@@ -1,0 +1,30 @@
+{
+  "extends": "../tslint.json",
+  "rules": {
+    "directive-selector": [
+      false,
+      "attribute",
+      [
+        "app",
+        "passport",
+        "exception",
+        "layout",
+        "header",
+        "erupt"
+      ],
+      "camelCase"
+    ],
+    "component-selector": [
+      true,
+      "element",
+      [
+        "app",
+        "passport",
+        "exception",
+        "layout",
+        "header"
+      ],
+      "kebab-case"
+    ]
+  }
+}
