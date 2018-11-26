@@ -8,22 +8,22 @@ import {FormsModule} from "@angular/forms";
 import {SharedModule} from "../shared/shared.module";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    SharedModule,
-    HttpClientModule,
-  ],
-  providers: [
-    DataService,
-  ],
-  exports: [
-    EditTypeComponent
-  ],
-  entryComponents: [
-    EditTypeComponent
-  ],
-  declarations: [EditTypeComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        SharedModule,
+        HttpClientModule,
+    ],
+    providers: [
+        DataService,
+    ],
+    exports: [
+        EditTypeComponent
+    ],
+    entryComponents: [
+        EditTypeComponent
+    ],
+    declarations: [EditTypeComponent]
 })
 export class EruptModule {
 }

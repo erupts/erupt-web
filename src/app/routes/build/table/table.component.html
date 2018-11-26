@@ -1,221 +1,226 @@
 <div *ngIf="eruptModel!=null">
-  <!--<div class="page-body" style="margin-top: -15px;">-->
-  <!--&lt;!&ndash;operator start&ndash;&gt;-->
-  <!--<div class="m-b-10">-->
-  <!--<ng-container *ngIf="eruptModel.eruptJson.power.add">-->
-  <!--<button mat-raised-button class="view-muti-operator-btn" (click)="addRow($event,value)"><i-->
-  <!--class="fa fa-plus"></i>&nbsp;新增-->
-  <!--</button>&nbsp;-->
-  <!--</ng-container>-->
+    <!--<div class="page-body" style="margin-top: -15px;">-->
+    <!--&lt;!&ndash;operator start&ndash;&gt;-->
+    <!--<div class="m-b-10">-->
+    <!--<ng-container *ngIf="eruptModel.eruptJson.power.add">-->
+    <!--<button mat-raised-button class="view-muti-operator-btn" (click)="addRow($event,value)"><i-->
+    <!--class="fa fa-plus"></i>&nbsp;新增-->
+    <!--</button>&nbsp;-->
+    <!--</ng-container>-->
 
-  <!--<ng-container *ngIf="eruptModel.eruptJson.power.del">-->
-  <!--<button mat-raised-button class="view-muti-operator-btn" color="warn"><i class="fa fa-trash"></i>&nbsp;删除-->
-  <!--</button>&nbsp;-->
-  <!--</ng-container>-->
+    <!--<ng-container *ngIf="eruptModel.eruptJson.power.del">-->
+    <!--<button mat-raised-button class="view-muti-operator-btn" color="warn"><i class="fa fa-trash"></i>&nbsp;删除-->
+    <!--</button>&nbsp;-->
+    <!--</ng-container>-->
 
-  <!--<ng-container *ngIf="eruptModel.eruptJson.power.export">-->
-  <!--<button mat-raised-button class="view-muti-operator-btn">-->
-  <!--<i class="fa fa-download"></i>&nbsp;导出-->
-  <!--</button>&nbsp;-->
-  <!--</ng-container>-->
+    <!--<ng-container *ngIf="eruptModel.eruptJson.power.export">-->
+    <!--<button mat-raised-button class="view-muti-operator-btn">-->
+    <!--<i class="fa fa-download"></i>&nbsp;导出-->
+    <!--</button>&nbsp;-->
+    <!--</ng-container>-->
 
-  <!--<ng-container *ngIf="eruptModel.eruptJson.power.importable">-->
-  <!--<button mat-raised-button [matMenuTriggerFor]="exportoption" class="view-muti-operator-btn">-->
-  <!--<i class="fa fa-upload"></i>&nbsp;导入-->
-  <!--</button>&nbsp;-->
-  <!--<mat-menu #exportoption="matMenu">-->
-  <!--<button mat-menu-item class="view-muti-operator-btn"><i class="fa fa-upload"></i>&nbsp;导入</button>-->
-  <!--<button mat-menu-item class="view-muti-operator-btn"><i class="fa fa-medium"></i>&nbsp;下载模板</button>-->
-  <!--</mat-menu>-->
-  <!--</ng-container>-->
-
-
-  <!--<ng-container *ngIf="eruptSearchFields.length>0">-->
-  <!--<button mat-raised-button-->
-  <!--class="view-muti-operator-btn"-->
-  <!--(click)="isSearchCollapsed = !isSearchCollapsed"-->
-  <!--[attr.aria-expanded]="isSearchCollapsed">-->
-  <!--<i class="fa {{isSearchCollapsed?'fa-level-up':'fa-level-down'}}"></i>&nbsp;条件-->
-  <!--</button>&nbsp;-->
-  <!--</ng-container>-->
-
-  <!--&lt;!&ndash;custom button&ndash;&gt;-->
-  <!--<ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">-->
-  <!--<ng-container *ngIf="oper.multi">-->
-  <!--<button mat-raised-button color="accent" class="view-muti-operator-btn"-->
-  <!--(click)="gcOperatorEdits(oper.code);operatorEdits.show()">-->
-  <!--<i class="{{oper.icon}}"></i>&nbsp;{{oper.title}}-->
-  <!--</button>&nbsp;-->
-  <!--</ng-container>-->
-  <!--</ng-container>-->
-
-  <!--<div bsModal #operatorEdits="bs-modal" class="modal fade" tabindex="-1">-->
-  <!--<div class="modal-dialog modal-md">-->
-  <!--<div class="modal-content">-->
-  <!--<ng-container *ngIf="operatorEdit[0].length>0">-->
-  <!--<div class="modal-body">-->
-  <!--<erupt-edit-type [eruptFieldModels]="operatorEdit[0]" [eruptName]="eruptModel.eruptName"-->
-  <!--[colClass]="'col-sm-6 col-md-6 col-lg-6'"></erupt-edit-type>-->
-  <!--</div>-->
-  <!--</ng-container>-->
-  <!--<div class="modal-footer">-->
-  <!--<button mat-raised-button class="outline-none" color="accent" (click)="actionOperator(operatorEdit)">-->
-  <!--执行-->
-  <!--</button>&nbsp;-->
-  <!--<button mat-raised-button class="outline-none" (click)="operatorEdits.hide()">-->
-  <!--取消（esc）-->
-  <!--</button>-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--&lt;!&ndash;operator end&ndash;&gt;-->
-
-  <!--&lt;!&ndash;search block start&ndash;&gt;-->
-  <!--<div class="card" [collapse]="!isSearchCollapsed">-->
-  <!--<div class="card-header">-->
-  <!--<h5>查询条件</h5>-->
-  <!--</div>-->
-  <!--<div class="p-20">-->
-  <!--<erupt-edit-type [eruptFieldModels]="eruptSearchFields" [eruptName]="eruptModel.eruptName"-->
-  <!--[colClass]="'col-sm-6 col-md-4 col-lg-4'">-->
-
-  <!--</erupt-edit-type>-->
-  <!--</div>-->
-  <!--</div>-->
-
-  <!--&lt;!&ndash;<mat-card &ndash;&gt;-->
-  <!--&lt;!&ndash;*ngIf="eruptSearchFields.length>0"&ndash;&gt;-->
-  <!--&lt;!&ndash;class="view-muti-operator-btn">&ndash;&gt;-->
-  <!--&lt;!&ndash;<mat-card-header>&ndash;&gt;-->
-  <!--&lt;!&ndash;<mat-card-title>查询条件</mat-card-title>&ndash;&gt;-->
-  <!--&lt;!&ndash;</mat-card-header>&ndash;&gt;-->
-
-  <!--&lt;!&ndash;&ndash;&gt;-->
-  <!--&lt;!&ndash;</mat-card>&ndash;&gt;-->
-  <!--&lt;!&ndash;search block end&ndash;&gt;-->
-
-  <!--&lt;!&ndash;card start&ndash;&gt;-->
-  <!--<ng-container *ngIf="eruptModel.eruptJson.cards.length > 0">-->
-  <!--<div class="row">-->
-  <!--<div class="col-lg-3 col-md-6" *ngFor="let card of eruptModel.eruptJson.cards">-->
-  <!--<div class="card">-->
-  <!--<div class="card-block">-->
-  <!--<div class="row align-items-center">-->
-  <!--<div class="col-8">-->
-  <!--<h4 class="text-c-{{card.color}}">{{card.value}}</h4>-->
-  <!--<h6 class="text-muted m-b-0">{{card.desc}}</h6>-->
-  <!--</div>-->
-  <!--<div class="col-4 text-right">-->
-  <!--<i class="{{card.icon}} f-30"></i>-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--<div class="card-footer bg-c-{{card.color}}">-->
-  <!--<div class="row align-items-center">-->
-  <!--<div class="col-9">-->
-  <!--<p class="text-white m-b-0">% change</p>-->
-  <!--</div>-->
-  <!--&lt;!&ndash;<div class="col-3 text-right">&ndash;&gt;-->
-  <!--&lt;!&ndash;<i class="feather icon-trending-up text-white f-16"></i>&ndash;&gt;-->
-  <!--&lt;!&ndash;</div>&ndash;&gt;-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--</div>-->
-  <!--</ng-container>-->
-  <!--&lt;!&ndash;card end&ndash;&gt;-->
-  <!--</div>-->
-
-  <!--table start-->
-  <st #st [data]="rows" [columns]="columns" [scroll]="{x: '1300px'}" [header]="eruptModel.eruptName" [bordered]="settingSrv.layout.tableBorder">
-
-  </st>
-
-  <!--<div class="card">-->
-  <!--<ngx-datatable-->
-  <!--*ngIf="eruptModel.views.length>0"-->
-  <!--[style.height]="'605px'"-->
-  <!--class="material"-->
-  <!--[columnMode]="'force'"-->
-  <!--[headerHeight]="50"-->
-  <!--[footerHeight]="50"-->
-  <!--[rowHeight]="50"-->
-  <!--[rows]="rows"-->
-  <!--[reorderable]="true"-->
-  <!--[scrollbarH]="true"-->
-  <!--[scrollbarV]="true"-->
-  <!--[selectionType]="'checkbox'"-->
-  <!--[selectAllRowsOnPage]="false"-->
-  <!--[externalPaging]="true"-->
-  <!--[count]="page.total"-->
-  <!--[offset]="page.pageNumber"-->
-  <!--[limit]="page.pageSize"-->
-  <!--(select)="onSelectTableRow($event)"-->
-  <!--[messages]="{-->
-  <!--emptyMessage: '无数据',-->
-  <!--totalMessage: 'total',-->
-  <!--selectedMessage: 'selected'-->
-  <!--}"-->
-  <!--&gt;-->
-  <!--<ngx-datatable-column [width]="60" [sortable]="false" [canAutoResize]="false" [draggable]="false"-->
-  <!--[frozenLeft]="true"-->
-  <!--[resizeable]="false" [checkboxable]="true">-->
-  <!--</ngx-datatable-column>-->
-
-  <!--<ngx-datatable-column *ngFor="let view of eruptModel.views" [name]="view.title" [prop]="view.column"-->
-  <!--[resizeable]="true">-->
-  <!--<ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected"-->
-  <!--let-onCheckboxChangeFn="onCheckboxChangeFn">-->
-  <!--<app-view-text [value]="value" [view]="view"></app-view-text>-->
-  <!--</ng-template>-->
-  <!--</ngx-datatable-column>-->
-
-  <!--<ngx-datatable-column [name]="'操作'" [frozenRight]="true" [width]="140" [maxWidth]="220" [resizeable]="true"-->
-  <!--[draggable]="false">-->
-  <!--<ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected"-->
-  <!--let-onCheckboxChangeFn="onCheckboxChangeFn">-->
-  <!--<div class="text-center">-->
-  <!--<ng-container *ngIf="eruptModel.eruptJson.power.edit">-->
-  <!--<i class="fa fa-pencil text-primary table-operator-btn" (click)="editRow($event,value)"></i>&nbsp;&nbsp;-->
-  <!--</ng-container>-->
-  <!--<ng-container *ngIf="eruptModel.eruptJson.power.del">-->
-  <!--<i class="fa fa-trash text-danger table-operator-btn" (click)="delRow($event,value)"></i>&nbsp;&nbsp;-->
-  <!--</ng-container>-->
-  <!--</div>-->
-  <!--</ng-template>-->
-  <!--</ngx-datatable-column>-->
-  <!--</ngx-datatable>-->
-  <!--</div>-->
-  <!--table end-->
-
-  <!--<button (click)="drawEdit.open()">23333333</button>-->
-  <!--<nz-drawer #drawEdit [nzClosable]="false" [nzVisible]="true" nzPlacement="right" nzTitle="Basic Drawer" [nzWidth]="720">-->
-  <!---->
-  <!--</nz-drawer>-->
+    <!--<ng-container *ngIf="eruptModel.eruptJson.power.importable">-->
+    <!--<button mat-raised-button [matMenuTriggerFor]="exportoption" class="view-muti-operator-btn">-->
+    <!--<i class="fa fa-upload"></i>&nbsp;导入-->
+    <!--</button>&nbsp;-->
+    <!--<mat-menu #exportoption="matMenu">-->
+    <!--<button mat-menu-item class="view-muti-operator-btn"><i class="fa fa-upload"></i>&nbsp;导入</button>-->
+    <!--<button mat-menu-item class="view-muti-operator-btn"><i class="fa fa-medium"></i>&nbsp;下载模板</button>-->
+    <!--</mat-menu>-->
+    <!--</ng-container>-->
 
 
-  <erupt-edit style="background: #eee"
-              [eruptModel]="eruptModel"
-              [rowDataFun]="rowData"
-              [behavior]="'add'">
-  </erupt-edit>
+    <!--<ng-container *ngIf="eruptSearchFields.length>0">-->
+    <!--<button mat-raised-button-->
+    <!--class="view-muti-operator-btn"-->
+    <!--(click)="isSearchCollapsed = !isSearchCollapsed"-->
+    <!--[attr.aria-expanded]="isSearchCollapsed">-->
+    <!--<i class="fa {{isSearchCollapsed?'fa-level-up':'fa-level-down'}}"></i>&nbsp;条件-->
+    <!--</button>&nbsp;-->
+    <!--</ng-container>-->
+
+    <!--&lt;!&ndash;custom button&ndash;&gt;-->
+    <!--<ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">-->
+    <!--<ng-container *ngIf="oper.multi">-->
+    <!--<button mat-raised-button color="accent" class="view-muti-operator-btn"-->
+    <!--(click)="gcOperatorEdits(oper.code);operatorEdits.show()">-->
+    <!--<i class="{{oper.icon}}"></i>&nbsp;{{oper.title}}-->
+    <!--</button>&nbsp;-->
+    <!--</ng-container>-->
+    <!--</ng-container>-->
+
+    <!--<div bsModal #operatorEdits="bs-modal" class="modal fade" tabindex="-1">-->
+    <!--<div class="modal-dialog modal-md">-->
+    <!--<div class="modal-content">-->
+    <!--<ng-container *ngIf="operatorEdit[0].length>0">-->
+    <!--<div class="modal-body">-->
+    <!--<erupt-edit-type [eruptFieldModels]="operatorEdit[0]" [eruptName]="eruptModel.eruptName"-->
+    <!--[colClass]="'col-sm-6 col-md-6 col-lg-6'"></erupt-edit-type>-->
+    <!--</div>-->
+    <!--</ng-container>-->
+    <!--<div class="modal-footer">-->
+    <!--<button mat-raised-button class="outline-none" color="accent" (click)="actionOperator(operatorEdit)">-->
+    <!--执行-->
+    <!--</button>&nbsp;-->
+    <!--<button mat-raised-button class="outline-none" (click)="operatorEdits.hide()">-->
+    <!--取消（esc）-->
+    <!--</button>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--&lt;!&ndash;operator end&ndash;&gt;-->
+
+    <!--&lt;!&ndash;search block start&ndash;&gt;-->
+    <!--<div class="card" [collapse]="!isSearchCollapsed">-->
+    <!--<div class="card-header">-->
+    <!--<h5>查询条件</h5>-->
+    <!--</div>-->
+    <!--<div class="p-20">-->
+    <!--<erupt-edit-type [eruptFieldModels]="eruptSearchFields" [eruptName]="eruptModel.eruptName"-->
+    <!--[colClass]="'col-sm-6 col-md-4 col-lg-4'">-->
+
+    <!--</erupt-edit-type>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <nz-card style="width:100%" nzTitle="Card title" *ngIf="eruptSearchFields.length>0">
+        <erupt-edit-type [eruptFieldModels]="eruptSearchFields" [eruptName]="eruptModel.eruptName"
+                         [colClass]="'col-sm-6 col-md-4 col-lg-4'">
+        </erupt-edit-type>
+    </nz-card>
+
+    <!--&lt;!&ndash;card start&ndash;&gt;-->
+    <!--<ng-container *ngIf="eruptModel.eruptJson.cards.length > 0">-->
+    <!--<div class="row">-->
+    <!--<div class="col-lg-3 col-md-6" *ngFor="let card of eruptModel.eruptJson.cards">-->
+    <!--<div class="card">-->
+    <!--<div class="card-block">-->
+    <!--<div class="row align-items-center">-->
+    <!--<div class="col-8">-->
+    <!--<h4 class="text-c-{{card.color}}">{{card.value}}</h4>-->
+    <!--<h6 class="text-muted m-b-0">{{card.desc}}</h6>-->
+    <!--</div>-->
+    <!--<div class="col-4 text-right">-->
+    <!--<i class="{{card.icon}} f-30"></i>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="card-footer bg-c-{{card.color}}">-->
+    <!--<div class="row align-items-center">-->
+    <!--<div class="col-9">-->
+    <!--<p class="text-white m-b-0">% change</p>-->
+    <!--</div>-->
+    <!--&lt;!&ndash;<div class="col-3 text-right">&ndash;&gt;-->
+    <!--&lt;!&ndash;<i class="feather icon-trending-up text-white f-16"></i>&ndash;&gt;-->
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</ng-container>-->
+    <!--&lt;!&ndash;card end&ndash;&gt;-->
+    <!--</div>-->
+
+    <!--table start-->
+    <st #st [data]="rows" [columns]="columns" [scroll]="{x: '1300px'}" [header]="eruptModel.eruptName"
+        [bordered]="settingSrv.layout.tableBorder">
+
+    </st>
+
+    <!--<div class="card">-->
+    <!--<ngx-datatable-->
+    <!--*ngIf="eruptModel.views.length>0"-->
+    <!--[style.height]="'605px'"-->
+    <!--class="material"-->
+    <!--[columnMode]="'force'"-->
+    <!--[headerHeight]="50"-->
+    <!--[footerHeight]="50"-->
+    <!--[rowHeight]="50"-->
+    <!--[rows]="rows"-->
+    <!--[reorderable]="true"-->
+    <!--[scrollbarH]="true"-->
+    <!--[scrollbarV]="true"-->
+    <!--[selectionType]="'checkbox'"-->
+    <!--[selectAllRowsOnPage]="false"-->
+    <!--[externalPaging]="true"-->
+    <!--[count]="page.total"-->
+    <!--[offset]="page.pageNumber"-->
+    <!--[limit]="page.pageSize"-->
+    <!--(select)="onSelectTableRow($event)"-->
+    <!--[messages]="{-->
+    <!--emptyMessage: '无数据',-->
+    <!--totalMessage: 'total',-->
+    <!--selectedMessage: 'selected'-->
+    <!--}"-->
+    <!--&gt;-->
+    <!--<ngx-datatable-column [width]="60" [sortable]="false" [canAutoResize]="false" [draggable]="false"-->
+    <!--[frozenLeft]="true"-->
+    <!--[resizeable]="false" [checkboxable]="true">-->
+    <!--</ngx-datatable-column>-->
+
+    <!--<ngx-datatable-column *ngFor="let view of eruptModel.views" [name]="view.title" [prop]="view.column"-->
+    <!--[resizeable]="true">-->
+    <!--<ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected"-->
+    <!--let-onCheckboxChangeFn="onCheckboxChangeFn">-->
+    <!--<app-view-text [value]="value" [view]="view"></app-view-text>-->
+    <!--</ng-template>-->
+    <!--</ngx-datatable-column>-->
+
+    <!--<ngx-datatable-column [name]="'操作'" [frozenRight]="true" [width]="140" [maxWidth]="220" [resizeable]="true"-->
+    <!--[draggable]="false">-->
+    <!--<ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected"-->
+    <!--let-onCheckboxChangeFn="onCheckboxChangeFn">-->
+    <!--<div class="text-center">-->
+    <!--<ng-container *ngIf="eruptModel.eruptJson.power.edit">-->
+    <!--<i class="fa fa-pencil text-primary table-operator-btn" (click)="editRow($event,value)"></i>&nbsp;&nbsp;-->
+    <!--</ng-container>-->
+    <!--<ng-container *ngIf="eruptModel.eruptJson.power.del">-->
+    <!--<i class="fa fa-trash text-danger table-operator-btn" (click)="delRow($event,value)"></i>&nbsp;&nbsp;-->
+    <!--</ng-container>-->
+    <!--</div>-->
+    <!--</ng-template>-->
+    <!--</ngx-datatable-column>-->
+    <!--</ngx-datatable>-->
+    <!--</div>-->
+    <!--table end-->
+
+    <!--<button (click)="drawEdit.open()">23333333</button>-->
+    <!--<nz-drawer #drawEdit [nzClosable]="false" [nzVisible]="true" nzPlacement="right" nzTitle="Basic Drawer" [nzWidth]="720">-->
+    <!---->
+    <!--</nz-drawer>-->
+    <nz-drawer [nzClosable]="false" [nzVisible]="editDrawerVisible" nzPlacement="right"
+               nzTitle="Basic Drawer"
+               [nzClosable]="true"
+               (nzOnClose)="editDrawerVisible=false"
+               nzWidth="calc(100%-100px)"
+    >
+        <erupt-edit-type [eruptFieldModels]="eruptModel.eruptFieldModels" [eruptName]="eruptModel.eruptName"
+                         [colClass]="'col-sm-6 col-md-4 col-lg-4'" style="width:800px">
+        </erupt-edit-type>
+
+        <!--<erupt-edit style="background: #eee"-->
+        <!--[eruptModel]="eruptModel"-->
+        <!--[rowDataFun]="rowData"-->
+        <!--[behavior]="'add'">-->
+        <!--</erupt-edit>-->
+    </nz-drawer>
 
 
-  <!--<ng-template #editModal>-->
-  <!--<div class="m-b-10" style="margin-top: -44px;">-->
-  <!--<button mat-raised-button class="outline-none" (click)="editModalRef.hide()"><i class="fa fa-mail-reply"></i>&nbsp;返回-->
-  <!--</button>&nbsp;-->
-  <!--<button mat-raised-button class="outline-none" [disabled]="!eruptModel" (click)="saveData()"><i-->
-  <!--class="fa fa-save"></i>&nbsp;保存-->
-  <!--</button>&nbsp;-->
-  <!--</div>-->
-  <!--<erupt-edit style="background: #eee"-->
-  <!--[eruptModel]="eruptModel"-->
-  <!--[rowDataFun]="rowData"-->
-  <!--[behavior]="'add'">-->
-  <!--</erupt-edit>-->
-  <!--</ng-template>-->
+    <!--<ng-template #editModal>-->
+    <!--<div class="m-b-10" style="margin-top: -44px;">-->
+    <!--<button mat-raised-button class="outline-none" (click)="editModalRef.hide()"><i class="fa fa-mail-reply"></i>&nbsp;返回-->
+    <!--</button>&nbsp;-->
+    <!--<button mat-raised-button class="outline-none" [disabled]="!eruptModel" (click)="saveData()"><i-->
+    <!--class="fa fa-save"></i>&nbsp;保存-->
+    <!--</button>&nbsp;-->
+    <!--</div>-->
+    <!--<erupt-edit style="background: #eee"-->
+    <!--[eruptModel]="eruptModel"-->
+    <!--[rowDataFun]="rowData"-->
+    <!--[behavior]="'add'">-->
+    <!--</erupt-edit>-->
+    <!--</ng-template>-->
 </div>

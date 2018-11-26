@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {EruptModel} from "../../../erupt/model/erupt.model";
 import {DataService} from "../../../erupt/service/data.service";
 import {EditType} from "../../../erupt/model/erupt.enum";
-import {eruptModelConvertViewKeys, eruptValueToObject, objectToEruptValue} from "../../../erupt/util/conver-util";
+import {eruptValueToObject, objectToEruptValue} from "../../../erupt/util/conver-util";
 
 @Component({
   selector: 'erupt-edit',
@@ -81,7 +81,6 @@ export class EditComponent implements OnInit {
             }
           }
           field.eruptFieldJson.edit.tabType[0].eruptFieldModels = subErupt.eruptFieldModels;
-          field.eruptFieldJson.edit.tabType[0].views = eruptModelConvertViewKeys(subErupt);
         });
 
       }

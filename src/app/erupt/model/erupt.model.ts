@@ -9,7 +9,7 @@ export interface EruptModel {
   eruptName: string;
   primaryKeyCol: string;
   //# customer prop
-  views?: Array<View>;
+  tableColumns?: Array<View>;
   subEruptModels?: Array<EruptModelAndField>;
 }
 
