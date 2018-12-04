@@ -19,11 +19,12 @@ export enum EditType {
   QRCODE = 'QRCODE',           //二维码
   ATTACHMENT = 'ATTACHMENT',       //附件
   TAB = 'TAB',             //TAB选项卡
+  MARK_DOWN = 'MARK_DOWN'  //mark down
 }
 
 export enum ViewType {
   TEXT = "TEXT",
-  PROGRESS = "PROGRESS",
+  QR_CODE = "QR_CODE",
   LINK = "LINK",
   COVER = "COVER",
 }

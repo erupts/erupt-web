@@ -67,6 +67,7 @@ import { SharedModule } from './shared/shared.module';
 import { AppComponent } from './app.component';
 import { RoutesModule } from './routes/routes.module';
 import { LayoutModule } from './layout/layout.module';
+import {SimplemdeModule} from "ngx-simplemde";
 
 @NgModule({
   declarations: [
@@ -80,6 +81,7 @@ import { LayoutModule } from './layout/layout.module';
     CoreModule,
     SharedModule,
     LayoutModule,
+    // SimplemdeModule.forRoot(),
     RoutesModule,
     ...FORM_MODULES,
     ...GLOBAL_THIRD_MODULES
@@ -89,6 +91,6 @@ import { LayoutModule } from './layout/layout.module';
     ...INTERCEPTOR_PROVIDES,
     ...APPINIT_PROVIDES
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

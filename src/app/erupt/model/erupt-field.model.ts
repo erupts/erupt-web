@@ -23,6 +23,7 @@ export interface View {
   sort: number;
   viewType: ViewType;
   template: string;
+  sortable: boolean;
   //extra
   eruptFieldModel?: EruptFieldModel;
 }
@@ -31,7 +32,7 @@ export interface Edit {
   title: string;
   notNull: boolean;
   desc: string;
-  $value: string | number | any;
+  $value: any;
   $viewValue: any;
   type: EditType;
   show: boolean;

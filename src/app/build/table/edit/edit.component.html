@@ -1,0 +1,28 @@
+<div *ngIf="eruptModel!=null">
+
+  <erupt-edit-type [eruptFieldModels]="eruptModel.eruptFieldModels" [eruptName]="eruptModel.eruptName"></erupt-edit-type>
+
+  <br>
+  <br>
+
+  <nz-tabset>
+    <ng-container *ngFor="let sub of eruptModel.subEruptModels">
+      <nz-tab [nzTitle]="sub.eruptField.eruptFieldJson.edit.title">
+        <st #st [data]="sub.eruptField.eruptFieldJson.edit.$value" [columns]="sub.columns"
+            [bordered]="settingSrv.layout.tableBorder">
+
+        </st>
+      </nz-tab>
+    </ng-container>
+  </nz-tabset>
+
+
+  <!--<div class="drawer-footer">-->
+    <!--<button nz-button [nzType]="'default'" >-->
+      <!--Cancel-->
+    <!--</button>-->
+    <!--<button nz-button [nzType]="'primary'" >-->
+      <!--OK-->
+    <!--</button>-->
+  <!--</div>-->
+</div>

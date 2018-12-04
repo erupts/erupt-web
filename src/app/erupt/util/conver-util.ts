@@ -7,6 +7,10 @@ import {FormControl} from "@angular/forms";
  */
 
 export function initErupt(eruptModel: EruptModel) {
+    eruptModel.eruptJson.rowOperationMap = new Map();
+    eruptModel.eruptJson.rowOperation.forEach(oper =>
+        eruptModel.eruptJson.rowOperationMap.set(oper.code, oper)
+    );
     eruptModel.tableColumns = [];
     eruptModel.eruptFieldModels.forEach(field => {
         if (field.eruptFieldJson.edit.type === EditType.CHOICE) {
@@ -41,6 +45,12 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
             title: view.title,
             index: view.column
         };
+
+        if (view.sortable) {
+            obj.sort = true;
+        }
+
+        //编辑类型
         if (edit.type === EditType.BOOLEAN) {
             obj.type = 'yn';
             obj.className = "text-center";
@@ -50,6 +60,7 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
             };
         }
 
+        //数据类型
         if (view.eruptFieldModel.fieldReturnName === "Integer"
             || view.eruptFieldModel.fieldReturnName === "Float"
             || view.eruptFieldModel.fieldReturnName === "Double") {
@@ -58,8 +69,22 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
             obj.type = 'date';
         }
 
+        //展示类型
         if (view.viewType === ViewType.LINK) {
             obj.type = 'link';
+            obj.click = (data) => {
+                console.log(data[view.column]);
+                window.open(data[view.column])
+            }
+        } else if (view.viewType === ViewType.QR_CODE) {
+            obj.className = "text-center";
+            obj.buttons = [
+                {
+                    icon: 'qrcode',
+                    click: (record: any, modal: any) =>
+                        alert(123)
+                }
+            ]
         }
 
         if (view.template) {
@@ -68,13 +93,11 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
             };
         }
         if (view.className) {
-            obj.className = view.className;
-            console.log(obj.className);
+            obj.className += " " + view.className;
         }
 
         cols.push(obj);
     }
-    console.log(cols);
     return cols;
 }
 

@@ -6,6 +6,7 @@ import {EditTypeComponent} from './edit-type/edit-type.component';
 import {FormsModule} from "@angular/forms";
 
 import {SharedModule} from "../shared/shared.module";
+import {SimplemdeModule} from "ngx-simplemde";
 
 @NgModule({
     imports: [
@@ -13,6 +14,10 @@ import {SharedModule} from "../shared/shared.module";
         FormsModule,
         SharedModule,
         HttpClientModule,
+        SimplemdeModule
+        // SimplemdeModule.forRoot({
+        //     autosave: { enabled: true, uniqueId: 'MyUniqueID' }
+        // }),
     ],
     providers: [
         DataService,

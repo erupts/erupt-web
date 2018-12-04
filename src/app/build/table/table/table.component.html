@@ -1,0 +1,61 @@
+<ng-container *ngIf="!eruptModel">
+    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
+</ng-container>
+<div *ngIf="eruptModel">
+    <!--operator start-->
+    <div>
+        <ng-container *ngIf="eruptModel.eruptJson.power.add">
+            <button nz-button nzType="default" class="mb-sm" (click)="addRow($event,value)">
+                <i nz-icon type="plus" theme="outline"></i>新增
+            </button>&nbsp;
+        </ng-container>
+
+        <ng-container *ngIf="eruptModel.eruptJson.power.del">
+            <button nz-button nzType="danger" class="mb-sm">
+                <i nz-icon type="delete" theme="outline"></i>删除
+            </button>&nbsp;
+        </ng-container>
+
+        <ng-container *ngIf="eruptModel.eruptJson.power.export">
+            <button nz-button nzType="default" class="mb-sm">
+                <i nz-icon type="export" theme="outline"></i>导出
+            </button>&nbsp;
+        </ng-container>
+
+        <ng-container *ngIf="eruptModel.eruptJson.power.importable">
+            <button nz-button nzType="default" class="mb-sm">
+                <i nz-icon type="login" theme="outline"></i>导入
+            </button>&nbsp;
+        </ng-container>
+
+        <ng-container *ngIf="eruptSearchFields.length>0">
+            <button nz-button nzType="default" class="mb-sm">
+                <i nz-icon type="codepen" theme="outline"></i>条件
+            </button>&nbsp;
+        </ng-container>
+
+        <nz-divider nzType="vertical"></nz-divider>
+
+        <ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">
+            <ng-container *ngIf="oper.multi">
+                <button nz-button nzType="dashed" class="mb-sm">
+                    <!--<i nz-icon type="{{oper.icon}}" theme="outline"></i>-->
+                    {{oper.title}}
+                </button>&nbsp;
+            </ng-container>
+        </ng-container>
+    </div>
+
+
+    <ng-container *ngIf="eruptSearchFields.length>0">
+        <erupt-edit-type [eruptFieldModels]="eruptSearchFields" [eruptName]="eruptModel.eruptName"
+                         [col]="{xs: 24,sm: 12,md: 6,lg: 6,xl: 4 ,xxl: 4}"
+                         [size]="'default'">
+        </erupt-edit-type>
+    </ng-container>
+
+
+    <st #st [data]="rows" [columns]="columns" [scroll]="{x: '1300px'}"
+        [bordered]="settingSrv.layout.tableBorder">
+    </st>
+</div>

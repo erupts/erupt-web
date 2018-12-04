@@ -1,5 +1,4 @@
 import {EruptModel} from "../model/erupt.model";
-import {ToastrService} from "ngx-toastr";
 /**
  * Created by liyuepeng on 11/19/18.
  */
@@ -29,12 +28,12 @@ export function EruptCheckReqData(eruptModel: EruptModel): PassAndMessage {
   };
 }
 
-export function EruptCheckReqDataByToastr(eruptModel: EruptModel, toastr: ToastrService): boolean {
+export function EruptCheckReqDataByToastr(eruptModel: EruptModel): boolean {
   let passMessage = EruptCheckReqData(eruptModel)
   if (!passMessage.pass) {
-    toastr.error(passMessage.message, "", {
-      positionClass: "toast-bottom-right"
-    });
+    // toastr.error(passMessage.message, "", {
+    //   positionClass: "toast-bottom-right"
+    // });
   }
   return passMessage.pass;
 }

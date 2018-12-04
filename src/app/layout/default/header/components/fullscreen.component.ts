@@ -5,7 +5,6 @@ import * as screenfull from 'screenfull';
   selector: 'header-fullscreen',
   template: `
   <i nz-icon [type]="status ? 'fullscreen' : 'fullscreen-exit'"></i>
-  {{ status ? '退出全屏' : '全屏' }}
   `
 })
 export class HeaderFullScreenComponent {

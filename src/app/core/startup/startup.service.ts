@@ -89,20 +89,25 @@ export class StartupService {
         text: '主导航',
         group: true,
         children: [
+          // {
+          //   text: '仪表盘',
+          //   link: '/dashboard',
+          //   icon: {type: 'icon', value: 'appstore'}
+          // },
+          // {
+          //   text: '快捷菜单',
+          //   icon: {type: 'icon', value: 'rocket'},
+          //   shortcutRoot: true
+          // },
           {
-            text: '仪表盘',
-            link: '/dashboard',
-            icon: {type: 'icon', value: 'appstore'}
-          },
-          {
-            text: '快捷菜单',
-            icon: {type: 'icon', value: 'rocket'},
-            shortcutRoot: true
-          },
-          {
-            text: '列表',
+            text: 'TABLE',
             icon: {type: 'icon', value: 'rocket'},
             link: '/build/table',
+          },
+          {
+            text: 'TREE',
+            icon: {type: 'icon', value: 'appstore'},
+            link: '/build/tree',
           }
         ]
       }
