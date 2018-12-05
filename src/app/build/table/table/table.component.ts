@@ -295,5 +295,11 @@ export class TableComponent implements OnInit {
         this.selectedRows = event.selected;
     }
 
+
+    exportExcel() {
+        window.open(window["domain"] + "/erupt-api/excel/export/" + this.eruptModel.eruptName);
+        // this.dataService.downloadEruptExcel(this.eruptModel.eruptName).subscribe();
+    }
+
 }
 

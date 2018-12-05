@@ -22,7 +22,7 @@ export class DataService {
     getEruptBuild(model: string): Observable<EruptModel> {
         return this.http.get<EruptModel>(this.domain + '/erupt-api/build/list/' + model, {
             headers: {
-                eruptHeaderKey: model
+                eruptKey: model
             }
         });
     }
@@ -32,7 +32,7 @@ export class DataService {
             condition: condition
         }, {
             headers: {
-                eruptHeaderKey: model
+                eruptKey: model
             }
         });
     }
@@ -40,7 +40,7 @@ export class DataService {
     queryEruptTreeData(model: string): Observable<Array<Tree>> {
         return this.http.post<Array<Tree>>(this.domain + '/erupt-api/data/tree/' + model, {}, {
             headers: {
-                eruptHeaderKey: model
+                eruptKey: model
             }
         });
     }
@@ -51,7 +51,7 @@ export class DataService {
             param
         }, {
             headers: {
-                eruptHeaderKey: model
+                eruptKey: model
             }
         });
     }
@@ -59,7 +59,7 @@ export class DataService {
     queryEruptReferenceData(model: string, refName: string): Observable<any> {
         return this.http.get(this.domain + "/erupt-api/data/" + model + "/ref/" + refName, {
             headers: {
-                eruptHeaderKey: model
+                eruptKey: model
             }
         });
     }
@@ -67,12 +67,24 @@ export class DataService {
     addEruptData(model: string, data: any): Observable<any> {
         return this.http.post(this.domain + "/erupt-api/data/" + model, data, {
             headers: {
-                eruptHeaderKey: model
+                eruptKey: model
             }
         });
     }
 
     deleteEruptData(model: string, id): Observable<any> {
-        return this.http.delete(this.domain + '/erupt-api/data/' + model + "/" + id);
+        return this.http.delete(this.domain + '/erupt-api/data/' + model + "/" + id, {
+            headers: {
+                eruptKey: model
+            }
+        });
+    }
+
+    downloadEruptExcel(model: string): Observable<any> {
+        return this.http.get(this.domain + '/erupt-api/excel/' + model, {
+            headers: {
+                eruptKey: model
+            }
+        });
     }
 }

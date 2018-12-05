@@ -17,8 +17,8 @@
         </ng-container>
 
         <ng-container *ngIf="eruptModel.eruptJson.power.export">
-            <button nz-button nzType="default" class="mb-sm">
-                <i nz-icon type="export" theme="outline"></i>导出
+            <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()">
+                <i nz-icon type="download" theme="outline"></i>导出
             </button>&nbsp;
         </ng-container>
 

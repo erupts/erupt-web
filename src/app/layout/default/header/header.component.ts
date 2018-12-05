@@ -1,20 +1,31 @@
-import { Component } from '@angular/core';
-import { SettingsService } from '@delon/theme';
+import {Component} from '@angular/core';
+import {SettingsService} from '@delon/theme';
+import * as screenfull from 'screenfull';
 
 @Component({
-  selector: 'layout-header',
-  templateUrl: './header.component.html'
+    selector: 'layout-header',
+    templateUrl: './header.component.html'
 })
 export class HeaderComponent {
-  searchToggleStatus: boolean;
+    searchToggleStatus: boolean;
 
-  constructor(public settings: SettingsService) { }
+    isFullScreen: boolean = false;
 
-  toggleCollapsedSidebar() {
-    this.settings.setLayout('collapsed', !this.settings.layout.collapsed);
-  }
+    constructor(public settings: SettingsService) {
+    }
 
-  searchToggleChange() {
-    this.searchToggleStatus = !this.searchToggleStatus;
-  }
+    toggleCollapsedSidebar() {
+        this.settings.setLayout('collapsed', !this.settings.layout.collapsed);
+    }
+
+    searchToggleChange() {
+        this.searchToggleStatus = !this.searchToggleStatus;
+    }
+
+    toggleScreen() {
+        if (screenfull.enabled) {
+            screenfull.toggle();
+            this.isFullScreen = !this.isFullScreen;
+        }
+    }
 }

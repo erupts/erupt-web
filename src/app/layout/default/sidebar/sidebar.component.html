@@ -1,7 +1,7 @@
 <div class="alain-default__aside-inner">
   <nz-dropdown nzTrigger="click" class="alain-default__aside-user">
     <div nz-dropdown class="user-block-dropdown">
-      <nz-avatar class="alain-default__aside-user-avatar" [nzSrc]="settings.user.avatar"></nz-avatar>
+      <nz-avatar class="alain-default__aside-user-avatar" [nzText]="settings.user.name.substr(0,2)" nzSize="default" ></nz-avatar>
       <div class="alain-default__aside-user-info">
         <strong>{{settings.user.name}}</strong>
         <p class="text-truncate mb0">{{settings.user.email}}</p>

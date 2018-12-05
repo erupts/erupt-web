@@ -17,116 +17,120 @@ import {ICONS} from '../../../style-icons';
  */
 @Injectable()
 export class StartupService {
-  constructor(iconSrv: NzIconService,
-              private menuService: MenuService,
-              private settingService: SettingsService,
-              private aclService: ACLService,
-              private titleService: TitleService,
-              @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
-              private httpClient: HttpClient,
-              private injector: Injector) {
-    iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
-  }
+    constructor(iconSrv: NzIconService,
+                private menuService: MenuService,
+                private settingService: SettingsService,
+                private aclService: ACLService,
+                private titleService: TitleService,
+                @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+                private httpClient: HttpClient,
+                private injector: Injector) {
+        iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
+    }
 
-  private viaHttp(resolve: any, reject: any) {
-    zip(
-      this.httpClient.get('assets/tmp/app-data.json')
-    ).pipe(
-      // 接收其他拦截器后产生的异常消息
-      catchError(([appData]) => {
-        resolve(null);
-        return [appData];
-      })
-    ).subscribe(([appData]) => {
+    private viaHttp(resolve: any, reject: any) {
+        zip(
+            this.httpClient.get('assets/tmp/app-data.json')
+        ).pipe(
+            // 接收其他拦截器后产生的异常消息
+            catchError(([appData]) => {
+                resolve(null);
+                return [appData];
+            })
+        ).subscribe(([appData]) => {
 
-        // application data
-        const res: any = appData;
+                // application data
+                const res: any = appData;
+                // 应用信息：包括站点名、描述、年份
+                this.settingService.setApp(res.app);
+                // 用户信息：包括姓名、头像、邮箱地址
+                this.settingService.setUser(res.user);
+                // ACL：设置权限为全量
+                this.aclService.setFull(true);
+                // 初始化菜单
+                this.menuService.add(res.menu);
+                // 设置页面标题的后缀
+                this.titleService.suffix = res.app.name;
+            },
+            () => {
+            },
+            () => {
+                resolve(null);
+            });
+    }
+
+    private viaMock(resolve: any, reject: any) {
+        // const tokenData = this.tokenService.get();
+        // if (!tokenData.token) {
+        //   this.injector.get(Router).navigateByUrl('/passport/login');
+        //   resolve({});
+        //   return;
+        // }
+        // mock
+        const app: any = {
+            name: `erupt admin`,
+            description: `erupt admin for YuePeng `
+        };
+        const user: any = {
+            name: 'Admin',
+            avatar: './assets/tmp/img/avatar.jpg',
+            email: '122339792@qq.com',
+            token: '123456789'
+        };
         // 应用信息：包括站点名、描述、年份
-        this.settingService.setApp(res.app);
+        this.settingService.setApp(app);
         // 用户信息：包括姓名、头像、邮箱地址
-        this.settingService.setUser(res.user);
+        this.settingService.setUser(user);
         // ACL：设置权限为全量
         this.aclService.setFull(true);
         // 初始化菜单
-        this.menuService.add(res.menu);
+        this.menuService.add([
+            {
+                text: '主导航',
+                group: true,
+                children: [
+                    // {
+                    //   text: '仪表盘',
+                    //   link: '/dashboard',
+                    //   icon: {type: 'icon', value: 'appstore'}
+                    // },
+                    // {
+                    //   text: '快捷菜单',
+                    //   icon: {type: 'icon', value: 'rocket'},
+                    //   shortcutRoot: true
+                    // },
+                    {
+                        text: 'TABLE',
+                        icon: {type: 'icon', value: 'rocket'},
+                        link: '/build/table',
+                    },
+                    {
+                        text: 'TREE',
+                        icon: {type: 'icon', value: 'appstore'},
+                        link: '/build/tree',
+                    }
+                ]
+            }
+        ]);
         // 设置页面标题的后缀
-        this.titleService.suffix = res.app.name;
-      },
-      () => {
-      },
-      () => {
-        resolve(null);
-      });
-  }
+        this.titleService.suffix = app.name;
 
-  private viaMock(resolve: any, reject: any) {
-    // const tokenData = this.tokenService.get();
-    // if (!tokenData.token) {
-    //   this.injector.get(Router).navigateByUrl('/passport/login');
-    //   resolve({});
-    //   return;
-    // }
-    // mock
-    const app: any = {
-      name: `erupt admin`,
-      description: `erupt admin for YuePeng `
-    };
-    const user: any = {
-      name: 'Admin',
-      avatar: './assets/tmp/img/avatar.jpg',
-      email: '122339792@qq.com',
-      token: '123456789'
-    };
-    // 应用信息：包括站点名、描述、年份
-    this.settingService.setApp(app);
-    // 用户信息：包括姓名、头像、邮箱地址
-    this.settingService.setUser(user);
-    // ACL：设置权限为全量
-    this.aclService.setFull(true);
-    // 初始化菜单
-    this.menuService.add([
-      {
-        text: '主导航',
-        group: true,
-        children: [
-          // {
-          //   text: '仪表盘',
-          //   link: '/dashboard',
-          //   icon: {type: 'icon', value: 'appstore'}
-          // },
-          // {
-          //   text: '快捷菜单',
-          //   icon: {type: 'icon', value: 'rocket'},
-          //   shortcutRoot: true
-          // },
-          {
-            text: 'TABLE',
-            icon: {type: 'icon', value: 'rocket'},
-            link: '/build/table',
-          },
-          {
-            text: 'TREE',
-            icon: {type: 'icon', value: 'appstore'},
-            link: '/build/tree',
-          }
-        ]
-      }
-    ]);
-    // 设置页面标题的后缀
-    this.titleService.suffix = app.name;
+        resolve({});
+    }
 
-    resolve({});
-  }
+    load(): Promise<any> {
+        console.log("%c YuePeng Erupt Framework",
+            " text-shadow: 0 1px 0 #ccc,0 2px 0 #c9c9c9,0 3px 0 #bbb,0 4px 0 #b9b9b9,0 5px 0 #aaa,0 6px 1px rgba(0,0,0,.1)," +
+            "0 0 5px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.3),0 3px 5px rgba(0,0,0,.2),0 5px 10px" +
+            " rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.2),0 20px 20px rgba(0,0,0,.15);font-size:2em");
+        // only works with promises
+        // https://github.com/angular/angular/issues/15088
+        return new Promise((resolve, reject) => {
+            // http
+            // this.viaHttp(resolve, reject);
+            // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
+            this.viaMock(resolve, reject);
 
-  load(): Promise<any> {
-    // only works with promises
-    // https://github.com/angular/angular/issues/15088
-    return new Promise((resolve, reject) => {
-      // http
-      // this.viaHttp(resolve, reject);
-      // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
-      this.viaMock(resolve, reject);
-
-    });
-  }
+        });
+    }
 }

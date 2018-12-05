@@ -73,7 +73,6 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
         if (view.viewType === ViewType.LINK) {
             obj.type = 'link';
             obj.click = (data) => {
-                console.log(data[view.column]);
                 window.open(data[view.column])
             }
         } else if (view.viewType === ViewType.QR_CODE) {
@@ -81,10 +80,14 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
             obj.buttons = [
                 {
                     icon: 'qrcode',
-                    click: (record: any, modal: any) =>
-                        alert(123)
+                    click: (record: any, modal: any) => {
+                        console.log(record[view.column]);
+                    }
                 }
-            ]
+            ];
+            obj.format = (item: any) => {
+                return '';
+            };
         }
 
         if (view.template) {
@@ -124,9 +127,8 @@ export function objectToEruptValue(eruptModel: EruptModel, object: any) {
                 field.eruptFieldJson.edit.$value = new FormControl(object[field.fieldName]).value;
                 break;
             case EditType.REFERENCE:
-                field.eruptFieldJson.edit.$value = object[field.eruptFieldJson.edit.referenceType[0].id];
-                field.eruptFieldJson.edit.$viewValue = object[field.eruptFieldJson.edit.referenceType[0].label];
-                console.log(field.eruptFieldJson.edit.$viewValue);
+                field.eruptFieldJson.edit.$value = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceType[0].id];
+                field.eruptFieldJson.edit.$viewValue = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceType[0].label];
                 break;
             default:
                 field.eruptFieldJson.edit.$value = object[field.fieldName];

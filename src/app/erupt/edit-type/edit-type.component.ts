@@ -2,6 +2,7 @@ import {Component, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {Edit, EruptFieldModel, ReferenceType} from "../model/erupt-field.model";
 import {ChoiceEnum, DateEnum, EditType} from "../model/erupt.enum";
 import {DataService} from "../service/data.service";
+import {ModalHelper} from "@delon/theme";
 
 interface col {
     xs?: number,
@@ -34,10 +35,7 @@ export class EditTypeComponent implements OnInit {
 
     dateEnum = DateEnum;
 
-    referenceLists: Array<ReferenceType> = [];
-
-    zhDate = "YYYY-MM-DD";
-    zhDateTime = "YYYY-MM-DD HH:mm:ss";
+    referenceLists: Array<ReferenceType>;
 
     @Input() col: col = {
         xs: 24,
@@ -50,8 +48,24 @@ export class EditTypeComponent implements OnInit {
 
     @Input() layout: 'horizontal' | 'vertical' | 'inline' = 'vertical';
 
+    @ViewChild('refModal') refModal;
 
-    constructor(private dataService: DataService) {
+
+    constructor(private dataService: DataService, private modalHelper: ModalHelper) {
+
+    }
+
+
+    createRefModal(field: EruptFieldModel) {
+        this.referenceLists = null;
+        let sub = this.modalHelper.create(this.refModal, {}, {size: 'sm'}).subscribe(() => {
+            alert(233);
+        });
+        console.log(sub);
+        field.eruptFieldJson.edit.referenceType[0].tempVal = null;
+        this.dataService.queryEruptReferenceData(this.eruptName, field.fieldName).subscribe(data => {
+            this.referenceLists = [...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data];
+        });
 
     }
 
@@ -78,13 +92,6 @@ export class EditTypeComponent implements OnInit {
         console.log(field.eruptFieldJson.edit.$value);
     }
 
-
-    queryReference(field: EruptFieldModel) {
-        field.eruptFieldJson.edit.referenceType[0].tempVal = null;
-        this.dataService.queryEruptReferenceData(this.eruptName, field.fieldName).subscribe(data => {
-            this.referenceLists = data;
-        });
-    }
 
     clearValue(field: EruptFieldModel, event: Event) {
         if (event) {
