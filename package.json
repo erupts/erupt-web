@@ -1,9 +1,15 @@
 {
   "name": "erupt-web",
   "version": "0.0.0",
+  "description": "[erupt] web admin",
+  "author": {
+    "name": "YuePeng",
+    "email": "122339792@qq.com",
+    "url": "http://www.erupt.xyz"
+  },
   "scripts": {
     "ng": "ng",
-    "start": "npm run color-less && ng serve --port 4200 -o",
+    "start": "npm run color-less && ng serve --port 4400 -o",
     "build": "npm run color-less && ng build --prod --build-optimizer",
     "test": "ng test",
     "lint": "npm run lint:ts && npm run lint:style",
@@ -47,7 +53,6 @@
     "ng-alain": "^2.0.0-rc.3",
     "ng-zorro-antd": "^1.8.0",
     "ngx-simplemde": "^1.1.1",
-    "ngx-toastr": "^9.1.1",
     "prettier": "^1.12.1",
     "prettier-stylelint": "^0.4.2",
     "qrious": "^4.0.2",

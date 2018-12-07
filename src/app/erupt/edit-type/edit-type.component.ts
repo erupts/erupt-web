@@ -50,6 +50,8 @@ export class EditTypeComponent implements OnInit {
 
     @ViewChild('refModal') refModal;
 
+    @ViewChild('refFoot') refFoot;
+
 
     constructor(private dataService: DataService, private modalHelper: ModalHelper) {
 
@@ -58,13 +60,17 @@ export class EditTypeComponent implements OnInit {
 
     createRefModal(field: EruptFieldModel) {
         this.referenceLists = null;
-        let sub = this.modalHelper.create(this.refModal, {}, {size: 'sm'}).subscribe(() => {
+        let sub = this.modalHelper.create(this.refModal, {field}, {
+            size: 'sm', modalOptions: {
+                nzFooter: this.refFoot
+            }
+        }).subscribe(() => {
             alert(233);
         });
         console.log(sub);
         field.eruptFieldJson.edit.referenceType[0].tempVal = null;
         this.dataService.queryEruptReferenceData(this.eruptName, field.fieldName).subscribe(data => {
-            this.referenceLists = [...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data];
+            this.referenceLists = data;
         });
 
     }

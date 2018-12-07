@@ -6,6 +6,7 @@ import {EditTypeComponent} from './edit-type/edit-type.component';
 
 import {SharedModule} from "../shared/shared.module";
 import {SimplemdeModule} from "ngx-simplemde";
+import { ListSelectComponent } from './list-select/list-select.component';
 
 @NgModule({
     imports: [
@@ -23,7 +24,7 @@ import {SimplemdeModule} from "ngx-simplemde";
     entryComponents: [
         EditTypeComponent
     ],
-    declarations: [EditTypeComponent]
+    declarations: [EditTypeComponent, ListSelectComponent]
 })
 export class EruptModule {
 }

@@ -201,9 +201,9 @@
         </ng-container>
     </form>
 </div>
-<ng-template #refModal>
+<ng-template #refModal let-data>
     <div class="modal-header">
-        <div class="modal-title">选择</div>
+        <div class="modal-title">选择 {{data}}</div>
     </div>
     <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
         <input type="text" nz-input placeholder="Search" >
@@ -216,7 +216,9 @@
             <ng-container *ngIf="referenceLists">
                 <nz-timeline>
                     <ng-container *ngFor="let ref of referenceLists">
-                        <nz-timeline-item [nzDot]="dotTemplate">{{ref.label||'----'}}</nz-timeline-item>
+                        <div (click)="ref.tempVal=true" style="cursor: pointer;">
+                            <nz-timeline-item [nzDot]="ref.tempVal&&dotTemplate">{{ref.label||'----'}}</nz-timeline-item>
+                        </div>
                     </ng-container>
                 </nz-timeline>
                 <ng-template #dotTemplate>
@@ -228,12 +230,13 @@
             <nz-skeleton [nzActive]="true"></nz-skeleton>
         </ng-container>
     </ng-container>
-    <div class="modal-footer">
-        <button nz-button [nzType]="'default'">
-            Cancel
-        </button>
-        <button nz-button [nzType]="'primary'">
-            OK
-        </button>
-    </div>
+</ng-template>
+
+<ng-template #refFoot>
+    <button nz-button [nzType]="'default'">
+        Cancel
+    </button>
+    <button nz-button [nzType]="'primary'">
+        OK
+    </button>
 </ng-template>

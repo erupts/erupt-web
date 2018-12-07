@@ -1,13 +1,31 @@
+<header class="eggs">
+    😈
+    <br>
+    👼
+    <br>
+    🍭
+    <br>
+    🐭
+    <br>
+    🚀
+</header>
 <div class="alain-default__progress-bar" *ngIf="isFetching"></div>
-<layout-header class="alain-default__header" [style.background]="settingSrv.layout.mColor"></layout-header>
+<layout-header class="alain-default__header" [style.background]="settings.layout.mColor"></layout-header>
 <layout-sidebar class="alain-default__aside"></layout-sidebar>
 <section class="alain-default__content">
-  <div class="alain-default__content-title">
-    <h1>
-      title
-      <small>Welcome !</small>
-    </h1>
-  </div>
-  <router-outlet></router-outlet>
+    <div class="alain-default__content-title">
+        <h1>
+            title
+            <small>Welcome !</small>
+        </h1>
+    </div>
+    <router-outlet></router-outlet>
 </section>
 <ng-template #settingHost></ng-template>
+
+<footer class="licence">
+    Powered by Erupt © 2018
+    <br>
+
+    author <mark style="background: #ff0;">YuePeng</mark>
+</footer>

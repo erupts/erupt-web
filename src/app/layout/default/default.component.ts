@@ -77,6 +77,9 @@ import {SettingDrawerComponent} from './setting-drawer/setting-drawer.component'
     host: {
         '[class.alain-default]': 'true',
     },
+    styleUrls: [
+        './default.component.less'
+    ]
 })
 export class LayoutDefaultComponent
     implements OnInit, AfterViewInit, OnDestroy {
@@ -85,9 +88,7 @@ export class LayoutDefaultComponent
     @ViewChild('settingHost', {read: ViewContainerRef})
     settingHost: ViewContainerRef;
 
-    constructor(
-                private settingSrv: SettingsService,
-                iconSrv: NzIconService,
+    constructor(iconSrv: NzIconService,
                 router: Router,
                 scroll: ScrollService,
                 _message: NzMessageService,
