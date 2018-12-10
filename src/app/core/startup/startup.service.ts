@@ -102,12 +102,12 @@ export class StartupService {
                     {
                         text: 'TABLE',
                         icon: {type: 'icon', value: 'rocket'},
-                        link: '/build/table',
+                        link: '/build/table/mmo',
                     },
                     {
                         text: 'TREE',
                         icon: {type: 'icon', value: 'appstore'},
-                        link: '/build/tree',
+                        link: '/build/tree/eruptuser',
                     }
                 ]
             }

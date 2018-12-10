@@ -1,8 +1,10 @@
 import {Component, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {Edit, EruptFieldModel, ReferenceType} from "../model/erupt-field.model";
+import {Edit, EruptFieldModel, ReferenceType, VL} from "../model/erupt-field.model";
 import {ChoiceEnum, DateEnum, EditType} from "../model/erupt.enum";
 import {DataService} from "../service/data.service";
 import {ModalHelper} from "@delon/theme";
+import {ListSelectComponent} from "../list-select/list-select.component";
+import {NzModalService} from "ng-zorro-antd/modal";
 
 interface col {
     xs?: number,
@@ -47,9 +49,6 @@ export class EditTypeComponent implements OnInit {
     };
 
     @Input() layout: 'horizontal' | 'vertical' | 'inline' = 'vertical';
-
-    @ViewChild('refModal') refModal;
-
     @ViewChild('refFoot') refFoot;
 
 
@@ -59,30 +58,44 @@ export class EditTypeComponent implements OnInit {
 
 
     createRefModal(field: EruptFieldModel) {
-        this.referenceLists = null;
-        let sub = this.modalHelper.create(this.refModal, {field}, {
-            size: 'sm', modalOptions: {
-                nzFooter: this.refFoot
-            }
-        }).subscribe(() => {
-            alert(233);
-        });
-        console.log(sub);
-        field.eruptFieldJson.edit.referenceType[0].tempVal = null;
         this.dataService.queryEruptReferenceData(this.eruptName, field.fieldName).subscribe(data => {
-            this.referenceLists = data;
+            let sub = this.modalHelper.create(ListSelectComponent, {list: data, eruptField: field}, {
+                size: 'sm',
+                modalOptions: {
+                    nzFooter: [
+                        {
+                            label: "确定",
+                            type: "primary",
+                            // onClick: (button, dialog) => {
+                            //     console.log(button);
+                            //     console.log(dialog);
+                            //     const tempVal = field.eruptFieldJson.edit.$tempValue;
+                            //     field.eruptFieldJson.edit.$viewValue = tempVal.label;
+                            //     field.eruptFieldJson.edit.$value = tempVal.id;
+                            // }
+                        },
+                        {
+                            label: "取消",
+                            onClick: () => {
+
+                            }
+                        }]
+                }
+            }).subscribe(() => {
+                alert(233);
+            });
         });
 
     }
 
 
     checkRefValue(edit: Edit) {
-        if (!edit.referenceType[0].tempVal) {
-            // this.toastr.warning("未选中数据项", "");
-            return;
-        }
-        edit.$value = edit.referenceType[0].tempVal.id;
-        edit.$viewValue = edit.referenceType[0].tempVal.label;
+        // if (!edit.referenceType[0].tempVal) {
+        //     // this.toastr.warning("未选中数据项", "");
+        //     return;
+        // }
+        edit.$value = edit.referenceType[0].id;
+        edit.$viewValue = edit.referenceType[0].label;
     }
 
     openModal(template: TemplateRef<any>) {
@@ -105,6 +118,7 @@ export class EditTypeComponent implements OnInit {
         }
         field.eruptFieldJson.edit.$value = null;
         field.eruptFieldJson.edit.$viewValue = null;
+        field.eruptFieldJson.edit.$tempValue = null;
     }
 
 

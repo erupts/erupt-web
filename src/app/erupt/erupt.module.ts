@@ -13,7 +13,7 @@ import { ListSelectComponent } from './list-select/list-select.component';
         CommonModule,
         SharedModule,
         HttpClientModule,
-        SimplemdeModule.forRoot({}),
+        SimplemdeModule.forRoot({})
     ],
     providers: [
         DataService,
@@ -22,7 +22,8 @@ import { ListSelectComponent } from './list-select/list-select.component';
         EditTypeComponent
     ],
     entryComponents: [
-        EditTypeComponent
+        EditTypeComponent,
+        ListSelectComponent
     ],
     declarations: [EditTypeComponent, ListSelectComponent]
 })

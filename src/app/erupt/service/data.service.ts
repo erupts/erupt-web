@@ -80,6 +80,17 @@ export class DataService {
         });
     }
 
+    deleteEruptDatas(model: string, ids: Array<any>): Observable<any> {
+        return this.http.delete(this.domain + '/erupt-api/data/' + model, {
+            params: {
+                ids: ids
+            },
+            headers: {
+                eruptKey: model
+            }
+        });
+    }
+
     downloadEruptExcel(model: string): Observable<any> {
         return this.http.get(this.domain + '/erupt-api/excel/' + model, {
             headers: {

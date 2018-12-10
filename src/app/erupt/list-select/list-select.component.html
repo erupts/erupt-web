@@ -1,0 +1,36 @@
+<div class="modal-header">
+    <div class="modal-title">请选择{{eruptField.eruptFieldJson.edit.title}}</div>
+</div>
+<nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
+    <input type="text" nz-input placeholder="Search">
+</nz-input-group>
+<ng-template #suffixIcon>
+    <i nz-icon type="search"></i>
+</ng-template>
+<ng-container>
+    <div style="max-height: 450px;overflow: scroll;padding: 10px 5px">
+        <ng-container *ngIf="list">
+            <nz-timeline>
+                <ng-container *ngFor="let ref of list">
+                    <div (click)="this.eruptField.eruptFieldJson.edit.$tempValue = ref;" style="cursor: pointer;">
+                        <nz-timeline-item [nzDot]="eruptField.eruptFieldJson.edit.$tempValue==ref?dotTemplate:''">{{ref.label||'----'}}
+                        </nz-timeline-item>
+                    </div>
+                </ng-container>
+            </nz-timeline>
+            <ng-template #dotTemplate>
+                <i nz-icon type="check-circle" theme="twotone" style="font-size: 16px;" [twoToneColor]="'#52c41a'"></i>
+            </ng-template>
+        </ng-container>
+    </div>
+    <ng-container *ngIf="!list">
+        <nz-skeleton [nzActive]="true"></nz-skeleton>
+    </ng-container>
+</ng-container>
+<!--<div class="ant-modal-footer">-->
+    <!--<button class="ant-btn ant-btn-default ng-star-inserted">-->
+        <!--<span> Cancel </span></button>-->
+    <!--<button class="ant-btn ant-btn-primary">-->
+        <!--<span> OK </span>-->
+    <!--</button>-->
+<!--</div>-->

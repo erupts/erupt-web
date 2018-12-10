@@ -3,6 +3,7 @@ import {DataService} from "../../../erupt/service/data.service";
 import {NzFormatEmitEvent} from "ng-zorro-antd/tree";
 import {EruptModel} from "../../../erupt/model/erupt.model";
 import {objectToEruptValue} from "../../../erupt/util/conver-util";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
     selector: 'app-tree',
@@ -11,12 +12,13 @@ import {objectToEruptValue} from "../../../erupt/util/conver-util";
 })
 export class TreeComponent implements OnInit {
 
-    eruptName: string = "mmo";
+    eruptName: string = "";
 
     eruptModel: EruptModel;
 
 
-    constructor(private dataService: DataService) {
+    constructor(private dataService: DataService,
+                public route: ActivatedRoute) {
     }
 
     @ViewChild('treeCom') treeCom;
@@ -29,10 +31,15 @@ export class TreeComponent implements OnInit {
     }
 
     nodeClickEvent(event: NzFormatEmitEvent): void {
-        objectToEruptValue(this.eruptModel,event.node.origin.data);
+        objectToEruptValue(this.eruptModel, event.node.origin.data);
     }
 
     ngOnInit(): void {
+        this.route.params.subscribe((params) => {
+            console.log(params);
+            this.eruptName = params.name;
+        });
+
         this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
             this.eruptModel = erupt;
         });
@@ -57,8 +64,10 @@ export class TreeComponent implements OnInit {
                 });
                 return tempNodes;
             }
+            if(tree){
+                this.nodes = gcZorroTree(tree);
+            }
 
-            this.nodes = gcZorroTree(tree);
         })
     }
 

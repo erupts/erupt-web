@@ -47,6 +47,7 @@
     "codemirror": "^5.41.0",
     "core-js": "^2.5.4",
     "editorconfig-tools": "^0.1.1",
+    "font-awesome": "^4.7.0",
     "font-awesome-scss": "^1.0.0",
     "husky": "^0.14.3",
     "lint-staged": "^7.1.2",

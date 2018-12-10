@@ -23,10 +23,10 @@ const routes: Routes = [
         path: '',
         component: LayoutDefaultComponent,
         children: [
-            {path: '', redirectTo: 'build/tree', pathMatch: 'full'},
+            {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
             {path: 'dashboard', component: DashboardComponent, data: {title: '仪表盘', titleI18n: 'dashboard'}},
-            {path: 'build/table', loadChildren: "../build/table/table.module#TableModule"},
-            {path: 'build/tree', loadChildren: "../build/tree/tree.module#TreeModule"}
+            {path: 'build/table/:name', loadChildren: "../build/table/table.module#TableModule"},
+            {path: 'build/tree/:name', loadChildren: "../build/tree/tree.module#TreeModule"}
         ]
     },
     // 全屏布局

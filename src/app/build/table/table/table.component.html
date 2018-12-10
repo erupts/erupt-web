@@ -11,21 +11,26 @@
         </ng-container>
 
         <ng-container *ngIf="eruptModel.eruptJson.power.del">
-            <button nz-button nzType="danger" class="mb-sm">
+            <button nz-button nzType="danger" class="mb-sm" (click)="delRows()">
                 <i nz-icon type="delete" theme="outline"></i>删除
             </button>&nbsp;
         </ng-container>
 
         <ng-container *ngIf="eruptModel.eruptJson.power.export">
             <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()">
-                <i nz-icon type="download" theme="outline"></i>导出
+                <i nz-icon type="download" theme="outline"></i>下载
             </button>&nbsp;
         </ng-container>
 
         <ng-container *ngIf="eruptModel.eruptJson.power.importable">
-            <button nz-button nzType="default" class="mb-sm">
-                <i nz-icon type="login" theme="outline"></i>导入
-            </button>&nbsp;
+            &nbsp;
+            <nz-dropdown-button (nzClick)="log()">
+                导入Excel
+                <ul nz-menu>
+                    <li nz-menu-item>导入excel模板</li>
+                </ul>
+            </nz-dropdown-button>
+            &nbsp;
         </ng-container>
 
         <ng-container *ngIf="eruptSearchFields.length>0">
@@ -39,7 +44,7 @@
         <ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">
             <ng-container *ngIf="oper.multi">
                 <button nz-button nzType="dashed" class="mb-sm">
-                    <!--<i nz-icon type="{{oper.icon}}" theme="outline"></i>-->
+                    <i class="fa" [ngClass]="oper.icon"></i>&nbsp;
                     {{oper.title}}
                 </button>&nbsp;
             </ng-container>
@@ -56,6 +61,8 @@
 
 
     <st #st [data]="rows" [columns]="columns" [scroll]="{x: '1300px'}"
-        [bordered]="settingSrv.layout.tableBorder">
+        [bordered]="settingSrv.layout.tableBorder"
+        (change)="tableDataChange($event)"
+    >
     </st>
 </div>

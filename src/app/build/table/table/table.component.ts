@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {DataService} from "../../../erupt/service/data.service";
 import {Page} from "../../../erupt/model/page";
 import {EruptModel} from "../../../erupt/model/erupt.model";
@@ -7,11 +7,13 @@ import {
     eruptValueToObject, initErupt, objectToEruptValue, viewToAlainTableConfig
 } from "../../../erupt/util/conver-util";
 import {EditType} from "../../../erupt/model/erupt.enum";
-import {EruptCheckReqDataByToastr} from "../../../erupt/util/erupt-util";
 import {DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../../erupt/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
-import {QRComponent} from "@delon/abc";
+import {QRComponent, STData} from "@delon/abc";
+import {ActivatedRoute} from "@angular/router";
+import {FormControl, FormGroup} from "@angular/forms";
+import {NzNotificationService} from "ng-zorro-antd/notification";
 
 @Component({
     selector: 'app-list-view',
@@ -25,11 +27,13 @@ export class TableComponent implements OnInit {
     constructor(private dataService: DataService,
                 private settingSrv: SettingsService,
                 private modalHelper: ModalHelper,
-                private drawerHelper: DrawerHelper) {
+                private drawerHelper: DrawerHelper,
+                private renderer: Renderer2,
+                public route: ActivatedRoute) {
 
     }
 
-    eruptName: string = "mmo";
+    eruptName: string = "";
 
     eruptModel: EruptModel;
 
@@ -46,7 +50,7 @@ export class TableComponent implements OnInit {
     operatorEdit: [Array<EruptFieldModel>, string] = [[], ""];
 
 
-    selectedRows = [];
+    selectedRows: Array<any> = [];
 
     columns = [];
 
@@ -56,6 +60,9 @@ export class TableComponent implements OnInit {
         // this.modalHelper.create(QRComponent, {value: "http://www.baidu.com",size:"100"}).subscribe(s => {
         //
         // });
+        this.route.params.subscribe((params) => {
+            this.eruptName = params.name;
+        });
 
         this.dataService.getEruptBuild(this.eruptName).subscribe(
             em => {
@@ -211,9 +218,12 @@ export class TableComponent implements OnInit {
                     },
                     type: 'del',
                     click: (record, modal, comp) => {
-                        // this.message.success(`成功删除【${record.name}】`);
-                        console.log(record);
-                        comp.removeRow(record);
+                        this.dataService.deleteEruptData(this.eruptName, record[this.eruptModel.primaryKeyCol]).subscribe(val => {
+
+                            // this.message.success(`成功删除`);
+                            comp.removeRow(record);
+                        });
+
                     },
                 }
             ]
@@ -237,6 +247,10 @@ export class TableComponent implements OnInit {
         this.operatorEdit[1] = code;
     }
 
+    tableDataChange(data: STData) {
+        this.selectedRows = data.checkbox;
+    }
+
     editRow(event: Event, value) {
         event.stopPropagation();
         // const modalOptions = new ModalOptions();
@@ -248,13 +262,23 @@ export class TableComponent implements OnInit {
     }
 
     addRow(event: Event, value) {
-        this.editRow(event, null);
-
+        this.modalHelper.createStatic(EditComponent, {eruptModel: this.eruptModel}, {
+            modalOptions: {
+                nzStyle: {
+                    top: '20px'
+                }
+            }
+        }).subscribe()
     }
 
-    delRow(event: Event, value) {
-        event.stopPropagation();
-        this.dataService.deleteEruptData(this.eruptName, value[this.eruptModel.primaryKeyCol]).subscribe(val => {
+
+    delRows() {
+        const ids = [];
+        this.selectedRows.forEach(e => {
+            ids.push(e[this.eruptModel.primaryKeyCol]);
+        });
+        console.log(ids);
+        this.dataService.deleteEruptDatas(this.eruptName, ids).subscribe(val => {
             console.log(val);
         });
     }
@@ -297,6 +321,7 @@ export class TableComponent implements OnInit {
 
 
     exportExcel() {
+        this.renderer;
         window.open(window["domain"] + "/erupt-api/excel/export/" + this.eruptModel.eruptName);
         // this.dataService.downloadEruptExcel(this.eruptModel.eruptName).subscribe();
     }

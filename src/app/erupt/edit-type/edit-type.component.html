@@ -37,8 +37,7 @@
 
                             <ng-container *ngSwitchCase="'TEXTAREA'">
                                 <div nz-col [nzSpan]="24">
-                                    <se [label]="field.eruptFieldJson.edit.title"
-                                        [required]="field.eruptFieldJson.edit.notNull"
+                                    <se [label]="field.eruptFieldJson.edit.title" [required]="field.eruptFieldJson.edit.notNull"
                                         [optionalHelp]="field.eruptFieldJson.edit.desc">
                                         <textarea rows="4" nz-input class="erupt-input"
                                                   [value]="field.eruptFieldJson.edit.$value||''"
@@ -142,7 +141,7 @@
                                         >
                                     </nz-input-group>
                                     <ng-template #refBtn>
-                                        <i>&times;</i>
+                                        <i nz-icon type="close-circle" theme="fill" class="point" *ngIf="field.eruptFieldJson.edit.$value" (click)="clearValue(field)"></i>
                                     </ng-template>
                                 </se>
                             </div>
@@ -201,42 +200,3 @@
         </ng-container>
     </form>
 </div>
-<ng-template #refModal let-data>
-    <div class="modal-header">
-        <div class="modal-title">选择 {{data}}</div>
-    </div>
-    <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
-        <input type="text" nz-input placeholder="Search" >
-    </nz-input-group>
-    <ng-template #suffixIcon>
-        <i nz-icon type="search"></i>
-    </ng-template>
-    <ng-container>
-        <div style="max-height: 450px;overflow: scroll;padding: 10px 5px">
-            <ng-container *ngIf="referenceLists">
-                <nz-timeline>
-                    <ng-container *ngFor="let ref of referenceLists">
-                        <div (click)="ref.tempVal=true" style="cursor: pointer;">
-                            <nz-timeline-item [nzDot]="ref.tempVal&&dotTemplate">{{ref.label||'----'}}</nz-timeline-item>
-                        </div>
-                    </ng-container>
-                </nz-timeline>
-                <ng-template #dotTemplate>
-                    <i nz-icon type="check-circle" theme="twotone" style="color: #67ff73;font-size: 16px;"></i>
-                </ng-template>
-            </ng-container>
-        </div>
-        <ng-container *ngIf="!referenceLists">
-            <nz-skeleton [nzActive]="true"></nz-skeleton>
-        </ng-container>
-    </ng-container>
-</ng-template>
-
-<ng-template #refFoot>
-    <button nz-button [nzType]="'default'">
-        Cancel
-    </button>
-    <button nz-button [nzType]="'primary'">
-        OK
-    </button>
-</ng-template>
