@@ -15,9 +15,9 @@ erupt前端展示程序
 
 #### 使用说明
 
-1. xxxx
-2. xxxx
-3. xxxx
+1. 安装 nodejs
+2. 安装 typescript
+3. 安装 angular cli
 
 #### 参与贡献
 
