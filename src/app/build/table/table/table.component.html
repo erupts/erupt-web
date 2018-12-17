@@ -5,7 +5,7 @@
     <!--operator start-->
     <div>
         <ng-container *ngIf="eruptModel.eruptJson.power.add">
-            <button nz-button nzType="default" class="mb-sm" (click)="addRow($event,value)">
+            <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
                 <i nz-icon type="plus" theme="outline"></i>新增
             </button>&nbsp;
         </ng-container>
@@ -60,7 +60,7 @@
     </ng-container>
 
 
-    <st #st [data]="rows" [columns]="columns" [scroll]="{x: '1300px'}"
+    <st #st [data]="rows" [columns]="columns" [scroll]="{x: '900px'}"
         [bordered]="settingSrv.layout.tableBorder"
         (change)="tableDataChange($event)"
     >

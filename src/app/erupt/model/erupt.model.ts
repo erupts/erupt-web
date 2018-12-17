@@ -7,7 +7,6 @@ export interface EruptModel {
     eruptFieldModels: Array<EruptFieldModel>;
     eruptJson: Erupt;
     eruptName: string;
-    primaryKeyCol: string;
     //# customer prop
     tableColumns?: Array<View>;
     subEruptModels?: Array<EruptModelAndField>;
@@ -15,6 +14,7 @@ export interface EruptModel {
 
 export interface Erupt {
     name: string;
+    primaryKeyCol: string;
     power: Power;
     desc: string;
     tree: Tree;
