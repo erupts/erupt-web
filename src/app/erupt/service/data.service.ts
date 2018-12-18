@@ -4,9 +4,9 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { EruptModel, Tree } from "../model/erupt.model";
-import { Observable } from "rxjs/Observable";
 import { Page } from "../model/page";
 import { _HttpClient } from "@delon/theme";
+import { Observable } from "rxjs";
 
 @Injectable()
 export class DataService {

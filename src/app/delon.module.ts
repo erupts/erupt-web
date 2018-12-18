@@ -82,12 +82,12 @@ const GLOBAL_CONFIG_PROVIDES = [
 @NgModule({
   imports: [
     AlainThemeModule.forRoot(),
-    DelonABCModule.forRoot(),
-    DelonChartModule.forRoot(),
-    DelonAuthModule.forRoot(),
-    DelonACLModule.forRoot(),
-    DelonCacheModule.forRoot(),
-    DelonUtilModule.forRoot(),
+    DelonABCModule,
+    DelonChartModule,
+    DelonAuthModule,
+    DelonACLModule,
+    DelonCacheModule,
+    DelonUtilModule,
     // mock
     ...MOCK_MODULES,
   ],

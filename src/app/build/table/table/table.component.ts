@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { Component, Injector, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { Page } from "../../../erupt/model/page";
 import { EruptModel } from "../../../erupt/model/erupt.model";
@@ -14,7 +14,8 @@ import { EditComponent } from "../edit/edit.component";
 import { QRComponent, STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
 import { FormControl, FormGroup } from "@angular/forms";
-import { NzNotificationService } from "ng-zorro-antd/notification";
+import { NzNotificationModule, NzNotificationService } from "ng-zorro-antd/notification";
+import { NzMessageService, NzModalService } from "ng-zorro-antd";
 
 @Component({
   selector: "app-list-view",
@@ -30,8 +31,18 @@ export class TableComponent implements OnInit {
               private modalHelper: ModalHelper,
               private drawerHelper: DrawerHelper,
               private renderer: Renderer2,
+              private injector: Injector,
+              // private notification: NzNotificationService,
               public route: ActivatedRoute) {
 
+  }
+
+  get msg(): NzMessageService {
+    return this.injector.get(NzMessageService);
+  }
+
+  get modal(): NzModalService {
+    return this.injector.get(NzModalService);
   }
 
   eruptName: string = "";
@@ -305,13 +316,20 @@ export class TableComponent implements OnInit {
       ids.push(e[this.eruptModel.eruptJson.primaryKeyCol]);
     });
     if (ids.length > 0) {
-      this.dataService.deleteEruptDatas(this.eruptName, ids).subscribe(val => {
-        //TODO 是否要删除？prop
+      this.modal.confirm(
+        {
+          nzTitle:"确定要删除吗？",
+          nzContent: "",
+          nzOnOk:()=>{
+            this.dataService.deleteEruptDatas(this.eruptName, ids).subscribe(val => {
+              console.log(val);
+            });
+          }
+        }
+      )
 
-        console.log(val);
-      });
     } else {
-      alert("请选择要删除的数据项");
+      this.msg.error("请选择要删除的数据项!");
     }
   }
 

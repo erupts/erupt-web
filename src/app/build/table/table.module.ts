@@ -15,7 +15,7 @@ const COMPONENTS_NOROUNT = [EditComponent];
         CommonModule,
         TableRoutingModule,
         SharedModule,
-        EruptModule,
+        EruptModule
     ],
     declarations: [
         ...COMPONENTS,

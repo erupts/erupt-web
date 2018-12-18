@@ -1556,6 +1556,7 @@ this.tinycolor = tinycolor;
 @heading-color-dark     : fade(#fff, 100%);
 @text-color-dark        : fade(#fff, 85%);
 @text-color-secondary-dark: fade(#fff, 65%);
+@font-variant-base      : tabular-nums;
 @font-size-base         : 14px;
 @font-size-lg           : @font-size-base + 2px;
 @font-size-sm           : 12px;
@@ -1672,6 +1673,7 @@ this.tinycolor = tinycolor;
 @checkbox-size          : 16px;
 @checkbox-color         : @primary-color;
 @checkbox-check-color   : #fff;
+@checkbox-border-width  : @border-width-base;
 
 // Radio
 @radio-size             : 16px;
@@ -1819,6 +1821,7 @@ this.tinycolor = tinycolor;
 
 // Modal
 // --
+@modal-header-bg: @component-background;
 @modal-mask-bg: rgba(0, 0, 0, 0.65);
 
 // Progress
@@ -1833,6 +1836,7 @@ this.tinycolor = tinycolor;
 @menu-item-height: 40px;
 @menu-collapsed-width: 80px;
 @menu-bg: @component-background;
+@menu-popup-bg: @component-background;
 @menu-item-color: @text-color;
 @menu-highlight-color: @primary-color;
 @menu-item-active-bg: @item-active-bg;
@@ -2040,21 +2044,6 @@ this.tinycolor = tinycolor;
 @list-item-meta-avatar-margin-right:         @padding-md;
 @list-item-meta-title-margin-bottom:         @padding-sm;
 
-// Menu
-@menu-dark-item-selected-bg: @menu-dark-item-active-bg;
-
-// Tabs
-@tab-bar-margin: @tabs-bar-margin;
-@tab-horizontal-margin: @tabs-horizontal-margin;
-@tab-vertical-margin: @tabs-vertical-margin;
-@tab-horizontal-padding: @tabs-horizontal-padding;
-@tab-vertical-padding: @tabs-vertical-padding;
-@tab-scrolling-size: @tabs-scrolling-size;
-@tab-highlight-color: @tabs-highlight-color;
-@tab-hover-color: @tabs-hover-color;
-@tab-active-color: @tabs-active-color;
-@tabs-ink-bar-bg-color: @tabs-ink-bar-color;
-
 // Mixins
 // --------------------------------------------------
 // Sizing shortcuts
@@ -2136,7 +2125,7 @@ this.tinycolor = tinycolor;
   @font-scale: unit(@size / 12px);
   font-size: 12px;
   // IE9
-  font-size: ~"@{size} \9"; // lesshint duplicateProperty: false
+  font-size: ~"@{size} \9";
   transform: scale(@font-scale) rotate(@rotate);
   :root & {
     font-size: @font-size-sm; // reset IE9 and above
@@ -2290,7 +2279,7 @@ darker  @grey-9;
     xl @screen-xl;
 
 @mobile-min: @screen-md-min;
-@mobile-max: @screen-md;
+@mobile-max: @screen-md-min - 1px;
 
 // spaceing
 @spacings:
@@ -2355,6 +2344,7 @@ darker  @grey-9;
 @scrollbar-height:          6px;
 @scrollbar-track-color:     rgba(0, 0, 0, 0.3);
 @scrollbar-thumb-color:     #6e6e6e;
+@scrollbar-table-enabled:   false;
 
 // type
 // ==========
@@ -2407,6 +2397,9 @@ darker  @grey-9;
 @nz-table-rep-column-name-text-align: right;
 @nz-table-rep-column-name-padding-right: 8px;
 @nz-table-rep-column-name-color: rgba(0, 0, 0, 0.5);
+
+// Forced to turn off Modal animation
+@forced-turn-off-nz-modal-animation-enabled: false;
 
 // antd
 // antd
@@ -3967,6 +3960,7 @@ this.tinycolor = tinycolor;
 @heading-color-dark     : fade(#fff, 100%);
 @text-color-dark        : fade(#fff, 85%);
 @text-color-secondary-dark: fade(#fff, 65%);
+@font-variant-base      : tabular-nums;
 @font-size-base         : 14px;
 @font-size-lg           : @font-size-base + 2px;
 @font-size-sm           : 12px;
@@ -4083,6 +4077,7 @@ this.tinycolor = tinycolor;
 @checkbox-size          : 16px;
 @checkbox-color         : @primary-color;
 @checkbox-check-color   : #fff;
+@checkbox-border-width  : @border-width-base;
 
 // Radio
 @radio-size             : 16px;
@@ -4230,6 +4225,7 @@ this.tinycolor = tinycolor;
 
 // Modal
 // --
+@modal-header-bg: @component-background;
 @modal-mask-bg: rgba(0, 0, 0, 0.65);
 
 // Progress
@@ -4244,6 +4240,7 @@ this.tinycolor = tinycolor;
 @menu-item-height: 40px;
 @menu-collapsed-width: 80px;
 @menu-bg: @component-background;
+@menu-popup-bg: @component-background;
 @menu-item-color: @text-color;
 @menu-highlight-color: @primary-color;
 @menu-item-active-bg: @item-active-bg;
@@ -4451,21 +4448,6 @@ this.tinycolor = tinycolor;
 @list-item-meta-avatar-margin-right:         @padding-md;
 @list-item-meta-title-margin-bottom:         @padding-sm;
 
-// Menu
-@menu-dark-item-selected-bg: @menu-dark-item-active-bg;
-
-// Tabs
-@tab-bar-margin: @tabs-bar-margin;
-@tab-horizontal-margin: @tabs-horizontal-margin;
-@tab-vertical-margin: @tabs-vertical-margin;
-@tab-horizontal-padding: @tabs-horizontal-padding;
-@tab-vertical-padding: @tabs-vertical-padding;
-@tab-scrolling-size: @tabs-scrolling-size;
-@tab-highlight-color: @tabs-highlight-color;
-@tab-hover-color: @tabs-hover-color;
-@tab-active-color: @tabs-active-color;
-@tabs-ink-bar-bg-color: @tabs-ink-bar-color;
-
 // Mixins
 // --------------------------------------------------
 // Sizing shortcuts
@@ -4547,7 +4529,7 @@ this.tinycolor = tinycolor;
   @font-scale: unit(@size / 12px);
   font-size: 12px;
   // IE9
-  font-size: ~"@{size} \9"; // lesshint duplicateProperty: false
+  font-size: ~"@{size} \9";
   transform: scale(@font-scale) rotate(@rotate);
   :root & {
     font-size: @font-size-sm; // reset IE9 and above
@@ -5274,7 +5256,7 @@ mark {
 
 [ant-click-animating-without-extra-node]:after,
 .ant-click-animating-node {
-  content: '';
+  content: "";
   position: absolute;
   top: -1px;
   left: -1px;
@@ -5680,7 +5662,6 @@ mark {
   .col(1); // kickstart it
 }
 
-// lesshint false
 .loop-grid-columns(@index, @class) when (@index > 0) {
   .@{ant-prefix}-col@{class}-@{index} {
     display: block;
@@ -6144,6 +6125,12 @@ mark {
     line-height: @size;
   }
 
+  &-string {
+    position: absolute;
+    left: 50%;
+    transform-origin: 0 center;
+  }
+
   &.@{avatar-prefix-cls}-icon {
     font-size: @font-size;
   }
@@ -6221,6 +6208,7 @@ mark {
     font-weight: @badge-font-weight;
     white-space: nowrap;
     box-shadow: 0 0 0 1px #fff;
+    z-index: 10;
     a,
     a:hover {
       color: #fff;
@@ -6276,7 +6264,7 @@ mark {
         height: 100%;
         border-radius: 50%;
         border: 1px solid @processing-color;
-        content: '';
+        content: "";
         animation: antStatusProcessing 1.2s infinite ease-in-out;
       }
     }
@@ -6432,7 +6420,7 @@ mark {
 .button-variant-primary(@color; @background) {
   .button-color(@color; @background; @background);
   text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
-  box-shadow: 0 2px 0 rgba(0, 0, 0, .035);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, .045);
 
   &:hover,
   &:focus {
@@ -6508,7 +6496,7 @@ mark {
   > a:only-child {
     color: currentColor;
     &:after {
-      content: '';
+      content: "";
       position: absolute;
       top: 0;
       left: 0;
@@ -6525,7 +6513,6 @@ mark {
   > .@{btnClassName},
   > span > .@{btnClassName} {
     position: relative;
-    line-height: @btn-height-base - 2px;
 
     &:hover,
     &:focus,
@@ -6589,7 +6576,6 @@ mark {
 
   &:not([disabled]):active {
     outline: 0;
-    transition: none;
     box-shadow: none;
   }
 
@@ -6757,7 +6743,10 @@ mark {
 // Button styles
 // -----------------------------
 .@{btn-prefix-cls} {
-  line-height: @line-height-base;
+  // Fixing https://github.com/ant-design/ant-design/issues/12978
+  // It is a render problem of chrome, which is only happened in the codesandbox demo
+  // 0.001px solution works and I don't why
+  line-height: @line-height-base - 0.001;
   .btn;
   .btn-default;
 
@@ -6766,6 +6755,7 @@ mark {
   > i,
   > span {
     pointer-events: none;
+    display: inline-block;
   }
 
   &-primary {
@@ -6823,7 +6813,7 @@ mark {
     right: -1px;
     background: #fff;
     opacity: 0.35;
-    content: '';
+    content: "";
     border-radius: inherit;
     z-index: 1;
     transition: opacity .2s;
@@ -6894,7 +6884,7 @@ mark {
     letter-spacing: .34em;
   }
 
-  &-two-chinese-chars > * {
+  &-two-chinese-chars > *:not(.@{iconfont-css-prefix}) {
     letter-spacing: .34em;
     margin-right: -.34em;
   }
@@ -6904,7 +6894,7 @@ mark {
   }
 
   .christmas&-primary:before {
-    content: '';
+    content: "";
     display: block;
     position: absolute;
     top: -6px;
@@ -6921,6 +6911,11 @@ mark {
 
   .christmas&-primary&-sm:before {
     background-size: 56px;
+  }
+
+  // https://github.com/ant-design/ant-design/issues/12681
+  &:empty {
+    vertical-align: top;
   }
 }
 
@@ -7236,6 +7231,7 @@ a.@{btn-prefix-cls} {
 
     &-wrapper {
       display: flex;
+      align-items: center;
     }
 
     &-title {
@@ -7243,9 +7239,8 @@ a.@{btn-prefix-cls} {
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      display: flex;
-      align-items: center;
       flex: 1;
+      display: inline-block;
     }
 
     .@{ant-prefix}-tabs {
@@ -7482,6 +7477,14 @@ a.@{btn-prefix-cls} {
 
     &.dragging {
       cursor: pointer;
+    }
+
+    .slick-slide {
+      pointer-events: none;
+
+      &.slick-active {
+        pointer-events: auto;
+      }
     }
   }
   .slick-slider .slick-track,
@@ -7824,7 +7827,7 @@ a.@{btn-prefix-cls} {
 
     // Reset Select's style in addon
     .@{ant-prefix}-select {
-      margin: -(@input-padding-vertical-base + 1px) (-@input-padding-horizontal-base);  // lesshint spaceAroundOperator: false
+      margin: -(@input-padding-vertical-base + 1px) (-@input-padding-horizontal-base);
 
       .@{ant-prefix}-select-selection {
         background-color: inherit;
@@ -7845,7 +7848,7 @@ a.@{btn-prefix-cls} {
     // https://github.com/ant-design/ant-design/issues/3714
     > i:only-child:after {
       position: absolute;
-      content: '';
+      content: "";
       top: 0;
       left: 0;
       right: 0;
@@ -8304,7 +8307,7 @@ a.@{btn-prefix-cls} {
       height: 100%;
       border-radius: @border-radius-sm;
       border: 1px solid @checkbox-color;
-      content: '';
+      content: "";
       animation: antCheckboxEffect 0.36s ease-in-out;
       animation-fill-mode: both;
       visibility: hidden;
@@ -8322,10 +8325,13 @@ a.@{btn-prefix-cls} {
       display: block;
       width: @checkbox-size;
       height: @checkbox-size;
-      border: @border-width-base @border-style-base @border-color-base;
+      border: @checkbox-border-width @border-style-base @border-color-base;
       border-radius: @border-radius-sm;
       background-color: @checkbox-check-color;
       transition: all .3s;
+      // Fix IE checked style
+      // https://github.com/ant-design/ant-design/issues/12597
+      border-collapse: separate;
 
       &:after {
         @check-width: (@checkbox-size / 14) * 5px;
@@ -8358,25 +8364,6 @@ a.@{btn-prefix-cls} {
       width: 100%;
       height: 100%;
     }
-  }
-
-  // 半选状态
-  .@{checkbox-prefix-cls}-indeterminate .@{checkbox-inner-prefix-cls}:after {
-    @indeterminate-width: @checkbox-size - 8px;
-    @indeterminate-height: @checkbox-size - 8px;
-    content: ' ';
-    transform: translate(-50%, -50%) scale(1);
-    border: 0;
-    left: 50%;
-    top: 50%;
-    width: @indeterminate-width;
-    height: @indeterminate-height;
-    background-color: @checkbox-color;
-    opacity: 1;
-  }
-
-  .@{checkbox-prefix-cls}-indeterminate.@{checkbox-prefix-cls}-disabled .@{checkbox-inner-prefix-cls}:after {
-    border-color: @disabled-color;
   }
 
   // 选中状态
@@ -8457,6 +8444,32 @@ a.@{btn-prefix-cls} {
     }
     &-item + &-item {
       margin-left: 0;
+    }
+  }
+
+  // 半选状态
+  .@{checkbox-prefix-cls}-indeterminate {
+    .@{checkbox-inner-prefix-cls} {
+      background-color: #fff;
+      border-color: @border-color-base;
+    }
+    .@{checkbox-inner-prefix-cls}:after {
+      @indeterminate-width: @checkbox-size - 8px;
+      @indeterminate-height: @checkbox-size - 8px;
+      content: ' ';
+      transform: translate(-50%, -50%) scale(1);
+      border: 0;
+      left: 50%;
+      top: 50%;
+      width: @indeterminate-width;
+      height: @indeterminate-height;
+      background-color: @checkbox-color;
+      opacity: 1;
+    }
+
+    &.@{checkbox-prefix-cls}-disabled .@{checkbox-inner-prefix-cls}:after {
+      border-color: @disabled-color;
+      background-color: @disabled-color;
     }
   }
 }
@@ -8737,6 +8750,15 @@ a.@{btn-prefix-cls} {
   }
 }
 
+textarea.cdk-textarea-autosize-measuring {
+  height: auto !important;
+  overflow: hidden !important;
+  // Having 2px top and bottom padding seems to fix a bug where Chrome gets an incorrect
+  // measurement. We just have to account for it later and subtract it off the final result.
+  padding: 2px 0 !important;
+  box-sizing: content-box !important;
+}
+
 @divider-prefix-cls: ~"@{ant-prefix}-divider";
 
 .@{divider-prefix-cls} {
@@ -8757,6 +8779,7 @@ a.@{btn-prefix-cls} {
     display: block;
     height: 1px;
     width: 100%;
+    min-width: 100%; // Fix https://github.com/ant-design/ant-design/issues/10914
     margin: 24px 0;
     clear: both;
   }
@@ -8774,7 +8797,7 @@ a.@{btn-prefix-cls} {
     margin: 16px 0;
     &:before,
     &:after {
-      content: '';
+      content: "";
       display: table-cell;
       position: relative;
       top: 50%;
@@ -8888,6 +8911,10 @@ a.@{btn-prefix-cls} {
     &-submenu-popup {
       position: absolute;
       z-index: @zindex-dropdown;
+
+      > .@{dropdown-prefix-cls}-menu {
+        transform-origin: 0 0;
+      }
     }
 
     &-item,
@@ -9016,7 +9043,7 @@ a.@{btn-prefix-cls} {
 
 .@{dropdown-prefix-cls}-trigger,
 .@{dropdown-prefix-cls}-link {
-  .@{iconfont-css-prefix}:not(.@{iconfont-css-prefix}-ellipsis) {
+  > .@{iconfont-css-prefix}:not(.@{iconfont-css-prefix}-ellipsis) {
     .iconfont-size-under-12px(10px);
   }
 }
@@ -9152,7 +9179,7 @@ a.@{btn-prefix-cls} {
   input[type="radio"]:focus,
   input[type="checkbox"]:focus {
     outline: thin dotted;
-    outline: 5px auto -webkit-focus-ring-color; // lesshint duplicateProperty: false
+    outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px;
   }
 
@@ -9292,7 +9319,9 @@ input[type="checkbox"] {
 .@{form-prefix-cls}-explain,
 .@{form-prefix-cls}-extra {
   color: @text-color-secondary;
-  line-height: @line-height-base;
+  // Magic tweak pixel number to float line-height diff in windows
+  // Fix https://github.com/ant-design/ant-design/issues/12803
+  line-height: @line-height-base + 0.024;
   transition: color .3s @ease-out; // sync input color transition
   margin-top: @form-help-margin-top;
   clear: both;
@@ -9542,9 +9571,10 @@ form {
       margin-bottom: 24px;
     }
 
-    > .@{form-prefix-cls}-item-control-wrapper, > .@{form-prefix-cls}-item-label {
+    > .@{form-prefix-cls}-item-control-wrapper,
+    > .@{form-prefix-cls}-item-label {
       display: inline-block;
-      vertical-align: middle;
+      vertical-align: top;
     }
   }
 
@@ -9554,11 +9584,6 @@ form {
 
   .has-feedback {
     display: inline-block;
-  }
-
-  // Fix https://github.com/ant-design/ant-design/issues/1040
-  .@{form-prefix-cls}-explain {
-    position: absolute;
   }
 }
 
@@ -10303,9 +10328,6 @@ form {
     }
     &-meta {
       margin-bottom: @list-item-meta-margin-bottom;
-      &-avatar {
-        display: none;
-      }
       &-title {
         color: @heading-color;
         margin-bottom: @list-item-meta-title-margin-bottom;
@@ -10493,7 +10515,7 @@ form {
       left: 0;
       bottom: 0;
       right: 0;
-      content: '';
+      content: "";
     }
   }
 
@@ -10606,6 +10628,7 @@ form {
       position: absolute;
       border-radius: @border-radius-base;
       z-index: @zindex-dropdown;
+      background: @menu-popup-bg;
 
       .submenu-title-wrapper {
         padding-right: 20px;
@@ -10642,7 +10665,7 @@ form {
         width: 10px;
         &:before,
         &:after {
-          content: '';
+          content: "";
           position: absolute;
           vertical-align: baseline;
           background: #fff;
@@ -11022,7 +11045,7 @@ form {
 
   &&-dark &-item-selected,
   &-submenu-popup&-dark &-item-selected {
-    background-color: @menu-dark-item-selected-bg;
+    background-color: @menu-dark-item-active-bg;
   }
 
   // Disabled state sets text to dark gray and nukes hover/tab effects
@@ -11323,7 +11346,7 @@ form {
   &-header {
     padding: 16px 24px;
     border-radius: @border-radius-base @border-radius-base 0 0;
-    background: @component-background;
+    background: @modal-header-bg;
     color: @text-color;
     border-bottom: @border-width-base @border-style-base @border-color-split;
   }
@@ -11360,7 +11383,7 @@ form {
     right: 0;
     left: 0;
     bottom: 0;
-    background-color: @modal-mask-bg; // lesshint duplicateProperty: false
+    background-color: @modal-mask-bg;
     height: 100%;
     z-index: @zindex-modal-mask;
     filter: ~"alpha(opacity=50)";
@@ -11378,7 +11401,7 @@ form {
 .@{dialog-prefix-cls}-centered {
   text-align: center;
   &:before {
-    content: '';
+    content: "";
     display: inline-block;
     height: 100%;
     vertical-align: middle;
@@ -11534,7 +11557,7 @@ form {
         display: block;
         max-width: 4px;
         &:before {
-          content: '';
+          content: "";
           display: block;
         }
       }
@@ -12325,8 +12348,8 @@ form {
     left: 0;
     margin: 0;
     color: @progress-text-color;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    padding: 0 6px;
 
     .@{iconfont-css-prefix} {
       font-size: 14 / 12em;
@@ -12405,7 +12428,7 @@ form {
     height: 100%;
     border-radius: 50%;
     border: 1px solid @radio-dot-color;
-    content: '';
+    content: "";
     animation: antRadioEffect 0.36s ease-in-out;
     animation-fill-mode: both;
     visibility: hidden;
@@ -13281,6 +13304,7 @@ span.@{radio-prefix-cls} + * {
 
   &&--multiple {
     .@{select-prefix-cls}-dropdown-menu-item {
+      padding-right: @control-padding-horizontal + 20;
       & .@{select-prefix-cls}-selected-icon {
         color: transparent;
         .iconfont-size-under-12px(10px);
@@ -13326,6 +13350,7 @@ span.@{radio-prefix-cls} + * {
   padding: 4px 0;
   height: 12px;
   cursor: pointer;
+  touch-action: none;
 
   .vertical();
 
@@ -13592,7 +13617,7 @@ span.@{radio-prefix-cls} + * {
     filter: ~"progid\:DXImageTransform\.Microsoft\.Blur(PixelRadius\=1, MakeShadow\=false)";
 
     &:after {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       right: 0;
@@ -13790,7 +13815,7 @@ span.@{radio-prefix-cls} + * {
     top: 12px;
     padding: 0 10px;
     &:after {
-      content: '';
+      content: "";
       display: inline-block;
       background: @border-color-split;
       height: 1px;
@@ -13807,7 +13832,7 @@ span.@{radio-prefix-cls} + * {
     position: relative;
     line-height: @steps-icon-size;
     &:after {
-      content: '';
+      content: "";
       height: 1px;
       width: 9999px;
       background: @wait-tail-color;
@@ -14283,8 +14308,11 @@ span.@{radio-prefix-cls} + * {
 
   &-loading,
   &-disabled {
-    pointer-events: none;
+    cursor: not-allowed;
     opacity: @switch-disabled-opacity;
+    * {
+      cursor: not-allowed;
+    }
   }
 }
 
@@ -14301,6 +14329,8 @@ span.@{radio-prefix-cls} + * {
 
 @table-prefix-cls: ~"@{ant-prefix}-table";
 @table-header-icon-color: #bfbfbf;
+@table-header-sort-active-bg: darken(@table-header-bg, 3%);
+@table-header-filter-active-bg: darken(@table-header-sort-active-bg, 5%);
 
 .@{table-prefix-cls}-wrapper {
   .clearfix;
@@ -14394,13 +14424,14 @@ span.@{radio-prefix-cls} + * {
 
     &.@{table-prefix-cls}-column-has-actions {
       position: relative;
+      background-clip: padding-box; // For Firefox background bug, https://github.com/ant-design/ant-design/issues/12628
 
       &.@{table-prefix-cls}-column-has-filters {
         .@{iconfont-css-prefix}-filter,
         .@{table-prefix-cls}-filter-icon {
           &.@{table-prefix-cls}-filter-open {
             color: @text-color-secondary;
-            background: #ebebeb;
+            background: @table-header-filter-active-bg;
           }
         }
         // Very complicated styles logic but neccessary
@@ -14409,7 +14440,7 @@ span.@{radio-prefix-cls} + * {
           .@{table-prefix-cls}-filter-icon {
             &:hover {
               color: @text-color-secondary;
-              background: #ebebeb;
+              background: @table-header-filter-active-bg;
             }
             &:active {
               color: @text-color;
@@ -14421,10 +14452,10 @@ span.@{radio-prefix-cls} + * {
       &.@{table-prefix-cls}-column-has-sorters {
         cursor: pointer;
         &:hover {
-          background: #f5f5f5;
+          background: @table-header-sort-active-bg;
           .@{iconfont-css-prefix}-filter,
           .@{table-prefix-cls}-filter-icon {
-            background: #f5f5f5;
+            background: @table-header-sort-active-bg;
           }
         }
         &:active {
@@ -14435,24 +14466,21 @@ span.@{radio-prefix-cls} + * {
         }
       }
 
-      // Repeat the class selector for prority
-      // https://github.com/ant-design/ant-design/commit/55a13a11fcea23fc4b5694cad7e2c32edc9128ee#r30842052
-      &.@{table-prefix-cls}-align-right.@{table-prefix-cls}-align-right {
-        &.@{table-prefix-cls}-column-has-sorters,
-        &.@{table-prefix-cls}-column-has-filters {
-          padding-right: 30px;
-        }
+      // https://github.com/ant-design/ant-design/issues/12650
+      &.@{table-prefix-cls}-column-has-sorters,
+      &.@{table-prefix-cls}-column-has-filters {
+        padding-right: 30px !important;
+      }
 
-        &.@{table-prefix-cls}-column-has-sorters.@{table-prefix-cls}-column-has-filters {
-          padding-right: 54px;
-        }
+      &.@{table-prefix-cls}-column-has-sorters.@{table-prefix-cls}-column-has-filters {
+        padding-right: 54px !important;
       }
     }
 
     .@{table-prefix-cls}-column-sorters {
       &:before {
         position: absolute;
-        content: '';
+        content: "";
         top: 0;
         left: 0;
         right: 0;
@@ -14500,7 +14528,7 @@ span.@{radio-prefix-cls} + * {
     transition: all .3s, height 0s;
     &.@{table-prefix-cls}-row-hover,
     &:hover {
-      & > td {
+      &:not(.@{table-prefix-cls}-expanded-row) > td {
         background: @table-row-hover-bg;
       }
     }
@@ -14517,7 +14545,7 @@ span.@{radio-prefix-cls} + * {
     position: relative;
     border-top: @border-width-base @border-style-base @border-color-split;
     &:before {
-      content: '';
+      content: "";
       height: 1px;
       background: @table-header-bg;
       position: absolute;
@@ -14583,8 +14611,9 @@ span.@{radio-prefix-cls} + * {
   }
 
   &-thead > tr > th.@{table-prefix-cls}-selection-column-custom {
-    padding-left: 16px;
-    padding-right: 0;
+    .@{table-prefix-cls}-selection {
+      margin-right: -15px;
+    }
   }
 
   &-thead > tr > th.@{table-prefix-cls}-selection-column,
@@ -14841,6 +14870,10 @@ span.@{radio-prefix-cls} + * {
     &:hover {
       background: @table-expanded-row-bg;
     }
+
+    td > .@{table-prefix-cls}-wrapper {
+      margin: -@table-padding-vertical -@table-padding-horizontal -@table-padding-vertical - 1px;
+    }
   }
 
   .@{table-prefix-cls}-row-indent + .@{table-prefix-cls}-row-expand-icon {
@@ -14946,10 +14979,15 @@ span.@{radio-prefix-cls} + * {
   }
 }
 
+@table-padding-vertical-md: @table-padding-vertical * 3 / 4;
+@table-padding-horizontal-md: @table-padding-horizontal / 2;
+@table-padding-vertical-sm: @table-padding-vertical / 2;
+@table-padding-horizontal-sm: @table-padding-horizontal / 2;
+
 .@{table-prefix-cls}-middle {
   > .@{table-prefix-cls}-title,
   > .@{table-prefix-cls}-footer {
-    padding: @table-padding-vertical*3/4 @table-padding-horizontal/2;
+    padding: @table-padding-vertical-md @table-padding-horizontal-md;
   }
   > .@{table-prefix-cls}-content {
     > .@{table-prefix-cls}-header > table,
@@ -14962,9 +15000,13 @@ span.@{radio-prefix-cls} + * {
     > .@{table-prefix-cls}-fixed-right > .@{table-prefix-cls}-body-outer > .@{table-prefix-cls}-body-inner > table {
       > .@{table-prefix-cls}-thead > tr > th,
       > .@{table-prefix-cls}-tbody > tr > td {
-        padding: @table-padding-vertical*3/4 @table-padding-horizontal/2;
+        padding: @table-padding-vertical-md @table-padding-horizontal-md;
       }
     }
+  }
+
+  tr.@{table-prefix-cls}-expanded-row td > .@{table-prefix-cls}-wrapper {
+    margin: -@table-padding-vertical-md -@table-padding-horizontal -@table-padding-vertical-md - 1px;
   }
 }
 
@@ -14974,7 +15016,7 @@ span.@{radio-prefix-cls} + * {
 
   > .@{table-prefix-cls}-title,
   > .@{table-prefix-cls}-footer {
-    padding: @table-padding-vertical/2 @table-padding-horizontal/2;
+    padding: @table-padding-vertical-sm @table-padding-horizontal-sm;
   }
 
   > .@{table-prefix-cls}-title {
@@ -14984,7 +15026,7 @@ span.@{radio-prefix-cls} + * {
 
   > .@{table-prefix-cls}-content {
     > .@{table-prefix-cls}-body {
-      margin: 0 @table-padding-horizontal/2;
+      margin: 0 @table-padding-horizontal-sm;
     }
 
     > .@{table-prefix-cls}-header > table,
@@ -14998,14 +15040,14 @@ span.@{radio-prefix-cls} + * {
       border: 0;
       > .@{table-prefix-cls}-thead > tr > th,
       > .@{table-prefix-cls}-tbody > tr > td {
-        padding: @table-padding-vertical/2 @table-padding-horizontal/2;
+        padding: @table-padding-vertical-sm @table-padding-horizontal-sm;
       }
       > .@{table-prefix-cls}-thead > tr > th {
-        background: @component-background;
+        background-color: @component-background;
         border-bottom: @border-width-base @border-style-base @border-color-split;
       }
       > .@{table-prefix-cls}-thead > tr > th.@{table-prefix-cls}-column-sort {
-        background: @table-body-sort-bg;
+        background-color: @table-body-sort-bg;
       }
     }
 
@@ -15019,7 +15061,7 @@ span.@{radio-prefix-cls} + * {
     }
 
     .@{table-prefix-cls}-header {
-      background: @component-background;
+      background-color: @component-background;
     }
 
     .@{table-prefix-cls}-placeholder,
@@ -15053,6 +15095,7 @@ span.@{radio-prefix-cls} + * {
     .@{table-prefix-cls}-placeholder {
       border-left: 0;
       border-bottom: 0;
+      border-right: 0;
     }
 
     .@{table-prefix-cls}-thead > tr > th:last-child,
@@ -15068,8 +15111,13 @@ span.@{radio-prefix-cls} + * {
     }
 
     .@{table-prefix-cls}-fixed-right {
+      border-left: @border-width-base @border-style-base @border-color-split;
       border-right: @border-width-base @border-style-base @border-color-split;
     }
+  }
+
+  tr.@{table-prefix-cls}-expanded-row td > .@{table-prefix-cls}-wrapper {
+    margin: -@table-padding-vertical-sm -@table-padding-horizontal -@table-padding-vertical-sm - 1px;
   }
 }
 
@@ -15243,13 +15291,13 @@ span.@{radio-prefix-cls} + * {
     bottom: 1px;
     box-sizing: border-box;
     height: 2px;
-    background-color: @tabs-ink-bar-bg-color;
+    background-color: @tabs-ink-bar-color;
     transform-origin: 0 0;
   }
 
   &-bar {
     border-bottom: @border-width-base @border-style-base @border-color-split;
-    margin: @tab-bar-margin;
+    margin: @tabs-bar-margin;
     outline: none;
     transition: padding .3s @ease-in-out;
   }
@@ -15266,8 +15314,8 @@ span.@{radio-prefix-cls} + * {
     .clearfix;
 
     &-scrolling {
-      padding-left: @tab-scrolling-size;
-      padding-right: @tab-scrolling-size;
+      padding-left: @tabs-scrolling-size;
+      padding-right: @tabs-scrolling-size;
     }
   }
 
@@ -15305,7 +15353,7 @@ span.@{radio-prefix-cls} + * {
 
     &.@{tab-prefix-cls}-tab-arrow-show {
       opacity: 1;
-      width: @tab-scrolling-size;
+      width: @tabs-scrolling-size;
       height: 100%;
       pointer-events: auto;
     }
@@ -15391,8 +15439,8 @@ span.@{radio-prefix-cls} + * {
     .@{tab-prefix-cls}-tab {
       display: inline-block;
       height: 100%;
-      margin: @tab-horizontal-margin;
-      padding: @tab-horizontal-padding;
+      margin: @tabs-horizontal-margin;
+      padding: @tabs-horizontal-padding;
       box-sizing: border-box;
       position: relative;
 
@@ -15405,11 +15453,11 @@ span.@{radio-prefix-cls} + * {
       text-decoration: none;
 
       &:hover {
-        color: @tab-hover-color;
+        color: @tabs-hover-color;
       }
 
       &:active {
-        color: @tab-active-color;
+        color: @tabs-active-color;
       }
 
       .@{iconfont-css-prefix} {
@@ -15418,7 +15466,7 @@ span.@{radio-prefix-cls} + * {
     }
 
     .@{tab-prefix-cls}-tab-active {
-      color: @tab-highlight-color;
+      color: @tabs-highlight-color;
       font-weight: 500;
     }
   }
@@ -15479,20 +15527,20 @@ span.@{radio-prefix-cls} + * {
       border-bottom: 0;
       height: 100%;
       &-tab-prev, &-tab-next {
-        width: @tab-scrolling-size;
+        width: @tabs-scrolling-size;
         height: 0;
         transition: height .3s @ease-in-out, opacity .3s @ease-in-out, color .3s @ease-in-out;
       }
       &-tab-prev.@{tab-prefix-cls}-tab-arrow-show,
       &-tab-next.@{tab-prefix-cls}-tab-arrow-show {
         width: 100%;
-        height: @tab-scrolling-size;
+        height: @tabs-scrolling-size;
       }
 
       .@{tab-prefix-cls}-tab {
         float: none;
-        margin: @tab-vertical-margin;
-        padding: @tab-vertical-padding;
+        margin: @tabs-vertical-margin;
+        padding: @tabs-vertical-padding;
         display: block;
 
         &:last-child {
@@ -15517,7 +15565,7 @@ span.@{radio-prefix-cls} + * {
         margin-bottom: 0;
 
         &.@{tab-prefix-cls}-nav-container-scrolling {
-          padding: @tab-scrolling-size 0;
+          padding: @tabs-scrolling-size 0;
         }
       }
 
@@ -15531,21 +15579,22 @@ span.@{radio-prefix-cls} + * {
 
       .@{tab-prefix-cls}-ink-bar {
         width: 2px;
+        top: 0;
         left: auto;
         height: auto;
-        top: 0;
+        bottom: auto;
       }
 
       .@{tab-prefix-cls}-tab-next {
         width: 100%;
         bottom: 0;
-        height: @tab-scrolling-size;
+        height: @tabs-scrolling-size;
       }
 
       .@{tab-prefix-cls}-tab-prev {
         top: 0;
         width: 100%;
-        height: @tab-scrolling-size;
+        height: @tabs-scrolling-size;
       }
     }
 
@@ -15611,12 +15660,12 @@ span.@{radio-prefix-cls} + * {
 
 .@{tab-prefix-cls}-top .@{tab-prefix-cls}-ink-bar-animated,
 .@{tab-prefix-cls}-bottom .@{tab-prefix-cls}-ink-bar-animated {
-  transition: transform .3s @ease-in-out, width .3s @ease-in-out;
+  transition: transform .3s @ease-in-out, width .3s @ease-in-out, left .3s @ease-in-out;
 }
 
 .@{tab-prefix-cls}-left .@{tab-prefix-cls}-ink-bar-animated,
 .@{tab-prefix-cls}-right .@{tab-prefix-cls}-ink-bar-animated {
-  transition: transform .3s @ease-in-out, height .3s @ease-in-out;
+  transition: transform .3s @ease-in-out, height .3s @ease-in-out, top .3s @ease-in-out;
 }
 
 .no-flex,
@@ -15769,17 +15818,18 @@ span.@{radio-prefix-cls} + * {
     border-radius: @border-radius-base;
     box-shadow: @box-shadow-base;
     background-clip: padding-box;
-    overflow: hidden;
     left: -2px;
   }
 
   &-input {
+    width: 100%;
     margin: 0;
     padding: 0;
     border: 0;
     max-width: @time-picker-panel-column-width * 3 - @control-padding-horizontal - 2px;
     cursor: auto;
     outline: 0;
+    line-height: normal;
 
     .placeholder;
 
@@ -17077,7 +17127,7 @@ span.@{radio-prefix-cls} + * {
           }
 
           &:before {
-            content: '';
+            content: "";
             position: absolute;
             left: 0;
             right: 0;
@@ -17405,6 +17455,11 @@ span.@{radio-prefix-cls} + * {
 
   &-input {
     outline: none;
+  }
+
+  &-input.@{ant-prefix}-input-sm {
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   &:hover &-input:not(.@{ant-prefix}-input-disabled) {
@@ -17938,7 +17993,7 @@ span.@{radio-prefix-cls} + * {
       z-index: 1;
     }
     &:before {
-      content: '';
+      content: "";
       display: block;
       background: @item-active-bg;
       border-radius: 0;
@@ -18118,7 +18173,7 @@ span.@{radio-prefix-cls} + * {
     }
 
     li:last-child:after {
-      content: '';
+      content: "";
       height: 202px;
       display: block;
     }
@@ -18822,23 +18877,46 @@ span.@{radio-prefix-cls} + * {
     }
 }
 
-// antd patch
+// Angular
+// router ant
+@router-animation-name:     antFadeIn;
+@router-animation-duration: 1s;
+
+// https://github.com/angular/angular/issues/9845
+// 一种路由切换动画的简单实现
+app-layout router-outlet + * {
+  display: block;
+  animation-duration: @router-animation-duration;
+  // animation-fill-mode: both;
+	animation-name: @router-animation-name; // fadeIn;
+}
+
 .preserve-white-spaces-mixin(@enabled) when(@enabled=true) {
 
   sf + st {
     margin-top: @preserve-sf-and-st-spaces;
   }
 
-  .ant-btn + .ant-btn,
-  .ant-btn + nz-popconfirm,
-  nz-popconfirm + .ant-btn,
+  // button + button
+  .@{ant-prefix}-btn + .@{ant-prefix}-btn,
+  // button + popconfirm
+  .@{ant-prefix}-btn + nz-popconfirm,
+  nz-popconfirm + .@{ant-prefix}-btn,
+  // popconfirm + popconfirm
   nz-popconfirm + nz-popconfirm,
-  .ant-btn + nz-button-group,
-  nz-popconfirm + nz-button-group {
+  // button + button group
+  .@{ant-prefix}-btn + nz-button-group,
+  nz-button-group + .@{ant-prefix}-btn,
+  // dropdown + button
+  .@{ant-prefix}-btn + nz-dropdown,
+  nz-dropdown +.@{ant-prefix}-btn,
+  // popconfirm + button group
+  nz-popconfirm + nz-button-group,
+  nz-button-group + nz-popconfirm {
     margin-left: @preserve-buttons-spaces;
   }
-  .ant-btn-group {
-    .ant-btn + .ant-btn {
+  .@{ant-prefix}-btn-group {
+    .@{ant-prefix}-btn + .@{ant-prefix}-btn {
       margin-left: -1px;
     }
   }
@@ -18846,13 +18924,34 @@ span.@{radio-prefix-cls} + * {
 
 .preserve-white-spaces-mixin(@preserve-white-spaces-enabled);
 
-.ant-card {
+@form-state-visual-feedback-enabled: false;
+
+.form-state-visual-feedback-mixin(@enabled) when(@enabled = true) {
+  .ng-invalid {
+    &:focus {
+      box-shadow: 0 0 @outline-blur-size @outline-width fade-out(@error-color, .8);
+    }
+    &,
+    &:hover {
+      border-color: @error-color;
+    }
+  }
+}
+.form-state-visual-feedback-mixin(@form-state-visual-feedback-enabled);
+
+// Antd patch
+// 修复点击后，鼠标的移动会倒置目标出现下划线
+a:focus {
+  text-decoration: none;
+}
+
+.@{ant-prefix}-card {
   margin-bottom: @md;
 }
 
 // Body no padding
-.ant-card__body-nopadding {
-  .ant-card-body {
+.@{ant-prefix}-card__body-nopadding {
+  .@{ant-prefix}-card-body {
     padding: 0 !important;
   }
 }
@@ -18919,13 +19018,13 @@ span.@{radio-prefix-cls} + * {
   }
 }
 
-.ant-form-item-label {
+.@{ant-prefix}-form-item-label {
   em {
     color: @grey-6;
   }
 }
 
-.ant-form-item-children {
+.@{ant-prefix}-form-item-children {
   em {
     margin-left: @layout-gutter;
   }
@@ -18933,7 +19032,7 @@ span.@{radio-prefix-cls} + * {
 
 // Small screen / tablet
 @media (min-width: @screen-sm) {
-  .modal-sm .ant-modal {
+  .modal-sm .@{ant-prefix}-modal {
     max-width: @modal-sm;
     width: auto !important;
   }
@@ -18941,7 +19040,7 @@ span.@{radio-prefix-cls} + * {
 
 // Medium screen / desktop
 @media (min-width: @screen-md) {
-  .modal-md .ant-modal {
+  .modal-md .@{ant-prefix}-modal {
     max-width: @modal-md;
     width: auto !important;
   }
@@ -18949,7 +19048,7 @@ span.@{radio-prefix-cls} + * {
 
 // Large screen / wide desktop
 @media (min-width: @screen-lg) {
-  .modal-lg .ant-modal {
+  .modal-lg .@{ant-prefix}-modal {
     max-width: @modal-lg;
     width: auto !important;
   }
@@ -18957,7 +19056,7 @@ span.@{radio-prefix-cls} + * {
 
 // Extra large screen / large descktop
 @media (min-width: @screen-xxl) {
-  .modal-xl .ant-modal {
+  .modal-xl .@{ant-prefix}-modal {
     max-width: @modal-xl;
     width: auto !important;
   }
@@ -19004,13 +19103,13 @@ span.@{radio-prefix-cls} + * {
     }
   }
   &-body-nopadding {
-    .ant-modal-body {
+    .@{ant-prefix}-modal-body {
       padding: 0 !important;
     }
   }
 }
 
-.ant-table {
+.@{ant-prefix}-table {
   td {
     > img,
     .img {
@@ -19023,20 +19122,20 @@ span.@{radio-prefix-cls} + * {
   }
 }
 
-.ant-table-rep {
+.@{ant-prefix}-table-rep {
   &__title {
     display: none;
   }
   &__hide-header-footer {
-    .ant-table-title,
-    .ant-table-footer {
+    .@{ant-prefix}-table-title,
+    .@{ant-prefix}-table-footer {
       display: none;
     }
   }
 }
 
 @media screen and (max-width: @nz-table-rep-max-width) {
-  .ant-table {
+  .@{ant-prefix}-table {
     &-rep {
       &__title {
         display: inline-block;
@@ -19046,8 +19145,8 @@ span.@{radio-prefix-cls} + * {
         color: @nz-table-rep-column-name-color;
       }
       &__hide-header-footer {
-        .ant-table-title,
-        .ant-table-footer {
+        .@{ant-prefix}-table-title,
+        .@{ant-prefix}-table-footer {
           display: block;
         }
       }
@@ -19067,12 +19166,13 @@ span.@{radio-prefix-cls} + * {
         > td {
           width: 100%;
           display: flex;
+          align-items: center;
           text-align: left !important;
           border-bottom: none;
           padding: @nz-table-rep-padding-vertical
             @nz-table-rep-padding-horizontal;
 
-          .ant-table-rep__title + *:not(.ant-avatar) {
+          .@{ant-prefix}-table-rep__title + *:not(.@{ant-prefix}-avatar) {
             flex: 1;
           }
         }
@@ -19081,29 +19181,27 @@ span.@{radio-prefix-cls} + * {
   }
 }
 
-.ant-tag {
+.@{ant-prefix}-tag {
   &__plus {
-    .ant-tag {
+    .@{ant-prefix}-tag {
       background: rgb(255, 255, 255);
       border-style: dashed;
     }
   }
 }
 
-// Core CSS
-// router ant
-@router-animation-name:     antFadeIn;
-@router-animation-duration: 1s;
-
-// https://github.com/angular/angular/issues/9845
-// 一种路由切换动画的简单实现
-app-layout router-outlet + * {
-  display: block;
-  animation-duration: @router-animation-duration;
-  // animation-fill-mode: both;
-	animation-name: @router-animation-name; // fadeIn;
+.forced-turn-off-nz-modal-animation-mixin(@enabled) when(@enabled=true) {
+  .@{ant-prefix}-modal {
+    &,
+    &-mask {
+      animation-duration: unset !important;
+    }
+  }
 }
 
+.forced-turn-off-nz-modal-animation-mixin(@forced-turn-off-nz-modal-animation-enabled);
+
+// Core CSS
 .h1,
 .h2,
 .h3 {
@@ -19271,30 +19369,53 @@ fieldset {
 
 .widget-badge-mixin(@badge-enabled);
 
-@form-state-visual-feedback-enabled: false;
+@search-form-enabled:   false;
 @search-form-bg:        #fbfbfb;
 @search-form-radius:    4px;
 
-.search-form {
-  background: @search-form-bg;
-  padding: @layout-gutter;
-  border: @border-width-base @border-style-base @border-color-split;
-  border-radius: @search-form-radius;
-  margin-bottom: @layout-gutter * 2;
-}
+@search__form-enabled:   true;
 
-.form-state-visual-feedback-mixin(@enabled) when(@enabled = true) {
-  .ng-invalid {
-    &:focus {
-      box-shadow: 0 0 @outline-blur-size @outline-width fade-out(@error-color, .8);
-    }
-    &,
-    &:hover {
-      border-color: @error-color;
+.search-form-mixin(@enabled) when(@enabled = true) {
+  .search-form {
+    background: @search-form-bg;
+    padding: @layout-gutter;
+    border: @border-width-base @border-style-base @border-color-split;
+    border-radius: @search-form-radius;
+    margin-bottom: @layout-gutter * 2;
+  }
+}
+.search-form-mixin(@search-form-enabled);
+
+.search__form-mixin(@enabled) when(@enabled = true) {
+  .search {
+    &__form {
+      // BUG: https://github.com/NG-ZORRO/ng-zorro-antd/issues/1202
+      &.@{ant-prefix}-form-inline {
+        .@{ant-prefix}-form-item-label,
+        .@{ant-prefix}-form-item-control-wrapper {
+          padding: 0 !important;
+        }
+      }
+      .@{ant-prefix}-form-item {
+        margin-bottom: 24px;
+        margin-right: 0;
+        display: flex;
+        > .@{ant-prefix}-form-item-label {
+          width: auto;
+          line-height: 32px;
+          padding-right: 8px;
+        }
+        .@{ant-prefix}-form-item-control {
+          line-height: 32px;
+        }
+      }
+      .@{ant-prefix}-form-item-control-wrapper {
+        flex: 1;
+      }
     }
   }
 }
-.form-state-visual-feedback-mixin(@form-state-visual-feedback-enabled);
+.search__form-mixin(@search__form-enabled);
 
 @hafl-enabled:      true;
 @hafl-float-size:
@@ -19374,56 +19495,123 @@ fieldset {
 
 .widget-masonry-mixin(@masonry-enabled);
 
-.no-data {
-  color: rgba(0, 0, 0, 0.25);
-  text-align: center;
-  line-height: 64px;
-  font-size: 16px;
-  i {
-    font-size: 24px;
-    margin-right: 16px;
-    position: relative;
-    top: 3px;
+.header-dropdown {
+  background-color: #fff;
+  box-shadow: @shadow-1-down;
+  border-radius: 4px;
+}
+
+@media screen and (max-width: @screen-xs) {
+  .header-dropdown {
+    width: 100% !important;
+    right: 0 !important;
+    left: 0 !important;
+    border-radius: 0 !important;
   }
 }
 
-.scrollbar-style-mixin(@element-name) {
-  @{element-name} {
-    &::-webkit-scrollbar {
-      height: @scrollbar-width;
-      width: @scrollbar-height;
+// @delon
+.sf {
+  display: block;
+  // mode
+  &-search + .ad-st {
+    margin-top: @layout-gutter * 2;
+  }
+  &__optional {
+    color: rgba(0, 0, 0, 0.45);
+  }
+  // 固定 label
+  &__fixed {
+    display: flex !important;
+    nz-form-control,
+    .@{ant-prefix}-form-item-control-wrapper {
+      flex: 1;
     }
-    &::-webkit-scrollbar-track {
-      -webkit-box-shadow: inset 0 0 @scrollbar-width @scrollbar-track-color;
+  }
+  // Array
+  &-array-container {
+    nz-card {
+      margin: 0 16px 0 0;
+      .remove {
+        display: none;
+        position: absolute;
+        right: -16px;
+        top: -16px;
+        font-size: 20px;
+        text-align: center;
+        height: 32px;
+        line-height: 32px;
+        width: 32px;
+        background: rgba(0, 0, 0, 0.26);
+        border-radius: 50%;
+        cursor: pointer;
+        i {
+          color: #fff;
+        }
+      }
+      &:hover {
+        .remove {
+          display: block;
+        }
+      }
     }
-    &::-webkit-scrollbar-thumb {
-      background-color: @scrollbar-thumb-color;
-      outline: 1px solid #333;
+  }
+  sf-array {
+    .add {
+      margin-right: 16px;
+    }
+  }
+  &__checkbox-list {
+    width: 100%;
+    display: block;
+    @media (min-width: @mobile-min) {
+      nz-col {
+        margin-top: 8px;
+      }
+    }
+  }
+  // upload
+  .@{ant-prefix}-upload-select-picture-card i {
+    font-size: 32px;
+    color: #999;
+  }
+  .@{ant-prefix}-upload.@{ant-prefix}-upload-drag {
+    height: 180px;
+  }
+  // transfer
+  .@{ant-prefix}-transfer {
+    &-list {
+      background: #fff;
+      &-header {
+        label {
+          position: unset;
+        }
+      }
+    }
+    .@{ant-prefix}-btn + .@{ant-prefix}-btn {
+      margin-left: 0;
+    }
+  }
+  // fix select width when inline mode
+  .@{ant-prefix}-form-inline {
+    sf-select {
+      .@{ant-prefix}-form-item {
+        display: inline-flex;
+        > .@{ant-prefix}-form-item-control-wrapper {
+          flex: 1 0 0;
+        }
+      }
+    }
+  }
+  &__no-error {
+    .@{ant-prefix}-form-item {
+      margin-bottom: 8px;
     }
   }
 }
 
-// body scrollbar
-.scrollbar-mixin(@enabled) when(@enabled=true) {
-  .scrollbar-style-mixin(body);
-}
-.scrollbar-mixin(@scrollbar-enabled);
-
-// 自定义div scrollbar
-@scrollbar-prefix: ~'.scrollbar';
-
-.scrollbar-style-mixin(@scrollbar-prefix);
-@{scrollbar-prefix} {
-  overflow: auto;
-
-  &-x {
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-  &-y {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
+.acl__hide {
+  display: none !important;
 }
 
 @setting-drawer-enabled:    true;
@@ -19486,7 +19674,7 @@ fieldset {
       align-items: center;
       cursor: pointer;
       pointer-events: auto;
-      z-index: 10000;
+      z-index: @zindex-modal-mask - 1;
       text-align: center;
       font-size: 16px;
       border-radius: 4px 0 0 4px;
@@ -19497,6 +19685,7 @@ fieldset {
       }
       &-opened {
         right: @setting-drawer-width;
+        z-index: @zindex-modal-mask + 1;
       }
     }
   }
@@ -19505,141 +19694,7 @@ fieldset {
 
 .widget-setting-drawer-mixin(@setting-drawer-enabled);
 
-.color-weak {
-  filter: invert(80%);
-  display: block;
-}
-
-// @delon
-.sf {
-  display: block;
-  // mode
-  &-search + .ad-st {
-    margin-top: @layout-gutter * 2;
-  }
-  .optional {
-    color: rgba(0, 0, 0, 0.45);
-  }
-  // 固定 label
-  &-fixed {
-    display: flex !important;
-    nz-form-control,
-    .ant-form-item-control-wrapper {
-      flex: 1;
-    }
-  }
-  &-array-container {
-    nz-card {
-      margin: 0 16px 0 0;
-      .remove {
-        display: none;
-        position: absolute;
-        right: -16px;
-        top: -16px;
-        font-size: 20px;
-        text-align: center;
-        height: 32px;
-        line-height: 32px;
-        width: 32px;
-        background: rgba(0, 0, 0, 0.26);
-        border-radius: 50%;
-        cursor: pointer;
-        i {
-          color: #fff;
-        }
-      }
-      &:hover {
-        .remove {
-          display: block;
-        }
-      }
-    }
-  }
-  sf-array {
-    .add {
-      margin-right: 16px;
-    }
-  }
-  &__checkbox-list {
-    width: 100%;
-    display: block;
-    @media (min-width: @mobile-min) {
-      nz-col {
-        margin-top: 8px;
-      }
-    }
-  }
-  // upload
-  .ant-upload-select-picture-card i {
-    font-size: 32px;
-    color: #999;
-  }
-  .ant-upload.ant-upload-drag {
-    height: 180px;
-  }
-  // transfer
-  .ant-transfer {
-    &-list {
-      background: #fff;
-      &-header {
-        label {
-          position: unset;
-        }
-      }
-    }
-    .ant-btn + .ant-btn {
-      margin-left: 0;
-    }
-  }
-  // fix select width when inline mode
-  .ant-form-inline {
-    .ant-form-item {
-      display: inline-flex;
-      > .ant-form-item-control-wrapper {
-        flex: 1 0 0;
-      }
-    }
-  }
-  &__no-error {
-    .ant-form-item {
-      margin-bottom: 8px;
-    }
-  }
-}
-
-.acl__hide {
-  display: none !important;
-}
-
-.search {
-  &__form {
-    // BUG: https://github.com/NG-ZORRO/ng-zorro-antd/issues/1202
-    &.ant-form-inline {
-      .ant-form-item-label,
-      .ant-form-item-control-wrapper {
-        padding: 0 !important;
-      }
-    }
-    .ant-form-item {
-      margin-bottom: 24px;
-      margin-right: 0;
-      display: flex;
-      > .ant-form-item-label {
-        width: auto;
-        line-height: 32px;
-        padding-right: 8px;
-      }
-      .ant-form-item-control {
-        line-height: 32px;
-      }
-    }
-    .ant-form-item-control-wrapper {
-      flex: 1;
-    }
-  }
-}
-
-// Other
+// Utils
 .align-baseline    { vertical-align: baseline !important; } // Browser default
 .align-top         { vertical-align: top !important; }
 .align-middle      { vertical-align: middle !important; }
@@ -19720,7 +19775,10 @@ code {
 .bg-white         { background-color: #fff !important; }
 .bg-transparent   { background-color: transparent !important; }
 .text-white       { color: #fff !important; }
-.text-hover:hover { color: @primary-color !important; }
+.text-hover {
+  cursor: pointer;
+  &:hover { color: @primary-color !important; }
+}
 
 .for-each(@colors, {
   .bg-@{adKey}-light       { background-color: extract(@adItem, @color-light-position) !important; }
@@ -19842,10 +19900,24 @@ code {
   cursor: pointer;
 }
 
-.no-resize {
-  resize: none;
-  max-width: 100%;
-  min-width: 100%;
+.no {
+  &-resize {
+    resize: none;
+    max-width: 100%;
+    min-width: 100%;
+  }
+  &-data {
+    color: rgba(0, 0, 0, 0.25);
+    text-align: center;
+    line-height: 64px;
+    font-size: 16px;
+    i {
+      font-size: 24px;
+      margin-right: 16px;
+      position: relative;
+      top: 3px;
+    }
+  }
 }
 
 .block-center {
@@ -19868,6 +19940,11 @@ code {
   bottom: 0;
   padding-top: 200px;
   text-align: center;
+}
+
+.color-weak {
+  filter: invert(80%);
+  display: block;
 }
 
 .for-each(@positions, {
@@ -20020,6 +20097,50 @@ code {
   }
 }
 
+.scrollbar-mixin(@element-name) {
+  .scrollbar-inner-mixin(@enabled) when(@enabled=true) {
+    @{element-name} {
+      &::-webkit-scrollbar {
+        height: @scrollbar-width;
+        width: @scrollbar-height;
+      }
+      &::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 @scrollbar-width @scrollbar-track-color;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: @scrollbar-thumb-color;
+        outline: 1px solid #333;
+      }
+    }
+  }
+  .scrollbar-inner-mixin(@scrollbar-enabled);
+}
+
+// 自定义div scrollbar
+@scrollbar-prefix: ~'.scrollbar';
+@{scrollbar-prefix} {
+  overflow: auto;
+
+  &-x {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  &-y {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+
+// scrollbar
+// TODO: https://github.com/NG-ZORRO/ng-zorro-antd/pull/2617
+.scrollbar-mixin(~'body, .nz-measure-scrollbar-placeholder, @{scrollbar-prefix}, .@{ant-prefix}-dialog-wrap, .@{ant-prefix}-drawer-body, .@{ant-prefix}-drawer-wrapper-body, .@{ant-prefix}-anchor-wrapper, textarea.@{ant-prefix}-input');
+
+// table
+.scrollbar-table-mixin(@enabled) when(@enabled=true) {
+  .scrollbar-mixin(~'.@{ant-prefix}-table-header, .@{ant-prefix}-table-body');
+}
+.scrollbar-table-mixin(@scrollbar-table-enabled);
+
 @alain-default-prefix:                ~'.alain-default';
 @alain-default-zindex:                @zindex-base;
 @alain-default-ease:                  cubic-bezier(.25, 0, .15, 1);
@@ -20028,6 +20149,7 @@ code {
 @alain-default-header-padding:        @layout-gutter * 2;
 @alain-default-header-search-enabled: true;
 @alain-default-header-search-height:  34px;
+@alain-default-header-icon-fs:        18px;
 
 @alain-default-aside-wd:                      200px;
 @alain-default-aside-bg:                      #fff;
@@ -20204,8 +20326,8 @@ body {
       }
       > i,
       &-icon {
-        font-size: 18px !important;
-        // TODO: fix ant-dropdown-trigger
+        font-size: @alain-default-header-icon-fs !important;
+        // fix ant-dropdown-trigger
         transform: none !important;
       }
     }
@@ -20220,14 +20342,14 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    .ant-input {
+    .@{ant-prefix}-input {
       padding-left: 0;
       &:focus {
         box-shadow: none;
       }
     }
-    .ant-input,
-    .ant-input-group-addon {
+    .@{ant-prefix}-input,
+    .@{ant-prefix}-input-group-addon {
       background-color: rgba(255, 255, 255, 0.2);
       color: #fff;
       border: none;
@@ -20236,7 +20358,7 @@ body {
         opacity: 1;
       }
     }
-    .ant-input-group-addon {
+    .@{ant-prefix}-input-group-addon {
       i {
         transition: color 300ms, transform 400ms;
         font-size: 18px;
@@ -20244,8 +20366,8 @@ body {
       }
     }
     &-focus {
-      .ant-input,
-      .ant-input-group-addon {
+      .@{ant-prefix}-input,
+      .@{ant-prefix}-input-group-addon {
         background-color: #f3f3f3;
         color: @grey-8;
         &::placeholder {
@@ -20253,7 +20375,7 @@ body {
           opacity: 1;
         }
       }
-      .ant-input-group-addon {
+      .@{ant-prefix}-input-group-addon {
         i {
           transform: rotate(90deg);
           color: @grey-8;
@@ -20440,7 +20562,7 @@ body {
 
 .app-icons {
   padding: @layout-gutter * 2;
-  .ant-col-6 {
+  .@{ant-prefix}-col-6 {
     padding: (@layout-gutter * 2) 0;
     border-radius: 4px;
     text-align: center;
@@ -20472,7 +20594,7 @@ body {
   display: block !important;
   width: @alain-default-user-block-width;
   cursor: pointer;
-  .ant-dropdown-trigger {
+  .@{ant-prefix}-dropdown-trigger {
     display: flex;
     align-items: center;
   }
@@ -20512,6 +20634,8 @@ body {
     position: relative;
     border-left: 3px solid transparent;
     transition: border-left-color 0.4s ease;
+    display: flex;
+    flex-direction: column;
     &-link {
       color: @alain-default-aside-nav-text-color;
       text-decoration: none !important;
@@ -20796,8 +20920,15 @@ body {
   @{reuse-tab-prefix} {
     position: fixed;
     top: @alain-default-header-hg;
-    width: 100%;
+    left: @alain-default-aside-wd + @alain-default-content-padding;
+    right: @alain-default-content-padding;
     z-index: @zindex-fixed + 1;
+  }
+}
+
+@{alain-default-prefix}__collapsed {
+  @{reuse-tab-prefix} {
+    left: @alain-default-aside-collapsed-wd + @alain-default-content-padding;
   }
 }
 
@@ -20820,6 +20951,11 @@ body {
       width: initial;
     }
   }
+}
+
+@{alain-default-prefix}__nav-item .@{ant-prefix}-badge-count {
+  top: -6px;
+  right: 18px;
 }
 
 @{alain-default-prefix}__fixed {
@@ -20872,21 +21008,21 @@ body {
     padding-left: 2px;
   }
   &__p-left {
-    .ant-table-pagination {
+    .@{ant-prefix}-table-pagination {
       float: none;
       display: block;
       text-align: left;
     }
   }
   &__p-center {
-    .ant-table-pagination {
+    .@{ant-prefix}-table-pagination {
       float: none;
       display: block;
       text-align: center;
     }
   }
   // 清除页码底部间距，在大部分列表中会包裹 `nz-card` 导致底部间距过大，若有需求可自行使用 `mb-md` 来调整
-  .ant-table-pagination.ant-pagination {
+  .@{ant-prefix}-table-pagination.@{ant-prefix}-pagination {
     margin-bottom: 0;
   }
 }
@@ -20909,7 +21045,7 @@ body {
   &__container {
     display: block;
     // offset the padding-bottom of last row
-    .ant-row {
+    .@{ant-prefix}-row {
       margin-bottom: -@sv-bottom;
       overflow: hidden;
     }
@@ -20980,7 +21116,7 @@ body {
   }
   &__small {
     // offset the padding-bottom of last row
-    .ant-row {
+    .@{ant-prefix}-row {
       margin-bottom: -8px;
     }
     @{sv-prefix}__title {
@@ -21047,7 +21183,7 @@ body {
     @{se-prefix}__item {
       margin-bottom: @se-compact-bottom;
     }
-    .ant-form-extra {
+    .@{ant-prefix}-form-extra {
       display: none;
     }
   }
@@ -21090,6 +21226,10 @@ body {
       }
     }
   }
+  // fix angular & ng-zorro-antd
+  .@{ant-prefix}-form-explain {
+    display: block;
+  }
 }
 
 @media (min-width: @mobile-min) {
@@ -21128,24 +21268,29 @@ body {
     margin-left: -8px;
     width: @avatar-size-base;
     height: @avatar-size-base;
-    .ant-avatar {
+    .@{ant-prefix}-avatar {
       border: 1px solid #fff;
+      cursor: pointer;
     }
-    &-large {
-      width: @avatar-size-lg;
-      height: @avatar-size-lg;
-    }
-    &-small {
-      width: @avatar-size-sm;
-      height: @avatar-size-sm;
-    }
-    &-mini {
+  }
+  &__large {
+    width: @avatar-size-lg;
+    height: @avatar-size-lg;
+  }
+  &__small {
+    width: @avatar-size-sm;
+    height: @avatar-size-sm;
+  }
+  &__mini {
+    width: 20px;
+    height: 20px;
+    .@{ant-prefix}-avatar {
       width: 20px;
       height: 20px;
-      .ant-avatar {
-        width: 20px;
-        height: 20px;
-        line-height: 20px;
+      line-height: 20px;
+      &-string {
+        font-size: 12px;
+        line-height: 18px;
       }
     }
   }
@@ -21321,51 +21466,55 @@ body {
     transition: all 0.3s;
   }
 
-  width: 336px;
+  & {
+    width: 336px;
+  }
 
-  .ant-popover-inner-content {
+  .@{ant-prefix}-popover-inner-content {
     padding: 0;
   }
-  .ant-tabs-bar {
-    margin-bottom: 4px;
-  }
-  .ant-tabs-nav-scroll {
-    text-align: center;
-  }
-  .ant-tabs-nav {
-    .ant-tabs-tab {
-      margin-right: 32px;
-      padding: 12px 16px;
-      &:last-child {
-        margin-right: 0;
+  .@{ant-prefix}-tabs {
+    &-bar {
+      margin-bottom: 4px;
+    }
+    &-nav {
+      .@{ant-prefix}-tabs-tab {
+        margin-right: 32px;
+        padding: 12px 16px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+      &-scroll {
+        text-align: center;
       }
     }
   }
-  .ant-list {
+  .@{ant-prefix}-list {
     max-height: 400px;
     overflow: auto;
-    .ant-list-item {
+    &-item {
       transition: all 0.3s;
       overflow: hidden;
       cursor: pointer;
       padding-left: 24px;
       padding-right: 24px;
-      .ant-list-item-meta {
-        width: 100%;
-      }
-      .ant-avatar {
-        background: #fff;
-        margin-top: 4px;
-      }
       &:last-child {
         border-bottom: 0;
       }
       &:hover {
         background: @primary-1;
       }
-      .ant-list-item-meta-title {
-        font-weight: normal;
-        margin-bottom: 8px;
+      &-meta {
+        width: 100%;
+        &-title {
+          font-weight: normal;
+          margin-bottom: 8px;
+        }
+      }
+      .@{ant-prefix}-avatar {
+        background: #fff;
+        margin-top: 4px;
       }
     }
   }
@@ -21393,7 +21542,7 @@ body {
     }
   }
   &__item {
-    .ant-badge-count {
+    .@{ant-prefix}-badge-count {
       top: -10px;
     }
     &-read {
@@ -21431,12 +21580,12 @@ body {
     max-width: @page-header-wide;
     margin: auto;
   }
-  .ant-breadcrumb {
+  .@{ant-prefix}-breadcrumb {
     margin-bottom: 16px;
   }
-  .ant-tabs {
+  .@{ant-prefix}-tabs {
     margin: 0 0 -17px -8px;
-    .ant-tabs-bar {
+    &-bar {
       border-bottom: @border-width-base @border-style-base @border-color-split;
     }
   }
@@ -21535,17 +21684,17 @@ body {
   }
   @media screen and (max-width: @screen-xs) {
     &__action {
-      .ant-btn-group,
-      .ant-btn {
+      .@{ant-prefix}-btn-group,
+      .@{ant-prefix}-btn {
         display: block;
         margin-bottom: 8px;
       }
-      .ant-input-search-enter-button {
-        .ant-btn {
+      .@{ant-prefix}-input-search-enter-button {
+        .@{ant-prefix}-btn {
           margin-bottom: 0;
         }
       }
-      .ant-btn-group > .ant-btn {
+      .@{ant-prefix}-btn-group > .@{ant-prefix}-btn {
         display: inline-block;
         margin-bottom: 0;
       }
@@ -21649,8 +21798,8 @@ body {
       margin-right: 8px;
     }
   }
-  .ant-steps .ant-steps-head,
-  .ant-steps .ant-steps-title {
+  .@{ant-prefix}-steps .@{ant-prefix}-steps-head,
+  .@{ant-prefix}-steps .@{ant-prefix}-steps-title {
     background: @result-extra-bg;
   }
 }
@@ -21668,11 +21817,11 @@ body {
   border-bottom: 1px solid @reuse-tab-border-color;
   outline: none;
   user-select: none;
-  .ant-tabs-bar {
+  .@{ant-prefix}-tabs-bar {
     margin-bottom: 0;
     border-bottom: none;
   }
-  .ant-tabs-nav .ant-tabs-tab {
+  .@{ant-prefix}-tabs-nav .@{ant-prefix}-tabs-tab {
     padding: 0;
     .name {
       display: inline-block;
@@ -21695,7 +21844,7 @@ body {
 }
 
 @{reuse-tab-prefix}__cm {
-  .ant-menu {
+  .@{ant-prefix}-menu {
     border: 1px solid #e9e9e9;
   }
 }
@@ -21716,7 +21865,7 @@ body {
   &__has-expand {
     padding-right: 50px;
   }
-  .ant-tag {
+  .@{ant-prefix}-tag {
     padding: 0 8px;
     margin-right: 24px;
   }
@@ -21736,6 +21885,7 @@ g2-bar,
 g2-gauge,
 g2-mini-area,
 g2-mini-bar,
+g2-single-bar,
 g2-tag-cloud,
 g2-timeline,
 g2,
@@ -21813,7 +21963,26 @@ g2-tag-cloud {
   }
 }
 
+@g2-gauge-prefix: ~'.g2-gauge';
+
+@{g2-gauge-prefix} {
+  &__desc {
+    width: 300px;
+    text-align: center;
+    font-size: 12px;
+  }
+  &__title {
+    font-size: 14px;
+    color: rgba(0,0,0,0.43);
+  }
+  &__percent {
+    font-size: 24px;
+    color: rgba(0,0,0,0.85);
+  }
+}
+
 @g2-mini-progress-prefix: ~'.g2-mini-progress';
+
 @{g2-mini-progress-prefix} {
   display: block;
   padding: 5px 0;
