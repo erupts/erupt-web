@@ -17,7 +17,7 @@ export function initErupt(eruptModel: EruptModel) {
     if (field.eruptFieldJson.edit.type === EditType.CHOICE) {
       const vlMap = field.eruptFieldJson.edit.choiceType[0].vlMap = new Map();
       field.eruptFieldJson.edit.choiceType[0].vl.forEach(vl => {
-        vlMap.set(vl.value + "", vl.label);
+        vlMap.set(vl.value, vl.label);
       });
     }
     //生成columns
@@ -57,7 +57,10 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
       obj.className = "text-center";
     } else if (edit.type === EditType.CHOICE) {
       obj.format = (item: any) => {
-        return item[view.column] ? edit.choiceType[0].vlMap.get(item[view.column]) : "";
+        console.log(edit.choiceType[0].vlMap);
+        console.log(item[view.column]);
+        console.log(edit.choiceType[0].vlMap.get(item[view.column]));
+        return edit.choiceType[0].vlMap.get(item[view.column]) || "";
       };
     }
 

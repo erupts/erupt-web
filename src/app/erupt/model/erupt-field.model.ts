@@ -91,7 +91,7 @@ interface ChoiceType {
     type: ChoiceEnum;
     vl: Array<VL>;
     //在页面初始化时将vl值转化成map形式
-    vlMap?: Map<string, string>;
+    vlMap?: Map<number, string>;
 }
 
 interface DictType {
