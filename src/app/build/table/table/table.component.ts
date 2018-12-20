@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { Component, Inject, Injector, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { Page } from "../../../erupt/model/page";
 import { EruptModel } from "../../../erupt/model/erupt.model";
@@ -11,10 +11,8 @@ import { EditType } from "../../../erupt/model/erupt.enum";
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 import { EditComponent } from "../edit/edit.component";
-import { QRComponent, STData } from "@delon/abc";
+import { QRComponent, ReuseTabService, STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
-import { FormControl, FormGroup } from "@angular/forms";
-import { NzNotificationModule, NzNotificationService } from "ng-zorro-antd/notification";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 
 @Component({
@@ -31,19 +29,14 @@ export class TableComponent implements OnInit {
               private modalHelper: ModalHelper,
               private drawerHelper: DrawerHelper,
               private renderer: Renderer2,
-              private injector: Injector,
-              // private notification: NzNotificationService,
+              @Inject(NzMessageService)
+              private msg: NzMessageService,
+              @Inject(NzModalService)
+              private modal: NzModalService,
               public route: ActivatedRoute) {
 
   }
 
-  get msg(): NzMessageService {
-    return this.injector.get(NzMessageService);
-  }
-
-  get modal(): NzModalService {
-    return this.injector.get(NzModalService);
-  }
 
   eruptName: string = "";
 
@@ -67,6 +60,8 @@ export class TableComponent implements OnInit {
   columns = [];
 
   @ViewChild("editDrawer") editDrawer;
+
+  @ViewChild("st") st;
 
   ngOnInit() {
     // this.modalHelper.create(QRComponent, {value: "http://www.baidu.com",size:"100"}).subscribe(s => {
@@ -235,10 +230,14 @@ export class TableComponent implements OnInit {
           },
           type: "del",
           click: (record, modal, comp) => {
-            this.dataService.deleteEruptData(this.eruptName, record[this.eruptModel.eruptJson.primaryKeyCol]).subscribe(val => {
+            this.dataService.deleteEruptData(this.eruptName, record[this.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
+              if (result.success) {
+                comp.removeRow(record);
+                this.msg.success("成功删除");
+              } else {
+                this.msg.success(result.message);
+              }
 
-              // this.message.success(`成功删除`);
-              comp.removeRow(record);
             });
 
           }
@@ -249,8 +248,18 @@ export class TableComponent implements OnInit {
 
 
   gcOperatorEdits(code: string) {
-    this.operatorEdit[0] = [];
     const ro = this.eruptModel.eruptJson.rowOperationMap.get(code);
+    if (ro.edits.length <= 0) {
+      this.modal.confirm({
+        nzTitle: "确定要进行操作吗？",
+        nzContent: "",
+        nzOnOk: () => {
+
+        }
+      });
+      return;
+    }
+    let eruptFieldModels: Array<EruptFieldModel> = [];
     ro.edits.forEach(edit => {
       const eruptFieldModel: EruptFieldModel = {
         fieldName: edit.code,
@@ -259,23 +268,41 @@ export class TableComponent implements OnInit {
           edit: edit.edit
         }
       };
-      this.operatorEdit[0].push(eruptFieldModel);
+      eruptFieldModels.push(eruptFieldModel);
     });
-    this.operatorEdit[1] = code;
+    console.log(eruptFieldModels);
+    this.modal.create({
+      nzKeyboard: true,
+      nzTitle: ro.title,
+      nzCancelText: "取消（ESC）",
+      nzOnOk: () => {
+        alert("ok");
+      },
+      nzContent: EditTypeComponent,
+      nzComponentParams: {
+        // @ts-ignore
+        eruptFieldModels: eruptFieldModels,
+        eruptName: this.eruptModel.eruptName
+      }
+    });
+
+    // this.modalHelper.create(EditTypeComponent, {
+    //   eruptFieldModels: eruptFieldModels,
+    //   eruptName: this.eruptModel.eruptName
+    // }, {
+    //   modalOptions: {
+    //     nzKeyboard: true,
+    //     nzTitle: ro.title,
+    //     nzOkText: "确定",
+    //     nzOnOk: () => {
+    //
+    //     }
+    //   }
+    // }).subscribe();
   }
 
   tableDataChange(data: STData) {
     this.selectedRows = data.checkbox;
-  }
-
-  editRow(event: Event, value) {
-    event.stopPropagation();
-    // const modalOptions = new ModalOptions();
-    // modalOptions.class = "gray modal-lg m-t-60";
-    // modalOptions.ignoreBackdropClick = true;
-    // modalOptions.keyboard = false;
-    // this.rowData = value;
-    // this.editModalRef = this.modalService.show(this.editModal, modalOptions);
   }
 
   addRow() {
@@ -318,15 +345,16 @@ export class TableComponent implements OnInit {
     if (ids.length > 0) {
       this.modal.confirm(
         {
-          nzTitle:"确定要删除吗？",
+          nzTitle: "确定要删除吗？",
           nzContent: "",
-          nzOnOk:()=>{
+          nzOnOk: () => {
             this.dataService.deleteEruptDatas(this.eruptName, ids).subscribe(val => {
               console.log(val);
+              this.st.removeRow(this.selectedRows);
             });
           }
         }
-      )
+      );
 
     } else {
       this.msg.error("请选择要删除的数据项!");

@@ -100,6 +100,11 @@ export class StartupService {
                     //   shortcutRoot: true
                     // },
                     {
+                        text: 'MMO',
+                        icon: {type: 'icon', value: 'rocket'},
+                        link: '/build/table/mmo',
+                    },
+                    {
                         text: 'TABLE',
                         icon: {type: 'icon', value: 'rocket'},
                         link: '/build/table/EruptUser',

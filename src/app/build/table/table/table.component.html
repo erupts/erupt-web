@@ -43,7 +43,7 @@
 
         <ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">
             <ng-container *ngIf="oper.multi">
-                <button nz-button nzType="dashed" class="mb-sm">
+                <button nz-button nzType="dashed" class="mb-sm" (click)="gcOperatorEdits(oper.code)">
                     <i class="fa" [ngClass]="oper.icon"></i>&nbsp;
                     {{oper.title}}
                 </button>&nbsp;

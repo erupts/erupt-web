@@ -8,7 +8,7 @@ import {ActivatedRoute} from "@angular/router";
 @Component({
     selector: 'app-tree',
     templateUrl: './tree.component.html',
-    styles: []
+    styleUrls: ['./tree.component.less']
 })
 export class TreeComponent implements OnInit {
 

@@ -9,7 +9,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "npm run color-less && ng serve --port 4400 -o",
+    "start": "npm run color-less && ng serve --port 4400 -o --host 192.168.1.133",
     "build": "npm run color-less && ng build --prod --build-optimizer",
     "test": "ng test",
     "lint": "npm run lint:ts && npm run lint:style",

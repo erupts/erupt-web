@@ -37,7 +37,8 @@
 
                             <ng-container *ngSwitchCase="'TEXTAREA'">
                                 <div nz-col [nzSpan]="24">
-                                    <se [label]="field.eruptFieldJson.edit.title" [required]="field.eruptFieldJson.edit.notNull"
+                                    <se [label]="field.eruptFieldJson.edit.title"
+                                        [required]="field.eruptFieldJson.edit.notNull"
                                         [optionalHelp]="field.eruptFieldJson.edit.desc">
                                         <textarea rows="4" nz-input class="erupt-input"
                                                   [value]="field.eruptFieldJson.edit.$value||''"
@@ -141,7 +142,13 @@
                                         >
                                     </nz-input-group>
                                     <ng-template #refBtn>
-                                        <i nz-icon type="close-circle" theme="fill" class="point" *ngIf="field.eruptFieldJson.edit.$value" (click)="clearValue(field)"></i>
+                                        <ng-container *ngIf="field.eruptFieldJson.edit.$value">
+                                            <i nz-icon type="close-circle" theme="fill" class="point"
+                                               (click)="clearValue(field)"></i>
+                                        </ng-container>
+                                        <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
+                                            <i nz-icon type="home" theme="fill" class="point"></i>
+                                        </ng-container>
                                     </ng-template>
                                 </se>
                             </div>

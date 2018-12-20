@@ -99,4 +99,20 @@ export class DataService {
       }
     });
   }
+
+  getVerifyCodeUrl(): string {
+    return this.domain + "/verify/code-img" + "?_t" + new Date().getTime();
+  }
+
+  login(account: string, pwd: string, verifyCode?: any): Observable<any> {
+    return this._http.post(this.domain + "/erupt-user/login", {},{
+      account: account,
+      pwd: pwd,
+      verifyCode: verifyCode
+    });
+  }
+
+  getMenu(): Observable<any> {
+    return this.http.post(this.domain + "/erupt-user/menu", {});
+  }
 }

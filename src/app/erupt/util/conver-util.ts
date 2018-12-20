@@ -81,7 +81,7 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
       obj.buttons = [
         {
           icon: "qrcode",
-          click: (record: any, modal: any) => {
+          click: (record: any) => {
             console.log(record[view.column]);
           }
         }
