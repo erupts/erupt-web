@@ -105,7 +105,7 @@ export class DataService {
   }
 
   login(account: string, pwd: string, verifyCode?: any): Observable<any> {
-    return this._http.post(this.domain + "/erupt-user/login", {},{
+    return this._http.post(this.domain + "/erupt-user/login", {}, {
       account: account,
       pwd: pwd,
       verifyCode: verifyCode

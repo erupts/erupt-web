@@ -2,6 +2,8 @@ import { View } from "../model/erupt-field.model";
 import { EruptModel } from "../model/erupt.model";
 import { EditType, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
+import { Inject } from "@angular/core";
+import { NzMessageService } from "ng-zorro-antd";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -109,7 +111,7 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
 }
 
 //将eruptModel中的内容拼接成后台需要的json格式
-export function eruptValueToObject(eruptModel: EruptModel): any {
+export function eruptValueToObject(eruptModel: EruptModel, msg?: NzMessageService): any {
   const eruptData: any = {};
   eruptModel.eruptFieldModels.forEach(field => {
     if (field.eruptFieldJson.edit.type === EditType.REFERENCE) {
@@ -120,6 +122,22 @@ export function eruptValueToObject(eruptModel: EruptModel): any {
     }
   });
   return eruptData;
+}
+
+export function validateNotNull(eruptModel: EruptModel, msg?: NzMessageService): boolean {
+  for (let field of eruptModel.eruptFieldModels) {
+    if (msg) {
+      if (field.eruptFieldJson.edit.notNull) {
+        console.log(field.eruptFieldJson.edit.notNull);
+        console.log(field.eruptFieldJson.edit.$value);
+        if (!field.eruptFieldJson.edit.$value) {
+          msg.error(field.eruptFieldJson.edit.title + "必填！");
+          return false;
+        }
+      }
+    }
+  }
+  return true;
 }
 
 //将后台数据转化成前端可视格式

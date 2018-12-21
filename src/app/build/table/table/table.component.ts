@@ -5,7 +5,7 @@ import { EruptModel } from "../../../erupt/model/erupt.model";
 import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
 import {
   emptyEruptValue,
-  eruptValueToObject, initErupt, objectToEruptValue, viewToAlainTableConfig
+  eruptValueToObject, initErupt, objectToEruptValue, validateNotNull, viewToAlainTableConfig
 } from "../../../erupt/util/conver-util";
 import { EditType } from "../../../erupt/model/erupt.enum";
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
@@ -307,28 +307,54 @@ export class TableComponent implements OnInit {
 
   addRow() {
     emptyEruptValue(this.eruptModel);
+    // this.modal.create({
+    //   nzContent: EditComponent,
+    //   nzComponentParams: {
+    //     eruptModel: this.eruptModel
+    //   },
+    //   nzTitle: "新增",
+    //   nzStyle: {
+    //     top: "20px"
+    //   },
+    //   nzOnOk: () => {
+    //     this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+    //       console.log(result);
+    //     });
+    //   }
+    // });
+
     this.modalHelper.createStatic(EditComponent, { eruptModel: this.eruptModel }, {
+      size: "lg",
       modalOptions: {
+        nzKeyboard: false,
         nzStyle: {
           top: "20px"
         },
         nzTitle: "新增",
+        // @ts-ignore
         nzFooter: [
           {
             label: "新增",
             type: "primary",
             autoLoading: true,
-            onClick: () => {
-              this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
-                console.log(result);
-              });
+            onClick: (modal, dialog) => {
+              if (validateNotNull(this.eruptModel, this.msg)) {
+                this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+                  console.log(result);
+                  this.modal.closeAll();
+                });
+              } else {
+                return new Promise<boolean>(resolve => resolve.apply(false));
+              }
             }
           },
           {
             label: "取消",
             autoLoading: true,
-            onClick: (modal) => {
+            onClick: (modal, a, b) => {
               console.log(modal);
+              console.log(a);
+              console.log(b);
             }
           }
         ]

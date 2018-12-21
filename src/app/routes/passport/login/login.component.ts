@@ -27,7 +27,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
   type = 0;
   loading = false;
 
-  useVerifyCode = true;
+  useVerifyCode = false;
 
   verifyCodeUrl: string = this.data.getVerifyCodeUrl();
 

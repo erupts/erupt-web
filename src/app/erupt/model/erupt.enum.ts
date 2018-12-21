@@ -41,7 +41,7 @@ export enum InputEnum {
 }
 
 export enum ChoiceEnum {
-  SINGLE = "SINGLE",
+  RADIO = "RADIO",
   SELECT_SINGLE = "SELECT_SINGLE",
   SELECT_MULTI = "SELECT_MULTI"
 }

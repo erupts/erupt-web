@@ -57,20 +57,26 @@
                              [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title" [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <!--<nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"-->
-                                <!--class="erupt-input stander-line-height">-->
-                                <!--<ng-container *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl">-->
-                                <!--<label nz-radio [nzValue]="vl.value">{{vl.label}}</label>-->
-                                <!--</ng-container>-->
-                                <!--</nz-radio-group>-->
-                                <nz-select class="erupt-input" [nzAllowClear]='true'
-                                           [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                           [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                           [name]="field.fieldName"
-                                           [nzMode]="field.eruptFieldJson.edit.choiceType[0].type==choiceEnum.SELECT_MULTI?'multiple':'default'">
-                                    <nz-option *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl"
-                                               [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
-                                </nz-select>
+                                <ng-container *ngIf="field.eruptFieldJson.edit.choiceType[0].type==choiceEnum.RADIO">
+                                    <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                    [name]="field.fieldName"
+                                                    class="erupt-input stander-line-height">
+                                        <ng-container *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl">
+                                            <label nz-radio [nzValue]="vl.value">{{vl.label}}</label>
+                                        </ng-container>
+                                    </nz-radio-group>
+                                </ng-container>
+                                <ng-container *ngIf="field.eruptFieldJson.edit.choiceType[0].type==choiceEnum.SELECT_MULTI
+                                ||field.eruptFieldJson.edit.choiceType[0].type==choiceEnum.SELECT_SINGLE">
+                                    <nz-select class="erupt-input" [nzAllowClear]='true'
+                                               [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                               [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [name]="field.fieldName"
+                                               [nzMode]="field.eruptFieldJson.edit.choiceType[0].type==choiceEnum.SELECT_MULTI?'multiple':'default'">
+                                        <nz-option *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl"
+                                                   [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
+                                    </nz-select>
+                                </ng-container>
                             </se>
                         </div>
                     </ng-container>
@@ -147,7 +153,7 @@
                                                (click)="clearValue(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
-                                            <i nz-icon type="home" theme="fill" class="point"></i>
+                                            <i nz-icon type="database" theme="fill" class="point"></i>
                                         </ng-container>
                                     </ng-template>
                                 </se>

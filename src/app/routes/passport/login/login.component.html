@@ -27,14 +27,11 @@
             <!--图形验证码-->
             <nz-form-item *ngIf="useVerifyCode">
                 <nz-form-control>
-                    <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-lock">
-                        <input nz-input type="text" [maxLength]="10" formControlName="password" placeholder="验证码">
+                    <nz-input-group nzSize="large">
+                        <input nz-input type="text" [maxLength]="10" formControlName="verifyCode" placeholder="验证码">
                         <img [src]="verifyCodeUrl" alt="验证码" (click)="changeVerifyCode()"
                              style="position: absolute;z-index: 9;right: 1px;top: 1px;">
                     </nz-input-group>
-                    <nz-form-explain *ngIf="password.dirty && password.errors">
-                        请输入验证码！
-                    </nz-form-explain>
                 </nz-form-control>
             </nz-form-item>
         </nz-tab>
