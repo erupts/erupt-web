@@ -3,7 +3,7 @@
  */
 export interface EruptApiModel {
     data: any;
-    status: Status;
+    success: boolean;
     message: string;
 }
 

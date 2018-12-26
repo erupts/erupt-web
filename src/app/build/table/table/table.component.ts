@@ -14,6 +14,7 @@ import { EditComponent } from "../edit/edit.component";
 import { QRComponent, ReuseTabService, STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
+import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 
 @Component({
   selector: "app-list-view",
@@ -33,7 +34,9 @@ export class TableComponent implements OnInit {
               private msg: NzMessageService,
               @Inject(NzModalService)
               private modal: NzModalService,
-              public route: ActivatedRoute) {
+              public route: ActivatedRoute,
+              @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService
+  ) {
 
   }
 
@@ -46,6 +49,15 @@ export class TableComponent implements OnInit {
     pageNumber: 0,
     pageSize: 10,
     total: 10
+  };
+
+
+  stPage = {
+    pageSizes: [10, 30, 50, 100],
+    showSize: true,
+    showQuickJumper: true,
+    total: true,
+    toTop: true
   };
 
   rows: any;
@@ -64,6 +76,7 @@ export class TableComponent implements OnInit {
   @ViewChild("st") st;
 
   ngOnInit() {
+    console.log(this.tokenService.get());
     // this.modalHelper.create(QRComponent, {value: "http://www.baidu.com",size:"100"}).subscribe(s => {
     //
     // });
@@ -146,6 +159,7 @@ export class TableComponent implements OnInit {
     }).subscribe(
       data => {
         this.rows = data.list;
+        console.log(data);
       }
     );
   }
@@ -307,59 +321,56 @@ export class TableComponent implements OnInit {
 
   addRow() {
     emptyEruptValue(this.eruptModel);
-    // this.modal.create({
-    //   nzContent: EditComponent,
-    //   nzComponentParams: {
-    //     eruptModel: this.eruptModel
-    //   },
-    //   nzTitle: "新增",
-    //   nzStyle: {
-    //     top: "20px"
-    //   },
-    //   nzOnOk: () => {
-    //     this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
-    //       console.log(result);
-    //     });
-    //   }
-    // });
+    this.modal.create({
+      nzWrapClassName: "modal-lg",
+      nzTitle: "新增",
+      nzContent: EditComponent,
+      nzComponentParams: {
+        eruptModel: this.eruptModel
+      },
+      nzOnOk: () => {
+        if (validateNotNull(this.eruptModel, this.msg)) {
+          this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+            console.log(result);
+            return true;
+          });
+        } else {
+          return false;
+        }
+      },
+      nzOnCancel: () => {
 
-    this.modalHelper.createStatic(EditComponent, { eruptModel: this.eruptModel }, {
-      size: "lg",
-      modalOptions: {
-        nzKeyboard: false,
-        nzStyle: {
-          top: "20px"
-        },
-        nzTitle: "新增",
-        // @ts-ignore
-        nzFooter: [
-          {
-            label: "新增",
-            type: "primary",
-            autoLoading: true,
-            onClick: (modal, dialog) => {
-              if (validateNotNull(this.eruptModel, this.msg)) {
-                this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
-                  console.log(result);
-                  this.modal.closeAll();
-                });
-              } else {
-                return new Promise<boolean>(resolve => resolve.apply(false));
-              }
-            }
-          },
-          {
-            label: "取消",
-            autoLoading: true,
-            onClick: (modal, a, b) => {
-              console.log(modal);
-              console.log(a);
-              console.log(b);
-            }
-          }
-        ]
       }
-    }).subscribe();
+    });
+
+    // this.modalHelper.createStatic(EditComponent, { eruptModel: this.eruptModel }, {
+    //   size: "lg",
+    //   modalOptions: {
+    //     nzKeyboard: true,
+    //     nzStyle: {
+    //       top: "20px"
+    //     },
+    //     nzTitle: "新增",
+    //     // @ts-ignore
+    //     nzFooter: [
+    //       {
+    //         label: "新增",
+    //         type: "primary",
+    //         autoLoading: true,
+    //         onClick: (modal, dialog) => {
+    //
+    //         }
+    //       },
+    //       {
+    //         label: "取消",
+    //         autoLoading: true,
+    //         onClick: (modal, a, b) => {
+    //           this.modal.closeAll();
+    //         }
+    //       }
+    //     ]
+    //   }
+    // }).subscribe();
   }
 
 

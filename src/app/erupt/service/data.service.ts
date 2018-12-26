@@ -7,6 +7,8 @@ import { EruptModel, Tree } from "../model/erupt.model";
 import { Page } from "../model/page";
 import { _HttpClient } from "@delon/theme";
 import { Observable } from "rxjs";
+import { loginModel } from "../model/user.model";
+import { EruptApiModel } from "../model/erupt-api.model";
 
 @Injectable()
 export class DataService {
@@ -20,7 +22,7 @@ export class DataService {
   }
 
   getEruptBuild(modelName: string): Observable<EruptModel> {
-    return this.http.get<EruptModel>(this.domain + "/erupt-api/build/list/" + modelName, {
+    return this._http.get<EruptModel>(this.domain + "/erupt-api/build/list/" + modelName, {
       headers: {
         eruptKey: modelName
       }
@@ -65,24 +67,24 @@ export class DataService {
     });
   }
 
-  addEruptData(modelName: string, data: any): Observable<any> {
-    return this.http.post(this.domain + "/erupt-api/data/" + modelName, data, {
+  addEruptData(modelName: string, data: any): Observable<EruptApiModel> {
+    return this.http.post<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, data, {
       headers: {
         eruptKey: modelName
       }
     });
   }
 
-  deleteEruptData(modelName: string, id): Observable<any> {
-    return this.http.delete(this.domain + "/erupt-api/data/" + modelName + "/" + id, {
+  deleteEruptData(modelName: string, id): Observable<EruptApiModel> {
+    return this.http.delete<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/" + id, {
       headers: {
         eruptKey: modelName
       }
     });
   }
 
-  deleteEruptDatas(modelName: string, ids: Array<any>): Observable<any> {
-    return this.http.delete(this.domain + "/erupt-api/data/" + modelName, {
+  deleteEruptDatas(modelName: string, ids: Array<any>): Observable<EruptApiModel> {
+    return this.http.delete<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, {
       params: {
         ids: ids
       },
@@ -104,12 +106,13 @@ export class DataService {
     return this.domain + "/verify/code-img" + "?_t" + new Date().getTime();
   }
 
-  login(account: string, pwd: string, verifyCode?: any): Observable<any> {
+  login(account: string, pwd: string, verifyCode?: any): Observable<loginModel> {
     return this._http.post(this.domain + "/erupt-user/login", {}, {
-      account: account,
-      pwd: pwd,
-      verifyCode: verifyCode
-    });
+        account: account,
+        pwd: pwd,
+        verifyCode: verifyCode
+      }
+    );
   }
 
   getMenu(): Observable<any> {

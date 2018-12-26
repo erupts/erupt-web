@@ -84,14 +84,16 @@ export class EditTypeComponent implements OnInit {
             {
               label: "取消",
               onClick: (button, dialog) => {
+                console.log(this);
                 console.log(button);
                 console.log(dialog);
-                sub.close();
+                return true;
               }
             }]
         }
-      }).subscribe();
-      console.log(sub);
+      }).subscribe(() => {
+        alert(233333);
+      });
     });
 
   }

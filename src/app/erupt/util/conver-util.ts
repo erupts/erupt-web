@@ -114,11 +114,20 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
 export function eruptValueToObject(eruptModel: EruptModel, msg?: NzMessageService): any {
   const eruptData: any = {};
   eruptModel.eruptFieldModels.forEach(field => {
-    if (field.eruptFieldJson.edit.type === EditType.REFERENCE) {
-      eruptData[field.fieldName] = {};
-      eruptData[field.fieldName][field.eruptFieldJson.edit.referenceType[0].id] = field.eruptFieldJson.edit.$value;
-    } else {
-      eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+    switch (field.eruptFieldJson.edit.type) {
+      case EditType.REFERENCE:
+        if (field.eruptFieldJson.edit.$value) {
+          eruptData[field.fieldName] = {};
+          eruptData[field.fieldName][field.eruptFieldJson.edit.referenceType[0].id] = field.eruptFieldJson.edit.$value;
+        }
+        break;
+      case EditType.BOOLEAN:
+        const $value = field.eruptFieldJson.edit.$value;
+        eruptData[field.fieldName] = $value;
+        break;
+      default:
+        eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+        break;
     }
   });
   return eruptData;
@@ -153,7 +162,11 @@ export function objectToEruptValue(eruptModel: EruptModel, object: any) {
         field.eruptFieldJson.edit.$viewValue = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceType[0].label];
         break;
       case EditType.BOOLEAN:
-        field.eruptFieldJson.edit.$value = field.eruptFieldJson.edit.boolType[0].defaultValue;
+        if (!object[field.fieldName] && object[field.fieldName] !== false) {
+          field.eruptFieldJson.edit.$value = field.eruptFieldJson.edit.boolType[0].defaultValue;
+        } else {
+          field.eruptFieldJson.edit.$value = object[field.fieldName];
+        }
         break;
       default:
         field.eruptFieldJson.edit.$value = object[field.fieldName];
@@ -164,9 +177,14 @@ export function objectToEruptValue(eruptModel: EruptModel, object: any) {
 
 export function emptyEruptValue(eruptModel: EruptModel) {
   eruptModel.eruptFieldModels.forEach(ef => {
-    ef.eruptFieldJson.edit.$value = null;
-    ef.eruptFieldJson.edit.$viewValue = null;
-    ef.eruptFieldJson.edit.$tempValue = null;
+    if (ef.eruptFieldJson.edit.type == EditType.BOOLEAN) {
+      ef.eruptFieldJson.edit.$value = ef.eruptFieldJson.edit.boolType[0].defaultValue;
+    } else {
+      ef.eruptFieldJson.edit.$value = null;
+      ef.eruptFieldJson.edit.$viewValue = null;
+      ef.eruptFieldJson.edit.$tempValue = null;
+    }
+
   });
 }
 

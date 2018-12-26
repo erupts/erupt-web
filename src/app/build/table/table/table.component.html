@@ -60,9 +60,12 @@
     </ng-container>
 
 
-    <st #st [data]="rows" [columns]="columns" [scroll]="{x: '900px'}"
+    <st [data]="rows" [columns]="columns" [scroll]="{x: '900px'}"
         [bordered]="settingSrv.layout.tableBorder"
         (change)="tableDataChange($event)"
+        ps="2"
+        [page] = "stPage"
+        size="default"
     >
     </st>
 </div>

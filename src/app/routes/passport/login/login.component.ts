@@ -116,27 +116,28 @@ export class UserLoginComponent implements OnDestroy, OnInit {
     this.loading = true;
     this.data.login(this.userName.value.toString(), this.password.value.toString(), 123).subscribe((result) => {
       this.loading = false;
-      this.error = result.reason;
       this.useVerifyCode = result.useVerifyCode;
-      console.log(result);
-      if (!result.pass) {
-        this.changeVerifyCode();
+      if (result.pass) {
+        // 设置Token信息
+        this.settingsService.user.name = result.userName;
+        this.tokenService.set({
+          token: result.token,
+          userName: result.userName,
+          time: +new Date()
+        });
+        this.router.navigate(["/"]);
+      } else {
+        this.error = result.reason;
+        if (result.useVerifyCode) {
+          this.changeVerifyCode();
+        }
       }
       this.reuseTabService.clear();
-      // this.router.navigate(["/"]);
     });
 
 
     setTimeout(() => {
 
-      // // 设置Token信息
-      // this.tokenService.set({
-      //   token: "123456789",
-      //   name: this.userName.value,
-      //   email: `cipchk@qq.com`,
-      //   id: 10000,
-      //   time: +new Date()
-      // });
 
     }, 1000);
   }

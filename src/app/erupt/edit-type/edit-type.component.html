@@ -194,6 +194,11 @@
                     <ng-container *ngSwitchCase="editType.DICT">
                         DICT
                     </ng-container>
+                    <ng-container *ngSwitchCase="editType.DIVIDE">
+                        <div nz-col [nzSpan]="24">
+                            <nz-divider [nzDashed]="false" [nzText]="field.eruptFieldJson.edit.title"></nz-divider>
+                        </div>
+                    </ng-container>
                     <ng-container *ngSwitchCase="editType.MARK_DOWN">
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title" [required]="field.eruptFieldJson.edit.notNull"

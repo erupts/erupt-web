@@ -4,7 +4,7 @@ import { NzFormatEmitEvent } from "ng-zorro-antd/tree";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { eruptValueToObject, objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
 import { ActivatedRoute } from "@angular/router";
-import { NzMessageService, NzModalService } from "ng-zorro-antd";
+import { NzMessageService, NzModalRef, NzModalService } from "ng-zorro-antd";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 
 @Component({
@@ -17,6 +17,8 @@ export class TreeComponent implements OnInit {
   eruptName: string = "";
 
   eruptModel: EruptModel;
+
+  private addModal: NzModalRef;
 
 
   constructor(private dataService: DataService,
@@ -34,21 +36,24 @@ export class TreeComponent implements OnInit {
 
 
   addRoot() {
-    this.modal.create({
+    this.addModal = this.modal.create({
       nzWrapClassName: "modal-lg",
-      nzTitle: "增加",
+      nzTitle: "新增",
       nzContent: EditTypeComponent,
-      behavior: "edit",
       nzComponentParams: {
         // @ts-ignore
         eruptFieldModels: this.eruptModel.eruptFieldModels,
-        eruptName: this.eruptName
+        eruptName: this.eruptName,
+        behavior: "edit"
       },
       nzOnOk: () => {
+        console.log(this.addModal);
         if (validateNotNull(this.eruptModel, this.msg)) {
           this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel, this.msg)).subscribe(result => {
             alert(result);
           });
+        } else {
+          return false;
         }
       }
     });
@@ -83,7 +88,7 @@ export class TreeComponent implements OnInit {
             title: node.label,
             data: node.data
           };
-          if (node.children.length > 0) {
+          if (node.children && node.children.length > 0) {
             tempNodes.push(option);
             option.children = gcZorroTree(node.children);
           } else {

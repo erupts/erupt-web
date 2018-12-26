@@ -19,7 +19,8 @@ export enum EditType {
   QRCODE = 'QRCODE',           //二维码
   ATTACHMENT = 'ATTACHMENT',       //附件
   TAB = 'TAB',             //TAB选项卡
-  MARK_DOWN = 'MARK_DOWN'  //mark down
+  MARK_DOWN = 'MARK_DOWN',  //mark down
+  DIVIDE = "DIVIDE"
 }
 
 export enum ViewType {

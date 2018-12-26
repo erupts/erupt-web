@@ -72,10 +72,10 @@ export class StartupService {
             description: `erupt admin for YuePeng `
         };
         const user: any = {
-            name: 'Admin',
+            name: this.tokenService.get().userName||"",
             avatar: './assets/tmp/img/avatar.jpg',
             email: '122339792@qq.com',
-            token: '123456789'
+            token: this.tokenService.get().token
         };
         // 应用信息：包括站点名、描述、年份
         this.settingService.setApp(app);
@@ -101,7 +101,7 @@ export class StartupService {
                     // },
                     {
                         text: 'MMO',
-                        icon: {type: 'icon', value: 'rocket'},
+                        icon: {type: 'icon', value: 'appstore'},
                         link: '/build/table/mmo',
                     },
                     {
