@@ -76,6 +76,7 @@ export class EditComponent implements OnInit {
             pageSize: 100
           }).subscribe(
             data => {
+
               sub.eruptFieldModel.eruptFieldJson.edit.$value = data.list;
             }
           );
