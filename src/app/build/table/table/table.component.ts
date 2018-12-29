@@ -46,7 +46,7 @@ export class TableComponent implements OnInit {
   subErupts: Array<EruptAndEruptFieldModel>;
 
   stPage = {
-    pageSizes: [1, 2, 3, 10, 30, 50, 100],
+    pageSizes: [10, 30, 50, 100],
     showSize: true,
     showQuickJumper: true,
     total: true,

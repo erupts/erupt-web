@@ -20,6 +20,8 @@ export class TreeComponent implements OnInit {
 
   private addModal: NzModalRef;
 
+  private showEdit: boolean = false;
+
 
   constructor(private dataService: DataService,
               public route: ActivatedRoute,
@@ -36,27 +38,37 @@ export class TreeComponent implements OnInit {
 
 
   addRoot() {
-    this.addModal = this.modal.create({
-      nzWrapClassName: "modal-lg",
-      nzTitle: "新增",
-      nzContent: EditTypeComponent,
-      nzComponentParams: {
-        // @ts-ignore
-        eruptFieldModels: this.eruptModel.eruptFieldModels,
-        eruptName: this.eruptName,
-        behavior: "edit"
-      },
-      nzOnOk: () => {
-        console.log(this.addModal);
-        if (validateNotNull(this.eruptModel, this.msg)) {
-          this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel, this.msg)).subscribe(result => {
-            alert(result);
-          });
-        } else {
-          return false;
-        }
-      }
-    });
+    this.showEdit = true;
+    objectToEruptValue(this.eruptModel, {});
+    // this.addModal = this.modal.create({
+    //   nzWrapClassName: "modal-lg",
+    //   nzTitle: "新增",
+    //   nzContent: EditTypeComponent,
+    //   nzComponentParams: {
+    //     // @ts-ignore
+    //     eruptFieldModels: this.eruptModel.eruptFieldModels,
+    //     eruptName: this.eruptName,
+    //     behavior: "edit"
+    //   },
+    //   nzOnOk: () => {
+    //     console.log(this.addModal);
+    //     if (validateNotNull(this.eruptModel, this.msg)) {
+    //       this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel, this.msg)).subscribe(result => {
+    //         alert(result);
+    //       });
+    //     } else {
+    //       return false;
+    //     }
+    //   }
+    // });
+  }
+
+  save() {
+    validateNotNull(this.eruptModel,this.msg);
+  }
+
+  del() {
+
   }
 
   nzEvent(event: NzFormatEmitEvent): void {
@@ -64,6 +76,7 @@ export class TreeComponent implements OnInit {
   }
 
   nodeClickEvent(event: NzFormatEmitEvent): void {
+    this.showEdit = true;
     objectToEruptValue(this.eruptModel, event.node.origin.data);
   }
 

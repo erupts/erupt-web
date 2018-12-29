@@ -27,14 +27,14 @@
         </nz-card>
     </div>
 
-    <div nz-col class="mb-sm" [nzXs]="24" [nzSm]="12" [nzMd]="16" [nzLg]="18">
+    <div nz-col class="mb-sm" [nzXs]="24" [nzSm]="12" [nzMd]="16" [nzLg]="18" *ngIf="showEdit">
         <nz-card>
             <div nz-row>
                 <div nz-col [nzXs]="12">
-                    <button nz-button>
+                    <button nz-button (click)="save()">
                         <i nz-icon type="save" theme="outline"></i>保存
                     </button>
-                    <button nz-button nzType="danger">
+                    <button nz-button nzType="danger" (click)="del()">
                         <i nz-icon type="delete" theme="outline"></i>删除
                     </button>
                 </div>
@@ -45,7 +45,8 @@
             <hr style="border: 0px;">
             <div style="background: #fff;padding: 10px">
                 <ng-container *ngIf="eruptModel">
-                    <erupt-edit-type [eruptFieldModels]="eruptModel.eruptFieldModels" [eruptName]="eruptModel.eruptName">
+                    <erupt-edit-type [eruptFieldModels]="eruptModel.eruptFieldModels"
+                                     [eruptName]="eruptModel.eruptName">
 
                     </erupt-edit-type>
                 </ng-container>

@@ -27,13 +27,3 @@ export function EruptCheckReqData(eruptModel: EruptModel): PassAndMessage {
     message: message
   };
 }
-
-export function EruptCheckReqDataByToastr(eruptModel: EruptModel): boolean {
-  let passMessage = EruptCheckReqData(eruptModel)
-  if (!passMessage.pass) {
-    // toastr.error(passMessage.message, "", {
-    //   positionClass: "toast-bottom-right"
-    // });
-  }
-  return passMessage.pass;
-}
