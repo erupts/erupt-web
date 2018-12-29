@@ -74,7 +74,7 @@ export class TreeComponent implements OnInit {
     });
 
     this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
-      this.eruptModel = erupt;
+      this.eruptModel = erupt.eruptModel;
     });
 
     this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {

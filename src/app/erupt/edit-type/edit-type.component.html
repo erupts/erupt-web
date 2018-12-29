@@ -52,33 +52,52 @@
                     </ng-container>
                     <!--choice-->
                     <ng-container *ngSwitchCase="editType.CHOICE">
-                        <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
-                             [nzXl]="col.xl"
-                             [nzXXl]="col.xxl">
-                            <se [label]="field.eruptFieldJson.edit.title" [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <ng-container *ngIf="field.eruptFieldJson.edit.choiceType[0].type==choiceEnum.RADIO">
-                                    <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                    [name]="field.fieldName"
-                                                    class="erupt-input stander-line-height">
-                                        <ng-container *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl">
-                                            <label nz-radio [nzValue]="vl.value">{{vl.label}}</label>
-                                        </ng-container>
-                                    </nz-radio-group>
-                                </ng-container>
-                                <ng-container *ngIf="field.eruptFieldJson.edit.choiceType[0].type==choiceEnum.SELECT_MULTI
-                                ||field.eruptFieldJson.edit.choiceType[0].type==choiceEnum.SELECT_SINGLE">
-                                    <nz-select class="erupt-input" [nzAllowClear]='true'
-                                               [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                               [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                               [name]="field.fieldName"
-                                               [nzMode]="field.eruptFieldJson.edit.choiceType[0].type==choiceEnum.SELECT_MULTI?'multiple':'default'">
-                                        <nz-option *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl"
-                                                   [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
-                                    </nz-select>
-                                </ng-container>
-                            </se>
-                        </div>
+                        <ng-container [ngSwitch]="field.eruptFieldJson.edit.choiceType[0].type">
+                            <ng-container *ngSwitchCase="choiceEnum.RADIO">
+                                <div nz-col class="col-div" [nzXs]="24">
+                                    <se [label]="field.eruptFieldJson.edit.title"
+                                        [required]="field.eruptFieldJson.edit.notNull"
+                                        [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                        <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                        [name]="field.fieldName"
+                                                        class="erupt-input stander-line-height">
+                                            <ng-container *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl">
+                                                <label nz-radio [nzValue]="vl.value">{{vl.label}}</label>
+                                            </ng-container>
+                                        </nz-radio-group>
+                                    </se>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="choiceEnum.CHECKBOX">
+                                <div nz-col class="col-div" [nzXs]="24">
+                                    <se [label]="field.eruptFieldJson.edit.title"
+                                        [required]="field.eruptFieldJson.edit.notNull"
+                                        [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                        <nz-checkbox-group [(ngModel)]="field.eruptFieldJson.edit.choiceType[0].vl">
+                                        </nz-checkbox-group>
+                                    </se>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="choiceEnum.SELECT_SINGLE||choiceEnum.SELECT_MULTI">
+                                <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                                     [nzLg]="col.lg"
+                                     [nzXl]="col.xl"
+                                     [nzXXl]="col.xxl">
+                                    <se [label]="field.eruptFieldJson.edit.title"
+                                        [required]="field.eruptFieldJson.edit.notNull"
+                                        [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                        <nz-select class="erupt-input" [nzAllowClear]='true'
+                                                   [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                   [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                   [name]="field.fieldName"
+                                                   [nzMode]="field.eruptFieldJson.edit.choiceType[0].type==choiceEnum.SELECT_MULTI?'multiple':'default'">
+                                            <nz-option *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl"
+                                                       [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
+                                        </nz-select>
+                                    </se>
+                                </div>
+                            </ng-container>
+                        </ng-container>
                     </ng-container>
                     <!--date-->
                     <ng-container *ngSwitchCase="editType.DATE">
@@ -187,16 +206,30 @@
                             </div>
                         </div>
                     </ng-container>
-                    <ng-container *ngSwitchCase="editType.IMAGE">
-
-                    </ng-container>
-                    <!--dict-->
-                    <ng-container *ngSwitchCase="editType.DICT">
-                        DICT
-                    </ng-container>
                     <ng-container *ngSwitchCase="editType.DIVIDE">
                         <div nz-col [nzSpan]="24">
                             <nz-divider [nzDashed]="false" [nzText]="field.eruptFieldJson.edit.title"></nz-divider>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.IMAGE">
+
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.ATTACHMENT">
+                        <div nz-col [nzSpan]="24">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <nz-upload
+                                        nzType="drag"
+                                        [nzMultiple]="true"
+                                        [nzLimit]="10"
+                                        nzAction="https://jsonplaceholder.typicode.com/posts/">
+                                    <p class="ant-upload-drag-icon">
+                                        <i nz-icon type="inbox"></i>CHECKBOX
+                                    </p>
+                                    <p class="ant-upload-text">单击或拖动文件到此区域上传</p>
+                                </nz-upload>
+                            </se>
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.MARK_DOWN">

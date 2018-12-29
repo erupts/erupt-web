@@ -6,9 +6,10 @@
     <br>
 
     <nz-tabset>
-        <ng-container *ngFor="let sub of eruptModel.subEruptModels">
-            <nz-tab [nzTitle]="sub.eruptField.eruptFieldJson.edit.title">
-                <st #st [data]="sub.eruptField.eruptFieldJson.edit.$value" [columns]="sub.columns"
+        <ng-container *ngFor="let sub of subErupts">
+            <nz-tab [nzTitle]="sub.eruptFieldModel.eruptFieldJson.edit.title">
+                <!--[data]="sub.eruptField.eruptFieldJson.edit.$value"-->
+                <st [columns]="sub.alainTableConfig"
                     [bordered]="settingSrv.layout.tableBorder">
 
                 </st>

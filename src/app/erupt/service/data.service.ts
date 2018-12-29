@@ -9,6 +9,7 @@ import { _HttpClient } from "@delon/theme";
 import { Observable } from "rxjs";
 import { loginModel } from "../model/user.model";
 import { EruptApiModel } from "../model/erupt-api.model";
+import { EruptPageModel } from "../model/erupt-page.model";
 
 @Injectable()
 export class DataService {
@@ -21,8 +22,8 @@ export class DataService {
   constructor(private http: HttpClient, private _http: _HttpClient) {
   }
 
-  getEruptBuild(modelName: string): Observable<EruptModel> {
-    return this._http.get<EruptModel>(this.domain + "/erupt-api/build/list/" + modelName, {
+  getEruptBuild(modelName: string): Observable<EruptPageModel> {
+    return this._http.get<EruptPageModel>(this.domain + "/erupt-api/build/list/" + modelName, {
       headers: {
         eruptKey: modelName
       }

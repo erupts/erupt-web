@@ -5,9 +5,8 @@ import { EruptModel } from "../../../erupt/model/erupt.model";
 import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
 import {
   emptyEruptValue,
-  eruptValueToObject, initErupt, objectToEruptValue, validateNotNull, viewToAlainTableConfig
+  eruptValueToObject, initErupt, validateNotNull, viewToAlainTableConfig
 } from "../../../erupt/util/conver-util";
-import { EditType } from "../../../erupt/model/erupt.enum";
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 import { EditComponent } from "../edit/edit.component";
@@ -15,6 +14,7 @@ import { QRComponent, ReuseTabService, STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
+import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 
 @Component({
   selector: "app-list-view",
@@ -37,128 +37,68 @@ export class TableComponent implements OnInit {
               public route: ActivatedRoute,
               @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService
   ) {
-
   }
 
-
-  eruptName: string = "";
+  eruptName: string;
 
   eruptModel: EruptModel;
 
-  page: Page = {
-    pageNumber: 0,
-    pageSize: 10,
-    total: 10
-  };
-
+  subErupts: Array<EruptAndEruptFieldModel>;
 
   stPage = {
-    pageSizes: [10, 30, 50, 100],
+    pageSizes: [1, 2, 3, 10, 30, 50, 100],
     showSize: true,
     showQuickJumper: true,
     total: true,
     toTop: true
   };
 
+  page: Page = {
+    pageIndex: 1,
+    pageSize: 2
+  };
   rows: any;
 
   rowData: any;
 
   operatorEdit: [Array<EruptFieldModel>, string] = [[], ""];
 
-
   selectedRows: Array<any> = [];
 
   columns = [];
 
-  @ViewChild("editDrawer") editDrawer;
-
   @ViewChild("st") st;
 
   ngOnInit() {
-    console.log(this.tokenService.get());
-    // this.modalHelper.create(QRComponent, {value: "http://www.baidu.com",size:"100"}).subscribe(s => {
-    //
-    // });
     this.route.params.subscribe((params) => {
       this.eruptName = params.name;
     });
 
     this.dataService.getEruptBuild(this.eruptName).subscribe(
       em => {
-        this.eruptModel = em;
+        this.eruptModel = em.eruptModel;
+        this.subErupts = em.subErupts;
         initErupt(this.eruptModel);
         this.buildTableConfig();
-        em.eruptFieldModels.forEach((field, i) => {
-          //根据TAb类型获取subEruptModels结构
-          if (field.eruptFieldJson.edit.type === EditType.TAB) {
-            this.eruptModel.subEruptModels = [];
-            this.dataService.getEruptBuild(field.fieldReturnName).subscribe(
-              subEm => {
-                initErupt(subEm);
-                let columns = viewToAlainTableConfig(this.eruptModel.tableColumns);
-                columns.push({
-                  fixed: "right",
-                  width: "100px",
-                  title: "操作区",
-                  buttons: [
-                    {
-                      icon: "edit",
-                      click: (record: any, modal: any) => {
-                        objectToEruptValue(subEm, record);
-                        this.modalHelper.createStatic(EditTypeComponent, {
-                          eruptFieldModels: subEm.eruptFieldModels,
-                          eruptName: subEm.eruptName,
-                          behavior: "edit"
-
-                        }, {
-                          modalOptions: {
-                            nzTitle: "操作",
-                            nzFooter: [{
-                              label: "确定",
-                              size: "large",
-                              onClick: (data) => {
-                                console.log(data);
-                              }
-                            }]
-                          }
-                        }).subscribe(f => {
-
-                        });
-                      }
-                    },
-                    {
-                      icon: {
-                        type: "delete",
-                        theme: "twotone",
-                        twoToneColor: "#f00"
-                      }
-                    }
-                  ]
-                });
-                this.eruptModel.subEruptModels.push({
-                  eruptModel: subEm,
-                  eruptField: field,
-                  columns: columns
-                });
-              }
-            );
-          }
+        em.eruptModel.eruptFieldModels.forEach((field, i) => {
           //search Edit
           if (field.eruptFieldJson.edit.search.isSearch) {
             field.eruptFieldJson.edit.notNull = false;
             this.eruptSearchFields.push(field);
           }
         });
+        em.subErupts.forEach((fe => {
+          //根据TAb类型获取subEruptModels结构
+          initErupt(fe.eruptModel);
+          fe.alainTableConfig = viewToAlainTableConfig(fe.eruptModel.tableColumns);
+        }));
       }
     );
 
-    this.dataService.queryEruptData(this.eruptName, {}, {
-      pageSize: 100,
-      pageNumber: 1
-    }).subscribe(
+    this.dataService.queryEruptData(this.eruptName, {}, this.page).subscribe(
       data => {
         this.rows = data.list;
+        this.page.total = data.total;
         console.log(data);
       }
     );
@@ -219,6 +159,7 @@ export class TableComponent implements OnInit {
           click: (record: any, modal: any) => {
             this.drawerHelper.static("编辑", EditComponent, {
               eruptModel: this.eruptModel,
+              subErupts: this.subErupts,
               rowDataFun: record
             }, {
               footer: false,
@@ -342,35 +283,6 @@ export class TableComponent implements OnInit {
 
       }
     });
-
-    // this.modalHelper.createStatic(EditComponent, { eruptModel: this.eruptModel }, {
-    //   size: "lg",
-    //   modalOptions: {
-    //     nzKeyboard: true,
-    //     nzStyle: {
-    //       top: "20px"
-    //     },
-    //     nzTitle: "新增",
-    //     // @ts-ignore
-    //     nzFooter: [
-    //       {
-    //         label: "新增",
-    //         type: "primary",
-    //         autoLoading: true,
-    //         onClick: (modal, dialog) => {
-    //
-    //         }
-    //       },
-    //       {
-    //         label: "取消",
-    //         autoLoading: true,
-    //         onClick: (modal, a, b) => {
-    //           this.modal.closeAll();
-    //         }
-    //       }
-    //     ]
-    //   }
-    // }).subscribe();
   }
 
 

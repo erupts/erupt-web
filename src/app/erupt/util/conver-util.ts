@@ -133,6 +133,7 @@ export function eruptValueToObject(eruptModel: EruptModel, msg?: NzMessageServic
   return eruptData;
 }
 
+//非空验证
 export function validateNotNull(eruptModel: EruptModel, msg?: NzMessageService): boolean {
   for (let field of eruptModel.eruptFieldModels) {
     if (msg) {

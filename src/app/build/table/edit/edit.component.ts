@@ -2,8 +2,9 @@ import { Component, Input, OnInit } from "@angular/core";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { DataService } from "../../../erupt/service/data.service";
 import { ChoiceEnum, EditType } from "../../../erupt/model/erupt.enum";
-import { eruptValueToObject, objectToEruptValue } from "../../../erupt/util/conver-util";
+import { objectToEruptValue, viewToAlainTableConfig } from "../../../erupt/util/conver-util";
 import { SettingsService } from "@delon/theme";
+import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 
 @Component({
   selector: "erupt-edit",
@@ -13,6 +14,8 @@ import { SettingsService } from "@delon/theme";
 export class EditComponent implements OnInit {
 
   @Input() eruptModel: EruptModel;
+
+  @Input() subErupts: Array<EruptAndEruptFieldModel>;
 
   @Input() set rowDataFun(data: any) {
     if (data) {
@@ -25,25 +28,26 @@ export class EditComponent implements OnInit {
     /**
      * TAB control
      */
-    for (const subErupt of this.eruptModel.subEruptModels) {
-      if (this.rowData) {
-        for (const subField of subErupt.eruptModel.eruptFieldModels) {
-          if (subField.fieldReturnName === this.eruptModel.eruptName) {
-            const condition: any = {};
-            condition[subField.fieldName + "." + this.eruptModel.eruptJson.primaryKeyCol] = this.rowData[this.eruptModel.eruptJson.primaryKeyCol];
-            this.dataService.queryEruptData(subErupt.eruptModel.eruptName, condition, {
-              pageNumber: 1,
-              pageSize: 100
-            }).subscribe(
-              data => {
-                subErupt.eruptField.eruptFieldJson.edit.$value = data.list;
-              }
-            );
-            break;
-          }
-        }
-      }
-    }
+    //读取tab栏的数据
+    // for (const subErupt of this.eruptModel.subEruptModels) {
+    //   if (this.rowData) {
+    //     for (const subField of subErupt.eruptFieldModels) {
+    //       if (subField.fieldReturnName === this.eruptModel.eruptName) {
+    //         const condition: any = {};
+    //         condition[subField.fieldName + "." + this.eruptModel.eruptJson.primaryKeyCol] = this.rowData[this.eruptModel.eruptJson.primaryKeyCol];
+    //         this.dataService.queryEruptData(subErupt.eruptName, condition, {
+    //           pageIndex: 1,
+    //           pageSize: 100
+    //         }).subscribe(
+    //           data => {
+    //             subField.eruptFieldJson.edit.$value = data.list;
+    //           }
+    //         );
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
 
   }
 
@@ -60,38 +64,25 @@ export class EditComponent implements OnInit {
   }
 
   ngOnInit() {
-
     // 计算里面所有的字段信息
-    for (const field of this.eruptModel.eruptFieldModels) {
-      if (field.eruptFieldJson.edit.type === EditType.TAB) {
-        if (!field.eruptFieldJson.edit.tabType) {
-          field.eruptFieldJson.edit.tabType = [];
-        }
-        field.eruptFieldJson.edit.tabType[0] = {};
-        //tab表的结构
-        this.dataService.getEruptBuild(field.fieldReturnName).subscribe(subErupt => {
-          //tab表的数据
-          if (this.rowData) {
-            for (const sub of subErupt.eruptFieldModels) {
-              if (sub.fieldReturnName === this.eruptModel.eruptName) {
-                const condition: any = {};
-                condition[sub.fieldName + "." + this.eruptModel.eruptJson.primaryKeyCol] = this.rowData[this.eruptModel.eruptJson.primaryKeyCol];
-                this.dataService.queryEruptData(field.fieldReturnName, condition, {
-                  pageNumber: 1,
-                  pageSize: 100
-                }).subscribe(
-                  data => {
-                    field.eruptFieldJson.edit.$value = data.list;
-                  }
-                );
-                break;
-              }
+    this.subErupts && this.subErupts.forEach(sub => {
+      // sub.eruptModel.tableColumns =
+      if (this.rowData) {
+        if (sub.eruptFieldModel.fieldReturnName === this.eruptModel.eruptName) {
+          const condition: any = {};
+          condition[sub.eruptFieldModel.fieldName + "." + this.eruptModel.eruptJson.primaryKeyCol] = this.rowData[this.eruptModel.eruptJson.primaryKeyCol];
+          this.dataService.queryEruptData(sub.eruptFieldModel.fieldReturnName, condition, {
+            pageIndex: 1,
+            pageSize: 100
+          }).subscribe(
+            data => {
+              sub.eruptFieldModel.eruptFieldJson.edit.$value = data.list;
             }
-          }
-          field.eruptFieldJson.edit.tabType[0].eruptFieldModels = subErupt.eruptFieldModels;
-        });
+          );
+          return;
+        }
       }
-    }
+    });
 
   }
 

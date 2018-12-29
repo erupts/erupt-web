@@ -1,5 +1,5 @@
 <ng-container *ngIf="!eruptModel">
-    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
+    <nz-skeleton [nzActive]="true"  [nzTitle]="false" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
 </ng-container>
 <div *ngIf="eruptModel">
     <!--operator start-->
@@ -59,12 +59,13 @@
         </erupt-edit-type>
     </ng-container>
 
-
     <st [data]="rows" [columns]="columns" [scroll]="{x: '900px'}"
         [bordered]="settingSrv.layout.tableBorder"
         (change)="tableDataChange($event)"
-        ps="2"
         [page] = "stPage"
+        [ps]="page.pageSize"
+        [pi]="page.pageIndex"
+        [total]="page.total"
         size="default"
     >
     </st>
