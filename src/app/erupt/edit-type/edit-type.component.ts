@@ -1,10 +1,13 @@
-import { Component, Input, OnInit, TemplateRef, ViewChild } from "@angular/core";
+import { Component, Inject, Input, OnInit, TemplateRef, ViewChild } from "@angular/core";
 import { Edit, EruptFieldModel, ReferenceType, VL } from "../model/erupt-field.model";
 import { ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
 import { ModalHelper } from "@delon/theme";
 import { ListSelectComponent } from "../list-select/list-select.component";
 import { NzModalService } from "ng-zorro-antd/modal";
+import { HelperService } from "../service/helper.service";
+import { NzMessageService } from "ng-zorro-antd";
+import { EruptModel } from "../model/erupt.model";
 
 interface col {
   xs?: number,
@@ -24,12 +27,11 @@ interface col {
 export class EditTypeComponent implements OnInit {
 
   //important
-  @Input() eruptFieldModels: EruptFieldModel;
-
-  //important
-  @Input() eruptName: string;
+  @Input() eruptModel: EruptModel;
 
   @Input() size: "large" | "small" | "default" = "large";
+
+  eruptFieldModels: Array<EruptFieldModel>;
 
   editType = EditType;
 
@@ -38,6 +40,7 @@ export class EditTypeComponent implements OnInit {
   dateEnum = DateEnum;
 
   referenceLists: Array<ReferenceType>;
+
 
   @Input() col: col = {
     xs: 24,
@@ -53,46 +56,30 @@ export class EditTypeComponent implements OnInit {
   @ViewChild("refFoot") refFoot;
 
 
-  constructor(private dataService: DataService, private modalHelper: ModalHelper) {
+  constructor(private dataService: DataService, private helper: HelperService,
+              @Inject(NzMessageService) private msg: NzMessageService) {
+  }
 
+  ngOnInit() {
+    this.eruptFieldModels = this.eruptModel.eruptFieldModels;
   }
 
 
   createRefModal(field: EruptFieldModel) {
-    this.dataService.queryEruptReferenceData(this.eruptName, field.fieldName).subscribe(data => {
-
-      let sub = this.modalHelper.create(ListSelectComponent, {
+    this.dataService.queryEruptReferenceData(this.eruptModel.eruptName, field.fieldName).subscribe(data => {
+      this.helper.modalHelper(ListSelectComponent, {
         list: data,
         eruptField: field,
-        bodyStyle: "max-height: 450px;"
-      }, {
-        size: "sm",
-        modalOptions: {
-          // @ts-ignore
-          nzFooter: [
-            {
-              label: "确定",
-              type: "primary"
-              // onClick: (button, dialog) => {
-              //     console.log(button);
-              //     console.log(dialog);
-              //     const tempVal = field.eruptFieldJson.edit.$tempValue;
-              //     field.eruptFieldJson.edit.$viewValue = tempVal.label;
-              //     field.eruptFieldJson.edit.$value = tempVal.id;
-              // }
-            },
-            {
-              label: "取消",
-              onClick: (button, dialog) => {
-                console.log(this);
-                console.log(button);
-                console.log(dialog);
-                return true;
-              }
-            }]
+        bodyStyle: {
+          maxHeight: "440px"
         }
-      }).subscribe(() => {
-        alert(233333);
+      }, field.eruptFieldJson.edit.title, "modal-xs", () => {
+        const tempVal = field.eruptFieldJson.edit.$tempValue;
+        if (tempVal == field.eruptModel) {
+
+        }
+        field.eruptFieldJson.edit.$viewValue = tempVal.label;
+        field.eruptFieldJson.edit.$value = tempVal.id;
       });
     });
 
@@ -109,10 +96,6 @@ export class EditTypeComponent implements OnInit {
   }
 
   openModal(template: TemplateRef<any>) {
-  }
-
-  ngOnInit() {
-    console.log(this.eruptFieldModels);
   }
 
   dateChange(event, field: EruptFieldModel) {

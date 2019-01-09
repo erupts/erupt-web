@@ -1,6 +1,5 @@
 <div *ngIf="eruptModel!=null">
-    <erupt-edit-type [eruptFieldModels]="eruptModel.eruptFieldModels"
-                     [eruptName]="eruptModel.eruptName"></erupt-edit-type>
+    <erupt-edit-type [eruptModel]="eruptModel"></erupt-edit-type>
     <br>
     <nz-tabset>
         <ng-container *ngFor="let sub of subErupts">

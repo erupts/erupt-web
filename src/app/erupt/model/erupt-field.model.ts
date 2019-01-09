@@ -6,9 +6,10 @@ import { EruptModel } from "./erupt.model";
  */
 export interface EruptFieldModel {
   fieldName: string;
+  eruptFieldJson: EruptField;
   fieldReturnName?: string;
   eruptModel?: EruptModel;
-  eruptFieldJson: EruptField;
+  value?: any;
 }
 
 
@@ -35,9 +36,6 @@ export interface Edit {
   title: string;
   notNull: boolean;
   desc: string;
-  $value: any;
-  $viewValue: any;
-  $tempValue: any;
   type: EditType;
   show: boolean;
   readOnly: boolean;
@@ -53,6 +51,10 @@ export interface Edit {
   dictType: Array<DictType>;
   dateType: Array<DateType>;
   search: Search;
+
+  $value?: any;
+  $viewValue?: any;
+  $tempValue?: any;
 }
 
 

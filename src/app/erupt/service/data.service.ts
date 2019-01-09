@@ -10,37 +10,37 @@ import { Observable } from "rxjs";
 import { loginModel } from "../model/user.model";
 import { EruptApiModel } from "../model/erupt-api.model";
 import { EruptPageModel } from "../model/erupt-page.model";
+import { STReq } from "@delon/abc";
 
 @Injectable()
 export class DataService {
 
-  domain: string = window["domain"];
+  public domain: string = window["domain"];
 
   eruptHeaderKey: String = "erupt";
-
 
   constructor(private http: HttpClient, private _http: _HttpClient) {
   }
 
+  //获取结构
   getEruptBuild(modelName: string): Observable<EruptPageModel> {
-    return this._http.get<EruptPageModel>(this.domain + "/erupt-api/build/list/" + modelName, {
+    return this.http.get<EruptPageModel>(this.domain + "/erupt-api/build/list/" + modelName, {
       headers: {
         eruptKey: modelName
       }
     });
   }
 
+  //查询数据
   queryEruptData(modelName: string, condition: any, page: Page): Observable<Page> {
-    return this.http.post<Page>(this.domain + "/erupt-api/data/table/" + modelName, {
-      condition: condition,
-      page: page
-    }, {
+    return this.http.post<Page>(this.domain + "/erupt-api/data/table/" + modelName, { ...page }, {
       headers: {
         eruptKey: modelName
       }
     });
   }
 
+  //查询tree数据
   queryEruptTreeData(modelName: string): Observable<Array<Tree>> {
     return this.http.post<Array<Tree>>(this.domain + "/erupt-api/data/tree/" + modelName, {}, {
       headers: {
@@ -49,10 +49,11 @@ export class DataService {
     });
   }
 
-  execOperatorFun(modelName: string, operatorCode: string, keys: any, param: any) {
-    return this.http.post<Page>(this.domain + "/erupt-api/data/" + modelName + "/operator/" + operatorCode, {
-      keys,
-      param
+  //执行自定义operator方法
+  execOperatorFun(modelName: string, operatorCode: string, data: any, param: object) {
+    return this.http.post<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/operator/" + operatorCode, {
+      data: data,
+      param: param
     }, {
       headers: {
         eruptKey: modelName
@@ -60,6 +61,7 @@ export class DataService {
     });
   }
 
+  //获取reference数据
   queryEruptReferenceData(modelName: string, refName: string): Observable<any> {
     return this.http.get(this.domain + "/erupt-api/data/" + modelName + "/ref/" + refName, {
       headers: {
@@ -68,6 +70,7 @@ export class DataService {
     });
   }
 
+  //增加数据
   addEruptData(modelName: string, data: any): Observable<EruptApiModel> {
     return this.http.post<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, data, {
       headers: {
@@ -76,6 +79,7 @@ export class DataService {
     });
   }
 
+  //删除数据
   deleteEruptData(modelName: string, id): Observable<EruptApiModel> {
     return this.http.delete<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/" + id, {
       headers: {
@@ -84,6 +88,7 @@ export class DataService {
     });
   }
 
+  //批量删除数据
   deleteEruptDatas(modelName: string, ids: Array<any>): Observable<EruptApiModel> {
     return this.http.delete<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, {
       params: {
@@ -103,10 +108,12 @@ export class DataService {
     });
   }
 
+  //获取而为澳门
   getVerifyCodeUrl(): string {
     return this.domain + "/verify/code-img" + "?_t" + new Date().getTime();
   }
 
+  //登录接口
   login(account: string, pwd: string, verifyCode?: any): Observable<loginModel> {
     return this._http.post(this.domain + "/erupt-user/login", {}, {
         account: account,
@@ -116,6 +123,7 @@ export class DataService {
     );
   }
 
+  //获取菜单接口
   getMenu(): Observable<any> {
     return this.http.post(this.domain + "/erupt-user/menu", {});
   }

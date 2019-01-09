@@ -36,6 +36,43 @@ export class TreeComponent implements OnInit {
 
   nodes: any = [];
 
+  ngOnInit(): void {
+    this.route.params.subscribe((params) => {
+      console.log(params);
+      this.eruptName = params.name;
+    });
+
+    this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
+      this.eruptModel = erupt.eruptModel;
+    });
+
+    this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
+      function gcZorroTree(nodes) {
+        const tempNodes = [];
+        nodes.forEach(node => {
+          let option: any = {
+            code: node.id,
+            title: node.label,
+            data: node.data
+          };
+          if (node.children && node.children.length > 0) {
+            tempNodes.push(option);
+            option.children = gcZorroTree(node.children);
+          } else {
+            option.isLeaf = true;
+            tempNodes.push(option);
+          }
+        });
+        return tempNodes;
+      }
+
+      if (tree) {
+        this.nodes = gcZorroTree(tree);
+      }
+
+    });
+  }
+
 
   addRoot() {
     this.showEdit = true;
@@ -78,45 +115,6 @@ export class TreeComponent implements OnInit {
   nodeClickEvent(event: NzFormatEmitEvent): void {
     this.showEdit = true;
     objectToEruptValue(this.eruptModel, event.node.origin.data);
-  }
-
-  ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      console.log(params);
-      this.eruptName = params.name;
-    });
-
-    this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
-      this.eruptModel = erupt.eruptModel;
-    });
-
-    this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
-      console.log(tree);
-
-      function gcZorroTree(nodes) {
-        const tempNodes = [];
-        nodes.forEach(node => {
-          let option: any = {
-            code: node.id,
-            title: node.label,
-            data: node.data
-          };
-          if (node.children && node.children.length > 0) {
-            tempNodes.push(option);
-            option.children = gcZorroTree(node.children);
-          } else {
-            option.isLeaf = true;
-            tempNodes.push(option);
-          }
-        });
-        return tempNodes;
-      }
-
-      if (tree) {
-        this.nodes = gcZorroTree(tree);
-      }
-
-    });
   }
 
 }

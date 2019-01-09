@@ -50,7 +50,9 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
     };
 
     if (view.sortable) {
-      obj.sort = true;
+      obj.sort = {
+        key: view.column
+      };
     }
 
     //编辑类型
@@ -110,6 +112,23 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
   return cols;
 }
 
+//非空验证
+export function validateNotNull(eruptModel: EruptModel, msg?: NzMessageService): boolean {
+  for (let field of eruptModel.eruptFieldModels) {
+    if (msg) {
+      if (field.eruptFieldJson.edit.notNull) {
+        console.log(field.eruptFieldJson.edit.notNull);
+        console.log(field.eruptFieldJson.edit.$value);
+        if (!field.eruptFieldJson.edit.$value) {
+          msg.error(field.eruptFieldJson.edit.title + "必填！");
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
 //将eruptModel中的内容拼接成后台需要的json格式
 export function eruptValueToObject(eruptModel: EruptModel, msg?: NzMessageService): any {
   const eruptData: any = {};
@@ -131,23 +150,6 @@ export function eruptValueToObject(eruptModel: EruptModel, msg?: NzMessageServic
     }
   });
   return eruptData;
-}
-
-//非空验证
-export function validateNotNull(eruptModel: EruptModel, msg?: NzMessageService): boolean {
-  for (let field of eruptModel.eruptFieldModels) {
-    if (msg) {
-      if (field.eruptFieldJson.edit.notNull) {
-        console.log(field.eruptFieldJson.edit.notNull);
-        console.log(field.eruptFieldJson.edit.$value);
-        if (!field.eruptFieldJson.edit.$value) {
-          msg.error(field.eruptFieldJson.edit.title + "必填！");
-          return false;
-        }
-      }
-    }
-  }
-  return true;
 }
 
 //将后台数据转化成前端可视格式
@@ -173,6 +175,7 @@ export function objectToEruptValue(eruptModel: EruptModel, object: any) {
         field.eruptFieldJson.edit.$value = object[field.fieldName];
         break;
     }
+
   });
 }
 
@@ -185,7 +188,9 @@ export function emptyEruptValue(eruptModel: EruptModel) {
       ef.eruptFieldJson.edit.$viewValue = null;
       ef.eruptFieldJson.edit.$tempValue = null;
     }
-
+    if (ef.value) {
+      ef.eruptFieldJson.edit.$value = ef.value;
+    }
   });
 }
 

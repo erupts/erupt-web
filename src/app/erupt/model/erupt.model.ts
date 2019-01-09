@@ -47,11 +47,11 @@ interface CodeAndEdit {
 
 interface Power {
   add: boolean;
-  del: boolean;
+  delete: boolean;
   edit: boolean;
   query: boolean;
-  export: boolean;
   importable: boolean;
+  export: boolean;
 }
 
 interface Card {

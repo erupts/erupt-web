@@ -1,16 +1,18 @@
-import { Component, Inject, Injector, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { Component, Inject, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
-import { Page } from "../../../erupt/model/page";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
 import {
   emptyEruptValue,
-  eruptValueToObject, initErupt, validateNotNull, viewToAlainTableConfig
+  eruptValueToObject,
+  initErupt,
+  validateNotNull,
+  viewToAlainTableConfig
 } from "../../../erupt/util/conver-util";
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 import { EditComponent } from "../edit/edit.component";
-import { QRComponent, ReuseTabService, STData } from "@delon/abc";
+import { STData, STReq } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
@@ -22,8 +24,6 @@ import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
   styleUrls: ["./table.component.less"]
 })
 export class TableComponent implements OnInit {
-
-  eruptSearchFields: Array<EruptFieldModel> = [];
 
   constructor(private dataService: DataService,
               private settingSrv: SettingsService,
@@ -39,29 +39,31 @@ export class TableComponent implements OnInit {
   ) {
   }
 
-  eruptName: string;
+  searchErupt: EruptModel;
 
   eruptModel: EruptModel;
 
   subErupts: Array<EruptAndEruptFieldModel>;
+
+  eruptName: string;
 
   stPage = {
     pageSizes: [10, 30, 50, 100],
     showSize: true,
     showQuickJumper: true,
     total: true,
-    toTop: true
+    toTop: true,
+    front: false
   };
 
-  page: Page = {
-    pageIndex: 1,
-    pageSize: 2
+  reqConfig: STReq = {
+    method: "POST",
+    allInBody: true,
+    reName: {
+      pi: "pageIndex",
+      ps: "pageSize"
+    }
   };
-  rows: any;
-
-  rowData: any;
-
-  operatorEdit: [Array<EruptFieldModel>, string] = [[], ""];
 
   selectedRows: Array<any> = [];
 
@@ -69,71 +71,52 @@ export class TableComponent implements OnInit {
 
   @ViewChild("st") st;
 
+  url: string;
+
   ngOnInit() {
-    this.route.params.subscribe((params) => {
+    this.columns = [];
+    this.route.params.subscribe(params => {
       this.eruptName = params.name;
+      this.url = this.dataService.domain + "/erupt-api/data/table/" + this.eruptName;
+      this.dataService.getEruptBuild(this.eruptName).subscribe(
+        em => {
+          this.eruptModel = em.eruptModel;
+          this.subErupts = em.subErupts;
+          initErupt(this.eruptModel);
+          this.buildTableConfig();
+          this.searchErupt = {
+            eruptFieldModels: [],
+            eruptJson: this.eruptModel.eruptJson,
+            eruptName: this.eruptModel.eruptName
+          };
+          em.eruptModel.eruptFieldModels.forEach((field, i) => {
+            //search Edit
+            if (field.eruptFieldJson.edit.search.isSearch) {
+              field.eruptFieldJson.edit.notNull = false;
+              this.searchErupt.eruptFieldModels.push(field);
+            }
+          });
+          em.subErupts.forEach((fe => {
+            initErupt(fe.eruptModel);
+            fe.alainTableConfig = viewToAlainTableConfig(fe.eruptModel.tableColumns);
+          }));
+        }
+      );
     });
-
-    this.dataService.getEruptBuild(this.eruptName).subscribe(
-      em => {
-        this.eruptModel = em.eruptModel;
-        this.subErupts = em.subErupts;
-        initErupt(this.eruptModel);
-        this.buildTableConfig();
-        em.eruptModel.eruptFieldModels.forEach((field, i) => {
-          //search Edit
-          if (field.eruptFieldJson.edit.search.isSearch) {
-            field.eruptFieldJson.edit.notNull = false;
-            this.eruptSearchFields.push(field);
-          }
-        });
-        em.subErupts.forEach((fe => {
-          //根据TAb类型获取subEruptModels结构
-          initErupt(fe.eruptModel);
-          fe.alainTableConfig = viewToAlainTableConfig(fe.eruptModel.tableColumns);
-        }));
-      }
-    );
-
-    this.dataService.queryEruptData(this.eruptName, {}, this.page).subscribe(
-      data => {
-        this.rows = data.list;
-        this.page.total = data.total;
-        console.log(data);
-      }
-    );
   }
 
   buildTableConfig() {
-    const that = this;
     this.columns.push({ title: "", type: "checkbox", fixed: "left", index: this.eruptModel.eruptJson.primaryKeyCol });
     this.columns.push({ title: "No", type: "no", fixed: "left", width: "60px" });
     this.columns.push(...viewToAlainTableConfig(this.eruptModel.tableColumns));
     const operators = [];
     this.eruptModel.eruptJson.rowOperation.forEach(ro => {
       if (!ro.multi) {
+        const that = this;
         operators.push({
           icon: ro.icon,
           click: (record: any, modal: any) => {
-            that.gcOperatorEdits(ro.code);
-
-            this.modalHelper.create(this.operatorEdit[0].length > 0 ? EditTypeComponent : "请确认操作", {
-              eruptFieldModels: this.operatorEdit[0],
-              eruptName: this.operatorEdit[1]
-            }, {
-              modalOptions: {
-                nzTitle: "功能",
-                nzFooter: [{
-                  label: "确定",
-                  size: "large",
-                  onClick: (data) => {
-
-                  }
-                }]
-              }
-            }).subscribe(s => {
-              console.log(s);
-            });
+            that.gcOperatorEdits(ro.code, false, record);
           }
         });
       }
@@ -167,14 +150,6 @@ export class TableComponent implements OnInit {
             }).subscribe(s => {
 
             });
-
-            // const drawerRef = this.drawerService.create({
-            //     nzTitle: '编辑',
-            //     nzContent: this.editDrawer,
-            //     nzContentParams: {
-            //         rowData: record
-            //     }
-            // });
           }
         },
         {
@@ -188,11 +163,10 @@ export class TableComponent implements OnInit {
             this.dataService.deleteEruptData(this.eruptName, record[this.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
               if (result.success) {
                 comp.removeRow(record);
-                this.msg.success("成功删除");
+                this.msg.success("删除成功");
               } else {
-                this.msg.success(result.message);
+                this.msg.error(result.message);
               }
-
             });
 
           }
@@ -202,62 +176,72 @@ export class TableComponent implements OnInit {
   }
 
 
-  gcOperatorEdits(code: string) {
+  /**
+   * @param code 编码
+   * @param data 数据（单个执行时使用）
+   */
+  gcOperatorEdits(code: string, multi: boolean, data?: object) {
+    if (multi) {
+      if (!this.selectedRows || this.selectedRows.length == 0) {
+        this.msg.warning("执行该操作时请至少选中一条数据");
+        return;
+      }
+    }
     const ro = this.eruptModel.eruptJson.rowOperationMap.get(code);
     if (ro.edits.length <= 0) {
       this.modal.confirm({
-        nzTitle: "确定要进行操作吗？",
+        nzTitle: "确定要执行吗",
         nzContent: "",
         nzOnOk: () => {
-
+          this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, null).subscribe(res => {
+            if (res.success) {
+              this.st.load(1);
+            } else {
+              this.msg.error(res.message);
+            }
+          });
         }
       });
-      return;
-    }
-    let eruptFieldModels: Array<EruptFieldModel> = [];
-    ro.edits.forEach(edit => {
-      const eruptFieldModel: EruptFieldModel = {
-        fieldName: edit.code,
-        fieldReturnName: edit.codeType,
-        eruptFieldJson: {
-          edit: edit.edit
-        }
-      };
-      eruptFieldModels.push(eruptFieldModel);
-    });
-    console.log(eruptFieldModels);
-    this.modal.create({
-      nzKeyboard: true,
-      nzTitle: ro.title,
-      nzCancelText: "取消（ESC）",
-      nzOnOk: () => {
-        alert("ok");
-      },
-      nzContent: EditTypeComponent,
-      nzComponentParams: {
-        // @ts-ignore
+    } else {
+      const eruptFieldModels: Array<EruptFieldModel> = [];
+      ro.edits.forEach(edit => {
+        const eruptFieldModel: EruptFieldModel = {
+          fieldName: edit.code,
+          fieldReturnName: edit.codeType,
+          eruptFieldJson: {
+            edit: edit.edit
+          }
+        };
+        eruptFieldModels.push(eruptFieldModel);
+      });
+      const operatorEruptModel: EruptModel = {
         eruptFieldModels: eruptFieldModels,
-        eruptName: this.eruptModel.eruptName
-      }
-    });
-
-    // this.modalHelper.create(EditTypeComponent, {
-    //   eruptFieldModels: eruptFieldModels,
-    //   eruptName: this.eruptModel.eruptName
-    // }, {
-    //   modalOptions: {
-    //     nzKeyboard: true,
-    //     nzTitle: ro.title,
-    //     nzOkText: "确定",
-    //     nzOnOk: () => {
-    //
-    //     }
-    //   }
-    // }).subscribe();
-  }
-
-  tableDataChange(data: STData) {
-    this.selectedRows = data.checkbox;
+        eruptName: this.eruptModel.eruptName,
+        eruptJson: this.eruptModel.eruptJson
+      };
+      this.modal.create({
+        nzKeyboard: true,
+        nzTitle: ro.title,
+        nzCancelText: "取消（ESC）",
+        nzOnOk: () => {
+          if (validateNotNull(operatorEruptModel, this.msg)) {
+            this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, eruptValueToObject(operatorEruptModel)).subscribe(res => {
+              if (res.success) {
+                this.st.load(1);
+              } else {
+                this.msg.error(res.message);
+              }
+            });
+          } else {
+            return false;
+          }
+        },
+        nzContent: EditTypeComponent,
+        nzComponentParams: {
+          eruptModel: operatorEruptModel
+        }
+      });
+    }
   }
 
   addRow() {
@@ -271,22 +255,29 @@ export class TableComponent implements OnInit {
       },
       nzOnOk: () => {
         if (validateNotNull(this.eruptModel, this.msg)) {
-          this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
-            console.log(result);
-            return true;
+          var v = this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+            if (result.success) {
+              this.st.load(1);
+              this.msg.success("新增成功");
+              return true;
+            } else {
+              this.msg.error(result.message);
+              return false;
+            }
           });
+          console.log(v);
         } else {
           return false;
         }
-      },
-      nzOnCancel: () => {
-
       }
     });
   }
 
-
   delRows() {
+    if (!this.selectedRows || this.selectedRows.length === 0) {
+      this.msg.warning("请选中要删除的数据");
+      return;
+    }
     const ids = [];
     this.selectedRows.forEach(e => {
       ids.push(e[this.eruptModel.eruptJson.primaryKeyCol]);
@@ -299,7 +290,9 @@ export class TableComponent implements OnInit {
           nzOnOk: () => {
             this.dataService.deleteEruptDatas(this.eruptName, ids).subscribe(val => {
               console.log(val);
-              this.st.removeRow(this.selectedRows);
+              this.selectedRows.forEach(r => {
+                this.st.removeRow(r);
+              });
             });
           }
         }
@@ -310,47 +303,12 @@ export class TableComponent implements OnInit {
     }
   }
 
-  saveData() {
-    // if (EruptCheckReqDataByToastr(this.eruptModel, this.toastr)) {
-    //     this.dataService.addEruptData(
-    //         this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)
-    //     ).subscribe(result => {
-    //         console.log(result);
-    //     });
-    // }
+  tableDataChange(data: STData) {
+    this.selectedRows = data.checkbox;
   }
-
-  actionOperator(operatorEdit: [Array<EruptFieldModel>, string]) {
-    // const param = eruptValueToObject({
-    //     eruptFieldModels: operatorEdit[0],
-    //     eruptJson: null,
-    //     eruptName: this.eruptModel.eruptName,
-    //     primaryKeyCol: this.eruptModel.primaryKeyCol
-    // });
-    // const selectKeys = [];
-    // this.selectedRows.forEach(row => {
-    //     selectKeys.push(row[this.eruptModel.primaryKeyCol]);
-    // });
-    // if (selectKeys.length !== 0) {
-    //     this.dataService.execOperatorFun(this.eruptModel.eruptName, operatorEdit[1], selectKeys, param).subscribe(resp => {
-    //         console.log(resp);
-    //     });
-    // } else {
-    //     this.toastr.clear();
-    //     this.toastr.warning("未选中数据");
-    // }
-
-  }
-
-  onSelectTableRow(event) {
-    this.selectedRows = event.selected;
-  }
-
 
   exportExcel() {
-    this.renderer;
     window.open(window["domain"] + "/erupt-api/excel/export/" + this.eruptModel.eruptName);
-    // this.dataService.downloadEruptExcel(this.eruptModel.eruptName).subscribe();
   }
 
 }

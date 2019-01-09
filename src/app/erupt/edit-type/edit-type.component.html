@@ -24,7 +24,7 @@
 
                                         <ng-container
                                                 *ngIf="field.fieldReturnName!=='Integer'&&field.fieldReturnName!=='Double'&&field.fieldReturnName!=='Float'">
-                                            <input nz-input [nzSize]="size" class="erupt-input"
+                                            <input nz-input [nzSize]="size" class="erupt-input" autocomplete="off"
                                                    [placeholder]="field.eruptFieldJson.edit.inputType[0].placeholder"
                                                    [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                    [name]="field.fieldName"

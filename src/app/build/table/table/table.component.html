@@ -1,16 +1,22 @@
 <ng-container *ngIf="!eruptModel">
-    <nz-skeleton [nzActive]="true"  [nzTitle]="false" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
+    <nz-skeleton [nzActive]="true" [nzTitle]="false" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
 </ng-container>
 <div *ngIf="eruptModel">
     <!--operator start-->
     <div>
+        <ng-container *ngIf="eruptModel.eruptJson.power.query">
+            <button nz-button nzType="default" class="mb-sm" (click)="st.load(1)">
+                <i nz-icon type="search" theme="outline"></i>查询
+            </button>&nbsp;
+        </ng-container>
+
         <ng-container *ngIf="eruptModel.eruptJson.power.add">
             <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
                 <i nz-icon type="plus" theme="outline"></i>新增
             </button>&nbsp;
         </ng-container>
 
-        <ng-container *ngIf="eruptModel.eruptJson.power.del">
+        <ng-container *ngIf="eruptModel.eruptJson.power.delete">
             <button nz-button nzType="danger" class="mb-sm" (click)="delRows()">
                 <i nz-icon type="delete" theme="outline"></i>删除
             </button>&nbsp;
@@ -24,7 +30,7 @@
 
         <ng-container *ngIf="eruptModel.eruptJson.power.importable">
             &nbsp;
-            <nz-dropdown-button (nzClick)="log()">
+            <nz-dropdown-button>
                 导入Excel
                 <ul nz-menu>
                     <li nz-menu-item>导入excel模板</li>
@@ -33,7 +39,7 @@
             &nbsp;
         </ng-container>
 
-        <ng-container *ngIf="eruptSearchFields.length>0">
+        <ng-container *ngIf="searchErupt.eruptFieldModels.length>0">
             <button nz-button nzType="default" class="mb-sm">
                 <i nz-icon type="codepen" theme="outline"></i>条件
             </button>&nbsp;
@@ -43,7 +49,7 @@
 
         <ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">
             <ng-container *ngIf="oper.multi">
-                <button nz-button nzType="dashed" class="mb-sm" (click)="gcOperatorEdits(oper.code)">
+                <button nz-button nzType="dashed" class="mb-sm" (click)="gcOperatorEdits(oper.code,true)">
                     <i class="fa" [ngClass]="oper.icon"></i>&nbsp;
                     {{oper.title}}
                 </button>&nbsp;
@@ -51,22 +57,20 @@
         </ng-container>
     </div>
 
-
-    <ng-container *ngIf="eruptSearchFields.length>0">
-        <erupt-edit-type [eruptFieldModels]="eruptSearchFields" [eruptName]="eruptModel.eruptName"
+    <nz-card *ngIf="searchErupt.eruptFieldModels.length>0">
+        <erupt-edit-type [eruptModel]="searchErupt"
                          [col]="{xs: 24,sm: 12,md: 6,lg: 6,xl: 4 ,xxl: 4}"
                          [size]="'default'">
         </erupt-edit-type>
-    </ng-container>
+    </nz-card>
 
-    <st [data]="rows" [columns]="columns" [scroll]="{x: '900px'}"
+    <st #st
+        [data]="url" [columns]="columns" [scroll]="{x: '900px',y:'500px'}"
+        [multiSort]="true"
         [bordered]="settingSrv.layout.tableBorder"
         (change)="tableDataChange($event)"
-        [page] = "stPage"
-        [ps]="page.pageSize"
-        [pi]="page.pageIndex"
-        [total]="page.total"
-        size="default"
-    >
+        [page]="stPage"
+        [req]="reqConfig"
+        size="default">
     </st>
 </div>

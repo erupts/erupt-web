@@ -1,3 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 @fa-font-path: "~font-awesome/fonts";
 @import '~font-awesome/less/font-awesome.less';
+
+//修复st表格中checkbox显示bug
+.ant-table .ant-checkbox-checked .ant-checkbox-inner::after {
+  left: 4px;
+}

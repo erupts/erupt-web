@@ -1,15 +1,13 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import {TableComponent} from "./table/table.component";
+import { NgModule } from "@angular/core";
+import { Routes, RouterModule } from "@angular/router";
+import { TableComponent } from "./table/table.component";
 
 const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: TableComponent,
     data: {
-      title: 'Erupt list',
-      icon: 'icon-table',
-      caption: 'table',
+      desc: "TABLE VIEW",
       status: true
     }
   }
@@ -19,4 +17,5 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class TableRoutingModule { }
+export class TableRoutingModule {
+}
