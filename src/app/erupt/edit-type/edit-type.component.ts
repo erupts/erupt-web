@@ -1,23 +1,12 @@
 import { Component, Inject, Input, OnInit, TemplateRef, ViewChild } from "@angular/core";
-import { Edit, EruptFieldModel, ReferenceType, VL } from "../model/erupt-field.model";
+import { Edit, EruptFieldModel, ReferenceType } from "../model/erupt-field.model";
 import { ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
-import { ModalHelper } from "@delon/theme";
 import { ListSelectComponent } from "../list-select/list-select.component";
-import { NzModalService } from "ng-zorro-antd/modal";
 import { HelperService } from "../service/helper.service";
 import { NzMessageService } from "ng-zorro-antd";
 import { EruptModel } from "../model/erupt.model";
-
-interface col {
-  xs?: number,
-  sm?: number,
-  md?: number,
-  lg?: number,
-  xl?: number,
-  xxl?: number
-}
-
+import { colRules } from "../model/util.model";
 
 @Component({
   selector: "erupt-edit-type",
@@ -42,16 +31,9 @@ export class EditTypeComponent implements OnInit {
   referenceLists: Array<ReferenceType>;
 
 
-  @Input() col: col = {
-    xs: 24,
-    sm: 24,
-    md: 12,
-    lg: 12,
-    xl: 8,
-    xxl: 8
-  };
+  @Input() col = colRules[3];
 
-  @Input() layout: "horizontal" | "vertical" | "inline" = "vertical";
+  @Input() layout: "horizontal" | "vertical" = "vertical";
 
   @ViewChild("refFoot") refFoot;
 

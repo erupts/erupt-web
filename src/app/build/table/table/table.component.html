@@ -4,12 +4,6 @@
 <div *ngIf="eruptModel">
     <!--operator start-->
     <div>
-        <ng-container *ngIf="eruptModel.eruptJson.power.query">
-            <button nz-button nzType="default" class="mb-sm" (click)="st.reset()">
-                <i nz-icon type="search" theme="outline"></i>查询
-            </button>&nbsp;
-        </ng-container>
-
         <ng-container *ngIf="eruptModel.eruptJson.power.add">
             <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
                 <i nz-icon type="plus" theme="outline"></i>新增
@@ -39,6 +33,12 @@
             &nbsp;
         </ng-container>
 
+        <ng-container *ngIf="eruptModel.eruptJson.power.query">
+            <button nz-button nzType="primary" class="mb-sm" (click)="query()">
+                <i nz-icon type="search" theme="outline"></i>查询
+            </button>&nbsp;
+        </ng-container>
+
         <ng-container *ngIf="searchErupt.eruptFieldModels.length>0">
             <button nz-button nzType="default" class="mb-sm">
                 <i nz-icon type="codepen" theme="outline"></i>条件
@@ -57,9 +57,10 @@
         </ng-container>
     </div>
 
-    <nz-card *ngIf="searchErupt.eruptFieldModels.length>0">
+    <nz-card *ngIf="searchErupt.eruptFieldModels.length>0" style="padding: 0">
         <erupt-edit-type [eruptModel]="searchErupt"
-                         [col]="{xs: 24,sm: 12,md: 6,lg: 6,xl: 4 ,xxl: 4}"
+                         [layout]="'horizontal'"
+                         [col]="colRules[3]"
                          [size]="'default'">
         </erupt-edit-type>
     </nz-card>
@@ -70,7 +71,7 @@
         (change)="tableDataChange($event)"
         [multiSort]="stConfig.multiSort"
         [page]="stConfig.stPage"
-        [req]="stConfig.reqConfig"
+        [req]="stConfig.req"
         size="default">
     </st>
 </div>

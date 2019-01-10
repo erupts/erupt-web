@@ -1,5 +1,5 @@
 <div nz-row [nzGutter]="16">
-    <form nz-form [nzLayout]="layout" #f="ngForm" se-container>
+    <form nz-form [nzLayout]="layout" [labelWidth]="100" se-container>
         <ng-container *ngFor="let field of eruptFieldModels">
             <ng-container *ngIf="field.eruptFieldJson.edit.show">
                 <ng-container [ngSwitch]="field.eruptFieldJson.edit.type">

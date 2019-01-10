@@ -24,11 +24,7 @@ export class DataService {
 
   //获取结构
   getEruptBuild(modelName: string): Observable<EruptPageModel> {
-    return this.http.get<EruptPageModel>(this.domain + "/erupt-api/build/list/" + modelName, {
-      headers: {
-        eruptKey: modelName
-      }
-    });
+    return this._http.get<EruptPageModel>(this.domain + "/erupt-api/build/list/" + modelName);
   }
 
   //查询数据

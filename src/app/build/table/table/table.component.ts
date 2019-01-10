@@ -17,6 +17,7 @@ import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
+import { colRules } from "../../../erupt/model/util.model";
 
 @Component({
   selector: "app-list-view",
@@ -39,6 +40,8 @@ export class TableComponent implements OnInit {
   ) {
   }
 
+  colRules = colRules;
+
   searchErupt: EruptModel;
 
   eruptModel: EruptModel;
@@ -56,7 +59,8 @@ export class TableComponent implements OnInit {
       toTop: true,
       front: false
     },
-    reqConfig: {
+    req: {
+      param: {},
       method: "POST",
       allInBody: true,
       reName: {
@@ -73,19 +77,18 @@ export class TableComponent implements OnInit {
 
   selectedRows: Array<any> = [];
 
-  columns = [];
+  columns: Array<any>;
 
   @ViewChild("st") st;
 
   url: string;
 
   ngOnInit() {
-    this.columns = [];
     this.route.params.subscribe(params => {
       this.eruptName = params.name;
-      this.url = this.dataService.domain + "/erupt-api/data/table/" + this.eruptName;
       this.dataService.getEruptBuild(this.eruptName).subscribe(
         em => {
+          this.url = this.dataService.domain + "/erupt-api/data/table/" + this.eruptName;
           this.eruptModel = em.eruptModel;
           this.subErupts = em.subErupts;
           initErupt(this.eruptModel);
@@ -102,26 +105,41 @@ export class TableComponent implements OnInit {
 
   //构建搜索项信息
   buildSearchErupt() {
-    const _searchErupt = {
-      eruptFieldModels: [],
-      eruptJson: null,
-      eruptName: this.eruptModel.eruptName
-    };
+    const eruptFieldModels = [];
     this.eruptModel.eruptFieldModels.forEach((field, i) => {
       //search Edit
       if (field.eruptFieldJson.edit.search.search) {
         field.eruptFieldJson.edit.notNull = false;
         field.eruptFieldJson.edit.show = true;
-        _searchErupt.eruptFieldModels.push(field);
+        eruptFieldModels.push(field);
       }
     });
-    this.searchErupt = _searchErupt;
+    this.searchErupt = {
+      eruptFieldModels: eruptFieldModels,
+      eruptJson: null,
+      eruptName: this.eruptModel.eruptName
+    };
+  }
+
+  query() {
+    if (this.searchErupt.eruptFieldModels.length > 0) {
+      this.stConfig.req.param = {};
+      this.searchErupt.eruptFieldModels.forEach(field => {
+        const val = field.eruptFieldJson.edit.$value;
+        if (val) {
+          this.stConfig.req.param[field.fieldName] = val;
+        }
+      });
+    }
+    console.log(this.stConfig.req.param);
+    this.st.load(1, this.stConfig.req.param);
   }
 
   buildTableConfig() {
-    this.columns.push({ title: "", type: "checkbox", fixed: "left", index: this.eruptModel.eruptJson.primaryKeyCol });
-    this.columns.push({ title: "No", type: "no", fixed: "left", width: "60px" });
-    this.columns.push(...viewToAlainTableConfig(this.eruptModel.tableColumns));
+    const _columns = [];
+    _columns.push({ title: "", type: "checkbox", fixed: "left", index: this.eruptModel.eruptJson.primaryKeyCol });
+    _columns.push({ title: "No", type: "no", fixed: "left", width: "60px" });
+    _columns.push(...viewToAlainTableConfig(this.eruptModel.tableColumns));
     const operators = [];
     const that = this;
     this.eruptModel.eruptJson.rowOperation.forEach(ro => {
@@ -136,7 +154,7 @@ export class TableComponent implements OnInit {
     });
 
     if (operators.length > 0) {
-      this.columns.push({
+      _columns.push({
         title: "功能",
         className: "text-center",
         fixed: "right",
@@ -144,11 +162,17 @@ export class TableComponent implements OnInit {
       });
     }
 
-    this.columns.push({
+    _columns.push({
       fixed: "right",
       title: "操作区",
       className: "text-center",
       buttons: [
+        {
+          icon: "eye",
+          click: (record: any, modal: any) => {
+
+          }
+        },
         {
           icon: "edit",
           click: (record: any, modal: any) => {
@@ -185,6 +209,7 @@ export class TableComponent implements OnInit {
         }
       ]
     });
+    this.columns = _columns;
   }
 
 

@@ -112,7 +112,6 @@ export class LayoutDefaultComponent
         }
         return;
       }
-      console.log(evt);
       if (!(evt instanceof NavigationEnd)) {
         return;
       }
