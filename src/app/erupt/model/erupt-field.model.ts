@@ -1,4 +1,4 @@
-import { ChoiceEnum, DateEnum, EditType, InputEnum, UiColor, ViewType } from "./erupt.enum";
+import { ChoiceEnum, DateEnum, EditType, InputEnum, ViewType } from "./erupt.enum";
 import { EruptModel } from "./erupt.model";
 
 /**
@@ -50,6 +50,7 @@ export interface Edit {
   choiceType: Array<ChoiceType>;
   dictType: Array<DictType>;
   dateType: Array<DateType>;
+  sliderType: Array<SliderType>;
   search: Search;
 
   $value?: any;
@@ -59,8 +60,8 @@ export interface Edit {
 
 
 interface Search {
-  isSearch: boolean;
-  isFuzzy: boolean;
+  search: boolean;
+  fuzzy: boolean;
   range: boolean;
 }
 
@@ -99,6 +100,11 @@ interface ChoiceType {
   vlMap?: Map<number, string>;
 }
 
+interface SliderType {
+  min: number;
+  max: number;
+}
+
 interface DictType {
   dictCode: string;
 }
@@ -113,3 +119,4 @@ export interface VL {
   value: number;
   label: string;
 }
+

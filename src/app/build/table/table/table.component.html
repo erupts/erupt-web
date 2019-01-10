@@ -5,7 +5,7 @@
     <!--operator start-->
     <div>
         <ng-container *ngIf="eruptModel.eruptJson.power.query">
-            <button nz-button nzType="default" class="mb-sm" (click)="st.load(1)">
+            <button nz-button nzType="default" class="mb-sm" (click)="st.reset()">
                 <i nz-icon type="search" theme="outline"></i>查询
             </button>&nbsp;
         </ng-container>
@@ -33,7 +33,7 @@
             <nz-dropdown-button>
                 导入Excel
                 <ul nz-menu>
-                    <li nz-menu-item>导入excel模板</li>
+                    <li nz-menu-item>下载模板</li>
                 </ul>
             </nz-dropdown-button>
             &nbsp;
@@ -65,12 +65,12 @@
     </nz-card>
 
     <st #st
-        [data]="url" [columns]="columns" [scroll]="{x: '900px',y:'500px'}"
-        [multiSort]="true"
+        [data]="url" [columns]="columns" [scroll]="{x: '900px'}"
         [bordered]="settingSrv.layout.tableBorder"
         (change)="tableDataChange($event)"
-        [page]="stPage"
-        [req]="reqConfig"
+        [multiSort]="stConfig.multiSort"
+        [page]="stConfig.stPage"
+        [req]="stConfig.reqConfig"
         size="default">
     </st>
 </div>

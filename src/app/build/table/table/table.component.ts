@@ -12,7 +12,7 @@ import {
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 import { EditComponent } from "../edit/edit.component";
-import { STData, STReq } from "@delon/abc";
+import { STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
@@ -47,23 +47,29 @@ export class TableComponent implements OnInit {
 
   eruptName: string;
 
-  stPage = {
-    pageSizes: [10, 30, 50, 100],
-    showSize: true,
-    showQuickJumper: true,
-    total: true,
-    toTop: true,
-    front: false
-  };
-
-  reqConfig: STReq = {
-    method: "POST",
-    allInBody: true,
-    reName: {
-      pi: "pageIndex",
-      ps: "pageSize"
+  stConfig = {
+    stPage: {
+      pageSizes: [10, 30, 50, 100],
+      showSize: true,
+      showQuickJumper: true,
+      total: true,
+      toTop: true,
+      front: false
+    },
+    reqConfig: {
+      method: "POST",
+      allInBody: true,
+      reName: {
+        pi: "pageIndex",
+        ps: "pageSize"
+      }
+    },
+    multiSort: {
+      separator: ",",
+      nameSeparator: " "
     }
   };
+
 
   selectedRows: Array<any> = [];
 
@@ -84,18 +90,7 @@ export class TableComponent implements OnInit {
           this.subErupts = em.subErupts;
           initErupt(this.eruptModel);
           this.buildTableConfig();
-          this.searchErupt = {
-            eruptFieldModels: [],
-            eruptJson: this.eruptModel.eruptJson,
-            eruptName: this.eruptModel.eruptName
-          };
-          em.eruptModel.eruptFieldModels.forEach((field, i) => {
-            //search Edit
-            if (field.eruptFieldJson.edit.search.isSearch) {
-              field.eruptFieldJson.edit.notNull = false;
-              this.searchErupt.eruptFieldModels.push(field);
-            }
-          });
+          this.buildSearchErupt();
           em.subErupts.forEach((fe => {
             initErupt(fe.eruptModel);
             fe.alainTableConfig = viewToAlainTableConfig(fe.eruptModel.tableColumns);
@@ -105,14 +100,32 @@ export class TableComponent implements OnInit {
     });
   }
 
+  //构建搜索项信息
+  buildSearchErupt() {
+    const _searchErupt = {
+      eruptFieldModels: [],
+      eruptJson: null,
+      eruptName: this.eruptModel.eruptName
+    };
+    this.eruptModel.eruptFieldModels.forEach((field, i) => {
+      //search Edit
+      if (field.eruptFieldJson.edit.search.search) {
+        field.eruptFieldJson.edit.notNull = false;
+        field.eruptFieldJson.edit.show = true;
+        _searchErupt.eruptFieldModels.push(field);
+      }
+    });
+    this.searchErupt = _searchErupt;
+  }
+
   buildTableConfig() {
     this.columns.push({ title: "", type: "checkbox", fixed: "left", index: this.eruptModel.eruptJson.primaryKeyCol });
     this.columns.push({ title: "No", type: "no", fixed: "left", width: "60px" });
     this.columns.push(...viewToAlainTableConfig(this.eruptModel.tableColumns));
     const operators = [];
+    const that = this;
     this.eruptModel.eruptJson.rowOperation.forEach(ro => {
       if (!ro.multi) {
-        const that = this;
         operators.push({
           icon: ro.icon,
           click: (record: any, modal: any) => {
@@ -127,15 +140,14 @@ export class TableComponent implements OnInit {
         title: "功能",
         className: "text-center",
         fixed: "right",
-        width: "100px",
         buttons: [...operators]
       });
     }
 
     this.columns.push({
       fixed: "right",
-      width: "100px",
       title: "操作区",
+      className: "text-center",
       buttons: [
         {
           icon: "edit",
@@ -160,7 +172,7 @@ export class TableComponent implements OnInit {
           },
           type: "del",
           click: (record, modal, comp) => {
-            this.dataService.deleteEruptData(this.eruptName, record[this.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
+            this.dataService.deleteEruptData(this.eruptModel.eruptName, record[this.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
               if (result.success) {
                 comp.removeRow(record);
                 this.msg.success("删除成功");
@@ -177,7 +189,9 @@ export class TableComponent implements OnInit {
 
 
   /**
+   *  自定义功能触发
    * @param code 编码
+   * @param multi 是否为多选执行
    * @param data 数据（单个执行时使用）
    */
   gcOperatorEdits(code: string, multi: boolean, data?: object) {
@@ -195,7 +209,7 @@ export class TableComponent implements OnInit {
         nzOnOk: () => {
           this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, null).subscribe(res => {
             if (res.success) {
-              this.st.load(1);
+              this.st.reset();
             } else {
               this.msg.error(res.message);
             }
@@ -227,7 +241,7 @@ export class TableComponent implements OnInit {
           if (validateNotNull(operatorEruptModel, this.msg)) {
             this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, eruptValueToObject(operatorEruptModel)).subscribe(res => {
               if (res.success) {
-                this.st.load(1);
+                this.st.reset();
               } else {
                 this.msg.error(res.message);
               }
@@ -244,6 +258,7 @@ export class TableComponent implements OnInit {
     }
   }
 
+  //新增
   addRow() {
     emptyEruptValue(this.eruptModel);
     this.modal.create({
@@ -255,9 +270,9 @@ export class TableComponent implements OnInit {
       },
       nzOnOk: () => {
         if (validateNotNull(this.eruptModel, this.msg)) {
-          var v = this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+          this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
             if (result.success) {
-              this.st.load(1);
+              this.st.reset();
               this.msg.success("新增成功");
               return true;
             } else {
@@ -265,7 +280,6 @@ export class TableComponent implements OnInit {
               return false;
             }
           });
-          console.log(v);
         } else {
           return false;
         }
@@ -273,6 +287,7 @@ export class TableComponent implements OnInit {
     });
   }
 
+  //批量删除
   delRows() {
     if (!this.selectedRows || this.selectedRows.length === 0) {
       this.msg.warning("请选中要删除的数据");
@@ -288,8 +303,7 @@ export class TableComponent implements OnInit {
           nzTitle: "确定要删除吗？",
           nzContent: "",
           nzOnOk: () => {
-            this.dataService.deleteEruptDatas(this.eruptName, ids).subscribe(val => {
-              console.log(val);
+            this.dataService.deleteEruptDatas(this.eruptModel.eruptName, ids).subscribe(val => {
               this.selectedRows.forEach(r => {
                 this.st.removeRow(r);
               });
@@ -303,10 +317,12 @@ export class TableComponent implements OnInit {
     }
   }
 
+  // table checkBox 触发事件
   tableDataChange(data: STData) {
     this.selectedRows = data.checkbox;
   }
 
+  // excel导出
   exportExcel() {
     window.open(window["domain"] + "/erupt-api/excel/export/" + this.eruptModel.eruptName);
   }

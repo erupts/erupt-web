@@ -99,6 +99,21 @@
                             </ng-container>
                         </ng-container>
                     </ng-container>
+                    <ng-container *ngSwitchCase="editType.SLIDER">
+                        <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl" [nzXXl]="col.xxl">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <nz-slider class="erupt-input"
+                                           [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                           [name]="field.fieldName"
+                                           [nzMax]="field.eruptFieldJson.edit.sliderType[0].max"
+                                           [nzMin]="field.eruptFieldJson.edit.sliderType[0].min"
+                                           [nzDisabled]="field.eruptFieldJson.edit.readOnly"></nz-slider>
+                            </se>
+                        </div>
+                    </ng-container>
                     <!--date-->
                     <ng-container *ngSwitchCase="editType.DATE">
                         <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
@@ -225,7 +240,7 @@
                                         [nzLimit]="10"
                                         nzAction="https://jsonplaceholder.typicode.com/posts/">
                                     <p class="ant-upload-drag-icon">
-                                        <i nz-icon type="inbox"></i>CHECKBOX
+                                        <i nz-icon type="inbox"></i>
                                     </p>
                                     <p class="ant-upload-text">单击或拖动文件到此区域上传</p>
                                 </nz-upload>
@@ -234,10 +249,10 @@
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.MARK_DOWN">
                         <div nz-col [nzSpan]="24">
-                            <se [label]="field.eruptFieldJson.edit.title" [required]="field.eruptFieldJson.edit.notNull"
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <simplemde class="erupt-input" [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                           (onChange)="null"
                                            [name]="field.fieldName">
                                 </simplemde>
                             </se>

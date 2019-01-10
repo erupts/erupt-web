@@ -2,7 +2,6 @@ import { View } from "../model/erupt-field.model";
 import { EruptModel } from "../model/erupt.model";
 import { EditType, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
-import { Inject } from "@angular/core";
 import { NzMessageService } from "ng-zorro-antd";
 
 /**
@@ -46,11 +45,15 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
     let edit = view.eruptFieldModel.eruptFieldJson.edit;
     let obj: any = {
       title: view.title,
-      index: view.column
+      index: view.column.replace("_", "\.")
     };
 
     if (view.sortable) {
       obj.sort = {
+        reName: {
+          ascend: "asc",
+          descend: "desc"
+        },
         key: view.column
       };
     }
@@ -61,9 +64,6 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
       obj.className = "text-center";
     } else if (edit.type === EditType.CHOICE) {
       obj.format = (item: any) => {
-        console.log(edit.choiceType[0].vlMap);
-        console.log(item[view.column]);
-        console.log(edit.choiceType[0].vlMap.get(item[view.column]));
         return edit.choiceType[0].vlMap.get(item[view.column]) || "";
       };
     }
@@ -93,9 +93,6 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
           }
         }
       ];
-      obj.format = (item: any) => {
-        return "";
-      };
     }
 
     if (view.template) {
@@ -117,8 +114,6 @@ export function validateNotNull(eruptModel: EruptModel, msg?: NzMessageService):
   for (let field of eruptModel.eruptFieldModels) {
     if (msg) {
       if (field.eruptFieldJson.edit.notNull) {
-        console.log(field.eruptFieldJson.edit.notNull);
-        console.log(field.eruptFieldJson.edit.$value);
         if (!field.eruptFieldJson.edit.$value) {
           msg.error(field.eruptFieldJson.edit.title + "必填！");
           return false;
@@ -157,7 +152,6 @@ export function objectToEruptValue(eruptModel: EruptModel, object: any) {
   eruptModel.eruptFieldModels.forEach(field => {
     switch (field.eruptFieldJson.edit.type) {
       case EditType.DATE:
-        // console.log(new FormControl(object[field.fieldName]).value);
         field.eruptFieldJson.edit.$value = new FormControl(object[field.fieldName]).value;
         break;
       case EditType.REFERENCE:

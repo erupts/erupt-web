@@ -24127,5 +24127,9 @@ g2-tag-cloud {
 .sr-only { .sr-only(); }
 .sr-only-focusable { .sr-only-focusable(); }
 
+//修复st表格中checkbox显示bug
+.ant-table .ant-checkbox-checked .ant-checkbox-inner::after {
+  left: 4px;
+}
 // 可以通过 https://ng-alain.github.io/ng-alain/ 获取主题参数代码
 // The theme paraments can be generated at https://ng-alain.github.io/ng-alain/

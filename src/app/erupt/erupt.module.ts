@@ -7,7 +7,6 @@ import { EditTypeComponent } from "./edit-type/edit-type.component";
 import { SharedModule } from "../shared/shared.module";
 import { SimplemdeModule } from "ngx-simplemde";
 import { ListSelectComponent } from "./list-select/list-select.component";
-import { DataTableComponent } from "./data-table/data-table.component";
 import { HelperService } from "./service/helper.service";
 
 @NgModule({
@@ -22,14 +21,13 @@ import { HelperService } from "./service/helper.service";
     HelperService
   ],
   exports: [
-    EditTypeComponent,
-    DataTableComponent
+    EditTypeComponent
   ],
   entryComponents: [
     EditTypeComponent,
     ListSelectComponent
   ],
-  declarations: [EditTypeComponent, ListSelectComponent, DataTableComponent]
+  declarations: [EditTypeComponent, ListSelectComponent]
 })
 export class EruptModule {
 }

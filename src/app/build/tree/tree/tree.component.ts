@@ -2,10 +2,9 @@ import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { NzFormatEmitEvent } from "ng-zorro-antd/tree";
 import { EruptModel } from "../../../erupt/model/erupt.model";
-import { eruptValueToObject, objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
+import { objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalRef, NzModalService } from "ng-zorro-antd";
-import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 
 @Component({
   selector: "app-tree",

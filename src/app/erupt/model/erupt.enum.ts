@@ -19,14 +19,14 @@ export enum EditType {
   ATTACHMENT = "ATTACHMENT",       //附件
   TAB = "TAB",                     //TAB选项卡
   MARK_DOWN = "MARK_DOWN",         //mark down
-  DIVIDE = "DIVIDE"
+  DIVIDE = "DIVIDE",
+  SLIDER = "SLIDER"               //数字滑块
 }
 
 export enum ViewType {
   TEXT = "TEXT",
   QR_CODE = "QR_CODE",
-  LINK = "LINK",
-  COVER = "COVER",
+  LINK = "LINK"
 }
 
 export enum DateEnum {
@@ -46,3 +46,4 @@ export enum ChoiceEnum {
   SELECT_SINGLE = "SELECT_SINGLE",
   SELECT_MULTI = "SELECT_MULTI"
 }
+
