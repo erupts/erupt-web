@@ -20,7 +20,8 @@ export enum EditType {
   TAB = "TAB",                     //TAB选项卡
   MARK_DOWN = "MARK_DOWN",         //mark down
   DIVIDE = "DIVIDE",
-  SLIDER = "SLIDER"               //数字滑块
+  SLIDER = "SLIDER",               //数字滑块
+  EMPTY = "EMPTY",
 }
 
 export enum ViewType {

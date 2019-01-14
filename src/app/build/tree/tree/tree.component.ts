@@ -1,10 +1,12 @@
 import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
-import { NzFormatEmitEvent } from "ng-zorro-antd/tree";
+import { NzFormatEmitEvent, NzTreeNode } from "ng-zorro-antd/tree";
 import { EruptModel } from "../../../erupt/model/erupt.model";
-import { objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
+import { eruptValueToObject, initErupt, objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalRef, NzModalService } from "ng-zorro-antd";
+import { colRules } from "../../../erupt/model/util.model";
+import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 
 @Component({
   selector: "app-tree",
@@ -13,14 +15,25 @@ import { NzMessageService, NzModalRef, NzModalService } from "ng-zorro-antd";
 })
 export class TreeComponent implements OnInit {
 
-  eruptName: string = "";
+  private eruptName: string = "";
 
-  eruptModel: EruptModel;
+  private colRules = colRules;
+
+  private eruptModel: EruptModel;
 
   private addModal: NzModalRef;
 
   private showEdit: boolean = false;
 
+  private ww = window.document.documentElement.clientHeight;
+
+  private loading = false;
+
+  private searchValue;
+
+  private nodes: any = [];
+
+  @ViewChild("tree") tree;
 
   constructor(private dataService: DataService,
               public route: ActivatedRoute,
@@ -30,19 +43,14 @@ export class TreeComponent implements OnInit {
               private modal: NzModalService) {
   }
 
-  @ViewChild("treeCom") treeCom;
-  searchValue;
-
-  nodes: any = [];
-
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      console.log(params);
       this.eruptName = params.name;
     });
 
     this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
       this.eruptModel = erupt.eruptModel;
+      initErupt(erupt.eruptModel);
     });
 
     this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
@@ -73,47 +81,76 @@ export class TreeComponent implements OnInit {
   }
 
 
-  addRoot() {
+  add() {
     this.showEdit = true;
-    objectToEruptValue(this.eruptModel, {});
-    // this.addModal = this.modal.create({
-    //   nzWrapClassName: "modal-lg",
-    //   nzTitle: "新增",
-    //   nzContent: EditTypeComponent,
-    //   nzComponentParams: {
-    //     // @ts-ignore
-    //     eruptFieldModels: this.eruptModel.eruptFieldModels,
-    //     eruptName: this.eruptName,
-    //     behavior: "edit"
-    //   },
-    //   nzOnOk: () => {
-    //     console.log(this.addModal);
-    //     if (validateNotNull(this.eruptModel, this.msg)) {
-    //       this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel, this.msg)).subscribe(result => {
-    //         alert(result);
-    //       });
-    //     } else {
-    //       return false;
-    //     }
-    //   }
-    // });
+    // objectToEruptValue(this.eruptModel, {});
+    this.addModal = this.modal.create({
+      nzWrapClassName: "modal-lg",
+      nzTitle: "新增",
+      nzContent: EditTypeComponent,
+      nzComponentParams: {
+        // @ts-ignore
+        eruptModel: this.eruptModel
+      },
+      nzOnOk: () => {
+        console.log(this.addModal);
+        if (validateNotNull(this.eruptModel, this.msg)) {
+          this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel, this.msg)).subscribe(result => {
+            alert(result);
+          });
+        } else {
+          return false;
+        }
+      }
+    });
   }
 
   save() {
-    validateNotNull(this.eruptModel,this.msg);
+    validateNotNull(this.eruptModel, this.msg);
   }
 
   del() {
+    const that = this;
+    const nzTreeNode: NzTreeNode = that.tree.getSelectedNodeList()[0];
+    if (nzTreeNode.isLeaf) {
+      this.dataService.deleteEruptData(this.eruptModel.eruptName, nzTreeNode.origin.code).subscribe(function(data) {
+        if (data.success) {
+
+        } else {
+          that.msg.error(data.message);
+        }
+      });
+    } else {
+      this.msg.error("存在叶节点不允许直接删除");
+    }
 
   }
 
   nzEvent(event: NzFormatEmitEvent): void {
-    console.log(event, this.treeCom.getMatchedNodeList().map(v => v.title));
+
+  }
+
+  nzContextMenu(event: NzFormatEmitEvent) {
+    console.log(event);
+  }
+
+  nzDblClick(event: NzFormatEmitEvent) {
+    event.node.setExpanded(!event.node.isExpanded);
   }
 
   nodeClickEvent(event: NzFormatEmitEvent): void {
-    this.showEdit = true;
-    objectToEruptValue(this.eruptModel, event.node.origin.data);
+    const that = this;
+    this.loading = true;
+    this.dataService.queryEruptSingleData(this.eruptModel.eruptName, event.node.origin.code).subscribe(data => {
+      that.loading = false;
+      if (data.success) {
+        this.showEdit = true;
+        objectToEruptValue(this.eruptModel, data.data);
+      } else {
+        this.msg.error(data.message);
+      }
+    });
+
   }
 
 }

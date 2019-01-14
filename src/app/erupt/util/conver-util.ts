@@ -1,4 +1,4 @@
-import { View } from "../model/erupt-field.model";
+import { EruptFieldModel, View } from "../model/erupt-field.model";
 import { EruptModel } from "../model/erupt.model";
 import { EditType, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
@@ -14,7 +14,9 @@ export function initErupt(eruptModel: EruptModel) {
     eruptModel.eruptJson.rowOperationMap.set(oper.code, oper)
   );
   eruptModel.tableColumns = [];
+  eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
   eruptModel.eruptFieldModels.forEach(field => {
+    eruptModel.eruptFieldModelMap.set(field.fieldName, field);
     if (field.eruptFieldJson.edit.type === EditType.CHOICE) {
       const vlMap = field.eruptFieldJson.edit.choiceType[0].vlMap = new Map();
       field.eruptFieldJson.edit.choiceType[0].vl.forEach(vl => {

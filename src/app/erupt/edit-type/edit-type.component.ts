@@ -20,6 +20,12 @@ export class EditTypeComponent implements OnInit {
 
   @Input() size: "large" | "small" | "default" = "large";
 
+  @Input() col = colRules[3];
+
+  @Input() layout: "horizontal" | "vertical" = "vertical";
+
+  @ViewChild("refFoot") refFoot;
+
   eruptFieldModels: Array<EruptFieldModel>;
 
   editType = EditType;
@@ -27,15 +33,6 @@ export class EditTypeComponent implements OnInit {
   choiceEnum = ChoiceEnum;
 
   dateEnum = DateEnum;
-
-  referenceLists: Array<ReferenceType>;
-
-
-  @Input() col = colRules[3];
-
-  @Input() layout: "horizontal" | "vertical" = "vertical";
-
-  @ViewChild("refFoot") refFoot;
 
 
   constructor(private dataService: DataService, private helper: HelperService,

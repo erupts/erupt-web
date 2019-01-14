@@ -7,19 +7,19 @@
         <ng-container *ngIf="eruptModel.eruptJson.power.add">
             <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
                 <i nz-icon type="plus" theme="outline"></i>新增
-            </button>&nbsp;
+            </button>
         </ng-container>
 
         <ng-container *ngIf="eruptModel.eruptJson.power.delete">
             <button nz-button nzType="danger" class="mb-sm" (click)="delRows()">
                 <i nz-icon type="delete" theme="outline"></i>删除
-            </button>&nbsp;
+            </button>
         </ng-container>
 
         <ng-container *ngIf="eruptModel.eruptJson.power.export">
             <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()">
                 <i nz-icon type="download" theme="outline"></i>下载
-            </button>&nbsp;
+            </button>
         </ng-container>
 
         <ng-container *ngIf="eruptModel.eruptJson.power.importable">
@@ -33,16 +33,17 @@
             &nbsp;
         </ng-container>
 
-        <ng-container *ngIf="eruptModel.eruptJson.power.query">
-            <button nz-button nzType="primary" class="mb-sm" (click)="query()">
-                <i nz-icon type="search" theme="outline"></i>查询
-            </button>&nbsp;
-        </ng-container>
-
         <ng-container *ngIf="searchErupt.eruptFieldModels.length>0">
             <button nz-button nzType="default" class="mb-sm">
                 <i nz-icon type="codepen" theme="outline"></i>条件
-            </button>&nbsp;
+            </button>
+        </ng-container>
+
+        <ng-container *ngIf="eruptModel.eruptJson.power.query">
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button nzType="primary" class="mb-sm" (click)="query()">
+                <i nz-icon type="search" theme="outline"></i>查询
+            </button>
         </ng-container>
 
         <nz-divider nzType="vertical"></nz-divider>
@@ -50,14 +51,14 @@
         <ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">
             <ng-container *ngIf="oper.multi">
                 <button nz-button nzType="dashed" class="mb-sm" (click)="gcOperatorEdits(oper.code,true)">
-                    <i class="fa" [ngClass]="oper.icon"></i>&nbsp;
+                    <i class="fa" [ngClass]="oper.icon"></i>
                     {{oper.title}}
-                </button>&nbsp;
+                </button>
             </ng-container>
         </ng-container>
     </div>
 
-    <nz-card *ngIf="searchErupt.eruptFieldModels.length>0" style="padding: 0">
+    <nz-card *ngIf="searchErupt&&searchErupt.eruptFieldModels.length>0" style="padding: 0">
         <erupt-edit-type [eruptModel]="searchErupt"
                          [layout]="'horizontal'"
                          [col]="colRules[3]"

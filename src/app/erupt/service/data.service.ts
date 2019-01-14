@@ -36,6 +36,15 @@ export class DataService {
     });
   }
 
+  //根据id获取数据
+  queryEruptSingleData(modelName: string, id: any): Observable<EruptApiModel> {
+    return this.http.get<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/" + id, {
+      headers: {
+        eruptKey: modelName
+      }
+    });
+  }
+
   //查询tree数据
   queryEruptTreeData(modelName: string): Observable<Array<Tree>> {
     return this.http.post<Array<Tree>>(this.domain + "/erupt-api/data/tree/" + modelName, {}, {

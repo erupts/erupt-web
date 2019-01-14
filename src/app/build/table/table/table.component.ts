@@ -85,6 +85,7 @@ export class TableComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
+      this.selectedRows = [];
       this.eruptName = params.name;
       this.dataService.getEruptBuild(this.eruptName).subscribe(
         em => {
@@ -106,8 +107,7 @@ export class TableComponent implements OnInit {
   //构建搜索项信息
   buildSearchErupt() {
     const eruptFieldModels = [];
-    this.eruptModel.eruptFieldModels.forEach((field, i) => {
-      //search Edit
+    this.eruptModel.eruptFieldModels.forEach((field) => {
       if (field.eruptFieldJson.edit.search.search) {
         field.eruptFieldJson.edit.notNull = false;
         field.eruptFieldJson.edit.show = true;
