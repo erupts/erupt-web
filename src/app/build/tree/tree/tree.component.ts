@@ -15,9 +15,9 @@ import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component"
 })
 export class TreeComponent implements OnInit {
 
-  private eruptName: string = "";
-
   private colRules = colRules;
+
+  private eruptName: string = "";
 
   private eruptModel: EruptModel;
 
