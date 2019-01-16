@@ -33,9 +33,7 @@ export class DefaultInterceptor implements HttpInterceptor {
     setTimeout(() => this.injector.get(Router).navigateByUrl(url));
   }
 
-  private handleData(
-    event: HttpResponse<any> | HttpErrorResponse
-  ): Observable<any> {
+  private handleData(event: HttpResponse<any> | HttpErrorResponse): Observable<any> {
     // 可能会因为 `throw` 导出无法执行 `_HttpClient` 的 `end()` 操作
     this.injector.get(_HttpClient).end();
     // 业务处理：一些通用操作
@@ -48,7 +46,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         // 则以下代码片断可直接适用
         if (event instanceof HttpResponse) {
           const body: any = event.body;
-          console.log(body);
+          console.log(event);
           // if (body && body.status !== 0) {
           //     this.msg.error(body.msg);
           //     // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：
@@ -57,8 +55,6 @@ export class DefaultInterceptor implements HttpInterceptor {
           // } else {
           //     // 重新修改 `body` 内容为 `response` 内容，对于绝大多数场景已经无须再关心业务状态码
           //     return of(new HttpResponse(Object.assign(event, { body: body.response })));
-          //     // 或者依然保持完整的格式
-          //     return of(event);
           // }
         }
         break;
@@ -68,8 +64,11 @@ export class DefaultInterceptor implements HttpInterceptor {
       case 404:
         this.goTo("/layout/404");
         break;
+      case 403:
+        this.goTo("/layout/403");
+        break;
       case 500:
-        this.goTo(`/${event.status}`);
+        this.goTo("/layout/500");
         break;
       default:
         if (event instanceof HttpErrorResponse) {

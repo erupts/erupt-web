@@ -12,6 +12,8 @@ export class HeaderComponent {
 
   isFullScreen: boolean = false;
 
+  collapse:boolean = false;
+
   constructor(public settings: SettingsService) {
   }
 

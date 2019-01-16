@@ -27,6 +27,11 @@ export class DataService {
     return this._http.get<EruptPageModel>(this.domain + "/erupt-api/build/list/" + modelName);
   }
 
+  //查询tree数据结构数据
+  queryEruptTreeData(modelName: string): Observable<Array<Tree>> {
+    return this._http.post<Array<Tree>>(this.domain + "/erupt-api/data/tree/" + modelName, {}, {});
+  }
+
   //查询数据
   queryEruptData(modelName: string, condition: any, page: Page): Observable<Page> {
     return this.http.post<Page>(this.domain + "/erupt-api/data/table/" + modelName, { ...page }, {
@@ -38,20 +43,7 @@ export class DataService {
 
   //根据id获取数据
   queryEruptSingleData(modelName: string, id: any): Observable<EruptApiModel> {
-    return this.http.get<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/" + id, {
-      headers: {
-        eruptKey: modelName
-      }
-    });
-  }
-
-  //查询tree数据
-  queryEruptTreeData(modelName: string): Observable<Array<Tree>> {
-    return this.http.post<Array<Tree>>(this.domain + "/erupt-api/data/tree/" + modelName, {}, {
-      headers: {
-        eruptKey: modelName
-      }
-    });
+    return this._http.get<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/" + id, {});
   }
 
   //执行自定义operator方法
@@ -113,14 +105,14 @@ export class DataService {
     });
   }
 
-  //获取而为澳门
-  getVerifyCodeUrl(): string {
-    return this.domain + "/verify/code-img" + "?_t" + new Date().getTime();
+  //获取二维码
+  getVerifyCodeUrl(account: string): string {
+    return this.domain + "/ws/code-img" + "?account=" + account + "&_t" + new Date().getTime();
   }
 
   //登录接口
   login(account: string, pwd: string, verifyCode?: any): Observable<loginModel> {
-    return this._http.post(this.domain + "/erupt-user/login", {}, {
+    return this._http.post(this.domain + "/ws/login", {}, {
         account: account,
         pwd: pwd,
         verifyCode: verifyCode

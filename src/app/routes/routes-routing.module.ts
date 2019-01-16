@@ -27,7 +27,9 @@ const routes: Routes = [
       { path: "dashboard", component: DashboardComponent, data: { title: "仪表盘", titleI18n: "dashboard" } },
       { path: "build/table/:name", loadChildren: "../build/table/table.module#TableModule", pathMatch: "full" },
       { path: "build/tree/:name", loadChildren: "../build/tree/tree.module#TreeModule", pathMatch: "full" },
-      { path: "layout/404", component: Exception404Component }
+      { path: "layout/403", component: Exception403Component },
+      { path: "layout/404", component: Exception404Component },
+      { path: "layout/500", component: Exception500Component }
     ]
   },
   // 全屏布局

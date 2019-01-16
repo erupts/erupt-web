@@ -11,6 +11,7 @@ export interface EruptModel {
   //# customer prop
   eruptFieldModelMap?: Map<String, EruptFieldModel>;
   tableColumns?: Array<View>;
+  mode?: "edit" | "search"
 }
 
 export interface Erupt {

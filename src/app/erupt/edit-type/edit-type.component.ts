@@ -54,9 +54,6 @@ export class EditTypeComponent implements OnInit {
         }
       }, field.eruptFieldJson.edit.title, "modal-xs", () => {
         const tempVal = field.eruptFieldJson.edit.$tempValue;
-        if (tempVal == field.eruptModel) {
-
-        }
         field.eruptFieldJson.edit.$viewValue = tempVal.label;
         field.eruptFieldJson.edit.$value = tempVal.id;
       });

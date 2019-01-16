@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, Inject, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
@@ -40,6 +40,8 @@ export class TableComponent implements OnInit {
   ) {
   }
 
+  hideCondition = false;
+
   colRules = colRules;
 
   searchErupt: EruptModel;
@@ -47,8 +49,6 @@ export class TableComponent implements OnInit {
   eruptModel: EruptModel;
 
   subErupts: Array<EruptAndEruptFieldModel>;
-
-  eruptName: string;
 
   stConfig = {
     stPage: {
@@ -86,10 +86,13 @@ export class TableComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.selectedRows = [];
-      this.eruptName = params.name;
-      this.dataService.getEruptBuild(this.eruptName).subscribe(
+      this.eruptModel = null;
+      if (this.searchErupt) {
+        this.searchErupt.eruptFieldModels = [];
+      }
+      this.dataService.getEruptBuild(params.name).subscribe(
         em => {
-          this.url = this.dataService.domain + "/erupt-api/data/table/" + this.eruptName;
+          this.url = this.dataService.domain + "/erupt-api/data/table/" + params.name;
           this.eruptModel = em.eruptModel;
           this.subErupts = em.subErupts;
           initErupt(this.eruptModel);
@@ -115,10 +118,15 @@ export class TableComponent implements OnInit {
       }
     });
     this.searchErupt = {
+      mode: "search",
       eruptFieldModels: eruptFieldModels,
       eruptJson: null,
       eruptName: this.eruptModel.eruptName
     };
+    console.log(this.searchErupt.eruptFieldModels);
+    setTimeout(() => {
+    }, 500);
+
   }
 
   query() {
@@ -288,6 +296,8 @@ export class TableComponent implements OnInit {
     emptyEruptValue(this.eruptModel);
     this.modal.create({
       nzWrapClassName: "modal-lg",
+      nzMaskClosable: false,
+      nzKeyboard: false,
       nzTitle: "新增",
       nzContent: EditComponent,
       nzComponentParams: {

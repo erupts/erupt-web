@@ -2,11 +2,10 @@ import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { NzFormatEmitEvent, NzTreeNode } from "ng-zorro-antd/tree";
 import { EruptModel } from "../../../erupt/model/erupt.model";
-import { eruptValueToObject, initErupt, objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
+import { initErupt, objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalRef, NzModalService } from "ng-zorro-antd";
 import { colRules } from "../../../erupt/model/util.model";
-import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 
 @Component({
   selector: "app-tree",
@@ -17,11 +16,9 @@ export class TreeComponent implements OnInit {
 
   private colRules = colRules;
 
-  private eruptName: string = "";
+  private eruptName: string;
 
   private eruptModel: EruptModel;
-
-  private addModal: NzModalRef;
 
   private showEdit: boolean = false;
 
@@ -45,64 +42,53 @@ export class TreeComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
+      this.eruptModel = null;
       this.eruptName = params.name;
-    });
+      this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
+        this.eruptModel = erupt.eruptModel;
+        initErupt(erupt.eruptModel);
+      });
 
-    this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
-      this.eruptModel = erupt.eruptModel;
-      initErupt(erupt.eruptModel);
-    });
+      this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
+        function gcZorroTree(nodes) {
+          const tempNodes = [];
+          nodes.forEach(node => {
+            let option: any = {
+              code: node.id,
+              title: node.label,
+              data: node.data
+            };
+            if (node.children && node.children.length > 0) {
+              tempNodes.push(option);
+              option.children = gcZorroTree(node.children);
+            } else {
+              option.isLeaf = true;
+              tempNodes.push(option);
+            }
+          });
+          return tempNodes;
+        }
 
-    this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
-      function gcZorroTree(nodes) {
-        const tempNodes = [];
-        nodes.forEach(node => {
-          let option: any = {
-            code: node.id,
-            title: node.label,
-            data: node.data
-          };
-          if (node.children && node.children.length > 0) {
-            tempNodes.push(option);
-            option.children = gcZorroTree(node.children);
-          } else {
-            option.isLeaf = true;
-            tempNodes.push(option);
-          }
-        });
-        return tempNodes;
-      }
+        if (tree) {
+          this.nodes = gcZorroTree(tree);
+        }
 
-      if (tree) {
-        this.nodes = gcZorroTree(tree);
-      }
-
+      });
     });
   }
 
 
-  add() {
+  addBlock() {
     this.showEdit = true;
-    // objectToEruptValue(this.eruptModel, {});
-    this.addModal = this.modal.create({
-      nzWrapClassName: "modal-lg",
-      nzTitle: "新增",
-      nzContent: EditTypeComponent,
-      nzComponentParams: {
-        // @ts-ignore
-        eruptModel: this.eruptModel
-      },
-      nzOnOk: () => {
-        console.log(this.addModal);
-        if (validateNotNull(this.eruptModel, this.msg)) {
-          this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel, this.msg)).subscribe(result => {
-            alert(result);
-          });
-        } else {
-          return false;
-        }
-      }
-    });
+    this.loading = false;
+    if (this.tree.getSelectedNodeList()[0]) {
+      this.tree.getSelectedNodeList()[0].setSelected(false);
+    }
+    objectToEruptValue(this.eruptModel, {});
+  }
+
+  add() {
+    validateNotNull(this.eruptModel, this.msg);
   }
 
   save() {

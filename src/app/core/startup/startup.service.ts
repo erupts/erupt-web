@@ -68,7 +68,7 @@ export class StartupService {
     // }
     // mock
     const app: any = {
-      name: `erupt admin`,
+      name: window["config"].name,
       description: `erupt admin for YuePeng `
     };
     const user: any = {

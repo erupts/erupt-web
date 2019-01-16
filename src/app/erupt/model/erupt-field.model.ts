@@ -8,7 +8,6 @@ export interface EruptFieldModel {
   fieldName: string;
   eruptFieldJson: EruptField;
   fieldReturnName?: string;
-  eruptModel?: EruptModel;
   value?: any;
 }
 
@@ -61,8 +60,7 @@ export interface Edit {
 
 interface Search {
   search: boolean;
-  fuzzy: boolean;
-  range: boolean;
+  vague: boolean;
 }
 
 export interface TabType {

@@ -30,13 +30,6 @@
                     <li nz-menu-item>下载模板</li>
                 </ul>
             </nz-dropdown-button>
-            &nbsp;
-        </ng-container>
-
-        <ng-container *ngIf="searchErupt.eruptFieldModels.length>0">
-            <button nz-button nzType="default" class="mb-sm">
-                <i nz-icon type="codepen" theme="outline"></i>条件
-            </button>
         </ng-container>
 
         <ng-container *ngIf="eruptModel.eruptJson.power.query">
@@ -56,13 +49,21 @@
                 </button>
             </ng-container>
         </ng-container>
+
+        <ng-container *ngIf="searchErupt.eruptFieldModels.length>0">
+            <button nz-button [nzType]="hideCondition?'default':'danger'" class="mb-sm float-right"
+                    (click)="hideCondition=!hideCondition">
+                <i nz-icon type="codepen" theme="outline"></i>
+            </button>
+        </ng-container>
     </div>
 
-    <nz-card *ngIf="searchErupt&&searchErupt.eruptFieldModels.length>0" style="padding: 0">
+    <nz-card *ngIf="searchErupt&&searchErupt.eruptFieldModels.length>0" style="padding: 0" [hidden]="hideCondition">
         <erupt-edit-type [eruptModel]="searchErupt"
-                         [layout]="'horizontal'"
                          [col]="colRules[3]"
-                         [size]="'default'">
+                         size="default"
+                         layout="horizontal"
+        >
         </erupt-edit-type>
     </nz-card>
 

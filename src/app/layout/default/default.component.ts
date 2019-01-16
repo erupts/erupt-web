@@ -85,8 +85,8 @@ export class LayoutDefaultComponent
   implements OnInit, AfterViewInit, OnDestroy {
   private notify$: Subscription;
   isFetching = false;
-  @ViewChild("settingHost", { read: ViewContainerRef })
-  settingHost: ViewContainerRef;
+  // @ViewChild("settingHost", { read: ViewContainerRef })
+  // settingHost: ViewContainerRef;
 
   constructor(iconSrv: NzIconService,
               router: Router,
@@ -142,14 +142,14 @@ export class LayoutDefaultComponent
 
   ngAfterViewInit(): void {
     // Setting componet for only developer
-    if (!environment.production) {
-      setTimeout(() => {
-        const settingFactory = this.resolver.resolveComponentFactory(
-          SettingDrawerComponent
-        );
-        this.settingHost.createComponent(settingFactory);
-      }, 22);
-    }
+    // if (!environment.production) {
+    //   setTimeout(() => {
+    //     const settingFactory = this.resolver.resolveComponentFactory(
+    //       SettingDrawerComponent
+    //     );
+    //     this.settingHost.createComponent(settingFactory);
+    //   }, 22);
+    // }
   }
 
   ngOnInit() {
