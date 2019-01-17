@@ -18,7 +18,7 @@ export class TreeComponent implements OnInit {
 
   private eruptName: string;
 
-  private eruptModel: EruptModel;
+  public eruptModel: EruptModel;
 
   private showEdit: boolean = false;
 
@@ -29,6 +29,8 @@ export class TreeComponent implements OnInit {
   private searchValue;
 
   private nodes: any = [];
+
+  private selectLeaf: boolean = false;
 
   @ViewChild("tree") tree;
 
@@ -81,6 +83,7 @@ export class TreeComponent implements OnInit {
   addBlock() {
     this.showEdit = true;
     this.loading = false;
+    this.selectLeaf = false;
     if (this.tree.getSelectedNodeList()[0]) {
       this.tree.getSelectedNodeList()[0].setSelected(false);
     }
@@ -126,6 +129,7 @@ export class TreeComponent implements OnInit {
 
   nodeClickEvent(event: NzFormatEmitEvent): void {
     const that = this;
+    this.selectLeaf = true;
     this.loading = true;
     this.dataService.queryEruptSingleData(this.eruptModel.eruptName, event.node.origin.code).subscribe(data => {
       that.loading = false;

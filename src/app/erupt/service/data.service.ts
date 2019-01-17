@@ -3,14 +3,13 @@
  */
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { EruptModel, Tree } from "../model/erupt.model";
+import { Tree } from "../model/erupt.model";
 import { Page } from "../model/page";
 import { _HttpClient } from "@delon/theme";
 import { Observable } from "rxjs";
 import { loginModel } from "../model/user.model";
 import { EruptApiModel } from "../model/erupt-api.model";
 import { EruptPageModel } from "../model/erupt-page.model";
-import { STReq } from "@delon/abc";
 
 @Injectable()
 export class DataService {
@@ -24,7 +23,12 @@ export class DataService {
 
   //获取结构
   getEruptBuild(modelName: string): Observable<EruptPageModel> {
-    return this._http.get<EruptPageModel>(this.domain + "/erupt-api/build/list/" + modelName);
+    return this._http.get<EruptPageModel>(this.domain + "/erupt-api/build/list/" + modelName, null, {
+      responseType: "json",
+      headers: {
+        eruptKey: modelName
+      }
+    });
   }
 
   //查询tree数据结构数据
@@ -60,11 +64,7 @@ export class DataService {
 
   //获取reference数据
   queryEruptReferenceData(modelName: string, refName: string): Observable<any> {
-    return this.http.get(this.domain + "/erupt-api/data/" + modelName + "/ref/" + refName, {
-      headers: {
-        eruptKey: modelName
-      }
-    });
+    return this._http.get(this.domain + "/erupt-api/data/" + modelName + "/ref/" + refName);
   }
 
   //增加数据
