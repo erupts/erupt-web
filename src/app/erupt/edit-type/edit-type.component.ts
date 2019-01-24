@@ -1,12 +1,13 @@
 import { Component, Inject, Input, OnInit, TemplateRef, ViewChild } from "@angular/core";
-import { Edit, EruptFieldModel, ReferenceType } from "../model/erupt-field.model";
-import { ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
+import { Edit, EruptField, EruptFieldModel, ReferenceType } from "../model/erupt-field.model";
+import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, InputEnum } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
 import { ListSelectComponent } from "../list-select/list-select.component";
 import { HelperService } from "../service/helper.service";
-import { NzMessageService } from "ng-zorro-antd";
+import { NzMessageService, UploadFile, UploadXHRArgs } from "ng-zorro-antd";
 import { EruptModel } from "../model/erupt.model";
 import { colRules } from "../model/util.model";
+import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 
 @Component({
   selector: "erupt-edit-type",
@@ -34,13 +35,32 @@ export class EditTypeComponent implements OnInit {
 
   dateEnum = DateEnum;
 
+  attachmentEnum = AttachmentEnum;
+
+  inputEnum = InputEnum;
+
 
   constructor(private dataService: DataService, private helper: HelperService,
-              @Inject(NzMessageService) private msg: NzMessageService) {
+              @Inject(NzMessageService) private msg: NzMessageService, @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
   }
 
   ngOnInit() {
     this.eruptFieldModels = this.eruptModel.eruptFieldModels;
+  }
+
+  upLoadNzChange({ file, fileList }, field: EruptFieldModel) {
+    const status = file.status;
+    if (status === "done") {
+      if (file.response.success) {
+        field.eruptFieldJson.edit.$value = file.response.data;
+      } else {
+        this.msg.error(file.response.message);
+        field.eruptFieldJson.edit.$tempValue.pop();
+      }
+      console.log(field.eruptFieldJson.edit.$tempValue);
+    } else if (status === "error") {
+      this.msg.error(`${file.name} 上传失败`);
+    }
   }
 
 

@@ -16,6 +16,8 @@ export class DataService {
 
   public domain: string = window["domain"];
 
+  public upload: string = this.domain + "/erupt-api/file/upload/";
+
   eruptHeaderKey: String = "erupt";
 
   constructor(private http: HttpClient, private _http: _HttpClient) {
@@ -122,6 +124,6 @@ export class DataService {
 
   //获取菜单接口
   getMenu(): Observable<any> {
-    return this.http.post(this.domain + "/erupt-user/menu", {});
+    return this.http.post(this.domain + "/ws/menu", null);
   }
 }

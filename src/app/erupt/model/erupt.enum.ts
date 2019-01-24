@@ -38,7 +38,14 @@ export enum DateEnum {
 }
 
 export enum InputEnum {
-  TEXT, EMAIL, TEXTAREA, TAG
+  TEXT = "TEXT",
+  TEXTAREA = "TEXTAREA"
+}
+
+export enum AttachmentEnum {
+  IMAGE = "IMAGE",
+  VIDEO = "VIDEO",
+  OTHER = "OTHER",
 }
 
 export enum ChoiceEnum {

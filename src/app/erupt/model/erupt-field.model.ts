@@ -1,4 +1,4 @@
-import { ChoiceEnum, DateEnum, EditType, InputEnum, ViewType } from "./erupt.enum";
+import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, InputEnum, ViewType } from "./erupt.enum";
 import { EruptModel } from "./erupt.model";
 
 /**
@@ -45,6 +45,7 @@ export interface Edit {
   tabType: Array<TabType>;
   inputType: Array<InputType>;
   referenceType: Array<ReferenceType>;
+  attachmentType: Array<AttachmentType>;
   boolType: Array<BoolType>;
   choiceType: Array<ChoiceType>;
   dictType: Array<DictType>;
@@ -112,9 +113,16 @@ interface DateType {
   isRange: boolean;
 }
 
+interface AttachmentType {
+  size: number;
+  fileType: Array<string>;
+  path: String;
+  maxLimit: number;
+  type: AttachmentEnum;
+}
+
 
 export interface VL {
   value: number;
   label: string;
 }
-
