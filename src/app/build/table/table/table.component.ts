@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { Component, Inject, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";

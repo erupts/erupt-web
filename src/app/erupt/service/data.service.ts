@@ -1,7 +1,7 @@
 /**
  * Created by liyuepeng on 10/17/18.
  */
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Tree } from "../model/erupt.model";
 import { Page } from "../model/page";
@@ -10,6 +10,7 @@ import { Observable } from "rxjs";
 import { loginModel } from "../model/user.model";
 import { EruptApiModel } from "../model/erupt-api.model";
 import { EruptPageModel } from "../model/erupt-page.model";
+import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 
 @Injectable()
 export class DataService {
@@ -20,7 +21,7 @@ export class DataService {
 
   eruptHeaderKey: String = "erupt";
 
-  constructor(private http: HttpClient, private _http: _HttpClient) {
+  constructor(private http: HttpClient, private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
   }
 
   //获取结构
@@ -124,6 +125,10 @@ export class DataService {
 
   //获取菜单接口
   getMenu(): Observable<any> {
-    return this.http.post(this.domain + "/ws/menu", null);
+    return this._http.get(this.domain + "/menu", null);
+  }
+
+  downloadAttachment(path: string) {
+    window.open(`/assets/attachment-download.html?path=${path}&token=${this.tokenService.get().token}`);
   }
 }

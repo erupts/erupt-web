@@ -1,10 +1,10 @@
 import { Component, Inject, Input, OnInit, TemplateRef, ViewChild } from "@angular/core";
-import { Edit, EruptField, EruptFieldModel, ReferenceType } from "../model/erupt-field.model";
+import { Edit, EruptFieldModel } from "../model/erupt-field.model";
 import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, InputEnum } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
 import { ListSelectComponent } from "../list-select/list-select.component";
 import { HelperService } from "../service/helper.service";
-import { NzMessageService, UploadFile, UploadXHRArgs } from "ng-zorro-antd";
+import { NzMessageService, UploadFile } from "ng-zorro-antd";
 import { EruptModel } from "../model/erupt.model";
 import { colRules } from "../model/util.model";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
@@ -39,6 +39,9 @@ export class EditTypeComponent implements OnInit {
 
   inputEnum = InputEnum;
 
+  previewImage = null;
+
+  previewVisible: boolean = false;
 
   constructor(private dataService: DataService, private helper: HelperService,
               @Inject(NzMessageService) private msg: NzMessageService, @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
@@ -62,6 +65,14 @@ export class EditTypeComponent implements OnInit {
       this.msg.error(`${file.name} 上传失败`);
     }
   }
+
+
+  previewImageHandler = (file: UploadFile) => {
+    console.log(file);
+    this.dataService.downloadAttachment(file.response.data);
+    this.previewImage = file.url || file.thumbUrl;
+    this.previewVisible = true;
+  };
 
 
   createRefModal(field: EruptFieldModel) {

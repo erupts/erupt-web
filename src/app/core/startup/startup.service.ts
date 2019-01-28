@@ -105,11 +105,19 @@ export class StartupService {
           //   shortcutRoot: true
           // },
           {
-            text: "404",
+            text: "subs",
             icon: { type: "icon", value: "appstore" },
-            link: "/build/table/mmo123",
-            title: "MMO",
-            desc: "one demo"
+            title: "subs",
+            desc: "one demo",
+            children: [
+              {
+                text: "404",
+                icon: { type: "icon", value: "appstore" },
+                link: "/build/table/mmo123",
+                title: "MMO",
+                desc: "one demo"
+              }
+            ]
           },
           {
             text: "MMO",

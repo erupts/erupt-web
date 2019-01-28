@@ -220,15 +220,24 @@
                                     <!--<label nz-radio-button [nzValue]="null">不选</label>-->
                                     <!--<label nz-radio-button [nzValue]="false">{{field.eruptFieldJson.edit.boolType[0].falseText}}</label>-->
                                     <!--</nz-radio-group>-->
-
-                                    <nz-switch class="erupt-input stander-line-height"
-                                               [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                               [name]="field.fieldName"
-                                               [nzCheckedChildren]="field.eruptFieldJson.edit.boolType[0].trueText"
-                                               [nzUnCheckedChildren]="field.eruptFieldJson.edit.boolType[0].falseText"
-                                               [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                    ></nz-switch>
-
+                                    <ng-container *ngIf="eruptModel.mode=='search'">
+                                        <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                        [name]="field.fieldName"
+                                                        class="erupt-input stander-line-height" [nzButtonStyle]="'solid'">
+                                            <label [nzValue]="null" nz-radio-button>全部</label>
+                                            <label [nzValue]="true" nz-radio-button>{{field.eruptFieldJson.edit.boolType[0].trueText}}</label>
+                                            <label [nzValue]="false" nz-radio-button>{{field.eruptFieldJson.edit.boolType[0].falseText}}</label>
+                                        </nz-radio-group>
+                                    </ng-container>
+                                    <ng-container *ngIf="eruptModel.mode!='search'">
+                                        <nz-switch class="erupt-input stander-line-height"
+                                                   [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                   [name]="field.fieldName"
+                                                   [nzCheckedChildren]="field.eruptFieldJson.edit.boolType[0].trueText"
+                                                   [nzUnCheckedChildren]="field.eruptFieldJson.edit.boolType[0].falseText"
+                                                   [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                        ></nz-switch>
+                                    </ng-container>
                                 </se>
                             </div>
                         </div>
@@ -255,6 +264,7 @@
                                                 [(nzFileList)]="field.eruptFieldJson.edit.$tempValue"
                                                 [nzLimit]="10"
                                                 (nzChange)="upLoadNzChange($event,field)"
+                                                [nzPreview]="previewImageHandler"
                                                 [nzHeaders]="{token:tokenService.get().token}"
                                                 [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
                                             <p class="ant-upload-drag-icon">
@@ -268,6 +278,7 @@
                                                 [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                 [nzMultiple]="false"
                                                 [nzLimit]="10"
+                                                [(nzFileList)]="field.eruptFieldJson.edit.$tempValue"
                                                 (nzChange)="upLoadNzChange($event,field)"
                                                 [nzHeaders]="{token:tokenService.get().token}"
                                                 [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
@@ -307,3 +318,10 @@
         </ng-container>
     </form>
 </div>
+
+<nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible=false"
+          [nzWrapClassName]="'modal-lg'">
+    <ng-template #modalContent>
+        <img [src]="previewImage" [ngStyle]="{ 'width': '100%' }"/>
+    </ng-template>
+</nz-modal>

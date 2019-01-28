@@ -1,0 +1,26 @@
+<ul nz-menu [nzMode]="'inline'" nzTheme='light' [nzInlineCollapsed]="settings.layout.collapsed ">
+    <ng-container *ngFor="let item of menu">
+        <ng-container *ngIf="item.children.length>0">
+            <li nz-submenu>
+                <a title>
+                    <i [ngClass]="item.data.icon" aria-hidden="true"></i>
+                    <span [hidden]="settings.layout.collapsed">{{item.data.name}}</span>
+                </a>
+                <ul>
+                    <li *ngFor="let ii of item.children" nz-menu-item>
+                        <i [ngClass]="ii.data.icon" aria-hidden="true"></i>
+                        <span>{{ii.data.name}}</span>
+                    </li>
+                </ul>
+            </li>
+        </ng-container>
+        <ng-container *ngIf="item.children.length==0">
+            <li nz-menu-item nz-tooltip nzPlacement="right">
+                <a title>
+                    <i [ngClass]="item.data.icon" aria-hidden="true"></i>
+                    <span [hidden]="settings.layout.collapsed">{{item.data.name}}</span>
+                </a>
+            </li>
+        </ng-container>
+    </ng-container>
+</ul>
