@@ -46,7 +46,6 @@ export class DefaultInterceptor implements HttpInterceptor {
         // 则以下代码片断可直接适用
         if (event instanceof HttpResponse) {
           const body: any = event.body;
-          console.log(event);
           // if (body && body.status !== 0) {
           //     this.msg.error(body.msg);
           //     // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：

@@ -124,7 +124,7 @@ export class DataService {
   }
 
   //获取菜单接口
-  getMenu(): Observable<any> {
+  getMenu(): Observable<Array<any>> {
     return this._http.get(this.domain + "/menu", null);
   }
 

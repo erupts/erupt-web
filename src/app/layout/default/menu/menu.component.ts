@@ -2,10 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { SettingsService } from "@delon/theme";
 import { DataService } from "../../../erupt/service/data.service";
 
-interface menu {
-
-}
-
 @Component({
   selector: "layout-menu",
   templateUrl: "./menu.component.html",

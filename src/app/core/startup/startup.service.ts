@@ -85,65 +85,6 @@ export class StartupService {
     this.settingService.setUser(user);
     // ACL：设置权限为全量
     this.aclService.setFull(true);
-    // 初始化菜单
-    this.data.getMenu().subscribe(data => {
-      console.log(data);
-    });
-    this.menuService.add([
-      {
-        text: "主导航",
-        group: true,
-        children: [
-          // {
-          //   text: '仪表盘',
-          //   link: '/dashboard',
-          //   icon: {type: 'icon', value: 'appstore'}
-          // },
-          // {
-          //   text: '快捷菜单',
-          //   icon: {type: 'icon', value: 'rocket'},
-          //   shortcutRoot: true
-          // },
-          {
-            text: "subs",
-            icon: { type: "icon", value: "appstore" },
-            title: "subs",
-            desc: "one demo",
-            children: [
-              {
-                text: "404",
-                icon: { type: "icon", value: "appstore" },
-                link: "/build/table/mmo123",
-                title: "MMO",
-                desc: "one demo"
-              }
-            ]
-          },
-          {
-            text: "MMO",
-            icon: { type: "icon", value: "appstore" },
-            link: "/build/table/mmo",
-            title: "MMO",
-            desc: "one demo"
-          },
-          {
-            text: "TABLE",
-            icon: { type: "icon", value: "rocket" },
-            link: "/build/table/EruptUser"
-          },
-          {
-            text: "ROLE",
-            icon: { type: "icon", value: "rocket" },
-            link: "/build/table/EruptRole"
-          },
-          {
-            text: "TREE",
-            icon: { type: "icon", value: "appstore" },
-            link: "/build/tree/EruptMenu"
-          }
-        ]
-      }
-    ]);
     // 设置页面标题的后缀
     this.titleService.suffix = app.name;
 

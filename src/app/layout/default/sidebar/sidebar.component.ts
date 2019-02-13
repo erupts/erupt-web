@@ -1,13 +1,22 @@
-import {Component} from '@angular/core';
-import {NzMessageService} from 'ng-zorro-antd';
-import {SettingsService} from '@delon/theme';
+import { Component, OnInit } from "@angular/core";
+import { NzMessageService } from "ng-zorro-antd";
+import { Menu, MenuService, SettingsService } from "@delon/theme";
+import { DataService } from "../../../erupt/service/data.service";
 
 @Component({
-    selector: 'layout-sidebar',
-    templateUrl: './sidebar.component.html'
+  selector: "layout-sidebar",
+  templateUrl: "./sidebar.component.html"
 })
-export class SidebarComponent {
-    constructor(public settings: SettingsService, public msgSrv: NzMessageService) {
-    }
+export class SidebarComponent implements OnInit {
+
+  constructor(public settings: SettingsService,
+              public msgSrv: NzMessageService,
+              public data: DataService,
+              private menuService: MenuService) {
+  }
+
+  ngOnInit(): void {
+
+  }
 
 }

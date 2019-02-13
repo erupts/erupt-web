@@ -303,7 +303,7 @@ export class SettingDrawerComponent {
   }
 
   changeColor(color: string) {
-    this.settingSrv.setLayout("mColor", color);
+    this.settingSrv.setLayout("mainColor", color);
     this.color = color;
     // Object.keys(DEFAULT_VARS)
     //   .filter(key => DEFAULT_VARS[key].default === '@primary-color')

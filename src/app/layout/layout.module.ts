@@ -15,10 +15,11 @@ import { HeaderUserComponent } from "./default/header/components/user.component"
 
 import { SettingDrawerComponent } from "./default/setting-drawer/setting-drawer.component";
 import { SettingDrawerItemComponent } from "./default/setting-drawer/setting-drawer-item.component";
-import { MenuComponent } from "./default/menu/menu.component";
 // passport
 import { LayoutPassportComponent } from "./passport/passport.component";
-import { MenuItemComponent } from "./default/menu/menu-item.component";
+
+import { DragDropModule } from "@angular/cdk/drag-drop";
+import { MenuComponent } from "./default/menu/menu.component";
 
 const SETTINGDRAWER = [SettingDrawerComponent, SettingDrawerItemComponent];
 
@@ -28,7 +29,6 @@ const COMPONENTS = [
   HeaderComponent,
   SidebarComponent,
   MenuComponent,
-  MenuItemComponent,
   ...SETTINGDRAWER
 ];
 
@@ -47,7 +47,7 @@ const PASSPORT = [
 ];
 
 @NgModule({
-  imports: [SharedModule],
+  imports: [SharedModule, DragDropModule],
   entryComponents: SETTINGDRAWER,
   declarations: [
     ...COMPONENTS,

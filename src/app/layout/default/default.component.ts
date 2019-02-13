@@ -21,7 +21,7 @@ import {
 import { NzMessageService, NzIconService } from "ng-zorro-antd";
 import { Subscription } from "rxjs";
 import { updateHostClass } from "@delon/util";
-import { ScrollService, MenuService, SettingsService } from "@delon/theme";
+import { ScrollService, MenuService, SettingsService, Menu } from "@delon/theme";
 
 // #region icons
 
@@ -69,6 +69,7 @@ const ICONS = [
 
 import { environment } from "@env/environment";
 import { SettingDrawerComponent } from "./setting-drawer/setting-drawer.component";
+import { DataService } from "../../erupt/service/data.service";
 
 @Component({
   selector: "layout-default",
@@ -98,6 +99,7 @@ export class LayoutDefaultComponent
               private el: ElementRef,
               private renderer: Renderer2,
               public route: ActivatedRoute,
+              public data: DataService,
               @Inject(DOCUMENT) private doc: any) {
     iconSrv.addIcon(...ICONS);
     // scroll to top in change page
@@ -118,7 +120,7 @@ export class LayoutDefaultComponent
       setTimeout(() => {
         scroll.scrollToTop();
         this.isFetching = false;
-      }, 100);
+      }, 2000);
     });
   }
 
@@ -155,6 +157,36 @@ export class LayoutDefaultComponent
   ngOnInit() {
     this.notify$ = this.settings.notify.subscribe(() => this.setClass());
     this.setClass();
+    //fill menu
+    this.data.getMenu().subscribe(result => {
+      function gcMenu(nodes) {
+        const tempNodes = [];
+        nodes.forEach(node => {
+          let option: any = {
+            text: node.data.name,
+            linkExact: true,
+            link: node.data.path,
+            icon: {
+              type: "class",
+              value: node.data.icon
+            }
+          };
+          if (node.children && node.children.length > 0) {
+            tempNodes.push(option);
+            option.children = gcMenu(node.children);
+          } else {
+            tempNodes.push(option);
+          }
+        });
+        return tempNodes;
+      }
+      this.menuSrv.add([{
+        group: false,
+        text: "~",
+        children: gcMenu(result)
+      }]);
+    });
+
   }
 
   ngOnDestroy() {
