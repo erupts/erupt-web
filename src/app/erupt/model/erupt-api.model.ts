@@ -7,10 +7,3 @@ export interface EruptApiModel {
   message: string;
 }
 
-export enum Status {
-  SUCCESS = "SUCCESS",
-  ERROR = "ERROR",
-  NO_LOGIN = "NO_LOGIN",
-  NO_RIGHT = "NO_RIGHT"
-}
-

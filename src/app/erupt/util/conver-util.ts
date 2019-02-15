@@ -17,6 +17,15 @@ export function initErupt(eruptModel: EruptModel) {
   eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
   eruptModel.eruptFieldModels.forEach(field => {
     eruptModel.eruptFieldModelMap.set(field.fieldName, field);
+    if (field.eruptFieldJson.edit.type === EditType.INPUT) {
+      const inputType = field.eruptFieldJson.edit.inputType[0];
+      if (inputType.prefix.length > 0) {
+        inputType.prefixValue = inputType.prefix[0].value;
+      }
+      if (inputType.suffix.length > 0) {
+        inputType.suffixValue = inputType.suffix[0].value;
+      }
+    }
     if (field.eruptFieldJson.edit.type === EditType.CHOICE) {
       const vlMap = field.eruptFieldJson.edit.choiceType[0].vlMap = new Map();
       field.eruptFieldJson.edit.choiceType[0].vl.forEach(vl => {
@@ -127,10 +136,18 @@ export function validateNotNull(eruptModel: EruptModel, msg?: NzMessageService):
 }
 
 //将eruptModel中的内容拼接成后台需要的json格式
-export function eruptValueToObject(eruptModel: EruptModel, msg?: NzMessageService): any {
+export function eruptValueToObject(eruptModel: EruptModel): any {
   const eruptData: any = {};
   eruptModel.eruptFieldModels.forEach(field => {
     switch (field.eruptFieldJson.edit.type) {
+      case EditType.INPUT:
+        const inputType = field.eruptFieldJson.edit.inputType[0];
+        if (inputType.prefixValue || inputType.suffixValue) {
+          eruptData[field.fieldName] = inputType.prefixValue || "" + field.eruptFieldJson.edit.$value + inputType.suffixValue || "";
+        } else {
+          eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+        }
+        break;
       case EditType.REFERENCE:
         if (field.eruptFieldJson.edit.$value) {
           eruptData[field.fieldName] = {};
@@ -153,6 +170,22 @@ export function eruptValueToObject(eruptModel: EruptModel, msg?: NzMessageServic
 export function objectToEruptValue(eruptModel: EruptModel, object: any) {
   eruptModel.eruptFieldModels.forEach(field => {
     switch (field.eruptFieldJson.edit.type) {
+      case EditType.INPUT:
+        if (object[field.fieldName]) {
+          const inputType = field.eruptFieldJson.edit.inputType[0];
+          if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
+            let str = <string>object[field.fieldName];
+            for (let pre of inputType.prefix) {
+              if (str.startsWith(pre.value)) {
+                field.eruptFieldJson.edit.$value = str.replace(pre.value, "");
+                return;
+              }
+            }
+          } else {
+            field.eruptFieldJson.edit.$value = object[field.fieldName];
+          }
+        }
+        break;
       case EditType.DATE:
         field.eruptFieldJson.edit.$value = new FormControl(object[field.fieldName]).value;
         break;

@@ -69,17 +69,17 @@
             <label nz-checkbox formControlName="remember">自动登录</label>
         </nz-col>
         <nz-col [nzSpan]="12" class="text-right">
-            <a class="forgot" (click)="msg.error('请找欧阳锋')">忘记密码？</a>
+            <a class="forgot" (click)="msg.error('请联系管理员')">忘记密码？</a>
         </nz-col>
     </nz-form-item>
     <nz-form-item>
         <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="loading" nzBlock>登录</button>
     </nz-form-item>
 </form>
-<div class="other">
-    其他登录方式
-    <!--<i title="in fact Auth0 via window" (click)="open('auth0', 'window')" nz-icon type="alipay-circle" class="icon"></i>-->
-    <!--<i title="in fact Github via redirect" (click)="open('taobao')" nz-icon type="taobao-circle" class="icon"></i>-->
-    <!--<i title="真的是微博" (click)="open('weibo', 'window')" nz-icon type="weibo-circle" class="icon"></i>-->
-    <a class="register" routerLink="/passport/register">注册账户</a>
-</div>
+<!--<div class="other">-->
+    <!--其他登录方式-->
+    <!--&lt;!&ndash;<i title="in fact Auth0 via window" (click)="open('auth0', 'window')" nz-icon type="alipay-circle" class="icon"></i>&ndash;&gt;-->
+    <!--&lt;!&ndash;<i title="in fact Github via redirect" (click)="open('taobao')" nz-icon type="taobao-circle" class="icon"></i>&ndash;&gt;-->
+    <!--&lt;!&ndash;<i title="真的是微博" (click)="open('weibo', 'window')" nz-icon type="weibo-circle" class="icon"></i>&ndash;&gt;-->
+    <!--<a class="register" routerLink="/passport/register">注册账户</a>-->
+<!--</div>-->

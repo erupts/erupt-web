@@ -19,8 +19,6 @@ export class DataService {
 
   public upload: string = this.domain + "/erupt-api/file/upload/";
 
-  eruptHeaderKey: String = "erupt";
-
   constructor(private http: HttpClient, private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
   }
 
@@ -29,7 +27,7 @@ export class DataService {
     return this._http.get<EruptPageModel>(this.domain + "/erupt-api/build/list/" + modelName, null, {
       responseType: "json",
       headers: {
-        eruptKey: modelName
+        erupt: modelName
       }
     });
   }
@@ -43,7 +41,7 @@ export class DataService {
   queryEruptData(modelName: string, condition: any, page: Page): Observable<Page> {
     return this.http.post<Page>(this.domain + "/erupt-api/data/table/" + modelName, { ...page }, {
       headers: {
-        eruptKey: modelName
+        erupt: modelName
       }
     });
   }
@@ -60,7 +58,7 @@ export class DataService {
       param: param
     }, {
       headers: {
-        eruptKey: modelName
+        erupt: modelName
       }
     });
   }
@@ -74,7 +72,7 @@ export class DataService {
   addEruptData(modelName: string, data: any): Observable<EruptApiModel> {
     return this.http.post<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, data, {
       headers: {
-        eruptKey: modelName
+        erupt: modelName
       }
     });
   }
@@ -83,7 +81,7 @@ export class DataService {
   deleteEruptData(modelName: string, id): Observable<EruptApiModel> {
     return this.http.delete<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/" + id, {
       headers: {
-        eruptKey: modelName
+        erupt: modelName
       }
     });
   }
@@ -95,7 +93,7 @@ export class DataService {
         ids: ids
       },
       headers: {
-        eruptKey: modelName
+        erupt: modelName
       }
     });
   }
@@ -103,7 +101,7 @@ export class DataService {
   downloadEruptExcel(modelName: string): Observable<any> {
     return this.http.get(this.domain + "/erupt-api/excel/" + modelName, {
       headers: {
-        eruptKey: modelName
+        erupt: modelName
       }
     });
   }

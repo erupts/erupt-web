@@ -22,14 +22,58 @@
                                                              [nzStep]="1"></nz-input-number>
                                         </ng-container>
 
-                                        <ng-container
-                                                *ngIf="field.fieldReturnName!=='Integer'&&field.fieldReturnName!=='Double'&&field.fieldReturnName!=='Float'">
-                                            <input nz-input [nzSize]="size" class="erupt-input" autocomplete="off"
-                                                   [placeholder]="field.eruptFieldJson.edit.inputType[0].placeholder"
-                                                   [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                   [name]="field.fieldName"
-                                                   [required]="field.eruptFieldJson.edit.notNull"
-                                                   [readonly]="field.eruptFieldJson.edit.readOnly">
+                                        <ng-container *ngIf="field.fieldReturnName!=='Integer'&&field.fieldReturnName!=='Double'&&field.fieldReturnName!=='Float'">
+                                            <ng-container *ngIf="field.eruptFieldJson.edit.inputType[0].prefix.length==0&&
+                                                             field.eruptFieldJson.edit.inputType[0].suffix.length==0">
+                                                <input nz-input [nzSize]="size" class="erupt-input" autocomplete="off"
+                                                       [placeholder]="field.eruptFieldJson.edit.inputType[0].placeholder"
+                                                       [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                       [name]="field.fieldName"
+                                                       [required]="field.eruptFieldJson.edit.notNull"
+                                                       [readonly]="field.eruptFieldJson.edit.readOnly">
+                                            </ng-container>
+                                            <ng-container *ngIf="field.eruptFieldJson.edit.inputType[0].prefix.length>0||
+                                                             field.eruptFieldJson.edit.inputType[0].suffix.length>0">
+                                                <nz-input-group
+                                                        [nzAddOnBefore]="field.eruptFieldJson.edit.inputType[0].prefix.length>0&&addOnBeforeTemplate"
+                                                        [nzAddOnAfter]="field.eruptFieldJson.edit.inputType[0].suffix.length>0&&addOnAfterTemplate"
+                                                        [nzSize]="size" class="erupt-input">
+                                                    <input nz-input autocomplete="off"
+                                                           [placeholder]="field.eruptFieldJson.edit.inputType[0].placeholder"
+                                                           [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                           [name]="field.fieldName"
+                                                           [required]="field.eruptFieldJson.edit.notNull"
+                                                           [readonly]="field.eruptFieldJson.edit.readOnly">
+                                                </nz-input-group>
+                                                <!--prefix and suffix template-->
+                                                <ng-template #addOnBeforeTemplate>
+                                                    <ng-container *ngIf="field.eruptFieldJson.edit.inputType[0].prefix.length==1">
+                                                        {{field.eruptFieldJson.edit.inputType[0].prefix[0].label}}
+                                                    </ng-container>
+                                                    <ng-container *ngIf="field.eruptFieldJson.edit.inputType[0].prefix.length>1">
+                                                        <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType[0].prefixValue"
+                                                                   [name]="field.fieldName+'before'">
+                                                            <ng-container *ngFor="let vl of field.eruptFieldJson.edit.inputType[0].prefix">
+                                                                <nz-option [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
+                                                            </ng-container>
+                                                        </nz-select>
+                                                    </ng-container>
+                                                </ng-template>
+                                                <ng-template #addOnAfterTemplate>
+                                                    <ng-container *ngIf="field.eruptFieldJson.edit.inputType[0].suffix.length==1">
+                                                        {{field.eruptFieldJson.edit.inputType[0].suffix[0].label}}
+                                                    </ng-container>
+                                                    <ng-container *ngIf="field.eruptFieldJson.edit.inputType[0].suffix.length>1">
+                                                        <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType[0].suffixValue"
+                                                                   [name]="field.fieldName+'after'">
+                                                            <ng-container *ngFor="let vl of field.eruptFieldJson.edit.inputType[0].suffix">
+                                                                <nz-option [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
+                                                            </ng-container>
+                                                        </nz-select>
+                                                    </ng-container>
+                                                </ng-template>
+                                                <!--end prefix and suffix template-->
+                                            </ng-container>
                                         </ng-container>
                                     </se>
                                 </div>
@@ -223,10 +267,13 @@
                                     <ng-container *ngIf="eruptModel.mode=='search'">
                                         <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                         [name]="field.fieldName"
-                                                        class="erupt-input stander-line-height" [nzButtonStyle]="'solid'">
+                                                        class="erupt-input stander-line-height"
+                                                        [nzButtonStyle]="'solid'">
                                             <label [nzValue]="null" nz-radio-button>全部</label>
-                                            <label [nzValue]="true" nz-radio-button>{{field.eruptFieldJson.edit.boolType[0].trueText}}</label>
-                                            <label [nzValue]="false" nz-radio-button>{{field.eruptFieldJson.edit.boolType[0].falseText}}</label>
+                                            <label [nzValue]="true"
+                                                   nz-radio-button>{{field.eruptFieldJson.edit.boolType[0].trueText}}</label>
+                                            <label [nzValue]="false"
+                                                   nz-radio-button>{{field.eruptFieldJson.edit.boolType[0].falseText}}</label>
                                         </nz-radio-group>
                                     </ng-container>
                                     <ng-container *ngIf="eruptModel.mode!='search'">

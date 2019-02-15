@@ -1,5 +1,4 @@
 import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, InputEnum, ViewType } from "./erupt.enum";
-import { EruptModel } from "./erupt.model";
 
 /**
  * Created by liyuepeng on 10/17/18.
@@ -76,8 +75,10 @@ interface InputType {
   type: InputEnum;
   length: number;
   placeholder: string;
-  defaultVal: string;
-  icon: string;
+  prefix: Array<VL>;
+  suffix: Array<VL>;
+  prefixValue?: string;
+  suffixValue?: string;
 }
 
 export interface ReferenceType {
@@ -96,7 +97,7 @@ interface ChoiceType {
   type: ChoiceEnum;
   vl: Array<VL>;
   //在页面初始化时将vl值转化成map形式
-  vlMap?: Map<number, string>;
+  vlMap?: Map<string, string>;
 }
 
 interface SliderType {
@@ -123,6 +124,6 @@ interface AttachmentType {
 
 
 export interface VL {
-  value: number;
+  value: string;
   label: string;
 }

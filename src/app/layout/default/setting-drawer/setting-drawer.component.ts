@@ -13,6 +13,10 @@ import { SettingsService } from "@delon/theme";
 const ALAINDEFAULTVAR = "alain-default-vars";
 const DEFAULT_COLORS = [
   {
+    key: "white",
+    color: "#FFFFFF"
+  },
+  {
     key: "dust",
     color: "#F5222D"
   },
@@ -305,6 +309,11 @@ export class SettingDrawerComponent {
   changeColor(color: string) {
     this.settingSrv.setLayout("mainColor", color);
     this.color = color;
+    if (color == "#fff") {
+
+    } else {
+
+    }
     // Object.keys(DEFAULT_VARS)
     //   .filter(key => DEFAULT_VARS[key].default === '@primary-color')
     //   .forEach(key => delete this.cachedData[`@${key}`]);
