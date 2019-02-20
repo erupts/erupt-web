@@ -34,12 +34,18 @@ export class DataService {
 
   //查询tree数据结构数据
   queryEruptTreeData(modelName: string): Observable<Array<Tree>> {
-    return this._http.post<Array<Tree>>(this.domain + "/erupt-api/data/tree/" + modelName, {}, {});
+    return this._http.post<Array<Tree>>(this.domain + "/erupt-api/data/tree/" + modelName, {}, {}, {
+      observe: null,
+      headers: {
+        erupt: modelName
+      }
+    });
   }
 
   //查询数据
   queryEruptData(modelName: string, condition: any, page: Page): Observable<Page> {
-    return this.http.post<Page>(this.domain + "/erupt-api/data/table/" + modelName, { ...page }, {
+    return this._http.post<Page>(this.domain + "/erupt-api/data/table/" + modelName, { ...page }, null, {
+      observe: null,
       headers: {
         erupt: modelName
       }
@@ -48,15 +54,21 @@ export class DataService {
 
   //根据id获取数据
   queryEruptSingleData(modelName: string, id: any): Observable<EruptApiModel> {
-    return this._http.get<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/" + id, {});
+    return this._http.get<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/" + id, null, {
+      responseType: 'json',
+      headers: {
+        erupt: modelName
+      }
+    });
   }
 
   //执行自定义operator方法
   execOperatorFun(modelName: string, operatorCode: string, data: any, param: object) {
-    return this.http.post<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/operator/" + operatorCode, {
+    return this._http.post<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/operator/" + operatorCode, {
       data: data,
       param: param
-    }, {
+    }, null, {
+      observe: null,
       headers: {
         erupt: modelName
       }
@@ -65,12 +77,17 @@ export class DataService {
 
   //获取reference数据
   queryEruptReferenceData(modelName: string, refName: string): Observable<any> {
-    return this._http.get(this.domain + "/erupt-api/data/" + modelName + "/ref/" + refName);
+    return this._http.get(this.domain + "/erupt-api/data/" + modelName + "/ref/" + refName, null, {
+      headers: {
+        erupt: modelName
+      }
+    });
   }
 
   //增加数据
   addEruptData(modelName: string, data: any): Observable<EruptApiModel> {
-    return this.http.post<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, data, {
+    return this._http.post<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, data, null, {
+      observe: null,
       headers: {
         erupt: modelName
       }
@@ -79,7 +96,7 @@ export class DataService {
 
   //删除数据
   deleteEruptData(modelName: string, id): Observable<EruptApiModel> {
-    return this.http.delete<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/" + id, {
+    return this._http.delete(this.domain + "/erupt-api/data/" + modelName + "/" + id, null, {
       headers: {
         erupt: modelName
       }
@@ -88,10 +105,7 @@ export class DataService {
 
   //批量删除数据
   deleteEruptDatas(modelName: string, ids: Array<any>): Observable<EruptApiModel> {
-    return this.http.delete<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, {
-      params: {
-        ids: ids
-      },
+    return this._http.delete(this.domain + "/erupt-api/data/" + modelName, { ids: ids }, {
       headers: {
         erupt: modelName
       }
@@ -106,7 +120,7 @@ export class DataService {
     });
   }
 
-  //获取二维码
+  //获取验证码
   getVerifyCodeUrl(account: string): string {
     return this.domain + "/ws/code-img" + "?account=" + account + "&_t" + new Date().getTime();
   }

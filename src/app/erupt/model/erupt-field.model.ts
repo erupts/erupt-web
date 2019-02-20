@@ -50,6 +50,7 @@ export interface Edit {
   dictType: Array<DictType>;
   dateType: Array<DateType>;
   sliderType: Array<SliderType>;
+  dependSwitchType: Array<DependSwitchType>
   search: Search;
 
   $value?: any;
@@ -61,12 +62,6 @@ export interface Edit {
 interface Search {
   search: boolean;
   vague: boolean;
-}
-
-export interface TabType {
-  icon: string;
-  views: Array<View>;
-  // eruptFieldModels: Array<EruptFieldModel>;
 }
 
 
@@ -98,6 +93,23 @@ interface ChoiceType {
   vl: Array<VL>;
   //在页面初始化时将vl值转化成map形式
   vlMap?: Map<string, string>;
+}
+
+export interface TabType {
+  icon: string;
+  views: Array<View>;
+  // eruptFieldModels: Array<EruptFieldModel>;
+}
+
+interface DependSwitchType {
+  reject: boolean;
+  dependSwitchAttrs: Array<DependSwitchAttr>
+}
+
+interface DependSwitchAttr {
+  value: number;
+  label: string;
+  dependEdits: Array<string>
 }
 
 interface SliderType {

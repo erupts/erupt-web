@@ -30,7 +30,6 @@ export class TableComponent implements OnInit {
               private settingSrv: SettingsService,
               private modalHelper: ModalHelper,
               private drawerHelper: DrawerHelper,
-              private renderer: Renderer2,
               @Inject(NzMessageService)
               private msg: NzMessageService,
               @Inject(NzModalService)
@@ -63,6 +62,7 @@ export class TableComponent implements OnInit {
     },
     req: {
       param: {},
+      headers: {},
       method: "POST",
       allInBody: true,
       reName: {
@@ -92,6 +92,8 @@ export class TableComponent implements OnInit {
       if (this.searchErupt) {
         this.searchErupt.eruptFieldModels = [];
       }
+      //put table api header
+      this.stConfig.req.headers["erupt"] = params.name;
       this.dataService.getEruptBuild(params.name).subscribe(
         em => {
           this.url = this.dataService.domain + "/erupt-api/data/table/" + params.name;
@@ -136,7 +138,7 @@ export class TableComponent implements OnInit {
       this.stConfig.req.param = {};
       this.searchErupt.eruptFieldModels.forEach(field => {
         const val = field.eruptFieldJson.edit.$value;
-        if (val) {
+        if (val != undefined) {
           this.stConfig.req.param[field.fieldName] = val;
         }
       });

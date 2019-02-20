@@ -335,6 +335,21 @@
                             </se>
                         </div>
                     </ng-container>
+                    <ng-container *ngSwitchCase="editType.DEPEND_SWITCH">
+                        <div  nz-col class="col-div" [nzSpan]="24">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                (ngModelChange)="dependChange($event,field)"
+                                                [name]="field.fieldName" class="erupt-input stander-line-height">
+                                    <ng-container *ngFor="let vl of field.eruptFieldJson.edit.dependSwitchType[0].dependSwitchAttrs">
+                                        <label nz-radio [nzValue]="vl.value">{{vl.label}}</label>
+                                    </ng-container>
+                                </nz-radio-group>
+                            </se>
+                        </div>
+                    </ng-container>
                     <ng-container *ngSwitchCase="editType.MARK_DOWN">
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"

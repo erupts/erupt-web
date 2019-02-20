@@ -51,6 +51,27 @@ export class EditTypeComponent implements OnInit {
     this.eruptFieldModels = this.eruptModel.eruptFieldModels;
   }
 
+  dependChange(value: number, field: EruptFieldModel) {
+    const dsa = field.eruptFieldJson.edit.dependSwitchType[0].dependSwitchAttrs;
+    dsa.forEach(attr => {
+      if (value == attr.value) {
+        attr.dependEdits.forEach(de => {
+          const field = this.eruptModel.eruptFieldModelMap.get(de);
+          if (field) {
+            field.eruptFieldJson.edit.show = true;
+          }
+        });
+      } else {
+        attr.dependEdits.forEach(de => {
+          const field = this.eruptModel.eruptFieldModelMap.get(de);
+          if (field) {
+            field.eruptFieldJson.edit.show = false;
+          }
+        });
+      }
+    });
+  }
+
   upLoadNzChange({ file, fileList }, field: EruptFieldModel) {
     const status = file.status;
     if (status === "done") {

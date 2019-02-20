@@ -170,7 +170,7 @@ export class LayoutDefaultComponent
             link: node.data.path,
             icon: {
               type: "class",
-              value: node.data.icon
+              value: node.data.icon||"fa fa-th-list"
             }
           };
           if (node.children && node.children.length > 0) {
