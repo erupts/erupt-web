@@ -22,7 +22,8 @@
                                                              [nzStep]="1"></nz-input-number>
                                         </ng-container>
 
-                                        <ng-container *ngIf="field.fieldReturnName!=='Integer'&&field.fieldReturnName!=='Double'&&field.fieldReturnName!=='Float'">
+                                        <ng-container
+                                                *ngIf="field.fieldReturnName!=='Integer'&&field.fieldReturnName!=='Double'&&field.fieldReturnName!=='Float'">
                                             <ng-container *ngIf="field.eruptFieldJson.edit.inputType[0].prefix.length==0&&
                                                              field.eruptFieldJson.edit.inputType[0].suffix.length==0">
                                                 <input nz-input [nzSize]="size" class="erupt-input" autocomplete="off"
@@ -30,7 +31,7 @@
                                                        [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                        [name]="field.fieldName"
                                                        [required]="field.eruptFieldJson.edit.notNull"
-                                                       [readonly]="field.eruptFieldJson.edit.readOnly">
+                                                       [disabled]="field.eruptFieldJson.edit.readOnly">
                                             </ng-container>
                                             <ng-container *ngIf="field.eruptFieldJson.edit.inputType[0].prefix.length>0||
                                                              field.eruptFieldJson.edit.inputType[0].suffix.length>0">
@@ -43,7 +44,7 @@
                                                            [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                            [name]="field.fieldName"
                                                            [required]="field.eruptFieldJson.edit.notNull"
-                                                           [readonly]="field.eruptFieldJson.edit.readOnly">
+                                                           [disabled]="field.eruptFieldJson.edit.readOnly">
                                                 </nz-input-group>
                                                 <!--prefix and suffix template-->
                                                 <ng-template #addOnBeforeTemplate>
@@ -87,7 +88,7 @@
                                         <textarea rows="4" nz-input class="erupt-input"
                                                   [value]="field.eruptFieldJson.edit.$value||''"
                                                   [required]="field.eruptFieldJson.edit.notNull"
-                                                  [readonly]="field.eruptFieldJson.edit.readOnly"
+                                                  [disabled]="field.eruptFieldJson.edit.readOnly"
                                         ></textarea>
                                     </se>
                                 </div>
@@ -228,22 +229,20 @@
                                 <se [label]="field.eruptFieldJson.edit.title"
                                     [required]="field.eruptFieldJson.edit.notNull"
                                     [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                    <nz-input-group [nzSize]="size" class="erupt-input" [nzSuffix]="refBtn">
+                                    <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
                                         <input nz-input [nzSize]="size" (click)="createRefModal(field)"
                                                [placeholder]="field.eruptFieldJson.edit.inputType[0].placeholder"
                                                [required]="field.eruptFieldJson.edit.notNull"
-                                               [readonly]="true"
+                                               [disabled]="true"
                                                [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
-                                               [name]="field.fieldName"
-                                        >
+                                               [name]="field.fieldName">
                                     </nz-input-group>
                                     <ng-template #refBtn>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.$value">
-                                            <i nz-icon type="close-circle" theme="fill" class="point"
-                                               (click)="clearValue(field)"></i>
+                                            <i nz-icon type="close-circle" theme="fill" class="point" (click)="clearValue(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
-                                            <i nz-icon type="database" theme="fill" class="point"></i>
+                                            <i (click)="createRefModal(field)" nz-icon type="database" theme="fill" class="point"></i>
                                         </ng-container>
                                     </ng-template>
                                 </se>
@@ -323,9 +322,6 @@
                                         <nz-upload
                                                 nzType="drag"
                                                 [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                [nzMultiple]="false"
-                                                [nzLimit]="10"
-                                                [(nzFileList)]="field.eruptFieldJson.edit.$tempValue"
                                                 (nzChange)="upLoadNzChange($event,field)"
                                                 [nzHeaders]="{token:tokenService.get().token}"
                                                 [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">

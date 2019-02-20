@@ -43,7 +43,7 @@ export class EditTypeComponent implements OnInit {
 
   previewVisible: boolean = false;
 
-  constructor(private dataService: DataService, private helper: HelperService,
+  constructor(public dataService: DataService, private helper: HelperService,
               @Inject(NzMessageService) private msg: NzMessageService, @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
   }
 

@@ -7,9 +7,7 @@ const routes: Routes = [
     path: '',
     component: TreeComponent,
     data: {
-      title: 'Erupt tree',
-      icon: 'icon-tree',
-      caption: 'tree tree tree',
+      caption: 'TREE VIEW',
       status: true
     }
   },

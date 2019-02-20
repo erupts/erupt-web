@@ -25,8 +25,7 @@ export class StartupService {
               private titleService: TitleService,
               @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
               private httpClient: HttpClient,
-              private data: DataService,
-              private injector: Injector) {
+              private data: DataService) {
     iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
   }
 
@@ -69,25 +68,12 @@ export class StartupService {
     //   return;
     // }
     // mock
-    const app: any = {
-      name: window["config"].name,
-      description: `erupt admin for YuePeng `
-    };
-    const user: any = {
-      name: this.tokenService.get().userName || "",
-      avatar: "./assets/tmp/img/avatar.jpg",
-      email: "122339792@qq.com",
-      token: this.tokenService.get().token
-    };
     // 应用信息：包括站点名、描述、年份
-    this.settingService.setApp(app);
-    // 用户信息：包括姓名、头像、邮箱地址
-    this.settingService.setUser(user);
+    this.settingService.setApp(window["site"]);
     // ACL：设置权限为全量
     this.aclService.setFull(true);
     // 设置页面标题的后缀
-    this.titleService.suffix = app.name;
-
+    this.titleService.suffix = this.settingService.app.name;
     resolve({});
   }
 

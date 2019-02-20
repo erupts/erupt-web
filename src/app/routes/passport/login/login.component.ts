@@ -104,11 +104,11 @@ export class UserLoginComponent implements OnDestroy, OnInit {
       }
       this.useVerifyCode = result.useVerifyCode;
       if (result.pass) {
-        // 设置Token信息
-        this.settingsService.user.name = result.userName;
+        this.settingsService.setUser({
+          name: result.userName
+        });
         this.tokenService.set({
           token: result.token,
-          userName: result.userName,
           time: +new Date()
         });
         this.router.navigate(["/"]);

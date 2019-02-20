@@ -66,9 +66,9 @@
         >
         </erupt-edit-type>
     </nz-card>
-
     <st #st
-        [data]="url" [columns]="columns" [scroll]="{x: '900px'}"
+        [data]="url" [columns]="columns"
+        [scroll]="{x: (clientWidth > 768 ? eruptModel.tableColumns.length * 110 : 0) + 'px'}"
         [bordered]="settingSrv.layout.tableBorder"
         (change)="tableDataChange($event)"
         [multiSort]="stConfig.multiSort"

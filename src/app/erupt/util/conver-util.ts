@@ -58,7 +58,6 @@ export function viewToAlainTableConfig(views: Array<View>): Array<any> {
       title: view.title,
       index: view.column.replace("_", "\.")
     };
-
     if (view.sortable) {
       obj.sort = {
         reName: {
@@ -171,19 +170,25 @@ export function objectToEruptValue(eruptModel: EruptModel, object: any) {
   eruptModel.eruptFieldModels.forEach(field => {
     switch (field.eruptFieldJson.edit.type) {
       case EditType.INPUT:
-        if (object[field.fieldName]) {
-          const inputType = field.eruptFieldJson.edit.inputType[0];
-          if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
-            let str = <string>object[field.fieldName];
-            for (let pre of inputType.prefix) {
-              if (str.startsWith(pre.value)) {
-                field.eruptFieldJson.edit.$value = str.replace(pre.value, "");
-                return;
-              }
+        const inputType = field.eruptFieldJson.edit.inputType[0];
+        //处理前缀和后缀的数据
+        if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
+          let str = <string>object[field.fieldName];
+          for (let pre of inputType.prefix) {
+            if (str.startsWith(pre.value)) {
+              str = str.substr(pre.value.length);
+              break;
             }
-          } else {
-            field.eruptFieldJson.edit.$value = object[field.fieldName];
           }
+          for (let suf of inputType.suffix) {
+            if (str.endsWith(suf.value)) {
+              str = str.substr(0, str.length - suf.value.length);
+              break;
+            }
+          }
+          field.eruptFieldJson.edit.$value = str;
+        } else {
+          field.eruptFieldJson.edit.$value = object[field.fieldName];
         }
         break;
       case EditType.DATE:

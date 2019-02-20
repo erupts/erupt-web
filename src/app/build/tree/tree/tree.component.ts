@@ -2,7 +2,7 @@ import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { NzFormatEmitEvent, NzTreeNode } from "ng-zorro-antd/tree";
 import { EruptModel } from "../../../erupt/model/erupt.model";
-import { initErupt, objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
+import { emptyEruptValue, initErupt, objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalRef, NzModalService } from "ng-zorro-antd";
 import { colRules } from "../../../erupt/model/util.model";
@@ -87,7 +87,8 @@ export class TreeComponent implements OnInit {
     if (this.tree.getSelectedNodeList()[0]) {
       this.tree.getSelectedNodeList()[0].setSelected(false);
     }
-    objectToEruptValue(this.eruptModel, {});
+    emptyEruptValue(this.eruptModel);
+    // objectToEruptValue(this.eruptModel, {});
   }
 
   add() {

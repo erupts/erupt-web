@@ -40,6 +40,8 @@ export class TableComponent implements OnInit {
   ) {
   }
 
+  clientWidth = document.body.clientWidth;
+
   hideCondition = false;
 
   colRules = colRules;
@@ -145,7 +147,7 @@ export class TableComponent implements OnInit {
 
   buildTableConfig() {
     const _columns = [];
-    _columns.push({ title: "", type: "checkbox", fixed: "left", index: this.eruptModel.eruptJson.primaryKeyCol });
+    _columns.push({ title: "", type: "checkbox", fixed: "left", width: "50px", index: this.eruptModel.eruptJson.primaryKeyCol });
     _columns.push({ title: "No", type: "no", fixed: "left", width: "60px" });
     _columns.push(...viewToAlainTableConfig(this.eruptModel.tableColumns));
     const operators = [];
@@ -160,19 +162,20 @@ export class TableComponent implements OnInit {
         });
       }
     });
-
     if (operators.length > 0) {
       _columns.push({
         title: "功能",
-        className: "text-center",
         fixed: "right",
+        width: 50 * operators.length + 20 + "px",
+        className: "text-center",
         buttons: [...operators]
       });
     }
 
     _columns.push({
-      fixed: "right",
       title: "操作区",
+      fixed: "right",
+      width: "150px",
       className: "text-center",
       buttons: [
         {

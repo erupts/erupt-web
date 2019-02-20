@@ -5,7 +5,10 @@ import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 
 @Component({
   selector: "layout-header",
-  templateUrl: "./header.component.html"
+  templateUrl: "./header.component.html",
+  styleUrls: [
+    "./header.component.less"
+  ]
 })
 export class HeaderComponent {
   searchToggleStatus: boolean;
