@@ -97,15 +97,15 @@ export class TableComponent implements OnInit {
       this.dataService.getEruptBuild(params.name).subscribe(
         em => {
           this.url = this.dataService.domain + "/erupt-api/data/table/" + params.name;
+          initErupt(em.eruptModel);
           this.eruptModel = em.eruptModel;
-          this.subErupts = em.subErupts;
-          initErupt(this.eruptModel);
           this.buildTableConfig();
           this.buildSearchErupt();
           em.subErupts.forEach((fe => {
             initErupt(fe.eruptModel);
             fe.alainTableConfig = viewToAlainTableConfig(fe.eruptModel.tableColumns);
           }));
+          this.subErupts = em.subErupts;
         }
       );
     });
@@ -138,12 +138,11 @@ export class TableComponent implements OnInit {
       this.stConfig.req.param = {};
       this.searchErupt.eruptFieldModels.forEach(field => {
         const val = field.eruptFieldJson.edit.$value;
-        if (val != undefined) {
+        if (val != undefined && val !== "") {
           this.stConfig.req.param[field.fieldName] = val;
         }
       });
     }
-    console.log(this.stConfig.req.param);
     this.st.load(1, this.stConfig.req.param);
   }
 

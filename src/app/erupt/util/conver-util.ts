@@ -17,20 +17,22 @@ export function initErupt(eruptModel: EruptModel) {
   eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
   eruptModel.eruptFieldModels.forEach(field => {
     eruptModel.eruptFieldModelMap.set(field.fieldName, field);
-    if (field.eruptFieldJson.edit.type === EditType.INPUT) {
-      const inputType = field.eruptFieldJson.edit.inputType[0];
-      if (inputType.prefix.length > 0) {
-        inputType.prefixValue = inputType.prefix[0].value;
-      }
-      if (inputType.suffix.length > 0) {
-        inputType.suffixValue = inputType.suffix[0].value;
-      }
-    }
-    if (field.eruptFieldJson.edit.type === EditType.CHOICE) {
-      const vlMap = field.eruptFieldJson.edit.choiceType[0].vlMap = new Map();
-      field.eruptFieldJson.edit.choiceType[0].vl.forEach(vl => {
-        vlMap.set(vl.value, vl.label);
-      });
+    switch (field.eruptFieldJson.edit.type) {
+      case EditType.INPUT:
+        const inputType = field.eruptFieldJson.edit.inputType[0];
+        if (inputType.prefix.length > 0) {
+          inputType.prefixValue = inputType.prefix[0].value;
+        }
+        if (inputType.suffix.length > 0) {
+          inputType.suffixValue = inputType.suffix[0].value;
+        }
+        break;
+      case EditType.CHOICE:
+        const vlMap = field.eruptFieldJson.edit.choiceType[0].vlMap = new Map();
+        field.eruptFieldJson.edit.choiceType[0].vl.forEach(vl => {
+          vlMap.set(vl.value, vl.label);
+        });
+        break;
     }
     //生成columns
     field.eruptFieldJson.views.forEach(view => {
@@ -46,6 +48,23 @@ export function initErupt(eruptModel: EruptModel) {
       eruptModel.tableColumns.push(view);
     });
   });
+  //TODO 在eruptFieldModelMap填充完成执行该代码
+  // eruptModel.eruptFieldModels.forEach(field => {
+  //   switch (field.eruptFieldJson.edit.type) {
+  //     case EditType.DEPEND_SWITCH:
+  //       field.eruptFieldJson.edit.dependSwitchType[0].dependSwitchAttrs.forEach(attr => {
+  //         attr.dependEdits.forEach(edit => {
+  //           const fm = eruptModel.eruptFieldModelMap.get(edit);
+  //           console.log(fm);
+  //           if (fm) {
+  //             fm.eruptFieldJson.edit.show = false;
+  //             console.log(fm.eruptFieldJson.edit.show);
+  //           }
+  //         });
+  //       });
+  //       break;
+  //   }
+  // });
 }
 
 

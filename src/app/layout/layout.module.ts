@@ -19,7 +19,6 @@ import { SettingDrawerItemComponent } from "./default/setting-drawer/setting-dra
 import { LayoutPassportComponent } from "./passport/passport.component";
 
 import { DragDropModule } from "@angular/cdk/drag-drop";
-import { MenuComponent } from "./default/menu/menu.component";
 
 const SETTINGDRAWER = [SettingDrawerComponent, SettingDrawerItemComponent];
 
@@ -28,7 +27,6 @@ const COMPONENTS = [
   LayoutFullScreenComponent,
   HeaderComponent,
   SidebarComponent,
-  MenuComponent,
   ...SETTINGDRAWER
 ];
 
