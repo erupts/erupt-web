@@ -55,7 +55,7 @@ export class DataService {
   //根据id获取数据
   queryEruptSingleData(modelName: string, id: any): Observable<EruptApiModel> {
     return this._http.get<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/" + id, null, {
-      responseType: 'json',
+      responseType: "json",
       headers: {
         erupt: modelName
       }
@@ -87,6 +87,16 @@ export class DataService {
   //增加数据
   addEruptData(modelName: string, data: any): Observable<EruptApiModel> {
     return this._http.post<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, data, null, {
+      observe: null,
+      headers: {
+        erupt: modelName
+      }
+    });
+  }
+
+  //增加数据
+  editEruptData(modelName: string, data: any): Observable<EruptApiModel> {
+    return this._http.put<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, data, null, {
       observe: null,
       headers: {
         erupt: modelName

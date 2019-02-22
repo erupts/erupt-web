@@ -2,7 +2,7 @@ import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { NzFormatEmitEvent, NzTreeNode } from "ng-zorro-antd/tree";
 import { EruptModel } from "../../../erupt/model/erupt.model";
-import { emptyEruptValue, initErupt, objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
+import { emptyEruptValue, eruptValueToObject, initErupt, objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalRef, NzModalService } from "ng-zorro-antd";
 import { colRules } from "../../../erupt/model/util.model";
@@ -46,36 +46,39 @@ export class TreeComponent implements OnInit {
     this.route.params.subscribe((params) => {
       this.eruptModel = null;
       this.eruptName = params.name;
+      this.fetchTreeData();
       this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
         this.eruptModel = erupt.eruptModel;
         initErupt(erupt.eruptModel);
       });
+    });
+  }
 
-      this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
-        function gcZorroTree(nodes) {
-          const tempNodes = [];
-          nodes.forEach(node => {
-            let option: any = {
-              code: node.id,
-              title: node.label,
-              data: node.data
-            };
-            if (node.children && node.children.length > 0) {
-              tempNodes.push(option);
-              option.children = gcZorroTree(node.children);
-            } else {
-              option.isLeaf = true;
-              tempNodes.push(option);
-            }
-          });
-          return tempNodes;
-        }
+  fetchTreeData() {
+    this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
+      function gcZorroTree(nodes) {
+        const tempNodes = [];
+        nodes.forEach(node => {
+          let option: any = {
+            code: node.id,
+            title: node.label,
+            data: node.data
+          };
+          if (node.children && node.children.length > 0) {
+            tempNodes.push(option);
+            option.children = gcZorroTree(node.children);
+          } else {
+            option.isLeaf = true;
+            tempNodes.push(option);
+          }
+        });
+        return tempNodes;
+      }
 
-        if (tree) {
-          this.nodes = gcZorroTree(tree);
-        }
+      if (tree) {
+        this.nodes = gcZorroTree(tree);
+      }
 
-      });
     });
   }
 
@@ -92,11 +95,29 @@ export class TreeComponent implements OnInit {
   }
 
   add() {
-    validateNotNull(this.eruptModel, this.msg);
+    if (validateNotNull(this.eruptModel, this.msg)) {
+      this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+        if (result.success) {
+          this.fetchTreeData();
+          this.msg.success("添加成功");
+        } else {
+          this.msg.error(result.message);
+        }
+      });
+    }
   }
 
   save() {
-    validateNotNull(this.eruptModel, this.msg);
+    if (validateNotNull(this.eruptModel, this.msg)) {
+      this.dataService.editEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+        if (result.success) {
+          this.fetchTreeData();
+          this.msg.success("修改成功");
+        } else {
+          this.msg.error(result.message);
+        }
+      });
+    }
   }
 
   del() {
@@ -105,7 +126,8 @@ export class TreeComponent implements OnInit {
     if (nzTreeNode.isLeaf) {
       this.dataService.deleteEruptData(this.eruptModel.eruptName, nzTreeNode.origin.code).subscribe(function(data) {
         if (data.success) {
-
+          that.fetchTreeData();
+          that.msg.success("删除成功");
         } else {
           that.msg.error(data.message);
         }

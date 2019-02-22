@@ -15,6 +15,7 @@ export class ListSelectComponent implements OnInit {
   @Input() bodyStyle: string;
 
   constructor() {
+
   }
 
   ngOnInit() {

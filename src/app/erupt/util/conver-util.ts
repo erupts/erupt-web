@@ -161,7 +161,7 @@ export function eruptValueToObject(eruptModel: EruptModel): any {
       case EditType.INPUT:
         const inputType = field.eruptFieldJson.edit.inputType[0];
         if (inputType.prefixValue || inputType.suffixValue) {
-          eruptData[field.fieldName] = inputType.prefixValue || "" + field.eruptFieldJson.edit.$value + inputType.suffixValue || "";
+          eruptData[field.fieldName] = (inputType.prefixValue || "") + field.eruptFieldJson.edit.$value + (inputType.suffixValue || "");
         } else {
           eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
         }
@@ -195,12 +195,14 @@ export function objectToEruptValue(eruptModel: EruptModel, object: any) {
           let str = <string>object[field.fieldName];
           for (let pre of inputType.prefix) {
             if (str.startsWith(pre.value)) {
+              field.eruptFieldJson.edit.inputType[0].prefixValue = pre.value;
               str = str.substr(pre.value.length);
               break;
             }
           }
           for (let suf of inputType.suffix) {
             if (str.endsWith(suf.value)) {
+              field.eruptFieldJson.edit.inputType[0].suffixValue = suf.value;
               str = str.substr(0, str.length - suf.value.length);
               break;
             }
@@ -214,8 +216,13 @@ export function objectToEruptValue(eruptModel: EruptModel, object: any) {
         field.eruptFieldJson.edit.$value = new FormControl(object[field.fieldName]).value;
         break;
       case EditType.REFERENCE:
-        field.eruptFieldJson.edit.$value = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceType[0].id];
-        field.eruptFieldJson.edit.$viewValue = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceType[0].label];
+        if (typeof object[field.fieldName] === "object") {
+          field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceType[0].id];
+          field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceType[0].label];
+        } else {
+          field.eruptFieldJson.edit.$value = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceType[0].id];
+          field.eruptFieldJson.edit.$viewValue = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceType[0].label];
+        }
         break;
       case EditType.BOOLEAN:
         if (!object[field.fieldName] && object[field.fieldName] !== false) {
