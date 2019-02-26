@@ -305,6 +305,7 @@ export class TableComponent implements OnInit {
       nzTitle: "新增",
       nzContent: EditComponent,
       nzComponentParams: {
+        subErupts: this.subErupts,
         eruptModel: this.eruptModel
       },
       nzOnOk: () => {

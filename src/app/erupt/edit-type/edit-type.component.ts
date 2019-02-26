@@ -39,10 +39,6 @@ export class EditTypeComponent implements OnInit {
 
   inputEnum = InputEnum;
 
-  previewImage = null;
-
-  previewVisible: boolean = false;
-
   constructor(public dataService: DataService, private helper: HelperService,
               @Inject(NzMessageService) private msg: NzMessageService, @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
   }
@@ -91,8 +87,6 @@ export class EditTypeComponent implements OnInit {
   previewImageHandler = (file: UploadFile) => {
     console.log(file);
     this.dataService.downloadAttachment(file.response.data);
-    this.previewImage = file.url || file.thumbUrl;
-    this.previewVisible = true;
   };
 
 
