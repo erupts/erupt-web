@@ -27,6 +27,7 @@
                                             <ng-container *ngIf="field.eruptFieldJson.edit.inputType[0].prefix.length==0&&
                                                              field.eruptFieldJson.edit.inputType[0].suffix.length==0">
                                                 <input nz-input [nzSize]="size" class="erupt-input" autocomplete="off"
+                                                       [maxLength]="field.eruptFieldJson.edit.inputType[0].length"
                                                        [placeholder]="field.eruptFieldJson.edit.inputType[0].placeholder"
                                                        [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                        [name]="field.fieldName"
@@ -40,6 +41,7 @@
                                                         [nzAddOnAfter]="field.eruptFieldJson.edit.inputType[0].suffix.length>0&&addOnAfterTemplate"
                                                         [nzSize]="size" class="erupt-input">
                                                     <input nz-input autocomplete="off"
+                                                           [maxLength]="field.eruptFieldJson.edit.inputType[0].length"
                                                            [placeholder]="field.eruptFieldJson.edit.inputType[0].placeholder"
                                                            [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                            [name]="field.fieldName"
@@ -86,6 +88,7 @@
                                         [required]="field.eruptFieldJson.edit.notNull"
                                         [optionalHelp]="field.eruptFieldJson.edit.desc">
                                         <textarea nz-input class="erupt-input" [name]="field.fieldName"
+                                                  [maxLength]="field.eruptFieldJson.edit.inputType[0].length"
                                                   [nzAutosize]="{ minRows: 3, maxRows: 20 }"
                                                   [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                   [required]="field.eruptFieldJson.edit.notNull"

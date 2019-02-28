@@ -3,6 +3,7 @@ import { EruptModel } from "../model/erupt.model";
 import { EditType, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
 import { NzMessageService } from "ng-zorro-antd";
+import { deepCopy } from "@delon/util";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -44,7 +45,9 @@ export function initErupt(eruptModel: EruptModel) {
       } else {
         view.column = field.fieldName;
       }
-      view.eruptFieldModel = field;
+      const deepField = <EruptFieldModel>deepCopy(field);
+      deepField.eruptFieldJson.views = null;
+      view.eruptFieldModel = deepField;
       eruptModel.tableColumns.push(view);
     });
   });

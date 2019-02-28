@@ -18,6 +18,7 @@ import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 import { colRules } from "../../../erupt/model/util.model";
+import { deepCopy } from "@delon/util";
 
 @Component({
   selector: "app-list-view",
@@ -45,13 +46,16 @@ export class TableComponent implements OnInit {
 
   colRules = colRules;
 
+  eruptModel: EruptModel;
+
   searchErupt: EruptModel;
 
-  eruptModel: EruptModel;
+  readonlyErupt: EruptModel;
 
   subErupts: Array<EruptAndEruptFieldModel>;
 
   stConfig = {
+    url: null,
     stPage: {
       pageSizes: [10, 30, 50, 100],
       showSize: true,
@@ -66,11 +70,12 @@ export class TableComponent implements OnInit {
       method: "POST",
       allInBody: true,
       reName: {
-        pi: "pageIndex",
-        ps: "pageSize"
+        pi: "_pageIndex",
+        ps: "_pageSize"
       }
     },
     multiSort: {
+      key: "_sort",
       separator: ",",
       nameSeparator: " "
     }
@@ -83,8 +88,6 @@ export class TableComponent implements OnInit {
 
   @ViewChild("st") st;
 
-  url: string;
-
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.selectedRows = [];
@@ -96,11 +99,12 @@ export class TableComponent implements OnInit {
       this.stConfig.req.headers["erupt"] = params.name;
       this.dataService.getEruptBuild(params.name).subscribe(
         em => {
-          this.url = this.dataService.domain + "/erupt-api/data/table/" + params.name;
+          this.stConfig.url = this.dataService.domain + "/erupt-api/data/table/" + params.name;
           initErupt(em.eruptModel);
           this.eruptModel = em.eruptModel;
           this.buildTableConfig();
           this.buildSearchErupt();
+          this.buildReadOnlyErupt();
           em.subErupts.forEach((fe => {
             initErupt(fe.eruptModel);
             fe.alainTableConfig = viewToAlainTableConfig(fe.eruptModel.tableColumns);
@@ -113,24 +117,26 @@ export class TableComponent implements OnInit {
 
   //构建搜索项信息
   buildSearchErupt() {
-    const eruptFieldModels = [];
-    this.eruptModel.eruptFieldModels.forEach((field) => {
+    let copyErupt = <EruptModel>deepCopy(this.eruptModel);
+    const searchFieldModels = [];
+    copyErupt.eruptFieldModels.forEach((field) => {
       if (field.eruptFieldJson.edit.search.search) {
         field.eruptFieldJson.edit.notNull = false;
         field.eruptFieldJson.edit.show = true;
-        eruptFieldModels.push(field);
+        searchFieldModels.push(field);
       }
     });
-    this.searchErupt = {
-      mode: "search",
-      eruptFieldModels: eruptFieldModels,
-      eruptJson: null,
-      eruptName: this.eruptModel.eruptName
-    };
-    console.log(this.searchErupt.eruptFieldModels);
-    setTimeout(() => {
-    }, 500);
+    copyErupt.mode = "search";
+    copyErupt.eruptFieldModels = searchFieldModels;
+    this.searchErupt = copyErupt;
+  }
 
+  buildReadOnlyErupt() {
+    let copyErupt = <EruptModel>deepCopy(this.eruptModel);
+    copyErupt.eruptFieldModels.forEach((field) => {
+      field.eruptFieldJson.edit.readOnly = true;
+    });
+    this.readonlyErupt = copyErupt;
   }
 
   query() {
@@ -182,21 +188,54 @@ export class TableComponent implements OnInit {
         {
           icon: "eye",
           click: (record: any, modal: any) => {
-
+            this.modal.create({
+              nzWrapClassName: "modal-lg",
+              nzStyle: { top: "60px" },
+              nzMaskClosable: true,
+              nzKeyboard: true,
+              nzCancelText: "关闭（ESC）",
+              nzOkText: null,
+              nzTitle: "查看",
+              nzContent: EditComponent,
+              nzComponentParams: {
+                subErupts: this.subErupts,
+                eruptModel: this.readonlyErupt,
+                rowDataFun: record
+              }
+            });
           }
         },
         {
           icon: "edit",
           click: (record: any, modal: any) => {
-            this.drawerHelper.static("编辑", EditComponent, {
-              eruptModel: this.eruptModel,
-              subErupts: this.subErupts,
-              rowDataFun: record
-            }, {
-              footer: false,
-              size: "lg"
-            }).subscribe(s => {
-
+            this.modal.create({
+              nzWrapClassName: "modal-lg",
+              nzStyle: { top: "60px" },
+              nzMaskClosable: false,
+              nzKeyboard: false,
+              nzTitle: "编辑",
+              nzContent: EditComponent,
+              nzComponentParams: {
+                subErupts: this.subErupts,
+                eruptModel: this.eruptModel,
+                rowDataFun: record
+              },
+              nzOnOk: () => {
+                if (validateNotNull(this.eruptModel, this.msg)) {
+                  // this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+                  //   if (result.success) {
+                  //     this.st.reset();
+                  //     this.msg.success("新增成功");
+                  //     return true;
+                  //   } else {
+                  //     this.msg.error(result.message);
+                  //     return false;
+                  //   }
+                  // });
+                } else {
+                  return false;
+                }
+              }
             });
           }
         },
@@ -299,6 +338,7 @@ export class TableComponent implements OnInit {
   addRow() {
     emptyEruptValue(this.eruptModel);
     this.modal.create({
+      nzStyle: { top: "60px" },
       nzWrapClassName: "modal-lg",
       nzMaskClosable: false,
       nzKeyboard: false,

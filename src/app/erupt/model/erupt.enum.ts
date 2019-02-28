@@ -25,6 +25,12 @@ export enum EditType {
   DEPEND_SWITCH = "DEPEND_SWITCH"
 }
 
+export enum TabEnum{
+  TABLE = "TABLE",
+  LIST_SELECT ="LIST_SELECT",
+  TREE_SELECT = "TREE_SELECT"
+}
+
 export enum ViewType {
   TEXT = "TEXT",
   QR_CODE = "QR_CODE",

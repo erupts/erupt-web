@@ -68,7 +68,7 @@
         </erupt-edit-type>
     </nz-card>
     <st #st
-        [data]="url" [columns]="columns"
+        [data]="stConfig.url" [columns]="columns"
         [scroll]="{x: (clientWidth > 768 ? eruptModel.tableColumns.length * 110 : 0) + 'px'}"
         [bordered]="true"
         (change)="tableDataChange($event)"

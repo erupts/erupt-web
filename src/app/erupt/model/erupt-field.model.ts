@@ -1,4 +1,4 @@
-import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, InputEnum, ViewType } from "./erupt.enum";
+import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, InputEnum, TabEnum, ViewType } from "./erupt.enum";
 
 /**
  * Created by liyuepeng on 10/17/18.
@@ -96,9 +96,7 @@ interface ChoiceType {
 }
 
 export interface TabType {
-  icon: string;
-  views: Array<View>;
-  // eruptFieldModels: Array<EruptFieldModel>;
+  type: TabEnum;
 }
 
 interface DependSwitchType {

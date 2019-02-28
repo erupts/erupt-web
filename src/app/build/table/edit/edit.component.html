@@ -5,21 +5,18 @@
         <ng-container *ngFor="let sub of subErupts">
             <nz-tab [nzTitle]="sub.eruptFieldModel.eruptFieldJson.edit.title">
                 <!--[data]="sub.eruptField.eruptFieldJson.edit.$value"-->
-                <st [columns]="sub.alainTableConfig"
-                    [bordered]="true"> 
+                <ng-container [ngSwitch]="sub.eruptFieldModel.eruptFieldJson.edit.tabType[0].type">
+                    <ng-container *ngSwitchCase="tabEnum.TABLE||tabEnum.LIST_SELECT">
+                        <st [columns]="sub.alainTableConfig"
+                            [bordered]="true">
 
-                </st>
+                        </st>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="tabEnum.TREE_SELECT">
+
+                    </ng-container>
+                </ng-container>
             </nz-tab>
         </ng-container>
     </nz-tabset>
-    <br>
-    <br>
-    <div class="drawer-footer" style="z-index:999;" *ngIf="behavior=='edit'">
-        <button nz-button [nzType]="'default'">
-            保存
-        </button>
-        <button nz-button [nzType]="'primary'">
-            取消
-        </button>
-    </div>
 </div>

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { DataService } from "../../../erupt/service/data.service";
-import { ChoiceEnum, EditType } from "../../../erupt/model/erupt.enum";
+import { ChoiceEnum, EditType, TabEnum } from "../../../erupt/model/erupt.enum";
 import { objectToEruptValue, viewToAlainTableConfig } from "../../../erupt/util/conver-util";
 import { SettingsService } from "@delon/theme";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
@@ -55,9 +55,7 @@ export class EditComponent implements OnInit {
 
   @Input() behavior: "add" | "edit" | string = "xxx";
 
-  editType = EditType;
-
-  choiceEnum = ChoiceEnum;
+  tabEnum = TabEnum;
 
   constructor(private dataService: DataService, private settingSrv: SettingsService) {
 
@@ -72,8 +70,8 @@ export class EditComponent implements OnInit {
           const condition: any = {};
           condition[sub.eruptFieldModel.fieldName + "." + this.eruptModel.eruptJson.primaryKeyCol] = this.rowData[this.eruptModel.eruptJson.primaryKeyCol];
           this.dataService.queryEruptData(sub.eruptFieldModel.fieldReturnName, condition, {
-            pageIndex: 1,
-            pageSize: 100
+            _pageIndex: 1,
+            _pageSize: 100
           }).subscribe(
             data => {
               sub.eruptFieldModel.eruptFieldJson.edit.$value = data.list;
