@@ -124,14 +124,21 @@ export class TreeComponent implements OnInit {
     const that = this;
     const nzTreeNode: NzTreeNode = that.tree.getSelectedNodeList()[0];
     if (nzTreeNode.isLeaf) {
-      this.dataService.deleteEruptData(this.eruptModel.eruptName, nzTreeNode.origin.code).subscribe(function(data) {
-        if (data.success) {
-          that.fetchTreeData();
-          that.msg.success("删除成功");
-        } else {
-          that.msg.error(data.message);
+      this.modal.confirm({
+        nzTitle: "请确认是否要删除",
+        nzContent: "",
+        nzOnOk: () => {
+          this.dataService.deleteEruptData(this.eruptModel.eruptName, nzTreeNode.origin.code).subscribe(function(data) {
+            if (data.success) {
+              that.fetchTreeData();
+              that.msg.success("删除成功");
+            } else {
+              that.msg.error(data.message);
+            }
+          });
         }
       });
+
     } else {
       this.msg.error("存在叶节点不允许直接删除");
     }

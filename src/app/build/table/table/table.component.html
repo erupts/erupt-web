@@ -39,8 +39,7 @@
                 <i nz-icon type="search" theme="outline"></i>查询
             </button>
         </ng-container>
-
-        <nz-divider nzType="vertical"></nz-divider>
+        <nz-divider nzType="vertical" [hidden]="hideCondition"></nz-divider>
 
         <ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">
             <ng-container *ngIf="oper.multi">
@@ -54,12 +53,16 @@
         <ng-container *ngIf="searchErupt.eruptFieldModels.length>0">
             <button nz-button [nzType]="hideCondition?'default':'danger'" class="mb-sm float-right"
                     (click)="hideCondition=!hideCondition">
-                <i nz-icon type="codepen" theme="outline"></i>
+                <i nz-icon [type]="hideCondition?'codepen':'close'" theme="outline"></i>
             </button>
         </ng-container>
     </div>
 
-    <nz-card *ngIf="searchErupt&&searchErupt.eruptFieldModels.length>0" style="padding: 0" [hidden]="hideCondition">
+    <nz-divider nzDashed="true" style="margin:2px 0 8px"></nz-divider>
+
+    <nz-card *ngIf="searchErupt.eruptFieldModels.length>0"
+             [nzBodyStyle]="{padding:'10px 4px'}"
+             style="background: #fafafa;margin-bottom: 0;" [hidden]="hideCondition">
         <erupt-edit-type [eruptModel]="searchErupt"
                          [col]="colRules[3]"
                          size="default"

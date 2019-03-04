@@ -13,7 +13,15 @@
                         </st>
                     </ng-container>
                     <ng-container *ngSwitchCase="tabEnum.TREE_SELECT">
-
+                        <nz-tree #tree
+                                 [nzCheckable]="!sub.eruptFieldModel.eruptFieldJson.edit.readOnly"
+                                 [nzMultiple]="true"
+                                 class="tree-container"
+                                 [nzShowLine]="true"
+                                 [nzData]="sub.eruptFieldModel.eruptFieldJson.edit.$viewValue"
+                                 (nzExpandChange)="nzEvent($event)"
+                                 (nzSearchValueChange)="nzEvent($event)">
+                        </nz-tree>
                     </ng-container>
                 </ng-container>
             </nz-tab>

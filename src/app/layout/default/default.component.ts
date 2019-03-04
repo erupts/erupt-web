@@ -168,9 +168,10 @@ export class LayoutDefaultComponent
             text: node.data.name,
             linkExact: true,
             link: node.data.path,
+            hide: node.data.status == 2 && true,
             icon: {
               type: "class",
-              value: node.data.icon||"fa fa-th-list"
+              value: node.data.icon || "fa fa-th-list"
             }
           };
           if (node.children && node.children.length > 0) {
@@ -182,6 +183,7 @@ export class LayoutDefaultComponent
         });
         return tempNodes;
       }
+
       this.menuSrv.add([{
         group: false,
         text: "~",
