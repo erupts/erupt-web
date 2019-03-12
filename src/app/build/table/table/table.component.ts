@@ -19,6 +19,7 @@ import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 import { colRules } from "../../../erupt/model/util.model";
 import { deepCopy } from "@delon/util";
+import { RestPath } from "../../../erupt/model/erupt.enum";
 
 @Component({
   selector: "app-list-view",
@@ -57,6 +58,7 @@ export class TableComponent implements OnInit {
   stConfig = {
     url: null,
     stPage: {
+      placement: "center",
       pageSizes: [10, 30, 50, 100],
       showSize: true,
       showQuickJumper: true,
@@ -99,7 +101,7 @@ export class TableComponent implements OnInit {
       this.stConfig.req.headers["erupt"] = params.name;
       this.dataService.getEruptBuild(params.name).subscribe(
         em => {
-          this.stConfig.url = this.dataService.domain + "/erupt-api/data/table/" + params.name;
+          this.stConfig.url = RestPath.data + "/table/" + params.name;
           initErupt(em.eruptModel);
           this.eruptModel = em.eruptModel;
           this.buildTableConfig();
@@ -154,8 +156,8 @@ export class TableComponent implements OnInit {
 
   buildTableConfig() {
     const _columns = [];
-    _columns.push({ title: "", type: "checkbox", fixed: "left", width: "50px", index: this.eruptModel.eruptJson.primaryKeyCol });
-    _columns.push({ title: "No", type: "no", fixed: "left", width: "60px" });
+    _columns.push({ title: "", type: "checkbox", fixed: "left", className: "text-center", index: this.eruptModel.eruptJson.primaryKeyCol });
+    _columns.push({ title: "No", type: "no", fixed: "left", className: "text-center", width: "60px" });
     _columns.push(...viewToAlainTableConfig(this.eruptModel.tableColumns));
     const operators = [];
     const that = this;

@@ -1,12 +1,11 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { DataService } from "../../../erupt/service/data.service";
-import { ChoiceEnum, EditType, TabEnum } from "../../../erupt/model/erupt.enum";
-import { objectToEruptValue, viewToAlainTableConfig } from "../../../erupt/util/conver-util";
+import { TabEnum } from "../../../erupt/model/erupt.enum";
+import { objectToEruptValue } from "../../../erupt/util/conver-util";
 import { SettingsService } from "@delon/theme";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 import { NzFormatEmitEvent } from "ng-zorro-antd";
-import { TabType } from "../../../erupt/model/erupt-field.model";
 
 @Component({
   selector: "erupt-edit",
@@ -14,6 +13,10 @@ import { TabType } from "../../../erupt/model/erupt-field.model";
   styleUrls: ["./edit.component.less"]
 })
 export class EditComponent implements OnInit {
+
+  private rowData: any;
+
+  private tabEnum = TabEnum;
 
   @Input() eruptModel: EruptModel;
 
@@ -30,34 +33,26 @@ export class EditComponent implements OnInit {
     /**
      * TAB control
      */
-    //读取tab栏的数据
-    // for (const subErupt of this.eruptModel.subEruptModels) {
-    //   if (this.rowData) {
-    //     for (const subField of subErupt.eruptFieldModels) {
-    //       if (subField.fieldReturnName === this.eruptModel.eruptName) {
-    //         const condition: any = {};
-    //         condition[subField.fieldName + "." + this.eruptModel.eruptJson.primaryKeyCol] = this.rowData[this.eruptModel.eruptJson.primaryKeyCol];
-    //         this.dataService.queryEruptData(subErupt.eruptName, condition, {
-    //           pageIndex: 1,
-    //           pageSize: 100
-    //         }).subscribe(
-    //           data => {
-    //             subField.eruptFieldJson.edit.$value = data.list;
-    //           }
-    //         );
-    //         break;
-    //       }
-    //     }
-    //   }
-    // }
+    // 读取tab栏的数据
+    if (this.rowData) {
+      this.subErupts && this.subErupts.forEach(sub => {
+        const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0];
+        switch (tabType.type) {
+          case TabEnum.TREE_SELECT:
+
+            break;
+          case TabEnum.TABLE:
+            this.dataService.findTabListById(this.eruptModel.eruptName, this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(
+              data => {
+                sub.eruptFieldModel.eruptFieldJson.edit.$value = data;
+              }
+            );
+            break;
+        }
+      });
+    }
 
   }
-
-  rowData: any;
-
-  @Input() behavior: "add" | "edit" | "view" | string = "xxx";
-
-  tabEnum = TabEnum;
 
   constructor(private dataService: DataService, private settingSrv: SettingsService) {
 
@@ -67,13 +62,6 @@ export class EditComponent implements OnInit {
     // 计算里面所有的字段信息
 
     this.subErupts && this.subErupts.forEach(sub => {
-      const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0];
-      switch (tabType.type) {
-        case TabEnum.TREE_SELECT:
-          this.fetchTreeData(sub);
-          break;
-      }
-
       // sub.eruptModel.tableColumns =
       // if (this.rowData) {
       //   if (sub.eruptFieldModel.fieldReturnName === this.eruptModel.eruptName) {

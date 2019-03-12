@@ -11,6 +11,7 @@ import { loginModel } from "../model/user.model";
 import { EruptApiModel } from "../model/erupt-api.model";
 import { EruptPageModel } from "../model/erupt-page.model";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
+import { RestPath } from "../model/erupt.enum";
 
 @Injectable()
 export class DataService {
@@ -19,12 +20,14 @@ export class DataService {
 
   public upload: string = this.domain + "/erupt-api/file/upload/";
 
+  public NO_RIGHT_SYMBOL: string = "__";
+
   constructor(private http: HttpClient, private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
   }
 
   //获取结构
   getEruptBuild(modelName: string): Observable<EruptPageModel> {
-    return this._http.get<EruptPageModel>(this.domain + "/erupt-api/build/list/" + modelName, null, {
+    return this._http.get<EruptPageModel>(RestPath.build + "list/" + modelName, null, {
       responseType: "json",
       headers: {
         erupt: modelName
@@ -34,7 +37,7 @@ export class DataService {
 
   //查询tree数据结构数据
   queryEruptTreeData(modelName: string): Observable<Array<Tree>> {
-    return this._http.post<Array<Tree>>(this.domain + "/erupt-api/data/tree/" + modelName, {}, {}, {
+    return this._http.post<Array<Tree>>(RestPath.data + "tree/" + modelName, {}, {}, {
       observe: null,
       headers: {
         erupt: modelName
@@ -42,10 +45,9 @@ export class DataService {
     });
   }
 
-  //查询数据
-  queryEruptData(modelName: string, condition: any, page: Page): Observable<Page> {
-    return this._http.post<Page>(this.domain + "/erupt-api/data/table/" + modelName, { ...page }, null, {
-      observe: null,
+
+  findTabListById(modelName: string, id: string, tabFieldName: string): Observable<any> {
+    return this._http.post(RestPath.data + "table/" + modelName + "/" + id + "/" + this.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
       headers: {
         erupt: modelName
       }
@@ -53,8 +55,8 @@ export class DataService {
   }
 
   //根据id获取数据
-  queryEruptSingleData(modelName: string, id: any): Observable<EruptApiModel> {
-    return this._http.get<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/" + id, null, {
+  queryEruptDataById(modelName: string, id: any): Observable<EruptApiModel> {
+    return this._http.get<EruptApiModel>(RestPath.data + modelName + "/" + id, null, {
       responseType: "json",
       headers: {
         erupt: modelName
@@ -64,7 +66,7 @@ export class DataService {
 
   //执行自定义operator方法
   execOperatorFun(modelName: string, operatorCode: string, data: any, param: object) {
-    return this._http.post<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName + "/operator/" + operatorCode, {
+    return this._http.post<EruptApiModel>(RestPath.data + modelName + "/operator/" + operatorCode, {
       data: data,
       param: param
     }, null, {
@@ -77,7 +79,7 @@ export class DataService {
 
   //获取reference数据
   queryEruptReferenceData(modelName: string, refName: string): Observable<any> {
-    return this._http.get(this.domain + "/erupt-api/data/" + modelName + "/ref/" + refName, null, {
+    return this._http.get(RestPath.data + modelName + "/ref/" + refName, null, {
       headers: {
         erupt: modelName
       }
@@ -86,7 +88,7 @@ export class DataService {
 
   //增加数据
   addEruptData(modelName: string, data: any): Observable<EruptApiModel> {
-    return this._http.post<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, data, null, {
+    return this._http.post<EruptApiModel>(RestPath.data + modelName, data, null, {
       observe: null,
       headers: {
         erupt: modelName
@@ -94,9 +96,9 @@ export class DataService {
     });
   }
 
-  //增加数据
+  //修改数据
   editEruptData(modelName: string, data: any): Observable<EruptApiModel> {
-    return this._http.put<EruptApiModel>(this.domain + "/erupt-api/data/" + modelName, data, null, {
+    return this._http.put<EruptApiModel>(RestPath.data + modelName, data, null, {
       observe: null,
       headers: {
         erupt: modelName
@@ -106,7 +108,7 @@ export class DataService {
 
   //删除数据
   deleteEruptData(modelName: string, id): Observable<EruptApiModel> {
-    return this._http.delete(this.domain + "/erupt-api/data/" + modelName + "/" + id, null, {
+    return this._http.delete(RestPath.data + modelName + "/" + id, null, {
       headers: {
         erupt: modelName
       }
@@ -115,7 +117,7 @@ export class DataService {
 
   //批量删除数据
   deleteEruptDatas(modelName: string, ids: Array<any>): Observable<EruptApiModel> {
-    return this._http.delete(this.domain + "/erupt-api/data/" + modelName, { ids: ids }, {
+    return this._http.delete(RestPath.data + modelName, { ids: ids }, {
       headers: {
         erupt: modelName
       }

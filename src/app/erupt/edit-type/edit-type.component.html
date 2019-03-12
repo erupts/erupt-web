@@ -237,7 +237,8 @@
                                         <input nz-input [nzSize]="size"
                                                [placeholder]="field.eruptFieldJson.edit.inputType[0].placeholder"
                                                [required]="field.eruptFieldJson.edit.notNull"
-                                               [disabled]="true"
+                                               (click)="createRefModal(field)"
+                                               [readOnly]="true"
                                                [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
                                                [name]="field.fieldName">
                                     </nz-input-group>

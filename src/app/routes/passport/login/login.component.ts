@@ -1,16 +1,10 @@
 import { SettingsService } from "@delon/theme";
-import { Component, OnDestroy, Inject, Optional, OnInit } from "@angular/core";
+import { Component, Inject, OnDestroy, OnInit, Optional } from "@angular/core";
 import { Router } from "@angular/router";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
-import {
-  SocialService,
-  SocialOpenType,
-  TokenService,
-  DA_SERVICE_TOKEN
-} from "@delon/auth";
+import { DA_SERVICE_TOKEN, SocialService, TokenService } from "@delon/auth";
 import { ReuseTabService } from "@delon/abc";
-import { environment } from "@env/environment";
 import { StartupService } from "@core/startup/startup.service";
 import { DataService } from "../../../erupt/service/data.service";
 

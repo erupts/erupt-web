@@ -6,8 +6,9 @@
             <nz-tab [nzTitle]="sub.eruptFieldModel.eruptFieldJson.edit.title">
                 <!--[data]="sub.eruptField.eruptFieldJson.edit.$value"-->
                 <ng-container [ngSwitch]="sub.eruptFieldModel.eruptFieldJson.edit.tabType[0].type">
-                    <ng-container *ngSwitchCase="tabEnum.TABLE||tabEnum.LIST_SELECT">
+                    <ng-container *ngSwitchCase="tabEnum.TABLE">
                         <st [columns]="sub.alainTableConfig"
+                            [data]="sub.eruptFieldModel.eruptFieldJson.edit.$value"
                             [bordered]="true">
 
                         </st>

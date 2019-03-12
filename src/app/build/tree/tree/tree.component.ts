@@ -161,7 +161,7 @@ export class TreeComponent implements OnInit {
     const that = this;
     this.selectLeaf = true;
     this.loading = true;
-    this.dataService.queryEruptSingleData(this.eruptModel.eruptName, event.node.origin.code).subscribe(data => {
+    this.dataService.queryEruptDataById(this.eruptModel.eruptName, event.node.origin.code).subscribe(data => {
       that.loading = false;
       if (data.success) {
         this.showEdit = true;

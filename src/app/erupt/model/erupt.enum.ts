@@ -1,9 +1,16 @@
 /**
  * Created by liyuepeng on 10/17/18.
  */
-export enum UiColor {
-  DEFAULT, primary, success, info, warning, danger, inverse
+
+export class RestPath {
+  public static erupt = window["domain"] + "/erupt-api";
+  public static build: string = RestPath.erupt + "/build/";
+  public static data: string = RestPath.erupt + "/data/";
+  public static excel: string = RestPath.erupt + "/excel/";
+  public static file: string = RestPath.erupt + "/file/";
+  public static NO_RIGHT_SYMBOL: string = "__";
 }
+
 
 export enum RgbColor {
   not, yellow, green, red, blue, white, black
@@ -25,9 +32,9 @@ export enum EditType {
   DEPEND_SWITCH = "DEPEND_SWITCH"
 }
 
-export enum TabEnum{
+export enum TabEnum {
   TABLE = "TABLE",
-  LIST_SELECT ="LIST_SELECT",
+  LIST_SELECT = "LIST_SELECT",
   TREE_SELECT = "TREE_SELECT"
 }
 
