@@ -1,11 +1,13 @@
 import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
-import { NzFormatEmitEvent, NzTreeNode } from "ng-zorro-antd/tree";
+import { NzFormatBeforeDropEvent, NzFormatEmitEvent, NzTreeNode } from "ng-zorro-antd/tree";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { emptyEruptValue, eruptValueToObject, initErupt, objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalRef, NzModalService } from "ng-zorro-antd";
 import { colRules } from "../../../erupt/model/util.model";
+import { Observable, of } from "rxjs";
+import { delay } from "rxjs/operators";
 
 @Component({
   selector: "app-tree",
@@ -45,6 +47,7 @@ export class TreeComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.eruptModel = null;
+      this.showEdit = false;
       this.eruptName = params.name;
       this.fetchTreeData();
       this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
@@ -80,6 +83,18 @@ export class TreeComponent implements OnInit {
       }
 
     });
+  }
+
+
+  beforeDrop(arg: NzFormatBeforeDropEvent): Observable<boolean> {
+    // if insert node into another node, wait 1s
+    console.log(arg);
+    if (arg.dragNode.level === arg.node.level) {
+      return of(false).pipe();
+    } else {
+      arg.node.isLeaf = false;
+      return of(true);
+    }
   }
 
 

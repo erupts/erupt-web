@@ -16,8 +16,9 @@
             <nz-tree #tree
                      nzDraggable
                      class="tree-container"
-                     [nzShowLine]="true"
+                     [nzShowLine]="false"
                      [nzData]="nodes"
+                     [nzBeforeDrop]="beforeDrop"
                      [nzSearchValue]="searchValue"
                      (nzClick)="nodeClickEvent($event)"
                      (nzDblClick)="nzDblClick($event)"

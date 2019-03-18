@@ -1,13 +1,109 @@
-import { EruptFieldModel, View } from "../model/erupt-field.model";
+import { EruptFieldModel } from "../model/erupt-field.model";
 import { EruptModel } from "../model/erupt.model";
-import { EditType, ViewType } from "../model/erupt.enum";
+import { EditType, RestPath, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
 import { NzMessageService } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
+import { DataService } from "../service/data.service";
+import { Injectable } from "@angular/core";
 
 /**
  * Created by liyuepeng on 10/31/18.
  */
+
+@Injectable()
+export class DataConvertService {
+
+  constructor(private dataService: DataService) {
+  }
+
+  //将view数据转换为alain table组件配置信息
+  viewToAlainTableConfig(erupt: EruptModel): Array<any> {
+    let cols = [];
+    const views = erupt.tableColumns;
+    for (let view of views) {
+      let edit = view.eruptFieldModel.eruptFieldJson.edit;
+      let obj: any = {
+        title: view.title,
+        index: view.column.replace("_", "\.")
+      };
+      if (view.sortable) {
+        obj.sort = {
+          reName: {
+            ascend: "asc",
+            descend: "desc"
+          },
+          key: view.column
+        };
+      }
+
+      //编辑类型
+      if (edit.type === EditType.BOOLEAN) {
+        obj.type = "yn";
+        obj.className = "text-center";
+      } else if (edit.type === EditType.CHOICE) {
+        obj.format = (item: any) => {
+          return edit.choiceType[0].vlMap.get(item[view.column]) || "";
+        };
+      }
+
+      //数据类型
+      if (view.eruptFieldModel.fieldReturnName === "Integer"
+        || view.eruptFieldModel.fieldReturnName === "Float"
+        || view.eruptFieldModel.fieldReturnName === "Double") {
+        obj.type = "number";
+      } else if (view.eruptFieldModel.fieldReturnName === "Date") {
+        obj.type = "date";
+      }
+
+      //展示类型
+      switch (view.viewType) {
+        case ViewType.LINK:
+          obj.type = "link";
+          obj.click = (data) => {
+            window.open(data[view.column]);
+          };
+          break;
+        case ViewType.QR_CODE:
+          obj.className = "text-center";
+          obj.buttons = [
+            {
+              icon: "qrcode",
+              click: (record: any) => {
+                console.log(record[view.column]);
+              }
+            }
+          ];
+          break;
+        case ViewType.IMAGE:
+          obj.type = "img";
+          obj.width = "80px";
+          obj.className = "text-center";
+          obj.format = (item: any) => {
+            if (item[view.column]) {
+              // return this.dataService.previewAttachment(erupt.eruptName, item[view.column]);
+              return `<img width="100%" class="text-center" src="${this.dataService.previewAttachment(erupt.eruptName, item[view.column])}"></img>`
+            } else {
+              return "";
+            }
+          };
+          break;
+      }
+
+      if (view.template) {
+        obj.format = (item: any) => {
+          return view.template.replace("@txt@", item[view.column] || "");
+        };
+      }
+      if (view.className) {
+        obj.className += " " + view.className;
+      }
+
+      cols.push(obj);
+    }
+    return cols;
+  }
+}
 
 export function initErupt(eruptModel: EruptModel) {
   eruptModel.eruptJson.rowOperationMap = new Map();
@@ -53,93 +149,21 @@ export function initErupt(eruptModel: EruptModel) {
   });
   //TODO 在eruptFieldModelMap填充完成执行该代码
   // eruptModel.eruptFieldModels.forEach(field => {
-  //   switch (field.eruptFieldJson.edit.type) {
-  //     case EditType.DEPEND_SWITCH:
-  //       field.eruptFieldJson.edit.dependSwitchType[0].dependSwitchAttrs.forEach(attr => {
-  //         attr.dependEdits.forEach(edit => {
-  //           const fm = eruptModel.eruptFieldModelMap.get(edit);
-  //           console.log(fm);
-  //           if (fm) {
-  //             fm.eruptFieldJson.edit.show = false;
-  //             console.log(fm.eruptFieldJson.edit.show);
-  //           }
-  //         });
+  //   if (field.eruptFieldJson.edit.type === EditType.DEPEND_SWITCH) {
+  //     field.eruptFieldJson.edit.dependSwitchType[0].dependSwitchAttrs.forEach(attr => {
+  //       attr.dependEdits.forEach(edit => {
+  //         const fm = eruptModel.eruptFieldModelMap.get(edit);
+  //         console.log(fm);
+  //         if (fm) {
+  //           fm.eruptFieldJson.edit.show = false;
+  //           console.log(fm.eruptFieldJson.edit.show);
+  //         }
   //       });
-  //       break;
+  //     });
   //   }
   // });
 }
 
-
-//将view数据转换为alain table组件配置信息
-export function viewToAlainTableConfig(views: Array<View>): Array<any> {
-  let cols = [];
-  for (let view of views) {
-    let edit = view.eruptFieldModel.eruptFieldJson.edit;
-    let obj: any = {
-      title: view.title,
-      index: view.column.replace("_", "\.")
-    };
-    if (view.sortable) {
-      obj.sort = {
-        reName: {
-          ascend: "asc",
-          descend: "desc"
-        },
-        key: view.column
-      };
-    }
-
-    //编辑类型
-    if (edit.type === EditType.BOOLEAN) {
-      obj.type = "yn";
-      obj.className = "text-center";
-    } else if (edit.type === EditType.CHOICE) {
-      obj.format = (item: any) => {
-        return edit.choiceType[0].vlMap.get(item[view.column]) || "";
-      };
-    }
-
-    //数据类型
-    if (view.eruptFieldModel.fieldReturnName === "Integer"
-      || view.eruptFieldModel.fieldReturnName === "Float"
-      || view.eruptFieldModel.fieldReturnName === "Double") {
-      obj.type = "number";
-    } else if (view.eruptFieldModel.fieldReturnName === "Date") {
-      obj.type = "date";
-    }
-
-    //展示类型
-    if (view.viewType === ViewType.LINK) {
-      obj.type = "link";
-      obj.click = (data) => {
-        window.open(data[view.column]);
-      };
-    } else if (view.viewType === ViewType.QR_CODE) {
-      obj.className = "text-center";
-      obj.buttons = [
-        {
-          icon: "qrcode",
-          click: (record: any) => {
-            console.log(record[view.column]);
-          }
-        }
-      ];
-    }
-
-    if (view.template) {
-      obj.format = (item: any) => {
-        return view.template.replace("@txt@", item[view.column] || "");
-      };
-    }
-    if (view.className) {
-      obj.className += " " + view.className;
-    }
-
-    cols.push(obj);
-  }
-  return cols;
-}
 
 //非空验证
 export function validateNotNull(eruptModel: EruptModel, msg?: NzMessageService): boolean {

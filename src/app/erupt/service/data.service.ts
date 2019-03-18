@@ -4,7 +4,6 @@
 import { Inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Tree } from "../model/erupt.model";
-import { Page } from "../model/page";
 import { _HttpClient } from "@delon/theme";
 import { Observable } from "rxjs";
 import { loginModel } from "../model/user.model";
@@ -48,6 +47,24 @@ export class DataService {
 
   findTabListById(modelName: string, id: string, tabFieldName: string): Observable<any> {
     return this._http.post(RestPath.data + "table/" + modelName + "/" + id + "/" + this.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
+      headers: {
+        erupt: modelName
+      }
+    });
+  }
+
+  findTabTree(modelName: string, tabFieldName: string): Observable<Array<Tree>> {
+    return this._http.post<Array<Tree>>(RestPath.data + "tree/" + modelName + "/" + this.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
+      observe: null,
+      headers: {
+        erupt: modelName
+      }
+    });
+  }
+
+  findTabTreeById(modelName: string, id: string, tabFieldName: string): Observable<any> {
+    return this._http.post<any>(RestPath.data + "tree/" + modelName + "/" + id + "/" + this.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
+      observe: null,
       headers: {
         erupt: modelName
       }
@@ -125,7 +142,7 @@ export class DataService {
   }
 
   downloadEruptExcel(modelName: string): Observable<any> {
-    return this.http.get(this.domain + "/erupt-api/excel/" + modelName, {
+    return this._http.get(this.domain + "/erupt-api/excel/" + modelName, {}, {
       headers: {
         erupt: modelName
       }
@@ -150,6 +167,10 @@ export class DataService {
   //获取菜单接口
   getMenu(): Observable<Array<any>> {
     return this._http.get(this.domain + "/menu", null);
+  }
+
+  previewAttachment(eruptName: string, path: string): string {
+    return RestPath.DONT_INTERCEPT + "preview-attachment?path=" + path;
   }
 
   downloadAttachment(path: string) {

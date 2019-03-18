@@ -4,7 +4,7 @@
 </ng-container>
 <div *ngIf="eruptModel">
     <!--operator start-->
-    <div>
+    <div style="margin-bottom: 5px;">
         <ng-container *ngIf="eruptModel.eruptJson.power.add">
             <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
                 <i nz-icon type="plus" theme="outline"></i>新增
@@ -58,11 +58,11 @@
         </ng-container>
     </div>
 
-    <nz-divider nzDashed="true" style="margin:2px 0 8px"></nz-divider>
+    <!--<nz-divider nzDashed="true" style="margin:2px 0 8px;border-width: 2px"></nz-divider>-->
 
     <nz-card *ngIf="searchErupt.eruptFieldModels.length>0"
              [nzBodyStyle]="{padding:'10px 4px'}"
-             style="background: #fafafa;margin-bottom: 0;" [hidden]="hideCondition">
+             style="background: #fafafa;margin-bottom: 0;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)" [hidden]="hideCondition">
         <erupt-edit-type [eruptModel]="searchErupt"
                          [col]="colRules[3]"
                          size="default"

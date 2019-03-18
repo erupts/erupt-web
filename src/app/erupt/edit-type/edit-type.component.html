@@ -298,9 +298,6 @@
                             <nz-divider [nzDashed]="false" [nzText]="field.eruptFieldJson.edit.title"></nz-divider>
                         </div>
                     </ng-container>
-                    <ng-container *ngSwitchCase="editType.IMAGE">
-                        123
-                    </ng-container>
                     <ng-container *ngSwitchCase="editType.ATTACHMENT">
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
@@ -316,7 +313,7 @@
                                                 [nzLimit]="10"
                                                 (nzChange)="upLoadNzChange($event,field)"
                                                 [nzPreview]="previewImageHandler"
-                                                [nzHeaders]="{token:tokenService.get().token}"
+                                                [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
                                                 [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
                                             <p class="ant-upload-drag-icon">
                                                 <i nz-icon type="plus"></i>

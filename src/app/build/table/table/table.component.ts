@@ -3,11 +3,11 @@ import { DataService } from "../../../erupt/service/data.service";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
 import {
+  DataConvertService,
   emptyEruptValue,
   eruptValueToObject,
   initErupt,
   validateNotNull,
-  viewToAlainTableConfig
 } from "../../../erupt/util/conver-util";
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
@@ -19,7 +19,7 @@ import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 import { colRules } from "../../../erupt/model/util.model";
 import { deepCopy } from "@delon/util";
-import { RestPath } from "../../../erupt/model/erupt.enum";
+import { RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
 
 @Component({
   selector: "app-list-view",
@@ -36,6 +36,7 @@ export class TableComponent implements OnInit {
               private msg: NzMessageService,
               @Inject(NzModalService)
               private modal: NzModalService,
+              private dataConvert: DataConvertService,
               public route: ActivatedRoute,
               @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService
   ) {
@@ -107,10 +108,7 @@ export class TableComponent implements OnInit {
           this.buildTableConfig();
           this.buildSearchErupt();
           this.buildReadOnlyErupt();
-          em.subErupts.forEach((fe => {
-            initErupt(fe.eruptModel);
-            fe.alainTableConfig = viewToAlainTableConfig(fe.eruptModel.tableColumns);
-          }));
+          this.buildSubErupt(em.subErupts);
           this.subErupts = em.subErupts;
         }
       );
@@ -131,6 +129,43 @@ export class TableComponent implements OnInit {
     copyErupt.mode = "search";
     copyErupt.eruptFieldModels = searchFieldModels;
     this.searchErupt = copyErupt;
+  }
+
+  buildSubErupt(subErupts: Array<EruptAndEruptFieldModel>) {
+    subErupts.forEach((sub => {
+      initErupt(sub.eruptModel);
+      const edit = sub.eruptFieldModel.eruptFieldJson.edit;
+      if (edit.tabType[0].type == TabEnum.TREE_SELECT) {
+        this.dataService.findTabTree(this.eruptModel.eruptName, sub.eruptFieldModel.fieldName).subscribe(
+          tree => {
+            function gcZorroTree(nodes) {
+              const tempNodes = [];
+              nodes.forEach(node => {
+                let option: any = {
+                  code: node.id,
+                  title: node.label,
+                  data: node.data,
+                  expanded: true
+                };
+                if (node.children && node.children.length > 0) {
+                  tempNodes.push(option);
+                  option.children = gcZorroTree(node.children);
+                } else {
+                  option.isLeaf = true;
+                  tempNodes.push(option);
+                }
+              });
+              return tempNodes;
+            }
+
+            if (tree) {
+              sub.eruptFieldModel.eruptFieldJson.edit.$viewValue = gcZorroTree(tree);
+            }
+          }
+        );
+      }
+      sub.alainTableConfig = this.dataConvert.viewToAlainTableConfig(sub.eruptModel);
+    }));
   }
 
   buildReadOnlyErupt() {
@@ -158,7 +193,7 @@ export class TableComponent implements OnInit {
     const _columns = [];
     _columns.push({ title: "", type: "checkbox", fixed: "left", className: "text-center", index: this.eruptModel.eruptJson.primaryKeyCol });
     _columns.push({ title: "No", type: "no", fixed: "left", className: "text-center", width: "60px" });
-    _columns.push(...viewToAlainTableConfig(this.eruptModel.tableColumns));
+    _columns.push(...this.dataConvert.viewToAlainTableConfig(this.eruptModel));
     const operators = [];
     const that = this;
     this.eruptModel.eruptJson.rowOperation.forEach(ro => {
@@ -202,7 +237,8 @@ export class TableComponent implements OnInit {
               nzComponentParams: {
                 subErupts: this.subErupts,
                 eruptModel: this.readonlyErupt,
-                rowDataFun: record
+                rowDataFun: record,
+                behavior: "readonly"
               }
             });
           }
@@ -356,15 +392,12 @@ export class TableComponent implements OnInit {
             if (result.success) {
               this.st.reset();
               this.msg.success("新增成功");
-              return true;
             } else {
               this.msg.error(result.message);
-              return false;
             }
           });
-        } else {
-          return false;
         }
+        return false;
       }
     });
   }

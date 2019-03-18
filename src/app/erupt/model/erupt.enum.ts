@@ -8,12 +8,8 @@ export class RestPath {
   public static data: string = RestPath.erupt + "/data/";
   public static excel: string = RestPath.erupt + "/excel/";
   public static file: string = RestPath.erupt + "/file/";
+  public static DONT_INTERCEPT: string = window["domain"] + "/ws/";
   public static NO_RIGHT_SYMBOL: string = "__";
-}
-
-
-export enum RgbColor {
-  not, yellow, green, red, blue, white, black
 }
 
 export enum EditType {
@@ -41,7 +37,8 @@ export enum TabEnum {
 export enum ViewType {
   TEXT = "TEXT",
   QR_CODE = "QR_CODE",
-  LINK = "LINK"
+  LINK = "LINK",
+  IMAGE = "IMAGE",
 }
 
 export enum DateEnum {

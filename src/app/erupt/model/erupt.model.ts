@@ -1,5 +1,4 @@
 import { Edit, EruptFieldModel, View } from "./erupt-field.model";
-import { RgbColor } from "./erupt.enum";
 
 /**
  * Created by liyuepeng on 10/16/18.
@@ -20,7 +19,6 @@ export interface Erupt {
   power: Power;
   desc: string;
   tree: Tree;
-  cards: Array<Card>;
   rowOperation: Array<RowOperation>;
   rowOperationMap?: Map<String, RowOperation>;
 }
@@ -54,11 +52,4 @@ interface Power {
   query: boolean;
   importable: boolean;
   export: boolean;
-}
-
-interface Card {
-  icon: string;
-  value: string;
-  desc: string;
-  color: RgbColor;
 }

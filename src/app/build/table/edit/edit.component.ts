@@ -22,6 +22,8 @@ export class EditComponent implements OnInit {
 
   @Input() subErupts: Array<EruptAndEruptFieldModel>;
 
+  @Input() behavior: "add" | "edit" | "readonly" = "add";
+
   @Input() set rowDataFun(data: any) {
     if (data) {
       this.rowData = data;
@@ -29,7 +31,6 @@ export class EditComponent implements OnInit {
     } else {
       objectToEruptValue(this.eruptModel, {});
     }
-
     /**
      * TAB control
      */
@@ -39,9 +40,14 @@ export class EditComponent implements OnInit {
         const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0];
         switch (tabType.type) {
           case TabEnum.TREE_SELECT:
-
+            this.dataService.findTabTreeById(this.eruptModel.eruptName, this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(
+              data => {
+                sub.eruptFieldModel.eruptFieldJson.edit.$value = data;
+              }
+            );
             break;
           case TabEnum.TABLE:
+            sub.alainTableConfig;
             this.dataService.findTabListById(this.eruptModel.eruptName, this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(
               data => {
                 sub.eruptFieldModel.eruptFieldJson.edit.$value = data;
@@ -60,24 +66,16 @@ export class EditComponent implements OnInit {
 
   ngOnInit() {
     // 计算里面所有的字段信息
-
-    this.subErupts && this.subErupts.forEach(sub => {
-      // sub.eruptModel.tableColumns =
-      // if (this.rowData) {
-      //   if (sub.eruptFieldModel.fieldReturnName === this.eruptModel.eruptName) {
-      //     const condition: any = {};
-      //     condition[sub.eruptFieldModel.fieldName + "." + this.eruptModel.eruptJson.primaryKeyCol] = this.rowData[this.eruptModel.eruptJson.primaryKeyCol];
-      //     this.dataService.queryEruptData(sub.eruptFieldModel.fieldReturnName, condition, {
-      //       _pageIndex: 1,
-      //       _pageSize: 100
-      //     }).subscribe(
-      //       data => {
-      //         sub.eruptFieldModel.eruptFieldJson.edit.$value = data.list;
-      //       }
-      //     );
-      //   }
-      // }
-    });
+    // this.subErupts && this.subErupts.forEach(sub => {
+    //   const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0];
+    //   switch (tabType.type) {
+    //     case TabEnum.TREE_SELECT:
+    //       break;
+    //     case TabEnum.TABLE:
+    //
+    //       break;
+    //   }
+    // });
   }
 
   fetchTreeData(ef: EruptAndEruptFieldModel) {
