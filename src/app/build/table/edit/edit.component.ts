@@ -2,10 +2,10 @@ import { Component, Input, OnInit } from "@angular/core";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { DataService } from "../../../erupt/service/data.service";
 import { TabEnum } from "../../../erupt/model/erupt.enum";
-import { objectToEruptValue } from "../../../erupt/util/conver-util";
 import { SettingsService } from "@delon/theme";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 import { NzFormatEmitEvent } from "ng-zorro-antd";
+import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 
 @Component({
   selector: "erupt-edit",
@@ -27,9 +27,9 @@ export class EditComponent implements OnInit {
   @Input() set rowDataFun(data: any) {
     if (data) {
       this.rowData = data;
-      objectToEruptValue(this.eruptModel, data);
+      this.dataHandlerService.objectToEruptValue(this.eruptModel, data);
     } else {
-      objectToEruptValue(this.eruptModel, {});
+      this.dataHandlerService.objectToEruptValue(this.eruptModel, {});
     }
     /**
      * TAB control
@@ -60,7 +60,7 @@ export class EditComponent implements OnInit {
 
   }
 
-  constructor(private dataService: DataService, private settingSrv: SettingsService) {
+  constructor(private dataService: DataService, private settingSrv: SettingsService, private dataHandlerService: DataHandlerService) {
 
   }
 

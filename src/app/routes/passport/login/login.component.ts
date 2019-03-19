@@ -118,10 +118,8 @@ export class UserLoginComponent implements OnDestroy, OnInit {
   }
 
   changeVerifyCode() {
-    this.verifyCodeUrl = this.data.getVerifyCodeUrl(this.form.controls.userName.value);
-    console.log(this.verifyCodeUrl);
+    this.verifyCodeUrl = DataService.getVerifyCodeUrl(this.form.controls.userName.value);
   }
-
 
   ngOnDestroy(): void {
 

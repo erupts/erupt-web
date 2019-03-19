@@ -8,7 +8,7 @@ import { SharedModule } from "../shared/shared.module";
 import { SimplemdeModule } from "ngx-simplemde";
 import { ListSelectComponent } from "./list-select/list-select.component";
 import { HelperService } from "./service/helper.service";
-import { DataConvertService } from "./util/conver-util";
+import { DataHandlerService } from "./service/data-handler.service";
 
 @NgModule({
   imports: [
@@ -20,7 +20,7 @@ import { DataConvertService } from "./util/conver-util";
   providers: [
     DataService,
     HelperService,
-    DataConvertService
+    DataHandlerService
   ],
   exports: [
     EditTypeComponent

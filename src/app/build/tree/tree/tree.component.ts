@@ -2,12 +2,11 @@ import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { NzFormatBeforeDropEvent, NzFormatEmitEvent, NzTreeNode } from "ng-zorro-antd/tree";
 import { EruptModel } from "../../../erupt/model/erupt.model";
-import { emptyEruptValue, eruptValueToObject, initErupt, objectToEruptValue, validateNotNull } from "../../../erupt/util/conver-util";
 import { ActivatedRoute } from "@angular/router";
-import { NzMessageService, NzModalRef, NzModalService } from "ng-zorro-antd";
+import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { colRules } from "../../../erupt/model/util.model";
 import { Observable, of } from "rxjs";
-import { delay } from "rxjs/operators";
+import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 
 @Component({
   selector: "app-tree",
@@ -41,7 +40,8 @@ export class TreeComponent implements OnInit {
               @Inject(NzMessageService)
               private msg: NzMessageService,
               @Inject(NzModalService)
-              private modal: NzModalService) {
+              private modal: NzModalService,
+              private dataHandler: DataHandlerService) {
   }
 
   ngOnInit(): void {
@@ -52,7 +52,7 @@ export class TreeComponent implements OnInit {
       this.fetchTreeData();
       this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
         this.eruptModel = erupt.eruptModel;
-        initErupt(erupt.eruptModel);
+        this.dataHandler.initErupt(erupt.eruptModel);
       });
     });
   }
@@ -105,13 +105,13 @@ export class TreeComponent implements OnInit {
     if (this.tree.getSelectedNodeList()[0]) {
       this.tree.getSelectedNodeList()[0].setSelected(false);
     }
-    emptyEruptValue(this.eruptModel);
+    this.dataHandler.emptyEruptValue(this.eruptModel);
     // objectToEruptValue(this.eruptModel, {});
   }
 
   add() {
-    if (validateNotNull(this.eruptModel, this.msg)) {
-      this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+    if (this.dataHandler.validateNotNull(this.eruptModel, this.msg)) {
+      this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
         if (result.success) {
           this.fetchTreeData();
           this.msg.success("添加成功");
@@ -123,8 +123,8 @@ export class TreeComponent implements OnInit {
   }
 
   save() {
-    if (validateNotNull(this.eruptModel, this.msg)) {
-      this.dataService.editEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+    if (this.dataHandler.validateNotNull(this.eruptModel, this.msg)) {
+      this.dataService.editEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
         if (result.success) {
           this.fetchTreeData();
           this.msg.success("修改成功");
@@ -180,7 +180,7 @@ export class TreeComponent implements OnInit {
       that.loading = false;
       if (data.success) {
         this.showEdit = true;
-        objectToEruptValue(this.eruptModel, data.data);
+        this.dataHandler.objectToEruptValue(this.eruptModel, data.data);
       } else {
         this.msg.error(data.message);
       }

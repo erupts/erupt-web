@@ -3,12 +3,12 @@
  */
 
 export class RestPath {
-  public static erupt = window["domain"] + "/erupt-api";
+  public static DONT_INTERCEPT: string = window["domain"] + "/ws/";
+  public static erupt: string = window["domain"] + "/erupt-api";
   public static build: string = RestPath.erupt + "/build/";
   public static data: string = RestPath.erupt + "/data/";
   public static excel: string = RestPath.erupt + "/excel/";
   public static file: string = RestPath.erupt + "/file/";
-  public static DONT_INTERCEPT: string = window["domain"] + "/ws/";
   public static NO_RIGHT_SYMBOL: string = "__";
 }
 
@@ -18,7 +18,6 @@ export enum EditType {
   DATE = "DATE",                   //日期
   REFERENCE = "REFERENCE",         //引用
   BOOLEAN = "BOOLEAN",             //布尔
-  IMAGE = "IMAGE",                 //图片
   ATTACHMENT = "ATTACHMENT",       //附件
   TAB = "TAB",                     //TAB选项卡
   MARK_DOWN = "MARK_DOWN",         //mark down

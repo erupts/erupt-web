@@ -1,14 +1,7 @@
-import { Component, Inject, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
-import {
-  DataConvertService,
-  emptyEruptValue,
-  eruptValueToObject,
-  initErupt,
-  validateNotNull,
-} from "../../../erupt/util/conver-util";
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 import { EditComponent } from "../edit/edit.component";
@@ -20,6 +13,7 @@ import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 import { colRules } from "../../../erupt/model/util.model";
 import { deepCopy } from "@delon/util";
 import { RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
+import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 
 @Component({
   selector: "app-list-view",
@@ -36,9 +30,9 @@ export class TableComponent implements OnInit {
               private msg: NzMessageService,
               @Inject(NzModalService)
               private modal: NzModalService,
-              private dataConvert: DataConvertService,
               public route: ActivatedRoute,
-              @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService
+              @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
+              private dataHandler: DataHandlerService
   ) {
   }
 
@@ -103,7 +97,7 @@ export class TableComponent implements OnInit {
       this.dataService.getEruptBuild(params.name).subscribe(
         em => {
           this.stConfig.url = RestPath.data + "/table/" + params.name;
-          initErupt(em.eruptModel);
+          this.dataHandler.initErupt(em.eruptModel);
           this.eruptModel = em.eruptModel;
           this.buildTableConfig();
           this.buildSearchErupt();
@@ -133,7 +127,7 @@ export class TableComponent implements OnInit {
 
   buildSubErupt(subErupts: Array<EruptAndEruptFieldModel>) {
     subErupts.forEach((sub => {
-      initErupt(sub.eruptModel);
+      this.dataHandler.initErupt(sub.eruptModel);
       const edit = sub.eruptFieldModel.eruptFieldJson.edit;
       if (edit.tabType[0].type == TabEnum.TREE_SELECT) {
         this.dataService.findTabTree(this.eruptModel.eruptName, sub.eruptFieldModel.fieldName).subscribe(
@@ -164,7 +158,7 @@ export class TableComponent implements OnInit {
           }
         );
       }
-      sub.alainTableConfig = this.dataConvert.viewToAlainTableConfig(sub.eruptModel);
+      sub.alainTableConfig = this.dataHandler.viewToAlainTableConfig(sub.eruptModel);
     }));
   }
 
@@ -193,13 +187,16 @@ export class TableComponent implements OnInit {
     const _columns = [];
     _columns.push({ title: "", type: "checkbox", fixed: "left", className: "text-center", index: this.eruptModel.eruptJson.primaryKeyCol });
     _columns.push({ title: "No", type: "no", fixed: "left", className: "text-center", width: "60px" });
-    _columns.push(...this.dataConvert.viewToAlainTableConfig(this.eruptModel));
+    _columns.push(...this.dataHandler.viewToAlainTableConfig(this.eruptModel));
     const operators = [];
     const that = this;
     this.eruptModel.eruptJson.rowOperation.forEach(ro => {
       if (!ro.multi) {
         operators.push({
-          icon: ro.icon,
+          // icon: ro.icon,
+          format: () => {
+            return `<i class="fa ${ro.icon}"></i>`;
+          },
           click: (record: any, modal: any) => {
             that.gcOperatorEdits(ro.code, false, record);
           }
@@ -259,7 +256,7 @@ export class TableComponent implements OnInit {
                 rowDataFun: record
               },
               nzOnOk: () => {
-                if (validateNotNull(this.eruptModel, this.msg)) {
+                if (this.dataHandler.validateNotNull(this.eruptModel, this.msg)) {
                   // this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
                   //   if (result.success) {
                   //     this.st.reset();
@@ -352,8 +349,8 @@ export class TableComponent implements OnInit {
         nzTitle: ro.title,
         nzCancelText: "取消（ESC）",
         nzOnOk: () => {
-          if (validateNotNull(operatorEruptModel, this.msg)) {
-            this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, eruptValueToObject(operatorEruptModel)).subscribe(res => {
+          if (this.dataHandler.validateNotNull(operatorEruptModel, this.msg)) {
+            this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, this.dataHandler.eruptValueToObject(operatorEruptModel)).subscribe(res => {
               if (res.success) {
                 this.st.reset();
               } else {
@@ -374,7 +371,7 @@ export class TableComponent implements OnInit {
 
   //新增
   addRow() {
-    emptyEruptValue(this.eruptModel);
+    this.dataHandler.emptyEruptValue(this.eruptModel);
     this.modal.create({
       nzStyle: { top: "60px" },
       nzWrapClassName: "modal-lg",
@@ -387,8 +384,8 @@ export class TableComponent implements OnInit {
         eruptModel: this.eruptModel
       },
       nzOnOk: () => {
-        if (validateNotNull(this.eruptModel, this.msg)) {
-          this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+        if (this.dataHandler.validateNotNull(this.eruptModel, this.msg)) {
+          this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
             if (result.success) {
               this.st.reset();
               this.msg.success("新增成功");

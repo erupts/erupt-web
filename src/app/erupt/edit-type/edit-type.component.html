@@ -309,10 +309,11 @@
                                                 [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                 [nzMultiple]="false"
                                                 nzListType="picture-card"
-                                                [(nzFileList)]="field.eruptFieldJson.edit.$tempValue"
-                                                [nzLimit]="10"
+                                                [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
+                                                [nzLimit]="1"
                                                 (nzChange)="upLoadNzChange($event,field)"
                                                 [nzPreview]="previewImageHandler"
+                                                [nzShowButton]="!field.eruptFieldJson.edit.$viewValue || field.eruptFieldJson.edit.$viewValue.length==0"
                                                 [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
                                                 [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
                                             <p class="ant-upload-drag-icon">

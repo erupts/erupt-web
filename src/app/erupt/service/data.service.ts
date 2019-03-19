@@ -17,7 +17,7 @@ export class DataService {
 
   public domain: string = window["domain"];
 
-  public upload: string = this.domain + "/erupt-api/file/upload/";
+  public upload: string = RestPath.file + "upload/";
 
   public NO_RIGHT_SYMBOL: string = "__";
 
@@ -142,21 +142,16 @@ export class DataService {
   }
 
   downloadEruptExcel(modelName: string): Observable<any> {
-    return this._http.get(this.domain + "/erupt-api/excel/" + modelName, {}, {
+    return this._http.get(RestPath.excel + modelName, {}, {
       headers: {
         erupt: modelName
       }
     });
   }
 
-  //获取验证码
-  getVerifyCodeUrl(account: string): string {
-    return this.domain + "/ws/code-img" + "?account=" + account + "&_t" + new Date().getTime();
-  }
-
   //登录接口
   login(account: string, pwd: string, verifyCode?: any): Observable<loginModel> {
-    return this._http.post(this.domain + "/ws/login", {}, {
+    return this._http.post(RestPath.DONT_INTERCEPT + "login", {}, {
         account: account,
         pwd: pwd,
         verifyCode: verifyCode
@@ -169,11 +164,13 @@ export class DataService {
     return this._http.get(this.domain + "/menu", null);
   }
 
-  previewAttachment(eruptName: string, path: string): string {
-    return RestPath.DONT_INTERCEPT + "preview-attachment?path=" + path;
+  //获取验证码
+  static getVerifyCodeUrl(account: string): string {
+    return RestPath.DONT_INTERCEPT + "code-img" + "?account=" + account + "&_t" + new Date().getTime();
   }
 
-  downloadAttachment(path: string) {
-    window.open(`/assets/attachment-download.html?path=${path}&token=${this.tokenService.get().token}`);
+  //读取附件
+  static previewAttachment(eruptName: string, path: string): string {
+    return RestPath.DONT_INTERCEPT + "preview-attachment?path=" + path;
   }
 }

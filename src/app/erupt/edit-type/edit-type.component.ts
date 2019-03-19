@@ -85,7 +85,11 @@ export class EditTypeComponent implements OnInit {
 
 
   previewImageHandler = (file: UploadFile) => {
-    this.dataService.previewAttachment(this.eruptModel.eruptName, file.response.data);
+    if (file.url) {
+      window.open(file.url);
+    } else if (file.response && file.response.data) {
+      window.open(DataService.previewAttachment(this.eruptModel.eruptName, file.response.data));
+    }
   };
 
 
