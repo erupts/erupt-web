@@ -55,7 +55,7 @@ export function StartupServiceFactory(startupService: StartupService): Function 
   return () => startupService.load();
 }
 
-const APPINIT_PROVIDES = [
+const APP_INIT_PROVIDES = [
   StartupService,
   {
     provide: APP_INITIALIZER,
@@ -92,7 +92,7 @@ import { LayoutModule } from "./layout/layout.module";
   providers: [
     ...LANG_PROVIDES,
     ...INTERCEPTOR_PROVIDES,
-    ...APPINIT_PROVIDES
+    ...APP_INIT_PROVIDES
   ],
   bootstrap: [AppComponent]
 })

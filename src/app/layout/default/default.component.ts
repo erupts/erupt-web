@@ -1,49 +1,32 @@
-import {
-  Component,
-  ViewChild,
-  ComponentFactoryResolver,
-  ViewContainerRef,
-  AfterViewInit,
-  OnInit,
-  OnDestroy,
-  ElementRef,
-  Renderer2,
-  Inject
-} from "@angular/core";
+import { AfterViewInit, Component, ComponentFactoryResolver, ElementRef, Inject, OnDestroy, OnInit, Renderer2 } from "@angular/core";
 import { DOCUMENT } from "@angular/common";
-import {
-  Router,
-  NavigationEnd,
-  RouteConfigLoadStart,
-  NavigationError,
-  NavigationCancel, ActivatedRoute
-} from "@angular/router";
-import { NzMessageService, NzIconService } from "ng-zorro-antd";
+import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router } from "@angular/router";
+import { NzIconService, NzMessageService } from "ng-zorro-antd";
 import { Subscription } from "rxjs";
 import { updateHostClass } from "@delon/util";
-import { ScrollService, MenuService, SettingsService, Menu } from "@delon/theme";
-
-// #region icons
-
+import { MenuService, ScrollService, SettingsService } from "@delon/theme";
 import {
+  AppstoreOutline,
+  ArrowDownOutline,
+  BellOutline,
+  EllipsisOutline,
+  FullscreenExitOutline,
+  FullscreenOutline,
+  GithubOutline,
+  GlobalOutline,
+  LockOutline,
+  LogoutOutline,
   MenuFoldOutline,
   MenuUnfoldOutline,
+  PlusOutline,
   SearchOutline,
   SettingOutline,
-  FullscreenOutline,
-  FullscreenExitOutline,
-  BellOutline,
-  LockOutline,
-  PlusOutline,
-  UserOutline,
-  LogoutOutline,
-  EllipsisOutline,
-  GlobalOutline,
-  ArrowDownOutline,
-  // Optional
-  GithubOutline,
-  AppstoreOutline
+  UserOutline
 } from "@ant-design/icons-angular/icons";
+import { DataService } from "../../erupt/service/data.service";
+import { flyIn } from "@core/animations/fly-in";
+
+// #region icons
 
 const ICONS = [
   MenuFoldOutline,
@@ -66,10 +49,6 @@ const ICONS = [
 ];
 
 // #endregion
-
-import { environment } from "@env/environment";
-import { SettingDrawerComponent } from "./setting-drawer/setting-drawer.component";
-import { DataService } from "../../erupt/service/data.service";
 
 @Component({
   selector: "layout-default",

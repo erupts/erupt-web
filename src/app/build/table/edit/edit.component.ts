@@ -41,8 +41,10 @@ export class EditComponent implements OnInit {
         switch (tabType.type) {
           case TabEnum.TREE_SELECT:
             this.dataService.findTabTreeById(this.eruptModel.eruptName, this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(
-              data => {
-                sub.eruptFieldModel.eruptFieldJson.edit.$value = data;
+              tree => {
+                console.log(tree);
+                console.log(sub.eruptFieldModel.eruptFieldJson.edit.$viewValue);
+                sub.eruptFieldModel.eruptFieldJson.edit.$value = tree;
               }
             );
             break;
@@ -65,17 +67,7 @@ export class EditComponent implements OnInit {
   }
 
   ngOnInit() {
-    // 计算里面所有的字段信息
-    // this.subErupts && this.subErupts.forEach(sub => {
-    //   const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0];
-    //   switch (tabType.type) {
-    //     case TabEnum.TREE_SELECT:
-    //       break;
-    //     case TabEnum.TABLE:
-    //
-    //       break;
-    //   }
-    // });
+
   }
 
   fetchTreeData(ef: EruptAndEruptFieldModel) {
