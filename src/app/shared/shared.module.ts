@@ -1,16 +1,18 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 // delon
-import { AlainThemeModule } from '@delon/theme';
-import { DelonABCModule } from '@delon/abc';
-import { DelonACLModule } from '@delon/acl';
-import { DelonFormModule } from '@delon/form';
+import { AlainThemeModule } from "@delon/theme";
+import { DelonABCModule } from "@delon/abc";
+import { DelonACLModule } from "@delon/acl";
+import { DelonFormModule } from "@delon/form";
 
 // #region third libs
-import { NgZorroAntdModule } from 'ng-zorro-antd';
-import { CountdownModule } from 'ngx-countdown';
+import { NgZorroAntdModule } from "ng-zorro-antd";
+import { CountdownModule } from "ngx-countdown";
+import { QrComponent } from "./qr/qr.component";
+
 const THIRDMODULES = [
   NgZorroAntdModule,
   CountdownModule
@@ -20,6 +22,7 @@ const THIRDMODULES = [
 // #region your componets & directives
 const COMPONENTS = [];
 const DIRECTIVES = [];
+
 // #endregion
 
 @NgModule({
@@ -38,7 +41,11 @@ const DIRECTIVES = [];
   declarations: [
     // your components
     ...COMPONENTS,
-    ...DIRECTIVES
+    ...DIRECTIVES,
+    QrComponent
+  ],
+  entryComponents: [
+    QrComponent
   ],
   exports: [
     CommonModule,
@@ -56,4 +63,5 @@ const DIRECTIVES = [];
     ...DIRECTIVES
   ]
 })
-export class SharedModule { }
+export class SharedModule {
+}

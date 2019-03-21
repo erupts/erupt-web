@@ -326,7 +326,7 @@
                                                 nzType="drag"
                                                 [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                 (nzChange)="upLoadNzChange($event,field)"
-                                                [nzHeaders]="{token:tokenService.get().token}"
+                                                [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
                                                 [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
                                             <p class="ant-upload-drag-icon">
                                                 <i nz-icon type="inbox"></i>

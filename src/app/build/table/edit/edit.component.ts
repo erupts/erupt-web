@@ -1,11 +1,12 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Inject, Input, OnInit } from "@angular/core";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { DataService } from "../../../erupt/service/data.service";
 import { TabEnum } from "../../../erupt/model/erupt.enum";
 import { SettingsService } from "@delon/theme";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
-import { NzFormatEmitEvent } from "ng-zorro-antd";
+import { NzFormatEmitEvent, NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
+import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 
 @Component({
   selector: "erupt-edit",
@@ -17,6 +18,18 @@ export class EditComponent implements OnInit {
   private rowData: any;
 
   private tabEnum = TabEnum;
+
+  private stConfig = {
+    stPage: {
+      placement: "center",
+      pageSizes: [10, 30, 50, 100],
+      showSize: true,
+      showQuickJumper: true,
+      total: true,
+      toTop: true,
+      front: false
+    }
+  };
 
   @Input() eruptModel: EruptModel;
 
@@ -39,19 +52,20 @@ export class EditComponent implements OnInit {
       this.subErupts && this.subErupts.forEach(sub => {
         const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0];
         switch (tabType.type) {
-          case TabEnum.TREE_SELECT:
+          case TabEnum.TREE:
             this.dataService.findTabTreeById(this.eruptModel.eruptName, this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(
               tree => {
-                console.log(tree);
                 console.log(sub.eruptFieldModel.eruptFieldJson.edit.$viewValue);
+                console.log(tree);
                 sub.eruptFieldModel.eruptFieldJson.edit.$value = tree;
               }
             );
             break;
           case TabEnum.TABLE:
-            sub.alainTableConfig;
+            sub.eruptFieldModel.eruptFieldJson.edit.$statusValue = false;
             this.dataService.findTabListById(this.eruptModel.eruptName, this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(
               data => {
+                sub.eruptFieldModel.eruptFieldJson.edit.$statusValue = true;
                 sub.eruptFieldModel.eruptFieldJson.edit.$value = data;
               }
             );
@@ -59,45 +73,97 @@ export class EditComponent implements OnInit {
         }
       });
     }
-
   }
 
-  constructor(private dataService: DataService, private settingSrv: SettingsService, private dataHandlerService: DataHandlerService) {
+  constructor(private dataService: DataService,
+              private settingSrv: SettingsService,
+              private dataHandlerService: DataHandlerService,
+              @Inject(NzMessageService) private msg: NzMessageService,
+              @Inject(NzModalService) private modal: NzModalService) {
 
   }
 
   ngOnInit() {
+    this.subErupts && this.subErupts.forEach(sub => {
+      const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0];
+      switch (tabType.type) {
+        case TabEnum.TREE:
 
-  }
-
-  fetchTreeData(ef: EruptAndEruptFieldModel) {
-    this.dataService.queryEruptTreeData(ef.eruptModel.eruptName).subscribe(tree => {
-      function gcZorroTree(nodes) {
-        const tempNodes = [];
-        nodes.forEach(node => {
-          let option: any = {
-            code: node.id,
-            title: node.label,
-            data: node.data
-          };
-          if (node.children && node.children.length > 0) {
-            tempNodes.push(option);
-            option.children = gcZorroTree(node.children);
+          break;
+        case TabEnum.TABLE:
+          if (this.behavior == "readonly") {
+            sub.eruptFieldModel.eruptFieldJson.edit.$viewValue = sub.alainTableConfig;
           } else {
-            option.isLeaf = true;
-            tempNodes.push(option);
+            const viewValue = sub.eruptFieldModel.eruptFieldJson.edit.$viewValue = [];
+            viewValue.push({
+              title: "",
+              type: "checkbox",
+              fixed: "left",
+              className: "text-center",
+              index: this.eruptModel.eruptJson.primaryKeyCol
+            });
+            viewValue.push(...sub.alainTableConfig);
+            viewValue.push({
+              title: "操作区",
+              fixed: "right",
+              width: "150px",
+              className: "text-center",
+              buttons: [
+                {
+                  icon: "edit",
+                  click: (record: any, modal: any) => {
+                    this.modal.create({
+                      nzWrapClassName: "modal-md",
+                      nzStyle: { top: "50px" },
+                      nzMaskClosable: false,
+                      nzKeyboard: false,
+                      nzTitle: "编辑",
+                      nzContent: EditTypeComponent,
+                      nzComponentParams: {
+                        eruptModel: sub.eruptModel
+                      },
+                      nzOnOk: () => {
+
+                      }
+                    });
+                  }
+                },
+                {
+                  icon: {
+                    type: "delete",
+                    theme: "twotone",
+                    twoToneColor: "#f00"
+                  },
+                  type: "del",
+                  click: (record, modal, comp) => {
+
+                  }
+                }
+              ]
+            });
           }
-        });
-        return tempNodes;
+          break;
       }
-
-      if (tree) {
-        ef.eruptFieldModel.eruptFieldJson.edit.$viewValue = gcZorroTree(tree);
-      }
-      console.log(ef.eruptFieldModel.eruptFieldJson.edit.$viewValue);
-
     });
   }
+
+  addData(sub: EruptAndEruptFieldModel) {
+    this.modal.create({
+      nzWrapClassName: "modal-md",
+      nzStyle: { top: "50px" },
+      nzMaskClosable: false,
+      nzKeyboard: false,
+      nzTitle: "编辑",
+      nzContent: EditTypeComponent,
+      nzComponentParams: {
+        eruptModel: sub.eruptModel
+      },
+      nzOnOk: () => {
+
+      }
+    });
+  }
+
 
   nzEvent(event: NzFormatEmitEvent): void {
 

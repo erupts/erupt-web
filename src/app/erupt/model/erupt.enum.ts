@@ -29,8 +29,8 @@ export enum EditType {
 
 export enum TabEnum {
   TABLE = "TABLE",
+  TREE = "TREE",
   LIST_SELECT = "LIST_SELECT",
-  TREE_SELECT = "TREE_SELECT"
 }
 
 export enum ViewType {
@@ -38,6 +38,7 @@ export enum ViewType {
   QR_CODE = "QR_CODE",
   LINK = "LINK",
   IMAGE = "IMAGE",
+  ATTACHMENT = "ATTACHMENT"
 }
 
 export enum DateEnum {

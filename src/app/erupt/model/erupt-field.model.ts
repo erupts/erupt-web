@@ -56,6 +56,7 @@ export interface Edit {
   $value?: any;
   $viewValue?: any;
   $tempValue?: any;
+  $statusValue?: any;
 }
 
 

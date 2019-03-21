@@ -1,11 +1,14 @@
 import { EruptFieldModel } from "../model/erupt-field.model";
 import { EruptModel } from "../model/erupt.model";
-import { EditType, RestPath, ViewType } from "../model/erupt.enum";
+import { EditType, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
-import { NzMessageService } from "ng-zorro-antd";
+import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
 import { DataService } from "../service/data.service";
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
+import { QRComponent } from "@delon/abc";
+import { EditComponent } from "../../build/table/edit/edit.component";
+import { QrComponent } from "@shared/qr/qr.component";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -14,7 +17,9 @@ import { Injectable } from "@angular/core";
 @Injectable()
 export class DataHandlerService {
 
-  constructor(private dataService: DataService) {
+  constructor(private dataService: DataService,
+              @Inject(NzModalService) private modal: NzModalService,
+              @Inject(NzMessageService) private msg: NzMessageService) {
   }
 
   //将view数据转换为alain table组件配置信息
@@ -60,32 +65,72 @@ export class DataHandlerService {
       switch (view.viewType) {
         case ViewType.LINK:
           obj.type = "link";
-          obj.click = (data) => {
-            window.open(data[view.column]);
+          obj.click = (item) => {
+            window.open(item[view.column]);
           };
           break;
         case ViewType.QR_CODE:
           obj.className = "text-center";
-          obj.buttons = [
-            {
-              icon: "qrcode",
-              click: (record: any) => {
-                console.log(record[view.column]);
-              }
+          obj.type = "link";
+          obj.format = (item: any) => {
+            console.log(item[view.column]);
+            if (item[view.column]) {
+              return "<i class='fa fa-qrcode' aria-hidden='true'></i>";
+            } else {
+              return "";
             }
-          ];
+          };
+          obj.click = (item) => {
+            console.log(item[view.column] + "");
+            this.modal.create({
+              nzWrapClassName: "modal-sm",
+              nzMaskClosable: true,
+              nzKeyboard: true,
+              nzFooter: null,
+              nzTitle: "查看",
+              nzContent: QrComponent,
+              nzComponentParams: {
+                value: item[view.column] + ""
+              }
+            });
+          };
           break;
         case ViewType.IMAGE:
-          obj.type = "img";
+          obj.type = "link";
           obj.width = "80px";
           obj.className = "text-center";
           obj.format = (item: any) => {
             if (item[view.column]) {
               // return this.dataService.previewAttachment(erupt.eruptName, item[view.column]);
-              return `<img width="100%" class="text-center" src="${DataService.previewAttachment(erupt.eruptName, item[view.column])}"></img>`;
+              return `<img width="100%" class="text-center" src="${DataService.previewAttachment(erupt.eruptName, item[view.column])}" />`;
             } else {
               return "";
             }
+          };
+          obj.click = (item) => {
+            this.modal.create({
+              // nzWrapClassName: "modal-xx",
+              nzMaskClosable: true,
+              nzKeyboard: true,
+              nzFooter: null,
+              nzTitle: "查看图片",
+              nzContent: `<img width="100%" src="${DataService.previewAttachment(erupt.eruptName, item[view.column])}"/>`
+            });
+          };
+          break;
+        case ViewType.ATTACHMENT:
+          obj.type = "link";
+          obj.className = "text-center";
+          obj.format = (item: any) => {
+            if (item[view.column]) {
+              // return this.dataService.previewAttachment(erupt.eruptName, item[view.column]);
+              return `<i class='fa fa-download' aria-hidden='true'></i>`;
+            } else {
+              return "";
+            }
+          };
+          obj.click = (item) => {
+            window.open(DataService.previewAttachment(erupt.eruptName, item[view.column]));
           };
           break;
       }
@@ -259,7 +304,7 @@ export class DataHandlerService {
         case EditType.ATTACHMENT:
           if (object[field.fieldName]) {
             field.eruptFieldJson.edit.$viewValue = [{
-              url: DataService.previewAttachment(eruptModel.eruptName,object[field.fieldName])
+              url: DataService.previewAttachment(eruptModel.eruptName, object[field.fieldName])
             }];
           } else {
             field.eruptFieldJson.edit.$viewValue = [];

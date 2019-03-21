@@ -12,5 +12,5 @@ export interface EruptPageModel {
 export interface EruptAndEruptFieldModel {
   eruptModel: EruptModel;
   eruptFieldModel: EruptFieldModel;
-  alainTableConfig?: any;
+  alainTableConfig?: Array<any>;
 }

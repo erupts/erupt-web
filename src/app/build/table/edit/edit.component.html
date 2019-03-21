@@ -8,22 +8,24 @@
                 <ng-container [ngSwitch]="sub.eruptFieldModel.eruptFieldJson.edit.tabType[0].type">
                     <ng-container *ngSwitchCase="tabEnum.TABLE">
                         <div style="background: #fafafa;border: 1px solid #e8e8e8;padding: 10px 10px" *ngIf="behavior!='readonly'">
-                            <button nz-button nzType="default"><i nz-icon type="plus" theme="outline"></i>新增</button>
+                            <button (click)="addData(sub)" nz-button nzType="default"><i nz-icon type="plus" theme="outline"></i>新增</button>
                             <button nz-button nzType="danger"><i nz-icon type="delete" theme="outline"></i>删除</button>
                             <!--<button nz-button nzType="default" nzGhost><i nz-icon type="reload" theme="outline"></i>刷新</button>-->
                         </div>
-                        <st [columns]="sub.alainTableConfig"
+                        <st *ngIf="sub.eruptFieldModel.eruptFieldJson.edit.$viewValue"
+                            [columns]="sub.eruptFieldModel.eruptFieldJson.edit.$viewValue"
                             [data]="sub.eruptFieldModel.eruptFieldJson.edit.$value"
-                            [bordered]="true">
+                            [loading]="!sub.eruptFieldModel.eruptFieldJson.edit.$statusValue"
+                            [bordered]="true" [page]="stConfig.stPage">
 
                         </st>
                     </ng-container>
-                    <ng-container *ngSwitchCase="tabEnum.TREE_SELECT">
+                    <ng-container *ngSwitchCase="tabEnum.TREE">
                         <nz-tree #tree
                                  [nzCheckable]="true"
                                  [nzMultiple]="true"
                                  [nzShowLine]="true"
-                                 [nzCheckedKeys]="['9','11']"
+                                 [nzCheckedKeys]="sub.eruptFieldModel.eruptFieldJson.edit.$value"
                                  [nzData]="sub.eruptFieldModel.eruptFieldJson.edit.$viewValue"
                                  (nzExpandChange)="nzEvent($event)"
                                  (nzSearchValueChange)="nzEvent($event)">

@@ -129,7 +129,7 @@ export class TableComponent implements OnInit {
     subErupts.forEach((sub => {
       this.dataHandler.initErupt(sub.eruptModel);
       const edit = sub.eruptFieldModel.eruptFieldJson.edit;
-      if (edit.tabType[0].type == TabEnum.TREE_SELECT) {
+      if (edit.tabType[0].type == TabEnum.TREE) {
         this.dataService.findTabTree(this.eruptModel.eruptName, sub.eruptFieldModel.fieldName).subscribe(
           tree => {
             function gcZorroTree(nodes) {

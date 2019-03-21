@@ -53,19 +53,21 @@
                 </button>
             </div>
         </div>
-        <nz-spin [nzSpinning]="loading" nzSize="large">
-            <nz-card [nzBodyStyle]="{height: ww-268+'px',overflow: 'scroll'}" style="margin-bottom: 0;">
-                <div style="background: #fff;padding: 10px">
-                    <ng-container *ngIf="eruptModel">
-                        <erupt-edit-type [eruptModel]="eruptModel" [col]="{xs: 24, sm: 24, md: 24, lg:12,xl: 8}">
+        <div [ngStyle]="{height: ww-268+'px',overflow: 'scroll'}">
+            <nz-spin [nzSpinning]="loading" nzSize="large">
+                <nz-card style="margin-bottom: 0;">
+                    <div style="background: #fff;padding: 10px">
+                        <ng-container *ngIf="eruptModel">
+                            <erupt-edit-type [eruptModel]="eruptModel" [col]="{xs: 24, sm: 24, md: 24, lg:12,xl: 8}">
 
-                        </erupt-edit-type>
-                    </ng-container>
-                    <ng-container *ngIf="!eruptModel">
-                        <nz-skeleton [nzActive]="true"></nz-skeleton>
-                    </ng-container>
-                </div>
-            </nz-card>
-        </nz-spin>
+                            </erupt-edit-type>
+                        </ng-container>
+                        <ng-container *ngIf="!eruptModel">
+                            <nz-skeleton [nzActive]="true"></nz-skeleton>
+                        </ng-container>
+                    </div>
+                </nz-card>
+            </nz-spin>
+        </div>
     </div>
 </div>
