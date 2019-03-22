@@ -6,8 +6,6 @@ import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
 import { DataService } from "../service/data.service";
 import { Inject, Injectable } from "@angular/core";
-import { QRComponent } from "@delon/abc";
-import { EditComponent } from "../../build/table/edit/edit.component";
 import { QrComponent } from "@shared/qr/qr.component";
 
 /**
@@ -43,14 +41,18 @@ export class DataHandlerService {
       }
 
       //编辑类型
-      if (edit.type === EditType.BOOLEAN) {
-        obj.type = "yn";
-        obj.className = "text-center";
-      } else if (edit.type === EditType.CHOICE) {
-        obj.format = (item: any) => {
-          return edit.choiceType[0].vlMap.get(item[view.column]) || "";
-        };
+      switch (edit.type) {
+        case EditType.BOOLEAN:
+          obj.type = "yn";
+          obj.className = "text-center";
+          break;
+        case EditType.CHOICE:
+          obj.format = (item: any) => {
+            return edit.choiceType[0].vlMap.get(item[view.column]) || "";
+          };
+          break;
       }
+
 
       //数据类型
       if (view.eruptFieldModel.fieldReturnName === "Integer"
@@ -109,12 +111,17 @@ export class DataHandlerService {
           };
           obj.click = (item) => {
             this.modal.create({
-              // nzWrapClassName: "modal-xx",
+              nzBodyStyle: {
+                overflow: "scroll",
+                textAlign: "center"
+
+              },
+              nzWrapClassName: "modal-lg",
               nzMaskClosable: true,
               nzKeyboard: true,
               nzFooter: null,
               nzTitle: "查看图片",
-              nzContent: `<img width="100%" src="${DataService.previewAttachment(erupt.eruptName, item[view.column])}"/>`
+              nzContent: `<img class="full-max-width" src="${DataService.previewAttachment(erupt.eruptName, item[view.column])}"/>`
             });
           };
           break;
@@ -208,7 +215,7 @@ export class DataHandlerService {
   }
 
 
-//非空验证
+  //非空验证
   validateNotNull(eruptModel: EruptModel, msg?: NzMessageService): boolean {
     for (let field of eruptModel.eruptFieldModels) {
       if (msg) {

@@ -12,6 +12,7 @@ import { DelonFormModule } from "@delon/form";
 import { NgZorroAntdModule } from "ng-zorro-antd";
 import { CountdownModule } from "ngx-countdown";
 import { QrComponent } from "./qr/qr.component";
+import { SimditorComponent } from './simditor/simditor.component';
 
 const THIRDMODULES = [
   NgZorroAntdModule,
@@ -42,7 +43,8 @@ const DIRECTIVES = [];
     // your components
     ...COMPONENTS,
     ...DIRECTIVES,
-    QrComponent
+    QrComponent,
+    SimditorComponent
   ],
   entryComponents: [
     QrComponent

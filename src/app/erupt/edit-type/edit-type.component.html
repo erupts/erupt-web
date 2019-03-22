@@ -353,14 +353,12 @@
                             </se>
                         </div>
                     </ng-container>
-                    <ng-container *ngSwitchCase="editType.MARK_DOWN">
+                    <ng-container *ngSwitchCase="editType.HTML_EDIT">
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <simplemde class="erupt-input" [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                           [name]="field.fieldName">
-                                </simplemde>
+
                             </se>
                         </div>
                     </ng-container>

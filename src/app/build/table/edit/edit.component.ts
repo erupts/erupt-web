@@ -62,10 +62,8 @@ export class EditComponent implements OnInit {
             );
             break;
           case TabEnum.TABLE:
-            sub.eruptFieldModel.eruptFieldJson.edit.$statusValue = false;
             this.dataService.findTabListById(this.eruptModel.eruptName, this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(
               data => {
-                sub.eruptFieldModel.eruptFieldJson.edit.$statusValue = true;
                 sub.eruptFieldModel.eruptFieldJson.edit.$value = data;
               }
             );

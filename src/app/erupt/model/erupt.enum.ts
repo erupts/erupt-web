@@ -20,11 +20,11 @@ export enum EditType {
   BOOLEAN = "BOOLEAN",             //布尔
   ATTACHMENT = "ATTACHMENT",       //附件
   TAB = "TAB",                     //TAB选项卡
-  MARK_DOWN = "MARK_DOWN",         //mark down
   DIVIDE = "DIVIDE",               //分割线
   SLIDER = "SLIDER",               //数字滑块
   EMPTY = "EMPTY",
-  DEPEND_SWITCH = "DEPEND_SWITCH"
+  DEPEND_SWITCH = "DEPEND_SWITCH",
+  HTML_EDIT = "HTML_EDIT"
 }
 
 export enum TabEnum {

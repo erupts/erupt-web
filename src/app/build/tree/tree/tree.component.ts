@@ -65,7 +65,8 @@ export class TreeComponent implements OnInit {
           let option: any = {
             code: node.id,
             title: node.label,
-            data: node.data
+            data: node.data,
+            expanded: true
           };
           if (node.children && node.children.length > 0) {
             tempNodes.push(option);
@@ -88,13 +89,14 @@ export class TreeComponent implements OnInit {
 
   beforeDrop(arg: NzFormatBeforeDropEvent): Observable<boolean> {
     // if insert node into another node, wait 1s
-    console.log(arg);
-    if (arg.dragNode.level === arg.node.level) {
-      return of(false).pipe();
-    } else {
-      arg.node.isLeaf = false;
-      return of(true);
-    }
+    // console.log(arg);
+    // if (arg.dragNode.level === arg.node.level) {
+    //   return of(false).pipe();
+    // } else {
+    //   arg.node.isLeaf = false;
+    //   return of(true);
+    // }
+    return of(true);
   }
 
 
