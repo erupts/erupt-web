@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+
 // delon
 import { AlainThemeModule } from "@delon/theme";
 import { DelonABCModule } from "@delon/abc";
@@ -12,16 +13,16 @@ import { DelonFormModule } from "@delon/form";
 import { NgZorroAntdModule } from "ng-zorro-antd";
 import { CountdownModule } from "ngx-countdown";
 import { QrComponent } from "./qr/qr.component";
-import { SimditorComponent } from './simditor/simditor.component';
+import { CKEditorComponent } from "./ckeditor/ckeditor.component";
 
-const THIRDMODULES = [
+const THIRD_MODULES = [
   NgZorroAntdModule,
   CountdownModule
 ];
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS = [];
+const COMPONENTS = [CKEditorComponent];
 const DIRECTIVES = [];
 
 // #endregion
@@ -37,14 +38,13 @@ const DIRECTIVES = [];
     DelonACLModule,
     DelonFormModule,
     // third libs
-    ...THIRDMODULES
+    ...THIRD_MODULES
   ],
   declarations: [
     // your components
     ...COMPONENTS,
     ...DIRECTIVES,
-    QrComponent,
-    SimditorComponent
+    QrComponent
   ],
   entryComponents: [
     QrComponent
@@ -59,7 +59,7 @@ const DIRECTIVES = [];
     DelonACLModule,
     DelonFormModule,
     // third libs
-    ...THIRDMODULES,
+    ...THIRD_MODULES,
     // your components
     ...COMPONENTS,
     ...DIRECTIVES

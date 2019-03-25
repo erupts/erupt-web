@@ -24,7 +24,6 @@ import {
   UserOutline
 } from "@ant-design/icons-angular/icons";
 import { DataService } from "../../erupt/service/data.service";
-import { flyIn } from "@core/animations/fly-in";
 
 // #region icons
 

@@ -354,11 +354,11 @@
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.HTML_EDIT">
-                        <div nz-col [nzSpan]="24">
+                        <div nz-col [nzSpan]="24" class="col-div">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-
+                                <ckeditor></ckeditor>
                             </se>
                         </div>
                     </ng-container>

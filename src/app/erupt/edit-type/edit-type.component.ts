@@ -19,13 +19,11 @@ export class EditTypeComponent implements OnInit {
   //important
   @Input() eruptModel: EruptModel;
 
-  @Input() size: "large" | "small" | "default" = "large";
-
   @Input() col = colRules[3];
 
-  @Input() layout: "horizontal" | "vertical" = "vertical";
+  @Input() size: "large" | "small" | "default" = "large";
 
-  @ViewChild("refFoot") refFoot;
+  @Input() layout: "horizontal" | "vertical" = "vertical";
 
   eruptFieldModels: Array<EruptFieldModel>;
 
@@ -107,28 +105,7 @@ export class EditTypeComponent implements OnInit {
         field.eruptFieldJson.edit.$value = tempVal.id;
       });
     });
-
   }
-
-
-  checkRefValue(edit: Edit) {
-    // if (!edit.referenceType[0].tempVal) {
-    //     // this.toastr.warning("未选中数据项", "");
-    //     return;
-    // }
-    edit.$value = edit.referenceType[0].id;
-    edit.$viewValue = edit.referenceType[0].label;
-  }
-
-  openModal(template: TemplateRef<any>) {
-  }
-
-  dateChange(event, field: EruptFieldModel) {
-    console.log(event);
-    field.eruptFieldJson.edit.$value = event.value;
-    console.log(field.eruptFieldJson.edit.$value);
-  }
-
 
   clearValue(field: EruptFieldModel, event: Event) {
     if (event) {
