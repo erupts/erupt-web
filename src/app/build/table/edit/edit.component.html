@@ -11,6 +11,7 @@
                             <button (click)="addData(sub)" nz-button nzType="default"><i nz-icon type="plus" theme="outline"></i>新增</button>
                             <button nz-button nzType="danger"><i nz-icon type="delete" theme="outline"></i>删除</button>
                             <!--<button nz-button nzType="default" nzGhost><i nz-icon type="reload" theme="outline"></i>刷新</button>-->
+
                         </div>
                         <st *ngIf="sub.eruptFieldModel.eruptFieldJson.edit.$viewValue"
                             [columns]="sub.eruptFieldModel.eruptFieldJson.edit.$viewValue"
