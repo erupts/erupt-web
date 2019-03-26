@@ -1,20 +1,21 @@
-import { NgModule } from '@angular/core';
+import { NgModule } from "@angular/core";
 
-import { SharedModule } from '@shared/shared.module';
-import { RouteRoutingModule } from './routes-routing.module';
+import { SharedModule } from "@shared/shared.module";
+import { RouteRoutingModule } from "./routes-routing.module";
 // dashboard pages
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardComponent } from "./dashboard/dashboard.component";
 // passport pages
-import { UserLoginComponent } from './passport/login/login.component';
-import { UserRegisterComponent } from './passport/register/register.component';
-import { UserRegisterResultComponent } from './passport/register-result/register-result.component';
+import { UserLoginComponent } from "./passport/login/login.component";
+import { UserRegisterComponent } from "./passport/register/register.component";
+import { UserRegisterResultComponent } from "./passport/register-result/register-result.component";
 // single pages
-import { CallbackComponent } from './callback/callback.component';
-import { UserLockComponent } from './passport/lock/lock.component';
-import { Exception403Component } from './exception/403.component';
-import { Exception404Component } from './exception/404.component';
-import { Exception500Component } from './exception/500.component';
+import { CallbackComponent } from "./callback/callback.component";
+import { UserLockComponent } from "./passport/lock/lock.component";
+import { Exception403Component } from "./exception/403.component";
+import { Exception404Component } from "./exception/404.component";
+import { Exception500Component } from "./exception/500.component";
 import { EruptModule } from "../erupt/erupt.module";
+import { PageComponent } from "./page/page.component";
 
 
 const COMPONENTS = [
@@ -28,16 +29,18 @@ const COMPONENTS = [
   UserLockComponent,
   Exception403Component,
   Exception404Component,
-  Exception500Component
+  Exception500Component,
+  PageComponent
 ];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({
-  imports: [ SharedModule, RouteRoutingModule,EruptModule ],
+  imports: [SharedModule, RouteRoutingModule, EruptModule],
   declarations: [
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
   ],
   entryComponents: COMPONENTS_NOROUNT
 })
-export class RoutesModule {}
+export class RoutesModule {
+}

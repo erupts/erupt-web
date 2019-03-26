@@ -14,6 +14,7 @@ import { NgZorroAntdModule } from "ng-zorro-antd";
 import { CountdownModule } from "ngx-countdown";
 import { QrComponent } from "./qr/qr.component";
 import { CKEditorComponent } from "./ckeditor/ckeditor.component";
+import { SafePipe } from "./pipe/safe.pipe";
 
 const THIRD_MODULES = [
   NgZorroAntdModule,
@@ -22,7 +23,7 @@ const THIRD_MODULES = [
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS = [CKEditorComponent];
+const COMPONENTS = [CKEditorComponent, SafePipe];
 const DIRECTIVES = [];
 
 // #endregion

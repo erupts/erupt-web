@@ -4,7 +4,7 @@ import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, Route
 import { NzIconService, NzMessageService } from "ng-zorro-antd";
 import { Subscription } from "rxjs";
 import { updateHostClass } from "@delon/util";
-import { MenuService, ScrollService, SettingsService } from "@delon/theme";
+import { Menu, MenuService, ScrollService, SettingsService } from "@delon/theme";
 import {
   AppstoreOutline,
   ArrowDownOutline,
@@ -142,9 +142,11 @@ export class LayoutDefaultComponent
       function gcMenu(nodes) {
         const tempNodes = [];
         nodes.forEach(node => {
-          let option: any = {
+          let option: Menu = {
             text: node.data.name,
             linkExact: true,
+            // externalLink: "/assets/page/a.html",
+            // target:"_blank",
             link: node.data.path,
             hide: node.data.status == 2 && true,
             icon: {
@@ -164,6 +166,7 @@ export class LayoutDefaultComponent
 
       this.menuSrv.add([{
         group: false,
+        hideInBreadcrumb: true,
         text: "~",
         children: gcMenu(result)
       }]);

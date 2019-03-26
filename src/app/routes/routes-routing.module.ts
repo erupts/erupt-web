@@ -17,19 +17,21 @@ import { UserLockComponent } from "./passport/lock/lock.component";
 import { Exception403Component } from "./exception/403.component";
 import { Exception404Component } from "./exception/404.component";
 import { Exception500Component } from "./exception/500.component";
+import { PageComponent } from "./page/page.component";
 
 const routes: Routes = [
   {
     path: "",
     component: LayoutDefaultComponent,
     children: [
-      { path: "", redirectTo: "dashboard", pathMatch: "full" },
+      { path: "", redirectTo: "build/table/home", pathMatch: "full" },
       { path: "dashboard", component: DashboardComponent, data: { title: "仪表盘", titleI18n: "dashboard" } },
       { path: "build/table/:name", loadChildren: "../build/table/table.module#TableModule", pathMatch: "full" },
       { path: "build/tree/:name", loadChildren: "../build/tree/tree.module#TreeModule", pathMatch: "full" },
-      { path: "layout/403", component: Exception403Component, data: { title: "403"} },
-      { path: "layout/404", component: Exception404Component, data: { title: "404"} },
-      { path: "layout/500", component: Exception500Component, data: { title: "500"} }
+      { path: "page/:name", component: PageComponent, pathMatch: "full" },
+      { path: "layout/403", component: Exception403Component, data: { title: "403" } },
+      { path: "layout/404", component: Exception404Component, data: { title: "404" } },
+      { path: "layout/500", component: Exception500Component, data: { title: "500" } }
     ]
   },
   // 全屏布局
