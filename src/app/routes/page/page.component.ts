@@ -1,14 +1,17 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { DataService } from "../../erupt/service/data.service";
 
 @Component({
   selector: "app-page",
   templateUrl: "./page.component.html",
-  styles: []
+  styleUrls: ["./page.component.less"],
+  // encapsulation: ViewEncapsulation.None
 })
 export class PageComponent implements OnInit {
 
-  constructor(public route: ActivatedRoute) {
+  constructor(public route: ActivatedRoute, public data: DataService) {
+
   }
 
   public page: string;

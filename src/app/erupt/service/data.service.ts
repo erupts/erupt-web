@@ -141,15 +141,7 @@ export class DataService {
     });
   }
 
-  downloadEruptExcel(modelName: string): Observable<any> {
-    return this._http.get(RestPath.excel + modelName, {}, {
-      headers: {
-        erupt: modelName
-      }
-    });
-  }
-
-  //登录接口
+  //登录
   login(account: string, pwd: string, verifyCode?: any): Observable<loginModel> {
     return this._http.post(RestPath.DONT_INTERCEPT + "login", {}, {
         account: account,
@@ -159,7 +151,7 @@ export class DataService {
     );
   }
 
-  //获取菜单接口
+  //获取菜单列表
   getMenu(): Observable<Array<any>> {
     return this._http.get(this.domain + "/menu", null);
   }

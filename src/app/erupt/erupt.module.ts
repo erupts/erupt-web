@@ -8,6 +8,7 @@ import { SharedModule } from "../shared/shared.module";
 import { ListSelectComponent } from "./list-select/list-select.component";
 import { HelperService } from "./service/helper.service";
 import { DataHandlerService } from "./service/data-handler.service";
+import { CkeditorComponent } from './ckeditor/ckeditor.component';
 
 @NgModule({
   imports: [
@@ -27,7 +28,7 @@ import { DataHandlerService } from "./service/data-handler.service";
     EditTypeComponent,
     ListSelectComponent
   ],
-  declarations: [EditTypeComponent, ListSelectComponent]
+  declarations: [EditTypeComponent, ListSelectComponent, CkeditorComponent]
 })
 export class EruptModule {
 }
