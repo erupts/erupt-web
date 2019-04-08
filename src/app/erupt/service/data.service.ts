@@ -147,7 +147,6 @@ export class DataService {
         account: account,
         pwd: pwd,
         verifyCode: verifyCode
-
       }
     );
   }
