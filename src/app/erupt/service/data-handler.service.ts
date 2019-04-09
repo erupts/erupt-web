@@ -27,6 +27,7 @@ export class DataHandlerService {
     for (let view of views) {
       let edit = view.eruptFieldModel.eruptFieldJson.edit;
       let obj: any = {
+        width: "200px",
         title: view.title,
         index: view.column.replace("_", "\.")
       };
@@ -45,6 +46,7 @@ export class DataHandlerService {
         case EditType.BOOLEAN:
           obj.type = "yn";
           obj.className = "text-center";
+          obj.width = "66px";
           break;
         case EditType.CHOICE:
           obj.format = (item: any) => {
@@ -59,7 +61,9 @@ export class DataHandlerService {
         || view.eruptFieldModel.fieldReturnName === "Float"
         || view.eruptFieldModel.fieldReturnName === "Double") {
         obj.type = "number";
+        obj.width = "100px";
       } else if (view.eruptFieldModel.fieldReturnName === "Date") {
+        obj.width = "100px";
         obj.type = "date";
       }
 
@@ -74,6 +78,7 @@ export class DataHandlerService {
         case ViewType.QR_CODE:
           obj.className = "text-center";
           obj.type = "link";
+          obj.width = "80px";
           obj.format = (item: any) => {
             console.log(item[view.column]);
             if (item[view.column]) {
@@ -127,6 +132,7 @@ export class DataHandlerService {
           break;
         case ViewType.ATTACHMENT:
           obj.type = "link";
+          obj.width = "80px";
           obj.className = "text-center";
           obj.format = (item: any) => {
             if (item[view.column]) {
@@ -216,21 +222,19 @@ export class DataHandlerService {
 
 
   //非空验证
-  validateNotNull(eruptModel: EruptModel, msg?: NzMessageService): boolean {
+  validateNotNull(eruptModel: EruptModel): boolean {
     for (let field of eruptModel.eruptFieldModels) {
-      if (msg) {
-        if (field.eruptFieldJson.edit.notNull) {
-          if (!field.eruptFieldJson.edit.$value) {
-            msg.error(field.eruptFieldJson.edit.title + "必填！");
-            return false;
-          }
+      if (field.eruptFieldJson.edit.notNull) {
+        if (!field.eruptFieldJson.edit.$value) {
+          this.msg.error(field.eruptFieldJson.edit.title + "必填！");
+          return false;
         }
       }
     }
     return true;
   }
 
-//将eruptModel中的内容拼接成后台需要的json格式
+  //将eruptModel中的内容拼接成后台需要的json格式
   eruptValueToObject(eruptModel: EruptModel): any {
     const eruptData: any = {};
     eruptModel.eruptFieldModels.forEach(field => {
@@ -261,7 +265,7 @@ export class DataHandlerService {
     return eruptData;
   }
 
-//将后台数据转化成前端可视格式
+  //将后台数据转化成前端可视格式
   objectToEruptValue(eruptModel: EruptModel, object: any) {
     eruptModel.eruptFieldModels.forEach(field => {
       switch (field.eruptFieldJson.edit.type) {

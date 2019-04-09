@@ -9,7 +9,7 @@ import { Observable, of } from "rxjs";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 
 @Component({
-  selector: "app-tree",
+  selector: "erupt-tree",
   templateUrl: "./tree.component.html",
   styleUrls: ["./tree.component.less"]
 })
@@ -112,7 +112,7 @@ export class TreeComponent implements OnInit {
   }
 
   add() {
-    if (this.dataHandler.validateNotNull(this.eruptModel, this.msg)) {
+    if (this.dataHandler.validateNotNull(this.eruptModel)) {
       this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
         if (result.success) {
           this.fetchTreeData();
@@ -125,7 +125,7 @@ export class TreeComponent implements OnInit {
   }
 
   save() {
-    if (this.dataHandler.validateNotNull(this.eruptModel, this.msg)) {
+    if (this.dataHandler.validateNotNull(this.eruptModel)) {
       this.dataService.editEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
         if (result.success) {
           this.fetchTreeData();

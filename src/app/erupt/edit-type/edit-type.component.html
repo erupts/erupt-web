@@ -15,11 +15,33 @@
                                         [optionalHelp]="field.eruptFieldJson.edit.desc">
                                         <ng-container
                                                 *ngIf="field.fieldReturnName=='Integer'||field.fieldReturnName=='Double'||field.fieldReturnName=='Float'">
-                                            <nz-input-number class="erupt-input" [nzSize]="size"
-                                                             [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                             [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                             [name]="field.fieldName"
-                                                             [nzStep]="1"></nz-input-number>
+
+                                            <ng-container *ngIf="eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague">
+                                                <nz-input-group [nzSize]="size" class="erupt-input">
+                                                    <nz-input-number [nzSize]="size" style="width: 45%;"
+                                                                     [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                                     [(ngModel)]="field.eruptFieldJson.edit.$value[0]"
+                                                                     [name]="field.fieldName"
+                                                                     [nzStep]="1"></nz-input-number>
+                                                    <nz-input-group [nzSize]="size" style="width: 10%;">
+                                                        <div style="line-height: 100%;text-align: center">
+                                                            ~
+                                                        </div>
+                                                    </nz-input-group>
+                                                    <nz-input-number [nzSize]="size" style="width: 45%;"
+                                                                     [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                                     [(ngModel)]="field.eruptFieldJson.edit.$value[1]"
+                                                                     [name]="field.fieldName"
+                                                                     [nzStep]="1"></nz-input-number>
+                                                </nz-input-group>
+                                            </ng-container>
+                                            <ng-container *ngIf="eruptModel.mode!='search' ||!field.eruptFieldJson.edit.search.vague">
+                                                <nz-input-number class="erupt-input" [nzSize]="size"
+                                                                 [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                                 [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                                 [name]="field.fieldName"
+                                                                 [nzStep]="1"></nz-input-number>
+                                            </ng-container>
                                         </ng-container>
 
                                         <ng-container

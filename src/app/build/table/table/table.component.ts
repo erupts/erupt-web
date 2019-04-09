@@ -16,7 +16,7 @@ import { RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 
 @Component({
-  selector: "app-list-view",
+  selector: "erupt-table",
   templateUrl: "./table.component.html",
   styleUrls: ["./table.component.less"]
 })
@@ -49,6 +49,8 @@ export class TableComponent implements OnInit {
   readonlyErupt: EruptModel;
 
   subErupts: Array<EruptAndEruptFieldModel>;
+
+  table = window["table"];
 
   stConfig = {
     url: null,
@@ -118,6 +120,9 @@ export class TableComponent implements OnInit {
         field.eruptFieldJson.edit.notNull = false;
         field.eruptFieldJson.edit.show = true;
         searchFieldModels.push(field);
+        if (field.eruptFieldJson.edit.search.vague) {
+          field.eruptFieldJson.edit.$value = [];
+        }
       }
     });
     copyErupt.mode = "search";
@@ -175,6 +180,16 @@ export class TableComponent implements OnInit {
       this.stConfig.req.param = {};
       this.searchErupt.eruptFieldModels.forEach(field => {
         const val = field.eruptFieldJson.edit.$value;
+        if (val instanceof Array) {
+          if (val.length != 2) {
+            return;
+          } else {
+            let v2 = val[0] + val[1];
+            if (v2 == undefined || v2 === "") {
+              return;
+            }
+          }
+        }
         if (val != undefined && val !== "") {
           this.stConfig.req.param[field.fieldName] = val;
         }
@@ -195,7 +210,7 @@ export class TableComponent implements OnInit {
         operators.push({
           // icon: ro.icon,
           format: () => {
-            return `<i class="fa ${ro.icon}"></i>`;
+            return `<i class="fa ${ro.icon}"></i> ${ro.title}`;
           },
           click: (record: any, modal: any) => {
             that.gcOperatorEdits(ro.code, false, record);
@@ -207,7 +222,7 @@ export class TableComponent implements OnInit {
       _columns.push({
         title: "功能",
         fixed: "right",
-        width: 50 * operators.length + 20 + "px",
+        width: 100 * operators.length + 20 + "px",
         className: "text-center",
         buttons: [...operators]
       });
@@ -256,7 +271,7 @@ export class TableComponent implements OnInit {
                 rowDataFun: record
               },
               nzOnOk: () => {
-                if (this.dataHandler.validateNotNull(this.eruptModel, this.msg)) {
+                if (this.dataHandler.validateNotNull(this.eruptModel)) {
                   // this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
                   //   if (result.success) {
                   //     this.st.reset();
@@ -349,7 +364,7 @@ export class TableComponent implements OnInit {
         nzTitle: ro.title,
         nzCancelText: "取消（ESC）",
         nzOnOk: () => {
-          if (this.dataHandler.validateNotNull(operatorEruptModel, this.msg)) {
+          if (this.dataHandler.validateNotNull(operatorEruptModel)) {
             this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, this.dataHandler.eruptValueToObject(operatorEruptModel)).subscribe(res => {
               if (res.success) {
                 this.st.reset();
@@ -384,7 +399,7 @@ export class TableComponent implements OnInit {
         eruptModel: this.eruptModel
       },
       nzOnOk: () => {
-        if (this.dataHandler.validateNotNull(this.eruptModel, this.msg)) {
+        if (this.dataHandler.validateNotNull(this.eruptModel)) {
           this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
             if (result.success) {
               this.st.reset();
