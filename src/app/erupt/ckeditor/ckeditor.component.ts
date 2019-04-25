@@ -24,7 +24,7 @@ export class CkeditorComponent implements OnInit {
 
   @Input() value;
 
-  private loading: boolean;
+  public loading: boolean;
 
   constructor(private lazy: LazyService, private ref: ElementRef, private data: DataService) {
   }
@@ -32,7 +32,8 @@ export class CkeditorComponent implements OnInit {
   ngOnInit() {
     const that = this;
     this.loading = true;
-    this.lazy.load(["/assets/js/ckeditor-zh-cn.js", "/assets/js/jquery.min.js", "//cdn.ckeditor.com/ckeditor5/12.0.0/decoupled-document/ckeditor.js"]).then(() => {
+    this.lazy.load(["/assets/js/ckeditor-zh-cn.js", "/assets/js/jquery.min.js",
+      "//cdn.ckeditor.com/ckeditor5/12.0.0/decoupled-document/ckeditor.js"]).then(() => {
       DecoupledEditor
         .create(this.ref.nativeElement.querySelector("#editor"), {
           language: "zh-cn"

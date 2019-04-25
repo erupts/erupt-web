@@ -49,6 +49,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         // 则以下代码片断可直接适用
         if (event instanceof HttpResponse) {
           const body: any = event.body;
+
           if ("success" in body && "message" in body) {
             let eruptBody = <EruptApiModel>body;
             if (!eruptBody.success) {
@@ -71,7 +72,7 @@ export class DefaultInterceptor implements HttpInterceptor {
       case 404:
         this.goTo("/layout/404");
         break;
-      case 403:
+      case 403: //无权限
         this.goTo("/layout/403");
         break;
       case 500:

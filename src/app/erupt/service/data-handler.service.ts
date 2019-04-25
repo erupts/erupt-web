@@ -27,7 +27,7 @@ export class DataHandlerService {
     for (let view of views) {
       let edit = view.eruptFieldModel.eruptFieldJson.edit;
       let obj: any = {
-        width: "200px",
+        // width: "200px",
         title: view.title,
         index: view.column.replace("_", "\.")
       };
@@ -46,7 +46,7 @@ export class DataHandlerService {
         case EditType.BOOLEAN:
           obj.type = "yn";
           obj.className = "text-center";
-          obj.width = "66px";
+          // obj.width = "66px";
           break;
         case EditType.CHOICE:
           obj.format = (item: any) => {
@@ -61,9 +61,9 @@ export class DataHandlerService {
         || view.eruptFieldModel.fieldReturnName === "Float"
         || view.eruptFieldModel.fieldReturnName === "Double") {
         obj.type = "number";
-        obj.width = "100px";
+        // obj.width = "100px";
       } else if (view.eruptFieldModel.fieldReturnName === "Date") {
-        obj.width = "100px";
+        // obj.width = "100px";
         obj.type = "date";
       }
 
@@ -78,7 +78,7 @@ export class DataHandlerService {
         case ViewType.QR_CODE:
           obj.className = "text-center";
           obj.type = "link";
-          obj.width = "80px";
+          // obj.width = "80px";
           obj.format = (item: any) => {
             console.log(item[view.column]);
             if (item[view.column]) {
@@ -170,6 +170,7 @@ export class DataHandlerService {
     eruptModel.tableColumns = [];
     eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
     eruptModel.eruptFieldModels.forEach(field => {
+      field.eruptFieldJson.edit.$value = field.value;
       eruptModel.eruptFieldModelMap.set(field.fieldName, field);
       switch (field.eruptFieldJson.edit.type) {
         case EditType.INPUT:
@@ -210,7 +211,6 @@ export class DataHandlerService {
         field.eruptFieldJson.edit.dependSwitchType[0].dependSwitchAttrs.forEach(attr => {
           attr.dependEdits.forEach(editName => {
             const fm = eruptModel.eruptFieldModelMap.get(editName);
-            console.log(fm);
             if (fm) {
               fm.eruptFieldJson.edit.show = false;
             }

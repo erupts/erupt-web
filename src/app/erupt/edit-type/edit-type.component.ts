@@ -4,7 +4,7 @@ import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, InputEnum } from "../mo
 import { DataService } from "../service/data.service";
 import { ListSelectComponent } from "../list-select/list-select.component";
 import { HelperService } from "../service/helper.service";
-import { NzMessageService, UploadFile } from "ng-zorro-antd";
+import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { EruptModel } from "../model/erupt.model";
 import { colRules } from "../model/util.model";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
@@ -38,7 +38,9 @@ export class EditTypeComponent implements OnInit {
   inputEnum = InputEnum;
 
   constructor(public dataService: DataService, private helper: HelperService,
-              @Inject(NzMessageService) private msg: NzMessageService, @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
+              @Inject(NzModalService) private modal: NzModalService,
+              @Inject(NzMessageService) private msg: NzMessageService,
+              @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
   }
 
   ngOnInit() {
@@ -72,10 +74,12 @@ export class EditTypeComponent implements OnInit {
       if (file.response.success) {
         field.eruptFieldJson.edit.$value = file.response.data;
       } else {
-        this.msg.error(file.response.message);
+        this.modal.error({
+          nzTitle: "Error",
+          nzContent: file.response.message
+        });
         field.eruptFieldJson.edit.$tempValue.pop();
       }
-      console.log(field.eruptFieldJson.edit.$tempValue);
     } else if (status === "error") {
       this.msg.error(`${file.name} 上传失败`);
     }

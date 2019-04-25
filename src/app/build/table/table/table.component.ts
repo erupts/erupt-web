@@ -7,7 +7,7 @@ import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component"
 import { EditComponent } from "../edit/edit.component";
 import { STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
-import { NzMessageService, NzModalService } from "ng-zorro-antd";
+import { ModalButtonOptions, NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 import { colRules } from "../../../erupt/model/util.model";
@@ -116,7 +116,7 @@ export class TableComponent implements OnInit {
     let copyErupt = <EruptModel>deepCopy(this.eruptModel);
     const searchFieldModels = [];
     copyErupt.eruptFieldModels.forEach((field) => {
-      if (field.eruptFieldJson.edit.search.search) {
+      if (field.eruptFieldJson.edit.search.value) {
         field.eruptFieldJson.edit.notNull = false;
         field.eruptFieldJson.edit.show = true;
         searchFieldModels.push(field);
@@ -204,16 +204,26 @@ export class TableComponent implements OnInit {
     _columns.push({ title: "No", type: "no", fixed: "left", className: "text-center", width: "60px" });
     _columns.push(...this.dataHandler.viewToAlainTableConfig(this.eruptModel));
     const operators = [];
+    const editOperators: Array<ModalButtonOptions> = [];
     const that = this;
     this.eruptModel.eruptJson.rowOperation.forEach(ro => {
       if (!ro.multi) {
         operators.push({
           // icon: ro.icon,
           format: () => {
-            return `<i class="fa ${ro.icon}"></i> ${ro.title}`;
+            return `<i class="fa ${ro.icon}"></i>`;
           },
           click: (record: any, modal: any) => {
+            console.log(record);
             that.gcOperatorEdits(ro.code, false, record);
+          }
+        });
+        editOperators.push({
+          label: ro.title,
+          type: "dashed",
+          onClick(com) {
+            console.log(com.rowData);
+            that.gcOperatorEdits(ro.code, false, com.rowData);
           }
         });
       }
@@ -270,22 +280,33 @@ export class TableComponent implements OnInit {
                 eruptModel: this.eruptModel,
                 rowDataFun: record
               },
-              nzOnOk: () => {
-                if (this.dataHandler.validateNotNull(this.eruptModel)) {
-                  // this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
-                  //   if (result.success) {
-                  //     this.st.reset();
-                  //     this.msg.success("新增成功");
-                  //     return true;
-                  //   } else {
-                  //     this.msg.error(result.message);
-                  //     return false;
-                  //   }
-                  // });
-                } else {
-                  return false;
-                }
-              }
+              nzFooter: [
+                {
+                  label: "保存",
+                  type: "primary",
+                  onClick: () => {
+                    if (this.dataHandler.validateNotNull(this.eruptModel)) {
+                      // this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
+                      //   if (result.success) {
+                      //     this.st.reset();
+                      //     this.msg.success("新增成功");
+                      //     return true;
+                      //   } else {
+                      //     this.msg.error(result.message);
+                      //     return false;
+                      //   }
+                      // });
+                    }
+                  }
+                }, {
+                  label: "取消",
+                  onClick: (mbo) => {
+                    console.log(mbo);
+                  }
+                },
+                ...editOperators
+              ]
+
             });
           }
         },

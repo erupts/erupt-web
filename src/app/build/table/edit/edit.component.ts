@@ -7,6 +7,7 @@ import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 import { NzFormatEmitEvent, NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
+import { colRules } from "../../../erupt/model/util.model";
 
 @Component({
   selector: "erupt-edit",
@@ -27,7 +28,7 @@ export class EditComponent implements OnInit {
       showQuickJumper: true,
       total: true,
       toTop: true,
-      front: false
+      front: true
     }
   };
 
@@ -112,13 +113,14 @@ export class EditComponent implements OnInit {
                   click: (record: any, modal: any) => {
                     this.modal.create({
                       nzWrapClassName: "modal-md",
-                      nzStyle: { top: "50px" },
+                      nzStyle: { top: "20px" },
                       nzMaskClosable: false,
                       nzKeyboard: false,
                       nzTitle: "编辑",
                       nzContent: EditTypeComponent,
                       nzComponentParams: {
-                        eruptModel: sub.eruptModel
+                        eruptModel: sub.eruptModel,
+                        col: colRules[2]
                       },
                       nzOnOk: () => {
 

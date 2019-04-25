@@ -61,7 +61,7 @@ export interface Edit {
 
 
 interface Search {
-  search: boolean;
+  value: boolean;
   vague: boolean;
 }
 

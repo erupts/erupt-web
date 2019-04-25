@@ -70,9 +70,10 @@
         >
         </erupt-edit-type>
     </nz-card>
+    <!--y: 'calc(100vh - 400px)'-->
     <st #st
         [data]="stConfig.url" [columns]="columns"
-        [scroll]="{x: (clientWidth > 768 ? eruptModel.tableColumns.length * 110 : 0) + 'px',y: 'calc(100vh - 400px)'}"
+        [scroll]="{x: (clientWidth > 768 ? eruptModel.tableColumns.length * 110 : 0) + 'px'}"
         [bordered]="table.border"
         (change)="tableDataChange($event)"
         [multiSort]="stConfig.multiSort"

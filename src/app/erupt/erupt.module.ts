@@ -9,6 +9,7 @@ import { ListSelectComponent } from "./list-select/list-select.component";
 import { HelperService } from "./service/helper.service";
 import { DataHandlerService } from "./service/data-handler.service";
 import { CkeditorComponent } from './ckeditor/ckeditor.component';
+import { TinyMCEComponent } from './tiny-mce/tiny-mce.component';
 
 @NgModule({
   imports: [
@@ -28,7 +29,7 @@ import { CkeditorComponent } from './ckeditor/ckeditor.component';
     EditTypeComponent,
     ListSelectComponent
   ],
-  declarations: [EditTypeComponent, ListSelectComponent, CkeditorComponent]
+  declarations: [EditTypeComponent, ListSelectComponent, CkeditorComponent, TinyMCEComponent]
 })
 export class EruptModule {
 }
