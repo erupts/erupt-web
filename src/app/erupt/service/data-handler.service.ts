@@ -7,6 +7,7 @@ import { deepCopy } from "@delon/util";
 import { DataService } from "../service/data.service";
 import { Inject, Injectable } from "@angular/core";
 import { QrComponent } from "@shared/qr/qr.component";
+import { EruptAndEruptFieldModel } from "../model/erupt-page.model";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -343,4 +344,14 @@ export class DataHandlerService {
       }
     });
   }
+
+  emptySubEruptValue(eruptAndEruptFieldModels: Array<EruptAndEruptFieldModel>) {
+    eruptAndEruptFieldModels.forEach(sub => {
+      sub.eruptFieldModel.eruptFieldJson.edit.$value = null;
+      this.emptyEruptValue(sub.eruptModel);
+    });
+
+  }
+
+
 }

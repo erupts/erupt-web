@@ -8,6 +8,7 @@ import { NzFormatEmitEvent, NzMessageService, NzModalService } from "ng-zorro-an
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 import { colRules } from "../../../erupt/model/util.model";
+import { STComponent } from "@delon/abc";
 
 @Component({
   selector: "erupt-edit",
@@ -110,7 +111,7 @@ export class EditComponent implements OnInit {
               buttons: [
                 {
                   icon: "edit",
-                  click: (record: any, modal: any) => {
+                  click: (record: any, modal: any, comp: STComponent) => {
                     this.modal.create({
                       nzWrapClassName: "modal-md",
                       nzStyle: { top: "20px" },
@@ -123,7 +124,9 @@ export class EditComponent implements OnInit {
                         col: colRules[2]
                       },
                       nzOnOk: () => {
-
+                        let obj = this.dataHandlerService.eruptValueToObject(sub.eruptModel);
+                        console.log(obj);
+                        console.log(comp.data);
                       }
                     });
                   }
@@ -135,8 +138,8 @@ export class EditComponent implements OnInit {
                     twoToneColor: "#f00"
                   },
                   type: "del",
-                  click: (record, modal, comp) => {
-
+                  click: (record, modal, comp: STComponent) => {
+                    comp.removeRow(record);
                   }
                 }
               ]
@@ -145,6 +148,17 @@ export class EditComponent implements OnInit {
           break;
       }
     });
+  }
+
+  deleteData(sub: EruptAndEruptFieldModel) {
+    const tempValue = sub.eruptFieldModel.eruptFieldJson.edit.$tempValue;
+    if (tempValue && tempValue.length > 0) {
+      console.log(sub.eruptFieldModel.eruptFieldJson.edit.$value);
+      const val = sub.eruptFieldModel.eruptFieldJson.edit.$value;
+
+    } else {
+      this.msg.warning("请选中要删除的数据");
+    }
   }
 
   addData(sub: EruptAndEruptFieldModel) {
@@ -159,9 +173,17 @@ export class EditComponent implements OnInit {
         eruptModel: sub.eruptModel
       },
       nzOnOk: () => {
-
+        let obj = this.dataHandlerService.eruptValueToObject(sub.eruptModel);
+        sub.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
+        console.log(sub.eruptFieldModel.eruptFieldJson.edit.$value);
       }
     });
+  }
+
+  selectTableItem(event, sub: EruptAndEruptFieldModel) {
+    if (event.type === "checkbox") {
+      sub.eruptFieldModel.eruptFieldJson.edit.$tempValue = event.checkbox;
+    }
   }
 
 

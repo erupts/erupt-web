@@ -42,7 +42,8 @@ export enum ViewType {
 }
 
 export enum DateEnum {
-  DAY = "DAY",
+  DATE = "DATE",
+  DATE_TIME = "DATE_TIME",
   WEEK = "WEEK",
   MONTH = "MONTH",
   YEAR = "YEAR"

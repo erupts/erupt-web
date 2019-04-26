@@ -206,23 +206,26 @@
                                 <ng-container *ngIf="eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague">
                                     <nz-range-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                      [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                     [name]="field.fieldName">
+                                                     [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                     [name]="field.fieldName" nzShowTime>
 
                                     </nz-range-picker>
                                 </ng-container>
                                 <ng-container
                                         *ngIf="eruptModel.mode!='search'||!field.eruptFieldJson.edit.search.vague">
                                     <ng-container [ngSwitch]="field.eruptFieldJson.edit.dateType[0].type">
-                                        <ng-container *ngSwitchCase="dateEnum.DAY">
+                                        <ng-container *ngSwitchCase="dateEnum.DATE||dateEnum.DATE_TIME">
                                             <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                             [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                            [name]="field.fieldName">
+                                                            [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                            [name]="field.fieldName" [nzShowTime]="field.eruptFieldJson.edit.dateType[0].type==dateEnum.DATE_TIME">
 
                                             </nz-date-picker>
                                         </ng-container>
                                         <ng-container *ngSwitchCase="dateEnum.WEEK">
                                             <nz-week-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                             [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                            [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                             [name]="field.fieldName">
 
                                             </nz-week-picker>
@@ -230,6 +233,7 @@
                                         <ng-container *ngSwitchCase="dateEnum.MONTH">
                                             <nz-month-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                              [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                             [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                              [name]="field.fieldName">
 
                                             </nz-month-picker>
@@ -237,6 +241,7 @@
                                         <ng-container *ngSwitchCase="dateEnum.YEAR">
                                             <nz-year-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                             [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                            [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                             [name]="field.fieldName">
 
                                             </nz-year-picker>
@@ -296,8 +301,9 @@
                                                    [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                    [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                    [name]="field.fieldName"
-                                                   [nzMode]="'default'">
-                                            <nz-option [nzLabel]="'全部'" [nzValue]="null"></nz-option>
+                                                   [nzMode]="'default'"
+                                                   nzAllowClear
+                                        >
                                             <nz-option [nzLabel]="field.eruptFieldJson.edit.boolType[0].trueText" [nzValue]="true"></nz-option>
                                             <nz-option [nzLabel]="field.eruptFieldJson.edit.boolType[0].falseText" [nzValue]="false"></nz-option>
                                         </nz-select>

@@ -238,6 +238,28 @@ export class TableComponent implements OnInit {
       });
     }
 
+    const edit = {
+      icon: "eye",
+      click: (record: any, modal: any) => {
+        this.modal.create({
+          nzWrapClassName: "modal-lg",
+          nzStyle: { top: "60px" },
+          nzMaskClosable: true,
+          nzKeyboard: true,
+          nzCancelText: "关闭（ESC）",
+          nzOkText: null,
+          nzTitle: "查看",
+          nzContent: EditComponent,
+          nzComponentParams: {
+            subErupts: this.subErupts,
+            eruptModel: this.readonlyErupt,
+            rowDataFun: record,
+            behavior: "readonly"
+          }
+        });
+      }
+    };
+
     _columns.push({
       title: "操作区",
       fixed: "right",
@@ -281,30 +303,31 @@ export class TableComponent implements OnInit {
                 rowDataFun: record
               },
               nzFooter: [
+                ...editOperators,
                 {
-                  label: "保存",
-                  type: "primary",
-                  onClick: () => {
-                    if (this.dataHandler.validateNotNull(this.eruptModel)) {
-                      // this.dataService.addEruptData(this.eruptModel.eruptName, eruptValueToObject(this.eruptModel)).subscribe(result => {
-                      //   if (result.success) {
-                      //     this.st.reset();
-                      //     this.msg.success("新增成功");
-                      //     return true;
-                      //   } else {
-                      //     this.msg.error(result.message);
-                      //     return false;
-                      //   }
-                      // });
-                    }
-                  }
-                }, {
                   label: "取消",
                   onClick: (mbo) => {
                     console.log(mbo);
+                    return true;
                   }
-                },
-                ...editOperators
+                }, {
+                  label: "修改",
+                  type: "primary",
+                  onClick: () => {
+                    if (this.dataHandler.validateNotNull(this.eruptModel)) {
+                      this.dataService.editEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
+                        if (result.success) {
+                          this.st.reset();
+                          this.msg.success("修改成功");
+                          return true;
+                        } else {
+                          this.msg.error(result.message);
+                          return false;
+                        }
+                      });
+                    }
+                  }
+                }
               ]
 
             });
@@ -408,6 +431,7 @@ export class TableComponent implements OnInit {
   //新增
   addRow() {
     this.dataHandler.emptyEruptValue(this.eruptModel);
+    this.dataHandler.emptySubEruptValue(this.subErupts);
     this.modal.create({
       nzStyle: { top: "60px" },
       nzWrapClassName: "modal-lg",
