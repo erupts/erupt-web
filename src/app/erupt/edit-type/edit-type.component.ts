@@ -2,7 +2,7 @@ import { Component, Inject, Input, OnInit, TemplateRef, ViewChild } from "@angul
 import { Edit, EruptFieldModel } from "../model/erupt-field.model";
 import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, InputEnum } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
-import { ListSelectComponent } from "../list-select/list-select.component";
+import { TreeSelectComponent } from "../tree-select/tree-select.component";
 import { HelperService } from "../service/helper.service";
 import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { EruptModel } from "../model/erupt.model";
@@ -97,7 +97,7 @@ export class EditTypeComponent implements OnInit {
 
   createRefModal(field: EruptFieldModel) {
     this.dataService.queryEruptReferenceData(this.eruptModel.eruptName, field.fieldName).subscribe(data => {
-      this.helper.modalHelper(ListSelectComponent, {
+      this.helper.modalHelper(TreeSelectComponent, {
         list: data,
         eruptField: field,
         bodyStyle: {

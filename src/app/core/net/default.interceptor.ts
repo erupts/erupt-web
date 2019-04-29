@@ -76,14 +76,17 @@ export class DefaultInterceptor implements HttpInterceptor {
         this.goTo("/layout/403");
         break;
       case 500:
-        this.goTo("/layout/500");
-        break;
+        event = <HttpErrorResponse>event;
+        this.modal.error({
+          nzTitle: "Error",
+          nzContent: event.error.message
+        });
+        return throwError({});
+      // this.goTo("/layout/500");
+      // break;
       default:
         if (event instanceof HttpErrorResponse) {
-          console.warn(
-            "未可知错误，大部分是由于后端无响应或无效配置引起",
-            event
-          );
+          console.warn("未可知错误，大部分是由于后端无响应或无效配置引起", event);
           this.msg.error(event.message);
         }
         break;

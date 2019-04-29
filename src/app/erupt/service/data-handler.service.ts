@@ -118,9 +118,7 @@ export class DataHandlerService {
           obj.click = (item) => {
             this.modal.create({
               nzBodyStyle: {
-                overflow: "scroll",
                 textAlign: "center"
-
               },
               nzWrapClassName: "modal-lg",
               nzMaskClosable: true,

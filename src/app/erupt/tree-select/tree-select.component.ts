@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { EruptFieldModel, ReferenceType } from "../model/erupt-field.model";
 
 @Component({
-  selector: "app-list-select",
-  templateUrl: "./list-select.component.html",
+  selector: "app-tree-select",
+  templateUrl: "./tree-select.component.html",
   styles: []
 })
-export class ListSelectComponent implements OnInit {
+export class TreeSelectComponent implements OnInit {
 
   @Input() list: Array<ReferenceType>;
 

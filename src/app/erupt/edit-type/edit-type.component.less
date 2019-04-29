@@ -1,34 +1,42 @@
-se {
-  width: 100%;
-  .se__label{
-    width: auto !important;
-  }
-}
-
-.erupt-input {
-  width: 100%;
-  //margin-bottom: 10px;
-}
-
-.stander-line-height {
-  line-height: 38px;
-}
-
-
-.ant-form-horizontal {
-  @media (max-width: 768px) {
-    .col-div {
-      height: auto !important;
+:host {
+  ::ng-deep {
+    se {
+      width: 100%;
+      .se__label {
+        width: auto !important;
+      }
     }
-  }
 
-  .col-div {
-    //height: 46px;
-  }
-}
+    .erupt-input {
+      width: 100%;
+    }
 
-.ant-form-vertical {
-  .col-div {
-    height: 90px;
+    .stander-line-height {
+      line-height: 38px;
+    }
+
+    nz-picker{
+      width: 100%
+    }
+
+    nz-range-picker .ant-calendar-picker.ant-calendar-picker-default {
+      width: 100% !important;
+    }
+
+
+    .ant-form-horizontal {
+      @media (max-width: 768px) {
+        .col-div {
+          height: auto !important;
+        }
+      }
+    }
+
+    .ant-form-vertical {
+      .col-div {
+        height: 90px;
+      }
+    }
+
   }
 }

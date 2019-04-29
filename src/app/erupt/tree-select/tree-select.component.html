@@ -5,7 +5,7 @@
     <i nz-icon type="search"></i>
 </ng-template>
 <ng-container>
-    <div style="max-height: 450px;overflow: scroll;padding: 15px 5px" [ngStyle]="bodyStyle">
+    <div style="max-height: 450px;overflow: auto;padding: 15px 5px" [ngStyle]="bodyStyle">
         <ng-container *ngIf="list">
             <nz-timeline>
                 <ng-container *ngFor="let ref of list">

@@ -207,7 +207,7 @@
                                     <nz-range-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                      [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                      [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                     [name]="field.fieldName" nzShowTime>
+                                                     [name]="field.fieldName" [nzShowTime]="field.eruptFieldJson.edit.dateType[0].type==dateEnum.DATE_TIME">
 
                                     </nz-range-picker>
                                 </ng-container>

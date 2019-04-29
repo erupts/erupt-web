@@ -19,8 +19,6 @@ export class DataService {
 
   public upload: string = RestPath.file + "upload/";
 
-  public NO_RIGHT_SYMBOL: string = "__";
-
   constructor(private http: HttpClient, private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
   }
 
@@ -46,7 +44,7 @@ export class DataService {
 
 
   findTabListById(modelName: string, id: string, tabFieldName: string): Observable<any> {
-    return this._http.post(RestPath.data + "table/" + modelName + "/" + id + "/" + this.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
+    return this._http.post(RestPath.data + "tab/table/" + modelName + "/" + id + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
       headers: {
         erupt: modelName
       }
@@ -54,7 +52,7 @@ export class DataService {
   }
 
   findTabTree(modelName: string, tabFieldName: string): Observable<Array<Tree>> {
-    return this._http.post<Array<Tree>>(RestPath.data + "tree/" + modelName + "/" + this.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
+    return this._http.post<Array<Tree>>(RestPath.data + "tab/tree/" + modelName + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
       observe: null,
       headers: {
         erupt: modelName
@@ -63,7 +61,7 @@ export class DataService {
   }
 
   findTabTreeById(modelName: string, id: string, tabFieldName: string): Observable<any> {
-    return this._http.post<any>(RestPath.data + "tree/" + modelName + "/" + id + "/" + this.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
+    return this._http.post<any>(RestPath.data + "tab/tree/" + modelName + "/" + id + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
       observe: null,
       headers: {
         erupt: modelName

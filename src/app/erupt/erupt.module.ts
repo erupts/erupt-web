@@ -5,11 +5,10 @@ import { HttpClientModule } from "@angular/common/http";
 import { EditTypeComponent } from "./edit-type/edit-type.component";
 
 import { SharedModule } from "../shared/shared.module";
-import { ListSelectComponent } from "./list-select/list-select.component";
+import { TreeSelectComponent } from "./tree-select/tree-select.component";
 import { HelperService } from "./service/helper.service";
 import { DataHandlerService } from "./service/data-handler.service";
 import { CkeditorComponent } from './ckeditor/ckeditor.component';
-import { TinyMCEComponent } from './tiny-mce/tiny-mce.component';
 
 @NgModule({
   imports: [
@@ -27,9 +26,9 @@ import { TinyMCEComponent } from './tiny-mce/tiny-mce.component';
   ],
   entryComponents: [
     EditTypeComponent,
-    ListSelectComponent
+    TreeSelectComponent
   ],
-  declarations: [EditTypeComponent, ListSelectComponent, CkeditorComponent, TinyMCEComponent]
+  declarations: [EditTypeComponent, TreeSelectComponent, CkeditorComponent]
 })
 export class EruptModule {
 }
