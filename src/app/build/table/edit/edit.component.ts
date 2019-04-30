@@ -58,7 +58,7 @@ export class EditComponent implements OnInit {
             this.dataService.findTabTreeById(this.eruptModel.eruptName, this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(
               tree => {
                 console.log(sub.eruptFieldModel.eruptFieldJson.edit.$viewValue);
-                console.log(tree);
+                console.log(sub.eruptFieldModel.eruptFieldJson.edit.$value);
                 sub.eruptFieldModel.eruptFieldJson.edit.$value = tree;
               }
             );

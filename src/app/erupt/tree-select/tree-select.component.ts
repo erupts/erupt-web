@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { EruptFieldModel, ReferenceType } from "../model/erupt-field.model";
+import { EruptFieldModel, ReferenceTreeType } from "../model/erupt-field.model";
 
 @Component({
   selector: "app-tree-select",
@@ -8,7 +8,7 @@ import { EruptFieldModel, ReferenceType } from "../model/erupt-field.model";
 })
 export class TreeSelectComponent implements OnInit {
 
-  @Input() list: Array<ReferenceType>;
+  @Input() list: Array<ReferenceTreeType>;
 
   @Input() eruptField: EruptFieldModel;
 
