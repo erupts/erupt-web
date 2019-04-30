@@ -173,7 +173,7 @@ export class DataHandlerService {
       eruptModel.eruptFieldModelMap.set(field.fieldName, field);
       switch (field.eruptFieldJson.edit.type) {
         case EditType.INPUT:
-          const inputType = field.eruptFieldJson.edit.inputType[0];
+          const inputType = field.eruptFieldJson.edit.inputType;
           if (inputType.prefix.length > 0) {
             inputType.prefixValue = inputType.prefix[0].value;
           }
@@ -239,7 +239,7 @@ export class DataHandlerService {
     eruptModel.eruptFieldModels.forEach(field => {
       switch (field.eruptFieldJson.edit.type) {
         case EditType.INPUT:
-          const inputType = field.eruptFieldJson.edit.inputType[0];
+          const inputType = field.eruptFieldJson.edit.inputType;
           if (inputType.prefixValue || inputType.suffixValue) {
             eruptData[field.fieldName] = (inputType.prefixValue || "") + field.eruptFieldJson.edit.$value + (inputType.suffixValue || "");
           } else {
@@ -249,7 +249,7 @@ export class DataHandlerService {
         case EditType.REFERENCE:
           if (field.eruptFieldJson.edit.$value) {
             eruptData[field.fieldName] = {};
-            eruptData[field.fieldName][field.eruptFieldJson.edit.referenceType[0].id] = field.eruptFieldJson.edit.$value;
+            eruptData[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].id] = field.eruptFieldJson.edit.$value;
           }
           break;
         case EditType.BOOLEAN:
@@ -269,20 +269,20 @@ export class DataHandlerService {
     eruptModel.eruptFieldModels.forEach(field => {
       switch (field.eruptFieldJson.edit.type) {
         case EditType.INPUT:
-          const inputType = field.eruptFieldJson.edit.inputType[0];
+          const inputType = field.eruptFieldJson.edit.inputType;
           //处理前缀和后缀的数据
           if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
             let str = <string>object[field.fieldName];
             for (let pre of inputType.prefix) {
               if (str.startsWith(pre.value)) {
-                field.eruptFieldJson.edit.inputType[0].prefixValue = pre.value;
+                field.eruptFieldJson.edit.inputType.prefixValue = pre.value;
                 str = str.substr(pre.value.length);
                 break;
               }
             }
             for (let suf of inputType.suffix) {
               if (str.endsWith(suf.value)) {
-                field.eruptFieldJson.edit.inputType[0].suffixValue = suf.value;
+                field.eruptFieldJson.edit.inputType.suffixValue = suf.value;
                 str = str.substr(0, str.length - suf.value.length);
                 break;
               }
@@ -297,11 +297,11 @@ export class DataHandlerService {
           break;
         case EditType.REFERENCE:
           if (typeof object[field.fieldName] === "object") {
-            field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceType[0].id];
-            field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceType[0].label];
+            field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].id];
+            field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].label];
           } else {
-            field.eruptFieldJson.edit.$value = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceType[0].id];
-            field.eruptFieldJson.edit.$viewValue = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceType[0].label];
+            field.eruptFieldJson.edit.$value = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType[0].id];
+            field.eruptFieldJson.edit.$viewValue = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType[0].label];
           }
           break;
         case EditType.BOOLEAN:

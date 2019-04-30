@@ -8,7 +8,8 @@ import { SharedModule } from "../shared/shared.module";
 import { TreeSelectComponent } from "./tree-select/tree-select.component";
 import { HelperService } from "./service/helper.service";
 import { DataHandlerService } from "./service/data-handler.service";
-import { CkeditorComponent } from './ckeditor/ckeditor.component';
+import { CkeditorComponent } from "./ckeditor/ckeditor.component";
+import { AppGlobalService } from "./service/app-global.service";
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { CkeditorComponent } from './ckeditor/ckeditor.component';
   providers: [
     DataService,
     HelperService,
-    DataHandlerService
+    DataHandlerService,
+    AppGlobalService
   ],
   exports: [
     EditTypeComponent

@@ -1,5 +1,5 @@
 import { Inject, Injectable, Injector } from "@angular/core";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import {
   HttpInterceptor,
   HttpRequest,
@@ -17,6 +17,7 @@ import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { _HttpClient } from "@delon/theme";
 import { environment } from "@env/environment";
 import { EruptApiModel } from "../../erupt/model/erupt-api.model";
+import { AppGlobalService } from "../../erupt/service/app-global.service";
 
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
@@ -25,7 +26,9 @@ import { EruptApiModel } from "../../erupt/model/erupt-api.model";
 export class DefaultInterceptor implements HttpInterceptor {
   constructor(private injector: Injector,
               @Inject(NzModalService)
-              private modal: NzModalService) {
+              private modal: NzModalService,
+              private router: Router,
+              private ag: AppGlobalService) {
   }
 
   get msg(): NzMessageService {
@@ -67,6 +70,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         }
         break;
       case 401: // 未登录状态码
+        this.ag.loginBackUrl = this.router.url;
         this.goTo("/passport/login");
         break;
       case 404:

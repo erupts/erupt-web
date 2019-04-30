@@ -7,6 +7,7 @@ import { DA_SERVICE_TOKEN, SocialService, TokenService } from "@delon/auth";
 import { ReuseTabService } from "@delon/abc";
 import { StartupService } from "@core/startup/startup.service";
 import { DataService } from "../../../erupt/service/data.service";
+import { AppGlobalService } from "../../../erupt/service/app-global.service";
 
 @Component({
   selector: "passport-login",
@@ -40,7 +41,8 @@ export class UserLoginComponent implements OnDestroy, OnInit {
     @Inject(ReuseTabService)
     private reuseTabService: ReuseTabService,
     @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
-    private startupSrv: StartupService
+    private startupSrv: StartupService,
+    private ag: AppGlobalService
   ) {
     this.form = fb.group({
       userName: [null, [Validators.required, Validators.minLength(1)]],
@@ -105,7 +107,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
           token: result.token,
           time: +new Date()
         });
-        this.router.navigate(["/"]);
+        this.router.navigate([this.ag.loginBackUrl || "/"]);
       } else {
         this.error = result.reason;
         this.verifyCode.setValue(null);

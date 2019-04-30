@@ -1,4 +1,4 @@
-import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, InputEnum, TabEnum, ViewType } from "./erupt.enum";
+import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, TabEnum, ViewType } from "./erupt.enum";
 
 /**
  * Created by liyuepeng on 10/17/18.
@@ -42,8 +42,8 @@ export interface Edit {
   groupIcon: string;
   col: number;
   tabType: Array<TabType>;
-  inputType: Array<InputType>;
-  referenceType: Array<ReferenceType>;
+  inputType: InputType;
+  referenceTreeType: Array<ReferenceTreeType>;
   attachmentType: Array<AttachmentType>;
   boolType: Array<BoolType>;
   choiceType: Array<ChoiceType>;
@@ -52,7 +52,6 @@ export interface Edit {
   sliderType: Array<SliderType>;
   dependSwitchType: Array<DependSwitchType>
   search: Search;
-
   $value?: any;
   $viewValue?: any;
   $tempValue?: any;
@@ -68,7 +67,6 @@ interface Search {
 
 //Edit Type
 interface InputType {
-  type: InputEnum;
   length: number;
   placeholder: string;
   prefix: Array<VL>;
@@ -77,9 +75,11 @@ interface InputType {
   suffixValue?: string;
 }
 
-export interface ReferenceType {
+export interface ReferenceTreeType {
   id: string;
   label: string;
+  pid: string;
+  depend: string;
   filter?: string;
 }
 

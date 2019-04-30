@@ -93,8 +93,8 @@ export class DataService {
   }
 
   //获取reference数据
-  queryEruptReferenceData(modelName: string, refName: string): Observable<any> {
-    return this._http.get(RestPath.data + modelName + "/ref/" + refName, null, {
+  queryRefTreeData(modelName: string, refName: string): Observable<any> {
+    return this._http.get(RestPath.data + modelName + "/reftree/" + refName, null, {
       headers: {
         erupt: modelName
       }

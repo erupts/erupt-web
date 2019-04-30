@@ -1,6 +1,6 @@
-import { Component, Inject, Input, OnInit, TemplateRef, ViewChild } from "@angular/core";
-import { Edit, EruptFieldModel } from "../model/erupt-field.model";
-import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, InputEnum } from "../model/erupt.enum";
+import { Component, Inject, Input, OnInit } from "@angular/core";
+import { EruptFieldModel } from "../model/erupt-field.model";
+import { AttachmentEnum, ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
 import { TreeSelectComponent } from "../tree-select/tree-select.component";
 import { HelperService } from "../service/helper.service";
@@ -34,8 +34,6 @@ export class EditTypeComponent implements OnInit {
   dateEnum = DateEnum;
 
   attachmentEnum = AttachmentEnum;
-
-  inputEnum = InputEnum;
 
   constructor(public dataService: DataService, private helper: HelperService,
               @Inject(NzModalService) private modal: NzModalService,
@@ -96,7 +94,7 @@ export class EditTypeComponent implements OnInit {
 
 
   createRefModal(field: EruptFieldModel) {
-    this.dataService.queryEruptReferenceData(this.eruptModel.eruptName, field.fieldName).subscribe(data => {
+    this.dataService.queryRefTreeData(this.eruptModel.eruptName, field.fieldName).subscribe(data => {
       this.helper.modalHelper(TreeSelectComponent, {
         list: data,
         eruptField: field,

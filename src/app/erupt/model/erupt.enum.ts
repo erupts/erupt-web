@@ -14,6 +14,7 @@ export class RestPath {
 
 export enum EditType {
   INPUT = "INPUT",                 //输入框
+  TEXTAREA = "TEXTAREA",
   CHOICE = "CHOICE",               //选择框
   DATE = "DATE",                   //日期
   REFERENCE = "REFERENCE",         //引用
@@ -47,11 +48,6 @@ export enum DateEnum {
   WEEK = "WEEK",
   MONTH = "MONTH",
   YEAR = "YEAR"
-}
-
-export enum InputEnum {
-  TEXT = "TEXT",
-  TEXTAREA = "TEXTAREA"
 }
 
 export enum AttachmentEnum {
