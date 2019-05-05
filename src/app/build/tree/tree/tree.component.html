@@ -18,11 +18,9 @@
                      class="tree-container"
                      [nzShowLine]="false"
                      [nzData]="nodes"
-                     [nzBeforeDrop]="beforeDrop"
                      [nzSearchValue]="searchValue"
                      (nzClick)="nodeClickEvent($event)"
                      (nzDblClick)="nzDblClick($event)"
-                     (nzContextMenu)="nzContextMenu($event)"
                      (nzExpandChange)="nzEvent($event)"
                      (nzSearchValueChange)="nzEvent($event)">
             </nz-tree>

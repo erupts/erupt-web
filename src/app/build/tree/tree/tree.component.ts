@@ -59,44 +59,10 @@ export class TreeComponent implements OnInit {
 
   fetchTreeData() {
     this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
-      function gcZorroTree(nodes) {
-        const tempNodes = [];
-        nodes.forEach(node => {
-          let option: any = {
-            code: node.id,
-            title: node.label,
-            data: node.data,
-            expanded: true
-          };
-          if (node.children && node.children.length > 0) {
-            tempNodes.push(option);
-            option.children = gcZorroTree(node.children);
-          } else {
-            option.isLeaf = true;
-            tempNodes.push(option);
-          }
-        });
-        return tempNodes;
-      }
-
       if (tree) {
-        this.nodes = gcZorroTree(tree);
+        this.nodes = this.dataHandler.dataTreeToZorroTree(tree);
       }
-
     });
-  }
-
-
-  beforeDrop(arg: NzFormatBeforeDropEvent): Observable<boolean> {
-    // if insert node into another node, wait 1s
-    // console.log(arg);
-    // if (arg.dragNode.level === arg.node.level) {
-    //   return of(false).pipe();
-    // } else {
-    //   arg.node.isLeaf = false;
-    //   return of(true);
-    // }
-    return of(true);
   }
 
 
@@ -164,10 +130,6 @@ export class TreeComponent implements OnInit {
 
   nzEvent(event: NzFormatEmitEvent): void {
 
-  }
-
-  nzContextMenu(event: NzFormatEmitEvent) {
-    console.log(event);
   }
 
   nzDblClick(event: NzFormatEmitEvent) {

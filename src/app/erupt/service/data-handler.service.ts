@@ -1,5 +1,5 @@
 import { EruptFieldModel } from "../model/erupt-field.model";
-import { EruptModel } from "../model/erupt.model";
+import { EruptModel, Tree } from "../model/erupt.model";
 import { EditType, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
@@ -231,6 +231,26 @@ export class DataHandlerService {
       }
     }
     return true;
+  }
+
+  dataTreeToZorroTree(nodes: Array<Tree>) {
+    const tempNodes = [];
+    nodes.forEach(node => {
+      let option: any = {
+        code: node.id,
+        title: node.label,
+        data: node.data,
+        expanded: true
+      };
+      if (node.children && node.children.length > 0) {
+        tempNodes.push(option);
+        option.children = this.dataTreeToZorroTree(node.children);
+      } else {
+        option.isLeaf = true;
+        tempNodes.push(option);
+      }
+    });
+    return tempNodes;
   }
 
   //将eruptModel中的内容拼接成后台需要的json格式

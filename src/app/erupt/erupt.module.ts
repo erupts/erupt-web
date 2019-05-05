@@ -10,6 +10,7 @@ import { HelperService } from "./service/helper.service";
 import { DataHandlerService } from "./service/data-handler.service";
 import { CkeditorComponent } from "./ckeditor/ckeditor.component";
 import { AppGlobalService } from "./service/app-global.service";
+import { TabTableComponent } from './tab-table/tab-table.component';
 
 @NgModule({
   imports: [
@@ -30,7 +31,7 @@ import { AppGlobalService } from "./service/app-global.service";
     EditTypeComponent,
     TreeSelectComponent
   ],
-  declarations: [EditTypeComponent, TreeSelectComponent, CkeditorComponent]
+  declarations: [EditTypeComponent, TreeSelectComponent, CkeditorComponent, TabTableComponent]
 })
 export class EruptModule {
 }

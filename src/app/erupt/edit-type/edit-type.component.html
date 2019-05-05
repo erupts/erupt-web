@@ -37,6 +37,7 @@
                                         <nz-input-number class="erupt-input" [nzSize]="size"
                                                          [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                          [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                         [nzPlaceHolder]="field.eruptFieldJson.edit.inputType.placeholder"
                                                          [name]="field.fieldName"
                                                          [nzStep]="1"></nz-input-number>
                                     </ng-container>
@@ -267,7 +268,7 @@
                                         <input nz-input [nzSize]="size"
                                                [placeholder]="field.eruptFieldJson.edit.inputType.placeholder"
                                                [required]="field.eruptFieldJson.edit.notNull"
-                                               (click)="createRefModal(field)"
+                                               (click)="createTreeRefModal(field)"
                                                [readOnly]="true"
                                                [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
                                                [name]="field.fieldName">
@@ -277,7 +278,7 @@
                                             <i nz-icon type="close-circle" theme="fill" class="point" (click)="clearValue(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
-                                            <i (click)="createRefModal(field)" nz-icon type="database" theme="fill" class="point"></i>
+                                            <i (click)="createTreeRefModal(field)" nz-icon type="database" theme="fill" class="point"></i>
                                         </ng-container>
                                     </ng-template>
                                 </se>

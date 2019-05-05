@@ -35,7 +35,7 @@ export class EditTypeComponent implements OnInit {
 
   attachmentEnum = AttachmentEnum;
 
-  constructor(public dataService: DataService, private helper: HelperService,
+  constructor(public dataService: DataService,
               @Inject(NzModalService) private modal: NzModalService,
               @Inject(NzMessageService) private msg: NzMessageService,
               @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
@@ -93,20 +93,31 @@ export class EditTypeComponent implements OnInit {
   };
 
 
-  createRefModal(field: EruptFieldModel) {
-    this.dataService.queryRefTreeData(this.eruptModel.eruptName, field.fieldName).subscribe(data => {
-      this.helper.modalHelper(TreeSelectComponent, {
-        list: data,
+  createTreeRefModal(field: EruptFieldModel) {
+    this.modal.create({
+      nzWrapClassName: "modal-xs",
+      nzKeyboard: true,
+      nzTitle: field.eruptFieldJson.edit.title,
+      nzCancelText: "取消（ESC）",
+      nzContent: TreeSelectComponent,
+      nzComponentParams: {
+        eruptModel: this.eruptModel,
         eruptField: field,
-        bodyStyle: {
+        bodyStyle: <any>{
           maxHeight: "440px"
         }
-      }, field.eruptFieldJson.edit.title, "modal-xs", () => {
+      }, nzOnOk: () => {
         const tempVal = field.eruptFieldJson.edit.$tempValue;
+        if (!tempVal) {
+          this.msg.warning("请选中一条数据");
+          return false;
+        }
         field.eruptFieldJson.edit.$viewValue = tempVal.label;
         field.eruptFieldJson.edit.$value = tempVal.id;
-      });
+        field.eruptFieldJson.edit.$tempValue = null;
+      }
     });
+
   }
 
   clearValue(field: EruptFieldModel, event: Event) {
