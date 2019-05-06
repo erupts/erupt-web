@@ -16,6 +16,7 @@ export enum EditType {
   INPUT = "INPUT",                 //输入框
   TEXTAREA = "TEXTAREA",
   CHOICE = "CHOICE",               //选择框
+  TAG = "TAG",                     //标签
   DATE = "DATE",                   //日期
   REFERENCE = "REFERENCE",         //引用
   BOOLEAN = "BOOLEAN",             //布尔
@@ -60,6 +61,7 @@ export enum ChoiceEnum {
   RADIO = "RADIO",
   CHECKBOX = "CHECKBOX",
   SELECT_SINGLE = "SELECT_SINGLE",
-  SELECT_MULTI = "SELECT_MULTI"
+  SELECT_MULTI = "SELECT_MULTI",
+  TAGS = "TAGS"
 }
 

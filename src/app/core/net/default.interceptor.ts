@@ -17,7 +17,7 @@ import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { _HttpClient } from "@delon/theme";
 import { environment } from "@env/environment";
 import { EruptApiModel } from "../../erupt/model/erupt-api.model";
-import { AppGlobalService } from "../../erupt/service/app-global.service";
+import { AppConstService } from "../../erupt/service/app-const.service";
 
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
@@ -28,7 +28,7 @@ export class DefaultInterceptor implements HttpInterceptor {
               @Inject(NzModalService)
               private modal: NzModalService,
               private router: Router,
-              private ag: AppGlobalService) {
+              private ac: AppConstService) {
   }
 
   get msg(): NzMessageService {
@@ -70,7 +70,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         }
         break;
       case 401: // 未登录状态码
-        this.ag.loginBackUrl = this.router.url;
+        this.ac.loginBackPath = this.router.url;
         this.goTo("/passport/login");
         break;
       case 404:

@@ -1,5 +1,5 @@
 <div nz-row [nzGutter]="16">
-    <form nz-form [nzLayout]="layout" [labelWidth]="100" se-container>
+    <form nz-form [nzLayout]="layout" se-container>
         <ng-container *ngFor="let field of eruptFieldModels">
             <ng-container *ngIf="field.eruptFieldJson.edit.show&&field.eruptFieldJson.edit.title">
                 <ng-container [ngSwitch]="field.eruptFieldJson.edit.type">
@@ -104,7 +104,7 @@
                     </ng-container>
                     <!--text area-->
                     <ng-container *ngSwitchCase="editType.TEXTAREA">
-                        <div nz-col [nzSpan]="24">
+                        <div nz-col [nzSpan]="24" class="mb-5">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
@@ -127,6 +127,7 @@
                                         [optionalHelp]="field.eruptFieldJson.edit.desc">
                                         <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                         [name]="field.fieldName"
+                                                        [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                         class="erupt-input stander-line-height">
                                             <ng-container *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl">
                                                 <label nz-radio [nzValue]="vl.value">{{vl.label}}</label>
@@ -136,16 +137,22 @@
                                 </div>
                             </ng-container>
                             <ng-container *ngSwitchCase="choiceEnum.CHECKBOX">
-                                <div nz-col class="col-div" [nzXs]="24">
+                                <div nz-col [nzXs]="24">
                                     <se [label]="field.eruptFieldJson.edit.title"
                                         [required]="field.eruptFieldJson.edit.notNull"
                                         [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                        <nz-checkbox-group [(ngModel)]="field.eruptFieldJson.edit.choiceType[0].vl">
-                                        </nz-checkbox-group>
+                                        <nz-checkbox-wrapper style="width: 100%;line-height: 39px" (nzOnChange)="checkboxChange($event,field)">
+                                            <div nz-row>
+                                                <div nz-col nzSpan="4" *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl">
+                                                    <label nz-checkbox [nzValue]="vl.value"
+                                                           [nzDisabled]="field.eruptFieldJson.edit.readOnly">{{vl.label}}</label>
+                                                </div>
+                                            </div>
+                                        </nz-checkbox-wrapper>
                                     </se>
                                 </div>
                             </ng-container>
-                            <ng-container *ngSwitchCase="choiceEnum.SELECT_SINGLE||choiceEnum.SELECT_MULTI">
+                            <ng-container *ngSwitchCase="choiceEnum.SELECT_SINGLE">
                                 <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                                      [nzLg]="col.lg"
                                      [nzXl]="col.xl"
@@ -156,8 +163,40 @@
                                         <nz-select class="erupt-input" [nzAllowClear]='!field.eruptFieldJson.edit.notNull'
                                                    [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                    [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                   [nzShowSearch]="true"
+                                                   [name]="field.fieldName">
+                                            <nz-option *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl"
+                                                       [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
+                                        </nz-select>
+                                    </se>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="choiceEnum.SELECT_MULTI">
+                                <div nz-col [nzSpan]="24" class="mb-5">
+                                    <se [label]="field.eruptFieldJson.edit.title"
+                                        [required]="field.eruptFieldJson.edit.notNull"
+                                        [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                        <nz-select [nzAllowClear]='!field.eruptFieldJson.edit.notNull'
+                                                   [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                   [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                    [name]="field.fieldName"
-                                                   [nzMode]="field.eruptFieldJson.edit.choiceType[0].type==choiceEnum.SELECT_MULTI?'multiple':'default'">
+                                                   [nzMode]="'multiple'">
+                                            <nz-option *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl"
+                                                       [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
+                                        </nz-select>
+                                    </se>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="choiceEnum.TAGS">
+                                <div nz-col [nzSpan]="24" class="mb-5">
+                                    <se [label]="field.eruptFieldJson.edit.title"
+                                        [required]="field.eruptFieldJson.edit.notNull"
+                                        [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                        <nz-select [nzAllowClear]='!field.eruptFieldJson.edit.notNull'
+                                                   [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                   [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                   [name]="field.fieldName"
+                                                   [nzMode]="'tags'">
                                             <nz-option *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl"
                                                        [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
                                         </nz-select>
@@ -294,11 +333,6 @@
                                 <se [label]="field.eruptFieldJson.edit.title"
                                     [required]="field.eruptFieldJson.edit.notNull"
                                     [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                    <!--<nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value" [nzSize]="size" class="erupt-input">-->
-                                    <!--<label nz-radio-button [nzValue]="true">{{field.eruptFieldJson.edit.boolType[0].trueText}}</label>-->
-                                    <!--<label nz-radio-button [nzValue]="null">不选</label>-->
-                                    <!--<label nz-radio-button [nzValue]="false">{{field.eruptFieldJson.edit.boolType[0].falseText}}</label>-->
-                                    <!--</nz-radio-group>-->
                                     <ng-container *ngIf="eruptModel.mode=='search'">
 
                                         <nz-select class="erupt-input"
@@ -306,8 +340,7 @@
                                                    [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                    [name]="field.fieldName"
                                                    [nzMode]="'default'"
-                                                   nzAllowClear
-                                        >
+                                                   nzAllowClear>
                                             <nz-option [nzLabel]="field.eruptFieldJson.edit.boolType[0].trueText" [nzValue]="true"></nz-option>
                                             <nz-option [nzLabel]="field.eruptFieldJson.edit.boolType[0].falseText" [nzValue]="false"></nz-option>
                                         </nz-select>
@@ -315,11 +348,11 @@
                                     <ng-container *ngIf="eruptModel.mode!='search'">
                                         <nz-switch class="erupt-input stander-line-height"
                                                    [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                   [nzSize]="size"
                                                    [name]="field.fieldName"
                                                    [nzCheckedChildren]="field.eruptFieldJson.edit.boolType[0].trueText"
                                                    [nzUnCheckedChildren]="field.eruptFieldJson.edit.boolType[0].falseText"
-                                                   [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                        ></nz-switch>
+                                                   [nzDisabled]="field.eruptFieldJson.edit.readOnly"></nz-switch>
                                     </ng-container>
                                 </se>
                             </div>

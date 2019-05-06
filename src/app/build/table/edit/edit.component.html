@@ -3,22 +3,9 @@
     <nz-tabset>
         <ng-container *ngFor="let sub of subErupts">
             <nz-tab [nzTitle]="sub.eruptFieldModel.eruptFieldJson.edit.title">
-                <!--[data]="sub.eruptField.eruptFieldJson.edit.$value"-->
                 <ng-container [ngSwitch]="sub.eruptFieldModel.eruptFieldJson.edit.tabType[0].type">
                     <ng-container *ngSwitchCase="tabEnum.TABLE">
-                        <div style="background: #fafafa;border: 1px solid #e8e8e8;padding: 10px 10px" *ngIf="behavior!='readonly'">
-                            <button (click)="addData(sub)" nz-button nzType="default"><i nz-icon type="plus" theme="outline"></i>新增</button>
-                            <button (click)="deleteData(sub)" nz-button nzType="danger"><i nz-icon type="delete" theme="outline"></i>删除</button>
-                            <!--<button nz-button nzType="default" nzGhost><i nz-icon type="reload" theme="outline"></i>刷新</button>-->
-
-                        </div>
-                        <st *ngIf="sub.eruptFieldModel.eruptFieldJson.edit.$viewValue"
-                            (change)="selectTableItem($event,sub)"
-                            [columns]="sub.eruptFieldModel.eruptFieldJson.edit.$viewValue"
-                            [data]="sub.eruptFieldModel.eruptFieldJson.edit.$value"
-                            [bordered]="true" [page]="stConfig.stPage">
-
-                        </st>
+                        <tab-table [tabErupt]="sub" [eruptModel]="eruptModel" [behavior]="behavior"></tab-table>
                     </ng-container>
                     <ng-container *ngSwitchCase="tabEnum.TREE">
                         <nz-tree #tree ng-if="sub.eruptFieldModel.eruptFieldJson.edit.$value.length>0"
@@ -26,9 +13,7 @@
                                  [nzMultiple]="true"
                                  [nzShowLine]="true"
                                  [nzData]="sub.eruptFieldModel.eruptFieldJson.edit.$viewValue"
-                                 [nzCheckedKeys]="sub.eruptFieldModel.eruptFieldJson.edit.$value"
-                                 (nzExpandChange)="nzEvent($event)"
-                                 (nzSearchValueChange)="nzEvent($event)">
+                                 [nzCheckedKeys]="sub.eruptFieldModel.eruptFieldJson.edit.$value">
                         </nz-tree>
                     </ng-container>
                 </ng-container>

@@ -1,5 +1,4 @@
 import { Inject, Injectable } from "@angular/core";
-import { ModalHelperOptions } from "@delon/theme";
 import { NzModalService } from "ng-zorro-antd";
 
 @Injectable({

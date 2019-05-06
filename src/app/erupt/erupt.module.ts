@@ -9,8 +9,8 @@ import { TreeSelectComponent } from "./tree-select/tree-select.component";
 import { HelperService } from "./service/helper.service";
 import { DataHandlerService } from "./service/data-handler.service";
 import { CkeditorComponent } from "./ckeditor/ckeditor.component";
-import { AppGlobalService } from "./service/app-global.service";
-import { TabTableComponent } from './tab-table/tab-table.component';
+import { AppConstService } from "./service/app-const.service";
+import { TabTableComponent } from "./tab-table/tab-table.component";
 
 @NgModule({
   imports: [
@@ -22,10 +22,11 @@ import { TabTableComponent } from './tab-table/tab-table.component';
     DataService,
     HelperService,
     DataHandlerService,
-    AppGlobalService
+    AppConstService
   ],
   exports: [
-    EditTypeComponent
+    EditTypeComponent,
+    TabTableComponent
   ],
   entryComponents: [
     EditTypeComponent,

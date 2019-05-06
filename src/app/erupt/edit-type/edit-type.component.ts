@@ -3,7 +3,6 @@ import { EruptFieldModel } from "../model/erupt-field.model";
 import { AttachmentEnum, ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
 import { TreeSelectComponent } from "../tree-select/tree-select.component";
-import { HelperService } from "../service/helper.service";
 import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { EruptModel } from "../model/erupt.model";
 import { colRules } from "../model/util.model";
@@ -118,6 +117,12 @@ export class EditTypeComponent implements OnInit {
       }
     });
 
+  }
+
+
+  checkboxChange(val: string[], field: EruptFieldModel) {
+    console.log(val.join(field.eruptFieldJson.edit.choiceType[0].joinSeparator));
+    field.eruptFieldJson.edit.$value = val.join(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
   }
 
   clearValue(field: EruptFieldModel, event: Event) {

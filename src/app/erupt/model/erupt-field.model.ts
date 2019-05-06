@@ -92,6 +92,7 @@ interface BoolType {
 interface ChoiceType {
   type: ChoiceEnum;
   vl: Array<VL>;
+  joinSeparator: string;
   //在页面初始化时将vl值转化成map形式
   vlMap?: Map<string, string>;
 }

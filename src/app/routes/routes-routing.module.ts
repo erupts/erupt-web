@@ -1,9 +1,8 @@
 import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
+import { RouterModule, Routes } from "@angular/router";
 import { environment } from "@env/environment";
 // layout
 import { LayoutDefaultComponent } from "../layout/default/default.component";
-import { LayoutFullScreenComponent } from "../layout/fullscreen/fullscreen.component";
 import { LayoutPassportComponent } from "../layout/passport/passport.component";
 // dashboard pages
 import { DashboardComponent } from "./dashboard/dashboard.component";

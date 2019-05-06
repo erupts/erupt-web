@@ -1,13 +1,13 @@
 import { EruptFieldModel } from "../model/erupt-field.model";
 import { EruptModel, Tree } from "../model/erupt.model";
-import { EditType, ViewType } from "../model/erupt.enum";
+import { ChoiceEnum, EditType, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
-import { DataService } from "../service/data.service";
 import { Inject, Injectable } from "@angular/core";
 import { QrComponent } from "@shared/qr/qr.component";
 import { EruptAndEruptFieldModel } from "../model/erupt-page.model";
+import { DataService } from "./data.service";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -16,8 +16,7 @@ import { EruptAndEruptFieldModel } from "../model/erupt-page.model";
 @Injectable()
 export class DataHandlerService {
 
-  constructor(private dataService: DataService,
-              @Inject(NzModalService) private modal: NzModalService,
+  constructor(@Inject(NzModalService) private modal: NzModalService,
               @Inject(NzMessageService) private msg: NzMessageService) {
   }
 
@@ -50,9 +49,16 @@ export class DataHandlerService {
           // obj.width = "66px";
           break;
         case EditType.CHOICE:
-          obj.format = (item: any) => {
-            return edit.choiceType[0].vlMap.get(item[view.column]) || "";
-          };
+          if (edit.choiceType[0].type == ChoiceEnum.SELECT_SINGLE || edit.choiceType[0].type == ChoiceEnum.RADIO) {
+            obj.format = (item: any) => {
+              return edit.choiceType[0].vlMap.get(item[view.column]) || "";
+            };
+          }
+          // else {
+          //   obj.format = (item: any) => {
+          //     return (<string>item[view.column]).split(edit.choiceType[0].joinSeparator);
+          //   };
+          // }
           break;
       }
 
@@ -89,13 +95,12 @@ export class DataHandlerService {
             }
           };
           obj.click = (item) => {
-            console.log(item[view.column] + "");
             this.modal.create({
               nzWrapClassName: "modal-sm",
               nzMaskClosable: true,
               nzKeyboard: true,
               nzFooter: null,
-              nzTitle: "查看",
+              nzTitle: "查看二维码",
               nzContent: QrComponent,
               nzComponentParams: {
                 value: item[view.column] + ""
@@ -109,7 +114,6 @@ export class DataHandlerService {
           obj.className = "text-center";
           obj.format = (item: any) => {
             if (item[view.column]) {
-              // return this.dataService.previewAttachment(erupt.eruptName, item[view.column]);
               return `<img width="100%" class="text-center" src="${DataService.previewAttachment(erupt.eruptName, item[view.column])}" />`;
             } else {
               return "";
@@ -262,6 +266,17 @@ export class DataHandlerService {
           const inputType = field.eruptFieldJson.edit.inputType;
           if (inputType.prefixValue || inputType.suffixValue) {
             eruptData[field.fieldName] = (inputType.prefixValue || "") + field.eruptFieldJson.edit.$value + (inputType.suffixValue || "");
+          } else {
+            eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+          }
+          break;
+        case EditType.CHOICE:
+          if (field.eruptFieldJson.edit.$value) {
+            if (field.eruptFieldJson.edit.$value) {
+              if (field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.TAGS) {
+                eruptData[field.fieldName] = (<string[]>field.eruptFieldJson.edit.$value).join(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
+              }
+            }
           } else {
             eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
           }

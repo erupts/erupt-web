@@ -119,6 +119,9 @@ export class TableComponent implements OnInit {
       if (field.eruptFieldJson.edit.search.value) {
         field.eruptFieldJson.edit.notNull = false;
         field.eruptFieldJson.edit.show = true;
+        field.eruptFieldJson.edit.$value = null;
+        field.eruptFieldJson.edit.$viewValue = null;
+        field.eruptFieldJson.edit.$tempValue = null;
         searchFieldModels.push(field);
         if (field.eruptFieldJson.edit.search.vague) {
           field.eruptFieldJson.edit.$value = [];
@@ -239,7 +242,7 @@ export class TableComponent implements OnInit {
     }
 
 
-    const tableOption:any = [{
+    const tableOption: any = [{
       icon: "eye",
       click: (record: any, modal: any) => {
         this.modal.create({
