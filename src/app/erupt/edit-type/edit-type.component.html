@@ -104,7 +104,7 @@
                     </ng-container>
                     <!--text area-->
                     <ng-container *ngSwitchCase="editType.TEXTAREA">
-                        <div nz-col [nzSpan]="24" class="mb-5">
+                        <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
@@ -172,7 +172,7 @@
                                 </div>
                             </ng-container>
                             <ng-container *ngSwitchCase="choiceEnum.SELECT_MULTI">
-                                <div nz-col [nzSpan]="24" class="mb-5">
+                                <div nz-col [nzSpan]="24">
                                     <se [label]="field.eruptFieldJson.edit.title"
                                         [required]="field.eruptFieldJson.edit.notNull"
                                         [optionalHelp]="field.eruptFieldJson.edit.desc">
@@ -188,7 +188,7 @@
                                 </div>
                             </ng-container>
                             <ng-container *ngSwitchCase="choiceEnum.TAGS">
-                                <div nz-col [nzSpan]="24" class="mb-5">
+                                <div nz-col [nzSpan]="24">
                                     <se [label]="field.eruptFieldJson.edit.title"
                                         [required]="field.eruptFieldJson.edit.notNull"
                                         [optionalHelp]="field.eruptFieldJson.edit.desc">
