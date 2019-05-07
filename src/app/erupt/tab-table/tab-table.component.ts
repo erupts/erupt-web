@@ -79,8 +79,6 @@ export class TabTableComponent implements OnInit {
                 },
                 nzOnOk: () => {
                   let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptModel);
-                  console.log(obj);
-                  console.log(comp.data);
                 }
               });
             }

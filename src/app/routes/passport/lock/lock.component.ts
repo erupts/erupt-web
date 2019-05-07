@@ -27,8 +27,8 @@ export class UserLockComponent {
       this.f.controls[i].updateValueAndValidity();
     }
     if (this.f.valid) {
-      console.log('Valid!');
-      console.log(this.f.value);
+      // console.log('Valid!');
+      // console.log(this.f.value);
       this.router.navigate(['dashboard']);
     }
   }

@@ -217,7 +217,6 @@ export class TableComponent implements OnInit {
             return `<i class="fa ${ro.icon}"></i>`;
           },
           click: (record: any, modal: any) => {
-            console.log(record);
             that.gcOperatorEdits(ro.code, false, record);
           }
         });
@@ -225,7 +224,6 @@ export class TableComponent implements OnInit {
           label: ro.title,
           type: "dashed",
           onClick(com) {
-            console.log(com.rowData);
             that.gcOperatorEdits(ro.code, false, com.rowData);
           }
         });

@@ -87,7 +87,6 @@ export class DataHandlerService {
           obj.type = "link";
           // obj.width = "80px";
           obj.format = (item: any) => {
-            console.log(item[view.column]);
             if (item[view.column]) {
               return "<i class='fa fa-qrcode' aria-hidden='true'></i>";
             } else {

@@ -121,7 +121,6 @@ export class EditTypeComponent implements OnInit {
 
 
   checkboxChange(val: string[], field: EruptFieldModel) {
-    console.log(val.join(field.eruptFieldJson.edit.choiceType[0].joinSeparator));
     field.eruptFieldJson.edit.$value = val.join(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
   }
 
