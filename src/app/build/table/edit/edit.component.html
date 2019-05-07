@@ -8,11 +8,19 @@
                         <tab-table [tabErupt]="sub" [eruptModel]="eruptModel" [behavior]="behavior"></tab-table>
                     </ng-container>
                     <ng-container *ngSwitchCase="tabEnum.TREE">
-                        <nz-tree #tree ng-if="sub.eruptFieldModel.eruptFieldJson.edit.$value.length>0"
+                        <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
+                            <input type="text" nz-input placeholder="Search" [(ngModel)]="sub.eruptFieldModel.eruptFieldJson.edit.$tempValue">
+                        </nz-input-group>
+                        <ng-template #suffixIcon>
+                            <i nz-icon type="search"></i>
+                        </ng-template>
+                        <br>
+                        <nz-tree ng-if="sub.eruptFieldModel.eruptFieldJson.edit.$value.length>0"
                                  [nzCheckable]="true"
-                                 [nzMultiple]="true"
                                  [nzShowLine]="true"
+                                 [nzCheckStrictly]="true"
                                  [nzData]="sub.eruptFieldModel.eruptFieldJson.edit.$viewValue"
+                                 [nzSearchValue]="sub.eruptFieldModel.eruptFieldJson.edit.$tempValue"
                                  [nzCheckedKeys]="sub.eruptFieldModel.eruptFieldJson.edit.$value">
                         </nz-tree>
                     </ng-container>
