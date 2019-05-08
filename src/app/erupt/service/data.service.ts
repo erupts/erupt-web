@@ -32,7 +32,7 @@ export class DataService {
     });
   }
 
-  //查询tree数据结构数据
+  //tree数据结构
   queryEruptTreeData(modelName: string): Observable<Array<Tree>> {
     return this._http.post<Array<Tree>>(RestPath.data + "tree/" + modelName, {}, {}, {
       observe: null,

@@ -50,6 +50,7 @@ interface Power {
   delete: boolean;
   edit: boolean;
   query: boolean;
+  viewDetails: boolean;
   importable: boolean;
   export: boolean;
 }

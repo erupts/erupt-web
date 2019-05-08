@@ -2,12 +2,12 @@ import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
-import { DrawerHelper, MenuService, ModalHelper, SettingsService } from "@delon/theme";
+import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 import { EditComponent } from "../edit/edit.component";
 import { STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
-import { ModalButtonOptions, NzMessageService, NzModalService } from "ng-zorro-antd";
+import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 import { colRules } from "../../../erupt/model/util.model";
@@ -98,7 +98,7 @@ export class TableComponent implements OnInit {
       this.stConfig.req.headers["erupt"] = params.name;
       this.dataService.getEruptBuild(params.name).subscribe(
         em => {
-          this.stConfig.url = RestPath.data + "/table/" + params.name;
+          this.stConfig.url = RestPath.data + "table/" + params.name;
           this.dataHandler.initErupt(em.eruptModel);
           this.eruptModel = em.eruptModel;
           this.buildTableConfig();
@@ -138,33 +138,35 @@ export class TableComponent implements OnInit {
       this.dataHandler.initErupt(sub.eruptModel);
       const edit = sub.eruptFieldModel.eruptFieldJson.edit;
       if (edit.tabType[0].type == TabEnum.TREE) {
-        this.dataService.findTabTree(this.eruptModel.eruptName, sub.eruptFieldModel.fieldName).subscribe(
-          tree => {
-            function gcZorroTree(nodes) {
-              const tempNodes = [];
-              nodes.forEach(node => {
-                let option: any = {
-                  key: node.id,
-                  title: node.label,
-                  data: node.data,
-                  expanded: true
-                };
-                if (node.children && node.children.length > 0) {
-                  tempNodes.push(option);
-                  option.children = gcZorroTree(node.children);
-                } else {
-                  option.isLeaf = true;
-                  tempNodes.push(option);
-                }
-              });
-              return tempNodes;
-            }
+        if (this.eruptModel.eruptJson.power.viewDetails || this.eruptModel.eruptJson.power.edit) {
+          this.dataService.findTabTree(this.eruptModel.eruptName, sub.eruptFieldModel.fieldName).subscribe(
+            tree => {
+              function gcZorroTree(nodes) {
+                const tempNodes = [];
+                nodes.forEach(node => {
+                  let option: any = {
+                    key: node.id,
+                    title: node.label,
+                    data: node.data,
+                    expanded: true
+                  };
+                  if (node.children && node.children.length > 0) {
+                    tempNodes.push(option);
+                    option.children = gcZorroTree(node.children);
+                  } else {
+                    option.isLeaf = true;
+                    tempNodes.push(option);
+                  }
+                });
+                return tempNodes;
+              }
 
-            if (tree) {
-              sub.eruptFieldModel.eruptFieldJson.edit.$viewValue = gcZorroTree(tree);
+              if (tree) {
+                sub.eruptFieldModel.eruptFieldJson.edit.$viewValue = gcZorroTree(tree);
+              }
             }
-          }
-        );
+          );
+        }
       }
       sub.alainTableConfig = this.dataHandler.viewToAlainTableConfig(sub.eruptModel);
     }));
@@ -206,41 +208,8 @@ export class TableComponent implements OnInit {
     _columns.push({ title: "", type: "checkbox", fixed: "left", className: "text-center", index: this.eruptModel.eruptJson.primaryKeyCol });
     _columns.push({ title: "No", type: "no", fixed: "left", className: "text-center", width: "60px" });
     _columns.push(...this.dataHandler.viewToAlainTableConfig(this.eruptModel));
-    const operators = [];
-    const editOperators: Array<ModalButtonOptions> = [];
-    const that = this;
-    this.eruptModel.eruptJson.rowOperation.forEach(ro => {
-      if (!ro.multi) {
-        operators.push({
-          // icon: ro.icon,
-          format: () => {
-            return `<i class="fa ${ro.icon}"></i>`;
-          },
-          click: (record: any, modal: any) => {
-            that.gcOperatorEdits(ro.code, false, record);
-          }
-        });
-        editOperators.push({
-          label: ro.title,
-          type: "dashed",
-          onClick(com) {
-            that.gcOperatorEdits(ro.code, false, com.rowData);
-          }
-        });
-      }
-    });
-    if (operators.length > 0) {
-      _columns.push({
-        title: "功能",
-        fixed: "right",
-        width: 50 * operators.length + 20 + "px",
-        className: "text-center",
-        buttons: [...operators]
-      });
-    }
-
-
-    const tableOption: any = [{
+    const tableOperators: any = [];
+    const eye = {
       icon: "eye",
       click: (record: any, modal: any) => {
         this.modal.create({
@@ -260,8 +229,7 @@ export class TableComponent implements OnInit {
           }
         });
       }
-    }];
-
+    };
     const edit = {
       icon: "edit",
       click: (record: any, modal: any) => {
@@ -312,18 +280,33 @@ export class TableComponent implements OnInit {
         });
       }
     };
+
+    if (this.eruptModel.eruptJson.power.viewDetails) {
+      tableOperators.push(eye);
+    }
     if (this.eruptModel.eruptJson.power.edit) {
-      tableOption.push(edit);
+      tableOperators.push(edit);
     }
     if (this.eruptModel.eruptJson.power.delete) {
-      tableOption.push(del);
+      tableOperators.push(del);
     }
+    const that = this;
+    this.eruptModel.eruptJson.rowOperation.forEach(ro => {
+      tableOperators.push({
+        format: () => {
+          return `<i title="${ro.title}" class="fa ${ro.icon}"></i>`;
+        },
+        click: (record: any, modal: any) => {
+          that.gcOperatorEdits(ro.code, false, record);
+        }
+      });
+    });
     _columns.push({
-      title: "操作区",
+      title: "操作",
       fixed: "right",
-      width: (tableOption.length * 50) + "px",
+      width: tableOperators.length * 25 + 50 + "px",
       className: "text-center",
-      buttons: tableOption
+      buttons: tableOperators
     });
     this.columns = _columns;
   }
@@ -345,8 +328,8 @@ export class TableComponent implements OnInit {
     const ro = this.eruptModel.eruptJson.rowOperationMap.get(code);
     if (ro.edits.length <= 0) {
       this.modal.confirm({
-        nzTitle: "确定要执行吗",
-        nzContent: "",
+        nzTitle: "请确认是否执行此操作",
+        nzContent: ro.title,
         nzOnOk: () => {
           this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, null).subscribe(res => {
             if (res.success) {

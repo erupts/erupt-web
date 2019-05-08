@@ -39,7 +39,7 @@
                 <i nz-icon type="search" theme="outline"></i>查询
             </button>
         </ng-container>
-        <nz-divider nzType="vertical" [hidden]="hideCondition"></nz-divider>
+        <nz-divider nzType="vertical" *ngIf="eruptModel.eruptJson.rowOperation.length>0"></nz-divider>
 
         <ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">
             <ng-container *ngIf="oper.multi">

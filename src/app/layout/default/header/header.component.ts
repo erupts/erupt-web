@@ -15,7 +15,9 @@ export class HeaderComponent {
 
   isFullScreen: boolean = false;
 
-  collapse:boolean = false;
+  collapse: boolean = false;
+
+  title = window["site"]["name"];
 
   constructor(public settings: SettingsService) {
   }
