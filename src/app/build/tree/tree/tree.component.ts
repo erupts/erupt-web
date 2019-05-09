@@ -80,6 +80,7 @@ export class TreeComponent implements OnInit {
     if (this.dataHandler.validateNotNull(this.eruptModel)) {
       this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
         if (result.success) {
+
           this.fetchTreeData();
           this.msg.success("添加成功");
         } else {
