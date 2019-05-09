@@ -1,6 +1,6 @@
 import { EruptFieldModel } from "../model/erupt-field.model";
 import { EruptModel, Tree } from "../model/erupt.model";
-import { ChoiceEnum, EditType, ViewType } from "../model/erupt.enum";
+import { ChoiceEnum, EditType, TabEnum, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
@@ -184,6 +184,16 @@ export class DataHandlerService {
             inputType.suffixValue = inputType.suffix[0].value;
           }
           break;
+        case EditType.SLIDER:
+          const markPoints = field.eruptFieldJson.edit.sliderType[0].markPoints;
+          const marks = field.eruptFieldJson.edit.sliderType[0].marks = {};
+          if (markPoints.length > 0) {
+            markPoints.forEach(m => {
+              marks[m] = "";
+            });
+            console.log(marks);
+          }
+          break;
         case EditType.CHOICE:
           const vlMap = field.eruptFieldJson.edit.choiceType[0].vlMap = new Map();
           field.eruptFieldJson.edit.choiceType[0].vl.forEach(vl => {
@@ -240,7 +250,7 @@ export class DataHandlerService {
     const tempNodes = [];
     nodes.forEach(node => {
       let option: any = {
-        code: node.id,
+        key: node.id,
         title: node.label,
         data: node.data,
         expanded: true
@@ -257,7 +267,8 @@ export class DataHandlerService {
   }
 
   //将eruptModel中的内容拼接成后台需要的json格式
-  eruptValueToObject(eruptModel: EruptModel): any {
+  eruptValueToObject(eruptModel: EruptModel, subErupts?: Array<EruptAndEruptFieldModel>): any {
+    // this.validateNotNull(eruptModel);
     const eruptData: any = {};
     eruptModel.eruptFieldModels.forEach(field => {
       switch (field.eruptFieldJson.edit.type) {
@@ -271,13 +282,14 @@ export class DataHandlerService {
           break;
         case EditType.CHOICE:
           if (field.eruptFieldJson.edit.$value) {
-            if (field.eruptFieldJson.edit.$value) {
-              if (field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.TAGS) {
-                eruptData[field.fieldName] = (<string[]>field.eruptFieldJson.edit.$value).join(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
+            if (field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.TAGS) {
+              let val = (<string[]>field.eruptFieldJson.edit.$value).join(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
+              if (val) {
+                eruptData[field.fieldName] = val;
               }
+            } else {
+              eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
             }
-          } else {
-            eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
           }
           break;
         case EditType.REFERENCE:
@@ -295,71 +307,111 @@ export class DataHandlerService {
           break;
       }
     });
+    if (subErupts.length > 0) {
+      subErupts.forEach(sub => {
+        let tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0].type;
+        if (tabType == TabEnum.TREE) {
+          const tabTree = eruptData[sub.eruptFieldModel.fieldName] = [];
+          if (sub.eruptFieldModel.eruptFieldJson.edit.$value) {
+            (<any[]>sub.eruptFieldModel.eruptFieldJson.edit.$value).forEach(val => {
+              const obj = {};
+              obj[sub.eruptModel.eruptJson.primaryKeyCol] = val;
+              tabTree.push(obj);
+            });
+          }
+          sub.eruptFieldModel.eruptFieldJson.edit.$value;
+          console.log(eruptData[sub.eruptFieldModel.fieldName]);
+        }
+      });
+    }
     return eruptData;
   }
 
   //将后台数据转化成前端可视格式
   objectToEruptValue(eruptModel: EruptModel, object: any) {
-    eruptModel.eruptFieldModels.forEach(field => {
-      switch (field.eruptFieldJson.edit.type) {
-        case EditType.INPUT:
-          const inputType = field.eruptFieldJson.edit.inputType;
-          //处理前缀和后缀的数据
-          if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
-            let str = <string>object[field.fieldName];
-            for (let pre of inputType.prefix) {
-              if (str.startsWith(pre.value)) {
-                field.eruptFieldJson.edit.inputType.prefixValue = pre.value;
-                str = str.substr(pre.value.length);
-                break;
+    this.emptyEruptValue(eruptModel);
+    for (let key in object) {
+      const field = eruptModel.eruptFieldModelMap.get(key);
+      if (field) {
+        switch (field.eruptFieldJson.edit.type) {
+          case EditType.INPUT:
+            const inputType = field.eruptFieldJson.edit.inputType;
+            //处理前缀和后缀的数据
+            if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
+              let str = <string>object[field.fieldName];
+              for (let pre of inputType.prefix) {
+                if (str.startsWith(pre.value)) {
+                  field.eruptFieldJson.edit.inputType.prefixValue = pre.value;
+                  str = str.substr(pre.value.length);
+                  break;
+                }
+              }
+              for (let suf of inputType.suffix) {
+                if (str.endsWith(suf.value)) {
+                  field.eruptFieldJson.edit.inputType.suffixValue = suf.value;
+                  str = str.substr(0, str.length - suf.value.length);
+                  break;
+                }
+              }
+              field.eruptFieldJson.edit.$value = str;
+            } else {
+              field.eruptFieldJson.edit.$value = object[field.fieldName];
+            }
+            break;
+          case EditType.DATE:
+            field.eruptFieldJson.edit.$value = new FormControl(object[field.fieldName]).value;
+            break;
+          case EditType.REFERENCE:
+            if (typeof object[field.fieldName] === "object") {
+              field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].id];
+              field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].label];
+            } else {
+              field.eruptFieldJson.edit.$value = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType[0].id];
+              field.eruptFieldJson.edit.$viewValue = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType[0].label];
+            }
+            break;
+          case EditType.BOOLEAN:
+            if (!object[field.fieldName] && object[field.fieldName] !== false) {
+              field.eruptFieldJson.edit.$value = field.eruptFieldJson.edit.boolType[0].defaultValue;
+            } else {
+              field.eruptFieldJson.edit.$value = object[field.fieldName];
+            }
+            break;
+          case EditType.ATTACHMENT:
+            if (object[field.fieldName]) {
+              field.eruptFieldJson.edit.$viewValue = [{
+                url: DataService.previewAttachment(eruptModel.eruptName, object[field.fieldName])
+              }];
+            } else {
+              field.eruptFieldJson.edit.$viewValue = [];
+            }
+            break;
+          case EditType.CHOICE:
+            if (field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.TAGS) {
+              if (object[field.fieldName]) {
+                field.eruptFieldJson.edit.$value = (<string>object[field.fieldName]).split(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
+                console.log(field.eruptFieldJson.edit.$value);
+              } else {
+                field.eruptFieldJson.edit.$value = [];
               }
             }
-            for (let suf of inputType.suffix) {
-              if (str.endsWith(suf.value)) {
-                field.eruptFieldJson.edit.inputType.suffixValue = suf.value;
-                str = str.substr(0, str.length - suf.value.length);
-                break;
-              }
-            }
-            field.eruptFieldJson.edit.$value = str;
-          } else {
+            break;
+          default:
             field.eruptFieldJson.edit.$value = object[field.fieldName];
-          }
-          break;
-        case EditType.DATE:
-          field.eruptFieldJson.edit.$value = new FormControl(object[field.fieldName]).value;
-          break;
-        case EditType.REFERENCE:
-          if (typeof object[field.fieldName] === "object") {
-            field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].id];
-            field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].label];
-          } else {
-            field.eruptFieldJson.edit.$value = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType[0].id];
-            field.eruptFieldJson.edit.$viewValue = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType[0].label];
-          }
-          break;
-        case EditType.BOOLEAN:
-          if (!object[field.fieldName] && object[field.fieldName] !== false) {
-            field.eruptFieldJson.edit.$value = field.eruptFieldJson.edit.boolType[0].defaultValue;
-          } else {
-            field.eruptFieldJson.edit.$value = object[field.fieldName];
-          }
-          break;
-        case EditType.ATTACHMENT:
-          if (object[field.fieldName]) {
-            field.eruptFieldJson.edit.$viewValue = [{
-              url: DataService.previewAttachment(eruptModel.eruptName, object[field.fieldName])
-            }];
-          } else {
-            field.eruptFieldJson.edit.$viewValue = [];
-          }
-          break;
-        default:
-          field.eruptFieldJson.edit.$value = object[field.fieldName];
-          break;
+            break;
+        }
       }
+    }
+  }
 
+  loadEruptDefaultValue(eruptModel: EruptModel) {
+    const obj = {};
+    eruptModel.eruptFieldModels.forEach(ef => {
+      if (ef.value) {
+        obj[ef.fieldName] = ef.value;
+      }
     });
+    this.objectToEruptValue(eruptModel, obj);
   }
 
   emptyEruptValue(eruptModel: EruptModel) {
@@ -370,9 +422,6 @@ export class DataHandlerService {
         ef.eruptFieldJson.edit.$value = null;
         ef.eruptFieldJson.edit.$viewValue = null;
         ef.eruptFieldJson.edit.$tempValue = null;
-      }
-      if (ef.value) {
-        ef.eruptFieldJson.edit.$value = ef.value;
       }
     });
   }

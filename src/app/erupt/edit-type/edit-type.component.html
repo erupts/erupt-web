@@ -209,11 +209,15 @@
                         <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl" [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
+                                class="stander-line-height"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <ng-container *ngIf="eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague">
                                     <nz-slider class="erupt-input" nzRange
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [nzMarks]="field.eruptFieldJson.edit.sliderType[0].marks"
+                                               [nzDots]="field.eruptFieldJson.edit.sliderType[0].markPoints.length>0"
+                                               [nzStep]="field.eruptFieldJson.edit.sliderType[0].step"
                                                [name]="field.fieldName"
                                                [nzMax]="field.eruptFieldJson.edit.sliderType[0].max"
                                                [nzMin]="field.eruptFieldJson.edit.sliderType[0].min"
@@ -223,6 +227,9 @@
                                         *ngIf="eruptModel.mode!='search'||!field.eruptFieldJson.edit.search.vague">
                                     <nz-slider class="erupt-input"
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [nzMarks]="field.eruptFieldJson.edit.sliderType[0].marks"
+                                               [nzDots]="field.eruptFieldJson.edit.sliderType[0].markPoints.length>0"
+                                               [nzStep]="field.eruptFieldJson.edit.sliderType[0].step"
                                                [name]="field.fieldName"
                                                [nzMax]="field.eruptFieldJson.edit.sliderType[0].max"
                                                [nzMin]="field.eruptFieldJson.edit.sliderType[0].min"

@@ -15,11 +15,11 @@
                             <i nz-icon type="search"></i>
                         </ng-template>
                         <br>
-                        <nz-tree ng-if="sub.eruptFieldModel.eruptFieldJson.edit.$value.length>0"
-                                 [nzCheckable]="true"
+                        <nz-tree [nzCheckable]="true"
                                  [nzShowLine]="true"
                                  [nzCheckStrictly]="true"
                                  [nzData]="sub.eruptFieldModel.eruptFieldJson.edit.$viewValue"
+                                 (nzCheckBoxChange)="checkBoxChange($event,sub)"
                                  [nzSearchValue]="sub.eruptFieldModel.eruptFieldJson.edit.$tempValue"
                                  [nzCheckedKeys]="sub.eruptFieldModel.eruptFieldJson.edit.$value">
                         </nz-tree>

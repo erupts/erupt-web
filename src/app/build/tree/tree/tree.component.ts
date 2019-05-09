@@ -110,7 +110,7 @@ export class TreeComponent implements OnInit {
         nzTitle: "请确认是否要删除",
         nzContent: "",
         nzOnOk: () => {
-          this.dataService.deleteEruptData(this.eruptModel.eruptName, nzTreeNode.origin.code).subscribe(function(data) {
+          this.dataService.deleteEruptData(this.eruptModel.eruptName, nzTreeNode.origin.key).subscribe(function(data) {
             if (data.success) {
               that.fetchTreeData();
               that.msg.success("删除成功");
@@ -127,19 +127,16 @@ export class TreeComponent implements OnInit {
 
   }
 
-  nzEvent(event: NzFormatEmitEvent): void {
-
-  }
-
   nzDblClick(event: NzFormatEmitEvent) {
     event.node.setExpanded(!event.node.isExpanded);
+    event.event.stopPropagation();
   }
 
   nodeClickEvent(event: NzFormatEmitEvent): void {
     const that = this;
     this.selectLeaf = true;
     this.loading = true;
-    this.dataService.queryEruptDataById(this.eruptModel.eruptName, event.node.origin.code).subscribe(data => {
+    this.dataService.queryEruptDataById(this.eruptModel.eruptName, event.node.origin.key).subscribe(data => {
       that.loading = false;
       if (data.success) {
         this.showEdit = true;

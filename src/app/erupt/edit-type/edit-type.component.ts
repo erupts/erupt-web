@@ -75,7 +75,8 @@ export class EditTypeComponent implements OnInit {
           nzTitle: "Error",
           nzContent: file.response.message
         });
-        field.eruptFieldJson.edit.$tempValue.pop();
+        console.log(field.eruptFieldJson.edit.$viewValue);
+        field.eruptFieldJson.edit.$viewValue.pop();
       }
     } else if (status === "error") {
       this.msg.error(`${file.name} 上传失败`);

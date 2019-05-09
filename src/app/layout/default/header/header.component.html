@@ -24,8 +24,8 @@
                 <i nz-icon type="search"></i>
             </div>
         </li>
-        <li>
-            <div class="alain-default__nav-item" (click)="toggleScreen()">
+        <li class="hidden-mobile" (click)="toggleScreen()">
+            <div class="alain-default__nav-item">
                 <i nz-icon [type]="isFullScreen?'fullscreen-exit':'fullscreen'"></i>
             </div>
         </li>

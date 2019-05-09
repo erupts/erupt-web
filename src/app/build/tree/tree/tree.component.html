@@ -13,16 +13,14 @@
         </ng-template>
         <br>
         <nz-card [nzBodyStyle]="{padding:'10px',height:ww-310+'px',overflow: 'auto'}">
-            <nz-tree #tree
-                     nzDraggable
+            <nz-tree nzDraggable
                      class="tree-container"
                      [nzShowLine]="false"
                      [nzData]="nodes"
                      [nzSearchValue]="searchValue"
                      (nzClick)="nodeClickEvent($event)"
                      (nzDblClick)="nzDblClick($event)"
-                     (nzExpandChange)="nzEvent($event)"
-                     (nzSearchValueChange)="nzEvent($event)">
+            >
             </nz-tree>
         </nz-card>
     </div>

@@ -103,18 +103,21 @@ export interface TabType {
 
 interface DependSwitchType {
   reject: boolean;
-  dependSwitchAttrs: Array<DependSwitchAttr>
+  dependSwitchAttrs: DependSwitchAttr[]
 }
 
 interface DependSwitchAttr {
   value: number;
   label: string;
-  dependEdits: Array<string>
+  dependEdits: string[]
 }
 
 interface SliderType {
   min: number;
   max: number;
+  step: number;
+  markPoints: number[];
+  marks?: any;
 }
 
 interface DictType {
@@ -128,7 +131,7 @@ interface DateType {
 
 interface AttachmentType {
   size: number;
-  fileType: Array<string>;
+  fileType: string[];
   path: String;
   maxLimit: number;
   type: AttachmentEnum;

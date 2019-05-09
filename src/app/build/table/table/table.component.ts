@@ -141,28 +141,8 @@ export class TableComponent implements OnInit {
         if (this.eruptModel.eruptJson.power.viewDetails || this.eruptModel.eruptJson.power.edit) {
           this.dataService.findTabTree(this.eruptModel.eruptName, sub.eruptFieldModel.fieldName).subscribe(
             tree => {
-              function gcZorroTree(nodes) {
-                const tempNodes = [];
-                nodes.forEach(node => {
-                  let option: any = {
-                    key: node.id,
-                    title: node.label,
-                    data: node.data,
-                    expanded: true
-                  };
-                  if (node.children && node.children.length > 0) {
-                    tempNodes.push(option);
-                    option.children = gcZorroTree(node.children);
-                  } else {
-                    option.isLeaf = true;
-                    tempNodes.push(option);
-                  }
-                });
-                return tempNodes;
-              }
-
               if (tree) {
-                sub.eruptFieldModel.eruptFieldJson.edit.$viewValue = gcZorroTree(tree);
+                sub.eruptFieldModel.eruptFieldJson.edit.$viewValue = this.dataHandler.dataTreeToZorroTree(tree);
               }
             }
           );
@@ -247,10 +227,11 @@ export class TableComponent implements OnInit {
           },
           nzOnOk: () => {
             if (this.dataHandler.validateNotNull(this.eruptModel)) {
-              this.dataService.editEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
+              this.dataService.editEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel, this.subErupts)).subscribe(result => {
                 if (result.success) {
-                  this.st.reset();
+                  this.st.reload();
                   this.msg.success("修改成功");
+                  this.modal.closeAll();
                 } else {
                   this.msg.error(result.message);
                 }
@@ -294,7 +275,7 @@ export class TableComponent implements OnInit {
     this.eruptModel.eruptJson.rowOperation.forEach(ro => {
       tableOperators.push({
         format: () => {
-          return `<i title="${ro.title}" class="fa ${ro.icon}"></i>`;
+          return `<i title="${ro.title}" class="fa ${ro.icon}" style="color: #000"></i>`;
         },
         click: (record: any, modal: any) => {
           that.gcOperatorEdits(ro.code, false, record);
@@ -386,6 +367,7 @@ export class TableComponent implements OnInit {
   addRow() {
     this.dataHandler.emptyEruptValue(this.eruptModel);
     this.dataHandler.emptySubEruptValue(this.subErupts);
+    this.dataHandler.loadEruptDefaultValue(this.eruptModel);
     this.modal.create({
       nzStyle: { top: "60px" },
       nzWrapClassName: "modal-lg",
@@ -397,9 +379,10 @@ export class TableComponent implements OnInit {
         subErupts: this.subErupts,
         eruptModel: this.eruptModel
       },
+      nzOkText: "增加",
       nzOnOk: () => {
         if (this.dataHandler.validateNotNull(this.eruptModel)) {
-          this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
+          this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel, this.subErupts)).subscribe(result => {
             if (result.success) {
               this.st.reset();
               this.msg.success("新增成功");

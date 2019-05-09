@@ -34,7 +34,7 @@ export class TreeSelectComponent implements OnInit {
 
   nodeClickEvent(event: NzFormatEmitEvent) {
     this.eruptField.eruptFieldJson.edit.$tempValue = {
-      id: event.node.origin.code,
+      id: event.node.origin.key,
       label: event.node.origin.title
     };
   }

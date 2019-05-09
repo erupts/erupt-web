@@ -61,11 +61,16 @@ export class EditComponent implements OnInit {
 
   constructor(private dataService: DataService,
               private settingSrv: SettingsService,
-              private dataHandlerService: DataHandlerService,) {
+              private dataHandlerService: DataHandlerService) {
 
   }
 
   ngOnInit() {
+  }
+
+
+  checkBoxChange(event, sub: EruptAndEruptFieldModel) {
+    sub.eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
   }
 
 
