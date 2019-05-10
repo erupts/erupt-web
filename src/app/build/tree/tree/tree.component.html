@@ -12,8 +12,8 @@
             <i nz-icon type="search"></i>
         </ng-template>
         <br>
-        <nz-card [nzBodyStyle]="{padding:'10px',height:ww-310+'px',overflow: 'auto'}">
-            <nz-tree nzDraggable
+        <nz-card [nzBodyStyle]="{padding:'10px',height:ww-310+'px',overflow: 'auto'}" [nzLoading]="treeLoading" [nzHoverable]="true">
+            <nz-tree #tree nzDraggable
                      class="tree-container"
                      [nzShowLine]="false"
                      [nzData]="nodes"

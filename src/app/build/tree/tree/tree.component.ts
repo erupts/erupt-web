@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
-import { NzFormatEmitEvent, NzTreeNode } from "ng-zorro-antd/tree";
+import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode } from "ng-zorro-antd/tree";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
@@ -25,6 +25,8 @@ export class TreeComponent implements OnInit {
   private ww = window.document.documentElement.clientHeight;
 
   private loading = false;
+
+  private treeLoading = false;
 
   private searchValue;
 
@@ -57,7 +59,9 @@ export class TreeComponent implements OnInit {
   }
 
   fetchTreeData() {
+    this.treeLoading = true;
     this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
+      this.treeLoading = false;
       if (tree) {
         this.nodes = this.dataHandler.dataTreeToZorroTree(tree);
       }
@@ -78,34 +82,31 @@ export class TreeComponent implements OnInit {
 
   add() {
     if (this.dataHandler.validateNotNull(this.eruptModel)) {
+      this.loading = true;
       this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
-        if (result.success) {
-
-          this.fetchTreeData();
-          this.msg.success("添加成功");
-        } else {
-          this.msg.error(result.message);
-        }
+        this.loading = false;
+        this.fetchTreeData();
+        this.dataHandler.emptyEruptValue(this.eruptModel);
+        this.msg.success("添加成功");
       });
     }
   }
 
   save() {
     if (this.dataHandler.validateNotNull(this.eruptModel)) {
+      this.loading = true;
       this.dataService.editEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
-        if (result.success) {
-          this.fetchTreeData();
-          this.msg.success("修改成功");
-        } else {
-          this.msg.error(result.message);
-        }
+        this.loading = false;
+        this.msg.success("修改成功");
+        this.fetchTreeData();
       });
     }
   }
 
   del() {
     const that = this;
-    const nzTreeNode: NzTreeNode = that.tree.getSelectedNodeList()[0];
+    console.log(this.tree.getSelectedNodeList());
+    const nzTreeNode: NzTreeNode = this.tree.getSelectedNodeList()[0];
     if (nzTreeNode.isLeaf) {
       this.modal.confirm({
         nzTitle: "请确认是否要删除",

@@ -53,6 +53,8 @@ export class DataHandlerService {
             obj.format = (item: any) => {
               return edit.choiceType[0].vlMap.get(item[view.column]) || "";
             };
+          } else {
+            obj.type = "tag";
           }
           // else {
           //   obj.format = (item: any) => {
@@ -191,7 +193,6 @@ export class DataHandlerService {
             markPoints.forEach(m => {
               marks[m] = "";
             });
-            console.log(marks);
           }
           break;
         case EditType.CHOICE:
@@ -290,24 +291,24 @@ export class DataHandlerService {
             } else {
               eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
             }
+          } else {
+            eruptData[field.fieldName] = null;
           }
           break;
         case EditType.REFERENCE:
           if (field.eruptFieldJson.edit.$value) {
             eruptData[field.fieldName] = {};
             eruptData[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].id] = field.eruptFieldJson.edit.$value;
+          } else {
+            field.eruptFieldJson.edit.$value = null;
           }
-          break;
-        case EditType.BOOLEAN:
-          const $value = field.eruptFieldJson.edit.$value;
-          eruptData[field.fieldName] = $value;
           break;
         default:
           eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
           break;
       }
     });
-    if (subErupts.length > 0) {
+    if (subErupts && subErupts.length > 0) {
       subErupts.forEach(sub => {
         let tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0].type;
         if (tabType == TabEnum.TREE) {
@@ -319,8 +320,6 @@ export class DataHandlerService {
               tabTree.push(obj);
             });
           }
-          sub.eruptFieldModel.eruptFieldJson.edit.$value;
-          console.log(eruptData[sub.eruptFieldModel.fieldName]);
         }
       });
     }
@@ -382,6 +381,7 @@ export class DataHandlerService {
               field.eruptFieldJson.edit.$viewValue = [{
                 url: DataService.previewAttachment(eruptModel.eruptName, object[field.fieldName])
               }];
+              field.eruptFieldJson.edit.$value = object[field.fieldName];
             } else {
               field.eruptFieldJson.edit.$viewValue = [];
             }
@@ -390,7 +390,6 @@ export class DataHandlerService {
             if (field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.TAGS) {
               if (object[field.fieldName]) {
                 field.eruptFieldJson.edit.$value = (<string>object[field.fieldName]).split(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
-                console.log(field.eruptFieldJson.edit.$value);
               } else {
                 field.eruptFieldJson.edit.$value = [];
               }
