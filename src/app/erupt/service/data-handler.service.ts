@@ -247,7 +247,7 @@ export class DataHandlerService {
     return true;
   }
 
-  dataTreeToZorroTree(nodes: Array<Tree>) {
+  dataTreeToZorroTree(nodes: Tree[]) {
     const tempNodes = [];
     nodes.forEach(node => {
       let option: any = {
@@ -389,7 +389,8 @@ export class DataHandlerService {
           case EditType.CHOICE:
             if (field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.TAGS) {
               if (object[field.fieldName]) {
-                field.eruptFieldJson.edit.$value = (<string>object[field.fieldName]).split(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
+                let v = <string>object[field.fieldName];
+                field.eruptFieldJson.edit.$value = String(object[field.fieldName]).split(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
               } else {
                 field.eruptFieldJson.edit.$value = [];
               }

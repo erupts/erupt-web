@@ -25,7 +25,7 @@ export class DataService {
   //获取结构
   getEruptBuild(modelName: string): Observable<EruptPageModel> {
     return this._http.get<EruptPageModel>(RestPath.build + "list/" + modelName, null, {
-      responseType: "json",
+      observe: "body",
       headers: {
         erupt: modelName
       }
@@ -33,9 +33,9 @@ export class DataService {
   }
 
   //tree数据结构
-  queryEruptTreeData(modelName: string): Observable<Array<Tree>> {
-    return this._http.post<Array<Tree>>(RestPath.data + "tree/" + modelName, {}, {}, {
-      observe: null,
+  queryEruptTreeData(modelName: string): Observable<Tree[]> {
+    return this._http.get<Tree[]>(RestPath.data + "tree/" + modelName, null, {
+      observe: "body",
       headers: {
         erupt: modelName
       }
@@ -51,9 +51,10 @@ export class DataService {
     });
   }
 
-  findTabTree(modelName: string, tabFieldName: string): Observable<Array<Tree>> {
-    return this._http.post<Array<Tree>>(RestPath.data + "tab/tree/" + modelName + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
-      observe: null,
+  findTabTree(modelName: string, tabFieldName: string): Observable<Tree[]> {
+    return this._http.get<Tree[]>(RestPath.data + "tab/tree/" + modelName + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, {
+      observe: "body",
+      reportProgress: true,
       headers: {
         erupt: modelName
       }
@@ -72,7 +73,7 @@ export class DataService {
   //根据id获取数据
   queryEruptDataById(modelName: string, id: any): Observable<EruptApiModel> {
     return this._http.get<EruptApiModel>(RestPath.data + modelName + "/" + id, null, {
-      responseType: "json",
+      observe: "body",
       headers: {
         erupt: modelName
       }
@@ -102,8 +103,8 @@ export class DataService {
   }
 
   //增加数据
-  addEruptData(modelName: string, data: any): Observable<EruptApiModel> {
-    return this._http.post<EruptApiModel>(RestPath.data + modelName, data, null, {
+  addEruptData(modelName: string, data: any): Observable<any> {
+    return this._http.post<any>(RestPath.data + modelName, data, null, {
       observe: null,
       headers: {
         erupt: modelName

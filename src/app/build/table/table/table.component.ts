@@ -313,11 +313,7 @@ export class TableComponent implements OnInit {
         nzContent: ro.title,
         nzOnOk: () => {
           this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, null).subscribe(res => {
-            if (res.success) {
-              this.st.reset();
-            } else {
-              this.msg.error(res.message);
-            }
+            this.st.reset();
           });
         }
       });
@@ -345,11 +341,7 @@ export class TableComponent implements OnInit {
         nzOnOk: () => {
           if (this.dataHandler.validateNotNull(operatorEruptModel)) {
             this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, this.dataHandler.eruptValueToObject(operatorEruptModel)).subscribe(res => {
-              if (res.success) {
-                this.st.reset();
-              } else {
-                this.msg.error(res.message);
-              }
+              this.st.reset();
             });
           } else {
             return false;
@@ -383,12 +375,10 @@ export class TableComponent implements OnInit {
       nzOnOk: () => {
         if (this.dataHandler.validateNotNull(this.eruptModel)) {
           this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel, this.subErupts)).subscribe(result => {
-            if (result.success) {
-              this.st.reset();
-              this.msg.success("新增成功");
-            } else {
-              this.msg.error(result.message);
-            }
+            this.st.reset();
+            this.modal.closeAll();
+            console.log(result);
+            this.msg.success("新增成功");
           });
         }
         return false;

@@ -1,9 +1,8 @@
 import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
-import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode } from "ng-zorro-antd/tree";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { ActivatedRoute } from "@angular/router";
-import { NzMessageService, NzModalService } from "ng-zorro-antd";
+import { NzFormatEmitEvent, NzMessageService, NzModalService } from "ng-zorro-antd";
 import { colRules } from "../../../erupt/model/util.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 
@@ -105,8 +104,7 @@ export class TreeComponent implements OnInit {
 
   del() {
     const that = this;
-    console.log(this.tree.getSelectedNodeList());
-    const nzTreeNode: NzTreeNode = this.tree.getSelectedNodeList()[0];
+    const nzTreeNode = this.tree.getSelectedNodeList()[0];
     if (nzTreeNode.isLeaf) {
       this.modal.confirm({
         nzTitle: "请确认是否要删除",

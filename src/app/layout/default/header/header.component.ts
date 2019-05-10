@@ -1,7 +1,6 @@
-import { Component, Inject } from "@angular/core";
+import { Component } from "@angular/core";
 import { SettingsService } from "@delon/theme";
 import * as screenfull from "screenfull";
-import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 
 @Component({
   selector: "layout-header",
@@ -30,10 +29,23 @@ export class HeaderComponent {
     this.searchToggleStatus = !this.searchToggleStatus;
   }
 
-  toggleScreen() {
-    if (screenfull.enabled) {
-      screenfull.toggle();
-      this.isFullScreen = !this.isFullScreen;
+  toggleScreen(){
+    let sf = screenfull as screenfull.Screenfull;
+    if (sf.enabled) {
+      this.isFullScreen = sf.isFullscreen;
+      sf.toggle();
     }
   }
+
+  // toggleScreen() {
+  //   const sf = screenfull as screenfull.Screenfull;
+  //   if (sf.enabled) {
+  //     sf.toggle();
+  //   }
+  //
+  //   // if (screenfull.enabled) {
+  //   //   screenfull.toggle();
+  //   //   this.isFullScreen = !this.isFullScreen;
+  //   // }
+  // }
 }
