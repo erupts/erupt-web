@@ -133,17 +133,12 @@ export class TreeComponent implements OnInit {
   }
 
   nodeClickEvent(event: NzFormatEmitEvent): void {
-    const that = this;
     this.selectLeaf = true;
     this.loading = true;
+    this.showEdit = true;
     this.dataService.queryEruptDataById(this.eruptModel.eruptName, event.node.origin.key).subscribe(data => {
-      that.loading = false;
-      if (data.success) {
-        this.showEdit = true;
-        this.dataHandler.objectToEruptValue(this.eruptModel, data.data);
-      } else {
-        this.msg.error(data.message);
-      }
+      this.loading = false;
+      this.dataHandler.objectToEruptValue(this.eruptModel, data.data);
     });
 
   }

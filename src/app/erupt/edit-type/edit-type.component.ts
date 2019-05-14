@@ -94,18 +94,28 @@ export class EditTypeComponent implements OnInit {
 
 
   createTreeRefModal(field: EruptFieldModel) {
+    let depend = field.eruptFieldJson.edit.referenceTreeType[0].depend;
+    let dependVal = null;
+    if (depend) {
+      const dependField: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(depend);
+      if (dependField.eruptFieldJson.edit.$value) {
+        dependVal = dependField.eruptFieldJson.edit.$value;
+      } else {
+        this.msg.warning("请先选择" + dependField.eruptFieldJson.edit.title);
+        return;
+      }
+    }
     this.modal.create({
       nzWrapClassName: "modal-xs",
       nzKeyboard: true,
+      nzStyle: { top: "30px" },
       nzTitle: field.eruptFieldJson.edit.title,
       nzCancelText: "取消（ESC）",
       nzContent: TreeSelectComponent,
       nzComponentParams: {
         eruptModel: this.eruptModel,
         eruptField: field,
-        bodyStyle: <any>{
-          maxHeight: "440px"
-        }
+        dependVal: dependVal
       }, nzOnOk: () => {
         const tempVal = field.eruptFieldJson.edit.$tempValue;
         if (!tempVal) {
@@ -118,6 +128,7 @@ export class EditTypeComponent implements OnInit {
       }
     });
 
+
   }
 
 
@@ -125,10 +136,7 @@ export class EditTypeComponent implements OnInit {
     field.eruptFieldJson.edit.$value = val.join(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
   }
 
-  clearValue(field: EruptFieldModel, event: Event) {
-    if (event) {
-      event.stopPropagation();
-    }
+  clearValue(field: EruptFieldModel) {
     field.eruptFieldJson.edit.$value = null;
     field.eruptFieldJson.edit.$viewValue = null;
     field.eruptFieldJson.edit.$tempValue = null;

@@ -43,8 +43,9 @@ export class DataService {
   }
 
 
-  findTabListById(modelName: string, id: string, tabFieldName: string): Observable<any> {
-    return this._http.post(RestPath.data + "tab/table/" + modelName + "/" + id + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
+  findTabListById(modelName: string, id: string, tabFieldName: string): Observable<Array<any>> {
+    return this._http.get<Array<any>>(RestPath.data + "tab/table/" + modelName + "/" + id + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, {
+      observe: "body",
       headers: {
         erupt: modelName
       }
@@ -54,7 +55,6 @@ export class DataService {
   findTabTree(modelName: string, tabFieldName: string): Observable<Tree[]> {
     return this._http.get<Tree[]>(RestPath.data + "tab/tree/" + modelName + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, {
       observe: "body",
-      reportProgress: true,
       headers: {
         erupt: modelName
       }
@@ -62,8 +62,8 @@ export class DataService {
   }
 
   findTabTreeById(modelName: string, id: string, tabFieldName: string): Observable<any> {
-    return this._http.post<any>(RestPath.data + "tab/tree/" + modelName + "/" + id + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, null, {
-      observe: null,
+    return this._http.get<any>(RestPath.data + "tab/tree/" + modelName + "/" + id + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, {
+      observe: "body",
       headers: {
         erupt: modelName
       }
@@ -94,8 +94,19 @@ export class DataService {
   }
 
   //获取reference数据
-  queryRefTreeData(modelName: string, refName: string): Observable<any> {
-    return this._http.get(RestPath.data + modelName + "/reftree/" + refName, null, {
+  queryRefTreeData(modelName: string, refName: string): Observable<Tree[]> {
+    return this._http.get<Tree[]>(RestPath.data + modelName + "/reftree/" + refName, null, {
+      observe: "body",
+      headers: {
+        erupt: modelName
+      }
+    });
+  }
+
+  //获取reference数据
+  queryRefTreeDataByDepend(modelName: string, refName: string, dependVal: any): Observable<Tree[]> {
+    return this._http.get<Tree[]>(RestPath.data + modelName + "/reftree/" + refName + "/" + dependVal, null, {
+      observe: "body",
       headers: {
         erupt: modelName
       }
@@ -113,7 +124,7 @@ export class DataService {
   }
 
   //修改数据
-  editEruptData(modelName: string, data: any): Observable<EruptApiModel> {
+  editEruptData(modelName: string, data: object): Observable<EruptApiModel> {
     return this._http.put<EruptApiModel>(RestPath.data + modelName, data, null, {
       observe: null,
       headers: {

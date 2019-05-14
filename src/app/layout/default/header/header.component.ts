@@ -1,6 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { SettingsService } from "@delon/theme";
 import * as screenfull from "screenfull";
+import { DA_SERVICE_TOKEN, ITokenService, TokenService } from "@delon/auth";
 
 @Component({
   selector: "layout-header",
@@ -18,7 +19,11 @@ export class HeaderComponent {
 
   title = window["site"]["name"];
 
-  constructor(public settings: SettingsService) {
+  l_tools: CustomerTool[] = window["l_tools"] || [];
+
+  r_tools: CustomerTool[] = window["r_tools"] || [];
+
+  constructor(public settings: SettingsService, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
   }
 
   toggleCollapsedSidebar() {
@@ -29,7 +34,7 @@ export class HeaderComponent {
     this.searchToggleStatus = !this.searchToggleStatus;
   }
 
-  toggleScreen(){
+  toggleScreen() {
     let sf = screenfull as screenfull.Screenfull;
     if (sf.enabled) {
       this.isFullScreen = sf.isFullscreen;
@@ -37,15 +42,17 @@ export class HeaderComponent {
     }
   }
 
-  // toggleScreen() {
-  //   const sf = screenfull as screenfull.Screenfull;
-  //   if (sf.enabled) {
-  //     sf.toggle();
-  //   }
-  //
-  //   // if (screenfull.enabled) {
-  //   //   screenfull.toggle();
-  //   //   this.isFullScreen = !this.isFullScreen;
-  //   // }
-  // }
+  customToolsFun(event: Event, tool: CustomerTool) {
+    tool.click && tool.click(event, this.tokenService.get().token);
+  }
+}
+
+interface CustomerTool {
+  html: string;
+
+  icon: string;
+
+  mobileShow: boolean;
+
+  click(event: Event, token: string): void;
 }

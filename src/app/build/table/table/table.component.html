@@ -60,8 +60,7 @@
 
     <!--<nz-divider nzDashed="true" style="margin:2px 0 8px;border-width: 2px"></nz-divider>-->
 
-    <nz-card *ngIf="searchErupt.eruptFieldModels.length>0"
-             [nzBodyStyle]="{padding:'10px 5px'}"
+    <nz-card *ngIf="searchErupt.eruptFieldModels.length>0" [nzBodyStyle]="{padding:'10px 5px'}" [nzBordered]="true"
              style="background: #fafafa;margin-bottom: 0;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)" [hidden]="hideCondition">
         <erupt-edit-type [eruptModel]="searchErupt"
                          [col]="{ xs: 24, sm: 24, md: 12, lg: 8, xl: 8, xxl: 6 }"

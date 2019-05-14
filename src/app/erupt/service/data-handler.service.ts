@@ -29,7 +29,7 @@ export class DataHandlerService {
       let obj: any = {
         // width: "200px",
         title: view.title,
-        index: view.column.replace("_", "\.")
+        index: view.column
       };
       if (view.sortable) {
         obj.sort = {
@@ -160,7 +160,6 @@ export class DataHandlerService {
       if (view.className) {
         obj.className += " " + view.className;
       }
-
       cols.push(obj);
     }
     return cols;
@@ -268,7 +267,7 @@ export class DataHandlerService {
   }
 
   //将eruptModel中的内容拼接成后台需要的json格式
-  eruptValueToObject(eruptModel: EruptModel, subErupts?: Array<EruptAndEruptFieldModel>): any {
+  eruptValueToObject(eruptModel: EruptModel, subErupts?: Array<EruptAndEruptFieldModel>): object {
     // this.validateNotNull(eruptModel);
     const eruptData: any = {};
     eruptModel.eruptFieldModels.forEach(field => {
@@ -328,9 +327,7 @@ export class DataHandlerService {
 
   //将后台数据转化成前端可视格式
   objectToEruptValue(eruptModel: EruptModel, object: any) {
-    this.emptyEruptValue(eruptModel);
-    for (let key in object) {
-      const field = eruptModel.eruptFieldModelMap.get(key);
+    for (let field of eruptModel.eruptFieldModels) {
       if (field) {
         switch (field.eruptFieldJson.edit.type) {
           case EditType.INPUT:
@@ -389,7 +386,6 @@ export class DataHandlerService {
           case EditType.CHOICE:
             if (field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.TAGS) {
               if (object[field.fieldName]) {
-                let v = <string>object[field.fieldName];
                 field.eruptFieldJson.edit.$value = String(object[field.fieldName]).split(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
               } else {
                 field.eruptFieldJson.edit.$value = [];
@@ -414,7 +410,7 @@ export class DataHandlerService {
     this.objectToEruptValue(eruptModel, obj);
   }
 
-  emptyEruptValue(eruptModel: EruptModel) {
+  emptyEruptValue(eruptModel: EruptModel, subFieldModels?: Array<EruptAndEruptFieldModel>) {
     eruptModel.eruptFieldModels.forEach(ef => {
       if (ef.eruptFieldJson.edit.type == EditType.BOOLEAN) {
         ef.eruptFieldJson.edit.$value = ef.eruptFieldJson.edit.boolType[0].defaultValue;
@@ -424,12 +420,8 @@ export class DataHandlerService {
         ef.eruptFieldJson.edit.$tempValue = null;
       }
     });
-  }
-
-  emptySubEruptValue(eruptAndEruptFieldModels: Array<EruptAndEruptFieldModel>) {
-    eruptAndEruptFieldModels.forEach(sub => {
-      sub.eruptFieldModel.eruptFieldJson.edit.$value = null;
-      this.emptyEruptValue(sub.eruptModel);
+    subFieldModels.forEach(sub => {
+      sub.eruptFieldModel.eruptFieldJson.edit.$value = [];
     });
 
   }

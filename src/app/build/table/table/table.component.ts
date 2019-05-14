@@ -10,7 +10,6 @@ import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
-import { colRules } from "../../../erupt/model/util.model";
 import { deepCopy } from "@delon/util";
 import { RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
@@ -40,8 +39,6 @@ export class TableComponent implements OnInit {
 
   hideCondition = false;
 
-  colRules = colRules;
-
   eruptModel: EruptModel;
 
   searchErupt: EruptModel;
@@ -56,7 +53,7 @@ export class TableComponent implements OnInit {
     url: null,
     stPage: {
       placement: "center",
-      pageSizes: [10, 30, 50, 100],
+      pageSizes: [10, 20, 30, 50, 100],
       showSize: true,
       showQuickJumper: true,
       total: true,
@@ -117,6 +114,7 @@ export class TableComponent implements OnInit {
     const searchFieldModels = [];
     copyErupt.eruptFieldModels.forEach((field) => {
       if (field.eruptFieldJson.edit.search.value) {
+        field.value = null;
         field.eruptFieldJson.edit.notNull = false;
         field.eruptFieldJson.edit.show = true;
         field.eruptFieldJson.edit.$value = null;
@@ -131,6 +129,7 @@ export class TableComponent implements OnInit {
     copyErupt.mode = "search";
     copyErupt.eruptFieldModels = searchFieldModels;
     this.searchErupt = copyErupt;
+    this.dataHandler.initErupt(this.searchErupt);
   }
 
   buildSubErupt(subErupts: Array<EruptAndEruptFieldModel>) {
@@ -210,9 +209,11 @@ export class TableComponent implements OnInit {
         });
       }
     };
+
     const edit = {
       icon: "edit",
-      click: (record: any, modal: any) => {
+      click: (record: any) => {
+        this.eruptModel.tabLoadCount = 0;
         this.modal.create({
           nzWrapClassName: "modal-lg",
           nzStyle: { top: "60px" },
@@ -227,15 +228,15 @@ export class TableComponent implements OnInit {
           },
           nzOnOk: () => {
             if (this.dataHandler.validateNotNull(this.eruptModel)) {
-              this.dataService.editEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel, this.subErupts)).subscribe(result => {
-                if (result.success) {
-                  this.st.reload();
+              if (this.eruptModel.tabLoadCount === this.subErupts.length) {
+                this.dataService.editEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel, this.subErupts)).subscribe(result => {
+                  this.st.load();
                   this.msg.success("修改成功");
                   this.modal.closeAll();
-                } else {
-                  this.msg.error(result.message);
-                }
-              });
+                });
+              } else {
+                this.msg.error("数据还未完全加载完成，请等待完全加载完成后再进行保存操作");
+              }
             }
             return false;
           },
@@ -318,7 +319,7 @@ export class TableComponent implements OnInit {
         }
       });
     } else {
-      const eruptFieldModels: Array<EruptFieldModel> = [];
+      const eruptFieldModels: EruptFieldModel[] = [];
       ro.edits.forEach(edit => {
         const eruptFieldModel: EruptFieldModel = {
           fieldName: edit.code,
@@ -357,8 +358,7 @@ export class TableComponent implements OnInit {
 
   //新增
   addRow() {
-    this.dataHandler.emptyEruptValue(this.eruptModel);
-    this.dataHandler.emptySubEruptValue(this.subErupts);
+    this.dataHandler.emptyEruptValue(this.eruptModel, this.subErupts);
     this.dataHandler.loadEruptDefaultValue(this.eruptModel);
     this.modal.create({
       nzStyle: { top: "60px" },
@@ -375,9 +375,8 @@ export class TableComponent implements OnInit {
       nzOnOk: () => {
         if (this.dataHandler.validateNotNull(this.eruptModel)) {
           this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel, this.subErupts)).subscribe(result => {
-            this.st.reset();
+            this.st.load();
             this.modal.closeAll();
-            console.log(result);
             this.msg.success("新增成功");
           });
         }
@@ -417,8 +416,11 @@ export class TableComponent implements OnInit {
   }
 
   // table checkBox 触发事件
-  tableDataChange(data: STData) {
-    this.selectedRows = data.checkbox;
+  tableDataChange(event: STData) {
+    if (event.type === "checkbox") {
+      this.selectedRows = event.checkbox;
+    }
+
   }
 
   // excel导出

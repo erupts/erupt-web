@@ -10,7 +10,9 @@ export interface EruptModel {
   //# customer prop
   eruptFieldModelMap?: Map<String, EruptFieldModel>;
   tableColumns?: Array<View>;
-  mode?: "edit" | "search"
+  mode?: "edit" | "search";
+  //计算tab加载完成情况
+  tabLoadCount?: number;
 }
 
 export interface Erupt {
@@ -26,8 +28,8 @@ export interface Erupt {
 export interface Tree {
   id: string;
   label: string;
-  children: Array<Tree>;
-  data: any;
+  children?: Array<Tree>;
+  data?: any;
 }
 
 

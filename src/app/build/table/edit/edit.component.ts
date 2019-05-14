@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { DataService } from "../../../erupt/service/data.service";
 import { TabEnum } from "../../../erupt/model/erupt.enum";
@@ -11,11 +11,13 @@ import { DataHandlerService } from "../../../erupt/service/data-handler.service"
   templateUrl: "./edit.component.html",
   styleUrls: ["./edit.component.less"]
 })
-export class EditComponent implements OnInit {
+export class EditComponent implements OnInit, OnDestroy {
 
   private rowData: any;
 
-  private tabEnum = TabEnum;
+  tabEnum = TabEnum;
+
+  // private tabCount = new Subject<number>();
 
   @Input() eruptModel: EruptModel;
 
@@ -24,38 +26,37 @@ export class EditComponent implements OnInit {
   @Input() behavior: "add" | "edit" | "readonly" = "add";
 
   @Input() set rowDataFun(data: any) {
+    this.dataHandlerService.emptyEruptValue(this.eruptModel, this.subErupts);
     if (data) {
       this.rowData = data;
       this.dataHandlerService.objectToEruptValue(this.eruptModel, data);
-    } else {
-      this.dataHandlerService.objectToEruptValue(this.eruptModel, {});
     }
     /**
      * TAB control
      */
-    // 读取tab栏的数据
     if (this.rowData) {
       this.subErupts && this.subErupts.forEach(sub => {
         const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0];
         switch (tabType.type) {
           case TabEnum.TREE:
             this.dataService.findTabTreeById(this.eruptModel.eruptName,
-              this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(
-              tree => {
+              this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(tree => {
                 sub.eruptFieldModel.eruptFieldJson.edit.$value = tree;
+                this.eruptModel.tabLoadCount++;
               }
             );
             break;
           case TabEnum.TABLE:
             this.dataService.findTabListById(this.eruptModel.eruptName,
-              this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(
-              data => {
+              this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(data => {
                 sub.eruptFieldModel.eruptFieldJson.edit.$value = data;
+                this.eruptModel.tabLoadCount++
               }
             );
             break;
         }
       });
+
     }
   }
 
@@ -66,6 +67,9 @@ export class EditComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnDestroy(): void {
   }
 
 

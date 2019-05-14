@@ -1,4 +1,4 @@
-<div>
+<nz-spin [nzSpinning]="!list">
     <nz-input-group [nzSuffix]="searchSuffixIcon" class="mb-sm" style="width: 100%;">
         <input type="text" nz-input placeholder="Search" [(ngModel)]="searchValue">
     </nz-input-group>
@@ -6,7 +6,7 @@
         <i nz-icon type="search"></i>
     </ng-template>
     <br>
-    <nz-spin [nzSpinning]="!list" style="max-height: 500px;overflow: auto;">
+    <div style="max-height: 450px;overflow: auto;">
         <nz-tree #tree
                  nzDraggable
                  class="tree-container"
@@ -15,5 +15,5 @@
                  [nzData]="list"
                  [nzSearchValue]="searchValue">
         </nz-tree>
-    </nz-spin>
-</div>
+    </div>
+</nz-spin>

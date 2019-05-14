@@ -63,6 +63,17 @@
                 <!--</div>-->
             <!--</nz-dropdown>-->
         <!--</li>-->
+        <ng-container *ngFor="let r of r_tools">
+            <li *ngIf="r.html" [innerHTML]="r.html" (click)="customToolsFun($event,r)" [ngClass]="r.mobileShow?'':'hidden-mobile'">
+
+            </li>
+            <li *ngIf="r.icon" (click)="customToolsFun($event,r)" [ngClass]="r.mobileShow?'':'hidden-mobile'">
+                <div class="alain-default__nav-item">
+                    <i class="fa {{r.icon}}"></i>
+                </div>
+            </li>
+        </ng-container>
+
         <li class="hidden-mobile">
             <header-user></header-user>
         </li>

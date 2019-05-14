@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { EruptFieldModel, ReferenceTreeType } from "../model/erupt-field.model";
 import { DataService } from "../service/data.service";
-import { EruptModel } from "../model/erupt.model";
+import { EruptModel, Tree } from "../model/erupt.model";
 import { DataHandlerService } from "../service/data-handler.service";
 import { NzFormatEmitEvent } from "ng-zorro-antd";
 
@@ -16,9 +16,9 @@ export class TreeSelectComponent implements OnInit {
 
   @Input() eruptModel: EruptModel;
 
-  @Input() bodyStyle: string;
+  @Input() dependVal: any;
 
-  list: Array<ReferenceTreeType>;
+  list: Tree[];
 
   searchValue: string;
 
@@ -27,9 +27,16 @@ export class TreeSelectComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.data.queryRefTreeData(this.eruptModel.eruptName, this.eruptField.fieldName).subscribe(tree => {
-      this.list = this.dataHandler.dataTreeToZorroTree(tree);
-    });
+    if (this.dependVal) {
+      this.data.queryRefTreeDataByDepend(this.eruptModel.eruptName, this.eruptField.fieldName, this.dependVal).subscribe(tree => {
+        this.list = this.dataHandler.dataTreeToZorroTree(tree);
+      });
+    } else {
+      this.data.queryRefTreeData(this.eruptModel.eruptName, this.eruptField.fieldName).subscribe(tree => {
+        this.list = this.dataHandler.dataTreeToZorroTree(tree);
+      });
+    }
+
   }
 
   nodeClickEvent(event: NzFormatEmitEvent) {

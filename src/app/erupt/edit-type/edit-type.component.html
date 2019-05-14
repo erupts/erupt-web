@@ -18,7 +18,7 @@
                                         <nz-input-group [nzSize]="size" class="erupt-input">
                                             <nz-input-number [nzSize]="size" style="width: 45%;"
                                                              [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                             [(ngModel)]="field.eruptFieldJson.edit.$value[0]"
+                                                             [(ngModel)]="field.eruptFieldJson.edit.$l_val"
                                                              [name]="field.fieldName"
                                                              [nzStep]="1"></nz-input-number>
                                             <nz-input-group [nzSize]="size" style="width: 10%;">
@@ -28,7 +28,7 @@
                                             </nz-input-group>
                                             <nz-input-number [nzSize]="size" style="width: 45%;"
                                                              [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                             [(ngModel)]="field.eruptFieldJson.edit.$value[1]"
+                                                             [(ngModel)]="field.eruptFieldJson.edit.$r_val"
                                                              [name]="field.fieldName"
                                                              [nzStep]="1"></nz-input-number>
                                         </nz-input-group>
@@ -216,7 +216,7 @@
                                     <nz-slider class="erupt-input" nzRange
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                [nzMarks]="field.eruptFieldJson.edit.sliderType[0].marks"
-                                               [nzDots]="field.eruptFieldJson.edit.sliderType[0].markPoints.length>0"
+                                               [nzDots]="true"
                                                [nzStep]="field.eruptFieldJson.edit.sliderType[0].step"
                                                [name]="field.fieldName"
                                                [nzMax]="field.eruptFieldJson.edit.sliderType[0].max"
@@ -228,7 +228,7 @@
                                     <nz-slider class="erupt-input"
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                [nzMarks]="field.eruptFieldJson.edit.sliderType[0].marks"
-                                               [nzDots]="field.eruptFieldJson.edit.sliderType[0].markPoints.length>0"
+                                               [nzDots]="true"
                                                [nzStep]="field.eruptFieldJson.edit.sliderType[0].step"
                                                [name]="field.fieldName"
                                                [nzMax]="field.eruptFieldJson.edit.sliderType[0].max"
@@ -324,7 +324,7 @@
                                             <i nz-icon type="close-circle" theme="fill" class="point" (click)="clearValue(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
-                                            <i (click)="createTreeRefModal(field)" nz-icon type="database" theme="fill" class="point"></i>
+                                            <i nz-icon (click)="createTreeRefModal(field)" type="database" theme="fill" class="point"></i>
                                         </ng-container>
                                     </ng-template>
                                 </se>

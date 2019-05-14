@@ -12,10 +12,11 @@
             <i nz-icon type="search"></i>
         </ng-template>
         <br>
-        <nz-card [nzBodyStyle]="{padding:'10px',height:ww-310+'px',overflow: 'auto'}" [nzLoading]="treeLoading" [nzHoverable]="true">
+        <nz-card [nzBodyStyle]="{padding:'10px',height:ww-310+'px',overflow: 'auto'}" [nzLoading]="treeLoading" [nzBordered]="true"
+                 [nzHoverable]="true">
             <nz-tree #tree nzDraggable
                      class="tree-container"
-                     [nzShowLine]="false"
+                     [nzShowLine]="true"
                      [nzData]="nodes"
                      [nzSearchValue]="searchValue"
                      (nzClick)="nodeClickEvent($event)"
@@ -51,7 +52,7 @@
         </div>
         <div [ngStyle]="{height: ww-268+'px',overflow: 'auto'}" class="scrollbar">
             <nz-spin [nzSpinning]="loading" nzSize="large">
-                <nz-card style="margin-bottom: 0;">
+                <nz-card [nzBordered]="true" [nzHoverable]="true" [nzBodyStyle]="{padding:'0'}" style="margin-bottom: 0;">
                     <div style="background: #fff;padding: 10px">
                         <ng-container *ngIf="eruptModel">
                             <erupt-edit-type [eruptModel]="eruptModel" [col]="{xs: 24, sm: 24, md: 24, lg:12,xl: 8}">
