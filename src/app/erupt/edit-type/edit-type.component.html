@@ -11,9 +11,7 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <ng-container
-                                        *ngIf="field.fieldReturnName=='Integer'||field.fieldReturnName=='Double'||field.fieldReturnName=='Float'">
-
+                                <ng-container *ngIf="field.fieldReturnName==='number'">
                                     <ng-container *ngIf="eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague">
                                         <nz-input-group [nzSize]="size" class="erupt-input">
                                             <nz-input-number [nzSize]="size" style="width: 45%;"
@@ -42,9 +40,7 @@
                                                          [nzStep]="1"></nz-input-number>
                                     </ng-container>
                                 </ng-container>
-
-                                <ng-container
-                                        *ngIf="field.fieldReturnName!=='Integer'&&field.fieldReturnName!=='Double'&&field.fieldReturnName!=='Float'">
+                                <ng-container *ngIf="field.fieldReturnName!=='number'">
                                     <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==0&&
                                                              field.eruptFieldJson.edit.inputType.suffix.length==0">
                                         <input nz-input [nzSize]="size" class="erupt-input" autocomplete="off"
@@ -141,13 +137,11 @@
                                     <se [label]="field.eruptFieldJson.edit.title"
                                         [required]="field.eruptFieldJson.edit.notNull"
                                         [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                        <nz-checkbox-wrapper style="width: 100%;line-height: 39px" (nzOnChange)="checkboxChange($event,field)">
-                                            <div nz-row>
-                                                <div nz-col nzSpan="4" *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl">
-                                                    <label nz-checkbox [nzValue]="vl.value"
-                                                           [nzDisabled]="field.eruptFieldJson.edit.readOnly">{{vl.label}}</label>
-                                                </div>
-                                            </div>
+                                        <nz-checkbox-wrapper style="width: 100%;" (nzOnChange)="checkboxChange($event,field)">
+                                            <ng-container *ngFor="let vl of field.eruptFieldJson.edit.choiceType[0].vl">
+                                                <label nz-checkbox [nzValue]="vl.value"
+                                                       [nzDisabled]="field.eruptFieldJson.edit.readOnly">{{vl.label}}</label>
+                                            </ng-container>
                                         </nz-checkbox-wrapper>
                                     </se>
                                 </div>

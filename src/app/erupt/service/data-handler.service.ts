@@ -420,10 +420,11 @@ export class DataHandlerService {
         ef.eruptFieldJson.edit.$tempValue = null;
       }
     });
-    subFieldModels.forEach(sub => {
-      sub.eruptFieldModel.eruptFieldJson.edit.$value = [];
-    });
-
+    if (subFieldModels){
+      subFieldModels.forEach(sub => {
+        sub.eruptFieldModel.eruptFieldJson.edit.$value = [];
+      });
+    }
   }
 
 

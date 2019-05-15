@@ -1,9 +1,8 @@
-import { Injectable, Injector, Inject } from "@angular/core";
-import { Router } from "@angular/router";
+import { Inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { zip } from "rxjs";
 import { catchError } from "rxjs/operators";
-import { MenuService, SettingsService, TitleService, ALAIN_I18N_TOKEN } from "@delon/theme";
+import { MenuService, SettingsService, TitleService } from "@delon/theme";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
 import { ACLService } from "@delon/acl";
 
@@ -11,6 +10,7 @@ import { NzIconService } from "ng-zorro-antd";
 import { ICONS_AUTO } from "../../../style-icons-auto";
 import { ICONS } from "../../../style-icons";
 import { DataService } from "../../erupt/service/data.service";
+import { WindowModel } from "../../erupt/model/window.model";
 
 /**
  * 用于应用启动时
@@ -69,7 +69,9 @@ export class StartupService {
     // }
     // mock
     // 应用信息：包括站点名、描述、年份
-    this.settingService.setApp(window["site"]);
+    this.settingService.setApp({
+      name: WindowModel.title
+    });
     // ACL：设置权限为全量
     this.aclService.setFull(true);
     // 设置页面标题的后缀

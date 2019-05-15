@@ -3,6 +3,7 @@ import { LazyService } from "@delon/util";
 import { DataService } from "../service/data.service";
 import { EruptFieldModel } from "../model/erupt-field.model";
 import { EruptModel } from "../model/erupt.model";
+import { WindowModel } from "../model/window.model";
 
 declare const DecoupledEditor;
 
@@ -43,7 +44,7 @@ export class CkeditorComponent implements OnInit {
           const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
           toolbarContainer.appendChild(editor.ui.view.toolbar.element);
           editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
-            return new UploadAdapter(loader, this.data.domain + "/upload/" + this.erupt.eruptName + "/" + this.eruptField.fieldName);
+            return new UploadAdapter(loader, WindowModel.domain + "/upload/" + this.erupt.eruptName + "/" + this.eruptField.fieldName);
           };
           editor.model.document.on("change:data", function() {
             that.value = editor.getData();

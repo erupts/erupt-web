@@ -1,10 +1,11 @@
 /**
  * Created by liyuepeng on 10/17/18.
  */
+import { WindowModel } from "./window.model";
 
 export class RestPath {
-  public static DONT_INTERCEPT: string = window["domain"] + "/ws/";
-  public static erupt: string = window["domain"] + "/erupt-api";
+  public static DONT_INTERCEPT: string = WindowModel.domain + "/ws/";
+  public static erupt: string = WindowModel.domain + "/erupt-api";
   public static build: string = RestPath.erupt + "/build/";
   public static data: string = RestPath.erupt + "/data/";
   public static excel: string = RestPath.erupt + "/excel/";

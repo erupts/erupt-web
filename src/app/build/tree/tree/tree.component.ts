@@ -2,7 +2,7 @@ import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { ActivatedRoute } from "@angular/router";
-import { NzFormatEmitEvent, NzMessageService, NzModalService } from "ng-zorro-antd";
+import { NzFormatEmitEvent, NzMessageService, NzModalService, NzTreeBaseService } from "ng-zorro-antd";
 import { colRules } from "../../../erupt/model/util.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 
@@ -33,7 +33,7 @@ export class TreeComponent implements OnInit {
 
   private selectLeaf: boolean = false;
 
-  @ViewChild("tree") tree;
+  @ViewChild("tree") tree: NzTreeBaseService;
 
   constructor(private dataService: DataService,
               public route: ActivatedRoute,
@@ -51,8 +51,8 @@ export class TreeComponent implements OnInit {
       this.eruptName = params.name;
       this.fetchTreeData();
       this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
-        this.eruptModel = erupt.eruptModel;
         this.dataHandler.initErupt(erupt.eruptModel);
+        this.eruptModel = erupt.eruptModel;
       });
     });
   }
@@ -73,10 +73,9 @@ export class TreeComponent implements OnInit {
     this.loading = false;
     this.selectLeaf = false;
     if (this.tree.getSelectedNodeList()[0]) {
-      this.tree.getSelectedNodeList()[0].setSelected(false);
+      this.tree.getSelectedNodeList()[0].isSelected = false;
     }
     this.dataHandler.emptyEruptValue(this.eruptModel);
-    // objectToEruptValue(this.eruptModel, {});
   }
 
   add() {

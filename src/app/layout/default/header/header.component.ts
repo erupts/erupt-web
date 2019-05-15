@@ -1,7 +1,8 @@
 import { Component, Inject } from "@angular/core";
 import { SettingsService } from "@delon/theme";
 import * as screenfull from "screenfull";
-import { DA_SERVICE_TOKEN, ITokenService, TokenService } from "@delon/auth";
+import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
+import { CustomerTool, WindowModel } from "../../../erupt/model/window.model";
 
 @Component({
   selector: "layout-header",
@@ -17,11 +18,9 @@ export class HeaderComponent {
 
   collapse: boolean = false;
 
-  title = window["site"]["name"];
+  title = WindowModel.title;
 
-  l_tools: CustomerTool[] = window["l_tools"] || [];
-
-  r_tools: CustomerTool[] = window["r_tools"] || [];
+  r_tools: CustomerTool[] = WindowModel.r_tools;
 
   constructor(public settings: SettingsService, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
   }
@@ -45,14 +44,4 @@ export class HeaderComponent {
   customToolsFun(event: Event, tool: CustomerTool) {
     tool.click && tool.click(event, this.tokenService.get().token);
   }
-}
-
-interface CustomerTool {
-  html: string;
-
-  icon: string;
-
-  mobileShow: boolean;
-
-  click(event: Event, token: string): void;
 }

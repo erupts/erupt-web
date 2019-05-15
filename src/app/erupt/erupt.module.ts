@@ -6,7 +6,6 @@ import { EditTypeComponent } from "./edit-type/edit-type.component";
 
 import { SharedModule } from "../shared/shared.module";
 import { TreeSelectComponent } from "./tree-select/tree-select.component";
-import { HelperService } from "./service/helper.service";
 import { DataHandlerService } from "./service/data-handler.service";
 import { CkeditorComponent } from "./ckeditor/ckeditor.component";
 import { AppConstService } from "./service/app-const.service";
@@ -20,7 +19,6 @@ import { TabTableComponent } from "./tab-table/tab-table.component";
   ],
   providers: [
     DataService,
-    HelperService,
     DataHandlerService,
     AppConstService
   ],

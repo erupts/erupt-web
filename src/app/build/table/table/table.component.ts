@@ -112,7 +112,9 @@ export class TableComponent implements OnInit {
   buildSearchErupt() {
     let copyErupt = <EruptModel>deepCopy(this.eruptModel);
     const searchFieldModels = [];
+    const searchFieldModelsMap: Map<String, EruptFieldModel> = new Map();
     copyErupt.eruptFieldModels.forEach((field) => {
+      searchFieldModelsMap.set(field.fieldName, field);
       if (field.eruptFieldJson.edit.search.value) {
         field.value = null;
         field.eruptFieldJson.edit.notNull = false;
@@ -128,8 +130,8 @@ export class TableComponent implements OnInit {
     });
     copyErupt.mode = "search";
     copyErupt.eruptFieldModels = searchFieldModels;
+    copyErupt.eruptFieldModelMap = searchFieldModelsMap;
     this.searchErupt = copyErupt;
-    this.dataHandler.initErupt(this.searchErupt);
   }
 
   buildSubErupt(subErupts: Array<EruptAndEruptFieldModel>) {
@@ -423,9 +425,18 @@ export class TableComponent implements OnInit {
 
   }
 
+  downloadExcelTemplate() {
+    this.dataService.downloadExcelTemplate(this.eruptModel.eruptName);
+  }
+
   // excel导出
   exportExcel() {
-    window.open(window["domain"] + "/erupt-api/excel/export/" + this.eruptModel.eruptName);
+
+  }
+
+  // excel导入
+  importableExcel() {
+    this.msg.success("导入");
   }
 
 }

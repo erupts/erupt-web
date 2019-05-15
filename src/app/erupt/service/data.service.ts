@@ -9,17 +9,16 @@ import { Observable } from "rxjs";
 import { loginModel } from "../model/user.model";
 import { EruptApiModel } from "../model/erupt-api.model";
 import { EruptPageModel } from "../model/erupt-page.model";
-import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
+import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
 import { RestPath } from "../model/erupt.enum";
+import { WindowModel } from "../model/window.model";
 
 @Injectable()
 export class DataService {
 
-  public domain: string = window["domain"];
-
   public upload: string = RestPath.file + "upload/";
 
-  constructor(private http: HttpClient, private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
+  constructor(private http: HttpClient, private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
   }
 
   //获取结构
@@ -163,7 +162,12 @@ export class DataService {
 
   //获取菜单列表
   getMenu(): Observable<Array<any>> {
-    return this._http.get(this.domain + "/menu", null);
+    return this._http.get(WindowModel.domain + "/menu", null);
+  }
+
+  //获取菜单列表
+  downloadExcelTemplate(modelName: string) {
+    window.open(RestPath.excel + "template/" + modelName + "?_erupt=" + modelName + "&_token=" + this.tokenService.get().token);
   }
 
   //获取验证码
