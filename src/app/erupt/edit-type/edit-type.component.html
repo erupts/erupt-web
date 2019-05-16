@@ -371,15 +371,14 @@
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <ng-container [ngSwitch]="field.eruptFieldJson.edit.attachmentType[0].type">
                                     <ng-container *ngSwitchCase="attachmentEnum.IMAGE">
-                                        <nz-upload
+                                        <nz-upload nzListType="picture-card"
                                                 [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                 [nzMultiple]="false"
-                                                nzListType="picture-card"
                                                 [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
-                                                [nzLimit]="1"
+                                                [nzLimit]="field.eruptFieldJson.edit.attachmentType[0].maxLimit"
                                                 (nzChange)="upLoadNzChange($event,field)"
                                                 [nzPreview]="previewImageHandler"
-                                                [nzShowButton]="!field.eruptFieldJson.edit.$viewValue || field.eruptFieldJson.edit.$viewValue.length==0"
+                                                [nzShowButton]="field.eruptFieldJson.edit.$viewValue.length!=field.eruptFieldJson.edit.attachmentType[0].maxLimit || field.eruptFieldJson.edit.attachmentType[0].maxLimit==0"
                                                 [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
                                                 [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
                                             <p class="ant-upload-drag-icon">
@@ -388,10 +387,11 @@
                                         </nz-upload>
                                     </ng-container>
                                     <ng-container *ngSwitchCase="attachmentEnum.OTHER">
-                                        <nz-upload
-                                                nzType="drag"
+                                        <nz-upload nzType="drag"
+                                                [nzLimit]="field.eruptFieldJson.edit.attachmentType[0].maxLimit"
                                                 [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                 (nzChange)="upLoadNzChange($event,field)"
+                                                [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
                                                 [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
                                                 [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
                                             <p class="ant-upload-drag-icon">

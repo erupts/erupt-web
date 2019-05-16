@@ -1,0 +1,15 @@
+<div class="text-center">
+    <ng-container *ngIf="images.length==1">
+        <img class="full-max-width" [src]="images[0]"/>
+    </ng-container>
+    <nz-spin *ngIf="images.length>1&&!show">
+
+    </nz-spin>
+    <ng-container *ngIf="images.length>1&&show">
+        <nz-carousel style="background: #09f">
+            <div nz-carousel-content *ngFor="let img of images">
+                <img class="full-max-width" [src]="img"/>
+            </div>
+        </nz-carousel>
+    </ng-container>
+</div>

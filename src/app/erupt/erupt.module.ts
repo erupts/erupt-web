@@ -10,6 +10,7 @@ import { DataHandlerService } from "./service/data-handler.service";
 import { CkeditorComponent } from "./ckeditor/ckeditor.component";
 import { AppConstService } from "./service/app-const.service";
 import { TabTableComponent } from "./tab-table/tab-table.component";
+import { CarouselImgComponent } from './components/carousel-img/carousel-img.component';
 
 @NgModule({
   imports: [
@@ -24,13 +25,15 @@ import { TabTableComponent } from "./tab-table/tab-table.component";
   ],
   exports: [
     EditTypeComponent,
-    TabTableComponent
+    TabTableComponent,
+    CarouselImgComponent
   ],
   entryComponents: [
     EditTypeComponent,
-    TreeSelectComponent
+    TreeSelectComponent,
+    CarouselImgComponent
   ],
-  declarations: [EditTypeComponent, TreeSelectComponent, CkeditorComponent, TabTableComponent]
+  declarations: [EditTypeComponent, TreeSelectComponent, CkeditorComponent, TabTableComponent, CarouselImgComponent]
 })
 export class EruptModule {
 }

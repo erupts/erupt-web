@@ -1,4 +1,4 @@
-import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, TabEnum, ViewType } from "./erupt.enum";
+import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, SaveMode, TabEnum, ViewType } from "./erupt.enum";
 
 /**
  * Created by liyuepeng on 10/17/18.
@@ -137,6 +137,8 @@ interface AttachmentType {
   path: String;
   maxLimit: number;
   type: AttachmentEnum;
+  fileSeparator: string;
+  saveMode:SaveMode;
 }
 
 

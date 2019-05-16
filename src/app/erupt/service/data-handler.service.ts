@@ -1,13 +1,14 @@
 import { EruptFieldModel } from "../model/erupt-field.model";
 import { EruptModel, Tree } from "../model/erupt.model";
-import { ChoiceEnum, EditType, TabEnum, ViewType } from "../model/erupt.enum";
+import { ChoiceEnum, EditType, SaveMode, TabEnum, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
-import { NzMessageService, NzModalService } from "ng-zorro-antd";
+import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
 import { Inject, Injectable } from "@angular/core";
 import { QrComponent } from "@shared/qr/qr.component";
 import { EruptAndEruptFieldModel } from "../model/erupt-page.model";
 import { DataService } from "./data.service";
+import { CarouselImgComponent } from "../components/carousel-img/carousel-img.component";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -115,22 +116,35 @@ export class DataHandlerService {
           obj.className = "text-center";
           obj.format = (item: any) => {
             if (item[view.column]) {
-              return `<img width="100%" class="text-center" src="${DataService.previewAttachment(erupt.eruptName, item[view.column])}" />`;
+              const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType[0];
+              let img = item[view.column];
+              if (attachmentType.maxLimit != 1) {
+                img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
+              }
+              return `<img width="100%" class="text-center" src="${DataService.previewAttachment(erupt.eruptName, img)}" />`;
             } else {
               return "";
             }
           };
           obj.click = (item) => {
+            const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType[0];
+            let images: string[] = item[view.column];
+            if (attachmentType.maxLimit != 1) {
+              images = (<string>item[view.column]).split(attachmentType.fileSeparator);
+              for (let key in images) {
+                images[key] = DataService.previewAttachment(erupt.eruptName, images[key]);
+              }
+            }
             this.modal.create({
-              nzBodyStyle: {
-                textAlign: "center"
-              },
               nzWrapClassName: "modal-lg",
               nzMaskClosable: true,
               nzKeyboard: true,
               nzFooter: null,
               nzTitle: "查看图片",
-              nzContent: `<img class="full-max-width" src="${DataService.previewAttachment(erupt.eruptName, item[view.column])}"/>`
+              nzContent: CarouselImgComponent,
+              nzComponentParams: {
+                images: images
+              }
             });
           };
           break;
@@ -302,6 +316,21 @@ export class DataHandlerService {
             field.eruptFieldJson.edit.$value = null;
           }
           break;
+        case EditType.ATTACHMENT:
+          if (field.eruptFieldJson.edit.attachmentType[0].saveMode === SaveMode.SINGLE_COLUMN) {
+            if (field.eruptFieldJson.edit.$viewValue) {
+              const $value: string[] = [];
+              console.log(field.eruptFieldJson.edit.$viewValue);
+              (<UploadFile[]>field.eruptFieldJson.edit.$viewValue).forEach(val => {
+                console.log(val);
+                $value.push(val.response.data);
+              });
+              eruptData[field.fieldName] = $value.join(field.eruptFieldJson.edit.attachmentType[0].fileSeparator);
+            }
+          } else {
+            this.msg.warning("该模式暂不可用");
+          }
+          break;
         default:
           eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
           break;
@@ -375,10 +404,24 @@ export class DataHandlerService {
             break;
           case EditType.ATTACHMENT:
             if (object[field.fieldName]) {
-              field.eruptFieldJson.edit.$viewValue = [{
-                url: DataService.previewAttachment(eruptModel.eruptName, object[field.fieldName])
-              }];
-              field.eruptFieldJson.edit.$value = object[field.fieldName];
+              if (field.eruptFieldJson.edit.attachmentType[0].saveMode === SaveMode.SINGLE_COLUMN) {
+                field.eruptFieldJson.edit.$viewValue = [];
+                (<string>object[field.fieldName]).split(field.eruptFieldJson.edit.attachmentType[0].fileSeparator)
+                  .forEach(str => {
+                    // @ts-ignore
+                    (<UploadFile[]>field.eruptFieldJson.edit.$viewValue).push({
+                      uid: str,
+                      name: str,
+                      url: DataService.previewAttachment(eruptModel.eruptName, str),
+                      response: {
+                        data: str
+                      }
+                    });
+                  });
+                field.eruptFieldJson.edit.$value = object[field.fieldName];
+              } else {
+                this.msg.warning("该功能尚未实现");
+              }
             } else {
               field.eruptFieldJson.edit.$viewValue = [];
             }
@@ -420,7 +463,7 @@ export class DataHandlerService {
         ef.eruptFieldJson.edit.$tempValue = null;
       }
     });
-    if (subFieldModels){
+    if (subFieldModels) {
       subFieldModels.forEach(sub => {
         sub.eruptFieldModel.eruptFieldJson.edit.$value = [];
       });

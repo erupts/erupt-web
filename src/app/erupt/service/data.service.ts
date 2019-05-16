@@ -175,7 +175,7 @@ export class DataService {
     return RestPath.DONT_INTERCEPT + "code-img" + "?account=" + account + "&_t" + new Date().getTime();
   }
 
-  //读取附件
+  //生成附件地址
   static previewAttachment(eruptName: string, path: string): string {
     return RestPath.DONT_INTERCEPT + "preview-attachment?path=" + path;
   }

@@ -66,3 +66,8 @@ export enum ChoiceEnum {
   TAGS = "TAGS"
 }
 
+
+export enum SaveMode {
+  SINGLE_COLUMN = "SINGLE_COLUMN",
+  MULTI_ROW = "MULTI_ROW"
+}

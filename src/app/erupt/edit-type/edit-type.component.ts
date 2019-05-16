@@ -68,14 +68,12 @@ export class EditTypeComponent implements OnInit {
   upLoadNzChange({ file, fileList }, field: EruptFieldModel) {
     const status = file.status;
     if (status === "done") {
-      if (file.response.success) {
-        field.eruptFieldJson.edit.$value = file.response.data;
-      } else {
+      console.log(file);
+      if (!file.response.success) {
         this.modal.error({
           nzTitle: "Error",
           nzContent: file.response.message
         });
-        console.log(field.eruptFieldJson.edit.$viewValue);
         field.eruptFieldJson.edit.$viewValue.pop();
       }
     } else if (status === "error") {
