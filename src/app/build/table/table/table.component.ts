@@ -11,7 +11,7 @@ import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 import { deepCopy } from "@delon/util";
-import { RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
+import { EditType, RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 
 @Component({
@@ -123,9 +123,6 @@ export class TableComponent implements OnInit {
         field.eruptFieldJson.edit.$viewValue = null;
         field.eruptFieldJson.edit.$tempValue = null;
         searchFieldModels.push(field);
-        if (field.eruptFieldJson.edit.search.vague) {
-          field.eruptFieldJson.edit.$value = [];
-        }
       }
     });
     copyErupt.mode = "search";
@@ -164,20 +161,14 @@ export class TableComponent implements OnInit {
   query() {
     if (this.searchErupt.eruptFieldModels.length > 0) {
       this.stConfig.req.param = {};
+      this.stConfig.req.param = this.dataHandler.eruptValueToObject(this.searchErupt);
+      //parse search vague value
       this.searchErupt.eruptFieldModels.forEach(field => {
-        const val = field.eruptFieldJson.edit.$value;
-        if (val instanceof Array) {
-          if (val.length != 2) {
-            return;
-          } else {
-            let v2 = val[0] + val[1];
-            if (v2 == undefined || v2 === "") {
-              return;
-            }
+        const edit = field.eruptFieldJson.edit;
+        if (edit.search.vague) {
+          if (edit.type === EditType.INPUT && field.fieldReturnName === "number") {
+            this.stConfig.req.param[field.fieldName] = [edit.$l_val, edit.$r_val];
           }
-        }
-        if (val != undefined && val !== "") {
-          this.stConfig.req.param[field.fieldName] = val;
         }
       });
     }

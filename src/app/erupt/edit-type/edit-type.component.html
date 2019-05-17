@@ -365,44 +365,46 @@
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.ATTACHMENT">
-                        <div nz-col [nzSpan]="24">
-                            <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <ng-container [ngSwitch]="field.eruptFieldJson.edit.attachmentType[0].type">
-                                    <ng-container *ngSwitchCase="attachmentEnum.IMAGE">
-                                        <nz-upload nzListType="picture-card"
-                                                [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                [nzMultiple]="false"
-                                                [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
-                                                [nzLimit]="field.eruptFieldJson.edit.attachmentType[0].maxLimit"
-                                                (nzChange)="upLoadNzChange($event,field)"
-                                                [nzPreview]="previewImageHandler"
-                                                [nzShowButton]="field.eruptFieldJson.edit.$viewValue.length!=field.eruptFieldJson.edit.attachmentType[0].maxLimit || field.eruptFieldJson.edit.attachmentType[0].maxLimit==0"
-                                                [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
-                                                [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
-                                            <p class="ant-upload-drag-icon">
-                                                <i nz-icon type="plus"></i>
-                                            </p>
-                                        </nz-upload>
+                        <ng-container *ngIf="eruptModel.mode!='search'">
+                            <div nz-col [nzSpan]="24">
+                                <se [label]="field.eruptFieldJson.edit.title"
+                                    [required]="field.eruptFieldJson.edit.notNull"
+                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                    <ng-container [ngSwitch]="field.eruptFieldJson.edit.attachmentType[0].type">
+                                        <ng-container *ngSwitchCase="attachmentEnum.IMAGE">
+                                            <nz-upload nzListType="picture-card"
+                                                       [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                       [nzMultiple]="false"
+                                                       [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
+                                                       [nzLimit]="field.eruptFieldJson.edit.attachmentType[0].maxLimit"
+                                                       (nzChange)="upLoadNzChange($event,field)"
+                                                       [nzPreview]="previewImageHandler"
+                                                       [nzShowButton]="field.eruptFieldJson.edit.$viewValue.length!=field.eruptFieldJson.edit.attachmentType[0].maxLimit || field.eruptFieldJson.edit.attachmentType[0].maxLimit==0"
+                                                       [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
+                                                       [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
+                                                <p class="ant-upload-drag-icon">
+                                                    <i nz-icon type="plus"></i>
+                                                </p>
+                                            </nz-upload>
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="attachmentEnum.OTHER">
+                                            <nz-upload nzType="drag"
+                                                       [nzLimit]="field.eruptFieldJson.edit.attachmentType[0].maxLimit"
+                                                       [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                       (nzChange)="upLoadNzChange($event,field)"
+                                                       [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
+                                                       [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
+                                                       [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
+                                                <p class="ant-upload-drag-icon">
+                                                    <i nz-icon type="inbox"></i>
+                                                </p>
+                                                <p class="ant-upload-text">单击或拖动文件到此区域上传</p>
+                                            </nz-upload>
+                                        </ng-container>
                                     </ng-container>
-                                    <ng-container *ngSwitchCase="attachmentEnum.OTHER">
-                                        <nz-upload nzType="drag"
-                                                [nzLimit]="field.eruptFieldJson.edit.attachmentType[0].maxLimit"
-                                                [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                (nzChange)="upLoadNzChange($event,field)"
-                                                [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
-                                                [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
-                                                [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
-                                            <p class="ant-upload-drag-icon">
-                                                <i nz-icon type="inbox"></i>
-                                            </p>
-                                            <p class="ant-upload-text">单击或拖动文件到此区域上传</p>
-                                        </nz-upload>
-                                    </ng-container>
-                                </ng-container>
-                            </se>
-                        </div>
+                                </se>
+                            </div>
+                        </ng-container>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.DEPEND_SWITCH">
                         <div nz-col [nzSpan]="24">

@@ -287,11 +287,13 @@ export class DataHandlerService {
     eruptModel.eruptFieldModels.forEach(field => {
       switch (field.eruptFieldJson.edit.type) {
         case EditType.INPUT:
-          const inputType = field.eruptFieldJson.edit.inputType;
-          if (inputType.prefixValue || inputType.suffixValue) {
-            eruptData[field.fieldName] = (inputType.prefixValue || "") + field.eruptFieldJson.edit.$value + (inputType.suffixValue || "");
-          } else {
-            eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+          if (field.eruptFieldJson.edit.$value) {
+            const inputType = field.eruptFieldJson.edit.inputType;
+            if (inputType.prefixValue || inputType.suffixValue) {
+              eruptData[field.fieldName] = (inputType.prefixValue || "") + field.eruptFieldJson.edit.$value + (inputType.suffixValue || "");
+            } else {
+              eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+            }
           }
           break;
         case EditType.CHOICE:
@@ -322,7 +324,6 @@ export class DataHandlerService {
               const $value: string[] = [];
               console.log(field.eruptFieldJson.edit.$viewValue);
               (<UploadFile[]>field.eruptFieldJson.edit.$viewValue).forEach(val => {
-                console.log(val);
                 $value.push(val.response.data);
               });
               eruptData[field.fieldName] = $value.join(field.eruptFieldJson.edit.attachmentType[0].fileSeparator);
@@ -332,7 +333,9 @@ export class DataHandlerService {
           }
           break;
         default:
-          eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+          if (field.eruptFieldJson.edit.$value){
+            eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+          }
           break;
       }
     });
