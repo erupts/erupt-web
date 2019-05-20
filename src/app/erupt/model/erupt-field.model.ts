@@ -119,6 +119,7 @@ interface SliderType {
   max: number;
   step: number;
   markPoints: number[];
+  dots: boolean;
   marks?: any;
 }
 

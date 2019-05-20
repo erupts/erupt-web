@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from "@angular/core";
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from "@angular/core";
 import { EruptFieldModel } from "../model/erupt-field.model";
 import { AttachmentEnum, ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
@@ -24,6 +24,8 @@ export class EditTypeComponent implements OnInit {
 
   @Input() layout: "horizontal" | "vertical" = "vertical";
 
+  @Output() search = new EventEmitter();
+
   eruptFieldModels: Array<EruptFieldModel>;
 
   editType = EditType;
@@ -42,6 +44,12 @@ export class EditTypeComponent implements OnInit {
 
   ngOnInit() {
     this.eruptFieldModels = this.eruptModel.eruptFieldModels;
+  }
+
+  enterEvent(event) {
+    if (event.which === 13) {
+      this.search.emit();
+    }
   }
 
   dependChange(value: number, field: EruptFieldModel) {

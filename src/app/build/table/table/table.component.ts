@@ -408,6 +408,10 @@ export class TableComponent implements OnInit {
     }
   }
 
+  clearCondition() {
+    this.dataHandler.emptyEruptValue(this.searchErupt);
+  }
+
   // table checkBox 触发事件
   tableDataChange(event: STData) {
     if (event.type === "checkbox") {

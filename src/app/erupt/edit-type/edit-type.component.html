@@ -44,6 +44,8 @@
                                     <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==0&&
                                                              field.eruptFieldJson.edit.inputType.suffix.length==0">
                                         <input nz-input [nzSize]="size" class="erupt-input" autocomplete="off"
+                                               [ngStyle]="{borderStyle:field.eruptFieldJson.edit.search.vague?'dashed':''}"
+                                               (keyup)="enterEvent($event)"
                                                [maxLength]="field.eruptFieldJson.edit.inputType.length"
                                                [placeholder]="field.eruptFieldJson.edit.inputType.placeholder"
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
@@ -210,8 +212,8 @@
                                     <nz-slider class="erupt-input" nzRange
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                [nzMarks]="field.eruptFieldJson.edit.sliderType[0].marks"
-                                               [nzDots]="true"
-                                               [nzStep]="field.eruptFieldJson.edit.sliderType[0].step"
+                                               [nzDots]="field.eruptFieldJson.edit.sliderType[0].dots"
+                                               [nzStep]="field.eruptFieldJson.edit.sliderType[0].dots?null:field.eruptFieldJson.edit.sliderType[0].step"
                                                [name]="field.fieldName"
                                                [nzMax]="field.eruptFieldJson.edit.sliderType[0].max"
                                                [nzMin]="field.eruptFieldJson.edit.sliderType[0].min"
@@ -222,7 +224,7 @@
                                     <nz-slider class="erupt-input"
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                [nzMarks]="field.eruptFieldJson.edit.sliderType[0].marks"
-                                               [nzDots]="true"
+                                               [nzDots]="field.eruptFieldJson.edit.sliderType[0].dots"
                                                [nzStep]="field.eruptFieldJson.edit.sliderType[0].step"
                                                [name]="field.fieldName"
                                                [nzMax]="field.eruptFieldJson.edit.sliderType[0].max"
