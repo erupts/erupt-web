@@ -1,6 +1,6 @@
 import { EruptFieldModel } from "../model/erupt-field.model";
 import { EruptModel, Tree } from "../model/erupt.model";
-import { ChoiceEnum, EditType, SaveMode, TabEnum, ViewType } from "../model/erupt.enum";
+import { ChoiceEnum, DateEnum, EditType, SaveMode, TabEnum, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
 import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
@@ -287,12 +287,23 @@ export class DataHandlerService {
     eruptModel.eruptFieldModels.forEach(field => {
       switch (field.eruptFieldJson.edit.type) {
         case EditType.INPUT:
-          if (field.eruptFieldJson.edit.$value) {
-            const inputType = field.eruptFieldJson.edit.inputType;
-            if (inputType.prefixValue || inputType.suffixValue) {
-              eruptData[field.fieldName] = (inputType.prefixValue || "") + field.eruptFieldJson.edit.$value + (inputType.suffixValue || "");
+          const edit = field.eruptFieldJson.edit;
+          if (edit.search.vague) {
+            if (edit.type === EditType.INPUT && field.fieldReturnName === "number") {
+              if (edit.$l_val && edit.$r_val) {
+                eruptData[field.fieldName] = [edit.$l_val, edit.$r_val];
+              }
             } else {
               eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+            }
+          } else {
+            if (field.eruptFieldJson.edit.$value) {
+              const inputType = field.eruptFieldJson.edit.inputType;
+              if (inputType.prefixValue || inputType.suffixValue) {
+                eruptData[field.fieldName] = (inputType.prefixValue || "") + field.eruptFieldJson.edit.$value + (inputType.suffixValue || "");
+              } else {
+                eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+              }
             }
           }
           break;
@@ -308,6 +319,40 @@ export class DataHandlerService {
             }
           } else {
             eruptData[field.fieldName] = null;
+          }
+          break;
+        case EditType.DATE:
+          if (field.eruptFieldJson.edit.$value) {
+            //日期格式
+            if (field.eruptFieldJson.edit.dateType[0].type === DateEnum.DATE) {
+              if (field.eruptFieldJson.edit.search.vague) {
+                if (field.eruptFieldJson.edit.$value.length > 0) {
+                  eruptData[field.fieldName] = [new Date(field.eruptFieldJson.edit.$value[0]).toISOString().substr(0, 10) + " 00:00:00"
+                    , new Date(field.eruptFieldJson.edit.$value[1]).toISOString().substr(0, 10) + " 23:59:59"];
+                }
+              } else {
+                eruptData[field.fieldName] = new Date(field.eruptFieldJson.edit.$value).toISOString().substr(0, 10);
+              }
+            }
+            //时间日期格式
+            else if (field.eruptFieldJson.edit.dateType[0].type === DateEnum.DATE_TIME) {
+              if (field.eruptFieldJson.edit.search.vague) {
+                if (field.eruptFieldJson.edit.$value.length > 0) {
+                  let l_isoStr = new Date(field.eruptFieldJson.edit.$value[0]).toISOString();
+                  let r_isoStr = new Date(field.eruptFieldJson.edit.$value[1]).toISOString();
+                  eruptData[field.fieldName] =
+                    [
+                      l_isoStr.substr(0, 10) + " " + l_isoStr.substr(11, 8),
+                      r_isoStr.substr(0, 10) + " " + r_isoStr.substr(11, 8)
+                    ];
+                }
+              } else {
+                let isoStr = new Date(field.eruptFieldJson.edit.$value).toISOString();
+                eruptData[field.fieldName] = isoStr.substr(0, 10) + " " + isoStr.substr(11, 8);
+              }
+            } else {
+              eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+            }
           }
           break;
         case EditType.REFERENCE:
@@ -333,7 +378,7 @@ export class DataHandlerService {
           }
           break;
         default:
-          if (field.eruptFieldJson.edit.$value){
+          if (field.eruptFieldJson.edit.$value) {
             eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
           }
           break;
@@ -436,6 +481,8 @@ export class DataHandlerService {
               } else {
                 field.eruptFieldJson.edit.$value = [];
               }
+            } else {
+              field.eruptFieldJson.edit.$value = object[field.fieldName];
             }
             break;
           default:
@@ -458,12 +505,14 @@ export class DataHandlerService {
 
   emptyEruptValue(eruptModel: EruptModel, subFieldModels?: Array<EruptAndEruptFieldModel>) {
     eruptModel.eruptFieldModels.forEach(ef => {
-      if (ef.eruptFieldJson.edit.type == EditType.BOOLEAN) {
+      if (ef.eruptFieldJson.edit.type == EditType.BOOLEAN && eruptModel.mode !== "search") {
         ef.eruptFieldJson.edit.$value = ef.eruptFieldJson.edit.boolType[0].defaultValue;
       } else {
         ef.eruptFieldJson.edit.$value = null;
         ef.eruptFieldJson.edit.$viewValue = null;
         ef.eruptFieldJson.edit.$tempValue = null;
+        ef.eruptFieldJson.edit.$l_val = null;
+        ef.eruptFieldJson.edit.$r_val = null;
       }
     });
     if (subFieldModels) {

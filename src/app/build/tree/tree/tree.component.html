@@ -1,4 +1,4 @@
-<page-header></page-header>
+<page-header [autoTitle]="false" [title]="null"></page-header>
 <div nz-row [nzGutter]="24" *ngIf="eruptModel">
     <div nz-col [nzXs]="24" [nzSm]="8" [nzMd]="8" [nzLg]="8">
         <button nz-button nzType="dashed" nzBlock (click)="addBlock()" style="margin-bottom: 10px"
@@ -12,7 +12,7 @@
             <i nz-icon type="search"></i>
         </ng-template>
         <br>
-        <nz-card [nzBodyStyle]="{padding:'10px',height:ww-310+'px',overflow: 'auto'}" [nzLoading]="treeLoading" [nzBordered]="true"
+        <nz-card [nzBodyStyle]="{padding:'10px',height:ww-270+'px',overflow: 'auto'}" [nzLoading]="treeLoading" [nzBordered]="true"
                  [nzHoverable]="true">
             <nz-tree #tree nzDraggable
                      class="tree-container"
@@ -50,7 +50,7 @@
                 </button>
             </div>
         </div>
-        <div [ngStyle]="{height: ww-268+'px',overflow: 'auto'}" class="scrollbar">
+        <div [ngStyle]="{height: ww-228+'px',overflow: 'auto',overflowX:'hidden'}" class="scrollbar">
             <nz-spin [nzSpinning]="loading" nzSize="large">
                 <nz-card [nzBordered]="true" [nzHoverable]="true" [nzBodyStyle]="{padding:'0'}" style="margin-bottom: 0;">
                     <div style="background: #fff;padding: 10px">

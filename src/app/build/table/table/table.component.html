@@ -1,85 +1,85 @@
-<page-header></page-header>
-<ng-container *ngIf="!eruptModel">
-    <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
-</ng-container>
-<div *ngIf="eruptModel">
-    <!--operator start-->
-    <div style="margin-bottom: 5px;">
-        <ng-container *ngIf="eruptModel.eruptJson.power.add">
-            <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
-                <i nz-icon type="plus" theme="outline"></i>新增
-            </button>
-        </ng-container>
-
-        <ng-container *ngIf="eruptModel.eruptJson.power.delete">
-            <button nz-button nzType="danger" class="mb-sm" (click)="delRows()">
-                <i nz-icon type="delete" theme="outline"></i>删除
-            </button>
-        </ng-container>
-
-        <ng-container *ngIf="eruptModel.eruptJson.power.export">
-            <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()">
-                <i nz-icon type="download" theme="outline"></i>下载
-            </button>
-        </ng-container>
-
-        <ng-container *ngIf="eruptModel.eruptJson.power.importable">
-            &nbsp;
-            <nz-dropdown-button (nzClick)="importableExcel()">
-                导入Excel
-                <ul nz-menu>
-                    <li nz-menu-item (click)="downloadExcelTemplate()">下载模板</li>
-                </ul>
-            </nz-dropdown-button>
-        </ng-container>
-
-        <ng-container *ngIf="eruptModel.eruptJson.power.query">
-            <nz-divider nzType="vertical"></nz-divider>
-            <button nz-button nzType="primary" class="mb-sm" (click)="query()">
-                <i nz-icon type="search" theme="outline"></i>查询
-            </button>
-        </ng-container>
-        <nz-divider nzType="vertical" *ngIf="eruptModel.eruptJson.rowOperation.length>0"></nz-divider>
-
-        <ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">
-            <ng-container *ngIf="oper.multi">
-                <button nz-button nzType="dashed" class="mb-sm" (click)="gcOperatorEdits(oper.code,true)">
-                    <i class="fa" [ngClass]="oper.icon"></i>
-                    {{oper.title}}
+<page-header [autoTitle]="false" [title]="null"></page-header>
+<nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" [nzLoading]="!eruptModel">
+    <ng-container *ngIf="eruptModel">
+        <div style="margin-bottom: 5px;">
+            <ng-container *ngIf="eruptModel.eruptJson.power.add">
+                <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
+                    <i nz-icon type="plus" theme="outline"></i>新增
                 </button>
             </ng-container>
-        </ng-container>
 
-        <ng-container *ngIf="searchErupt.eruptFieldModels.length>0">
-            <button nz-button [nzType]="hideCondition?'default':'danger'" class="mb-sm float-right"
-                    (click)="hideCondition=!hideCondition">
-                <i nz-icon [type]="hideCondition?'codepen':'close'" theme="outline"></i>
-            </button>
-            <button *ngIf="!hideCondition" nz-button (click)="clearCondition()" class="mb-sm float-right">重置条件</button>
-        </ng-container>
-    </div>
+            <ng-container *ngIf="eruptModel.eruptJson.power.delete">
+                <button nz-button nzType="danger" class="mb-sm" (click)="delRows()">
+                    <i nz-icon type="delete" theme="outline"></i>删除
+                </button>
+            </ng-container>
 
-    <!--<nz-divider nzDashed="true" style="margin:2px 0 8px;border-width: 2px"></nz-divider>-->
+            <ng-container *ngIf="eruptModel.eruptJson.power.export">
+                <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()">
+                    <i nz-icon type="download" theme="outline"></i>下载
+                </button>
+            </ng-container>
 
-    <nz-card *ngIf="searchErupt.eruptFieldModels.length>0" [nzBodyStyle]="{padding:'10px 5px'}"
-             style="background: #fafafa;margin-bottom: 0;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)" [hidden]="hideCondition">
-        <erupt-edit-type [eruptModel]="searchErupt"
-                         [col]="{ xs: 24, sm: 24, md: 12, lg: 8, xl: 8, xxl: 6 }"
-                         (search)="query()"
-                         size="default"
-                         layout="horizontal"
-        >
-        </erupt-edit-type>
-    </nz-card>
-    <!--y: 'calc(100vh - 400px)'-->
-    <st #st
-        [data]="stConfig.url" [columns]="columns"
-        [scroll]="{x: (clientWidth > 768 ? eruptModel.tableColumns.length * 110 : 0) + 'px'}"
-        (change)="tableDataChange($event)"
-        [bordered]="true"
-        [multiSort]="stConfig.multiSort"
-        [page]="stConfig.stPage"
-        [req]="stConfig.req"
-        size="middle">
-    </st>
-</div>
+            <ng-container *ngIf="eruptModel.eruptJson.power.importable">
+                &nbsp;
+                <nz-dropdown-button (nzClick)="importableExcel()">
+                    导入Excel
+                    <ul nz-menu>
+                        <li nz-menu-item (click)="downloadExcelTemplate()">下载模板</li>
+                    </ul>
+                </nz-dropdown-button>
+            </ng-container>
+
+            <ng-container *ngIf="eruptModel.eruptJson.power.query">
+                <nz-divider nzType="vertical"></nz-divider>
+                <button nz-button nzType="primary" class="mb-sm" (click)="query()">
+                    <i nz-icon type="search" theme="outline"></i>查询
+                </button>
+            </ng-container>
+            <nz-divider nzType="vertical" *ngIf="eruptModel.eruptJson.rowOperation.length>0"></nz-divider>
+
+            <ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">
+                <ng-container *ngIf="oper.multi">
+                    <button nz-button nzType="dashed" class="mb-sm" (click)="gcOperatorEdits(oper.code,true)">
+                        <i class="fa" [ngClass]="oper.icon"></i>
+                        {{oper.title}}
+                    </button>
+                </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="searchErupt.eruptFieldModels.length>0">
+                <button nz-button [nzType]="hideCondition?'default':'danger'" class="mb-sm float-right"
+                        (click)="hideCondition=!hideCondition">
+                    <i nz-icon [type]="hideCondition?'codepen':'close'" theme="outline"></i>
+                </button>
+                <button *ngIf="!hideCondition" nz-button (click)="clearCondition()" class="mb-sm float-right">
+                    <i nz-icon nzType="sync" nzTheme="outline"></i>重置条件
+                </button>
+            </ng-container>
+        </div>
+
+        <!--<nz-divider nzDashed="true" style="margin:2px 0 8px;border-width: 2px"></nz-divider>-->
+
+        <nz-card *ngIf="searchErupt.eruptFieldModels.length>0" [nzBodyStyle]="{padding:'10px 5px'}"
+                 style="background: #fafafa;margin-bottom: 0;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)" [hidden]="hideCondition">
+            <erupt-edit-type [eruptModel]="searchErupt"
+                             [col]="{ xs: 24, sm: 24, md: 12, lg: 8, xl: 8, xxl: 6 }"
+                             (search)="query()"
+                             size="default"
+                             layout="horizontal"
+            >
+            </erupt-edit-type>
+        </nz-card>
+        <!--y: 'calc(100vh - 400px)'-->
+        <st #st
+            [data]="stConfig.url" [columns]="columns"
+            [scroll]="{x: (clientWidth > 768 ? eruptModel.tableColumns.length * 110 : 0) + 'px'}"
+            (change)="tableDataChange($event)"
+            [bordered]="true"
+            [multiSort]="stConfig.multiSort"
+            [page]="stConfig.stPage"
+            [req]="stConfig.req"
+            size="middle">
+        </st>
+    </ng-container>
+</nz-skeleton>

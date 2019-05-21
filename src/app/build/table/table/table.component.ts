@@ -47,8 +47,6 @@ export class TableComponent implements OnInit {
 
   subErupts: Array<EruptAndEruptFieldModel>;
 
-  table = window["table"];
-
   stConfig = {
     url: null,
     stPage: {
@@ -162,15 +160,6 @@ export class TableComponent implements OnInit {
     if (this.searchErupt.eruptFieldModels.length > 0) {
       this.stConfig.req.param = {};
       this.stConfig.req.param = this.dataHandler.eruptValueToObject(this.searchErupt);
-      //parse search vague value
-      this.searchErupt.eruptFieldModels.forEach(field => {
-        const edit = field.eruptFieldJson.edit;
-        if (edit.search.vague) {
-          if (edit.type === EditType.INPUT && field.fieldReturnName === "number") {
-            this.stConfig.req.param[field.fieldName] = [edit.$l_val, edit.$r_val];
-          }
-        }
-      });
     }
     this.st.load(1, this.stConfig.req.param);
   }
@@ -332,6 +321,7 @@ export class TableComponent implements OnInit {
         nzKeyboard: true,
         nzTitle: ro.title,
         nzCancelText: "取消（ESC）",
+        nzWrapClassName: "modal-lg",
         nzOnOk: () => {
           if (this.dataHandler.validateNotNull(operatorEruptModel)) {
             this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, this.dataHandler.eruptValueToObject(operatorEruptModel)).subscribe(res => {
