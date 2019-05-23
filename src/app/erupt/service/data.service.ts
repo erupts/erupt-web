@@ -41,6 +41,16 @@ export class DataService {
     });
   }
 
+  //根据id获取数据
+  queryEruptDataById(modelName: string, id: any): Observable<any> {
+    return this._http.get<any>(RestPath.data + modelName + "/" + id, null, {
+      observe: "body",
+      headers: {
+        erupt: modelName
+      }
+    });
+  }
+
 
   findTabListById(modelName: string, id: string, tabFieldName: string): Observable<Array<any>> {
     return this._http.get<Array<any>>(RestPath.data + "tab/table/" + modelName + "/" + id + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, {
@@ -62,16 +72,6 @@ export class DataService {
 
   findTabTreeById(modelName: string, id: string, tabFieldName: string): Observable<any> {
     return this._http.get<any>(RestPath.data + "tab/tree/" + modelName + "/" + id + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, {
-      observe: "body",
-      headers: {
-        erupt: modelName
-      }
-    });
-  }
-
-  //根据id获取数据
-  queryEruptDataById(modelName: string, id: any): Observable<EruptApiModel> {
-    return this._http.get<EruptApiModel>(RestPath.data + modelName + "/" + id, null, {
       observe: "body",
       headers: {
         erupt: modelName

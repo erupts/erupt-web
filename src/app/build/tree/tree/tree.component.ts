@@ -141,7 +141,7 @@ export class TreeComponent implements OnInit,OnDestroy {
     this.showEdit = true;
     this.dataService.queryEruptDataById(this.eruptModel.eruptName, event.node.origin.key).subscribe(data => {
       this.loading = false;
-      this.dataHandler.objectToEruptValue(this.eruptModel, data.data);
+      this.dataHandler.objectToEruptValue(this.eruptModel, data);
     });
 
   }
