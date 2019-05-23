@@ -1,19 +1,15 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ReactiveFormsModule, FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-
 // delon
 import { AlainThemeModule } from "@delon/theme";
 import { DelonABCModule } from "@delon/abc";
 import { DelonACLModule } from "@delon/acl";
 import { DelonFormModule } from "@delon/form";
-
 // #region third libs
 import { NgZorroAntdModule } from "ng-zorro-antd";
 import { CountdownModule } from "ngx-countdown";
-import { QrComponent } from "./qr/qr.component";
-import { SafePipe } from "./pipe/safe.pipe";
 
 const THIRD_MODULES = [
   NgZorroAntdModule,
@@ -22,7 +18,7 @@ const THIRD_MODULES = [
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS = [ SafePipe];
+const COMPONENTS = [];
 const DIRECTIVES = [];
 
 // #endregion
@@ -43,12 +39,9 @@ const DIRECTIVES = [];
   declarations: [
     // your components
     ...COMPONENTS,
-    ...DIRECTIVES,
-    QrComponent
+    ...DIRECTIVES
   ],
-  entryComponents: [
-    QrComponent
-  ],
+  entryComponents: [],
   exports: [
     CommonModule,
     FormsModule,

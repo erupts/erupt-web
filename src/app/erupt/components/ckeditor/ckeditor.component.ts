@@ -1,9 +1,9 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { LazyService } from "@delon/util";
-import { DataService } from "../service/data.service";
-import { EruptFieldModel } from "../model/erupt-field.model";
-import { EruptModel } from "../model/erupt.model";
-import { WindowModel } from "../model/window.model";
+import { DataService } from "../../service/data.service";
+import { EruptFieldModel } from "../../model/erupt-field.model";
+import { EruptModel } from "../../model/erupt.model";
+import { WindowModel } from "../../model/window.model";
 
 declare const DecoupledEditor;
 
@@ -33,28 +33,30 @@ export class CkeditorComponent implements OnInit {
   ngOnInit() {
     const that = this;
     this.loading = true;
-    this.lazy.load(["/assets/js/ckeditor-zh-cn.js", "/assets/js/jquery.min.js",
-      "//cdn.ckeditor.com/ckeditor5/12.0.0/decoupled-document/ckeditor.js"]).then(() => {
-      DecoupledEditor
-        .create(this.ref.nativeElement.querySelector("#editor"), {
-          language: "zh-cn"
-        })
-        .then(editor => {
-          this.loading = false;
-          const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
-          toolbarContainer.appendChild(editor.ui.view.toolbar.element);
-          editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
-            return new UploadAdapter(loader, WindowModel.domain + "/upload/" + this.erupt.eruptName + "/" + this.eruptField.fieldName);
-          };
-          editor.model.document.on("change:data", function() {
-            that.value = editor.getData();
-            that.valueChange.emit(that.value);
+    this.lazy.loadScript("//cdn.ckeditor.com/ckeditor5/12.0.0/decoupled-document/ckeditor.js").then(()=>{
+      this.lazy.load(["/assets/js/ckeditor-zh-cn.js", "/assets/js/jquery.min.js"]).then(() => {
+        DecoupledEditor
+          .create(this.ref.nativeElement.querySelector("#editor"), {
+            language: "zh-cn"
+          })
+          .then(editor => {
+            this.loading = false;
+            const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
+            toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+            editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
+              return new UploadAdapter(loader, WindowModel.domain + "/upload/" + this.erupt.eruptName + "/" + this.eruptField.fieldName);
+            };
+            editor.model.document.on("change:data", function() {
+              that.value = editor.getData();
+              that.valueChange.emit(that.value);
+            });
+          })
+          .catch(error => {
+            console.error(error);
           });
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    });
+      });
+    })
+
   }
 
 }

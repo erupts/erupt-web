@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from "@angular/core";
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
@@ -19,7 +19,7 @@ import { DataHandlerService } from "../../../erupt/service/data-handler.service"
   templateUrl: "./table.component.html",
   styleUrls: ["./table.component.less"]
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, OnDestroy {
 
   constructor(private dataService: DataService,
               private settingSrv: SettingsService,
@@ -106,6 +106,10 @@ export class TableComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.route.params.subscribe().unsubscribe();
+  }
+
   //构建搜索项信息
   buildSearchErupt() {
     let copyErupt = <EruptModel>deepCopy(this.eruptModel);
@@ -185,7 +189,7 @@ export class TableComponent implements OnInit {
           nzComponentParams: {
             subErupts: this.subErupts,
             eruptModel: this.readonlyErupt,
-            rowDataFun: record,
+            setIdData: record[this.eruptModel.eruptJson.primaryKeyCol],
             behavior: "readonly"
           }
         });
@@ -202,11 +206,12 @@ export class TableComponent implements OnInit {
           nzMaskClosable: false,
           nzKeyboard: false,
           nzTitle: "编辑",
+          nzOkText: "修改",
           nzContent: EditComponent,
           nzComponentParams: {
             subErupts: this.subErupts,
             eruptModel: this.eruptModel,
-            rowDataFun: record
+            setIdData: record[this.eruptModel.eruptJson.primaryKeyCol]
           },
           nzOnOk: () => {
             if (this.dataHandler.validateNotNull(this.eruptModel)) {
@@ -221,8 +226,7 @@ export class TableComponent implements OnInit {
               }
             }
             return false;
-          },
-          nzOkText: "修改"
+          }
         });
       }
     };

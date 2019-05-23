@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { DataService } from "../../../erupt/service/data.service";
 import { TabEnum } from "../../../erupt/model/erupt.enum";
@@ -13,9 +13,9 @@ import { DataHandlerService } from "../../../erupt/service/data-handler.service"
 })
 export class EditComponent implements OnInit, OnDestroy {
 
-  private rowData: any;
-
   tabEnum = TabEnum;
+
+  loading = false;
 
   // private tabCount = new Subject<number>();
 
@@ -25,45 +25,41 @@ export class EditComponent implements OnInit, OnDestroy {
 
   @Input() behavior: "add" | "edit" | "readonly" = "add";
 
-  @Input() set rowDataFun(data: any) {
-    this.dataHandlerService.emptyEruptValue(this.eruptModel, this.subErupts);
-    if (data) {
-      this.rowData = data;
-      this.dataHandlerService.objectToEruptValue(this.eruptModel, data);
-    }
-    /**
-     * TAB control
-     */
-    if (this.rowData) {
-      this.subErupts && this.subErupts.forEach(sub => {
-        const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0];
-        switch (tabType.type) {
-          case TabEnum.TREE:
-            this.dataService.findTabTreeById(this.eruptModel.eruptName,
-              this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(tree => {
-                sub.eruptFieldModel.eruptFieldJson.edit.$value = tree;
-                this.eruptModel.tabLoadCount++;
-              }
-            );
-            break;
-          case TabEnum.TABLE:
-            this.dataService.findTabListById(this.eruptModel.eruptName,
-              this.rowData[this.eruptModel.eruptJson.primaryKeyCol], sub.eruptFieldModel.fieldName).subscribe(data => {
-                sub.eruptFieldModel.eruptFieldJson.edit.$value = data;
-                this.eruptModel.tabLoadCount++
-              }
-            );
-            break;
-        }
-      });
-
-    }
-  }
+  @Output() save = new EventEmitter();
 
   constructor(private dataService: DataService,
               private settingSrv: SettingsService,
               private dataHandlerService: DataHandlerService) {
 
+  }
+
+  @Input() set setIdData(id: any) {
+    this.loading = true;
+    this.dataHandlerService.emptyEruptValue(this.eruptModel, this.subErupts);
+    this.dataService.queryEruptDataById(this.eruptModel.eruptName, id).subscribe(res => {
+      this.dataHandlerService.objectToEruptValue(this.eruptModel, res.data);
+      this.loading = false;
+    });
+    //TAB control
+    this.subErupts && this.subErupts.forEach(sub => {
+      const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0];
+      switch (tabType.type) {
+        case TabEnum.TREE:
+          this.dataService.findTabTreeById(this.eruptModel.eruptName, id, sub.eruptFieldModel.fieldName).subscribe(tree => {
+              sub.eruptFieldModel.eruptFieldJson.edit.$value = tree;
+              this.eruptModel.tabLoadCount++;
+            }
+          );
+          break;
+        case TabEnum.TABLE:
+          this.dataService.findTabListById(this.eruptModel.eruptName, id, sub.eruptFieldModel.fieldName).subscribe(data => {
+              sub.eruptFieldModel.eruptFieldJson.edit.$value = data;
+              this.eruptModel.tabLoadCount++;
+            }
+          );
+          break;
+      }
+    });
   }
 
   ngOnInit() {

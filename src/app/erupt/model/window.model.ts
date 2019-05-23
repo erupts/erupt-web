@@ -1,12 +1,12 @@
 export class WindowModel {
 
-  public static domain: string = window["domain"] || "";
+  public static domain: string = window["eruptSiteConfig"]["domain"] || "";
 
-  public static r_tools: CustomerTool[] = window["r_tools"] || [];
+  public static r_tools: CustomerTool[] = window["eruptSiteConfig"]["r_tools"] || [];
 
-  public static mapKey: string = window["mapKey"];
+  public static amapKey: string = window["eruptSiteConfig"]["amapKey"];
 
-  public static title: string = window["title"];
+  public static title: string = window["eruptSiteConfig"]["title"];
 }
 
 

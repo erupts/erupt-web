@@ -19,7 +19,7 @@ export enum EditType {
   CHOICE = "CHOICE",               //选择框
   TAG = "TAG",                     //标签
   DATE = "DATE",                   //日期
-  REFERENCE = "REFERENCE",         //引用
+  REFERENCE_TREE = "REFERENCE_TREE",         //引用
   BOOLEAN = "BOOLEAN",             //布尔
   ATTACHMENT = "ATTACHMENT",       //附件
   TAB = "TAB",                     //TAB选项卡
@@ -27,7 +27,8 @@ export enum EditType {
   SLIDER = "SLIDER",               //数字滑块
   EMPTY = "EMPTY",
   DEPEND_SWITCH = "DEPEND_SWITCH",
-  HTML_EDIT = "HTML_EDIT"
+  HTML_EDIT = "HTML_EDIT",
+  MAP = "MAP"
 }
 
 export enum TabEnum {

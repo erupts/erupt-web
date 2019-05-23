@@ -5,10 +5,10 @@ import { FormControl } from "@angular/forms";
 import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
 import { Inject, Injectable } from "@angular/core";
-import { QrComponent } from "@shared/qr/qr.component";
 import { EruptAndEruptFieldModel } from "../model/erupt-page.model";
 import { DataService } from "./data.service";
 import { CarouselImgComponent } from "../components/carousel-img/carousel-img.component";
+import { QrComponent } from "../components/qr/qr.component";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -355,7 +355,7 @@ export class DataHandlerService {
             }
           }
           break;
-        case EditType.REFERENCE:
+        case EditType.REFERENCE_TREE:
           if (field.eruptFieldJson.edit.$value) {
             eruptData[field.fieldName] = {};
             eruptData[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].id] = field.eruptFieldJson.edit.$value;
@@ -434,7 +434,7 @@ export class DataHandlerService {
           case EditType.DATE:
             field.eruptFieldJson.edit.$value = new FormControl(object[field.fieldName]).value;
             break;
-          case EditType.REFERENCE:
+          case EditType.REFERENCE_TREE:
             if (typeof object[field.fieldName] === "object") {
               field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].id];
               field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].label];

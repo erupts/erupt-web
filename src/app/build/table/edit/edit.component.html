@@ -1,5 +1,7 @@
 <div *ngIf="eruptModel!=null">
-    <erupt-edit-type [eruptModel]="eruptModel"></erupt-edit-type>
+    <nz-spin [nzSpinning]="loading">
+        <erupt-edit-type [eruptModel]="eruptModel"></erupt-edit-type>
+    </nz-spin>
     <nz-tabset *ngIf="subErupts.length>0">
         <ng-container *ngFor="let sub of subErupts">
             <nz-tab [nzTitle]="sub.eruptFieldModel.eruptFieldJson.edit.title">

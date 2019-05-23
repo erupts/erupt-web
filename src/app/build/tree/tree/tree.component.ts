@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from "@angular/core";
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { ActivatedRoute } from "@angular/router";
@@ -11,7 +11,7 @@ import { DataHandlerService } from "../../../erupt/service/data-handler.service"
   templateUrl: "./tree.component.html",
   styleUrls: ["./tree.component.less"]
 })
-export class TreeComponent implements OnInit {
+export class TreeComponent implements OnInit,OnDestroy {
 
   private colRules = colRules;
 
@@ -55,6 +55,10 @@ export class TreeComponent implements OnInit {
         this.eruptModel = erupt.eruptModel;
       });
     });
+  }
+
+  ngOnDestroy(): void {
+    this.route.params.subscribe().unsubscribe();
   }
 
   fetchTreeData() {

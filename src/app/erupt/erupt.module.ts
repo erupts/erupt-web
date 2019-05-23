@@ -7,10 +7,13 @@ import { EditTypeComponent } from "./edit-type/edit-type.component";
 import { SharedModule } from "../shared/shared.module";
 import { TreeSelectComponent } from "./tree-select/tree-select.component";
 import { DataHandlerService } from "./service/data-handler.service";
-import { CkeditorComponent } from "./ckeditor/ckeditor.component";
+import { CkeditorComponent } from "./components/ckeditor/ckeditor.component";
 import { AppConstService } from "./service/app-const.service";
 import { TabTableComponent } from "./tab-table/tab-table.component";
-import { CarouselImgComponent } from './components/carousel-img/carousel-img.component';
+import { CarouselImgComponent } from "./components/carousel-img/carousel-img.component";
+import { QrComponent } from "./components/qr/qr.component";
+import { SafeUrlPipe } from "./pipe/safe-url.pipe";
+import { AmapComponent } from './components/amap/amap.component';
 
 @NgModule({
   imports: [
@@ -26,14 +29,16 @@ import { CarouselImgComponent } from './components/carousel-img/carousel-img.com
   exports: [
     EditTypeComponent,
     TabTableComponent,
-    CarouselImgComponent
+    CarouselImgComponent,
+    SafeUrlPipe
   ],
   entryComponents: [
     EditTypeComponent,
     TreeSelectComponent,
-    CarouselImgComponent
+    CarouselImgComponent,
+    QrComponent
   ],
-  declarations: [EditTypeComponent, TreeSelectComponent, CkeditorComponent, TabTableComponent, CarouselImgComponent]
+  declarations: [EditTypeComponent, TreeSelectComponent, CkeditorComponent, TabTableComponent, CarouselImgComponent, QrComponent,SafeUrlPipe, AmapComponent]
 })
 export class EruptModule {
 }
