@@ -5,7 +5,7 @@
     <nz-tabset *ngIf="subErupts.length>0">
         <ng-container *ngFor="let sub of subErupts">
             <nz-tab [nzTitle]="sub.eruptFieldModel.eruptFieldJson.edit.title">
-                <ng-container [ngSwitch]="sub.eruptFieldModel.eruptFieldJson.edit.tabType[0].type">
+                <ng-container [ngSwitch]="sub.eruptFieldModel.eruptFieldJson.edit.tabType.type">
                     <ng-container *ngSwitchCase="tabEnum.TABLE">
                         <tab-table [tabErupt]="sub" [eruptModel]="eruptModel" [behavior]="behavior"></tab-table>
                     </ng-container>

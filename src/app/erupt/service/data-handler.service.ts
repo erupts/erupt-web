@@ -50,9 +50,9 @@ export class DataHandlerService {
           // obj.width = "66px";
           break;
         case EditType.CHOICE:
-          if (edit.choiceType[0].type == ChoiceEnum.SELECT_SINGLE || edit.choiceType[0].type == ChoiceEnum.RADIO) {
+          if (edit.choiceType.type == ChoiceEnum.SELECT_SINGLE || edit.choiceType.type == ChoiceEnum.RADIO) {
             obj.format = (item: any) => {
-              return edit.choiceType[0].vlMap.get(item[view.column]) || "";
+              return edit.choiceType.vlMap.get(item[view.column]) || "";
             };
           } else {
             obj.type = "tag";
@@ -116,7 +116,7 @@ export class DataHandlerService {
           obj.className = "text-center";
           obj.format = (item: any) => {
             if (item[view.column]) {
-              const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType[0];
+              const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
               let img = item[view.column];
               if (attachmentType.maxLimit != 1) {
                 img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
@@ -127,7 +127,7 @@ export class DataHandlerService {
             }
           };
           obj.click = (item) => {
-            const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType[0];
+            const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
             let images: string[] = item[view.column];
             if (attachmentType.maxLimit != 1) {
               images = (<string>item[view.column]).split(attachmentType.fileSeparator);
@@ -200,8 +200,8 @@ export class DataHandlerService {
           }
           break;
         case EditType.SLIDER:
-          const markPoints = field.eruptFieldJson.edit.sliderType[0].markPoints;
-          const marks = field.eruptFieldJson.edit.sliderType[0].marks = {};
+          const markPoints = field.eruptFieldJson.edit.sliderType.markPoints;
+          const marks = field.eruptFieldJson.edit.sliderType.marks = {};
           if (markPoints.length > 0) {
             markPoints.forEach(m => {
               marks[m] = "";
@@ -209,8 +209,8 @@ export class DataHandlerService {
           }
           break;
         case EditType.CHOICE:
-          const vlMap = field.eruptFieldJson.edit.choiceType[0].vlMap = new Map();
-          field.eruptFieldJson.edit.choiceType[0].vl.forEach(vl => {
+          const vlMap = field.eruptFieldJson.edit.choiceType.vlMap = new Map();
+          field.eruptFieldJson.edit.choiceType.vl.forEach(vl => {
             vlMap.set(vl.value, vl.label);
           });
           break;
@@ -234,7 +234,7 @@ export class DataHandlerService {
     // TODO 在eruptFieldModelMap填充完成执行该代码
     eruptModel.eruptFieldModels.forEach(field => {
       if (field.eruptFieldJson.edit.type === EditType.DEPEND_SWITCH) {
-        field.eruptFieldJson.edit.dependSwitchType[0].dependSwitchAttrs.forEach(attr => {
+        field.eruptFieldJson.edit.dependSwitchType.dependSwitchAttrs.forEach(attr => {
           attr.dependEdits.forEach(editName => {
             const fm = eruptModel.eruptFieldModelMap.get(editName);
             if (fm) {
@@ -309,8 +309,8 @@ export class DataHandlerService {
           break;
         case EditType.CHOICE:
           if (field.eruptFieldJson.edit.$value) {
-            if (field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.TAGS) {
-              let val = (<string[]>field.eruptFieldJson.edit.$value).join(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
+            if (field.eruptFieldJson.edit.choiceType.type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType.type === ChoiceEnum.TAGS) {
+              let val = (<string[]>field.eruptFieldJson.edit.$value).join(field.eruptFieldJson.edit.choiceType.joinSeparator);
               if (val) {
                 eruptData[field.fieldName] = val;
               }
@@ -324,7 +324,7 @@ export class DataHandlerService {
         case EditType.DATE:
           if (field.eruptFieldJson.edit.$value) {
             //日期格式
-            if (field.eruptFieldJson.edit.dateType[0].type === DateEnum.DATE) {
+            if (field.eruptFieldJson.edit.dateType.type === DateEnum.DATE) {
               if (field.eruptFieldJson.edit.search.vague) {
                 if (field.eruptFieldJson.edit.$value.length > 0) {
                   eruptData[field.fieldName] = [new Date(field.eruptFieldJson.edit.$value[0]).toISOString().substr(0, 10) + " 00:00:00"
@@ -335,7 +335,7 @@ export class DataHandlerService {
               }
             }
             //时间日期格式
-            else if (field.eruptFieldJson.edit.dateType[0].type === DateEnum.DATE_TIME) {
+            else if (field.eruptFieldJson.edit.dateType.type === DateEnum.DATE_TIME) {
               if (field.eruptFieldJson.edit.search.vague) {
                 if (field.eruptFieldJson.edit.$value.length > 0) {
                   let l_isoStr = new Date(field.eruptFieldJson.edit.$value[0]).toISOString();
@@ -358,20 +358,20 @@ export class DataHandlerService {
         case EditType.REFERENCE_TREE:
           if (field.eruptFieldJson.edit.$value) {
             eruptData[field.fieldName] = {};
-            eruptData[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].id] = field.eruptFieldJson.edit.$value;
+            eruptData[field.fieldName][field.eruptFieldJson.edit.referenceTreeType.id] = field.eruptFieldJson.edit.$value;
           } else {
             field.eruptFieldJson.edit.$value = null;
           }
           break;
         case EditType.ATTACHMENT:
-          if (field.eruptFieldJson.edit.attachmentType[0].saveMode === SaveMode.SINGLE_COLUMN) {
+          if (field.eruptFieldJson.edit.attachmentType.saveMode === SaveMode.SINGLE_COLUMN) {
             if (field.eruptFieldJson.edit.$viewValue) {
               const $value: string[] = [];
               console.log(field.eruptFieldJson.edit.$viewValue);
               (<UploadFile[]>field.eruptFieldJson.edit.$viewValue).forEach(val => {
                 $value.push(val.response.data);
               });
-              eruptData[field.fieldName] = $value.join(field.eruptFieldJson.edit.attachmentType[0].fileSeparator);
+              eruptData[field.fieldName] = $value.join(field.eruptFieldJson.edit.attachmentType.fileSeparator);
             }
           } else {
             this.msg.warning("该模式暂不可用");
@@ -386,7 +386,7 @@ export class DataHandlerService {
     });
     if (subErupts && subErupts.length > 0) {
       subErupts.forEach(sub => {
-        let tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0].type;
+        let tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType.type;
         if (tabType == TabEnum.TREE) {
           const tabTree = eruptData[sub.eruptFieldModel.fieldName] = [];
           if (sub.eruptFieldModel.eruptFieldJson.edit.$value) {
@@ -436,25 +436,25 @@ export class DataHandlerService {
             break;
           case EditType.REFERENCE_TREE:
             if (typeof object[field.fieldName] === "object") {
-              field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].id];
-              field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType[0].label];
+              field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType.id];
+              field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType.label];
             } else {
-              field.eruptFieldJson.edit.$value = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType[0].id];
-              field.eruptFieldJson.edit.$viewValue = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType[0].label];
+              field.eruptFieldJson.edit.$value = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType.id];
+              field.eruptFieldJson.edit.$viewValue = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType.label];
             }
             break;
           case EditType.BOOLEAN:
             if (!object[field.fieldName] && object[field.fieldName] !== false) {
-              field.eruptFieldJson.edit.$value = field.eruptFieldJson.edit.boolType[0].defaultValue;
+              field.eruptFieldJson.edit.$value = field.eruptFieldJson.edit.boolType.defaultValue;
             } else {
               field.eruptFieldJson.edit.$value = object[field.fieldName];
             }
             break;
           case EditType.ATTACHMENT:
             if (object[field.fieldName]) {
-              if (field.eruptFieldJson.edit.attachmentType[0].saveMode === SaveMode.SINGLE_COLUMN) {
+              if (field.eruptFieldJson.edit.attachmentType.saveMode === SaveMode.SINGLE_COLUMN) {
                 field.eruptFieldJson.edit.$viewValue = [];
-                (<string>object[field.fieldName]).split(field.eruptFieldJson.edit.attachmentType[0].fileSeparator)
+                (<string>object[field.fieldName]).split(field.eruptFieldJson.edit.attachmentType.fileSeparator)
                   .forEach(str => {
                     // @ts-ignore
                     (<UploadFile[]>field.eruptFieldJson.edit.$viewValue).push({
@@ -475,9 +475,9 @@ export class DataHandlerService {
             }
             break;
           case EditType.CHOICE:
-            if (field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType[0].type === ChoiceEnum.TAGS) {
+            if (field.eruptFieldJson.edit.choiceType.type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType.type === ChoiceEnum.TAGS) {
               if (object[field.fieldName]) {
-                field.eruptFieldJson.edit.$value = String(object[field.fieldName]).split(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
+                field.eruptFieldJson.edit.$value = String(object[field.fieldName]).split(field.eruptFieldJson.edit.choiceType.joinSeparator);
               } else {
                 field.eruptFieldJson.edit.$value = [];
               }
@@ -506,7 +506,7 @@ export class DataHandlerService {
   emptyEruptValue(eruptModel: EruptModel, subFieldModels?: Array<EruptAndEruptFieldModel>) {
     eruptModel.eruptFieldModels.forEach(ef => {
       if (ef.eruptFieldJson.edit.type == EditType.BOOLEAN && eruptModel.mode !== "search") {
-        ef.eruptFieldJson.edit.$value = ef.eruptFieldJson.edit.boolType[0].defaultValue;
+        ef.eruptFieldJson.edit.$value = ef.eruptFieldJson.edit.boolType.defaultValue;
       } else {
         ef.eruptFieldJson.edit.$value = null;
         ef.eruptFieldJson.edit.$viewValue = null;

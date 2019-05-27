@@ -41,16 +41,15 @@ export interface Edit {
   group: string;
   groupIcon: string;
   col: number;
-  tabType: Array<TabType>;
+  tabType: TabType;
   inputType: InputType;
-  referenceTreeType: Array<ReferenceTreeType>;
-  attachmentType: Array<AttachmentType>;
-  boolType: Array<BoolType>;
-  choiceType: Array<ChoiceType>;
-  dictType: Array<DictType>;
-  dateType: Array<DateType>;
-  sliderType: Array<SliderType>;
-  dependSwitchType: Array<DependSwitchType>
+  referenceTreeType: ReferenceTreeType;
+  attachmentType: AttachmentType;
+  boolType: BoolType;
+  choiceType: ChoiceType;
+  dateType: DateType;
+  sliderType: SliderType;
+  dependSwitchType: DependSwitchType
   search: Search;
   $value?: any;
   $viewValue?: any;
@@ -121,10 +120,6 @@ interface SliderType {
   markPoints: number[];
   dots: boolean;
   marks?: any;
-}
-
-interface DictType {
-  dictCode: string;
 }
 
 interface DateType {

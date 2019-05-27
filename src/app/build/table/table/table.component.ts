@@ -137,7 +137,7 @@ export class TableComponent implements OnInit, OnDestroy {
     subErupts.forEach((sub => {
       this.dataHandler.initErupt(sub.eruptModel);
       const edit = sub.eruptFieldModel.eruptFieldJson.edit;
-      if (edit.tabType[0].type == TabEnum.TREE) {
+      if (edit.tabType.type == TabEnum.TREE) {
         if (this.eruptModel.eruptJson.power.viewDetails || this.eruptModel.eruptJson.power.edit) {
           this.dataService.findTabTree(this.eruptModel.eruptName, sub.eruptFieldModel.fieldName).subscribe(
             tree => {

@@ -42,7 +42,7 @@ export class EditComponent implements OnInit, OnDestroy {
     });
     //TAB control
     this.subErupts && this.subErupts.forEach(sub => {
-      const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType[0];
+      const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType;
       switch (tabType.type) {
         case TabEnum.TREE:
           this.dataService.findTabTreeById(this.eruptModel.eruptName, id, sub.eruptFieldModel.fieldName).subscribe(tree => {

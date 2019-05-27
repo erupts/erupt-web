@@ -53,7 +53,7 @@ export class EditTypeComponent implements OnInit {
   }
 
   dependChange(value: number, field: EruptFieldModel) {
-    const dsa = field.eruptFieldJson.edit.dependSwitchType[0].dependSwitchAttrs;
+    const dsa = field.eruptFieldJson.edit.dependSwitchType.dependSwitchAttrs;
     dsa.forEach(attr => {
       if (value == attr.value) {
         attr.dependEdits.forEach(de => {
@@ -100,7 +100,7 @@ export class EditTypeComponent implements OnInit {
 
 
   createTreeRefModal(field: EruptFieldModel) {
-    let depend = field.eruptFieldJson.edit.referenceTreeType[0].depend;
+    let depend = field.eruptFieldJson.edit.referenceTreeType.depend;
     let dependVal = null;
     if (depend) {
       const dependField: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(depend);
@@ -139,7 +139,7 @@ export class EditTypeComponent implements OnInit {
 
 
   checkboxChange(val: string[], field: EruptFieldModel) {
-    field.eruptFieldJson.edit.$value = val.join(field.eruptFieldJson.edit.choiceType[0].joinSeparator);
+    field.eruptFieldJson.edit.$value = val.join(field.eruptFieldJson.edit.choiceType.joinSeparator);
   }
 
   clearValue(field: EruptFieldModel) {
