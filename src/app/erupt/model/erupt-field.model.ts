@@ -37,10 +37,7 @@ export interface Edit {
   type: EditType;
   show: boolean;
   readOnly: boolean;
-  sort: number;
-  group: string;
-  groupIcon: string;
-  col: number;
+  search: Search;
   tabType: TabType;
   inputType: InputType;
   referenceTreeType: ReferenceTreeType;
@@ -50,7 +47,6 @@ export interface Edit {
   dateType: DateType;
   sliderType: SliderType;
   dependSwitchType: DependSwitchType
-  search: Search;
   $value?: any;
   $viewValue?: any;
   $tempValue?: any;

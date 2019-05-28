@@ -17,7 +17,10 @@
     "ng-zorro-antd",
     "angular",
     "component",
-    "scaffold"
+    "scaffold",
+    "erupt",
+    "yuepeng",
+    "alain"
   ],
   "scripts": {
     "ng": "ng",
@@ -58,21 +61,17 @@
     "@ngx-translate/http-loader": "^4.0.0",
     "ajv": "^6.10.0",
     "@delon/abc": "^7.4.0",
-    "@delon/acl": "^7.4.0",
     "@delon/auth": "^7.4.0",
     "@delon/cache": "^7.4.0",
     "@delon/chart": "^7.4.0",
-    "@delon/form": "^7.4.0",
     "@delon/mock": "^7.4.0",
     "@delon/theme": "^7.4.0",
     "@delon/util": "^7.4.0",
     "file-saver": "^2.0.1",
     "ng-zorro-antd": "^7.3.3",
-    "ngx-countdown": "^3.2.0",
     "screenfull": "^4.2.0",
     "qrious": "^4.0.2",
-    "font-awesome": "^4.7.0",
-    "font-awesome-scss": "^1.0.0"
+    "font-awesome": "^4.7.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.13.0",

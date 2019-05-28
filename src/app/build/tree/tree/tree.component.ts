@@ -5,19 +5,22 @@ import { ActivatedRoute } from "@angular/router";
 import { NzFormatEmitEvent, NzMessageService, NzModalService, NzTreeBaseService } from "ng-zorro-antd";
 import { colRules } from "../../../erupt/model/util.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
+import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
 
 @Component({
   selector: "erupt-tree",
   templateUrl: "./tree.component.html",
   styleUrls: ["./tree.component.less"]
 })
-export class TreeComponent implements OnInit,OnDestroy {
+export class TreeComponent implements OnInit, OnDestroy {
 
   private colRules = colRules;
 
   private eruptName: string;
 
   public eruptModel: EruptModel;
+
+  public combineErupts: Array<EruptAndEruptFieldModel>;
 
   private showEdit: boolean = false;
 
@@ -52,7 +55,11 @@ export class TreeComponent implements OnInit,OnDestroy {
       this.fetchTreeData();
       this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
         this.dataHandler.initErupt(erupt.eruptModel);
+        erupt.combineErupts.forEach(ce => {
+          this.dataHandler.initErupt(ce.eruptModel);
+        });
         this.eruptModel = erupt.eruptModel;
+        this.combineErupts = erupt.combineErupts;
       });
     });
   }

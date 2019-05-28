@@ -27,6 +27,8 @@ export class EditComponent implements OnInit, OnDestroy {
 
   @Output() save = new EventEmitter();
 
+  @Input() combineErupts: Array<EruptAndEruptFieldModel>;
+
   constructor(private dataService: DataService,
               private settingSrv: SettingsService,
               private dataHandlerService: DataHandlerService) {

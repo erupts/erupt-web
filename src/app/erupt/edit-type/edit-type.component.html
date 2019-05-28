@@ -312,6 +312,7 @@
                                                [required]="field.eruptFieldJson.edit.notNull"
                                                (click)="createTreeRefModal(field)"
                                                [readOnly]="true"
+                                               [disabled]="field.eruptFieldJson.edit.readOnly"
                                                [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
                                                [name]="field.fieldName">
                                     </nz-input-group>
@@ -320,7 +321,8 @@
                                             <i nz-icon type="close-circle" theme="fill" class="point" (click)="clearValue(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
-                                            <i nz-icon (click)="createTreeRefModal(field)" type="database" theme="fill" class="point"></i>
+                                            <i nz-icon (click)="field.eruptFieldJson.edit.readOnly||createTreeRefModal(field)"
+                                               type="database" theme="fill" class="point"></i>
                                         </ng-container>
                                     </ng-template>
                                 </se>

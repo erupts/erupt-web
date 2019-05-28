@@ -5,15 +5,10 @@ import { RouterModule } from "@angular/router";
 // delon
 import { AlainThemeModule } from "@delon/theme";
 import { DelonABCModule } from "@delon/abc";
-import { DelonACLModule } from "@delon/acl";
-import { DelonFormModule } from "@delon/form";
 // #region third libs
 import { NgZorroAntdModule } from "ng-zorro-antd";
-import { CountdownModule } from "ngx-countdown";
-
 const THIRD_MODULES = [
-  NgZorroAntdModule,
-  CountdownModule
+  NgZorroAntdModule
 ];
 // #endregion
 
@@ -31,8 +26,6 @@ const DIRECTIVES = [];
     ReactiveFormsModule,
     AlainThemeModule.forChild(),
     DelonABCModule,
-    DelonACLModule,
-    DelonFormModule,
     // third libs
     ...THIRD_MODULES
   ],
@@ -49,8 +42,6 @@ const DIRECTIVES = [];
     RouterModule,
     AlainThemeModule,
     DelonABCModule,
-    DelonACLModule,
-    DelonFormModule,
     // third libs
     ...THIRD_MODULES,
     // your components

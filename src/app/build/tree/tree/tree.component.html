@@ -52,18 +52,40 @@
         </div>
         <div [ngStyle]="{height: ww-228+'px',overflow: 'auto',overflowX:'hidden'}" class="scrollbar">
             <nz-spin [nzSpinning]="loading" nzSize="large">
-                <nz-card [nzBordered]="true" [nzHoverable]="true" [nzBodyStyle]="{padding:'0'}" style="margin-bottom: 0;">
-                    <div style="background: #fff;padding: 10px">
+                <nz-collapse nzAccordion>
+                    <nz-collapse-panel [nzActive]="true" [nzHeader]="'基本信息'">
                         <ng-container *ngIf="eruptModel">
-                            <erupt-edit-type [eruptModel]="eruptModel" [col]="{xs: 24, sm: 24, md: 24, lg:12,xl: 8}">
+                            <erupt-edit-type [eruptModel]="eruptModel"  [col]="{xs: 24, sm: 24, md: 24, lg:12,xl: 8}">
 
                             </erupt-edit-type>
                         </ng-container>
                         <ng-container *ngIf="!eruptModel">
                             <nz-skeleton [nzActive]="true"></nz-skeleton>
                         </ng-container>
-                    </div>
-                </nz-card>
+                    </nz-collapse-panel>
+                </nz-collapse>
+
+                <!--<nz-card [nzBordered]="true" [nzHoverable]="true" [nzBodyStyle]="{padding:'0'}" style="margin-bottom: 0;">-->
+                    <!--<div style="background: #fff;padding: 10px">-->
+                        <!--<ng-container *ngIf="eruptModel">-->
+                            <!--<erupt-edit-type [eruptModel]="eruptModel"  [col]="{xs: 24, sm: 24, md: 24, lg:12,xl: 8}">-->
+
+                            <!--</erupt-edit-type>-->
+                        <!--</ng-container>-->
+                        <!--<ng-container *ngIf="!eruptModel">-->
+                            <!--<nz-skeleton [nzActive]="true"></nz-skeleton>-->
+                        <!--</ng-container>-->
+                    <!--</div>-->
+                <!--</nz-card>-->
+
+                <ng-container *ngIf="combineErupts">
+                    <nz-collapse *ngFor="let combine of combineErupts" nzAccordion style="margin-top: 11px;">
+                        <nz-collapse-panel [nzActive]="true" [nzDisabled]="combine.eruptFieldModel.eruptFieldJson.edit.readOnly"
+                                           [nzHeader]="combine.eruptFieldModel.eruptFieldJson.edit.title">
+                            <erupt-edit-type [eruptModel]="combine.eruptModel"></erupt-edit-type>
+                        </nz-collapse-panel>
+                    </nz-collapse>
+                </ng-container>
             </nz-spin>
         </div>
     </div>

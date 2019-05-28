@@ -4,12 +4,12 @@ import { Edit, EruptFieldModel, View } from "./erupt-field.model";
  * Created by liyuepeng on 10/16/18.
  */
 export interface EruptModel {
-  eruptFieldModels: Array<EruptFieldModel>;
+  eruptFieldModels: EruptFieldModel[];
   eruptJson: Erupt;
   eruptName: string;
   //# customer prop
   eruptFieldModelMap?: Map<String, EruptFieldModel>;
-  tableColumns?: Array<View>;
+  tableColumns?: View[];
   mode?: "edit" | "search";
   //计算tab加载完成情况TODO delete
   tabLoadCount?: number;
@@ -21,7 +21,7 @@ export interface Erupt {
   power: Power;
   desc: string;
   tree: Tree;
-  rowOperation: Array<RowOperation>;
+  rowOperation: Map<String, RowOperation>;
   rowOperationMap?: Map<String, RowOperation>;
 }
 

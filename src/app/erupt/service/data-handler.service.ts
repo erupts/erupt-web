@@ -231,7 +231,7 @@ export class DataHandlerService {
         eruptModel.tableColumns.push(view);
       });
     });
-    // TODO 在eruptFieldModelMap填充完成执行该代码
+    //生成depend组件代码
     eruptModel.eruptFieldModels.forEach(field => {
       if (field.eruptFieldJson.edit.type === EditType.DEPEND_SWITCH) {
         field.eruptFieldJson.edit.dependSwitchType.dependSwitchAttrs.forEach(attr => {

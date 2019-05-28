@@ -47,6 +47,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
   subErupts: Array<EruptAndEruptFieldModel>;
 
+
+  combineErupts: Array<EruptAndEruptFieldModel>;
+
   stConfig = {
     url: null,
     stPage: {
@@ -91,14 +94,15 @@ export class TableComponent implements OnInit, OnDestroy {
       }
       //put table api header
       this.stConfig.req.headers["erupt"] = params.name;
-      this.dataService.getEruptBuild(params.name).subscribe(
-        em => {
+      this.dataService.getEruptBuild(params.name).subscribe(em => {
           this.stConfig.url = RestPath.data + "table/" + params.name;
           this.dataHandler.initErupt(em.eruptModel);
           this.eruptModel = em.eruptModel;
           this.buildTableConfig();
           this.buildSearchErupt();
           this.buildReadOnlyErupt();
+          this.buildCombineErupt(em.combineErupts);
+          this.combineErupts = em.combineErupts;
           this.buildSubErupt(em.subErupts);
           this.subErupts = em.subErupts;
         }
@@ -149,6 +153,13 @@ export class TableComponent implements OnInit, OnDestroy {
         }
       }
       sub.alainTableConfig = this.dataHandler.viewToAlainTableConfig(sub.eruptModel);
+    }));
+  }
+
+  buildCombineErupt(combineErupts: Array<EruptAndEruptFieldModel>) {
+    combineErupts.forEach((sub => {
+      this.dataHandler.initErupt(sub.eruptModel);
+      // sub.alainTableConfig = this.dataHandler.viewToAlainTableConfig(sub.eruptModel);
     }));
   }
 
@@ -356,7 +367,8 @@ export class TableComponent implements OnInit, OnDestroy {
       nzContent: EditComponent,
       nzComponentParams: {
         subErupts: this.subErupts,
-        eruptModel: this.eruptModel
+        eruptModel: this.eruptModel,
+        combineErupts: this.combineErupts
       },
       nzOkText: "增加",
       nzOnOk: () => {
