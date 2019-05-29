@@ -373,7 +373,6 @@ export class DataHandlerService {
           if (field.eruptFieldJson.edit.attachmentType.saveMode === SaveMode.SINGLE_COLUMN) {
             if (field.eruptFieldJson.edit.$viewValue) {
               const $value: string[] = [];
-              console.log(field.eruptFieldJson.edit.$viewValue);
               (<UploadFile[]>field.eruptFieldJson.edit.$viewValue).forEach(val => {
                 $value.push(val.response.data);
               });
@@ -457,7 +456,6 @@ export class DataHandlerService {
             }
             break;
           case EditType.BOOLEAN:
-            console.log(object[field.fieldName]);
             if (!object[field.fieldName] && object[field.fieldName] !== false) {
               field.eruptFieldJson.edit.$value = field.eruptFieldJson.edit.boolType.defaultValue;
             } else {

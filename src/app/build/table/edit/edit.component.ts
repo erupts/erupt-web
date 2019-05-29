@@ -3,7 +3,7 @@ import { EruptModel } from "../../../erupt/model/erupt.model";
 import { DataService } from "../../../erupt/service/data.service";
 import { TabEnum } from "../../../erupt/model/erupt.enum";
 import { SettingsService } from "@delon/theme";
-import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-build.model";
+import { EruptAndEruptFieldModel, EruptBuildModel } from "../../../erupt/model/erupt-build.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 
 @Component({
@@ -19,15 +19,11 @@ export class EditComponent implements OnInit, OnDestroy {
 
   // private tabCount = new Subject<number>();
 
-  @Input() eruptModel: EruptModel;
-
-  @Input() subErupts: Array<EruptAndEruptFieldModel>;
-
   @Input() behavior: "add" | "edit" | "readonly" = "add";
 
   @Output() save = new EventEmitter();
 
-  @Input() combineErupts: Array<EruptAndEruptFieldModel>;
+  @Input() eruptBuildModel: EruptBuildModel;
 
   constructor(private dataService: DataService,
               private settingSrv: SettingsService,
@@ -37,26 +33,26 @@ export class EditComponent implements OnInit, OnDestroy {
 
   @Input() set setIdData(id: any) {
     this.loading = true;
-    this.dataHandlerService.emptyEruptValue({ eruptModel: this.eruptModel, subErupts: this.subErupts });
-    this.dataService.queryEruptDataById(this.eruptModel.eruptName, id).subscribe(data => {
-      this.dataHandlerService.objectToEruptValue(data, this.eruptModel);
+    this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
+    this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, id).subscribe(data => {
+      this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel.eruptModel);
       this.loading = false;
     });
     //TAB control
-    this.subErupts && this.subErupts.forEach(sub => {
+    this.eruptBuildModel.subErupts && this.eruptBuildModel.subErupts.forEach(sub => {
       const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType;
       switch (tabType.type) {
         case TabEnum.TREE:
-          this.dataService.findTabTreeById(this.eruptModel.eruptName, id, sub.eruptFieldModel.fieldName).subscribe(tree => {
+          this.dataService.findTabTreeById(this.eruptBuildModel.eruptModel.eruptName, id, sub.eruptFieldModel.fieldName).subscribe(tree => {
               sub.eruptFieldModel.eruptFieldJson.edit.$value = tree;
-              this.eruptModel.tabLoadCount++;
+              this.eruptBuildModel.eruptModel.tabLoadCount++;
             }
           );
           break;
         case TabEnum.TABLE:
-          this.dataService.findTabListById(this.eruptModel.eruptName, id, sub.eruptFieldModel.fieldName).subscribe(data => {
+          this.dataService.findTabListById(this.eruptBuildModel.eruptModel.eruptName, id, sub.eruptFieldModel.fieldName).subscribe(data => {
               sub.eruptFieldModel.eruptFieldJson.edit.$value = data;
-              this.eruptModel.tabLoadCount++;
+              this.eruptBuildModel.eruptModel.tabLoadCount++;
             }
           );
           break;

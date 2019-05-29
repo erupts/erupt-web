@@ -1,28 +1,22 @@
-<div *ngIf="eruptModel!=null">
+<div *ngIf="eruptBuildModel!=null">
     <nz-spin [nzSpinning]="loading">
-        <erupt-edit-type [eruptModel]="eruptModel"></erupt-edit-type>
+        <erupt-edit-type [eruptModel]="eruptBuildModel.eruptModel"></erupt-edit-type>
 
-        <ng-container *ngIf="combineErupts&&combineErupts.length>0">
-            <nz-collapse nzAccordion *ngFor="let combine of combineErupts" style="margin-bottom: 10px;">
+        <ng-container *ngIf="eruptBuildModel.combineErupts&&eruptBuildModel.combineErupts.length>0">
+            <nz-collapse nzAccordion *ngFor="let combine of eruptBuildModel.combineErupts" style="margin-bottom: 10px;">
                 <nz-collapse-panel [nzActive]="true" [nzDisabled]="combine.eruptFieldModel.eruptFieldJson.edit.readOnly"
                                    [nzHeader]="combine.eruptFieldModel.eruptFieldJson.edit.title">
                     <erupt-edit-type [eruptModel]="combine.eruptModel"></erupt-edit-type>
                 </nz-collapse-panel>
             </nz-collapse>
-
-            <!--<ng-container *ngFor="let combine of combineErupts">-->
-            <!--<nz-card [nzTitle]="combine.eruptFieldModel.eruptFieldJson.edit.title" [nzHoverable]="true" [nzLoading]="loading">-->
-            <!--<erupt-edit-type [eruptModel]="combine.eruptModel"></erupt-edit-type>-->
-            <!--</nz-card>-->
-            <!--</ng-container>-->
         </ng-container>
     </nz-spin>
-    <nz-tabset *ngIf="subErupts.length>0">
-        <ng-container *ngFor="let sub of subErupts">
+    <nz-tabset *ngIf="eruptBuildModel.subErupts.length>0">
+        <ng-container *ngFor="let sub of eruptBuildModel.subErupts">
             <nz-tab [nzTitle]="sub.eruptFieldModel.eruptFieldJson.edit.title">
                 <ng-container [ngSwitch]="sub.eruptFieldModel.eruptFieldJson.edit.tabType.type">
                     <ng-container *ngSwitchCase="tabEnum.TABLE">
-                        <tab-table [tabErupt]="sub" [eruptModel]="eruptModel" [behavior]="behavior"></tab-table>
+                        <tab-table [tabErupt]="sub" [eruptModel]="eruptBuildModel.eruptModel" [behavior]="behavior"></tab-table>
                     </ng-container>
                     <ng-container *ngSwitchCase="tabEnum.TREE">
                         <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">

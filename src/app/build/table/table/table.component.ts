@@ -198,8 +198,11 @@ export class TableComponent implements OnInit, OnDestroy {
           nzTitle: "查看",
           nzContent: EditComponent,
           nzComponentParams: {
-            subErupts: this.eruptBuildModel.subErupts,
-            eruptModel: this.readonlyErupt,
+            eruptBuildModel: {
+              eruptModel: this.readonlyErupt,
+              subErupts: this.eruptBuildModel.subErupts,
+              combineErupts: this.eruptBuildModel.combineErupts
+            },
             setIdData: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
             behavior: "readonly"
           }
@@ -220,8 +223,7 @@ export class TableComponent implements OnInit, OnDestroy {
           nzOkText: "修改",
           nzContent: EditComponent,
           nzComponentParams: {
-            subErupts: this.eruptBuildModel.subErupts,
-            eruptModel: this.eruptBuildModel.eruptModel,
+            eruptBuildModel: this.eruptBuildModel,
             setIdData: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
           },
           nzOnOk: () => {
@@ -368,9 +370,7 @@ export class TableComponent implements OnInit, OnDestroy {
       nzTitle: "新增",
       nzContent: EditComponent,
       nzComponentParams: {
-        subErupts: this.eruptBuildModel.subErupts,
-        eruptModel: this.eruptBuildModel.eruptModel,
-        combineErupts: this.eruptBuildModel.combineErupts
+        eruptBuildModel: this.eruptBuildModel
       },
       nzOkText: "增加",
       nzOnOk: () => {
