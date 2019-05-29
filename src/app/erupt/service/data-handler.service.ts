@@ -5,7 +5,7 @@ import { FormControl } from "@angular/forms";
 import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
 import { Inject, Injectable } from "@angular/core";
-import { EruptAndEruptFieldModel } from "../model/erupt-page.model";
+import { EruptAndEruptFieldModel, EruptBuildModel } from "../model/erupt-build.model";
 import { DataService } from "./data.service";
 import { CarouselImgComponent } from "../components/carousel-img/carousel-img.component";
 import { QrComponent } from "../components/qr/qr.component";
@@ -22,7 +22,7 @@ export class DataHandlerService {
   }
 
   //将view数据转换为alain table组件配置信息
-  viewToAlainTableConfig(erupt: EruptModel): Array<any> {
+  viewToAlainTableConfig(erupt: EruptModel): any[] {
     let cols = [];
     const views = erupt.tableColumns;
     for (let view of views) {
@@ -248,11 +248,18 @@ export class DataHandlerService {
 
 
   //非空验证
-  validateNotNull(eruptModel: EruptModel): boolean {
+  validateNotNull(eruptModel: EruptModel, combineErupt?: EruptAndEruptFieldModel[]): boolean {
     for (let field of eruptModel.eruptFieldModels) {
       if (field.eruptFieldJson.edit.notNull) {
         if (!field.eruptFieldJson.edit.$value) {
           this.msg.error(field.eruptFieldJson.edit.title + "必填！");
+          return false;
+        }
+      }
+    }
+    if (combineErupt) {
+      for (let combine of combineErupt) {
+        if (!this.validateNotNull(combine.eruptModel)) {
           return false;
         }
       }
@@ -281,10 +288,9 @@ export class DataHandlerService {
   }
 
   //将eruptModel中的内容拼接成后台需要的json格式
-  eruptValueToObject(eruptModel: EruptModel, subErupts?: Array<EruptAndEruptFieldModel>): object {
-    // this.validateNotNull(eruptModel);
+  eruptValueToObject(eruptBuildModel: EruptBuildModel): object {
     const eruptData: any = {};
-    eruptModel.eruptFieldModels.forEach(field => {
+    eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
       switch (field.eruptFieldJson.edit.type) {
         case EditType.INPUT:
           const edit = field.eruptFieldJson.edit;
@@ -384,8 +390,8 @@ export class DataHandlerService {
           break;
       }
     });
-    if (subErupts && subErupts.length > 0) {
-      subErupts.forEach(sub => {
+    if (eruptBuildModel.subErupts) {
+      eruptBuildModel.subErupts.forEach(sub => {
         let tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType.type;
         if (tabType == TabEnum.TREE) {
           const tabTree = eruptData[sub.eruptFieldModel.fieldName] = [];
@@ -399,11 +405,18 @@ export class DataHandlerService {
         }
       });
     }
+    if (eruptBuildModel.combineErupts) {
+      for (let combineErupt of eruptBuildModel.combineErupts) {
+        eruptData[combineErupt.eruptFieldModel.fieldName] = this.eruptValueToObject({
+          eruptModel: combineErupt.eruptModel
+        });
+      }
+    }
     return eruptData;
   }
 
   //将后台数据转化成前端可视格式
-  objectToEruptValue(eruptModel: EruptModel, object: any) {
+  objectToEruptValue(object: any, eruptModel: EruptModel, combineErupts?: EruptAndEruptFieldModel[]) {
     for (let field of eruptModel.eruptFieldModels) {
       if (field) {
         switch (field.eruptFieldJson.edit.type) {
@@ -444,6 +457,7 @@ export class DataHandlerService {
             }
             break;
           case EditType.BOOLEAN:
+            console.log(object[field.fieldName]);
             if (!object[field.fieldName] && object[field.fieldName] !== false) {
               field.eruptFieldJson.edit.$value = field.eruptFieldJson.edit.boolType.defaultValue;
             } else {
@@ -491,6 +505,16 @@ export class DataHandlerService {
         }
       }
     }
+    if (combineErupts) {
+      for (let combineErupt of combineErupts) {
+        const combineObj = object[combineErupt.eruptFieldModel.fieldName];
+        if (combineObj) {
+          this.objectToEruptValue(combineObj, combineErupt.eruptModel);
+        }
+
+      }
+    }
+
   }
 
   loadEruptDefaultValue(eruptModel: EruptModel) {
@@ -500,12 +524,12 @@ export class DataHandlerService {
         obj[ef.fieldName] = ef.value;
       }
     });
-    this.objectToEruptValue(eruptModel, obj);
+    this.objectToEruptValue(obj, eruptModel);
   }
 
-  emptyEruptValue(eruptModel: EruptModel, subFieldModels?: Array<EruptAndEruptFieldModel>) {
-    eruptModel.eruptFieldModels.forEach(ef => {
-      if (ef.eruptFieldJson.edit.type == EditType.BOOLEAN && eruptModel.mode !== "search") {
+  emptyEruptValue(eruptBuildModel: EruptBuildModel) {
+    eruptBuildModel.eruptModel.eruptFieldModels.forEach(ef => {
+      if (ef.eruptFieldJson.edit.type == EditType.BOOLEAN && eruptBuildModel.eruptModel.mode !== "search") {
         ef.eruptFieldJson.edit.$value = ef.eruptFieldJson.edit.boolType.defaultValue;
       } else {
         ef.eruptFieldJson.edit.$value = null;
@@ -515,9 +539,16 @@ export class DataHandlerService {
         ef.eruptFieldJson.edit.$r_val = null;
       }
     });
-    if (subFieldModels) {
-      subFieldModels.forEach(sub => {
+    if (eruptBuildModel.subErupts) {
+      eruptBuildModel.subErupts.forEach(sub => {
         sub.eruptFieldModel.eruptFieldJson.edit.$value = [];
+      });
+    }
+    if (eruptBuildModel.combineErupts) {
+      eruptBuildModel.combineErupts.forEach(combine => {
+        this.emptyEruptValue({
+          eruptModel: combine.eruptModel
+        });
       });
     }
   }

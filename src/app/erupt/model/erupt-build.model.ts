@@ -4,14 +4,14 @@
 import { EruptModel } from "./erupt.model";
 import { EruptFieldModel } from "./erupt-field.model";
 
-export interface EruptPageModel {
+export interface EruptBuildModel {
   eruptModel: EruptModel;
-  subErupts: Array<EruptAndEruptFieldModel>;
-  combineErupts: Array<EruptAndEruptFieldModel>;
+  subErupts?: EruptAndEruptFieldModel[];
+  combineErupts?: EruptAndEruptFieldModel[];
 }
 
 export interface EruptAndEruptFieldModel {
   eruptModel: EruptModel;
   eruptFieldModel: EruptFieldModel;
-  alainTableConfig?: Array<any>;
+  alainTableConfig?: any[];
 }

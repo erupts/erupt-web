@@ -8,7 +8,7 @@ import { _HttpClient } from "@delon/theme";
 import { Observable } from "rxjs";
 import { loginModel } from "../model/user.model";
 import { EruptApiModel } from "../model/erupt-api.model";
-import { EruptPageModel } from "../model/erupt-page.model";
+import { EruptBuildModel } from "../model/erupt-build.model";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
 import { RestPath } from "../model/erupt.enum";
 import { WindowModel } from "../model/window.model";
@@ -22,8 +22,8 @@ export class DataService {
   }
 
   //获取结构
-  getEruptBuild(modelName: string): Observable<EruptPageModel> {
-    return this._http.get<EruptPageModel>(RestPath.build + "list/" + modelName, null, {
+  getEruptBuild(modelName: string): Observable<EruptBuildModel> {
+    return this._http.get<EruptBuildModel>(RestPath.build + "list/" + modelName, null, {
       observe: "body",
       headers: {
         erupt: modelName
@@ -52,8 +52,8 @@ export class DataService {
   }
 
 
-  findTabListById(modelName: string, id: string, tabFieldName: string): Observable<Array<any>> {
-    return this._http.get<Array<any>>(RestPath.data + "tab/table/" + modelName + "/" + id + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, {
+  findTabListById(modelName: string, id: string, tabFieldName: string): Observable<any[]> {
+    return this._http.get<any[]>(RestPath.data + "tab/table/" + modelName + "/" + id + "/" + RestPath.NO_RIGHT_SYMBOL + tabFieldName, null, {
       observe: "body",
       headers: {
         erupt: modelName
@@ -142,7 +142,7 @@ export class DataService {
   }
 
   //批量删除数据
-  deleteEruptDatas(modelName: string, ids: Array<any>): Observable<EruptApiModel> {
+  deleteEruptDatas(modelName: string, ids: any[]): Observable<EruptApiModel> {
     return this._http.delete(RestPath.data + modelName, { ids: ids }, {
       headers: {
         erupt: modelName
@@ -161,7 +161,7 @@ export class DataService {
   }
 
   //获取菜单列表
-  getMenu(): Observable<Array<any>> {
+  getMenu(): Observable<any[]> {
     return this._http.get(WindowModel.domain + "/menu", null);
   }
 

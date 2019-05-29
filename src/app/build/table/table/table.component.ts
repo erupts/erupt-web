@@ -9,7 +9,7 @@ import { STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
-import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
+import { EruptAndEruptFieldModel, EruptBuildModel } from "../../../erupt/model/erupt-build.model";
 import { deepCopy } from "@delon/util";
 import { EditType, RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
@@ -39,16 +39,11 @@ export class TableComponent implements OnInit, OnDestroy {
 
   hideCondition = false;
 
-  eruptModel: EruptModel;
-
   searchErupt: EruptModel;
 
   readonlyErupt: EruptModel;
 
-  subErupts: Array<EruptAndEruptFieldModel>;
-
-
-  combineErupts: Array<EruptAndEruptFieldModel>;
+  eruptBuildModel: EruptBuildModel;
 
   stConfig = {
     url: null,
@@ -78,17 +73,16 @@ export class TableComponent implements OnInit, OnDestroy {
     }
   };
 
+  selectedRows: any[] = [];
 
-  selectedRows: Array<any> = [];
-
-  columns: Array<any>;
+  columns: any[];
 
   @ViewChild("st") st;
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.selectedRows = [];
-      this.eruptModel = null;
+      this.eruptBuildModel = null;
       if (this.searchErupt) {
         this.searchErupt.eruptFieldModels = [];
       }
@@ -97,14 +91,12 @@ export class TableComponent implements OnInit, OnDestroy {
       this.dataService.getEruptBuild(params.name).subscribe(em => {
           this.stConfig.url = RestPath.data + "table/" + params.name;
           this.dataHandler.initErupt(em.eruptModel);
-          this.eruptModel = em.eruptModel;
+          this.eruptBuildModel = em;
+          this.buildCombineErupt(em.combineErupts);
+          this.buildSubErupt(em.subErupts);
           this.buildTableConfig();
           this.buildSearchErupt();
           this.buildReadOnlyErupt();
-          this.buildCombineErupt(em.combineErupts);
-          this.combineErupts = em.combineErupts;
-          this.buildSubErupt(em.subErupts);
-          this.subErupts = em.subErupts;
         }
       );
     });
@@ -116,7 +108,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   //构建搜索项信息
   buildSearchErupt() {
-    let copyErupt = <EruptModel>deepCopy(this.eruptModel);
+    let copyErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
     const searchFieldModels = [];
     const searchFieldModelsMap: Map<String, EruptFieldModel> = new Map();
     copyErupt.eruptFieldModels.forEach((field) => {
@@ -137,13 +129,13 @@ export class TableComponent implements OnInit, OnDestroy {
     this.searchErupt = copyErupt;
   }
 
-  buildSubErupt(subErupts: Array<EruptAndEruptFieldModel>) {
+  buildSubErupt(subErupts: EruptAndEruptFieldModel[]) {
     subErupts.forEach((sub => {
       this.dataHandler.initErupt(sub.eruptModel);
       const edit = sub.eruptFieldModel.eruptFieldJson.edit;
       if (edit.tabType.type == TabEnum.TREE) {
-        if (this.eruptModel.eruptJson.power.viewDetails || this.eruptModel.eruptJson.power.edit) {
-          this.dataService.findTabTree(this.eruptModel.eruptName, sub.eruptFieldModel.fieldName).subscribe(
+        if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails || this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
+          this.dataService.findTabTree(this.eruptBuildModel.eruptModel.eruptName, sub.eruptFieldModel.fieldName).subscribe(
             tree => {
               if (tree) {
                 sub.eruptFieldModel.eruptFieldJson.edit.$viewValue = this.dataHandler.dataTreeToZorroTree(tree);
@@ -156,7 +148,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }));
   }
 
-  buildCombineErupt(combineErupts: Array<EruptAndEruptFieldModel>) {
+  buildCombineErupt(combineErupts: EruptAndEruptFieldModel[]) {
     combineErupts.forEach((sub => {
       this.dataHandler.initErupt(sub.eruptModel);
       // sub.alainTableConfig = this.dataHandler.viewToAlainTableConfig(sub.eruptModel);
@@ -164,7 +156,7 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   buildReadOnlyErupt() {
-    let copyErupt = <EruptModel>deepCopy(this.eruptModel);
+    let copyErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
     copyErupt.eruptFieldModels.forEach((field) => {
       field.eruptFieldJson.edit.readOnly = true;
     });
@@ -174,16 +166,24 @@ export class TableComponent implements OnInit, OnDestroy {
   query() {
     if (this.searchErupt.eruptFieldModels.length > 0) {
       this.stConfig.req.param = {};
-      this.stConfig.req.param = this.dataHandler.eruptValueToObject(this.searchErupt);
+      this.stConfig.req.param = this.dataHandler.eruptValueToObject({
+        eruptModel: this.searchErupt
+      });
     }
     this.st.load(1, this.stConfig.req.param);
   }
 
   buildTableConfig() {
     const _columns = [];
-    _columns.push({ title: "", type: "checkbox", fixed: "left", className: "text-center", index: this.eruptModel.eruptJson.primaryKeyCol });
+    _columns.push({
+      title: "",
+      type: "checkbox",
+      fixed: "left",
+      className: "text-center",
+      index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
+    });
     _columns.push({ title: "No", type: "no", fixed: "left", className: "text-center", width: "60px" });
-    _columns.push(...this.dataHandler.viewToAlainTableConfig(this.eruptModel));
+    _columns.push(...this.dataHandler.viewToAlainTableConfig(this.eruptBuildModel.eruptModel));
     const tableOperators: any = [];
     const eye = {
       icon: "eye",
@@ -198,9 +198,9 @@ export class TableComponent implements OnInit, OnDestroy {
           nzTitle: "查看",
           nzContent: EditComponent,
           nzComponentParams: {
-            subErupts: this.subErupts,
+            subErupts: this.eruptBuildModel.subErupts,
             eruptModel: this.readonlyErupt,
-            setIdData: record[this.eruptModel.eruptJson.primaryKeyCol],
+            setIdData: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
             behavior: "readonly"
           }
         });
@@ -210,7 +210,7 @@ export class TableComponent implements OnInit, OnDestroy {
     const edit = {
       icon: "edit",
       click: (record: any) => {
-        this.eruptModel.tabLoadCount = 0;
+        this.eruptBuildModel.eruptModel.tabLoadCount = 0;
         this.modal.create({
           nzWrapClassName: "modal-lg",
           nzStyle: { top: "60px" },
@@ -220,14 +220,14 @@ export class TableComponent implements OnInit, OnDestroy {
           nzOkText: "修改",
           nzContent: EditComponent,
           nzComponentParams: {
-            subErupts: this.subErupts,
-            eruptModel: this.eruptModel,
-            setIdData: record[this.eruptModel.eruptJson.primaryKeyCol]
+            subErupts: this.eruptBuildModel.subErupts,
+            eruptModel: this.eruptBuildModel.eruptModel,
+            setIdData: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
           },
           nzOnOk: () => {
-            if (this.dataHandler.validateNotNull(this.eruptModel)) {
-              if (this.eruptModel.tabLoadCount === this.subErupts.length) {
-                this.dataService.editEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel, this.subErupts)).subscribe(result => {
+            if (this.dataHandler.validateNotNull(this.eruptBuildModel.eruptModel)) {
+              if (this.eruptBuildModel.eruptModel.tabLoadCount === this.eruptBuildModel.subErupts.length) {
+                this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
                   this.st.load();
                   this.msg.success("修改成功");
                   this.modal.closeAll();
@@ -249,7 +249,7 @@ export class TableComponent implements OnInit, OnDestroy {
       },
       type: "del",
       click: (record, modal, comp) => {
-        this.dataService.deleteEruptData(this.eruptModel.eruptName, record[this.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
+        this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
           if (result.success) {
             comp.removeRow(record);
             this.msg.success("删除成功");
@@ -260,17 +260,17 @@ export class TableComponent implements OnInit, OnDestroy {
       }
     };
 
-    if (this.eruptModel.eruptJson.power.viewDetails) {
+    if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
       tableOperators.push(eye);
     }
-    if (this.eruptModel.eruptJson.power.edit) {
+    if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
       tableOperators.push(edit);
     }
-    if (this.eruptModel.eruptJson.power.delete) {
+    if (this.eruptBuildModel.eruptModel.eruptJson.power.delete) {
       tableOperators.push(del);
     }
     const that = this;
-    this.eruptModel.eruptJson.rowOperation.forEach(ro => {
+    this.eruptBuildModel.eruptModel.eruptJson.rowOperation.forEach(ro => {
       tableOperators.push({
         format: () => {
           return `<i title="${ro.title}" class="fa ${ro.icon}" style="color: #000"></i>`;
@@ -304,13 +304,13 @@ export class TableComponent implements OnInit, OnDestroy {
         return;
       }
     }
-    const ro = this.eruptModel.eruptJson.rowOperationMap.get(code);
+    const ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperationMap.get(code);
     if (ro.edits.length <= 0) {
       this.modal.confirm({
         nzTitle: "请确认是否执行此操作",
         nzContent: ro.title,
         nzOnOk: () => {
-          this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, null).subscribe(res => {
+          this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, multi ? this.selectedRows : data, null).subscribe(res => {
             this.st.reset();
           });
         }
@@ -329,8 +329,8 @@ export class TableComponent implements OnInit, OnDestroy {
       });
       const operatorEruptModel: EruptModel = {
         eruptFieldModels: eruptFieldModels,
-        eruptName: this.eruptModel.eruptName,
-        eruptJson: this.eruptModel.eruptJson
+        eruptName: this.eruptBuildModel.eruptModel.eruptName,
+        eruptJson: this.eruptBuildModel.eruptModel.eruptJson
       };
       this.modal.create({
         nzKeyboard: true,
@@ -339,7 +339,9 @@ export class TableComponent implements OnInit, OnDestroy {
         nzWrapClassName: "modal-lg",
         nzOnOk: () => {
           if (this.dataHandler.validateNotNull(operatorEruptModel)) {
-            this.dataService.execOperatorFun(this.eruptModel.eruptName, code, multi ? this.selectedRows : data, this.dataHandler.eruptValueToObject(operatorEruptModel)).subscribe(res => {
+            this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, multi ? this.selectedRows : data, this.dataHandler.eruptValueToObject({
+              eruptModel: operatorEruptModel
+            })).subscribe(res => {
               this.st.reset();
             });
           } else {
@@ -356,8 +358,8 @@ export class TableComponent implements OnInit, OnDestroy {
 
   //新增
   addRow() {
-    this.dataHandler.emptyEruptValue(this.eruptModel, this.subErupts);
-    this.dataHandler.loadEruptDefaultValue(this.eruptModel);
+    this.dataHandler.emptyEruptValue(this.eruptBuildModel);
+    this.dataHandler.loadEruptDefaultValue(this.eruptBuildModel.eruptModel);
     this.modal.create({
       nzStyle: { top: "60px" },
       nzWrapClassName: "modal-lg",
@@ -366,14 +368,14 @@ export class TableComponent implements OnInit, OnDestroy {
       nzTitle: "新增",
       nzContent: EditComponent,
       nzComponentParams: {
-        subErupts: this.subErupts,
-        eruptModel: this.eruptModel,
-        combineErupts: this.combineErupts
+        subErupts: this.eruptBuildModel.subErupts,
+        eruptModel: this.eruptBuildModel.eruptModel,
+        combineErupts: this.eruptBuildModel.combineErupts
       },
       nzOkText: "增加",
       nzOnOk: () => {
-        if (this.dataHandler.validateNotNull(this.eruptModel)) {
-          this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel, this.subErupts)).subscribe(result => {
+        if (this.dataHandler.validateNotNull(this.eruptBuildModel.eruptModel)) {
+          this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
             this.st.load();
             this.modal.closeAll();
             this.msg.success("新增成功");
@@ -392,7 +394,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
     const ids = [];
     this.selectedRows.forEach(e => {
-      ids.push(e[this.eruptModel.eruptJson.primaryKeyCol]);
+      ids.push(e[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
     });
     if (ids.length > 0) {
       this.modal.confirm(
@@ -400,7 +402,7 @@ export class TableComponent implements OnInit, OnDestroy {
           nzTitle: "确定要删除吗？",
           nzContent: "",
           nzOnOk: () => {
-            this.dataService.deleteEruptDatas(this.eruptModel.eruptName, ids).subscribe(val => {
+            this.dataService.deleteEruptDatas(this.eruptBuildModel.eruptModel.eruptName, ids).subscribe(val => {
               this.selectedRows.forEach(r => {
                 this.st.removeRow(r);
               });
@@ -415,7 +417,7 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   clearCondition() {
-    this.dataHandler.emptyEruptValue(this.searchErupt);
+    this.dataHandler.emptyEruptValue({ eruptModel: this.searchErupt });
   }
 
   // table checkBox 触发事件
@@ -427,7 +429,7 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   downloadExcelTemplate() {
-    this.dataService.downloadExcelTemplate(this.eruptModel.eruptName);
+    this.dataService.downloadExcelTemplate(this.eruptBuildModel.eruptModel.eruptName);
   }
 
   // excel导出

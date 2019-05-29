@@ -28,7 +28,7 @@ export interface Erupt {
 export interface Tree {
   id: string;
   label: string;
-  children?: Array<Tree>;
+  children?: Tree[];
   data?: any;
 }
 
@@ -38,7 +38,7 @@ interface RowOperation {
   icon: string;
   title: string;
   multi: boolean;
-  edits: Array<CodeAndEdit>;
+  edits: CodeAndEdit[];
 }
 
 interface CodeAndEdit {

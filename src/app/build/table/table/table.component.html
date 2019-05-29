@@ -1,26 +1,27 @@
 <page-header [autoTitle]="false" [title]="null"></page-header>
-<nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" [nzLoading]="!eruptModel">
-    <ng-container *ngIf="eruptModel">
+<nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" [nzLoading]="!eruptBuildModel">
+    <ng-container *ngIf="eruptBuildModel">
         <div style="margin-bottom: 5px;">
-            <ng-container *ngIf="eruptModel.eruptJson.power.add">
+
+            <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
                 <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
                     <i nz-icon type="plus" theme="outline"></i>新增
                 </button>
             </ng-container>
 
-            <ng-container *ngIf="eruptModel.eruptJson.power.delete">
+            <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
                 <button nz-button nzType="danger" class="mb-sm" (click)="delRows()">
                     <i nz-icon type="delete" theme="outline"></i>删除
                 </button>
             </ng-container>
 
-            <ng-container *ngIf="eruptModel.eruptJson.power.export">
+            <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
                 <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()">
                     <i nz-icon type="download" theme="outline"></i>下载
                 </button>
             </ng-container>
 
-            <ng-container *ngIf="eruptModel.eruptJson.power.importable">
+            <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.importable">
                 &nbsp;
                 <nz-dropdown-button (nzClick)="importableExcel()">
                     导入Excel
@@ -30,16 +31,16 @@
                 </nz-dropdown-button>
             </ng-container>
 
-            <ng-container *ngIf="eruptModel.eruptJson.power.query">
+            <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
                 <nz-divider nzType="vertical"></nz-divider>
                 <button nz-button nzType="primary" class="mb-sm" (click)="query()">
                     <i nz-icon type="search" theme="outline"></i>查询
                 </button>
             </ng-container>
-            <nz-divider nzType="vertical" *ngIf="eruptModel.eruptJson.rowOperation"></nz-divider>
+            <nz-divider nzType="vertical" *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation"></nz-divider>
 
-            <ng-container *ngIf="eruptModel.eruptJson.rowOperation">
-                <ng-container *ngFor="let oper of eruptModel.eruptJson.rowOperation">
+            <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
+                <ng-container *ngFor="let oper of eruptBuildModel.eruptModel.eruptJson.rowOperation">
                     <ng-container *ngIf="oper.multi">
                         <button nz-button nzType="dashed" class="mb-sm" (click)="gcOperatorEdits(oper.code,true)">
                             <i class="fa" [ngClass]="oper.icon"></i>
@@ -73,7 +74,7 @@
             </erupt-edit-type>
         </nz-card>
         <!--y: 'calc(100vh - 400px)'-->
-        <!--[scroll]="{x: (clientWidth > 768 ? eruptModel.tableColumns.length * 110 : 0) + 'px'}"-->
+        <!--[scroll]="{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 110 : 0) + 'px'}"-->
         <st #st
             [data]="stConfig.url" [columns]="columns"
 

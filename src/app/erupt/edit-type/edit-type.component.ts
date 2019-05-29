@@ -26,7 +26,7 @@ export class EditTypeComponent implements OnInit {
 
   @Output() search = new EventEmitter();
 
-  eruptFieldModels: Array<EruptFieldModel>;
+  eruptFieldModels: EruptFieldModel[];
 
   editType = EditType;
 

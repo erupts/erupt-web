@@ -3,7 +3,7 @@ import { EruptModel } from "../../../erupt/model/erupt.model";
 import { DataService } from "../../../erupt/service/data.service";
 import { TabEnum } from "../../../erupt/model/erupt.enum";
 import { SettingsService } from "@delon/theme";
-import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
+import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-build.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 
 @Component({
@@ -37,9 +37,9 @@ export class EditComponent implements OnInit, OnDestroy {
 
   @Input() set setIdData(id: any) {
     this.loading = true;
-    this.dataHandlerService.emptyEruptValue(this.eruptModel, this.subErupts);
+    this.dataHandlerService.emptyEruptValue({ eruptModel: this.eruptModel, subErupts: this.subErupts });
     this.dataService.queryEruptDataById(this.eruptModel.eruptName, id).subscribe(data => {
-      this.dataHandlerService.objectToEruptValue(this.eruptModel, data);
+      this.dataHandlerService.objectToEruptValue(data, this.eruptModel);
       this.loading = false;
     });
     //TAB control

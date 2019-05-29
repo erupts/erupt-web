@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit, ViewChild } from "@angular/core";
-import { EruptAndEruptFieldModel } from "../model/erupt-page.model";
+import { EruptAndEruptFieldModel } from "../model/erupt-build.model";
 import { DataService } from "../service/data.service";
 import { EruptModel } from "../model/erupt.model";
 import { STComponent } from "@delon/abc";
@@ -78,7 +78,7 @@ export class TabTableComponent implements OnInit {
                   col: colRules[2]
                 },
                 nzOnOk: () => {
-                  let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptModel);
+                  let obj = this.dataHandlerService.eruptValueToObject({ eruptModel: this.tabErupt.eruptModel });
                 }
               });
             }
@@ -112,7 +112,9 @@ export class TabTableComponent implements OnInit {
       },
       nzOnOk: () => {
         if (this.dataHandlerService.validateNotNull(this.tabErupt.eruptModel)) {
-          let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptModel);
+          let obj = this.dataHandlerService.eruptValueToObject({
+            eruptModel: this.tabErupt.eruptModel
+          });
           this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
           this.st.reload();
         } else {

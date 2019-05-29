@@ -13,7 +13,7 @@ export interface EruptFieldModel {
 
 //field detail
 export interface EruptField {
-  views?: Array<View>;
+  views?: View[];
   edit?: Edit;
 }
 
@@ -66,8 +66,8 @@ interface Search {
 interface InputType {
   length: number;
   placeholder: string;
-  prefix: Array<VL>;
-  suffix: Array<VL>;
+  prefix: VL[];
+  suffix: VL[];
   prefixValue?: string;
   suffixValue?: string;
 }
@@ -88,7 +88,7 @@ interface BoolType {
 
 interface ChoiceType {
   type: ChoiceEnum;
-  vl: Array<VL>;
+  vl: VL[];
   joinSeparator: string;
   //在页面初始化时将vl值转化成map形式
   vlMap?: Map<string, string>;

@@ -5,7 +5,7 @@ import { ActivatedRoute } from "@angular/router";
 import { NzFormatEmitEvent, NzMessageService, NzModalService, NzTreeBaseService } from "ng-zorro-antd";
 import { colRules } from "../../../erupt/model/util.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
-import { EruptAndEruptFieldModel } from "../../../erupt/model/erupt-page.model";
+import { EruptAndEruptFieldModel, EruptBuildModel } from "../../../erupt/model/erupt-build.model";
 
 @Component({
   selector: "erupt-tree",
@@ -18,9 +18,7 @@ export class TreeComponent implements OnInit, OnDestroy {
 
   private eruptName: string;
 
-  public eruptModel: EruptModel;
-
-  public combineErupts: Array<EruptAndEruptFieldModel>;
+  public eruptBuildModel: EruptBuildModel;
 
   private showEdit: boolean = false;
 
@@ -36,6 +34,7 @@ export class TreeComponent implements OnInit, OnDestroy {
 
   private selectLeaf: boolean = false;
 
+
   @ViewChild("tree") tree: NzTreeBaseService;
 
   constructor(private dataService: DataService,
@@ -49,17 +48,17 @@ export class TreeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.eruptModel = null;
+      this.eruptBuildModel = null;
       this.showEdit = false;
       this.eruptName = params.name;
       this.fetchTreeData();
       this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
+        erupt.subErupts = null;
         this.dataHandler.initErupt(erupt.eruptModel);
         erupt.combineErupts.forEach(ce => {
           this.dataHandler.initErupt(ce.eruptModel);
         });
-        this.eruptModel = erupt.eruptModel;
-        this.combineErupts = erupt.combineErupts;
+        this.eruptBuildModel = erupt;
       });
     });
   }
@@ -86,25 +85,25 @@ export class TreeComponent implements OnInit, OnDestroy {
     if (this.tree.getSelectedNodeList()[0]) {
       this.tree.getSelectedNodeList()[0].isSelected = false;
     }
-    this.dataHandler.emptyEruptValue(this.eruptModel);
+    this.dataHandler.emptyEruptValue(this.eruptBuildModel);
   }
 
   add() {
-    if (this.dataHandler.validateNotNull(this.eruptModel)) {
+    if (this.dataHandler.validateNotNull(this.eruptBuildModel.eruptModel, this.eruptBuildModel.combineErupts)) {
       this.loading = true;
-      this.dataService.addEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
+      this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
         this.loading = false;
         this.fetchTreeData();
-        this.dataHandler.emptyEruptValue(this.eruptModel);
+        this.dataHandler.emptyEruptValue(this.eruptBuildModel);
         this.msg.success("添加成功");
       });
     }
   }
 
   save() {
-    if (this.dataHandler.validateNotNull(this.eruptModel)) {
+    if (this.dataHandler.validateNotNull(this.eruptBuildModel.eruptModel, this.eruptBuildModel.combineErupts)) {
       this.loading = true;
-      this.dataService.editEruptData(this.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptModel)).subscribe(result => {
+      this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
         this.loading = false;
         this.msg.success("修改成功");
         this.fetchTreeData();
@@ -120,7 +119,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         nzTitle: "请确认是否要删除",
         nzContent: "",
         nzOnOk: () => {
-          this.dataService.deleteEruptData(this.eruptModel.eruptName, nzTreeNode.origin.key).subscribe(function(data) {
+          this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, nzTreeNode.origin.key).subscribe(function(data) {
             if (data.success) {
               that.fetchTreeData();
               that.msg.success("删除成功");
@@ -146,9 +145,9 @@ export class TreeComponent implements OnInit, OnDestroy {
     this.selectLeaf = true;
     this.loading = true;
     this.showEdit = true;
-    this.dataService.queryEruptDataById(this.eruptModel.eruptName, event.node.origin.key).subscribe(data => {
+    this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, event.node.origin.key).subscribe(data => {
       this.loading = false;
-      this.dataHandler.objectToEruptValue(this.eruptModel, data);
+      this.dataHandler.objectToEruptValue(data, this.eruptBuildModel.eruptModel, this.eruptBuildModel.combineErupts);
     });
 
   }
