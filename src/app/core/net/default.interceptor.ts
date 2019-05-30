@@ -1,23 +1,24 @@
 import { Inject, Injectable, Injector } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
   HttpErrorResponse,
-  HttpSentEvent,
+  HttpHandler,
   HttpHeaderResponse,
+  HttpInterceptor,
   HttpProgressEvent,
+  HttpRequest,
   HttpResponse,
+  HttpSentEvent,
   HttpUserEvent
 } from "@angular/common/http";
 import { Observable, of, throwError } from "rxjs";
-import { mergeMap, catchError } from "rxjs/operators";
+import { catchError, mergeMap } from "rxjs/operators";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { _HttpClient } from "@delon/theme";
 import { environment } from "@env/environment";
 import { EruptApiModel } from "../../erupt/model/erupt-api.model";
-import { AppConstService } from "../../erupt/service/app-const.service";
+import { CacheService } from "@delon/cache";
+import { GlobalKeys } from "../../erupt/model/erupt-const";
 
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
@@ -28,7 +29,7 @@ export class DefaultInterceptor implements HttpInterceptor {
               @Inject(NzModalService)
               private modal: NzModalService,
               private router: Router,
-              private ac: AppConstService) {
+              private cacheService: CacheService) {
   }
 
   get msg(): NzMessageService {
@@ -70,7 +71,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         }
         break;
       case 401: // 未登录状态码
-        this.ac.loginBackPath = this.router.url;
+        this.cacheService.set(GlobalKeys.loginBackPath,this.router.url);
         this.goTo("/passport/login");
         break;
       case 404:

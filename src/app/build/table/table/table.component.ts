@@ -5,7 +5,7 @@ import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 import { EditComponent } from "../edit/edit.component";
-import { STData } from "@delon/abc";
+import { STComponent, STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
@@ -77,7 +77,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   columns: any[];
 
-  @ViewChild("st") st;
+  @ViewChild("st") st: STComponent;
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -230,7 +230,7 @@ export class TableComponent implements OnInit, OnDestroy {
             if (this.dataHandler.validateNotNull(this.eruptBuildModel.eruptModel)) {
               if (this.eruptBuildModel.eruptModel.tabLoadCount === this.eruptBuildModel.subErupts.length) {
                 this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
-                  this.st.load();
+                  this.st.reload();
                   this.msg.success("修改成功");
                   this.modal.closeAll();
                 });
@@ -250,14 +250,15 @@ export class TableComponent implements OnInit, OnDestroy {
         twoToneColor: "#f00"
       },
       type: "del",
-      click: (record, modal, comp) => {
+      click: (record) => {
+        // const msg = this.msg.loading("删除中", {
+        //   nzPauseOnHover: true,
+        //   nzDuration: 9999
+        // });
+        // this.msg.remove(msg.messageId);
         this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
-          if (result.success) {
-            comp.removeRow(record);
-            this.msg.success("删除成功");
-          } else {
-            this.msg.error(result.message);
-          }
+          this.st.reload();
+          this.msg.success("删除成功");
         });
       }
     };
@@ -313,7 +314,7 @@ export class TableComponent implements OnInit, OnDestroy {
         nzContent: ro.title,
         nzOnOk: () => {
           this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, multi ? this.selectedRows : data, null).subscribe(res => {
-            this.st.reset();
+            this.st.reload();
           });
         }
       });
@@ -344,7 +345,7 @@ export class TableComponent implements OnInit, OnDestroy {
             this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, multi ? this.selectedRows : data, this.dataHandler.eruptValueToObject({
               eruptModel: operatorEruptModel
             })).subscribe(res => {
-              this.st.reset();
+              this.st.reload();
             });
           } else {
             return false;
@@ -376,7 +377,7 @@ export class TableComponent implements OnInit, OnDestroy {
       nzOnOk: () => {
         if (this.dataHandler.validateNotNull(this.eruptBuildModel.eruptModel)) {
           this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
-            this.st.load();
+            this.st.reload();
             this.modal.closeAll();
             this.msg.success("新增成功");
           });
@@ -403,9 +404,8 @@ export class TableComponent implements OnInit, OnDestroy {
           nzContent: "",
           nzOnOk: () => {
             this.dataService.deleteEruptDatas(this.eruptBuildModel.eruptModel.eruptName, ids).subscribe(val => {
-              this.selectedRows.forEach(r => {
-                this.st.removeRow(r);
-              });
+              this.st.reload();
+              this.msg.success("删除成功");
             });
           }
         }

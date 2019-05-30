@@ -7,7 +7,8 @@ import { DA_SERVICE_TOKEN, SocialService, TokenService } from "@delon/auth";
 import { ReuseTabService } from "@delon/abc";
 import { StartupService } from "@core/startup/startup.service";
 import { DataService } from "../../../erupt/service/data.service";
-import { AppConstService } from "../../../erupt/service/app-const.service";
+import { CacheService } from "@delon/cache";
+import { GlobalKeys } from "../../../erupt/model/erupt-const";
 
 @Component({
   selector: "passport-login",
@@ -42,7 +43,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
     private reuseTabService: ReuseTabService,
     @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
     private startupSrv: StartupService,
-    private ac: AppConstService
+    private cacheService: CacheService
   ) {
     this.form = fb.group({
       userName: [null, [Validators.required, Validators.minLength(1)]],
@@ -100,14 +101,17 @@ export class UserLoginComponent implements OnDestroy, OnInit {
       }
       this.useVerifyCode = result.useVerifyCode;
       if (result.pass) {
-        this.settingsService.setUser({
-          name: result.userName
-        });
-        this.tokenService.set({
-          token: result.token,
-          time: +new Date()
-        });
-        this.router.navigate([this.ac.loginBackPath || "/"]);
+        this.settingsService.setUser({ name: result.userName });
+        this.tokenService.set({ token: result.token, time: +new Date() });
+        let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
+        if (loginBackPath) {
+          this.cacheService.set(GlobalKeys.loginBackPath, null);
+          this.router.navigate([loginBackPath]);
+        } else {
+          this.router.navigate(["/"]);
+        }
+
+
       } else {
         this.error = result.reason;
         this.verifyCode.setValue(null);
