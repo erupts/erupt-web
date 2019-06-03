@@ -110,8 +110,6 @@ export class UserLoginComponent implements OnDestroy, OnInit {
         } else {
           this.router.navigate(["/"]);
         }
-
-
       } else {
         this.error = result.reason;
         this.verifyCode.setValue(null);

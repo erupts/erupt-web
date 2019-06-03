@@ -51,13 +51,15 @@
             </ng-container>
 
             <ng-container *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0">
-                <button nz-button [nzType]="hideCondition?'default':'danger'" class="mb-sm float-right"
-                        (click)="hideCondition=!hideCondition">
-                    <i nz-icon [type]="hideCondition?'codepen':'close'" theme="outline"></i>
-                </button>
-                <button *ngIf="!hideCondition" nz-button (click)="clearCondition()" class="mb-sm float-right">
-                    <i nz-icon nzType="sync" nzTheme="outline"></i>重置条件
-                </button>
+                <div class="mb-sm float-right">
+                    <button *ngIf="!hideCondition" nz-button (click)="clearCondition()">
+                        <i nz-icon nzType="sync" nzTheme="outline"></i>重置条件
+                    </button>
+                    <button nz-button [nzType]="hideCondition?'default':'danger'"
+                            (click)="hideCondition=!hideCondition">
+                        <i nz-icon [type]="hideCondition?'codepen':'close'" theme="outline"></i>
+                    </button>
+                </div>
             </ng-container>
         </div>
 

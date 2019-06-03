@@ -21,13 +21,14 @@ export interface Erupt {
   power: Power;
   desc: string;
   tree: Tree;
-  rowOperation: Map<String, RowOperation>;
+  rowOperation: RowOperation[];
   rowOperationMap?: Map<String, RowOperation>;
 }
 
 export interface Tree {
   id: string;
   label: string;
+  pid: string;
   children?: Tree[];
   data?: any;
 }

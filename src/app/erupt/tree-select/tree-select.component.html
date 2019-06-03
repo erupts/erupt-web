@@ -12,6 +12,7 @@
                  class="tree-container"
                  (nzClick)="nodeClickEvent($event)"
                  [nzShowLine]="true"
+                 [nzHideUnMatched]="true"
                  [nzData]="list"
                  [nzSearchValue]="searchValue">
         </nz-tree>

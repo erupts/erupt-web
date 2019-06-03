@@ -15,19 +15,32 @@ export class PageComponent implements OnInit {
 
   }
 
-  public page: string;
+  page: string;
 
-  public html: object;
+  html: object;
+
+  url: string;
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-      this.page = params.name;
-      // this.httpClient.get("/page/" + params.name).subscribe(value => {
-      //   alert(123)
-      //   console.log(value);
-      //   this.html = value;
-      // });
+    this.route.queryParamMap.subscribe(map => {
+      if (map.has("file")) {
+        this.url = "/page/" + map.get("file");
+      } else if (map.has("site")) {
+        this.url = map.get("site");
+      }
+      console.log(map);
     });
+    // this.route.params.subscribe(params => {
+    //   this.page = params.name;
+    //   console.log(params);
+    //   this.url = "/page/" + this.page;
+    //   console.log(this.url);
+    //   // this.httpClient.get("/page/" + params.name).subscribe(value => {
+    //   //   alert(123)
+    //   //   console.log(value);
+    //   //   this.html = value;
+    //   // });
+    // });
   }
 
 }

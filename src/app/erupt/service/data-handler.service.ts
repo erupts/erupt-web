@@ -168,7 +168,11 @@ export class DataHandlerService {
 
       if (view.template) {
         obj.format = (item: any) => {
-          return view.template.replace("@txt@", item[view.column] || "");
+          if (item[view.column]) {
+            return eval(view.template);
+          } else {
+            return "";
+          }
         };
       }
       if (view.className) {
@@ -235,12 +239,16 @@ export class DataHandlerService {
     eruptModel.eruptFieldModels.forEach(field => {
       if (field.eruptFieldJson.edit.type === EditType.DEPEND_SWITCH) {
         field.eruptFieldJson.edit.dependSwitchType.dependSwitchAttrs.forEach(attr => {
-          attr.dependEdits.forEach(editName => {
-            const fm = eruptModel.eruptFieldModelMap.get(editName);
-            if (fm) {
-              fm.eruptFieldJson.edit.show = false;
-            }
-          });
+          if (field.value && field.value == attr.value) {
+            return;
+          } else {
+            attr.dependEdits.forEach(editName => {
+              const fm = eruptModel.eruptFieldModelMap.get(editName);
+              if (fm) {
+                fm.eruptFieldJson.edit.show = false;
+              }
+            });
+          }
         });
       }
     });
@@ -300,7 +308,9 @@ export class DataHandlerService {
                 eruptData[field.fieldName] = [edit.$l_val, edit.$r_val];
               }
             } else {
-              eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+              if (field.eruptFieldJson.edit.$value) {
+                eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+              }
             }
           } else {
             if (field.eruptFieldJson.edit.$value) {
@@ -424,18 +434,20 @@ export class DataHandlerService {
             //处理前缀和后缀的数据
             if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
               let str = <string>object[field.fieldName];
-              for (let pre of inputType.prefix) {
-                if (str.startsWith(pre.value)) {
-                  field.eruptFieldJson.edit.inputType.prefixValue = pre.value;
-                  str = str.substr(pre.value.length);
-                  break;
+              if (str) {
+                for (let pre of inputType.prefix) {
+                  if (str.startsWith(pre.value)) {
+                    field.eruptFieldJson.edit.inputType.prefixValue = pre.value;
+                    str = str.substr(pre.value.length);
+                    break;
+                  }
                 }
-              }
-              for (let suf of inputType.suffix) {
-                if (str.endsWith(suf.value)) {
-                  field.eruptFieldJson.edit.inputType.suffixValue = suf.value;
-                  str = str.substr(0, str.length - suf.value.length);
-                  break;
+                for (let suf of inputType.suffix) {
+                  if (str.endsWith(suf.value)) {
+                    field.eruptFieldJson.edit.inputType.suffixValue = suf.value;
+                    str = str.substr(0, str.length - suf.value.length);
+                    break;
+                  }
                 }
               }
               field.eruptFieldJson.edit.$value = str;
@@ -494,7 +506,9 @@ export class DataHandlerService {
                 field.eruptFieldJson.edit.$value = [];
               }
             } else {
-              field.eruptFieldJson.edit.$value = object[field.fieldName];
+              if (object[field.fieldName]) {
+                field.eruptFieldJson.edit.$value = object[field.fieldName] + "";
+              }
             }
             break;
           default:

@@ -26,8 +26,6 @@ export class EditTypeComponent implements OnInit {
 
   @Output() search = new EventEmitter();
 
-  eruptFieldModels: EruptFieldModel[];
-
   editType = EditType;
 
   choiceEnum = ChoiceEnum;
@@ -43,7 +41,7 @@ export class EditTypeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.eruptFieldModels = this.eruptModel.eruptFieldModels;
+
   }
 
   enterEvent(event) {
@@ -123,6 +121,7 @@ export class EditTypeComponent implements OnInit {
         eruptField: field,
         dependVal: dependVal
       }, nzOnOk: () => {
+        console.log(field.eruptFieldJson.edit.$value);
         const tempVal = field.eruptFieldJson.edit.$tempValue;
         if (!tempVal) {
           this.msg.warning("请选中一条数据");

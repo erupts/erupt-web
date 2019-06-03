@@ -23,11 +23,11 @@ const routes: Routes = [
     path: "",
     component: LayoutDefaultComponent,
     children: [
-      { path: "", redirectTo: "page/home.html", pathMatch: "full" },
+      { path: "", redirectTo: "page?file=home.html", pathMatch: "full" },
       { path: "dashboard", component: DashboardComponent, data: { title: "仪表盘", titleI18n: "dashboard" } },
       { path: "build/table/:name", loadChildren: "../build/table/table.module#TableModule", pathMatch: "full" },
       { path: "build/tree/:name", loadChildren: "../build/tree/tree.module#TreeModule", pathMatch: "full" },
-      { path: "page/:name", component: PageComponent, pathMatch: "full" },
+      { path: "page", component: PageComponent, pathMatch: "full" },
       { path: "layout/403", component: Exception403Component, data: { title: "403" } },
       { path: "layout/404", component: Exception404Component, data: { title: "404" } },
       { path: "layout/500", component: Exception500Component, data: { title: "500" } }
@@ -54,7 +54,7 @@ const routes: Routes = [
   { path: "403", component: Exception403Component },
   { path: "404", component: Exception404Component },
   { path: "500", component: Exception500Component },
-  { path: "**", redirectTo: "dashboard" }
+  { path: "**", redirectTo: "" }
 ];
 
 @NgModule({
