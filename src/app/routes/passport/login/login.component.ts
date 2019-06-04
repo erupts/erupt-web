@@ -14,7 +14,7 @@ import { GlobalKeys } from "../../../erupt/model/erupt-const";
   selector: "passport-login",
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.less"],
-  providers: [SocialService]
+  providers: [SocialService],
 })
 export class UserLoginComponent implements OnDestroy, OnInit {
 

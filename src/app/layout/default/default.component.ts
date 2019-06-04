@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ComponentFactoryResolver, ElementRef, Inject, OnDestroy, OnInit, Renderer2 } from "@angular/core";
+import { AfterViewInit, Component, ComponentFactoryResolver, ElementRef, HostBinding, Inject, OnDestroy, OnInit, Renderer2 } from "@angular/core";
 import { DOCUMENT } from "@angular/common";
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router } from "@angular/router";
 import { NzIconService, NzMessageService } from "ng-zorro-antd";
@@ -24,6 +24,7 @@ import {
   UserOutline
 } from "@ant-design/icons-angular/icons";
 import { DataService } from "../../erupt/service/data.service";
+import { mainPageSwitchTransition } from "../../app.animation";
 
 // #region icons
 
@@ -58,11 +59,15 @@ const ICONS = [
   },
   styleUrls: [
     "./default.component.less"
-  ]
+  ],
+  // animations: [mainPageSwitchTransition]
 })
-export class LayoutDefaultComponent
-  implements OnInit, AfterViewInit, OnDestroy {
+export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  // @HostBinding("@mainPageSwitchTransition") state = "activated";
+
   private notify$: Subscription;
+
   isFetching = false;
 
   nowYear = new Date().getFullYear();
