@@ -152,7 +152,7 @@ export class DataService {
 
   //登录
   login(account: string, pwd: string, verifyCode?: any): Observable<loginModel> {
-    return this._http.post(RestPath.DONT_INTERCEPT + "login", {}, {
+    return this._http.post(WindowModel.domain  + "/login", {}, {
         account: account,
         pwd: pwd,
         verifyCode: verifyCode

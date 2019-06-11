@@ -25,6 +25,7 @@ import {
 } from "@ant-design/icons-angular/icons";
 import { DataService } from "../../erupt/service/data.service";
 import { mainPageSwitchTransition } from "../../app.animation";
+import { WindowModel } from "../../erupt/model/window.model";
 
 // #region icons
 
@@ -59,7 +60,7 @@ const ICONS = [
   },
   styleUrls: [
     "./default.component.less"
-  ],
+  ]
   // animations: [mainPageSwitchTransition]
 })
 export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -71,6 +72,8 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
   isFetching = false;
 
   nowYear = new Date().getFullYear();
+
+  routerReuse: boolean = WindowModel.routerReuse;
   // @ViewChild("settingHost", { read: ViewContainerRef })
   // settingHost: ViewContainerRef;
 

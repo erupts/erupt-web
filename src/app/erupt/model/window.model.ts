@@ -1,12 +1,16 @@
 export class WindowModel {
 
-  public static domain: string = window["eruptSiteConfig"]["domain"] || "";
+  private static config: any = window["eruptSiteConfig"] || {};
 
-  public static r_tools: CustomerTool[] = window["eruptSiteConfig"]["r_tools"] || [];
+  public static domain: string = WindowModel.config["domain"] || "";
 
-  public static amapKey: string = window["eruptSiteConfig"]["amapKey"];
+  public static r_tools: CustomerTool[] = WindowModel.config["r_tools"] || [];
 
-  public static title: string = window["eruptSiteConfig"]["title"];
+  public static amapKey: string = WindowModel.config["amapKey"];
+
+  public static title: string = WindowModel.config["title"];
+
+  public static routerReuse: boolean = WindowModel.config["routerReuse"] || false;
 }
 
 

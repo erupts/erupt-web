@@ -7,12 +7,10 @@ import { HttpClient } from "@angular/common/http";
   selector: "app-page",
   templateUrl: "./page.component.html",
   styleUrls: ["./page.component.less"]
-  // encapsulation: ViewEncapsulation.None
 })
 export class PageComponent implements OnInit {
 
-  constructor(public route: ActivatedRoute, public data: DataService, public httpClient: HttpClient) {
-
+  constructor(public route: ActivatedRoute, public data: DataService) {
   }
 
   page: string;
@@ -21,26 +19,24 @@ export class PageComponent implements OnInit {
 
   url: string;
 
+  targetUrl: string;
+
   ngOnInit() {
     this.route.queryParamMap.subscribe(map => {
-      if (map.has("file")) {
-        this.url = "/page/" + map.get("file");
+      this.url = null;
+      this.targetUrl = null;
+      if (map.has("page")) {
+        this.url = "/page/" + map.get("page");
       } else if (map.has("site")) {
-        this.url = map.get("site");
+        let target = map.get("target");
+        if (target === "blank") {
+          this.targetUrl = map.get("site");
+          window.open(this.targetUrl);
+        } else {
+          this.url = map.get("site");
+        }
       }
-      console.log(map);
     });
-    // this.route.params.subscribe(params => {
-    //   this.page = params.name;
-    //   console.log(params);
-    //   this.url = "/page/" + this.page;
-    //   console.log(this.url);
-    //   // this.httpClient.get("/page/" + params.name).subscribe(value => {
-    //   //   alert(123)
-    //   //   console.log(value);
-    //   //   this.html = value;
-    //   // });
-    // });
   }
 
 }
