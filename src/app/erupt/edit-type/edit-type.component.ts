@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from "@angular/core";
-import { EruptFieldModel } from "../model/erupt-field.model";
+import { Edit, EruptFieldModel } from "../model/erupt-field.model";
 import { AttachmentEnum, ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
 import { TreeSelectComponent } from "../tree-select/tree-select.component";
@@ -7,6 +7,7 @@ import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { EruptModel } from "../model/erupt.model";
 import { colRules } from "../model/util.model";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
+import { DatePipe } from "@angular/common";
 
 @Component({
   selector: "erupt-edit-type",
@@ -34,7 +35,10 @@ export class EditTypeComponent implements OnInit {
 
   attachmentEnum = AttachmentEnum;
 
+  // ranges1 = { "今天": [new Date(), new Date()], "本月": [new Date(), endOfMonth(new Date())] };
+
   constructor(public dataService: DataService,
+              private date: DatePipe,
               @Inject(NzModalService) private modal: NzModalService,
               @Inject(NzMessageService) private msg: NzMessageService,
               @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
@@ -145,6 +149,37 @@ export class EditTypeComponent implements OnInit {
     field.eruptFieldJson.edit.$value = null;
     field.eruptFieldJson.edit.$viewValue = null;
     field.eruptFieldJson.edit.$tempValue = null;
+  }
+
+
+  dateChange(date, edit: Edit) {
+    if (this.eruptModel.mode === "search" && edit.search.vague) {
+      if (edit.dateType.type == DateEnum.DATE) {
+        edit.$value = [this.date.transform(date[0], "yyyy-MM-dd 00:00:00"), this.date.transform(date[1], "yyyy-MM-dd 23:59:59")];
+      } else if (edit.dateType.type == DateEnum.DATE_TIME) {
+        edit.$value = [this.date.transform(date[0], "yyyy-MM-dd hh:mm:ss"), this.date.transform(date[1], "yyyy-MM-dd hh:mm:ss")];
+      }
+    } else {
+      let format = null;
+      switch (edit.dateType.type) {
+        case DateEnum.DATE:
+          format = "yyyy-MM-dd";
+          break;
+        case DateEnum.DATE_TIME:
+          format = "yyyy-MM-dd hh:mm:ss";
+          break;
+        case DateEnum.MONTH:
+          format = "yyyy-MM";
+          break;
+        case DateEnum.WEEK:
+          format = "yyyy-ww";
+          break;
+        case DateEnum.YEAR:
+          format = "yyyy";
+          break;
+      }
+      edit.$value = this.date.transform(date, format);
+    }
   }
 
 

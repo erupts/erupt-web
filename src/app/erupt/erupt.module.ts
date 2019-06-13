@@ -13,6 +13,7 @@ import { CarouselImgComponent } from "./components/carousel-img/carousel-img.com
 import { QrComponent } from "./components/qr/qr.component";
 import { SafeUrlPipe } from "./pipe/safe-url.pipe";
 import { AmapComponent } from "./components/amap/amap.component";
+import { ExcelImportComponent } from "./components/excel-import/excel-import.component";
 
 @NgModule({
   imports: [
@@ -34,9 +35,10 @@ import { AmapComponent } from "./components/amap/amap.component";
     EditTypeComponent,
     TreeSelectComponent,
     CarouselImgComponent,
-    QrComponent
+    QrComponent,
+    ExcelImportComponent
   ],
-  declarations: [EditTypeComponent, TreeSelectComponent, CkeditorComponent, TabTableComponent, CarouselImgComponent, QrComponent,SafeUrlPipe, AmapComponent]
+  declarations: [EditTypeComponent, TreeSelectComponent, CkeditorComponent, TabTableComponent, CarouselImgComponent, QrComponent, SafeUrlPipe, AmapComponent, ExcelImportComponent]
 })
 export class EruptModule {
 }

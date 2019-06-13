@@ -90,8 +90,7 @@ interface ChoiceType {
   type: ChoiceEnum;
   vl: VL[];
   joinSeparator: string;
-  //在页面初始化时将vl值转化成map形式
-  vlMap?: Map<string, string>;
+  vlMap?: Map<String, String>
 }
 
 export interface TabType {
@@ -130,7 +129,7 @@ interface AttachmentType {
   maxLimit: number;
   type: AttachmentEnum;
   fileSeparator: string;
-  saveMode:SaveMode;
+  saveMode: SaveMode;
 }
 
 

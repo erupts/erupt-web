@@ -5,11 +5,14 @@ import { AfterViewInit, Component, Input, OnInit } from "@angular/core";
   templateUrl: "./carousel-img.component.html",
   styles: []
 })
-export class CarouselImgComponent implements OnInit,AfterViewInit {
+export class CarouselImgComponent implements OnInit, AfterViewInit {
 
   @Input() images: string[];
 
-  show:boolean = false;
+  @Input() type: "image" | "swf" = "image";
+
+  show: boolean = false;
+
 
   constructor() {
   }
@@ -18,10 +21,10 @@ export class CarouselImgComponent implements OnInit,AfterViewInit {
 
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     setTimeout(() => {
       this.show = true;
-    },200);
+    }, 200);
   }
 
 }

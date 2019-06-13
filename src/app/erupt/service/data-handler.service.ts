@@ -9,6 +9,7 @@ import { EruptAndEruptFieldModel, EruptBuildModel } from "../model/erupt-build.m
 import { DataService } from "./data.service";
 import { CarouselImgComponent } from "../components/carousel-img/carousel-img.component";
 import { QrComponent } from "../components/qr/qr.component";
+import { DatePipe } from "@angular/common";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -17,7 +18,8 @@ import { QrComponent } from "../components/qr/qr.component";
 @Injectable()
 export class DataHandlerService {
 
-  constructor(@Inject(NzModalService) private modal: NzModalService,
+  constructor(private date: DatePipe,
+              @Inject(NzModalService) private modal: NzModalService,
               @Inject(NzMessageService) private msg: NzMessageService) {
   }
 
@@ -57,19 +59,12 @@ export class DataHandlerService {
           } else {
             obj.type = "tag";
           }
-          // else {
-          //   obj.format = (item: any) => {
-          //     return (<string>item[view.column]).split(edit.choiceType[0].joinSeparator);
-          //   };
-          // }
           break;
       }
 
 
       //数据类型
-      if (view.eruptFieldModel.fieldReturnName === "Integer"
-        || view.eruptFieldModel.fieldReturnName === "Float"
-        || view.eruptFieldModel.fieldReturnName === "Double") {
+      if (view.eruptFieldModel.fieldReturnName === "number") {
         obj.type = "number";
         // obj.width = "100px";
       } else if (view.eruptFieldModel.fieldReturnName === "Date") {
@@ -337,40 +332,40 @@ export class DataHandlerService {
             eruptData[field.fieldName] = null;
           }
           break;
-        case EditType.DATE:
-          if (field.eruptFieldJson.edit.$value) {
-            //日期格式
-            if (field.eruptFieldJson.edit.dateType.type === DateEnum.DATE) {
-              if (field.eruptFieldJson.edit.search.vague) {
-                if (field.eruptFieldJson.edit.$value.length > 0) {
-                  eruptData[field.fieldName] = [new Date(field.eruptFieldJson.edit.$value[0]).toISOString().substr(0, 10) + " 00:00:00"
-                    , new Date(field.eruptFieldJson.edit.$value[1]).toISOString().substr(0, 10) + " 23:59:59"];
-                }
-              } else {
-                eruptData[field.fieldName] = new Date(field.eruptFieldJson.edit.$value).toISOString().substr(0, 10);
-              }
-            }
-            //时间日期格式
-            else if (field.eruptFieldJson.edit.dateType.type === DateEnum.DATE_TIME) {
-              if (field.eruptFieldJson.edit.search.vague) {
-                if (field.eruptFieldJson.edit.$value.length > 0) {
-                  let l_isoStr = new Date(field.eruptFieldJson.edit.$value[0]).toISOString();
-                  let r_isoStr = new Date(field.eruptFieldJson.edit.$value[1]).toISOString();
-                  eruptData[field.fieldName] =
-                    [
-                      l_isoStr.substr(0, 10) + " " + l_isoStr.substr(11, 8),
-                      r_isoStr.substr(0, 10) + " " + r_isoStr.substr(11, 8)
-                    ];
-                }
-              } else {
-                let isoStr = new Date(field.eruptFieldJson.edit.$value).toISOString();
-                eruptData[field.fieldName] = isoStr.substr(0, 10) + " " + isoStr.substr(11, 8);
-              }
-            } else {
-              eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
-            }
-          }
-          break;
+        // case EditType.DATE:
+        //   if (field.eruptFieldJson.edit.$value) {
+        //     //日期格式
+        //     if (field.eruptFieldJson.edit.dateType.type === DateEnum.DATE) {
+        //       if (field.eruptFieldJson.edit.search.vague) {
+        //         if (field.eruptFieldJson.edit.$value.length > 0) {
+        //           eruptData[field.fieldName] = [new Date(field.eruptFieldJson.edit.$value[0]).toISOString().substr(0, 10) + " 00:00:00"
+        //             , new Date(field.eruptFieldJson.edit.$value[1]).toISOString().substr(0, 10) + " 23:59:59"];
+        //         }
+        //       } else {
+        //         eruptData[field.fieldName] = new Date(field.eruptFieldJson.edit.$value).toISOString().substr(0, 10);
+        //       }
+        //     }
+        //     //时间日期格式
+        //     else if (field.eruptFieldJson.edit.dateType.type === DateEnum.DATE_TIME) {
+        //       if (field.eruptFieldJson.edit.search.vague) {
+        //         if (field.eruptFieldJson.edit.$value.length > 0) {
+        //           let l_isoStr = new Date(field.eruptFieldJson.edit.$value[0]).toISOString();
+        //           let r_isoStr = new Date(field.eruptFieldJson.edit.$value[1]).toISOString();
+        //           eruptData[field.fieldName] =
+        //             [
+        //               l_isoStr.substr(0, 10) + " " + l_isoStr.substr(11, 8),
+        //               r_isoStr.substr(0, 10) + " " + r_isoStr.substr(11, 8)
+        //             ];
+        //         }
+        //       } else {
+        //         let isoStr = new Date(field.eruptFieldJson.edit.$value).toISOString();
+        //         eruptData[field.fieldName] = isoStr.substr(0, 10) + " " + isoStr.substr(11, 8);
+        //       }
+        //     } else {
+        //       eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+        //     }
+        //   }
+        //   break;
         case EditType.REFERENCE_TREE:
           if (field.eruptFieldJson.edit.$value) {
             eruptData[field.fieldName] = {};
@@ -391,6 +386,9 @@ export class DataHandlerService {
           } else {
             this.msg.warning("该模式暂不可用");
           }
+          break;
+        case EditType.BOOLEAN:
+          eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
           break;
         default:
           if (field.eruptFieldJson.edit.$value) {

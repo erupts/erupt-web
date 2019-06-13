@@ -243,13 +243,16 @@
                             <se [label]="field.eruptFieldJson.edit.title" [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <ng-container *ngIf="eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague">
-                                    <nz-range-picker [nzSize]="size" class="erupt-input stander-line-height"
-                                                     [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                     [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                     [name]="field.fieldName"
-                                                     [nzShowTime]="field.eruptFieldJson.edit.dateType.type==dateEnum.DATE_TIME">
+                                    <ng-container *ngIf="field.eruptFieldJson.edit.dateType.type==dateEnum.DATE_TIME
+                                        ||field.eruptFieldJson.edit.dateType.type==dateEnum.DATE">
+                                        <nz-range-picker [nzSize]="size" class="erupt-input stander-line-height"
+                                                         [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                         [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                         [name]="field.fieldName" (ngModelChange)="dateChange($event,field.eruptFieldJson.edit)"
+                                                         [nzShowTime]="field.eruptFieldJson.edit.dateType.type==dateEnum.DATE_TIME">
 
-                                    </nz-range-picker>
+                                        </nz-range-picker>
+                                    </ng-container>
                                 </ng-container>
                                 <ng-container
                                         *ngIf="eruptModel.mode!='search'||!field.eruptFieldJson.edit.search.vague">
@@ -258,14 +261,14 @@
                                             <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                             [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                             [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                            [name]="field.fieldName">
+                                                            [name]="field.fieldName" (ngModelChange)="dateChange($event,field.eruptFieldJson.edit)">
                                             </nz-date-picker>
                                         </ng-container>
                                         <ng-container *ngSwitchCase="dateEnum.DATE_TIME">
                                             <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                             [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                             [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                            [name]="field.fieldName"
+                                                            [name]="field.fieldName" (ngModelChange)="dateChange($event,field.eruptFieldJson.edit)"
                                                             nzShowTime>
                                             </nz-date-picker>
                                         </ng-container>
@@ -273,7 +276,7 @@
                                             <nz-week-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                             [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                             [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                            [name]="field.fieldName">
+                                                            [name]="field.fieldName" (ngModelChange)="dateChange($event,field.eruptFieldJson.edit)">
 
                                             </nz-week-picker>
                                         </ng-container>
@@ -281,7 +284,7 @@
                                             <nz-month-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                              [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                              [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                             [name]="field.fieldName">
+                                                             [name]="field.fieldName" (ngModelChange)="dateChange($event,field.eruptFieldJson.edit)">
 
                                             </nz-month-picker>
                                         </ng-container>
@@ -289,7 +292,7 @@
                                             <nz-year-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                             [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                             [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                            [name]="field.fieldName">
+                                                            [name]="field.fieldName" (ngModelChange)="dateChange($event,field.eruptFieldJson.edit)">
 
                                             </nz-year-picker>
                                         </ng-container>

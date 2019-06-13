@@ -13,6 +13,7 @@ import { EruptAndEruptFieldModel, EruptBuildModel } from "../../../erupt/model/e
 import { deepCopy } from "@delon/util";
 import { EditType, RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
+import { ExcelImportComponent } from "../../../erupt/components/excel-import/excel-import.component";
 
 @Component({
   selector: "erupt-table",
@@ -441,12 +442,24 @@ export class TableComponent implements OnInit, OnDestroy {
       });
     }
     //导出接口
-
+    this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition);
   }
 
   // excel导入
   importableExcel() {
-    this.msg.success("导入");
+    this.modal.create({
+      nzKeyboard: true,
+      nzTitle: "Excel导入",
+      nzCancelText: "取消（ESC）",
+      nzWrapClassName: "modal-lg",
+      nzOnOk: () => {
+        return false;
+      },
+      nzContent: ExcelImportComponent,
+      nzComponentParams: {
+        eruptModel: this.eruptBuildModel.eruptModel
+      }
+    });
   }
 
 }

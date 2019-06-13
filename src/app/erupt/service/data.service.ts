@@ -18,6 +18,12 @@ export class DataService {
 
   public upload: string = RestPath.file + "upload/";
 
+  public excelImport: string = RestPath.excel + "import/";
+
+  public static PARAM_ERUPT: string = "_erupt";
+
+  public static PARAM_TOKEN: string = "_token";
+
   constructor(private http: HttpClient, private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
   }
 
@@ -152,7 +158,7 @@ export class DataService {
 
   //登录
   login(account: string, pwd: string, verifyCode?: any): Observable<loginModel> {
-    return this._http.post(WindowModel.domain  + "/login", {}, {
+    return this._http.post(WindowModel.domain + "/login", {}, {
         account: account,
         pwd: pwd,
         verifyCode: verifyCode
@@ -165,9 +171,35 @@ export class DataService {
     return this._http.get(WindowModel.domain + "/menu", null);
   }
 
-  //获取菜单列表
   downloadExcelTemplate(modelName: string) {
-    window.open(RestPath.excel + "template/" + modelName + "?_erupt=" + modelName + "&_token=" + this.tokenService.get().token);
+    DataService.postExcelFile(RestPath.excel + "template/" + modelName + "?" + this.createAuthParam(modelName));
+  }
+
+  downloadExcel(modelName: string, condition: any) {
+    DataService.postExcelFile(RestPath.excel + "export/" + modelName + "?" + this.createAuthParam(modelName), condition);
+  }
+
+  createAuthParam(eruptName: string): string {
+    return DataService.PARAM_ERUPT + "=" + eruptName + "&" + DataService.PARAM_TOKEN + "=" + this.tokenService.get().token;
+  }
+
+  static postExcelFile(url, params?: object) { //params是post请求需要的参数，url是请求url地址
+    let form = document.createElement("form");
+    form.style.display = "none";
+    form.action = url;
+    form.method = "post";
+    document.body.appendChild(form);
+    if (params) {
+      for (let key in params) {
+        let input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = params[key];
+        form.appendChild(input);
+      }
+    }
+    form.submit();
+    form.remove();
   }
 
   //获取验证码
