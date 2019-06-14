@@ -25,7 +25,7 @@ import {
 } from "@ant-design/icons-angular/icons";
 import { DataService } from "../../erupt/service/data.service";
 import { mainPageSwitchTransition } from "../../app.animation";
-import { WindowModel } from "../../erupt/model/window.model";
+import { WindowModel } from "../../erupt/window.model";
 
 // #region icons
 

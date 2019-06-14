@@ -2,7 +2,7 @@ import { Component, Inject } from "@angular/core";
 import { SettingsService } from "@delon/theme";
 import * as screenfull from "screenfull";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
-import { CustomerTool, WindowModel } from "../../../erupt/model/window.model";
+import { CustomerTool, WindowModel } from "../../../erupt/window.model";
 
 @Component({
   selector: "layout-header",

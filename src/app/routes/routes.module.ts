@@ -9,13 +9,13 @@ import { UserLoginComponent } from "./passport/login/login.component";
 import { UserRegisterComponent } from "./passport/register/register.component";
 import { UserRegisterResultComponent } from "./passport/register-result/register-result.component";
 // single pages
-import { CallbackComponent } from "./callback/callback.component";
 import { UserLockComponent } from "./passport/lock/lock.component";
 import { Exception403Component } from "./exception/403.component";
 import { Exception404Component } from "./exception/404.component";
 import { Exception500Component } from "./exception/500.component";
 import { EruptModule } from "../erupt/erupt.module";
 import { PageComponent } from "./page/page.component";
+import { ChangePwdComponent } from "./change-pwd/change-pwd.component";
 
 
 const COMPONENTS = [
@@ -25,12 +25,12 @@ const COMPONENTS = [
   UserRegisterComponent,
   UserRegisterResultComponent,
   // single pages
-  CallbackComponent,
   UserLockComponent,
   Exception403Component,
   Exception404Component,
   Exception500Component,
-  PageComponent
+  PageComponent,
+  ChangePwdComponent
 ];
 const COMPONENTS_NOROUNT = [];
 

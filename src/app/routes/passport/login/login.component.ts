@@ -14,7 +14,7 @@ import { GlobalKeys } from "../../../erupt/model/erupt-const";
   selector: "passport-login",
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.less"],
-  providers: [SocialService],
+  providers: [SocialService]
 })
 export class UserLoginComponent implements OnDestroy, OnInit {
 
@@ -102,7 +102,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
       this.useVerifyCode = result.useVerifyCode;
       if (result.pass) {
         this.settingsService.setUser({ name: result.userName });
-        this.tokenService.set({ token: result.token, time: +new Date() });
+        this.tokenService.set({ token: result.token, time: +new Date(), account: this.userName.value });
         let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
         if (loginBackPath) {
           this.cacheService.set(GlobalKeys.loginBackPath, null);

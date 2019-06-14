@@ -11,6 +11,8 @@ export class WindowModel {
   public static title: string = WindowModel.config["title"];
 
   public static routerReuse: boolean = WindowModel.config["routerReuse"] || false;
+
+  public static desc: string = WindowModel.config["desc"] || null;
 }
 
 

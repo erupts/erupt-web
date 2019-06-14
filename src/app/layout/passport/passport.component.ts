@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { WindowModel } from "../../erupt/window.model";
 
 @Component({
   selector: "layout-passport",
@@ -8,6 +9,10 @@ import { Component } from "@angular/core";
 export class LayoutPassportComponent {
 
   nowYear = new Date().getFullYear();
+
+  desc = WindowModel.desc;
+
+  title = WindowModel.title;
 
   links = [
     {

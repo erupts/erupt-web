@@ -11,7 +11,7 @@ import { EruptApiModel } from "../model/erupt-api.model";
 import { EruptBuildModel } from "../model/erupt-build.model";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
 import { RestPath } from "../model/erupt.enum";
-import { WindowModel } from "../model/window.model";
+import { WindowModel } from "../window.model";
 
 @Injectable()
 export class DataService {

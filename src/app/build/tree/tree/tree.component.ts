@@ -6,6 +6,7 @@ import { NzFormatEmitEvent, NzMessageService, NzModalService, NzTreeBaseService 
 import { colRules } from "../../../erupt/model/util.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 import { EruptAndEruptFieldModel, EruptBuildModel } from "../../../erupt/model/erupt-build.model";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "erupt-tree",
@@ -34,6 +35,7 @@ export class TreeComponent implements OnInit, OnDestroy {
 
   private selectLeaf: boolean = false;
 
+  private router$: Subscription;
 
   @ViewChild("tree") tree: NzTreeBaseService;
 
@@ -47,7 +49,7 @@ export class TreeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
+    this.router$ = this.route.params.subscribe((params) => {
       this.eruptBuildModel = null;
       this.showEdit = false;
       this.eruptName = params.name;
@@ -64,7 +66,7 @@ export class TreeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.route.params.subscribe().unsubscribe();
+    this.router$.unsubscribe();
   }
 
   fetchTreeData() {

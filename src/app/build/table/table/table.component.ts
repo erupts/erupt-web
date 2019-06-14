@@ -14,6 +14,7 @@ import { deepCopy } from "@delon/util";
 import { EditType, RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 import { ExcelImportComponent } from "../../../erupt/components/excel-import/excel-import.component";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "erupt-table",
@@ -80,8 +81,10 @@ export class TableComponent implements OnInit, OnDestroy {
 
   @ViewChild("st") st: STComponent;
 
+  private router$: Subscription;
+
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.router$ = this.route.params.subscribe(params => {
       this.selectedRows = [];
       this.eruptBuildModel = null;
       if (this.searchErupt) {
@@ -104,7 +107,7 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.route.params.subscribe().unsubscribe();
+    this.router$.unsubscribe();
   }
 
   //构建搜索项信息

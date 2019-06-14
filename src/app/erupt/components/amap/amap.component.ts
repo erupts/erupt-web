@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit } from "@angular/core";
 import { LazyService } from "@delon/util";
-import { WindowModel } from "../../model/window.model";
+import { WindowModel } from "../../window.model";
 
 declare const AMap;
 

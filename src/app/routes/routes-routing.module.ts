@@ -11,12 +11,12 @@ import { UserLoginComponent } from "./passport/login/login.component";
 import { UserRegisterComponent } from "./passport/register/register.component";
 import { UserRegisterResultComponent } from "./passport/register-result/register-result.component";
 // single pages
-import { CallbackComponent } from "./callback/callback.component";
 import { UserLockComponent } from "./passport/lock/lock.component";
 import { Exception403Component } from "./exception/403.component";
 import { Exception404Component } from "./exception/404.component";
 import { Exception500Component } from "./exception/500.component";
 import { PageComponent } from "./page/page.component";
+import { ChangePwdComponent } from "./change-pwd/change-pwd.component";
 
 const routes: Routes = [
   {
@@ -28,6 +28,7 @@ const routes: Routes = [
       { path: "build/table/:name", loadChildren: "../build/table/table.module#TableModule", pathMatch: "full" },
       { path: "build/tree/:name", loadChildren: "../build/tree/tree.module#TreeModule", pathMatch: "full" },
       { path: "page", component: PageComponent, pathMatch: "full" },
+      { path: "change-pwd", component: ChangePwdComponent, data: { title: "修改密码" } },
       { path: "layout/403", component: Exception403Component, data: { title: "403" } },
       { path: "layout/404", component: Exception404Component, data: { title: "404" } },
       { path: "layout/500", component: Exception500Component, data: { title: "500" } }
@@ -49,7 +50,6 @@ const routes: Routes = [
     ]
   },
   // 单页不包裹Layout
-  { path: "callback/:type", component: CallbackComponent },
   { path: "lock", component: UserLockComponent, data: { title: "锁屏", titleI18n: "lock" } },
   { path: "403", component: Exception403Component },
   { path: "404", component: Exception404Component },

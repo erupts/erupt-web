@@ -35,7 +35,7 @@ export class EditTypeComponent implements OnInit {
 
   attachmentEnum = AttachmentEnum;
 
-  // ranges1 = { "今天": [new Date(), new Date()], "本月": [new Date(), endOfMonth(new Date())] };
+  dateRanges: object = null;
 
   constructor(public dataService: DataService,
               private date: DatePipe,
@@ -45,7 +45,9 @@ export class EditTypeComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.dateRanges = {
+      "今天": [this.date.transform(new Date(), "yyyy-MM-dd 23:59:59"), this.date.transform(new Date(), "yyyy-MM-dd 23:59:59")]
+    };
   }
 
   enterEvent(event) {

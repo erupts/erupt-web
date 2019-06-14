@@ -3,7 +3,7 @@ import { LazyService } from "@delon/util";
 import { DataService } from "../../service/data.service";
 import { EruptFieldModel } from "../../model/erupt-field.model";
 import { EruptModel } from "../../model/erupt.model";
-import { WindowModel } from "../../model/window.model";
+import { WindowModel } from "../../window.model";
 
 declare const DecoupledEditor;
 

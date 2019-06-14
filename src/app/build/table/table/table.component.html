@@ -79,7 +79,7 @@
         <!--[scroll]="{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 110 : 0) + 'px'}"-->
         <st #st
             [data]="stConfig.url" [columns]="columns"
-
+            [scroll]="{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 110 : 0) + 'px'}"
             (change)="tableDataChange($event)"
             [bordered]="true"
             [multiSort]="stConfig.multiSort"

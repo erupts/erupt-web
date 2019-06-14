@@ -37,6 +37,7 @@ export interface Edit {
   type: EditType;
   show: boolean;
   readOnly: boolean;
+  placeHolder: string
   search: Search;
   tabType: TabType;
   inputType: InputType;
@@ -65,7 +66,6 @@ interface Search {
 //Edit Type
 interface InputType {
   length: number;
-  placeholder: string;
   prefix: VL[];
   suffix: VL[];
   prefixValue?: string;
