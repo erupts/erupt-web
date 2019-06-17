@@ -12,10 +12,6 @@ import { hmrBootstrap } from "./hmr";
 
 if (environment.production) {
   enableProdMode();
-  // window.console.log = function() {};
-  // window.console.info = function() {};
-  // window.console.warn = function() {};
-  // window.console.error = function() {};
 }
 
 const bootstrap = () => {

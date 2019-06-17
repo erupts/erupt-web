@@ -1,4 +1,15 @@
-import { AfterViewInit, Component, ComponentFactoryResolver, ElementRef, HostBinding, Inject, OnDestroy, OnInit, Renderer2 } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  ComponentFactoryResolver,
+  ElementRef,
+  HostBinding,
+  Inject,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  ViewChild, ViewContainerRef
+} from "@angular/core";
 import { DOCUMENT } from "@angular/common";
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router } from "@angular/router";
 import { NzIconService, NzMessageService } from "ng-zorro-antd";
@@ -26,6 +37,8 @@ import {
 import { DataService } from "../../erupt/service/data.service";
 import { mainPageSwitchTransition } from "../../app.animation";
 import { WindowModel } from "../../erupt/window.model";
+import { environment } from "@env/environment";
+import { SettingDrawerComponent } from "./setting-drawer/setting-drawer.component";
 
 // #region icons
 
@@ -74,8 +87,10 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
   nowYear = new Date().getFullYear();
 
   routerReuse: boolean = WindowModel.routerReuse;
-  // @ViewChild("settingHost", { read: ViewContainerRef })
-  // settingHost: ViewContainerRef;
+
+
+  @ViewChild("settingHost", { read: ViewContainerRef })
+  settingHost: ViewContainerRef;
 
   constructor(iconSrv: NzIconService,
               router: Router,
@@ -132,14 +147,14 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngAfterViewInit(): void {
     // Setting componet for only developer
-    // if (!environment.production) {
-    //   setTimeout(() => {
-    //     const settingFactory = this.resolver.resolveComponentFactory(
-    //       SettingDrawerComponent
-    //     );
-    //     this.settingHost.createComponent(settingFactory);
-    //   }, 22);
-    // }
+    if (!environment.production) {
+      setTimeout(() => {
+        const settingFactory = this.resolver.resolveComponentFactory(
+          SettingDrawerComponent
+        );
+        this.settingHost.createComponent(settingFactory);
+      }, 22);
+    }
   }
 
   ngOnInit() {

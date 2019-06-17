@@ -1,12 +1,12 @@
 import { Component, Inject, Input, OnInit, ViewChild } from "@angular/core";
-import { EruptAndEruptFieldModel } from "../model/erupt-build.model";
-import { DataService } from "../service/data.service";
-import { EruptModel } from "../model/erupt.model";
+import { EruptAndEruptFieldModel } from "../../model/erupt-build.model";
+import { DataService } from "../../service/data.service";
+import { EruptModel } from "../../model/erupt.model";
 import { STComponent } from "@delon/abc";
-import { EditTypeComponent } from "../edit-type/edit-type.component";
-import { colRules } from "../model/util.model";
+import { EditTypeComponent } from "../../edit-type/edit-type.component";
+import { colRules } from "../../model/util.model";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
-import { DataHandlerService } from "../service/data-handler.service";
+import { DataHandlerService } from "../../service/data-handler.service";
 
 @Component({
   selector: "tab-table",

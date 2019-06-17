@@ -19,6 +19,10 @@
                     <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-lock">
                         <input nz-input type="password" formControlName="password" placeholder="密码">
                     </nz-input-group>
+                    <!--<ng-template #controlPwd>-->
+                    <!--<i class="fa fa-eye-slash" [hidden]="passwordType=='text'" (click)="passwordType='text'"></i>-->
+                    <!--<i class="fa fa-eye" [hidden]="passwordType=='password'" (click)="passwordType='password'"></i>-->
+                    <!--</ng-template>-->
                     <nz-form-explain *ngIf="password.dirty && password.errors">
                         请输入密码！
                     </nz-form-explain>

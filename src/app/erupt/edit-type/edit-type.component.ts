@@ -2,12 +2,13 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output } from "@angular
 import { Edit, EruptFieldModel } from "../model/erupt-field.model";
 import { AttachmentEnum, ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
-import { TreeSelectComponent } from "../tree-select/tree-select.component";
+import { TreeSelectComponent } from "../components/tree-select/tree-select.component";
 import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { EruptModel } from "../model/erupt.model";
 import { colRules } from "../model/util.model";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { DatePipe } from "@angular/common";
+import { ReferenceTableComponent } from "../components/reference-table/reference-table.component";
 
 @Component({
   selector: "erupt-edit-type",
@@ -103,7 +104,7 @@ export class EditTypeComponent implements OnInit {
   };
 
 
-  createTreeRefModal(field: EruptFieldModel) {
+  createRefTreeModal(field: EruptFieldModel) {
     let depend = field.eruptFieldJson.edit.referenceTreeType.depend;
     let dependVal = null;
     if (depend) {
@@ -138,8 +139,30 @@ export class EditTypeComponent implements OnInit {
         field.eruptFieldJson.edit.$tempValue = null;
       }
     });
+  }
 
-
+  createRefTableModal(field: EruptFieldModel) {
+    this.modal.create({
+      nzWrapClassName: "modal-xs",
+      nzKeyboard: true,
+      nzStyle: { top: "30px" },
+      nzTitle: field.eruptFieldJson.edit.title,
+      nzCancelText: "取消（ESC）",
+      nzContent: ReferenceTableComponent,
+      nzComponentParams: {
+        referenceEruptName: field.fieldReturnName
+      }, nzOnOk: () => {
+        // console.log(field.eruptFieldJson.edit.$value);
+        // const tempVal = field.eruptFieldJson.edit.$tempValue;
+        // if (!tempVal) {
+        //   this.msg.warning("请选中一条数据");
+        //   return false;
+        // }
+        // field.eruptFieldJson.edit.$viewValue = tempVal.label;
+        // field.eruptFieldJson.edit.$value = tempVal.id;
+        // field.eruptFieldJson.edit.$tempValue = null;
+      }
+    });
   }
 
 
@@ -155,6 +178,10 @@ export class EditTypeComponent implements OnInit {
 
 
   dateChange(date, edit: Edit) {
+    if (!date || date.length == 0) {
+      edit.$value = null;
+      return;
+    }
     if (this.eruptModel.mode === "search" && edit.search.vague) {
       if (edit.dateType.type == DateEnum.DATE) {
         edit.$value = [this.date.transform(date[0], "yyyy-MM-dd 00:00:00"), this.date.transform(date[1], "yyyy-MM-dd 23:59:59")];

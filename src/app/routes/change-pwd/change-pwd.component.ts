@@ -1,8 +1,10 @@
 import { Component, Inject } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { NzMessageService } from "ng-zorro-antd";
+import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
+import { DataService } from "../../erupt/service/data.service";
+import { SettingsService } from "@delon/theme";
 
 @Component({
   selector: "app-change-pwd",
@@ -28,6 +30,9 @@ export class ChangePwdComponent {
   constructor(fb: FormBuilder,
               public router: Router,
               public msg: NzMessageService,
+              public modal: NzModalService,
+              public data: DataService,
+              public settingsService: SettingsService,
               @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService
   ) {
     this.form = fb.group({
@@ -93,20 +98,23 @@ export class ChangePwdComponent {
     }
     if (this.form.invalid) return;
     this.loading = true;
-    // 修改密码接口
-    setTimeout(() => {
-      this.loading = false;
-      let param = {
-        account: this.tokenService.get().account,
-        pwd: this.pwd.value,
-        newPwd: this.newPwd.value,
-        newPwd2: this.newPwd2.value
-      };
-
-      for (const i in this.form.controls) {
-        this.form.controls[i].setValue(null);
-      }
-    }, 1000);
+    this.data.changePwd(this.tokenService.get().account, this.pwd.value, this.newPwd.value, this.newPwd2.value)
+      .subscribe(api => {
+        this.loading = false;
+        if (api.success) {
+          this.modal.success({
+            nzTitle: "密码修改成功"
+          });
+          // this.msg.success("密码修改成功");
+          for (const i in this.form.controls) {
+            this.form.controls[i].markAsDirty();
+            this.form.controls[i].updateValueAndValidity();
+            this.form.controls[i].setValue(null);
+          }
+        } else {
+          this.error = api.message;
+        }
+      });
   }
 
 }

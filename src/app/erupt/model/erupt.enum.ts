@@ -19,6 +19,7 @@ export enum EditType {
   CHOICE = "CHOICE",               //选择框
   TAG = "TAG",                     //标签
   DATE = "DATE",                   //日期
+  REFERENCE_TABLE = "REFERENCE_TABLE",
   REFERENCE_TREE = "REFERENCE_TREE",         //引用
   BOOLEAN = "BOOLEAN",             //布尔
   ATTACHMENT = "ATTACHMENT",       //附件

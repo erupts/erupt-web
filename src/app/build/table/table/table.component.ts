@@ -2,6 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { EruptModel } from "../../../erupt/model/erupt.model";
 import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
+
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 import { EditComponent } from "../edit/edit.component";
@@ -11,10 +12,11 @@ import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { EruptAndEruptFieldModel, EruptBuildModel } from "../../../erupt/model/erupt-build.model";
 import { deepCopy } from "@delon/util";
-import { EditType, RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
+import { RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 import { ExcelImportComponent } from "../../../erupt/components/excel-import/excel-import.component";
 import { Subscription } from "rxjs";
+import { BuildConfig } from "../../../erupt/model/build-config";
 
 @Component({
   selector: "erupt-table",
@@ -47,33 +49,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   eruptBuildModel: EruptBuildModel;
 
-  stConfig = {
-    url: null,
-    stPage: {
-      placement: "center",
-      pageSizes: [10, 20, 30, 50, 100],
-      showSize: true,
-      showQuickJumper: true,
-      total: true,
-      toTop: true,
-      front: false
-    },
-    req: {
-      param: {},
-      headers: {},
-      method: "POST",
-      allInBody: true,
-      reName: {
-        pi: "_pageIndex",
-        ps: "_pageSize"
-      }
-    },
-    multiSort: {
-      key: "_sort",
-      separator: ",",
-      nameSeparator: " "
-    }
-  };
+  stConfig = BuildConfig.stConfig;
 
   selectedRows: any[] = [];
 

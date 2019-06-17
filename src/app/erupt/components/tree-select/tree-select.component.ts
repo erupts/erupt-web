@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { EruptFieldModel, ReferenceTreeType } from "../model/erupt-field.model";
-import { DataService } from "../service/data.service";
-import { EruptModel, Tree } from "../model/erupt.model";
-import { DataHandlerService } from "../service/data-handler.service";
+import { EruptFieldModel, ReferenceTreeType } from "../../model/erupt-field.model";
+import { DataService } from "../../service/data.service";
+import { EruptModel, Tree } from "../../model/erupt.model";
+import { DataHandlerService } from "../../service/data-handler.service";
 import { NzFormatEmitEvent } from "ng-zorro-antd";
 
 @Component({

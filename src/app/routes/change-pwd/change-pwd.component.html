@@ -1,10 +1,11 @@
+<div style="height:20px"></div>
 <nz-card [nzHoverable]="true" id="change-pwd-card">
     <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
         <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
         <nz-form-item>
             <nz-form-control>
                 <nz-input-group class="full-width" nzSize="large" nzAddonBeforeIcon="anticon anticon-user">
-                    <input nz-input [value]="tokenService.get().account" disabled="disabled">
+                    <input nz-input [value]="settingsService.user.name" disabled="disabled">
                 </nz-input-group>
             </nz-form-control>
         </nz-form-item>
@@ -20,7 +21,7 @@
         </nz-form-item>
         <nz-form-item>
             <nz-form-control>
-                <nz-input-group class="full-width" nzSize="large" nz-popover nzAddonBeforeIcon="anticon anticon-lock"
+                <nz-input-group class="full-width" nzSize="large" nz-popover nzPlacement="right"
                                 [nzContent]="nzTemplate">
                     <input nz-input type="password" formControlName="newPwd" placeholder="新密码（至少6位密码，区分大小写）">
                 </nz-input-group>

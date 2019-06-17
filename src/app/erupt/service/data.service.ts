@@ -100,7 +100,7 @@ export class DataService {
 
   //获取reference数据
   queryRefTreeData(modelName: string, refName: string): Observable<Tree[]> {
-    return this._http.get<Tree[]>(RestPath.data + modelName + "/reftree/" + refName, null, {
+    return this._http.get<Tree[]>(RestPath.data + modelName + "/reference-tree/" + refName, null, {
       observe: "body",
       headers: {
         erupt: modelName
@@ -110,7 +110,7 @@ export class DataService {
 
   //获取reference数据
   queryRefTreeDataByDepend(modelName: string, refName: string, dependVal: any): Observable<Tree[]> {
-    return this._http.get<Tree[]>(RestPath.data + modelName + "/reftree/" + refName + "/" + dependVal, null, {
+    return this._http.get<Tree[]>(RestPath.data + modelName + "/reference-tree/" + refName + "/" + dependVal, null, {
       observe: "body",
       headers: {
         erupt: modelName
@@ -165,6 +165,17 @@ export class DataService {
       }
     );
   }
+
+  changePwd(account: string, pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
+    return this._http.post(WindowModel.domain + "/change-pwd", {}, {
+        account: account,
+        pwd: pwd,
+        newPwd: newPwd,
+        newPwd2: newPwd2
+      }
+    );
+  }
+
 
   //获取菜单列表
   getMenu(): Observable<any[]> {

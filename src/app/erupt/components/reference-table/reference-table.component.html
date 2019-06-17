@@ -1,0 +1,20 @@
+<ng-container *ngIf="eruptModel">
+    <!--<nz-card *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0" [nzBodyStyle]="{padding:'10px 5px'}"-->
+    <!--style="background: #fafafa;margin-bottom: 0;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)" [hidden]="hideCondition">-->
+    <!--<erupt-edit-type [eruptModel]="searchErupt"-->
+    <!--[col]="{ xs: 24, sm: 24, md: 12, lg: 8, xl: 8, xxl: 6 }"-->
+    <!--(search)="query()"-->
+    <!--size="default"-->
+    <!--layout="horizontal">-->
+    <!--</erupt-edit-type>-->
+    <!--</nz-card>-->
+    <st #st
+        [data]="stConfig.url" [columns]="columns"
+        (change)="tableDataChange($event)"
+        [bordered]="true"
+        [multiSort]="stConfig.multiSort"
+        [page]="stConfig.stPage"
+        [req]="stConfig.req"
+        [size]="'middle'">
+    </st>
+</ng-container>

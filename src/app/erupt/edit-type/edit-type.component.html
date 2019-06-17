@@ -254,11 +254,11 @@
                                         <nz-range-picker [nzSize]="size" class="erupt-input stander-line-height"
                                                          [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                          [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                         [name]="field.fieldName" (ngModelChange)="dateChange($event,field.eruptFieldJson.edit)"
+                                                         [name]="field.fieldName"
+                                                         (ngModelChange)="dateChange($event,field.eruptFieldJson.edit)"
                                                          [nzShowTime]="field.eruptFieldJson.edit.dateType.type==dateEnum.DATE_TIME"
                                                          [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                         [nzRanges]="dateRanges"
-                                        >
+                                                         [nzRanges]="dateRanges">
 
                                         </nz-range-picker>
                                     </ng-container>
@@ -327,7 +327,7 @@
                                     <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
                                         <input nz-input [nzSize]="size"
                                                [required]="field.eruptFieldJson.edit.notNull"
-                                               (click)="createTreeRefModal(field)"
+                                               (click)="createRefTreeModal(field)"
                                                [readOnly]="true"
                                                [placeholder]="field.eruptFieldJson.edit.placeHolder"
                                                [disabled]="field.eruptFieldJson.edit.readOnly"
@@ -337,6 +337,38 @@
                                     <ng-template #refBtn>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.$value">
                                             <i nz-icon type="close-circle" theme="fill" class="point" (click)="clearValue(field)"></i>
+                                        </ng-container>
+                                        <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
+                                            <i nz-icon (click)="field.eruptFieldJson.edit.readOnly||createRefTreeModal(field)"
+                                               type="database" theme="fill" class="point"></i>
+                                        </ng-container>
+                                    </ng-template>
+                                </se>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngSwitchCase="editType.REFERENCE_TABLE">
+                        <div class="stander-line-height">
+                            <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                                 [nzXl]="col.xl"
+                                 [nzXXl]="col.xxl">
+                                <se [label]="field.eruptFieldJson.edit.title"
+                                    [required]="field.eruptFieldJson.edit.notNull"
+                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                    <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
+                                        <input nz-input [nzSize]="size"
+                                               [required]="field.eruptFieldJson.edit.notNull"
+                                               (click)="createRefTableModal(field)"
+                                               [readOnly]="true"
+                                               [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                               [disabled]="field.eruptFieldJson.edit.readOnly"
+                                               [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
+                                               [name]="field.fieldName">
+                                    </nz-input-group>
+                                    <ng-template #refBtn>
+                                        <ng-container *ngIf="field.eruptFieldJson.edit.$value">
+                                            <i nz-icon type="close-circle" theme="fill" class="point" (click)="createRefTableModal(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
                                             <i nz-icon (click)="field.eruptFieldJson.edit.readOnly||createTreeRefModal(field)"
