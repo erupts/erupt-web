@@ -23,6 +23,115 @@ export class DataHandlerService {
               @Inject(NzMessageService) private msg: NzMessageService) {
   }
 
+  initErupt(em: EruptBuildModel) {
+    this.buildErupt(em.eruptModel);
+    em.subErupts && em.subErupts.forEach(sub => this.buildErupt(sub.eruptModel));
+    if (em.combineErupts) {
+      for (let key in em.combineErupts) {
+        this.buildErupt(em.combineErupts[key]);
+      }
+    }
+    if (em.referenceErupts) {
+      for (let key in em.referenceErupts) {
+        this.buildErupt(em.referenceErupts[key]);
+      }
+    }
+  }
+
+  buildErupt(eruptModel: EruptModel) {
+    eruptModel.eruptJson.rowOperationMap = new Map();
+    eruptModel.eruptJson.rowOperation.forEach(oper =>
+      eruptModel.eruptJson.rowOperationMap.set(oper.code, oper)
+    );
+    eruptModel.tableColumns = [];
+    eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
+    eruptModel.eruptFieldModels.forEach(field => {
+      field.eruptFieldJson.edit.$value = field.value;
+      eruptModel.eruptFieldModelMap.set(field.fieldName, field);
+      switch (field.eruptFieldJson.edit.type) {
+        case EditType.INPUT:
+          const inputType = field.eruptFieldJson.edit.inputType;
+          if (inputType.prefix.length > 0) {
+            inputType.prefixValue = inputType.prefix[0].value;
+          }
+          if (inputType.suffix.length > 0) {
+            inputType.suffixValue = inputType.suffix[0].value;
+          }
+          break;
+        case EditType.SLIDER:
+          const markPoints = field.eruptFieldJson.edit.sliderType.markPoints;
+          const marks = field.eruptFieldJson.edit.sliderType.marks = {};
+          if (markPoints.length > 0) {
+            markPoints.forEach(m => {
+              marks[m] = "";
+            });
+          }
+          break;
+        case EditType.CHOICE:
+          const vlMap = field.eruptFieldJson.edit.choiceType.vlMap = new Map();
+          field.eruptFieldJson.edit.choiceType.vl.forEach(vl => {
+            vlMap.set(vl.value, vl.label);
+          });
+          break;
+      }
+      //生成columns
+      field.eruptFieldJson.views.forEach(view => {
+        if (!view.show) {
+          return;
+        }
+        if (view.column) {
+          view.column = field.fieldName + "_" + view.column.replace("\.", "_");
+        } else {
+          view.column = field.fieldName;
+        }
+        const deepField = <EruptFieldModel>deepCopy(field);
+        deepField.eruptFieldJson.views = null;
+        view.eruptFieldModel = deepField;
+        eruptModel.tableColumns.push(view);
+      });
+    });
+    //生成depend组件代码
+    eruptModel.eruptFieldModels.forEach(field => {
+      if (field.eruptFieldJson.edit.type === EditType.DEPEND_SWITCH) {
+        field.eruptFieldJson.edit.dependSwitchType.dependSwitchAttrs.forEach(attr => {
+          if (field.value && field.value == attr.value) {
+            return;
+          } else {
+            attr.dependEdits.forEach(editName => {
+              const fm = eruptModel.eruptFieldModelMap.get(editName);
+              if (fm) {
+                fm.eruptFieldJson.edit.show = false;
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+
+
+  buildSearchErupt(eruptBuildModel: EruptBuildModel): EruptModel {
+    let copyErupt = <EruptModel>deepCopy(eruptBuildModel.eruptModel);
+    const searchFieldModels = [];
+    const searchFieldModelsMap: Map<String, EruptFieldModel> = new Map();
+    copyErupt.eruptFieldModels.forEach((field) => {
+      searchFieldModelsMap.set(field.fieldName, field);
+      if (field.eruptFieldJson.edit.search.value) {
+        field.value = null;
+        field.eruptFieldJson.edit.notNull = false;
+        field.eruptFieldJson.edit.show = true;
+        field.eruptFieldJson.edit.$value = null;
+        field.eruptFieldJson.edit.$viewValue = null;
+        field.eruptFieldJson.edit.$tempValue = null;
+        searchFieldModels.push(field);
+      }
+    });
+    copyErupt.mode = "search";
+    copyErupt.eruptFieldModels = searchFieldModels;
+    copyErupt.eruptFieldModelMap = searchFieldModelsMap;
+    return copyErupt;
+  }
+
   //将view数据转换为alain table组件配置信息
   viewToAlainTableConfig(erupt: EruptModel): any[] {
     let cols = [];
@@ -61,7 +170,6 @@ export class DataHandlerService {
           }
           break;
       }
-
 
       //数据类型
       if (view.eruptFieldModel.fieldReturnName === "number") {
@@ -178,80 +286,9 @@ export class DataHandlerService {
     return cols;
   }
 
-  initErupt(eruptModel: EruptModel) {
-    eruptModel.eruptJson.rowOperationMap = new Map();
-    eruptModel.eruptJson.rowOperation.forEach(oper =>
-      eruptModel.eruptJson.rowOperationMap.set(oper.code, oper)
-    );
-    eruptModel.tableColumns = [];
-    eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
-    eruptModel.eruptFieldModels.forEach(field => {
-      field.eruptFieldJson.edit.$value = field.value;
-      eruptModel.eruptFieldModelMap.set(field.fieldName, field);
-      switch (field.eruptFieldJson.edit.type) {
-        case EditType.INPUT:
-          const inputType = field.eruptFieldJson.edit.inputType;
-          if (inputType.prefix.length > 0) {
-            inputType.prefixValue = inputType.prefix[0].value;
-          }
-          if (inputType.suffix.length > 0) {
-            inputType.suffixValue = inputType.suffix[0].value;
-          }
-          break;
-        case EditType.SLIDER:
-          const markPoints = field.eruptFieldJson.edit.sliderType.markPoints;
-          const marks = field.eruptFieldJson.edit.sliderType.marks = {};
-          if (markPoints.length > 0) {
-            markPoints.forEach(m => {
-              marks[m] = "";
-            });
-          }
-          break;
-        case EditType.CHOICE:
-          const vlMap = field.eruptFieldJson.edit.choiceType.vlMap = new Map();
-          field.eruptFieldJson.edit.choiceType.vl.forEach(vl => {
-            vlMap.set(vl.value, vl.label);
-          });
-          break;
-      }
-      //生成columns
-      field.eruptFieldJson.views.forEach(view => {
-        if (!view.show) {
-          return;
-        }
-        if (view.column) {
-          view.column = field.fieldName + "_" + view.column.replace("\.", "_");
-        } else {
-          view.column = field.fieldName;
-        }
-        const deepField = <EruptFieldModel>deepCopy(field);
-        deepField.eruptFieldJson.views = null;
-        view.eruptFieldModel = deepField;
-        eruptModel.tableColumns.push(view);
-      });
-    });
-    //生成depend组件代码
-    eruptModel.eruptFieldModels.forEach(field => {
-      if (field.eruptFieldJson.edit.type === EditType.DEPEND_SWITCH) {
-        field.eruptFieldJson.edit.dependSwitchType.dependSwitchAttrs.forEach(attr => {
-          if (field.value && field.value == attr.value) {
-            return;
-          } else {
-            attr.dependEdits.forEach(editName => {
-              const fm = eruptModel.eruptFieldModelMap.get(editName);
-              if (fm) {
-                fm.eruptFieldJson.edit.show = false;
-              }
-            });
-          }
-        });
-      }
-    });
-  }
-
 
   //非空验证
-  validateNotNull(eruptModel: EruptModel, combineErupt?: EruptAndEruptFieldModel[]): boolean {
+  validateNotNull(eruptModel: EruptModel, combineErupt?: { [key: string]: EruptModel }): boolean {
     for (let field of eruptModel.eruptFieldModels) {
       if (field.eruptFieldJson.edit.notNull) {
         if (!field.eruptFieldJson.edit.$value) {
@@ -261,8 +298,8 @@ export class DataHandlerService {
       }
     }
     if (combineErupt) {
-      for (let combine of combineErupt) {
-        if (!this.validateNotNull(combine.eruptModel)) {
+      for (let key in combineErupt) {
+        if (!this.validateNotNull(combineErupt[key])) {
           return false;
         }
       }
@@ -413,9 +450,9 @@ export class DataHandlerService {
       });
     }
     if (eruptBuildModel.combineErupts) {
-      for (let combineErupt of eruptBuildModel.combineErupts) {
-        eruptData[combineErupt.eruptFieldModel.fieldName] = this.eruptValueToObject({
-          eruptModel: combineErupt.eruptModel
+      for (let key in eruptBuildModel.combineErupts) {
+        eruptData[key] = this.eruptValueToObject({
+          eruptModel: eruptBuildModel.combineErupts[key]
         });
       }
     }
@@ -423,7 +460,7 @@ export class DataHandlerService {
   }
 
   //将后台数据转化成前端可视格式
-  objectToEruptValue(object: any, eruptModel: EruptModel, combineErupts?: EruptAndEruptFieldModel[]) {
+  objectToEruptValue(object: any, eruptModel: EruptModel, combineErupts?: { [key: string]: EruptModel }) {
     for (let field of eruptModel.eruptFieldModels) {
       if (field) {
         switch (field.eruptFieldJson.edit.type) {
@@ -516,12 +553,8 @@ export class DataHandlerService {
       }
     }
     if (combineErupts) {
-      for (let combineErupt of combineErupts) {
-        const combineObj = object[combineErupt.eruptFieldModel.fieldName];
-        if (combineObj) {
-          this.objectToEruptValue(combineObj, combineErupt.eruptModel);
-        }
-
+      for (let key in combineErupts) {
+        this.objectToEruptValue(object[key], object[key].eruptModel);
       }
     }
 
@@ -555,11 +588,11 @@ export class DataHandlerService {
       });
     }
     if (eruptBuildModel.combineErupts) {
-      eruptBuildModel.combineErupts.forEach(combine => {
+      for (let key in eruptBuildModel.combineErupts) {
         this.emptyEruptValue({
-          eruptModel: combine.eruptModel
+          eruptModel: eruptBuildModel.combineErupts[key]
         });
-      });
+      }
     }
   }
 

@@ -1,5 +1,9 @@
 export class BuildConfig {
-  static stConfig = {
+  public static pi = "_pageIndex";
+
+  public static ps = "_pageSize";
+
+  public stConfig: any = {
     url: null,
     stPage: {
       placement: "center",
@@ -16,8 +20,8 @@ export class BuildConfig {
       method: "POST",
       allInBody: true,
       reName: {
-        pi: "_pageIndex",
-        ps: "_pageSize"
+        pi: BuildConfig.pi,
+        ps: BuildConfig.ps
       }
     },
     multiSort: {

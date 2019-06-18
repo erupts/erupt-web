@@ -54,13 +54,10 @@ export class TreeComponent implements OnInit, OnDestroy {
       this.showEdit = false;
       this.eruptName = params.name;
       this.fetchTreeData();
-      this.dataService.getEruptBuild(this.eruptName).subscribe(erupt => {
-        erupt.subErupts = null;
-        this.dataHandler.initErupt(erupt.eruptModel);
-        erupt.combineErupts.forEach(ce => {
-          this.dataHandler.initErupt(ce.eruptModel);
-        });
-        this.eruptBuildModel = erupt;
+      this.dataService.getEruptBuild(this.eruptName).subscribe(em => {
+        em.subErupts = null;
+        this.dataHandler.initErupt(em);
+        this.eruptBuildModel = em;
       });
     });
   }

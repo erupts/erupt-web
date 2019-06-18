@@ -60,21 +60,20 @@
                 <nz-collapse nzAccordion>
                     <nz-collapse-panel [nzActive]="true" [nzHeader]="'基本信息'">
                         <nz-skeleton [nzActive]="true" [nzLoading]="!eruptBuildModel">
-                            <erupt-edit-type [eruptModel]="eruptBuildModel.eruptModel" [col]="{xs: 24, sm: 24, md: 24, lg:12,xl: 8}">
+                            <erupt-edit-type [eruptBuildModel]="eruptBuildModel" [col]="{xs: 24, sm: 24, md: 24, lg:12,xl: 8}">
 
                             </erupt-edit-type>
                         </nz-skeleton>
                     </nz-collapse-panel>
                 </nz-collapse>
-
-                <ng-container *ngIf="eruptBuildModel.combineErupts">
-                    <nz-collapse *ngFor="let combine of eruptBuildModel.combineErupts" nzAccordion style="margin-top: 8px;">
-                        <nz-collapse-panel [nzActive]="true" [nzDisabled]="combine.eruptFieldModel.eruptFieldJson.edit.readOnly"
-                                           [nzHeader]="combine.eruptFieldModel.eruptFieldJson.edit.title">
-                            <erupt-edit-type [eruptModel]="combine.eruptModel"></erupt-edit-type>
-                        </nz-collapse-panel>
-                    </nz-collapse>
-                </ng-container>
+                <!--<ng-container *ngIf="eruptBuildModel.combineErupts">-->
+                <!--<nz-collapse *ngFor="let combine of eruptBuildModel.combineErupts" nzAccordion style="margin-top: 8px;">-->
+                <!--<nz-collapse-panel [nzActive]="true" [nzDisabled]="combine.eruptFieldModel.eruptFieldJson.edit.readOnly"-->
+                <!--[nzHeader]="combine.eruptFieldModel.eruptFieldJson.edit.title">-->
+                <!--<erupt-edit-type [eruptBuildModel]="{eruptModel:combine.eruptModel}"></erupt-edit-type>-->
+                <!--</nz-collapse-panel>-->
+                <!--</nz-collapse>-->
+                <!--</ng-container>-->
             </nz-spin>
         </div>
     </div>

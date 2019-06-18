@@ -10,7 +10,7 @@ import { STComponent, STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
-import { EruptAndEruptFieldModel, EruptBuildModel } from "../../../erupt/model/erupt-build.model";
+import { EruptBuildModel } from "../../../erupt/model/erupt-build.model";
 import { deepCopy } from "@delon/util";
 import { RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
@@ -49,7 +49,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   eruptBuildModel: EruptBuildModel;
 
-  stConfig = BuildConfig.stConfig;
+  stConfig = new BuildConfig().stConfig;
 
   selectedRows: any[] = [];
 
@@ -68,14 +68,13 @@ export class TableComponent implements OnInit, OnDestroy {
       }
       //put table api header
       this.stConfig.req.headers["erupt"] = params.name;
-      this.dataService.getEruptBuild(params.name).subscribe(em => {
+      this.dataService.getEruptBuild(params.name).subscribe(eb => {
           this.stConfig.url = RestPath.data + "table/" + params.name;
-          this.dataHandler.initErupt(em.eruptModel);
-          this.eruptBuildModel = em;
-          this.buildCombineErupt(em.combineErupts);
-          this.buildSubErupt(em.subErupts);
+        this.dataHandler.initErupt(eb);
+        this.eruptBuildModel = eb;
+        this.buildSubErupt();
           this.buildTableConfig();
-          this.buildSearchErupt();
+        this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
           this.buildReadOnlyErupt();
         }
       );
@@ -86,32 +85,8 @@ export class TableComponent implements OnInit, OnDestroy {
     this.router$.unsubscribe();
   }
 
-  //构建搜索项信息
-  buildSearchErupt() {
-    let copyErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
-    const searchFieldModels = [];
-    const searchFieldModelsMap: Map<String, EruptFieldModel> = new Map();
-    copyErupt.eruptFieldModels.forEach((field) => {
-      searchFieldModelsMap.set(field.fieldName, field);
-      if (field.eruptFieldJson.edit.search.value) {
-        field.value = null;
-        field.eruptFieldJson.edit.notNull = false;
-        field.eruptFieldJson.edit.show = true;
-        field.eruptFieldJson.edit.$value = null;
-        field.eruptFieldJson.edit.$viewValue = null;
-        field.eruptFieldJson.edit.$tempValue = null;
-        searchFieldModels.push(field);
-      }
-    });
-    copyErupt.mode = "search";
-    copyErupt.eruptFieldModels = searchFieldModels;
-    copyErupt.eruptFieldModelMap = searchFieldModelsMap;
-    this.searchErupt = copyErupt;
-  }
-
-  buildSubErupt(subErupts: EruptAndEruptFieldModel[]) {
-    subErupts.forEach((sub => {
-      this.dataHandler.initErupt(sub.eruptModel);
+  buildSubErupt() {
+    this.eruptBuildModel.subErupts.forEach((sub => {
       const edit = sub.eruptFieldModel.eruptFieldJson.edit;
       if (edit.tabType.type == TabEnum.TREE) {
         if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails || this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
@@ -125,13 +100,6 @@ export class TableComponent implements OnInit, OnDestroy {
         }
       }
       sub.alainTableConfig = this.dataHandler.viewToAlainTableConfig(sub.eruptModel);
-    }));
-  }
-
-  buildCombineErupt(combineErupts: EruptAndEruptFieldModel[]) {
-    combineErupts.forEach((sub => {
-      this.dataHandler.initErupt(sub.eruptModel);
-      // sub.alainTableConfig = this.dataHandler.viewToAlainTableConfig(sub.eruptModel);
     }));
   }
 

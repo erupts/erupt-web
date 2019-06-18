@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
-import { EruptModel } from "../../../erupt/model/erupt.model";
 import { DataService } from "../../../erupt/service/data.service";
 import { TabEnum } from "../../../erupt/model/erupt.enum";
 import { SettingsService } from "@delon/theme";

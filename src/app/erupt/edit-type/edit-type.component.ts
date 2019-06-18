@@ -9,6 +9,7 @@ import { colRules } from "../model/util.model";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { DatePipe } from "@angular/common";
 import { ReferenceTableComponent } from "../components/reference-table/reference-table.component";
+import { EruptAndEruptFieldModel, EruptBuildModel } from "../model/erupt-build.model";
 
 @Component({
   selector: "erupt-edit-type",
@@ -18,7 +19,9 @@ import { ReferenceTableComponent } from "../components/reference-table/reference
 export class EditTypeComponent implements OnInit {
 
   //important
-  @Input() eruptModel: EruptModel;
+  @Input() eruptBuildModel: EruptBuildModel;
+
+  @Input() referenceEruptModel: EruptAndEruptFieldModel[];
 
   @Input() col = colRules[3];
 
@@ -27,6 +30,8 @@ export class EditTypeComponent implements OnInit {
   @Input() layout: "horizontal" | "vertical" = "vertical";
 
   @Output() search = new EventEmitter();
+
+  eruptModel: EruptModel;
 
   editType = EditType;
 
@@ -46,6 +51,7 @@ export class EditTypeComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.eruptModel = this.eruptBuildModel.eruptModel;
     this.dateRanges = {
       "今天": [this.date.transform(new Date(), "yyyy-MM-dd 23:59:59"), this.date.transform(new Date(), "yyyy-MM-dd 23:59:59")]
     };
@@ -143,14 +149,16 @@ export class EditTypeComponent implements OnInit {
 
   createRefTableModal(field: EruptFieldModel) {
     this.modal.create({
-      nzWrapClassName: "modal-xs",
+      nzWrapClassName: "modal-lg",
       nzKeyboard: true,
       nzStyle: { top: "30px" },
       nzTitle: field.eruptFieldJson.edit.title,
       nzCancelText: "取消（ESC）",
       nzContent: ReferenceTableComponent,
       nzComponentParams: {
-        referenceEruptName: field.fieldReturnName
+        eruptField: field,
+        erupt: this.eruptModel,
+        referenceErupt: this.eruptBuildModel.referenceErupts[field.fieldName]
       }, nzOnOk: () => {
         // console.log(field.eruptFieldJson.edit.$value);
         // const tempVal = field.eruptFieldJson.edit.$tempValue;

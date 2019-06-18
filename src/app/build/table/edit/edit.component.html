@@ -1,15 +1,6 @@
 <div *ngIf="eruptBuildModel!=null">
     <nz-spin [nzSpinning]="loading">
-        <erupt-edit-type [eruptModel]="eruptBuildModel.eruptModel"></erupt-edit-type>
-
-        <ng-container *ngIf="eruptBuildModel.combineErupts&&eruptBuildModel.combineErupts.length>0">
-            <nz-collapse nzAccordion *ngFor="let combine of eruptBuildModel.combineErupts" style="margin-bottom: 10px;">
-                <nz-collapse-panel [nzActive]="true" [nzDisabled]="combine.eruptFieldModel.eruptFieldJson.edit.readOnly"
-                                   [nzHeader]="combine.eruptFieldModel.eruptFieldJson.edit.title">
-                    <erupt-edit-type [eruptModel]="combine.eruptModel"></erupt-edit-type>
-                </nz-collapse-panel>
-            </nz-collapse>
-        </ng-container>
+        <erupt-edit-type [eruptBuildModel]="eruptBuildModel"></erupt-edit-type>
     </nz-spin>
     <nz-tabset *ngIf="eruptBuildModel.subErupts.length>0">
         <ng-container *ngFor="let sub of eruptBuildModel.subErupts">

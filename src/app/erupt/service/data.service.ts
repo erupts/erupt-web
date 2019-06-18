@@ -98,7 +98,7 @@ export class DataService {
     });
   }
 
-  //获取reference数据
+  //获取reference-tree数据
   queryRefTreeData(modelName: string, refName: string): Observable<Tree[]> {
     return this._http.get<Tree[]>(RestPath.data + modelName + "/reference-tree/" + refName, null, {
       observe: "body",
@@ -108,7 +108,7 @@ export class DataService {
     });
   }
 
-  //获取reference数据
+  //获取reference-tree数据
   queryRefTreeDataByDepend(modelName: string, refName: string, dependVal: any): Observable<Tree[]> {
     return this._http.get<Tree[]>(RestPath.data + modelName + "/reference-tree/" + refName + "/" + dependVal, null, {
       observe: "body",
