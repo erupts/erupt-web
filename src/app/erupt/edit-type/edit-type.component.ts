@@ -3,7 +3,7 @@ import { Edit, EruptFieldModel } from "../model/erupt-field.model";
 import { AttachmentEnum, ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
 import { TreeSelectComponent } from "../components/tree-select/tree-select.component";
-import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
+import { NzDrawerService, NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { EruptModel } from "../model/erupt.model";
 import { colRules } from "../model/util.model";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
@@ -45,6 +45,7 @@ export class EditTypeComponent implements OnInit {
 
   constructor(public dataService: DataService,
               private date: DatePipe,
+              @Inject(NzDrawerService) private drawerService: NzDrawerService,
               @Inject(NzModalService) private modal: NzModalService,
               @Inject(NzMessageService) private msg: NzMessageService,
               @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
@@ -148,10 +149,22 @@ export class EditTypeComponent implements OnInit {
   }
 
   createRefTableModal(field: EruptFieldModel) {
+
+    // const drawerRef = this.drawerService.create({
+    //   nzTitle: "Component",
+    //   nzContent: ReferenceTableComponent,
+    //   nzWrapClassName: "modal-lg",
+    //   nzContentParams: {
+    //     eruptField: field,
+    //     erupt: this.eruptModel,
+    //     referenceErupt: this.eruptBuildModel.referenceErupts[field.fieldName]
+    //   }
+    // });
+
     this.modal.create({
       nzWrapClassName: "modal-lg",
       nzKeyboard: true,
-      nzStyle: { top: "30px" },
+      nzStyle: { top: "35px" },
       nzTitle: field.eruptFieldJson.edit.title,
       nzCancelText: "取消（ESC）",
       nzContent: ReferenceTableComponent,
@@ -186,6 +199,7 @@ export class EditTypeComponent implements OnInit {
 
 
   dateChange(date, edit: Edit) {
+    console.log(date);
     if (!date || date.length == 0) {
       edit.$value = null;
       return;

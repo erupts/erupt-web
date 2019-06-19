@@ -54,10 +54,10 @@ export class TreeComponent implements OnInit, OnDestroy {
       this.showEdit = false;
       this.eruptName = params.name;
       this.fetchTreeData();
-      this.dataService.getEruptBuild(this.eruptName).subscribe(em => {
-        em.subErupts = null;
-        this.dataHandler.initErupt(em);
-        this.eruptBuildModel = em;
+      this.dataService.getEruptBuild(this.eruptName).subscribe(eb => {
+        eb.subErupts = null;
+        this.dataHandler.initErupt(eb);
+        this.eruptBuildModel = eb;
       });
     });
   }
@@ -192,7 +192,7 @@ export class TreeComponent implements OnInit, OnDestroy {
     this.showEdit = true;
     this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, event.node.origin.key).subscribe(data => {
       this.loading = false;
-      this.dataHandler.objectToEruptValue(data, this.eruptBuildModel.eruptModel, this.eruptBuildModel.combineErupts);
+      this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
     });
 
   }

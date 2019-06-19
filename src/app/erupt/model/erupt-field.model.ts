@@ -42,6 +42,7 @@ export interface Edit {
   tabType: TabType;
   inputType: InputType;
   referenceTreeType: ReferenceTreeType;
+  referenceTableType: ReferenceTableType;
   attachmentType: AttachmentType;
   boolType: BoolType;
   choiceType: ChoiceType;
@@ -77,7 +78,11 @@ export interface ReferenceTreeType {
   label: string;
   pid: string;
   depend: string;
-  filter?: string;
+}
+
+export interface ReferenceTableType {
+  id: string;
+  label: string;
 }
 
 interface BoolType {

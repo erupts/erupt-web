@@ -28,6 +28,8 @@ export class ReferenceTableComponent implements OnInit {
 
   columns: any[];
 
+  selectRow: any;
+
   constructor(private dataService: DataService,
               @Inject(NzMessageService)
               private msg: NzMessageService,
@@ -53,8 +55,12 @@ export class ReferenceTableComponent implements OnInit {
     this.columns = _columns;
   }
 
-  tableDataChange() {
-
+  tableDataChange(event) {
+    if (event.type === "click") {
+      console.log(event);
+      event.click.item.checked = true;
+      // this.selectRow = event.radio;
+    }
   }
 
   query() {

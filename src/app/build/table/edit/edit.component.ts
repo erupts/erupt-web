@@ -34,7 +34,7 @@ export class EditComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
     this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, id).subscribe(data => {
-      this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel.eruptModel);
+      this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
       this.loading = false;
     });
     //TAB control

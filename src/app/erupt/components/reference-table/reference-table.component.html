@@ -1,7 +1,7 @@
 <nz-card *ngIf="searchErupt&&searchErupt.eruptFieldModels.length>0" [nzBodyStyle]="{padding:'10px 5px'}"
          style="background: #fafafa;" [hidden]="hideCondition">
     <erupt-edit-type [eruptBuildModel]="{eruptModel:searchErupt}"
-                     [col]="{ xs: 24, sm: 24, md: 12, lg: 8, xl: 8, xxl: 6 }"
+                     [col]="{ xs: 24, sm: 24, md: 12, lg: 8 }"
                      (search)="query()"
                      size="default"
                      layout="horizontal">

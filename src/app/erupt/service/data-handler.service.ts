@@ -460,9 +460,9 @@ export class DataHandlerService {
   }
 
   //将后台数据转化成前端可视格式
-  objectToEruptValue(object: any, eruptModel: EruptModel, combineErupts?: { [key: string]: EruptModel }) {
-    for (let field of eruptModel.eruptFieldModels) {
-      if (field) {
+  objectToEruptValue(object: any, eruptBuild: EruptBuildModel) {
+    for (let field of eruptBuild.eruptModel.eruptFieldModels) {
+      if (object[field.fieldName]) {
         switch (field.eruptFieldJson.edit.type) {
           case EditType.INPUT:
             const inputType = field.eruptFieldJson.edit.inputType;
@@ -494,13 +494,12 @@ export class DataHandlerService {
             field.eruptFieldJson.edit.$value = new FormControl(object[field.fieldName]).value;
             break;
           case EditType.REFERENCE_TREE:
-            if (typeof object[field.fieldName] === "object") {
-              field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType.id];
-              field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType.label];
-            } else {
-              field.eruptFieldJson.edit.$value = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType.id];
-              field.eruptFieldJson.edit.$viewValue = object[field.fieldName + "_" + field.eruptFieldJson.edit.referenceTreeType.label];
-            }
+            field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType.id];
+            field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType.label];
+            break;
+          case EditType.REFERENCE_TABLE:
+            field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTableType.id];
+            field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTableType.label];
             break;
           case EditType.BOOLEAN:
             if (!object[field.fieldName] && object[field.fieldName] !== false) {
@@ -519,7 +518,7 @@ export class DataHandlerService {
                     (<UploadFile[]>field.eruptFieldJson.edit.$viewValue).push({
                       uid: str,
                       name: str,
-                      url: DataService.previewAttachment(eruptModel.eruptName, str),
+                      url: DataService.previewAttachment(eruptBuild.eruptModel.eruptName, str),
                       response: {
                         data: str
                       }
@@ -552,9 +551,9 @@ export class DataHandlerService {
         }
       }
     }
-    if (combineErupts) {
-      for (let key in combineErupts) {
-        this.objectToEruptValue(object[key], object[key].eruptModel);
+    if (eruptBuild.combineErupts) {
+      for (let key in eruptBuild.combineErupts) {
+        this.objectToEruptValue(object[key], { eruptModel: eruptBuild.combineErupts[key] });
       }
     }
 
@@ -567,7 +566,7 @@ export class DataHandlerService {
         obj[ef.fieldName] = ef.value;
       }
     });
-    this.objectToEruptValue(obj, eruptModel);
+    this.objectToEruptValue(obj, { eruptModel: eruptModel });
   }
 
   emptyEruptValue(eruptBuildModel: EruptBuildModel) {
