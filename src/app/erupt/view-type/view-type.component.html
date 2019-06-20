@@ -1,0 +1,31 @@
+<ng-container *ngIf="show">
+    <ng-container [ngSwitch]="view.viewType">
+        <ng-container *ngSwitchCase="viewType.IMAGE">
+            <nz-carousel class="text-center">
+                <div nz-carousel-content *ngFor="let img of paths">
+                    <img class="full-max-width" [src]="img|safeUrl" style="display: inline-block"/>
+                </div>
+            </nz-carousel>
+        </ng-container>
+        <ng-container *ngSwitchCase="viewType.SWF">
+            <nz-carousel class="text-center">
+                <div nz-carousel-content *ngFor="let swf of paths">
+                    <embed style="width:100%;height:600px" [src]="swf|safeUrl" type="application/x-shockwave-flash" quality="high"/>
+                </div>
+            </nz-carousel>
+        </ng-container>
+        <ng-container *ngSwitchCase="viewType.HTML">
+            <div [innerHTML]="value|html" class="view_inner_html">
+
+            </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="viewType.PDF">
+            <iframe [src]="value|safeUrl" frameborder="0" style="width: 100%;height: 700px;"></iframe>
+        </ng-container>
+        <ng-container *ngSwitchCase="viewType.QR_CODE">
+            <div style="width: 100%;text-align: center">
+                <qr [value]="value"></qr>
+            </div>
+        </ng-container>
+    </ng-container>
+</ng-container>

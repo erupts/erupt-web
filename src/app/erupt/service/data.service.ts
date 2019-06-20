@@ -219,7 +219,7 @@ export class DataService {
   }
 
   //生成附件地址
-  static previewAttachment(eruptName: string, path: string): string {
+  static previewAttachment(path: string): string {
     return RestPath.DONT_INTERCEPT + "preview-attachment?path=" + path;
   }
 }

@@ -1,15 +1,14 @@
 import { EruptFieldModel } from "../model/erupt-field.model";
 import { EruptModel, Tree } from "../model/erupt.model";
-import { ChoiceEnum, DateEnum, EditType, SaveMode, TabEnum, ViewType } from "../model/erupt.enum";
+import { ChoiceEnum, EditType, SaveMode, TabEnum, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
 import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
 import { Inject, Injectable } from "@angular/core";
-import { EruptAndEruptFieldModel, EruptBuildModel } from "../model/erupt-build.model";
+import { EruptBuildModel } from "../model/erupt-build.model";
 import { DataService } from "./data.service";
-import { CarouselImgComponent } from "../components/carousel-img/carousel-img.component";
-import { QrComponent } from "../components/qr/qr.component";
 import { DatePipe } from "@angular/common";
+import { ViewTypeComponent } from "../view-type/view-type.component";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -191,7 +190,6 @@ export class DataHandlerService {
         case ViewType.QR_CODE:
           obj.className = "text-center";
           obj.type = "link";
-          // obj.width = "80px";
           obj.format = (item: any) => {
             if (item[view.column]) {
               return "<i class='fa fa-qrcode' aria-hidden='true'></i>";
@@ -205,10 +203,11 @@ export class DataHandlerService {
               nzMaskClosable: true,
               nzKeyboard: true,
               nzFooter: null,
-              nzTitle: "查看二维码",
-              nzContent: QrComponent,
+              nzTitle: "查看",
+              nzContent: ViewTypeComponent,
               nzComponentParams: {
-                value: item[view.column] + ""
+                value: item[view.column],
+                view: view
               }
             });
           };
@@ -221,32 +220,101 @@ export class DataHandlerService {
             if (item[view.column]) {
               const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
               let img = item[view.column];
-              if (attachmentType.maxLimit != 1) {
+              if (attachmentType.maxLimit > 1) {
                 img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
               }
-              return `<img width="100%" class="text-center" src="${DataService.previewAttachment(erupt.eruptName, img)}" />`;
+              return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
             } else {
               return "";
             }
           };
           obj.click = (item) => {
-            const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
-            let images: string[] = item[view.column];
-            if (attachmentType.maxLimit != 1) {
-              images = (<string>item[view.column]).split(attachmentType.fileSeparator);
-              for (let key in images) {
-                images[key] = DataService.previewAttachment(erupt.eruptName, images[key]);
-              }
-            }
             this.modal.create({
               nzWrapClassName: "modal-lg",
               nzMaskClosable: true,
               nzKeyboard: true,
               nzFooter: null,
-              nzTitle: "查看图片",
-              nzContent: CarouselImgComponent,
+              nzTitle: "查看",
+              nzContent: ViewTypeComponent,
               nzComponentParams: {
-                images: images
+                value: item[view.column],
+                view: view
+              }
+            });
+          };
+          break;
+        case ViewType.HTML:
+          obj.type = "link";
+          obj.className = "text-center";
+          obj.format = (item: any) => {
+            if (item[view.column]) {
+              return `<i class='fa fa-file-text' aria-hidden='true'></i>`;
+            } else {
+              return "";
+            }
+          };
+          obj.click = (item) => {
+            this.modal.create({
+              nzWrapClassName: "modal-lg",
+              nzMaskClosable: true,
+              nzKeyboard: true,
+              nzFooter: null,
+              nzTitle: "查看",
+              nzContent: ViewTypeComponent,
+              nzComponentParams: {
+                value: item[view.column],
+                view: view
+              }
+            });
+          };
+          break;
+        case ViewType.SWF:
+          obj.type = "link";
+          obj.className = "text-center";
+          obj.format = (item: any) => {
+            if (item[view.column]) {
+              return `<i class='fa fa-file-image-o' aria-hidden='true'></i>`;
+            } else {
+              return "";
+            }
+          };
+          obj.click = (item) => {
+            this.modal.create({
+              nzWrapClassName: "modal-lg",
+              nzMaskClosable: true,
+              nzKeyboard: true,
+              nzFooter: null,
+              nzTitle: "查看",
+              nzContent: ViewTypeComponent,
+              nzComponentParams: {
+                value: item[view.column],
+                view: view
+              }
+            });
+          };
+          break;
+        case ViewType.PDF:
+          obj.type = "link";
+          obj.className = "text-center";
+          obj.format = (item: any) => {
+            if (item[view.column]) {
+              return `<i class='fa fa-file-pdf-o' aria-hidden='true'></i>`;
+            } else {
+              return "";
+            }
+          };
+          obj.click = (item) => {
+            this.modal.create({
+              nzWrapClassName: "modal-lg modal-body-nopadding",
+              nzStyle: { top: "30px" },
+              nzMaskClosable: true,
+              nzKeyboard: true,
+              nzFooter: null,
+              nzTitle: "查看",
+              nzContent: ViewTypeComponent,
+              nzComponentParams: {
+                value: item[view.column],
+                view: view
               }
             });
           };
@@ -264,7 +332,7 @@ export class DataHandlerService {
             }
           };
           obj.click = (item) => {
-            window.open(DataService.previewAttachment(erupt.eruptName, item[view.column]));
+            window.open(DataService.previewAttachment(item[view.column]));
           };
           break;
       }
@@ -284,6 +352,11 @@ export class DataHandlerService {
       cols.push(obj);
     }
     return cols;
+  }
+
+
+  private createViewType() {
+
   }
 
 
@@ -462,93 +535,94 @@ export class DataHandlerService {
   //将后台数据转化成前端可视格式
   objectToEruptValue(object: any, eruptBuild: EruptBuildModel) {
     for (let field of eruptBuild.eruptModel.eruptFieldModels) {
-      if (object[field.fieldName]) {
-        switch (field.eruptFieldJson.edit.type) {
-          case EditType.INPUT:
+      switch (field.eruptFieldJson.edit.type) {
+        case EditType.INPUT:
+          if (object[field.fieldName]) {
             const inputType = field.eruptFieldJson.edit.inputType;
             //处理前缀和后缀的数据
             if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
               let str = <string>object[field.fieldName];
-              if (str) {
-                for (let pre of inputType.prefix) {
-                  if (str.startsWith(pre.value)) {
-                    field.eruptFieldJson.edit.inputType.prefixValue = pre.value;
-                    str = str.substr(pre.value.length);
-                    break;
-                  }
+              for (let pre of inputType.prefix) {
+                if (str.startsWith(pre.value)) {
+                  field.eruptFieldJson.edit.inputType.prefixValue = pre.value;
+                  str = str.substr(pre.value.length);
+                  break;
                 }
-                for (let suf of inputType.suffix) {
-                  if (str.endsWith(suf.value)) {
-                    field.eruptFieldJson.edit.inputType.suffixValue = suf.value;
-                    str = str.substr(0, str.length - suf.value.length);
-                    break;
-                  }
+              }
+              for (let suf of inputType.suffix) {
+                if (str.endsWith(suf.value)) {
+                  field.eruptFieldJson.edit.inputType.suffixValue = suf.value;
+                  str = str.substr(0, str.length - suf.value.length);
+                  break;
                 }
               }
               field.eruptFieldJson.edit.$value = str;
             } else {
               field.eruptFieldJson.edit.$value = object[field.fieldName];
             }
-            break;
-          case EditType.DATE:
-            field.eruptFieldJson.edit.$value = new FormControl(object[field.fieldName]).value;
-            break;
-          case EditType.REFERENCE_TREE:
+          }
+          break;
+        case EditType.DATE:
+          field.eruptFieldJson.edit.$value = new FormControl(object[field.fieldName]).value;
+          break;
+        case EditType.REFERENCE_TREE:
+          if (object[field.fieldName]) {
             field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType.id];
             field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTreeType.label];
-            break;
-          case EditType.REFERENCE_TABLE:
+          }
+          break;
+        case EditType.REFERENCE_TABLE:
+          if (object[field.fieldName]) {
             field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTableType.id];
             field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTableType.label];
-            break;
-          case EditType.BOOLEAN:
-            if (!object[field.fieldName] && object[field.fieldName] !== false) {
-              field.eruptFieldJson.edit.$value = field.eruptFieldJson.edit.boolType.defaultValue;
-            } else {
+          }
+          break;
+        case EditType.BOOLEAN:
+          if (!object[field.fieldName] && object[field.fieldName] !== false) {
+            field.eruptFieldJson.edit.$value = field.eruptFieldJson.edit.boolType.defaultValue;
+          } else {
+            field.eruptFieldJson.edit.$value = object[field.fieldName];
+          }
+          break;
+        case EditType.ATTACHMENT:
+          if (field.eruptFieldJson.edit.attachmentType.saveMode === SaveMode.SINGLE_COLUMN) {
+            field.eruptFieldJson.edit.$viewValue = [];
+            if (object[field.fieldName]) {
+              (<string>object[field.fieldName]).split(field.eruptFieldJson.edit.attachmentType.fileSeparator)
+                .forEach(str => {
+                  (<UploadFile[]>field.eruptFieldJson.edit.$viewValue).push({
+                    uid: str,
+                    name: str,
+                    size: 1,
+                    type: "",
+                    url: DataService.previewAttachment(str),
+                    response: {
+                      data: str
+                    }
+                  });
+                });
               field.eruptFieldJson.edit.$value = object[field.fieldName];
             }
-            break;
-          case EditType.ATTACHMENT:
+          } else {
+            this.msg.warning("该功能尚未实现");
+          }
+          break;
+        case EditType.CHOICE:
+          if (field.eruptFieldJson.edit.choiceType.type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType.type === ChoiceEnum.TAGS) {
             if (object[field.fieldName]) {
-              if (field.eruptFieldJson.edit.attachmentType.saveMode === SaveMode.SINGLE_COLUMN) {
-                field.eruptFieldJson.edit.$viewValue = [];
-                (<string>object[field.fieldName]).split(field.eruptFieldJson.edit.attachmentType.fileSeparator)
-                  .forEach(str => {
-                    // @ts-ignore
-                    (<UploadFile[]>field.eruptFieldJson.edit.$viewValue).push({
-                      uid: str,
-                      name: str,
-                      url: DataService.previewAttachment(eruptBuild.eruptModel.eruptName, str),
-                      response: {
-                        data: str
-                      }
-                    });
-                  });
-                field.eruptFieldJson.edit.$value = object[field.fieldName];
-              } else {
-                this.msg.warning("该功能尚未实现");
-              }
+              field.eruptFieldJson.edit.$value = String(object[field.fieldName]).split(field.eruptFieldJson.edit.choiceType.joinSeparator);
             } else {
-              field.eruptFieldJson.edit.$viewValue = [];
+              field.eruptFieldJson.edit.$value = [];
             }
-            break;
-          case EditType.CHOICE:
-            if (field.eruptFieldJson.edit.choiceType.type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType.type === ChoiceEnum.TAGS) {
-              if (object[field.fieldName]) {
-                field.eruptFieldJson.edit.$value = String(object[field.fieldName]).split(field.eruptFieldJson.edit.choiceType.joinSeparator);
-              } else {
-                field.eruptFieldJson.edit.$value = [];
-              }
-            } else {
-              if (object[field.fieldName]) {
-                field.eruptFieldJson.edit.$value = object[field.fieldName] + "";
-              }
+          } else {
+            if (object[field.fieldName]) {
+              field.eruptFieldJson.edit.$value = object[field.fieldName] + "";
             }
-            break;
-          default:
-            field.eruptFieldJson.edit.$value = object[field.fieldName];
-            break;
-        }
+          }
+          break;
+        default:
+          field.eruptFieldJson.edit.$value = object[field.fieldName];
+          break;
       }
     }
     if (eruptBuild.combineErupts) {

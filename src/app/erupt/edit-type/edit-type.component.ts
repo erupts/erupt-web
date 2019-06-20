@@ -106,7 +106,7 @@ export class EditTypeComponent implements OnInit {
     if (file.url) {
       window.open(file.url);
     } else if (file.response && file.response.data) {
-      window.open(DataService.previewAttachment(this.eruptModel.eruptName, file.response.data));
+      window.open(DataService.previewAttachment(file.response.data));
     }
   };
 
@@ -149,18 +149,6 @@ export class EditTypeComponent implements OnInit {
   }
 
   createRefTableModal(field: EruptFieldModel) {
-
-    // const drawerRef = this.drawerService.create({
-    //   nzTitle: "Component",
-    //   nzContent: ReferenceTableComponent,
-    //   nzWrapClassName: "modal-lg",
-    //   nzContentParams: {
-    //     eruptField: field,
-    //     erupt: this.eruptModel,
-    //     referenceErupt: this.eruptBuildModel.referenceErupts[field.fieldName]
-    //   }
-    // });
-
     this.modal.create({
       nzWrapClassName: "modal-lg",
       nzKeyboard: true,

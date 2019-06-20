@@ -41,10 +41,13 @@ export enum TabEnum {
 
 export enum ViewType {
   TEXT = "TEXT",
-  QR_CODE = "QR_CODE",
   LINK = "LINK",
+  ATTACHMENT = "ATTACHMENT",
   IMAGE = "IMAGE",
-  ATTACHMENT = "ATTACHMENT"
+  PDF = "PDF",
+  SWF = "SWF",
+  QR_CODE = "QR_CODE",
+  HTML = "HTML"
 }
 
 export enum DateEnum {
