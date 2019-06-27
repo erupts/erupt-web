@@ -56,10 +56,10 @@ export class ReferenceTableComponent implements OnInit {
   }
 
   tableDataChange(event) {
-    if (event.type === "click") {
+    if (event.type === "radio") {
       console.log(event);
-      event.click.item.checked = true;
-      // this.selectRow = event.radio;
+      // event.click.item.checked = true;
+      this.selectRow = event.radio;
     }
   }
 

@@ -179,8 +179,8 @@ export class TableComponent implements OnInit, OnDestroy {
               if (this.eruptBuildModel.eruptModel.tabLoadCount === this.eruptBuildModel.subErupts.length) {
                 this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
                   this.st.reload();
-                  this.msg.success("修改成功");
                   this.modal.closeAll();
+                  this.msg.success("修改成功");
                 });
               } else {
                 this.msg.error("数据还未完全加载完成，请等待完全加载完成后再进行保存操作");

@@ -215,11 +215,15 @@ export class DataService {
 
   //获取验证码
   static getVerifyCodeUrl(account: string): string {
-    return RestPath.DONT_INTERCEPT + "code-img" + "?account=" + account + "&_t" + new Date().getTime();
+    return RestPath.ws + "code-img" + "?account=" + account + "&_t" + new Date().getTime();
   }
 
-  //生成附件地址
-  static previewAttachment(path: string): string {
-    return RestPath.DONT_INTERCEPT + "preview-attachment?path=" + path;
+  static downloadAttachment(path: string): string {
+    return RestPath.file + "download-attachment?path=" + path;
   }
+
+  static previewAttachment(path: string): string {
+    return RestPath.file + "preview-attachment?path=" + path;
+  }
+
 }

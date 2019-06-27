@@ -4,7 +4,7 @@
 import { WindowModel } from "../window.model";
 
 export class RestPath {
-  public static DONT_INTERCEPT: string = WindowModel.domain + "/ws/";
+  public static ws: string = WindowModel.domain + "/ws/";
   public static erupt: string = WindowModel.domain + "/erupt-api";
   public static build: string = RestPath.erupt + "/build/";
   public static data: string = RestPath.erupt + "/data/";
@@ -42,9 +42,10 @@ export enum TabEnum {
 export enum ViewType {
   TEXT = "TEXT",
   LINK = "LINK",
-  ATTACHMENT = "ATTACHMENT",
+  DOWNLOAD = "DOWNLOAD",
   IMAGE = "IMAGE",
-  PDF = "PDF",
+  IFRAME = "IFRAME",
+  ATTACHMENT = "ATTACHMENT",
   SWF = "SWF",
   QR_CODE = "QR_CODE",
   HTML = "HTML"

@@ -41,7 +41,7 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
         }
       }
       switch (this.view.viewType) {
-        case ViewType.PDF:
+        case ViewType.IFRAME:
           this.value = [DataService.previewAttachment(this.value)];
           break;
       }
