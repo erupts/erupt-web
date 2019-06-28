@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from "@angular/core";
+import { Component, Inject, Input, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../service/data.service";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DataHandlerService } from "../../service/data-handler.service";
@@ -6,6 +6,7 @@ import { BuildConfig } from "../../model/build-config";
 import { EruptModel } from "../../model/erupt.model";
 import { RestPath } from "../../model/erupt.enum";
 import { EruptFieldModel } from "../../model/erupt-field.model";
+import { STComponent } from "@delon/abc";
 
 @Component({
   selector: "app-reference-table",
@@ -29,6 +30,8 @@ export class ReferenceTableComponent implements OnInit {
   columns: any[];
 
   selectRow: any;
+
+  @ViewChild("st") st: STComponent;
 
   constructor(private dataService: DataService,
               @Inject(NzMessageService)
@@ -64,7 +67,17 @@ export class ReferenceTableComponent implements OnInit {
   }
 
   query() {
+    if (this.searchErupt.eruptFieldModels.length > 0) {
+      this.stConfig.req.param = {};
+      this.stConfig.req.param = this.dataHandler.eruptValueToObject({
+        eruptModel: this.searchErupt
+      });
+    }
+    this.st.load(1, this.stConfig.req.param);
+  }
 
+  clearCondition() {
+    this.dataHandler.emptyEruptValue({ eruptModel: this.searchErupt });
   }
 
 }

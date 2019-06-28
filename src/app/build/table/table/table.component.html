@@ -2,7 +2,6 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" [nzLoading]="!eruptBuildModel">
     <ng-container *ngIf="eruptBuildModel">
         <div style="margin-bottom: 5px;">
-
             <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
                 <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
                     <i nz-icon type="plus" theme="outline"></i>新增
@@ -37,6 +36,26 @@
                     <i nz-icon type="search" theme="outline"></i>查询
                 </button>
             </ng-container>
+
+            <ng-container>
+                <nz-divider nzType="vertical"></nz-divider>
+                <button nz-button nzType="default" nz-popover
+                        [(nzVisible)]="showColCtrl" [nzContent]="tableColumnCtrl"
+                        nzTitle="表格列控制"
+                        nzTrigger="click" class="mb-sm">
+                    表格列控制
+                </button>
+                <ng-template #tableColumnCtrl>
+                    <div nz-row>
+                        <ng-container *ngFor="let col of columns">
+                            <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 100px;">
+                                <label nz-checkbox [(ngModel)]="col.show" (ngModelChange)="this.st.resetColumns()">{{col.title}}</label>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-template>
+            </ng-container>
+
             <nz-divider nzType="vertical" *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation"></nz-divider>
 
             <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
@@ -62,9 +81,7 @@
                 </div>
             </ng-container>
         </div>
-
         <!--<nz-divider nzDashed="true" style="margin:2px 0 8px;border-width: 2px"></nz-divider>-->
-
         <nz-card *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0" [nzBodyStyle]="{padding:'10px 5px'}"
                  style="background: #fafafa;margin-bottom: 0;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)" [hidden]="hideCondition">
             <erupt-edit-type [eruptBuildModel]="{eruptModel:searchErupt,referenceErupts:eruptBuildModel.referenceErupts}"
@@ -79,7 +96,7 @@
         <!--{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 110 : 0) + 'px'}-->
         <st #st
             [data]="stConfig.url" [columns]="columns"
-            [scroll]=""
+            [scroll]="{x: '100%'}"
             (change)="tableDataChange($event)"
             [bordered]="true"
             [multiSort]="stConfig.multiSort"

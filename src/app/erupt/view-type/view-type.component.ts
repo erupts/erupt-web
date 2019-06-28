@@ -41,7 +41,7 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
         }
       }
       switch (this.view.viewType) {
-        case ViewType.IFRAME:
+        case ViewType.ATTACHMENT_DIALOG:
           this.value = [DataService.previewAttachment(this.value)];
           break;
       }

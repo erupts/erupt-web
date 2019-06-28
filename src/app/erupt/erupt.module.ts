@@ -40,7 +40,18 @@ import { ViewTypeComponent } from "./view-type/view-type.component";
     ExcelImportComponent,
     ReferenceTableComponent
   ],
-  declarations: [EditTypeComponent, TreeSelectComponent, CkeditorComponent, TabTableComponent, QrComponent, SafeUrlPipe, AmapComponent, ExcelImportComponent, ReferenceTableComponent, ViewTypeComponent]
+  declarations: [
+    EditTypeComponent,
+    TreeSelectComponent,
+    CkeditorComponent,
+    TabTableComponent,
+    QrComponent,
+    SafeUrlPipe,
+    AmapComponent,
+    ExcelImportComponent,
+    ReferenceTableComponent,
+    ViewTypeComponent
+  ]
 })
 export class EruptModule {
 }

@@ -7,8 +7,6 @@ import { WindowModel } from "../../window.model";
 
 declare const DecoupledEditor;
 
-declare const $;
-
 @Component({
   selector: "ckeditor",
   templateUrl: "./ckeditor.component.html",
@@ -21,9 +19,9 @@ export class CkeditorComponent implements OnInit {
 
   @Input() private erupt: EruptModel;
 
-  @Output() valueChange = new EventEmitter();
-
   @Input() value;
+
+  @Output() valueChange = new EventEmitter();
 
   public loading: boolean;
 
@@ -31,9 +29,10 @@ export class CkeditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    const that = this;
+    console.log(this.value);
     this.loading = true;
-    this.lazy.loadScript("//cdn.ckeditor.com/ckeditor5/12.0.0/decoupled-document/ckeditor.js").then(()=>{
+    let that = this;
+    this.lazy.loadScript("//cdn.ckeditor.com/ckeditor5/12.0.0/decoupled-document/ckeditor.js").then(() => {
       this.lazy.load(["/assets/js/ckeditor-zh-cn.js", "/assets/js/jquery.min.js"]).then(() => {
         DecoupledEditor
           .create(this.ref.nativeElement.querySelector("#editor"), {
@@ -55,7 +54,7 @@ export class CkeditorComponent implements OnInit {
             console.error(error);
           });
       });
-    })
+    });
 
   }
 

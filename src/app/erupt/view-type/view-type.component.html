@@ -19,8 +19,11 @@
 
             </div>
         </ng-container>
-        <ng-container *ngSwitchCase="viewType.IFRAME">
-            <iframe [src]="value|safeUrl" frameborder="0" style="display: block;width: 100%;height: 700px;"></iframe>
+        <ng-container *ngSwitchCase="viewType.LINK_DIALOG">
+            <iframe [src]="value|safeUrl" frameborder="0" style="display: block;width: 100%;height: 650px;"></iframe>
+        </ng-container>
+        <ng-container *ngSwitchCase="viewType.ATTACHMENT_DIALOG">
+            <iframe [src]="value|safeUrl" frameborder="0" style="display: block;width: 100%;height: 650px;"></iframe>
         </ng-container>
         <ng-container *ngSwitchCase="viewType.QR_CODE">
             <div style="width: 100%;text-align: center">

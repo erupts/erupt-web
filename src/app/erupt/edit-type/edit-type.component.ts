@@ -3,7 +3,7 @@ import { Edit, EruptFieldModel } from "../model/erupt-field.model";
 import { AttachmentEnum, ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
 import { TreeSelectComponent } from "../components/tree-select/tree-select.component";
-import { NzDrawerService, NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
+import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { EruptModel } from "../model/erupt.model";
 import { colRules } from "../model/util.model";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
@@ -43,9 +43,9 @@ export class EditTypeComponent implements OnInit {
 
   dateRanges: object = null;
 
+  private datePipe: DatePipe = new DatePipe("zh-cn");
+
   constructor(public dataService: DataService,
-              private date: DatePipe,
-              @Inject(NzDrawerService) private drawerService: NzDrawerService,
               @Inject(NzModalService) private modal: NzModalService,
               @Inject(NzMessageService) private msg: NzMessageService,
               @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
@@ -54,7 +54,7 @@ export class EditTypeComponent implements OnInit {
   ngOnInit() {
     this.eruptModel = this.eruptBuildModel.eruptModel;
     this.dateRanges = {
-      "今天": [this.date.transform(new Date(), "yyyy-MM-dd 23:59:59"), this.date.transform(new Date(), "yyyy-MM-dd 23:59:59")]
+      "今天": [this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")]
     };
   }
 
@@ -187,16 +187,15 @@ export class EditTypeComponent implements OnInit {
 
 
   dateChange(date, edit: Edit) {
-    console.log(date);
     if (!date || date.length == 0) {
       edit.$value = null;
       return;
     }
     if (this.eruptModel.mode === "search" && edit.search.vague) {
       if (edit.dateType.type == DateEnum.DATE) {
-        edit.$value = [this.date.transform(date[0], "yyyy-MM-dd 00:00:00"), this.date.transform(date[1], "yyyy-MM-dd 23:59:59")];
+        edit.$value = [this.datePipe.transform(date[0], "yyyy-MM-dd 00:00:00"), this.datePipe.transform(date[1], "yyyy-MM-dd 23:59:59")];
       } else if (edit.dateType.type == DateEnum.DATE_TIME) {
-        edit.$value = [this.date.transform(date[0], "yyyy-MM-dd hh:mm:ss"), this.date.transform(date[1], "yyyy-MM-dd hh:mm:ss")];
+        edit.$value = [this.datePipe.transform(date[0], "yyyy-MM-dd hh:mm:ss"), this.datePipe.transform(date[1], "yyyy-MM-dd hh:mm:ss")];
       }
     } else {
       let format = null;
@@ -217,7 +216,7 @@ export class EditTypeComponent implements OnInit {
           format = "yyyy";
           break;
       }
-      edit.$value = this.date.transform(date, format);
+      edit.$value = this.datePipe.transform(date, format);
     }
   }
 

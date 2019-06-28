@@ -9,7 +9,7 @@ import { default as ngLang } from "@angular/common/locales/zh";
 import { NZ_I18N, zh_CN as zorroLang } from "ng-zorro-antd";
 import { DELON_LOCALE, zh_CN as delonLang } from "@delon/theme";
 // register angular
-import { registerLocaleData } from "@angular/common";
+import { DatePipe, registerLocaleData } from "@angular/common";
 import { SimpleInterceptor } from "@delon/auth";
 import { DefaultInterceptor } from "@core/net/default.interceptor";
 // #region Startup Service

@@ -6,7 +6,7 @@ import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 import { EditComponent } from "../edit/edit.component";
-import { STComponent, STData } from "@delon/abc";
+import { STColumn, STComponent, STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
@@ -39,6 +39,8 @@ export class TableComponent implements OnInit, OnDestroy {
   ) {
   }
 
+  showColCtrl: boolean = false;
+
   clientWidth = document.body.clientWidth;
 
   hideCondition = false;
@@ -53,7 +55,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   selectedRows: any[] = [];
 
-  columns: any[];
+  columns: STColumn[];
 
   @ViewChild("st") st: STComponent;
 
@@ -122,16 +124,24 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   buildTableConfig() {
-    const _columns = [];
+    const _columns: STColumn[] = [];
     _columns.push({
       title: "",
+      width: "50px",
       type: "checkbox",
       fixed: "left",
       className: "text-center",
       index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
     });
-    _columns.push({ title: "No", type: "no", fixed: "left", className: "text-center", width: "60px" });
-    _columns.push(...this.dataHandler.viewToAlainTableConfig(this.eruptBuildModel.eruptModel));
+    // _columns.push({ title: "#", type: "no", fixed: "left", className: "text-center", width: "60px" });
+    let viewCols = this.dataHandler.viewToAlainTableConfig(this.eruptBuildModel.eruptModel);
+    for (let viewCol of viewCols) {
+      viewCol.show = true;
+      viewCol.iif = () => {
+        return viewCol.show;
+      };
+    }
+    _columns.push(...viewCols);
     const tableOperators: any = [];
     const eye = {
       icon: "eye",
@@ -240,7 +250,6 @@ export class TableComponent implements OnInit, OnDestroy {
     });
     this.columns = _columns;
   }
-
 
   /**
    *  自定义功能触发
@@ -391,6 +400,7 @@ export class TableComponent implements OnInit, OnDestroy {
     //导出接口
     this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition);
   }
+
 
   // excel导入
   importableExcel() {

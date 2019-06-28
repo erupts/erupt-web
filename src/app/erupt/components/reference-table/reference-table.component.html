@@ -1,5 +1,13 @@
+<div class="mb-sm">
+    <button nz-button nzType="primary" (click)="query()">
+        <i nz-icon type="search" theme="outline"></i>查询
+    </button>
+    <button nz-button (click)="clearCondition()">
+        <i nz-icon nzType="sync" nzTheme="outline"></i>重置条件
+    </button>
+</div>
 <nz-card *ngIf="searchErupt&&searchErupt.eruptFieldModels.length>0" [nzBodyStyle]="{padding:'10px 5px'}"
-         style="background: #fafafa;" [hidden]="hideCondition">
+         style="background: #fafafa;margin-bottom: 8px;" [hidden]="hideCondition">
     <erupt-edit-type [eruptBuildModel]="{eruptModel:searchErupt}"
                      [col]="{ xs: 24, sm: 24, md: 12, lg: 8 }"
                      (search)="query()"

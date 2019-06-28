@@ -7,8 +7,8 @@ import { deepCopy } from "@delon/util";
 import { Inject, Injectable } from "@angular/core";
 import { EruptBuildModel } from "../model/erupt-build.model";
 import { DataService } from "./data.service";
-import { DatePipe } from "@angular/common";
 import { ViewTypeComponent } from "../view-type/view-type.component";
+import { STColumn } from "@delon/abc";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -17,9 +17,9 @@ import { ViewTypeComponent } from "../view-type/view-type.component";
 @Injectable()
 export class DataHandlerService {
 
-  constructor(private date: DatePipe,
-              @Inject(NzModalService) private modal: NzModalService,
-              @Inject(NzMessageService) private msg: NzMessageService) {
+  constructor(
+    @Inject(NzModalService) private modal: NzModalService,
+    @Inject(NzMessageService) private msg: NzMessageService) {
   }
 
   initErupt(em: EruptBuildModel) {
@@ -132,12 +132,12 @@ export class DataHandlerService {
   }
 
   //将view数据转换为alain table组件配置信息
-  viewToAlainTableConfig(erupt: EruptModel): any[] {
-    let cols = [];
+  viewToAlainTableConfig(erupt: EruptModel): STColumn[] {
+    let cols: STColumn[] = [];
     const views = erupt.tableColumns;
     for (let view of views) {
       let edit = view.eruptFieldModel.eruptFieldJson.edit;
-      let obj: any = {
+      let obj: STColumn = {
         // width: "200px",
         title: view.title,
         index: view.column
@@ -161,8 +161,8 @@ export class DataHandlerService {
           break;
         case EditType.CHOICE:
           if (edit.choiceType.type == ChoiceEnum.SELECT_SINGLE || edit.choiceType.type == ChoiceEnum.RADIO) {
-            obj.format = (item: any) => {
-              return edit.choiceType.vlMap.get(item[view.column]) || "";
+            obj.format = (item) => {
+              return edit.choiceType.vlMap.get(item[view.column]) + "" || "";
             };
           } else {
             obj.type = "tag";
@@ -185,6 +185,25 @@ export class DataHandlerService {
           obj.type = "link";
           obj.click = (item) => {
             window.open(item[view.column]);
+          };
+          break;
+        case ViewType.LINK_DIALOG:
+          obj.className = "text-center";
+          obj.type = "link";
+          obj.click = (item) => {
+            this.modal.create({
+              nzWrapClassName: "modal-lg modal-body-nopadding",
+              nzStyle: { top: "20px" },
+              nzMaskClosable: false,
+              nzKeyboard: true,
+              nzFooter: null,
+              nzTitle: "查看",
+              nzContent: ViewTypeComponent,
+              nzComponentParams: {
+                value: item[view.column],
+                view: view
+              }
+            });
           };
           break;
         case ViewType.QR_CODE:
@@ -294,7 +313,7 @@ export class DataHandlerService {
             });
           };
           break;
-        case ViewType.IFRAME:
+        case ViewType.ATTACHMENT_DIALOG:
           obj.type = "link";
           obj.className = "text-center";
           obj.format = (item: any) => {
@@ -308,7 +327,6 @@ export class DataHandlerService {
             this.modal.create({
               nzWrapClassName: "modal-lg modal-body-nopadding",
               nzStyle: { top: "30px" },
-              nzMaskClosable: true,
               nzKeyboard: true,
               nzFooter: null,
               nzContent: ViewTypeComponent,
@@ -321,7 +339,6 @@ export class DataHandlerService {
           break;
         case ViewType.DOWNLOAD:
           obj.type = "link";
-          obj.width = "80px";
           obj.className = "text-center";
           obj.format = (item: any) => {
             if (item[view.column]) {
@@ -336,7 +353,6 @@ export class DataHandlerService {
           break;
         case ViewType.ATTACHMENT:
           obj.type = "link";
-          obj.width = "80px";
           obj.className = "text-center";
           obj.format = (item: any) => {
             if (item[view.column]) {
