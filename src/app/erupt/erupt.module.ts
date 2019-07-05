@@ -9,7 +9,6 @@ import { TreeSelectComponent } from "./components/tree-select/tree-select.compon
 import { DataHandlerService } from "./service/data-handler.service";
 import { CkeditorComponent } from "./components/ckeditor/ckeditor.component";
 import { TabTableComponent } from "./components/tab-table/tab-table.component";
-import { QrComponent } from "./components/qr/qr.component";
 import { SafeUrlPipe } from "./pipe/safe-url.pipe";
 import { AmapComponent } from "./components/amap/amap.component";
 import { ExcelImportComponent } from "./components/excel-import/excel-import.component";
@@ -36,7 +35,6 @@ import { ViewTypeComponent } from "./view-type/view-type.component";
     EditTypeComponent,
     ViewTypeComponent,
     TreeSelectComponent,
-    QrComponent,
     ExcelImportComponent,
     ReferenceTableComponent
   ],
@@ -45,7 +43,6 @@ import { ViewTypeComponent } from "./view-type/view-type.component";
     TreeSelectComponent,
     CkeditorComponent,
     TabTableComponent,
-    QrComponent,
     SafeUrlPipe,
     AmapComponent,
     ExcelImportComponent,

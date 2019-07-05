@@ -11,7 +11,7 @@ import { STComponent } from "@delon/abc";
 @Component({
   selector: "app-reference-table",
   templateUrl: "./reference-table.component.html",
-  styles: []
+  styleUrls: ["./reference-table.component.less"]
 })
 export class ReferenceTableComponent implements OnInit {
 
@@ -25,11 +25,7 @@ export class ReferenceTableComponent implements OnInit {
 
   searchErupt: EruptModel;
 
-  hideCondition: boolean = false;
-
   columns: any[];
-
-  selectRow: any;
 
   @ViewChild("st") st: STComponent;
 
@@ -43,7 +39,7 @@ export class ReferenceTableComponent implements OnInit {
 
   ngOnInit() {
     this.stConfig.req.headers["erupt"] = this.erupt.eruptName;
-    this.stConfig.url = RestPath.data + this.erupt.eruptName + "/reference-table/" + this.eruptField.fieldName;
+    this.stConfig.url = RestPath.data + this.erupt.eruptName + "/refer-table/" + this.eruptField.fieldName;
     this.buildTableConfig();
     this.searchErupt = this.dataHandler.buildSearchErupt({ eruptModel: this.referenceErupt });
   }
@@ -51,7 +47,7 @@ export class ReferenceTableComponent implements OnInit {
   buildTableConfig() {
     const _columns = [];
     _columns.push({
-      title: "", type: "radio", fixed: "left", width: "40px", className: "text-center",
+      title: "", type: "radio", fixed: "left", width: "50px", className: "text-center",
       index: this.referenceErupt.eruptJson.primaryKeyCol
     });
     _columns.push(...this.dataHandler.viewToAlainTableConfig(this.referenceErupt));
@@ -60,9 +56,12 @@ export class ReferenceTableComponent implements OnInit {
 
   tableDataChange(event) {
     if (event.type === "radio") {
-      console.log(event);
-      // event.click.item.checked = true;
-      this.selectRow = event.radio;
+      let id = event.radio[this.eruptField.eruptFieldJson.edit.referenceTableType.id];
+      let label = event.radio[this.eruptField.eruptFieldJson.edit.referenceTableType.label];
+      this.eruptField.eruptFieldJson.edit.$tempValue = {
+        id: id,
+        label: label
+      };
     }
   }
 

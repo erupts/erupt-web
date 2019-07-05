@@ -336,7 +336,7 @@
                                     </nz-input-group>
                                     <ng-template #refBtn>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.$value">
-                                            <i nz-icon type="close-circle" theme="fill" class="point" (click)="clearValue(field)"></i>
+                                            <i nz-icon type="close-circle" theme="fill" class="point" (click)="clearReferValue(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
                                             <i nz-icon (click)="field.eruptFieldJson.edit.readOnly||createRefTreeModal(field)"
@@ -368,7 +368,7 @@
                                     </nz-input-group>
                                     <ng-template #refBtn>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.$value">
-                                            <i nz-icon type="close-circle" theme="fill" class="point" (click)="createRefTableModal(field)"></i>
+                                            <i nz-icon type="close-circle" theme="fill" class="point" (click)="clearReferValue(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
                                             <i nz-icon (click)="field.eruptFieldJson.edit.readOnly||createRefTableModal(field)"

@@ -24,13 +24,16 @@ export enum EditType {
   REFERENCE_TREE = "REFERENCE_TREE",         //引用
   BOOLEAN = "BOOLEAN",             //布尔
   ATTACHMENT = "ATTACHMENT",       //附件
+  TAB_TREE = "TAB_TREE",
+  TAB_TABLE_ADD = "TAB_TABLE_ADD",
+  TAB_TABLE_REFER = "TAB_TABLE_REFER",
   TAB = "TAB",                     //TAB选项卡
   DIVIDE = "DIVIDE",               //分割线
   SLIDER = "SLIDER",               //数字滑块
   EMPTY = "EMPTY",
   DEPEND_SWITCH = "DEPEND_SWITCH",
   HTML_EDIT = "HTML_EDIT",
-  MAP = "MAP"
+  MAP = "MAP",
 }
 
 export enum TabEnum {

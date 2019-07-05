@@ -29,7 +29,7 @@ export class DataService {
 
   //获取结构
   getEruptBuild(modelName: string): Observable<EruptBuildModel> {
-    return this._http.get<EruptBuildModel>(RestPath.build + "list/" + modelName, null, {
+    return this._http.get<EruptBuildModel>(RestPath.build + modelName, null, {
       observe: "body",
       headers: {
         erupt: modelName

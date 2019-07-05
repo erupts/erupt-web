@@ -24,6 +24,8 @@ export class EditComponent implements OnInit, OnDestroy {
 
   @Input() eruptBuildModel: EruptBuildModel;
 
+  eruptFieldModelMap = this.eruptBuildModel.eruptModel.eruptFieldModelMap;
+
   constructor(private dataService: DataService,
               private settingSrv: SettingsService,
               private dataHandlerService: DataHandlerService) {
@@ -36,26 +38,6 @@ export class EditComponent implements OnInit, OnDestroy {
     this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, id).subscribe(data => {
       this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
       this.loading = false;
-    });
-    //TAB control
-    this.eruptBuildModel.subErupts && this.eruptBuildModel.subErupts.forEach(sub => {
-      const tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType;
-      switch (tabType.type) {
-        case TabEnum.TREE:
-          this.dataService.findTabTreeById(this.eruptBuildModel.eruptModel.eruptName, id, sub.eruptFieldModel.fieldName).subscribe(tree => {
-              sub.eruptFieldModel.eruptFieldJson.edit.$value = tree;
-              this.eruptBuildModel.eruptModel.tabLoadCount++;
-            }
-          );
-          break;
-        case TabEnum.TABLE:
-          this.dataService.findTabListById(this.eruptBuildModel.eruptModel.eruptName, id, sub.eruptFieldModel.fieldName).subscribe(data => {
-              sub.eruptFieldModel.eruptFieldJson.edit.$value = data;
-              this.eruptBuildModel.eruptModel.tabLoadCount++;
-            }
-          );
-          break;
-      }
     });
   }
 

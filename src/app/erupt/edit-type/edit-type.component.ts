@@ -135,7 +135,6 @@ export class EditTypeComponent implements OnInit {
         eruptField: field,
         dependVal: dependVal
       }, nzOnOk: () => {
-        console.log(field.eruptFieldJson.edit.$value);
         const tempVal = field.eruptFieldJson.edit.$tempValue;
         if (!tempVal) {
           this.msg.warning("请选中一条数据");
@@ -157,19 +156,18 @@ export class EditTypeComponent implements OnInit {
       nzCancelText: "取消（ESC）",
       nzContent: ReferenceTableComponent,
       nzComponentParams: {
-        eruptField: field,
         erupt: this.eruptModel,
+        eruptField: field,
         referenceErupt: this.eruptBuildModel.referenceErupts[field.fieldName]
       }, nzOnOk: () => {
-        // console.log(field.eruptFieldJson.edit.$value);
-        // const tempVal = field.eruptFieldJson.edit.$tempValue;
-        // if (!tempVal) {
-        //   this.msg.warning("请选中一条数据");
-        //   return false;
-        // }
-        // field.eruptFieldJson.edit.$viewValue = tempVal.label;
-        // field.eruptFieldJson.edit.$value = tempVal.id;
-        // field.eruptFieldJson.edit.$tempValue = null;
+        const tempVal = field.eruptFieldJson.edit.$tempValue;
+        if (!tempVal) {
+          this.msg.warning("请选中一条数据");
+          return false;
+        }
+        field.eruptFieldJson.edit.$viewValue = tempVal.label;
+        field.eruptFieldJson.edit.$value = tempVal.id;
+        field.eruptFieldJson.edit.$tempValue = null;
       }
     });
   }
@@ -179,7 +177,7 @@ export class EditTypeComponent implements OnInit {
     field.eruptFieldJson.edit.$value = val.join(field.eruptFieldJson.edit.choiceType.joinSeparator);
   }
 
-  clearValue(field: EruptFieldModel) {
+  clearReferValue(field: EruptFieldModel) {
     field.eruptFieldJson.edit.$value = null;
     field.eruptFieldJson.edit.$viewValue = null;
     field.eruptFieldJson.edit.$tempValue = null;

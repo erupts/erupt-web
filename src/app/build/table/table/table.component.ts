@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { EruptModel } from "../../../erupt/model/erupt.model";
-import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
+import { Edit, EruptFieldModel } from "../../../erupt/model/erupt-field.model";
 
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
@@ -12,7 +12,7 @@ import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { EruptBuildModel } from "../../../erupt/model/erupt-build.model";
 import { deepCopy } from "@delon/util";
-import { RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
+import { EditType, RestPath, TabEnum } from "../../../erupt/model/erupt.enum";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 import { ExcelImportComponent } from "../../../erupt/components/excel-import/excel-import.component";
 import { Subscription } from "rxjs";
@@ -74,7 +74,7 @@ export class TableComponent implements OnInit, OnDestroy {
           this.stConfig.url = RestPath.data + "table/" + params.name;
         this.dataHandler.initErupt(eb);
         this.eruptBuildModel = eb;
-        this.buildSubErupt();
+        this.buildTabErupt();
           this.buildTableConfig();
         this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
           this.buildReadOnlyErupt();
@@ -87,22 +87,25 @@ export class TableComponent implements OnInit, OnDestroy {
     this.router$.unsubscribe();
   }
 
-  buildSubErupt() {
-    this.eruptBuildModel.subErupts.forEach((sub => {
-      const edit = sub.eruptFieldModel.eruptFieldJson.edit;
-      if (edit.tabType.type == TabEnum.TREE) {
-        if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails || this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
-          this.dataService.findTabTree(this.eruptBuildModel.eruptModel.eruptName, sub.eruptFieldModel.fieldName).subscribe(
-            tree => {
-              if (tree) {
-                sub.eruptFieldModel.eruptFieldJson.edit.$viewValue = this.dataHandler.dataTreeToZorroTree(tree);
+  buildTabErupt() {
+    for (let key in this.eruptBuildModel.tabErupts) {
+      let eruptFieldModel = this.eruptBuildModel.eruptModel.eruptFieldModelMap.get(key);
+      //根据权限来决定是否加载树结构
+      if (this.eruptBuildModel.eruptModel.eruptJson.power.edit || this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
+        if (eruptFieldModel.eruptFieldJson.edit.type == EditType.TAB_TREE) {
+          //构建树结构
+          if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails || this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
+            this.dataService.findTabTree(this.eruptBuildModel.eruptModel.eruptName, eruptFieldModel.fieldName).subscribe(
+              tree => {
+                if (tree) {
+                  eruptFieldModel.eruptFieldJson.edit.$viewValue = this.dataHandler.dataTreeToZorroTree(tree);
+                }
               }
-            }
-          );
+            );
+          }
         }
       }
-      sub.alainTableConfig = this.dataHandler.viewToAlainTableConfig(sub.eruptModel);
-    }));
+    }
   }
 
   buildReadOnlyErupt() {

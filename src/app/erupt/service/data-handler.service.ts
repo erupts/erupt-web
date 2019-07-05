@@ -513,8 +513,7 @@ export class DataHandlerService {
     });
     if (eruptBuildModel.subErupts) {
       eruptBuildModel.subErupts.forEach(sub => {
-        let tabType = sub.eruptFieldModel.eruptFieldJson.edit.tabType.type;
-        if (tabType == TabEnum.TREE) {
+        if (sub.eruptFieldModel.eruptFieldJson.edit.type === EditType.TAB_TREE) {
           const tabTree = eruptData[sub.eruptFieldModel.fieldName] = [];
           if (sub.eruptFieldModel.eruptFieldJson.edit.$value) {
             (<any[]>sub.eruptFieldModel.eruptFieldJson.edit.$value).forEach(val => {

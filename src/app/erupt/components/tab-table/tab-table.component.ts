@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit, ViewChild } from "@angular/core";
-import { EruptAndEruptFieldModel } from "../../model/erupt-build.model";
+import { EruptAndEruptFieldModel, EruptBuildModel } from "../../model/erupt-build.model";
 import { DataService } from "../../service/data.service";
 import { EruptModel } from "../../model/erupt.model";
 import { STComponent } from "@delon/abc";
@@ -17,7 +17,7 @@ export class TabTableComponent implements OnInit {
 
   @Input() tabErupt: EruptAndEruptFieldModel;
 
-  @Input() eruptModel: EruptModel;
+  @Input() eruptBuildModel: EruptBuildModel;
 
   @Input() behavior: "add" | "edit" | "readonly" = "add";
 
@@ -54,7 +54,7 @@ export class TabTableComponent implements OnInit {
         type: "checkbox",
         fixed: "left",
         className: "text-center",
-        index: this.eruptModel.eruptJson.primaryKeyCol
+        index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
       });
       viewValue.push(...this.tabErupt.alainTableConfig);
       viewValue.push({
@@ -108,7 +108,9 @@ export class TabTableComponent implements OnInit {
       nzTitle: "新增",
       nzContent: EditTypeComponent,
       nzComponentParams: {
-        eruptModel: this.tabErupt.eruptModel
+        eruptBuildModel: {
+          eruptModel: this.tabErupt.eruptModel
+        }
       },
       nzOnOk: () => {
         if (this.dataHandlerService.validateNotNull(this.tabErupt.eruptModel)) {

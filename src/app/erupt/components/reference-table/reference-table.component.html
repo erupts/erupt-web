@@ -7,7 +7,7 @@
     </button>
 </div>
 <nz-card *ngIf="searchErupt&&searchErupt.eruptFieldModels.length>0" [nzBodyStyle]="{padding:'10px 5px'}"
-         style="background: #fafafa;margin-bottom: 8px;" [hidden]="hideCondition">
+         style="background: #fafafa;margin-bottom: 8px;">
     <erupt-edit-type [eruptBuildModel]="{eruptModel:searchErupt}"
                      [col]="{ xs: 24, sm: 24, md: 12, lg: 8 }"
                      (search)="query()"

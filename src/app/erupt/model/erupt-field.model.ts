@@ -54,7 +54,6 @@ export interface Edit {
   $tempValue?: any;
   $l_val?: any;
   $r_val?: any;
-  $statusValue?: boolean;
 }
 
 
