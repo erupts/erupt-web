@@ -161,7 +161,7 @@ export class TableComponent implements OnInit, OnDestroy {
           nzComponentParams: {
             eruptBuildModel: {
               eruptModel: this.readonlyErupt,
-              subErupts: this.eruptBuildModel.subErupts,
+              tabErupts: this.eruptBuildModel.tabErupts,
               combineErupts: this.eruptBuildModel.combineErupts
             },
             setIdData: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
@@ -174,7 +174,6 @@ export class TableComponent implements OnInit, OnDestroy {
     const edit = {
       icon: "edit",
       click: (record: any) => {
-        this.eruptBuildModel.eruptModel.tabLoadCount = 0;
         this.modal.create({
           nzWrapClassName: "modal-lg",
           nzStyle: { top: "60px" },
@@ -189,15 +188,11 @@ export class TableComponent implements OnInit, OnDestroy {
           },
           nzOnOk: () => {
             if (this.dataHandler.validateNotNull(this.eruptBuildModel.eruptModel)) {
-              if (this.eruptBuildModel.eruptModel.tabLoadCount === this.eruptBuildModel.subErupts.length) {
-                this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
-                  this.st.reload();
-                  this.modal.closeAll();
-                  this.msg.success("修改成功");
-                });
-              } else {
-                this.msg.error("数据还未完全加载完成，请等待完全加载完成后再进行保存操作");
-              }
+              this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
+                this.modal.closeAll();
+                this.msg.success("修改成功");
+                this.st.reload();
+              });
             }
             return false;
           }

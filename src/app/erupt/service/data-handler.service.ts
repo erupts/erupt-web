@@ -24,7 +24,13 @@ export class DataHandlerService {
 
   initErupt(em: EruptBuildModel) {
     this.buildErupt(em.eruptModel);
-    em.subErupts && em.subErupts.forEach(sub => this.buildErupt(sub.eruptModel));
+    if (em.tabErupts) {
+      for (let key in em.tabErupts) {
+        if (em.tabErupts[key]) {
+          this.buildErupt(em.tabErupts[key]);
+        }
+      }
+    }
     if (em.combineErupts) {
       for (let key in em.combineErupts) {
         this.buildErupt(em.combineErupts[key]);
@@ -511,19 +517,20 @@ export class DataHandlerService {
           break;
       }
     });
-    if (eruptBuildModel.subErupts) {
-      eruptBuildModel.subErupts.forEach(sub => {
-        if (sub.eruptFieldModel.eruptFieldJson.edit.type === EditType.TAB_TREE) {
-          const tabTree = eruptData[sub.eruptFieldModel.fieldName] = [];
-          if (sub.eruptFieldModel.eruptFieldJson.edit.$value) {
-            (<any[]>sub.eruptFieldModel.eruptFieldJson.edit.$value).forEach(val => {
+    if (eruptBuildModel.tabErupts) {
+      for (let key in eruptBuildModel.tabErupts) {
+        const eruptFieldModel = eruptBuildModel.eruptModel.eruptFieldModelMap.get(key);
+        if (eruptFieldModel.eruptFieldJson.edit.type === EditType.TAB_TREE) {
+          const tabTree = eruptData[eruptFieldModel.fieldName] = [];
+          if (eruptFieldModel.eruptFieldJson.edit.$value) {
+            (<any[]>eruptFieldModel.eruptFieldJson.edit.$value).forEach(val => {
               const obj = {};
-              obj[sub.eruptModel.eruptJson.primaryKeyCol] = val;
+              obj[eruptBuildModel.tabErupts[key].eruptJson.primaryKeyCol] = val;
               tabTree.push(obj);
             });
           }
         }
-      });
+      }
     }
     if (eruptBuildModel.combineErupts) {
       for (let key in eruptBuildModel.combineErupts) {
@@ -658,18 +665,6 @@ export class DataHandlerService {
         ef.eruptFieldJson.edit.$r_val = null;
       }
     });
-    if (eruptBuildModel.subErupts) {
-      eruptBuildModel.subErupts.forEach(sub => {
-        sub.eruptFieldModel.eruptFieldJson.edit.$value = [];
-      });
-    }
-    if (eruptBuildModel.combineErupts) {
-      for (let key in eruptBuildModel.combineErupts) {
-        this.emptyEruptValue({
-          eruptModel: eruptBuildModel.combineErupts[key]
-        });
-      }
-    }
   }
 
 

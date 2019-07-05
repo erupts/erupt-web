@@ -11,8 +11,6 @@ export interface EruptModel {
   eruptFieldModelMap?: Map<String, EruptFieldModel>;
   tableColumns?: View[];
   mode?: "edit" | "search";
-  //计算tab加载完成情况TODO delete
-  tabLoadCount?: number;
 }
 
 export interface Erupt {
