@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
-import { TabEnum } from "../../../erupt/model/erupt.enum";
+import { EditType, TabEnum } from "../../../erupt/model/erupt.enum";
 import { SettingsService } from "@delon/theme";
-import { EruptAndEruptFieldModel, EruptBuildModel } from "../../../erupt/model/erupt-build.model";
+import { EruptBuildModel } from "../../../erupt/model/erupt-build.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
+import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
 
 @Component({
   selector: "erupt-edit",
@@ -12,9 +13,9 @@ import { DataHandlerService } from "../../../erupt/service/data-handler.service"
 })
 export class EditComponent implements OnInit, OnDestroy {
 
-  tabEnum = TabEnum;
-
   loading = false;
+
+  editType = EditType;
 
   // private tabCount = new Subject<number>();
 
@@ -24,7 +25,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
   @Input() eruptBuildModel: EruptBuildModel;
 
-  eruptFieldModelMap = this.eruptBuildModel.eruptModel.eruptFieldModelMap;
+  eruptFieldModelMap: Map<String, EruptFieldModel>;
 
   constructor(private dataService: DataService,
               private settingSrv: SettingsService,
@@ -42,14 +43,15 @@ export class EditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.eruptFieldModelMap = this.eruptBuildModel.eruptModel.eruptFieldModelMap;
   }
 
   ngOnDestroy(): void {
   }
 
 
-  checkBoxChange(event, sub: EruptAndEruptFieldModel) {
-    sub.eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
+  checkBoxChange(event, eruptFieldModel: EruptFieldModel) {
+    eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
   }
 
 

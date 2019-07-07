@@ -5,8 +5,8 @@ import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, SaveMode, TabEnum, View
  */
 export interface EruptFieldModel {
   fieldName: string;
-  eruptFieldJson: EruptField;
   fieldReturnName?: string;
+  eruptFieldJson: EruptField;
   value?: any;
 }
 

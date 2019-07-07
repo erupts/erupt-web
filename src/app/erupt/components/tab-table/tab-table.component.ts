@@ -1,7 +1,6 @@
 import { Component, Inject, Input, OnInit, ViewChild } from "@angular/core";
 import { EruptAndEruptFieldModel, EruptBuildModel } from "../../model/erupt-build.model";
 import { DataService } from "../../service/data.service";
-import { EruptModel } from "../../model/erupt.model";
 import { STComponent } from "@delon/abc";
 import { EditTypeComponent } from "../../edit-type/edit-type.component";
 import { colRules } from "../../model/util.model";
@@ -15,9 +14,9 @@ import { DataHandlerService } from "../../service/data-handler.service";
 })
 export class TabTableComponent implements OnInit {
 
-  @Input() tabErupt: EruptAndEruptFieldModel;
-
   @Input() eruptBuildModel: EruptBuildModel;
+
+  @Input() tabErupt: EruptAndEruptFieldModel;
 
   @Input() behavior: "add" | "edit" | "readonly" = "add";
 

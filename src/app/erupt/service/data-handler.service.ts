@@ -1,6 +1,6 @@
 import { EruptFieldModel } from "../model/erupt-field.model";
 import { EruptModel, Tree } from "../model/erupt.model";
-import { ChoiceEnum, EditType, SaveMode, TabEnum, ViewType } from "../model/erupt.enum";
+import { ChoiceEnum, EditType, SaveMode, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
 import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
@@ -26,7 +26,7 @@ export class DataHandlerService {
     this.buildErupt(em.eruptModel);
     if (em.tabErupts) {
       for (let key in em.tabErupts) {
-        if (em.tabErupts[key]) {
+        if (em.tabErupts[key] && em.eruptModel.eruptFieldModelMap.get(key).eruptFieldJson.edit.type != EditType.TAB_TREE) {
           this.buildErupt(em.tabErupts[key]);
         }
       }
@@ -44,10 +44,6 @@ export class DataHandlerService {
   }
 
   buildErupt(eruptModel: EruptModel) {
-    eruptModel.eruptJson.rowOperationMap = new Map();
-    eruptModel.eruptJson.rowOperation.forEach(oper =>
-      eruptModel.eruptJson.rowOperationMap.set(oper.code, oper)
-    );
     eruptModel.tableColumns = [];
     eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
     eruptModel.eruptFieldModels.forEach(field => {

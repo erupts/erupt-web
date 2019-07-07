@@ -43,7 +43,7 @@
                         [(nzVisible)]="showColCtrl" [nzContent]="tableColumnCtrl"
                         nzTitle="表格列控制"
                         nzTrigger="click" class="mb-sm">
-                    表格列控制
+                    <i nz-icon nzType="table" nzTheme="outline"></i>表格列控制
                 </button>
                 <ng-template #tableColumnCtrl>
                     <div nz-row>
@@ -70,11 +70,10 @@
         </div>
         <div>
             <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
-                <ng-container *ngFor="let oper of eruptBuildModel.eruptModel.eruptJson.rowOperation">
-                    <ng-container *ngIf="oper.multi">
-                        <button nz-button nzType="dashed" class="mb-sm" (click)="gcOperatorEdits(oper.code,true)">
-                            <i class="fa" [ngClass]="oper.icon"></i>
-                            {{oper.title}}
+                <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation | keyvalue">
+                    <ng-container *ngIf="item.value.multi">
+                        <button nz-button nzType="dashed" class="mb-sm" (click)="gcOperator(item.key,true)">
+                            <i class="fa" [ngClass]="item.value.icon"></i>&nbsp;{{item.value.title}}
                         </button>
                     </ng-container>
                 </ng-container>

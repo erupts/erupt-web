@@ -14,13 +14,10 @@ export interface EruptModel {
 }
 
 export interface Erupt {
-  name: string;
   primaryKeyCol: string;
   power: Power;
-  desc: string;
   tree: Tree;
-  rowOperation: RowOperation[];
-  rowOperationMap?: Map<String, RowOperation>;
+  rowOperation: { [key: string]: RowOperation };
 }
 
 export interface Tree {
@@ -33,7 +30,6 @@ export interface Tree {
 
 
 interface RowOperation {
-  code: string;
   icon: string;
   title: string;
   multi: boolean;

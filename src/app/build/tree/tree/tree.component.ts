@@ -1,11 +1,10 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
-import { EruptModel } from "../../../erupt/model/erupt.model";
 import { ActivatedRoute } from "@angular/router";
 import { NzFormatEmitEvent, NzMessageService, NzModalService, NzTreeBaseService } from "ng-zorro-antd";
 import { colRules } from "../../../erupt/model/util.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
-import { EruptAndEruptFieldModel, EruptBuildModel } from "../../../erupt/model/erupt-build.model";
+import { EruptBuildModel } from "../../../erupt/model/erupt-build.model";
 import { Subscription } from "rxjs";
 
 @Component({

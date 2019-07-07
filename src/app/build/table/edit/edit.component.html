@@ -2,17 +2,17 @@
     <nz-spin [nzSpinning]="loading">
         <erupt-edit-type [eruptBuildModel]="eruptBuildModel"></erupt-edit-type>
     </nz-spin>
-    <nz-tabset *ngIf="eruptBuildModel.tabErupts.length>0">
-        <ng-container *ngFor="let key in eruptBuildModel.tabErupts">
-            <nz-tab [nzTitle]="eruptFieldModelMap.get(key).eruptFieldModel.eruptFieldJson.edit.title">
-                <ng-container [ngSwitch]="eruptFieldModelMap.get(key).eruptFieldModel.eruptFieldJson.edit.tabType.type">
-                    <ng-container *ngSwitchCase="tabEnum.TABLE">
-                        <tab-table [tabErupt]="eruptBuildModel.tabErupts[key]" [eruptBuildModel]="eruptBuildModel" [behavior]="behavior"></tab-table>
+    <nz-tabset *ngIf="eruptBuildModel.tabErupts">
+        <ng-container *ngFor="let item of eruptBuildModel.tabErupts | keyvalue">
+            <nz-tab [nzTitle]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.title">
+                <ng-container [ngSwitch]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.type">
+                    <ng-container *ngSwitchCase="editType.TAB_TABLE_ADD">
+                        <!--<tab-table [tabErupt]="eruptBuildModel.tabErupts[key]" [eruptBuildModel]="eruptBuildModel" [behavior]="behavior"></tab-table>-->
                     </ng-container>
-                    <ng-container *ngSwitchCase="tabEnum.TREE">
+                    <ng-container *ngSwitchCase="editType.TAB_TREE">
                         <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
                             <input type="text" nz-input placeholder="Search"
-                                   [(ngModel)]="eruptFieldModelMap.get(key).eruptFieldModel.eruptFieldJson.edit.$tempValue">
+                                   [(ngModel)]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.$tempValue">
                         </nz-input-group>
                         <ng-template #suffixIcon>
                             <i nz-icon type="search"></i>
@@ -21,10 +21,10 @@
                         <nz-tree [nzCheckable]="true"
                                  [nzShowLine]="true"
                                  [nzCheckStrictly]="true"
-                                 [nzData]="eruptFieldModelMap.get(key).eruptFieldModel.eruptFieldJson.edit.$viewValue"
-                                 (nzCheckBoxChange)="checkBoxChange($event,sub)"
-                                 [nzSearchValue]="eruptFieldModelMap.get(key).eruptFieldModel.eruptFieldJson.edit.$tempValue"
-                                 [nzCheckedKeys]="eruptFieldModelMap.get(key).eruptFieldModel.eruptFieldJson.edit.$value">
+                                 [nzData]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.$viewValue"
+                                 (nzCheckBoxChange)="checkBoxChange($event,eruptFieldModelMap.get(item.key))"
+                                 [nzSearchValue]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.$tempValue"
+                                 [nzCheckedKeys]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.$value">
                         </nz-tree>
                     </ng-container>
                 </ng-container>

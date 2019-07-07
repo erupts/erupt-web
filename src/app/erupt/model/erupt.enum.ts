@@ -27,7 +27,6 @@ export enum EditType {
   TAB_TREE = "TAB_TREE",
   TAB_TABLE_ADD = "TAB_TABLE_ADD",
   TAB_TABLE_REFER = "TAB_TABLE_REFER",
-  TAB = "TAB",                     //TAB选项卡
   DIVIDE = "DIVIDE",               //分割线
   SLIDER = "SLIDER",               //数字滑块
   EMPTY = "EMPTY",

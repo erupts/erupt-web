@@ -13,10 +13,10 @@ import {
 } from "@angular/common/http";
 import { Observable, of, throwError } from "rxjs";
 import { catchError, mergeMap } from "rxjs/operators";
-import { NzMessageService, NzModalService } from "ng-zorro-antd";
+import { NzMessageService, NzModalService, NzNotificationService } from "ng-zorro-antd";
 import { _HttpClient } from "@delon/theme";
 import { environment } from "@env/environment";
-import { EruptApiModel } from "../../erupt/model/erupt-api.model";
+import { EruptApiModel, PromptWay, Status } from "../../erupt/model/erupt-api.model";
 import { CacheService } from "@delon/cache";
 import { GlobalKeys } from "../../erupt/model/erupt-const";
 
@@ -28,13 +28,14 @@ export class DefaultInterceptor implements HttpInterceptor {
   constructor(private injector: Injector,
               @Inject(NzModalService)
               private modal: NzModalService,
+              @Inject(NzNotificationService)
+              private notify: NzNotificationService,
+              @Inject(NzMessageService)
+              private msg: NzMessageService,
               private router: Router,
               private cacheService: CacheService) {
   }
 
-  get msg(): NzMessageService {
-    return this.injector.get(NzMessageService);
-  }
 
   private goTo(url: string) {
     setTimeout(() => this.injector.get(Router).navigateByUrl(url));
@@ -53,21 +54,88 @@ export class DefaultInterceptor implements HttpInterceptor {
         // 则以下代码片断可直接适用
         if (event instanceof HttpResponse) {
           const body: any = event.body;
-          if ("success" in body && "message" in body) {
-            let eruptBody = <EruptApiModel>body;
-            if (eruptBody.success) {
-              if (eruptBody.message) {
-                this.msg.success(eruptBody.message);
+          //如果返回对象为EruptApi
+          if ("status" in body && "message" in body && "errorIntercept" in body) {
+            let eruptApiBody = <EruptApiModel>body;
+            if (eruptApiBody.message) {
+              switch (eruptApiBody.promptWay) {
+                case PromptWay.DIALOG:
+                  switch (eruptApiBody.status) {
+                    case Status.INFO:
+                      this.modal.info({
+                        nzTitle: eruptApiBody.message
+                      });
+                      break;
+                    case Status.SUCCESS:
+                      this.modal.success({
+                        nzTitle: eruptApiBody.message
+                      });
+                      break;
+                    case Status.WARNING:
+                      this.modal.warning({
+                        nzTitle: eruptApiBody.message
+                      });
+                      break;
+                    case Status.ERROR:
+                      this.modal.error({
+                        nzTitle: eruptApiBody.message
+                      });
+                      break;
+                  }
+                  break;
+                case PromptWay.MESSAGE:
+                  switch (eruptApiBody.status) {
+                    case Status.INFO:
+                      this.msg.info(eruptApiBody.message);
+                      break;
+                    case Status.SUCCESS:
+                      this.msg.success(eruptApiBody.message);
+                      break;
+                    case Status.WARNING:
+                      this.msg.warning(eruptApiBody.message);
+                      break;
+                    case Status.ERROR:
+                      this.msg.error(eruptApiBody.message);
+                      break;
+                  }
+                  break;
+                case PromptWay.NOTIFY:
+                  switch (eruptApiBody.status) {
+                    case Status.INFO:
+                      this.notify.info(
+                        eruptApiBody.message,
+                        null,
+                        { nzDuration: 0 }
+                      );
+                      break;
+                    case Status.SUCCESS:
+                      this.notify.success(
+                        eruptApiBody.message,
+                        null,
+                        { nzDuration: 0 }
+                      );
+                      break;
+                    case Status.WARNING:
+                      this.notify.warning(
+                        eruptApiBody.message,
+                        null,
+                        { nzDuration: 0 }
+                      );
+                      break;
+                    case Status.ERROR:
+                      this.notify.error(
+                        eruptApiBody.message,
+                        null,
+                        { nzDuration: 0 }
+                      );
+                      break;
+                  }
+                  break;
               }
-            } else {
-              if (<boolean>body.errorIntercept) {
-                this.modal.error({
-                  nzTitle: "Error",
-                  nzContent: eruptBody.message
-                });
-                // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：this.http.get('/').subscribe() 并不会触发
-                return throwError({});
-              }
+            }
+            if (body.errorIntercept) {
+              // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：this.http.get('/').subscribe() 并不会触发
+              return throwError({});
             }
           }
           // 重新修改 `body` 内容为 `response` 内容，对于绝大多数场景已经无须再关心业务状态码
@@ -95,7 +163,7 @@ export class DefaultInterceptor implements HttpInterceptor {
       // break;
       default:
         if (event instanceof HttpErrorResponse) {
-          console.warn("无法连接到服务器", event);
+          console.warn("未可知错误，大部分是由于后端无响应或无效配置引起", event);
           this.msg.error(event.message);
         }
         break;

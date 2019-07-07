@@ -9,7 +9,7 @@ import { colRules } from "../model/util.model";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { DatePipe } from "@angular/common";
 import { ReferenceTableComponent } from "../components/reference-table/reference-table.component";
-import { EruptAndEruptFieldModel, EruptBuildModel } from "../model/erupt-build.model";
+import { EruptBuildModel } from "../model/erupt-build.model";
 
 @Component({
   selector: "erupt-edit-type",
@@ -20,8 +20,6 @@ export class EditTypeComponent implements OnInit {
 
   //important
   @Input() eruptBuildModel: EruptBuildModel;
-
-  @Input() referenceEruptModel: EruptAndEruptFieldModel[];
 
   @Input() col = colRules[3];
 

@@ -229,16 +229,17 @@ export class TableComponent implements OnInit, OnDestroy {
       tableOperators.push(del);
     }
     const that = this;
-    this.eruptBuildModel.eruptModel.eruptJson.rowOperation.forEach(ro => {
+    for (let key in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
+      let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[key];
       tableOperators.push({
         format: () => {
           return `<i title="${ro.title}" class="fa ${ro.icon}" style="color: #000"></i>`;
         },
         click: (record: any, modal: any) => {
-          that.gcOperatorEdits(ro.code, false, record);
+          that.gcOperator(key, false, record);
         }
       });
-    });
+    }
     _columns.push({
       title: "操作",
       fixed: "right",
@@ -255,14 +256,14 @@ export class TableComponent implements OnInit, OnDestroy {
    * @param multi 是否为多选执行
    * @param data 数据（单个执行时使用）
    */
-  gcOperatorEdits(code: string, multi: boolean, data?: object) {
+  gcOperator(code: string, multi: boolean, data?: object) {
     if (multi) {
       if (!this.selectedRows || this.selectedRows.length == 0) {
         this.msg.warning("执行该操作时请至少选中一条数据");
         return;
       }
     }
-    const ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperationMap.get(code);
+    const ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[code];
     if (ro.edits.length <= 0) {
       this.modal.confirm({
         nzTitle: "请确认是否执行此操作",
