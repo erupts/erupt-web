@@ -5,6 +5,7 @@ import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { DataService } from "../../erupt/service/data.service";
 import { SettingsService } from "@delon/theme";
+import { Status } from "../../erupt/model/erupt-api.model";
 
 @Component({
   selector: "app-change-pwd",
@@ -101,7 +102,7 @@ export class ChangePwdComponent {
     this.data.changePwd(this.tokenService.get().account, this.pwd.value, this.newPwd.value, this.newPwd2.value)
       .subscribe(api => {
         this.loading = false;
-        if (api.success) {
+        if (api.status == Status.SUCCESS) {
           this.modal.success({
             nzTitle: "密码修改成功"
           });

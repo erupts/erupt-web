@@ -154,21 +154,26 @@ export class DataHandlerService {
         };
       }
 
-      //编辑类型
+      // 编辑类型
       switch (edit.type) {
         case EditType.BOOLEAN:
           obj.type = "yn";
           obj.className = "text-center";
-          // obj.width = "66px";
+          obj.yn = {
+            truth: edit.boolType.trueText
+            // mode: "full",
+            // yes: edit.boolType.trueText,
+            // no: edit.boolType.falseText
+          };
           break;
         case EditType.CHOICE:
-          if (edit.choiceType.type == ChoiceEnum.SELECT_SINGLE || edit.choiceType.type == ChoiceEnum.RADIO) {
-            obj.format = (item) => {
-              return edit.choiceType.vlMap.get(item[view.column]) + "" || "";
-            };
-          } else {
-            obj.type = "tag";
-          }
+          // if (edit.choiceType.type == ChoiceEnum.SELECT_SINGLE || edit.choiceType.type == ChoiceEnum.RADIO) {
+          //   obj.format = (item) => {
+          //     return edit.choiceType.vlMap.get(item[view.column]) + "" || "";
+          //   };
+          // } else {
+          //   obj.type = "tag";
+          // }
           break;
       }
 
@@ -235,7 +240,7 @@ export class DataHandlerService {
           break;
         case ViewType.IMAGE:
           obj.type = "link";
-          obj.width = "80px";
+          // obj.width = "80px";
           obj.className = "text-center";
           obj.format = (item: any) => {
             if (item[view.column]) {
@@ -244,7 +249,7 @@ export class DataHandlerService {
               if (attachmentType.maxLimit > 1) {
                 img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
               }
-              return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
+              return `<img width="80px" class="text-center" src="${DataService.previewAttachment(img)}" />`;
             } else {
               return "";
             }
@@ -301,7 +306,7 @@ export class DataHandlerService {
           };
           obj.click = (item) => {
             this.modal.create({
-              nzWrapClassName: "modal-lg",
+              nzWrapClassName: "modal-lg modal-body-nopadding",
               nzStyle: { top: "40px" },
               nzMaskClosable: true,
               nzKeyboard: true,

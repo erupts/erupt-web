@@ -4,26 +4,27 @@
         <div>
             <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
                 <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
-                    <i nz-icon type="plus" theme="outline"></i>新增
+                    <i nz-icon type="plus" nzTheme="outline"></i>新增
                 </button>
             </ng-container>
 
             <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
                 <button nz-button nzType="danger" class="mb-sm" (click)="delRows()">
-                    <i nz-icon type="delete" theme="outline"></i>删除
+                    <i nz-icon type="delete" nzTheme="outline"></i>删除
                 </button>
             </ng-container>
 
             <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
                 <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()">
-                    <i nz-icon type="download" theme="outline"></i>下载
+                    <i nz-icon type="download" nzTheme="outline"></i>下载
                 </button>
             </ng-container>
 
             <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.importable">
                 &nbsp;
                 <nz-dropdown-button (nzClick)="importableExcel()">
-                    导入Excel
+                    <i nz-icon nzType="import" nzTheme="outline"></i>
+                    <span style="margin-left: 8px;">导入Excel</span>
                     <ul nz-menu>
                         <li nz-menu-item (click)="downloadExcelTemplate()">下载模板</li>
                     </ul>
@@ -33,7 +34,7 @@
             <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
                 <nz-divider nzType="vertical"></nz-divider>
                 <button nz-button nzType="primary" class="mb-sm" (click)="query()">
-                    <i nz-icon type="search" theme="outline"></i>查询
+                    <i nz-icon type="search" nzTheme="outline"></i>查询
                 </button>
             </ng-container>
 
@@ -63,7 +64,7 @@
                     </button>
                     <button nz-button [nzType]="hideCondition?'default':'danger'"
                             (click)="hideCondition=!hideCondition">
-                        <i nz-icon [type]="hideCondition?'codepen':'close'" theme="outline"></i>
+                        <i nz-icon [type]="hideCondition?'codepen':'close'" nzTheme="outline"></i>
                     </button>
                 </div>
             </ng-container>
@@ -73,7 +74,8 @@
                 <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation | keyvalue">
                     <ng-container *ngIf="item.value.multi">
                         <button nz-button nzType="dashed" class="mb-sm" (click)="gcOperator(item.key,true)">
-                            <i class="fa" [ngClass]="item.value.icon"></i>&nbsp;{{item.value.title}}
+                            <i class="fa" [ngClass]="item.value.icon"></i>
+                            <span style="margin-left: 8px;">{{item.value.title}}</span>
                         </button>
                     </ng-container>
                 </ng-container>
@@ -95,7 +97,7 @@
         <!--{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 110 : 0) + 'px'}-->
         <st #st
             [data]="stConfig.url" [columns]="columns"
-            [scroll]=""
+            [scroll]="{x: '1000px'}"
             (change)="tableDataChange($event)"
             [bordered]="true"
             [multiSort]="stConfig.multiSort"
