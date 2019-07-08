@@ -240,7 +240,7 @@ export class DataHandlerService {
           break;
         case ViewType.IMAGE:
           obj.type = "link";
-          // obj.width = "80px";
+          obj.width = "90px";
           obj.className = "text-center";
           obj.format = (item: any) => {
             if (item[view.column]) {
@@ -249,7 +249,7 @@ export class DataHandlerService {
               if (attachmentType.maxLimit > 1) {
                 img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
               }
-              return `<img width="80px" class="text-center" src="${DataService.previewAttachment(img)}" />`;
+              return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
             } else {
               return "";
             }
@@ -399,21 +399,21 @@ export class DataHandlerService {
 
   //非空验证
   validateNotNull(eruptModel: EruptModel, combineErupt?: { [key: string]: EruptModel }): boolean {
-    for (let field of eruptModel.eruptFieldModels) {
-      if (field.eruptFieldJson.edit.notNull) {
-        if (!field.eruptFieldJson.edit.$value) {
-          this.msg.error(field.eruptFieldJson.edit.title + "必填！");
-          return false;
-        }
-      }
-    }
-    if (combineErupt) {
-      for (let key in combineErupt) {
-        if (!this.validateNotNull(combineErupt[key])) {
-          return false;
-        }
-      }
-    }
+    // for (let field of eruptModel.eruptFieldModels) {
+    //   if (field.eruptFieldJson.edit.notNull) {
+    //     if (!field.eruptFieldJson.edit.$value) {
+    //       this.msg.error(field.eruptFieldJson.edit.title + "必填！");
+    //       return false;
+    //     }
+    //   }
+    // }
+    // if (combineErupt) {
+    //   for (let key in combineErupt) {
+    //     if (!this.validateNotNull(combineErupt[key])) {
+    //       return false;
+    //     }
+    //   }
+    // }
     return true;
   }
 
@@ -495,6 +495,16 @@ export class DataHandlerService {
             field.eruptFieldJson.edit.$value = null;
           }
           break;
+        case EditType.TAB_TREE:
+          const tabTree = eruptData[field.fieldName] = [];
+          if (field.eruptFieldJson.edit.$value) {
+            (<any[]>field.eruptFieldJson.edit.$value).forEach(val => {
+              const obj = {};
+              obj[eruptBuildModel.tabErupts[field.fieldName].eruptJson.primaryKeyCol] = val;
+              tabTree.push(obj);
+            });
+          }
+          break;
         case EditType.ATTACHMENT:
           if (field.eruptFieldJson.edit.attachmentType.saveMode === SaveMode.SINGLE_COLUMN) {
             if (field.eruptFieldJson.edit.$viewValue) {
@@ -518,21 +528,6 @@ export class DataHandlerService {
           break;
       }
     });
-    if (eruptBuildModel.tabErupts) {
-      for (let key in eruptBuildModel.tabErupts) {
-        const eruptFieldModel = eruptBuildModel.eruptModel.eruptFieldModelMap.get(key);
-        if (eruptFieldModel.eruptFieldJson.edit.type === EditType.TAB_TREE) {
-          const tabTree = eruptData[eruptFieldModel.fieldName] = [];
-          if (eruptFieldModel.eruptFieldJson.edit.$value) {
-            (<any[]>eruptFieldModel.eruptFieldJson.edit.$value).forEach(val => {
-              const obj = {};
-              obj[eruptBuildModel.tabErupts[key].eruptJson.primaryKeyCol] = val;
-              tabTree.push(obj);
-            });
-          }
-        }
-      }
-    }
     if (eruptBuildModel.combineErupts) {
       for (let key in eruptBuildModel.combineErupts) {
         eruptData[key] = this.eruptValueToObject({

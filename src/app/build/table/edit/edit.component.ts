@@ -33,7 +33,8 @@ export class EditComponent implements OnInit, OnDestroy {
 
   }
 
-  @Input() set setIdData(id: any) {
+  @Input() set setId(id: any) {
+    console.log(this.eruptBuildModel.eruptModel.eruptFieldModels);
     this.loading = true;
     this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
     this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, id).subscribe(data => {

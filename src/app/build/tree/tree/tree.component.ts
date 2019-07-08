@@ -100,28 +100,24 @@ export class TreeComponent implements OnInit, OnDestroy {
   }
 
   add() {
-    if (this.dataHandler.validateNotNull(this.eruptBuildModel.eruptModel, this.eruptBuildModel.combineErupts)) {
-      this.loading = true;
-      this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
-        this.loading = false;
-        this.fetchTreeData();
-        this.dataHandler.emptyEruptValue(this.eruptBuildModel);
-        this.msg.success("添加成功");
-      });
-    }
+    this.loading = true;
+    this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
+      this.loading = false;
+      this.fetchTreeData();
+      this.dataHandler.emptyEruptValue(this.eruptBuildModel);
+      this.msg.success("添加成功");
+    });
   }
 
   save() {
     //校验菜单和合法性
     if (this.validateParentIdValue()) {
-      if (this.dataHandler.validateNotNull(this.eruptBuildModel.eruptModel, this.eruptBuildModel.combineErupts)) {
-        this.loading = true;
-        this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
-          this.loading = false;
-          this.msg.success("修改成功");
-          this.fetchTreeData();
-        });
-      }
+      this.loading = true;
+      this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
+        this.loading = false;
+        this.msg.success("修改成功");
+        this.fetchTreeData();
+      });
     }
   }
 

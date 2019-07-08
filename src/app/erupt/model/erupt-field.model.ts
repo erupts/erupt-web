@@ -49,6 +49,7 @@ export interface Edit {
   dateType: DateType;
   sliderType: SliderType;
   dependSwitchType: DependSwitchType
+  $tabTreeViewData?: any;
   $value?: any;
   $viewValue?: any;
   $tempValue?: any;

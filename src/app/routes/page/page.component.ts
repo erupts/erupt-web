@@ -1,7 +1,6 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DataService } from "../../erupt/service/data.service";
-import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "app-page",

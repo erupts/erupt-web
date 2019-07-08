@@ -112,15 +112,11 @@ export class TabTableComponent implements OnInit {
         }
       },
       nzOnOk: () => {
-        if (this.dataHandlerService.validateNotNull(this.tabErupt.eruptModel)) {
-          let obj = this.dataHandlerService.eruptValueToObject({
-            eruptModel: this.tabErupt.eruptModel
-          });
-          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
-          this.st.reload();
-        } else {
-          return false;
-        }
+        // let obj = this.dataHandlerService.eruptValueToObject({
+        //   eruptModel: this.tabErupt.eruptModel
+        // });
+        // this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
+        // this.st.reload();
       }
     });
   }
