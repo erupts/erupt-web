@@ -58,15 +58,6 @@ export class DataService {
   }
 
 
-  findTabListById(modelName: string, id: string, tabFieldName: string): Observable<any[]> {
-    return this._http.get<any[]>(RestPath.data + "tab/table/" + modelName + "/" + id + "/" + tabFieldName, null, {
-      observe: "body",
-      headers: {
-        erupt: modelName
-      }
-    });
-  }
-
   findTabTree(modelName: string, tabFieldName: string): Observable<Tree[]> {
     return this._http.get<Tree[]>(RestPath.data + "tab/tree/" + modelName + "/" + tabFieldName, null, {
       observe: "body",
@@ -76,22 +67,13 @@ export class DataService {
     });
   }
 
-  findTabTreeById(modelName: string, id: string, tabFieldName: string): Observable<any> {
-    return this._http.get<any>(RestPath.data + "tab/tree/" + modelName + "/" + id + "/" + tabFieldName, null, {
-      observe: "body",
-      headers: {
-        erupt: modelName
-      }
-    });
-  }
-
   //执行自定义operator方法
   execOperatorFun(modelName: string, operatorCode: string, data: any, param: object) {
-    return this._http.post<EruptApiModel>(RestPath.data + modelName + "/operator/" + operatorCode, {
+    return this._http.post(RestPath.data + modelName + "/operator/" + operatorCode, {
       data: data,
       param: param
     }, null, {
-      observe: null,
+      observe: "body",
       headers: {
         erupt: modelName
       }

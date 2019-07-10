@@ -9,6 +9,7 @@ export interface EruptBuildModel {
   tabErupts?: { [key: string]: EruptModel };
   combineErupts?: { [key: string]: EruptModel };
   referenceErupts?: { [key: string]: EruptModel };
+  operationErupts?: { [key: string]: EruptModel };
 }
 
 export interface EruptAndEruptFieldModel {

@@ -1,7 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { EruptModel } from "../../../erupt/model/erupt.model";
-import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
 
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
@@ -17,6 +16,7 @@ import { DataHandlerService } from "../../../erupt/service/data-handler.service"
 import { ExcelImportComponent } from "../../../erupt/components/excel-import/excel-import.component";
 import { Subscription } from "rxjs";
 import { BuildConfig } from "../../../erupt/model/build-config";
+import { EruptApiModel, Status } from "../../../erupt/model/erupt-api.model";
 
 @Component({
   selector: "erupt-table",
@@ -186,13 +186,16 @@ export class TableComponent implements OnInit, OnDestroy {
             eruptBuildModel: this.eruptBuildModel,
             setId: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
           },
-          nzOnOk: () => {
-            this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
-              this.modal.closeAll();
+          nzOnOk: async () => {
+            let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName,
+              this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
+            if (res) {
               this.msg.success("修改成功");
               this.st.reload();
-            });
-            return false;
+              return true;
+            } else {
+              return false;
+            }
           }
         });
       }
@@ -234,7 +237,7 @@ export class TableComponent implements OnInit, OnDestroy {
           return `<i title="${ro.title}" class="fa ${ro.icon}" style="color: #000"></i>`;
         },
         click: (record: any, modal: any) => {
-          that.gcOperator(key, false, record);
+          that.createOperator(key, false, record);
         }
       });
     }
@@ -254,7 +257,7 @@ export class TableComponent implements OnInit, OnDestroy {
    * @param multi 是否为多选执行
    * @param data 数据（单个执行时使用）
    */
-  gcOperator(code: string, multi: boolean, data?: object) {
+  createOperator(code: string, multi: boolean, data?: object) {
     if (multi) {
       if (!this.selectedRows || this.selectedRows.length == 0) {
         this.msg.warning("执行该操作时请至少选中一条数据");
@@ -262,7 +265,33 @@ export class TableComponent implements OnInit, OnDestroy {
       }
     }
     const ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[code];
-    if (ro.edits.length <= 0) {
+    let operationErupt = this.eruptBuildModel.operationErupts[code];
+    if (operationErupt) {
+      this.modal.create({
+        nzKeyboard: true,
+        nzTitle: ro.title,
+        nzCancelText: "取消（ESC）",
+        nzWrapClassName: "modal-lg",
+        nzOnOk: async () => {
+          // return new Promise(resolve => setTimeout(resolve, 1000))
+          let eruptValue = this.dataHandler.eruptValueToObject({ eruptModel: operationErupt });
+          let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code,
+            multi ? this.selectedRows : data, eruptValue).toPromise().then(res => res);
+          if (res.status == Status.SUCCESS) {
+            this.st.reload();
+            return true;
+          } else {
+            return false;
+          }
+        },
+        nzContent: EditTypeComponent,
+        nzComponentParams: {
+          eruptBuildModel: {
+            eruptModel: operationErupt
+          }
+        }
+      });
+    } else {
       this.modal.confirm({
         nzTitle: "请确认是否执行此操作",
         nzContent: ro.title,
@@ -270,41 +299,6 @@ export class TableComponent implements OnInit, OnDestroy {
           this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, multi ? this.selectedRows : data, null).subscribe(res => {
             this.st.reload();
           });
-        }
-      });
-    } else {
-      const eruptFieldModels: EruptFieldModel[] = [];
-      ro.edits.forEach(edit => {
-        const eruptFieldModel: EruptFieldModel = {
-          fieldName: edit.code,
-          fieldReturnName: edit.codeType,
-          eruptFieldJson: {
-            edit: edit.edit
-          }
-        };
-        eruptFieldModels.push(eruptFieldModel);
-      });
-      const operatorEruptModel: EruptModel = {
-        eruptFieldModels: eruptFieldModels,
-        eruptName: this.eruptBuildModel.eruptModel.eruptName,
-        eruptJson: this.eruptBuildModel.eruptModel.eruptJson
-      };
-      this.modal.create({
-        nzKeyboard: true,
-        nzTitle: ro.title,
-        nzCancelText: "取消（ESC）",
-        nzWrapClassName: "modal-lg",
-        nzOnOk: () => {
-          this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, multi ? this.selectedRows : data, this.dataHandler.eruptValueToObject({
-            eruptModel: operatorEruptModel
-          })).subscribe(res => {
-            this.st.reload();
-            this.modal.closeAll();
-          });
-        },
-        nzContent: EditTypeComponent,
-        nzComponentParams: {
-          eruptModel: operatorEruptModel
         }
       });
     }
@@ -325,12 +319,14 @@ export class TableComponent implements OnInit, OnDestroy {
         eruptBuildModel: this.eruptBuildModel
       },
       nzOkText: "增加",
-      nzOnOk: () => {
-        this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
-          this.st.reload();
-          this.modal.closeAll();
+      nzOnOk: async () => {
+        let res: EruptApiModel = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
+          this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
+        if (res.status == Status.SUCCESS) {
           this.msg.success("新增成功");
-        });
+          this.st.reload();
+          return true;
+        }
         return false;
       }
     });
