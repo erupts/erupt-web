@@ -10,6 +10,7 @@ import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
 import { DatePipe } from "@angular/common";
 import { ReferenceTableComponent } from "../components/reference-table/reference-table.component";
 import { EruptBuildModel } from "../model/erupt-build.model";
+import { EruptApiModel, Status } from "../model/erupt-api.model";
 
 @Component({
   selector: "erupt-edit-type",
@@ -86,10 +87,9 @@ export class EditTypeComponent implements OnInit {
   upLoadNzChange({ file, fileList }, field: EruptFieldModel) {
     const status = file.status;
     if (status === "done") {
-      console.log(file);
-      if (!file.response.success) {
+      if ((<EruptApiModel>file.response).status == Status.ERROR) {
         this.modal.error({
-          nzTitle: "Error",
+          nzTitle: "ERROR",
           nzContent: file.response.message
         });
         field.eruptFieldJson.edit.$viewValue.pop();
@@ -110,7 +110,7 @@ export class EditTypeComponent implements OnInit {
 
 
   createRefTreeModal(field: EruptFieldModel) {
-    let depend = field.eruptFieldJson.edit.referenceTreeType.depend;
+    let depend = field.eruptFieldJson.edit.referenceTreeType.dependField;
     let dependVal = null;
     if (depend) {
       const dependField: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(depend);

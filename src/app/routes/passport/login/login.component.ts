@@ -1,5 +1,5 @@
 import { SettingsService } from "@delon/theme";
-import { AfterViewInit, Component, Inject, OnDestroy, OnInit, Optional } from "@angular/core";
+import { Component, Inject, OnDestroy, OnInit, Optional } from "@angular/core";
 import { Router } from "@angular/router";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
@@ -10,7 +10,6 @@ import { DataService } from "../../../erupt/service/data.service";
 import { CacheService } from "@delon/cache";
 import { GlobalKeys } from "../../../erupt/model/erupt-const";
 
-declare const Waves;
 
 @Component({
   selector: "passport-login",

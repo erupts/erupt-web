@@ -5,7 +5,7 @@ import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, SaveMode, TabEnum, View
  */
 export interface EruptFieldModel {
   fieldName: string;
-  fieldReturnName?: string;
+  fieldReturnName: string;
   eruptFieldJson: EruptField;
   value?: any;
 }
@@ -77,7 +77,7 @@ export interface ReferenceTreeType {
   id: string;
   label: string;
   pid: string;
-  depend: string;
+  dependField: string;
 }
 
 export interface ReferenceTableType {

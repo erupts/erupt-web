@@ -81,7 +81,7 @@
             </ng-container>
         </ng-container>
     </div>
-    <nz-card *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0" [nzBodyStyle]="{padding:'10px 5px'}"
+    <nz-card *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0" [nzBodyStyle]="{padding:'10px'}"
              style="background: #fafafa;margin-bottom: 0;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)" [hidden]="hideCondition">
         <erupt-edit-type [eruptBuildModel]="{eruptModel:searchErupt,referenceErupts:eruptBuildModel.referenceErupts}"
                          [col]="{ xs: 24, sm: 24, md: 12, lg: 8, xl: 8, xxl: 6 }"
