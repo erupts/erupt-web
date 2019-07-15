@@ -399,21 +399,21 @@ export class DataHandlerService {
 
   //非空验证
   validateNotNull(eruptModel: EruptModel, combineErupt?: { [key: string]: EruptModel }): boolean {
-    // for (let field of eruptModel.eruptFieldModels) {
-    //   if (field.eruptFieldJson.edit.notNull) {
-    //     if (!field.eruptFieldJson.edit.$value) {
-    //       this.msg.error(field.eruptFieldJson.edit.title + "必填！");
-    //       return false;
-    //     }
-    //   }
-    // }
-    // if (combineErupt) {
-    //   for (let key in combineErupt) {
-    //     if (!this.validateNotNull(combineErupt[key])) {
-    //       return false;
-    //     }
-    //   }
-    // }
+    for (let field of eruptModel.eruptFieldModels) {
+      if (field.eruptFieldJson.edit.notNull) {
+        if (!field.eruptFieldJson.edit.$value) {
+          this.msg.error(field.eruptFieldJson.edit.title + "必填！");
+          return false;
+        }
+      }
+    }
+    if (combineErupt) {
+      for (let key in combineErupt) {
+        if (!this.validateNotNull(combineErupt[key])) {
+          return false;
+        }
+      }
+    }
     return true;
   }
 
@@ -445,7 +445,7 @@ export class DataHandlerService {
         case EditType.INPUT:
           const edit = field.eruptFieldJson.edit;
           if (edit.search.vague) {
-            if (edit.type === EditType.INPUT && field.fieldReturnName === "number") {
+            if (field.fieldReturnName === "number") {
               if (edit.$l_val && edit.$r_val) {
                 eruptData[field.fieldName] = [edit.$l_val, edit.$r_val];
               }
@@ -455,7 +455,7 @@ export class DataHandlerService {
               }
             }
           } else {
-            if (field.eruptFieldJson.edit.$value) {
+            if (field.eruptFieldJson.edit.$value || field.eruptFieldJson.edit.$value == 0) {
               const inputType = field.eruptFieldJson.edit.inputType;
               if (inputType.prefixValue || inputType.suffixValue) {
                 eruptData[field.fieldName] = (inputType.prefixValue || "") + field.eruptFieldJson.edit.$value + (inputType.suffixValue || "");
@@ -540,13 +540,14 @@ export class DataHandlerService {
 
   //将后台数据转化成前端可视格式
   objectToEruptValue(object: any, eruptBuild: EruptBuildModel) {
+    this.emptyEruptValue(eruptBuild);
     for (let field of eruptBuild.eruptModel.eruptFieldModels) {
       switch (field.eruptFieldJson.edit.type) {
         case EditType.INPUT:
-          if (object[field.fieldName]) {
-            const inputType = field.eruptFieldJson.edit.inputType;
-            //处理前缀和后缀的数据
-            if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
+          const inputType = field.eruptFieldJson.edit.inputType;
+          //处理前缀和后缀的数据
+          if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
+            if (object[field.fieldName]) {
               let str = <string>object[field.fieldName];
               for (let pre of inputType.prefix) {
                 if (str.startsWith(pre.value)) {
@@ -563,9 +564,9 @@ export class DataHandlerService {
                 }
               }
               field.eruptFieldJson.edit.$value = str;
-            } else {
-              field.eruptFieldJson.edit.$value = object[field.fieldName];
             }
+          } else {
+            field.eruptFieldJson.edit.$value = object[field.fieldName];
           }
           break;
         case EditType.DATE:
@@ -651,14 +652,16 @@ export class DataHandlerService {
 
   emptyEruptValue(eruptBuildModel: EruptBuildModel) {
     eruptBuildModel.eruptModel.eruptFieldModels.forEach(ef => {
+      ef.eruptFieldJson.edit.$value = null;
+      ef.eruptFieldJson.edit.$viewValue = null;
+      ef.eruptFieldJson.edit.$tempValue = null;
+      ef.eruptFieldJson.edit.$l_val = null;
+      ef.eruptFieldJson.edit.$r_val = null;
       if (ef.eruptFieldJson.edit.type == EditType.BOOLEAN && eruptBuildModel.eruptModel.mode !== "search") {
         ef.eruptFieldJson.edit.$value = ef.eruptFieldJson.edit.boolType.defaultValue;
-      } else {
-        ef.eruptFieldJson.edit.$value = null;
-        ef.eruptFieldJson.edit.$viewValue = null;
-        ef.eruptFieldJson.edit.$tempValue = null;
-        ef.eruptFieldJson.edit.$l_val = null;
-        ef.eruptFieldJson.edit.$r_val = null;
+      } else if (ef.eruptFieldJson.edit.type == EditType.INPUT) {
+        ef.eruptFieldJson.edit.inputType.prefixValue = null;
+        ef.eruptFieldJson.edit.inputType.suffixValue = null;
       }
     });
   }

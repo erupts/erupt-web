@@ -6,6 +6,7 @@ import { colRules } from "../../../erupt/model/util.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 import { EruptBuildModel } from "../../../erupt/model/erupt-build.model";
 import { Subscription } from "rxjs";
+import { Status } from "../../../erupt/model/erupt-api.model";
 
 @Component({
   selector: "erupt-tree",
@@ -103,9 +104,11 @@ export class TreeComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
       this.loading = false;
-      this.fetchTreeData();
-      this.dataHandler.emptyEruptValue(this.eruptBuildModel);
-      this.msg.success("添加成功");
+      if (result.status == Status.SUCCESS) {
+        this.fetchTreeData();
+        this.dataHandler.emptyEruptValue(this.eruptBuildModel);
+        this.msg.success("添加成功");
+      }
     });
   }
 

@@ -6,7 +6,7 @@ window.eruptSiteConfig = {
   routerReuse: false,
   amapKey: "15bc4df0bd6758645308fa591f439799",
   r_tools: [{
-    html: `<h4>BTN</h4>`
+    // html: `<h4>BTN</h4>`
   }, {
     icon: "fa-download",
     mobileShow: true,

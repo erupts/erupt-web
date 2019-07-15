@@ -12,14 +12,7 @@ import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
               {{settings.user.name}}
           </div>
           <div nz-menu class="width-sm">
-              <!--<div nz-menu-item routerLink="/pro/account/center"><i class="anticon anticon-user mr-sm"></i>-->
-              <!--个人中心-->
-              <!--</div>-->
-              <!--<div nz-menu-item routerLink="/pro/account/settings"><i class="anticon anticon-setting mr-sm"></i>-->
-              <!--个人设置-->
-              <!--</div>-->
-              <!--<li nz-menu-divider></li>-->
-              <div nz-menu-item (click)="changePwd()">
+              <div nz-menu-item routerLink="/change-pwd">
                   <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>修改密码
               </div>
               <div nz-menu-item (click)="logout()">
@@ -40,9 +33,5 @@ export class HeaderUserComponent {
   logout() {
     this.tokenService.clear();
     this.router.navigateByUrl(this.tokenService.login_url);
-  }
-
-  changePwd() {
-    this.router.navigateByUrl("change-pwd");
   }
 }
