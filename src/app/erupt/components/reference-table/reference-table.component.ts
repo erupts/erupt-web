@@ -6,7 +6,7 @@ import { BuildConfig } from "../../model/build-config";
 import { EruptModel } from "../../model/erupt.model";
 import { RestPath } from "../../model/erupt.enum";
 import { EruptFieldModel } from "../../model/erupt-field.model";
-import { STComponent } from "@delon/abc";
+import { STColumn, STComponent } from "@delon/abc";
 
 @Component({
   selector: "app-reference-table",
@@ -20,6 +20,8 @@ export class ReferenceTableComponent implements OnInit {
   @Input() eruptField: EruptFieldModel;
 
   @Input() erupt: EruptModel;
+
+  @Input() mode: "radio" | "checkbox" = "radio";
 
   stConfig = new BuildConfig().stConfig;
 
@@ -45,9 +47,9 @@ export class ReferenceTableComponent implements OnInit {
   }
 
   buildTableConfig() {
-    const _columns = [];
+    const _columns: STColumn[] = [];
     _columns.push({
-      title: "", type: "radio", fixed: "left", width: "50px", className: "text-center",
+      title: "", type: this.mode, fixed: "left", width: "50px", className: "text-center",
       index: this.referenceErupt.eruptJson.primaryKeyCol
     });
     _columns.push(...this.dataHandler.viewToAlainTableConfig(this.referenceErupt));
@@ -62,6 +64,8 @@ export class ReferenceTableComponent implements OnInit {
         id: id,
         label: label
       };
+    } else if (event.type === "checkbox") {
+      this.eruptField.eruptFieldJson.edit.$tempValue = event.checkbox;
     }
   }
 

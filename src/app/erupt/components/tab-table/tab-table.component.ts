@@ -1,11 +1,15 @@
 import { Component, Inject, Input, OnInit, ViewChild } from "@angular/core";
-import { EruptAndEruptFieldModel, EruptBuildModel } from "../../model/erupt-build.model";
+import { EruptBuildModel } from "../../model/erupt-build.model";
 import { DataService } from "../../service/data.service";
-import { STComponent } from "@delon/abc";
+import { STColumn, STComponent } from "@delon/abc";
 import { EditTypeComponent } from "../../edit-type/edit-type.component";
 import { colRules } from "../../model/util.model";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DataHandlerService } from "../../service/data-handler.service";
+import { EruptModel } from "../../model/erupt.model";
+import { EruptFieldModel } from "../../model/erupt-field.model";
+import { ReferenceTableComponent } from "../reference-table/reference-table.component";
+import { BuildConfig } from "../../model/build-config";
 
 @Component({
   selector: "tab-table",
@@ -16,23 +20,18 @@ export class TabTableComponent implements OnInit {
 
   @Input() eruptBuildModel: EruptBuildModel;
 
-  @Input() tabErupt: EruptAndEruptFieldModel;
+  @Input() tabErupt: {
+    eruptModel: EruptModel;
+    eruptFieldModel: EruptFieldModel;
+  };
 
   @Input() behavior: "add" | "edit" | "readonly" = "add";
 
+  @Input() mode: "refer-add" | "add" = "add";
+
   @ViewChild("st") st: STComponent;
 
-  private stConfig = {
-    stPage: {
-      placement: "center",
-      pageSizes: [10, 30, 50, 100],
-      showSize: true,
-      showQuickJumper: true,
-      total: true,
-      toTop: true,
-      front: true
-    }
-  };
+  private stConfig = new BuildConfig().stConfig;
 
   constructor(private dataService: DataService,
               private dataHandlerService: DataHandlerService,
@@ -41,13 +40,14 @@ export class TabTableComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$viewValue = null;
     if (!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
       this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
     }
     if (this.behavior == "readonly") {
-      this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$viewValue = this.tabErupt.alainTableConfig;
+      this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$viewValue = this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptModel);
     } else {
-      const viewValue = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$viewValue = [];
+      const viewValue: STColumn[] = [];
       viewValue.push({
         title: "",
         type: "checkbox",
@@ -55,7 +55,7 @@ export class TabTableComponent implements OnInit {
         className: "text-center",
         index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
       });
-      viewValue.push(...this.tabErupt.alainTableConfig);
+      viewValue.push(...this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptModel));
       viewValue.push({
         title: "操作区",
         fixed: "right",
@@ -95,6 +95,7 @@ export class TabTableComponent implements OnInit {
           }
         ]
       });
+      this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$viewValue = viewValue;
     }
   }
 
@@ -128,6 +129,28 @@ export class TabTableComponent implements OnInit {
     } else {
       this.msg.warning("请选中要删除的数据");
     }
+  }
+
+  addDataByRefer() {
+    this.modal.create({
+      nzStyle: { top: "20px" },
+      nzWrapClassName: "modal-lg",
+      nzMaskClosable: false,
+      nzKeyboard: false,
+      nzTitle: "新增",
+      nzContent: ReferenceTableComponent,
+      nzComponentParams: {
+        erupt: this.eruptBuildModel.eruptModel,
+        referenceErupt: this.tabErupt.eruptModel,
+        eruptField: this.tabErupt.eruptFieldModel,
+        mode: "checkbox"
+      },
+      nzOkText: "增加",
+      nzOnOk: () => {
+        let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
+        edit.$value = edit.$tempValue;
+      }
+    });
   }
 
   selectTableItem(event) {

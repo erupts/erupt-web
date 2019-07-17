@@ -164,7 +164,7 @@ export class TableComponent implements OnInit, OnDestroy {
               tabErupts: this.eruptBuildModel.tabErupts,
               combineErupts: this.eruptBuildModel.combineErupts
             },
-            setId: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
+            id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
             behavior: "readonly"
           }
         });
@@ -184,7 +184,7 @@ export class TableComponent implements OnInit, OnDestroy {
           nzContent: EditComponent,
           nzComponentParams: {
             eruptBuildModel: this.eruptBuildModel,
-            setId: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
+            id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
           },
           nzOnOk: async () => {
             let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName,

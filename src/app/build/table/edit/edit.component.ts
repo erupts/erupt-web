@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
-import { EditType, TabEnum } from "../../../erupt/model/erupt.enum";
+import { EditType } from "../../../erupt/model/erupt.enum";
 import { SettingsService } from "@delon/theme";
 import { EruptBuildModel } from "../../../erupt/model/erupt-build.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 import { EruptFieldModel } from "../../../erupt/model/erupt-field.model";
+import { NzModalService } from "ng-zorro-antd";
 
 @Component({
   selector: "erupt-edit",
@@ -17,32 +18,34 @@ export class EditComponent implements OnInit, OnDestroy {
 
   editType = EditType;
 
-  // private tabCount = new Subject<number>();
-
   @Input() behavior: "add" | "edit" | "readonly" = "add";
 
   @Output() save = new EventEmitter();
 
   @Input() eruptBuildModel: EruptBuildModel;
 
+  @Input() id: any;
+
   eruptFieldModelMap: Map<String, EruptFieldModel>;
 
-  constructor(private dataService: DataService,
-              private settingSrv: SettingsService,
-              private dataHandlerService: DataHandlerService) {
+  constructor(
+    @Inject(NzModalService)
+    private modal: NzModalService,
+    private dataService: DataService,
+    private settingSrv: SettingsService,
+    private dataHandlerService: DataHandlerService) {
 
-  }
-
-  @Input() set setId(id: any) {
-    this.loading = true;
-    this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
-    this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, id).subscribe(data => {
-      this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
-      this.loading = false;
-    });
   }
 
   ngOnInit() {
+    this.loading = true;
+    this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
+    this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.id).subscribe(data => {
+      console.log(data);
+      this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
+      this.loading = false;
+    });
+
     this.eruptFieldModelMap = this.eruptBuildModel.eruptModel.eruptFieldModelMap;
   }
 
@@ -53,6 +56,5 @@ export class EditComponent implements OnInit, OnDestroy {
   checkBoxChange(event, eruptFieldModel: EruptFieldModel) {
     eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
   }
-
 
 }
