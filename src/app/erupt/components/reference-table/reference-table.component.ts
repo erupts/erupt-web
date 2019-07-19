@@ -29,6 +29,8 @@ export class ReferenceTableComponent implements OnInit {
 
   columns: any[];
 
+  checkedValues: any[];
+
   @ViewChild("st") st: STComponent;
 
   constructor(private dataService: DataService,
@@ -65,7 +67,7 @@ export class ReferenceTableComponent implements OnInit {
         label: label
       };
     } else if (event.type === "checkbox") {
-      this.eruptField.eruptFieldJson.edit.$tempValue = event.checkbox;
+      this.checkedValues = event.checkbox;
     }
   }
 

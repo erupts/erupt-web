@@ -1,7 +1,7 @@
 import { Component, Inject, Input, OnInit, ViewChild } from "@angular/core";
 import { EruptBuildModel } from "../../model/erupt-build.model";
 import { DataService } from "../../service/data.service";
-import { STColumn, STComponent } from "@delon/abc";
+import { STColumn, STColumnButton, STComponent } from "@delon/abc";
 import { EditTypeComponent } from "../../edit-type/edit-type.component";
 import { colRules } from "../../model/util.model";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
@@ -45,6 +45,7 @@ export class TabTableComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.stConfig.stPage.front = true;
     if (!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
       this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
     }
@@ -60,50 +61,61 @@ export class TabTableComponent implements OnInit {
         index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
       });
       viewValue.push(...this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptModel));
+      let operators: STColumnButton[] = [];
+      if (this.mode == "add") {
+        operators.push({
+          icon: "edit",
+          click: (record: any, modal: any, comp: STComponent) => {
+            this.dataHandlerService.objectToEruptValue(record, {
+              eruptModel: this.tabErupt.eruptModel
+            });
+            this.modal.create({
+              nzWrapClassName: "modal-md",
+              nzStyle: { top: "20px" },
+              nzMaskClosable: false,
+              nzKeyboard: false,
+              nzTitle: "编辑",
+              nzContent: EditTypeComponent,
+              nzComponentParams: {
+                col: colRules[2],
+                eruptBuildModel: {
+                  eruptModel: this.tabErupt.eruptModel
+                }
+              },
+              nzOnOk: () => {
+                let obj = this.dataHandlerService.eruptValueToObject({ eruptModel: this.tabErupt.eruptModel });
+              }
+            });
+          }
+        });
+      }
+      operators.push({
+        icon: {
+          type: "delete",
+          theme: "twotone",
+          twoToneColor: "#f00"
+        },
+        type: "del",
+        click: (record, modal, comp: STComponent) => {
+          // comp.removeRow(record);
+          console.log(record);
+          console.log(comp);
+          console.log(this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value);
+          // this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.forEach((val, index) => {
+          //   console.log(JSON.stringify(val));
+          //   if (JSON.stringify(val) == recordJsonStr) {
+          //     console.log(index);
+          //   }
+          // });
+          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = comp.data;
+        }
+      });
       viewValue.push({
         title: "操作区",
         fixed: "right",
         width: "150px",
         className: "text-center",
-        buttons: [
-          {
-            icon: "edit",
-            click: (record: any, modal: any, comp: STComponent) => {
-              this.modal.create({
-                nzWrapClassName: "modal-md",
-                nzStyle: { top: "20px" },
-                nzMaskClosable: false,
-                nzKeyboard: false,
-                nzTitle: "编辑",
-                nzContent: EditTypeComponent,
-                nzComponentParams: {
-                  eruptModel: this.tabErupt.eruptModel,
-                  col: colRules[2]
-                },
-                nzOnOk: () => {
-                  let obj = this.dataHandlerService.eruptValueToObject({ eruptModel: this.tabErupt.eruptModel });
-                }
-              });
-            }
-          },
-          {
-            icon: {
-              type: "delete",
-              theme: "twotone",
-              twoToneColor: "#f00"
-            },
-            type: "del",
-            click: (record, modal, comp: STComponent) => {
-              // comp.removeRow(record);
-              // for (let val of this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
-              //   // if (record[this.tabErupt.eruptModel]){
-              //   //
-              //   // }
-              // }
-              // this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = comp.data;
-            }
-          }
-        ]
+        buttons: operators
       });
       this.column = viewValue;
     }
@@ -141,6 +153,7 @@ export class TabTableComponent implements OnInit {
 
   deleteData() {
     if (this.checkedRow) {
+      console.log(this.checkedRow);
       //TODO
       // for (let value of this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
       //   this.st.removeRow(value);
@@ -152,7 +165,7 @@ export class TabTableComponent implements OnInit {
   }
 
   addDataByRefer() {
-    this.modal.create({
+    const modal = this.modal.create({
       nzStyle: { top: "20px" },
       nzWrapClassName: "modal-lg",
       nzMaskClosable: false,
@@ -167,8 +180,8 @@ export class TabTableComponent implements OnInit {
       },
       nzOkText: "增加",
       nzOnOk: () => {
-        let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
-        edit.$value = edit.$tempValue;
+        this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(...modal.getContentComponent().checkedValues);
+        this.st.reload();
       }
     });
   }

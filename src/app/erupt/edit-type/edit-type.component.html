@@ -110,7 +110,8 @@
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                         <textarea nz-input class="erupt-input" [name]="field.fieldName"
                                                   [nzAutosize]="{ minRows: 3, maxRows: 20 }"
-                                                  [ngStyle]="{borderStyle:field.eruptFieldJson.edit.search.vague?'dashed':''}"
+                                                  [ngStyle]="{borderStyle:(field.eruptFieldJson.edit.search.vague&&eruptModel.mode=='search')
+                                                  ?'dashed':''}"
                                                   [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                   [placeholder]="field.eruptFieldJson.edit.placeHolder"
                                                   [required]="field.eruptFieldJson.edit.notNull"
