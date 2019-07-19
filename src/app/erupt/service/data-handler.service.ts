@@ -441,64 +441,64 @@ export class DataHandlerService {
   eruptValueToObject(eruptBuildModel: EruptBuildModel): object {
     const eruptData: any = {};
     eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
-      switch (field.eruptFieldJson.edit.type) {
+      const edit = field.eruptFieldJson.edit;
+      switch (edit.type) {
         case EditType.INPUT:
-          const edit = field.eruptFieldJson.edit;
-          if (edit.search.vague) {
+          if (edit.search.vague && eruptBuildModel.eruptModel.mode == "search") {
             if (field.fieldReturnName === "number") {
               if (edit.$l_val && edit.$r_val) {
                 eruptData[field.fieldName] = [edit.$l_val, edit.$r_val];
               }
             } else {
-              if (field.eruptFieldJson.edit.$value) {
-                eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+              if (edit.$value) {
+                eruptData[field.fieldName] = edit.$value;
               }
             }
           } else {
-            if (field.eruptFieldJson.edit.$value || field.eruptFieldJson.edit.$value == 0) {
-              const inputType = field.eruptFieldJson.edit.inputType;
+            if (edit.$value) {
+              const inputType = edit.inputType;
               if (inputType.prefixValue || inputType.suffixValue) {
-                eruptData[field.fieldName] = (inputType.prefixValue || "") + field.eruptFieldJson.edit.$value + (inputType.suffixValue || "");
+                eruptData[field.fieldName] = (inputType.prefixValue || "") + edit.$value + (inputType.suffixValue || "");
               } else {
-                eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+                eruptData[field.fieldName] = edit.$value;
               }
             }
           }
           break;
         case EditType.CHOICE:
-          if (field.eruptFieldJson.edit.$value) {
-            if (field.eruptFieldJson.edit.choiceType.type === ChoiceEnum.SELECT_MULTI || field.eruptFieldJson.edit.choiceType.type === ChoiceEnum.TAGS) {
-              let val = (<string[]>field.eruptFieldJson.edit.$value).join(field.eruptFieldJson.edit.choiceType.joinSeparator);
+          if (edit.$value) {
+            if (edit.choiceType.type === ChoiceEnum.SELECT_MULTI || edit.choiceType.type === ChoiceEnum.TAGS) {
+              let val = (<string[]>edit.$value).join(edit.choiceType.joinSeparator);
               if (val) {
                 eruptData[field.fieldName] = val;
               }
             } else {
-              eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+              eruptData[field.fieldName] = edit.$value;
             }
           } else {
             eruptData[field.fieldName] = null;
           }
           break;
         case EditType.REFERENCE_TREE:
-          if (field.eruptFieldJson.edit.$value) {
+          if (edit.$value) {
             eruptData[field.fieldName] = {};
-            eruptData[field.fieldName][field.eruptFieldJson.edit.referenceTreeType.id] = field.eruptFieldJson.edit.$value;
+            eruptData[field.fieldName][edit.referenceTreeType.id] = edit.$value;
           } else {
-            field.eruptFieldJson.edit.$value = null;
+            edit.$value = null;
           }
           break;
         case EditType.REFERENCE_TABLE:
-          if (field.eruptFieldJson.edit.$value) {
+          if (edit.$value) {
             eruptData[field.fieldName] = {};
-            eruptData[field.fieldName][field.eruptFieldJson.edit.referenceTableType.id] = field.eruptFieldJson.edit.$value;
+            eruptData[field.fieldName][edit.referenceTableType.id] = edit.$value;
           } else {
-            field.eruptFieldJson.edit.$value = null;
+            edit.$value = null;
           }
           break;
         case EditType.TAB_TREE:
           const tabTree = eruptData[field.fieldName] = [];
-          if (field.eruptFieldJson.edit.$value) {
-            (<any[]>field.eruptFieldJson.edit.$value).forEach(val => {
+          if (edit.$value) {
+            (<any[]>edit.$value).forEach(val => {
               const obj = {};
               obj[eruptBuildModel.tabErupts[field.fieldName].eruptJson.primaryKeyCol] = val;
               tabTree.push(obj);
@@ -506,24 +506,24 @@ export class DataHandlerService {
           }
           break;
         case EditType.ATTACHMENT:
-          if (field.eruptFieldJson.edit.attachmentType.saveMode === SaveMode.SINGLE_COLUMN) {
-            if (field.eruptFieldJson.edit.$viewValue) {
+          if (edit.attachmentType.saveMode === SaveMode.SINGLE_COLUMN) {
+            if (edit.$viewValue) {
               const $value: string[] = [];
-              (<UploadFile[]>field.eruptFieldJson.edit.$viewValue).forEach(val => {
+              (<UploadFile[]>edit.$viewValue).forEach(val => {
                 $value.push(val.response.data);
               });
-              eruptData[field.fieldName] = $value.join(field.eruptFieldJson.edit.attachmentType.fileSeparator);
+              eruptData[field.fieldName] = $value.join(edit.attachmentType.fileSeparator);
             }
           } else {
             this.msg.warning("该模式暂不可用");
           }
           break;
         case EditType.BOOLEAN:
-          eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+          eruptData[field.fieldName] = edit.$value;
           break;
         default:
-          if (field.eruptFieldJson.edit.$value) {
-            eruptData[field.fieldName] = field.eruptFieldJson.edit.$value;
+          if (edit.$value) {
+            eruptData[field.fieldName] = edit.$value;
           }
           break;
       }

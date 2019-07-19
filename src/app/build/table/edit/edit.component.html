@@ -1,6 +1,6 @@
 <div *ngIf="eruptBuildModel!=null">
     <nz-spin [nzSpinning]="loading">
-        <erupt-edit-type [eruptBuildModel]="eruptBuildModel"></erupt-edit-type>
+        <erupt-edit-type #eruptEdit [eruptBuildModel]="eruptBuildModel"></erupt-edit-type>
     </nz-spin>
     <nz-tabset *ngIf="eruptBuildModel.tabErupts">
         <ng-container *ngFor="let item of eruptBuildModel.tabErupts | keyvalue">
@@ -17,7 +17,6 @@
 
                             </tab-table>
                         </ng-container>
-                        <!--<tab-table [tabErupt]="eruptBuildModel.tabErupts[key]" [eruptBuildModel]="eruptBuildModel" [behavior]="behavior"></tab-table>-->
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.TAB_TREE">
                         <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">

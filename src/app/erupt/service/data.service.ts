@@ -28,106 +28,114 @@ export class DataService {
   }
 
   //获取结构
-  getEruptBuild(modelName: string): Observable<EruptBuildModel> {
-    return this._http.get<EruptBuildModel>(RestPath.build + modelName, null, {
+  getEruptBuild(eruptName: string): Observable<EruptBuildModel> {
+    return this._http.get<EruptBuildModel>(RestPath.build + eruptName, null, {
       observe: "body",
       headers: {
-        erupt: modelName
+        erupt: eruptName
       }
     });
   }
 
   //tree数据结构
-  queryEruptTreeData(modelName: string): Observable<Tree[]> {
-    return this._http.get<Tree[]>(RestPath.data + "tree/" + modelName, null, {
+  queryEruptTreeData(eruptName: string): Observable<Tree[]> {
+    return this._http.get<Tree[]>(RestPath.data + "tree/" + eruptName, null, {
       observe: "body",
       headers: {
-        erupt: modelName
+        erupt: eruptName
       }
     });
   }
 
   //根据id获取数据
-  queryEruptDataById(modelName: string, id: any): Observable<any> {
-    return this._http.get<any>(RestPath.data + modelName + "/" + id, null, {
+  queryEruptDataById(eruptName: string, id: any): Observable<any> {
+    return this._http.get<any>(RestPath.data + eruptName + "/" + id, null, {
       observe: "body",
       headers: {
-        erupt: modelName
+        erupt: eruptName
       }
     });
   }
 
 
-  findTabTree(modelName: string, tabFieldName: string): Observable<Tree[]> {
-    return this._http.get<Tree[]>(RestPath.data + "tab/tree/" + modelName + "/" + tabFieldName, null, {
+  findTabTree(eruptName: string, tabFieldName: string): Observable<Tree[]> {
+    return this._http.get<Tree[]>(RestPath.data + "tab/tree/" + eruptName + "/" + tabFieldName, null, {
       observe: "body",
       headers: {
-        erupt: modelName
+        erupt: eruptName
       }
     });
   }
 
   //执行自定义operator方法
-  execOperatorFun(modelName: string, operatorCode: string, data: any, param: object) {
-    return this._http.post(RestPath.data + modelName + "/operator/" + operatorCode, {
+  execOperatorFun(eruptName: string, operatorCode: string, data: any, param: object) {
+    return this._http.post(RestPath.data + eruptName + "/operator/" + operatorCode, {
       data: data,
       param: param
     }, null, {
       observe: "body",
       headers: {
-        erupt: modelName
+        erupt: eruptName
       }
     });
   }
 
   //获取reference-tree数据
-  queryReferenceTreeData(modelName: string, refName: string, dependVal: any): Observable<Tree[]> {
+  queryReferenceTreeData(eruptName: string, refName: string, dependVal: any): Observable<Tree[]> {
     let param = {};
     if (dependVal) {
       param["dependValue"] = dependVal;
     }
-    return this._http.get<Tree[]>(RestPath.data + modelName + "/reference-tree/" + refName, param, {
+    return this._http.get<Tree[]>(RestPath.data + eruptName + "/reference-tree/" + refName, param, {
       observe: "body",
       headers: {
-        erupt: modelName
+        erupt: eruptName
       }
     });
   }
 
   //增加数据
-  addEruptData(modelName: string, data: any): Observable<any> {
-    return this._http.post<any>(RestPath.data + modelName, data, null, {
+  addEruptData(eruptName: string, data: any): Observable<any> {
+    return this._http.post<any>(RestPath.data + eruptName, data, null, {
       observe: null,
       headers: {
-        erupt: modelName
+        erupt: eruptName
       }
     });
   }
 
   //修改数据
-  editEruptData(modelName: string, data: object): Observable<EruptApiModel> {
-    return this._http.put<EruptApiModel>(RestPath.data + modelName, data, null, {
+  editEruptData(eruptName: string, data: object): Observable<EruptApiModel> {
+    return this._http.put<EruptApiModel>(RestPath.data + eruptName, data, null, {
       observe: null,
       headers: {
-        erupt: modelName
+        erupt: eruptName
       }
     });
   }
 
   //删除数据
-  deleteEruptData(modelName: string, id): Observable<EruptApiModel> {
-    return this._http.delete(RestPath.data + modelName + "/" + id, null, {
+  deleteEruptData(eruptName: string, id): Observable<EruptApiModel> {
+    return this._http.delete(RestPath.data + eruptName + "/" + id, null, {
       headers: {
-        erupt: modelName
+        erupt: eruptName
       }
     });
   }
 
   //批量删除数据
-  deleteEruptDatas(modelName: string, ids: any[]): Observable<EruptApiModel> {
-    return this._http.delete(RestPath.data + modelName, { ids: ids }, {
+  deleteEruptDatas(eruptName: string, ids: any[]): Observable<EruptApiModel> {
+    return this._http.delete(RestPath.data + eruptName, { ids: ids }, {
       headers: {
-        erupt: modelName
+        erupt: eruptName
+      }
+    });
+  }
+
+  eruptDataValidate(eruptName: string, data: any): Observable<EruptApiModel> {
+    return this._http.post(RestPath.data + "validate-erupt/" + eruptName, data, null, {
+      headers: {
+        erupt: eruptName
       }
     });
   }
@@ -158,12 +166,12 @@ export class DataService {
     return this._http.get(WindowModel.domain + "/menu", null);
   }
 
-  downloadExcelTemplate(modelName: string) {
-    DataService.postExcelFile(RestPath.excel + "template/" + modelName + "?" + this.createAuthParam(modelName));
+  downloadExcelTemplate(eruptName: string) {
+    DataService.postExcelFile(RestPath.excel + "template/" + eruptName + "?" + this.createAuthParam(eruptName));
   }
 
-  downloadExcel(modelName: string, condition: any) {
-    DataService.postExcelFile(RestPath.excel + "export/" + modelName + "?" + this.createAuthParam(modelName), condition);
+  downloadExcel(eruptName: string, condition: any) {
+    DataService.postExcelFile(RestPath.excel + "export/" + eruptName + "?" + this.createAuthParam(eruptName), condition);
   }
 
   createAuthParam(eruptName: string): string {

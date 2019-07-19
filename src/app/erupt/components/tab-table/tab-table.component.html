@@ -1,16 +1,13 @@
 <div style="background: #fafafa;border: 1px solid #e8e8e8;padding: 10px 10px" *ngIf="behavior!='readonly'">
-    <button (click)="addDataByRefer()" nz-button nzType="default" [nzSize]="'default'" *ngIf="mode=='refer-add'">
+    <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzType="default" [nzSize]="'default'">
         <i nz-icon type="plus" theme="outline"></i>新增
-    </button>
-    <button (click)="addData()" nz-button nzType="default" [nzSize]="'default'" *ngIf="mode=='add'"><i nz-icon type="plus" theme="outline"></i>
-        新增
     </button>
     <button (click)="deleteData()" nz-button nzType="danger" [nzSize]="'default'"><i nz-icon type="delete" theme="outline"></i>删除</button>
 </div>
-<st #st *ngIf="tabErupt.eruptFieldModel.eruptFieldJson.edit.$viewValue"
+<st #st
     (change)="selectTableItem($event)"
     [size]="'small'"
-    [columns]="tabErupt.eruptFieldModel.eruptFieldJson.edit.$viewValue"
+    [columns]="column"
     [data]="tabErupt.eruptFieldModel.eruptFieldJson.edit.$value"
     [bordered]="true" [page]="stConfig.stPage">
 

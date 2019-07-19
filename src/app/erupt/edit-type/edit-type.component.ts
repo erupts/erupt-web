@@ -11,6 +11,7 @@ import { DatePipe } from "@angular/common";
 import { ReferenceTableComponent } from "../components/reference-table/reference-table.component";
 import { EruptBuildModel } from "../model/erupt-build.model";
 import { EruptApiModel, Status } from "../model/erupt-api.model";
+import { DataHandlerService } from "../service/data-handler.service";
 
 @Component({
   selector: "erupt-edit-type",
@@ -42,9 +43,12 @@ export class EditTypeComponent implements OnInit {
 
   dateRanges: object = null;
 
+  uploadFilesStatus: { [key: string]: boolean } = {};
+
   private datePipe: DatePipe = new DatePipe("zh-cn");
 
   constructor(public dataService: DataService,
+              public dataHandlerService: DataHandlerService,
               @Inject(NzModalService) private modal: NzModalService,
               @Inject(NzMessageService) private msg: NzMessageService,
               @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
@@ -52,9 +56,20 @@ export class EditTypeComponent implements OnInit {
 
   ngOnInit() {
     this.eruptModel = this.eruptBuildModel.eruptModel;
+    this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
     this.dateRanges = {
       "今天": [this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")]
     };
+  }
+
+  eruptEditValidate(): boolean {
+    for (let key in this.uploadFilesStatus) {
+      if (!this.uploadFilesStatus[key]) {
+        this.msg.warning("附件上传中请稍后");
+        return false;
+      }
+    }
+    return true;
   }
 
   enterEvent(event) {
@@ -86,7 +101,11 @@ export class EditTypeComponent implements OnInit {
 
   upLoadNzChange({ file, fileList }, field: EruptFieldModel) {
     const status = file.status;
+    if (file.status == "uploading") {
+      this.uploadFilesStatus[file.uid] = false;
+    }
     if (status === "done") {
+      this.uploadFilesStatus[file.uid] = true;
       if ((<EruptApiModel>file.response).status == Status.ERROR) {
         this.modal.error({
           nzTitle: "ERROR",

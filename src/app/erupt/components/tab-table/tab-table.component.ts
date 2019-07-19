@@ -10,6 +10,7 @@ import { EruptModel } from "../../model/erupt.model";
 import { EruptFieldModel } from "../../model/erupt-field.model";
 import { ReferenceTableComponent } from "../reference-table/reference-table.component";
 import { BuildConfig } from "../../model/build-config";
+import { Status } from "../../model/erupt-api.model";
 
 @Component({
   selector: "tab-table",
@@ -31,6 +32,10 @@ export class TabTableComponent implements OnInit {
 
   @ViewChild("st") st: STComponent;
 
+  column: STColumn[];
+
+  checkedRow = [];
+
   private stConfig = new BuildConfig().stConfig;
 
   constructor(private dataService: DataService,
@@ -40,12 +45,11 @@ export class TabTableComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$viewValue = null;
     if (!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
       this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
     }
     if (this.behavior == "readonly") {
-      this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$viewValue = this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptModel);
+      this.column = this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptModel);
     } else {
       const viewValue: STColumn[] = [];
       viewValue.push({
@@ -90,12 +94,18 @@ export class TabTableComponent implements OnInit {
             },
             type: "del",
             click: (record, modal, comp: STComponent) => {
-              comp.removeRow(record);
+              // comp.removeRow(record);
+              // for (let val of this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
+              //   // if (record[this.tabErupt.eruptModel]){
+              //   //
+              //   // }
+              // }
+              // this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = comp.data;
             }
           }
         ]
       });
-      this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$viewValue = viewValue;
+      this.column = viewValue;
     }
   }
 
@@ -105,27 +115,37 @@ export class TabTableComponent implements OnInit {
       nzStyle: { top: "50px" },
       nzMaskClosable: false,
       nzKeyboard: false,
-      nzTitle: "新增",
+      nzTitle: "添加",
       nzContent: EditTypeComponent,
       nzComponentParams: {
         eruptBuildModel: {
           eruptModel: this.tabErupt.eruptModel
         }
       },
-      nzOnOk: () => {
-        // let obj = this.dataHandlerService.eruptValueToObject({
-        //   eruptModel: this.tabErupt.eruptModel
-        // });
-        // this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
-        // this.st.reload();
+      nzOnOk: async () => {
+        let obj = this.dataHandlerService.eruptValueToObject({
+          eruptModel: this.tabErupt.eruptModel
+        });
+        console.log(obj);
+        let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptModel.eruptName, obj).toPromise().then(resp => resp);
+        if (result.status == Status.SUCCESS) {
+          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
+          this.st.reload();
+          return true;
+        } else {
+          return false;
+        }
       }
     });
   }
 
   deleteData() {
-    const tempValue = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$tempValue;
-    if (tempValue && tempValue.length > 0) {
-      const val = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
+    if (this.checkedRow) {
+      //TODO
+      // for (let value of this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
+      //   this.st.removeRow(value);
+      // }
+      this.st.reload();
     } else {
       this.msg.warning("请选中要删除的数据");
     }
@@ -154,7 +174,9 @@ export class TabTableComponent implements OnInit {
   }
 
   selectTableItem(event) {
-
+    if (event.type === "checkbox") {
+      this.checkedRow = event.checkbox;
+    }
   }
 
 

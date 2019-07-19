@@ -174,7 +174,7 @@ export class TableComponent implements OnInit, OnDestroy {
     const edit = {
       icon: "edit",
       click: (record: any) => {
-        this.modal.create({
+        const model = this.modal.create({
           nzWrapClassName: "modal-lg",
           nzStyle: { top: "60px" },
           nzMaskClosable: false,
@@ -183,16 +183,22 @@ export class TableComponent implements OnInit, OnDestroy {
           nzOkText: "修改",
           nzContent: EditComponent,
           nzComponentParams: {
+            behavior: "edit",
             eruptBuildModel: this.eruptBuildModel,
             id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
           },
           nzOnOk: async () => {
-            let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName,
-              this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
-            if (res) {
-              this.msg.success("修改成功");
-              this.st.reload();
-              return true;
+            let validateResult = model.getContentComponent().beforeSaveValidate();
+            if (validateResult) {
+              let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
+              if (res.status == Status.SUCCESS) {
+                this.msg.success("修改成功");
+                this.st.reload();
+                return true;
+              } else {
+                return false;
+              }
             } else {
               return false;
             }
