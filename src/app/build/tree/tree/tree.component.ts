@@ -164,6 +164,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         nzOnOk: () => {
           this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, nzTreeNode.origin.key).subscribe(function(data) {
             that.fetchTreeData();
+            that.showEdit = false;
             that.msg.success("删除成功");
           });
         }

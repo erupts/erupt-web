@@ -6,7 +6,6 @@ import { EditTypeComponent } from "../../edit-type/edit-type.component";
 import { colRules } from "../../model/util.model";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DataHandlerService } from "../../service/data-handler.service";
-import { EruptModel } from "../../model/erupt.model";
 import { EruptFieldModel } from "../../model/erupt-field.model";
 import { ReferenceTableComponent } from "../reference-table/reference-table.component";
 import { BuildConfig } from "../../model/build-config";
@@ -22,7 +21,7 @@ export class TabTableComponent implements OnInit {
   @Input() eruptBuildModel: EruptBuildModel;
 
   @Input() tabErupt: {
-    eruptModel: EruptModel;
+    eruptBuildModel: EruptBuildModel;
     eruptFieldModel: EruptFieldModel;
   };
 
@@ -50,7 +49,7 @@ export class TabTableComponent implements OnInit {
       this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
     }
     if (this.behavior == "readonly") {
-      this.column = this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptModel);
+      this.column = this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel);
     } else {
       const viewValue: STColumn[] = [];
       viewValue.push({
@@ -60,15 +59,13 @@ export class TabTableComponent implements OnInit {
         className: "text-center",
         index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
       });
-      viewValue.push(...this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptModel));
+      viewValue.push(...this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel));
       let operators: STColumnButton[] = [];
       if (this.mode == "add") {
         operators.push({
           icon: "edit",
           click: (record: any, modal: any, comp: STComponent) => {
-            this.dataHandlerService.objectToEruptValue(record, {
-              eruptModel: this.tabErupt.eruptModel
-            });
+            this.dataHandlerService.objectToEruptValue(record, this.tabErupt.eruptBuildModel);
             this.modal.create({
               nzWrapClassName: "modal-md",
               nzStyle: { top: "20px" },
@@ -78,12 +75,10 @@ export class TabTableComponent implements OnInit {
               nzContent: EditTypeComponent,
               nzComponentParams: {
                 col: colRules[2],
-                eruptBuildModel: {
-                  eruptModel: this.tabErupt.eruptModel
-                }
+                eruptBuildModel: this.tabErupt.eruptBuildModel
               },
               nzOnOk: () => {
-                let obj = this.dataHandlerService.eruptValueToObject({ eruptModel: this.tabErupt.eruptModel });
+                let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
               }
             });
           }
@@ -130,17 +125,15 @@ export class TabTableComponent implements OnInit {
       nzTitle: "添加",
       nzContent: EditTypeComponent,
       nzComponentParams: {
-        eruptBuildModel: {
-          eruptModel: this.tabErupt.eruptModel
-        }
+        eruptBuildModel: this.tabErupt.eruptBuildModel
       },
       nzOnOk: async () => {
-        let obj = this.dataHandlerService.eruptValueToObject({
-          eruptModel: this.tabErupt.eruptModel
-        });
-        console.log(obj);
-        let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptModel.eruptName, obj).toPromise().then(resp => resp);
+        let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
+        let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(resp => resp);
         if (result.status == Status.SUCCESS) {
+          console.log("123");
+          console.log(obj);
+          console.log(this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value);
           this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
           this.st.reload();
           return true;
@@ -174,7 +167,7 @@ export class TabTableComponent implements OnInit {
       nzContent: ReferenceTableComponent,
       nzComponentParams: {
         erupt: this.eruptBuildModel.eruptModel,
-        referenceErupt: this.tabErupt.eruptModel,
+        referenceErupt: this.tabErupt.eruptBuildModel.eruptModel,
         eruptField: this.tabErupt.eruptFieldModel,
         mode: "checkbox"
       },

@@ -6,7 +6,7 @@ import { EruptFieldModel } from "./erupt-field.model";
 
 export interface EruptBuildModel {
   eruptModel: EruptModel;
-  tabErupts?: { [key: string]: EruptModel };
+  tabErupts?: { [key: string]: EruptBuildModel };
   combineErupts?: { [key: string]: EruptModel };
   referenceErupts?: { [key: string]: EruptModel };
   operationErupts?: { [key: string]: EruptModel };

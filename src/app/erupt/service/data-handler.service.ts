@@ -26,8 +26,8 @@ export class DataHandlerService {
     this.buildErupt(em.eruptModel);
     if (em.tabErupts) {
       for (let key in em.tabErupts) {
-        if (em.tabErupts[key] && em.eruptModel.eruptFieldModelMap.get(key).eruptFieldJson.edit.type != EditType.TAB_TREE) {
-          this.buildErupt(em.tabErupts[key]);
+        if ("eruptName" in em.tabErupts[key].eruptModel) {
+          this.initErupt(em.tabErupts[key]);
         }
       }
     }
@@ -500,7 +500,7 @@ export class DataHandlerService {
           if (edit.$value) {
             (<any[]>edit.$value).forEach(val => {
               const obj = {};
-              obj[eruptBuildModel.tabErupts[field.fieldName].eruptJson.primaryKeyCol] = val;
+              obj[eruptBuildModel.tabErupts[field.fieldName].eruptModel.eruptJson.primaryKeyCol] = val;
               tabTree.push(obj);
             });
           }
@@ -582,6 +582,13 @@ export class DataHandlerService {
           if (object[field.fieldName]) {
             field.eruptFieldJson.edit.$value = object[field.fieldName][field.eruptFieldJson.edit.referenceTableType.id];
             field.eruptFieldJson.edit.$viewValue = object[field.fieldName][field.eruptFieldJson.edit.referenceTableType.label];
+          }
+          break;
+        case EditType.TAB_TREE:
+          if (!object[field.fieldName]) {
+            field.eruptFieldJson.edit.$value = [];
+          } else {
+            field.eruptFieldJson.edit.$value = object[field.fieldName];
           }
           break;
         case EditType.BOOLEAN:
