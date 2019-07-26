@@ -34,6 +34,8 @@ export class PageComponent implements OnInit {
         } else {
           this.url = map.get("site");
         }
+      } else {
+        this.url = "/page/home.html";
       }
     });
   }
