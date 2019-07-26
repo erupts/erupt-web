@@ -118,8 +118,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   query() {
     if (this.searchErupt.eruptFieldModels.length > 0) {
-      this.stConfig.req.param = {};
-      this.stConfig.req.param = this.dataHandler.eruptValueToObject({
+      this.stConfig.req.param = this.dataHandler.searchEruptToObject({
         eruptModel: this.searchErupt
       });
     }
@@ -190,8 +189,10 @@ export class TableComponent implements OnInit, OnDestroy {
           nzOnOk: async () => {
             let validateResult = model.getContentComponent().beforeSaveValidate();
             if (validateResult) {
-              let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
+              let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
+              console.log(obj);
+              let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
+              console.log(res);
               if (res.status == Status.SUCCESS) {
                 this.msg.success("修改成功");
                 this.st.reload();

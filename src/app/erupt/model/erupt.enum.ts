@@ -13,21 +13,21 @@ export class RestPath {
 }
 
 export enum EditType {
-  INPUT = "INPUT",                 //输入框
-  TEXTAREA = "TEXTAREA",
-  CHOICE = "CHOICE",               //选择框
-  TAG = "TAG",                     //标签
-  DATE = "DATE",                   //日期
-  COMBINE = "COMBINE",            //表格合并
-  REFERENCE_TABLE = "REFERENCE_TABLE",
+  INPUT = "INPUT",                           //输入框
+  TEXTAREA = "TEXTAREA",                     //大文本域
+  CHOICE = "CHOICE",                         //选择框
+  TAGS = "TAGS",                             //标签
+  DATE = "DATE",                             //日期
+  COMBINE = "COMBINE",                       //表格合并
+  REFERENCE_TABLE = "REFERENCE_TABLE",       //引用
   REFERENCE_TREE = "REFERENCE_TREE",         //引用
-  BOOLEAN = "BOOLEAN",             //布尔
-  ATTACHMENT = "ATTACHMENT",       //附件
+  BOOLEAN = "BOOLEAN",                       //布尔
+  ATTACHMENT = "ATTACHMENT",                 //附件
   TAB_TREE = "TAB_TREE",
   TAB_TABLE_ADD = "TAB_TABLE_ADD",
   TAB_TABLE_REFER = "TAB_TABLE_REFER",
-  DIVIDE = "DIVIDE",               //分割线
-  SLIDER = "SLIDER",               //数字滑块
+  DIVIDE = "DIVIDE",                         //分割线
+  SLIDER = "SLIDER",                         //数字滑块
   EMPTY = "EMPTY",
   DEPEND_SWITCH = "DEPEND_SWITCH",
   HTML_EDIT = "HTML_EDIT",

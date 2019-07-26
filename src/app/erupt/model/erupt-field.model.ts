@@ -57,7 +57,6 @@ export interface Edit {
   $r_val?: any;
 }
 
-
 interface Search {
   value: boolean;
   vague: boolean;
@@ -141,4 +140,5 @@ interface AttachmentType {
 export interface VL {
   value: string;
   label: string;
+  $viewValue?: any;
 }

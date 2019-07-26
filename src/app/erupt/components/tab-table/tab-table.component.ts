@@ -92,17 +92,14 @@ export class TabTableComponent implements OnInit {
         },
         type: "del",
         click: (record, modal, comp: STComponent) => {
-          // comp.removeRow(record);
-          console.log(record);
-          console.log(comp);
-          console.log(this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value);
-          // this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.forEach((val, index) => {
-          //   console.log(JSON.stringify(val));
-          //   if (JSON.stringify(val) == recordJsonStr) {
-          //     console.log(index);
-          //   }
-          // });
-          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = comp.data;
+          let newArr = [];
+          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.forEach((val) => {
+            let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+            if (record[tabPrimaryKeyCol] != val[tabPrimaryKeyCol]) {
+              newArr.push(val);
+            }
+          });
+          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = newArr;
         }
       });
       viewValue.push({
@@ -131,9 +128,7 @@ export class TabTableComponent implements OnInit {
         let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
         let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(resp => resp);
         if (result.status == Status.SUCCESS) {
-          console.log("123");
-          console.log(obj);
-          console.log(this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value);
+          obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = Math.floor(Math.random() * 100000);
           this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
           this.st.reload();
           return true;
@@ -146,12 +141,27 @@ export class TabTableComponent implements OnInit {
 
   deleteData() {
     if (this.checkedRow) {
-      console.log(this.checkedRow);
-      //TODO
-      // for (let value of this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
-      //   this.st.removeRow(value);
-      // }
+      this.st.loading = true;
+      let newArr = [];
+      this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.forEach((val, i) => {
+        let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+        this.checkedRow.forEach((cr) => {
+          if (val) {
+            if (cr[tabPrimaryKeyCol] == val[tabPrimaryKeyCol]) {
+              this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value[i] = null;
+            }
+          }
+        });
+      });
+      this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.forEach((val) => {
+        if (val) {
+          newArr.push(val);
+        }
+      });
+      this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = newArr;
+      this.st.loading = false;
       this.st.reload();
+      this.checkedRow = [];
     } else {
       this.msg.warning("请选中要删除的数据");
     }

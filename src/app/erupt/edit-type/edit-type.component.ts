@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from "@angular/core";
-import { Edit, EruptFieldModel } from "../model/erupt-field.model";
+import { Edit, EruptField, EruptFieldModel, VL } from "../model/erupt-field.model";
 import { AttachmentEnum, ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
 import { TreeSelectComponent } from "../components/tree-select/tree-select.component";
@@ -189,9 +189,10 @@ export class EditTypeComponent implements OnInit {
     });
   }
 
-
-  checkboxChange(val: string[], field: EruptFieldModel) {
-    field.eruptFieldJson.edit.$value = val.join(field.eruptFieldJson.edit.choiceType.joinSeparator);
+  changeTagAll($event, field: EruptFieldModel) {
+    for (let vl of field.eruptFieldJson.edit.choiceType.vl) {
+      vl.$viewValue = $event;
+    }
   }
 
   clearReferValue(field: EruptFieldModel) {
