@@ -56,7 +56,7 @@ export function fnPageHeaderConfig(): PageHeaderConfig {
 }
 
 import { DelonAuthConfig } from "@delon/auth";
-import { WindowModel } from "./erupt/window.model";
+import { WindowModel } from "./erupt/model/window.model";
 
 export function fnDelonAuthConfig(): DelonAuthConfig {
   return Object.assign(new DelonAuthConfig(), <DelonAuthConfig>{

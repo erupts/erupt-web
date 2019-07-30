@@ -6,7 +6,7 @@ import { ACLService } from "@delon/acl";
 import { NzIconService } from "ng-zorro-antd";
 import { ICONS_AUTO } from "../../../style-icons-auto";
 import { ICONS } from "../../../style-icons";
-import { WindowModel } from "../../erupt/window.model";
+import { WindowModel } from "../../erupt/model/window.model";
 
 /**
  * 用于应用启动时

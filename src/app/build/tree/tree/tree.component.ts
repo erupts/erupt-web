@@ -84,8 +84,7 @@ export class TreeComponent implements OnInit, OnDestroy {
     if (this.tree.getSelectedNodeList()[0]) {
       this.tree.getSelectedNodeList()[0].isSelected = false;
     }
-    this.dataHandler.emptyEruptValue(this.eruptBuildModel);
-    this.dataHandler.loadEruptDefaultValue(this.eruptBuildModel.eruptModel);
+    this.dataHandler.loadEruptDefaultValue(this.eruptBuildModel);
   }
 
   addSub() {

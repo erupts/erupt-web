@@ -11,7 +11,7 @@ import { EruptApiModel } from "../model/erupt-api.model";
 import { EruptBuildModel } from "../model/erupt-build.model";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
 import { RestPath } from "../model/erupt.enum";
-import { WindowModel } from "../window.model";
+import { WindowModel } from "../model/window.model";
 
 @Injectable()
 export class DataService {
@@ -90,6 +90,19 @@ export class DataService {
       observe: "body",
       headers: {
         erupt: eruptName
+      }
+    });
+  }
+
+  queryReferenceTreeDataByParentErupt(parentEruptName: string, eruptName: string, refName: string, dependVal: any): Observable<Tree[]> {
+    let param = {};
+    if (dependVal) {
+      param["dependValue"] = dependVal;
+    }
+    return this._http.get<Tree[]>(RestPath.data + parentEruptName + "/" + eruptName + "/reference-tree/" + refName, param, {
+      observe: "body",
+      headers: {
+        erupt: parentEruptName
       }
     });
   }

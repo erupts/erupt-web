@@ -16,6 +16,8 @@ export class TreeSelectComponent implements OnInit {
 
   @Input() eruptModel: EruptModel;
 
+  @Input() parentEruptName: string;
+
   @Input() dependVal: any;
 
   list: Tree[];
@@ -27,9 +29,15 @@ export class TreeSelectComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.data.queryReferenceTreeData(this.eruptModel.eruptName, this.eruptField.fieldName, this.dependVal).subscribe(tree => {
-      this.list = this.dataHandler.dataTreeToZorroTree(tree);
-    });
+    if (this.parentEruptName) {
+      this.data.queryReferenceTreeDataByParentErupt(this.parentEruptName, this.eruptModel.eruptName, this.eruptField.fieldName, this.dependVal).subscribe(tree => {
+        this.list = this.dataHandler.dataTreeToZorroTree(tree);
+      });
+    } else {
+      this.data.queryReferenceTreeData(this.eruptModel.eruptName, this.eruptField.fieldName, this.dependVal).subscribe(tree => {
+        this.list = this.dataHandler.dataTreeToZorroTree(tree);
+      });
+    }
   }
 
   nodeClickEvent(event: NzFormatEmitEvent) {

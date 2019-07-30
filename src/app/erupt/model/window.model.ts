@@ -17,11 +17,12 @@ export class WindowModel {
 
 
 export interface CustomerTool {
-  html: string;
 
   icon: string;
 
-  mobileShow: boolean;
+  text: string;
+
+  mobileHidden: boolean;
 
   click(event: Event, token: string): void;
 }

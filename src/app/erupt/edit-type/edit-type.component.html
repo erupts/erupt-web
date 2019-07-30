@@ -457,8 +457,7 @@
                                                        [nzLimit]="field.eruptFieldJson.edit.attachmentType.maxLimit"
                                                        (nzChange)="upLoadNzChange($event,field)"
                                                        [nzPreview]="previewImageHandler"
-                                                       [nzShowButton]="field.eruptFieldJson.edit.$viewValue&&field.eruptFieldJson.edit.$viewValue.length!=field.eruptFieldJson.edit.attachmentType.maxLimit
-                                                        || field.eruptFieldJson.edit.attachmentType.maxLimit==0"
+                                                       [nzShowButton]="field.eruptFieldJson.edit.$viewValue&&field.eruptFieldJson.edit.$viewValue.length!=field.eruptFieldJson.edit.attachmentType.maxLimit|| field.eruptFieldJson.edit.attachmentType.maxLimit==0"
                                                        [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
                                                        [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
                                                 <p class="ant-upload-drag-icon">

@@ -8,7 +8,7 @@ import { Inject, Injectable } from "@angular/core";
 import { EruptBuildModel } from "../model/erupt-build.model";
 import { DataService } from "./data.service";
 import { ViewTypeComponent } from "../view-type/view-type.component";
-import { STColumn } from "@delon/abc";
+import { STColumn, STData } from "@delon/abc";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -150,7 +150,10 @@ export class DataHandlerService {
             ascend: "asc",
             descend: "desc"
           },
-          key: view.column
+          key: view.column,
+          compare: ((a: STData, b: STData) => {
+            return a[view.column] < b[view.column] ? 1 : -1;
+          })
         };
       }
 
@@ -382,11 +385,6 @@ export class DataHandlerService {
   }
 
 
-  private createViewType() {
-
-  }
-
-
   //非空验证
   validateNotNull(eruptModel: EruptModel, combineErupt?: { [key: string]: EruptModel }): boolean {
     for (let field of eruptModel.eruptFieldModels) {
@@ -528,9 +526,6 @@ export class DataHandlerService {
           break;
         case EditType.TAB_TABLE_ADD:
           if (edit.$value) {
-            (<any[]>edit.$value).forEach(val => {
-              delete val[eruptBuildModel.tabErupts[field.fieldName].eruptModel.eruptJson.primaryKeyCol];
-            });
             eruptData[field.fieldName] = edit.$value;
           }
           break;
@@ -564,6 +559,26 @@ export class DataHandlerService {
         });
       }
     }
+    return eruptData;
+  }
+
+  eruptValueToTableValue(eruptBuildModel: EruptBuildModel) {
+    const eruptData: any = {};
+    eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
+      const edit = field.eruptFieldJson.edit;
+      switch (edit.type) {
+        case EditType.REFERENCE_TREE:
+          eruptData[field.fieldName + "_" + edit.referenceTreeType.id] = edit.$value;
+          eruptData[field.fieldName + "_" + edit.referenceTreeType.label] = edit.$viewValue;
+          break;
+        case EditType.REFERENCE_TABLE:
+          eruptData[field.fieldName + "_" + edit.referenceTableType.id] = edit.$value;
+          eruptData[field.fieldName + "_" + edit.referenceTableType.label] = edit.$viewValue;
+          break;
+        default:
+          eruptData[field.fieldName] = edit.$value;
+      }
+    });
     return eruptData;
   }
 
@@ -678,14 +693,20 @@ export class DataHandlerService {
 
   }
 
-  loadEruptDefaultValue(eruptModel: EruptModel) {
+  loadEruptDefaultValue(eruptBuildModel: EruptBuildModel) {
+    this.emptyEruptValue(eruptBuildModel);
     const obj = {};
-    eruptModel.eruptFieldModels.forEach(ef => {
+    eruptBuildModel.eruptModel.eruptFieldModels.forEach(ef => {
       if (ef.value) {
         obj[ef.fieldName] = ef.value;
       }
     });
-    this.objectToEruptValue(obj, { eruptModel: eruptModel });
+    this.objectToEruptValue(obj, { eruptModel: eruptBuildModel.eruptModel });
+    for (let key in eruptBuildModel.combineErupts) {
+      this.loadEruptDefaultValue({
+        eruptModel: eruptBuildModel.combineErupts[key]
+      });
+    }
   }
 
   emptyEruptValue(eruptBuildModel: EruptBuildModel) {
@@ -695,7 +716,6 @@ export class DataHandlerService {
       ef.eruptFieldJson.edit.$tempValue = null;
       ef.eruptFieldJson.edit.$l_val = null;
       ef.eruptFieldJson.edit.$r_val = null;
-
       switch (ef.eruptFieldJson.edit.type) {
         case EditType.CHOICE:
           if (eruptBuildModel.eruptModel.mode === "search") {
@@ -714,8 +734,13 @@ export class DataHandlerService {
           ef.eruptFieldJson.edit.inputType.suffixValue = null;
           break;
       }
-
     });
+
+    for (let key in eruptBuildModel.combineErupts) {
+      this.emptyEruptValue({
+        eruptModel: eruptBuildModel.combineErupts[key]
+      });
+    }
   }
 
 

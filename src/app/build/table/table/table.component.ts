@@ -61,6 +61,8 @@ export class TableComponent implements OnInit, OnDestroy {
 
   private router$: Subscription;
 
+  private build$: Subscription;
+
   ngOnInit() {
     this.router$ = this.route.params.subscribe(params => {
       this.selectedRows = [];
@@ -68,9 +70,12 @@ export class TableComponent implements OnInit, OnDestroy {
       if (this.searchErupt) {
         this.searchErupt.eruptFieldModels = [];
       }
+      if (this.build$) {
+        this.build$.unsubscribe();
+      }
       //put table api header
       this.stConfig.req.headers["erupt"] = params.name;
-      this.dataService.getEruptBuild(params.name).subscribe(eb => {
+      this.build$ = this.dataService.getEruptBuild(params.name).subscribe(eb => {
           this.stConfig.url = RestPath.data + "table/" + params.name;
         this.dataHandler.initErupt(eb);
         this.eruptBuildModel = eb;
@@ -280,7 +285,6 @@ export class TableComponent implements OnInit, OnDestroy {
         nzCancelText: "取消（ESC）",
         nzWrapClassName: "modal-lg",
         nzOnOk: async () => {
-          // return new Promise(resolve => setTimeout(resolve, 1000))
           let eruptValue = this.dataHandler.eruptValueToObject({ eruptModel: operationErupt });
           let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code,
             multi ? this.selectedRows : data, eruptValue).toPromise().then(res => res);
@@ -293,6 +297,7 @@ export class TableComponent implements OnInit, OnDestroy {
         },
         nzContent: EditTypeComponent,
         nzComponentParams: {
+          mode: "addNew",
           eruptBuildModel: {
             eruptModel: operationErupt
           }
@@ -313,8 +318,6 @@ export class TableComponent implements OnInit, OnDestroy {
 
   //新增
   addRow() {
-    this.dataHandler.emptyEruptValue(this.eruptBuildModel);
-    this.dataHandler.loadEruptDefaultValue(this.eruptBuildModel.eruptModel);
     this.modal.create({
       nzStyle: { top: "60px" },
       nzWrapClassName: "modal-lg",
@@ -377,7 +380,6 @@ export class TableComponent implements OnInit, OnDestroy {
     if (event.type === "checkbox") {
       this.selectedRows = event.checkbox;
     }
-
   }
 
   downloadExcelTemplate() {

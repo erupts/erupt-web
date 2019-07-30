@@ -6,10 +6,17 @@ window.eruptSiteConfig = {
   routerReuse: false,
   amapKey: "15bc4df0bd6758645308fa591f439799",
   r_tools: [{
-    // html: `<h4>BTN</h4>`
-  }, {
+    text: "下载",
     icon: "fa-download",
-    mobileShow: true,
+    mobileHidden: true,
+    click: function(event, token) {
+      console.log(event);
+      console.log(token);
+    }
+  }, {
+    text: "下载",
+    icon: "fa-download",
+    mobileHidden: true,
     click: function(event, token) {
       console.log(event);
       console.log(token);

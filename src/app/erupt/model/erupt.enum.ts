@@ -1,7 +1,7 @@
 /**
  * Created by liyuepeng on 10/17/18.
  */
-import { WindowModel } from "../window.model";
+import { WindowModel } from "./window.model";
 
 export class RestPath {
   public static ws: string = WindowModel.domain + "/ws/";

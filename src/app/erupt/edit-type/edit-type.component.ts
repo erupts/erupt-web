@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from "@angular/core";
-import { Edit, EruptField, EruptFieldModel, VL } from "../model/erupt-field.model";
+import { Edit, EruptFieldModel } from "../model/erupt-field.model";
 import { AttachmentEnum, ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
 import { TreeSelectComponent } from "../components/tree-select/tree-select.component";
@@ -23,12 +23,21 @@ export class EditTypeComponent implements OnInit {
   //important
   @Input() eruptBuildModel: EruptBuildModel;
 
+  //UI
   @Input() col = colRules[3];
 
+  //UI
   @Input() size: "large" | "small" | "default" = "large";
 
+  //UI
   @Input() layout: "horizontal" | "vertical" = "vertical";
 
+  //Behavior
+  @Input() mode: "addNew" | null;
+
+  @Input() parentEruptName: string;
+
+  //event
   @Output() search = new EventEmitter();
 
   eruptModel: EruptModel;
@@ -56,10 +65,12 @@ export class EditTypeComponent implements OnInit {
 
   ngOnInit() {
     this.eruptModel = this.eruptBuildModel.eruptModel;
-    this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
     this.dateRanges = {
       "今天": [this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")]
     };
+    if (this.mode === "addNew") {
+      this.dataHandlerService.loadEruptDefaultValue(this.eruptBuildModel);
+    }
   }
 
   eruptEditValidate(): boolean {
@@ -148,6 +159,7 @@ export class EditTypeComponent implements OnInit {
       nzCancelText: "取消（ESC）",
       nzContent: TreeSelectComponent,
       nzComponentParams: {
+        parentEruptName: this.parentEruptName,
         eruptModel: this.eruptModel,
         eruptField: field,
         dependVal: dependVal
@@ -165,7 +177,7 @@ export class EditTypeComponent implements OnInit {
   }
 
   createRefTableModal(field: EruptFieldModel) {
-    this.modal.create({
+    let model = this.modal.create({
       nzWrapClassName: "modal-lg",
       nzKeyboard: true,
       nzStyle: { top: "35px" },
@@ -175,16 +187,17 @@ export class EditTypeComponent implements OnInit {
       nzComponentParams: {
         erupt: this.eruptModel,
         eruptField: field,
-        referenceErupt: this.eruptBuildModel.referenceErupts[field.fieldName]
+        referenceErupt: this.eruptBuildModel.referenceErupts[field.fieldName],
+        parentEruptName: this.parentEruptName
       }, nzOnOk: () => {
-        const tempVal = field.eruptFieldJson.edit.$tempValue;
-        if (!tempVal) {
+        let radioValue = model.getContentComponent().radioValue;
+        if (!radioValue) {
           this.msg.warning("请选中一条数据");
           return false;
         }
-        field.eruptFieldJson.edit.$viewValue = tempVal.label;
-        field.eruptFieldJson.edit.$value = tempVal.id;
-        field.eruptFieldJson.edit.$tempValue = null;
+        field.eruptFieldJson.edit.$value = radioValue[field.eruptFieldJson.edit.referenceTableType.id];
+        field.eruptFieldJson.edit.$viewValue = radioValue[field.eruptFieldJson.edit.referenceTableType.label];
+        field.eruptFieldJson.edit.$tempValue = radioValue;
       }
     });
   }

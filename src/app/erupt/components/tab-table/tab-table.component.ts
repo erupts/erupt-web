@@ -75,7 +75,8 @@ export class TabTableComponent implements OnInit {
               nzContent: EditTypeComponent,
               nzComponentParams: {
                 col: colRules[2],
-                eruptBuildModel: this.tabErupt.eruptBuildModel
+                eruptBuildModel: this.tabErupt.eruptBuildModel,
+                parentEruptName: this.eruptBuildModel.eruptModel.eruptName
               },
               nzOnOk: () => {
                 let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
@@ -122,14 +123,18 @@ export class TabTableComponent implements OnInit {
       nzTitle: "添加",
       nzContent: EditTypeComponent,
       nzComponentParams: {
-        eruptBuildModel: this.tabErupt.eruptBuildModel
+        mode: "addNew",
+        eruptBuildModel: this.tabErupt.eruptBuildModel,
+        parentEruptName: this.eruptBuildModel.eruptModel.eruptName
       },
       nzOnOk: async () => {
         let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
         let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(resp => resp);
         if (result.status == Status.SUCCESS) {
-          obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = Math.floor(Math.random() * 100000);
-          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
+          let tableData = this.dataHandlerService.eruptValueToTableValue(this.tabErupt.eruptBuildModel);
+          tableData[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = -Math.floor(Math.random() * 1000);
+
+          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(tableData);
           this.st.reload();
           return true;
         } else {
