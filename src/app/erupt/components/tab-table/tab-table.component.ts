@@ -49,7 +49,7 @@ export class TabTableComponent implements OnInit {
       this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
     }
     if (this.behavior == "readonly") {
-      this.column = this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel);
+      this.column = this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel, false);
     } else {
       const viewValue: STColumn[] = [];
       viewValue.push({
@@ -59,7 +59,7 @@ export class TabTableComponent implements OnInit {
         className: "text-center",
         index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
       });
-      viewValue.push(...this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel));
+      viewValue.push(...this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel, false));
       let operators: STColumnButton[] = [];
       if (this.mode == "add") {
         operators.push({
@@ -80,6 +80,14 @@ export class TabTableComponent implements OnInit {
               },
               nzOnOk: () => {
                 let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
+                let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
+                $value.forEach((val, index) => {
+                  let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+                  if (record[tabPrimaryKeyCol] == val[tabPrimaryKeyCol]) {
+                    $value[index] = obj;
+                  }
+                });
+                this.st.reload();
               }
             });
           }
@@ -93,14 +101,15 @@ export class TabTableComponent implements OnInit {
         },
         type: "del",
         click: (record, modal, comp: STComponent) => {
-          let newArr = [];
-          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.forEach((val) => {
+          let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
+          for (let i in <any[]>$value) {
             let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
-            if (record[tabPrimaryKeyCol] != val[tabPrimaryKeyCol]) {
-              newArr.push(val);
+            if (record[tabPrimaryKeyCol] == $value[i][tabPrimaryKeyCol]) {
+              $value.splice(i, 1);
+              break;
             }
-          });
-          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = newArr;
+          }
+          this.st.reload();
         }
       });
       viewValue.push({
@@ -131,10 +140,10 @@ export class TabTableComponent implements OnInit {
         let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
         let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(resp => resp);
         if (result.status == Status.SUCCESS) {
-          let tableData = this.dataHandlerService.eruptValueToTableValue(this.tabErupt.eruptBuildModel);
-          tableData[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = -Math.floor(Math.random() * 1000);
-
-          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(tableData);
+          obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = -Math.floor(Math.random() * 1000);
+          let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
+          let tableData = this.dataHandlerService.eruptObjectToTableValue(this.tabErupt.eruptBuildModel, obj);
+          edit.$value.push(tableData);
           this.st.reload();
           return true;
         } else {
@@ -142,34 +151,6 @@ export class TabTableComponent implements OnInit {
         }
       }
     });
-  }
-
-  deleteData() {
-    if (this.checkedRow) {
-      this.st.loading = true;
-      let newArr = [];
-      this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.forEach((val, i) => {
-        let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
-        this.checkedRow.forEach((cr) => {
-          if (val) {
-            if (cr[tabPrimaryKeyCol] == val[tabPrimaryKeyCol]) {
-              this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value[i] = null;
-            }
-          }
-        });
-      });
-      this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.forEach((val) => {
-        if (val) {
-          newArr.push(val);
-        }
-      });
-      this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = newArr;
-      this.st.loading = false;
-      this.st.reload();
-      this.checkedRow = [];
-    } else {
-      this.msg.warning("请选中要删除的数据");
-    }
   }
 
   addDataByRefer() {
@@ -188,7 +169,8 @@ export class TabTableComponent implements OnInit {
       },
       nzOkText: "增加",
       nzOnOk: () => {
-        this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(...modal.getContentComponent().checkedValues);
+        let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
+        edit.$value.push(...modal.getContentComponent().checkedValues);
         this.st.reload();
       }
     });
@@ -197,6 +179,24 @@ export class TabTableComponent implements OnInit {
   selectTableItem(event) {
     if (event.type === "checkbox") {
       this.checkedRow = event.checkbox;
+    }
+  }
+
+  deleteData() {
+    if (this.checkedRow.length) {
+      let value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
+      for (let i in <any[]>value) {
+        let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+        this.checkedRow.forEach((cr) => {
+          if (cr[tabPrimaryKeyCol] == value[i][tabPrimaryKeyCol]) {
+            value.splice(i, 1);
+          }
+        });
+      }
+      this.st.reload();
+      this.checkedRow = [];
+    } else {
+      this.msg.warning("请选中要删除的数据");
     }
   }
 

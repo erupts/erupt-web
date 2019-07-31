@@ -141,7 +141,7 @@ export class TableComponent implements OnInit, OnDestroy {
       index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
     });
     // _columns.push({ title: "#", type: "no", fixed: "left", className: "text-center", width: "60px" });
-    let viewCols = this.dataHandler.viewToAlainTableConfig(this.eruptBuildModel.eruptModel);
+    let viewCols = this.dataHandler.viewToAlainTableConfig(this.eruptBuildModel.eruptModel, true);
     for (let viewCol of viewCols) {
       viewCol.show = true;
       viewCol.iif = () => {
@@ -195,9 +195,7 @@ export class TableComponent implements OnInit, OnDestroy {
             let validateResult = model.getContentComponent().beforeSaveValidate();
             if (validateResult) {
               let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
-              console.log(obj);
               let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
-              console.log(res);
               if (res.status == Status.SUCCESS) {
                 this.msg.success("修改成功");
                 this.st.reload();

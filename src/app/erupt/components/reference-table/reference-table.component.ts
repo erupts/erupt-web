@@ -63,7 +63,7 @@ export class ReferenceTableComponent implements OnInit {
       title: "", type: this.mode, fixed: "left", width: "50px", className: "text-center",
       index: this.referenceErupt.eruptJson.primaryKeyCol
     });
-    _columns.push(...this.dataHandler.viewToAlainTableConfig(this.referenceErupt));
+    _columns.push(...this.dataHandler.viewToAlainTableConfig(this.referenceErupt, true));
     this.columns = _columns;
   }
 

@@ -81,7 +81,7 @@ export class DataHandlerService {
           return;
         }
         if (view.column) {
-          view.column = field.fieldName + "_" + view.column.replace("\.", "_");
+          view.column = field.fieldName + "." + view.column.replace("\.", "_");
         } else {
           view.column = field.fieldName;
         }
@@ -133,17 +133,27 @@ export class DataHandlerService {
     return copyErupt;
   }
 
-  //将view数据转换为alain table组件配置信息
-  viewToAlainTableConfig(erupt: EruptModel): STColumn[] {
+  /**
+   * 将view数据转换为alain table组件配置信息
+   * @param erupt
+   * @param lineData
+   *     true   数据形式为一整行txt
+   *     false  数据形式为：带有层级的json
+   */
+  viewToAlainTableConfig(erupt: EruptModel, lineData: boolean): STColumn[] {
     let cols: STColumn[] = [];
     const views = erupt.tableColumns;
     for (let view of views) {
       let edit = view.eruptFieldModel.eruptFieldJson.edit;
       let obj: STColumn = {
         // width: "200px",
-        title: view.title,
-        index: view.column
+        title: view.title
       };
+      if (lineData) {
+        obj.index = view.column.replace(".", "_");
+      } else {
+        obj.index = view.column;
+      }
       if (view.sortable) {
         obj.sort = {
           reName: {
@@ -489,6 +499,7 @@ export class DataHandlerService {
           if (edit.$value) {
             eruptData[field.fieldName] = {};
             eruptData[field.fieldName][edit.referenceTreeType.id] = edit.$value;
+            eruptData[field.fieldName][edit.referenceTreeType.label] = edit.$viewValue;
           } else {
             edit.$value = null;
           }
@@ -497,6 +508,7 @@ export class DataHandlerService {
           if (edit.$value) {
             eruptData[field.fieldName] = {};
             eruptData[field.fieldName][edit.referenceTableType.id] = edit.$value;
+            eruptData[field.fieldName][edit.referenceTableType.label] = edit.$viewValue;
           } else {
             edit.$value = null;
           }
@@ -577,6 +589,30 @@ export class DataHandlerService {
           break;
         default:
           eruptData[field.fieldName] = edit.$value;
+      }
+    });
+    return eruptData;
+  }
+
+  eruptObjectToTableValue(eruptBuildModel: EruptBuildModel, obj: object): any {
+    const eruptData: any = {};
+    eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
+      if (obj[field.fieldName] != undefined) {
+        const edit = field.eruptFieldJson.edit;
+        switch (edit.type) {
+          case EditType.REFERENCE_TREE:
+            eruptData[field.fieldName + "_" + edit.referenceTreeType.id] = obj[field.fieldName][edit.referenceTreeType.id];
+            eruptData[field.fieldName + "_" + edit.referenceTreeType.label] = obj[field.fieldName][edit.referenceTreeType.label];
+            obj[field.fieldName] = null;
+            break;
+          case EditType.REFERENCE_TABLE:
+            eruptData[field.fieldName + "_" + edit.referenceTableType.id] = obj[field.fieldName][edit.referenceTableType.id];
+            eruptData[field.fieldName + "_" + edit.referenceTableType.label] = obj[field.fieldName][edit.referenceTableType.label];
+            obj[field.fieldName] = null;
+            break;
+          default:
+            eruptData[field.fieldName] = obj[field.fieldName];
+        }
       }
     });
     return eruptData;
