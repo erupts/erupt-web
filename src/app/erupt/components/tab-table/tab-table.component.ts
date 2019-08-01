@@ -35,7 +35,7 @@ export class TabTableComponent implements OnInit {
 
   checkedRow = [];
 
-  private stConfig = new BuildConfig().stConfig;
+  stConfig = new BuildConfig().stConfig;
 
   constructor(private dataService: DataService,
               private dataHandlerService: DataHandlerService,
@@ -141,9 +141,7 @@ export class TabTableComponent implements OnInit {
         let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(resp => resp);
         if (result.status == Status.SUCCESS) {
           obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = -Math.floor(Math.random() * 1000);
-          let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
-          let tableData = this.dataHandlerService.eruptObjectToTableValue(this.tabErupt.eruptBuildModel, obj);
-          edit.$value.push(tableData);
+          this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
           this.st.reload();
           return true;
         } else {

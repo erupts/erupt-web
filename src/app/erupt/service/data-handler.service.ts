@@ -162,7 +162,7 @@ export class DataHandlerService {
           },
           key: view.column,
           compare: ((a: STData, b: STData) => {
-            return a[view.column] < b[view.column] ? 1 : -1;
+            return a[view.column] > b[view.column] ? 1 : -1;
           })
         };
       }
@@ -179,7 +179,9 @@ export class DataHandlerService {
       }
 
       //数据类型
-      if (view.eruptFieldModel.fieldReturnName === "number") {
+      if (view.eruptFieldModel.fieldReturnName === "number" &&
+        (view.eruptFieldModel.eruptFieldJson.edit.type == EditType.INPUT
+          || view.eruptFieldModel.eruptFieldJson.edit.type == EditType.SLIDER)) {
         obj.type = "number";
         // obj.width = "100px";
       } else if (view.eruptFieldModel.fieldReturnName === "Date") {
@@ -443,7 +445,6 @@ export class DataHandlerService {
         switch (edit.type) {
           case EditType.INPUT:
             if (field.fieldReturnName === "number") {
-              console.log(edit);
               if (edit.$l_val && edit.$r_val) {
                 obj[field.fieldName] = [edit.$l_val, edit.$r_val];
               }
@@ -699,7 +700,7 @@ export class DataHandlerService {
               edit.$value = object[field.fieldName];
             }
           } else {
-            this.msg.warning("该功能尚未实现");
+
           }
           break;
         case EditType.CHOICE:

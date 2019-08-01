@@ -402,11 +402,9 @@ export class TableComponent implements OnInit, OnDestroy {
     this.modal.create({
       nzKeyboard: true,
       nzTitle: "Excel导入",
-      nzCancelText: "取消（ESC）",
+      nzOkText: null,
+      nzCancelText: "关闭（ESC）",
       nzWrapClassName: "modal-lg",
-      nzOnOk: () => {
-        return false;
-      },
       nzContent: ExcelImportComponent,
       nzComponentParams: {
         eruptModel: this.eruptBuildModel.eruptModel

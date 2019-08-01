@@ -1,3 +1,6 @@
+<button nz-button nzType="default" class="mb-sm" (click)="this.dataService.downloadExcelTemplate(eruptModel.eruptName)">
+    <i nz-icon type="download" nzTheme="outline"></i>下载模板
+</button>
 <nz-upload
         nzType="drag"
         [nzLimit]="1"
@@ -9,8 +12,7 @@
     </p>
     <p class="ant-upload-text">单击或拖动Excel文件到此区域上传</p>
 </nz-upload>
-<br>
-<st [widthMode]="{type: 'strict'}" [bordered]="true" [data]="[{text:2333}]"
-    [columns]="[{ title: '编号', type:'no', width: 80, className: 'text-center' },{ title: '错误信息', index: 'text'}]">
+<!--<st style="margin-top: 8px;" [widthMode]="{type: 'strict'}" [bordered]="true" [data]="[{text:2333}]"-->
+<!--[columns]="[{ title: '编号', type:'no', width: 80, className: 'text-center' },{ title: '错误信息', index: 'text'}]">-->
 
-</st>
+<!--</st>-->

@@ -29,7 +29,6 @@ export class CkeditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.value);
     this.loading = true;
     let that = this;
     this.lazy.loadScript("//cdn.ckeditor.com/ckeditor5/12.0.0/decoupled-document/ckeditor.js").then(() => {

@@ -2,7 +2,7 @@
  * Created by liyuepeng on 10/17/18.
  */
 import { Inject, Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpUrlEncodingCodec } from "@angular/common/http";
 import { Tree } from "../model/erupt.model";
 import { _HttpClient } from "@delon/theme";
 import { Observable } from "rxjs";
@@ -184,7 +184,9 @@ export class DataService {
   }
 
   downloadExcel(eruptName: string, condition: any) {
-    DataService.postExcelFile(RestPath.excel + "export/" + eruptName + "?" + this.createAuthParam(eruptName), condition);
+    DataService.postExcelFile(RestPath.excel + "export/" + eruptName + "?" + this.createAuthParam(eruptName), {
+      condition: encodeURIComponent(JSON.stringify(condition))
+    });
   }
 
   createAuthParam(eruptName: string): string {
