@@ -3,12 +3,12 @@ import {
   Component,
   ComponentFactoryResolver,
   ElementRef,
-  HostBinding,
   Inject,
   OnDestroy,
   OnInit,
   Renderer2,
-  ViewChild, ViewContainerRef
+  ViewChild,
+  ViewContainerRef
 } from "@angular/core";
 import { DOCUMENT } from "@angular/common";
 import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router } from "@angular/router";
@@ -35,7 +35,6 @@ import {
   UserOutline
 } from "@ant-design/icons-angular/icons";
 import { DataService } from "../../erupt/service/data.service";
-import { mainPageSwitchTransition } from "../../app.animation";
 import { WindowModel } from "../../erupt/model/window.model";
 import { environment } from "@env/environment";
 import { SettingDrawerComponent } from "./setting-drawer/setting-drawer.component";

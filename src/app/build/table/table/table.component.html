@@ -20,16 +20,32 @@
             </button>
         </ng-container>
 
+        <!--<ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.importable">-->
+        <!--&nbsp;-->
+        <!--<nz-button-group>-->
+        <!--<button nz-button (click)="importableExcel()"><i nz-icon nzType="import" nzTheme="outline"></i>导入Excel</button>-->
+        <!--<button nz-button nz-dropdown [nzDropdownMenu]="menu" nzPlacement="bottomRight">-->
+        <!--<i nz-icon nzType="ellipsis"></i>-->
+        <!--</button>-->
+        <!--</nz-button-group>-->
+        <!--<nz-dropdown-menu #menu>-->
+        <!--<ul nz-menu>-->
+        <!--<li nz-menu-item (click)="downloadExcelTemplate()"><i nz-icon nzType="build" nzTheme="outline"></i>下载模板</li>-->
+        <!--</ul>-->
+        <!--</nz-dropdown-menu>-->
+        <!--</ng-container>-->
+
         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.importable">
             &nbsp;
             <nz-dropdown-button (nzClick)="importableExcel()">
                 <i nz-icon nzType="import" nzTheme="outline"></i>
                 <span style="margin-left: 8px;">导入Excel</span>
                 <ul nz-menu>
-                    <li nz-menu-item (click)="downloadExcelTemplate()">下载模板</li>
+                    <li nz-menu-item (click)="downloadExcelTemplate()"><i nz-icon nzType="build" nzTheme="outline"></i>下载模板</li>
                 </ul>
             </nz-dropdown-button>
         </ng-container>
+
 
         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
             <nz-divider nzType="vertical"></nz-divider>
@@ -50,7 +66,7 @@
                 <div nz-row>
                     <ng-container *ngFor="let col of columns">
                         <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 100px;">
-                            <label nz-checkbox [(ngModel)]="col.show" (ngModelChange)="this.st.resetColumns()">{{col.title}}</label>
+                            <label nz-checkbox [(ngModel)]="col.show" (ngModelChange)="st.resetColumns({emitReload:true})">{{col.title}}</label>
                         </div>
                     </ng-container>
                 </div>

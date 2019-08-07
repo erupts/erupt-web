@@ -399,7 +399,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   // excel导入
   importableExcel() {
-    this.modal.create({
+    let model = this.modal.create({
       nzKeyboard: true,
       nzTitle: "Excel导入",
       nzOkText: null,
@@ -408,6 +408,11 @@ export class TableComponent implements OnInit, OnDestroy {
       nzContent: ExcelImportComponent,
       nzComponentParams: {
         eruptModel: this.eruptBuildModel.eruptModel
+      },
+      nzOnCancel: () => {
+        if (model.getContentComponent().upload) {
+          this.st.reload();
+        }
       }
     });
   }

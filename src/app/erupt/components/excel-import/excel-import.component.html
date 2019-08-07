@@ -1,8 +1,16 @@
 <button nz-button nzType="default" class="mb-sm" (click)="this.dataService.downloadExcelTemplate(eruptModel.eruptName)">
     <i nz-icon type="download" nzTheme="outline"></i>下载模板
 </button>
+<nz-alert *ngIf="errorText"
+          style="margin-bottom: 8px;"
+          nzType="error"
+          nzCloseable
+          [nzDescription]="errorText"
+>
+</nz-alert>
 <nz-upload
         nzType="drag"
+        [(nzFileList)]="fileList"
         [nzLimit]="1"
         [nzAction]="dataService.excelImport + eruptModel.eruptName+'?'+dataService.createAuthParam(eruptModel.eruptName)"
         [nzShowButton]="true"

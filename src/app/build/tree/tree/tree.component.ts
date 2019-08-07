@@ -15,8 +15,6 @@ import { Status } from "../../../erupt/model/erupt-api.model";
 })
 export class TreeComponent implements OnInit, OnDestroy {
 
-  private colRules = colRules;
-
   private eruptName: string;
 
   public eruptBuildModel: EruptBuildModel;

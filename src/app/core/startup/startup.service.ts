@@ -1,7 +1,6 @@
 import { Inject, Injectable } from "@angular/core";
 import { MenuService, SettingsService, TitleService } from "@delon/theme";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
-import { ACLService } from "@delon/acl";
 
 import { NzIconService } from "ng-zorro-antd";
 import { ICONS_AUTO } from "../../../style-icons-auto";
@@ -17,7 +16,6 @@ export class StartupService {
   constructor(iconSrv: NzIconService,
               private menuService: MenuService,
               private settingService: SettingsService,
-              private aclService: ACLService,
               private titleService: TitleService,
               @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     iconSrv.addIcon(...ICONS_AUTO, ...ICONS);

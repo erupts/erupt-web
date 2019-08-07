@@ -2,7 +2,7 @@ import { Component, Inject, Input, OnInit } from "@angular/core";
 import { DataService } from "../../service/data.service";
 import { EruptModel } from "../../model/erupt.model";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
-import { NzMessageService, NzModalService } from "ng-zorro-antd";
+import { NzMessageService, NzModalService, UploadChangeParam, UploadFile } from "ng-zorro-antd";
 import { EruptApiModel, Status } from "../../model/erupt-api.model";
 
 @Component({
@@ -14,7 +14,11 @@ export class ExcelImportComponent implements OnInit {
 
   @Input() eruptModel: EruptModel;
 
-  ds = DataService;
+  upload: boolean = false;
+
+  fileList = [];
+
+  errorText: string;
 
   constructor(public dataService: DataService,
               @Inject(NzModalService)
@@ -27,17 +31,21 @@ export class ExcelImportComponent implements OnInit {
   }
 
 
-  upLoadNzChange({ file, fileList }) {
-    const status = file.status;
-    if (status === "done") {
+  upLoadNzChange(param: UploadChangeParam) {
+    const file = param.file;
+    this.errorText = null;
+    if (file.status === "done") {
       if ((<EruptApiModel>file.response).status == Status.ERROR) {
-        this.modal.error({
-          nzTitle: "ERROR",
-          nzContent: file.response.message
-        });
+        this.errorText = file.response.message;
+        this.fileList = [];
+      } else {
+        this.upload = true;
+        this.msg.success("导入成功");
       }
-    } else if (status === "error") {
-      this.msg.error(`${file.name} 上传失败`);
+    } else if (file.status === "error") {
+      console.log(file.error.error.message);
+      this.errorText = file.error.error.message;
+      this.fileList = [];
     }
   }
 
