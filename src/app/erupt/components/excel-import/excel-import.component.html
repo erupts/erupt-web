@@ -1,26 +1,17 @@
 <button nz-button nzType="default" class="mb-sm" (click)="this.dataService.downloadExcelTemplate(eruptModel.eruptName)">
     <i nz-icon type="download" nzTheme="outline"></i>下载模板
 </button>
-<nz-alert *ngIf="errorText"
-          style="margin-bottom: 8px;"
-          nzType="error"
-          nzCloseable
-          [nzDescription]="errorText"
->
+<nz-alert *ngIf="errorText" style="margin-bottom: 8px;" nzType="error" nzCloseable [nzDescription]="errorText">
 </nz-alert>
-<nz-upload
-        nzType="drag"
-        [(nzFileList)]="fileList"
-        [nzLimit]="1"
-        [nzAction]="dataService.excelImport + eruptModel.eruptName+'?'+dataService.createAuthParam(eruptModel.eruptName)"
-        [nzShowButton]="true"
-        (nzChange)="upLoadNzChange($event)">
+<nz-upload nzType="drag"
+           [(nzFileList)]="fileList"
+           [nzLimit]="1"
+           [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
+           [nzAction]="dataService.excelImport + eruptModel.eruptName"
+           [nzShowButton]="true"
+           (nzChange)="upLoadNzChange($event)">
     <p class="ant-upload-drag-icon">
         <i nz-icon nzType="inbox"></i>
     </p>
     <p class="ant-upload-text">单击或拖动Excel文件到此区域上传</p>
 </nz-upload>
-<!--<st style="margin-top: 8px;" [widthMode]="{type: 'strict'}" [bordered]="true" [data]="[{text:2333}]"-->
-<!--[columns]="[{ title: '编号', type:'no', width: 80, className: 'text-center' },{ title: '错误信息', index: 'text'}]">-->
-
-<!--</st>-->

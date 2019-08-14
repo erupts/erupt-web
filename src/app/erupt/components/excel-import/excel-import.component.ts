@@ -24,7 +24,7 @@ export class ExcelImportComponent implements OnInit {
               @Inject(NzModalService)
               private modal: NzModalService,
               @Inject(NzMessageService) private msg: NzMessageService,
-              @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
+              @Inject(DA_SERVICE_TOKEN) public tokenService: TokenService) {
   }
 
   ngOnInit() {

@@ -12,6 +12,9 @@ window.eruptSiteConfig = {
     click: function(event, token) {
       console.log(event);
       console.log(token);
+    },
+    load: function(event, token) {
+
     }
   }, {
     text: "下载",

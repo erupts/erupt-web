@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { SettingsService } from "@delon/theme";
 import * as screenfull from "screenfull";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
@@ -11,7 +11,7 @@ import { CustomerTool, WindowModel } from "../../../erupt/model/window.model";
     "./header.component.less"
   ]
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   searchToggleStatus: boolean;
 
   isFullScreen: boolean = false;
@@ -23,6 +23,12 @@ export class HeaderComponent {
   r_tools: CustomerTool[] = WindowModel.r_tools;
 
   constructor(public settings: SettingsService, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
+  }
+
+  ngOnInit() {
+    this.r_tools.forEach(tool => {
+      tool.load && tool.load(event, this.tokenService.get().token);
+    });
   }
 
   toggleCollapsedSidebar() {
