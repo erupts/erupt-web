@@ -20,6 +20,8 @@ export class HeaderComponent implements OnInit {
 
   title = WindowModel.title;
 
+  logoPath: string = WindowModel.logoPath;
+
   r_tools: CustomerTool[] = WindowModel.r_tools;
 
   constructor(public settings: SettingsService, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {

@@ -13,6 +13,8 @@ export class WindowModel {
   public static routerReuse: boolean = WindowModel.config["routerReuse"] || false;
 
   public static desc: string = WindowModel.config["desc"] || null;
+
+  public static logoPath: string = WindowModel.config["logoPath"] || null;
 }
 
 

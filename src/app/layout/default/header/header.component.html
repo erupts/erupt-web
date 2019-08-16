@@ -1,7 +1,7 @@
 <div class="alain-default__header-logo">
     <a [routerLink]="['/']" class="alain-default__header-logo-link">
-        <img class="alain-default__header-logo-expanded" src="./assets/logo-full.svg" alt="{{settings.app.name}}" style="max-height:40px;"/>
-        <img class="alain-default__header-logo-collapsed" src="./assets/logo.svg" alt="{{settings.app.name}}" style="max-height:30px;"/>
+        <img class="alain-default__header-logo-expanded" [src]="logoPath" alt="{{settings.app.name}}" style="max-height:40px;"/>
+        <img class="alain-default__header-logo-collapsed" [src]="logoPath" alt="{{settings.app.name}}" style="max-height:30px;"/>
     </a>
 </div>
 <div class="alain-default__nav-wrap">
@@ -19,11 +19,11 @@
             <!--</div>-->
         <!--</li>-->
         <!-- Search Button -->
-        <li class="hidden-pc" (click)="searchToggleChange()">
-            <div class="alain-default__nav-item">
-                <i nz-icon type="search"></i>
-            </div>
-        </li>
+        <!--<li class="hidden-pc" (click)="searchToggleChange()">-->
+        <!--<div class="alain-default__nav-item">-->
+        <!--<i nz-icon type="search"></i>-->
+        <!--</div>-->
+        <!--</li>-->
         <li class="hidden-mobile" (click)="toggleScreen()">
             <div class="alain-default__nav-item">
                 <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'"></i>
