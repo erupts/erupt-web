@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from "@angular/core";
 import { Edit, EruptFieldModel } from "../model/erupt-field.model";
-import { AttachmentEnum, ChoiceEnum, DateEnum, EditType } from "../model/erupt.enum";
+import { AttachmentEnum, ChoiceEnum, DateEnum, DependSwitchTypeEnum, EditType } from "../model/erupt.enum";
 import { DataService } from "../service/data.service";
 import { TreeSelectComponent } from "../components/tree-select/tree-select.component";
 import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
@@ -90,20 +90,30 @@ export class EditTypeComponent implements OnInit {
   }
 
   dependChange(value: number, field: EruptFieldModel) {
-    const dsa = field.eruptFieldJson.edit.dependSwitchType.dependSwitchAttrs;
+    const dsa = field.eruptFieldJson.edit.dependSwitchType.attr;
+    const type = field.eruptFieldJson.edit.dependSwitchType.type;
     dsa.forEach(attr => {
       if (value == attr.value) {
         attr.dependEdits.forEach(de => {
           const field = this.eruptModel.eruptFieldModelMap.get(de);
           if (field) {
-            field.eruptFieldJson.edit.show = true;
+            if (type == DependSwitchTypeEnum.HIDDEN) {
+              field.eruptFieldJson.edit.show = true;
+            } else {
+              field.eruptFieldJson.edit.readOnly = false;
+            }
+
           }
         });
       } else {
         attr.dependEdits.forEach(de => {
           const field = this.eruptModel.eruptFieldModelMap.get(de);
           if (field) {
-            field.eruptFieldJson.edit.show = false;
+            if (type == DependSwitchTypeEnum.HIDDEN) {
+              field.eruptFieldJson.edit.show = false;
+            } else {
+              field.eruptFieldJson.edit.readOnly = true;
+            }
           }
         });
       }

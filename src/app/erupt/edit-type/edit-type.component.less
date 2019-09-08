@@ -2,9 +2,10 @@
   ::ng-deep {
     se {
       width: 100%;
+      min-height: 40px;
 
       .ant-form-item-label {
-        width: auto;
+        width: auto !important;
       }
 
       .se__label {
@@ -36,6 +37,9 @@
       width: 100% !important;
     }
 
+    .se__horizontal .se__item .se__label {
+      justify-content: normal !important;
+    }
 
     .ant-form-horizontal {
       @media (max-width: 768px) {

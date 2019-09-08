@@ -4,7 +4,6 @@
 import { WindowModel } from "./window.model";
 
 export class RestPath {
-  public static ws: string = WindowModel.domain + "/ws/";
   public static erupt: string = WindowModel.domain + "/erupt-api";
   public static build: string = RestPath.erupt + "/build/";
   public static data: string = RestPath.erupt + "/data/";
@@ -63,7 +62,6 @@ export enum DateEnum {
 
 export enum AttachmentEnum {
   IMAGE = "IMAGE",
-  VIDEO = "VIDEO",
   OTHER = "OTHER",
 }
 
@@ -73,6 +71,12 @@ export enum ChoiceEnum {
   SELECT_SINGLE = "SELECT_SINGLE",
   SELECT_MULTI = "SELECT_MULTI",
   TAGS = "TAGS"
+}
+
+
+export enum DependSwitchTypeEnum {
+  HIDDEN = "HIDDEN",
+  DISABLE = "DISABLE"
 }
 
 

@@ -29,7 +29,7 @@ export class TabTableComponent implements OnInit {
 
   @Input() mode: "refer-add" | "add" = "add";
 
-  @ViewChild("st") st: STComponent;
+  @ViewChild("st", { static: false }) st: STComponent;
 
   column: STColumn[];
 

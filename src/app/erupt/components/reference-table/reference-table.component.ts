@@ -35,7 +35,7 @@ export class ReferenceTableComponent implements OnInit {
 
   checkedValues: any[];
 
-  @ViewChild("st") st: STComponent;
+  @ViewChild("st", { static: false }) st: STComponent;
 
   constructor(private dataService: DataService,
               @Inject(NzMessageService)

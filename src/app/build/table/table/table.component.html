@@ -48,7 +48,6 @@
 
 
         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
-            <nz-divider nzType="vertical"></nz-divider>
             <button nz-button nzType="primary" class="mb-sm" (click)="query()">
                 <i nz-icon type="search" nzTheme="outline"></i>查询
             </button>
@@ -59,11 +58,11 @@
             <button nz-button nzType="default" nz-popover
                     [(nzVisible)]="showColCtrl" [nzContent]="tableColumnCtrl"
                     nzTitle="表格列控制"
-                    nzTrigger="click" class="mb-sm">
+                    nzTrigger="click" class="mb-sm hidden-mobile">
                 <i nz-icon nzType="table" nzTheme="outline"></i>表格列控制
             </button>
             <ng-template #tableColumnCtrl>
-                <div nz-row>
+                <div nz-row style="max-width: 500px;">
                     <ng-container *ngFor="let col of columns">
                         <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 100px;">
                             <label nz-checkbox [(ngModel)]="col.show" (ngModelChange)="st.resetColumns({emitReload:true})">{{col.title}}</label>
@@ -112,12 +111,13 @@
     <!--{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 110 : 0) + 'px'}-->
     <st #st
         [data]="stConfig.url" [columns]="columns"
-        [scroll]="{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 110 : 0) + 'px'}"
+        [scroll]="{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 150 : 0) + 'px'}"
         (change)="tableDataChange($event)"
         [bordered]="true"
         [multiSort]="stConfig.multiSort"
         [page]="stConfig.stPage"
         [req]="stConfig.req"
-        [size]="'middle'">
+        [size]="'middle'"
+    >
     </st>
 </ng-container>

@@ -10,6 +10,8 @@ export class LayoutPassportComponent {
 
   nowYear = new Date().getFullYear();
 
+  logoPath: string = WindowModel.logoPath;
+
   desc = WindowModel.desc;
 
   title = WindowModel.title;

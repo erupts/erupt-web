@@ -5,7 +5,7 @@ import { EruptModel } from "../../../erupt/model/erupt.model";
 import { DrawerHelper, ModalHelper, SettingsService } from "@delon/theme";
 import { EditTypeComponent } from "../../../erupt/edit-type/edit-type.component";
 import { EditComponent } from "../edit/edit.component";
-import { STColumn, STComponent, STData } from "@delon/abc";
+import { STColumn, STColumnButton, STComponent, STData } from "@delon/abc";
 import { ActivatedRoute } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
@@ -57,7 +57,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   columns: STColumn[];
 
-  @ViewChild("st") st: STComponent;
+  @ViewChild("st", { static: false }) st: STComponent;
 
   private router$: Subscription;
 
@@ -149,95 +149,85 @@ export class TableComponent implements OnInit, OnDestroy {
       };
     }
     _columns.push(...viewCols);
-    const tableOperators: any = [];
-    const eye = {
-      icon: "eye",
-      click: (record: any, modal: any) => {
-        this.modal.create({
-          nzWrapClassName: "modal-lg",
-          nzStyle: { top: "60px" },
-          nzMaskClosable: true,
-          nzKeyboard: true,
-          nzCancelText: "关闭（ESC）",
-          nzOkText: null,
-          nzTitle: "查看",
-          nzContent: EditComponent,
-          nzComponentParams: {
-            eruptBuildModel: {
-              eruptModel: this.readonlyErupt,
-              tabErupts: this.eruptBuildModel.tabErupts,
-              combineErupts: this.eruptBuildModel.combineErupts
+    const tableOperators: STColumnButton[] = [];
+    if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
+      tableOperators.push({
+        icon: "eye",
+        click: (record: any, modal: any) => {
+          this.modal.create({
+            nzWrapClassName: "modal-lg",
+            nzStyle: { top: "60px" },
+            nzMaskClosable: true,
+            nzKeyboard: true,
+            nzCancelText: "关闭（ESC）",
+            nzOkText: null,
+            nzTitle: "查看",
+            nzContent: EditComponent,
+            nzComponentParams: {
+              eruptBuildModel: {
+                eruptModel: this.readonlyErupt,
+                tabErupts: this.eruptBuildModel.tabErupts,
+                combineErupts: this.eruptBuildModel.combineErupts
+              },
+              id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
+              behavior: "readonly"
+            }
+          });
+        }
+      });
+    }
+    if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
+      tableOperators.push({
+        icon: "edit",
+        click: (record: any) => {
+          const model = this.modal.create({
+            nzWrapClassName: "modal-lg",
+            nzStyle: { top: "60px" },
+            nzMaskClosable: false,
+            nzKeyboard: false,
+            nzTitle: "编辑",
+            nzOkText: "修改",
+            nzContent: EditComponent,
+            nzComponentParams: {
+              behavior: "edit",
+              eruptBuildModel: this.eruptBuildModel,
+              id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
             },
-            id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
-            behavior: "readonly"
-          }
-        });
-      }
-    };
-
-    const edit = {
-      icon: "edit",
-      click: (record: any) => {
-        const model = this.modal.create({
-          nzWrapClassName: "modal-lg",
-          nzStyle: { top: "60px" },
-          nzMaskClosable: false,
-          nzKeyboard: false,
-          nzTitle: "编辑",
-          nzOkText: "修改",
-          nzContent: EditComponent,
-          nzComponentParams: {
-            behavior: "edit",
-            eruptBuildModel: this.eruptBuildModel,
-            id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
-          },
-          nzOnOk: async () => {
-            let validateResult = model.getContentComponent().beforeSaveValidate();
-            if (validateResult) {
-              let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
-              let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
-              if (res.status == Status.SUCCESS) {
-                this.msg.success("修改成功");
-                this.st.reload();
-                return true;
+            nzOnOk: async () => {
+              let validateResult = model.getContentComponent().beforeSaveValidate();
+              if (validateResult) {
+                let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
+                let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
+                if (res.status == Status.SUCCESS) {
+                  this.msg.success("修改成功");
+                  this.st.reload();
+                  return true;
+                } else {
+                  return false;
+                }
               } else {
                 return false;
               }
-            } else {
-              return false;
             }
-          }
-        });
-      }
-    };
-    const del = {
-      icon: {
-        type: "delete",
-        theme: "twotone",
-        twoToneColor: "#f00"
-      },
-      type: "del",
-      click: (record) => {
-        // const msg = this.msg.loading("删除中", {
-        //   nzPauseOnHover: true,
-        //   nzDuration: 9999
-        // });
-        // this.msg.remove(msg.messageId);
-        this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
-          this.st.reload();
-          this.msg.success("删除成功");
-        });
-      }
-    };
-
-    if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
-      tableOperators.push(eye);
-    }
-    if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
-      tableOperators.push(edit);
+          });
+        }
+      });
     }
     if (this.eruptBuildModel.eruptModel.eruptJson.power.delete) {
-      tableOperators.push(del);
+      tableOperators.push({
+        icon: {
+          type: "delete",
+          theme: "twotone",
+          twoToneColor: "#f00"
+        },
+        type: "del",
+        click: (record) => {
+          this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
+            this.st.reload();
+            this.msg.success("删除成功");
+          });
+        }
+      });
     }
     const that = this;
     for (let key in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
@@ -251,13 +241,15 @@ export class TableComponent implements OnInit, OnDestroy {
         }
       });
     }
-    _columns.push({
-      title: "操作",
-      fixed: "right",
-      width: tableOperators.length * 25 + 50 + "px",
-      className: "text-center",
-      buttons: tableOperators
-    });
+    if (tableOperators.length > 0) {
+      _columns.push({
+        title: "操作",
+        fixed: "right",
+        width: tableOperators.length * 25 + 50 + "px",
+        className: "text-center",
+        buttons: tableOperators
+      });
+    }
     this.columns = _columns;
   }
 
@@ -275,7 +267,10 @@ export class TableComponent implements OnInit, OnDestroy {
       }
     }
     const ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[code];
-    let operationErupt = this.eruptBuildModel.operationErupts[code];
+    let operationErupt = null;
+    if (this.eruptBuildModel.operationErupts) {
+      operationErupt = this.eruptBuildModel.operationErupts[code];
+    }
     if (operationErupt) {
       this.modal.create({
         nzKeyboard: true,

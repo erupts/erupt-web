@@ -35,7 +35,7 @@ export class TreeComponent implements OnInit, OnDestroy {
 
   private router$: Subscription;
 
-  @ViewChild("tree") tree: NzTreeBaseService;
+  @ViewChild("tree", { static: false }) tree: NzTreeBaseService;
 
   constructor(private dataService: DataService,
               public route: ActivatedRoute,

@@ -1,6 +1,6 @@
 import { EruptFieldModel } from "../model/erupt-field.model";
 import { EruptModel, Tree } from "../model/erupt.model";
-import { ChoiceEnum, EditType, SaveMode, ViewType } from "../model/erupt.enum";
+import { ChoiceEnum, DependSwitchTypeEnum, EditType, SaveMode, ViewType } from "../model/erupt.enum";
 import { FormControl } from "@angular/forms";
 import { NzMessageService, NzModalService, UploadFile } from "ng-zorro-antd";
 import { deepCopy } from "@delon/util";
@@ -94,14 +94,19 @@ export class DataHandlerService {
     //生成depend组件代码
     eruptModel.eruptFieldModels.forEach(field => {
       if (field.eruptFieldJson.edit.type === EditType.DEPEND_SWITCH) {
-        field.eruptFieldJson.edit.dependSwitchType.dependSwitchAttrs.forEach(attr => {
+        let type = field.eruptFieldJson.edit.dependSwitchType.type;
+        field.eruptFieldJson.edit.dependSwitchType.attr.forEach(attr => {
           if (field.value && field.value == attr.value) {
             return;
           } else {
             attr.dependEdits.forEach(editName => {
               const fm = eruptModel.eruptFieldModelMap.get(editName);
               if (fm) {
-                fm.eruptFieldJson.edit.show = false;
+                if (type == DependSwitchTypeEnum.HIDDEN) {
+                  fm.eruptFieldJson.edit.show = false;
+                } else {
+                  fm.eruptFieldJson.edit.readOnly = true;
+                }
               }
             });
           }
@@ -121,6 +126,7 @@ export class DataHandlerService {
         field.value = null;
         field.eruptFieldJson.edit.notNull = false;
         field.eruptFieldJson.edit.show = true;
+        field.eruptFieldJson.edit.readOnly = false;
         field.eruptFieldJson.edit.$value = null;
         field.eruptFieldJson.edit.$viewValue = null;
         field.eruptFieldJson.edit.$tempValue = null;

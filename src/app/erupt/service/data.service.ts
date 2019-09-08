@@ -155,7 +155,7 @@ export class DataService {
 
   //登录
   login(account: string, pwd: string, verifyCode?: any): Observable<loginModel> {
-    return this._http.post(WindowModel.domain + "/login", {}, {
+    return this._http.post(RestPath.erupt + "/login", {}, {
         account: account,
         pwd: pwd,
         verifyCode: verifyCode
@@ -164,7 +164,7 @@ export class DataService {
   }
 
   changePwd(account: string, pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
-    return this._http.post(WindowModel.domain + "/change-pwd", {}, {
+    return this._http.post(RestPath.erupt + "/change-pwd", {}, {
         account: account,
         pwd: pwd,
         newPwd: newPwd,
@@ -176,7 +176,7 @@ export class DataService {
 
   //获取菜单列表
   getMenu(): Observable<any[]> {
-    return this._http.get(WindowModel.domain + "/menu", null);
+    return this._http.get(RestPath.erupt + "/menu", null);
   }
 
   downloadExcelTemplate(eruptName: string) {
@@ -214,7 +214,7 @@ export class DataService {
 
   //获取验证码
   static getVerifyCodeUrl(account: string): string {
-    return RestPath.ws + "code-img" + "?account=" + account + "&_t" + new Date().getTime();
+    return RestPath.erupt + "/code-img" + "?account=" + account + "&_t" + new Date().getTime();
   }
 
   static downloadAttachment(path: string): string {

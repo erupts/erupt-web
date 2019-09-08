@@ -119,6 +119,8 @@ export class UserLoginComponent implements OnDestroy, OnInit {
         }
       }
       this.reuseTabService.clear();
+    }, () => {
+      this.loading = false;
     });
   }
 

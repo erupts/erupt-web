@@ -1,4 +1,4 @@
-import { AttachmentEnum, ChoiceEnum, DateEnum, EditType, SaveMode, TabEnum, ViewType } from "./erupt.enum";
+import { AttachmentEnum, ChoiceEnum, DateEnum, DependSwitchTypeEnum, EditType, SaveMode, TabEnum, ViewType } from "./erupt.enum";
 
 /**
  * Created by liyuepeng on 10/17/18.
@@ -103,7 +103,8 @@ export interface TabType {
 
 interface DependSwitchType {
   reject: boolean;
-  dependSwitchAttrs: DependSwitchAttr[]
+  type: DependSwitchTypeEnum
+  attr: DependSwitchAttr[]
 }
 
 interface DependSwitchAttr {

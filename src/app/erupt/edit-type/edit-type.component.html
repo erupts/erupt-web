@@ -487,17 +487,23 @@
                         </ng-container>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.DEPEND_SWITCH">
-                        <div nz-col [nzSpan]="24">
+                        <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                (ngModelChange)="dependChange($event,field)"
-                                                [name]="field.fieldName" class="erupt-input stander-line-height">
-                                    <ng-container *ngFor="let vl of field.eruptFieldJson.edit.dependSwitchType.dependSwitchAttrs">
-                                        <label nz-radio [nzValue]="vl.value">{{vl.label}}</label>
+                                <nz-select class="erupt-input"
+                                           [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                           [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                           [name]="field.fieldName"
+                                           (ngModelChange)="dependChange($event,field)"
+                                           [nzMode]="'default'"
+                                           nzAllowClear>
+                                    <ng-container *ngFor="let vl of field.eruptFieldJson.edit.dependSwitchType.attr">
+                                        <nz-option [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
                                     </ng-container>
-                                </nz-radio-group>
+                                </nz-select>
                             </se>
                         </div>
                     </ng-container>
