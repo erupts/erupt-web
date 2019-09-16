@@ -16,7 +16,6 @@ declare const DecoupledEditor;
 })
 export class CkeditorComponent implements OnInit {
 
-
   @Input() private eruptField: EruptFieldModel;
 
   @Input() private erupt: EruptModel;
@@ -25,41 +24,40 @@ export class CkeditorComponent implements OnInit {
 
   @Output() valueChange = new EventEmitter();
 
-  public loading: boolean;
+  public loading: boolean = true;
 
   constructor(private lazy: LazyService, private ref: ElementRef,
               @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
   }
 
   ngOnInit() {
-    this.loading = true;
     let that = this;
-    // <script src="https://cdn.ckeditor.com/ckeditor5/12.4.0/decoupled-document/ckeditor.js"></script>
-    this.lazy.load("//cdn.ckeditor.com/ckeditor5/12.4.0/decoupled-document/ckeditor.js").then(() => {
-      this.lazy.load([]).then(() => {
-        DecoupledEditor
-          .create(this.ref.nativeElement.querySelector("#editor"), {
+    setTimeout(() => {
+      // <script src="https://cdn.ckeditor.com/ckeditor5/12.4.0/decoupled-document/ckeditor.js"></script>
+      this.lazy.loadScript("//cdn.ckeditor.com/ckeditor5/12.4.0/decoupled-document/ckeditor.js").then(() => {
+        this.lazy.load(["/assets/ckeditor5-zh-cn.js"]).then(() => {
+          DecoupledEditor.create(this.ref.nativeElement.querySelector("#editor"), {
             language: "zh-cn",
             ckfinder: {
               uploadUrl: RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
                 this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token
             }
-          })
-          .then(editor => {
-            this.loading = false;
+          }).then(editor => {
+            that.loading = false;
             const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
             toolbarContainer.appendChild(editor.ui.view.toolbar.element);
-            editor.setData(that.value);
+            if (that.value) {
+              editor.setData(that.value);
+            }
             editor.model.document.on("change:data", function() {
               that.valueChange.emit(editor.getData());
             });
-          })
-          .catch(error => {
+          }).catch(error => {
             console.error(error);
           });
+        });
       });
-    });
-
+    }, 200);
   }
 
 }

@@ -30,6 +30,7 @@ export class StartupService {
     });
     // 设置页面标题的后缀
     this.titleService.suffix = this.settingService.app.name;
+    this.titleService.default = "";
     resolve({});
   }
 
