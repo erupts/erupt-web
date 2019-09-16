@@ -1,9 +1,11 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output } from "@angular/core";
 import { LazyService } from "@delon/util";
 import { DataService } from "../../service/data.service";
 import { EruptFieldModel } from "../../model/erupt-field.model";
 import { EruptModel } from "../../model/erupt.model";
 import { WindowModel } from "../../model/window.model";
+import { RestPath } from "../../model/erupt.enum";
+import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
 
 declare const DecoupledEditor;
 
@@ -25,28 +27,31 @@ export class CkeditorComponent implements OnInit {
 
   public loading: boolean;
 
-  constructor(private lazy: LazyService, private ref: ElementRef, private data: DataService) {
+  constructor(private lazy: LazyService, private ref: ElementRef,
+              @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
   }
 
   ngOnInit() {
     this.loading = true;
     let that = this;
-    this.lazy.loadScript("//cdn.ckeditor.com/ckeditor5/12.0.0/decoupled-document/ckeditor.js").then(() => {
-      this.lazy.load(["/assets/js/ckeditor-zh-cn.js", "/assets/js/jquery.min.js"]).then(() => {
+    // <script src="https://cdn.ckeditor.com/ckeditor5/12.4.0/decoupled-document/ckeditor.js"></script>
+    this.lazy.load("//cdn.ckeditor.com/ckeditor5/12.4.0/decoupled-document/ckeditor.js").then(() => {
+      this.lazy.load([]).then(() => {
         DecoupledEditor
           .create(this.ref.nativeElement.querySelector("#editor"), {
-            language: "zh-cn"
+            language: "zh-cn",
+            ckfinder: {
+              uploadUrl: RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
+                this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token
+            }
           })
           .then(editor => {
             this.loading = false;
             const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
             toolbarContainer.appendChild(editor.ui.view.toolbar.element);
-            editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
-              return new UploadAdapter(loader, WindowModel.domain + "/upload/" + this.erupt.eruptName + "/" + this.eruptField.fieldName);
-            };
+            editor.setData(that.value);
             editor.model.document.on("change:data", function() {
-              that.value = editor.getData();
-              that.valueChange.emit(that.value);
+              that.valueChange.emit(editor.getData());
             });
           })
           .catch(error => {
@@ -57,40 +62,4 @@ export class CkeditorComponent implements OnInit {
 
   }
 
-}
-
-class UploadAdapter {
-
-  private loader: any;
-
-  private url: string;
-
-  constructor(loader, url) {
-    this.loader = loader;
-    this.url = url;
-  }
-
-  upload() {
-    return new Promise((resolve, reject) => {
-      // $.ajax({
-      //   url: this.url,
-      //   type: "POST",
-      //   dataType: "json",
-      //   header: "",
-      //   success: function(data) {
-      //     if (data.res) {
-      //       resolve({
-      //         default: data.url
-      //       });
-      //     } else {
-      //       reject(data.msg);
-      //     }
-      //
-      //   }
-      // });
-    });
-  }
-
-  abort() {
-  }
 }

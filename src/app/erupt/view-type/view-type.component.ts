@@ -19,7 +19,7 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
 
   show: boolean = false;
 
-  paths: string[];
+  paths: string[] = [];
 
   viewType = ViewType;
 
@@ -30,14 +30,9 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
     if (this.value) {
       if (this.view.eruptFieldModel.eruptFieldJson.edit.type == EditType.ATTACHMENT) {
         const attachmentType = this.view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
-        if (attachmentType.maxLimit > 1) {
-          this.paths = [];
-          let _paths = (<string>this.value).split(attachmentType.fileSeparator);
-          for (let path of _paths) {
-            this.paths.push(DataService.previewAttachment(path));
-          }
-        } else {
-          this.paths = [DataService.previewAttachment(this.value)];
+        let _paths = (<string>this.value).split(attachmentType.fileSeparator);
+        for (let path of _paths) {
+          this.paths.push(DataService.previewAttachment(path));
         }
       }
       switch (this.view.viewType) {

@@ -20,32 +20,22 @@
             </button>
         </ng-container>
 
-        <!--<ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.importable">-->
-        <!--&nbsp;-->
-        <!--<nz-button-group>-->
-        <!--<button nz-button (click)="importableExcel()"><i nz-icon nzType="import" nzTheme="outline"></i>导入Excel</button>-->
-        <!--<button nz-button nz-dropdown [nzDropdownMenu]="menu" nzPlacement="bottomRight">-->
-        <!--<i nz-icon nzType="ellipsis"></i>-->
-        <!--</button>-->
-        <!--</nz-button-group>-->
-        <!--<nz-dropdown-menu #menu>-->
-        <!--<ul nz-menu>-->
-        <!--<li nz-menu-item (click)="downloadExcelTemplate()"><i nz-icon nzType="build" nzTheme="outline"></i>下载模板</li>-->
-        <!--</ul>-->
-        <!--</nz-dropdown-menu>-->
-        <!--</ng-container>-->
-
         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.importable">
             &nbsp;
-            <nz-dropdown-button (nzClick)="importableExcel()">
-                <i nz-icon nzType="import" nzTheme="outline"></i>
-                <span style="margin-left: 8px;">导入Excel</span>
-                <ul nz-menu>
-                    <li nz-menu-item (click)="downloadExcelTemplate()"><i nz-icon nzType="build" nzTheme="outline"></i>下载模板</li>
-                </ul>
-            </nz-dropdown-button>
+            <nz-button-group>
+                <button nz-button (click)="importableExcel()"><i nz-icon nzType="import" nzTheme="outline"></i>导入Excel</button>
+                <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzPlacement="bottomRight">
+                    <i nz-icon nzType="ellipsis"></i>
+                </button>
+            </nz-button-group>
+            &nbsp;
         </ng-container>
 
+        <nz-dropdown-menu #menu>
+            <ul nz-menu>
+                <li nz-menu-item (click)="downloadExcelTemplate()"><i nz-icon nzType="build" nzTheme="outline"></i>下载模板</li>
+            </ul>
+        </nz-dropdown-menu>
 
         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
             <button nz-button nzType="primary" class="mb-sm" (click)="query()">

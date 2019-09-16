@@ -6257,7 +6257,6 @@ textarea.cdk-textarea-autosize-measuring {
   &-close-text {
     color: @alert-close-color;
     transition: color 0.3s;
-
     &:hover {
       color: @alert-close-hover-color;
     }
@@ -7624,7 +7623,6 @@ a.@{btn-prefix-cls} {
       border-top: @tabs-card-tab-active-border-top;
     }
   }
-
   &&-card &-card-bar &-tab-disabled {
     color: @tabs-card-active-color;
     color: @disabled-color;
@@ -8576,11 +8574,9 @@ a.@{btn-prefix-cls} {
     padding: 0;
     text-align: center;
     list-style: none;
-
     &-bottom {
       bottom: 12px;
     }
-
     &-top {
       top: 12px;
     }
@@ -8630,11 +8626,9 @@ a.@{btn-prefix-cls} {
     width: @carousel-dot-height;
     height: auto;
     transform: translateY(-50%);
-
     &-left {
       left: 12px;
     }
-
     &-right {
       right: 12px;
     }
@@ -11229,7 +11223,6 @@ a.@{btn-prefix-cls} {
   &-bordered {
     .@{descriptions-prefix-cls}-view {
       border: 1px solid @border-color-split;
-
       > table {
         table-layout: auto;
       }
@@ -11254,7 +11247,6 @@ a.@{btn-prefix-cls} {
 
     .@{descriptions-prefix-cls}-row {
       border-bottom: 1px solid @border-color-split;
-
       &:last-child {
         border-bottom: none;
       }
@@ -13824,7 +13816,6 @@ form {
       &-active {
         background: darken(@disabled-bg, 10%);
         border-color: transparent;
-
         a {
           color: #fff;
         }
@@ -13849,7 +13840,6 @@ form {
         .@{pagination-prefix-cls}-item-link-icon {
           opacity: 0;
         }
-
         .@{pagination-prefix-cls}-item-ellipsis {
           opacity: 1;
         }
@@ -14469,7 +14459,6 @@ form {
       }
     }
   }
-
   &-dark &-item:hover {
     background-color: @menu-dark-item-hover-bg;
   }
@@ -14484,11 +14473,9 @@ form {
     > a:hover {
       color: @menu-dark-highlight-color;
     }
-
     .@{iconfont-css-prefix} {
       color: @menu-dark-selected-item-icon-color;
     }
-
     span {
       color: @menu-dark-selected-item-text-color;
     }
@@ -15370,7 +15357,6 @@ form {
     padding: 4px 0;
     font-size: 16px;
     line-height: 100%;
-
     &-button {
       .operation-unit();
       color: @text-color;
@@ -15418,7 +15404,6 @@ form {
       > * {
         margin-left: 8px;
       }
-
       > *:first-child {
         margin-left: 0;
       }
@@ -18135,17 +18120,14 @@ span.@{radio-prefix-cls} + * {
         background: @table-row-hover-bg;
       }
     }
-
     &.@{table-prefix-cls}-row-selected > td {
       &.@{table-prefix-cls}-column-sort {
         background: @table-body-selected-sort-bg;
       }
     }
-
     &:hover {
       &.@{table-prefix-cls}-row-selected > td {
         background: @table-selected-row-hover-bg;
-
         &.@{table-prefix-cls}-column-sort {
           background: @table-body-selected-sort-bg;
         }
@@ -18546,7 +18528,6 @@ span.@{radio-prefix-cls} + * {
     // https://stackoverflow.com/a/54101063
     // https://github.com/react-component/table/pull/333
     scrollbar-color: transparent transparent;
-
     &::-webkit-scrollbar {
       background-color: transparent;
     }
@@ -18558,7 +18539,6 @@ span.@{radio-prefix-cls} + * {
       border: 1px solid @border-color-split;
       border-width: 1px 1px 1px 0;
     }
-
     &.@{table-prefix-cls}-hide-scrollbar
     .@{table-prefix-cls}-thead
     > tr:only-child
@@ -18751,7 +18731,6 @@ span.@{radio-prefix-cls} + * {
       > .@{table-prefix-cls}-thead > tr > th {
         background-color: transparent;
       }
-
       > .@{table-prefix-cls}-thead > tr {
         border-bottom: @border-width-base @border-style-base @border-color-split;
       }
@@ -19357,7 +19336,6 @@ a[nz-tab-link] {
         > span {
           padding-right: 0;
         }
-
         &-text {
           padding-left: 8px;
         }
@@ -19449,15 +19427,12 @@ a[nz-tab-link] {
 .typography-title-1() {
   .typography-title(@heading-1-size, 1.23);
 }
-
 .typography-title-2() {
   .typography-title(@heading-2-size, 1.35);
 }
-
 .typography-title-3() {
   .typography-title(@heading-3-size, 1.35);
 }
-
 .typography-title-4() {
   .typography-title(@heading-4-size, 1.4);
 }
@@ -19494,17 +19469,14 @@ a[nz-tab-link] {
   h1 {
     .typography-title-1();
   }
-
   h2&,
   h2 {
     .typography-title-2();
   }
-
   h3&,
   h3 {
     .typography-title-3();
   }
-
   h4&,
   h4 {
     .typography-title-4();
@@ -20595,7 +20567,6 @@ a[nz-tab-link] {
 
 .@{tree-prefix-cls} {
   /* see https://github.com/ant-design/ant-design/issues/16259 */
-
   &-checkbox-checked::after {
     position: absolute;
     top: 16.67%;
@@ -21412,10 +21383,8 @@ a[nz-tab-link] {
   &-extra {
     margin-top: 32px;
     text-align: center;
-
     > * {
       margin-right: 8px;
-
       &:last-child {
         margin-right: 0;
       }
@@ -22229,7 +22198,6 @@ fieldset {
       &-container {
       nz-card {
         margin: 0 16px 0 0;
-
         @{sf-prefix}__array-remove {
           position: absolute;
           top: -16px;
@@ -23818,13 +23786,11 @@ body {
       padding: @layout-gutter;
     }
   }
-
   // Title
   .@{ant-prefix}-table-column-title {
     display: flex;
     align-items: center;
   }
-
   &__head {
     &-optional,
     &-tip {
@@ -23832,12 +23798,10 @@ body {
       color: @st-title-optional-color;
     }
   }
-
   // 修复自动定义图标无法高亮问题
   .@{ant-prefix}-table-thead > tr > th .@{ant-prefix}-table-filter-selected.@{ant-prefix}-table-filter-icon {
     color: @primary-color;
   }
-
   // 修复过滤图标优先级问题
   .@{ant-prefix}-table-thead > tr > th .@{ant-prefix}-table-filter-icon {
     position: absolute !important;
@@ -23908,7 +23872,6 @@ body {
         content: ':';
       }
     }
-
     &-text {
       margin-right: 2px;
     }
@@ -23972,12 +23935,10 @@ body {
       font-size: 16px;
     }
   }
-
   &__horizontal {
     @{sv-prefix}__label-width {
       display: flex;
       justify-content: flex-end;
-
       @{sv-prefix}__label-text {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -24066,22 +24027,18 @@ body {
       &:last-child {
         margin-bottom: 0;
       }
-
       @{se-prefix}__label {
         display: flex;
         justify-content: flex-end;
-
         &-text {
           overflow: hidden;
           text-overflow: ellipsis;
         }
       }
-
       .@{ant-prefix}-form-item {
         &-required::before {
           line-height: inherit;
         }
-
         &-label > label::after {
           margin-left: 4px;
         }
@@ -24675,20 +24632,16 @@ ellipsis {
   background-color: @reuse-tab-bg;
   outline: none;
   user-select: none;
-
   &__line {
     padding: @reuse-tab-padding;
     border-bottom: 1px solid @reuse-tab-border-color;
-
     .@{ant-prefix}-tabs {
       &-bar {
         margin-bottom: 0;
         border-bottom: none;
       }
-
       &-nav .@{ant-prefix}-tabs-tab {
         padding: 0;
-
         @{reuse-tab-prefix}__op {
           position: absolute;
           top: 12px;
@@ -24697,13 +24650,11 @@ ellipsis {
           margin: 0;
           font-size: 10px;
         }
-
         &:hover {
           @{reuse-tab-prefix}__op {
             display: block;
           }
         }
-
         @{reuse-tab-prefix}__name {
           display: inline-block;
           padding: 8px 20px;
@@ -24711,14 +24662,11 @@ ellipsis {
       }
     }
   }
-
   &__card {
     padding-top: @reuse-tab-padding;
-
     .@{ant-prefix}-tabs-nav-container {
       padding: 0 8px;
     }
-
     .@{ant-prefix}-tabs-nav .@{ant-prefix}-tabs-tab {
       @{reuse-tab-prefix}__op {
         margin-right: 0;

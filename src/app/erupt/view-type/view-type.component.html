@@ -3,7 +3,7 @@
         <ng-container *ngSwitchCase="viewType.IMAGE">
             <nz-carousel class="text-center">
                 <div nz-carousel-content *ngFor="let img of paths">
-                    <img class="full-max-width" [src]="img|safeUrl" style="display: inline-block"/>
+                    <img class="full-max-width" [src]="img|safeUrl" style="display: inline-block;"/>
                 </div>
             </nz-carousel>
         </ng-container>

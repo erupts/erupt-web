@@ -254,10 +254,7 @@ export class DataHandlerService {
           obj.format = (item: any) => {
             if (item[view.column]) {
               const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
-              let img = item[view.column];
-              if (attachmentType.maxLimit > 1) {
-                img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
-              }
+              let img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
               return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
             } else {
               return "";

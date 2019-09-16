@@ -142,7 +142,7 @@
                                 </div>
                             </ng-container>
                         </ng-container>
-                        <ng-container *ngIf="eruptModel.mode!='search'">
+                        <ng-container *ngIf="eruptModel.mode!='search'||!field.eruptFieldJson.edit.search.vague">
                             <ng-container [ngSwitch]="field.eruptFieldJson.edit.choiceType.type">
                                 <ng-container *ngSwitchCase="choiceEnum.RADIO">
                                     <div nz-col [nzXs]="24">
