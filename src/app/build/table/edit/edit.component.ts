@@ -27,7 +27,8 @@ export class EditComponent implements OnInit, OnDestroy {
 
   @Input() id: any;
 
-  @ViewChild("eruptEdit", { static: false }) eruptEdit: EditTypeComponent;
+  // { static: false }
+  @ViewChild("eruptEdit") eruptEdit: EditTypeComponent;
 
   eruptFieldModelMap: Map<String, EruptFieldModel>;
 

@@ -57,7 +57,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   columns: STColumn[];
 
-  @ViewChild("st", { static: false }) st: STComponent;
+  @ViewChild("st") st: STComponent;
 
   private router$: Subscription;
 

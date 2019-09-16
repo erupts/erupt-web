@@ -87,8 +87,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
 
   routerReuse: boolean = WindowModel.routerReuse;
 
-
-  @ViewChild("settingHost", { read: ViewContainerRef, static: true })
+  @ViewChild("settingHost", { read: ViewContainerRef })
   settingHost: ViewContainerRef;
 
   constructor(iconSrv: NzIconService,

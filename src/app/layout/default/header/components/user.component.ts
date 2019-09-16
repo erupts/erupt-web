@@ -6,23 +6,20 @@ import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
 @Component({
   selector: "header-user",
   template: `
-      <div class="alain-default__nav-item d-flex align-items-center px-sm"
-           nz-dropdown
-           nzPlacement="bottomRight"
-           [nzDropdownMenu]="userMenu">
-          <nz-avatar [nzText]="settings.user.name&&settings.user.name.substr(0,2)" nzSize="default" class="mr-sm"></nz-avatar>
-          {{ settings.user.name }}
-      </div>
-      <nz-dropdown-menu #userMenu="nzDropdownMenu">
+      <nz-dropdown nzPlacement="bottomRight">
+          <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown>
+              <nz-avatar [nzText]="settings.user.name&&settings.user.name.substr(0,2)" nzSize="default" class="mr-sm"></nz-avatar>
+              {{settings.user.name}}
+          </div>
           <div nz-menu class="width-sm">
               <div nz-menu-item routerLink="/change-pwd">
                   <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>修改密码
               </div>
               <div nz-menu-item (click)="logout()">
-                  <i nz-icon nzType="logout" nzTheme="outline"></i> 退出登录
+                  <i nz-icon nzType="logout" nzTheme="outline" class="mr-sm"></i>退出登录
               </div>
           </div>
-      </nz-dropdown-menu>
+      </nz-dropdown>
   `
 })
 export class HeaderUserComponent {

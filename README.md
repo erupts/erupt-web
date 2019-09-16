@@ -18,7 +18,7 @@ erupt前端展示程序
 1. 安装 nodejs
 2. 安装 typescript
 3. 安装 angular cli
-4. 在项目根目录执行 npm install
+4. 在项目根目录执行 sudo npm install
 
 #### 参与贡献
 

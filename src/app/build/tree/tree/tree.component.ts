@@ -2,7 +2,6 @@ import { Component, Inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { DataService } from "../../../erupt/service/data.service";
 import { ActivatedRoute } from "@angular/router";
 import { NzFormatEmitEvent, NzMessageService, NzModalService, NzTreeBaseService } from "ng-zorro-antd";
-import { colRules } from "../../../erupt/model/util.model";
 import { DataHandlerService } from "../../../erupt/service/data-handler.service";
 import { EruptBuildModel } from "../../../erupt/model/erupt-build.model";
 import { Subscription } from "rxjs";
@@ -35,7 +34,7 @@ export class TreeComponent implements OnInit, OnDestroy {
 
   private router$: Subscription;
 
-  @ViewChild("tree", { static: false }) tree: NzTreeBaseService;
+  @ViewChild("tree") tree: NzTreeBaseService;
 
   constructor(private dataService: DataService,
               public route: ActivatedRoute,

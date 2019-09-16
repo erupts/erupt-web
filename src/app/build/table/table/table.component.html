@@ -22,17 +22,13 @@
 
         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.importable">
             &nbsp;
-            <nz-button-group>
-                <button nz-button (click)="importableExcel()"><i nz-icon nzType="import" nzTheme="outline"></i>导入Excel</button>
-                <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzPlacement="bottomRight">
-                    <i nz-icon nzType="ellipsis"></i>
-                </button>
-            </nz-button-group>
-            <nz-dropdown-menu #menu>
+            <nz-dropdown-button (nzClick)="importableExcel()">
+                <i nz-icon nzType="import" nzTheme="outline"></i>
+                <span style="margin-left: 8px;">导入Excel</span>
                 <ul nz-menu>
                     <li nz-menu-item (click)="downloadExcelTemplate()"><i nz-icon nzType="build" nzTheme="outline"></i>下载模板</li>
                 </ul>
-            </nz-dropdown-menu>
+            </nz-dropdown-button>
             &nbsp;
         </ng-container>
 

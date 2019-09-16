@@ -18,8 +18,6 @@ import { SettingDrawerItemComponent } from "./default/setting-drawer/setting-dra
 // passport
 import { LayoutPassportComponent } from "./passport/passport.component";
 
-import { DragDropModule } from "@angular/cdk/drag-drop";
-
 const SETTINGDRAWER = [SettingDrawerComponent, SettingDrawerItemComponent];
 
 const COMPONENTS = [
@@ -45,7 +43,7 @@ const PASSPORT = [
 ];
 
 @NgModule({
-  imports: [SharedModule, DragDropModule],
+  imports: [SharedModule],
   entryComponents: SETTINGDRAWER,
   declarations: [
     ...COMPONENTS,
