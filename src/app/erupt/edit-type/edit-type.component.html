@@ -360,11 +360,11 @@
                                     </nz-input-group>
                                     <ng-template #refBtn>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.$value">
-                                            <i nz-icon type="close-circle" theme="fill" class="point" (click)="clearReferValue(field)"></i>
+                                            <i nz-icon nzType="close-circle" theme="fill" class="point" (click)="clearReferValue(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
                                             <i nz-icon (click)="field.eruptFieldJson.edit.readOnly||createRefTreeModal(field)"
-                                               type="database" theme="fill" class="point"></i>
+                                               nzType="database" theme="fill" class="point"></i>
                                         </ng-container>
                                     </ng-template>
                                 </se>
@@ -392,11 +392,11 @@
                                     </nz-input-group>
                                     <ng-template #refBtn>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.$value">
-                                            <i nz-icon type="close-circle" theme="fill" class="point" (click)="clearReferValue(field)"></i>
+                                            <i nz-icon nzType="close-circle" theme="fill" class="point" (click)="clearReferValue(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
                                             <i nz-icon (click)="field.eruptFieldJson.edit.readOnly||createRefTableModal(field)"
-                                               type="database" theme="fill" class="point"></i>
+                                               nzType="database" theme="fill" class="point"></i>
                                         </ng-container>
                                     </ng-template>
                                 </se>
@@ -461,7 +461,7 @@
                                                        [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
                                                        [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
                                                 <p class="ant-upload-drag-icon">
-                                                    <i nz-icon type="plus"></i>
+                                                    <i nz-icon nzType="plus"></i>
                                                 </p>
                                             </nz-upload>
                                         </ng-container>
@@ -475,7 +475,7 @@
                                                        [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
                                                        [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
                                                 <p class="ant-upload-drag-icon">
-                                                    <i nz-icon type="inbox"></i>
+                                                    <i nz-icon nzType="inbox"></i>
                                                 </p>
                                                 <p class="ant-upload-text">单击或拖动文件到此区域上传</p>
                                                 <p class="ant-upload-hint">{{field.eruptFieldJson.edit.placeHolder}}</p>

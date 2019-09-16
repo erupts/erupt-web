@@ -3,13 +3,13 @@
     <div nz-col [nzXs]="24" [nzSm]="8" [nzMd]="8" [nzLg]="8">
         <button nz-button nzType="dashed" nzBlock (click)="addBlock()" class="mb-sm"
                 *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
-            <i nz-icon type="plus" theme="outline"></i>
+            <i nz-icon nzType="plus" theme="outline"></i>
         </button>
         <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
             <input type="text" nz-input placeholder="Search" [(ngModel)]="searchValue">
         </nz-input-group>
         <ng-template #suffixIcon>
-            <i nz-icon type="search"></i>
+            <i nz-icon nzType="search"></i>
         </ng-template>
         <br>
         <nz-card [nzBodyStyle]="{padding:'10px',height:ww-270+'px',overflow: 'auto'}" [nzLoading]="treeLoading" [nzBordered]="true"
@@ -32,11 +32,11 @@
             <div nz-col [nzXs]="24">
                 <span [hidden]="!selectLeaf">
                     <button nz-button (click)="save()" [disabled]="loading" *ngIf="eruptBuildModel.eruptModel.eruptJson.power.edit">
-                        <i nz-icon type="save" theme="outline"></i>保存
+                        <i nz-icon nzType="save" theme="outline"></i>保存
                     </button>
                     <button nz-button nzType="danger" (click)="del()" [disabled]="loading"
                             *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
-                        <i nz-icon type="delete" theme="outline"></i>删除
+                        <i nz-icon nzType="delete" theme="outline"></i>删除
                     </button>
                     <button nz-button nzType="dashed" (click)="addSub()" [disabled]="loading" *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add
                     &&eruptBuildModel.eruptModel.eruptJson.tree.pid">
@@ -45,13 +45,13 @@
                 </span>
                 <span [hidden]="selectLeaf">
                     <button nz-button (click)="add()" [disabled]="loading" *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
-                        <i nz-icon type="plus" theme="outline"></i>增加
+                        <i nz-icon nzType="plus" theme="outline"></i>增加
                     </button>
                 </span>
                 <button class="float-right" nz-button nzType="danger" nzGhost
                         (click)="showEdit=false" [disabled]="loading"
                         *ngIf="showEdit">
-                    <i nz-icon type="close" theme="outline"></i>
+                    <i nz-icon nzType="close" theme="outline"></i>
                 </button>
             </div>
         </div>

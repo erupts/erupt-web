@@ -16,7 +16,7 @@ import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
                   <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>修改密码
               </div>
               <div nz-menu-item (click)="logout()">
-                  <i class="anticon anticon-logout mr-sm"></i>退出登录
+                  <i nz-icon nzType="logout" nzTheme="outline"></i> 退出登录
               </div>
           </div>
       </nz-dropdown>
