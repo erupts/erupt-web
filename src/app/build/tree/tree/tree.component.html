@@ -1,7 +1,7 @@
 <page-header [autoTitle]="false" [title]="null"></page-header>
 <div nz-row [nzGutter]="16" *ngIf="eruptBuildModel">
     <div nz-col [nzXs]="24" [nzSm]="8" [nzMd]="8" [nzLg]="8">
-        <button nz-button nzType="dashed" nzBlock (click)="addBlock()" class="mb-sm"
+        <button nz-button nzType="dashed" style="display:block;width: 100%;" (click)="addBlock()" class="mb-sm"
                 *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
             <i nz-icon nzType="plus" theme="outline"></i>
         </button>
