@@ -15,7 +15,7 @@
       "severity": "warn"
     },
     "eofline": true,
-    "forin": true,
+    "forin": false,
     "import-blacklist": [
       true,
       "rxjs/Rx"
@@ -58,7 +58,7 @@
     "no-duplicate-super": true,
     "no-empty": false,
     "no-empty-interface": true,
-    "no-eval": true,
+    "no-eval": false,
     "no-inferrable-types": [
       false,
       "ignore-params"
@@ -135,7 +135,8 @@
         "passport",
         "exception",
         "layout",
-        "header"
+        "header",
+        "erupt"
       ],
       "camelCase"
     ],

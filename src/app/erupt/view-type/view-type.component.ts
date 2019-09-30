@@ -28,12 +28,14 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     if (this.value) {
-      if (this.view.eruptFieldModel.eruptFieldJson.edit.type == EditType.ATTACHMENT) {
+      if (this.view.eruptFieldModel.eruptFieldJson.edit.type === EditType.ATTACHMENT) {
         const attachmentType = this.view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
         let _paths = (<string>this.value).split(attachmentType.fileSeparator);
         for (let path of _paths) {
           this.paths.push(DataService.previewAttachment(path));
         }
+      } else {
+        this.paths.push(DataService.previewAttachment(this.value));
       }
       switch (this.view.viewType) {
         case ViewType.ATTACHMENT_DIALOG:

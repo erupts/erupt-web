@@ -34,7 +34,7 @@ export class CkeditorComponent implements OnInit {
     let that = this;
     setTimeout(() => {
       // <script src="https://cdn.ckeditor.com/ckeditor5/12.4.0/decoupled-document/ckeditor.js"></script>
-      this.lazy.loadScript("//cdn.ckeditor.com/ckeditor5/12.4.0/decoupled-document/ckeditor.js").then(() => {
+      this.lazy.loadScript("/assets/js/ckeditor5.js").then(() => {
         this.lazy.load(["/assets/js/ckeditor5-zh-cn.js"]).then(() => {
           DecoupledEditor.create(this.ref.nativeElement.querySelector("#editor"), {
             language: "zh-cn",

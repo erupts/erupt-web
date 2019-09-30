@@ -25,7 +25,7 @@ export class PageComponent implements OnInit {
       this.url = null;
       this.targetUrl = null;
       if (map.has("page")) {
-        this.url = "/page/" + map.get("page");
+        this.url = "page/" + map.get("page");
       } else if (map.has("site")) {
         let target = map.get("target");
         if (target === "blank") {
@@ -35,7 +35,7 @@ export class PageComponent implements OnInit {
           this.url = map.get("site");
         }
       } else {
-        this.url = "/page/home.html";
+        this.url = "page/home.html";
       }
     });
   }

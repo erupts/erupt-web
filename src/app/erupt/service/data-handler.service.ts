@@ -186,8 +186,8 @@ export class DataHandlerService {
 
       //数据类型
       if (view.eruptFieldModel.fieldReturnName === "number" &&
-        (view.eruptFieldModel.eruptFieldJson.edit.type == EditType.INPUT
-          || view.eruptFieldModel.eruptFieldJson.edit.type == EditType.SLIDER)) {
+        (view.eruptFieldModel.eruptFieldJson.edit.type === EditType.INPUT
+          || view.eruptFieldModel.eruptFieldJson.edit.type === EditType.SLIDER)) {
         obj.type = "number";
         // obj.width = "100px";
       } else if (view.eruptFieldModel.fieldReturnName === "Date") {
@@ -254,8 +254,12 @@ export class DataHandlerService {
           obj.format = (item: any) => {
             if (item[view.column]) {
               const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
-              let img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
-              return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
+              if (attachmentType) {
+                let img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
+                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
+              } else {
+                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(item[view.column])}" />`;
+              }
             } else {
               return "";
             }
@@ -384,11 +388,7 @@ export class DataHandlerService {
 
       if (view.template) {
         obj.format = (item: any) => {
-          if (item[view.column]) {
-            return eval(view.template);
-          } else {
-            return "";
-          }
+          return eval(view.template);
         };
       }
       if (view.className) {
@@ -475,7 +475,7 @@ export class DataHandlerService {
       const edit = field.eruptFieldJson.edit;
       switch (edit.type) {
         case EditType.INPUT:
-          if (edit.$value) {
+          if (edit.$value || edit.$value === 0) {
             const inputType = edit.inputType;
             if (inputType.prefixValue || inputType.suffixValue) {
               eruptData[field.fieldName] = (inputType.prefixValue || "") + edit.$value + (inputType.suffixValue || "");
@@ -485,7 +485,7 @@ export class DataHandlerService {
           }
           break;
         case EditType.CHOICE:
-          if (edit.$value) {
+          if (edit.$value || edit.$value === 0) {
             if (edit.choiceType.type === ChoiceEnum.SELECT_MULTI || edit.choiceType.type === ChoiceEnum.TAGS ||
               edit.choiceType.type === ChoiceEnum.CHECKBOX) {
               let val = (<string[]>edit.$value).join(edit.choiceType.joinSeparator);
@@ -562,7 +562,7 @@ export class DataHandlerService {
           eruptData[field.fieldName] = edit.$value;
           break;
         default:
-          if (edit.$value) {
+          if (edit.$value || edit.$value === 0) {
             eruptData[field.fieldName] = edit.$value;
           }
           break;

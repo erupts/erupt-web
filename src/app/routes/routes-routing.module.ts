@@ -23,7 +23,7 @@ const routes: Routes = [
     path: "",
     component: LayoutDefaultComponent,
     children: [
-      { path: "", redirectTo: "page", pathMatch: "full", data: { title: "首页", titleI18n: "home" } },
+      { path: "", redirectTo: "page", pathMatch: "full", data: { title: "首页" } },
       { path: "dashboard", component: DashboardComponent, data: { title: "仪表盘", titleI18n: "dashboard" } },
       { path: "build/table/:name", loadChildren: "../build/table/table.module#TableModule", pathMatch: "full" },
       { path: "build/tree/:name", loadChildren: "../build/tree/tree.module#TreeModule", pathMatch: "full" },

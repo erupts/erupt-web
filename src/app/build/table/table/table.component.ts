@@ -198,7 +198,7 @@ export class TableComponent implements OnInit, OnDestroy {
               if (validateResult) {
                 let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
                 let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
-                if (res.status == Status.SUCCESS) {
+                if (res.status === Status.SUCCESS) {
                   this.msg.success("修改成功");
                   this.st.reload();
                   return true;
@@ -222,7 +222,8 @@ export class TableComponent implements OnInit, OnDestroy {
         },
         type: "del",
         click: (record) => {
-          this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
+          this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName,
+            record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
             this.st.reload();
             this.msg.success("删除成功");
           });
@@ -301,7 +302,8 @@ export class TableComponent implements OnInit, OnDestroy {
         nzTitle: "请确认是否执行此操作",
         nzContent: ro.title,
         nzOnOk: () => {
-          this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, multi ? this.selectedRows : data, null).subscribe(res => {
+          this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code,
+            multi ? this.selectedRows : data, null).subscribe(res => {
             this.st.reload();
           });
         }
@@ -325,7 +327,7 @@ export class TableComponent implements OnInit, OnDestroy {
       nzOnOk: async () => {
         let res: EruptApiModel = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
           this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
-        if (res.status == Status.SUCCESS) {
+        if (res.status === Status.SUCCESS) {
           this.msg.success("新增成功");
           this.st.reload();
           return true;
