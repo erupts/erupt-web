@@ -13,6 +13,7 @@ export class RestPath {
 
 export enum EditType {
   INPUT = "INPUT",                           //输入框
+  NUMBER = "NUMBER",
   TEXTAREA = "TEXTAREA",                     //大文本域
   CHOICE = "CHOICE",                         //选择框
   TAGS = "TAGS",                             //标签
@@ -29,6 +30,7 @@ export enum EditType {
   SLIDER = "SLIDER",                         //数字滑块
   EMPTY = "EMPTY",
   DEPEND_SWITCH = "DEPEND_SWITCH",
+  HTML = "HTML",
   HTML_EDIT = "HTML_EDIT",
   MAP = "MAP",
 }

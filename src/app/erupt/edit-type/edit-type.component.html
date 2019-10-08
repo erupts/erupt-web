@@ -11,93 +11,101 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <ng-container *ngIf="field.fieldReturnName==='number'">
-                                    <ng-container *ngIf="eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague">
-                                        <nz-input-group [nzSize]="size" class="erupt-input">
-                                            <nz-input-number [nzSize]="size" style="width: 45%;"
-                                                             [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                             [(ngModel)]="field.eruptFieldJson.edit.$l_val"
-                                                             [name]="field.fieldName"
-                                                             [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                             [nzStep]="1"></nz-input-number>
-                                            <nz-input-group [nzSize]="size" style="width: 10%;">
-                                                <div style="line-height: 100%;text-align: center">
-                                                    ~
-                                                </div>
-                                            </nz-input-group>
-                                            <nz-input-number [nzSize]="size" style="width: 45%;"
-                                                             [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                             [(ngModel)]="field.eruptFieldJson.edit.$r_val"
-                                                             [name]="field.fieldName"
-                                                             [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                             [nzStep]="1"></nz-input-number>
-                                        </nz-input-group>
-                                    </ng-container>
-                                    <ng-container *ngIf="eruptModel.mode!='search' ||!field.eruptFieldJson.edit.search.vague">
-                                        <nz-input-number class="erupt-input" [nzSize]="size"
-                                                         [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                         [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                         [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                         [name]="field.fieldName"
-                                                         [nzStep]="1"></nz-input-number>
-                                    </ng-container>
-                                </ng-container>
-                                <ng-container *ngIf="field.fieldReturnName!=='number'">
-                                    <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==0&&
+                                <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==0&&
                                                              field.eruptFieldJson.edit.inputType.suffix.length==0">
-                                        <input nz-input [nzSize]="size" class="erupt-input" autocomplete="off"
-                                               [ngStyle]="{borderStyle:(eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague)?'dashed':''}"
-                                               (keyup)="enterEvent($event)"
+                                    <input nz-input [nzSize]="size" class="erupt-input" autocomplete="off"
+                                           [ngStyle]="{borderStyle:(eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague)?'dashed':''}"
+                                           (keyup)="enterEvent($event)"
+                                           [maxLength]="field.eruptFieldJson.edit.inputType.length"
+                                           [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                           [name]="field.fieldName"
+                                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                           [required]="field.eruptFieldJson.edit.notNull"
+                                           [disabled]="field.eruptFieldJson.edit.readOnly">
+                                </ng-container>
+                                <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length>0||
+                                                             field.eruptFieldJson.edit.inputType.suffix.length>0">
+                                    <nz-input-group
+                                            [nzAddOnBefore]="field.eruptFieldJson.edit.inputType.prefix.length>0&&addOnBeforeTemplate"
+                                            [nzAddOnAfter]="field.eruptFieldJson.edit.inputType.suffix.length>0&&addOnAfterTemplate"
+                                            [nzSize]="size" class="erupt-input">
+                                        <input nz-input autocomplete="off"
                                                [maxLength]="field.eruptFieldJson.edit.inputType.length"
+                                               [placeholder]="field.eruptFieldJson.edit.placeHolder"
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                [name]="field.fieldName"
-                                               [placeholder]="field.eruptFieldJson.edit.placeHolder"
                                                [required]="field.eruptFieldJson.edit.notNull"
                                                [disabled]="field.eruptFieldJson.edit.readOnly">
-                                    </ng-container>
-                                    <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length>0||
-                                                             field.eruptFieldJson.edit.inputType.suffix.length>0">
-                                        <nz-input-group
-                                                [nzAddOnBefore]="field.eruptFieldJson.edit.inputType.prefix.length>0&&addOnBeforeTemplate"
-                                                [nzAddOnAfter]="field.eruptFieldJson.edit.inputType.suffix.length>0&&addOnAfterTemplate"
-                                                [nzSize]="size" class="erupt-input">
-                                            <input nz-input autocomplete="off"
-                                                   [maxLength]="field.eruptFieldJson.edit.inputType.length"
-                                                   [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                                   [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                   [name]="field.fieldName"
-                                                   [required]="field.eruptFieldJson.edit.notNull"
-                                                   [disabled]="field.eruptFieldJson.edit.readOnly">
+                                    </nz-input-group>
+                                    <!--prefix and suffix template-->
+                                    <ng-template #addOnBeforeTemplate>
+                                        <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==1">
+                                            {{field.eruptFieldJson.edit.inputType.prefix[0].label}}
+                                        </ng-container>
+                                        <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length>1">
+                                            <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType.prefixValue"
+                                                       [name]="field.fieldName+'before'" style="min-width: 70px;">
+                                                <ng-container *ngFor="let vl of field.eruptFieldJson.edit.inputType.prefix">
+                                                    <nz-option [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
+                                                </ng-container>
+                                            </nz-select>
+                                        </ng-container>
+                                    </ng-template>
+                                    <ng-template #addOnAfterTemplate>
+                                        <ng-container *ngIf="field.eruptFieldJson.edit.inputType.suffix.length==1">
+                                            {{field.eruptFieldJson.edit.inputType.suffix[0].label}}
+                                        </ng-container>
+                                        <ng-container *ngIf="field.eruptFieldJson.edit.inputType.suffix.length>1">
+                                            <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType.suffixValue"
+                                                       [name]="field.fieldName+'after'" style="min-width: 70px;">
+                                                <ng-container *ngFor="let vl of field.eruptFieldJson.edit.inputType.suffix">
+                                                    <nz-option [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
+                                                </ng-container>
+                                            </nz-select>
+                                        </ng-container>
+                                    </ng-template>
+                                    <!--end prefix and suffix template-->
+                                </ng-container>
+                            </se>
+                        </div>
+                    </ng-container>
+                    <!-- number-->
+                    <ng-container *ngSwitchCase="editType.NUMBER">
+                        <div class="col-div" nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                             [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <ng-container *ngIf="eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague">
+                                    <nz-input-group [nzSize]="size" class="erupt-input">
+                                        <nz-input-number [nzSize]="size" style="width: 45%;"
+                                                         [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                         [(ngModel)]="field.eruptFieldJson.edit.$l_val"
+                                                         [name]="field.fieldName"
+                                                         [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
+                                                         [nzStep]="1"></nz-input-number>
+                                        <nz-input-group [nzSize]="size" style="width: 10%;">
+                                            <div style="line-height: 100%;text-align: center">
+                                                ~
+                                            </div>
                                         </nz-input-group>
-                                        <!--prefix and suffix template-->
-                                        <ng-template #addOnBeforeTemplate>
-                                            <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==1">
-                                                {{field.eruptFieldJson.edit.inputType.prefix[0].label}}
-                                            </ng-container>
-                                            <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length>1">
-                                                <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType.prefixValue"
-                                                           [name]="field.fieldName+'before'" style="min-width: 70px;">
-                                                    <ng-container *ngFor="let vl of field.eruptFieldJson.edit.inputType.prefix">
-                                                        <nz-option [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
-                                                    </ng-container>
-                                                </nz-select>
-                                            </ng-container>
-                                        </ng-template>
-                                        <ng-template #addOnAfterTemplate>
-                                            <ng-container *ngIf="field.eruptFieldJson.edit.inputType.suffix.length==1">
-                                                {{field.eruptFieldJson.edit.inputType.suffix[0].label}}
-                                            </ng-container>
-                                            <ng-container *ngIf="field.eruptFieldJson.edit.inputType.suffix.length>1">
-                                                <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType.suffixValue"
-                                                           [name]="field.fieldName+'after'" style="min-width: 70px;">
-                                                    <ng-container *ngFor="let vl of field.eruptFieldJson.edit.inputType.suffix">
-                                                        <nz-option [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
-                                                    </ng-container>
-                                                </nz-select>
-                                            </ng-container>
-                                        </ng-template>
-                                        <!--end prefix and suffix template-->
-                                    </ng-container>
+                                        <nz-input-number [nzSize]="size" style="width: 45%;"
+                                                         [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                         [(ngModel)]="field.eruptFieldJson.edit.$r_val"
+                                                         [name]="field.fieldName"
+                                                         [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
+                                                         [nzStep]="1"></nz-input-number>
+                                    </nz-input-group>
+                                </ng-container>
+                                <ng-container *ngIf="eruptModel.mode!='search' ||!field.eruptFieldJson.edit.search.vague">
+                                    <nz-input-number class="erupt-input" [nzSize]="size"
+                                                     [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                     [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                     [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
+                                                     [name]="field.fieldName"
+                                                     [nzStep]="1"></nz-input-number>
                                 </ng-container>
                             </se>
                         </div>
@@ -353,6 +361,7 @@
                                     [optionalHelp]="field.eruptFieldJson.edit.desc">
                                     <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
                                         <input nz-input [nzSize]="size"
+                                               autocomplete="off"
                                                [required]="field.eruptFieldJson.edit.notNull"
                                                (click)="createRefTreeModal(field)"
                                                [readOnly]="true"
@@ -385,6 +394,7 @@
                                     [optionalHelp]="field.eruptFieldJson.edit.desc">
                                     <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
                                         <input nz-input [nzSize]="size"
+                                               autocomplete="off"
                                                [required]="field.eruptFieldJson.edit.notNull"
                                                (click)="createRefTableModal(field)"
                                                [readOnly]="true"
@@ -520,7 +530,11 @@
                             </se>
                         </div>
                     </ng-container>
-
+                    <ng-container *ngSwitchCase="editType.HTML">
+                        <div nz-col [nzSpan]="24">
+                            <div [innerHTML]="field.eruptFieldJson.edit.$value|html"></div>
+                        </div>
+                    </ng-container>
                     <ng-container *ngSwitchCase="editType.MAP">
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"

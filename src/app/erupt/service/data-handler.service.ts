@@ -96,13 +96,13 @@ export class DataHandlerService {
       if (field.eruptFieldJson.edit.type === EditType.DEPEND_SWITCH) {
         let type = field.eruptFieldJson.edit.dependSwitchType.type;
         field.eruptFieldJson.edit.dependSwitchType.attr.forEach(attr => {
-          if (field.value && field.value == attr.value) {
+          if (field.value && field.value === attr.value) {
             return;
           } else {
             attr.dependEdits.forEach(editName => {
               const fm = eruptModel.eruptFieldModelMap.get(editName);
               if (fm) {
-                if (type == DependSwitchTypeEnum.HIDDEN) {
+                if (type === DependSwitchTypeEnum.HIDDEN) {
                   fm.eruptFieldJson.edit.show = false;
                 } else {
                   fm.eruptFieldJson.edit.readOnly = true;
@@ -185,9 +185,8 @@ export class DataHandlerService {
       }
 
       //数据类型
-      if (view.eruptFieldModel.fieldReturnName === "number" &&
-        (view.eruptFieldModel.eruptFieldJson.edit.type === EditType.INPUT
-          || view.eruptFieldModel.eruptFieldJson.edit.type === EditType.SLIDER)) {
+      if (view.eruptFieldModel.eruptFieldJson.edit.type === EditType.NUMBER
+        || view.eruptFieldModel.eruptFieldJson.edit.type === EditType.SLIDER) {
         obj.type = "number";
         // obj.width = "100px";
       } else if (view.eruptFieldModel.fieldReturnName === "Date") {
@@ -446,13 +445,6 @@ export class DataHandlerService {
       const edit = field.eruptFieldJson.edit;
       if (edit.search.vague) {
         switch (edit.type) {
-          case EditType.INPUT:
-            if (field.fieldReturnName === "number") {
-              if (edit.$l_val && edit.$r_val) {
-                obj[field.fieldName] = [edit.$l_val, edit.$r_val];
-              }
-            }
-            break;
           case EditType.CHOICE:
             let arr = [];
             for (let vl of edit.choiceType.vl) {
@@ -461,6 +453,11 @@ export class DataHandlerService {
               }
             }
             obj[field.fieldName] = arr;
+            break;
+          case EditType.NUMBER:
+            if (edit.$l_val && edit.$r_val) {
+              obj[field.fieldName] = [edit.$l_val, edit.$r_val];
+            }
             break;
         }
       }
@@ -475,7 +472,7 @@ export class DataHandlerService {
       const edit = field.eruptFieldJson.edit;
       switch (edit.type) {
         case EditType.INPUT:
-          if (edit.$value || edit.$value === 0) {
+          if (edit.$value) {
             const inputType = edit.inputType;
             if (inputType.prefixValue || inputType.suffixValue) {
               eruptData[field.fieldName] = (inputType.prefixValue || "") + edit.$value + (inputType.suffixValue || "");

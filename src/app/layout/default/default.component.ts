@@ -15,7 +15,7 @@ import { ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, Route
 import { NzIconService, NzMessageService } from "ng-zorro-antd";
 import { Subscription } from "rxjs";
 import { updateHostClass } from "@delon/util";
-import { Menu, MenuService, ScrollService, SettingsService } from "@delon/theme";
+import { Menu, MenuIcon, MenuService, ScrollService, SettingsService } from "@delon/theme";
 import {
   AppstoreOutline,
   ArrowDownOutline,
@@ -163,6 +163,18 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
       function gcMenu(nodes) {
         const tempNodes = [];
         nodes.forEach(node => {
+          let icon: MenuIcon = null;
+          if (node.data.icon) {
+            icon = {
+              type: "class",
+              value: node.data.icon
+            };
+          } else {
+            icon = {
+              type: "icon",
+              value: "unordered-list"
+            };
+          }
           let option: Menu = {
             text: node.data.name,
             linkExact: true,
@@ -170,10 +182,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
             // target:"_blank",
             link: node.data.path,
             hide: node.data.status == 2 && true,
-            icon: {
-              type: "class",
-              value: node.data.icon || "fa fa-th-list"
-            }
+            icon: icon
           };
           if (node.children && node.children.length > 0) {
             tempNodes.push(option);
