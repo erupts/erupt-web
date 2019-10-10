@@ -14,7 +14,7 @@ export class WindowModel {
 
   public static desc: string = WindowModel.config["desc"] || null;
 
-  public static logoPath: string = WindowModel.config["logoPath"] || null;
+  public static logoPath: string = WindowModel.config["logoPath"] || "favicon.ico";
 }
 
 

@@ -5,7 +5,7 @@
     <title></title>
     <!--<base href="/">-->
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <style type="text/css">
         .preloader {
             position: fixed;
@@ -14,7 +14,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #f9f9f9;
+            background: #fff;
             z-index: 9999;
             transition: opacity 1s
         }
@@ -49,10 +49,12 @@
             text-align: center
         }
     </style>
+    <link rel="stylesheet" href="assets/app.css">
+    <link rel="manifest" href="assets/manifest.json">
 </head>
 <body>
 <app-root></app-root>
-<div class="preloader">
+<div class="preloader" style="background: #f9f9f9;">
     <div class="cs-loader">
         <div class="cs-loader-inner">
             <img src="assets/image/loading.gif" alt="">
@@ -60,5 +62,10 @@
     </div>
 </div>
 <script charset="utf-8" src="assets/app.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("asset/service-worker.js");
+  }
+</script>
 </body>
 </html>
