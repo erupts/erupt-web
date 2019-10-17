@@ -12,6 +12,7 @@ import { ReferenceTableComponent } from "../components/reference-table/reference
 import { EruptBuildModel } from "../model/erupt-build.model";
 import { EruptApiModel, Status } from "../model/erupt-api.model";
 import { DataHandlerService } from "../service/data-handler.service";
+import { UtilsService } from "../service/utils.service";
 
 @Component({
   selector: "erupt-edit-type",
@@ -58,6 +59,7 @@ export class EditTypeComponent implements OnInit {
 
   constructor(public dataService: DataService,
               public dataHandlerService: DataHandlerService,
+              public utilsService: UtilsService,
               @Inject(NzModalService) private modal: NzModalService,
               @Inject(NzMessageService) private msg: NzMessageService,
               @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
@@ -71,6 +73,16 @@ export class EditTypeComponent implements OnInit {
     if (this.mode === "addNew") {
       this.dataHandlerService.loadEruptDefaultValue(this.eruptBuildModel);
     }
+    this.eruptModel.eruptFieldModels.forEach(field => {
+      switch (field.eruptFieldJson.edit.type) {
+        case EditType.HTML:
+          this.dataService.getEruptFieldHtml(this.eruptModel.eruptName, field.fieldName).subscribe(res => {
+            let html = this.utilsService.analyseHtml(res);
+            field.eruptFieldJson.edit.$viewValue = html;
+          });
+          break;
+      }
+    });
   }
 
   eruptEditValidate(): boolean {
@@ -93,11 +105,11 @@ export class EditTypeComponent implements OnInit {
     const dsa = field.eruptFieldJson.edit.dependSwitchType.attr;
     const type = field.eruptFieldJson.edit.dependSwitchType.type;
     dsa.forEach(attr => {
-      if (value == attr.value) {
+      if (value === attr.value) {
         attr.dependEdits.forEach(de => {
           const field = this.eruptModel.eruptFieldModelMap.get(de);
           if (field) {
-            if (type == DependSwitchTypeEnum.HIDDEN) {
+            if (type === DependSwitchTypeEnum.HIDDEN) {
               field.eruptFieldJson.edit.show = true;
             } else {
               field.eruptFieldJson.edit.readOnly = false;
@@ -122,12 +134,12 @@ export class EditTypeComponent implements OnInit {
 
   upLoadNzChange({ file, fileList }, field: EruptFieldModel) {
     const status = file.status;
-    if (file.status == "uploading") {
+    if (file.status === "uploading") {
       this.uploadFilesStatus[file.uid] = false;
     }
     if (status === "done") {
       this.uploadFilesStatus[file.uid] = true;
-      if ((<EruptApiModel>file.response).status == Status.ERROR) {
+      if ((<EruptApiModel>file.response).status === Status.ERROR) {
         this.modal.error({
           nzTitle: "ERROR",
           nzContent: file.response.message

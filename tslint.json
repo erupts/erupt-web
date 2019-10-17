@@ -14,7 +14,7 @@
     "deprecation": {
       "severity": "warn"
     },
-    "eofline": true,
+    "eofline": false,
     "forin": false,
     "import-blacklist": [
       true,
@@ -33,7 +33,7 @@
     ],
     "member-access": false,
     "member-ordering": [
-      true,
+      false,
       {
         "order": [
           "static-field",
@@ -148,7 +148,8 @@
         "passport",
         "exception",
         "layout",
-        "header"
+        "header",
+        "erupt"
       ],
       "kebab-case"
     ]

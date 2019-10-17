@@ -2,7 +2,7 @@
  * Created by liyuepeng on 10/17/18.
  */
 import { Inject, Injectable } from "@angular/core";
-import { HttpClient, HttpUrlEncodingCodec } from "@angular/common/http";
+import { HttpClient, HttpResponse, HttpUrlEncodingCodec } from "@angular/common/http";
 import { Tree } from "../model/erupt.model";
 import { _HttpClient } from "@delon/theme";
 import { Observable } from "rxjs";
@@ -16,15 +16,47 @@ import { WindowModel } from "../model/window.model";
 @Injectable()
 export class DataService {
 
-  public upload: string = RestPath.file + "upload/";
-
-  public excelImport: string = RestPath.excel + "import/";
-
   public static PARAM_ERUPT: string = "_erupt";
 
   public static PARAM_TOKEN: string = "_token";
 
+  public upload: string = RestPath.file + "upload/";
+
+  public excelImport: string = RestPath.excel + "import/";
+
   constructor(private http: HttpClient, private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
+  }
+
+  static postExcelFile(url, params?: object) { //params是post请求需要的参数，url是请求url地址
+    let form = document.createElement("form");
+    form.style.display = "none";
+    form.action = url;
+    form.method = "post";
+    document.body.appendChild(form);
+    if (params) {
+      for (let key in params) {
+        let input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = params[key];
+        form.appendChild(input);
+      }
+    }
+    form.submit();
+    form.remove();
+  }
+
+  //获取验证码
+  static getVerifyCodeUrl(account: string): string {
+    return RestPath.erupt + "/code-img" + "?account=" + account + "&_t" + new Date().getTime();
+  }
+
+  static downloadAttachment(path: string): string {
+    return RestPath.file + "download-attachment?path=" + path;
+  }
+
+  static previewAttachment(path: string): string {
+    return RestPath.file + "preview-attachment?path=" + path;
   }
 
   //获取结构
@@ -33,6 +65,16 @@ export class DataService {
       observe: "body",
       headers: {
         erupt: eruptName
+      }
+    });
+  }
+
+  getEruptFieldHtml(eruptName: string, fieldName: string) {
+    return this.http.get(RestPath.build + "html-field/" + eruptName + "/" + fieldName, {
+      responseType: "text",
+      headers: {
+        erupt: eruptName,
+        token: this.tokenService.get().token
       }
     });
   }
@@ -173,7 +215,6 @@ export class DataService {
     );
   }
 
-
   //获取菜单列表
   getMenu(): Observable<any[]> {
     return this._http.get(RestPath.erupt + "/menu", null);
@@ -191,38 +232,6 @@ export class DataService {
 
   createAuthParam(eruptName: string): string {
     return DataService.PARAM_ERUPT + "=" + eruptName + "&" + DataService.PARAM_TOKEN + "=" + this.tokenService.get().token;
-  }
-
-  static postExcelFile(url, params?: object) { //params是post请求需要的参数，url是请求url地址
-    let form = document.createElement("form");
-    form.style.display = "none";
-    form.action = url;
-    form.method = "post";
-    document.body.appendChild(form);
-    if (params) {
-      for (let key in params) {
-        let input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = params[key];
-        form.appendChild(input);
-      }
-    }
-    form.submit();
-    form.remove();
-  }
-
-  //获取验证码
-  static getVerifyCodeUrl(account: string): string {
-    return RestPath.erupt + "/code-img" + "?account=" + account + "&_t" + new Date().getTime();
-  }
-
-  static downloadAttachment(path: string): string {
-    return RestPath.file + "download-attachment?path=" + path;
-  }
-
-  static previewAttachment(path: string): string {
-    return RestPath.file + "preview-attachment?path=" + path;
   }
 
 }

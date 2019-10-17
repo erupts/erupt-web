@@ -14,6 +14,7 @@ import { AmapComponent } from "./components/amap/amap.component";
 import { ExcelImportComponent } from "./components/excel-import/excel-import.component";
 import { ReferenceTableComponent } from "./components/reference-table/reference-table.component";
 import { ViewTypeComponent } from "./view-type/view-type.component";
+import { UtilsService } from "./service/utils.service";
 
 @NgModule({
   imports: [
@@ -23,6 +24,7 @@ import { ViewTypeComponent } from "./view-type/view-type.component";
   ],
   providers: [
     DataService,
+    UtilsService,
     DataHandlerService
   ],
   exports: [

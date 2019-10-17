@@ -37,10 +37,11 @@ export interface Edit {
   type: EditType;
   show: boolean;
   readOnly: boolean;
-  placeHolder: string
+  placeHolder: string;
   search: Search;
   tabType: TabType;
   inputType: InputType;
+  numberType: NumberType;
   referenceTreeType: ReferenceTreeType;
   referenceTableType: ReferenceTableType;
   attachmentType: AttachmentType;
@@ -48,7 +49,7 @@ export interface Edit {
   choiceType: ChoiceType;
   dateType: DateType;
   sliderType: SliderType;
-  dependSwitchType: DependSwitchType
+  dependSwitchType: DependSwitchType;
   $tabTreeViewData?: any;
   $value?: any;
   $viewValue?: any;
@@ -70,6 +71,11 @@ interface InputType {
   suffix: VL[];
   prefixValue?: string;
   suffixValue?: string;
+}
+
+interface NumberType {
+  min: number;
+  max: number;
 }
 
 export interface ReferenceTreeType {

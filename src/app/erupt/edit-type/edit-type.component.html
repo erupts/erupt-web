@@ -85,6 +85,8 @@
                                                          [(ngModel)]="field.eruptFieldJson.edit.$l_val"
                                                          [name]="field.fieldName"
                                                          [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
+                                                         [nzMin]="field.eruptFieldJson.edit.numberType.min"
+                                                         [nzMax]="field.eruptFieldJson.edit.numberType.max"
                                                          [nzStep]="1"></nz-input-number>
                                         <nz-input-group [nzSize]="size" style="width: 10%;">
                                             <div style="line-height: 100%;text-align: center">
@@ -96,6 +98,8 @@
                                                          [(ngModel)]="field.eruptFieldJson.edit.$r_val"
                                                          [name]="field.fieldName"
                                                          [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
+                                                         [nzMin]="field.eruptFieldJson.edit.numberType.min"
+                                                         [nzMax]="field.eruptFieldJson.edit.numberType.max"
                                                          [nzStep]="1"></nz-input-number>
                                     </nz-input-group>
                                 </ng-container>
@@ -105,6 +109,8 @@
                                                      [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                      [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
                                                      [name]="field.fieldName"
+                                                     [nzMin]="field.eruptFieldJson.edit.numberType.min"
+                                                     [nzMax]="field.eruptFieldJson.edit.numberType.max"
                                                      [nzStep]="1"></nz-input-number>
                                 </ng-container>
                             </se>
@@ -532,7 +538,7 @@
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.HTML">
                         <div nz-col [nzSpan]="24">
-                            <div [innerHTML]="field.eruptFieldJson.edit.$value|html"></div>
+                            <div [innerHTML]="field.eruptFieldJson.edit.$viewValue|html"></div>
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.MAP">
