@@ -14,8 +14,24 @@ export class UtilsService {
     let parser = new DOMParser();
     let xmlDoc = parser.parseFromString(`<html><body>${content}</body></html>`, "text/html");
     let body = xmlDoc.getElementsByTagName("body")[0];
+    let html = "";
+    // link
+    let links = body.getElementsByTagName("link");
+    for (let i = 0; i < links.length; i++) {
+      let link = links[i];
+      if (link.getAttribute("rel") === "stylesheet") {
+        this.loadStyle(link.getAttribute("href")).then();
+      }
+    }
+    //style
+    let styles = body.getElementsByTagName("style");
+    for (let i = 0; i < styles.length; i++) {
+      let style = styles[i];
+      html += style.outerHTML;
+    }
     //script脚本再页面渲染完成后执行
     setTimeout(() => {
+      // script
       let scripts = xmlDoc.getElementsByTagName("script");
       for (let i = 0; i < scripts.length; i++) {
         let script = scripts[i];
@@ -25,15 +41,20 @@ export class UtilsService {
         } else {
           setTimeout(function() {
             eval(script.innerHTML);
-          }, 100);
+          }, 200);
         }
       }
     }, 200);
-    return body.getElementsByTagName("template")[0].innerHTML;
+    html += body.getElementsByTagName("template")[0].innerHTML;
+    return html;
   }
 
   async loadScript(src) {
-    await this.lazy.loadScript(src).then();
+    await this.lazy.loadScript(src).then(res => res);
+  }
+
+  async loadStyle(src) {
+    await this.lazy.loadStyle(src).then(res => res);
   }
 
 }
