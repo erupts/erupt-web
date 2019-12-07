@@ -2,6 +2,7 @@ import { Component, Inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { SettingsService } from "@delon/theme";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
+import {DataService} from "../../../../erupt/service/data.service";
 
 @Component({
   selector: "header-user",
@@ -26,11 +27,13 @@ export class HeaderUserComponent {
   constructor(
     public settings: SettingsService,
     private router: Router,
-    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService
+    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+    private data:DataService
   ) {
   }
 
   logout() {
+    this.data.logout().subscribe();
     this.tokenService.clear();
     this.router.navigateByUrl(this.tokenService.login_url);
   }

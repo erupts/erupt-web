@@ -1,7 +1,7 @@
 <div nz-row [nzGutter]="16">
     <form nz-form [nzLayout]="layout" se-container>
         <ng-container *ngFor="let field of eruptModel.eruptFieldModels;">
-            <ng-container *ngIf="field.eruptFieldJson.edit.show&&field.eruptFieldJson.edit.title">
+            <ng-container *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.show&&field.eruptFieldJson.edit.title">
                 <ng-container [ngSwitch]="field.eruptFieldJson.edit.type">
                     <ng-container *ngSwitchCase="editType.INPUT">
                         <div class="col-div" nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"

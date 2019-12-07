@@ -5,6 +5,7 @@ import { WindowModel } from "./window.model";
 
 export class RestPath {
   public static erupt: string = WindowModel.domain + "/erupt-api";
+  public static tpl:string = RestPath.erupt + "/tpl/";
   public static build: string = RestPath.erupt + "/build/";
   public static data: string = RestPath.erupt + "/data/";
   public static excel: string = RestPath.erupt + "/excel/";

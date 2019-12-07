@@ -116,7 +116,9 @@ export class TableComponent implements OnInit, OnDestroy {
   buildReadOnlyErupt() {
     let copyErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
     copyErupt.eruptFieldModels.forEach((field) => {
-      field.eruptFieldJson.edit.readOnly = true;
+      if (field.eruptFieldJson.edit){
+        field.eruptFieldJson.edit.readOnly = true;
+      }
     });
     this.readonlyErupt = copyErupt;
   }

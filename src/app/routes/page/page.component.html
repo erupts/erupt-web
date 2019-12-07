@@ -1,4 +1,5 @@
 <div id="page-container">
+    <div *ngIf="html"></div>
     <p *ngIf="targetUrl" class="text-center" style="font-size: 2.6em;position: relative;top: 30%;">
         <a [href]="targetUrl" target="_blank">{{targetUrl}}</a>
     </p>
