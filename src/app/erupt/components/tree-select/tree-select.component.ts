@@ -29,15 +29,9 @@ export class TreeSelectComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.parentEruptName) {
-      this.data.queryReferenceTreeDataByParentErupt(this.parentEruptName, this.eruptModel.eruptName, this.eruptField.fieldName, this.dependVal).subscribe(tree => {
-        this.list = this.dataHandler.dataTreeToZorroTree(tree);
-      });
-    } else {
-      this.data.queryReferenceTreeData(this.eruptModel.eruptName, this.eruptField.fieldName, this.dependVal).subscribe(tree => {
-        this.list = this.dataHandler.dataTreeToZorroTree(tree);
-      });
-    }
+    this.data.queryReferenceTreeData(this.eruptModel.eruptName, this.eruptField.fieldName, this.dependVal,this.parentEruptName).subscribe(tree => {
+      this.list = this.dataHandler.dataTreeToZorroTree(tree);
+    });
   }
 
   nodeClickEvent(event: NzFormatEmitEvent) {

@@ -82,8 +82,6 @@ export class EditTypeComponent implements OnInit, OnDestroy {
             }
             if (field.eruptFieldJson.edit.type == EditType.HTML) {
                 this.dataService.getEruptFieldHtml(this.eruptModel.eruptName, field.fieldName).subscribe(res => {
-                    alert(res);
-                    console.log(res);
                     let page = this.utilsService.analyseHtml(res);
                     field.eruptFieldJson.edit.$viewValue = page.html;
                     this.exitJs += page.exitJs;
@@ -95,7 +93,11 @@ export class EditTypeComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         if (this.exitJs) {
-            eval(this.exitJs);
+            try {
+                eval(this.exitJs);
+            } catch (e) {
+
+            }
         }
     }
 

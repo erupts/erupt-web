@@ -46,13 +46,9 @@ export class ReferenceTableComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.parentEruptName) {
-      this.stConfig.req.headers["erupt"] = this.parentEruptName;
-      this.stConfig.url = RestPath.data + this.parentEruptName + "/" + this.erupt.eruptName + "/reference-table/" + this.eruptField.fieldName;
-    } else {
-      this.stConfig.req.headers["erupt"] = this.erupt.eruptName;
-      this.stConfig.url = RestPath.data + this.erupt.eruptName + "/reference-table/" + this.eruptField.fieldName;
-    }
+    this.stConfig.req.headers["erupt"] = this.erupt.eruptName;
+    this.stConfig.req.headers["eruptParent"] = this.parentEruptName;
+    this.stConfig.url = RestPath.data + this.erupt.eruptName + "/reference-table/" + this.eruptField.fieldName;
     this.buildTableConfig();
     this.searchErupt = this.dataHandler.buildSearchErupt({ eruptModel: this.referenceErupt });
   }

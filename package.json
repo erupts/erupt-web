@@ -50,9 +50,6 @@
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
-    "@antv/data-set": "^0.10.2",
-    "@antv/g2": "^3.5.3",
-    "@antv/g2-plugin-slider": "^2.1.1",
     "@delon/abc": "^7.7.1",
     "@delon/acl": "^7.7.1",
     "@delon/auth": "^7.7.1",
@@ -72,6 +69,7 @@
     "qrious": "^4.0.2",
     "rxjs": "~6.3.3",
     "screenfull": "^4.2.0",
+    "ts-md5": "^1.2.7",
     "tslib": "^1.9.0",
     "web-animations-js": "^2.3.2",
     "zone.js": "~0.8.26"

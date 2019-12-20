@@ -452,22 +452,24 @@ export class DataHandlerService {
         const obj = this.eruptValueToObject(eruptBuildModel);
         eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
             const edit = field.eruptFieldJson.edit;
-            if (edit.search.vague) {
-                switch (edit.type) {
-                    case EditType.CHOICE:
-                        let arr = [];
-                        for (let vl of edit.choiceType.vl) {
-                            if (vl.$viewValue) {
-                                arr.push(vl.value);
+            if (edit.search.value) {
+                if (edit.search.vague) {
+                    switch (edit.type) {
+                        case EditType.CHOICE:
+                            let arr = [];
+                            for (let vl of edit.choiceType.vl) {
+                                if (vl.$viewValue) {
+                                    arr.push(vl.value);
+                                }
                             }
-                        }
-                        obj[field.fieldName] = arr;
-                        break;
-                    case EditType.NUMBER:
-                        if (edit.$l_val && edit.$r_val) {
-                            obj[field.fieldName] = [edit.$l_val, edit.$r_val];
-                        }
-                        break;
+                            obj[field.fieldName] = arr;
+                            break;
+                        case EditType.NUMBER:
+                            if (edit.$l_val && edit.$r_val) {
+                                obj[field.fieldName] = [edit.$l_val, edit.$r_val];
+                            }
+                            break;
+                    }
                 }
             }
         });
@@ -479,7 +481,7 @@ export class DataHandlerService {
         const eruptData: any = {};
         eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
             const edit = field.eruptFieldJson.edit;
-            if (edit){
+            if (edit) {
                 switch (edit.type) {
                     case EditType.INPUT:
                         if (edit.$value) {

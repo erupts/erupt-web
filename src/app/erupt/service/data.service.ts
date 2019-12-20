@@ -83,7 +83,6 @@ export class DataService {
         return this.http.get(RestPath.tpl + "html/" + name, {
             responseType: "text",
             headers: {
-                erupt: name,
                 token: this.tokenService.get().token
             }
         });
@@ -133,7 +132,7 @@ export class DataService {
     }
 
     //获取reference-tree数据
-    queryReferenceTreeData(eruptName: string, refName: string, dependVal: any): Observable<Tree[]> {
+    queryReferenceTreeData(eruptName: string, refName: string, dependVal: any, eruptParent?: string): Observable<Tree[]> {
         let param = {};
         if (dependVal) {
             param["dependValue"] = dependVal;
@@ -141,7 +140,8 @@ export class DataService {
         return this._http.get<Tree[]>(RestPath.data + eruptName + "/reference-tree/" + refName, param, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                eruptParent: eruptParent
             }
         });
     }

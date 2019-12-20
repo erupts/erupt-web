@@ -4,4 +4,5 @@ export interface loginModel {
   pass: boolean;
   reason: string;
   userName: string;
+  indexPath?: string;
 }
