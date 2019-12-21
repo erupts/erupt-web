@@ -146,19 +146,6 @@ export class DataService {
         });
     }
 
-    queryReferenceTreeDataByParentErupt(parentEruptName: string, eruptName: string, refName: string, dependVal: any): Observable<Tree[]> {
-        let param = {};
-        if (dependVal) {
-            param["dependValue"] = dependVal;
-        }
-        return this._http.get<Tree[]>(RestPath.data + parentEruptName + "/" + eruptName + "/reference-tree/" + refName, param, {
-            observe: "body",
-            headers: {
-                erupt: parentEruptName
-            }
-        });
-    }
-
     //增加数据
     addEruptData(eruptName: string, data: any): Observable<any> {
         return this._http.post<any>(RestPath.data + eruptName, data, null, {

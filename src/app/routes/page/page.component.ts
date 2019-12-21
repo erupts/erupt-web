@@ -29,6 +29,7 @@ export class PageComponent implements OnInit, OnDestroy {
             this.targetUrl = null;
             if (map.has("tpl")) {
                 this.dataService.getEruptTpl(map.get("tpl")).subscribe((res) => {
+                    alert(res)
                     console.log(res);
                     let tpl = this.util.analyseHtml(res);
                     this.html = tpl.html;

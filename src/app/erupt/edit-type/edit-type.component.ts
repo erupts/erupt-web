@@ -77,9 +77,6 @@ export class EditTypeComponent implements OnInit, OnDestroy {
             this.dataHandlerService.loadEruptDefaultValue(this.eruptBuildModel);
         }
         this.eruptModel.eruptFieldModels.forEach(field => {
-            if (!field.eruptFieldJson.edit) {
-                return;
-            }
             if (field.eruptFieldJson.edit.type == EditType.HTML) {
                 this.dataService.getEruptFieldHtml(this.eruptModel.eruptName, field.fieldName).subscribe(res => {
                     let page = this.utilsService.analyseHtml(res);
