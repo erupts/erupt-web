@@ -110,7 +110,6 @@ interface ChoiceType {
     type: ChoiceEnum;
     vl: VL[];
     joinSeparator: string;
-    vlMap?: Map<String, String>
 }
 
 export interface TabType {

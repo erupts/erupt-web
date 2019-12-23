@@ -2,7 +2,7 @@
  * Created by liyuepeng on 10/17/18.
  */
 import {Inject, Injectable} from "@angular/core";
-import {HttpClient, HttpResponse, HttpUrlEncodingCodec} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {Tree} from "../model/erupt.model";
 import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
@@ -11,7 +11,6 @@ import {EruptApiModel} from "../model/erupt-api.model";
 import {EruptBuildModel} from "../model/erupt-build.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {RestPath} from "../model/erupt.enum";
-import {WindowModel} from "../model/window.model";
 
 @Injectable()
 export class DataService {
@@ -137,12 +136,15 @@ export class DataService {
         if (dependVal) {
             param["dependValue"] = dependVal;
         }
+        let header = {
+            erupt: eruptName
+        };
+        if (eruptParent) {
+            header["eruptParent"] = eruptParent;
+        }
         return this._http.get<Tree[]>(RestPath.data + eruptName + "/reference-tree/" + refName, param, {
             observe: "body",
-            headers: {
-                erupt: eruptName,
-                eruptParent: eruptParent
-            }
+            headers: header
         });
     }
 

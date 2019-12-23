@@ -71,12 +71,6 @@ export class DataHandlerService {
                         });
                     }
                     break;
-                case EditType.CHOICE:
-                    const vlMap = field.eruptFieldJson.edit.choiceType.vlMap = new Map();
-                    field.eruptFieldJson.edit.choiceType.vl.forEach(vl => {
-                        vlMap.set(vl.value, vl.label);
-                    });
-                    break;
             }
             //生成columns
             field.eruptFieldJson.views.forEach(view => {

@@ -496,7 +496,7 @@
                                                        (nzChange)="upLoadNzChange($event,field)"
                                                        [nzPreview]="previewImageHandler"
                                                        [nzShowButton]="field.eruptFieldJson.edit.$viewValue&&field.eruptFieldJson.edit.$viewValue.length!=field.eruptFieldJson.edit.attachmentType.maxLimit|| field.eruptFieldJson.edit.attachmentType.maxLimit==0"
-                                                       [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName,eruptParent:parentEruptName}"
+                                                       [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName,eruptParent:parentEruptName||''}"
                                                        [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
                                                 <p class="ant-upload-drag-icon">
                                                     <i nz-icon nzType="plus"></i>
@@ -510,7 +510,7 @@
                                                        [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                        (nzChange)="upLoadNzChange($event,field)"
                                                        [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
-                                                       [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
+                                                       [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName,eruptParent:parentEruptName||''}"
                                                        [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
                                                 <p class="ant-upload-drag-icon">
                                                     <i nz-icon nzType="inbox"></i>
