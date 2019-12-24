@@ -10,6 +10,7 @@ import {DataService} from "../../../erupt/service/data.service";
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "../../../erupt/model/erupt-const";
 import {Md5} from "ts-md5";
+import {WindowModel} from "../../../erupt/model/window.model";
 
 @Component({
     selector: "passport-login",
@@ -30,6 +31,8 @@ export class UserLoginComponent implements OnDestroy, OnInit {
     useVerifyCode = false;
 
     verifyCodeUrl: string;
+
+    registerPage: string = WindowModel.registerPage;
 
     constructor(
         fb: FormBuilder,
@@ -96,7 +99,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
         }
         this.loading = true;
         this.data.login(this.userName.value,
-            <string>Md5.hashStr(Md5.hashStr(this.password.value)+navigator.userAgent+ this.userName.value),
+            <string>Md5.hashStr(Md5.hashStr(this.password.value) + navigator.userAgent + this.userName.value),
             this.verifyCode.value).subscribe((result) => {
             this.loading = false;
             if (result.useVerifyCode) {
