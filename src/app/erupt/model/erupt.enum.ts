@@ -17,7 +17,6 @@ export enum EditType {
   NUMBER = "NUMBER",
   TEXTAREA = "TEXTAREA",                     //大文本域
   CHOICE = "CHOICE",                         //选择框
-  TAGS = "TAGS",                             //标签
   DATE = "DATE",                             //日期
   COMBINE = "COMBINE",                       //表格合并
   REFERENCE_TABLE = "REFERENCE_TABLE",       //引用
