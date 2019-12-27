@@ -23,6 +23,8 @@ export class PageComponent implements OnInit, OnDestroy {
 
     exitJs: string = "";
 
+    spin: boolean = false;
+
     ngOnInit() {
         this.route.queryParamMap.subscribe(map => {
             this.url = null;
@@ -44,12 +46,18 @@ export class PageComponent implements OnInit, OnDestroy {
                     this.targetUrl = map.get("site");
                     window.open(this.targetUrl);
                 } else {
+                    this.spin = true;
                     this.url = map.get("site");
                 }
             } else {
                 this.url = "page/home.html";
             }
         });
+    }
+
+
+    iframeLoad() {
+        this.spin = false;
     }
 
     ngOnDestroy(): void {
