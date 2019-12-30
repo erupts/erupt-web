@@ -57,7 +57,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
   beforeSaveValidate(): boolean {
     if (this.loading) {
-      this.msg.warning("数据加载中无法保存");
+      this.msg.warning("数据加载中无法保存!");
       return false;
     } else if (!this.eruptEdit.eruptEditValidate()) {
       return false;

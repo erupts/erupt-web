@@ -99,6 +99,7 @@ export class EditTypeComponent implements OnInit, OnDestroy {
     }
 
     eruptEditValidate(): boolean {
+        console.log(this.uploadFilesStatus)
         for (let key in this.uploadFilesStatus) {
             if (!this.uploadFilesStatus[key]) {
                 this.msg.warning("附件上传中请稍后");

@@ -14,7 +14,7 @@ import {
  */
 export interface EruptFieldModel {
     fieldName: string;
-    fieldReturnName: string;
+    fieldReturnName: string | 'date' | 'boolean' | 'number';
     eruptFieldJson: EruptField;
     choiceMap?: Map<String, String>
     value?: any;
@@ -144,7 +144,7 @@ interface DateType {
 
 interface AttachmentType {
     size: number;
-    fileType: string[];
+    fileTypes: string[];
     path: String;
     maxLimit: number;
     type: AttachmentEnum;

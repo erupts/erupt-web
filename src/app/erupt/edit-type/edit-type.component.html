@@ -516,6 +516,13 @@
                                                     <i nz-icon nzType="inbox"></i>
                                                 </p>
                                                 <p class="ant-upload-text">单击或拖动文件到此区域上传</p>
+                                                <p class="ant-upload-hint"
+                                                   *ngIf="field.eruptFieldJson.edit.attachmentType.fileTypes.length>0">
+                                                    文件格式：
+                                                    <span *ngFor="let type of field.eruptFieldJson.edit.attachmentType.fileTypes">
+                                                        {{type}},
+                                                    </span>
+                                                </p>
                                                 <p class="ant-upload-hint">{{field.eruptFieldJson.edit.placeHolder}}</p>
                                             </nz-upload>
                                         </ng-container>

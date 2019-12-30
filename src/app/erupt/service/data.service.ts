@@ -118,9 +118,9 @@ export class DataService {
     }
 
     //执行自定义operator方法
-    execOperatorFun(eruptName: string, operatorCode: string, data: any, param: object) {
+    execOperatorFun(eruptName: string, operatorCode: string, ids: any, param: object) {
         return this._http.post(RestPath.data + eruptName + "/operator/" + operatorCode, {
-            data: data,
+            ids: ids,
             param: param
         }, null, {
             observe: "body",

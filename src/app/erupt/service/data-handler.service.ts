@@ -177,24 +177,22 @@ export class DataHandlerService {
             }
 
             // 编辑类型
-            switch (edit.type) {
-                case EditType.BOOLEAN:
-                    obj.type = "yn";
-                    obj.className = "text-center";
-                    obj.yn = {
-                        truth: edit.boolType.trueText
-                    };
-                    break;
+            if (edit.type === EditType.BOOLEAN) {
+                obj.type = "yn";
+                obj.className = "text-center";
+                obj.yn = {
+                    truth: edit.boolType.trueText
+                };
             }
 
             //数据类型
-            if (view.eruptFieldModel.eruptFieldJson.edit.type === EditType.NUMBER
-                || view.eruptFieldModel.eruptFieldJson.edit.type === EditType.SLIDER) {
-                obj.type = "number";
-                // obj.width = "100px";
-            } else if (view.eruptFieldModel.fieldReturnName === "Date") {
-                // obj.width = "100px";
-                obj.type = "date";
+            switch (view.eruptFieldModel.fieldReturnName.toLowerCase()) {
+                case 'number':
+                    obj.type = "number";
+                    break;
+                case 'date':
+                    obj.className = "date-row";
+                    break;
             }
 
             //展示类型
