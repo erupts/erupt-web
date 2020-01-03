@@ -186,10 +186,11 @@ export class DataService {
         });
     }
 
-    eruptDataValidate(eruptName: string, data: any): Observable<EruptApiModel> {
+    eruptDataValidate(eruptName: string, data: any, eruptParent?: string): Observable<EruptApiModel> {
         return this._http.post(RestPath.data + "validate-erupt/" + eruptName, data, null, {
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                eruptParent: eruptParent || ""
             }
         });
     }
