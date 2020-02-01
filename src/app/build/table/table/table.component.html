@@ -89,6 +89,7 @@
              [hidden]="hideCondition">
         <erupt-edit-type [eruptBuildModel]="{eruptModel:searchErupt,referenceErupts:eruptBuildModel.referenceErupts}"
                          [col]="{ xs: 24, sm: 24, md: 12, lg: 8, xl: 8, xxl: 6 }"
+                         (search)="query()"
                          size="default"
                          layout="horizontal"
         >

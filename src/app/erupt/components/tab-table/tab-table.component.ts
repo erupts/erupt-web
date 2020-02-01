@@ -67,7 +67,7 @@ export class TabTableComponent implements OnInit {
                     click: (record: any, modal: any, comp: STComponent) => {
                         this.dataHandlerService.objectToEruptValue(record, this.tabErupt.eruptBuildModel);
                         this.modal.create({
-                            nzWrapClassName: "modal-md",
+                            nzWrapClassName: "modal-lg",
                             nzStyle: {top: "20px"},
                             nzMaskClosable: false,
                             nzKeyboard: false,
@@ -125,7 +125,7 @@ export class TabTableComponent implements OnInit {
 
     addData() {
         this.modal.create({
-            nzWrapClassName: "modal-md",
+            nzWrapClassName: "modal-lg",
             nzStyle: {top: "50px"},
             nzMaskClosable: false,
             nzKeyboard: false,
