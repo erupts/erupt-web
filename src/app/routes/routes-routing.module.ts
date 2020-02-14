@@ -27,6 +27,7 @@ const routes: Routes = [
       { path: "dashboard", component: DashboardComponent, data: { title: "仪表盘", titleI18n: "dashboard" } },
       { path: "build/table/:name", loadChildren: "../build/table/table.module#TableModule", pathMatch: "full" },
       { path: "build/tree/:name", loadChildren: "../build/tree/tree.module#TreeModule", pathMatch: "full" },
+      { path: "build/bi/:name", loadChildren: "../build/bi/bi.module#BiModule", pathMatch: "full" },
       { path: "page", component: PageComponent, pathMatch: "full" },
       { path: "change-pwd", component: ChangePwdComponent, data: { title: "修改密码" } },
       { path: "layout/403", component: Exception403Component, data: { title: "403" } },
@@ -40,7 +41,7 @@ const routes: Routes = [
     path: "passport",
     component: LayoutPassportComponent,
     children: [
-      { path: "login", component: UserLoginComponent, data: { title: "登录", titleI18n: "login" } },
+      { path: "login", component: UserLoginComponent, data: { title: "登录" } },
       { path: "register", component: UserRegisterComponent, data: { title: "注册", titleI18n: "register" } },
       {
         path: "register-result",

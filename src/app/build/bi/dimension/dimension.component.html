@@ -1,0 +1,74 @@
+<div nz-row [nzGutter]="16">
+    <form nz-form nzLayout="horizontal" se-container>
+        <ng-container *ngFor="let dim of dimensions;">
+            <div class="col-div" nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                 [nzLg]="col.lg"
+                 [nzXl]="col.xl"
+                 [nzXXl]="col.xxl">
+                <se [label]="dim.title"
+                    [required]="dim.notNull" style="width: 100%">
+                    <ng-container [ngSwitch]="dim.type">
+                        <ng-container *ngSwitchCase="dimType.INPUT">
+                            <input nz-input autocomplete="off"
+                                   class="full-width" [(ngModel)]="dim.$value"
+                                   [name]="dim.code" [required]="dim.notNull">
+                        </ng-container>
+                        <ng-container *ngSwitchCase="dimType.NUMBER">
+                            <nz-input-number [(ngModel)]="dim.$value" class="full-width"
+                                             [name]="dim.code"></nz-input-number>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="dimType.REFERENCE">
+                            <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                                <input nz-input autocomplete="off" [required]="dim.notNull" [readOnly]="true"
+                                       [(ngModel)]="dim.$value" [name]="dim.code">
+                            </nz-input-group>
+                            <ng-template #refBtn>
+                                <ng-container *ngIf="dim.$value">
+                                    <i nz-icon nzType="close-circle" theme="fill" class="point"></i>
+                                </ng-container>
+                                <ng-container *ngIf="!dim.$value">
+                                    <i nz-icon nzType="database" theme="fill" class="point"></i>
+                                </ng-container>
+                            </ng-template>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="dimType.DATE">
+                            <nz-date-picker class="full-width"
+                                            [(ngModel)]="dim.$value"
+                                            [name]="dim.code" nzShowToday>
+                            </nz-date-picker>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="dimType.TIME">
+                            <nz-time-picker [(ngModel)]="dim.$value" class="full-width"
+                                            [name]="dim.code"></nz-time-picker>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="dimType.DATETIME">
+                            <nz-date-picker class="full-width"
+                                            [(ngModel)]="dim.$value"
+                                            nzShowTime
+                                            nzShowToday
+                                            [name]="dim.code">
+                            </nz-date-picker>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="dimType.WEEK">
+                            <nz-week-picker [(ngModel)]="dim.$value" class="full-width"
+                                            [name]="dim.code"></nz-week-picker>
+
+                        </ng-container>
+                        <ng-container *ngSwitchCase="dimType.MONTH">
+                            <nz-month-picker [(ngModel)]="dim.$value" class="full-width"
+                                             [name]="dim.code">
+
+                            </nz-month-picker>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="dimType.YEAR">
+                            <nz-year-picker [(ngModel)]="dim.$value" class="full-width"
+                                            [name]="dim.code">
+                            </nz-year-picker>
+                        </ng-container>
+                    </ng-container>
+
+                </se>
+            </div>
+        </ng-container>
+    </form>
+</div>

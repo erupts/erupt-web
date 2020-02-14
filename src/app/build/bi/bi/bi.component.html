@@ -1,0 +1,52 @@
+<page-header [autoTitle]="false" [title]="null"></page-header>
+<nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!bi"></nz-skeleton>
+<ng-container *ngIf="bi">
+    <ng-container *ngIf="bi.dimensions.length>0">
+        <button nz-button nzType="dashed" class="mb-sm" (click)="query()">
+            <i nz-icon nzType="search" nzTheme="outline"></i>查询
+        </button>
+    </ng-container>
+    <ng-container *ngIf="bi.export">
+        <button nz-button nzType="dashed" class="mb-sm">
+            <i nz-icon nzType="download" nzTheme="outline"></i>导出
+        </button>
+    </ng-container>
+    <!--  style="background: #fafafa;margin-bottom: 0;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)"  -->
+    <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true"
+             [hidden]="false" nzSize="small">
+        <dimension [dimensions]="bi.dimensions">
+
+        </dimension>
+    </nz-card>
+
+    <ng-container *ngIf="bi.charts.length>0">
+        <div style="margin-top: 15px;" nz-row nzGutter="16">
+            <ng-container *ngFor="let chart of bi.charts">
+                <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
+                    <nz-card [nzTitle]="chart.name" nzSize="small" [nzHoverable]="true" [nzLoading]="!chart.loading"
+                             [nzBodyStyle]="{padding:'0'}">
+                        <div echarts [options]="chart.option" class="demo-chart"
+                             style="width: 100%; height: 280px;"></div>
+                    </nz-card>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+</ng-container>
+
+
+<ng-container *ngIf="!columns">
+    <!--    <nz-result [nzIcon]="'smile-twotone'" [nzTitle]="'Great, we have done all the operators!'">-->
+    <!--        &lt;!&ndash;        <div nz-result-extra>&ndash;&gt;-->
+    <!--        &lt;!&ndash;            <button nz-button nzType="primary">Next</button>&ndash;&gt;-->
+    <!--        &lt;!&ndash;        </div>&ndash;&gt;-->
+    <!--    </nz-result>-->
+</ng-container>
+<ng-container *ngIf="columns">
+    <st #st [columns]="columns" [data]="data"
+        [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
+        [bordered]="true"
+        [size]="'small'"
+    >
+    </st>
+</ng-container>

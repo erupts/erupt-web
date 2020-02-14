@@ -11,6 +11,7 @@ import {EruptApiModel} from "../model/erupt-api.model";
 import {EruptBuildModel} from "../model/erupt-build.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {RestPath} from "../model/erupt.enum";
+import {Bi, BiData} from "../../build/bi/model/bi.model";
 
 @Injectable()
 export class DataService {
@@ -236,6 +237,30 @@ export class DataService {
 
     createAuthParam(eruptName: string): string {
         return DataService.PARAM_ERUPT + "=" + eruptName + "&" + DataService.PARAM_TOKEN + "=" + this.tokenService.get().token;
+    }
+
+
+    /**
+     * BI
+     * @param code
+     */
+    //BI结构
+    getBiBuild(code: string): Observable<Bi> {
+        return this._http.get<any>(RestPath.bi + "build/" + code, null, {
+            observe: "body",
+            headers: {
+                erupt: code
+            }
+        });
+    }
+
+    //BI数据
+    getBiData(code: string, query: any): Observable<BiData> {
+        return this._http.post(RestPath.bi + "data/" + code, query, null, {
+            headers: {
+                erupt: code
+            }
+        });
     }
 
 }

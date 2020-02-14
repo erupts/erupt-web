@@ -10,6 +10,7 @@ export class RestPath {
   public static data: string = RestPath.erupt + "/data/";
   public static excel: string = RestPath.erupt + "/excel/";
   public static file: string = RestPath.erupt + "/file/";
+  public static bi: string = RestPath.erupt + "/bi/";
 }
 
 export enum EditType {

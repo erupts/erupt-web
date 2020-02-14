@@ -10,11 +10,11 @@ export class WindowModel {
 
     public static title: string = WindowModel.config["title"];
 
-    public static routerReuse: boolean = WindowModel.config["routerReuse"] || false;
-
     public static desc: string = WindowModel.config["desc"] || null;
 
-    public static logoPath: string = WindowModel.config["logoPath"] || "favicon.ico";
+    public static routerReuse: boolean = WindowModel.config["routerReuse"] || false;
+
+    public static logoPath: string = WindowModel.config["logoPath"] || "assets/logo.png";
     //注册页面地址
     public static registerPage: string = WindowModel.config["registerPage"] || null;
 }
