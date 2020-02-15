@@ -12,7 +12,6 @@ import {STColumn} from "@delon/abc/table/table.interfaces";
 })
 export class BiComponent implements OnInit {
 
-
     bi: Bi;
 
     columns: STColumn[];
