@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from "@angular/core";
 import { SettingsService } from "@delon/theme";
 import * as screenfull from "screenfull";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
-import { CustomerTool, WindowModel } from "../../../erupt/model/window.model";
+import { CustomerTool, WindowModel } from "@shared/model/window.model";
 
 @Component({
   selector: "layout-header",
@@ -43,7 +43,7 @@ export class HeaderComponent implements OnInit {
 
   toggleScreen() {
     let sf = screenfull as screenfull.Screenfull;
-    if (sf.enabled) {
+    if (sf.isEnabled) {
       this.isFullScreen = sf.isFullscreen;
       sf.toggle();
     }

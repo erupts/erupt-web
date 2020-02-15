@@ -3,9 +3,9 @@ import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms"
 import { Router } from "@angular/router";
 import { NzMessageService, NzModalService } from "ng-zorro-antd";
 import { DA_SERVICE_TOKEN, TokenService } from "@delon/auth";
-import { DataService } from "../../erupt/service/data.service";
+import {DataService} from "@shared/service/data.service";
 import { SettingsService } from "@delon/theme";
-import { Status } from "../../erupt/model/erupt-api.model";
+import { Status } from "../../build/erupt/model/erupt-api.model";
 
 @Component({
   selector: "app-change-pwd",

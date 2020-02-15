@@ -2,7 +2,7 @@ import { Component, Inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { SettingsService } from "@delon/theme";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
-import {DataService} from "../../../../erupt/service/data.service";
+import {DataService} from "@shared/service/data.service";
 
 @Component({
   selector: "header-user",

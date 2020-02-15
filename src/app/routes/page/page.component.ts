@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
-import {DataService} from "../../erupt/service/data.service";
-import {UtilsService} from "../../erupt/service/utils.service";
+import {DataService} from "@shared/service/data.service";
+import {UtilsService} from "@shared/service/utils.service";
 
 @Component({
     selector: "app-page",

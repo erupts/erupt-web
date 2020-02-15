@@ -26,7 +26,7 @@ export class HeaderFullScreenComponent {
   @HostListener("click")
   _click() {
     let sf = screenfull as screenfull.Screenfull;
-    if (sf.enabled) {
+    if (sf.isEnabled) {
       sf.toggle();
     }
   }

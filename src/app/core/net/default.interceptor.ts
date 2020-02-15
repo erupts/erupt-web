@@ -16,9 +16,9 @@ import {catchError, mergeMap} from "rxjs/operators";
 import {NzMessageService, NzModalService, NzNotificationService} from "ng-zorro-antd";
 import {_HttpClient} from "@delon/theme";
 import {environment} from "@env/environment";
-import {EruptApiModel, PromptWay, Status} from "../../erupt/model/erupt-api.model";
+import {EruptApiModel, PromptWay, Status} from "../../build/erupt/model/erupt-api.model";
 import {CacheService} from "@delon/cache";
-import {GlobalKeys} from "../../erupt/model/erupt-const";
+import {GlobalKeys} from "@shared/model/erupt-const";
 
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`

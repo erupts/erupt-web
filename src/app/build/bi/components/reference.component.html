@@ -1,0 +1,20 @@
+<nz-spin [nzSpinning]="![]">
+    <nz-input-group [nzSuffix]="searchSuffixIcon" class="mb-sm" style="width: 100%;">
+        <input type="text" nz-input placeholder="Search" [(ngModel)]="searchValue">
+    </nz-input-group>
+    <ng-template #searchSuffixIcon>
+        <i nz-icon nzType="search"></i>
+    </ng-template>
+    <br>
+    <div style="max-height: 450px;overflow: auto;">
+        <nz-tree #tree
+                 nzDraggable
+                 class="tree-container"
+                 (nzClick)="nodeClickEvent($event)"
+                 [nzShowLine]="true"
+                 [nzHideUnMatched]="true"
+                 [nzData]="[]"
+                 [nzSearchValue]="searchValue">
+        </nz-tree>
+    </div>
+</nz-spin>

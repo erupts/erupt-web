@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {DataService} from "../../../erupt/service/data.service";
-import {Bi, Column} from "../model/bi.model";
+import {DataService} from "@shared/service/data.service";
+import {Bi} from "../model/bi.model";
 import {NzMessageService} from "ng-zorro-antd";
 import {STColumn} from "@delon/abc/table/table.interfaces";
 
@@ -27,7 +27,6 @@ export class BiComponent implements OnInit {
     }
 
     ngOnInit() {
-
         this.dataService.getBiBuild("test").subscribe(res => {
             this.bi = res;
             //图表
@@ -41,16 +40,9 @@ export class BiComponent implements OnInit {
                 }
                 chart.option = {
                     backgroundColor: '#2c343c',
-
                     title: {
-                        text: 'Customized Pie',
-                        left: 'center',
-                        top: 20,
-                        textStyle: {
-                            color: '#ccc'
-                        }
+                        text: ''
                     },
-
                     tooltip: {
                         trigger: 'item',
                         formatter: '{a} <br/>{b} : {c} ({d}%)'

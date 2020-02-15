@@ -5,7 +5,7 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {NzIconService} from "ng-zorro-antd";
 import {ICONS_AUTO} from "../../../style-icons-auto";
 import {ICONS} from "../../../style-icons";
-import {WindowModel} from "../../erupt/model/window.model";
+import {WindowModel} from "@shared/model/window.model";
 
 /**
  * 用于应用启动时

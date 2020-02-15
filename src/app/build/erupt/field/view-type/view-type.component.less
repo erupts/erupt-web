@@ -1,0 +1,59 @@
+@import '../../../../../../node_modules/@delon/theme/styles/default';
+
+:host {
+  ::ng-deep {
+    [nz-carousel-content] {
+      height: auto !important;
+    }
+
+    .slick-list {
+      height: auto !important;
+    }
+
+    .slick-track {
+      height: auto !important;
+    }
+
+    .view_inner_html {
+      table {
+        width: 100%;
+
+        tr {
+          transition: all 0.3s;
+
+          &:hover {
+            background: #e6f7ff;
+          }
+        }
+
+        td, th {
+          padding: 12px 8px;
+          border: 1px solid #e8e8e8;
+        }
+
+        th {
+          background: #fafafa;
+          text-align: center;
+        }
+
+      }
+
+      p {
+        text-indent: 2em;
+        line-height: 35px;
+        font-size: 18px;
+        word-wrap: break-word;
+        word-break: break-all;
+        text-align: justify;
+      }
+
+      img {
+        max-width: 100%;
+        width: auto;
+        display: block;
+        margin: 0 auto;
+      }
+
+    }
+  }
+}

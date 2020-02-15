@@ -1,7 +1,5 @@
-import { Component, OnInit } from "@angular/core";
-import { NzMessageService } from "ng-zorro-antd";
-import { Menu, MenuService, SettingsService } from "@delon/theme";
-import { DataService } from "../../../erupt/service/data.service";
+import {Component, OnInit} from "@angular/core";
+import {SettingsService} from "@delon/theme";
 
 @Component({
   selector: "layout-sidebar",
@@ -9,10 +7,7 @@ import { DataService } from "../../../erupt/service/data.service";
 })
 export class SidebarComponent implements OnInit {
 
-  constructor(public settings: SettingsService,
-              public msgSrv: NzMessageService,
-              public data: DataService,
-              private menuService: MenuService) {
+  constructor(public settings: SettingsService) {
   }
 
   ngOnInit(): void {

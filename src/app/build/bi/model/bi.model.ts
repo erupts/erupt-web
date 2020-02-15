@@ -22,6 +22,7 @@ export interface Dimension {
     notNull: boolean;
     dependDimension: string;
     $value: any;
+    $viewValue?: any;
 }
 
 export enum DimType {

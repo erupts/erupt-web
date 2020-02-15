@@ -6,11 +6,11 @@ import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, SocialService, TokenService} from "@delon/auth";
 import {ReuseTabService} from "@delon/abc";
 import {StartupService} from "@core/startup/startup.service";
-import {DataService} from "../../../erupt/service/data.service";
+import {DataService} from "@shared/service/data.service";
 import {CacheService} from "@delon/cache";
-import {GlobalKeys} from "../../../erupt/model/erupt-const";
+import {GlobalKeys} from "@shared/model/erupt-const";
 import {Md5} from "ts-md5";
-import {WindowModel} from "../../../erupt/model/window.model";
+import {WindowModel} from "@shared/model/window.model";
 
 @Component({
     selector: "passport-login",

@@ -32,21 +32,24 @@
             </ng-container>
         </div>
     </ng-container>
-</ng-container>
 
-
-<ng-container *ngIf="!columns">
-    <!--    <nz-result [nzIcon]="'smile-twotone'" [nzTitle]="'Great, we have done all the operators!'">-->
-    <!--        &lt;!&ndash;        <div nz-result-extra>&ndash;&gt;-->
-    <!--        &lt;!&ndash;            <button nz-button nzType="primary">Next</button>&ndash;&gt;-->
-    <!--        &lt;!&ndash;        </div>&ndash;&gt;-->
-    <!--    </nz-result>-->
-</ng-container>
-<ng-container *ngIf="columns">
-    <st #st [columns]="columns" [data]="data"
-        [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
-        [bordered]="true"
-        [size]="'small'"
-    >
-    </st>
+    <ng-container *ngIf="!columns">
+        <nz-card [nzHoverable]="true" [nzBordered]="true">
+            <nz-result [nzIcon]="'smile-twotone'" [nzTitle]="'请输入必填条件开始查询操作!'">
+                <div nz-result-extra>
+                    <button nz-button nzType="primary" class="mb-sm" (click)="query()">
+                        <i nz-icon nzType="search" nzTheme="outline"></i>查询
+                    </button>
+                </div>
+            </nz-result>
+        </nz-card>
+    </ng-container>
+    <ng-container *ngIf="columns">
+        <st #st [columns]="columns" [data]="data"
+            [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
+            [bordered]="true"
+            [size]="'small'"
+        >
+        </st>
+    </ng-container>
 </ng-container>

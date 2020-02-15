@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { WindowModel } from "../../erupt/model/window.model";
+import { WindowModel } from "@shared/model/window.model";
 
 @Component({
   selector: "layout-passport",
