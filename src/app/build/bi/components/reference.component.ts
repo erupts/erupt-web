@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from "@angular/core";
 import {NzFormatEmitEvent} from "ng-zorro-antd";
-import {DataService} from "@shared/service/data.service";
 import {Dimension} from "../model/bi.model";
+import {BiDataService} from "../service/data.service";
 
 @Component({
     selector: "app-tree-select",
@@ -10,23 +10,27 @@ import {Dimension} from "../model/bi.model";
 })
 export class ReferenceComponent implements OnInit {
 
-    @Input() dimension:Dimension
+    @Input() dimension: Dimension;
+
+    @Input() code: string;
 
     searchValue: string;
 
-    constructor(private data: DataService) {
+    data: any[];
+
+    constructor(private dataService: BiDataService) {
 
     }
 
     ngOnInit() {
-
+        this.dataService.getBiReference(this.code, this.dimension.code, null).subscribe((res) => {
+            this.data = res;
+        })
     }
 
     nodeClickEvent(event: NzFormatEmitEvent) {
-        // this.eruptField.eruptFieldJson.edit.$tempValue = {
-        //     id: event.node.origin.key,
-        //     label: event.node.origin.title
-        // };
+        this.dimension.$viewValue = event.node.origin.title;
+        this.dimension.$value = event.node.origin.key;
     }
 
 }

@@ -9,7 +9,7 @@ import {EruptBuildModel} from "../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {ViewTypeComponent} from "../field/view-type/view-type.component";
 import {STColumn, STData} from "@delon/abc";
-import {TableComponent} from "../table/table.component";
+import {TableComponent} from "../view/table/table.component";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -385,20 +385,6 @@ export class DataHandlerService {
                         window.open(DataService.previewAttachment(item[view.column]));
                     };
                     break;
-            }
-
-            if (view.drill.enable) {
-                obj.type = "link";
-                obj.click = (item) => {
-                    this.modal.create({
-                        nzWrapClassName: "modal-lg modal-body-nopadding",
-                        nzStyle: {top: "30px"},
-                        nzKeyboard: true,
-                        nzFooter: null,
-                        nzContent: "TableComponent",
-                        nzComponentParams: {}
-                    });
-                }
             }
 
             if (view.template) {

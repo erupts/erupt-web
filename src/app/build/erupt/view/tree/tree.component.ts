@@ -2,10 +2,10 @@ import { Component, Inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import {DataService} from "@shared/service/data.service";
 import { ActivatedRoute } from "@angular/router";
 import { NzFormatEmitEvent, NzMessageService, NzModalService, NzTreeBaseService } from "ng-zorro-antd";
-import { DataHandlerService } from "../service/data-handler.service";
-import { EruptBuildModel } from "../model/erupt-build.model";
+import { DataHandlerService } from "../../service/data-handler.service";
+import { EruptBuildModel } from "../../model/erupt-build.model";
 import { Subscription } from "rxjs";
-import { Status } from "../model/erupt-api.model";
+import { Status } from "../../model/erupt-api.model";
 
 @Component({
   selector: "erupt-tree",

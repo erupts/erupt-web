@@ -1,11 +1,11 @@
 import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
-import {EditType} from "../model/erupt.enum";
+import {EditType} from "../../model/erupt.enum";
 import {SettingsService} from "@delon/theme";
-import {EruptBuildModel} from "../model/erupt-build.model";
-import {DataHandlerService} from "../service/data-handler.service";
-import {EruptFieldModel} from "../model/erupt-field.model";
+import {EruptBuildModel} from "../../model/erupt-build.model";
+import {DataHandlerService} from "../../service/data-handler.service";
+import {EruptFieldModel} from "../../model/erupt-field.model";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
-import {EditTypeComponent} from "../field/edit-type/edit-type.component";
+import {EditTypeComponent} from "../../field/edit-type/edit-type.component";
 import {DataService} from "@shared/service/data.service";
 
 @Component({

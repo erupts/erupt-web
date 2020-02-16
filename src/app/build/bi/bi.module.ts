@@ -7,6 +7,7 @@ import {SharedModule} from "@shared/shared.module";
 import {DimensionComponent} from './dimension/dimension.component';
 import {NgxEchartsModule} from "ngx-echarts";
 import {ReferenceComponent} from "./components/reference.component";
+import {BiDataService} from "./service/data.service";
 
 // import "echarts/dist/echarts.min.js"
 
@@ -18,7 +19,10 @@ import {ReferenceComponent} from "./components/reference.component";
         BiRoutingModule,
         SharedModule
     ],
-    entryComponents:[
+    providers: [
+        BiDataService
+    ],
+    entryComponents: [
         ReferenceComponent
     ]
 })

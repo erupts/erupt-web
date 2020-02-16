@@ -3,6 +3,7 @@ import {DataService} from "@shared/service/data.service";
 import {Bi} from "../model/bi.model";
 import {NzMessageService} from "ng-zorro-antd";
 import {STColumn} from "@delon/abc/table/table.interfaces";
+import {BiDataService} from "../service/data.service";
 
 @Component({
     selector: 'app-bi',
@@ -20,7 +21,7 @@ export class BiComponent implements OnInit {
 
     clientWidth = document.body.clientWidth;
 
-    constructor(private dataService: DataService,
+    constructor(private dataService: BiDataService,
                 @Inject(NzMessageService)
                 private msg: NzMessageService
     ) {
@@ -31,7 +32,7 @@ export class BiComponent implements OnInit {
             this.bi = res;
             //图表
             for (let chart of this.bi.charts) {
-                chart.loading = true;
+                chart.loading = false;
                 let opt = chart.chartOption;
                 if (opt) {
                     opt = JSON.parse(opt);
@@ -39,7 +40,7 @@ export class BiComponent implements OnInit {
                     opt = {};
                 }
                 chart.option = {
-                    backgroundColor: '#2c343c',
+                    // backgroundColor: '#2c343c',
                     title: {
                         text: ''
                     },
@@ -68,14 +69,16 @@ export class BiComponent implements OnInit {
                                 {value: 274, name: '联盟广告'},
                                 {value: 235, name: '视频广告'},
                                 {value: 400, name: '搜索引擎'}
-                            ].sort(function (a, b) { return a.value - b.value; }),
+                            ].sort(function (a, b) {
+                                return a.value - b.value;
+                            }),
                             roseType: 'radius',
                             label: {
-                                color: 'rgba(255, 255, 255, 0.3)'
+                                color: '#000'
                             },
                             labelLine: {
                                 lineStyle: {
-                                    color: 'rgba(255, 255, 255, 0.3)'
+                                    color: '#000'
                                 },
                                 smooth: 0.2,
                                 length: 10,
@@ -114,6 +117,9 @@ export class BiComponent implements OnInit {
                 this.msg.error(dimension.title + "必填");
                 return
             }
+        }
+        for (let chart of this.bi.charts) {
+            chart.loading = false;
         }
         this.dataService.getBiData("test", {name: 233}).subscribe(res => {
             this.columns = [];

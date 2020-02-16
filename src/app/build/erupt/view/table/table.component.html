@@ -48,7 +48,7 @@
                 <i nz-icon nzType="table" nzTheme="outline"></i>表格列控制
             </button>
             <ng-template #tableColumnCtrl>
-                <div nz-row style="max-width: 500px;">
+                <div nz-row style="max-width: 520px;">
                     <ng-container *ngFor="let col of columns">
                         <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 100px;">
                             <label nz-checkbox [(ngModel)]="col.show"

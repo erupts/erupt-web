@@ -1,22 +1,22 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {EruptModel} from "../model/erupt.model";
+import {EruptModel} from "../../model/erupt.model";
 
 import {DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
-import {EditTypeComponent} from "../field/edit-type/edit-type.component";
+import {EditTypeComponent} from "../../field/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {STColumn, STColumnButton, STComponent, STData} from "@delon/abc";
 import {ActivatedRoute} from "@angular/router";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
-import {EruptBuildModel} from "../model/erupt-build.model";
+import {EruptBuildModel} from "../../model/erupt-build.model";
 import {deepCopy} from "@delon/util";
-import {EditType, RestPath} from "../model/erupt.enum";
-import {DataHandlerService} from "../service/data-handler.service";
-import {ExcelImportComponent} from "../components/excel-import/excel-import.component";
+import {EditType, RestPath} from "../../model/erupt.enum";
+import {DataHandlerService} from "../../service/data-handler.service";
+import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Subscription} from "rxjs";
-import {BuildConfig} from "../model/build-config";
-import {EruptApiModel, Status} from "../model/erupt-api.model";
+import {BuildConfig} from "../../model/build-config";
+import {EruptApiModel, Status} from "../../model/erupt-api.model";
 
 @Component({
     selector: "erupt-table",
@@ -57,7 +57,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     columns: STColumn[];
 
-    @ViewChild("st",{static: false}) st: STComponent;
+    @ViewChild("st", {static: false}) st: STComponent;
 
     private router$: Subscription;
 
@@ -235,12 +235,40 @@ export class TableComponent implements OnInit, OnDestroy {
         const that = this;
         for (let key in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
             let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[key];
+            if (!ro.icon) {
+                ro.icon = "fa fa-ravelry";
+            }
             tableOperators.push({
                 format: () => {
-                    return `<i title="${ro.title}" class="fa ${ro.icon}" style="color: #000"></i>`;
+                    return `<i title="${ro.title}" class="${ro.icon}" style="color: #000"></i>`;
                 },
                 click: (record: any, modal: any) => {
                     that.createOperator(key, false, record);
+                }
+            });
+        }
+        //drill
+        const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
+        for (let key in eruptJson.drills) {
+            let drill = eruptJson.drills[key];
+            if (!drill.icon) {
+                drill.icon = "fa fa-table";
+            }
+            tableOperators.push({
+                format: () => {
+                    return `<i title="${drill.title}" class="${drill.icon}" style="color: #09f"></i>`;
+                },
+                click: (record) => {
+                    let drill = eruptJson.drills[key];
+                    this.modal.create({
+                        nzWrapClassName: "modal-xxl",
+                        nzStyle: {top: "60px"},
+                        nzMaskClosable: false,
+                        nzKeyboard: false,
+                        nzTitle: drill.title,
+                        nzContent: TableComponent,
+                        nzComponentParams: {}
+                    })
                 }
             });
         }

@@ -240,27 +240,6 @@ export class DataService {
     }
 
 
-    /**
-     * BI
-     * @param code
-     */
-    //BI结构
-    getBiBuild(code: string): Observable<Bi> {
-        return this._http.get<any>(RestPath.bi + code, null, {
-            observe: "body",
-            headers: {
-                erupt: code
-            }
-        });
-    }
 
-    //BI数据
-    getBiData(code: string, query: any): Observable<BiData> {
-        return this._http.post(RestPath.bi + code + "/data", query, null, {
-            headers: {
-                erupt: code
-            }
-        });
-    }
 
 }

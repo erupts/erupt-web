@@ -1,7 +1,6 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
-import {Dimension, DimType} from "../model/bi.model";
+import {Bi, Dimension, DimType} from "../model/bi.model";
 import {colRules} from "@shared/model/util.model";
-import {TreeSelectComponent} from "../../erupt/components/tree-select/tree-select.component";
 import {NzModalService} from "ng-zorro-antd";
 import {ReferenceComponent} from "../components/reference.component";
 
@@ -13,9 +12,9 @@ import {ReferenceComponent} from "../components/reference.component";
 })
 export class DimensionComponent implements OnInit {
 
-    @Input() dimensions: Dimension[];
+    @Input() bi: Bi;
 
-    @Input() col = colRules[3];
+    col = colRules[3];
 
     dimType = DimType;
 
@@ -27,6 +26,7 @@ export class DimensionComponent implements OnInit {
     }
 
     ref(dim: Dimension) {
+        console.log(this.bi.code)
         this.modal.create({
             nzWrapClassName: "modal-xs",
             nzKeyboard: true,
@@ -35,7 +35,8 @@ export class DimensionComponent implements OnInit {
             nzCancelText: "取消（ESC）",
             nzContent: ReferenceComponent,
             nzComponentParams: {
-                dimension: dim
+                dimension: dim,
+                code: this.bi.code
             },
             nzOnOk: (res) => {
 

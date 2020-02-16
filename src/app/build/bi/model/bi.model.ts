@@ -1,4 +1,5 @@
 export interface Bi {
+    code: string;
     export: boolean
     dimensions: Dimension[];
     charts: Chart[];

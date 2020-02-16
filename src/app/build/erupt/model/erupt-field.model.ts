@@ -38,12 +38,6 @@ export interface View {
     sortable: boolean;
     //extra
     eruptFieldModel?: EruptFieldModel;
-    drill: Drill;
-}
-
-export interface Drill {
-    enable: boolean;
-    eruptClass: string;
 }
 
 export interface Edit {

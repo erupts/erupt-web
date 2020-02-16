@@ -12,9 +12,9 @@ import {ReferenceTableComponent} from "./components/reference-table/reference-ta
 import {CkeditorComponent} from "./components/ckeditor/ckeditor.component";
 import {AmapComponent} from "./components/amap/amap.component";
 import {EruptRoutingModule} from "./erupt-routing.module";
-import {TreeComponent} from "./tree/tree.component";
-import {TableComponent} from "./table/table.component";
-import {EditComponent} from "./edit/edit.component";
+import {TreeComponent} from "./view/tree/tree.component";
+import {TableComponent} from "./view/table/table.component";
+import {EditComponent} from "./view/edit/edit.component";
 
 @NgModule({
     imports: [
