@@ -19,11 +19,11 @@ import {BuildConfig} from "../../model/build-config";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 
 @Component({
-    selector: "erupt-table",
+    selector: "table-erupt",
     templateUrl: "./table.component.html",
     styleUrls: ["./table.component.less"]
 })
-export class TableComponent implements OnInit, OnDestroy {
+export class TableComponent implements OnInit {
 
     constructor(private dataService: DataService,
                 private settingSrv: SettingsService,
@@ -37,6 +37,29 @@ export class TableComponent implements OnInit, OnDestroy {
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 private dataHandler: DataHandlerService
     ) {
+    }
+
+    @Input() set eruptName(eruptName: string) {
+        this.selectedRows = [];
+        this.eruptBuildModel = null;
+        if (this.searchErupt) {
+            this.searchErupt.eruptFieldModels = [];
+        }
+        if (this.build$) {
+            this.build$.unsubscribe();
+        }
+        //put table-view api header
+        this.stConfig.req.headers["erupt"] = eruptName;
+        this.build$ = this.dataService.getEruptBuild(eruptName).subscribe(eb => {
+                this.stConfig.url = RestPath.data + "table/" + eruptName;
+                this.dataHandler.initErupt(eb);
+                this.eruptBuildModel = eb;
+                this.buildTabErupt();
+                this.buildTableConfig();
+                this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
+                this.buildReadOnlyErupt();
+            }
+        );
     }
 
     showColCtrl: boolean = false;
@@ -58,38 +81,10 @@ export class TableComponent implements OnInit, OnDestroy {
     columns: STColumn[];
 
     @ViewChild("st", {static: false}) st: STComponent;
-
-    private router$: Subscription;
-
     private build$: Subscription;
 
     ngOnInit() {
-        this.router$ = this.route.params.subscribe(params => {
-            this.selectedRows = [];
-            this.eruptBuildModel = null;
-            if (this.searchErupt) {
-                this.searchErupt.eruptFieldModels = [];
-            }
-            if (this.build$) {
-                this.build$.unsubscribe();
-            }
-            //put table api header
-            this.stConfig.req.headers["erupt"] = params.name;
-            this.build$ = this.dataService.getEruptBuild(params.name).subscribe(eb => {
-                    this.stConfig.url = RestPath.data + "table/" + params.name;
-                    this.dataHandler.initErupt(eb);
-                    this.eruptBuildModel = eb;
-                    this.buildTabErupt();
-                    this.buildTableConfig();
-                    this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
-                    this.buildReadOnlyErupt();
-                }
-            );
-        });
-    }
 
-    ngOnDestroy(): void {
-        this.router$.unsubscribe();
     }
 
     buildTabErupt() {
@@ -262,12 +257,15 @@ export class TableComponent implements OnInit, OnDestroy {
                     let drill = eruptJson.drills[key];
                     this.modal.create({
                         nzWrapClassName: "modal-xxl",
-                        nzStyle: {top: "60px"},
+                        nzStyle: {top: "30px"},
                         nzMaskClosable: false,
                         nzKeyboard: false,
                         nzTitle: drill.title,
+                        nzFooter: null,
                         nzContent: TableComponent,
-                        nzComponentParams: {}
+                        nzComponentParams: {
+                            eruptName: drill.eruptClass
+                        }
                     })
                 }
             });
@@ -410,7 +408,7 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt});
     }
 
-    // table checkBox 触发事件
+    // table-view checkBox 触发事件
     tableDataChange(event: STData) {
         if (event.type === "checkbox") {
             this.selectedRows = event.checkbox;

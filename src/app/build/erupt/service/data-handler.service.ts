@@ -9,7 +9,6 @@ import {EruptBuildModel} from "../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {ViewTypeComponent} from "../field/view-type/view-type.component";
 import {STColumn, STData} from "@delon/abc";
-import {TableComponent} from "../view/table/table.component";
 
 /**
  * Created by liyuepeng on 10/31/18.

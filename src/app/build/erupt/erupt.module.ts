@@ -13,8 +13,9 @@ import {CkeditorComponent} from "./components/ckeditor/ckeditor.component";
 import {AmapComponent} from "./components/amap/amap.component";
 import {EruptRoutingModule} from "./erupt-routing.module";
 import {TreeComponent} from "./view/tree/tree.component";
-import {TableComponent} from "./view/table/table.component";
+import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
+import {TableComponent} from './view/table/table.component';
 
 @NgModule({
     imports: [
@@ -37,6 +38,7 @@ import {EditComponent} from "./view/edit/edit.component";
         TreeSelectComponent,
         ExcelImportComponent,
         ReferenceTableComponent,
+        TableComponent,
         EditComponent
     ],
     declarations: [
@@ -48,9 +50,9 @@ import {EditComponent} from "./view/edit/edit.component";
         ExcelImportComponent,
         ReferenceTableComponent,
         ViewTypeComponent,
-
         EditComponent,
         TreeComponent,
+        TableViewComponent,
         TableComponent
     ]
 })
