@@ -48,7 +48,7 @@ export class TableComponent implements OnInit {
         if (this.build$) {
             this.build$.unsubscribe();
         }
-        //put table-view api header
+        //put table api header
         this.stConfig.req.headers["erupt"] = eruptName;
         this.build$ = this.dataService.getEruptBuild(eruptName).subscribe(eb => {
                 this.stConfig.url = RestPath.data + "table/" + eruptName;
@@ -408,7 +408,7 @@ export class TableComponent implements OnInit {
         this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt});
     }
 
-    // table-view checkBox 触发事件
+    // table checkBox 触发事件
     tableDataChange(event: STData) {
         if (event.type === "checkbox") {
             this.selectedRows = event.checkbox;
