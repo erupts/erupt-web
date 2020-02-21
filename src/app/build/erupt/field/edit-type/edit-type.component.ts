@@ -249,40 +249,4 @@ export class EditTypeComponent implements OnInit, OnDestroy {
         field.eruptFieldJson.edit.$tempValue = null;
     }
 
-
-    dateChange(date, edit: Edit) {
-        if (!date || date.length == 0) {
-            edit.$value = null;
-            return;
-        }
-        if (this.eruptModel.mode === "search" && edit.search.vague) {
-            if (edit.dateType.type == DateEnum.DATE) {
-                edit.$value = [this.datePipe.transform(date[0], "yyyy-MM-dd 00:00:00"), this.datePipe.transform(date[1], "yyyy-MM-dd 23:59:59")];
-            } else if (edit.dateType.type == DateEnum.DATE_TIME) {
-                edit.$value = [this.datePipe.transform(date[0], "yyyy-MM-dd hh:mm:ss"), this.datePipe.transform(date[1], "yyyy-MM-dd hh:mm:ss")];
-            }
-        } else {
-            let format = null;
-            switch (edit.dateType.type) {
-                case DateEnum.DATE:
-                    format = "yyyy-MM-dd";
-                    break;
-                case DateEnum.DATE_TIME:
-                    format = "yyyy-MM-dd hh:mm:ss";
-                    break;
-                case DateEnum.MONTH:
-                    format = "yyyy-MM";
-                    break;
-                case DateEnum.WEEK:
-                    format = "yyyy-ww";
-                    break;
-                case DateEnum.YEAR:
-                    format = "yyyy";
-                    break;
-            }
-            edit.$value = this.datePipe.transform(date, format);
-        }
-    }
-
-
 }

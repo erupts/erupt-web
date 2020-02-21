@@ -6,6 +6,7 @@ import { DataHandlerService } from "../../service/data-handler.service";
 import { EruptBuildModel } from "../../model/erupt-build.model";
 import { Subscription } from "rxjs";
 import { Status } from "../../model/erupt-api.model";
+import {colRules} from "@shared/model/util.model";
 
 @Component({
   selector: "erupt-tree",
@@ -13,6 +14,8 @@ import { Status } from "../../model/erupt-api.model";
   styleUrls: ["./tree.component.less"]
 })
 export class TreeComponent implements OnInit, OnDestroy {
+
+  col = colRules[3];
 
   private eruptName: string;
 
@@ -165,7 +168,6 @@ export class TreeComponent implements OnInit, OnDestroy {
           });
         }
       });
-
     } else {
       this.msg.error("存在叶节点不允许直接删除");
     }

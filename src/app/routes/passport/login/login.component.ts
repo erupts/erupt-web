@@ -60,7 +60,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
     }
 
     ngOnInit(): void {
-
+        this.modalSrv.closeAll();
     }
 
     // region: fields

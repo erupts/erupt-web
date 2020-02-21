@@ -60,11 +60,12 @@ export class DataService {
     }
 
     //获取结构
-    getEruptBuild(eruptName: string): Observable<EruptBuildModel> {
+    getEruptBuild(eruptName: string, eruptParentName?: string): Observable<EruptBuildModel> {
         return this._http.get<EruptBuildModel>(RestPath.build + eruptName, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                eruptParent: eruptParentName||''
             }
         });
     }
@@ -238,8 +239,6 @@ export class DataService {
     createAuthParam(eruptName: string): string {
         return DataService.PARAM_ERUPT + "=" + eruptName + "&" + DataService.PARAM_TOKEN + "=" + this.tokenService.get().token;
     }
-
-
 
 
 }

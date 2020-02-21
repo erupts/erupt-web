@@ -18,13 +18,14 @@ export interface Erupt {
     power: Power;
     tree: Tree;
     rowOperation: { [key: string]: RowOperation };
-    drills:  { [key: string]: Drill }
+    drills: { [key: string]: Drill }
 }
 
 export interface Drill {
     code: string;
     title: string;
     icon: string;
+    column: string;
     eruptClass: string;
 }
 

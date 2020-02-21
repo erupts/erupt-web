@@ -21,9 +21,15 @@ export class AmapComponent implements OnInit {
     this.lazy.loadScript("https://webapi.amap.com/maps?v=1.4.14&key=" + WindowModel.amapKey).then(() => {
       this.loading = false;
       let map = new AMap.Map(this.ref.nativeElement.querySelector("#amap"), {
+        zoom: 11,
         resizeEnable: true,
-        center: [116.480983, 39.989628],
-        zoom: 11
+        viewMode: '3D',
+      });
+      AMap.plugin([
+        'AMap.ControlBar',
+      ], function(){
+        // 添加 3D 罗盘控制
+        map.addControl(new AMap.ControlBar());
       });
     });
   }

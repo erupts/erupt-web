@@ -1,6 +1,6 @@
-import {EruptFieldModel} from "../model/erupt-field.model";
+import {Edit, EruptFieldModel} from "../model/erupt-field.model";
 import {EruptModel, Tree} from "../model/erupt.model";
-import {ChoiceEnum, DependSwitchTypeEnum, EditType, SaveMode, ViewType} from "../model/erupt.enum";
+import {ChoiceEnum, DateEnum, DependSwitchTypeEnum, EditType, SaveMode, ViewType} from "../model/erupt.enum";
 import {FormControl} from "@angular/forms";
 import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
 import {deepCopy} from "@delon/util";
@@ -9,6 +9,7 @@ import {EruptBuildModel} from "../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {ViewTypeComponent} from "../field/view-type/view-type.component";
 import {STColumn, STData} from "@delon/abc";
+import {DatePipe} from "@angular/common";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -185,18 +186,14 @@ export class DataHandlerService {
                 };
             }
 
-            //数据类型
-            switch (view.eruptFieldModel.fieldReturnName.toLowerCase()) {
-                case 'number':
-                    obj.type = "number";
-                    break;
-                case 'date':
-                    obj.className = "date-row";
-                    break;
-            }
-
             //展示类型
             switch (view.viewType) {
+                case ViewType.NUMBER:
+                    obj.type = "number";
+                    break;
+                case ViewType.DATE:
+                    obj.className = "date-col";
+                    break;
                 case ViewType.LINK:
                     obj.type = "link";
                     obj.click = (item) => {
@@ -461,11 +458,48 @@ export class DataHandlerService {
                                 obj[field.fieldName] = [edit.$l_val, edit.$r_val];
                             }
                             break;
+                        case EditType.DATE:
+                            if (edit.$value) {
+                                if (edit.dateType.type == DateEnum.DATE) {
+                                    obj[field.fieldName] = [this.datePipe.transform(edit.$value[0], "yyyy-MM-dd 00:00:00"),
+                                        this.datePipe.transform(edit.$value[1], "yyyy-MM-dd 23:59:59")];
+                                } else if (edit.dateType.type == DateEnum.DATE_TIME) {
+                                    obj[field.fieldName] = [this.datePipe.transform(edit.$value[0], "yyyy-MM-dd HH:mm:ss"),
+                                        this.datePipe.transform(edit.$value[1], "yyyy-MM-dd HH:mm:ss")];
+                                }
+                            }
                     }
                 }
             }
         });
         return obj;
+    }
+
+    private datePipe: DatePipe = new DatePipe("zh-cn");
+
+    dateFormat(date, edit: Edit): string {
+        let format = null;
+        switch (edit.dateType.type) {
+            case DateEnum.DATE:
+                format = "yyyy-MM-dd";
+                break;
+            case DateEnum.DATE_TIME:
+                format = "yyyy-MM-dd HH:mm:ss";
+                break;
+            case DateEnum.MONTH:
+                format = "yyyy-MM";
+                break;
+            case DateEnum.WEEK:
+                format = "yyyy-ww";
+                break;
+            case DateEnum.YEAR:
+                format = "yyyy";
+                break;
+            case DateEnum.TIME:
+                format = "HH:mm:ss";
+                break;
+        }
+        return this.datePipe.transform(date, format);
     }
 
     //将eruptModel中的内容拼接成后台需要的json格式
@@ -501,7 +535,7 @@ export class DataHandlerService {
                         }
                         break;
                     case EditType.REFERENCE_TREE:
-                        if (edit.$value) {
+                        if (edit.$value || edit.$value === 0) {
                             eruptData[field.fieldName] = {};
                             eruptData[field.fieldName][edit.referenceTreeType.id] = edit.$value;
                             eruptData[field.fieldName][edit.referenceTreeType.label] = edit.$viewValue;
@@ -510,7 +544,7 @@ export class DataHandlerService {
                         }
                         break;
                     case EditType.REFERENCE_TABLE:
-                        if (edit.$value) {
+                        if (edit.$value || edit.$value === 0) {
                             eruptData[field.fieldName] = {};
                             eruptData[field.fieldName][edit.referenceTableType.id] = edit.$value;
                             eruptData[field.fieldName][edit.referenceTableType.label] = edit.$viewValue;
@@ -561,6 +595,12 @@ export class DataHandlerService {
                         break;
                     case EditType.BOOLEAN:
                         eruptData[field.fieldName] = edit.$value;
+                        break;
+                    case EditType.DATE:
+                        if (Array.isArray(edit.$value)) {
+                            break;
+                        }
+                        eruptData[field.fieldName] = this.dateFormat(edit.$value, edit);
                         break;
                     default:
                         if (edit.$value || edit.$value === 0) {

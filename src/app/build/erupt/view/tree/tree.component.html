@@ -60,7 +60,7 @@
                 <nz-collapse nzAccordion>
                     <nz-collapse-panel [nzActive]="true" [nzHeader]="'基本信息'" [nzDisabled]="true">
                         <nz-skeleton [nzActive]="true" [nzLoading]="!eruptBuildModel">
-                            <erupt-edit-type [eruptBuildModel]="eruptBuildModel" [col]="{xs: 24, sm: 24, md: 24, lg:12,xl: 8}">
+                            <erupt-edit-type [eruptBuildModel]="eruptBuildModel" [col]="col">
 
                             </erupt-edit-type>
                         </nz-skeleton>

@@ -14,7 +14,6 @@ import {
  */
 export interface EruptFieldModel {
     fieldName: string;
-    fieldReturnName: string | 'date' | 'boolean' | 'number';
     eruptFieldJson: EruptField;
     choiceMap?: Map<String, String>
     value?: any;

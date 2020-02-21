@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 
@@ -39,27 +39,22 @@ export class TableComponent implements OnInit {
     ) {
     }
 
-    @Input() set eruptName(eruptName: string) {
-        this.selectedRows = [];
-        this.eruptBuildModel = null;
-        if (this.searchErupt) {
-            this.searchErupt.eruptFieldModels = [];
-        }
-        if (this.build$) {
-            this.build$.unsubscribe();
-        }
-        //put table api header
-        this.stConfig.req.headers["erupt"] = eruptName;
-        this.build$ = this.dataService.getEruptBuild(eruptName).subscribe(eb => {
-                this.stConfig.url = RestPath.data + "table/" + eruptName;
-                this.dataHandler.initErupt(eb);
-                this.eruptBuildModel = eb;
-                this.buildTabErupt();
-                this.buildTableConfig();
-                this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
-                this.buildReadOnlyErupt();
+    @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
+        this.init(drill.erupt, {
+            url: RestPath.data + drill.eruptParent + "/drill/" + drill.code + "/" + drill.val,
+            header: {
+                erupt: drill.eruptParent
             }
-        );
+        });
+    };
+
+    @Input() set eruptName(value: string) {
+        this.init(value, {
+            url: RestPath.data + "table/" + value,
+            header: {
+                erupt: value
+            }
+        });
     }
 
     showColCtrl: boolean = false;
@@ -85,6 +80,32 @@ export class TableComponent implements OnInit {
 
     ngOnInit() {
 
+    }
+
+    init(erupt: string, req: {
+        url: string,
+        header: any
+    }) {
+        this.selectedRows = [];
+        this.eruptBuildModel = null;
+        if (this.searchErupt) {
+            this.searchErupt.eruptFieldModels = [];
+        }
+        if (this.build$) {
+            this.build$.unsubscribe();
+        }
+        //put table api header
+        this.stConfig.req.headers = req.header;
+        this.stConfig.url = req.url;
+        this.build$ = this.dataService.getEruptBuild(erupt).subscribe(eb => {
+                this.dataHandler.initErupt(eb);
+                this.eruptBuildModel = eb;
+                this.buildTabErupt();
+                this.buildTableConfig();
+                this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
+                this.buildReadOnlyErupt();
+            }
+        );
     }
 
     buildTabErupt() {
@@ -255,6 +276,7 @@ export class TableComponent implements OnInit {
                 },
                 click: (record) => {
                     let drill = eruptJson.drills[key];
+                    console.log(key);
                     this.modal.create({
                         nzWrapClassName: "modal-xxl",
                         nzStyle: {top: "30px"},
@@ -264,7 +286,12 @@ export class TableComponent implements OnInit {
                         nzFooter: null,
                         nzContent: TableComponent,
                         nzComponentParams: {
-                            eruptName: drill.eruptClass
+                            drill: {
+                                code: key,
+                                val: record[drill.column],
+                                erupt: drill.eruptClass,
+                                eruptParent: this.eruptBuildModel.eruptModel.eruptName
+                            }
                         }
                     })
                 }
