@@ -35,6 +35,31 @@ nz-picker, nz-picker .ant-calendar-picker {
   width: 100% !important;
 }
 
+//iframe style
+#page-container {
+  position: absolute;
+  left: 200px;
+  right: 0;
+  top: 64px;
+  bottom: 0;
+}
+
+.ant-spin-container {
+  height: 100%;
+}
+
+.alain-default__collapsed {
+  #page-container {
+    left: 64px !important;
+  }
+}
+
+reuse-tab ~ app-page {
+  #page-container {
+    top: 116px !important;
+  }
+}
+
 //.setting-drawer__handle-opened{
 //  right: 450px;
 //}

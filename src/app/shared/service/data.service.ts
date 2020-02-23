@@ -65,7 +65,7 @@ export class DataService {
             observe: "body",
             headers: {
                 erupt: eruptName,
-                eruptParent: eruptParentName||''
+                eruptParent: eruptParentName || ''
             }
         });
     }
@@ -81,12 +81,7 @@ export class DataService {
     }
 
     getEruptTpl(name: string) {
-        return this.http.get(RestPath.tpl + "html/" + name, {
-            responseType: "text",
-            headers: {
-                token: this.tokenService.get().token
-            }
-        });
+        return RestPath.tpl + name + "?_token=" + this.tokenService.get().token + "&_erupt=" + name;
     }
 
     //tree数据结构

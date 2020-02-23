@@ -25,7 +25,6 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/page",
               "src/erupt",
               {
                 "glob": "**/*",
