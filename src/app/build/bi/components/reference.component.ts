@@ -24,6 +24,9 @@ export class ReferenceComponent implements OnInit {
 
     ngOnInit() {
         this.dataService.getBiReference(this.code, this.dimension.code, null).subscribe((res) => {
+            res.forEach(r => {
+                r.isLeaf = true;
+            });
             this.data = res;
         })
     }

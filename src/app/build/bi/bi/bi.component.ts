@@ -1,9 +1,11 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from "@shared/service/data.service";
 import {Bi} from "../model/bi.model";
 import {NzMessageService} from "ng-zorro-antd";
 import {STColumn} from "@delon/abc/table/table.interfaces";
 import {BiDataService} from "../service/data.service";
+import {ActivatedRoute} from "@angular/router";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-bi',
@@ -11,9 +13,12 @@ import {BiDataService} from "../service/data.service";
     styleUrls: ["./bi.component.less"],
     styles: []
 })
-export class BiComponent implements OnInit {
+export class BiComponent implements OnInit, OnDestroy {
 
     bi: Bi;
+
+
+    name: string;
 
     columns: STColumn[];
 
@@ -22,93 +27,102 @@ export class BiComponent implements OnInit {
     clientWidth = document.body.clientWidth;
 
     constructor(private dataService: BiDataService,
+                public route: ActivatedRoute,
                 @Inject(NzMessageService)
                 private msg: NzMessageService
     ) {
     }
 
-    ngOnInit() {
-        this.dataService.getBiBuild("test").subscribe(res => {
-            this.bi = res;
-            //图表
-            for (let chart of this.bi.charts) {
-                chart.loading = false;
-                let opt = chart.chartOption;
-                if (opt) {
-                    opt = JSON.parse(opt);
-                } else {
-                    opt = {};
-                }
-                chart.option = {
-                    // backgroundColor: '#2c343c',
-                    title: {
-                        text: ''
-                    },
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: '{a} <br/>{b} : {c} ({d}%)'
-                    },
+    private router$: Subscription;
 
-                    visualMap: {
-                        show: false,
-                        min: 80,
-                        max: 600,
-                        inRange: {
-                            colorLightness: [0, 1]
-                        }
-                    },
-                    series: [
-                        {
-                            name: '访问来源',
-                            type: 'pie',
-                            radius: '55%',
-                            center: ['50%', '50%'],
-                            data: [
-                                {value: 335, name: '直接访问'},
-                                {value: 310, name: '邮件营销'},
-                                {value: 274, name: '联盟广告'},
-                                {value: 235, name: '视频广告'},
-                                {value: 400, name: '搜索引擎'}
-                            ].sort(function (a, b) {
-                                return a.value - b.value;
-                            }),
-                            roseType: 'radius',
-                            label: {
-                                color: '#000'
-                            },
-                            labelLine: {
-                                lineStyle: {
+    ngOnInit() {
+        this.router$ = this.route.params.subscribe(params => {
+            this.name = params.name;
+            this.dataService.getBiBuild(this.name).subscribe(res => {
+                this.bi = res;
+                //图表
+                for (let chart of this.bi.charts) {
+                    chart.loading = false;
+                    let opt = chart.chartOption;
+                    if (opt) {
+                        opt = JSON.parse(opt);
+                    } else {
+                        opt = {};
+                    }
+                    chart.option = {
+                        // backgroundColor: '#2c343c',
+                        title: {
+                            text: ''
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: '{a} <br/>{b} : {c} ({d}%)'
+                        },
+
+                        visualMap: {
+                            show: false,
+                            min: 80,
+                            max: 600,
+                            inRange: {
+                                colorLightness: [0, 1]
+                            }
+                        },
+                        series: [
+                            {
+                                name: '访问来源',
+                                type: 'pie',
+                                radius: '55%',
+                                center: ['50%', '50%'],
+                                data: [
+                                    {value: 335, name: '直接访问'},
+                                    {value: 310, name: '邮件营销'},
+                                    {value: 274, name: '联盟广告'},
+                                    {value: 235, name: '视频广告'},
+                                    {value: 400, name: '搜索引擎'}
+                                ].sort(function (a, b) {
+                                    return a.value - b.value;
+                                }),
+                                roseType: 'radius',
+                                label: {
                                     color: '#000'
                                 },
-                                smooth: 0.2,
-                                length: 10,
-                                length2: 20
-                            },
-                            itemStyle: {
-                                color: '#c23531',
-                                shadowBlur: 200,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            },
+                                labelLine: {
+                                    lineStyle: {
+                                        color: '#000'
+                                    },
+                                    smooth: 0.2,
+                                    length: 10,
+                                    length2: 20
+                                },
+                                itemStyle: {
+                                    color: '#c23531',
+                                    shadowBlur: 200,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                },
 
-                            animationType: 'scale',
-                            animationEasing: 'elasticOut',
-                            animationDelay: function (idx) {
-                                return Math.random() * 200;
+                                animationType: 'scale',
+                                animationEasing: 'elasticOut',
+                                animationDelay: function (idx) {
+                                    return Math.random() * 200;
+                                }
                             }
-                        }
-                    ]
-                };
-                Object.assign(chart.option, opt);
-            }
-            //维度
-            for (let dimension of res.dimensions) {
-                if (dimension.notNull) {
-                    return;
+                        ]
+                    };
+                    Object.assign(chart.option, opt);
                 }
-            }
+                //维度
+                for (let dimension of res.dimensions) {
+                    if (dimension.notNull) {
+                        return;
+                    }
+                }
+                this.query();
+            })
+        });
+    }
 
-            this.query();
-        })
+    ngOnDestroy(): void {
+        this.router$.unsubscribe();
     }
 
     query() {
@@ -121,7 +135,7 @@ export class BiComponent implements OnInit {
         for (let chart of this.bi.charts) {
             chart.loading = false;
         }
-        this.dataService.getBiData("test", {name: 233}).subscribe(res => {
+        this.dataService.getBiData(this.name, {name: 233}).subscribe(res => {
             this.columns = [];
             for (let column of res.columns) {
                 this.columns.push({

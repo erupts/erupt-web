@@ -25,7 +25,8 @@
                     <nz-card [nzTitle]="chart.name" nzSize="small" [nzHoverable]="true" [nzLoading]="chart.loading"
                              [nzBodyStyle]="{padding:'0'}">
                         <div echarts [options]="chart.option"
-                             style="width: 100%; height: 280px;"></div>
+                             [ngStyle]="{height: '320px'}"
+                             style="width: 100%;"></div>
                     </nz-card>
                 </div>
             </ng-container>

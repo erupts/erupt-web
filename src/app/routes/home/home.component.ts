@@ -1,4 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import {UserLoginComponent} from "../passport/login/login.component";
+import {NzModalService} from "ng-zorro-antd";
 
 @Component({
     selector: 'app-home',
@@ -11,7 +13,7 @@ export class HomeComponent implements OnInit {
 
     spin: boolean = true;
 
-    constructor() {
+    constructor(private modal: NzModalService) {
     }
 
     ngOnInit() {

@@ -110,6 +110,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
                 this.settingsService.setUser({name: result.userName});
                 this.tokenService.set({token: result.token, time: +new Date(), account: this.userName.value});
                 let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
+                this.modalSrv.closeAll();
                 if (loginBackPath) {
                     this.cacheService.set(GlobalKeys.loginBackPath, null);
                     this.router.navigate([loginBackPath]);

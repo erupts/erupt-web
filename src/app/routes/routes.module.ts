@@ -29,7 +29,9 @@ const COMPONENTS = [
     ChangePwdComponent,
     SiteComponent
 ];
-const COMPONENTS_NOROUNT = [];
+const COMPONENTS_NOROUNT = [
+    UserLoginComponent
+];
 
 @NgModule({
     imports: [SharedModule, RouteRoutingModule],

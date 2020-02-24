@@ -1,5 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
+import {Component, OnInit} from '@angular/core';
 import {DataService} from "@shared/service/data.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
@@ -17,7 +16,7 @@ export class TplComponent implements OnInit {
 
     private router$: Subscription;
 
-    constructor(private dataService: DataService, public route: ActivatedRoute,) {
+    constructor(private dataService: DataService, public route: ActivatedRoute) {
     }
 
     ngOnInit() {
