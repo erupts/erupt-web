@@ -3,6 +3,7 @@ import {Observable} from "rxjs";
 import {Bi, BiData} from "../model/bi.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
+import {EruptFieldModel} from "../../erupt/model/erupt-field.model";
 
 @Injectable({
     providedIn: 'root'
@@ -36,7 +37,7 @@ export class BiDataService {
     }
 
     //图表
-    getBiChart(code: string, chart: string, query: any) {
+    getBiChart(code: string, chart: string, query: any): Observable<Map<String, any>[]> {
         return this._http.post(RestPath.bi + code + "/chart/" + chart, query, null, {
             headers: {
                 erupt: code
@@ -46,10 +47,10 @@ export class BiDataService {
 
     //维度参照
     getBiReference(code: string, dim: string, query: any) {
-      return this._http.post(RestPath.bi + code + "/reference/" + dim, query, null, {
-        headers: {
-          erupt: code
-        }
-      });
+        return this._http.post(RestPath.bi + code + "/reference/" + dim, query, null, {
+            headers: {
+                erupt: code
+            }
+        });
     }
 }

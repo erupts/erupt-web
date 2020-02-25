@@ -145,17 +145,20 @@ export class DefaultInterceptor implements HttpInterceptor {
                 break;
             case 401: // 未登录状态码
                 this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
-                this.modal.create({
-                    // nzWrapClassName: "modal-xs",
-                    nzMaskClosable: false,
-                    nzKeyboard: false,
-                    nzClosable: false,
-                    nzFooter: null,
-                    nzTitle: "登录",
-                    nzBodyStyle: {},
-                    nzContent: UserLoginComponent
-                });
-                // this.goTo("/passport/login");
+                if (this.router.url=="/"){
+                    this.goTo("/passport/login");
+                }else{
+                    this.modal.create({
+                        // nzWrapClassName: "modal-xs",
+                        nzMaskClosable: false,
+                        nzKeyboard: false,
+                        nzClosable: false,
+                        nzFooter: null,
+                        nzTitle: "登录",
+                        nzBodyStyle: {},
+                        nzContent: UserLoginComponent
+                    });
+                }
                 break;
             case 404:
                 this.goTo("/layout/404");

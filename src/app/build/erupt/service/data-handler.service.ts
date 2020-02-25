@@ -150,7 +150,7 @@ export class DataHandlerService {
      *     true   数据形式为一整行txt
      *     false  数据形式为：带有层级的json
      */
-    viewToAlainTableConfig(erupt: EruptModel, lineData: boolean): STColumn[] {
+    viewToAlainTableConfig(erupt: EruptModel, lineData: boolean, tfBool?: boolean): STColumn[] {
         let cols: STColumn[] = [];
         const views = erupt.tableColumns;
         for (let view of views) {
@@ -181,9 +181,12 @@ export class DataHandlerService {
             if (edit.type === EditType.BOOLEAN) {
                 obj.type = "yn";
                 obj.className = "text-center";
-                obj.yn = {
-                    truth: edit.boolType.trueText
-                };
+                if (!tfBool) {
+                    obj.yn = {
+                        truth: edit.boolType.trueText
+                    };
+                }
+
             }
 
             //展示类型

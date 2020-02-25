@@ -14,7 +14,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
 
     private router$: Subscription;
 
-    private eruptName: string;
+    public eruptName: string;
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe(params => {

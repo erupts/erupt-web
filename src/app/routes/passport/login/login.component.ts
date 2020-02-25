@@ -56,11 +56,10 @@ export class UserLoginComponent implements OnDestroy, OnInit {
             mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
             remember: [true]
         });
-        modalSrv.closeAll();
     }
 
     ngOnInit(): void {
-        this.modalSrv.closeAll();
+
     }
 
     // region: fields

@@ -10,6 +10,7 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {ReferenceTableComponent} from "../reference-table/reference-table.component";
 import {BuildConfig} from "../../model/build-config";
 import {Status} from "../../model/erupt-api.model";
+import {skip} from "rxjs/operators";
 
 @Component({
     selector: "tab-table",
@@ -29,7 +30,7 @@ export class TabTableComponent implements OnInit {
 
     @Input() mode: "refer-add" | "add" = "add";
 
-    @ViewChild("st",{static: false}) st: STComponent;
+    @ViewChild("st", {static: false}) st: STComponent;
 
     column: STColumn[];
 
@@ -49,7 +50,7 @@ export class TabTableComponent implements OnInit {
             this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
         }
         if (this.behavior == "readonly") {
-            this.column = this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel, false);
+            this.column = this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel, false, true);
         } else {
             const viewValue: STColumn[] = [];
             viewValue.push({
@@ -59,7 +60,7 @@ export class TabTableComponent implements OnInit {
                 className: "text-center",
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
-            viewValue.push(...this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel, false));
+            viewValue.push(...this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel, false, true));
             let operators: STColumnButton[] = [];
             if (this.mode == "add") {
                 operators.push({
@@ -74,7 +75,7 @@ export class TabTableComponent implements OnInit {
                             nzTitle: "编辑",
                             nzContent: EditTypeComponent,
                             nzComponentParams: {
-                                col: colRules[2],
+                                col: colRules[3],
                                 eruptBuildModel: this.tabErupt.eruptBuildModel,
                                 parentEruptName: this.eruptBuildModel.eruptModel.eruptName
                             },

@@ -19,23 +19,22 @@
         </dimension>
     </nz-card>
     <ng-container *ngIf="bi.charts.length>0">
-        <div style="margin-top: 15px;" nz-row nzGutter="16">
+        <div nz-row nzGutter="16">
             <ng-container *ngFor="let chart of bi.charts">
                 <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
-                    <nz-card [nzTitle]="chart.name" nzSize="small" [nzHoverable]="true" [nzLoading]="chart.loading"
-                             [nzBodyStyle]="{padding:'0'}">
-                        <div echarts [options]="chart.option"
-                             [ngStyle]="{height: '320px'}"
-                             style="width: 100%;"></div>
+                    <nz-card [nzTitle]="chart.name" nzSize="small"
+                             [nzBodyStyle]="{padding:'12px'}"
+                             [nzHoverable]="true" [nzLoading]="chart.loading">
+                        <bi-chart [chart]="chart" [biCode]="bi.code"></bi-chart>
                     </nz-card>
                 </div>
             </ng-container>
         </div>
     </ng-container>
 
-    <ng-container *ngIf="!columns">
+    <ng-container *ngIf="haveNotNull">
         <nz-card [nzHoverable]="true" [nzBordered]="true">
-            <nz-result [nzIcon]="'smile-twotone'" [nzTitle]="'请输入必填条件开始查询操作!'">
+            <nz-result [nzIcon]="'thunderbolt'" [nzTitle]="'输入查询条件，开始查询操作'">
                 <div nz-result-extra>
                     <button nz-button nzType="primary" class="mb-sm" (click)="query()">
                         <i nz-icon nzType="search" nzTheme="outline"></i>查询
@@ -44,12 +43,16 @@
             </nz-result>
         </nz-card>
     </ng-container>
-    <ng-container *ngIf="columns">
-        <st #st [columns]="columns" [data]="data"
+    <ng-container *ngIf="!haveNotNull">
+        <st *ngIf="columns&&columns.length>0" [columns]="columns" [data]="data"
+            [loading]="querying"
+            [page]="{placement:'center'}"
             [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
             [bordered]="true"
-            [size]="'small'"
-        >
+            [size]="'small'">
         </st>
     </ng-container>
+    <!--    <div style="height: 50px">-->
+
+    <!--    </div>-->
 </ng-container>
