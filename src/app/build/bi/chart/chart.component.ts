@@ -21,7 +21,8 @@ export class ChartComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.query();
+        this.query()
+
     }
 
     query() {
@@ -29,7 +30,9 @@ export class ChartComponent implements OnInit {
         this.chart.loading = true;
         this.biDataService.getBiChart(this.biCode, this.chart.code, {}).subscribe(data => {
             this.chart.loading = false;
-            this.render(element, data);
+            setTimeout(() => {
+                this.render(element, data)
+            }, 100);
         })
     }
 

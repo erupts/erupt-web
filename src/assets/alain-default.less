@@ -25654,7 +25654,7 @@ nz-picker, nz-picker .ant-calendar-picker {
 }
 
 //iframe style
-#page-container {
+.page-container {
   position: absolute;
   left: 200px;
   right: 0;
@@ -25662,18 +25662,25 @@ nz-picker, nz-picker .ant-calendar-picker {
   bottom: 0;
 }
 
+@media screen and (max-width: 767px) {
+  .page-container {
+    position: static;
+    height: calc(100vh - 64px);
+  }
+}
+
 .ant-spin-container {
   height: 100%;
 }
 
 .alain-default__collapsed {
-  #page-container {
+  .page-container {
     left: 64px !important;
   }
 }
 
 reuse-tab ~ app-page {
-  #page-container {
+  .page-container {
     top: 116px !important;
   }
 }

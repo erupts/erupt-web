@@ -5,8 +5,7 @@ import {ActivatedRoute} from "@angular/router";
 
 @Component({
     selector: 'app-tpl',
-    templateUrl: './tpl.component.html',
-    styles: []
+    templateUrl: './tpl.component.html'
 })
 export class TplComponent implements OnInit {
 
@@ -21,7 +20,6 @@ export class TplComponent implements OnInit {
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe((params) => {
-            console.log(params)
             this.url = this.dataService.getEruptTpl(params.name);
         });
     }
