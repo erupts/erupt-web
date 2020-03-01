@@ -39,14 +39,17 @@ export class TableComponent implements OnInit {
     ) {
     }
 
+    _drill: { erupt: string, code: string, eruptParent: string, val: any };
+
     @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
+        this._drill = drill;
         this.init(drill.erupt, {
             url: RestPath.data + drill.eruptParent + "/drill/" + drill.code + "/" + drill.val,
             header: {
                 erupt: drill.eruptParent
             }
         });
-    };
+    }
 
     @Input() set eruptName(value: string) {
         this.init(value, {
@@ -276,7 +279,6 @@ export class TableComponent implements OnInit {
                 },
                 click: (record) => {
                     let drill = eruptJson.drills[key];
-                    console.log(key);
                     this.modal.create({
                         nzWrapClassName: "modal-xxl",
                         nzStyle: {top: "30px"},
@@ -288,7 +290,7 @@ export class TableComponent implements OnInit {
                         nzComponentParams: {
                             drill: {
                                 code: key,
-                                val: record[drill.column],
+                                val: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
                                 erupt: drill.eruptClass,
                                 eruptParent: this.eruptBuildModel.eruptModel.eruptName
                             }
@@ -389,8 +391,17 @@ export class TableComponent implements OnInit {
             nzOkText: "增加",
             nzOnOk: async () => {
                 if (modal.getContentComponent().beforeSaveValidate()) {
-                    let res: EruptApiModel = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                        this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
+                    let res: EruptApiModel;
+                    if (this._drill && this._drill.val) {
+                        res = await this.dataService.addEruptDrillData(
+                            this._drill.eruptParent,
+                            this._drill.code,
+                            this._drill.val,
+                            this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
+                    } else {
+                        res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                            this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
+                    }
                     if (res.status === Status.SUCCESS) {
                         this.msg.success("新增成功");
                         this.st.reload();

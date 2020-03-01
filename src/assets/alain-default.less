@@ -25653,7 +25653,23 @@ nz-picker, nz-picker .ant-calendar-picker {
   width: 100% !important;
 }
 
-//iframe style
+.ant-spin-container {
+  height: 100%;
+}
+
+//iframe page-container style start
+.alain-default__collapsed {
+  .page-container {
+    left: 64px;
+  }
+}
+
+reuse-tab ~ app-page {
+  .page-container {
+    top: 116px;
+  }
+}
+
 .page-container {
   position: absolute;
   left: 200px;
@@ -25664,41 +25680,14 @@ nz-picker, nz-picker .ant-calendar-picker {
 
 @media screen and (max-width: 767px) {
   .page-container {
-    position: static;
     height: calc(100vh - 64px);
+    left: 0 !important;
+    top: 0 !important;
+    margin: 0 -25px;
   }
 }
 
-.ant-spin-container {
-  height: 100%;
-}
-
-.alain-default__collapsed {
-  .page-container {
-    left: 64px !important;
-  }
-}
-
-reuse-tab ~ app-page {
-  .page-container {
-    top: 116px !important;
-  }
-}
-
-//.setting-drawer__handle-opened{
-//  right: 450px;
-//}
-//::-webkit-scrollbar {
-//  width: 6px;
-//}
-//
-//::-webkit-scrollbar-thumb {
-//  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-//}
-//
-//::-webkit-scrollbar-track {
-//  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-//}
+//iframe page-container style end
 html {
   background: #fff;
 }

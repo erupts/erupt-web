@@ -155,6 +155,16 @@ export class DataService {
         });
     }
 
+    //增加数据
+    addEruptDrillData(eruptName: string, code: string, val: any, data: any): Observable<any> {
+        return this._http.post<any>(RestPath.data + "add/" + eruptName + "/drill/" + code + "/" + val, data, null, {
+            observe: null,
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
     //修改数据
     editEruptData(eruptName: string, data: object): Observable<EruptApiModel> {
         return this._http.put<EruptApiModel>(RestPath.data + eruptName, data, null, {
