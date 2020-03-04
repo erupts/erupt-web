@@ -70,16 +70,6 @@ export class DataService {
         });
     }
 
-    getEruptFieldHtml(eruptName: string, fieldName: string) {
-        return this.http.get(RestPath.tpl + "html-field/" + eruptName + "/" + fieldName, {
-            responseType: "text",
-            headers: {
-                erupt: eruptName,
-                token: this.tokenService.get().token
-            }
-        });
-    }
-
     getEruptTpl(name: string) {
         return RestPath.tpl + name + "?_token=" + this.tokenService.get().token + "&_erupt=" + name;
     }
@@ -243,6 +233,10 @@ export class DataService {
 
     createAuthParam(eruptName: string): string {
         return DataService.PARAM_ERUPT + "=" + eruptName + "&" + DataService.PARAM_TOKEN + "=" + this.tokenService.get().token;
+    }
+
+    getFieldTplPath(eruptName: string, fieldName: string): string {
+        return RestPath.tpl + "html-field/" + eruptName + "/" + fieldName + "?_token=" + this.tokenService.get().token + "&_erupt=" + eruptName;
     }
 
 

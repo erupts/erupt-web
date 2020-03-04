@@ -34,7 +34,7 @@
                     <button nz-button (click)="save()" [disabled]="loading" *ngIf="eruptBuildModel.eruptModel.eruptJson.power.edit">
                         <i nz-icon nzType="save" theme="outline"></i>保存
                     </button>
-                    <button nz-button nzType="danger" (click)="del()" [disabled]="loading"
+                    <button nz-button nzType="danger" style="background: #fff !important;" [nzGhost]="true" (click)="del()" [disabled]="loading"
                             *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
                         <i nz-icon nzType="delete" theme="outline"></i>删除
                     </button>

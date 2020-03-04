@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from "@angular/core";
-import {Edit, EruptFieldModel} from "../../model/erupt-field.model";
+import {EruptFieldModel} from "../../model/erupt-field.model";
 import {AttachmentEnum, ChoiceEnum, DateEnum, DependSwitchTypeEnum, EditType} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {TreeSelectComponent} from "../../components/tree-select/tree-select.component";
@@ -55,8 +55,6 @@ export class EditTypeComponent implements OnInit, OnDestroy {
 
     uploadFilesStatus: { [key: string]: boolean } = {};
 
-    exitJs: string = "";
-
     private datePipe: DatePipe = new DatePipe("zh-cn");
 
     constructor(public dataService: DataService,
@@ -75,26 +73,10 @@ export class EditTypeComponent implements OnInit, OnDestroy {
         if (this.mode === "addNew") {
             this.dataHandlerService.loadEruptDefaultValue(this.eruptBuildModel);
         }
-        this.eruptModel.eruptFieldModels.forEach(field => {
-            if (field.eruptFieldJson.edit.type == EditType.HTML) {
-                this.dataService.getEruptFieldHtml(this.eruptModel.eruptName, field.fieldName).subscribe(res => {
-                    let page = this.utilsService.analyseHtml(res);
-                    field.eruptFieldJson.edit.$viewValue = page.html;
-                    this.exitJs += page.exitJs;
-                    setTimeout(() => eval(page.js), 200)
-                });
-            }
-        });
     }
 
     ngOnDestroy(): void {
-        if (this.exitJs) {
-            try {
-                eval(this.exitJs);
-            } catch (e) {
 
-            }
-        }
     }
 
     eruptEditValidate(): boolean {
@@ -247,6 +229,14 @@ export class EditTypeComponent implements OnInit, OnDestroy {
         field.eruptFieldJson.edit.$value = null;
         field.eruptFieldJson.edit.$viewValue = null;
         field.eruptFieldJson.edit.$tempValue = null;
+    }
+
+    iframeHeight(event) {
+        let iframe = event.path[0];
+        let iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
+        if (iframeWin.document.body) {
+            iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
+        }
     }
 
 }

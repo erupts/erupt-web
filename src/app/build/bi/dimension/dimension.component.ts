@@ -26,7 +26,6 @@ export class DimensionComponent implements OnInit {
     }
 
     ref(dim: Dimension) {
-        console.log(this.bi.code)
         this.modal.create({
             nzWrapClassName: "modal-xs",
             nzKeyboard: true,
@@ -42,6 +41,11 @@ export class DimensionComponent implements OnInit {
 
             }
         });
+    }
+
+    clearRef(dim: Dimension){
+        dim.$viewValue = null;
+        dim.$value = null;
     }
 
 }

@@ -24,7 +24,7 @@
                             </nz-input-group>
                             <ng-template #refBtn>
                                 <ng-container *ngIf="dim.$value">
-                                    <i nz-icon nzType="close-circle" theme="fill" class="point"></i>
+                                    <i nz-icon nzType="close-circle" theme="fill" class="point" (click)="clearRef(dim)"></i>
                                 </ng-container>
                                 <ng-container *ngIf="!dim.$value">
                                     <i nz-icon nzType="database" theme="fill" class="point" (click)="ref(dim)"></i>

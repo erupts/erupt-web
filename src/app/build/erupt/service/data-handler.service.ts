@@ -524,7 +524,8 @@ export class DataHandlerService {
                         break;
                     case EditType.CHOICE:
                         if (edit.$value || edit.$value === 0) {
-                            if (edit.choiceType.type === ChoiceEnum.SELECT_MULTI || edit.choiceType.type === ChoiceEnum.TAGS ||
+                            if (edit.choiceType.type === ChoiceEnum.SELECT_MULTI ||
+                                edit.choiceType.type === ChoiceEnum.TAGS ||
                                 edit.choiceType.type === ChoiceEnum.CHECKBOX) {
                                 let val = (<string[]>edit.$value).join(edit.choiceType.joinSeparator);
                                 if (val) {

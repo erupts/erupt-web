@@ -8,7 +8,8 @@
         </ng-container>
 
         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
-            <button nz-button nzType="danger" [nzGhost]="true"  class="mb-sm" (click)="delRows()">
+            <button nz-button nzType="danger" [nzGhost]="true" style="background: #fff !important;" class="mb-sm"
+                    (click)="delRows()">
                 <i nz-icon nzType="delete" nzTheme="outline"></i>删除
             </button>
         </ng-container>
@@ -33,7 +34,8 @@
         </ng-container>
 
         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
-            <button nz-button nzType="primary" [nzGhost]="true" class="mb-sm" (click)="query()">
+            <button nz-button nzType="primary" style="background: #fff !important;" [nzGhost]="true" class="mb-sm"
+                    (click)="query()">
                 <i nz-icon nzType="search" nzTheme="outline"></i>查询
             </button>
         </ng-container>
@@ -49,7 +51,7 @@
             <ng-template #tableColumnCtrl>
                 <div nz-row style="max-width: 520px;">
                     <ng-container *ngFor="let col of columns">
-                        <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 100px;">
+                        <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
                             <label nz-checkbox [(ngModel)]="col.show"
                                    (ngModelChange)="st.resetColumns()">{{col.title}}</label>
                         </div>

@@ -31,7 +31,7 @@ export enum EditType {
     SLIDER = "SLIDER",                         //数字滑块
     EMPTY = "EMPTY",
     DEPEND_SWITCH = "DEPEND_SWITCH",
-    HTML = "HTML",
+    TPL = "TPL",
     HTML_EDIT = "HTML_EDIT",
     MAP = "MAP",
     CODE_EDITOR = "CODE_EDITOR",

@@ -565,9 +565,11 @@
                             </se>
                         </div>
                     </ng-container>
-                    <ng-container *ngSwitchCase="editType.HTML">
+                    <ng-container *ngSwitchCase="editType.TPL">
                         <div nz-col [nzSpan]="24">
-                            <div [innerHTML]="field.eruptFieldJson.edit.$viewValue|html"></div>
+                            <iframe [src]="dataService.getFieldTplPath(eruptBuildModel.eruptModel.eruptName,field.fieldName) | safeUrl"
+                                    frameborder="0" style="width:100%" (load)="iframeHeight($event)">
+                            </iframe>
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.MAP">
