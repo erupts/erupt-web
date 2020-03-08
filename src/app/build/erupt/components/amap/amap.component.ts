@@ -18,7 +18,8 @@ export class AmapComponent implements OnInit {
 
     ngOnInit() {
         this.loading = true;
-        this.lazy.loadScript("https://webapi.amap.com/maps?v=1.4.14&key=" + WindowModel.amapKey).then(() => {
+        this.lazy.loadScript("https://webapi.amap.com/maps?v=1.4.15&key="
+            + WindowModel.amapKey + "&plugin=AMap.Autocomplete").then(() => {
             this.loading = false;
             let map = new AMap.Map(this.ref.nativeElement.querySelector("#amap"), {
                 zoom: 11,
@@ -34,6 +35,10 @@ export class AmapComponent implements OnInit {
                 });
                 map.addControl(geolocation);
             });
+            var auto = new AMap.Autocomplete({
+                input: "tipinput"
+            });
+            console.log(auto)
             AMap.plugin(['AMap.ControlBar',], function () {
                 // 添加 3D 罗盘控制
                 map.addControl(new AMap.ControlBar());

@@ -26,15 +26,20 @@ export interface Drill {
     title: string;
     icon: string;
     column: string;
-    eruptClass: string;
+    link: Link;
 }
 
 export interface Tree {
     id: string;
     label: string;
     pid: string;
+    linkTable: Link[];
     children?: Tree[];
     data?: any;
+}
+
+export interface Link {
+    eruptClass: string;
 }
 
 

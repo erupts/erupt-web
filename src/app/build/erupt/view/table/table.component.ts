@@ -51,6 +51,7 @@ export class TableComponent implements OnInit {
         });
     }
 
+
     @Input() set eruptName(value: string) {
         this.init(value, {
             url: RestPath.data + "table/" + value,
@@ -291,7 +292,7 @@ export class TableComponent implements OnInit {
                             drill: {
                                 code: key,
                                 val: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
-                                erupt: drill.eruptClass,
+                                erupt: drill.link.eruptClass,
                                 eruptParent: this.eruptBuildModel.eruptModel.eruptName
                             }
                         }

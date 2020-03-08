@@ -58,6 +58,7 @@ export class DefaultInterceptor implements HttpInterceptor {
                     //如果返回对象为EruptApi
                     if ("status" in body && "message" in body && "errorIntercept" in body) {
                         let eruptApiBody = <EruptApiModel>body;
+                        eruptApiBody.success = !(eruptApiBody.status === Status.ERROR);
                         if (eruptApiBody.message) {
                             switch (eruptApiBody.promptWay) {
                                 case PromptWay.DIALOG:
@@ -145,9 +146,9 @@ export class DefaultInterceptor implements HttpInterceptor {
                 break;
             case 401: // 未登录状态码
                 this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
-                if (this.router.url=="/"){
+                if (this.router.url == "/") {
                     this.goTo("/passport/login");
-                }else{
+                } else {
                     this.modal.create({
                         // nzWrapClassName: "modal-xs",
                         nzMaskClosable: false,
