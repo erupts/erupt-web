@@ -762,7 +762,7 @@ export class DataHandlerService {
                                 edit.$value = [];
                             }
                         } else {
-                            edit.$value = object[field.fieldName] + "";
+                            edit.$value = object[field.fieldName];
                         }
                         break;
                     default:

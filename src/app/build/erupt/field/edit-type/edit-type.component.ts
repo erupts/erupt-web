@@ -59,7 +59,6 @@ export class EditTypeComponent implements OnInit, OnDestroy {
 
     constructor(public dataService: DataService,
                 public dataHandlerService: DataHandlerService,
-                public utilsService: UtilsService,
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
