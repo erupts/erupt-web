@@ -16,6 +16,7 @@
     </erupt-edit-type>
 </nz-card>
 <st #st
+    [scroll]="{x: (columns.length * 120) + 'px'}"
     [data]="stConfig.url" [columns]="columns"
     (change)="tableDataChange($event)"
     [bordered]="true"

@@ -601,10 +601,20 @@ export class DataHandlerService {
                         eruptData[field.fieldName] = edit.$value;
                         break;
                     case EditType.DATE:
-                        if (Array.isArray(edit.$value)) {
-                            break;
+                        if (edit.$value) {
+                            if (Array.isArray(edit.$value)) {
+                                if (!edit.$value[0]) {
+                                    edit.$value = null;
+                                    break;
+                                }
+                                eruptData[field.fieldName] = [
+                                    this.dateFormat(edit.$value[0], edit),
+                                    this.dateFormat(edit.$value[1], edit)
+                                ];
+                            } else {
+                                eruptData[field.fieldName] = this.dateFormat(edit.$value, edit);
+                            }
                         }
-                        eruptData[field.fieldName] = this.dateFormat(edit.$value, edit);
                         break;
                     default:
                         if (edit.$value || edit.$value === 0) {

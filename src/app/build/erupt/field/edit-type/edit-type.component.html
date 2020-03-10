@@ -304,7 +304,6 @@
                                                          [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                          [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                          [name]="field.fieldName"
-                                                         (ngModelChange)="dateChange($event,field.eruptFieldJson.edit)"
                                                          [nzShowTime]="field.eruptFieldJson.edit.dateType.type==dateEnum.DATE_TIME"
                                                          [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
                                                          [nzRanges]="dateRanges">
