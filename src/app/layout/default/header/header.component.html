@@ -1,7 +1,9 @@
 <div class="alain-default__header-logo">
     <a [routerLink]="['/']" class="alain-default__header-logo-link">
-        <img class="alain-default__header-logo-expanded" [src]="logoPath" alt="{{settings.app.name}}" style="max-height:40px;"/>
-        <img class="alain-default__header-logo-collapsed" [src]="logoPath" alt="{{settings.app.name}}" style="max-height:30px;"/>
+        <img class="alain-default__header-logo-expanded" [src]="logoPath" alt="{{settings.app.name}}"
+             style="max-height:40px;"/>
+        <img class="alain-default__header-logo-collapsed" [src]="logoPath" alt="{{settings.app.name}}"
+             style="max-height:30px;"/>
     </a>
 </div>
 <div class="alain-default__nav-wrap">
@@ -14,9 +16,9 @@
         </li>
         <!-- Lock Page -->
         <!--<li class="hidden-mobile">-->
-            <!--<div class="alain-default__nav-item" [routerLink]="['/lock']">-->
+        <!--<div class="alain-default__nav-item" [routerLink]="['/lock']">-->
         <!--<i nz-icon nzType="lock"></i>-->
-            <!--</div>-->
+        <!--</div>-->
         <!--</li>-->
         <!-- Search Button -->
         <!--<li class="hidden-pc" (click)="searchToggleChange()">-->
@@ -29,6 +31,12 @@
                 <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'"></i>
             </div>
         </li>
+
+<!--        <li (click)="refresh()">-->
+<!--            <div class="alain-default__nav-item">-->
+<!--                <i nz-icon [nzType]="'reload'"></i>-->
+<!--            </div>-->
+<!--        </li>-->
     </ul>
     <!--<div style="width: 100%;text-align: center;font-size: 26px;line-height: 48px;color: #fff;">-->
     <!--{{title}}-->
@@ -37,31 +45,31 @@
     <ul class="alain-default__nav">
         <!--&lt;!&ndash; Notify &ndash;&gt;-->
         <!--<li>-->
-            <!--<header-notify></header-notify>-->
+        <!--<header-notify></header-notify>-->
         <!--</li>-->
         <!--&lt;!&ndash; Task &ndash;&gt;-->
         <!--<li class="hidden-mobile">-->
-            <!--<header-task></header-task>-->
+        <!--<header-task></header-task>-->
         <!--</li>-->
         <!--&lt;!&ndash; App Icons &ndash;&gt;-->
         <!--<li class="hidden-mobile">-->
-            <!--<header-icon></header-icon>-->
+        <!--<header-icon></header-icon>-->
         <!--</li>-->
-         <!--&lt;!&ndash;Settings &ndash;&gt;-->
+        <!--&lt;!&ndash;Settings &ndash;&gt;-->
         <!--<li class="hidden-mobile">-->
-            <!--<nz-dropdown nzTrigger="click" nzPlacement="bottomRight">-->
-                <!--<div class="alain-default__nav-item" nz-dropdown>-->
+        <!--<nz-dropdown nzTrigger="click" nzPlacement="bottomRight">-->
+        <!--<div class="alain-default__nav-item" nz-dropdown>-->
         <!--<i nz-icon nzType="setting"></i>-->
-                <!--</div>-->
-                <!--<div nz-menu style="width:200px;">-->
-                    <!--&lt;!&ndash;<div nz-menu-item>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<header-fullscreen></header-fullscreen>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                    <!--<div nz-menu-item>-->
-                        <!--<header-storage></header-storage>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</nz-dropdown>-->
+        <!--</div>-->
+        <!--<div nz-menu style="width:200px;">-->
+        <!--&lt;!&ndash;<div nz-menu-item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<header-fullscreen></header-fullscreen>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--<div nz-menu-item>-->
+        <!--<header-storage></header-storage>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</nz-dropdown>-->
         <!--</li>-->
         <ng-container *ngFor="let r of r_tools">
             <li (click)="customToolsFun($event,r)" [ngClass]="r.mobileHidden?'hidden-mobile':''">

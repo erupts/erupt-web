@@ -69,8 +69,6 @@ export class TableComponent implements OnInit {
 
     searchErupt: EruptModel;
 
-    readonlyErupt: EruptModel;
-
     eruptBuildModel: EruptBuildModel;
 
     stConfig = new BuildConfig().stConfig;
@@ -107,7 +105,6 @@ export class TableComponent implements OnInit {
                 this.buildTabErupt();
                 this.buildTableConfig();
                 this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
-                this.buildReadOnlyErupt();
             }
         );
     }
@@ -131,16 +128,6 @@ export class TableComponent implements OnInit {
                 }
             }
         }
-    }
-
-    buildReadOnlyErupt() {
-        let copyErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
-        copyErupt.eruptFieldModels.forEach((field) => {
-            if (field.eruptFieldJson.edit) {
-                field.eruptFieldJson.edit.readOnly = true;
-            }
-        });
-        this.readonlyErupt = copyErupt;
     }
 
     query() {
@@ -186,11 +173,7 @@ export class TableComponent implements OnInit {
                         nzTitle: "查看",
                         nzContent: EditComponent,
                         nzComponentParams: {
-                            eruptBuildModel: {
-                                eruptModel: this.readonlyErupt,
-                                tabErupts: this.eruptBuildModel.tabErupts,
-                                combineErupts: this.eruptBuildModel.combineErupts
-                            },
+                            eruptBuildModel: deepCopy(this.eruptBuildModel),
                             id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
                             behavior: "readonly"
                         }

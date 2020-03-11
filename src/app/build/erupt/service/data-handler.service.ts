@@ -534,8 +534,6 @@ export class DataHandlerService {
                             } else {
                                 eruptData[field.fieldName] = edit.$value;
                             }
-                        } else {
-                            eruptData[field.fieldName] = null;
                         }
                         break;
                     case EditType.REFERENCE_TREE:

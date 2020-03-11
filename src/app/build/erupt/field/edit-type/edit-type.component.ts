@@ -211,8 +211,10 @@ export class EditTypeComponent implements OnInit, OnDestroy {
                     this.msg.warning("请选中一条数据");
                     return false;
                 }
+                console.log(radioValue)
                 field.eruptFieldJson.edit.$value = radioValue[field.eruptFieldJson.edit.referenceTableType.id];
-                field.eruptFieldJson.edit.$viewValue = radioValue[field.eruptFieldJson.edit.referenceTableType.label];
+                field.eruptFieldJson.edit.$viewValue = radioValue[field.eruptFieldJson.edit.referenceTableType.label
+                    .replace(".", "_")] || '----';
                 field.eruptFieldJson.edit.$tempValue = radioValue;
             }
         });

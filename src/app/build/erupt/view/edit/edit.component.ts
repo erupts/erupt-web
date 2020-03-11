@@ -7,6 +7,8 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {EditTypeComponent} from "../../field/edit-type/edit-type.component";
 import {DataService} from "@shared/service/data.service";
+import {EruptModel} from "../../model/erupt.model";
+import {deepCopy} from "@delon/util";
 
 @Component({
     selector: "erupt-edit",
@@ -45,6 +47,14 @@ export class EditComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
+        if (this.behavior === "readonly") {
+            this.eruptBuildModel = <EruptBuildModel>deepCopy(this.eruptBuildModel);
+            this.eruptBuildModel.eruptModel.eruptFieldModels.forEach((field) => {
+                if (field.eruptFieldJson.edit) {
+                    field.eruptFieldJson.edit.readOnly = true;
+                }
+            });
+        }
         if (this.behavior != "add") {
             this.loading = true;
             this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.id).subscribe(data => {
