@@ -48,7 +48,6 @@ export class EditComponent implements OnInit, OnDestroy {
     ngOnInit() {
         // this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
         if (this.behavior === "readonly") {
-            this.eruptBuildModel = <EruptBuildModel>deepCopy(this.eruptBuildModel);
             this.eruptBuildModel.eruptModel.eruptFieldModels.forEach((field) => {
                 if (field.eruptFieldJson.edit) {
                     field.eruptFieldJson.edit.readOnly = true;

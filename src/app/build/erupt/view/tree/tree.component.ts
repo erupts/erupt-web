@@ -186,7 +186,7 @@ export class TreeComponent implements OnInit, OnDestroy {
     }
 
     nzDblClick(event: NzFormatEmitEvent) {
-        event.node.setExpanded(!event.node.isExpanded);
+        event.node.isExpanded = !event.node.isExpanded;
         event.event.stopPropagation();
     }
 
@@ -199,7 +199,6 @@ export class TreeComponent implements OnInit, OnDestroy {
             this.loading = false;
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
         });
-
     }
 
 }

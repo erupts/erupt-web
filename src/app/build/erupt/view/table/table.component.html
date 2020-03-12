@@ -83,30 +83,37 @@
             </ng-container>
         </ng-container>
     </div>
-    <nz-card *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0"
-             [nzBodyStyle]="{padding:'10px'}"
-             style="background: #fafafa;margin-bottom: 0;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)"
-             [hidden]="hideCondition">
-        <erupt-edit-type [eruptBuildModel]="{eruptModel:searchErupt,referenceErupts:eruptBuildModel.referenceErupts}"
-                         [col]="{ xs: 24, sm: 24, md: 12, lg: 8, xl: 8, xxl: 6 }"
-                         (search)="query()"
-                         size="default"
-                         layout="horizontal"
-        >
-        </erupt-edit-type>
-    </nz-card>
 
-    <!--y: 'calc(100vh - 400px)'-->
-    <!--{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 110 : 0) + 'px'}-->
-    <st #st
-        [data]="stConfig.url" [columns]="columns"
-        [scroll]="{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 150 : 0) + 'px'}"
-        (change)="tableDataChange($event)"
-        [bordered]="true"
-        [multiSort]="stConfig.multiSort"
-        [page]="stConfig.stPage"
-        [req]="stConfig.req"
-        [size]="'middle'"
-    >
-    </st>
+    <div nz-row [nzGutter]="16">
+        <div nz-col *ngIf="layoutTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="8" [nzXl]="6">
+            <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
+        </div>
+        <div nz-col [nzXs]="24" [nzMd]="layoutTree?16:24" [nzLg]="layoutTree?16:24" [nzXl]="layoutTree?18:24">
+            <nz-card *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0"
+                     [nzBodyStyle]="{padding:'10px'}"
+                     class="search-card"
+                     [hidden]="hideCondition">
+                <erupt-edit-type
+                        [eruptBuildModel]="{eruptModel:searchErupt,referenceErupts:eruptBuildModel.referenceErupts}"
+                        [col]="{ xs: 24, sm: 24, md: 12, lg: 8, xl: 8, xxl: 6 }"
+                        (search)="query()"
+                        size="default"
+                        layout="horizontal"
+                >
+                </erupt-edit-type>
+            </nz-card>
+            <st #st
+                [data]="stConfig.url" [columns]="columns"
+                [scroll]="{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 150 : 0) + 'px'}"
+                (change)="tableDataChange($event)"
+                [bordered]="true"
+                [multiSort]="stConfig.multiSort"
+                [page]="stConfig.stPage"
+                [req]="stConfig.req"
+                [size]="'middle'"
+            >
+            </st>
+        </div>
+    </div>
+
 </ng-container>

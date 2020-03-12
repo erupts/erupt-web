@@ -16,6 +16,7 @@ import {TreeComponent} from "./view/tree/tree.component";
 import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
 import {TableComponent} from './view/table/table.component';
+import { LayoutTreeComponent } from './field/layout-tree/layout-tree.component';
 
 @NgModule({
     imports: [
@@ -53,7 +54,8 @@ import {TableComponent} from './view/table/table.component';
         EditComponent,
         TreeComponent,
         TableViewComponent,
-        TableComponent
+        TableComponent,
+        LayoutTreeComponent
     ]
 })
 export class EruptModule {

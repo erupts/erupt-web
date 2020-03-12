@@ -17,6 +17,7 @@ export interface Erupt {
     primaryKeyCol: string;
     power: Power;
     tree: Tree;
+    layoutTree: string;
     rowOperation: { [key: string]: RowOperation };
     drills: { [key: string]: Drill }
 }

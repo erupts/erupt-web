@@ -61,6 +61,8 @@ export class TableComponent implements OnInit {
         });
     }
 
+    ww = window.document.documentElement.clientHeight;
+
     showColCtrl: boolean = false;
 
     clientWidth = document.body.clientWidth;
@@ -77,6 +79,8 @@ export class TableComponent implements OnInit {
 
     columns: STColumn[];
 
+    layoutTree: boolean;
+
     @ViewChild("st", {static: false}) st: STComponent;
     private build$: Subscription;
 
@@ -90,18 +94,21 @@ export class TableComponent implements OnInit {
     }) {
         this.selectedRows = [];
         this.eruptBuildModel = null;
+        this.layoutTree = false;
         if (this.searchErupt) {
             this.searchErupt.eruptFieldModels = [];
         }
         if (this.build$) {
             this.build$.unsubscribe();
         }
-        //put table api header
         this.stConfig.req.headers = req.header;
         this.stConfig.url = req.url;
         this.build$ = this.dataService.getEruptBuild(erupt).subscribe(eb => {
                 this.dataHandler.initErupt(eb);
                 this.eruptBuildModel = eb;
+                if (eb.eruptModel.eruptJson.layoutTree) {
+                    this.layoutTree = true;
+                }
                 this.buildTabErupt();
                 this.buildTableConfig();
                 this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
@@ -130,13 +137,13 @@ export class TableComponent implements OnInit {
         }
     }
 
-    query() {
+    query(param?: any) {
         if (this.searchErupt.eruptFieldModels.length > 0) {
             this.stConfig.req.param = this.dataHandler.searchEruptToObject({
                 eruptModel: this.searchErupt
             });
         }
-        this.st.load(1, this.stConfig.req.param);
+        this.st.load(1, Object.assign(this.stConfig.req.param, param));
     }
 
     buildTableConfig() {
@@ -431,7 +438,7 @@ export class TableComponent implements OnInit {
     }
 
     // table checkBox 触发事件
-    tableDataChange(event: STData) {
+    tableDataChange(event: any) {
         if (event.type === "checkbox") {
             this.selectedRows = event.checkbox;
         }
@@ -451,6 +458,11 @@ export class TableComponent implements OnInit {
         }
         //导出接口
         this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition);
+    }
+
+
+    clickTreeNode(event) {
+        this.query(event);
     }
 
 

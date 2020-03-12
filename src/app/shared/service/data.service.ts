@@ -118,7 +118,7 @@ export class DataService {
     }
 
     //获取reference-tree数据
-    queryReferenceTreeData(eruptName: string, refName: string, dependVal: any, eruptParent?: string): Observable<Tree[]> {
+    queryReferenceTreeData(eruptName: string, refName: string, dependVal?: any, eruptParent?: string): Observable<Tree[]> {
         let param = {};
         if (dependVal) {
             param["dependValue"] = dependVal;

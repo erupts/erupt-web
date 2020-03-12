@@ -1,10 +1,21 @@
 :host {
   ::ng-deep {
+    .search-card {
+      background: #fafafa;
+      margin-bottom: 0;
+      border-color: rgba(0, 0, 0, 0.09);
+      border-bottom: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+      border-radius: 0;
+      z-index: 1;
+    }
     st {
       .ant-table {
-        box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2);
-        tr{
-          th:nth-child(n+2){
+        border-color: rgba(0, 0, 0, 0.09);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+
+        tr {
+          th:nth-child(n+2) {
             min-width: 90px;
           }
         }

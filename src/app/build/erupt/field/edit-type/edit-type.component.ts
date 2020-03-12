@@ -214,7 +214,7 @@ export class EditTypeComponent implements OnInit, OnDestroy {
                 console.log(radioValue)
                 field.eruptFieldJson.edit.$value = radioValue[field.eruptFieldJson.edit.referenceTableType.id];
                 field.eruptFieldJson.edit.$viewValue = radioValue[field.eruptFieldJson.edit.referenceTableType.label
-                    .replace(".", "_")] || '----';
+                    .replace(".", "_")] || '-----';
                 field.eruptFieldJson.edit.$tempValue = radioValue;
             }
         });
