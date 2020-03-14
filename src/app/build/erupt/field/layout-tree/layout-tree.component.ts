@@ -3,6 +3,8 @@ import {EruptModel} from "../../model/erupt.model";
 import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {NzFormatEmitEvent} from "ng-zorro-antd";
+import {EruptFieldModel} from "../../model/erupt-field.model";
+import {EditType} from "../../model/erupt.enum";
 
 @Component({
     selector: 'layout-tree',
@@ -43,12 +45,10 @@ export class LayoutTreeComponent implements OnInit {
 
     nodeClickEvent(event: NzFormatEmitEvent): void {
         if (event.node.origin.selected) {
-
+            let ef: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(this.eruptModel.eruptJson.layoutTree);
             this.trigger.emit({
                 [this.eruptModel.eruptJson.layoutTree]: {
-                    [this.eruptModel.eruptFieldModelMap.get(this.eruptModel.eruptJson.layoutTree)
-                        .eruptFieldJson.edit.referenceTreeType.id
-                        ]: event.node.origin.key
+                    [ef.eruptFieldJson.edit.referenceTreeType.id]: event.node.origin.key
                 }
             });
         } else {

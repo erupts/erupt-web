@@ -7,8 +7,6 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {EditTypeComponent} from "../../field/edit-type/edit-type.component";
 import {DataService} from "@shared/service/data.service";
-import {EruptModel} from "../../model/erupt.model";
-import {deepCopy} from "@delon/util";
 
 @Component({
     selector: "erupt-edit",

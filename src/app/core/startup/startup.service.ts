@@ -6,6 +6,7 @@ import {NzIconService} from "ng-zorro-antd";
 import {ICONS_AUTO} from "../../../style-icons-auto";
 import {ICONS} from "../../../style-icons";
 import {WindowModel} from "@shared/model/window.model";
+import {ActivatedRoute, Router} from "@angular/router";
 
 /**
  * 用于应用启动时
@@ -22,12 +23,14 @@ export class StartupService {
     }
 
     load(): Promise<any> {
-        console.log("Erupt cyber：https://www.erupt.xyz");
-        // console.log("%c YuePeng Erupt Framework",
-        //   " text-shadow: 0 1px 0 #ccc,0 2px 0 #c9c9c9,0 3px 0 #bbb,0 4px 0 #b9b9b9,0 5px 0 #aaa,0 6px 1px rgba(0,0,0,.1)," +
-        //   "0 0 5px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.3),0 3px 5px rgba(0,0,0,.2),0 5px 10px" +
-        //   " rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.2),0 20px 20px rgba(0,0,0,.15);font-size:2em");
-
+        console.log("%c Erupt Framework %chttps://www.erupt.xyz"
+            ,`color:#fff;margin:10px;margin-left:0;font-size:1.8em;
+            font-family: Courier New, Menlo, Monaco, Consolas, monospace;
+            font-width:800;background:#FF5722;padding:10px 30px`
+            ," text-shadow: 0 1px 0 #ccc,0 2px 0 #c9c9c9,0 3px 0 #bbb," +
+            "0 4px 0 #b9b9b9,0 5px 0 #aaa,0 6px 1px rgba(0,0,0,.1)," +
+            "0 0 5px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.3),0 3px 5px rgba(0,0,0,.2),0 5px 10px" +
+            " rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.2),0 20px 20px rgba(0,0,0,.15);font-size:1.6em;margin-bottom:10px");
         return new Promise((resolve, reject) => {
             // 应用信息：包括站点名、描述、年份
             this.settingService.setApp({

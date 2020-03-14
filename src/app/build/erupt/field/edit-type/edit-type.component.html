@@ -195,7 +195,8 @@
                                             <nz-select class="erupt-input"
                                                        [nzAllowClear]='!field.eruptFieldJson.edit.notNull'
                                                        [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                       [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                       [nzSize]="size"
+                                                       [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                        [nzShowSearch]="true"
                                                        [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
                                                        [name]="field.fieldName">

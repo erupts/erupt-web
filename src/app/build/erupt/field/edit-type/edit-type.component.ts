@@ -12,7 +12,6 @@ import {ReferenceTableComponent} from "../../components/reference-table/referenc
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {DataHandlerService} from "../../service/data-handler.service";
-import {UtilsService} from "@shared/service/utils.service";
 
 @Component({
     selector: "erupt-edit-type",
@@ -79,7 +78,6 @@ export class EditTypeComponent implements OnInit, OnDestroy {
     }
 
     eruptEditValidate(): boolean {
-        console.log(this.uploadFilesStatus)
         for (let key in this.uploadFilesStatus) {
             if (!this.uploadFilesStatus[key]) {
                 this.msg.warning("附件上传中请稍后");
@@ -221,6 +219,9 @@ export class EditTypeComponent implements OnInit, OnDestroy {
     }
 
     changeTagAll($event, field: EruptFieldModel) {
+        // for (let vl of field.choiceMap) {
+        //     vl.$viewValue = $event;
+        // }
         for (let vl of field.eruptFieldJson.edit.choiceType.vl) {
             vl.$viewValue = $event;
         }
