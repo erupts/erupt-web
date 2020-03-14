@@ -21,17 +21,13 @@
         <!--<i nz-icon nzType="search"></i>-->
         <!--</div>-->
         <!--</li>-->
-        <li class="hidden-mobile" (click)="toggleScreen()">
-            <div class="alain-default__nav-item">
-                <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'"></i>
-            </div>
-        </li>
 
-<!--        <li (click)="refresh()">-->
-<!--            <div class="alain-default__nav-item">-->
-<!--                <i nz-icon [nzType]="'reload'"></i>-->
-<!--            </div>-->
-<!--        </li>-->
+
+        <!--        <li (click)="refresh()">-->
+        <!--            <div class="alain-default__nav-item">-->
+        <!--                <i nz-icon [nzType]="'reload'"></i>-->
+        <!--            </div>-->
+        <!--        </li>-->
     </ul>
     <!--<div style="width: 100%;text-align: center;font-size: 26px;line-height: 48px;color: #fff;">-->
     <!--{{title}}-->
@@ -73,6 +69,24 @@
                 </div>
             </li>&nbsp;
         </ng-container>
+
+        <li class="hidden-mobile" (click)="toggleScreen()">
+            <div class="alain-default__nav-item">
+                <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'"></i>
+            </div>
+        </li>
+
+        <li class="hidden-mobile" (click)="toggleDark()">
+            <div class="alain-default__nav-item">
+                <ng-container *ngIf="!isDark">
+                    <img src="/assets/image/dark.svg" alt="" width="26px">
+                </ng-container>
+                <ng-container *ngIf="isDark">
+                    <img src="/assets/image/light.svg" alt="" width="26px">
+                </ng-container>
+                <!--<i nz-icon [nzType]="isDark ? 'warning' : 'copy'"></i>-->
+            </div>
+        </li>
 
         <li class="hidden-mobile">
             <header-user></header-user>

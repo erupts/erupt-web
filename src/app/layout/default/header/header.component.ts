@@ -4,6 +4,7 @@ import * as screenfull from "screenfull";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {CustomerTool, WindowModel} from "@shared/model/window.model";
 import {Router} from "@angular/router";
+import {CacheService} from "@delon/cache";
 
 @Component({
     selector: "layout-header",
@@ -24,13 +25,32 @@ export class HeaderComponent implements OnInit {
 
     r_tools: CustomerTool[] = WindowModel.r_tools;
 
-    constructor(public settings: SettingsService, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService, private router: Router) {
+    isDark: boolean;
+
+    constructor(public settings: SettingsService,
+                @Inject(DA_SERVICE_TOKEN)
+                private tokenService: ITokenService,
+                private cacheService: CacheService) {
     }
 
     ngOnInit() {
+        this.isDark = this.cacheService.getNone("dark") || false;
+        if (this.isDark) {
+            document.body.className = "dark";
+        }
         this.r_tools.forEach(tool => {
             tool.load && tool.load(event, this.tokenService.get().token);
         });
+    }
+
+    toggleDark() {
+        if (this.isDark) {
+            document.body.className = "";
+        } else {
+            document.body.className = "dark";
+        }
+        this.isDark = !this.isDark;
+        this.cacheService.set("dark", this.isDark);
     }
 
     toggleScreen() {
