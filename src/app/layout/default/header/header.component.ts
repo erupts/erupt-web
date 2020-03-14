@@ -13,7 +13,6 @@ import {Router} from "@angular/router";
     ]
 })
 export class HeaderComponent implements OnInit {
-    searchToggleStatus: boolean;
 
     isFullScreen: boolean = false;
 
@@ -34,18 +33,10 @@ export class HeaderComponent implements OnInit {
         });
     }
 
-    toggleCollapsedSidebar() {
-        this.settings.setLayout("collapsed", !this.settings.layout.collapsed);
-    }
-
-    searchToggleChange() {
-        this.searchToggleStatus = !this.searchToggleStatus;
-    }
-
     toggleScreen() {
         let sf = screenfull as screenfull.Screenfull;
         if (sf.isEnabled) {
-            this.isFullScreen = sf.isFullscreen;
+            this.isFullScreen = !sf.isFullscreen;
             sf.toggle();
         }
     }

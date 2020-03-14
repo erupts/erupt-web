@@ -1,18 +1,8 @@
 <div class="alain-default__aside-inner">
-    <!--<nz-dropdown nzTrigger="click" class="alain-default__aside-user">-->
-    <!--<div nz-dropdown class="user-block-dropdown">-->
-    <!--<nz-avatar class="alain-default__aside-user-avatar" [nzText]="settings.user.name.substr(0,1)"-->
-    <!--nzSize="default"></nz-avatar>-->
-    <!--<div class="alain-default__aside-user-info">-->
-    <!--<strong>{{settings.user.name}}</strong>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<ul nz-menu>-->
-    <!--<li nz-menu-item routerLink="/pro/account/center">个人中心</li>-->
-    <!--<li nz-menu-item routerLink="/pro/account/settings">个人设置</li>-->
-    <!--</ul>-->
-    <!--</nz-dropdown>-->
-    <!--settings.layout.menuDark-->
-    <!--<layout-menu></layout-menu>-->
-    <sidebar-nav [autoCloseUnderPad]="false" class="d-block py-lg" style="padding-top: 0 !important;" ></sidebar-nav>
+    <!--    <layout-menu></layout-menu>-->
+    <sidebar-nav [autoCloseUnderPad]="false" class="d-block"
+                 style="padding-top: 0 !important;padding-bottom:42px"></sidebar-nav>
+    <div class="fold" (click)="toggleCollapsedSidebar()">
+        <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}" style="font-size: 1.2em"></i>
+    </div>
 </div>

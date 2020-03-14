@@ -1,0 +1,21 @@
+@import '~styles/theme';
+
+:host {
+  .fold {
+    position: absolute;
+    z-index: 0;
+    padding: 10px;
+    bottom: 0;
+    width: 100%;
+    color: @alain-default-aside-nav-text-color;
+    border-top: 1px solid #efe3e5;
+    background: @alain-default-aside-bg;
+    text-align: center;
+    cursor: pointer;
+    transition: .4s all;
+  }
+
+  .fold:hover {
+    color: @primary-color;
+  }
+}

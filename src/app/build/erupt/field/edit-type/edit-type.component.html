@@ -152,6 +152,12 @@
                                                     style="margin-right: 10px"
                                                     nzMode="checkable">全选
                                             </nz-tag>
+                                            <ng-container *ngFor="let vl of field.choiceMap | keyvalue">
+<!--                                                <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"-->
+<!--                                                        style="margin-right: 10px"-->
+<!--                                                        nzMode="checkable"-->
+<!--                                                        [(nzChecked)]="vl.$viewValue">{{vl.label}}</nz-tag>-->
+                                            </ng-container>
                                             <ng-container *ngFor="let vl of field.eruptFieldJson.edit.choiceType.vl">
                                                 <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"
                                                         style="margin-right: 10px"

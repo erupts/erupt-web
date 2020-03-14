@@ -1,3 +1,4 @@
+@import "theme";
 //修复st表格中checkbox显示bug
 .ant-table .ant-checkbox-checked .ant-checkbox-inner::after {
   left: 3px;
@@ -56,13 +57,13 @@ reuse-tab ~ app-page {
   position: absolute;
   left: 200px;
   right: 0;
-  top: 64px;
+  top: @alain-default-header-hg;
   bottom: 0;
 }
 
 @media screen and (max-width: 767px) {
   .page-container {
-    height: calc(100vh - 64px);
+    height: calc(100vh - @alain-default-header-hg);
     left: 0 !important;
     top: 0 !important;
     margin: 0 -25px;
