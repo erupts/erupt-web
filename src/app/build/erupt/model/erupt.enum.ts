@@ -92,3 +92,8 @@ export enum SaveMode {
     SINGLE_COLUMN = "SINGLE_COLUMN",
     MULTI_ROW = "MULTI_ROW"
 }
+
+export enum SelectMode {
+    checkbox = "checkbox",
+    radio = "radio"
+}

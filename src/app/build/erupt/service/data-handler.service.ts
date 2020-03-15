@@ -7,7 +7,7 @@ import {deepCopy} from "@delon/util";
 import {Inject, Injectable} from "@angular/core";
 import {EruptBuildModel} from "../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
-import {ViewTypeComponent} from "../field/view-type/view-type.component";
+import {ViewTypeComponent} from "../view/view-type/view-type.component";
 import {STColumn, STData} from "@delon/abc";
 import {DatePipe} from "@angular/common";
 

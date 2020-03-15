@@ -70,6 +70,17 @@ export class DataService {
         });
     }
 
+    //获取结构
+    getEruptBuildByField(eruptName: string, field: string, eruptParentName?: string): Observable<EruptBuildModel> {
+        return this._http.get<EruptBuildModel>(RestPath.build + eruptName + "/" + field, null, {
+            observe: "body",
+            headers: {
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
+            }
+        });
+    }
+
     getEruptTpl(name: string) {
         return RestPath.tpl + name + "?_token=" + this.tokenService.get().token + "&_erupt=" + name;
     }

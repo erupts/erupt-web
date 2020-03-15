@@ -2,7 +2,7 @@ import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {STColumn, STColumnButton, STComponent} from "@delon/abc";
-import {EditTypeComponent} from "../../field/edit-type/edit-type.component";
+import {EditTypeComponent} from "../edit-type/edit-type.component";
 import {colRules} from "@shared/model/util.model";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DataHandlerService} from "../../service/data-handler.service";
@@ -10,7 +10,7 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {ReferenceTableComponent} from "../reference-table/reference-table.component";
 import {BuildConfig} from "../../model/build-config";
 import {Status} from "../../model/erupt-api.model";
-import {skip} from "rxjs/operators";
+import {SelectMode} from "../../model/erupt.enum";
 
 @Component({
     selector: "tab-table",
@@ -154,23 +154,26 @@ export class TabTableComponent implements OnInit {
     }
 
     addDataByRefer() {
-        const modal = this.modal.create({
+        this.modal.create({
             nzStyle: {top: "20px"},
-            nzWrapClassName: "modal-lg",
+            nzWrapClassName: "modal-xxl",
             nzMaskClosable: false,
             nzKeyboard: false,
             nzTitle: "新增",
             nzContent: ReferenceTableComponent,
             nzComponentParams: {
-                erupt: this.eruptBuildModel.eruptModel,
-                referenceErupt: this.tabErupt.eruptBuildModel.eruptModel,
+                eruptBuild: this.eruptBuildModel,
                 eruptField: this.tabErupt.eruptFieldModel,
-                mode: "checkbox"
+                mode: SelectMode.checkbox
             },
             nzOkText: "增加",
             nzOnOk: () => {
                 let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
-                edit.$value.push(...modal.getContentComponent().checkedValues);
+                if(!edit.$tempValue){
+                    this.msg.warning("请选中一条数据");
+                    return false;
+                }
+                edit.$value.push(...edit.$tempValue);
                 this.st.reload();
             }
         });

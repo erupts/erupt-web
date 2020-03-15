@@ -401,7 +401,7 @@
                                     <ng-template #refBtn>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.$value">
                                             <i nz-icon nzType="close-circle" theme="fill" class="point"
-                                               (click)="clearReferValue(field)"></i>
+                                               (click)="field.eruptFieldJson.edit.readOnly||clearReferValue(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
                                             <i nz-icon
@@ -436,7 +436,7 @@
                                     <ng-template #refBtn>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.$value">
                                             <i nz-icon nzType="close-circle" theme="fill" class="point"
-                                               (click)="clearReferValue(field)"></i>
+                                               (click)="field.eruptFieldJson.edit.readOnly||clearReferValue(field)"></i>
                                         </ng-container>
                                         <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
                                             <i nz-icon

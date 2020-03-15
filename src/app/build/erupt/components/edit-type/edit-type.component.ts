@@ -2,13 +2,13 @@ import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from 
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {AttachmentEnum, ChoiceEnum, DateEnum, DependSwitchTypeEnum, EditType} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
-import {TreeSelectComponent} from "../../components/tree-select/tree-select.component";
+import {TreeSelectComponent} from "../tree-select/tree-select.component";
 import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {DatePipe} from "@angular/common";
-import {ReferenceTableComponent} from "../../components/reference-table/reference-table.component";
+import {ReferenceTableComponent} from "../reference-table/reference-table.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {DataHandlerService} from "../../service/data-handler.service";
@@ -192,24 +192,21 @@ export class EditTypeComponent implements OnInit, OnDestroy {
 
     createRefTableModal(field: EruptFieldModel) {
         let model = this.modal.create({
-            nzWrapClassName: "modal-lg",
+            nzWrapClassName: "modal-xxl",
             nzKeyboard: true,
             nzStyle: {top: "35px"},
             nzTitle: field.eruptFieldJson.edit.title,
             nzCancelText: "取消（ESC）",
             nzContent: ReferenceTableComponent,
             nzComponentParams: {
-                erupt: this.eruptModel,
-                eruptField: field,
-                referenceErupt: this.eruptBuildModel.referenceErupts[field.fieldName],
-                parentEruptName: this.parentEruptName
+                eruptBuild: this.eruptBuildModel,
+                eruptField: field
             }, nzOnOk: () => {
-                let radioValue = model.getContentComponent().radioValue;
+                let radioValue = field.eruptFieldJson.edit.$tempValue;
                 if (!radioValue) {
                     this.msg.warning("请选中一条数据");
                     return false;
                 }
-                console.log(radioValue)
                 field.eruptFieldJson.edit.$value = radioValue[field.eruptFieldJson.edit.referenceTableType.id];
                 field.eruptFieldJson.edit.$viewValue = radioValue[field.eruptFieldJson.edit.referenceTableType.label
                     .replace(".", "_")] || '-----';

@@ -5,6 +5,7 @@ html {
   background: #fff;
 }
 
+
 .alain-default {
   background: #f5f7fa;
 }
@@ -15,5 +16,22 @@ html {
 
   .ant-breadcrumb {
     margin-bottom: 12px;
+  }
+}
+
+//暗黑模式
+.dark {
+  .alain-default__content, .alain-default__aside, .ant-modal-content {
+    filter: invert(85%);
+  }
+
+  .alain-default__content, .ant-modal-content {
+    img, canvas, .page-container, .fa, bi-chart {
+      filter: invert(100%);
+    }
+  }
+
+  .alain-default__header, .alain-default {
+    background: #292929;
   }
 }

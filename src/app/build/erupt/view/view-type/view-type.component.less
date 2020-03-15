@@ -15,27 +15,31 @@
     }
 
     .view_inner_html {
-      table {
-        width: 100%;
+      figure.table {
+        overflow: auto;
 
-        tr {
-          transition: all 0.3s;
+        table {
+          width: 100%;
 
-          &:hover {
-            background: #e6f7ff;
+          tr {
+            transition: all 0.3s;
+
+            &:hover {
+              background: #e6f7ff;
+            }
           }
-        }
 
-        td, th {
-          padding: 12px 8px;
-          border: 1px solid #e8e8e8;
-        }
+          td, th {
+            padding: 12px 8px;
+            border: 1px solid #e8e8e8;
+          }
 
-        th {
-          background: #fafafa;
-          text-align: center;
-        }
+          th {
+            background: #fafafa;
+            text-align: center;
+          }
 
+        }
       }
 
       p {
