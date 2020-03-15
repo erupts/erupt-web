@@ -7,7 +7,7 @@ import {deepCopy} from "@delon/util";
 import {Inject, Injectable} from "@angular/core";
 import {EruptBuildModel} from "../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
-import {ViewTypeComponent} from "../view/view-type/view-type.component";
+import {ViewTypeComponent} from "../components/view-type/view-type.component";
 import {STColumn, STData} from "@delon/abc";
 import {DatePipe} from "@angular/common";
 
@@ -128,7 +128,7 @@ export class DataHandlerService {
             searchFieldModelsMap.set(field.fieldName, field);
             if (field.eruptFieldJson.edit.search.value) {
                 field.value = null;
-                field.eruptFieldJson.edit.notNull = false;
+                field.eruptFieldJson.edit.notNull = field.eruptFieldJson.edit.search.notNull;
                 field.eruptFieldJson.edit.show = true;
                 field.eruptFieldJson.edit.readOnly = false;
                 field.eruptFieldJson.edit.$value = null;

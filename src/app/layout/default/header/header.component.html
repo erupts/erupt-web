@@ -21,13 +21,11 @@
         <!--<i nz-icon nzType="search"></i>-->
         <!--</div>-->
         <!--</li>-->
-
-
-        <!--        <li (click)="refresh()">-->
-        <!--            <div class="alain-default__nav-item">-->
-        <!--                <i nz-icon [nzType]="'reload'"></i>-->
-        <!--            </div>-->
-        <!--        </li>-->
+        <li class="hidden-pc">
+            <div class="alain-default__nav-item" (click)="toggleCollapsedSidebar()">
+                <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
+            </div>
+        </li>
     </ul>
     <!--<div style="width: 100%;text-align: center;font-size: 26px;line-height: 48px;color: #fff;">-->
     <!--{{title}}-->
@@ -70,7 +68,7 @@
             </li>&nbsp;
         </ng-container>
 
-        <nz-divider nzType="vertical" *ngIf="r_tools.length>0"></nz-divider>
+        <nz-divider nzType="vertical" class="hidden-mobile" *ngIf="r_tools.length>0"></nz-divider>
 
         <li class="hidden-mobile" (click)="toggleScreen()">
             <div class="alain-default__nav-item">

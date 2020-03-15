@@ -43,6 +43,10 @@ export class HeaderComponent implements OnInit {
         });
     }
 
+    toggleCollapsedSidebar() {
+        this.settings.setLayout("collapsed", !this.settings.layout.collapsed);
+    }
+
     toggleDark() {
         if (this.isDark) {
             document.body.className = "";

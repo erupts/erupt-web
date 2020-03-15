@@ -70,6 +70,7 @@ export interface Edit {
 interface Search {
     value: boolean;
     vague: boolean;
+    notNull:boolean;
 }
 
 

@@ -1,6 +1,6 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!eruptBuildModel"></nz-skeleton>
 <ng-container *ngIf="eruptBuildModel">
-    <div>
+    <div style="overflow: auto">
         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
             <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
                 <i nz-icon nzType="plus" nzTheme="outline"></i>新增

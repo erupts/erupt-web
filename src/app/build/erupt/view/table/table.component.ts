@@ -17,6 +17,7 @@ import {ExcelImportComponent} from "../../components/excel-import/excel-import.c
 import {BuildConfig} from "../../model/build-config";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
+import {Observable, Subscription} from "rxjs";
 
 @Component({
     selector: "table-erupt",
@@ -39,60 +40,8 @@ export class TableComponent implements OnInit {
     ) {
     }
 
-    _drill: { erupt: string, code: string, eruptParent: string, val: any };
-
-    @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
-        this._drill = drill;
-        this.dataService.getEruptBuild(drill.erupt).subscribe(eb => {
-            this.init(eb, {
-                url: RestPath.data + drill.eruptParent + "/drill/" + drill.code + "/" + drill.val,
-                header: {
-                    erupt: drill.eruptParent
-                }
-            });
-        });
-
-    }
-
-    _reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode };
-
-    @Input() set referenceTable(reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode }) {
-        this._reference = reference;
-        this.dataService.getEruptBuildByField(reference.eruptBuild.eruptModel.eruptName,
-            reference.eruptField.fieldName).subscribe(eb => {
-            let erupt = eb.eruptModel.eruptJson;
-            erupt.rowOperation = {};
-            erupt.drills = {};
-            erupt.power.add = false;
-            erupt.power.delete = false;
-            erupt.power.importable = false;
-            erupt.power.edit = false;
-            erupt.power.export = false;
-            erupt.power.viewDetails = false;
-            this.init(eb, {
-                url: RestPath.data + reference.eruptBuild.eruptModel.eruptName
-                    + "/reference-table/"
-                    + reference.eruptField.fieldName,
-                header: {
-                    erupt: reference.eruptBuild.eruptModel.eruptName
-                }
-            });
-        });
-    }
-
-
-    @Input() set eruptName(value: string) {
-        this.dataService.getEruptBuild(value).subscribe(eb => {
-            this.init(eb, {
-                url: RestPath.data + "table/" + value,
-                header: {
-                    erupt: value
-                }
-            });
-        });
-    }
-
-    @ViewChild("st", {static: false}) st: STComponent;
+    @ViewChild("st", {static: false})
+    st: STComponent;
 
     ww = window.document.documentElement.clientHeight;
 
@@ -114,33 +63,81 @@ export class TableComponent implements OnInit {
 
     layoutTree: boolean;
 
+    _drill: { erupt: string, code: string, eruptParent: string, val: any };
+
+    @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
+        this._drill = drill;
+        this.init(this.dataService.getEruptBuild(drill.erupt), {
+            url: RestPath.data + drill.eruptParent + "/drill/" + drill.code + "/" + drill.val,
+            header: {
+                erupt: drill.eruptParent
+            }
+        });
+
+    }
+
+    _reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode };
+
+    @Input() set referenceTable(reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode }) {
+        this._reference = reference;
+        this.init(this.dataService.getEruptBuildByField(reference.eruptBuild.eruptModel.eruptName,
+            reference.eruptField.fieldName), {
+            url: RestPath.data + reference.eruptBuild.eruptModel.eruptName
+                + "/reference-table/"
+                + reference.eruptField.fieldName,
+            header: {
+                erupt: reference.eruptBuild.eruptModel.eruptName
+            }
+        }, (eb: EruptBuildModel) => {
+            let erupt = eb.eruptModel.eruptJson;
+            erupt.rowOperation = {};
+            erupt.drills = {};
+            erupt.power.add = false;
+            erupt.power.delete = false;
+            erupt.power.importable = false;
+            erupt.power.edit = false;
+            erupt.power.export = false;
+            erupt.power.viewDetails = false;
+        });
+    }
+
+
+    @Input() set eruptName(value: string) {
+        this.init(this.dataService.getEruptBuild(value), {
+            url: RestPath.data + "table/" + value,
+            header: {
+                erupt: value
+            }
+        });
+    }
+
     ngOnInit() {
 
     }
 
-    init(eb: EruptBuildModel, req: {
+    init(observable: Observable<EruptBuildModel>, req: {
         url: string,
         header: any
-    }, callback?) {
+    }, callback?: Function) {
         this.selectedRows = [];
         this.eruptBuildModel = null;
-        this.layoutTree = false;
         if (this.searchErupt) {
             this.searchErupt.eruptFieldModels = [];
         }
+        //put table api header
         this.stConfig.req.headers = req.header;
         this.stConfig.url = req.url;
-        //erupt logic
-        this.dataHandler.initErupt(eb);
-        this.eruptBuildModel = eb;
-        if (eb.eruptModel.eruptJson.layoutTree) {
-            this.layoutTree = true;
-        }
-        this.buildTabErupt();
-        this.buildTableConfig();
-        this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
-        callback && callback();
+        observable.subscribe(eb => {
+                this.dataHandler.initErupt(eb);
+                callback && callback(eb);
+                this.eruptBuildModel = eb;
+                this.buildTabErupt();
+                this.buildTableConfig();
+                this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
+            }
+        );
     }
+
 
     buildTabErupt() {
         for (let key in this.eruptBuildModel.tabErupts) {
@@ -483,7 +480,7 @@ export class TableComponent implements OnInit {
                 } else if (event.type === "radio") {
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = event.radio;
                 }
-            } else if(this._reference.mode == SelectMode.checkbox){
+            } else if (this._reference.mode == SelectMode.checkbox) {
                 if (event.type === "checkbox") {
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = event.checkbox;
                 }
