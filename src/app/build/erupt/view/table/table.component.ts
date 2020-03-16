@@ -17,7 +17,7 @@ import {ExcelImportComponent} from "../../components/excel-import/excel-import.c
 import {BuildConfig} from "../../model/build-config";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {Observable, Subscription} from "rxjs";
+import {Observable} from "rxjs";
 
 @Component({
     selector: "table-erupt",
@@ -73,7 +73,6 @@ export class TableComponent implements OnInit {
                 erupt: drill.eruptParent
             }
         });
-
     }
 
     _reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode };
@@ -265,10 +264,13 @@ export class TableComponent implements OnInit {
                 type: "del",
                 click: (record) => {
                     this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                        record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]).subscribe(result => {
-                        this.st.reload();
-                        this.msg.success("删除成功");
-                    });
+                        record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
+                        .subscribe(result => {
+                            if (result.status === Status.SUCCESS) {
+                                this.st.reload();
+                                this.msg.success("删除成功");
+                            }
+                        });
                 }
             });
         }

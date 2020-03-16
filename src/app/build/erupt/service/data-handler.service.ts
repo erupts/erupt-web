@@ -388,7 +388,12 @@ export class DataHandlerService {
 
             if (view.template) {
                 obj.format = (item: any) => {
-                    return eval(view.template);
+                    try {
+                        return eval(view.template);
+                    } catch (e) {
+                        console.error(e);
+                        this.msg.error(e.toString());
+                    }
                 };
             }
             if (view.className) {
