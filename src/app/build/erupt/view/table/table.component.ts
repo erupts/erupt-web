@@ -127,6 +127,7 @@ export class TableComponent implements OnInit {
         this.stConfig.req.headers = req.header;
         this.stConfig.url = req.url;
         observable.subscribe(eb => {
+                this.layoutTree = !!eb.eruptModel.eruptJson.layoutTree;
                 this.dataHandler.initErupt(eb);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
