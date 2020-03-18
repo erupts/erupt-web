@@ -363,14 +363,17 @@ export class TableComponent implements OnInit {
             ids = [data[eruptModel.eruptJson.primaryKeyCol]];
         }
         if (operationErupt) {
-            this.modal.create({
-                nzKeyboard: true,
+            let modal = this.modal.create({
+                nzKeyboard: false,
                 nzTitle: ro.title,
-                nzCancelText: "取消（ESC）",
+                nzMaskClosable: false,
+                nzCancelText: "取消",
                 nzWrapClassName: "modal-lg",
                 nzOnOk: async () => {
+                    modal.getInstance().nzCancelDisabled = true;
                     let eruptValue = this.dataHandler.eruptValueToObject({eruptModel: operationErupt});
                     let res = await this.dataService.execOperatorFun(eruptModel.eruptName, code, ids, eruptValue).toPromise().then(res => res);
+                    modal.getInstance().nzCancelDisabled = false;
                     if (res.status == Status.SUCCESS) {
                         this.st.reload();
                         return true;

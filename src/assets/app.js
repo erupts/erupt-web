@@ -21,10 +21,10 @@ window.eruptSiteConfig = {
 };
 window.eruptEvent = {
     Router: {
-        load(url, token) {
+        load:function(url, token) {
 
         },
-        unload(url, token) {
+        unload:function(url, token) {
         }
     }
 

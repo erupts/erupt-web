@@ -139,6 +139,7 @@ export class EditTypeComponent implements OnInit, OnDestroy {
                 field.eruptFieldJson.edit.$viewValue.pop();
             }
         } else if (status === "error") {
+            this.uploadFilesStatus[file.uid] = true;
             this.msg.error(`${file.name} 上传失败`);
         }
     }

@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "ng": "ng",
-    "start": "npm run color-less && ng serve --port 4400 -o --host 127.0.0.1",
+    "start": "npm run color-less && ng serve --port 4400 -o --host 192.168.1.187",
     "hmr": "npm run color-less && ng serve -c=hmr",
     "build": "npm run color-less && ng build --prod --build-optimizer",
     "analyze": "ng build --prod --build-optimizer --stats-json",
@@ -49,7 +49,7 @@
     "@angular/platform-browser": "~8.2.11",
     "@angular/platform-browser-dynamic": "~8.2.11",
     "@angular/router": "~8.2.11",
-    "@antv/g2plot": "^0.11.32",
+    "@antv/g2plot": "~0.11.32",
     "@delon/abc": "^8.8.0",
     "@delon/acl": "^8.8.0",
     "@delon/auth": "^8.8.0",
@@ -58,8 +58,10 @@
     "@delon/mock": "^8.8.0",
     "@delon/theme": "^8.8.0",
     "@delon/util": "^8.8.0",
+    "classlist.js": "^1.1.20150312",
     "echarts": "^4.6.0",
     "font-awesome": "^4.7.0",
+    "intl": "^1.2.5",
     "monaco-editor": "^0.20.0",
     "ng-zorro-antd": "^8.5.2",
     "ngx-echarts": "^4.2.2",
@@ -68,6 +70,7 @@
     "screenfull": "^5.0.0",
     "ts-md5": "^1.2.7",
     "tslib": "^1.10.0",
+    "web-animations-js": "^2.3.2",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
