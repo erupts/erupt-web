@@ -157,7 +157,9 @@ export class BiComponent implements OnInit, OnDestroy {
     }
 
     query() {
+        let param = {};
         for (let dimension of this.bi.dimensions) {
+            param[dimension.code] = dimension.$value;
             if (dimension.notNull && !dimension.$value) {
                 this.msg.error(dimension.title + "必填");
                 return
@@ -166,15 +168,22 @@ export class BiComponent implements OnInit, OnDestroy {
         this.haveNotNull = false;
         if (this.bi.table) {
             this.querying = true;
-            this.dataService.getBiData(this.name, {name: 233}).subscribe(res => {
+            this.dataService.getBiData(this.name, param).subscribe(res => {
                 this.querying = false;
                 this.columns = [];
-                for (let column of res.columns) {
+                if (!res.columns) {
                     this.columns.push({
-                        title: column.name,
-                        index: column.name,
+                        title: "暂无数据",
                         className: "text-center"
                     })
+                } else {
+                    for (let column of res.columns) {
+                        this.columns.push({
+                            title: column.name,
+                            index: column.name,
+                            className: "text-center"
+                        })
+                    }
                 }
                 this.data = res.list;
             })

@@ -1,5 +1,5 @@
 import {SettingsService} from "@delon/theme";
-import {Component, Inject, OnDestroy, OnInit, Optional} from "@angular/core";
+import {Component, Inject, Input, OnDestroy, OnInit, Optional} from "@angular/core";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
@@ -27,6 +27,8 @@ export class UserLoginComponent implements OnDestroy, OnInit {
     type = 0;
 
     loading = false;
+
+    @Input() isModal:boolean = false;
 
     useVerifyCode = false;
 

@@ -17,6 +17,8 @@ export class WindowModel {
     public static logoPath: string = WindowModel.config["logoPath"] || "assets/logo.png";
     //注册页面地址
     public static registerPage: string = WindowModel.config["registerPage"] || null;
+
+    public static dialogLogin: boolean = WindowModel.config["dialogLogin"] || false;
 }
 
 

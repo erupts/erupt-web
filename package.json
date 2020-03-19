@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "ng": "ng",
-    "start": "npm run color-less && ng serve --port 4400 -o --host 192.168.1.187",
+    "start": "npm run color-less && ng serve --port 4400 -o --host 127.0.0.1",
     "hmr": "npm run color-less && ng serve -c=hmr",
     "build": "npm run color-less && ng build --prod --build-optimizer",
     "analyze": "ng build --prod --build-optimizer --stats-json",

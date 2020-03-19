@@ -13,13 +13,14 @@ import {
 } from "@angular/common/http";
 import {Observable, of, throwError} from "rxjs";
 import {catchError, mergeMap} from "rxjs/operators";
-import {NzMessageService, NzModalService, NzNotificationService} from "ng-zorro-antd";
+import {NzMessageService, NzModalRef, NzModalService, NzNotificationService} from "ng-zorro-antd";
 import {_HttpClient} from "@delon/theme";
 import {environment} from "@env/environment";
 import {EruptApiModel, PromptWay, Status} from "../../build/erupt/model/erupt-api.model";
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {UserLoginComponent} from "../../routes/passport/login/login.component";
+import {WindowModel} from "@shared/model/window.model";
 
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
@@ -145,19 +146,25 @@ export class DefaultInterceptor implements HttpInterceptor {
                 break;
             case 401: // 未登录状态码
                 this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
-                if (this.router.url == "/") {
-                    this.goTo("/passport/login");
+                if (WindowModel.dialogLogin) {
+                    if (this.router.url == "/") {
+                        this.goTo("/passport/login");
+                    } else {
+                        this.modal.create({
+                            // nzWrapClassName: "modal-xs",
+                            nzMaskClosable: false,
+                            nzKeyboard: false,
+                            nzClosable: false,
+                            nzFooter: null,
+                            nzTitle: "登录",
+                            nzContent: UserLoginComponent,
+                            nzComponentParams: {
+                                isModal: true
+                            }
+                        });
+                    }
                 } else {
-                    this.modal.create({
-                        // nzWrapClassName: "modal-xs",
-                        nzMaskClosable: false,
-                        nzKeyboard: false,
-                        nzClosable: false,
-                        nzFooter: null,
-                        nzTitle: "登录",
-                        nzBodyStyle: {},
-                        nzContent: UserLoginComponent
-                    });
+                    this.goTo("/passport/login");
                 }
                 break;
             case 404:
