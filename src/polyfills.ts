@@ -32,6 +32,9 @@ import 'web-animations-js';  // Run `npm install --save web-animations-js`.
  */
 import 'zone.js/dist/zone'; // Included with Angular CLI.
 
+
+import 'babel-polyfill'; // Run `npm install --save-dev babel-polyfill`.
+
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
@@ -45,3 +48,5 @@ import 'intl';  // Run `npm install --save intl`.
  * Need to import at least one locale-data with intl.
  */
 import 'intl/locale-data/jsonp/en';
+
+(window as any)['global'] = window;
