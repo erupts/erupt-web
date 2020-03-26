@@ -149,6 +149,7 @@ export class DataHandlerService {
      * @param lineData
      *     true   数据形式为一整行txt
      *     false  数据形式为：带有层级的json
+     * @param tfBool
      */
     viewToAlainTableConfig(erupt: EruptModel, lineData: boolean, tfBool?: boolean): STColumn[] {
         let cols: STColumn[] = [];
@@ -188,7 +189,16 @@ export class DataHandlerService {
                 }
 
             }
-
+            if (view.template) {
+                obj.format = (item: any) => {
+                    try {
+                        return eval(view.template);
+                    } catch (e) {
+                        console.error(e);
+                        this.msg.error(e.toString());
+                    }
+                };
+            }
             //展示类型
             switch (view.viewType) {
                 case ViewType.NUMBER:
@@ -239,6 +249,34 @@ export class DataHandlerService {
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: "查看",
+                            nzContent: ViewTypeComponent,
+                            nzComponentParams: {
+                                value: item[view.column],
+                                view: view
+                            }
+                        });
+                    };
+                    break;
+                case ViewType.MAP:
+                    obj.className = "text-center";
+                    obj.type = "link";
+                    obj.format = (item: any) => {
+                        if (item[view.column]) {
+                            return "<i class='fa fa-map' aria-hidden='true'></i>";
+                        } else {
+                            return "";
+                        }
+                    };
+                    obj.click = (item) => {
+                        this.modal.create({
+                            nzWrapClassName: "modal-lg",
+                            nzBodyStyle: {
+                                padding: 0
+                            },
+                            nzMaskClosable: true,
+                            nzKeyboard: true,
+                            nzFooter: null,
+                            nzTitle: "地理位置",
                             nzContent: ViewTypeComponent,
                             nzComponentParams: {
                                 value: item[view.column],
@@ -384,17 +422,6 @@ export class DataHandlerService {
                         window.open(DataService.previewAttachment(item[view.column]));
                     };
                     break;
-            }
-
-            if (view.template) {
-                obj.format = (item: any) => {
-                    try {
-                        return eval(view.template);
-                    } catch (e) {
-                        console.error(e);
-                        this.msg.error(e.toString());
-                    }
-                };
             }
             if (view.className) {
                 obj.className += " " + view.className;

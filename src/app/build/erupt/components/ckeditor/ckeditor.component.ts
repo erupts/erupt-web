@@ -5,7 +5,7 @@ import {EruptModel} from "../../model/erupt.model";
 import {RestPath} from "../../model/erupt.enum";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
-declare const DecoupledEditor;
+declare const DecoupledDocumentEditor;
 
 @Component({
     selector: "ckeditor",
@@ -31,28 +31,79 @@ export class CkeditorComponent implements OnInit {
     ngOnInit() {
         let that = this;
         setTimeout(() => {
-            this.lazy.loadScript("/assets/js/ckeditor5.js").then(() => {
-                this.lazy.load(["/assets/js/ckeditor5-zh-cn.js"]).then(() => {
-                    DecoupledEditor.create(this.ref.nativeElement.querySelector("#editor"), {
-                        language: "zh-cn",
-                        ckfinder: {
-                            uploadUrl: RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
-                                this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token
-                        }
-                    }).then(editor => {
-                        editor.isReadOnly = this.eruptField.eruptFieldJson.edit.readOnly;
-                        that.loading = false;
-                        const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
-                        toolbarContainer.appendChild(editor.ui.view.toolbar.element);
-                        if (that.value) {
-                            editor.setData(that.value);
-                        }
-                        editor.model.document.on("change:data", function () {
-                            that.valueChange.emit(editor.getData());
-                        });
-                    }).catch(error => {
-                        console.error(error);
+            this.lazy.loadScript("/assets/js/ckeditor.js").then(() => {
+                DecoupledDocumentEditor.create(this.ref.nativeElement.querySelector("#editor"), {
+                    toolbar: {
+                        items: [
+                            'heading',
+                            '|',
+                            'fontSize',
+                            'fontFamily',
+                            '|',
+                            'bold',
+                            'italic',
+                            'underline',
+                            'strikethrough',
+                            'fontBackgroundColor',
+                            'fontColor',
+                            'highlight',
+                            '|',
+                            'alignment',
+                            '|',
+                            'numberedList',
+                            'bulletedList',
+                            '|',
+                            'indent',
+                            'outdent',
+                            '|',
+                            'link',
+                            'imageUpload',
+                            'insertTable',
+                            'codeBlock',
+                            'blockQuote',
+                            '|',
+                            'undo',
+                            'redo',
+                            'code',
+                            'horizontalLine',
+                            'subscript',
+                            'todoList',
+                            'mediaEmbed'
+                        ]
+                    },
+                    image: {
+                        toolbar: [
+                            'imageTextAlternative',
+                            'imageStyle:full',
+                            'imageStyle:side'
+                        ]
+                    },
+                    table: {
+                        contentToolbar: [
+                            'tableColumn',
+                            'tableRow',
+                            'mergeTableCells'
+                        ]
+                    },
+                    licenseKey: '',
+                    language: "zh-cn",
+                    ckfinder: {
+                        uploadUrl: RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
+                            this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token
+                    }
+                }).then(editor => {
+                    editor.isReadOnly = this.eruptField.eruptFieldJson.edit.readOnly;
+                    that.loading = false;
+                    const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
+                    toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+                    if (that.value) {
+                        editor.setData(that.value);
+                    }
+                    editor.model.document.on("change:data", function () {
+                        that.valueChange.emit(editor.getData());
                     });
+                }).catch(error => {
+                    console.error(error);
                 });
             });
         }, 200);

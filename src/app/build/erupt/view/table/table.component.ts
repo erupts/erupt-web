@@ -282,9 +282,11 @@ export class TableComponent implements OnInit {
                 ro.icon = "fa fa-ravelry";
             }
             tableOperators.push({
-                format: () => {
-                    return `<i title="${ro.title}" class="${ro.icon}" style="color: #000"></i>`;
-                },
+                type: 'link',
+                text: ro.title,
+                // format: () => {
+                //     return `<i title="${ro.title}" class="${ro.icon}" style="color: #000"></i>`;
+                // },
                 click: (record: any, modal: any) => {
                     that.createOperator(key, false, record);
                 }
@@ -324,10 +326,14 @@ export class TableComponent implements OnInit {
             });
         }
         if (tableOperators.length > 0) {
+            let width = 0;
+            for (let key in eruptJson.rowOperation) {
+                width += (eruptJson.rowOperation[key].title.length * 20)
+            }
             _columns.push({
                 title: "操作",
                 fixed: "right",
-                width: tableOperators.length * 25 + 50 + "px",
+                width: (width + 120) + "px",
                 className: "text-center",
                 buttons: tableOperators
             });

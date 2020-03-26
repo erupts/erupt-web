@@ -20,6 +20,8 @@ import {DataHandlerService} from "../../service/data-handler.service";
 })
 export class EditTypeComponent implements OnInit, OnDestroy {
 
+    @Input() loading: boolean = false;
+
     //important
     @Input() eruptBuildModel: EruptBuildModel;
 
@@ -66,7 +68,7 @@ export class EditTypeComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.eruptModel = this.eruptBuildModel.eruptModel;
         this.dateRanges = {
-            "今天": [this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")]
+            "今天": [this.datePipe.transform(new Date(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")]
         };
         if (this.mode === "addNew") {
             this.dataHandlerService.loadEruptDefaultValue(this.eruptBuildModel);

@@ -1,94 +1,98 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!eruptBuildModel"></nz-skeleton>
 <ng-container *ngIf="eruptBuildModel">
-    <div style="overflow: auto">
-        <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
-            <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
-                <i nz-icon nzType="plus" nzTheme="outline"></i>新增
-            </button>
-        </ng-container>
-
-        <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
-            <button nz-button nzType="danger" [nzGhost]="true" style="background: #fff !important;" class="mb-sm"
-                    (click)="delRows()">
-                <i nz-icon nzType="delete" nzTheme="outline"></i>删除
-            </button>
-        </ng-container>
-
-        <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
-            <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()">
-                <i nz-icon nzType="download" nzTheme="outline"></i>下载
-            </button>
-        </ng-container>
-
-        <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.importable">
-            &nbsp;
-            <nz-dropdown-button (nzClick)="importableExcel()">
-                <i nz-icon nzType="import" nzTheme="outline"></i>
-                <span style="margin-left: 8px;">导入Excel</span>
-                <ul nz-menu>
-                    <li nz-menu-item (click)="downloadExcelTemplate()"><i nz-icon nzType="build" nzTheme="outline"></i>下载模板
-                    </li>
-                </ul>
-            </nz-dropdown-button>
-            &nbsp;
-        </ng-container>
-
-        <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
-            <button nz-button nzType="primary" style="background: #fff !important;" [nzGhost]="true" class="mb-sm"
-                    (click)="query()">
-                <i nz-icon nzType="search" nzTheme="outline"></i>查询
-            </button>
-        </ng-container>
-
-        <ng-container>
-            <nz-divider nzType="vertical"></nz-divider>
-            <button nz-button nzType="default" nz-popover
-                    [(nzVisible)]="showColCtrl" [nzContent]="tableColumnCtrl"
-                    nzTitle="表格列控制"
-                    nzTrigger="click" class="mb-sm hidden-mobile">
-                <i nz-icon nzType="table" nzTheme="outline"></i>表格列控制
-            </button>
-            <ng-template #tableColumnCtrl>
-                <div nz-row style="max-width: 520px;">
-                    <ng-container *ngFor="let col of columns">
-                        <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
-                            <label nz-checkbox [(ngModel)]="col.show"
-                                   (ngModelChange)="st.resetColumns()">{{col.title}}</label>
-                        </div>
-                    </ng-container>
-                </div>
-            </ng-template>
-        </ng-container>
-
-        <ng-container *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0">
-            <div class="mb-sm float-right">
-                <button *ngIf="!hideCondition" nz-button (click)="clearCondition()">
-                    <i nz-icon nzType="sync" nzTheme="outline"></i>重置条件
-                </button>
-                <button nz-button (click)="hideCondition=!hideCondition">
-                    <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
-                </button>
-            </div>
-        </ng-container>
-    </div>
-    <div>
-        <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
-            <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation | keyvalue">
-                <ng-container *ngIf="item.value.multi">
-                    <button nz-button nzType="dashed" class="mb-sm" (click)="createOperator(item.key,true)">
-                        <i class="fa" [ngClass]="item.value.icon"></i>
-                        <span style="margin-left: 8px;">{{item.value.title}}</span>
-                    </button>
-                </ng-container>
-            </ng-container>
-        </ng-container>
-    </div>
-
     <div nz-row [nzGutter]="16">
         <div nz-col *ngIf="layoutTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="8" [nzXl]="6">
             <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
         </div>
-        <div nz-col [nzXs]="24" [nzMd]="layoutTree?16:24" [nzLg]="layoutTree?16:24" [nzXl]="layoutTree?18:24">
+        <div nz-col [nzXs]="24" [nzMd]="layoutTree?16:24" [nzLg]="layoutTree?16:24" [nzXl]="layoutTree?18:24"
+             [ngStyle]="{overflowX: 'hidden',overflowY: 'auto',height:layoutTree?(ww-160)+'px':'auto'}">
+            <div>
+                <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
+                    <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
+                        <i nz-icon nzType="plus" nzTheme="outline"></i>新增
+                    </button>
+                </ng-container>
+
+                <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
+                    <button nz-button nzType="danger" [nzGhost]="true" style="background: #fff !important;"
+                            class="mb-sm"
+                            (click)="delRows()">
+                        <i nz-icon nzType="delete" nzTheme="outline"></i>删除
+                    </button>
+                </ng-container>
+
+                <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
+                    <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()">
+                        <i nz-icon nzType="download" nzTheme="outline"></i>下载
+                    </button>
+                </ng-container>
+
+                <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.importable">
+                    &nbsp;
+                    <nz-dropdown-button (nzClick)="importableExcel()">
+                        <i nz-icon nzType="import" nzTheme="outline"></i>
+                        <span style="margin-left: 8px;">导入Excel</span>
+                        <ul nz-menu>
+                            <li nz-menu-item (click)="downloadExcelTemplate()"><i nz-icon nzType="build"
+                                                                                  nzTheme="outline"></i>下载模板
+                            </li>
+                        </ul>
+                    </nz-dropdown-button>
+                    &nbsp;
+                </ng-container>
+
+                <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
+                    <button nz-button nzType="primary" style="background: #fff !important;" [nzGhost]="true"
+                            class="mb-sm"
+                            (click)="query()">
+                        <i nz-icon nzType="search" nzTheme="outline"></i>查询
+                    </button>
+                </ng-container>
+
+                <ng-container>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <button nz-button nzType="default" nz-popover
+                            [(nzVisible)]="showColCtrl" [nzContent]="tableColumnCtrl"
+                            nzTitle="表格列控制"
+                            nzTrigger="click" class="mb-sm hidden-mobile">
+                        <i nz-icon nzType="table" nzTheme="outline"></i>表格列控制
+                    </button>
+                    <ng-template #tableColumnCtrl>
+                        <div nz-row style="max-width: 520px;">
+                            <ng-container *ngFor="let col of columns">
+                                <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
+                                    <label nz-checkbox [(ngModel)]="col.show"
+                                           (ngModelChange)="st.resetColumns()">{{col.title}}</label>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-template>
+                </ng-container>
+
+                <ng-container *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0">
+                    <div class="mb-sm float-right">
+                        <button *ngIf="!hideCondition" nz-button (click)="clearCondition()">
+                            <i nz-icon nzType="sync" nzTheme="outline"></i>重置条件
+                        </button>
+                        <button nz-button (click)="hideCondition=!hideCondition">
+                            <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                        </button>
+                    </div>
+                </ng-container>
+            </div>
+            <div>
+                <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
+                    <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation | keyvalue">
+                        <ng-container *ngIf="item.value.multi">
+                            <button nz-button nzType="dashed" class="mb-sm" (click)="createOperator(item.key,true)">
+                                <i class="fa" [ngClass]="item.value.icon"></i>
+                                <span style="margin-left: 8px;">{{item.value.title}}</span>
+                            </button>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+            </div>
+
             <nz-card *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0"
                      [nzBodyStyle]="{padding:'10px'}"
                      class="search-card"
@@ -115,5 +119,4 @@
             </st>
         </div>
     </div>
-
 </ng-container>

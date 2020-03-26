@@ -2,13 +2,16 @@
     <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzType="default" [nzSize]="'default'">
         <i nz-icon nzType="plus" theme="outline"></i>新增
     </button>
-    <button (click)="deleteData()" nz-button nzType="danger" [nzSize]="'default'"><i nz-icon nzType="delete" theme="outline"></i>删除</button>
+    <button (click)="deleteData()" nz-button nzType="danger" [nzSize]="'default'"><i nz-icon nzType="delete"
+                                                                                     theme="outline"></i>删除
+    </button>
 </div>
 <st #st
     (change)="selectTableItem($event)"
     [size]="'small'"
     [columns]="column"
     [ps]="20"
+    [scroll]="{x: (tabErupt.eruptBuildModel.eruptModel.tableColumns.length * 100) + 'px'}"
     [data]="tabErupt.eruptFieldModel.eruptFieldJson.edit.$value"
     [bordered]="true" [page]="stConfig.stPage">
 

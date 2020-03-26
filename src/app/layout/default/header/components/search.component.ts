@@ -3,11 +3,11 @@ import { Component, HostBinding, Input, ElementRef, AfterViewInit } from '@angul
 @Component({
   selector: 'header-search',
   template: `
-  <nz-input-group nzAddOnBeforeIcon="anticon anticon-search">
-    <input nz-input [(ngModel)]="q" (focus)="qFocus()" (blur)="qBlur()"
+  <nz-input-group>
+    <input nz-input [(ngModel)]="q" (focus)="qFocus()" (blur)="qBlur()" style="padding:0 15px"
       [placeholder]="'搜索'">
   </nz-input-group>
-  `
+  `,
 })
 export class HeaderSearchComponent implements AfterViewInit {
 

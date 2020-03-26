@@ -53,6 +53,7 @@ export enum ViewType {
     ATTACHMENT_DIALOG = "ATTACHMENT_DIALOG",
     ATTACHMENT = "ATTACHMENT",
     QR_CODE = "QR_CODE",
+    MAP = "MAP",
     HTML = "HTML",
     DATE = "DATE",
     BOOLEAN = "BOOLEAN",

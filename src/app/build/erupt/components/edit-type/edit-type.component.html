@@ -153,10 +153,10 @@
                                                     nzMode="checkable">全选
                                             </nz-tag>
                                             <ng-container *ngFor="let vl of field.choiceMap | keyvalue">
-<!--                                                <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"-->
-<!--                                                        style="margin-right: 10px"-->
-<!--                                                        nzMode="checkable"-->
-<!--                                                        [(nzChecked)]="vl.$viewValue">{{vl.label}}</nz-tag>-->
+                                                <!--                                                <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"-->
+                                                <!--                                                        style="margin-right: 10px"-->
+                                                <!--                                                        nzMode="checkable"-->
+                                                <!--                                                        [(nzChecked)]="vl.$viewValue">{{vl.label}}</nz-tag>-->
                                             </ng-container>
                                             <ng-container *ngFor="let vl of field.eruptFieldJson.edit.choiceType.vl">
                                                 <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"
@@ -583,7 +583,7 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <gaode-map></gaode-map>
+                                <amap [(value)]="field.eruptFieldJson.edit.$value" *ngIf="!loading"></amap>
                             </se>
                         </div>
                     </ng-container>

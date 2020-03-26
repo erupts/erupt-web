@@ -8,7 +8,6 @@ import {Subscription} from "rxjs";
 import {Status} from "../../model/erupt-api.model";
 import {colRules} from "@shared/model/util.model";
 import {Link} from "../../model/erupt.model";
-import {Key} from "readline";
 
 @Component({
     selector: "erupt-tree",
@@ -66,7 +65,6 @@ export class TreeComponent implements OnInit, OnDestroy {
                 if (eb.eruptModel.eruptJson.tree.linkTable[0]) {
                     this.linkTable = eb.eruptModel.eruptJson.tree.linkTable[0];
                 }
-                eb.tabErupts = null;
                 this.dataHandler.initErupt(eb);
                 this.eruptBuildModel = eb;
             });
@@ -127,9 +125,11 @@ export class TreeComponent implements OnInit, OnDestroy {
         if (this.validateParentIdValue()) {
             this.loading = true;
             this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
+                if (result.status == Status.SUCCESS) {
+                    this.msg.success("修改成功");
+                    this.fetchTreeData();
+                }
                 this.loading = false;
-                this.msg.success("修改成功");
-                this.fetchTreeData();
             });
         }
     }
@@ -173,9 +173,11 @@ export class TreeComponent implements OnInit, OnDestroy {
                 nzContent: "",
                 nzOnOk: () => {
                     this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, nzTreeNode.origin.key).subscribe(function (res) {
-                        that.fetchTreeData();
+                        if (res.status == Status.SUCCESS) {
+                            that.fetchTreeData();
+                            that.msg.success("删除成功");
+                        }
                         that.showEdit = false;
-                        that.msg.success("删除成功");
                     });
                 }
             });

@@ -3,7 +3,6 @@ import {SettingsService} from "@delon/theme";
 import * as screenfull from "screenfull";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {CustomerTool, WindowModel} from "@shared/model/window.model";
-import {Router} from "@angular/router";
 import {CacheService} from "@delon/cache";
 
 @Component({
@@ -14,6 +13,8 @@ import {CacheService} from "@delon/cache";
     ]
 })
 export class HeaderComponent implements OnInit {
+
+    searchToggleStatus: boolean;
 
     isFullScreen: boolean = false;
 
@@ -45,6 +46,10 @@ export class HeaderComponent implements OnInit {
 
     toggleCollapsedSidebar() {
         this.settings.setLayout("collapsed", !this.settings.layout.collapsed);
+    }
+
+    searchToggleChange() {
+        this.searchToggleStatus = !this.searchToggleStatus;
     }
 
     toggleDark() {

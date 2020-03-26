@@ -1,36 +1,26 @@
 <div class="alain-default__header-logo">
     <a [routerLink]="['/']" class="alain-default__header-logo-link">
-        <img class="alain-default__header-logo-expanded" [src]="logoPath" alt="{{settings.app.name}}"
-             style="max-height:40px;"/>
-        <img class="alain-default__header-logo-collapsed" [src]="logoPath" alt="{{settings.app.name}}"
-             style="max-height:30px;"/>
+        <img [src]="logoPath" alt="{{settings.app.name}}" class="header-logo-img"/>
     </a>
 </div>
 <div class="alain-default__nav-wrap">
     <ul class="alain-default__nav">
-        <!-- Menu -->
-        <!-- Lock Page -->
-        <!--<li class="hidden-mobile">-->
-        <!--<div class="alain-default__nav-item" [routerLink]="['/lock']">-->
-        <!--<i nz-icon nzType="lock"></i>-->
-        <!--</div>-->
-        <!--</li>-->
         <!-- Search Button -->
-        <!--<li class="hidden-pc" (click)="searchToggleChange()">-->
-        <!--<div class="alain-default__nav-item">-->
-        <!--<i nz-icon nzType="search"></i>-->
-        <!--</div>-->
-        <!--</li>-->
+        <li class="hidden-pc" (click)="searchToggleChange()">
+            <div class="alain-default__nav-item">
+                <i nz-icon nzType="search"></i>
+            </div>
+        </li>
         <li class="hidden-pc">
             <div class="alain-default__nav-item" (click)="toggleCollapsedSidebar()">
                 <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
             </div>
         </li>
     </ul>
-    <!--<div style="width: 100%;text-align: center;font-size: 26px;line-height: 48px;color: #fff;">-->
-    <!--{{title}}-->
-    <!--</div>-->
-    <!--<header-search class="alain-default__search" [toggleChange]="searchToggleStatus"></header-search>-->
+<!--    <div style="width: 100%;text-align: center;font-size: 26px;line-height: 48px;color: #fff;">-->
+<!--        {{title}}-->
+<!--    </div>-->
+<!--    <header-search class="alain-default__search" [toggleChange]="searchToggleStatus"></header-search>-->
     <ul class="alain-default__nav">
         <!--&lt;!&ndash; Notify &ndash;&gt;-->
         <!--<li>-->

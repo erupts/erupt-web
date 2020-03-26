@@ -30,5 +30,8 @@
                 <qr [value]="value"></qr>
             </div>
         </ng-container>
+        <ng-container *ngSwitchCase="viewType.MAP">
+            <amap [value]="value" [readonly]="true" [zoom]="18"></amap>
+        </ng-container>
     </ng-container>
 </ng-container>

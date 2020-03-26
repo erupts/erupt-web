@@ -4,7 +4,6 @@ import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {NzFormatEmitEvent} from "ng-zorro-antd";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {EditType} from "../../model/erupt.enum";
 
 @Component({
     selector: 'layout-tree',
