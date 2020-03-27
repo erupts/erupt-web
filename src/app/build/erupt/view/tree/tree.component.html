@@ -67,7 +67,7 @@
                     </button>
                 </div>
             </div>
-            <div [ngStyle]="{height: ww-228+'px',overflow: 'auto',overflowX:'hidden'}" class="scrollbar">
+            <div [ngStyle]="{height: ww-228+'px',overflow: 'auto',overflowX:'hidden'}">
                 <nz-spin [nzSpinning]="loading" nzSize="large">
                     <nz-collapse nzAccordion>
                         <nz-collapse-panel [nzActive]="true" [nzHeader]="'基本信息'" [nzDisabled]="true">
@@ -75,9 +75,6 @@
                                 <erupt-edit [eruptBuildModel]="eruptBuildModel">
 
                                 </erupt-edit>
-<!--                                <erupt-edit-type [eruptBuildModel]="eruptBuildModel" [col]="col">-->
-
-<!--                                </erupt-edit-type>-->
                             </nz-skeleton>
                         </nz-collapse-panel>
                     </nz-collapse>

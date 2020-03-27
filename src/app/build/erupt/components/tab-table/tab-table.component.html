@@ -6,12 +6,12 @@
                                                                                      theme="outline"></i>删除
     </button>
 </div>
+<!--[scroll]="{x: (tabErupt.eruptBuildModel.eruptModel.tableColumns.length * 100) + 'px'}"-->
 <st #st
     (change)="selectTableItem($event)"
     [size]="'small'"
     [columns]="column"
     [ps]="20"
-    [scroll]="{x: (tabErupt.eruptBuildModel.eruptModel.tableColumns.length * 100) + 'px'}"
     [data]="tabErupt.eruptFieldModel.eruptFieldJson.edit.$value"
     [bordered]="true" [page]="stConfig.stPage">
 

@@ -17,13 +17,17 @@ import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
 import {TableComponent} from './view/table/table.component';
 import { LayoutTreeComponent } from './view/layout-tree/layout-tree.component';
+import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
+import { CodeEditorComponent } from './components/code-editor/code-editor.component';
+import { CodeEditorViewComponent } from './components/code-editor-view/code-editor-view.component';
 
 @NgModule({
     imports: [
         CommonModule,
         SharedModule,
         HttpClientModule,
-        EruptRoutingModule
+        EruptRoutingModule,
+        NzCodeEditorModule
     ],
     providers: [
         DataHandlerService
@@ -40,7 +44,8 @@ import { LayoutTreeComponent } from './view/layout-tree/layout-tree.component';
         ExcelImportComponent,
         ReferenceTableComponent,
         TableComponent,
-        EditComponent
+        EditComponent,
+        CodeEditorViewComponent
     ],
     declarations: [
         EditTypeComponent,
@@ -55,7 +60,9 @@ import { LayoutTreeComponent } from './view/layout-tree/layout-tree.component';
         TreeComponent,
         TableViewComponent,
         TableComponent,
-        LayoutTreeComponent
+        LayoutTreeComponent,
+        CodeEditorComponent,
+        CodeEditorViewComponent
     ]
 })
 export class EruptModule {

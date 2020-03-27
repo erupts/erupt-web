@@ -606,9 +606,15 @@
                             </div>
                         </ng-container>
                     </ng-container>
-                    <!--date-->
                     <ng-container *ngSwitchCase="editType.CODE_EDITOR">
-                        <!--                        <nz-code-editor class="editor" [ngModel]="code" [nzEditorOption]="{ language: 'typescript' }"></nz-code-editor>-->
+                        <div nz-col [nzSpan]="24" *ngIf="!loading">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <erupt-code-editor [field]="field">
+                                </erupt-code-editor>
+                            </se>
+                        </div>
                     </ng-container>
                     <ng-container *ngSwitchDefault>
 

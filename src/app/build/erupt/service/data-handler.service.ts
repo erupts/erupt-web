@@ -10,6 +10,7 @@ import {DataService} from "@shared/service/data.service";
 import {ViewTypeComponent} from "../components/view-type/view-type.component";
 import {STColumn, STData} from "@delon/abc";
 import {DatePipe} from "@angular/common";
+import {CodeEditorViewComponent} from "../components/code-editor-view/code-editor-view.component";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -210,7 +211,7 @@ export class DataHandlerService {
                             nzMaskClosable: false,
                             nzKeyboard: true,
                             nzFooter: null,
-                            nzTitle: "查看",
+                            nzTitle: view.title,
                             nzContent: ViewTypeComponent,
                             nzComponentParams: {
                                 value: item[view.column],
@@ -235,11 +236,39 @@ export class DataHandlerService {
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
-                            nzTitle: "查看",
+                            nzTitle: view.title,
                             nzContent: ViewTypeComponent,
                             nzComponentParams: {
                                 value: item[view.column],
                                 view: view
+                            }
+                        });
+                    };
+                    break;
+                case ViewType.CODE_EDITOR:
+                    obj.className = "text-center";
+                    obj.type = "link";
+                    obj.format = (item: any) => {
+                        if (item[view.column]) {
+                            return "<i class='fa fa-code' aria-hidden='true'></i>";
+                        } else {
+                            return "";
+                        }
+                    };
+                    obj.click = (item) => {
+                        this.modal.create({
+                            nzWrapClassName: "modal-lg",
+                            nzBodyStyle: {
+                                padding: 0
+                            },
+                            nzMaskClosable: true,
+                            nzKeyboard: true,
+                            nzFooter: null,
+                            nzTitle: view.title,
+                            nzContent: CodeEditorViewComponent,
+                            nzComponentParams: {
+                                language: view.eruptFieldModel.eruptFieldJson.edit.codeEditType.language,
+                                value: item[view.column]
                             }
                         });
                     };
@@ -263,7 +292,7 @@ export class DataHandlerService {
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
-                            nzTitle: "地理位置",
+                            nzTitle: view.title,
                             nzContent: ViewTypeComponent,
                             nzComponentParams: {
                                 value: item[view.column],
@@ -296,7 +325,7 @@ export class DataHandlerService {
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
-                            nzTitle: "查看",
+                            nzTitle: view.title,
                             nzContent: ViewTypeComponent,
                             nzComponentParams: {
                                 value: item[view.column],
@@ -322,7 +351,7 @@ export class DataHandlerService {
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
-                            nzTitle: "查看",
+                            nzTitle: view.title,
                             nzContent: ViewTypeComponent,
                             nzComponentParams: {
                                 value: item[view.column],
@@ -348,7 +377,7 @@ export class DataHandlerService {
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
-                            nzTitle: "查看",
+                            nzTitle: view.title,
                             nzContent: ViewTypeComponent,
                             nzComponentParams: {
                                 value: item[view.column],
@@ -643,6 +672,12 @@ export class DataHandlerService {
                             }
                         }
                         break;
+                    case EditType.CODE_EDITOR:
+                        let val = edit.$viewValue.getValue();
+                        if (val || val === 0) {
+                            eruptData[field.fieldName] = val;
+                        }
+                        break;
                     default:
                         if (edit.$value || edit.$value === 0) {
                             eruptData[field.fieldName] = edit.$value;
@@ -859,9 +894,12 @@ export class DataHandlerService {
                     ef.eruptFieldJson.edit.inputType.prefixValue = null;
                     ef.eruptFieldJson.edit.inputType.suffixValue = null;
                     break;
+                case EditType.TAB_TABLE_REFER:
+                case EditType.TAB_TABLE_ADD:
+                    ef.eruptFieldJson.edit.$value = [];
+                    break;
             }
         });
-
         for (let key in eruptBuildModel.combineErupts) {
             this.emptyEruptValue({
                 eruptModel: eruptBuildModel.combineErupts[key]

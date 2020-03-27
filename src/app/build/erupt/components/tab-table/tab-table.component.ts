@@ -116,7 +116,7 @@ export class TabTableComponent implements OnInit {
             viewValue.push({
                 title: "操作区",
                 fixed: "right",
-                width: "150px",
+                width: "80px",
                 className: "text-center",
                 buttons: operators
             });

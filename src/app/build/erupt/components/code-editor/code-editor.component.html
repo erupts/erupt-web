@@ -1,0 +1,5 @@
+<nz-code-editor style="height: 300px;border:1px solid #ccc"
+                (nzEditorInitialized)="codeEditorInit($event,field)"
+                [nzEditorOption]="{ language: field.eruptFieldJson.edit.codeEditType.language,
+                                                theme: field.eruptFieldJson.edit.codeEditType.darkTheme?'vs-dark':'vs' }">
+</nz-code-editor>

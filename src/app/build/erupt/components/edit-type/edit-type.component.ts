@@ -13,6 +13,8 @@ import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {DataHandlerService} from "../../service/data-handler.service";
 
+declare const monaco
+
 @Component({
     selector: "erupt-edit-type",
     templateUrl: "./edit-type.component.html",
@@ -55,6 +57,11 @@ export class EditTypeComponent implements OnInit, OnDestroy {
     dateRanges: object = null;
 
     uploadFilesStatus: { [key: string]: boolean } = {};
+
+    code = `function flatten(arr) {
+              if (!(arr instanceof Array)) {
+                throw new Error('The parameter must be an array.');
+              }`;
 
     private datePipe: DatePipe = new DatePipe("zh-cn");
 
@@ -239,6 +246,11 @@ export class EditTypeComponent implements OnInit, OnDestroy {
         if (iframeWin.document.body) {
             iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
         }
+    }
+
+    codeEditorInit(event, field?: EruptFieldModel) {
+        event.setValue(field.eruptFieldJson.edit.$value||'');
+        field.eruptFieldJson.edit.$viewValue = event;
     }
 
 }

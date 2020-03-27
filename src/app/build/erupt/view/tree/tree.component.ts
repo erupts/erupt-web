@@ -93,7 +93,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         if (this.tree.getSelectedNodeList()[0]) {
             this.tree.getSelectedNodeList()[0].isSelected = false;
         }
-        this.dataHandler.loadEruptDefaultValue(this.eruptBuildModel);
+        this.dataHandler.emptyEruptValue(this.eruptBuildModel);
     }
 
     addSub() {
@@ -102,7 +102,8 @@ export class TreeComponent implements OnInit, OnDestroy {
         let label = eruptFieldModelMap.get(this.eruptBuildModel.eruptModel.eruptJson.tree.label).eruptFieldJson.edit.$value;
         this.addBlock();
         if (id) {
-            let edit = eruptFieldModelMap.get(this.eruptBuildModel.eruptModel.eruptJson.tree.pid.split(".")[0]).eruptFieldJson.edit;
+            let edit = eruptFieldModelMap.get(this.eruptBuildModel.eruptModel.eruptJson.tree.pid.split(".")[0])
+                .eruptFieldJson.edit;
             edit.$value = id;
             edit.$viewValue = label;
         }
@@ -110,7 +111,8 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     add() {
         this.loading = true;
-        this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
+        this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
+            this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
             this.loading = false;
             if (result.status == Status.SUCCESS) {
                 this.fetchTreeData();
@@ -124,7 +126,8 @@ export class TreeComponent implements OnInit, OnDestroy {
         //校验菜单和合法性
         if (this.validateParentIdValue()) {
             this.loading = true;
-            this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
+            this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
                 if (result.status == Status.SUCCESS) {
                     this.msg.success("修改成功");
                     this.fetchTreeData();
@@ -172,13 +175,14 @@ export class TreeComponent implements OnInit, OnDestroy {
                 nzTitle: "请确认是否要删除",
                 nzContent: "",
                 nzOnOk: () => {
-                    this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, nzTreeNode.origin.key).subscribe(function (res) {
-                        if (res.status == Status.SUCCESS) {
-                            that.fetchTreeData();
-                            that.msg.success("删除成功");
-                        }
-                        that.showEdit = false;
-                    });
+                    this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, nzTreeNode.origin.key)
+                        .subscribe(function (res) {
+                            if (res.status == Status.SUCCESS) {
+                                that.fetchTreeData();
+                                that.msg.success("删除成功");
+                            }
+                            that.showEdit = false;
+                        });
                 }
             });
         } else {

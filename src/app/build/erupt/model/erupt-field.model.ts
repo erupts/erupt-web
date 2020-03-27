@@ -59,6 +59,7 @@ export interface Edit {
     dateType: DateType;
     sliderType: SliderType;
     dependSwitchType: DependSwitchType;
+    codeEditType: CodeEditType;
     $tabTreeViewData?: any;
     $value?: any;
     $viewValue?: any;
@@ -70,9 +71,13 @@ export interface Edit {
 interface Search {
     value: boolean;
     vague: boolean;
-    notNull:boolean;
+    notNull: boolean;
 }
 
+interface CodeEditType {
+    language:string;
+    darkTheme:boolean;
+}
 
 //Edit Type
 interface InputType {
