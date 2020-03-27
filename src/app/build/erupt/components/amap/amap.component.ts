@@ -8,7 +8,7 @@ declare const AMap;
 @Component({
     selector: "amap",
     templateUrl: "./amap.component.html",
-    styles: []
+    styleUrls: ["./amap.component.less"]
 })
 export class AmapComponent implements OnInit {
 
@@ -69,7 +69,7 @@ export class AmapComponent implements OnInit {
             function complete() {
                 AMap.plugin('AMap.Autocomplete', function () {
                     let autoComplete = new AMap.Autocomplete({
-                        city: '全国'
+                        city: ''
                     });
                     autoComplete.search((<HTMLInputElement>document.getElementById("tipInput")).value, function (status, result) {
                         if (status == "complete") {
@@ -138,6 +138,8 @@ export class AmapComponent implements OnInit {
                 s.push("地址：" + poi.address);
                 s.push("电话：" + poi.tel);
                 s.push("类型：" + poi.type);
+                s.push("纬度：" + poi.location.lat);
+                s.push("经度：" + poi.location.lng);
                 return s.join("<br>");
             }
         });

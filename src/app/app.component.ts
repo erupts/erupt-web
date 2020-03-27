@@ -47,8 +47,14 @@ export class AppComponent implements OnInit {
                     let paths = url.split("/");
                     let match = paths[paths.length - 1];
                     if (this.beforeMatch) {
+                        if (eruptEvent.$) {
+                            eruptEvent.$.unload && eruptEvent.$.unload(res, this.tokenService.get().token);
+                        }
                         eruptEvent[this.beforeMatch] && eruptEvent[this.beforeMatch].unload &&
                         eruptEvent[this.beforeMatch].unload(res, this.tokenService.get().token);
+                    }
+                    if (eruptEvent.$) {
+                        eruptEvent.$.load && eruptEvent.$.load(res, this.tokenService.get().token);
                     }
                     eruptEvent[match] && eruptEvent[match].load && eruptEvent[match].load(res, this.tokenService.get().token);
                     this.beforeMatch = match;

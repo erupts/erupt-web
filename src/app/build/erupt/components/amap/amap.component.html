@@ -6,8 +6,8 @@
     </div>
 
     <nz-autocomplete #auto>
-        <nz-auto-option *ngFor="let auto of autocompleteList" [nzValue]="auto"
-                        (click)="choiceList(auto)"
+        <nz-auto-option *ngFor="let auto of autocompleteList"
+                        [nzValue]="auto" (click)="choiceList(auto)"
                         [nzLabel]="auto.name">{{auto.name}}
         </nz-auto-option>
     </nz-autocomplete>

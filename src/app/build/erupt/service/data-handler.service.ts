@@ -177,32 +177,19 @@ export class DataHandlerService {
                     })
                 };
             }
-
-            // 编辑类型
-            if (edit.type === EditType.BOOLEAN) {
-                obj.type = "yn";
-                obj.className = "text-center";
-                if (!tfBool) {
-                    obj.yn = {
-                        truth: edit.boolType.trueText
-                    };
-                }
-
-            }
-            if (view.template) {
-                obj.format = (item: any) => {
-                    try {
-                        return eval(view.template);
-                    } catch (e) {
-                        console.error(e);
-                        this.msg.error(e.toString());
-                    }
-                };
-            }
             //展示类型
             switch (view.viewType) {
+                case ViewType.BOOLEAN:
+                    obj.type = "yn";
+                    obj.className = "text-center";
+                    if (!tfBool) {
+                        obj.yn = {
+                            truth: edit.boolType.trueText
+                        };
+                    }
+                    break;
                 case ViewType.NUMBER:
-                    obj.type = "number";
+                    obj.className = "text-right";
                     break;
                 case ViewType.DATE:
                     obj.className = "date-col";
@@ -288,15 +275,15 @@ export class DataHandlerService {
                 case ViewType.IMAGE:
                     obj.type = "link";
                     obj.width = "90px";
-                    obj.className = "text-center";
+                    obj.className = "text-center p-sm";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
                             if (attachmentType) {
                                 let img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
-                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
+                                return `<img height="50px" class="text-center" src="${DataService.previewAttachment(img)}" />`;
                             } else {
-                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(item[view.column])}" />`;
+                                return `<img height="50px" class="text-center" src="${DataService.previewAttachment(item[view.column])}" />`;
                             }
                         } else {
                             return "";
@@ -422,6 +409,16 @@ export class DataHandlerService {
                         window.open(DataService.previewAttachment(item[view.column]));
                     };
                     break;
+            }
+            if (view.template) {
+                obj.format = (item: any) => {
+                    try {
+                        return eval(view.template);
+                    } catch (e) {
+                        console.error(e);
+                        this.msg.error(e.toString());
+                    }
+                };
             }
             if (view.className) {
                 obj.className += " " + view.className;

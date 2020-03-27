@@ -296,13 +296,9 @@ export class TableComponent implements OnInit {
         const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
         for (let key in eruptJson.drills) {
             let drill = eruptJson.drills[key];
-            if (!drill.icon) {
-                drill.icon = "fa fa-table";
-            }
             tableOperators.push({
-                format: () => {
-                    return `<i title="${drill.title}" class="${drill.icon}" style="color: #09f"></i>`;
-                },
+                type: 'link',
+                text: drill.title,
                 click: (record) => {
                     let drill = eruptJson.drills[key];
                     this.modal.create({
@@ -329,6 +325,9 @@ export class TableComponent implements OnInit {
             let width = 0;
             for (let key in eruptJson.rowOperation) {
                 width += (eruptJson.rowOperation[key].title.length * 20)
+            }
+            for (let key in eruptJson.drills) {
+                width += (eruptJson.drills[key].title.length * 20)
             }
             _columns.push({
                 title: "操作",
