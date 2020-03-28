@@ -11,6 +11,20 @@ html {
   background: #f5f7fa;
 }
 
+.alain-default__progress-bar {
+  height: 8px;
+}
+
+.erupt-global__progress {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 999;
+  background: rgba(35, 35, 35, 0.4);
+}
+
 .page-header {
   margin-bottom: 16px !important;
   //box-shadow: 0 10px 30px 0 rgba(82, 63, 105, .08);
@@ -22,6 +36,7 @@ html {
 
 //暗黑模式
 .dark {
+
   .alain-default__content, .ant-modal-content, .alain-default__aside {
     filter: invert(88%);
   }
@@ -41,6 +56,10 @@ html {
     st .ant-table {
       box-shadow: none;
     }
+
+    //[class*='primary']{
+    //  color: #888;
+    //}
   }
 
   .alain-default {
@@ -49,7 +68,7 @@ html {
 
   .alain-default__header {
     border-bottom: 1px solid #333;
-    background: #111;
+    background: #222;
   }
 
 }

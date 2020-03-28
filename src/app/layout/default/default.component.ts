@@ -128,7 +128,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
             setTimeout(() => {
                 scroll.scrollToTop();
                 this.isFetching = false;
-            }, 2000);
+            }, 1000);
         });
     }
 

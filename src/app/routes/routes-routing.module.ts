@@ -30,12 +30,12 @@ const routes: Routes = [
                 loadChildren: () => import('../build/erupt/erupt.module').then(m => m.EruptModule),
             },
             {
-                path: "build/bi/:name",
+                path: "bi/:name",
                 loadChildren: () => import( "../build/bi/bi.module").then(m => m.BiModule),
                 pathMatch: "full"
             },
             {
-                path: "build/tpl/:name",
+                path: "tpl/:name",
                 loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule),
                 pathMatch: "full"
             }
