@@ -83,7 +83,7 @@ export class TableComponent implements OnInit {
             reference.eruptField.fieldName), {
             url: RestPath.data + reference.eruptBuild.eruptModel.eruptName
                 + "/reference-table/"
-                + reference.eruptField.fieldName + (reference.dependVal && "?dependValue=" + reference.dependVal),
+                + reference.eruptField.fieldName + (reference.dependVal ? "?dependValue=" + reference.dependVal : ''),
             header: {
                 erupt: reference.eruptBuild.eruptModel.eruptName
             }
