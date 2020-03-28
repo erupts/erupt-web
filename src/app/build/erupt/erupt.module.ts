@@ -19,7 +19,6 @@ import {TableComponent} from './view/table/table.component';
 import { LayoutTreeComponent } from './view/layout-tree/layout-tree.component';
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import { CodeEditorComponent } from './components/code-editor/code-editor.component';
-import { CodeEditorViewComponent } from './components/code-editor-view/code-editor-view.component';
 
 @NgModule({
     imports: [
@@ -45,7 +44,7 @@ import { CodeEditorViewComponent } from './components/code-editor-view/code-edit
         ReferenceTableComponent,
         TableComponent,
         EditComponent,
-        CodeEditorViewComponent
+        CodeEditorComponent
     ],
     declarations: [
         EditTypeComponent,
@@ -61,8 +60,7 @@ import { CodeEditorViewComponent } from './components/code-editor-view/code-edit
         TableViewComponent,
         TableComponent,
         LayoutTreeComponent,
-        CodeEditorComponent,
-        CodeEditorViewComponent
+        CodeEditorComponent
     ]
 })
 export class EruptModule {

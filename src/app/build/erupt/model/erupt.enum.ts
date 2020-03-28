@@ -54,7 +54,7 @@ export enum ViewType {
     ATTACHMENT = "ATTACHMENT",
     QR_CODE = "QR_CODE",
     MAP = "MAP",
-    CODE_EDITOR = "CODE_EDITOR",
+    CODE = "CODE",
     HTML = "HTML",
     DATE = "DATE",
     BOOLEAN = "BOOLEAN",

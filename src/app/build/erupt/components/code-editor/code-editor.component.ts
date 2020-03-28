@@ -1,5 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {EruptFieldModel} from "../../model/erupt-field.model";
+import {Edit, EruptFieldModel} from "../../model/erupt-field.model";
+import {NzCodeEditorService} from "ng-zorro-antd/code-editor";
+import {CacheService} from "@delon/cache";
+import {GlobalKeys} from "@shared/model/erupt-const";
+
+let codeEditorDarkKey = "code_editor_dark";
 
 @Component({
     selector: 'erupt-code-editor',
@@ -8,17 +13,42 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 })
 export class CodeEditorComponent implements OnInit {
 
-    @Input() field: EruptFieldModel;
+    /**
+     * choice field or value
+     */
+    @Input() edit: Edit;
 
-    constructor() {
+    @Input() value: string;
+
+    @Input() language: string;
+
+    codeEditorEvent: any;
+
+    dark = false;
+
+    constructor(private nzCodeEditorService: NzCodeEditorService, private cacheService: CacheService) {
+
     }
 
     ngOnInit() {
+        this.dark = this.cacheService.getNone(codeEditorDarkKey) || false;
     }
 
-    codeEditorInit(event, field?: EruptFieldModel) {
-        event.setValue(field.eruptFieldJson.edit.$value || '');
-        field.eruptFieldJson.edit.$viewValue = event;
+    codeEditorInit(event) {
+        if (this.edit) {
+            this.edit.$viewValue = event;
+            event.setValue(this.edit.$value || '');
+        } else {
+            event.setValue(this.value || '');
+        }
+        this.codeEditorEvent = event;
+        this.nzCodeEditorService.updateDefaultOption({theme: this.dark ? 'vs-dark' : 'vs'})
+    }
+
+    switchChange(bool) {
+        this.dark = bool;
+        this.cacheService.set(codeEditorDarkKey, bool);
+        this.nzCodeEditorService.updateDefaultOption({theme: bool ? 'vs-dark' : 'vs'});
     }
 
 }

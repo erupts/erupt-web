@@ -1,5 +1,18 @@
-<nz-code-editor style="height: 300px;border:1px solid #ccc"
-                (nzEditorInitialized)="codeEditorInit($event,field)"
-                [nzEditorOption]="{ language: field.eruptFieldJson.edit.codeEditType.language,
-                                                theme: field.eruptFieldJson.edit.codeEditType.darkTheme?'vs-dark':'vs' }">
-</nz-code-editor>
+<nz-spin [nzSpinning]="!codeEditorEvent">
+    <nz-code-editor style="height: 300px;border:1px solid #ccc"
+                    (nzEditorInitialized)="codeEditorInit($event)"
+                    [nzEditorOption]="{ language: language}">
+    </nz-code-editor>
+    <nz-switch nzSize="small" [ngModel]="dark"
+               [nzUnCheckedChildren]="unchecked"
+               [nzCheckedChildren]="checked"
+               (ngModelChange)="switchChange($event)"
+               style="position: absolute;right: 22px;bottom: 10px"
+    ></nz-switch>
+    <ng-template #unchecked>
+        <i nz-icon nzType="bulb"></i>
+    </ng-template>
+    <ng-template #checked>
+        <i nz-icon nzType="poweroff"></i>
+    </ng-template>
+</nz-spin>

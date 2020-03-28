@@ -10,7 +10,7 @@ import {DataService} from "@shared/service/data.service";
 import {ViewTypeComponent} from "../components/view-type/view-type.component";
 import {STColumn, STData} from "@delon/abc";
 import {DatePipe} from "@angular/common";
-import {CodeEditorViewComponent} from "../components/code-editor-view/code-editor-view.component";
+import {CodeEditorComponent} from "../components/code-editor/code-editor.component";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -245,7 +245,7 @@ export class DataHandlerService {
                         });
                     };
                     break;
-                case ViewType.CODE_EDITOR:
+                case ViewType.CODE:
                     obj.className = "text-center";
                     obj.type = "link";
                     obj.format = (item: any) => {
@@ -265,7 +265,7 @@ export class DataHandlerService {
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: CodeEditorViewComponent,
+                            nzContent: CodeEditorComponent,
                             nzComponentParams: {
                                 language: view.eruptFieldModel.eruptFieldJson.edit.codeEditType.language,
                                 value: item[view.column]

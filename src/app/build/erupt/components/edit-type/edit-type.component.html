@@ -611,7 +611,8 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <erupt-code-editor [field]="field">
+                                <erupt-code-editor [edit]="field.eruptFieldJson.edit"
+                                                   [language]="field.eruptFieldJson.edit.codeEditType.language">
                                 </erupt-code-editor>
                             </se>
                         </div>

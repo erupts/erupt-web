@@ -58,11 +58,6 @@ export class EditTypeComponent implements OnInit, OnDestroy {
 
     uploadFilesStatus: { [key: string]: boolean } = {};
 
-    code = `function flatten(arr) {
-              if (!(arr instanceof Array)) {
-                throw new Error('The parameter must be an array.');
-              }`;
-
     private datePipe: DatePipe = new DatePipe("zh-cn");
 
     constructor(public dataService: DataService,
@@ -246,11 +241,6 @@ export class EditTypeComponent implements OnInit, OnDestroy {
         if (iframeWin.document.body) {
             iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
         }
-    }
-
-    codeEditorInit(event, field?: EruptFieldModel) {
-        event.setValue(field.eruptFieldJson.edit.$value||'');
-        field.eruptFieldJson.edit.$viewValue = event;
     }
 
 }
