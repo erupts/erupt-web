@@ -77,13 +77,13 @@ export class TableComponent implements OnInit {
 
     _reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode };
 
-    @Input() set referenceTable(reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode }) {
+    @Input() set referenceTable(reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode, dependVal?: any }) {
         this._reference = reference;
         this.init(this.dataService.getEruptBuildByField(reference.eruptBuild.eruptModel.eruptName,
             reference.eruptField.fieldName), {
             url: RestPath.data + reference.eruptBuild.eruptModel.eruptName
                 + "/reference-table/"
-                + reference.eruptField.fieldName,
+                + reference.eruptField.fieldName + (reference.dependVal && "?dependValue=" + reference.dependVal),
             header: {
                 erupt: reference.eruptBuild.eruptModel.eruptName
             }

@@ -75,8 +75,8 @@ interface Search {
 }
 
 interface CodeEditType {
-    language:string;
-    darkTheme:boolean;
+    language: string;
+    darkTheme: boolean;
 }
 
 //Edit Type
@@ -103,6 +103,7 @@ export interface ReferenceTreeType {
 export interface ReferenceTableType {
     id: string;
     label: string;
+    dependField: string;
 }
 
 interface BoolType {

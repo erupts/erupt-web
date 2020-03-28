@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from "@angular/core";
-import {EruptFieldModel} from "../../model/erupt-field.model";
+import {EruptFieldModel, ReferenceTableType} from "../../model/erupt-field.model";
 import {AttachmentEnum, ChoiceEnum, DateEnum, DependSwitchTypeEnum, EditType} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {TreeSelectComponent} from "../tree-select/tree-select.component";
@@ -12,8 +12,6 @@ import {ReferenceTableComponent} from "../reference-table/reference-table.compon
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {DataHandlerService} from "../../service/data-handler.service";
-
-declare const monaco
 
 @Component({
     selector: "erupt-edit-type",
@@ -196,26 +194,38 @@ export class EditTypeComponent implements OnInit, OnDestroy {
     }
 
     createRefTableModal(field: EruptFieldModel) {
+        let edit = field.eruptFieldJson.edit;
+        let dependVal: string;
+        if (edit.referenceTableType.dependField) {
+            const dependField: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(edit.referenceTableType.dependField);
+            if (dependField.eruptFieldJson.edit.$value) {
+                dependVal = dependField.eruptFieldJson.edit.$value;
+            } else {
+                this.msg.warning("请先选择" + dependField.eruptFieldJson.edit.title);
+                return;
+            }
+        }
         let model = this.modal.create({
             nzWrapClassName: "modal-xxl",
             nzKeyboard: true,
             nzStyle: {top: "35px"},
-            nzTitle: field.eruptFieldJson.edit.title,
+            nzTitle: edit.title,
             nzCancelText: "取消（ESC）",
             nzContent: ReferenceTableComponent,
             nzComponentParams: {
                 eruptBuild: this.eruptBuildModel,
-                eruptField: field
+                eruptField: field,
+                dependVal: dependVal
             }, nzOnOk: () => {
-                let radioValue = field.eruptFieldJson.edit.$tempValue;
+                let radioValue = edit.$tempValue;
                 if (!radioValue) {
                     this.msg.warning("请选中一条数据");
                     return false;
                 }
-                field.eruptFieldJson.edit.$value = radioValue[field.eruptFieldJson.edit.referenceTableType.id];
-                field.eruptFieldJson.edit.$viewValue = radioValue[field.eruptFieldJson.edit.referenceTableType.label
+                edit.$value = radioValue[edit.referenceTableType.id];
+                edit.$viewValue = radioValue[edit.referenceTableType.label
                     .replace(".", "_")] || '-----';
-                field.eruptFieldJson.edit.$tempValue = radioValue;
+                edit.$tempValue = radioValue;
             }
         });
     }
