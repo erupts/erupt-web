@@ -22,17 +22,34 @@ html {
 
 //暗黑模式
 .dark {
-  .alain-default__content, .alain-default__aside, .ant-modal-content {
-    filter: invert(85%);
+  .alain-default__content, .ant-modal-content, .alain-default__aside {
+    filter: invert(88%);
+  }
+
+  .ant-modal-content {
+    border: 1px solid #999;
+    box-shadow: none;
   }
 
   .alain-default__content, .ant-modal-content {
-    img, canvas, .page-container, .fa, bi-chart {
+    img, canvas,
+    .page-container, .fa, .exception__img,
+    bi-chart {
       filter: invert(100%);
+    }
+
+    st .ant-table {
+      box-shadow: none;
     }
   }
 
-  .alain-default__header, .alain-default {
-    background: #292929;
+  .alain-default {
+    background: #222;
   }
+
+  .alain-default__header {
+    border-bottom: 1px solid #333;
+    background: #111;
+  }
+
 }
