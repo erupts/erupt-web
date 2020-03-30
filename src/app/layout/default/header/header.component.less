@@ -1,6 +1,20 @@
 @import '~styles/theme';
 
-.header-logo-img {
-  height: @alain-default-header-hg;
-  padding: 6px 0
+:host {
+  .header-logo-img {
+    height: @alain-default-header-hg;
+    padding: 6px 0
+  }
+
+  .alain-default__collapsed .alain-default__header-logo {
+    width: auto;
+    min-width: 64px;
+  }
+
+  @media (max-width: 767px) {
+    .alain-default__header-logo {
+      width: auto;
+      min-width: 64px;
+    }
+  }
 }
