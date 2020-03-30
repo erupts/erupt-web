@@ -9,9 +9,16 @@
                     [required]="dim.notNull" style="width: 100%">
                     <ng-container [ngSwitch]="dim.type">
                         <ng-container *ngSwitchCase="dimType.INPUT">
-                            <input nz-input autocomplete="off"
-                                   class="full-width" [(ngModel)]="dim.$value"
-                                   [name]="dim.code" [required]="dim.notNull">
+                            <nz-input-group [nzSuffix]="suffixTemplate">
+                                <input nz-input autocomplete="off"
+                                       class="full-width" [(ngModel)]="dim.$value"
+                                       [name]="dim.code" [required]="dim.notNull">
+                            </nz-input-group>
+                            <ng-template #suffixTemplate><i nz-icon nz-tooltip class="ant-input-clear-icon"
+                                                            nzTheme="fill"
+                                                            nzType="close-circle" *ngIf="dim.$value"
+                                                            (click)="dim.$value = null"></i>
+                            </ng-template>
                         </ng-container>
                         <ng-container *ngSwitchCase="dimType.NUMBER">
                             <nz-input-number [(ngModel)]="dim.$value" class="full-width"
@@ -20,11 +27,12 @@
                         <ng-container *ngSwitchCase="dimType.REFERENCE">
                             <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
                                 <input nz-input autocomplete="off" [required]="dim.notNull" [readOnly]="true"
-                                       [(ngModel)]="dim.$value" [name]="dim.code" (click)="ref(dim)">
+                                       [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
                             </nz-input-group>
                             <ng-template #refBtn>
                                 <ng-container *ngIf="dim.$value">
-                                    <i nz-icon nzType="close-circle" theme="fill" class="point" (click)="clearRef(dim)"></i>
+                                    <i nz-icon nzType="close-circle" theme="fill" class="point"
+                                       (click)="clearRef(dim)"></i>
                                 </ng-container>
                                 <ng-container *ngIf="!dim.$value">
                                     <i nz-icon nzType="database" theme="fill" class="point" (click)="ref(dim)"></i>

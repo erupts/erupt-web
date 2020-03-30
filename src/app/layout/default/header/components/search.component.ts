@@ -9,7 +9,7 @@ import {Menu} from "@delon/theme/src/services/menu/interface";
     selector: 'header-search',
     template: `
         <!--(keydown.enter)="toMenu()"-->
-        <nz-input-group [nzSuffix]="suffixTemplateInfo">
+        <nz-input-group [nzSuffix]="suffixTemplateInfo" nzPrefixIcon="prefixTemplateInfo">
             <input nz-input [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()"
                    (input)="onInput($event)"
                    [placeholder]="'搜索'" [nzAutocomplete]="auto" style="padding-left: 15px">

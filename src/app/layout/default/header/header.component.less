@@ -1,20 +1,18 @@
 @import '~styles/theme';
 
 :host {
-  .header-logo-img {
-    height: @alain-default-header-hg;
-    padding: 6px 0
-  }
+  ::ng-deep {
+    .header-logo-img {
+      height: @alain-default-header-hg;
+      padding: 6px 0
+    }
 
-  .alain-default__collapsed .alain-default__header-logo {
-    width: auto;
-    min-width: 64px;
-  }
-
-  @media (max-width: 767px) {
-    .alain-default__header-logo {
-      width: auto;
-      min-width: 64px;
+    @media (max-width: 767px) {
+      .alain-default__header-logo {
+        width: auto;
+        min-width: 64px;
+        margin: 0 6px;
+      }
     }
   }
 }

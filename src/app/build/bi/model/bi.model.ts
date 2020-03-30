@@ -36,7 +36,7 @@ export enum ChartType {
 export interface Dimension {
     code: string;
     title: string;
-    type: string;
+    type: DimType;
     vague: boolean;
     notNull: boolean;
     dependDimension: string;
