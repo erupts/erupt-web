@@ -11,7 +11,6 @@ import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
-import {Bi, BiData} from "../../build/bi/model/bi.model";
 
 @Injectable()
 export class DataService {
@@ -226,9 +225,14 @@ export class DataService {
         );
     }
 
-    //获取菜单列表
+    //获取菜单树
     getMenu(): Observable<any[]> {
         return this._http.get(RestPath.erupt + "/menu", null);
+    }
+
+    //获取菜单列表
+    getMenuList(): Observable<any[]> {
+        return this._http.get(RestPath.erupt + "/menu-list", null);
     }
 
     downloadExcelTemplate(eruptName: string) {

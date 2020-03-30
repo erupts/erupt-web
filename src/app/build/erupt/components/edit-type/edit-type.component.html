@@ -14,15 +14,22 @@
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==0&&
                                                              field.eruptFieldJson.edit.inputType.suffix.length==0">
-                                    <input nz-input [nzSize]="size" class="erupt-input" autocomplete="off"
-                                           [ngStyle]="{borderStyle:(eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague)?'dashed':''}"
-                                           (keyup)="enterEvent($event)"
-                                           [maxLength]="field.eruptFieldJson.edit.inputType.length"
-                                           [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                           [name]="field.fieldName"
-                                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                           [required]="field.eruptFieldJson.edit.notNull"
-                                           [disabled]="field.eruptFieldJson.edit.readOnly">
+                                    <nz-input-group [nzSuffix]="suffixTemplate">
+                                        <input nz-input [nzSize]="size" class="erupt-input" autocomplete="off"
+                                               [ngStyle]="{borderStyle:(eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague)?'dashed':''}"
+                                               (keyup)="enterEvent($event)"
+                                               [maxLength]="field.eruptFieldJson.edit.inputType.length"
+                                               [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [name]="field.fieldName"
+                                               [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                               [required]="field.eruptFieldJson.edit.notNull"
+                                               [disabled]="field.eruptFieldJson.edit.readOnly">
+                                    </nz-input-group>
+                                    <ng-template #suffixTemplate
+                                    ><i nz-icon nz-tooltip class="ant-input-clear-icon" nzTheme="fill"
+                                        nzType="close-circle" *ngIf="field.eruptFieldJson.edit.$value"
+                                        (click)="field.eruptFieldJson.edit.$value = null"></i>
+                                    </ng-template>
                                 </ng-container>
                                 <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length>0||
                                                              field.eruptFieldJson.edit.inputType.suffix.length>0">
@@ -147,17 +154,13 @@
                                     <se [label]="field.eruptFieldJson.edit.title"
                                         [required]="field.eruptFieldJson.edit.notNull"
                                         [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                        <tag-select [expandable]="true" style="margin-left: 0;">
+                                        <tag-select
+                                                [expandable]="false"
+                                                style="margin-left: 0;">
                                             <nz-tag (nzCheckedChange)="changeTagAll($event,field)"
                                                     style="margin-right: 10px"
                                                     nzMode="checkable">全选
                                             </nz-tag>
-                                            <ng-container *ngFor="let vl of field.choiceMap | keyvalue">
-                                                <!--                                                <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"-->
-                                                <!--                                                        style="margin-right: 10px"-->
-                                                <!--                                                        nzMode="checkable"-->
-                                                <!--                                                        [(nzChecked)]="vl.$viewValue">{{vl.label}}</nz-tag>-->
-                                            </ng-container>
                                             <ng-container *ngFor="let vl of field.eruptFieldJson.edit.choiceType.vl">
                                                 <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"
                                                         style="margin-right: 10px"

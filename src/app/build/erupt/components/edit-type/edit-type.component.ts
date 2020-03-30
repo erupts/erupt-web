@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from "@angular/core";
-import {EruptFieldModel, ReferenceTableType} from "../../model/erupt-field.model";
+import {Edit, EruptFieldModel, ReferenceTableType, VL} from "../../model/erupt-field.model";
 import {AttachmentEnum, ChoiceEnum, DateEnum, DependSwitchTypeEnum, EditType} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {TreeSelectComponent} from "../tree-select/tree-select.component";
@@ -72,6 +72,17 @@ export class EditTypeComponent implements OnInit, OnDestroy {
         };
         if (this.mode === "addNew") {
             this.dataHandlerService.loadEruptDefaultValue(this.eruptBuildModel);
+        }
+        for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
+            let edit: Edit = eruptFieldModel.eruptFieldJson.edit;
+            if (edit.type == EditType.CHOICE && edit.search.vague == true) {
+                let vl = [];
+                console.log(eruptFieldModel.choiceMap);
+                for (let key in eruptFieldModel.choiceMap) {
+                    vl.push({label: eruptFieldModel.choiceMap[key], value: key})
+                }
+                edit.choiceType.vl = vl;
+            }
         }
     }
 
@@ -231,9 +242,6 @@ export class EditTypeComponent implements OnInit, OnDestroy {
     }
 
     changeTagAll($event, field: EruptFieldModel) {
-        // for (let vl of field.choiceMap) {
-        //     vl.$viewValue = $event;
-        // }
         for (let vl of field.eruptFieldJson.edit.choiceType.vl) {
             vl.$viewValue = $event;
         }

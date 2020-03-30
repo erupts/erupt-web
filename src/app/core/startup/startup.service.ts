@@ -6,7 +6,6 @@ import {NzIconService} from "ng-zorro-antd";
 import {ICONS_AUTO} from "../../../style-icons-auto";
 import {ICONS} from "../../../style-icons";
 import {WindowModel} from "@shared/model/window.model";
-import {ActivatedRoute, Router} from "@angular/router";
 
 /**
  * 用于应用启动时

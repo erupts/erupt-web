@@ -98,7 +98,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
     settingHost: ViewContainerRef;
 
     constructor(iconSrv: NzIconService,
-                router: Router,
+                private router: Router,
                 scroll: ScrollService,
                 _message: NzMessageService,
                 private resolver: ComponentFactoryResolver,
@@ -184,6 +184,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                     }
                     let option: Menu = {
                         text: node.data.name,
+                        key: node.data.name,
                         linkExact: true,
                         // externalLink: "/assets/page/a.html",
                         // target:"_blank",
@@ -207,6 +208,8 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 text: "~",
                 children: gcMenu(result)
             }]);
+            this.router.navigateByUrl(this.router.url)
+            // this.menuSrv.openedByUrl(this.router.url,true)
         });
 
     }
