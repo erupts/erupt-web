@@ -267,6 +267,7 @@ export class DataHandlerService {
                             nzTitle: view.title,
                             nzContent: CodeEditorComponent,
                             nzComponentParams: {
+                                readonly: true,
                                 language: view.eruptFieldModel.eruptFieldJson.edit.codeEditType.language,
                                 value: item[view.column]
                             }

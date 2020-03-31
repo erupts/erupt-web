@@ -23,8 +23,7 @@
             <ng-container *ngFor="let chart of bi.charts">
                 <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
                     <nz-card [nzTitle]="chart.name" nzSize="small"
-                             [nzBodyStyle]="{padding:'12px'}"
-                             [nzHoverable]="true" [nzLoading]="chart.loading">
+                             [nzBodyStyle]="{padding:'12px'}" [nzHoverable]="true">
                         <bi-chart [chart]="chart" [biCode]="bi.code"></bi-chart>
                     </nz-card>
                 </div>
@@ -52,7 +51,4 @@
             [size]="'small'">
         </st>
     </ng-container>
-    <!--    <div style="height: 50px">-->
-
-    <!--    </div>-->
 </ng-container>

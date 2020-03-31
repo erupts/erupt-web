@@ -9,10 +9,10 @@ import {Menu} from "@delon/theme/src/services/menu/interface";
     selector: 'header-search',
     template: `
         <!--(keydown.enter)="toMenu()"-->
-        <nz-input-group [nzSuffix]="suffixTemplateInfo" nzPrefixIcon="prefixTemplateInfo">
+        <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
             <input nz-input [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()"
                    (input)="onInput($event)"
-                   [placeholder]="'搜索'" [nzAutocomplete]="auto" style="padding-left: 15px">
+                   [placeholder]="'搜索'" [nzAutocomplete]="auto" style="padding-left: 35px">
             <nz-autocomplete #auto [nzBackfill]="true">
                 <nz-auto-option *ngFor="let menu of options" [nzValue]="menu.name"
                                 [nzLabel]="menu.name">
@@ -24,11 +24,11 @@ import {Menu} from "@delon/theme/src/services/menu/interface";
         </nz-input-group>
         <ng-template #prefixTemplateInfo>
             <i nz-icon nzType="search" nzTheme="outline"
-               [ngStyle]="{color:focus?'#000':'#fff'}"></i>&nbsp;&nbsp;
+               [ngStyle]="{color:focus?'#000':'#fff'}" style="margin-top: 2px"></i>&nbsp;&nbsp;
         </ng-template>
         <ng-template #suffixTemplateInfo>
             <i nz-icon nzType="arrow-right" nzTheme="outline" *ngIf="text" (click)="toMenu()"
-               style="cursor: pointer;transition:.5s all"
+               style="cursor: pointer;transition:.5s all;"
                [ngStyle]="{color:focus?'#000':'#fff'}"></i>
         </ng-template>
     `,
@@ -68,7 +68,6 @@ export class HeaderSearchComponent implements AfterViewInit {
     ngAfterViewInit() {
         this.dataService.getMenuList().subscribe((res) => {
             this.menuList = res;
-            console.log(res)
         });
         this.qIpt = (this.el.nativeElement as HTMLElement).querySelector('.ant-input') as HTMLInputElement;
     }
@@ -93,7 +92,6 @@ export class HeaderSearchComponent implements AfterViewInit {
     }
 
     toMenu() {
-        console.log(this.text);
         let menu: Menu = this.menuSrv.getItem(this.text);
         if (!menu) {
             this.msg.warning("请选择有效菜单！");

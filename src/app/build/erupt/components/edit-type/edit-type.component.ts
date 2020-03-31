@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from "@angular/core";
-import {Edit, EruptFieldModel, ReferenceTableType, VL} from "../../model/erupt-field.model";
+import {Edit, EruptFieldModel} from "../../model/erupt-field.model";
 import {AttachmentEnum, ChoiceEnum, DateEnum, DependSwitchTypeEnum, EditType} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {TreeSelectComponent} from "../tree-select/tree-select.component";
@@ -77,7 +77,6 @@ export class EditTypeComponent implements OnInit, OnDestroy {
             let edit: Edit = eruptFieldModel.eruptFieldJson.edit;
             if (edit.type == EditType.CHOICE && edit.search.vague == true) {
                 let vl = [];
-                console.log(eruptFieldModel.choiceMap);
                 for (let key in eruptFieldModel.choiceMap) {
                     vl.push({label: eruptFieldModel.choiceMap[key], value: key})
                 }

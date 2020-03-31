@@ -12,7 +12,6 @@ export interface Chart {
     grid: number;
     type: ChartType;
     linkage: boolean;
-    loading?: boolean;
     option: object;
     chartOption: any;
 }
@@ -46,14 +45,17 @@ export interface Dimension {
 
 export enum DimType {
     INPUT = "INPUT",
+    REFERENCE = "REFERENCE",
     NUMBER = "NUMBER",
+    NUMBER_RANGE = "NUMBER_RANGE",
     DATE = "DATE",
-    TIME = "TIME",
+    DATE_RANGE = "DATE_RANGE",
     DATETIME = "DATETIME",
+    DATETIME_RANGE = "DATETIME_RANGE",
+    TIME = "TIME",
     WEEK = 'WEEK',
     MONTH = "MONTH",
     YEAR = "YEAR",
-    REFERENCE = "REFERENCE"
 }
 
 export interface BiData {

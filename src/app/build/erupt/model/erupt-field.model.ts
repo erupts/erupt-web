@@ -76,7 +76,6 @@ interface Search {
 
 interface CodeEditType {
     language: string;
-    darkTheme: boolean;
 }
 
 //Edit Type
@@ -124,9 +123,16 @@ export interface TabType {
 
 interface DependSwitchType {
     reject: boolean;
-    type: DependSwitchTypeEnum
     attr: DependSwitchAttr[]
+    type: DependSwitchTypeEnum;
+    view: DependSwitchViewEnum;
 }
+
+enum DependSwitchViewEnum {
+    RADIO = "RADIO",
+    SELECT = "SELECT"
+}
+
 
 interface DependSwitchAttr {
     value: number;

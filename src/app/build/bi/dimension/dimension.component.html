@@ -9,19 +9,32 @@
                     [required]="dim.notNull" style="width: 100%">
                     <ng-container [ngSwitch]="dim.type">
                         <ng-container *ngSwitchCase="dimType.INPUT">
-                            <nz-input-group [nzSuffix]="suffixTemplate">
+                            <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input">
                                 <input nz-input autocomplete="off"
                                        class="full-width" [(ngModel)]="dim.$value"
                                        [name]="dim.code" [required]="dim.notNull">
                             </nz-input-group>
-                            <ng-template #suffixTemplate><i nz-icon nz-tooltip class="ant-input-clear-icon"
-                                                            nzTheme="fill"
-                                                            nzType="close-circle" *ngIf="dim.$value"
-                                                            (click)="dim.$value = null"></i>
+                            <ng-template #suffixTemplate>
+                                <i nz-icon nz-tooltip class="ant-input-clear-icon" nzTheme="fill"
+                                   nzType="close-circle" *ngIf="dim.$value"
+                                   (click)="dim.$value = null"></i>
                             </ng-template>
                         </ng-container>
                         <ng-container *ngSwitchCase="dimType.NUMBER">
                             <nz-input-number [(ngModel)]="dim.$value" class="full-width"
+                                             [name]="dim.code"></nz-input-number>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="dimType.NUMBER_RANGE">
+                            <nz-input-number style="width: 45%;"
+                                             [(ngModel)]="dim.$value[0]"
+                                             [name]="dim.code"></nz-input-number>
+                            <nz-input-group style="width: 10%;">
+                                <div style="line-height: 100%;text-align: center">
+                                    ~
+                                </div>
+                            </nz-input-group>
+                            <nz-input-number style="width: 45%;"
+                                             [(ngModel)]="dim.$value[1]"
                                              [name]="dim.code"></nz-input-number>
                         </ng-container>
                         <ng-container *ngSwitchCase="dimType.REFERENCE">
@@ -45,6 +58,12 @@
                                             [name]="dim.code" nzShowToday>
                             </nz-date-picker>
                         </ng-container>
+                        <ng-container *ngSwitchCase="dimType.DATE_RANGE">
+                            <nz-range-picker class="full-width"
+                                             [(ngModel)]="dim.$value"
+                                             [name]="dim.code" nzShowToday>
+                            </nz-range-picker>
+                        </ng-container>
                         <ng-container *ngSwitchCase="dimType.TIME">
                             <nz-time-picker [(ngModel)]="dim.$value" class="full-width"
                                             [name]="dim.code"></nz-time-picker>
@@ -56,6 +75,14 @@
                                             nzShowToday
                                             [name]="dim.code">
                             </nz-date-picker>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="dimType.DATETIME_RANGE">
+                            <nz-range-picker class="full-width"
+                                             [(ngModel)]="dim.$value"
+                                             [name]="dim.code"
+                                             nzShowToday
+                                             nzShowTime>
+                            </nz-range-picker>
                         </ng-container>
                         <ng-container *ngSwitchCase="dimType.WEEK">
                             <nz-week-picker [(ngModel)]="dim.$value" class="full-width"

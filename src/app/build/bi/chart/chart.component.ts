@@ -17,6 +17,8 @@ export class ChartComponent implements OnInit {
 
     @Input() biCode: string;
 
+    loading: boolean = false;
+
     constructor(private ref: ElementRef, private biDataService: BiDataService) {
     }
 
@@ -27,12 +29,12 @@ export class ChartComponent implements OnInit {
 
     query() {
         let element = this.ref.nativeElement.querySelector(".plot");
-        this.chart.loading = true;
+        this.loading = true;
         this.biDataService.getBiChart(this.biCode, this.chart.code, {}).subscribe(data => {
-            this.chart.loading = false;
+            this.loading = false;
             setTimeout(() => {
                 this.render(element, data)
-            }, 100);
+            }, 200);
         })
     }
 

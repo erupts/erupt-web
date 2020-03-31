@@ -22,6 +22,8 @@ export class CodeEditorComponent implements OnInit {
 
     @Input() language: string;
 
+    @Input() readonly: boolean = false;
+
     codeEditorEvent: any;
 
     dark = false;
@@ -42,7 +44,7 @@ export class CodeEditorComponent implements OnInit {
             event.setValue(this.value || '');
         }
         this.codeEditorEvent = event;
-        this.nzCodeEditorService.updateDefaultOption({theme: this.dark ? 'vs-dark' : 'vs'})
+        this.nzCodeEditorService.updateDefaultOption({theme: this.dark ? 'vs-dark' : 'vs', readOnly: this.readonly})
     }
 
     switchChange(bool) {

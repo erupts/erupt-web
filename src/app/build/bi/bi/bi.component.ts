@@ -45,18 +45,11 @@ export class BiComponent implements OnInit, OnDestroy {
             this.data = null;
             this.dataService.getBiBuild(this.name).subscribe(res => {
                 this.bi = res;
-                //图表
-                for (let chart of this.bi.charts) {
-                    chart.loading = false;
-                    let opt = chart.chartOption;
-                    if (opt) {
-                        opt = JSON.parse(opt);
-                    } else {
-                        opt = {};
-                    }
-                }
                 //维度
                 for (let dimension of res.dimensions) {
+                    if (dimension.type == DimType.NUMBER_RANGE) {
+                        dimension.$value = [];
+                    }
                     if (dimension.notNull) {
                         this.haveNotNull = true;
                         return;
@@ -77,29 +70,37 @@ export class BiComponent implements OnInit, OnDestroy {
         let param = {};
         for (let dimension of this.bi.dimensions) {
             let val = dimension.$value;
-            let format;
-            switch (dimension.type) {
-                case DimType.DATE:
-                    format = "yyyy-MM-dd";
-                    break;
-                case DimType.DATETIME:
-                    format = "yyyy-MM-dd HH:mm:ss";
-                    break;
-                case DimType.TIME:
-                    format = "HH:mm:ss";
-                    break;
-                case DimType.YEAR:
-                    format = "yyyy";
-                    break;
-                case DimType.MONTH:
-                    format = "yyyy-MM";
-                    break;
-                case DimType.WEEK:
-                    format = "yyyy-ww";
-                    break;
-            }
-            if (format && val) {
-                val = this.datePipe.transform(val, format);
+            if (val) {
+                switch (dimension.type) {
+                    case DimType.DATE_RANGE:
+                        val[0] = this.datePipe.transform(val[0], "yyyy-MM-dd");
+                        val[1] = this.datePipe.transform(val[1], "yyyy-MM-dd");
+                        break;
+                    case DimType.DATETIME_RANGE:
+                        val[0] = this.datePipe.transform(val[0], "yyyy-MM-dd HH:mm:ss");
+                        val[1] = this.datePipe.transform(val[1], "yyyy-MM-dd HH:mm:ss");
+                        break;
+                    case DimType.NUMBER_RANGE:
+                        break;
+                    case DimType.DATE:
+                        val = this.datePipe.transform(val, "yyyy-MM-dd");
+                        break;
+                    case DimType.DATETIME:
+                        val = this.datePipe.transform(val, "yyyy-MM-dd HH:mm:ss");
+                        break;
+                    case DimType.TIME:
+                        val = this.datePipe.transform(val, "HH:mm:ss");
+                        break;
+                    case DimType.YEAR:
+                        val = this.datePipe.transform(val, "yyyy");
+                        break;
+                    case DimType.MONTH:
+                        val = this.datePipe.transform(val, "yyyy-MM");
+                        break;
+                    case DimType.WEEK:
+                        val = this.datePipe.transform(val, "yyyy-ww");
+                        break;
+                }
             }
             param[dimension.code] = val || null;
             if (dimension.notNull && !dimension.$value) {
