@@ -19,6 +19,7 @@
           "options": {
             "outputPath": "/Users/liyuepeng/git/erupt/erupt-web/src/main/resources/public",
             "index": "src/index.html",
+            "es5BrowserSupport": true,
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -93,6 +94,9 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "erupt-web:build"
+          },
+          "es5": {
+            "browserTarget": "app:build:es5"
           },
           "configurations": {
             "production": {

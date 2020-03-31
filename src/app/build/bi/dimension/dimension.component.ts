@@ -18,7 +18,7 @@ export class DimensionComponent implements OnInit {
 
     dimType = DimType;
 
-    constructor(@Inject(NzModalService) private modal: NzModalService,) {
+    constructor(@Inject(NzModalService) private modal: NzModalService) {
     }
 
     ngOnInit() {

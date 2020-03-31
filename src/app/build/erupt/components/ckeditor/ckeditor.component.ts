@@ -24,6 +24,8 @@ export class CkeditorComponent implements OnInit {
 
     public loading: boolean = true;
 
+    editorError: boolean = false;
+
     constructor(private lazy: LazyService, private ref: ElementRef,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
@@ -103,6 +105,8 @@ export class CkeditorComponent implements OnInit {
                         that.valueChange.emit(editor.getData());
                     });
                 }).catch(error => {
+                    this.loading = false;
+                    this.editorError = true;
                     console.error(error);
                 });
             });

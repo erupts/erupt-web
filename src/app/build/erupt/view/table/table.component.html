@@ -5,7 +5,7 @@
             <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
         </div>
         <div nz-col [nzXs]="24" [nzMd]="layoutTree?16:24" [nzLg]="layoutTree?16:24" [nzXl]="layoutTree?18:24"
-             [ngStyle]="{overflowX: 'hidden',overflowY: 'auto',height:layoutTree?(ww-160)+'px':'auto'}">
+             [ngStyle]="{overflowX: 'hidden',overflowY: layoutTree?'auto':'hidden',height:layoutTree?(ww-160)+'px':'auto'}">
             <div>
                 <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
                     <button nz-button nzType="default" class="mb-sm" (click)="addRow()">

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd';
 
 @Component({
@@ -6,7 +6,7 @@ import { NzModalService } from 'ng-zorro-antd';
   template: `<exception type="403" style="min-height: 700px; height: 80%;"></exception>`,
 })
 export class Exception403Component {
-  constructor(modalSrv: NzModalService) {
-    modalSrv.closeAll();
+  constructor(@Inject(NzModalService) private modal: NzModalService) {
+    modal.closeAll();
   }
 }
