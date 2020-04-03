@@ -461,9 +461,11 @@ export class TableComponent implements OnInit {
                     nzTitle: "确定要删除吗？",
                     nzContent: "",
                     nzOnOk: () => {
-                        this.dataService.deleteEruptDatas(this.eruptBuildModel.eruptModel.eruptName, ids).subscribe(val => {
-                            this.st.reload();
-                            this.msg.success("删除成功");
+                        this.dataService.deleteEruptDatas(this.eruptBuildModel.eruptModel.eruptName, ids).subscribe(res => {
+                            if (res.status == Status.SUCCESS) {
+                                this.st.reload();
+                                this.msg.success("删除成功");
+                            }
                         });
                     }
                 }

@@ -250,6 +250,19 @@ export class EditTypeComponent implements OnInit, OnDestroy {
         field.eruptFieldJson.edit.$value = null;
         field.eruptFieldJson.edit.$viewValue = null;
         field.eruptFieldJson.edit.$tempValue = null;
+        for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
+            let edit = eruptFieldModel.eruptFieldJson.edit;
+            if (edit.type == EditType.REFERENCE_TREE) {
+                if (edit.referenceTreeType.dependField == field.fieldName) {
+                    this.clearReferValue(eruptFieldModel);
+                }
+            }
+            if (edit.type == EditType.REFERENCE_TABLE) {
+                if (edit.referenceTableType.dependField == field.fieldName) {
+                    this.clearReferValue(eruptFieldModel);
+                }
+            }
+        }
     }
 
     iframeHeight(event) {

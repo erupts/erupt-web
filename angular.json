@@ -52,6 +52,7 @@
               "src/styles.less"
             ],
             "scripts": [
+              "node_modules/moment/min/moment.min.js",
               "node_modules/qrious/dist/qrious.min.js"
             ]
           },

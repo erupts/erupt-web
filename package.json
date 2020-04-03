@@ -61,6 +61,7 @@
     "classlist.js": "^1.1.20150312",
     "font-awesome": "^4.7.0",
     "intl": "^1.2.5",
+    "moment": "^2.24.0",
     "monaco-editor": "^0.14.0",
     "ng-zorro-antd": "^8.5.2",
     "qrious": "^4.0.2",

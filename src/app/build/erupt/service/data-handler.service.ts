@@ -1,7 +1,6 @@
 import {Edit, EruptFieldModel} from "../model/erupt-field.model";
 import {EruptModel, Tree} from "../model/erupt.model";
 import {ChoiceEnum, DateEnum, DependSwitchTypeEnum, EditType, SaveMode, ViewType} from "../model/erupt.enum";
-import {FormControl} from "@angular/forms";
 import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
 import {deepCopy} from "@delon/util";
 import {Inject, Injectable} from "@angular/core";
@@ -11,6 +10,7 @@ import {ViewTypeComponent} from "../components/view-type/view-type.component";
 import {STColumn, STData} from "@delon/abc";
 import {DatePipe} from "@angular/common";
 import {CodeEditorComponent} from "../components/code-editor/code-editor.component";
+import * as moment from 'moment';
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -775,7 +775,27 @@ export class DataHandlerService {
                         }
                         break;
                     case EditType.DATE:
-                        edit.$value = new FormControl(object[field.fieldName]).value;
+                        if (object[field.fieldName]){
+                            switch (edit.dateType.type) {
+                                case DateEnum.DATE_TIME:
+                                case DateEnum.DATE:
+                                    edit.$value = moment(object[field.fieldName]).toDate();
+                                    break;
+                                case DateEnum.TIME:
+                                    edit.$value = moment(object[field.fieldName],"HH:mm:ss").toDate();
+                                    break;
+                                case DateEnum.WEEK:
+                                    edit.$value = moment(object[field.fieldName],"YYYY-ww").toDate();
+                                    break;
+                                case DateEnum.MONTH:
+                                    edit.$value = moment(object[field.fieldName],"YYYY-MM").toDate();
+                                    break;
+                                case DateEnum.YEAR:
+                                    edit.$value = moment(object[field.fieldName],"YYYY").toDate();
+                                    break;
+                            }
+                        }
+
                         break;
                     case EditType.REFERENCE_TREE:
                         if (object[field.fieldName]) {
