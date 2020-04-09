@@ -196,6 +196,9 @@ export class EditTypeComponent implements OnInit, OnDestroy {
                     this.msg.warning("请选中一条数据");
                     return false;
                 }
+                if (tempVal.id != field.eruptFieldJson.edit.$value) {
+                    this.clearReferValue(field);
+                }
                 field.eruptFieldJson.edit.$viewValue = tempVal.label;
                 field.eruptFieldJson.edit.$value = tempVal.id;
                 field.eruptFieldJson.edit.$tempValue = null;
@@ -232,18 +235,15 @@ export class EditTypeComponent implements OnInit, OnDestroy {
                     this.msg.warning("请选中一条数据");
                     return false;
                 }
+                if (radioValue[edit.referenceTableType.id] != field.eruptFieldJson.edit.$value) {
+                    this.clearReferValue(field);
+                }
                 edit.$value = radioValue[edit.referenceTableType.id];
                 edit.$viewValue = radioValue[edit.referenceTableType.label
                     .replace(".", "_")] || '-----';
                 edit.$tempValue = radioValue;
             }
         });
-    }
-
-    changeTagAll($event, field: EruptFieldModel) {
-        for (let vl of field.eruptFieldJson.edit.choiceType.vl) {
-            vl.$viewValue = $event;
-        }
     }
 
     clearReferValue(field: EruptFieldModel) {
@@ -262,6 +262,13 @@ export class EditTypeComponent implements OnInit, OnDestroy {
                     this.clearReferValue(eruptFieldModel);
                 }
             }
+        }
+    }
+
+
+    changeTagAll($event, field: EruptFieldModel) {
+        for (let vl of field.eruptFieldJson.edit.choiceType.vl) {
+            vl.$viewValue = $event;
         }
     }
 

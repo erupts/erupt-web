@@ -20,6 +20,8 @@ import { SharedModule } from "./shared/shared.module";
 import { AppComponent } from "./app.component";
 import { RoutesModule } from "./routes/routes.module";
 import { LayoutModule } from "./layout/layout.module";
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 const LANG = {
   abbr: "zh",
@@ -74,7 +76,8 @@ const APP_INIT_PROVIDES = [
     SharedModule,
     LayoutModule,
     RoutesModule,
-    ...GLOBAL_THIRD_MODULES
+    ...GLOBAL_THIRD_MODULES,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     ...LANG_PROVIDES,

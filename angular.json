@@ -46,7 +46,8 @@
                 "glob": "**/*",
                 "input": "./node_modules/monaco-editor/min/vs/",
                 "output": "/assets/vs/"
-              }
+              },
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "src/styles.less"
@@ -79,7 +80,9 @@
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
                 }
-              ]
+              ],
+              "serviceWorker": true,
+              "ngswConfigPath": "ngsw-config.json"
             },
             "hmr": {
               "fileReplacements": [
@@ -130,7 +133,8 @@
             ],
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest"
             ]
           }
         },
