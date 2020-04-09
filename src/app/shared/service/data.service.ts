@@ -51,11 +51,11 @@ export class DataService {
     }
 
     static downloadAttachment(path: string): string {
-        return RestPath.file + "download-attachment?path=" + path;
+        return RestPath.file + "download-attachment" + path;
     }
 
     static previewAttachment(path: string): string {
-        return RestPath.file + "preview-attachment?path=" + path;
+        return RestPath.file + "preview-attachment" + path;
     }
 
     //获取结构

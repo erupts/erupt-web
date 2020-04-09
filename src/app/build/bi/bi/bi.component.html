@@ -12,6 +12,7 @@
         </button>
     </ng-container>
     <!--  style="background: #fafafa;margin-bottom: 0;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)"  -->
+    <!--    [ngStyle]="{marginBottom:bi.charts.length>0?'8px':'0'}"-->
     <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom:8px"
              [hidden]="false" nzSize="small">
         <dimension [bi]="bi">
@@ -45,7 +46,7 @@
     <ng-container *ngIf="!haveNotNull">
         <st *ngIf="columns&&columns.length>0" [columns]="columns" [data]="data"
             [loading]="querying"
-            [page]="{placement:'center'}"
+            [page]="{placement:'center', showSize:true, showQuickJumper:true}"
             [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
             [bordered]="true"
             [size]="'small'">

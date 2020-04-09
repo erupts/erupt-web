@@ -107,6 +107,12 @@ export class BiComponent implements OnInit, OnDestroy {
                 this.msg.error(dimension.title + "必填");
                 return
             }
+            if (Array.isArray(dimension.$value)) {
+                if (!dimension.$value[0] && !dimension.$value[1]) {
+                    this.msg.error(dimension.title + "必填");
+                    return
+                }
+            }
         }
         this.haveNotNull = false;
         if (this.bi.table) {
@@ -120,6 +126,13 @@ export class BiComponent implements OnInit, OnDestroy {
                         className: "text-center"
                     })
                 } else {
+                    this.columns.push({
+                        title: '#',
+                        type: 'no',
+                        width: '60px',
+                        className: "text-center",
+                        fixed: "left"
+                    });
                     for (let column of res.columns) {
                         this.columns.push({
                             title: column.name,
