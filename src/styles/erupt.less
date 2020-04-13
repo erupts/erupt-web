@@ -1,0 +1,22 @@
+@import "./theme";
+
+span.ripple {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: @primary-color;
+  opacity: .06;
+  width: 15px;
+  height: 15px;
+  border-radius: 1000px;
+  animation: ripple 1.2s infinite;
+}
+
+@keyframes ripple {
+  100% {
+    transform: scale(50, 50);
+  }
+}

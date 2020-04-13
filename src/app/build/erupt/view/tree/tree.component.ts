@@ -8,6 +8,7 @@ import {Subscription} from "rxjs";
 import {Status} from "../../model/erupt-api.model";
 import {colRules} from "@shared/model/util.model";
 import {Link} from "../../model/erupt.model";
+import {EditType} from "../../model/erupt.enum";
 
 @Component({
     selector: "erupt-tree",
@@ -67,9 +68,32 @@ export class TreeComponent implements OnInit, OnDestroy {
                 }
                 this.dataHandler.initErupt(eb);
                 this.eruptBuildModel = eb;
+                this.buildTabErupt();
             });
         });
     }
+
+    buildTabErupt() {
+        for (let key in this.eruptBuildModel.tabErupts) {
+            let eruptFieldModel = this.eruptBuildModel.eruptModel.eruptFieldModelMap.get(key);
+            //根据权限来决定是否加载树结构
+            if (this.eruptBuildModel.eruptModel.eruptJson.power.edit || this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
+                if (eruptFieldModel.eruptFieldJson.edit.type == EditType.TAB_TREE) {
+                    //构建树结构
+                    if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails || this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
+                        this.dataService.findTabTree(this.eruptBuildModel.eruptModel.eruptName, eruptFieldModel.fieldName).subscribe(
+                            tree => {
+                                if (tree) {
+                                    eruptFieldModel.eruptFieldJson.edit.$tabTreeViewData = this.dataHandler.dataTreeToZorroTree(tree);
+                                }
+                            }
+                        );
+                    }
+                }
+            }
+        }
+    }
+
 
     ngOnDestroy(): void {
         this.router$.unsubscribe();

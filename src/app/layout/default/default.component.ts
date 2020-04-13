@@ -208,8 +208,25 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 text: "~",
                 children: gcMenu(result)
             }]);
-            this.router.navigateByUrl(this.router.url)
-            // this.menuSrv.openedByUrl(this.router.url,true)
+            this.router.navigateByUrl(this.router.url).then();
+
+            let menuEle = this.el.nativeElement.getElementsByClassName("sidebar-nav__item");
+            for (let i = 0; i < menuEle.length; i++) {
+                let ele = menuEle.item(i);
+                ele.style.position = "relative";
+                ele.style.overflow = "hidden";
+                ele.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    let spanRipper = document.createElement("span");
+                    spanRipper.className = "ripple";
+                    spanRipper.style.left = e.offsetX+"px";
+                    spanRipper.style.top = e.offsetY+"px";
+                    ele.appendChild(spanRipper);
+                    setTimeout(() => {
+                        ele.removeChild(spanRipper)
+                    }, 500);
+                })
+            }
         });
 
     }

@@ -1,5 +1,5 @@
 import {Inject, Injectable} from "@angular/core";
-import {MenuService, SettingsService, TitleService} from "@delon/theme";
+import {SettingsService, TitleService} from "@delon/theme";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 import {NzIconService} from "ng-zorro-antd";
@@ -14,7 +14,6 @@ import {WindowModel} from "@shared/model/window.model";
 @Injectable()
 export class StartupService {
     constructor(iconSrv: NzIconService,
-                private menuService: MenuService,
                 private settingService: SettingsService,
                 private titleService: TitleService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
