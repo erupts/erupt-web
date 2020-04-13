@@ -10,7 +10,7 @@ import {NgZorroAntdModule} from "ng-zorro-antd";
 import {SafeUrlPipe} from "@shared/pipe/safe-url.pipe";
 import {DataService} from "@shared/service/data.service";
 import {UtilsService} from "@shared/service/utils.service";
-import {DataHandlerService} from "../build/erupt/service/data-handler.service";
+import {RipperDirective} from './directive/ripper.directive';
 
 const THIRD_MODULES = [
     NgZorroAntdModule
@@ -37,7 +37,8 @@ const DIRECTIVES = [];
     declarations: [
         // your components
         ...COMPONENTS,
-        ...DIRECTIVES
+        ...DIRECTIVES,
+        RipperDirective
     ],
     providers: [
         DataService,
@@ -55,7 +56,8 @@ const DIRECTIVES = [];
         ...THIRD_MODULES,
         // your components
         ...COMPONENTS,
-        ...DIRECTIVES
+        ...DIRECTIVES,
+        RipperDirective
     ]
 })
 export class SharedModule {

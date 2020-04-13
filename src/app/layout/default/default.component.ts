@@ -224,7 +224,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                     ele.appendChild(spanRipper);
                     setTimeout(() => {
                         ele.removeChild(spanRipper)
-                    }, 500);
+                    }, 800);
                 })
             }
         });
