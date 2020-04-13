@@ -1,7 +1,8 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output} from "@angular/core";
+import {Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, Renderer2} from "@angular/core";
 import {LazyService} from "@delon/util";
 import {WindowModel} from "@shared/model/window.model";
 import {NzMessageService} from "ng-zorro-antd";
+import {isObject} from "util";
 
 declare const AMap;
 
@@ -28,7 +29,9 @@ export class AmapComponent implements OnInit {
 
     autocompleteList: any[] = [];
 
-    constructor(private lazy: LazyService, private ref: ElementRef,
+    constructor(private lazy: LazyService,
+                private ref: ElementRef,
+                private renderer: Renderer2,
                 @Inject(NzMessageService)
                 private msg: NzMessageService,) {
     }
@@ -143,6 +146,21 @@ export class AmapComponent implements OnInit {
                 return s.join("<br>");
             }
         });
+    }
+
+    blur() {
+        if (!this.value) {
+            this.viewValue = null;
+            return;
+        }
+        if (!isObject(this.value)) {
+            this.value = JSON.parse(this.value);
+        }
+        let tipInput = this.ref.nativeElement.querySelector("#tipInput");
+        if (this.value.name != tipInput.value) {
+            this.value = null;
+            this.viewValue = null;
+        }
     }
 
     choiceList(auto: any) {
