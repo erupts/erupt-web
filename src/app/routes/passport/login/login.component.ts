@@ -28,7 +28,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
 
     loading = false;
 
-    @Input() isModal:boolean = false;
+    @Input() isModal: boolean = false;
 
     useVerifyCode = false;
 
@@ -110,15 +110,15 @@ export class UserLoginComponent implements OnDestroy, OnInit {
             }
             this.useVerifyCode = result.useVerifyCode;
             if (result.pass) {
-                this.settingsService.setUser({name: result.userName});
+                this.settingsService.setUser({name: result.userName, indexPath: result.indexPath});
                 this.tokenService.set({token: result.token, time: +new Date(), account: this.userName.value});
                 let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
                 this.modalSrv.closeAll();
                 if (loginBackPath) {
                     this.cacheService.set(GlobalKeys.loginBackPath, null);
-                    this.router.navigate([loginBackPath]);
+                    this.router.navigateByUrl(<string>loginBackPath);
                 } else {
-                    this.router.navigate([result.indexPath || '/']);
+                    this.router.navigateByUrl(result.indexPath || '/');
                 }
             } else {
                 this.error = result.reason;

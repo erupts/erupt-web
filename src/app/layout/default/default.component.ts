@@ -45,6 +45,8 @@ import {DataService} from "@shared/service/data.service";
 import {WindowModel} from "@shared/model/window.model";
 import {environment} from "@env/environment";
 import {SettingDrawerComponent} from "./setting-drawer/setting-drawer.component";
+import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
+import {GlobalKeys} from "@shared/model/erupt-const";
 
 // #region icons
 
@@ -108,6 +110,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 private renderer: Renderer2,
                 public route: ActivatedRoute,
                 public data: DataService,
+                @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(DOCUMENT) private doc: any) {
         iconSrv.addIcon(...ICONS);
         // scroll to top in change page
@@ -219,8 +222,8 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                     e.stopPropagation();
                     let spanRipper = document.createElement("span");
                     spanRipper.className = "ripple";
-                    spanRipper.style.left = e.offsetX+"px";
-                    spanRipper.style.top = e.offsetY+"px";
+                    spanRipper.style.left = e.offsetX + "px";
+                    spanRipper.style.top = e.offsetY + "px";
                     ele.appendChild(spanRipper);
                     setTimeout(() => {
                         ele.removeChild(spanRipper)
@@ -228,6 +231,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 })
             }
         });
+        window[GlobalKeys.getAppToken] = this.tokenService.get();
 
     }
 

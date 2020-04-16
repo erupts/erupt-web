@@ -4,6 +4,7 @@ import * as screenfull from "screenfull";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {CustomerTool, WindowModel} from "@shared/model/window.model";
 import {CacheService} from "@delon/cache";
+import {Router} from "@angular/router";
 
 @Component({
     selector: "layout-header",
@@ -29,6 +30,7 @@ export class HeaderComponent implements OnInit {
     isDark: boolean;
 
     constructor(public settings: SettingsService,
+                private router: Router,
                 @Inject(DA_SERVICE_TOKEN)
                 private tokenService: ITokenService,
                 private cacheService: CacheService) {
@@ -72,6 +74,10 @@ export class HeaderComponent implements OnInit {
 
     customToolsFun(event: Event, tool: CustomerTool) {
         tool.click && tool.click(event, this.tokenService.get().token);
+    }
+
+    toIndex() {
+        this.router.navigateByUrl(this.settings.user.indexPath);
     }
 
     refresh() {

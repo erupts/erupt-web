@@ -1,6 +1,7 @@
 <div class="alain-default__header-logo">
-    <a [routerLink]="['/']" class="alain-default__header-logo-link">
-<!--        <h1 style='color: #fff;margin: 0;line-height: 50px;'>Erupt</h1>-->
+    <a href="javascript:;" (click)="toIndex()"
+       class="alain-default__header-logo-link">
+        <!--        <h1 style='color: #fff;margin: 0;line-height: 50px;'>Erupt</h1>-->
         <img [src]="logoPath" [alt]="settings.app.name" [title]="settings.app.name" class="header-logo-img"/>
     </a>
 </div>

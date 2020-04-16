@@ -141,8 +141,8 @@ export class AmapComponent implements OnInit {
                 s.push("地址：" + poi.address);
                 s.push("电话：" + poi.tel);
                 s.push("类型：" + poi.type);
-                s.push("纬度：" + poi.location.lat);
                 s.push("经度：" + poi.location.lng);
+                s.push("纬度：" + poi.location.lat);
                 return s.join("<br>");
             }
         });
