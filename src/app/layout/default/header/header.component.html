@@ -1,4 +1,4 @@
-<div class="alain-default__header-logo">
+<div class="alain-default__header-logo" ripper color="#000">
     <a href="javascript:" (click)="toIndex()"
        class="alain-default__header-logo-link">
         <img [src]="logoPath" [alt]="settings.app.name" [title]="settings.app.name" class="header-logo-img"/>
@@ -64,7 +64,7 @@
             </div>
         </li>
 
-        <li class="hidden-mobile" (click)="toggleDark()">
+        <li (click)="toggleDark()">
             <div class="alain-default__nav-item">
                 <ng-container *ngIf="!isDark">
                     <img src="/assets/image/dark.svg" alt="" width="26px">
