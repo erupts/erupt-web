@@ -78,6 +78,7 @@ export class HeaderComponent implements OnInit {
 
     toIndex() {
         this.router.navigateByUrl(this.settings.user.indexPath);
+        return false;
     }
 
     refresh() {

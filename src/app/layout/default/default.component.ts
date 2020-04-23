@@ -216,6 +216,17 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
             let menuEle = this.el.nativeElement.getElementsByClassName("sidebar-nav__item");
             for (let i = 0; i < menuEle.length; i++) {
                 let ele = menuEle.item(i);
+                let linkEle = ele.getElementsByClassName("sidebar-nav__item-link")[0];
+                if (linkEle) {
+                    let menu = this.menuSrv.getItem(
+                        linkEle.getElementsByClassName("sidebar-nav__item-text")[0].innerText);
+                    if (menu.link) {
+                        linkEle.href = "/#" + menu.link;
+                        linkEle.onclick = function () {
+                            return false;
+                        };
+                    }
+                }
                 ele.style.position = "relative";
                 ele.style.overflow = "hidden";
                 ele.addEventListener("click", (e) => {
@@ -230,6 +241,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                     }, 800);
                 })
             }
+
         });
         window[GlobalKeys.getAppToken] = this.tokenService.get();
 
