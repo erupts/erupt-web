@@ -221,7 +221,7 @@ export class EditTypeComponent implements OnInit, OnDestroy {
         let model = this.modal.create({
             nzWrapClassName: "modal-xxl",
             nzKeyboard: true,
-            nzStyle: {top: "35px"},
+            nzStyle: {top: "20px"},
             nzTitle: edit.title,
             nzCancelText: "取消（ESC）",
             nzContent: ReferenceTableComponent,

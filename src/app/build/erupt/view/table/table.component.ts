@@ -284,11 +284,19 @@ export class TableComponent implements OnInit {
             tableOperators.push({
                 type: 'link',
                 text: ro.title,
+                tooltip: ro.tip,
                 // format: () => {
                 //     return `<i title="${ro.title}" class="${ro.icon}" style="color: #000"></i>`;
                 // },
                 click: (record: any, modal: any) => {
                     that.createOperator(key, false, record);
+                },
+                iif: (item) => {
+                    if (ro.ifExpr) {
+                        return eval(ro.ifExpr)
+                    } else {
+                        return true;
+                    }
                 }
             });
         }

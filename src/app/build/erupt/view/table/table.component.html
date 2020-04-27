@@ -5,7 +5,7 @@
             <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
         </div>
         <div nz-col [nzXs]="24" [nzMd]="layoutTree?16:24" [nzLg]="layoutTree?16:24" [nzXl]="layoutTree?18:24"
-             [ngStyle]="{overflowX: 'hidden',overflowY: layoutTree?'auto':'hidden',height:layoutTree?(ww-160)+'px':'auto'}">
+             [ngStyle]="{overflowX: 'hidden',overflowY: layoutTree?'auto':'hidden',height:layoutTree?(ww-155)+'px':'auto'}">
             <div>
                 <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
                     <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
@@ -84,7 +84,7 @@
                 <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
                     <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation | keyvalue">
                         <ng-container *ngIf="item.value.multi">
-                            <button nz-button nzType="dashed" class="mb-sm" (click)="createOperator(item.key,true)">
+                            <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.value.tip" (click)="createOperator(item.key,true)">
                                 <i class="fa" [ngClass]="item.value.icon"></i>
                                 <span style="margin-left: 8px;">{{item.value.title}}</span>
                             </button>

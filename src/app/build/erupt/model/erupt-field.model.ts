@@ -30,6 +30,7 @@ export interface View {
     className: string;
     column: string;
     title: string;
+    desc: string;
     show: boolean;
     sort: number;
     viewType: ViewType;
@@ -60,6 +61,7 @@ export interface Edit {
     sliderType: SliderType;
     dependSwitchType: DependSwitchType;
     codeEditType: CodeEditType;
+    mapType: MapType
     $tabTreeViewData?: any;
     $value?: any;
     $viewValue?: any;
@@ -164,6 +166,10 @@ interface AttachmentType {
     saveMode: SaveMode;
 }
 
+export interface MapType {
+    draw: boolean;
+    drawMaxLayer: number;
+}
 
 export interface VL {
     value: string;

@@ -50,13 +50,14 @@ export class AppComponent implements OnInit {
                         if (eruptEvent.$) {
                             eruptEvent.$.unload && eruptEvent.$.unload(res, this.tokenService.get().token);
                         }
-                        eruptEvent[this.beforeMatch] && eruptEvent[this.beforeMatch].unload &&
-                        eruptEvent[this.beforeMatch].unload(res, this.tokenService.get().token);
+                        let beforeEvent = eruptEvent[this.beforeMatch];
+                        beforeEvent && beforeEvent.unload && beforeEvent.unload(res, this.tokenService.get().token);
                     }
                     if (eruptEvent.$) {
                         eruptEvent.$.load && eruptEvent.$.load(res, this.tokenService.get().token);
                     }
-                    eruptEvent[match] && eruptEvent[match].load && eruptEvent[match].load(res, this.tokenService.get().token);
+                    let event = eruptEvent[match];
+                    event && event.load && event.load(res, this.tokenService.get().token);
                     this.beforeMatch = match;
                 }
             });

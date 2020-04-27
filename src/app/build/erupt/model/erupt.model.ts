@@ -48,6 +48,8 @@ interface RowOperation {
     icon: string;
     title: string;
     multi: boolean;
+    tip:string;
+    ifExpr: string;
     edits: CodeAndEdit[];
 }
 

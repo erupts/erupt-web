@@ -601,7 +601,7 @@
                     <ng-container *ngSwitchCase="editType.TPL">
                         <div nz-col [nzSpan]="24">
                             <iframe [src]="dataService.getFieldTplPath(eruptBuildModel.eruptModel.eruptName,field.fieldName) | safeUrl"
-                                    frameborder="0" style="width:100%" (load)="iframeHeight($event)">
+                                    style="width:100%;border: none" (load)="iframeHeight($event)">
                             </iframe>
                         </div>
                     </ng-container>
@@ -610,7 +610,8 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <amap [(value)]="field.eruptFieldJson.edit.$value" *ngIf="!loading"></amap>
+                                <amap [(value)]="field.eruptFieldJson.edit.$value" *ngIf="!loading"
+                                      [mapType]="field.eruptFieldJson.edit.mapType"></amap>
                             </se>
                         </div>
                     </ng-container>

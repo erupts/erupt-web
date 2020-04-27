@@ -159,7 +159,11 @@ export class DataHandlerService {
             let edit = view.eruptFieldModel.eruptFieldJson.edit;
             let obj: STColumn = {
                 // width: "200px",
-                title: view.title
+                title: {
+                    text: view.title,
+                    optional: "   ",
+                    optionalHelp: view.desc
+                }
             };
             if (lineData) {
                 obj.index = view.column.replace(".", "_");
@@ -443,6 +447,7 @@ export class DataHandlerService {
             if (view.template) {
                 obj.format = (item: any) => {
                     try {
+                        let value = item[view.column];
                         return eval(view.template);
                     } catch (e) {
                         console.error(e);
@@ -775,23 +780,23 @@ export class DataHandlerService {
                         }
                         break;
                     case EditType.DATE:
-                        if (object[field.fieldName]){
+                        if (object[field.fieldName]) {
                             switch (edit.dateType.type) {
                                 case DateEnum.DATE_TIME:
                                 case DateEnum.DATE:
                                     edit.$value = moment(object[field.fieldName]).toDate();
                                     break;
                                 case DateEnum.TIME:
-                                    edit.$value = moment(object[field.fieldName],"HH:mm:ss").toDate();
+                                    edit.$value = moment(object[field.fieldName], "HH:mm:ss").toDate();
                                     break;
                                 case DateEnum.WEEK:
-                                    edit.$value = moment(object[field.fieldName],"YYYY-ww").toDate();
+                                    edit.$value = moment(object[field.fieldName], "YYYY-ww").toDate();
                                     break;
                                 case DateEnum.MONTH:
-                                    edit.$value = moment(object[field.fieldName],"YYYY-MM").toDate();
+                                    edit.$value = moment(object[field.fieldName], "YYYY-MM").toDate();
                                     break;
                                 case DateEnum.YEAR:
-                                    edit.$value = moment(object[field.fieldName],"YYYY").toDate();
+                                    edit.$value = moment(object[field.fieldName], "YYYY").toDate();
                                     break;
                             }
                         }

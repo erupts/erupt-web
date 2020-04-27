@@ -1,5 +1,5 @@
 <nz-spin [nzSpinning]="loading">
-    <div [hidden]="readonly" style="position: absolute;top:10px;left: 20px;right: 20px;z-index: 9;">
+    <div [hidden]="readonly" class="search-container" style="">
         <input nz-input [value]="viewValue" [nzAutocomplete]="auto" placeholder="请输入关键字" nzSize="default"
                style="width: 300px" id="tipInput" [disabled]="!loaded" (blur)="blur()"/> &nbsp;
         <button nz-button nzType="default" [disabled]="!loaded" id="mapOk">&nbsp; 确定 &nbsp;</button>
@@ -11,8 +11,23 @@
                         [nzLabel]="auto.name">{{auto.name}}
         </nz-auto-option>
     </nz-autocomplete>
-    <div id="amap" tabindex="0" style="min-height: 500px;
+    <div id="amap" tabindex="0" style="min-height: 550px;
     border: 1px solid #d9d9d9;outline: none;border-radius: 4px">
 
+    </div>
+    <div *ngIf="!readonly&&mapType.draw" class="draw-tool">
+        <nz-radio-group [ngModel]="checkType" (ngModelChange)="draw($event)">
+            <label nz-radio val="marker" [nzValue]="'marker'">画点</label>
+            <label nz-radio val="polyline" [nzValue]="'polyline'">画折线</label>
+            <label nz-radio val="polygon" [nzValue]="'polygon'">面多边形</label>
+            <label nz-radio val="rectangle" [nzValue]="'rectangle'">画矩形</label>
+            <label nz-radio val="circle" [nzValue]="'circle'">画圆形</label>
+        </nz-radio-group>
+        <button nz-button id="clear" (click)="clearDraw()" nzType="default" [disabled]="!loaded" [nzSize]="'small'">
+            &nbsp; 清除 &nbsp;
+        </button>
+        <button nz-button id="close" (click)="closeDraw()" nzType="default" [disabled]="!loaded" [nzSize]="'small'">
+            &nbsp; 关闭绘图 &nbsp;
+        </button>
     </div>
 </nz-spin>

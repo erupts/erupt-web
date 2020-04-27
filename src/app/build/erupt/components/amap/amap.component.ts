@@ -3,6 +3,7 @@ import {LazyService} from "@delon/util";
 import {WindowModel} from "@shared/model/window.model";
 import {NzMessageService} from "ng-zorro-antd";
 import {isObject} from "util";
+import {MapType} from "../../model/erupt-field.model";
 
 declare const AMap;
 
@@ -23,6 +24,8 @@ export class AmapComponent implements OnInit {
 
     @Input() readonly: boolean = false;
 
+    @Input() mapType: MapType;
+
     viewValue: any = "";
 
     loaded: boolean = false;
@@ -36,10 +39,14 @@ export class AmapComponent implements OnInit {
                 private msg: NzMessageService,) {
     }
 
+    map: any;
+
+    mouseTool: any;
+
     ngOnInit() {
         this.loading = true;
         this.lazy.loadScript("https://webapi.amap.com/maps?v=1.4.15&key=" +
-            WindowModel.amapKey + "&plugin=AMap.Autocomplete&&plugin=AMap.PlaceSearch").then(() => {
+            WindowModel.amapKey + "&plugin=AMap.Autocomplete&&plugin=AMap.PlaceSearch&plugin=AMap.MouseTool").then(() => {
             if (this.value) {
                 this.value = JSON.parse(this.value);
                 this.autocompleteList = [this.value];
@@ -54,6 +61,8 @@ export class AmapComponent implements OnInit {
             map.on("complete", () => {
                 this.loaded = true;
             });
+            this.map = map;
+            this.mouseTool = new AMap.MouseTool(map);
             AMap.plugin('AMap.Geolocation', function () {
                 let geolocation = new AMap.Geolocation({
                     enableHighAccuracy: true,//是否使用高精度定位，默认:true
@@ -167,5 +176,79 @@ export class AmapComponent implements OnInit {
         this.value = auto;
         this.viewValue = auto.name;
     }
+
+    checkType: string;
+
+    overlays: any[];
+
+    d1(e) {
+        console.log(e)
+    }
+
+    draw(type) {
+        //监听draw事件可获取画好的覆盖物
+        this.overlays = [];
+        this.mouseTool.on('draw', (e) => {
+            this.overlays.push(e.obj);
+            console.log(e.obj)
+        });
+        drawFun.call(this, type);
+
+        function drawFun(type) {
+            let fillColor = "#00b0ff";
+            let strokeColor = "#80d8ff";
+            switch (type) {
+                case 'marker': {
+                    this.mouseTool.marker({
+                        //同Marker的Option设置
+                    });
+                    break;
+                }
+                case 'polyline': {
+                    this.mouseTool.polyline({
+                        strokeColor: strokeColor
+                        //同Polyline的Option设置
+                    });
+                    break;
+                }
+                case 'polygon': {
+                    this.mouseTool.polygon({
+                        fillColor: fillColor,
+                        strokeColor: strokeColor
+                        //同Polygon的Option设置
+                    });
+                    break;
+                }
+                case 'rectangle': {
+                    this.mouseTool.rectangle({
+                        fillColor: fillColor,
+                        strokeColor: strokeColor
+                        //同Polygon的Option设置
+                    });
+                    break;
+                }
+                case 'circle': {
+                    this.mouseTool.circle({
+                        fillColor: fillColor,
+                        strokeColor: strokeColor
+                        //同Circle的Option设置
+                    });
+                    break;
+                }
+            }
+        }
+    }
+
+    clearDraw() {
+        let last = this.overlays.pop();
+        console.log(last);
+        last && this.map.remove(last);
+    }
+
+    closeDraw() {
+        this.mouseTool.close(true);//关闭，并清除覆盖物
+        this.checkType = '';
+    }
+
 
 }

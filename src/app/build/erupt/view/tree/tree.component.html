@@ -12,7 +12,7 @@
             <i nz-icon nzType="search"></i>
         </ng-template>
         <br>
-        <nz-card [nzBodyStyle]="{padding:'10px',height:ww-270+'px',overflow: 'auto'}" [nzLoading]="treeLoading"
+        <nz-card [nzBodyStyle]="{padding:'10px',height:ww-235+'px',overflow: 'auto'}" [nzLoading]="treeLoading"
                  [nzBordered]="true"
                  [nzHoverable]="true">
             <nz-tree #tree
@@ -29,7 +29,7 @@
     </div>
 
     <div nz-col class="mb-sm" [nzXs]="24" [nzSm]="16" [nzMd]="16" [nzLg]="18" [hidden]="!showEdit">
-        <div *ngIf="linkTable&&currentKey" [ngStyle]="{height: ww-228+'px',overflow: 'auto',overflowX:'hidden'}"
+        <div *ngIf="linkTable&&currentKey" [ngStyle]="{height: ww-193+'px',overflow: 'auto',overflowX:'hidden'}"
              style="border-bottom: 1px solid #e8e8e8;padding-bottom: 20px" class="scrollbar">
             <table-erupt [drill]="{erupt:linkTable.eruptClass,eruptParent:eruptName,code:'link',val:currentKey}">
 
@@ -67,7 +67,7 @@
                     </button>
                 </div>
             </div>
-            <div [ngStyle]="{height: ww-228+'px',overflow: 'auto',overflowX:'hidden'}">
+            <div [ngStyle]="{height: ww-193+'px',overflow: 'auto',overflowX:'hidden'}">
                 <nz-spin [nzSpinning]="loading" nzSize="large">
                     <nz-collapse nzAccordion>
                         <nz-collapse-panel [nzActive]="true" [nzHeader]="'基本信息'" [nzDisabled]="true">
