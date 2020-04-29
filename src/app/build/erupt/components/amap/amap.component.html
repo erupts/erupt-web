@@ -15,7 +15,7 @@
     border: 1px solid #d9d9d9;outline: none;border-radius: 4px">
 
     </div>
-    <div *ngIf="!readonly&&mapType.draw" class="draw-tool">
+    <div *ngIf="openDraw" class="draw-tool">
         <nz-radio-group [ngModel]="checkType" (ngModelChange)="draw($event)">
             <label nz-radio val="marker" [nzValue]="'marker'">画点</label>
             <label nz-radio val="polyline" [nzValue]="'polyline'">画折线</label>

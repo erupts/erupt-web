@@ -43,6 +43,8 @@ export class AmapComponent implements OnInit {
 
     mouseTool: any;
 
+    openDraw: boolean = false;
+
     ngOnInit() {
         this.loading = true;
         this.lazy.loadScript("https://webapi.amap.com/maps?v=1.4.15&key=" +
@@ -116,12 +118,19 @@ export class AmapComponent implements OnInit {
                 getDetails(this.value.id);
             }
 
+
             //详情查询
             function getDetails(id) {
                 placeSearch.getDetails(id, (status, result) => {
                     if (status === 'complete' && result.info === 'OK') {
                         placeSearch_CallBack(result);
                         that.valueChange.emit(JSON.stringify(that.value));
+                        console.log(that.mapType.draw);
+                        if (that.mapType.draw) {
+                            that.openDraw = true;
+                        }
+                    } else {
+                        that.msg.warning("找不到该位置信息");
                     }
                 });
             }
@@ -180,10 +189,6 @@ export class AmapComponent implements OnInit {
     checkType: string;
 
     overlays: any[];
-
-    d1(e) {
-        console.log(e)
-    }
 
     draw(type) {
         //监听draw事件可获取画好的覆盖物

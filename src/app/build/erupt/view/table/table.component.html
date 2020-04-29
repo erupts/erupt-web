@@ -62,7 +62,7 @@
                             <ng-container *ngFor="let col of columns">
                                 <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
                                     <label nz-checkbox [(ngModel)]="col.show"
-                                           (ngModelChange)="st.resetColumns()">{{col.title}}</label>
+                                           (ngModelChange)="st.resetColumns()">{{col.title.text}}</label>
                                 </div>
                             </ng-container>
                         </div>
