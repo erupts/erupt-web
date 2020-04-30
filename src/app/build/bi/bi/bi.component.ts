@@ -157,9 +157,9 @@ export class BiComponent implements OnInit, OnDestroy {
                     })
                 } else {
                     this.columns.push({
-                        title: '#',
+                        title: '序号',
                         type: 'no',
-                        width: '60px',
+                        width: '80px',
                         className: "text-center",
                         fixed: "left"
                     });

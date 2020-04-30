@@ -41,8 +41,7 @@ const DIRECTIVES = [];
         RipperDirective
     ],
     providers: [
-        DataService,
-        UtilsService
+        DataService
     ],
     entryComponents: [],
     exports: [

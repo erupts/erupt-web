@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, Renderer2} from "@angular/core";
+import {Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, Renderer2, ViewChild} from "@angular/core";
 import {LazyService} from "@delon/util";
 import {WindowModel} from "@shared/model/window.model";
 import {NzMessageService} from "ng-zorro-antd";
@@ -25,6 +25,11 @@ export class AmapComponent implements OnInit {
     @Input() readonly: boolean = false;
 
     @Input() mapType: MapType;
+
+
+    @ViewChild('tipInput', {
+        static: true
+    }) tipInput;
 
     viewValue: any = "";
 
@@ -85,7 +90,7 @@ export class AmapComponent implements OnInit {
                     let autoComplete = new AMap.Autocomplete({
                         city: ''
                     });
-                    autoComplete.search((<HTMLInputElement>document.getElementById("tipInput")).value, function (status, result) {
+                    autoComplete.search(that.tipInput.nativeElement.value, function (status, result) {
                         if (status == "complete") {
                             that.autocompleteList = result.tips;
                         }
@@ -93,7 +98,7 @@ export class AmapComponent implements OnInit {
                 })
             }
 
-            document.getElementById("tipInput").oninput = complete;
+            this.tipInput.nativeElement.oninput = complete;
 
             let placeSearch = new AMap.PlaceSearch({
                 pageSize: 10, // 单页显示结果条数
@@ -103,6 +108,10 @@ export class AmapComponent implements OnInit {
             });
 
             document.getElementById("mapOk").onclick = () => {
+                if (!this.value && this.autocompleteList.length > 0) {
+                    this.value = this.autocompleteList[0];
+                    this.viewValue = this.value.name;
+                }
                 if (this.value) {
                     if (!this.value["id"]) {
                         this.msg.warning("请选择有效的地址");
@@ -125,7 +134,6 @@ export class AmapComponent implements OnInit {
                     if (status === 'complete' && result.info === 'OK') {
                         placeSearch_CallBack(result);
                         that.valueChange.emit(JSON.stringify(that.value));
-                        console.log(that.mapType.draw);
                         if (that.mapType.draw) {
                             that.openDraw = true;
                         }
@@ -174,8 +182,7 @@ export class AmapComponent implements OnInit {
         if (!isObject(this.value)) {
             this.value = JSON.parse(this.value);
         }
-        let tipInput = this.ref.nativeElement.querySelector("#tipInput");
-        if (this.value.name != tipInput.value) {
+        if (this.value.name != this.tipInput.nativeElement.value) {
             this.value = null;
             this.viewValue = null;
         }
@@ -245,9 +252,7 @@ export class AmapComponent implements OnInit {
     }
 
     clearDraw() {
-        let last = this.overlays.pop();
-        console.log(last);
-        last && this.map.remove(last);
+        this.map.remove(this.overlays)
     }
 
     closeDraw() {

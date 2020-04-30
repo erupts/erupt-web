@@ -1,7 +1,7 @@
 <nz-spin [nzSpinning]="loading">
     <div [hidden]="readonly" class="search-container" style="">
-        <input nz-input [value]="viewValue" [nzAutocomplete]="auto" placeholder="请输入关键字" nzSize="default"
-               style="width: 300px" id="tipInput" [disabled]="!loaded" (blur)="blur()"/> &nbsp;
+        <input nz-input [value]="viewValue" [nzAutocomplete]="auto"  placeholder="请输入关键字" nzSize="default"
+               style="width: 300px" #tipInput [disabled]="!loaded" (blur)="blur()"/> &nbsp;
         <button nz-button nzType="default" [disabled]="!loaded" id="mapOk">&nbsp; 确定 &nbsp;</button>
     </div>
 
