@@ -61,6 +61,7 @@ export enum DimType {
 export interface BiData {
     columns: Column[];
     list: any;
+    total: number;
 }
 
 export interface Column {

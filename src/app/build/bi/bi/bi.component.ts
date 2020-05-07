@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Bi, DimType} from "../model/bi.model";
 import {NzMessageService} from "ng-zorro-antd";
 import {STColumn} from "@delon/abc/table/table.interfaces";
@@ -6,7 +6,7 @@ import {BiDataService} from "../service/data.service";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {DatePipe} from "@angular/common";
-import {RestPath} from "../../erupt/model/erupt.enum";
+import {STComponent} from "@delon/abc";
 
 @Component({
     selector: 'app-bi',
@@ -30,6 +30,16 @@ export class BiComponent implements OnInit, OnDestroy {
 
     clientWidth = document.body.clientWidth;
 
+    @ViewChild("st", {static: false})
+    st: STComponent;
+
+    //page
+    index: number = 1;
+
+    size: number = 10;
+
+    total: number = 0;
+
     private router$: Subscription;
 
     constructor(private dataService: BiDataService,
@@ -38,34 +48,6 @@ export class BiComponent implements OnInit, OnDestroy {
                 private msg: NzMessageService
     ) {
     }
-
-    stConfig = {
-        url: null,
-        stPage: {
-            placement: "center",
-            pageSizes: [10, 20, 30, 50, 100],
-            showSize: true,
-            showQuickJumper: true,
-            total: true,
-            toTop: true,
-            front: false
-        },
-        req: {
-            param: {},
-            headers: {},
-            method: "POST",
-            allInBody: true,
-            reName: {
-                pi: 1,
-                ps: 10
-            }
-        },
-        multiSort: {
-            key: "_sort",
-            separator: ",",
-            nameSeparator: " "
-        }
-    };
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe(params => {
@@ -84,9 +66,18 @@ export class BiComponent implements OnInit, OnDestroy {
                         return;
                     }
                 }
-                this.query();
+                this.query(1, 20);
             })
         });
+    }
+
+    //导出报表数据
+    exportBiData() {
+        let param = this.buildDimParam();
+        if (!param) {
+            return;
+        }
+        this.dataService.exportExcel(this.name, param);
     }
 
     ngOnDestroy(): void {
@@ -95,7 +86,60 @@ export class BiComponent implements OnInit, OnDestroy {
 
     private datePipe: DatePipe = new DatePipe("zh-cn");
 
-    query() {
+    query(pageIndex: number, pageSize: number) {
+        let param = this.buildDimParam();
+        if (!param) {
+            return;
+        }
+        this.haveNotNull = false;
+        if (this.bi.table) {
+            this.querying = true;
+            this.index = pageIndex;
+            this.dataService.getBiData(this.name, pageIndex, pageSize, param).subscribe(res => {
+                this.querying = false;
+                this.total = res.total;
+                this.columns = [];
+                if (!res.columns) {
+                    this.columns.push({
+                        title: "暂无数据",
+                        className: "text-center"
+                    })
+                } else {
+                    this.columns.push({
+                        title: '序号',
+                        type: 'no',
+                        width: '82px',
+                        className: "text-center",
+                        fixed: "left",
+                    });
+                    for (let column of res.columns) {
+                        let col = {
+                            title: column.name,
+                            index: column.name,
+                            className: "text-center",
+                            show: true,
+                            iif: () => {
+                                return col.show;
+                            }
+                        };
+                        this.columns.push(col)
+                    }
+                }
+                this.data = res.list;
+            })
+        }
+    }
+
+    pageIndexChange(index) {
+        this.query(index, this.size);
+    }
+
+    pageSizeChange(size) {
+        this.size = size;
+        this.query(1, size);
+    }
+
+    buildDimParam(): object {
         let param = {};
         for (let dimension of this.bi.dimensions) {
             let val = dimension.$value;
@@ -134,46 +178,16 @@ export class BiComponent implements OnInit, OnDestroy {
             param[dimension.code] = val || null;
             if (dimension.notNull && !dimension.$value) {
                 this.msg.error(dimension.title + "必填");
-                return
+                return;
             }
             if (Array.isArray(dimension.$value)) {
                 if (!dimension.$value[0] && !dimension.$value[1]) {
                     this.msg.error(dimension.title + "必填");
-                    return
+                    return;
                 }
             }
         }
-        this.haveNotNull = false;
-        if (this.bi.table) {
-            this.querying = true;
-            // this.stConfig.url = RestPath.bi + this.name + "/data";
-            this.dataService.getBiData(this.name, param).subscribe(res => {
-                this.querying = false;
-                this.columns = [];
-                if (!res.columns) {
-                    this.columns.push({
-                        title: "暂无数据",
-                        className: "text-center"
-                    })
-                } else {
-                    this.columns.push({
-                        title: '序号',
-                        type: 'no',
-                        width: '80px',
-                        className: "text-center",
-                        fixed: "left"
-                    });
-                    for (let column of res.columns) {
-                        this.columns.push({
-                            title: column.name,
-                            index: column.name,
-                            className: "text-center"
-                        })
-                    }
-                }
-                this.data = res.list;
-            })
-        }
+        return param;
     }
 
 }

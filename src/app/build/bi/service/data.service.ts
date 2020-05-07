@@ -1,16 +1,18 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {Bi, BiData} from "../model/bi.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
 import {EruptFieldModel} from "../../erupt/model/erupt-field.model";
+import {DataService} from "@shared/service/data.service";
+import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 @Injectable({
     providedIn: 'root'
 })
 export class BiDataService {
 
-    constructor(private _http: _HttpClient) {
+    constructor(private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
 
     /**
@@ -28,8 +30,11 @@ export class BiDataService {
     }
 
     //BI数据
-    getBiData(code: string, query: any): Observable<BiData> {
-        return this._http.post(RestPath.bi + code + "/data", query, null, {
+    getBiData(code: string, index: number, size: number, query: any): Observable<BiData> {
+        return this._http.post(RestPath.bi + code + "/data", query, {
+            index: index,
+            size: size
+        }, {
             headers: {
                 erupt: code
             }
@@ -42,6 +47,15 @@ export class BiDataService {
             headers: {
                 erupt: code
             }
+        });
+    }
+
+    //导出excel
+    exportExcel(code: string, query: any) {
+        DataService.postExcelFile(RestPath.bi + code + "/excel", {
+            condition: encodeURIComponent(JSON.stringify(query)),
+            [DataService.PARAM_ERUPT]: code,
+            [DataService.PARAM_TOKEN]: this.tokenService.get().token
         });
     }
 
