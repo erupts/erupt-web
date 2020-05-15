@@ -315,9 +315,11 @@ export class DataHandlerService {
                             const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
                             if (attachmentType) {
                                 let img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
-                                return `<img height="50px" class="text-center" src="${DataService.previewAttachment(img)}" />`;
+                                //height="50px"
+                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
                             } else {
-                                return `<img height="50px" class="text-center" src="${DataService.previewAttachment(item[view.column])}" />`;
+                                //height="50px"
+                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(item[view.column])}" />`;
                             }
                         } else {
                             return "";
