@@ -2,9 +2,9 @@ export class WindowModel {
 
     private static config: any = window["eruptSiteConfig"] || {};
 
-    public static domain: string = WindowModel.config["domain"] || undefined;
+    public static domain: string = WindowModel.config["domain"] || '';
 
-    public static attachmentDomain: string = WindowModel.config["attachmentDomain"] || undefined;
+    public static attachmentDomain: string = WindowModel.config["attachmentDomain"] || '';
 
     public static r_tools: CustomerTool[] = WindowModel.config["r_tools"] || [];
 
