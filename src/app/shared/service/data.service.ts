@@ -11,6 +11,7 @@ import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
+import {WindowModel} from "@shared/model/window.model";
 
 @Injectable()
 export class DataService {
@@ -55,7 +56,11 @@ export class DataService {
     }
 
     static previewAttachment(path: string): string {
-        return RestPath.file + "preview-attachment" + path;
+        if (WindowModel.attachmentDomain) {
+            return WindowModel.attachmentDomain + path;
+        } else {
+            return RestPath.file + "preview-attachment" + path;
+        }
     }
 
     //获取结构

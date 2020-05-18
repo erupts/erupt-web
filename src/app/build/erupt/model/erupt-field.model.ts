@@ -164,6 +164,7 @@ interface AttachmentType {
     type: AttachmentEnum;
     fileSeparator: string;
     saveMode: SaveMode;
+    baseUrl: { value: string }
 }
 
 export interface MapType {

@@ -2,7 +2,9 @@ export class WindowModel {
 
     private static config: any = window["eruptSiteConfig"] || {};
 
-    public static domain: string = WindowModel.config["domain"] || "";
+    public static domain: string = WindowModel.config["domain"] || undefined;
+
+    public static attachmentDomain: string = WindowModel.config["attachmentDomain"] || undefined;
 
     public static r_tools: CustomerTool[] = WindowModel.config["r_tools"] || [];
 
@@ -10,13 +12,15 @@ export class WindowModel {
 
     public static title: string = WindowModel.config["title"];
 
-    public static desc: string = WindowModel.config["desc"] || null;
+    public static desc: string = WindowModel.config["desc"] || undefined;
 
     public static routerReuse: boolean = WindowModel.config["routerReuse"] || false;
 
     public static logoPath: string = WindowModel.config["logoPath"] || "assets/logo.png";
+
+    public static logoText: string = WindowModel.config["logoText"] || undefined;
     //注册页面地址
-    public static registerPage: string = WindowModel.config["registerPage"] || null;
+    public static registerPage: string = WindowModel.config["registerPage"] || undefined;
 
     public static dialogLogin: boolean = WindowModel.config["dialogLogin"] || false;
 }

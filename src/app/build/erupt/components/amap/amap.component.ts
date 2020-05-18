@@ -193,6 +193,12 @@ export class AmapComponent implements OnInit {
         this.viewValue = auto.name;
     }
 
+    clearLocation() {
+        this.value = null;
+        this.viewValue = null;
+        this.valueChange.emit(null);
+    }
+
     checkType: string;
 
     overlays: any[];

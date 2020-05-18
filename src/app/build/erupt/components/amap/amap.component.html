@@ -1,8 +1,13 @@
 <nz-spin [nzSpinning]="loading">
     <div [hidden]="readonly" class="search-container" style="">
-        <input nz-input [value]="viewValue" [nzAutocomplete]="auto"  placeholder="请输入关键字" nzSize="default"
+        <input nz-input [value]="viewValue" [nzAutocomplete]="auto" placeholder="请输入关键字" nzSize="default"
                style="width: 300px" #tipInput [disabled]="!loaded" (blur)="blur()"/> &nbsp;
         <button nz-button nzType="default" [disabled]="!loaded" id="mapOk">&nbsp; 确定 &nbsp;</button>
+        <button nz-button nzType="danger" [disabled]="!loaded" *ngIf="value" [nzGhost]="true" style="background: #fff !important;"
+                class="mb-sm"
+                (click)="clearLocation()">
+            &nbsp; <i nz-icon nzType="close" nzTheme="outline"></i> &nbsp;
+        </button>
     </div>
 
     <nz-autocomplete #auto>

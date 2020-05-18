@@ -25,6 +25,8 @@ export class HeaderComponent implements OnInit {
 
     logoPath: string = WindowModel.logoPath;
 
+    logoText: string = WindowModel.logoText;
+
     r_tools: CustomerTool[] = WindowModel.r_tools;
 
     isDark: boolean;

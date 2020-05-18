@@ -2,13 +2,19 @@
 
 :host {
   ::ng-deep {
+    #erupt_logo_svg {
+      path {
+        fill: #fff !important;
+      }
+    }
+
     .header-logo-img {
       height: @alain-default-header-hg;
       padding: 6px 0
     }
 
     .alain-default__header-logo {
-      border-right: 1px solid #efe3e5;
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
     }
 
     @media (max-width: 767px) {

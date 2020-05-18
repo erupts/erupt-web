@@ -52,39 +52,41 @@
         </div>
     </ng-container>
 
-    <ng-container *ngIf="haveNotNull">
-        <nz-card [nzHoverable]="true" [nzBordered]="true">
-            <nz-result [nzIcon]="'thunderbolt'" [nzTitle]="'输入查询条件，开始查询操作'">
-                <div nz-result-extra>
-                    <button nz-button nzType="primary" class="mb-sm" (click)="query()">
-                        <i nz-icon nzType="search" nzTheme="outline"></i>查询
-                    </button>
-                </div>
-            </nz-result>
-        </nz-card>
-    </ng-container>
-    <ng-container *ngIf="!haveNotNull">
-        <ng-container *ngIf="columns&&columns.length>0">
-            <st [columns]="columns" [data]="data"
-                #st
-                style="margin-bottom: 16px"
-                [loading]="querying"
-                [page]="{show: false}"
-                [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
-                [bordered]="true"
-                [size]="'small'">
-            </st>
-            <nz-pagination [nzPageIndex]="index"
-                           [nzPageSize]="size"
-                           [nzTotal]="total"
-                           style="text-align: center" nzShowSizeChanger nzShowQuickJumper
-                           [nzPageSizeOptions]="[5,10,20,30,50,100]"
-                           [nzSize]="'small'"
-                           [nzShowTotal]="totalTemplate"
-                           (nzPageSizeChange)="pageSizeChange($event)"
-                           (nzPageIndexChange)="pageIndexChange($event)"
-            ></nz-pagination>
-            <ng-template #totalTemplate let-total>共{{ total }}条</ng-template>
+    <ng-container *ngIf="bi.table">
+        <ng-container *ngIf="haveNotNull">
+            <nz-card [nzHoverable]="true" [nzBordered]="true">
+                <nz-result [nzIcon]="'thunderbolt'" [nzTitle]="'输入查询条件，开始查询操作'">
+                    <div nz-result-extra>
+                        <button nz-button nzType="primary" class="mb-sm" (click)="query(1,size)">
+                            <i nz-icon nzType="search" nzTheme="outline"></i>查询
+                        </button>
+                    </div>
+                </nz-result>
+            </nz-card>
+        </ng-container>
+        <ng-container *ngIf="!haveNotNull">
+            <ng-container *ngIf="columns&&columns.length>0">
+                <st [columns]="columns" [data]="data"
+                    #st
+                    style="margin-bottom: 16px"
+                    [loading]="querying"
+                    [page]="{show: false}"
+                    [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
+                    [bordered]="true"
+                    [size]="'small'">
+                </st>
+                <nz-pagination [nzPageIndex]="index"
+                               [nzPageSize]="size"
+                               [nzTotal]="total"
+                               style="text-align: center" nzShowSizeChanger nzShowQuickJumper
+                               [nzPageSizeOptions]="[5,10,20,30,50,100]"
+                               [nzSize]="'small'"
+                               [nzShowTotal]="totalTemplate"
+                               (nzPageSizeChange)="pageSizeChange($event)"
+                               (nzPageIndexChange)="pageIndexChange($event)"
+                ></nz-pagination>
+                <ng-template #totalTemplate let-total>共{{ total }}条</ng-template>
+            </ng-container>
         </ng-container>
     </ng-container>
 </ng-container>

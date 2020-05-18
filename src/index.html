@@ -9,6 +9,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="Cache" content="no-cache">
+    <meta name="renderer" content="webkit">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <style type="text/css">
         .preloader {
@@ -59,6 +60,19 @@
 </head>
 <body>
 <link rel="stylesheet" href="assets/app.css">
+<!--[if lt IE 11]>
+<style>
+    .preloader {
+        display: none;
+    }
+</style>
+<div class="old-browser" style="padding: 60px 30px 0;text-align: center">
+    <a href="https://support.dmeng.net/upgrade-your-browser.html" target="_blank">
+        <img src="assets/image/older-browsers.png" style="width: 100%;max-width: 1000px"
+             alt="您的浏览器版本过低，为了保障您的访问安全，以及获得更友好的用户体验，建议您升级您的浏览器到最新版本。">
+    </a>
+</div>
+<![endif]-->
 <app-root></app-root>
 <div class="preloader" style="background: #34495E;">
     <div class="cs-loader">
