@@ -5,7 +5,6 @@ import {WindowModel} from "@shared/model/window.model";
 
 export class RestPath {
     public static erupt: string = WindowModel.domain + "/erupt-api";
-    public static attachmentDomain: string = WindowModel.attachmentDomain + "/tpl/";
     public static tpl: string = RestPath.erupt + "/tpl/";
     public static build: string = RestPath.erupt + "/build/";
     public static data: string = RestPath.erupt + "/data/";
