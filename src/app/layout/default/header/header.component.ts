@@ -75,7 +75,7 @@ export class HeaderComponent implements OnInit {
     }
 
     customToolsFun(event: Event, tool: CustomerTool) {
-        tool.click && tool.click(event, this.tokenService.get().token);
+        tool.click && tool.click(event);
     }
 
     toIndex() {

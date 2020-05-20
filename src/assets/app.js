@@ -18,9 +18,12 @@ window.eruptSiteConfig = {
             console.log(event);
         },
         load: function () {
+            console.log("load");
         }
     }]
 };
+
+//路由回调函数
 window.eruptRouterEvent = {
     Router: {
         load: function (url) {
@@ -38,8 +41,9 @@ window.eruptRouterEvent = {
     }
 };
 
+//全局生命周期回调函数
 window.eruptEvent = {
     startup: function () {
-
+        console.log(window.getAppToken());
     }
 };

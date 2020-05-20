@@ -243,8 +243,6 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
             }
 
         });
-        window[GlobalKeys.getAppToken] = this.tokenService.get();
-
     }
 
     ngOnDestroy() {

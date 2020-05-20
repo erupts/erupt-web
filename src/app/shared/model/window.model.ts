@@ -36,5 +36,5 @@ export interface CustomerTool {
 
     load(): void;
 
-    click(event: Event, token: string): void;
+    click(event: Event): void;
 }

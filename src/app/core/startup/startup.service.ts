@@ -6,6 +6,7 @@ import {NzIconService} from "ng-zorro-antd";
 import {ICONS_AUTO} from "../../../style-icons-auto";
 import {ICONS} from "../../../style-icons";
 import {WindowModel} from "@shared/model/window.model";
+import {GlobalKeys} from "@shared/model/erupt-const";
 
 /**
  * 用于应用启动时
@@ -34,6 +35,10 @@ export class StartupService {
             "                           \\/_/        ", "color:#2196f3");
         console.log("%cDocument : https://www.erupt.xyz", "color:#2196f3;font-size:1.3em;padding:16px 0");
         console.groupEnd();
+        //注入全局方法：token
+        window[GlobalKeys.getAppToken] = () => {
+            return this.tokenService.get();
+        };
         let eruptEvent = window["eruptEvent"];
         if (eruptEvent) {
             eruptEvent.startup && eruptEvent.startup();
