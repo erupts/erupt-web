@@ -104,23 +104,26 @@ export class UserLoginComponent implements OnDestroy, OnInit {
                 (new Date().getDate() + "") +
                 this.userName.value),
             this.verifyCode.value).subscribe((result) => {
-            this.loading = false;
             if (result.useVerifyCode) {
                 this.changeVerifyCode();
             }
             this.useVerifyCode = result.useVerifyCode;
             if (result.pass) {
                 this.settingsService.setUser({name: result.userName, indexPath: result.indexPath});
-                this.tokenService.set({token: result.token, time: +new Date(), account: this.userName.value});
-                let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
-                this.modalSrv.closeAll();
-                if (loginBackPath) {
-                    this.cacheService.set(GlobalKeys.loginBackPath, null);
-                    this.router.navigateByUrl(<string>loginBackPath);
-                } else {
-                    this.router.navigateByUrl(result.indexPath || '/');
-                }
+                this.tokenService.set({token: result.token, time: new Date(), account: this.userName.value});
+                setTimeout(() => {
+                    this.loading = false;
+                    let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
+                    this.modalSrv.closeAll();
+                    if (loginBackPath) {
+                        this.cacheService.set(GlobalKeys.loginBackPath, null);
+                        this.router.navigateByUrl(<string>loginBackPath).then();
+                    } else {
+                        this.router.navigateByUrl(result.indexPath || '/').then();
+                    }
+                }, 300)
             } else {
+                this.loading = false;
                 this.error = result.reason;
                 this.verifyCode.setValue(null);
                 if (result.useVerifyCode) {

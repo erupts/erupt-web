@@ -29,35 +29,40 @@ export class AppComponent implements OnInit {
             'ng-zorro-version',
             VERSION_ZORRO.full,
         );
+        renderer.setAttribute(
+            el.nativeElement,
+            'ng-erupt',
+            VERSION_ALAIN.full,
+        );
     }
 
     beforeMatch = null;
 
     ngOnInit() {
-        const eruptEvent = window["eruptEvent"];
+        const eruptRouterEvent = window["eruptRouterEvent"];
         this.router.events
             .pipe(filter(evt => evt instanceof NavigationEnd))
             .subscribe((res) => {
                 this.titleSrv.setTitle();
                 this.modalSrv.closeAll();
                 //页面生命周期函数核心逻辑
-                if (eruptEvent) {
+                if (eruptRouterEvent) {
                     let url: string = res["url"];
                     url = url.substring(0, (url.indexOf("?") === -1 ? url.length : url.indexOf("?")));
                     let paths = url.split("/");
                     let match = paths[paths.length - 1];
                     if (this.beforeMatch) {
-                        if (eruptEvent.$) {
-                            eruptEvent.$.unload && eruptEvent.$.unload(res, this.tokenService.get().token);
+                        if (eruptRouterEvent.$) {
+                            eruptRouterEvent.$.unload && eruptRouterEvent.$.unload(res);
                         }
-                        let beforeEvent = eruptEvent[this.beforeMatch];
-                        beforeEvent && beforeEvent.unload && beforeEvent.unload(res, this.tokenService.get().token);
+                        let beforeEvent = eruptRouterEvent[this.beforeMatch];
+                        beforeEvent && beforeEvent.unload && beforeEvent.unload(res);
                     }
-                    if (eruptEvent.$) {
-                        eruptEvent.$.load && eruptEvent.$.load(res, this.tokenService.get().token);
+                    if (eruptRouterEvent.$) {
+                        eruptRouterEvent.$.load && eruptRouterEvent.$.load(res);
                     }
-                    let event = eruptEvent[match];
-                    event && event.load && event.load(res, this.tokenService.get().token);
+                    let event = eruptRouterEvent[match];
+                    event && event.load && event.load(res);
                     this.beforeMatch = match;
                 }
             });

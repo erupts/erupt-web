@@ -34,7 +34,7 @@ export interface CustomerTool {
 
     mobileHidden: boolean;
 
-    load(event: Event, token: string): void;
+    load(): void;
 
     click(event: Event, token: string): void;
 }

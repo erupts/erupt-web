@@ -44,7 +44,7 @@ export class HeaderComponent implements OnInit {
             document.body.className = "dark";
         }
         this.r_tools.forEach(tool => {
-            tool.load && tool.load(event, this.tokenService.get().token);
+            tool.load && tool.load();
         });
     }
 

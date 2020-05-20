@@ -14,27 +14,32 @@ window.eruptSiteConfig = {
         text: "下载",
         icon: "fa-download",
         mobileHidden: true,
-        click: function (event, token) {
+        click: function (event) {
             console.log(event);
-            console.log(token);
         },
-        load: function (event, token) {
+        load: function () {
         }
     }]
 };
-window.eruptEvent = {
+window.eruptRouterEvent = {
     Router: {
-        load: function (url, token) {
+        load: function (url) {
 
         },
-        unload: function (url, token) {
+        unload: function (url) {
         }
     },
     $: {
-        load: function (url, token) {
+        load: function (url) {
 
         },
-        unload: function (url, token) {
+        unload: function (url) {
         }
+    }
+};
+
+window.eruptEvent = {
+    startup: function () {
+
     }
 };

@@ -34,6 +34,10 @@ export class StartupService {
             "                           \\/_/        ", "color:#2196f3");
         console.log("%cDocument : https://www.erupt.xyz", "color:#2196f3;font-size:1.3em;padding:16px 0");
         console.groupEnd();
+        let eruptEvent = window["eruptEvent"];
+        if (eruptEvent) {
+            eruptEvent.startup && eruptEvent.startup();
+        }
         return new Promise((resolve, reject) => {
             // 应用信息：包括站点名、描述、年份
             this.settingService.setApp({
