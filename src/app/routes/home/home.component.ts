@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.url = "erupt/home.html";
+        this.url = "home.html";
     }
 
     iframeLoad() {

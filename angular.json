@@ -27,6 +27,9 @@
               "src/favicon.ico",
               "src/assets",
               "src/erupt",
+              "src/app.js",
+              "src/app.css",
+              "src/home.html",
               {
                 "glob": "**/*",
                 "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",

@@ -2,7 +2,6 @@ import {
     AttachmentEnum,
     ChoiceEnum,
     DateEnum,
-    DependSwitchTypeEnum,
     EditType,
     SaveMode,
     TabEnum,
@@ -15,7 +14,7 @@ import {
 export interface EruptFieldModel {
     fieldName: string;
     eruptFieldJson: EruptField;
-    choiceMap?: Map<String, String>
+    choiceList?: VL[]
     value?: any;
 }
 
@@ -46,6 +45,7 @@ export interface Edit {
     desc: string;
     type: EditType;
     show: boolean;
+    showBy: { dependField: string, expr: string };
     readOnly: boolean;
     placeHolder: string;
     search: Search;
@@ -59,13 +59,13 @@ export interface Edit {
     choiceType: ChoiceType;
     dateType: DateType;
     sliderType: SliderType;
-    dependSwitchType: DependSwitchType;
     codeEditType: CodeEditType;
     mapType: MapType
     $tabTreeViewData?: any;
     $value?: any;
     $viewValue?: any;
     $tempValue?: any;
+    $beforeValue?: any;
     $l_val?: any;
     $r_val?: any;
 }
@@ -123,24 +123,6 @@ export interface TabType {
     type: TabEnum;
 }
 
-interface DependSwitchType {
-    reject: boolean;
-    attr: DependSwitchAttr[]
-    type: DependSwitchTypeEnum;
-    view: DependSwitchViewEnum;
-}
-
-enum DependSwitchViewEnum {
-    RADIO = "RADIO",
-    SELECT = "SELECT"
-}
-
-
-interface DependSwitchAttr {
-    value: number;
-    label: string;
-    dependEdits: string[]
-}
 
 interface SliderType {
     min: number;

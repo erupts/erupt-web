@@ -24,6 +24,8 @@ export class CodeEditorComponent implements OnInit {
 
     @Input() readonly: boolean = false;
 
+    @Input() height:number  = 300;
+
     codeEditorEvent: any;
 
     dark = false;

@@ -18,11 +18,13 @@ import {BuildConfig} from "../../model/build-config";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
+import {shrink, stretch} from "@shared/animate/sim-anim";
 
 @Component({
     selector: "table-erupt",
     templateUrl: "./table.component.html",
-    styleUrls: ["./table.component.less"]
+    styleUrls: ["./table.component.less"],
+    animations: [shrink, stretch]
 })
 export class TableComponent implements OnInit {
 
@@ -182,7 +184,7 @@ export class TableComponent implements OnInit {
                 width: "50px",
                 type: "checkbox",
                 fixed: "left",
-                className: "text-center",
+                className: "text-center left-sticky-checkbox",
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
         }

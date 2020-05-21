@@ -30,7 +30,6 @@ export enum EditType {
     DIVIDE = "DIVIDE",                         //分割线
     SLIDER = "SLIDER",                         //数字滑块
     EMPTY = "EMPTY",
-    DEPEND_SWITCH = "DEPEND_SWITCH",
     TPL = "TPL",
     HTML_EDIT = "HTML_EDIT",
     MAP = "MAP",
@@ -83,11 +82,6 @@ export enum ChoiceEnum {
     TAGS = "TAGS"
 }
 
-
-export enum DependSwitchTypeEnum {
-    HIDDEN = "HIDDEN",
-    DISABLE = "DISABLE"
-}
 
 
 export enum SaveMode {

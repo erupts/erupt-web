@@ -1,6 +1,6 @@
 import {Edit, EruptFieldModel} from "../model/erupt-field.model";
 import {EruptModel, Tree} from "../model/erupt.model";
-import {ChoiceEnum, DateEnum, DependSwitchTypeEnum, EditType, SaveMode, ViewType} from "../model/erupt.enum";
+import {ChoiceEnum, DateEnum, EditType, SaveMode, ViewType} from "../model/erupt.enum";
 import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
 import {deepCopy} from "@delon/util";
 import {Inject, Injectable} from "@angular/core";
@@ -89,31 +89,6 @@ export class DataHandlerService {
                 view.eruptFieldModel = deepField;
                 eruptModel.tableColumns.push(view);
             });
-        });
-        //生成depend组件代码
-        eruptModel.eruptFieldModels.forEach(field => {
-            if (!field.eruptFieldJson.edit) {
-                return;
-            }
-            if (field.eruptFieldJson.edit.type === EditType.DEPEND_SWITCH) {
-                let type = field.eruptFieldJson.edit.dependSwitchType.type;
-                field.eruptFieldJson.edit.dependSwitchType.attr.forEach(attr => {
-                    if (field.value && field.value === attr.value) {
-                        return;
-                    } else {
-                        attr.dependEdits.forEach(editName => {
-                            const fm = eruptModel.eruptFieldModelMap.get(editName);
-                            if (fm) {
-                                if (type === DependSwitchTypeEnum.HIDDEN) {
-                                    fm.eruptFieldJson.edit.show = false;
-                                } else {
-                                    fm.eruptFieldJson.edit.readOnly = true;
-                                }
-                            }
-                        });
-                    }
-                });
-            }
         });
     }
 
@@ -262,15 +237,15 @@ export class DataHandlerService {
                     obj.click = (item) => {
                         this.modal.create({
                             nzWrapClassName: "modal-lg",
-                            nzBodyStyle: {
-                                padding: 0
-                            },
+                            // nzStyle: {top: "60px"},
+                            nzBodyStyle: {padding: 0},
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
                             nzContent: CodeEditorComponent,
                             nzComponentParams: {
+                                height: 500,
                                 readonly: true,
                                 language: view.eruptFieldModel.eruptFieldJson.edit.codeEditType.language,
                                 value: item[view.column]
@@ -515,7 +490,7 @@ export class DataHandlerService {
                     switch (edit.type) {
                         case EditType.CHOICE:
                             let arr = [];
-                            for (let vl of edit.choiceType.vl) {
+                            for (let vl of field.choiceList) {
                                 if (vl.$viewValue) {
                                     arr.push(vl.value);
                                 }

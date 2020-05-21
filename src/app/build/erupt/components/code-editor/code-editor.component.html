@@ -1,5 +1,5 @@
 <nz-spin [nzSpinning]="!codeEditorEvent">
-    <nz-code-editor style="height: 300px;border:1px solid #ccc"
+    <nz-code-editor [ngStyle]="{height:height+'px'}" style="border:1px solid #ccc"
                     (nzEditorInitialized)="codeEditorInit($event)"
                     [nzEditorOption]="{ language: language}">
     </nz-code-editor>

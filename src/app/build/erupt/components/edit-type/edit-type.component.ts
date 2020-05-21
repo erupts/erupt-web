@@ -1,6 +1,16 @@
-import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from "@angular/core";
-import {Edit, EruptFieldModel} from "../../model/erupt-field.model";
-import {AttachmentEnum, ChoiceEnum, DateEnum, DependSwitchTypeEnum, EditType} from "../../model/erupt.enum";
+import {
+    Component,
+    DoCheck,
+    EventEmitter,
+    Inject,
+    Input,
+    KeyValueDiffers,
+    OnDestroy,
+    OnInit,
+    Output
+} from "@angular/core";
+import {EruptFieldModel} from "../../model/erupt-field.model";
+import {AttachmentEnum, ChoiceEnum, DateEnum, EditType} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {TreeSelectComponent} from "../tree-select/tree-select.component";
 import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
@@ -18,7 +28,7 @@ import {DataHandlerService} from "../../service/data-handler.service";
     templateUrl: "./edit-type.component.html",
     styleUrls: ["./edit-type.component.less"]
 })
-export class EditTypeComponent implements OnInit, OnDestroy {
+export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     @Input() loading: boolean = false;
 
@@ -42,6 +52,8 @@ export class EditTypeComponent implements OnInit, OnDestroy {
     //event
     @Output() search = new EventEmitter();
 
+    showByFieldModels: EruptFieldModel[] = [];
+
     eruptModel: EruptModel;
 
     editType = EditType;
@@ -59,6 +71,7 @@ export class EditTypeComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe = new DatePipe("zh-cn");
 
     constructor(public dataService: DataService,
+                private differs: KeyValueDiffers,
                 public dataHandlerService: DataHandlerService,
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService,
@@ -73,14 +86,25 @@ export class EditTypeComponent implements OnInit, OnDestroy {
         if (this.mode === "addNew") {
             this.dataHandlerService.loadEruptDefaultValue(this.eruptBuildModel);
         }
-        for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
-            let edit: Edit = eruptFieldModel.eruptFieldJson.edit;
-            if (edit.type == EditType.CHOICE && edit.search.vague == true) {
-                let vl = [];
-                for (let key in eruptFieldModel.choiceMap) {
-                    vl.push({label: eruptFieldModel.choiceMap[key], value: key})
-                }
-                edit.choiceType.vl = vl;
+        for (let models of this.eruptModel.eruptFieldModels) {
+            let showBy = models.eruptFieldJson.edit.showBy;
+            if (showBy) {
+                this.showByFieldModels.push(models);
+                let fieldValue = this.eruptModel.eruptFieldModelMap.get(showBy.dependField).eruptFieldJson.edit.$value;
+                models.eruptFieldJson.edit.show = !!eval(showBy.expr);
+            }
+        }
+        console.log(this.showByFieldModels);
+    }
+
+    ngDoCheck() {
+        for (let models of this.showByFieldModels) {
+            let showBy = models.eruptFieldJson.edit.showBy;
+            let edit = this.eruptModel.eruptFieldModelMap.get(showBy.dependField).eruptFieldJson.edit;
+            if (edit.$beforeValue != edit.$value) {
+                edit.$beforeValue = edit.$value;
+                let fieldValue = edit.$value;
+                models.eruptFieldJson.edit.show = !!eval(showBy.expr);
             }
         }
     }
@@ -103,37 +127,6 @@ export class EditTypeComponent implements OnInit, OnDestroy {
         if (event.which === 13) {
             this.search.emit();
         }
-    }
-
-    dependChange(value: number, field: EruptFieldModel) {
-        const dsa = field.eruptFieldJson.edit.dependSwitchType.attr;
-        const type = field.eruptFieldJson.edit.dependSwitchType.type;
-        dsa.forEach(attr => {
-            if (value === attr.value) {
-                attr.dependEdits.forEach(de => {
-                    const field = this.eruptModel.eruptFieldModelMap.get(de);
-                    if (field) {
-                        if (type === DependSwitchTypeEnum.HIDDEN) {
-                            field.eruptFieldJson.edit.show = true;
-                        } else {
-                            field.eruptFieldJson.edit.readOnly = false;
-                        }
-
-                    }
-                });
-            } else {
-                attr.dependEdits.forEach(de => {
-                    const field = this.eruptModel.eruptFieldModelMap.get(de);
-                    if (field) {
-                        if (type == DependSwitchTypeEnum.HIDDEN) {
-                            field.eruptFieldJson.edit.show = false;
-                        } else {
-                            field.eruptFieldJson.edit.readOnly = true;
-                        }
-                    }
-                });
-            }
-        });
     }
 
     upLoadNzChange({file, fileList}, field: EruptFieldModel) {
@@ -267,7 +260,7 @@ export class EditTypeComponent implements OnInit, OnDestroy {
 
 
     changeTagAll($event, field: EruptFieldModel) {
-        for (let vl of field.eruptFieldJson.edit.choiceType.vl) {
+        for (let vl of field.choiceList) {
             vl.$viewValue = $event;
         }
     }
