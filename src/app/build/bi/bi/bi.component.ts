@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Bi, DimType} from "../model/bi.model";
 import {NzMessageService} from "ng-zorro-antd";
 import {STColumn} from "@delon/abc/table/table.interfaces";
@@ -7,6 +7,7 @@ import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {DatePipe} from "@angular/common";
 import {STComponent} from "@delon/abc";
+import {ChartComponent} from "../chart/chart.component";
 
 @Component({
     selector: 'app-bi',
@@ -32,6 +33,8 @@ export class BiComponent implements OnInit, OnDestroy {
 
     @ViewChild("st", {static: false})
     st: STComponent;
+
+    @ViewChildren('biChart') biCharts: QueryList<ChartComponent>;
 
     //page
     index: number = 1;
@@ -67,6 +70,7 @@ export class BiComponent implements OnInit, OnDestroy {
                     }
                 }
                 this.query(1, 20);
+
             })
         });
     }
@@ -87,15 +91,16 @@ export class BiComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe = new DatePipe("zh-cn");
 
     query(pageIndex: number, pageSize: number) {
+        //this.chartQuery();
         let param = this.buildDimParam();
         if (!param) {
             return;
         }
-        this.haveNotNull = false;
         if (this.bi.table) {
             this.querying = true;
             this.index = pageIndex;
             this.dataService.getBiData(this.name, pageIndex, pageSize, param).subscribe(res => {
+                this.haveNotNull = false;
                 this.querying = false;
                 this.total = res.total;
                 this.columns = [];
@@ -130,6 +135,12 @@ export class BiComponent implements OnInit, OnDestroy {
         }
     }
 
+    chartQuery() {
+        this.biCharts.forEach(chart => {
+            chart.query();
+        });
+    }
+
     pageIndexChange(index) {
         this.query(index, this.size);
     }
@@ -152,8 +163,6 @@ export class BiComponent implements OnInit, OnDestroy {
                     case DimType.DATETIME_RANGE:
                         val[0] = this.datePipe.transform(val[0], "yyyy-MM-dd HH:mm:ss");
                         val[1] = this.datePipe.transform(val[1], "yyyy-MM-dd HH:mm:ss");
-                        break;
-                    case DimType.NUMBER_RANGE:
                         break;
                     case DimType.DATE:
                         val = this.datePipe.transform(val, "yyyy-MM-dd");
@@ -180,7 +189,7 @@ export class BiComponent implements OnInit, OnDestroy {
                 this.msg.error(dimension.title + "必填");
                 return;
             }
-            if (Array.isArray(dimension.$value)) {
+            if (dimension.notNull && Array.isArray(dimension.$value)) {
                 if (!dimension.$value[0] && !dimension.$value[1]) {
                     this.msg.error(dimension.title + "必填");
                     return;

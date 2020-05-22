@@ -2,7 +2,7 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!bi"></nz-skeleton>
 <ng-container *ngIf="bi">
     <ng-container *ngIf="bi.dimensions.length>0">
-        <button nz-button class="mb-sm" (click)="query(1,size)">
+        <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query(1,size)">
             <i nz-icon nzType="search" nzTheme="outline"></i>查询
         </button>
     </ng-container>
@@ -43,9 +43,9 @@
         <div nz-row nzGutter="16">
             <ng-container *ngFor="let chart of bi.charts">
                 <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
-                    <nz-card [nzTitle]="chart.name" nzSize="small"
+                    <nz-card [nzTitle]="chart.name" nzSize="small" [nzLoading]="chart.loading"
                              [nzBodyStyle]="{padding:'12px'}" [nzHoverable]="true">
-                        <bi-chart [chart]="chart" [biCode]="bi.code"></bi-chart>
+                        <bi-chart #biChart [chart]="chart" [biCode]="bi.code"></bi-chart>
                     </nz-card>
                 </div>
             </ng-container>
@@ -55,13 +55,17 @@
     <ng-container *ngIf="bi.table">
         <ng-container *ngIf="haveNotNull">
             <nz-card [nzHoverable]="true" [nzBordered]="true">
-                <nz-result [nzIcon]="'thunderbolt'" [nzTitle]="'输入查询条件，开始查询操作'">
+                <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开始查询操作'">
                     <div nz-result-extra>
-                        <button nz-button nzType="primary" class="mb-sm" (click)="query(1,size)">
+                        <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying" (click)="query(1,size)"
+                                [nzGhost]="true">
                             <i nz-icon nzType="search" nzTheme="outline"></i>查询
                         </button>
                     </div>
                 </nz-result>
+                <ng-template #icon>
+                    <i nz-icon nzType="rocket" nzTheme="twotone"></i>
+                </ng-template>
             </nz-card>
         </ng-container>
         <ng-container *ngIf="!haveNotNull">

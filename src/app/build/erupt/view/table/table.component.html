@@ -43,7 +43,7 @@
 
                 <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
                     <button nz-button nzType="primary" style="background: #fff !important;" [nzGhost]="true"
-                            class="mb-sm"
+                            class="mb-sm" [nzLoading]="st._loading"
                             (click)="query()">
                         <i nz-icon nzType="search" nzTheme="outline"></i>查询
                     </button>
@@ -84,7 +84,8 @@
                 <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
                     <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation | keyvalue">
                         <ng-container *ngIf="item.value.multi">
-                            <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.value.tip" (click)="createOperator(item.key,true)">
+                            <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.value.tip"
+                                    (click)="createOperator(item.key,true)">
                                 <i class="fa" [ngClass]="item.value.icon"></i>
                                 <span style="margin-left: 8px;">{{item.value.title}}</span>
                             </button>

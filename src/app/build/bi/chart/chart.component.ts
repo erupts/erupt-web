@@ -17,21 +17,18 @@ export class ChartComponent implements OnInit {
 
     @Input() biCode: string;
 
-    loading: boolean = false;
-
     constructor(private ref: ElementRef, private biDataService: BiDataService) {
     }
 
     ngOnInit() {
-        this.query()
-
+        this.query();
     }
 
     query() {
         let element = this.ref.nativeElement.querySelector(".plot");
-        this.loading = true;
+        this.chart.loading = true;
         this.biDataService.getBiChart(this.biCode, this.chart.code, {}).subscribe(data => {
-            this.loading = false;
+            this.chart.loading = false;
             setTimeout(() => {
                 this.render(element, data)
             }, 200);
@@ -48,6 +45,7 @@ export class ChartComponent implements OnInit {
             data: data,
             xField: x,
             yField: y,
+            // theme: 'dark',
         };
         switch (this.chart.type) {
             case ChartType.Line:

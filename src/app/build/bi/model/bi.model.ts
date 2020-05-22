@@ -10,10 +10,12 @@ export interface Chart {
     code: string;
     name: string;
     grid: number;
+    height: number;
     type: ChartType;
     linkage: boolean;
     option: object;
     chartOption: any;
+    loading?: boolean;
 }
 
 export enum ChartType {

@@ -18,13 +18,11 @@ import {BuildConfig} from "../../model/build-config";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
-import {shrink, stretch} from "@shared/animate/sim-anim";
 
 @Component({
     selector: "table-erupt",
     templateUrl: "./table.component.html",
-    styleUrls: ["./table.component.less"],
-    animations: [shrink, stretch]
+    styleUrls: ["./table.component.less"]
 })
 export class TableComponent implements OnInit {
 
