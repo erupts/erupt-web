@@ -1,10 +1,10 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!eruptBuildModel"></nz-skeleton>
 <ng-container *ngIf="eruptBuildModel">
     <div nz-row [nzGutter]="16">
-        <div nz-col *ngIf="layoutTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="8" [nzXl]="6">
+        <div nz-col *ngIf="layoutTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="6">
             <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
         </div>
-        <div nz-col [nzXs]="24" [nzMd]="layoutTree?16:24" [nzLg]="layoutTree?16:24" [nzXl]="layoutTree?18:24"
+        <div nz-col [nzXs]="24" [nzMd]="layoutTree?16:24" [nzLg]="layoutTree?18:24" [nzXl]="layoutTree?18:24"
              [ngStyle]="{overflowX: 'hidden',overflowY: layoutTree?'auto':'hidden',height:layoutTree?(ww-155)+'px':'auto'}">
             <div>
                 <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">

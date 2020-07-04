@@ -21,7 +21,7 @@ export class BiDataService {
      */
     //BI结构
     getBiBuild(code: string): Observable<Bi> {
-        return this._http.get<any>(RestPath.bi + code, null, {
+        return this._http.get<any>(RestPath.bi + "/" + code, null, {
             observe: "body",
             headers: {
                 erupt: code
@@ -31,7 +31,7 @@ export class BiDataService {
 
     //BI数据
     getBiData(code: string, index: number, size: number, query: any): Observable<BiData> {
-        return this._http.post(RestPath.bi + code + "/data", query, {
+        return this._http.post(RestPath.bi + "/" + code + "/data", query, {
             index: index,
             size: size
         }, {
@@ -43,7 +43,7 @@ export class BiDataService {
 
     //图表
     getBiChart(code: string, chart: string, query: any): Observable<Map<String, any>[]> {
-        return this._http.post(RestPath.bi + code + "/chart/" + chart, query, null, {
+        return this._http.post(RestPath.bi + "/" + code + "/chart/" + chart, query, null, {
             headers: {
                 erupt: code
             }
@@ -52,7 +52,7 @@ export class BiDataService {
 
     //导出excel
     exportExcel(code: string, query: any) {
-        DataService.postExcelFile(RestPath.bi + code + "/excel", {
+        DataService.postExcelFile(RestPath.bi + "/" + code + "/excel", {
             condition: encodeURIComponent(JSON.stringify(query)),
             [DataService.PARAM_ERUPT]: code,
             [DataService.PARAM_TOKEN]: this.tokenService.get().token
@@ -61,7 +61,7 @@ export class BiDataService {
 
     //维度参照
     getBiReference(code: string, dim: string, query: any) {
-        return this._http.post(RestPath.bi + code + "/reference/" + dim, query, null, {
+        return this._http.post(RestPath.bi + "/" + code + "/reference/" + dim, query, null, {
             headers: {
                 erupt: code
             }

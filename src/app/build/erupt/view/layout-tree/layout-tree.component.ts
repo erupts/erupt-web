@@ -33,6 +33,11 @@ export class LayoutTreeComponent implements OnInit {
         this.data.queryReferenceTreeData(this.eruptModel.eruptName, this.eruptModel.eruptJson.layoutTree)
             .subscribe(tree => {
                 this.list = this.dataHandler.dataTreeToZorroTree(tree);
+                this.list.unshift({
+                    key: null,
+                    title: "全部",
+                    isLeaf: true
+                });
                 this.treeLoading = false;
             });
     }
@@ -45,11 +50,15 @@ export class LayoutTreeComponent implements OnInit {
     nodeClickEvent(event: NzFormatEmitEvent): void {
         if (event.node.origin.selected) {
             let ef: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(this.eruptModel.eruptJson.layoutTree);
-            this.trigger.emit({
-                [this.eruptModel.eruptJson.layoutTree]: {
-                    [ef.eruptFieldJson.edit.referenceTreeType.id]: event.node.origin.key
-                }
-            });
+            if (event.node.origin.key) {
+                this.trigger.emit({
+                    [this.eruptModel.eruptJson.layoutTree]: {
+                        [ef.eruptFieldJson.edit.referenceTreeType.id]: event.node.origin.key
+                    }
+                });
+            } else {
+                this.trigger.emit(null);
+            }
         } else {
             this.trigger.emit(null);
         }

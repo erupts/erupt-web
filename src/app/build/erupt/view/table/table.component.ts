@@ -68,7 +68,7 @@ export class TableComponent implements OnInit {
     @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
         this._drill = drill;
         this.init(this.dataService.getEruptBuild(drill.erupt), {
-            url: RestPath.data + drill.eruptParent + "/drill/" + drill.code + "/" + drill.val,
+            url: RestPath.data + "/" + drill.eruptParent + "/drill/" + drill.code + "/" + drill.val,
             header: {
                 erupt: drill.eruptParent
             }
@@ -81,7 +81,7 @@ export class TableComponent implements OnInit {
         this._reference = reference;
         this.init(this.dataService.getEruptBuildByField(reference.eruptBuild.eruptModel.eruptName,
             reference.eruptField.fieldName), {
-            url: RestPath.data + reference.eruptBuild.eruptModel.eruptName
+            url: RestPath.data + "/" + reference.eruptBuild.eruptModel.eruptName
                 + "/reference-table/"
                 + reference.eruptField.fieldName + (reference.dependVal ? "?dependValue=" + reference.dependVal : ''),
             header: {
@@ -103,7 +103,7 @@ export class TableComponent implements OnInit {
 
     @Input() set eruptName(value: string) {
         this.init(this.dataService.getEruptBuild(value), {
-            url: RestPath.data + "table/" + value,
+            url: RestPath.data + "/table/" + value,
             header: {
                 erupt: value
             }
@@ -293,7 +293,7 @@ export class TableComponent implements OnInit {
                 },
                 iif: (item) => {
                     if (ro.ifExpr) {
-                        return eval(ro.ifExpr)
+                        return eval(ro.ifExpr);
                     } else {
                         return true;
                     }
@@ -325,17 +325,17 @@ export class TableComponent implements OnInit {
                                 eruptParent: this.eruptBuildModel.eruptModel.eruptName
                             }
                         }
-                    })
+                    });
                 }
             });
         }
         if (tableOperators.length > 0) {
             let width = 0;
             for (let key in eruptJson.rowOperation) {
-                width += (eruptJson.rowOperation[key].title.length * 20)
+                width += (eruptJson.rowOperation[key].title.length * 20);
             }
             for (let key in eruptJson.drills) {
-                width += (eruptJson.drills[key].title.length * 20)
+                width += (eruptJson.drills[key].title.length * 20);
             }
             _columns.push({
                 title: "操作",

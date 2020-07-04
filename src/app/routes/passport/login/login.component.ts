@@ -121,7 +121,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
                     } else {
                         this.router.navigateByUrl(result.indexPath || '/').then();
                     }
-                }, 300)
+                }, 100)
             } else {
                 this.loading = false;
                 this.error = result.reason;

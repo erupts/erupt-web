@@ -20,9 +20,9 @@ export class DataService {
 
     public static PARAM_TOKEN: string = "_token";
 
-    public upload: string = RestPath.file + "upload/";
+    public upload: string = RestPath.file + "/upload/";
 
-    public excelImport: string = RestPath.excel + "import/";
+    public excelImport: string = RestPath.excel + "/import/";
 
     constructor(private http: HttpClient, private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
@@ -55,7 +55,7 @@ export class DataService {
         if (WindowModel.fileDomain) {
             return WindowModel.fileDomain + "/" + path;
         } else {
-            return RestPath.file + "/" + "download-attachment" + "/" + path;
+            return RestPath.file + "/download-attachment" + "/" + path;
         }
     }
 
@@ -63,13 +63,13 @@ export class DataService {
         if (WindowModel.fileDomain) {
             return WindowModel.fileDomain + "/" + path;
         } else {
-            return RestPath.file + "preview-attachment" + "/" + path;
+            return RestPath.file + "/preview-attachment" + "/" + path;
         }
     }
 
     //获取结构
     getEruptBuild(eruptName: string, eruptParentName?: string): Observable<EruptBuildModel> {
-        return this._http.get<EruptBuildModel>(RestPath.build + eruptName, null, {
+        return this._http.get<EruptBuildModel>(RestPath.build + "/" + eruptName, null, {
             observe: "body",
             headers: {
                 erupt: eruptName,
@@ -79,7 +79,7 @@ export class DataService {
     }
 
     getEruptBuildByField(eruptName: string, field: string, eruptParentName?: string): Observable<EruptBuildModel> {
-        return this._http.get<EruptBuildModel>(RestPath.build + eruptName + "/" + field, null, {
+        return this._http.get<EruptBuildModel>(RestPath.build + "/" + eruptName + "/" + field, null, {
             observe: "body",
             headers: {
                 erupt: eruptName,
@@ -89,12 +89,12 @@ export class DataService {
     }
 
     getEruptTpl(name: string) {
-        return RestPath.tpl + name + "?_token=" + this.tokenService.get().token + "&_erupt=" + name;
+        return RestPath.tpl + "/" + name + "?_token=" + this.tokenService.get().token + "&_erupt=" + name;
     }
 
     //tree数据结构
     queryEruptTreeData(eruptName: string): Observable<Tree[]> {
-        return this._http.get<Tree[]>(RestPath.data + "tree/" + eruptName, null, {
+        return this._http.get<Tree[]>(RestPath.data + "/tree/" + eruptName, null, {
             observe: "body",
             headers: {
                 erupt: eruptName
@@ -104,7 +104,7 @@ export class DataService {
 
     //根据id获取数据
     queryEruptDataById(eruptName: string, id: any): Observable<any> {
-        return this._http.get<any>(RestPath.data + eruptName + "/" + id, null, {
+        return this._http.get<any>(RestPath.data + "/" + eruptName + "/" + id, null, {
             observe: "body",
             headers: {
                 erupt: eruptName
@@ -114,7 +114,7 @@ export class DataService {
 
 
     findTabTree(eruptName: string, tabFieldName: string): Observable<Tree[]> {
-        return this._http.get<Tree[]>(RestPath.data + "tab/tree/" + eruptName + "/" + tabFieldName, null, {
+        return this._http.get<Tree[]>(RestPath.data + "/tab/tree/" + eruptName + "/" + tabFieldName, null, {
             observe: "body",
             headers: {
                 erupt: eruptName
@@ -124,7 +124,7 @@ export class DataService {
 
     //执行自定义operator方法
     execOperatorFun(eruptName: string, operatorCode: string, ids: any, param: object) {
-        return this._http.post(RestPath.data + eruptName + "/operator/" + operatorCode, {
+        return this._http.post(RestPath.data + "/" + eruptName + "/operator/" + operatorCode, {
             ids: ids,
             param: param
         }, null, {
@@ -147,7 +147,7 @@ export class DataService {
         if (eruptParent) {
             header["eruptParent"] = eruptParent;
         }
-        return this._http.get<Tree[]>(RestPath.data + eruptName + "/reference-tree/" + refName, param, {
+        return this._http.get<Tree[]>(RestPath.data + "/" + eruptName + "/reference-tree/" + refName, param, {
             observe: "body",
             headers: header
         });
@@ -155,7 +155,7 @@ export class DataService {
 
     //增加数据
     addEruptData(eruptName: string, data: any): Observable<any> {
-        return this._http.post<any>(RestPath.data + eruptName, data, null, {
+        return this._http.post<any>(RestPath.data + "/" + eruptName, data, null, {
             observe: null,
             headers: {
                 erupt: eruptName
@@ -165,7 +165,7 @@ export class DataService {
 
     //增加数据
     addEruptDrillData(eruptName: string, code: string, val: any, data: any): Observable<any> {
-        return this._http.post<any>(RestPath.data + "add/" + eruptName + "/drill/" + code + "/" + val, data, null, {
+        return this._http.post<any>(RestPath.data + "/add/" + eruptName + "/drill/" + code + "/" + val, data, null, {
             observe: null,
             headers: {
                 erupt: eruptName
@@ -175,7 +175,7 @@ export class DataService {
 
     //修改数据
     editEruptData(eruptName: string, data: object): Observable<EruptApiModel> {
-        return this._http.put<EruptApiModel>(RestPath.data + eruptName, data, null, {
+        return this._http.put<EruptApiModel>(RestPath.data + "/" + eruptName, data, null, {
             observe: null,
             headers: {
                 erupt: eruptName
@@ -185,7 +185,7 @@ export class DataService {
 
     //删除数据
     deleteEruptData(eruptName: string, id): Observable<EruptApiModel> {
-        return this._http.delete(RestPath.data + eruptName + "/" + id, null, {
+        return this._http.delete(RestPath.data + "/" + eruptName + "/" + id, null, {
             headers: {
                 erupt: eruptName
             }
@@ -194,7 +194,7 @@ export class DataService {
 
     //批量删除数据
     deleteEruptDatas(eruptName: string, ids: any[]): Observable<EruptApiModel> {
-        return this._http.delete(RestPath.data + eruptName, {ids: ids}, {
+        return this._http.delete(RestPath.data + "/" + eruptName, {ids: ids}, {
             headers: {
                 erupt: eruptName
             }
@@ -202,7 +202,7 @@ export class DataService {
     }
 
     eruptDataValidate(eruptName: string, data: any, eruptParent?: string): Observable<EruptApiModel> {
-        return this._http.post(RestPath.data + "validate-erupt/" + eruptName, data, null, {
+        return this._http.post(RestPath.data + "/validate-erupt/" + eruptName, data, null, {
             headers: {
                 erupt: eruptName,
                 eruptParent: eruptParent || ""
@@ -245,11 +245,11 @@ export class DataService {
     }
 
     downloadExcelTemplate(eruptName: string) {
-        DataService.postExcelFile(RestPath.excel + "template/" + eruptName + "?" + this.createAuthParam(eruptName));
+        DataService.postExcelFile(RestPath.excel + "/template/" + eruptName + "?" + this.createAuthParam(eruptName));
     }
 
     downloadExcel(eruptName: string, condition: any) {
-        DataService.postExcelFile(RestPath.excel + "export/" + eruptName + "?" + this.createAuthParam(eruptName), {
+        DataService.postExcelFile(RestPath.excel + "/export/" + eruptName + "?" + this.createAuthParam(eruptName), {
             condition: encodeURIComponent(JSON.stringify(condition))
         });
     }
@@ -259,7 +259,7 @@ export class DataService {
     }
 
     getFieldTplPath(eruptName: string, fieldName: string): string {
-        return RestPath.tpl + "html-field/" + eruptName + "/" + fieldName + "?_token=" + this.tokenService.get().token + "&_erupt=" + eruptName;
+        return RestPath.tpl + "/" + "html-field/" + eruptName + "/" + fieldName + "?_token=" + this.tokenService.get().token + "&_erupt=" + eruptName;
     }
 
 

@@ -2,7 +2,7 @@ export class WindowModel {
 
     private static config: any = window["eruptSiteConfig"] || {};
 
-    public static domain: string = WindowModel.config["domain"] || '';
+    public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';
 
     public static fileDomain: string = WindowModel.config["fileDomain"] || '';
 
