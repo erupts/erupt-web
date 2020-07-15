@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {
     Rose, Line, Area, StepLine, Ring, Radar,
     StackArea, WordCloud, Funnel, Pie, Column, StackColumn
@@ -16,6 +16,8 @@ export class ChartComponent implements OnInit {
     @Input() chart: Chart;
 
     @Input() biCode: string;
+
+    @ViewChild('biChart', null) biCharts: ChartComponent[];
 
     constructor(private ref: ElementRef, private biDataService: BiDataService) {
     }

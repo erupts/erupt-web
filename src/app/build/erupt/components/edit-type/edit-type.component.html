@@ -521,7 +521,7 @@
                                             <nz-upload nzType="drag"
                                                        *ngIf="field.eruptFieldJson.edit.$viewValue"
                                                        [nzLimit]="field.eruptFieldJson.edit.attachmentType.maxLimit"
-                                                       [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                       [nzDisabled]="field.eruptFieldJson.edit.readOnly||field.eruptFieldJson.edit.$viewValue.length==field.eruptFieldJson.edit.attachmentType.maxLimit"
                                                        (nzChange)="upLoadNzChange($event,field)"
                                                        [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
                                                        [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName,eruptParent:parentEruptName||''}"

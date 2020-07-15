@@ -61,7 +61,7 @@ export class BiComponent implements OnInit, OnDestroy {
                 this.bi = res;
                 //维度
                 for (let dimension of res.dimensions) {
-                    if (dimension.type == DimType.NUMBER_RANGE) {
+                    if (dimension.type === DimType.NUMBER_RANGE) {
                         dimension.$value = [];
                     }
                     if (dimension.notNull) {
@@ -70,8 +70,8 @@ export class BiComponent implements OnInit, OnDestroy {
                     }
                 }
                 this.query(1, 20);
-
-            })
+                // this.chartQuery();
+            });
         });
     }
 
@@ -91,7 +91,6 @@ export class BiComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe = new DatePipe("zh-cn");
 
     query(pageIndex: number, pageSize: number) {
-        //this.chartQuery();
         let param = this.buildDimParam();
         if (!param) {
             return;
@@ -108,7 +107,7 @@ export class BiComponent implements OnInit, OnDestroy {
                     this.columns.push({
                         title: "暂无数据",
                         className: "text-center"
-                    })
+                    });
                 } else {
                     this.columns.push({
                         title: '序号',
@@ -127,12 +126,16 @@ export class BiComponent implements OnInit, OnDestroy {
                                 return col.show;
                             }
                         };
-                        this.columns.push(col)
+                        this.columns.push(col);
                     }
                 }
                 this.data = res.list;
-            })
+            });
         }
+    }
+
+    print() {
+        window.print();
     }
 
     chartQuery() {

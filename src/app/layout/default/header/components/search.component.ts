@@ -12,7 +12,7 @@ import {Menu} from "@delon/theme/src/services/menu/interface";
         <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
             <input nz-input [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()"
                    (input)="onInput($event)"
-                   [placeholder]="'搜索'" [nzAutocomplete]="auto" style="padding-left: 35px">
+                   [placeholder]="'搜索菜单'" [nzAutocomplete]="auto" style="padding-left: 32px">
             <nz-autocomplete #auto [nzBackfill]="true">
                 <nz-auto-option *ngFor="let menu of options" [nzValue]="menu.name"
                                 [nzLabel]="menu.name">
