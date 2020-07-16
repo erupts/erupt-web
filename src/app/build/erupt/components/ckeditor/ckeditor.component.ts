@@ -33,7 +33,7 @@ export class CkeditorComponent implements OnInit {
     ngOnInit() {
         let that = this;
         setTimeout(() => {
-            this.lazy.loadScript("/assets/js/ckeditor.js").then(() => {
+            this.lazy.loadScript("assets/js/ckeditor.js").then(() => {
                 DecoupledDocumentEditor.create(this.ref.nativeElement.querySelector("#editor"), {
                     toolbar: {
                         items: [

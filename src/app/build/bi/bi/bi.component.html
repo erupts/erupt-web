@@ -2,13 +2,13 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!bi"></nz-skeleton>
 <ng-container *ngIf="bi">
     <ng-container *ngIf="bi.dimensions.length>0">
-        <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query(1,size);chartQuery()">
+        <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query(1,size);">
             <i nz-icon nzType="search" nzTheme="outline"></i>查询
         </button>
     </ng-container>
-    <button nz-button class="mb-sm" (click)="print()">
-        <i nz-icon nzType="printer" nzTheme="outline"></i>打印
-    </button>
+<!--    <button nz-button class="mb-sm" (click)="print()">-->
+<!--        <i nz-icon nzType="printer" nzTheme="outline"></i>打印-->
+<!--    </button>-->
     <ng-container *ngIf="bi.export">
         <button nz-button class="mb-sm" (click)="exportBiData()">
             <i nz-icon nzType="download" nzTheme="outline"></i>导出
