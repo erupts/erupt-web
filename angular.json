@@ -50,7 +50,7 @@
                 "input": "./node_modules/monaco-editor/min/vs/",
                 "output": "/assets/vs/"
               },
-              "src/manifest.webmanifest"
+              "src/manifest.json"
             ],
             "styles": [
               "src/styles.less"

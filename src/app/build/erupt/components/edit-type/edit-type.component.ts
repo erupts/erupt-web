@@ -94,7 +94,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 models.eruptFieldJson.edit.show = !!eval(showBy.expr);
             }
         }
-        console.log(this.showByFieldModels);
     }
 
     ngDoCheck() {

@@ -92,3 +92,7 @@ export enum SelectMode {
     checkbox = "checkbox",
     radio = "radio"
 }
+
+export enum OperationMode {
+    SINGLE = "SINGLE", MULTI = "MULTI", BUTTON = "BUTTON"
+}

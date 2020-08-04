@@ -51,7 +51,13 @@ export class EditComponent implements OnInit, OnDestroy {
                 }
             });
         }
-        if (this.behavior != "add") {
+        if (this.behavior == "add") {
+            this.loading = true;
+            this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
+                this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
+                this.loading = false;
+            });
+        } else {
             this.loading = true;
             this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.id).subscribe(data => {
                 this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);

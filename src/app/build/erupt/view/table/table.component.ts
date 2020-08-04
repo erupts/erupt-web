@@ -11,7 +11,7 @@ import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {deepCopy} from "@delon/util";
-import {EditType, RestPath, SelectMode} from "../../model/erupt.enum";
+import {EditType, OperationMode, RestPath, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {BuildConfig} from "../../model/build-config";
@@ -42,6 +42,8 @@ export class TableComponent implements OnInit {
 
     @ViewChild("st", {static: false})
     st: STComponent;
+
+    operationMode = OperationMode;
 
     ww = window.document.documentElement.clientHeight;
 
@@ -278,28 +280,36 @@ export class TableComponent implements OnInit {
         const that = this;
         for (let key in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
             let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[key];
-            if (!ro.icon) {
-                ro.icon = "fa fa-ravelry";
-            }
-            tableOperators.push({
-                type: 'link',
-                text: ro.title,
-                tooltip: ro.tip,
-                // format: () => {
-                //     return `<i title="${ro.title}" class="${ro.icon}" style="color: #000"></i>`;
-                // },
-                click: (record: any, modal: any) => {
-                    that.createOperator(key, false, record);
-                },
-                iif: (item) => {
-                    if (ro.ifExpr) {
-                        return eval(ro.ifExpr);
-                    } else {
-                        return true;
-                    }
+            if (ro.mode !== OperationMode.BUTTON) {
+                let text = "";
+                if (ro.icon) {
+                    text = `<i class=\"${ro.icon}\"></i>`;
                 }
-            });
+                // if (ro.title) {
+                //     if (ro.icon) {
+                //         text += "&nbsp;&nbsp;" + ro.title;
+                //     } else {
+                //         text = ro.title;
+                //     }
+                // }
+                tableOperators.push({
+                    type: 'link',
+                    text: text,
+                    tooltip: ro.title + (ro.tip && "(" + ro.tip + ")"),
+                    click: (record: any, modal: any) => {
+                        that.createOperator(key, record);
+                    },
+                    iif: (item) => {
+                        if (ro.ifExpr) {
+                            return eval(ro.ifExpr);
+                        } else {
+                            return true;
+                        }
+                    }
+                });
+            }
         }
+
         //drill
         const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
         for (let key in eruptJson.drills) {
@@ -330,17 +340,21 @@ export class TableComponent implements OnInit {
             });
         }
         if (tableOperators.length > 0) {
-            let width = 0;
-            for (let key in eruptJson.rowOperation) {
-                width += (eruptJson.rowOperation[key].title.length * 20);
-            }
-            for (let key in eruptJson.drills) {
-                width += (eruptJson.drills[key].title.length * 20);
-            }
+            // let width = 0;
+            // for (let key in eruptJson.rowOperation) {
+            //     width += (eruptJson.rowOperation[key].title.length * 20);
+            //     if (eruptJson.rowOperation[key].icon) {
+            //         width += 20;
+            //     }
+            // }
+            // for (let key in eruptJson.drills) {
+            //     width += (eruptJson.drills[key].title.length * 20);
+            // }
             _columns.push({
                 title: "操作",
                 fixed: "right",
-                width: (width + 120) + "px",
+                width: "auto",
+                // width: (width + 120) + "px",
                 className: "text-center",
                 buttons: tableOperators
             });
@@ -354,26 +368,24 @@ export class TableComponent implements OnInit {
      * @param multi 是否为多选执行
      * @param data 数据（单个执行时使用）
      */
-    createOperator(code: string, multi: boolean, data?: object) {
-        if (multi) {
-            if (!this.selectedRows || this.selectedRows.length == 0) {
-                this.msg.warning("执行该操作时请至少选中一条数据");
-                return;
-            }
-        }
+    createOperator(code: string, data?: object) {
         const eruptModel = this.eruptBuildModel.eruptModel;
         const ro = eruptModel.eruptJson.rowOperation[code];
         let operationErupt = null;
         if (this.eruptBuildModel.operationErupts) {
             operationErupt = this.eruptBuildModel.operationErupts[code];
         }
-
         let ids = [];
-        this.selectedRows.forEach(e => {
-            ids.push(e[eruptModel.eruptJson.primaryKeyCol]);
-        });
-        if (!multi) {
+        if (data) {
             ids = [data[eruptModel.eruptJson.primaryKeyCol]];
+        } else {
+            if (ro.mode === OperationMode.MULTI && this.selectedRows.length === 0) {
+                this.msg.warning("执行该操作时请至少选中一条数据");
+                return;
+            }
+            this.selectedRows.forEach(e => {
+                ids.push(e[eruptModel.eruptJson.primaryKeyCol]);
+            });
         }
         if (operationErupt) {
             let modal = this.modal.create({
@@ -387,7 +399,9 @@ export class TableComponent implements OnInit {
                     let eruptValue = this.dataHandler.eruptValueToObject({eruptModel: operationErupt});
                     let res = await this.dataService.execOperatorFun(eruptModel.eruptName, code, ids, eruptValue).toPromise().then(res => res);
                     modal.getInstance().nzCancelDisabled = false;
-                    if (res.status == Status.SUCCESS) {
+
+                    this.selectedRows = [];
+                    if (res.status === Status.SUCCESS) {
                         this.st.reload();
                         return true;
                     } else {
@@ -407,10 +421,11 @@ export class TableComponent implements OnInit {
             this.modal.confirm({
                 nzTitle: "请确认是否执行此操作",
                 nzContent: ro.title,
-                nzOnOk: () => {
-                    this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, ids, null).subscribe(res => {
-                        this.st.reload();
-                    });
+                nzOnOk: async () => {
+                    this.selectedRows = [];
+                    await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, ids, null)
+                        .toPromise().then();
+                    this.st.reload();
                 }
             });
         }

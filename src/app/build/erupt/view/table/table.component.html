@@ -83,9 +83,9 @@
             <div>
                 <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
                     <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation | keyvalue">
-                        <ng-container *ngIf="item.value.multi">
+                        <ng-container *ngIf="item.value.mode != operationMode.SINGLE">
                             <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.value.tip"
-                                    (click)="createOperator(item.key,true)">
+                                    (click)="createOperator(item.key)">
                                 <i class="fa" [ngClass]="item.value.icon"></i>
                                 <span style="margin-left: 8px;">{{item.value.title}}</span>
                             </button>
