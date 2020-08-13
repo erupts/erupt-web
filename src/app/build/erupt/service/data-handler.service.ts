@@ -26,6 +26,7 @@ export class DataHandlerService {
 
     initErupt(em: EruptBuildModel) {
         this.buildErupt(em.eruptModel);
+        em.eruptModel.eruptJson.power = em.power;
         if (em.tabErupts) {
             for (let key in em.tabErupts) {
                 if ("eruptName" in em.tabErupts[key].eruptModel) {
@@ -669,6 +670,10 @@ export class DataHandlerService {
                 }
             }
         });
+        let dependTree = eruptBuildModel.eruptModel.eruptJson.linkTree;
+        if (dependTree) {
+            eruptData[dependTree.field] = dependTree.value;
+        }
         if (eruptBuildModel.combineErupts) {
             for (let key in eruptBuildModel.combineErupts) {
                 eruptData[key] = this.eruptValueToObject({

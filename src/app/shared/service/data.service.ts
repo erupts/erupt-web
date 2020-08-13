@@ -114,8 +114,7 @@ export class DataService {
 
     //根据id获取数据
     getInitValue(eruptName: string): Observable<any> {
-        console.log(RestPath.data + "/init/" + eruptName);
-        return this._http.get<any>(RestPath.data + "/init/" + eruptName, null, {
+        return this._http.get<any>(RestPath.data + "/init-value/" + eruptName, null, {
             observe: "body",
             headers: {
                 erupt: eruptName
@@ -139,6 +138,15 @@ export class DataService {
             ids: ids,
             param: param
         }, null, {
+            observe: "body",
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
+    queryDependTreeData(eruptName: string) {
+        return this._http.get<Tree[]>(RestPath.data + "/depend-tree/" + eruptName, null, {
             observe: "body",
             headers: {
                 erupt: eruptName

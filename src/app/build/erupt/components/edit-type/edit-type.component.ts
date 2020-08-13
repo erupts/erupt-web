@@ -87,7 +87,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             this.dataHandlerService.loadEruptDefaultValue(this.eruptBuildModel);
         }
         for (let models of this.eruptModel.eruptFieldModels) {
-            let showBy = models.eruptFieldJson.edit.showBy;
+            let edit = models.eruptFieldJson.edit;
+            let showBy = edit.showBy;
             if (showBy) {
                 this.showByFieldModels.push(models);
                 let fieldValue = this.eruptModel.eruptFieldModelMap.get(showBy.dependField).eruptFieldJson.edit.$value;
@@ -213,7 +214,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         let model = this.modal.create({
             nzWrapClassName: "modal-xxl",
             nzKeyboard: true,
-            nzStyle: {top: "20px"},
+            nzStyle: {top: "24px"},
+            nzBodyStyle: {padding: "8px"},
             nzTitle: edit.title,
             nzCancelText: "取消（ESC）",
             nzContent: ReferenceTableComponent,

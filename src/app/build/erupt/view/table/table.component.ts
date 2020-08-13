@@ -20,7 +20,7 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 
 @Component({
-    selector: "table-erupt",
+    selector: "erupt-table",
     templateUrl: "./table.component.html",
     styleUrls: ["./table.component.less"]
 })
@@ -45,8 +45,6 @@ export class TableComponent implements OnInit {
 
     operationMode = OperationMode;
 
-    ww = window.document.documentElement.clientHeight;
-
     showColCtrl: boolean = false;
 
     clientWidth = document.body.clientWidth;
@@ -63,7 +61,9 @@ export class TableComponent implements OnInit {
 
     columns: STColumn[];
 
-    layoutTree: boolean;
+    linkTree: boolean = false;
+
+    showTable: boolean = true;
 
     _drill: { erupt: string, code: string, eruptParent: string, val: any };
 
@@ -121,6 +121,7 @@ export class TableComponent implements OnInit {
         header: any
     }, callback?: Function) {
         this.selectedRows = [];
+        this.showTable = true;
         this.eruptBuildModel = null;
         if (this.searchErupt) {
             this.searchErupt.eruptFieldModels = [];
@@ -129,7 +130,11 @@ export class TableComponent implements OnInit {
         this.stConfig.req.headers = req.header;
         this.stConfig.url = req.url;
         observable.subscribe(eb => {
-                this.layoutTree = !!eb.eruptModel.eruptJson.layoutTree;
+                let dt = eb.eruptModel.eruptJson.linkTree;
+                this.linkTree = !!dt;
+                if (dt) {
+                    this.showTable = !dt.dependNode;
+                }
                 this.dataHandler.initErupt(eb);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
@@ -162,13 +167,13 @@ export class TableComponent implements OnInit {
         }
     }
 
-    query(param?: any) {
+    query() {
         if (this.searchErupt.eruptFieldModels.length > 0) {
             this.stConfig.req.param = this.dataHandler.searchEruptToObject({
                 eruptModel: this.searchErupt
             });
         }
-        this.st.load(1, Object.assign(this.stConfig.req.param, param));
+        this.st.load(1, this.stConfig.req.param);
     }
 
     buildTableConfig() {
@@ -331,7 +336,7 @@ export class TableComponent implements OnInit {
                             drill: {
                                 code: key,
                                 val: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
-                                erupt: drill.link.eruptClass,
+                                erupt: drill.link.linkErupt,
                                 eruptParent: this.eruptBuildModel.eruptModel.eruptName
                             }
                         }
@@ -340,21 +345,22 @@ export class TableComponent implements OnInit {
             });
         }
         if (tableOperators.length > 0) {
-            // let width = 0;
-            // for (let key in eruptJson.rowOperation) {
-            //     width += (eruptJson.rowOperation[key].title.length * 20);
-            //     if (eruptJson.rowOperation[key].icon) {
-            //         width += 20;
-            //     }
-            // }
-            // for (let key in eruptJson.drills) {
-            //     width += (eruptJson.drills[key].title.length * 20);
-            // }
+            let width = 0;
+            for (let key in eruptJson.rowOperation) {
+                // width += (eruptJson.rowOperation[key].title.length * 20);
+                // if (eruptJson.rowOperation[key].icon) {
+                //     width += 20;
+                // }
+                width += 25;
+            }
+            for (let key in eruptJson.drills) {
+                width += (eruptJson.drills[key].title.length * 20);
+            }
             _columns.push({
                 title: "操作",
                 fixed: "right",
-                width: "auto",
-                // width: (width + 120) + "px",
+                // width: "auto",
+                width: (width + 120) + "px",
                 className: "text-center",
                 buttons: tableOperators
             });
@@ -546,7 +552,10 @@ export class TableComponent implements OnInit {
 
 
     clickTreeNode(event) {
-        this.query(event);
+        this.showTable = true;
+        this.eruptBuildModel.eruptModel.eruptJson.linkTree.value = event;
+        this.searchErupt.eruptJson.linkTree.value = event;
+        this.query();
     }
 
 

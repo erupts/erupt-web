@@ -4,10 +4,12 @@
 <ng-template #suffixIcon>
     <i nz-icon nzType="search"></i>
 </ng-template>
-<nz-card [nzBodyStyle]="{padding:'10px',height:ww-195+'px',overflow: 'auto'}" [nzLoading]="treeLoading"
+<nz-card [nzBodyStyle]="{padding:'10px',overflow: 'auto'}" [nzLoading]="treeLoading"
+         style="height: calc(100vh - 180px)"
          [nzBordered]="true"
          [nzHoverable]="true">
     <nz-tree #tree
+
              [nzData]="list"
              class="tree-container"
              [nzShowLine]="true"

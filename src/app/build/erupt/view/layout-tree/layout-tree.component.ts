@@ -1,9 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {NzFormatEmitEvent} from "ng-zorro-antd";
 import {EruptFieldModel} from "../../model/erupt-field.model";
+import {STComponent} from "@delon/abc";
+import {TreeComponent} from "../tree/tree.component";
 
 @Component({
     selector: 'layout-tree',
@@ -26,20 +28,19 @@ export class LayoutTreeComponent implements OnInit {
 
     list: any;
 
-    ww = window.document.documentElement.clientHeight;
-
     ngOnInit() {
         this.treeLoading = true;
-        this.data.queryReferenceTreeData(this.eruptModel.eruptName, this.eruptModel.eruptJson.layoutTree)
-            .subscribe(tree => {
-                this.list = this.dataHandler.dataTreeToZorroTree(tree);
+        this.data.queryDependTreeData(this.eruptModel.eruptName).subscribe(data => {
+            this.list = this.dataHandler.dataTreeToZorroTree(data);
+            if (!this.eruptModel.eruptJson.linkTree.dependNode) {
                 this.list.unshift({
                     key: null,
                     title: "全部",
                     isLeaf: true
                 });
-                this.treeLoading = false;
-            });
+            }
+            this.treeLoading = false;
+        });
     }
 
     nzDblClick(event: NzFormatEmitEvent) {
@@ -48,21 +49,16 @@ export class LayoutTreeComponent implements OnInit {
     }
 
     nodeClickEvent(event: NzFormatEmitEvent): void {
-        if (event.node.origin.selected) {
-            let ef: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(this.eruptModel.eruptJson.layoutTree);
-            if (event.node.origin.key) {
-                this.trigger.emit({
-                    [this.eruptModel.eruptJson.layoutTree]: {
-                        [ef.eruptFieldJson.edit.referenceTreeType.id]: event.node.origin.key
-                    }
-                });
-            } else {
-                this.trigger.emit(null);
-            }
-        } else {
+        if (event.node.origin.key == null) {
             this.trigger.emit(null);
+        } else {
+            let dt = this.eruptModel.eruptJson.linkTree;
+            if (!event.node.origin.selected && !dt.dependNode) {
+                this.trigger.emit(null);
+            } else {
+                this.trigger.emit(event.node.origin.key);
+            }
         }
-
         // this.data.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
         //     this.loading = false;
         //     this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);

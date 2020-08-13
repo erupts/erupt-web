@@ -8,8 +8,8 @@ import {SelectMode} from "../../model/erupt.enum";
 @Component({
     selector: "app-reference-table",
     template: `
-        <table-erupt [referenceTable]="{eruptBuild:eruptBuild,eruptField:eruptField,mode:mode,dependVal:dependVal}">
-        </table-erupt>
+        <erupt-table [referenceTable]="{eruptBuild:eruptBuild,eruptField:eruptField,mode:mode,dependVal:dependVal}">
+        </erupt-table>
     `,
     styleUrls: ["./reference-table.component.less"]
 })

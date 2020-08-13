@@ -72,7 +72,6 @@ export class AmapComponent implements OnInit {
             this.mouseTool = new AMap.MouseTool(map);
             AMap.plugin('AMap.Geolocation', function () {
                 let geolocation = new AMap.Geolocation({
-                    enableHighAccuracy: true,//是否使用高精度定位，默认:true
                     timeout: 10000,          //超过10秒后停止定位，默认：5s
                     buttonPosition: 'RB',    //定位按钮的停靠位置
                     autoFitView: true

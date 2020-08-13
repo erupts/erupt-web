@@ -25,8 +25,6 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     private showEdit: boolean = false;
 
-    private ww = window.document.documentElement.clientHeight;
-
     private loading = false;
 
     private treeLoading = false;
@@ -112,12 +110,16 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     addBlock() {
         this.showEdit = true;
-        this.loading = false;
+        this.loading = true;
         this.selectLeaf = false;
         if (this.tree.getSelectedNodeList()[0]) {
             this.tree.getSelectedNodeList()[0].isSelected = false;
         }
         this.dataHandler.emptyEruptValue(this.eruptBuildModel);
+        this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
+            this.loading = false;
+            this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
+        });
     }
 
     addSub() {

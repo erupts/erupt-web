@@ -12,7 +12,8 @@
             <i nz-icon nzType="search"></i>
         </ng-template>
         <br>
-        <nz-card [nzBodyStyle]="{padding:'10px',height:ww-235+'px',overflow: 'auto'}" [nzLoading]="treeLoading"
+        <nz-card [nzBodyStyle]="{padding:'10px',height:'calc(100vh - 220px)',overflow: 'auto'}"
+                 [nzLoading]="treeLoading"
                  [nzBordered]="true"
                  [nzHoverable]="true">
             <nz-tree #tree
@@ -29,11 +30,13 @@
     </div>
 
     <div nz-col class="mb-sm" [nzXs]="24" [nzSm]="16" [nzMd]="16" [nzLg]="18" [hidden]="!showEdit">
-        <div *ngIf="linkTable&&currentKey" [ngStyle]="{height: ww-193+'px',overflow: 'auto',overflowX:'hidden'}"
-             style="border-bottom: 1px solid #e8e8e8;padding-bottom: 20px" class="scrollbar">
-            <table-erupt [drill]="{erupt:linkTable.eruptClass,eruptParent:eruptName,code:'link',val:currentKey}">
+        <div *ngIf="linkTable&&currentKey"
+             style="border-bottom: 1px solid #e8e8e8;padding-bottom: 20px;
+             height:calc(100vh - 180px);overflow: auto;overflow-x:hidden"
+             class="scrollbar">
+            <erupt-table [drill]="{erupt:linkTable.linkErupt,eruptParent:eruptName,code:'link',val:currentKey}">
 
-            </table-erupt>
+            </erupt-table>
         </div>
         <ng-container *ngIf="!linkTable">
             <div nz-row class="mb-sm">
@@ -67,14 +70,16 @@
                     </button>
                 </div>
             </div>
-            <div [ngStyle]="{height: ww-193+'px',overflow: 'auto',overflowX:'hidden'}">
+            <div [ngStyle]="{overflow: 'auto',overflowX:'hidden'}" style="height:calc(100vh - 180px)">
                 <nz-spin [nzSpinning]="loading" nzSize="large">
                     <nz-collapse nzAccordion>
                         <nz-collapse-panel [nzActive]="true" [nzHeader]="'基本信息'" [nzDisabled]="true">
                             <nz-skeleton [nzActive]="true" [nzLoading]="!eruptBuildModel">
-                                <erupt-edit [eruptBuildModel]="eruptBuildModel">
+                                <div>
+                                    <erupt-edit [eruptBuildModel]="eruptBuildModel">
 
-                                </erupt-edit>
+                                    </erupt-edit>
+                                </div>
                             </nz-skeleton>
                         </nz-collapse-panel>
                     </nz-collapse>

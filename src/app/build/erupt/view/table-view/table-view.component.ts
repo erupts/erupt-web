@@ -3,7 +3,7 @@ import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 
 @Component({
-    selector: "erupt-table",
+    selector: "erupt-table-view",
     templateUrl: "./table-view.component.html",
     styleUrls: ["./table-view.component.less"]
 })
