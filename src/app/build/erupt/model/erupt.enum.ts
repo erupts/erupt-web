@@ -8,6 +8,7 @@ export class RestPath {
     public static tpl: string = RestPath.erupt + "/tpl";
     public static build: string = RestPath.erupt + "/build";
     public static data: string = RestPath.erupt + "/data";
+    public static comp: string = RestPath.erupt + "/comp";
     public static excel: string = RestPath.erupt + "/excel";
     public static file: string = RestPath.erupt + "/file";
     public static bi: string = RestPath.erupt + "/bi";
@@ -24,6 +25,7 @@ export enum EditType {
     REFERENCE_TREE = "REFERENCE_TREE",         //引用
     BOOLEAN = "BOOLEAN",                       //布尔
     ATTACHMENT = "ATTACHMENT",                 //附件
+    AUTO_COMPLETE = "AUTO_COMPLETE",           //自动完成
     TAB_TREE = "TAB_TREE",
     TAB_TABLE_ADD = "TAB_TABLE_ADD",
     TAB_TABLE_REFER = "TAB_TABLE_REFER",

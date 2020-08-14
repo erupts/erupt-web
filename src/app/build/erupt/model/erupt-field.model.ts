@@ -55,6 +55,7 @@ export interface Edit {
     referenceTreeType: ReferenceTreeType;
     referenceTableType: ReferenceTableType;
     attachmentType: AttachmentType;
+    autoCompleteType: AutoCompleteType;
     boolType: BoolType;
     choiceType: ChoiceType;
     dateType: DateType;
@@ -92,6 +93,11 @@ interface InputType {
 interface NumberType {
     min: number;
     max: number;
+}
+
+interface AutoCompleteType {
+    items: any[];
+    triggerLength: number;
 }
 
 export interface ReferenceTreeType {

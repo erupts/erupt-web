@@ -122,6 +122,15 @@ export class DataService {
         });
     }
 
+    queryAutoCompleteResult(eruptName: string, field: string, val: string): Observable<string[]> {
+        return this._http.get<string[]>(RestPath.comp + "/auto-complete/" + eruptName + "/" + field + "/" + val, null, {
+            observe: "body",
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
 
     findTabTree(eruptName: string, tabFieldName: string): Observable<Tree[]> {
         return this._http.get<Tree[]>(RestPath.data + "/tab/tree/" + eruptName + "/" + tabFieldName, null, {

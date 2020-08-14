@@ -9,7 +9,7 @@ import {
     OnInit,
     Output
 } from "@angular/core";
-import {EruptFieldModel} from "../../model/erupt-field.model";
+import {Edit, EruptField, EruptFieldModel} from "../../model/erupt-field.model";
 import {AttachmentEnum, ChoiceEnum, DateEnum, EditType} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {TreeSelectComponent} from "../tree-select/tree-select.component";
@@ -263,6 +263,18 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     changeTagAll($event, field: EruptFieldModel) {
         for (let vl of field.choiceList) {
             vl.$viewValue = $event;
+        }
+    }
+
+
+    onAutoCompleteInput(event, fieldModel: EruptFieldModel) {
+        let edit = fieldModel.eruptFieldJson.edit;
+        if (edit.$value && edit.autoCompleteType.triggerLength <= edit.$value.toString().length) {
+            this.dataService.queryAutoCompleteResult(this.eruptModel.eruptName, fieldModel.fieldName, edit.$value).subscribe(res => {
+                edit.autoCompleteType.items = res;
+            });
+        } else {
+            edit.autoCompleteType.items = [];
         }
     }
 

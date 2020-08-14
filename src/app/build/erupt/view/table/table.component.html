@@ -17,7 +17,7 @@
 
                     <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
                         <button nz-button nzType="danger" [nzGhost]="true" style="background: #fff !important;"
-                                class="mb-sm"
+                                class="mb-sm" [nzLoading]="deleting"
                                 (click)="delRows()">
                             <i nz-icon nzType="delete" nzTheme="outline"></i>删除
                         </button>

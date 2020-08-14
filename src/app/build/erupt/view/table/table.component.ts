@@ -47,6 +47,8 @@ export class TableComponent implements OnInit {
 
     showColCtrl: boolean = false;
 
+    deleting: boolean = false;
+
     clientWidth = document.body.clientWidth;
 
     hideCondition = false;
@@ -489,13 +491,14 @@ export class TableComponent implements OnInit {
                 {
                     nzTitle: "确定要删除吗？",
                     nzContent: "",
-                    nzOnOk: () => {
-                        this.dataService.deleteEruptDatas(this.eruptBuildModel.eruptModel.eruptName, ids).subscribe(res => {
-                            if (res.status == Status.SUCCESS) {
-                                this.st.reload();
-                                this.msg.success("删除成功");
-                            }
-                        });
+                    nzOnOk: async () => {
+                        this.deleting = true;
+                        let res = await this.dataService.deleteEruptDatas(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
+                        this.deleting = false;
+                        if (res.status == Status.SUCCESS) {
+                            this.st.reload();
+                            this.msg.success("删除成功");
+                        }
                     }
                 }
             );
