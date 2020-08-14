@@ -270,7 +270,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     onAutoCompleteInput(event, fieldModel: EruptFieldModel) {
         let edit = fieldModel.eruptFieldJson.edit;
         if (edit.$value && edit.autoCompleteType.triggerLength <= edit.$value.toString().length) {
-            this.dataService.queryAutoCompleteResult(this.eruptModel.eruptName, fieldModel.fieldName, edit.$value).subscribe(res => {
+            this.dataService.findAutoCompleteValue(this.eruptModel.eruptName, fieldModel.fieldName, edit.$value).subscribe(res => {
                 edit.autoCompleteType.items = res;
             });
         } else {
