@@ -84,6 +84,7 @@ interface CodeEditType {
 //Edit Type
 interface InputType {
     length: number;
+    type: string;
     prefix: VL[];
     suffix: VL[];
     prefixValue?: string;

@@ -16,6 +16,7 @@
                                                              field.eruptFieldJson.edit.inputType.suffix.length==0">
                                     <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size">
                                         <input nz-input [nzSize]="size" autocomplete="off"
+                                               [type]="field.eruptFieldJson.edit.inputType.type"
                                                [ngStyle]="{borderStyle:(eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague)?'dashed':''}"
                                                (keyup)="enterEvent($event)"
                                                [maxLength]="field.eruptFieldJson.edit.inputType.length"
@@ -39,6 +40,7 @@
                                             [nzAddOnAfter]="field.eruptFieldJson.edit.inputType.suffix.length>0&&addOnAfterTemplate"
                                             [nzSize]="size" class="erupt-input">
                                         <input nz-input autocomplete="off"
+                                               [type]="field.eruptFieldJson.edit.inputType.type"
                                                [maxLength]="field.eruptFieldJson.edit.inputType.length"
                                                [placeholder]="field.eruptFieldJson.edit.placeHolder"
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"

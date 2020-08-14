@@ -670,9 +670,9 @@ export class DataHandlerService {
                 }
             }
         });
-        let dependTree = eruptBuildModel.eruptModel.eruptJson.linkTree;
-        if (dependTree) {
-            eruptData[dependTree.field] = dependTree.value;
+        let linkTree = eruptBuildModel.eruptModel.eruptJson.linkTree;
+        if (linkTree) {
+            eruptData[linkTree.field] = linkTree.value;
         }
         if (eruptBuildModel.combineErupts) {
             for (let key in eruptBuildModel.combineErupts) {

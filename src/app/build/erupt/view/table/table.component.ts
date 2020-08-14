@@ -170,11 +170,9 @@ export class TableComponent implements OnInit {
     }
 
     query() {
-        if (this.searchErupt.eruptFieldModels.length > 0) {
-            this.stConfig.req.param = this.dataHandler.searchEruptToObject({
-                eruptModel: this.searchErupt
-            });
-        }
+        this.stConfig.req.param = this.dataHandler.searchEruptToObject({
+            eruptModel: this.searchErupt
+        });
         this.st.load(1, this.stConfig.req.param);
     }
 

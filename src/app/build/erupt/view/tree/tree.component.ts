@@ -108,7 +108,7 @@ export class TreeComponent implements OnInit, OnDestroy {
     }
 
 
-    addBlock() {
+    addBlock(callback?: Function) {
         this.showEdit = true;
         this.loading = true;
         this.selectLeaf = false;
@@ -119,6 +119,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
             this.loading = false;
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
+            callback();
         });
     }
 
@@ -126,13 +127,13 @@ export class TreeComponent implements OnInit, OnDestroy {
         let eruptFieldModelMap = this.eruptBuildModel.eruptModel.eruptFieldModelMap;
         let id = eruptFieldModelMap.get(this.eruptBuildModel.eruptModel.eruptJson.tree.id).eruptFieldJson.edit.$value;
         let label = eruptFieldModelMap.get(this.eruptBuildModel.eruptModel.eruptJson.tree.label).eruptFieldJson.edit.$value;
-        this.addBlock();
-        if (id) {
-            let edit = eruptFieldModelMap.get(this.eruptBuildModel.eruptModel.eruptJson.tree.pid.split(".")[0])
-                .eruptFieldJson.edit;
-            edit.$value = id;
-            edit.$viewValue = label;
-        }
+        this.addBlock(() => {
+            if (id) {
+                let edit = eruptFieldModelMap.get(this.eruptBuildModel.eruptModel.eruptJson.tree.pid.split(".")[0]).eruptFieldJson.edit;
+                edit.$value = id;
+                edit.$viewValue = label;
+            }
+        });
     }
 
     add() {
