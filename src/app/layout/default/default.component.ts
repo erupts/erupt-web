@@ -221,7 +221,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                     let menu = this.menuSrv.getItem(
                         linkEle.getElementsByClassName("sidebar-nav__item-text")[0].innerText);
                     if (menu.link) {
-                        linkEle.href = "/#" + menu.link;
+                        linkEle.href = "#" + menu.link;
                         linkEle.onclick = function () {
                             return false;
                         };
