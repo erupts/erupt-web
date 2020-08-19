@@ -5,8 +5,7 @@
         <!--                class="header-logo-img"></iframe>-->
         <img [src]="logoPath" [alt]="settings.app.name" [title]="settings.app.name" style="vertical-align: top"
              class="header-logo-img"/>
-        <span *ngIf="logoText"
-              style="color: #fff;line-height: 54px;font-size: 2em;letter-spacing: 2px;margin-left: 6px;font-family: 'Courier New'">{{logoText}}</span>
+        <span *ngIf="logoText" class="header-logo-text">{{logoText}}</span>
     </a>
 </div>
 <div class="alain-default__nav-wrap">
