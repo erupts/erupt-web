@@ -319,9 +319,11 @@ export class TableComponent implements OnInit {
         const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
         for (let key in eruptJson.drills) {
             let drill = eruptJson.drills[key];
+            console.log(drill.icon);
             tableOperators.push({
                 type: 'link',
-                text: drill.title,
+                tooltip: drill.title,
+                text: `<i class="${drill.icon}"></i>`,
                 click: (record) => {
                     let drill = eruptJson.drills[key];
                     this.modal.create({
@@ -360,7 +362,7 @@ export class TableComponent implements OnInit {
                 title: "操作",
                 fixed: "right",
                 // width: "auto",
-                width: (width + 120) + "px",
+                width: tableOperators.length * 40,
                 className: "text-center",
                 buttons: tableOperators
             });
@@ -487,7 +489,7 @@ export class TableComponent implements OnInit {
         if (ids.length > 0) {
             this.modal.confirm(
                 {
-                    nzTitle: "确定要删除吗？",
+                    nzTitle: "确定要删除这" + ids.length + "条数据吗？",
                     nzContent: "",
                     nzOnOk: async () => {
                         this.deleting = true;
