@@ -4,7 +4,7 @@ export class WindowModel {
 
     public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';
 
-    public static fileDomain: string = WindowModel.config["fileDomain"] || '';
+    public static fileDomain: string = WindowModel.config["fileDomain"] || undefined;
 
     public static r_tools: CustomerTool[] = WindowModel.config["r_tools"] || [];
 

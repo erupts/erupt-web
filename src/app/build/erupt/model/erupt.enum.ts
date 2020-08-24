@@ -11,6 +11,7 @@ export class RestPath {
     public static comp: string = RestPath.erupt + "/comp";
     public static excel: string = RestPath.erupt + "/excel";
     public static file: string = RestPath.erupt + "/file";
+    public static eruptAttachment: string = WindowModel.domain + "/erupt-attachment";
     public static bi: string = RestPath.erupt + "/bi";
 }
 
@@ -33,7 +34,7 @@ export enum EditType {
     SLIDER = "SLIDER",                         //数字滑块
     EMPTY = "EMPTY",
     TPL = "TPL",
-    HTML_EDIT = "HTML_EDIT",
+    HTML_EDITOR = "HTML_EDITOR",
     MAP = "MAP",
     CODE_EDITOR = "CODE_EDITOR",
 }
@@ -42,6 +43,12 @@ export enum TabEnum {
     TABLE = "TABLE",
     TREE = "TREE",
     LIST_SELECT = "LIST_SELECT",
+}
+
+export enum HtmlEditTypeEnum {
+    CKEDITOR = "CKEDITOR",
+    UEDITOR = "UEDITOR",
+    // MARKDOWN = "MARKDOWN"
 }
 
 export enum ViewType {

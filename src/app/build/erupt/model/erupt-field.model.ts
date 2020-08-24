@@ -2,7 +2,7 @@ import {
     AttachmentEnum,
     ChoiceEnum,
     DateEnum,
-    EditType,
+    EditType, HtmlEditTypeEnum,
     SaveMode,
     TabEnum,
     ViewType
@@ -56,6 +56,7 @@ export interface Edit {
     referenceTableType: ReferenceTableType;
     attachmentType: AttachmentType;
     autoCompleteType: AutoCompleteType;
+    htmlEditorType: HtmlEditorType;
     boolType: BoolType;
     choiceType: ChoiceType;
     dateType: DateType;
@@ -69,6 +70,10 @@ export interface Edit {
     $beforeValue?: any;
     $l_val?: any;
     $r_val?: any;
+}
+
+interface HtmlEditorType {
+    value: HtmlEditTypeEnum;
 }
 
 interface Search {

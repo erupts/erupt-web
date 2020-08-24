@@ -63,7 +63,7 @@ export class DataService {
         if (WindowModel.fileDomain) {
             return WindowModel.fileDomain + "/" + path;
         } else {
-            return RestPath.file + "/preview-attachment" + "/" + path;
+            return RestPath.eruptAttachment + "/" + path;
         }
     }
 

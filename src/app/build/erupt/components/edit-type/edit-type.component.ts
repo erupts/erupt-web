@@ -10,7 +10,7 @@ import {
     Output
 } from "@angular/core";
 import {Edit, EruptField, EruptFieldModel} from "../../model/erupt-field.model";
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType} from "../../model/erupt.enum";
+import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {TreeSelectComponent} from "../tree-select/tree-select.component";
 import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
@@ -57,6 +57,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     eruptModel: EruptModel;
 
     editType = EditType;
+
+    htmlEditorType = HtmlEditTypeEnum;
 
     choiceEnum = ChoiceEnum;
 

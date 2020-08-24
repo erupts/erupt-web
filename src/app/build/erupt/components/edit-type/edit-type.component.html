@@ -573,13 +573,22 @@
                             </se>
                         </div>
                     </ng-container>
-                    <ng-container *ngSwitchCase="editType.HTML_EDIT">
+                    <ng-container *ngSwitchCase="editType.HTML_EDITOR">
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <ckeditor [(value)]="field.eruptFieldJson.edit.$value"
-                                          [eruptField]="field" [erupt]="eruptModel"></ckeditor>
+                                <ng-container
+                                        *ngIf="field.eruptFieldJson.edit.htmlEditorType.value===htmlEditorType.CKEDITOR">
+                                    <ckeditor [(value)]="field.eruptFieldJson.edit.$value"
+                                              [eruptField]="field" [erupt]="eruptModel"></ckeditor>
+                                </ng-container>
+                                <ng-container
+                                        *ngIf="field.eruptFieldJson.edit.htmlEditorType.value===htmlEditorType.UEDITOR">
+                                    <erupt-ueditor [eruptField]="field" [erupt]="eruptModel">
+
+                                    </erupt-ueditor>
+                                </ng-container>
                             </se>
                         </div>
                     </ng-container>

@@ -16,9 +16,11 @@ import {TreeComponent} from "./view/tree/tree.component";
 import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
 import {TableComponent} from './view/table/table.component';
-import { LayoutTreeComponent } from './view/layout-tree/layout-tree.component';
+import {LayoutTreeComponent} from './view/layout-tree/layout-tree.component';
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
-import { CodeEditorComponent } from './components/code-editor/code-editor.component';
+import {CodeEditorComponent} from './components/code-editor/code-editor.component';
+import {UEditorModule} from "ngx-ueditor";
+import {UeditorComponent} from './components/ueditor/ueditor.component';
 
 @NgModule({
     imports: [
@@ -26,7 +28,17 @@ import { CodeEditorComponent } from './components/code-editor/code-editor.compon
         SharedModule,
         HttpClientModule,
         EruptRoutingModule,
-        NzCodeEditorModule
+        NzCodeEditorModule,
+        UEditorModule.forRoot({
+            js: [
+                './assets/ueditor/ueditor.config.js',
+                './assets/ueditor/ueditor.all.min.js',
+            ],
+            // 默认前端配置项
+            options: {
+                UEDITOR_HOME_URL: './assets/ueditor/'
+            }
+        })
     ],
     providers: [
         DataHandlerService
@@ -60,7 +72,8 @@ import { CodeEditorComponent } from './components/code-editor/code-editor.compon
         TableViewComponent,
         TableComponent,
         LayoutTreeComponent,
-        CodeEditorComponent
+        CodeEditorComponent,
+        UeditorComponent
     ]
 })
 export class EruptModule {
