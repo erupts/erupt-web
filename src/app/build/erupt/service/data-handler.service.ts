@@ -343,6 +343,31 @@ export class DataHandlerService {
                         });
                     };
                     break;
+                case ViewType.MOBILE_HTML:
+                    obj.className = "text-center";
+                    obj.type = "link";
+                    obj.format = (item: any) => {
+                        if (item[view.column]) {
+                            return "<i class='fa fa-file-text' aria-hidden='true'></i>";
+                        } else {
+                            return "";
+                        }
+                    };
+                    obj.click = (item) => {
+                        this.modal.create({
+                            nzWrapClassName: "modal-xs",
+                            nzMaskClosable: true,
+                            nzKeyboard: true,
+                            nzFooter: null,
+                            nzTitle: view.title,
+                            nzContent: ViewTypeComponent,
+                            nzComponentParams: {
+                                value: item[view.column],
+                                view: view
+                            }
+                        });
+                    };
+                    break;
                 case ViewType.SWF:
                     obj.type = "link";
                     obj.className = "text-center";

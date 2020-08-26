@@ -19,6 +19,11 @@
 
             </div>
         </ng-container>
+        <ng-container *ngSwitchCase="viewType.MOBILE_HTML">
+            <div [innerHTML]="value|html" class="view_inner_html">
+
+            </div>
+        </ng-container>
         <ng-container *ngSwitchCase="viewType.LINK_DIALOG">
             <iframe [src]="value|safeUrl" [frameBorder]="0" style="display: block;width: 100%;height: 650px;"></iframe>
         </ng-container>

@@ -74,7 +74,6 @@
     "screenfull": "^5.0.0",
     "ts-md5": "^1.2.7",
     "tslib": "^1.10.0",
-    "ueditor": "^1.2.3",
     "web-animations-js": "^2.3.2",
     "zone.js": "~0.9.1"
   },

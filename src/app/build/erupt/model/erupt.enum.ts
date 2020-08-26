@@ -60,6 +60,7 @@ export enum ViewType {
     DOWNLOAD = "DOWNLOAD",
     ATTACHMENT_DIALOG = "ATTACHMENT_DIALOG",
     ATTACHMENT = "ATTACHMENT",
+    MOBILE_HTML = "MOBILE_HTML",
     QR_CODE = "QR_CODE",
     MAP = "MAP",
     CODE = "CODE",
