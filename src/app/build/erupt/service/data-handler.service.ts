@@ -830,7 +830,7 @@ export class DataHandlerService {
                         break;
                     case EditType.BOOLEAN:
                         if (!object[field.fieldName] && object[field.fieldName] !== false) {
-                            edit.$value = edit.boolType.defaultValue;
+                            edit.$value = false;
                         } else {
                             edit.$value = object[field.fieldName];
                         }

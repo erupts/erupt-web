@@ -28,7 +28,7 @@ export class UeditorComponent implements OnInit {
     ngOnInit() {
         let rf = RestPath.file;
         if (!WindowModel.domain) {
-            rf = "/" + rf;
+            rf = window.location.pathname + rf;
         }
         this.serverPath = rf + "/upload-ueditor/" + this.erupt.eruptName + "/" +
             this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token;

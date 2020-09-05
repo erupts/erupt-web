@@ -90,7 +90,7 @@
         //,indentValue:'2em'
 
         //,initialFrameWidth:1000  //初始化编辑器宽度,默认1000
-        ,initialFrameHeight:360  //初始化编辑器高度,默认320
+        , initialFrameHeight: 360  //初始化编辑器高度,默认320
 
         //,readonly : false //编辑器初始化结束后,编辑区域是否是只读的，默认是false
 
@@ -193,7 +193,7 @@
 
         //fontsize
         //字号
-        //,'fontsize':[10, 11, 12, 14, 16, 18, 20, 24, 36]
+        , 'fontsize': [10, 11, 12, 13, 14, 15, 16, 18, 20, 24, 36]
 
         //paragraph
         //段落格式 值留空时支持多语言自动识别，若配置，则以配置值为准
