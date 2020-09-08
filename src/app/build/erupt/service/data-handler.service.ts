@@ -697,7 +697,7 @@ export class DataHandlerService {
         });
         let linkTree = eruptBuildModel.eruptModel.eruptJson.linkTree;
         if (linkTree) {
-            eruptData[linkTree.field] = linkTree.value;
+            eruptData['$' + linkTree.field] = linkTree.value;
         }
         if (eruptBuildModel.combineErupts) {
             for (let key in eruptBuildModel.combineErupts) {
@@ -830,7 +830,7 @@ export class DataHandlerService {
                         break;
                     case EditType.BOOLEAN:
                         if (!object[field.fieldName] && object[field.fieldName] !== false) {
-                            edit.$value = false;
+                            edit.$value = edit.boolType.defaultValue;
                         } else {
                             edit.$value = object[field.fieldName];
                         }
