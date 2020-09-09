@@ -10,13 +10,13 @@ export class WindowModel {
 
     public static amapKey: string = WindowModel.config["amapKey"];
 
-    public static title: string = WindowModel.config["title"];
+    public static title: string = WindowModel.config["title"] || 'Hello Erupt';
 
     public static desc: string = WindowModel.config["desc"] || undefined;
 
     public static routerReuse: boolean = WindowModel.config["routerReuse"] || false;
 
-    public static logoPath: string = WindowModel.config["logoPath"] || "assets/logo.png";
+    public static logoPath: string = WindowModel.config["logoPath"] || "assets/logo.svg";
 
     public static logoText: string = WindowModel.config["logoText"] || undefined;
     //注册页面地址
