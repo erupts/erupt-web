@@ -47,7 +47,7 @@ export interface Dimension {
 
 export enum DimType {
     INPUT = "INPUT",
-    REFERENCE = "REFERENCE",
+    TAG = "TAG",
     NUMBER = "NUMBER",
     NUMBER_RANGE = "NUMBER_RANGE",
     DATE = "DATE",
@@ -58,6 +58,11 @@ export enum DimType {
     WEEK = 'WEEK',
     MONTH = "MONTH",
     YEAR = "YEAR",
+
+    REFERENCE = "REFERENCE",
+    REFERENCE_MULTI = "REFERENCE_MULTI",
+    REFERENCE_RADIO = "REFERENCE_RADIO",
+    REFERENCE_CHECKBOX = "REFERENCE_CHECKBOX"
 }
 
 export interface BiData {

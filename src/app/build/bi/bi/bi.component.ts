@@ -31,6 +31,8 @@ export class BiComponent implements OnInit, OnDestroy {
 
     clientWidth = document.body.clientWidth;
 
+    hideCondition: boolean = false;
+
     @ViewChild("st", {static: false})
     st: STComponent;
 
@@ -108,9 +110,10 @@ export class BiComponent implements OnInit, OnDestroy {
                         title: "暂无数据",
                         className: "text-center"
                     });
+                    this.data = [];
                 } else {
                     this.columns.push({
-                        title: '序号',
+                        title: 'No',
                         type: 'no',
                         width: '82px',
                         className: "text-center",
@@ -128,8 +131,8 @@ export class BiComponent implements OnInit, OnDestroy {
                         };
                         this.columns.push(col);
                     }
+                    this.data = res.list;
                 }
-                this.data = res.list;
             });
         }
     }
@@ -151,6 +154,13 @@ export class BiComponent implements OnInit, OnDestroy {
     pageSizeChange(size) {
         this.size = size;
         this.query(1, size);
+    }
+
+    clearCondition() {
+        for (let dimension of this.bi.dimensions) {
+            dimension.$value = null;
+            dimension.$viewValue = null;
+        }
     }
 
     buildDimParam(): object {

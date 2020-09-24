@@ -8,7 +8,8 @@ import {SelectMode} from "../../model/erupt.enum";
 @Component({
     selector: "app-reference-table",
     template: `
-        <erupt-table [referenceTable]="{eruptBuild:eruptBuild,eruptField:eruptField,mode:mode,dependVal:dependVal}">
+        <erupt-table
+                [referenceTable]="{eruptBuild:eruptBuild,eruptField:eruptField,mode:mode,dependVal:dependVal,parentEruptName:parentEruptName}">
         </erupt-table>
     `,
     styleUrls: ["./reference-table.component.less"]
@@ -22,6 +23,8 @@ export class ReferenceTableComponent implements OnInit {
     @Input() mode: SelectMode = SelectMode.radio;
 
     @Input() dependVal: any;
+
+    @Input() parentEruptName: string;
 
     constructor(private dataService: DataService,
                 @Inject(NzMessageService)

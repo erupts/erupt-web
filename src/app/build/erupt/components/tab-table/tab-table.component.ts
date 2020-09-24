@@ -143,6 +143,9 @@ export class TabTableComponent implements OnInit {
                     , obj, this.eruptBuildModel.eruptModel.eruptName).toPromise().then(resp => resp);
                 if (result.status == Status.SUCCESS) {
                     obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = -Math.floor(Math.random() * 1000);
+                    if (!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
+                        this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
+                    }
                     this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
                     this.st.reload();
                     return true;
@@ -169,7 +172,7 @@ export class TabTableComponent implements OnInit {
             nzOkText: "增加",
             nzOnOk: () => {
                 let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
-                if(!edit.$tempValue){
+                if (!edit.$tempValue) {
                     this.msg.warning("请选中一条数据");
                     return false;
                 }

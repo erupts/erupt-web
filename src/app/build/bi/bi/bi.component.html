@@ -2,21 +2,33 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!bi"></nz-skeleton>
 <ng-container *ngIf="bi">
     <ng-container *ngIf="bi.dimensions.length>0">
+        <div class="mb-sm float-right">
+            <button nz-button *ngIf="!hideCondition" (click)="clearCondition()">
+                <i nz-icon nzType="sync" nzTheme="outline"></i>重置条件
+            </button>
+            <button nz-button (click)="hideCondition=!hideCondition">
+                <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+            </button>
+        </div>
+    </ng-container>
+
+
+    <ng-container *ngIf="bi.dimensions.length>0">
         <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query(1,size);">
             <i nz-icon nzType="search" nzTheme="outline"></i>查询
         </button>
     </ng-container>
-<!--    <button nz-button class="mb-sm" (click)="print()">-->
-<!--        <i nz-icon nzType="printer" nzTheme="outline"></i>打印-->
-<!--    </button>-->
+    <!--    <button nz-button class="mb-sm" (click)="print()">-->
+    <!--        <i nz-icon nzType="printer" nzTheme="outline"></i>打印-->
+    <!--    </button>-->
     <ng-container *ngIf="bi.export">
         <button nz-button class="mb-sm" (click)="exportBiData()">
             <i nz-icon nzType="download" nzTheme="outline"></i>导出
         </button>
     </ng-container>
+
     <ng-container *ngIf="columns&&columns.length>0">
         <nz-divider nzType="vertical"></nz-divider>
-        <!--                [(nzVisible)]="true" -->
         <button nz-button nzType="default" nz-popover
                 [nzContent]="tableColumnCtrl"
                 nzTitle="表格列控制"
@@ -34,10 +46,10 @@
             </div>
         </ng-template>
     </ng-container>
-    <!--  style="background: #fafafa;margin-bottom: 0;box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2)"  -->
-    <!--    [ngStyle]="{marginBottom:bi.charts.length>0?'8px':'0'}"-->
+
+
     <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom:8px"
-             [hidden]="false" nzSize="small">
+             [hidden]="hideCondition" nzSize="small">
         <dimension [bi]="bi">
 
         </dimension>

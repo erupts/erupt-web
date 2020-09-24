@@ -100,9 +100,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
         }
         this.loading = true;
         this.data.login(this.userName.value,
-            <string>Md5.hashStr(Md5.hashStr(this.password.value) +
-                (new Date().getDate() + "") +
-                this.userName.value),
+            <string>Md5.hashStr(Md5.hashStr(this.password.value) + (new Date().getDate() + "") + this.userName.value),
             this.verifyCode.value).subscribe((result) => {
             if (result.useVerifyCode) {
                 this.changeVerifyCode();
@@ -111,17 +109,15 @@ export class UserLoginComponent implements OnDestroy, OnInit {
             if (result.pass) {
                 this.settingsService.setUser({name: result.userName, indexPath: result.indexPath});
                 this.tokenService.set({token: result.token, time: new Date(), account: this.userName.value});
-                setTimeout(() => {
-                    this.loading = false;
-                    let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
-                    this.modalSrv.closeAll();
-                    if (loginBackPath) {
-                        this.cacheService.set(GlobalKeys.loginBackPath, null);
-                        this.router.navigateByUrl(<string>loginBackPath).then();
-                    } else {
-                        this.router.navigateByUrl(result.indexPath || '/').then();
-                    }
-                }, 100)
+                this.loading = false;
+                let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
+                this.modalSrv.closeAll();
+                if (loginBackPath) {
+                    this.cacheService.remove(GlobalKeys.loginBackPath);
+                    this.router.navigateByUrl(<string>loginBackPath).then();
+                } else {
+                    this.router.navigateByUrl(result.indexPath || '/').then();
+                }
             } else {
                 this.loading = false;
                 this.error = result.reason;

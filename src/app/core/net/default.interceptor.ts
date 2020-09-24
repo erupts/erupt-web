@@ -145,7 +145,9 @@ export class DefaultInterceptor implements HttpInterceptor {
                 }
                 break;
             case 401: // 未登录状态码
-                this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
+                if (this.router.url !== "/passport/login") {
+                    this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
+                }
                 if (WindowModel.dialogLogin) {
                     if (this.router.url === "/") {
                         this.goTo("/passport/login");

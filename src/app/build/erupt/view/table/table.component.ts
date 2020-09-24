@@ -81,15 +81,16 @@ export class TableComponent implements OnInit {
 
     _reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode };
 
-    @Input() set referenceTable(reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode, dependVal?: any }) {
+    @Input() set referenceTable(reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode, parentEruptName?: string, dependVal?: any }) {
         this._reference = reference;
         this.init(this.dataService.getEruptBuildByField(reference.eruptBuild.eruptModel.eruptName,
-            reference.eruptField.fieldName), {
+            reference.eruptField.fieldName, reference.parentEruptName), {
             url: RestPath.data + "/" + reference.eruptBuild.eruptModel.eruptName
                 + "/reference-table/"
                 + reference.eruptField.fieldName + (reference.dependVal ? "?dependValue=" + reference.dependVal : ''),
             header: {
-                erupt: reference.eruptBuild.eruptModel.eruptName
+                erupt: reference.eruptBuild.eruptModel.eruptName,
+                eruptParent: reference.parentEruptName || ''
             }
         }, (eb: EruptBuildModel) => {
             let erupt = eb.eruptModel.eruptJson;

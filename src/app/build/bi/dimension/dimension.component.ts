@@ -2,7 +2,7 @@ import {Component, Inject, Input, OnInit} from '@angular/core';
 import {Bi, Dimension, DimType} from "../model/bi.model";
 import {colRules} from "@shared/model/util.model";
 import {NzModalService} from "ng-zorro-antd";
-import {ReferenceComponent} from "../components/reference.component";
+import {ReferenceComponent} from "../components/reference/reference.component";
 
 @Component({
     selector: 'dimension',
@@ -43,7 +43,7 @@ export class DimensionComponent implements OnInit {
         });
     }
 
-    clearRef(dim: Dimension){
+    clearRef(dim: Dimension) {
         dim.$viewValue = null;
         dim.$value = null;
     }

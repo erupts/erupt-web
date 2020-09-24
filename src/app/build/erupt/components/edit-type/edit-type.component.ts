@@ -224,6 +224,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             nzComponentParams: {
                 eruptBuild: this.eruptBuildModel,
                 eruptField: field,
+                parentEruptName: this.parentEruptName,
                 dependVal: dependVal
             }, nzOnOk: () => {
                 let radioValue = edit.$tempValue;

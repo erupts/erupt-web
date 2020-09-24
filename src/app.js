@@ -1,7 +1,7 @@
 window.eruptSiteConfig = {
     //global config
     domain: "http://localhost:9999",
-    fileDomain: "http://localhost:9999",
+    fileDomain: "",
     title: "Erupt Framework", //通用数据管理框架
     desc: "通用数据管理框架",
     routerReuse: false,
