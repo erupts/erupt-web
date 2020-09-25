@@ -14,7 +14,7 @@
 
 
     <ng-container *ngIf="bi.dimensions.length>0">
-        <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query(1,size);">
+        <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query(1,size,true);">
             <i nz-icon nzType="search" nzTheme="outline"></i>查询
         </button>
     </ng-container>
@@ -58,8 +58,8 @@
         <div nz-row nzGutter="16">
             <ng-container *ngFor="let chart of bi.charts">
                 <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
-                    <nz-card [nzTitle]="chart.name" nzSize="small" [nzLoading]="chart.loading"
-                             [nzBodyStyle]="{padding:'12px'}" [nzHoverable]="true">
+                    <nz-card [nzTitle]="chart.name" nzSize="small"
+                             [nzBodyStyle]="{padding:'0'}" [nzHoverable]="true">
                         <bi-chart #biChart [chart]="chart" [biCode]="bi.code"></bi-chart>
                     </nz-card>
                 </div>

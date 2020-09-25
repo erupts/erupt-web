@@ -150,7 +150,8 @@
         "exception",
         "layout",
         "header",
-        "erupt"
+        "erupt",
+        "bi"
       ],
       "kebab-case"
     ]

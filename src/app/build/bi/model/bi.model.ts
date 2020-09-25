@@ -1,6 +1,7 @@
 export interface Bi {
     code: string;
     export: boolean;
+    refreshTime: number;
     table: boolean;
     dimensions: Dimension[];
     charts: Chart[];

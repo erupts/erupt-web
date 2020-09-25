@@ -33,8 +33,7 @@ export class BiComponent implements OnInit, OnDestroy {
 
     hideCondition: boolean = false;
 
-    @ViewChild("st", {static: false})
-    st: STComponent;
+    @ViewChild("st", {static: false}) st: STComponent;
 
     @ViewChildren('biChart') biCharts: QueryList<ChartComponent>;
 
@@ -46,6 +45,8 @@ export class BiComponent implements OnInit, OnDestroy {
     total: number = 0;
 
     private router$: Subscription;
+
+    timer: NodeJS.Timer;
 
     constructor(private dataService: BiDataService,
                 public route: ActivatedRoute,
@@ -72,7 +73,12 @@ export class BiComponent implements OnInit, OnDestroy {
                     }
                 }
                 this.query(1, 20);
-                // this.chartQuery();
+
+                if (this.bi.refreshTime) {
+                    this.timer = setInterval(() => {
+                        this.query(this.index, this.size, true);
+                    }, this.bi.refreshTime * 1000);
+                }
             });
         });
     }
@@ -88,11 +94,15 @@ export class BiComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.router$.unsubscribe();
+        this.timer && clearInterval(this.timer);
     }
 
     private datePipe: DatePipe = new DatePipe("zh-cn");
 
-    query(pageIndex: number, pageSize: number) {
+    query(pageIndex: number, pageSize: number, updateChart?: boolean) {
+        if (updateChart) {
+            this.biCharts.forEach(chart => chart.update());
+        }
         let param = this.buildDimParam();
         if (!param) {
             return;
@@ -139,12 +149,6 @@ export class BiComponent implements OnInit, OnDestroy {
 
     print() {
         window.print();
-    }
-
-    chartQuery() {
-        this.biCharts.forEach(chart => {
-            chart.query();
-        });
     }
 
     pageIndexChange(index) {

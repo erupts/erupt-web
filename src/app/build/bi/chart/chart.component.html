@@ -1,1 +1,3 @@
-<div class='plot' style='width:100%;' [ngStyle]="{height:chart.height+'px'}"></div>
+<nz-spin [nzSpinning]="chart.loading">
+    <div [id]='chart.code' style='width:100%;' [ngStyle]="{height:chart.height+'px'}"></div>
+</nz-spin>
