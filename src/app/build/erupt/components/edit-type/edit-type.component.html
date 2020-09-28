@@ -187,10 +187,11 @@
                                                             [nzDisabled]="field.eruptFieldJson.edit.readOnly"
                                                             class="erupt-input stander-line-height">
                                                 <ng-container *ngIf="eruptModel.mode=='search'">
-                                                    <label style="min-width: 90px" nz-radio [nzValue]="">全部</label>
+                                                    <label style="min-width: 120px" nz-radio [nzValue]="">全部</label>
                                                 </ng-container>
                                                 <ng-container *ngFor="let vl of field.choiceList">
-                                                    <label style="min-width: 90px" nz-radio
+                                                    <label style="min-width: 120px" nz-radio
+                                                           nz-tooltip [nzTooltipTitle]="vl.desc"
                                                            [nzValue]="vl.value">{{vl.label}}</label>
                                                 </ng-container>
                                             </nz-radio-group>

@@ -5,9 +5,9 @@ import {STColumn} from "@delon/abc/table/table.interfaces";
 import {BiDataService} from "../service/data.service";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
-import {DatePipe} from "@angular/common";
 import {STComponent} from "@delon/abc";
 import {ChartComponent} from "../chart/chart.component";
+import {HandlerService} from "../service/handler.service";
 
 @Component({
     selector: 'app-bi',
@@ -50,6 +50,7 @@ export class BiComponent implements OnInit, OnDestroy {
 
     constructor(private dataService: BiDataService,
                 public route: ActivatedRoute,
+                private handlerService: HandlerService,
                 @Inject(NzMessageService)
                 private msg: NzMessageService
     ) {
@@ -73,39 +74,22 @@ export class BiComponent implements OnInit, OnDestroy {
                     }
                 }
                 this.query(1, 20);
-
                 if (this.bi.refreshTime) {
                     this.timer = setInterval(() => {
-                        this.query(this.index, this.size, true);
+                        this.query(this.index, this.size, true, false);
                     }, this.bi.refreshTime * 1000);
                 }
             });
         });
     }
 
-    //导出报表数据
-    exportBiData() {
-        let param = this.buildDimParam();
+    query(pageIndex: number, pageSize: number, updateChart?: boolean, chartLoading: boolean = true) {
+        let param = this.handlerService.buildDimParam(this.bi);
         if (!param) {
             return;
         }
-        this.dataService.exportExcel(this.name, param);
-    }
-
-    ngOnDestroy(): void {
-        this.router$.unsubscribe();
-        this.timer && clearInterval(this.timer);
-    }
-
-    private datePipe: DatePipe = new DatePipe("zh-cn");
-
-    query(pageIndex: number, pageSize: number, updateChart?: boolean) {
         if (updateChart) {
-            this.biCharts.forEach(chart => chart.update());
-        }
-        let param = this.buildDimParam();
-        if (!param) {
-            return;
+            this.biCharts.forEach(chart => chart.update(chartLoading));
         }
         if (this.bi.table) {
             this.querying = true;
@@ -147,10 +131,6 @@ export class BiComponent implements OnInit, OnDestroy {
         }
     }
 
-    print() {
-        window.print();
-    }
-
     pageIndexChange(index) {
         this.query(index, this.size);
     }
@@ -167,53 +147,18 @@ export class BiComponent implements OnInit, OnDestroy {
         }
     }
 
-    buildDimParam(): object {
-        let param = {};
-        for (let dimension of this.bi.dimensions) {
-            let val = dimension.$value;
-            if (val) {
-                switch (dimension.type) {
-                    case DimType.DATE_RANGE:
-                        val[0] = this.datePipe.transform(val[0], "yyyy-MM-dd");
-                        val[1] = this.datePipe.transform(val[1], "yyyy-MM-dd");
-                        break;
-                    case DimType.DATETIME_RANGE:
-                        val[0] = this.datePipe.transform(val[0], "yyyy-MM-dd HH:mm:ss");
-                        val[1] = this.datePipe.transform(val[1], "yyyy-MM-dd HH:mm:ss");
-                        break;
-                    case DimType.DATE:
-                        val = this.datePipe.transform(val, "yyyy-MM-dd");
-                        break;
-                    case DimType.DATETIME:
-                        val = this.datePipe.transform(val, "yyyy-MM-dd HH:mm:ss");
-                        break;
-                    case DimType.TIME:
-                        val = this.datePipe.transform(val, "HH:mm:ss");
-                        break;
-                    case DimType.YEAR:
-                        val = this.datePipe.transform(val, "yyyy");
-                        break;
-                    case DimType.MONTH:
-                        val = this.datePipe.transform(val, "yyyy-MM");
-                        break;
-                    case DimType.WEEK:
-                        val = this.datePipe.transform(val, "yyyy-ww");
-                        break;
-                }
-            }
-            param[dimension.code] = val || null;
-            if (dimension.notNull && !dimension.$value) {
-                this.msg.error(dimension.title + "必填");
-                return;
-            }
-            if (dimension.notNull && Array.isArray(dimension.$value)) {
-                if (!dimension.$value[0] && !dimension.$value[1]) {
-                    this.msg.error(dimension.title + "必填");
-                    return;
-                }
-            }
+    //导出报表数据
+    exportBiData() {
+        let param = this.handlerService.buildDimParam(this.bi);
+        if (!param) {
+            return;
         }
-        return param;
+        this.dataService.exportExcel(this.name, param);
+    }
+
+    ngOnDestroy(): void {
+        this.router$.unsubscribe();
+        this.timer && clearInterval(this.timer);
     }
 
 }

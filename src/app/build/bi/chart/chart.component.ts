@@ -1,11 +1,30 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {
-    Rose, Line, Area, StepLine, Ring, Radar,
-    StackArea, WordCloud, Funnel, Pie, Column, StackColumn
+    Area,
+    Bubble,
+    Funnel,
+    GroupBar,
+    GroupColumn,
+    Heatmap,
+    Line,
+    PercentageStackArea,
+    PercentageStackBar,
+    Pie,
+    Radar,
+    Ring,
+    Rose,
+    Scatter,
+    StackArea,
+    StackColumn,
+    StepLine,
+    Waterfall,
+    WordCloud
 } from '@antv/g2plot';
-import {Chart, ChartType} from "../model/bi.model";
+import {Bi, Chart, ChartType} from "../model/bi.model";
 import {BiDataService} from "../service/data.service";
 import BasePlot from "@antv/g2plot/lib/base/plot";
+import {NzMessageService} from "ng-zorro-antd";
+import {HandlerService} from "../service/handler.service";
 
 @Component({
     selector: 'bi-chart',
@@ -16,32 +35,75 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     @Input() chart: Chart;
 
-    @Input() biCode: string;
+    @Input() bi: Bi;
+
+    @Output() buildDimParam = new EventEmitter();
 
     private plot: BasePlot;
 
-    constructor(private ref: ElementRef, private biDataService: BiDataService) {
+    constructor(private ref: ElementRef, private biDataService: BiDataService,
+                private handlerService: HandlerService,
+                @Inject(NzMessageService) private msg: NzMessageService) {
     }
 
     ngOnInit() {
-        this.chart.loading = true;
-        this.biDataService.getBiChart(this.biCode, this.chart.code, {}).subscribe(data => {
-            this.chart.loading = false;
-            let element = this.ref.nativeElement.querySelector("#" + this.chart.code);
-            this.render(element, data);
-        });
+        this.init();
+    }
+
+    init() {
+        let param = this.handlerService.buildDimParam(this.bi, false);
+        if (param) {
+            this.chart.loading = true;
+            this.biDataService.getBiChart(this.bi.code, this.chart.code, param).subscribe(data => {
+                this.chart.loading = false;
+                let element = this.ref.nativeElement.querySelector("#" + this.chart.code);
+                this.render(element, data);
+            });
+        }
     }
 
     ngOnDestroy(): void {
         this.plot && this.plot.destroy();
     }
 
-    update() {
-        this.chart.loading = true;
-        this.biDataService.getBiChart(this.biCode, this.chart.code, {}).subscribe(data => {
-            this.chart.loading = false;
-            this.plot.changeData(data);
-        });
+    update(loading: boolean) {
+        let param = this.handlerService.buildDimParam(this.bi);
+        if (param) {
+            if (this.plot) {
+                if (loading) {
+                    this.chart.loading = true;
+                }
+                this.biDataService.getBiChart(this.bi.code, this.chart.code, param).subscribe(data => {
+                    if (this.chart.loading) {
+                        this.chart.loading = false;
+                    }
+                    this.plot.changeData(data, true);
+                });
+            } else {
+                this.init();
+            }
+        }
+    }
+
+    downloadChart() {
+        if (!this.plot) {
+            this.init();
+        }
+        let canvas = this.ref.nativeElement.querySelector("#" + this.chart.code).querySelector("canvas");
+        let src = canvas.toDataURL("image/png");
+        let anchor = document.createElement('a');
+        if ('download' in anchor) {
+            anchor.style.visibility = 'hidden';
+            anchor.href = src;
+            anchor.download = this.chart.name;
+            document.body.appendChild(anchor);
+            let evt = document.createEvent('MouseEvents');
+            evt.initEvent('click', true, true);
+            anchor.dispatchEvent(evt);
+            document.body.removeChild(anchor);
+        } else {
+            window.open(src);
+        }
     }
 
     render(element, data: any[]) {
@@ -53,6 +115,7 @@ export class ChartComponent implements OnInit, OnDestroy {
         let x = keys[0];
         let y = keys[1];
         let series = keys[2];
+        let size = keys[3];
         let props = {
             data: data,
             xField: x,
@@ -65,22 +128,37 @@ export class ChartComponent implements OnInit, OnDestroy {
         switch (this.chart.type) {
             case ChartType.Line:
                 this.plot = new Line(element, Object.assign(props, {
-                    seriesField: series,
+                    seriesField: series
                 }));
                 break;
             case ChartType.StepLine:
                 this.plot = new StepLine(element, Object.assign(props, {
-                    seriesField: series,
+                    seriesField: series
                 }));
                 break;
+            case ChartType.Bar:
+                this.plot = new GroupBar(element, Object.assign(props, {
+                    groupField: series,
+                }));
+                break;
+            case ChartType.PercentStackedBar:
+                // @ts-ignore
+                this.plot = new PercentageStackBar(element, Object.assign(props, {
+                    stackField: series,
+                }));
+                break;
+            case ChartType.Waterfall:
+                this.plot = new Waterfall(element, Object.assign(props, {}));
+                break;
             case ChartType.Column:
-                if (series) {
-                    this.plot = new StackColumn(element, Object.assign(props, {
-                        stackField: series
-                    }));
-                } else {
-                    this.plot = new Column(element, Object.assign(props, {}));
-                }
+                this.plot = new GroupColumn(element, Object.assign(props, {
+                    groupField: series
+                }));
+                break;
+            case ChartType.StackedColumn:
+                this.plot = new StackColumn(element, Object.assign(props, {
+                    stackField: series
+                }));
                 break;
             case ChartType.Area:
                 if (series) {
@@ -88,11 +166,15 @@ export class ChartComponent implements OnInit, OnDestroy {
                         stackField: series
                     }));
                 } else {
-                    this.plot = new Area(element, Object.assign(props, {}));
+                    this.plot = new Area(element, props);
                 }
                 break;
-
-            //饼
+            case ChartType.PercentageArea:
+                // @ts-ignore
+                this.plot = new PercentageStackArea(element, Object.assign(props, {
+                    stackField: series,
+                }));
+                break;
             case ChartType.Pie:
                 this.plot = new Pie(element, Object.assign(props, {
                     angleField: y,
@@ -105,7 +187,6 @@ export class ChartComponent implements OnInit, OnDestroy {
                     colorField: x,
                 }));
                 break;
-
             case ChartType.Rose:
                 this.plot = new Rose(element, Object.assign(props, {
                     radiusField: y,
@@ -115,9 +196,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                 }));
                 break;
             case ChartType.Funnel:
-                this.plot = new Funnel(element, Object.assign(props, {
-                    transpose: true
-                }));
+                this.plot = new Funnel(element, Object.assign(props, {}));
                 break;
             case ChartType.Radar:
                 this.plot = new Radar(element, Object.assign(props, {
@@ -133,33 +212,42 @@ export class ChartComponent implements OnInit, OnDestroy {
                     },
                 }));
                 break;
+            case ChartType.Scatter:
+                this.plot = new Scatter(element, Object.assign(props, {
+                    colorField: series
+                }));
+                break;
+            case ChartType.Bubble:
+                this.plot = new Bubble(element, Object.assign(props, {
+                    colorField: series,
+                    sizeField: size
+                }));
+                break;
+            //TODO 升级G2plot版本再添加如下类型图表支持
             case ChartType.WordCloud:
-                const list = [];
-                // change data type
-                data.forEach((d) => {
-                    list.push({
-                        word: d[x],
-                        weight: d[y],
-                        id: data.length,
-                    });
-                });
-                const arr = ['#5B8FF9', '#5AD8A6', '#5D7092', '#F6BD16', '#E8684A',
-                    '#6DC8EC', '#9270CA', '#FF9D4D', '#269A99', '#FF99C3',];
+                // const arr = ['#5B8FF9', '#5AD8A6', '#5D7092', '#F6BD16', '#E8684A',
+                //     '#6DC8EC', '#9270CA', '#FF9D4D', '#269A99', '#FF99C3'];
                 this.plot = new WordCloud(element, Object.assign(props, {
-                    data: list,
+                    wordField: x,
+                    weightField: y,
                     wordStyle: {
                         fontSize: [20, 100],
-                        color: (word, weight) => {
-                            return arr[Math.floor(Math.random() * (arr.length - 1))];
-                        },
+                        // color: (word, weight) => {
+                        //     return arr[Math.floor(Math.random() * (arr.length - 1))];
+                        // },
                     },
                 }));
                 break;
             case ChartType.Heatmap:
+                this.plot = new Heatmap(element, Object.assign(props, {
+                    colorField: series,
+                    sizeField: size || series,
+                    legend: null
+                }));
                 break;
-            case ChartType.Scatter:
-                break;
+            case ChartType.DensityHeatmap:
 
+                break;
         }
         setTimeout(() => {
             this.plot && this.plot.render();

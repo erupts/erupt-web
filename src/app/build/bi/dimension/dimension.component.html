@@ -63,11 +63,7 @@
                                                      [(ngModel)]="dim.$value[1]"
                                                      [name]="dim.code"></nz-input-number>
                                 </ng-container>
-                                <ng-container *ngSwitchCase="dimType.REFERENCE">
-                                    <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
-                                        <input nz-input autocomplete="off" [required]="dim.notNull" [readOnly]="true"
-                                               [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
-                                    </nz-input-group>
+                                <ng-container>
                                     <ng-template #refBtn>
                                         <ng-container *ngIf="dim.$value">
                                             <i nz-icon nzType="close-circle" theme="fill" class="point"
@@ -78,23 +74,36 @@
                                                (click)="ref(dim)"></i>
                                         </ng-container>
                                     </ng-template>
+                                    <ng-container *ngSwitchCase="dimType.REFERENCE">
+                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                                            <input nz-input autocomplete="off" [required]="dim.notNull"
+                                                   [readOnly]="true"
+                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
+                                        </nz-input-group>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="dimType.REFERENCE_MULTI">
+                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                                            <input nz-input autocomplete="off" [required]="dim.notNull"
+                                                   [readOnly]="true"
+                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
+                                        </nz-input-group>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="dimType.REFERENCE_TREE_MULTI">
+                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                                            <input nz-input autocomplete="off" [required]="dim.notNull"
+                                                   [readOnly]="true"
+                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
+                                        </nz-input-group>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="dimType.REFERENCE_TREE_RADIO">
+                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                                            <input nz-input autocomplete="off" [required]="dim.notNull"
+                                                   [readOnly]="true"
+                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
+                                        </nz-input-group>
+                                    </ng-container>
                                 </ng-container>
-                                <ng-container *ngSwitchCase="dimType.REFERENCE_MULTI">
-                                    <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
-                                        <input nz-input autocomplete="off" [required]="dim.notNull" [readOnly]="true"
-                                               [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
-                                    </nz-input-group>
-                                    <ng-template #refBtn>
-                                        <ng-container *ngIf="dim.$value">
-                                            <i nz-icon nzType="close-circle" theme="fill" class="point"
-                                               (click)="clearRef(dim)"></i>
-                                        </ng-container>
-                                        <ng-container *ngIf="!dim.$value">
-                                            <i nz-icon nzType="database" theme="fill" class="point"
-                                               (click)="ref(dim)"></i>
-                                        </ng-container>
-                                    </ng-template>
-                                </ng-container>
+
                                 <ng-container *ngSwitchCase="dimType.DATE">
                                     <nz-date-picker class="full-width"
                                                     [(ngModel)]="dim.$value"

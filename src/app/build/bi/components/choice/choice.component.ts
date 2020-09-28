@@ -1,11 +1,23 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Bi, Dimension, DimType} from "../../model/bi.model";
+import {Bi, Dimension, DimType, Reference} from "../../model/bi.model";
 import {BiDataService} from "../../service/data.service";
 
 @Component({
     selector: 'erupt-bi-choice',
     templateUrl: './choice.component.html',
-    styles: []
+    styles: [`
+        label[nz-radio] {
+            min-width: 120px;
+            margin-right: 0;
+        }
+
+        label[nz-checkbox] {
+            min-width: 120px;
+            line-height: initial;
+            margin-left: 0;
+            margin-bottom: 12px;
+        }
+    `]
 })
 export class ChoiceComponent implements OnInit {
 
@@ -16,7 +28,7 @@ export class ChoiceComponent implements OnInit {
     loading: boolean;
 
     dimType = DimType;
-    data: { key: any, title: any }[];
+    data: Reference[];
 
     constructor(private dataService: BiDataService) {
     }

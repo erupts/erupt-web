@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {Observable} from "rxjs";
-import {Bi, BiData} from "../model/bi.model";
+import {Bi, BiData, Reference} from "../model/bi.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
 import {EruptFieldModel} from "../../erupt/model/erupt-field.model";
@@ -59,8 +59,9 @@ export class BiDataService {
         });
     }
 
+
     //维度参照
-    getBiReference(code: string, dim: string, query: any) {
+    getBiReference(code: string, dim: string, query: any): Observable<Reference[]> {
         return this._http.post(RestPath.bi + "/" + code + "/reference/" + dim, query, null, {
             headers: {
                 erupt: code

@@ -169,5 +169,6 @@ export interface MapType {
 export interface VL {
     value: string;
     label: string;
+    desc: string;
     $viewValue?: any;
 }

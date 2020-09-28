@@ -1,7 +1,10 @@
 import {Component, Input, OnInit} from "@angular/core";
 import {NzFormatEmitEvent} from "ng-zorro-antd";
 import {BiDataService} from "../../service/data.service";
-import {Dimension, DimType} from "../../model/bi.model";
+import {Dimension, DimType, Reference} from "../../model/bi.model";
+import {Tree} from "../../../erupt/model/erupt.model";
+import {NzTreeNode} from "ng-zorro-antd/core/tree/nz-tree-base-node";
+
 @Component({
     selector: "erupt-reference-select",
     templateUrl: "./reference.component.html",
@@ -26,15 +29,49 @@ export class ReferenceComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.multiple = (this.dimension.type === DimType.REFERENCE_MULTI);
+        this.multiple = (this.dimension.type === DimType.REFERENCE_MULTI || this.dimension.type === DimType.REFERENCE_TREE_MULTI);
         this.loading = true;
         this.dataService.getBiReference(this.code, this.dimension.code, null).subscribe((res) => {
-            res.forEach(r => {
-                r.isLeaf = true;
-            });
-            this.data = res;
+            if (res) {
+                if (this.dimension.type == DimType.REFERENCE_TREE_MULTI || this.dimension.type == DimType.REFERENCE_TREE_RADIO) {
+                    this.data = this.recursiveTree(res, null);
+                } else {
+                    let node: {
+                        key: string,
+                        title: string,
+                        isLeaf: boolean
+                    }[] = [];
+                    res.forEach(r => {
+                        node.push({
+                            isLeaf: true,
+                            key: r.id,
+                            title: r.title
+                        });
+                    });
+                    this.data = node;
+                }
+            } else {
+                this.data = [];
+            }
             this.loading = false;
         });
+    }
+
+    recursiveTree(items: Reference[], pid: any) {
+        let result: any = [];
+        items.forEach(item => {
+            if (item.pid == pid) {
+                let option: any = {
+                    key: item.id,
+                    title: item.title,
+                    expanded: true,
+                    children: this.recursiveTree(items, item.id),
+                };
+                option.isLeaf = !option.children.length;
+                result.push(option);
+            }
+        });
+        return result;
     }
 
     nodeClickEvent(event: NzFormatEmitEvent) {
@@ -49,7 +86,7 @@ export class ReferenceComponent implements OnInit {
             viewValues.push(e.origin.title);
         });
         this.dimension.$value = event.keys;
-        this.dimension.$viewValue = viewValues.join(",");
+        this.dimension.$viewValue = viewValues.join(" | ");
     }
 
 }
