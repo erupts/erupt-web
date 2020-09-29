@@ -32,7 +32,7 @@
                         <br>
                         <nz-tree [nzCheckable]="true"
                                  [nzShowLine]="true"
-                                 [nzCheckStrictly]="true"
+                                 [nzCheckStrictly]="false"
                                  [nzData]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.$tabTreeViewData"
                                  (nzCheckBoxChange)="checkBoxChange($event,eruptFieldModelMap.get(item.key))"
                                  [nzSearchValue]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.$tempValue"

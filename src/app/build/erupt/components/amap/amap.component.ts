@@ -207,7 +207,6 @@ export class AmapComponent implements OnInit {
         this.overlays = [];
         this.mouseTool.on('draw', (e) => {
             this.overlays.push(e.obj);
-            console.log(e.obj)
         });
         drawFun.call(this, type);
 

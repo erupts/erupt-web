@@ -58,6 +58,7 @@ export class BiComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe(params => {
+            this.timer && clearInterval(this.timer);
             this.name = params.name;
             this.columns = [];
             this.data = null;

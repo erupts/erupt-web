@@ -45,8 +45,10 @@ import {DataService} from "@shared/service/data.service";
 import {WindowModel} from "@shared/model/window.model";
 import {environment} from "@env/environment";
 import {SettingDrawerComponent} from "./setting-drawer/setting-drawer.component";
-import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
+import {DA_SERVICE_TOKEN, TokenService, urlBase64Decode} from "@delon/auth";
 import {GlobalKeys} from "@shared/model/erupt-const";
+import {utf8Encode} from "@angular/compiler/src/util";
+import {encode} from "punycode";
 
 // #region icons
 
@@ -189,12 +191,20 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                         text: node.data.name,
                         key: node.data.name,
                         linkExact: true,
-                        // externalLink: "/assets/page/a.html",
-                        // target:"_blank",
                         link: node.data.path,
                         hide: node.data.status == 2 && true,
                         icon: icon
                     };
+                    let newWindowFeature = "/new_window?url=";
+                    let siteUrlFeature = "/site?url=";
+                    if (option.link) {
+                        if (option.link.indexOf(newWindowFeature) != -1) {
+                            option.target = "_blank";
+                            option.externalLink = option.link.split(newWindowFeature)[1];
+                        } else if (option.link.indexOf(siteUrlFeature) != -1) {
+                            option.link = siteUrlFeature + encodeURIComponent(option.link.split(siteUrlFeature)[1]);
+                        }
+                    }
                     if (node.children && node.children.length > 0) {
                         tempNodes.push(option);
                         option.children = gcMenu(node.children);
@@ -218,13 +228,15 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 let ele = menuEle.item(i);
                 let linkEle = ele.getElementsByClassName("sidebar-nav__item-link")[0];
                 if (linkEle) {
-                    let menu = this.menuSrv.getItem(
-                        linkEle.getElementsByClassName("sidebar-nav__item-text")[0].innerText);
+                    let menu = this.menuSrv.getItem(linkEle.getElementsByClassName("sidebar-nav__item-text")[0].innerText);
                     if (menu.link) {
                         linkEle.href = "#" + menu.link;
                         linkEle.onclick = function () {
                             return false;
                         };
+                    }
+                    if (menu.externalLink) {
+                        linkEle.href = menu.externalLink;
                     }
                 }
                 ele.style.position = "relative";

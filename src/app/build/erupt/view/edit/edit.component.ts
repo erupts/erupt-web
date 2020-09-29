@@ -4,9 +4,10 @@ import {SettingsService} from "@delon/theme";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {NzMessageService, NzModalService} from "ng-zorro-antd";
+import {NzFormatEmitEvent, NzMessageService, NzModalService} from "ng-zorro-antd";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {DataService} from "@shared/service/data.service";
+import {NzTreeNode} from "ng-zorro-antd/core/tree/nz-tree-base-node";
 
 @Component({
     selector: "erupt-edit",
@@ -82,8 +83,20 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
 
-    checkBoxChange(event, eruptFieldModel: EruptFieldModel) {
-        eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
+    checkBoxChange(event: NzFormatEmitEvent, eruptFieldModel: EruptFieldModel) {
+        eruptFieldModel.eruptFieldJson.edit.$value = this.findChecks(event.checkedKeys);
+        // eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
+    }
+
+    //递归获取所有选中的值
+    findChecks(treeNodes: NzTreeNode[], result: any[] = []) {
+        treeNodes.forEach(node => {
+            if (node.children) {
+                this.findChecks(node.children, result);
+            }
+            result.push(node.origin.key);
+        });
+        return result;
     }
 
 }

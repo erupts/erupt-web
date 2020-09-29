@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {NzFormatEmitEvent} from "ng-zorro-antd";
+import {Component, Input, OnInit, ViewChild} from "@angular/core";
+import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd";
 import {BiDataService} from "../../service/data.service";
 import {Dimension, DimType, Reference} from "../../model/bi.model";
 import {Tree} from "../../../erupt/model/erupt.model";
@@ -24,16 +24,19 @@ export class ReferenceComponent implements OnInit {
 
     loading: boolean = false;
 
+    @ViewChild("tree", {static: false}) tree: NzTreeBaseService;
+
     constructor(private dataService: BiDataService) {
 
     }
 
     ngOnInit() {
         this.multiple = (this.dimension.type === DimType.REFERENCE_MULTI || this.dimension.type === DimType.REFERENCE_TREE_MULTI);
+        let isTree = (this.dimension.type == DimType.REFERENCE_TREE_MULTI || this.dimension.type == DimType.REFERENCE_TREE_RADIO);
         this.loading = true;
         this.dataService.getBiReference(this.code, this.dimension.code, null).subscribe((res) => {
             if (res) {
-                if (this.dimension.type == DimType.REFERENCE_TREE_MULTI || this.dimension.type == DimType.REFERENCE_TREE_RADIO) {
+                if (isTree) {
                     this.data = this.recursiveTree(res, null);
                 } else {
                     let node: {
@@ -49,6 +52,49 @@ export class ReferenceComponent implements OnInit {
                         });
                     });
                     this.data = node;
+                }
+                if (this.multiple) {
+                    this.data = [{
+                        key: null,
+                        title: '全部',
+                        expanded: true,
+                        children: this.data,
+                        all: true,
+                    }];
+                }
+
+                //选中回显
+                if (this.dimension.$value) {
+                    switch (this.dimension.type) {
+                        case DimType.REFERENCE:
+                            this.data.forEach(e => {
+                                if (e.key == this.dimension.$value) {
+                                    e.selected = true;
+                                }
+                            });
+                            break;
+                        case DimType.REFERENCE_MULTI:
+                            this.data[0].children.forEach((e) => {
+                                if (this.dimension.$value.indexOf(e.key) != -1) {
+                                    e.checked = true;
+                                }
+                            });
+                            break;
+                        case DimType.REFERENCE_TREE_RADIO:
+                            this.findAllNode(this.data).forEach(e => {
+                                if (e.key == this.dimension.$value) {
+                                    e.selected = true;
+                                }
+                            });
+                            break;
+                        case DimType.REFERENCE_TREE_MULTI:
+                            this.findAllNode(this.data).forEach(e => {
+                                if (this.dimension.$value.indexOf(e.key) != -1) {
+                                    e.checked = true;
+                                }
+                            });
+                            break;
+                    }
                 }
             } else {
                 this.data = [];
@@ -81,12 +127,32 @@ export class ReferenceComponent implements OnInit {
 
 
     nodeCheck(event: NzFormatEmitEvent) {
+        let treeNodes: NzTreeNode[] = this.findAllNode(event.checkedKeys);
         let viewValues = [];
-        event.checkedKeys.forEach(e => {
-            viewValues.push(e.origin.title);
+        let values = [];
+        treeNodes.forEach(e => {
+            if (e.origin.key) {
+                values.push(e.origin.key);
+                viewValues.push(e.origin.title);
+            }
         });
-        this.dimension.$value = event.keys;
+        if (values.length + 1 === this.findAllNode(this.data).length) {
+            this.dimension.$value = [];
+        } else {
+            this.dimension.$value = values;
+        }
         this.dimension.$viewValue = viewValues.join(" | ");
+    }
+
+    //递归获取所有选中的值
+    findAllNode(treeNodes: NzTreeNode[], result: any[] = []) {
+        treeNodes.forEach(node => {
+            if (node.children) {
+                this.findAllNode(node.children, result);
+            }
+            result.push(node);
+        });
+        return result;
     }
 
 }

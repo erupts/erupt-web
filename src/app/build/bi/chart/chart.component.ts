@@ -39,7 +39,7 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     @Output() buildDimParam = new EventEmitter();
 
-    private plot: BasePlot;
+    plot: BasePlot;
 
     constructor(private ref: ElementRef, private biDataService: BiDataService,
                 private handlerService: HandlerService,
@@ -63,7 +63,9 @@ export class ChartComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.plot && this.plot.destroy();
+        if (this.plot) {
+            this.plot.destroy();
+        }
     }
 
     update(loading: boolean) {
@@ -249,9 +251,7 @@ export class ChartComponent implements OnInit, OnDestroy {
 
                 break;
         }
-        setTimeout(() => {
-            this.plot && this.plot.render();
-        }, 200);
+        this.plot && this.plot.render();
     }
 
 }

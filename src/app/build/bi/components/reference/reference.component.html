@@ -10,7 +10,7 @@
         <nz-tree #tree
                  nzDraggable
                  class="tree-container"
-                 [nzCheckStrictly]="true"
+                 [nzCheckStrictly]="false"
                  [nzCheckable]="multiple"
                  (nzClick)="multiple||nodeClickEvent($event)"
                  (nzCheckBoxChange)="nodeCheck($event)"
