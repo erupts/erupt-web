@@ -48,7 +48,6 @@ export class HandlerService {
                         break;
                 }
             }
-            param[dimension.code] = val || null;
             if (dimension.notNull && !dimension.$value) {
                 if (tip) {
                     this.msg.error(dimension.title + "必填");
@@ -62,6 +61,12 @@ export class HandlerService {
                     }
                     return;
                 }
+            }
+            //赋值
+            if (Array.isArray(val) && val.length == 0) {
+                param[dimension.code] = null;
+            } else {
+                param[dimension.code] = val || null;
             }
         }
         return param;

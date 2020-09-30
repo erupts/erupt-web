@@ -1,0 +1,18 @@
+<nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
+    <input type="text" nz-input placeholder="Search"
+           [(ngModel)]="eruptFieldModel.eruptFieldJson.edit.$tempValue">
+</nz-input-group>
+<ng-template #suffixIcon>
+    <i nz-icon nzType="search"></i>
+</ng-template>
+<br>
+<nz-spin [nzSpinning]="loading">
+    <nz-tree [nzCheckable]="true"
+             [nzShowLine]="true"
+             [nzCheckStrictly]="true"
+             [nzData]="treeData"
+             (nzCheckBoxChange)="checkBoxChange($event)"
+             [nzSearchValue]="eruptFieldModel.eruptFieldJson.edit.$tempValue"
+             [nzCheckedKeys]="eruptFieldModel.eruptFieldJson.edit.$value">
+    </nz-tree>
+</nz-spin>

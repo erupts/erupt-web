@@ -21,6 +21,7 @@ import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import {CodeEditorComponent} from './components/code-editor/code-editor.component';
 import {UEditorModule} from "ngx-ueditor";
 import {UeditorComponent} from './components/ueditor/ueditor.component';
+import { TabTreeComponent } from './components/tab-tree/tab-tree.component';
 
 @NgModule({
     imports: [
@@ -73,7 +74,8 @@ import {UeditorComponent} from './components/ueditor/ueditor.component';
         TableComponent,
         LayoutTreeComponent,
         CodeEditorComponent,
-        UeditorComponent
+        UeditorComponent,
+        TabTreeComponent
     ]
 })
 export class EruptModule {

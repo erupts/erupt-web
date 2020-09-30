@@ -2,7 +2,7 @@
 <div nz-row [nzGutter]="16" *ngIf="eruptBuildModel">
     <div nz-col [nzXs]="24" [nzSm]="8" [nzMd]="8" [nzLg]="6">
         <button nz-button nzType="dashed" style="display:block;width: 100%;" (click)="addBlock()" class="mb-sm"
-                *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add&&!linkTable">
+                *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
             <i nz-icon nzType="plus" theme="outline"></i> 新增
         </button>
         <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
@@ -30,15 +30,7 @@
     </div>
 
     <div nz-col class="mb-sm" [nzXs]="24" [nzSm]="16" [nzMd]="16" [nzLg]="18" [hidden]="!showEdit">
-        <div *ngIf="linkTable&&currentKey"
-             style="border-bottom: 1px solid #e8e8e8;padding-bottom: 20px;
-             height:calc(100vh - 180px);overflow: auto;overflow-x:hidden"
-             class="scrollbar">
-            <erupt-table [drill]="{erupt:linkTable.linkErupt,eruptParent:eruptName,code:'link',val:currentKey}">
-
-            </erupt-table>
-        </div>
-        <ng-container *ngIf="!linkTable">
+        <ng-container>
             <div nz-row class="mb-sm">
                 <div nz-col [nzXs]="24">
                 <span [hidden]="!selectLeaf">

@@ -22,22 +22,10 @@
                         </ng-container>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.TAB_TREE">
-                        <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
-                            <input type="text" nz-input placeholder="Search"
-                                   [(ngModel)]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.$tempValue">
-                        </nz-input-group>
-                        <ng-template #suffixIcon>
-                            <i nz-icon nzType="search"></i>
-                        </ng-template>
-                        <br>
-                        <nz-tree [nzCheckable]="true"
-                                 [nzShowLine]="true"
-                                 [nzCheckStrictly]="false"
-                                 [nzData]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.$tabTreeViewData"
-                                 (nzCheckBoxChange)="checkBoxChange($event,eruptFieldModelMap.get(item.key))"
-                                 [nzSearchValue]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.$tempValue"
-                                 [nzCheckedKeys]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.$value">
-                        </nz-tree>
+                        <erupt-tab-tree
+                                [eruptFieldModel]="eruptFieldModelMap.get(item.key)"
+                                [eruptBuildModel]="eruptBuildModel"
+                        ></erupt-tab-tree>
                     </ng-container>
                 </ng-container>
             </nz-tab>

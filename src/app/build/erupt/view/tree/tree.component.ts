@@ -19,25 +19,23 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     col = colRules[3];
 
-    private eruptName: string;
+    eruptName: string;
 
-    public eruptBuildModel: EruptBuildModel;
+    eruptBuildModel: EruptBuildModel;
 
-    private showEdit: boolean = false;
+    showEdit: boolean = false;
 
-    private loading = false;
+    loading = false;
 
-    private treeLoading = false;
+    treeLoading = false;
 
-    private searchValue;
+    searchValue;
 
-    private nodes: any = [];
+    nodes: any = [];
 
-    private selectLeaf: boolean = false;
+    selectLeaf: boolean = false;
 
     private router$: Subscription;
-
-    private linkTable: Link;
 
     private currentKey: string;
 
@@ -56,40 +54,14 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.router$ = this.route.params.subscribe((params) => {
             this.eruptBuildModel = null;
             this.showEdit = false;
-            this.linkTable = null;
             this.eruptName = params.name;
             this.currentKey = null;
             this.fetchTreeData();
             this.dataService.getEruptBuild(this.eruptName).subscribe(eb => {
-                if (eb.eruptModel.eruptJson.tree.linkTable[0]) {
-                    this.linkTable = eb.eruptModel.eruptJson.tree.linkTable[0];
-                }
                 this.dataHandler.initErupt(eb);
                 this.eruptBuildModel = eb;
-                this.buildTabErupt();
             });
         });
-    }
-
-    buildTabErupt() {
-        for (let key in this.eruptBuildModel.tabErupts) {
-            let eruptFieldModel = this.eruptBuildModel.eruptModel.eruptFieldModelMap.get(key);
-            //根据权限来决定是否加载树结构
-            if (this.eruptBuildModel.eruptModel.eruptJson.power.edit || this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
-                if (eruptFieldModel.eruptFieldJson.edit.type == EditType.TAB_TREE) {
-                    //构建树结构
-                    if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails || this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
-                        this.dataService.findTabTree(this.eruptBuildModel.eruptModel.eruptName, eruptFieldModel.fieldName).subscribe(
-                            tree => {
-                                if (tree) {
-                                    eruptFieldModel.eruptFieldJson.edit.$tabTreeViewData = this.dataHandler.dataTreeToZorroTree(tree);
-                                }
-                            }
-                        );
-                    }
-                }
-            }
-        }
     }
 
 

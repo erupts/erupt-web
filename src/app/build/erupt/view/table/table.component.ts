@@ -141,34 +141,12 @@ export class TableComponent implements OnInit {
                 this.dataHandler.initErupt(eb);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
-                this.buildTabErupt();
                 this.buildTableConfig();
                 this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
             }
         );
     }
 
-
-    buildTabErupt() {
-        for (let key in this.eruptBuildModel.tabErupts) {
-            let eruptFieldModel = this.eruptBuildModel.eruptModel.eruptFieldModelMap.get(key);
-            //根据权限来决定是否加载树结构
-            if (this.eruptBuildModel.eruptModel.eruptJson.power.edit || this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
-                if (eruptFieldModel.eruptFieldJson.edit.type == EditType.TAB_TREE) {
-                    //构建树结构
-                    if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails || this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
-                        this.dataService.findTabTree(this.eruptBuildModel.eruptModel.eruptName, eruptFieldModel.fieldName).subscribe(
-                            tree => {
-                                if (tree) {
-                                    eruptFieldModel.eruptFieldJson.edit.$tabTreeViewData = this.dataHandler.dataTreeToZorroTree(tree);
-                                }
-                            }
-                        );
-                    }
-                }
-            }
-        }
-    }
 
     query() {
         this.stConfig.req.param = this.dataHandler.searchEruptToObject({

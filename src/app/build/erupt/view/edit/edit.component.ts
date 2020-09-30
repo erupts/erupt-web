@@ -83,20 +83,4 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
 
-    checkBoxChange(event: NzFormatEmitEvent, eruptFieldModel: EruptFieldModel) {
-        eruptFieldModel.eruptFieldJson.edit.$value = this.findChecks(event.checkedKeys);
-        // eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
-    }
-
-    //递归获取所有选中的值
-    findChecks(treeNodes: NzTreeNode[], result: any[] = []) {
-        treeNodes.forEach(node => {
-            if (node.children) {
-                this.findChecks(node.children, result);
-            }
-            result.push(node.origin.key);
-        });
-        return result;
-    }
-
 }
