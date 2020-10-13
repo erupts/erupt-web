@@ -30,6 +30,7 @@
               "src/app.js",
               "src/app.css",
               "src/home.html",
+              "src/erupt.svg",
               {
                 "glob": "**/*",
                 "input": "./ueditor/",
