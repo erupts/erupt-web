@@ -21,7 +21,7 @@ export class RipperDirective {
         spanRipper.className = "ripple";
         spanRipper.style.left = e.offsetX + "px";
         spanRipper.style.top = e.offsetY + "px";
-        if (this.radius){
+        if (this.radius) {
             spanRipper.style.width = this.radius + "px";
             spanRipper.style.height = this.radius + "px";
         }
@@ -30,7 +30,7 @@ export class RipperDirective {
         }
         ele.appendChild(spanRipper);
         setTimeout(() => {
-            ele.removeChild(spanRipper)
+            ele.removeChild(spanRipper);
         }, 800);
     }
 

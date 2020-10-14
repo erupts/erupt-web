@@ -49,24 +49,14 @@ html {
 //暗黑模式
 .dark {
 
-  .alain-default__header-logo {
-    border-right: 1px solid #333 !important;
-  }
-
   .alain-default__content, .ant-modal-content, .alain-default__aside {
     filter: invert(.9) hue-rotate(180deg);
-  }
-
-  .ant-modal-content {
-    border: 1px solid #999;
-    box-shadow: none;
   }
 
   .alain-default__content, .ant-modal-content {
     img,
     picture,
     video,
-    //canvas,
     .exception__img {
       filter: invert(1) hue-rotate(180deg);
     }
@@ -84,8 +74,16 @@ html {
     background: #222;
   }
 
+  .alain-default__header-logo {
+    border-right: 1px solid #333 !important;
+  }
+
+  .ant-modal-content {
+    border: 1px solid #999;
+    box-shadow: none;
+  }
+
   .alain-default__header {
-    //filter: invert(.9) hue-rotate(180deg);
     box-shadow: 0 1px #454549;
     background: #191919;
   }
