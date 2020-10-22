@@ -14,6 +14,7 @@ import {Exception500Component} from "./exception/500.component";
 import {ChangePwdComponent} from "./change-pwd/change-pwd.component";
 import {HomeComponent} from './home/home.component';
 import {SiteComponent} from "./site/site.component";
+import { FillComponent } from './fill/fill.component';
 
 
 const COMPONENTS = [
@@ -38,7 +39,8 @@ const COMPONENTS_NOROUNT = [
     declarations: [
         ...COMPONENTS,
         ...COMPONENTS_NOROUNT,
-        HomeComponent
+        HomeComponent,
+        FillComponent
     ],
     entryComponents: COMPONENTS_NOROUNT
 })

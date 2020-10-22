@@ -6,12 +6,13 @@ import {HttpClient} from "@angular/common/http";
 import {Tree} from "../../build/erupt/model/erupt.model";
 import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
-import {loginModel} from "../model/user.model";
+import {LoginModel} from "../model/user.model";
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
+import {MenuVo} from "../../build/erupt/model/erupt.vo";
 
 @Injectable()
 export class DataService {
@@ -239,7 +240,7 @@ export class DataService {
     }
 
     //登录
-    login(account: string, pwd: string, verifyCode?: any): Observable<loginModel> {
+    login(account: string, pwd: string, verifyCode?: any): Observable<LoginModel> {
         return this._http.post(RestPath.erupt + "/login", {}, {
                 account: account,
                 pwd: pwd,
@@ -262,14 +263,9 @@ export class DataService {
         );
     }
 
-    //获取菜单树
-    getMenu(): Observable<any[]> {
-        return this._http.get(RestPath.erupt + "/menu", null);
-    }
-
-    //获取菜单列表
-    getMenuList(): Observable<any[]> {
-        return this._http.get(RestPath.erupt + "/menu-list", null);
+    //获取菜单
+    getMenu(): Observable<MenuVo[]> {
+        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", null);
     }
 
     downloadExcelTemplate(eruptName: string) {

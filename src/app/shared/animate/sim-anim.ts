@@ -2,8 +2,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {trigger, state, style, transition, animate, keyframes} from '@angular/animations';
 
 // 动画时间线
-var time = '300ms';
-var styles = {
+let time = '300ms';
+let styles = {
     ease: time + ' ease ',
     linear: time + ' linear ',
     easeIn: time + ' ease-in',
@@ -20,7 +20,7 @@ var styles = {
 
 // 动画配置
 
-var opts = {
+let opts = {
     fadeIn: [
         style({opacity: 0}),
         animate(styles.inOutBack, style({opacity: 1})),

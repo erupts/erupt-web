@@ -1,7 +1,8 @@
 <div class="alain-default__header-logo" ripper color="#888">
     <a [routerLink]="settings.user.indexPath" (click)="toIndex()"
        class="alain-default__header-logo-link">
-        <img [src]="logoPath" style="vertical-align: top" class="header-logo-img" [ngStyle]="{'filter':logoPath=='erupt.svg'?'invert(1) hue-rotate(180deg)':''}"/>
+<!--        [ngStyle]="{'filter':logoPath=='erupt.svg'?'invert(1) hue-rotate(180deg)':''}"-->
+        <img [src]="logoPath" style="vertical-align: top" class="header-logo-img"/>
         <span *ngIf="logoText" class="header-logo-text">{{logoText}}</span>
     </a>
 </div>

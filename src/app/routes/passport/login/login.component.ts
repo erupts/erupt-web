@@ -11,6 +11,7 @@ import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {Md5} from "ts-md5";
 import {WindowModel} from "@shared/model/window.model";
+import {generateMenuPath} from "@shared/util/erupt.util";
 
 @Component({
     selector: "passport-login",
@@ -61,7 +62,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
     }
 
     ngOnInit(): void {
-        console.log(this.msg)
+        console.log(this.msg);
     }
 
     // region: fields
@@ -107,6 +108,10 @@ export class UserLoginComponent implements OnDestroy, OnInit {
             }
             this.useVerifyCode = result.useVerifyCode;
             if (result.pass) {
+                if (result.indexMenu) {
+                    let split = result.indexMenu.split("||");
+                    result.indexPath = generateMenuPath(split[0], split[1]);
+                }
                 this.settingsService.setUser({name: result.userName, indexPath: result.indexPath});
                 this.tokenService.set({token: result.token, time: new Date(), account: this.userName.value});
                 this.loading = false;

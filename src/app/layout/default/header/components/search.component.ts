@@ -4,6 +4,7 @@ import {Router} from "@angular/router";
 import {NzMessageService} from "ng-zorro-antd";
 import {MenuService} from "@delon/theme";
 import {Menu} from "@delon/theme/src/services/menu/interface";
+import {MenuVo} from "../../../../build/erupt/model/erupt.vo";
 
 @Component({
     selector: 'header-search',
@@ -45,7 +46,7 @@ export class HeaderSearchComponent implements AfterViewInit {
     @HostBinding('class.alain-default__search-toggled')
     searchToggled = false;
 
-    menuList: any[];
+    menuList: MenuVo[];
 
     options: any[] = [];
 
@@ -66,7 +67,7 @@ export class HeaderSearchComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.dataService.getMenuList().subscribe((res) => {
+        this.dataService.getMenu().subscribe((res) => {
             this.menuList = res;
         });
         this.qIpt = (this.el.nativeElement as HTMLElement).querySelector('.ant-input') as HTMLInputElement;

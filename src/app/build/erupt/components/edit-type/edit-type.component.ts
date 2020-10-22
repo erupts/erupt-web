@@ -52,7 +52,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     //event
     @Output() search = new EventEmitter();
 
-    showByFieldModels: EruptFieldModel[] = [];
+    private showByFieldModels: EruptFieldModel[];
 
     eruptModel: EruptModel;
 
@@ -88,27 +88,38 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         if (this.mode === "addNew") {
             this.dataHandlerService.loadEruptDefaultValue(this.eruptBuildModel);
         }
-        for (let models of this.eruptModel.eruptFieldModels) {
-            let edit = models.eruptFieldJson.edit;
-            let showBy = edit.showBy;
+        for (let model of this.eruptModel.eruptFieldModels) {
+            let showBy = model.eruptFieldJson.edit.showBy;
             if (showBy) {
-                this.showByFieldModels.push(models);
-                let fieldValue = this.eruptModel.eruptFieldModelMap.get(showBy.dependField).eruptFieldJson.edit.$value;
-                models.eruptFieldJson.edit.show = !!eval(showBy.expr);
+                if (!this.showByFieldModels) {
+                    this.showByFieldModels = [];
+                }
+                this.showByFieldModels.push(model);
+                this.showByCheck(model);
             }
         }
     }
 
     ngDoCheck() {
-        for (let models of this.showByFieldModels) {
-            let showBy = models.eruptFieldJson.edit.showBy;
-            let edit = this.eruptModel.eruptFieldModelMap.get(showBy.dependField).eruptFieldJson.edit;
-            if (edit.$beforeValue != edit.$value) {
-                edit.$beforeValue = edit.$value;
-                let fieldValue = edit.$value;
-                models.eruptFieldJson.edit.show = !!eval(showBy.expr);
+        if (this.showByFieldModels) {
+            for (let model of this.showByFieldModels) {
+                let showBy = model.eruptFieldJson.edit.showBy;
+                let edit = this.eruptModel.eruptFieldModelMap.get(showBy.dependField).eruptFieldJson.edit;
+                if (edit.$beforeValue != edit.$value) {
+                    edit.$beforeValue = edit.$value;
+                    this.showByFieldModels.forEach(m => {
+                        this.showByCheck(m);
+                    });
+                }
             }
         }
+
+    }
+
+    showByCheck(model: EruptFieldModel) {
+        let showBy = model.eruptFieldJson.edit.showBy;
+        let value = this.eruptModel.eruptFieldModelMap.get(showBy.dependField).eruptFieldJson.edit.$value;
+        model.eruptFieldJson.edit.show = !!eval(showBy.expr);
     }
 
     ngOnDestroy(): void {

@@ -11,6 +11,7 @@ import {SafeUrlPipe} from "@shared/pipe/safe-url.pipe";
 import {DataService} from "@shared/service/data.service";
 import {UtilsService} from "@shared/service/utils.service";
 import {RipperDirective} from './directive/ripper.directive';
+import {EruptPageHeaderComponent} from "@shared/component/erupt-page-header.component";
 
 const THIRD_MODULES = [
     NgZorroAntdModule
@@ -18,7 +19,7 @@ const THIRD_MODULES = [
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS = [SafeUrlPipe];
+const COMPONENTS = [SafeUrlPipe, EruptPageHeaderComponent];
 const DIRECTIVES = [];
 
 // #endregion

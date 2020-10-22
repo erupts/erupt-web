@@ -49,6 +49,8 @@ import {DA_SERVICE_TOKEN, TokenService, urlBase64Decode} from "@delon/auth";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {utf8Encode} from "@angular/compiler/src/util";
 import {encode} from "punycode";
+import {MenuTypeEnum, MenuVo} from "../../build/erupt/model/erupt.vo";
+import {generateMenuPath} from "@shared/util/erupt.util";
 
 // #region icons
 
@@ -171,58 +173,38 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
         this.notify$ = this.settings.notify.subscribe(() => this.setClass());
         this.setClass();
         //fill menu
-        this.data.getMenu().subscribe(result => {
-            function gcMenu(nodes) {
-                const tempNodes = [];
-                nodes.forEach(node => {
-                    let icon: MenuIcon = null;
-                    if (node.data.icon) {
-                        icon = {
-                            type: "class",
-                            value: node.data.icon
+        this.data.getMenu().subscribe(res => {
+            function generateTree(menus, pid): Menu[] {
+                let result: Menu[] = [];
+                menus.forEach((menu) => {
+                    if (menu.pid == pid) {
+                        let option: Menu = {
+                            text: menu.name,
+                            key: menu.name,
+                            linkExact: true,
+                            icon: menu.icon,
+                            link: generateMenuPath(menu.type, menu.value),
+                            children: generateTree(menus, menu.id)
                         };
-                    } else {
-                        icon = {
-                            type: "icon",
-                            value: "unordered-list"
-                        };
-                    }
-                    let option: Menu = {
-                        text: node.data.name,
-                        key: node.data.name,
-                        linkExact: true,
-                        link: node.data.path,
-                        hide: node.data.status == 2 && true,
-                        icon: icon
-                    };
-                    let newWindowFeature = "/new_window?url=";
-                    let siteUrlFeature = "/site?url=";
-                    if (option.link) {
-                        if (option.link.indexOf(newWindowFeature) != -1) {
+                        if (menu.type == MenuTypeEnum.newWindow) {
                             option.target = "_blank";
-                            option.externalLink = option.link.split(newWindowFeature)[1];
-                        } else if (option.link.indexOf(siteUrlFeature) != -1) {
-                            option.link = siteUrlFeature + encodeURIComponent(option.link.split(siteUrlFeature)[1]);
+                            option.externalLink = option.link;
                         }
-                    }
-                    if (node.children && node.children.length > 0) {
-                        tempNodes.push(option);
-                        option.children = gcMenu(node.children);
-                    } else {
-                        tempNodes.push(option);
+                        result.push(option);
                     }
                 });
-                return tempNodes;
+                return result;
             }
 
             this.menuSrv.add([{
                 group: false,
                 hideInBreadcrumb: true,
                 text: "~",
-                children: gcMenu(result)
+                children: generateTree(res, null)
             }]);
             this.router.navigateByUrl(this.router.url).then();
 
+            //将所有菜单元素增加水波纹效果，动态写入href
             let menuEle = this.el.nativeElement.getElementsByClassName("sidebar-nav__item");
             for (let i = 0; i < menuEle.length; i++) {
                 let ele = menuEle.item(i);
