@@ -40,6 +40,9 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         const eruptRouterEvent = window["eruptRouterEvent"];
+        if (!this.tokenService.get().token) {
+            this.tokenService.set({token: "@", time: new Date()});
+        }
         this.router.events
             .pipe(filter(evt => evt instanceof NavigationEnd))
             .subscribe((res) => {
