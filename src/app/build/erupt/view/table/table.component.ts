@@ -326,21 +326,9 @@ export class TableComponent implements OnInit {
             });
         }
         if (tableOperators.length > 0) {
-            let width = 0;
-            for (let key in eruptJson.rowOperation) {
-                // width += (eruptJson.rowOperation[key].title.length * 20);
-                // if (eruptJson.rowOperation[key].icon) {
-                //     width += 20;
-                // }
-                width += 25;
-            }
-            for (let key in eruptJson.drills) {
-                width += (eruptJson.drills[key].title.length * 20);
-            }
             _columns.push({
                 title: "操作",
                 fixed: "right",
-                // width: "auto",
                 width: tableOperators.length * 40,
                 className: "text-center",
                 buttons: tableOperators

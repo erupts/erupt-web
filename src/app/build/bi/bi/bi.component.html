@@ -13,7 +13,7 @@
     </ng-container>
 
 
-    <ng-container *ngIf="bi.dimensions.length>0">
+    <ng-container>
         <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query(1,size,true);">
             <i nz-icon nzType="search" nzTheme="outline"></i>查询
         </button>
