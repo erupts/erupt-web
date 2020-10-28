@@ -11,7 +11,7 @@ export class RestPath {
     public static comp: string = RestPath.erupt + "/comp";
     public static excel: string = RestPath.erupt + "/excel";
     public static file: string = RestPath.erupt + "/file";
-    public static eruptAttachment: string = WindowModel.domain + "/erupt-attachment";
+    public static eruptAttachment: string = WindowModel.domain + "erupt-attachment";
     public static bi: string = RestPath.erupt + "/bi";
 }
 

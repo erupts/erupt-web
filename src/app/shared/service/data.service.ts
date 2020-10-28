@@ -54,17 +54,17 @@ export class DataService {
 
     static downloadAttachment(path: string): string {
         if (WindowModel.fileDomain) {
-            return WindowModel.fileDomain + "/" + path;
+            return WindowModel.fileDomain + path;
         } else {
-            return RestPath.file + "/download-attachment" + "/" + path;
+            return RestPath.file + "/download-attachment" + path;
         }
     }
 
     static previewAttachment(path: string): string {
         if (WindowModel.fileDomain) {
-            return WindowModel.fileDomain + "/" + path;
+            return WindowModel.fileDomain + path;
         } else {
-            return RestPath.eruptAttachment + "/" + path;
+            return RestPath.eruptAttachment + path;
         }
     }
 
