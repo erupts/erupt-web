@@ -3,4 +3,5 @@ export class GlobalKeys {
     public static loginBackPath: string = "loginBackPath";
 
     public static getAppToken: string = "getAppToken";
+
 }
