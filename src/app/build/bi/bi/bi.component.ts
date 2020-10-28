@@ -74,7 +74,7 @@ export class BiComponent implements OnInit, OnDestroy {
                         return;
                     }
                 }
-                this.query(1, 20);
+                this.query(1, this.size);
                 if (this.bi.refreshTime) {
                     this.timer = setInterval(() => {
                         this.query(this.index, this.size, true, false);

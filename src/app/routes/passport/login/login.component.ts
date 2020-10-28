@@ -62,7 +62,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
     }
 
     ngOnInit(): void {
-        console.log(this.msg);
+
     }
 
     // region: fields

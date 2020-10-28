@@ -298,7 +298,6 @@ export class TableComponent implements OnInit {
         const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
         for (let key in eruptJson.drills) {
             let drill = eruptJson.drills[key];
-            console.log(drill.icon);
             tableOperators.push({
                 type: 'link',
                 tooltip: drill.title,

@@ -650,16 +650,12 @@ export class DataHandlerService {
                         }
                         break;
                     case EditType.ATTACHMENT:
-                        if (edit.attachmentType.saveMode === SaveMode.SINGLE_COLUMN) {
-                            if (edit.$viewValue) {
-                                const $value: string[] = [];
-                                (<UploadFile[]>edit.$viewValue).forEach(val => {
-                                    $value.push(val.response.data);
-                                });
-                                eruptData[field.fieldName] = $value.join(edit.attachmentType.fileSeparator);
-                            }
-                        } else {
-                            this.msg.warning("该模式暂不可用");
+                        if (edit.$viewValue) {
+                            const $value: string[] = [];
+                            (<UploadFile[]>edit.$viewValue).forEach(val => {
+                                $value.push(val.response.data);
+                            });
+                            eruptData[field.fieldName] = $value.join(edit.attachmentType.fileSeparator);
                         }
                         break;
                     case EditType.BOOLEAN:
@@ -682,9 +678,12 @@ export class DataHandlerService {
                         }
                         break;
                     case EditType.CODE_EDITOR:
-                        let val = edit.$viewValue.getValue();
-                        if (val || val === 0) {
-                            eruptData[field.fieldName] = val;
+                        let val = edit.$viewValue;
+                        if (val) {
+                            val = val.getValue();
+                            if (val || val === 0) {
+                                eruptData[field.fieldName] = val;
+                            }
                         }
                         break;
                     default:
