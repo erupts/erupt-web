@@ -10,7 +10,7 @@ export class WindowModel {
 
     public static amapKey: string = WindowModel.config["amapKey"];
 
-    public static title: string = WindowModel.config["title"] || 'Hello Erupt';
+    public static title: string = WindowModel.config["title"] || 'Erupt Framework';
 
     public static desc: string = WindowModel.config["desc"] || undefined;
 
@@ -18,7 +18,7 @@ export class WindowModel {
 
     public static logoPath: string = WindowModel.config["logoPath"] || "erupt.svg";
 
-    public static logoText: string = WindowModel.config["logoText"] || undefined;
+    public static logoText: string = WindowModel.config["logoText"] || "Erupt";
     //注册页面地址
     public static registerPage: string = WindowModel.config["registerPage"] || undefined;
 

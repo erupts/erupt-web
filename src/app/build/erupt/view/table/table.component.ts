@@ -509,7 +509,7 @@ export class TableComponent implements OnInit {
 
     // excel导出
     exportExcel() {
-        let condition = null;
+        let condition = {};
         if (this.searchErupt.eruptFieldModels.length > 0) {
             condition = this.dataHandler.eruptValueToObject({
                 eruptModel: this.searchErupt
