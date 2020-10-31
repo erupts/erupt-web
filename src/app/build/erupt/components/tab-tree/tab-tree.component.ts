@@ -39,9 +39,6 @@ export class TabTreeComponent implements OnInit {
 
     checkBoxChange(event: NzFormatEmitEvent) {
         this.eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
-        // if (event.node.isChecked) {
-        //     this.eruptFieldModel.eruptFieldJson.edit.$value.push(...this.findChecks([event.node]));
-        // }
     }
 
     //递归获取所有选中的值

@@ -46,6 +46,12 @@ export interface Tree {
     data?: any;
 }
 
+export interface Checkbox {
+    id: any;
+    label: any;
+    checked: boolean;
+}
+
 export interface Link {
     linkErupt: string;
 }

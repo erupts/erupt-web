@@ -1,0 +1,9 @@
+<nz-spin [nzSpinning]="loading">
+    <nz-checkbox-wrapper style="width: 100%;" (nzOnChange)="change($event)">
+        <div nz-row>
+            <div nz-col nzSpan="4" *ngFor="let c of checkbox">
+                <label nz-checkbox [nzValue]="c.id" [nzChecked]="edit.$value&&edit.$value.indexOf(c.id)!=-1">{{c.label}}</label>
+            </div>
+        </div>
+    </nz-checkbox-wrapper>
+</nz-spin>

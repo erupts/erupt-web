@@ -27,8 +27,8 @@
               "src/favicon.ico",
               "src/assets",
               "src/erupt",
-              "src/app.js",
               "src/app.css",
+              "src/app.js",
               "src/home.html",
               "src/erupt.svg",
               {

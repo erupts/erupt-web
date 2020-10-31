@@ -272,6 +272,15 @@
                             </ng-container>
                         </ng-container>
                     </ng-container>
+                    <ng-container *ngSwitchCase="editType.CHECKBOX">
+                        <div nz-col [nzSpan]="24">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <erupt-checkbox [eruptBuildModel]="eruptBuildModel" [eruptFieldModel]="field"></erupt-checkbox>
+                            </se>
+                        </div>
+                    </ng-container>
                     <ng-container *ngSwitchCase="editType.SLIDER">
                         <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl" [nzXXl]="col.xxl">

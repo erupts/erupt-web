@@ -3,7 +3,7 @@
  */
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {Tree} from "../../build/erupt/model/erupt.model";
+import {Checkbox, Tree} from "../../build/erupt/model/erupt.model";
 import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
 import {LoginModel} from "../model/user.model";
@@ -135,6 +135,15 @@ export class DataService {
 
     findTabTree(eruptName: string, tabFieldName: string): Observable<Tree[]> {
         return this._http.get<Tree[]>(RestPath.data + "/tab/tree/" + eruptName + "/" + tabFieldName, null, {
+            observe: "body",
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
+    findCheckBox(eruptName: string, fieldName: string): Observable<Checkbox[]> {
+        return this._http.get<Tree[]>(RestPath.data + "/" + eruptName + "/checkbox/" + fieldName, null, {
             observe: "body",
             headers: {
                 erupt: eruptName

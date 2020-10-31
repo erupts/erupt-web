@@ -621,6 +621,17 @@ export class DataHandlerService {
                             edit.$value = null;
                         }
                         break;
+                    case EditType.CHECKBOX:
+                        if (edit.$value) {
+                            let ids = [];
+                            (<any[]>edit.$value).forEach(val => {
+                                const obj = {};
+                                obj["id"] = val;
+                                ids.push(obj);
+                            });
+                            eruptData[field.fieldName] = ids;
+                        }
+                        break;
                     case EditType.TAB_TREE:
                         if (edit.$value) {
                             let ids = [];

@@ -22,6 +22,7 @@ import {CodeEditorComponent} from './components/code-editor/code-editor.componen
 import {UEditorModule} from "ngx-ueditor";
 import {UeditorComponent} from './components/ueditor/ueditor.component';
 import { TabTreeComponent } from './components/tab-tree/tab-tree.component';
+import { CheckboxComponent } from './components/checkbox/checkbox.component';
 
 @NgModule({
     imports: [
@@ -75,7 +76,8 @@ import { TabTreeComponent } from './components/tab-tree/tab-tree.component';
         LayoutTreeComponent,
         CodeEditorComponent,
         UeditorComponent,
-        TabTreeComponent
+        TabTreeComponent,
+        CheckboxComponent
     ]
 })
 export class EruptModule {
