@@ -107,3 +107,7 @@ export enum SelectMode {
 export enum OperationMode {
     SINGLE = "SINGLE", MULTI = "MULTI", BUTTON = "BUTTON"
 }
+
+export enum OperationType {
+    ERUPT = "ERUPT", TPL = "TPL",
+}

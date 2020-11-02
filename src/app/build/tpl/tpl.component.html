@@ -1,7 +1,7 @@
 <erupt-page-header></erupt-page-header>
 <div class="page-container" style="margin-top: 38px">
     <nz-spin [nzSpinning]="spin" style="height:100%;width: 100%">
-        <iframe *ngIf="url" (load)="iframeLoad()" [src]="url | safeUrl" frameborder="0" height="100%" width="100%">
+        <iframe *ngIf="url" (load)="iframeLoad()" [src]="url | safeUrl" style="border: 0" height="100%" width="100%">
         </iframe>
     </nz-spin>
 </div>

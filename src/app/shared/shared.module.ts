@@ -9,9 +9,11 @@ import {DelonABCModule} from "@delon/abc";
 import {NgZorroAntdModule} from "ng-zorro-antd";
 import {SafeUrlPipe} from "@shared/pipe/safe-url.pipe";
 import {DataService} from "@shared/service/data.service";
-import {UtilsService} from "@shared/service/utils.service";
 import {RipperDirective} from './directive/ripper.directive';
 import {EruptPageHeaderComponent} from "@shared/component/erupt-page-header.component";
+import {SafeHtmlPipe} from "@shared/pipe/safe-html.pipe";
+import {SafeScriptPipe} from "@shared/pipe/safe-script.pipe";
+import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 const THIRD_MODULES = [
     NgZorroAntdModule
@@ -19,7 +21,7 @@ const THIRD_MODULES = [
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS = [SafeUrlPipe, EruptPageHeaderComponent];
+const COMPONENTS = [SafeUrlPipe, SafeHtmlPipe, SafeScriptPipe, EruptIframeComponent, EruptPageHeaderComponent];
 const DIRECTIVES = [];
 
 // #endregion
@@ -44,7 +46,9 @@ const DIRECTIVES = [];
     providers: [
         DataService
     ],
-    entryComponents: [],
+    entryComponents: [
+        EruptIframeComponent
+    ],
     exports: [
         CommonModule,
         FormsModule,

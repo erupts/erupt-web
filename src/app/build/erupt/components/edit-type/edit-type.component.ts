@@ -22,6 +22,7 @@ import {ReferenceTableComponent} from "../reference-table/reference-table.compon
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {DataHandlerService} from "../../service/data-handler.service";
+import {IframeHeight} from "@shared/util/window.util";
 
 @Component({
     selector: "erupt-edit-type",
@@ -292,12 +293,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         }
     }
 
-    iframeHeight(event) {
-        let iframe = (event.path || (event.composedPath && event.composedPath()))[0];
-        let iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
-        if (iframeWin.document.body) {
-            iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
-        }
-    }
+    iframeHeight = IframeHeight;
 
 }

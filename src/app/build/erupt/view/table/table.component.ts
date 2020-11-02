@@ -11,13 +11,16 @@ import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {deepCopy} from "@delon/util";
-import {EditType, OperationMode, RestPath, SelectMode} from "../../model/erupt.enum";
+import {EditType, OperationMode, OperationType, RestPath, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {BuildConfig} from "../../model/build-config";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
+import {DomSanitizer} from "@angular/platform-browser";
+import {SafeTemplateComponent} from "../../components/safe-template/safe-template.component";
+import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 @Component({
     selector: "erupt-table",
@@ -35,6 +38,7 @@ export class TableComponent implements OnInit {
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 public route: ActivatedRoute,
+                private sanitizer: DomSanitizer,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 private dataHandler: DataHandlerService
     ) {
@@ -345,10 +349,7 @@ export class TableComponent implements OnInit {
     createOperator(code: string, data?: object) {
         const eruptModel = this.eruptBuildModel.eruptModel;
         const ro = eruptModel.eruptJson.rowOperation[code];
-        let operationErupt = null;
-        if (this.eruptBuildModel.operationErupts) {
-            operationErupt = this.eruptBuildModel.operationErupts[code];
-        }
+
         let ids = [];
         if (data) {
             ids = [data[eruptModel.eruptJson.primaryKeyCol]];
@@ -361,47 +362,69 @@ export class TableComponent implements OnInit {
                 ids.push(e[eruptModel.eruptJson.primaryKeyCol]);
             });
         }
-        if (operationErupt) {
-            let modal = this.modal.create({
-                nzKeyboard: false,
+        if (ro.type === OperationType.TPL) {
+            let url = this.dataService.getEruptOperationTpl(this.eruptBuildModel.eruptModel.eruptName, code, ids);
+            this.modal.create({
+                nzKeyboard: true,
                 nzTitle: ro.title,
-                nzMaskClosable: false,
-                nzCancelText: "取消",
+                nzMaskClosable: true,
                 nzWrapClassName: "modal-lg",
-                nzOnOk: async () => {
-                    modal.getInstance().nzCancelDisabled = true;
-                    let eruptValue = this.dataHandler.eruptValueToObject({eruptModel: operationErupt});
-                    let res = await this.dataService.execOperatorFun(eruptModel.eruptName, code, ids, eruptValue).toPromise().then(res => res);
-                    modal.getInstance().nzCancelDisabled = false;
-
-                    this.selectedRows = [];
-                    if (res.status === Status.SUCCESS) {
-                        this.st.reload();
-                        return true;
-                    } else {
-                        return false;
-                    }
+                nzBodyStyle: {
+                    padding: 0
                 },
-                nzContent: EditTypeComponent,
+                nzFooter: null,
+                nzContent: EruptIframeComponent,
                 nzComponentParams: {
-                    mode: "addNew",
-                    eruptBuildModel: {
-                        eruptModel: operationErupt
-                    },
-                    parentEruptName: this.eruptBuildModel.eruptModel.eruptName
+                    url: url
                 }
             });
         } else {
-            this.modal.confirm({
-                nzTitle: "请确认是否执行此操作",
-                nzContent: ro.title,
-                nzOnOk: async () => {
-                    this.selectedRows = [];
-                    await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, ids, null)
-                        .toPromise().then();
-                    this.st.reload();
-                }
-            });
+            let operationErupt = null;
+            if (this.eruptBuildModel.operationErupts) {
+                operationErupt = this.eruptBuildModel.operationErupts[code];
+            }
+            if (operationErupt) {
+                let modal = this.modal.create({
+                    nzKeyboard: false,
+                    nzTitle: ro.title,
+                    nzMaskClosable: false,
+                    nzCancelText: "取消",
+                    nzWrapClassName: "modal-lg",
+                    nzOnOk: async () => {
+                        modal.getInstance().nzCancelDisabled = true;
+                        let eruptValue = this.dataHandler.eruptValueToObject({eruptModel: operationErupt});
+                        let res = await this.dataService.execOperatorFun(eruptModel.eruptName, code, ids, eruptValue).toPromise().then(res => res);
+                        modal.getInstance().nzCancelDisabled = false;
+
+                        this.selectedRows = [];
+                        if (res.status === Status.SUCCESS) {
+                            this.st.reload();
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    },
+                    nzContent: EditTypeComponent,
+                    nzComponentParams: {
+                        mode: "addNew",
+                        eruptBuildModel: {
+                            eruptModel: operationErupt
+                        },
+                        parentEruptName: this.eruptBuildModel.eruptModel.eruptName
+                    }
+                });
+            } else {
+                this.modal.confirm({
+                    nzTitle: "请确认是否执行此操作",
+                    nzContent: ro.title,
+                    nzOnOk: async () => {
+                        this.selectedRows = [];
+                        await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, ids, null)
+                            .toPromise().then();
+                        this.st.reload();
+                    }
+                });
+            }
         }
     }
 

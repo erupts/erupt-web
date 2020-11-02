@@ -23,6 +23,7 @@ import {UEditorModule} from "ngx-ueditor";
 import {UeditorComponent} from './components/ueditor/ueditor.component';
 import { TabTreeComponent } from './components/tab-tree/tab-tree.component';
 import { CheckboxComponent } from './components/checkbox/checkbox.component';
+import { SafeTemplateComponent } from './components/safe-template/safe-template.component';
 
 @NgModule({
     imports: [
@@ -58,7 +59,8 @@ import { CheckboxComponent } from './components/checkbox/checkbox.component';
         ReferenceTableComponent,
         TableComponent,
         EditComponent,
-        CodeEditorComponent
+        CodeEditorComponent,
+        SafeTemplateComponent
     ],
     declarations: [
         EditTypeComponent,
@@ -77,7 +79,8 @@ import { CheckboxComponent } from './components/checkbox/checkbox.component';
         CodeEditorComponent,
         UeditorComponent,
         TabTreeComponent,
-        CheckboxComponent
+        CheckboxComponent,
+        SafeTemplateComponent
     ]
 })
 export class EruptModule {

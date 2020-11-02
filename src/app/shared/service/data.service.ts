@@ -93,6 +93,21 @@ export class DataService {
         return RestPath.tpl + "/" + name + "?_token=" + this.tokenService.get().token + "&_erupt=" + name;
     }
 
+    getEruptOperationTpl(eruptName: string, operationCode: string, ids: any[]) {
+        return RestPath.tpl + "/operation_tpl/" + eruptName + "/" + operationCode +
+            "?_token=" + this.tokenService.get().token + "&_erupt=" + eruptName + "&ids=" + ids;
+    }
+
+    // getEruptOperationTpl(eruptName: string, operationCode: string, ids: any[]) {
+    //     return this.http.post(RestPath.tpl + "/operation_tpl/" + eruptName + "/" + operationCode, ids, {
+    //         responseType: 'text',
+    //         headers: {
+    //             erupt: eruptName,
+    //             token: this.tokenService.get().token
+    //         }
+    //     });
+    // }
+
     //tree数据结构
     queryEruptTreeData(eruptName: string): Observable<Tree[]> {
         return this._http.get<Tree[]>(RestPath.data + "/tree/" + eruptName, null, {
@@ -143,7 +158,7 @@ export class DataService {
     }
 
     findCheckBox(eruptName: string, fieldName: string): Observable<Checkbox[]> {
-        return this._http.get<Tree[]>(RestPath.data + "/" + eruptName + "/checkbox/" + fieldName, null, {
+        return this._http.get<Checkbox[]>(RestPath.data + "/" + eruptName + "/checkbox/" + fieldName, null, {
             observe: "body",
             headers: {
                 erupt: eruptName

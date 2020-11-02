@@ -1,5 +1,5 @@
 import {Edit, EruptFieldModel, View} from "./erupt-field.model";
-import {OperationMode} from "./erupt.enum";
+import {OperationMode, OperationType} from "./erupt.enum";
 
 /**
  * Created by liyuepeng on 10/16/18.
@@ -61,6 +61,7 @@ export interface RowOperation {
     icon: string;
     title: string;
     mode: OperationMode;
+    type: OperationType;
     tip: string;
     ifExpr: string;
 }
