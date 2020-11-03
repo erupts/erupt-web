@@ -29,9 +29,7 @@ export class TabTreeComponent implements OnInit {
         this.loading = true;
         this.dataService.findTabTree(this.eruptBuildModel.eruptModel.eruptName, this.eruptFieldModel.fieldName).subscribe(
             tree => {
-                if (tree) {
-                    this.treeData = this.dataHandlerService.dataTreeToZorroTree(tree);
-                }
+                this.treeData = this.dataHandlerService.dataTreeToZorroTree(tree) || [];
                 this.loading = false;
             }
         );
@@ -39,6 +37,15 @@ export class TabTreeComponent implements OnInit {
 
     checkBoxChange(event: NzFormatEmitEvent) {
         this.eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
+    }
+
+    arrayAnyToString(array: any[]): string[] {
+        if (array) {
+            for (let i in array) {
+                array[i] = array[i].toString();
+            }
+        }
+        return array;
     }
 
     //递归获取所有选中的值

@@ -6,13 +6,13 @@
     <i nz-icon nzType="search"></i>
 </ng-template>
 <br>
-<nz-spin [nzSpinning]="loading">
+<nz-spin [nzSpinning]="loading" *ngIf="treeData">
     <nz-tree [nzCheckable]="true"
              [nzShowLine]="true"
              [nzCheckStrictly]="true"
              [nzData]="treeData"
              (nzCheckBoxChange)="checkBoxChange($event)"
              [nzSearchValue]="eruptFieldModel.eruptFieldJson.edit.$tempValue"
-             [nzCheckedKeys]="eruptFieldModel.eruptFieldJson.edit.$value">
+             [nzCheckedKeys]="arrayAnyToString(eruptFieldModel.eruptFieldJson.edit.$value)">
     </nz-tree>
 </nz-spin>
