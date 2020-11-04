@@ -91,7 +91,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
             this.loading = false;
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
-            callback();
+            callback && callback();
         });
     }
 
@@ -116,6 +116,7 @@ export class TreeComponent implements OnInit, OnDestroy {
             if (result.status == Status.SUCCESS) {
                 this.fetchTreeData();
                 this.dataHandler.emptyEruptValue(this.eruptBuildModel);
+                console.log(this.eruptBuildModel.eruptModel)
                 this.msg.success("添加成功");
             }
         });

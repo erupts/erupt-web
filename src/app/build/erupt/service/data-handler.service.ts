@@ -11,6 +11,7 @@ import {STColumn, STData} from "@delon/abc";
 import {DatePipe} from "@angular/common";
 import {CodeEditorComponent} from "../components/code-editor/code-editor.component";
 import * as moment from 'moment';
+import {QueryCondition} from "../model/erupt.vo";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -507,6 +508,17 @@ export class DataHandlerService {
         return tempNodes;
     }
 
+    eruptObjectToCondition(obj: Object): QueryCondition[] {
+        let queryCondition: QueryCondition[] = [];
+        for (let key in obj) {
+            queryCondition.push({
+                key: key,
+                value: obj[key]
+            });
+        }
+        return queryCondition;
+    }
+
     searchEruptToObject(eruptBuildModel: EruptBuildModel): object {
         const obj = this.eruptValueToObject(eruptBuildModel);
         eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
@@ -538,6 +550,15 @@ export class DataHandlerService {
                                         this.datePipe.transform(edit.$value[1], "yyyy-MM-dd HH:mm:ss")];
                                 }
                             }
+                            break;
+
+                    }
+                } else {
+                    switch (edit.type) {
+                        case EditType.REFERENCE_TREE:
+                        case EditType.REFERENCE_TABLE:
+                            obj[field.fieldName] = edit.$value;
+                            break;
                     }
                 }
             }
@@ -705,10 +726,6 @@ export class DataHandlerService {
                 }
             }
         });
-        let linkTree = eruptBuildModel.eruptModel.eruptJson.linkTree;
-        if (linkTree) {
-            eruptData['$' + linkTree.field] = linkTree.value;
-        }
         if (eruptBuildModel.combineErupts) {
             for (let key in eruptBuildModel.combineErupts) {
                 eruptData[key] = this.eruptValueToObject({
@@ -923,9 +940,11 @@ export class DataHandlerService {
             switch (ef.eruptFieldJson.edit.type) {
                 case EditType.CHOICE:
                     if (eruptBuildModel.eruptModel.mode === "search") {
-                        ef.eruptFieldJson.edit.choiceType.vl.forEach(v => {
-                            v.$viewValue = false;
-                        });
+                        if (ef.eruptFieldJson.edit.choiceType.vl) {
+                            ef.eruptFieldJson.edit.choiceType.vl.forEach(v => {
+                                v.$viewValue = false;
+                            });
+                        }
                     }
                     break;
                 case EditType.BOOLEAN:
@@ -936,6 +955,9 @@ export class DataHandlerService {
                 case EditType.INPUT:
                     ef.eruptFieldJson.edit.inputType.prefixValue = null;
                     ef.eruptFieldJson.edit.inputType.suffixValue = null;
+                    break;
+                case EditType.ATTACHMENT:
+                    ef.eruptFieldJson.edit.$viewValue = [];
                     break;
                 case EditType.TAB_TABLE_REFER:
                 case EditType.TAB_TABLE_ADD:

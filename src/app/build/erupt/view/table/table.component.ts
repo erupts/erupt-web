@@ -11,7 +11,7 @@ import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {deepCopy} from "@delon/util";
-import {EditType, OperationMode, OperationType, RestPath, SelectMode} from "../../model/erupt.enum";
+import {OperationMode, OperationType, RestPath, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {BuildConfig} from "../../model/build-config";
@@ -19,7 +19,6 @@ import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
-import {SafeTemplateComponent} from "../../components/safe-template/safe-template.component";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 @Component({
@@ -153,9 +152,15 @@ export class TableComponent implements OnInit {
 
 
     query() {
-        this.stConfig.req.param = this.dataHandler.searchEruptToObject({
-            eruptModel: this.searchErupt
-        });
+        this.stConfig.req.param["condition"] = this.dataHandler.eruptObjectToCondition(
+            this.dataHandler.searchEruptToObject({
+                eruptModel: this.searchErupt
+            })
+        );
+        let linkTree = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
+        if (linkTree.field) {
+            this.stConfig.req.param["linkTreeVal"] = linkTree.value;
+        }
         this.st.load(1, this.stConfig.req.param);
     }
 
@@ -532,12 +537,13 @@ export class TableComponent implements OnInit {
 
     // excel导出
     exportExcel() {
-        let condition = {};
+        let condition;
         if (this.searchErupt.eruptFieldModels.length > 0) {
-            condition = this.dataHandler.eruptValueToObject({
+            condition = this.dataHandler.eruptObjectToCondition(this.dataHandler.eruptValueToObject({
                 eruptModel: this.searchErupt
-            });
+            }));
         }
+        console.log(condition)
         //导出接口
         this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition);
     }

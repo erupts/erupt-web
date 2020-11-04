@@ -61,65 +61,75 @@ export class TabTableComponent implements OnInit {
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
             viewValue.push(...this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel, false, true));
-            let operators: STColumnButton[] = [];
-            if (this.mode == "add") {
-                operators.push({
-                    icon: "edit",
-                    click: (record: any, modal: any, comp: STComponent) => {
-                        this.dataHandlerService.objectToEruptValue(record, this.tabErupt.eruptBuildModel);
-                        this.modal.create({
-                            nzWrapClassName: "modal-lg",
-                            nzStyle: {top: "20px"},
-                            nzMaskClosable: false,
-                            nzKeyboard: false,
-                            nzTitle: "编辑",
-                            nzContent: EditTypeComponent,
-                            nzComponentParams: {
-                                col: colRules[3],
-                                eruptBuildModel: this.tabErupt.eruptBuildModel,
-                                parentEruptName: this.eruptBuildModel.eruptModel.eruptName
-                            },
-                            nzOnOk: () => {
-                                let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
-                                let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
-                                $value.forEach((val, index) => {
-                                    let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
-                                    if (record[tabPrimaryKeyCol] == val[tabPrimaryKeyCol]) {
-                                        $value[index] = obj;
+            if (!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.readOnly) {
+                let operators: STColumnButton[] = [];
+                if (this.mode == "add") {
+                    operators.push({
+                        icon: "edit",
+                        click: (record: any, modal: any, comp: STComponent) => {
+                            this.dataHandlerService.objectToEruptValue(record, this.tabErupt.eruptBuildModel);
+                            this.modal.create({
+                                nzWrapClassName: "modal-lg",
+                                nzStyle: {top: "20px"},
+                                nzMaskClosable: false,
+                                nzKeyboard: false,
+                                nzTitle: "编辑",
+                                nzContent: EditTypeComponent,
+                                nzComponentParams: {
+                                    col: colRules[3],
+                                    eruptBuildModel: this.tabErupt.eruptBuildModel,
+                                    parentEruptName: this.eruptBuildModel.eruptModel.eruptName
+                                },
+                                nzOnOk: async () => {
+                                    let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
+
+                                    let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName
+                                        , obj, this.eruptBuildModel.eruptModel.eruptName).toPromise().then(resp => resp);
+                                    if (result.status == Status.SUCCESS) {
+                                        let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
+                                        $value.forEach((val, index) => {
+                                            let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+                                            if (record[tabPrimaryKeyCol] == val[tabPrimaryKeyCol]) {
+                                                $value[index] = obj;
+                                            }
+                                        });
+                                        this.st.reload();
+                                        return true;
+                                    } else {
+                                        return false;
                                     }
-                                });
-                                this.st.reload();
+                                }
+                            });
+                        }
+                    });
+                }
+                operators.push({
+                    icon: {
+                        type: "delete",
+                        theme: "twotone",
+                        twoToneColor: "#f00"
+                    },
+                    type: "del",
+                    click: (record, modal, comp: STComponent) => {
+                        let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
+                        for (let i in <any[]>$value) {
+                            let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+                            if (record[tabPrimaryKeyCol] == $value[i][tabPrimaryKeyCol]) {
+                                $value.splice(i, 1);
+                                break;
                             }
-                        });
+                        }
+                        this.st.reload();
                     }
                 });
+                viewValue.push({
+                    title: "操作区",
+                    fixed: "right",
+                    width: "80px",
+                    className: "text-center",
+                    buttons: operators
+                });
             }
-            operators.push({
-                icon: {
-                    type: "delete",
-                    theme: "twotone",
-                    twoToneColor: "#f00"
-                },
-                type: "del",
-                click: (record, modal, comp: STComponent) => {
-                    let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
-                    for (let i in <any[]>$value) {
-                        let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
-                        if (record[tabPrimaryKeyCol] == $value[i][tabPrimaryKeyCol]) {
-                            $value.splice(i, 1);
-                            break;
-                        }
-                    }
-                    this.st.reload();
-                }
-            });
-            viewValue.push({
-                title: "操作区",
-                fixed: "right",
-                width: "80px",
-                className: "text-center",
-                buttons: operators
-            });
             this.column = viewValue;
         }
     }
@@ -143,10 +153,11 @@ export class TabTableComponent implements OnInit {
                     , obj, this.eruptBuildModel.eruptModel.eruptName).toPromise().then(resp => resp);
                 if (result.status == Status.SUCCESS) {
                     obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = -Math.floor(Math.random() * 1000);
-                    if (!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
-                        this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
+                    let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
+                    if (!edit.$value) {
+                        edit.$value = [];
                     }
-                    this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value.push(obj);
+                    edit.$value.push(obj);
                     this.st.reload();
                     return true;
                 } else {
@@ -177,6 +188,8 @@ export class TabTableComponent implements OnInit {
                     return false;
                 }
                 edit.$value.push(...edit.$tempValue);
+                //去重
+                edit.$value = Array.from(new Set(edit.$value));
                 this.st.reload();
             }
         });

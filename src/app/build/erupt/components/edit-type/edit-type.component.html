@@ -5,10 +5,19 @@
                     *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.show&&field.eruptFieldJson.edit.title">
                 <ng-container [ngSwitch]="field.eruptFieldJson.edit.type">
                     <ng-container *ngSwitchCase="editType.INPUT">
-                        <div class="col-div" nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
-                             [nzLg]="col.lg"
-                             [nzXl]="col.xl"
-                             [nzXXl]="col.xxl">
+                        <ng-container *ngIf="field.eruptFieldJson.edit.inputType.fullSpan">
+                            <div class="col-div" nz-col [nzSpan]="24">
+                                <ng-container [ngTemplateOutlet]="inputSe"></ng-container>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="!field.eruptFieldJson.edit.inputType.fullSpan">
+                            <div class="col-div" nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                                 [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
+                                <ng-container [ngTemplateOutlet]="inputSe"></ng-container>
+                            </div>
+                        </ng-container>
+
+                        <ng-template #inputSe>
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
@@ -80,7 +89,7 @@
                                     <!--end prefix and suffix template-->
                                 </ng-container>
                             </se>
-                        </div>
+                        </ng-template>
                     </ng-container>
                     <!-- number-->
                     <ng-container *ngSwitchCase="editType.NUMBER">
@@ -277,7 +286,8 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <erupt-checkbox [eruptBuildModel]="eruptBuildModel" [eruptFieldModel]="field"></erupt-checkbox>
+                                <erupt-checkbox [eruptBuildModel]="eruptBuildModel"
+                                                [eruptFieldModel]="field"></erupt-checkbox>
                             </se>
                         </div>
                     </ng-container>

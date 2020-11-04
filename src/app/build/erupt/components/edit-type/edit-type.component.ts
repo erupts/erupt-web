@@ -229,7 +229,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             nzWrapClassName: "modal-xxl",
             nzKeyboard: true,
             nzStyle: {top: "24px"},
-            nzBodyStyle: {padding: "8px"},
+            nzBodyStyle: {padding: "16px"},
             nzTitle: edit.title,
             nzCancelText: "取消（ESC）",
             nzContent: ReferenceTableComponent,

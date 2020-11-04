@@ -5,12 +5,10 @@
     <i nz-icon nzType="search"></i>
 </ng-template>
 <nz-card [nzBodyStyle]="{padding:'10px',overflow: 'auto'}" [nzLoading]="treeLoading"
-         style="height: calc(100vh - 180px)"
-         [nzBordered]="true"
-         [nzHoverable]="true">
-    <nz-tree #tree
+         style="height: calc(100vh - 180px);box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09)"
+         [nzBordered]="true">
+    <nz-tree class="tree-container"
              [nzData]="list"
-             class="tree-container"
              [nzShowLine]="true"
              [nzSearchValue]="searchValue"
              [nzBlockNode]="true"

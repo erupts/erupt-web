@@ -90,6 +90,7 @@ interface CodeEditType {
 interface InputType {
     length: number;
     type: string;
+    fullSpan: boolean;
     prefix: VL[];
     suffix: VL[];
     prefixValue?: string;

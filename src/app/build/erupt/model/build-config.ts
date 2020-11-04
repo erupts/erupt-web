@@ -1,7 +1,7 @@
 export class BuildConfig {
-    public static pi = "_pageIndex";
+    public static pi = "pageIndex";
 
-    public static ps = "_pageSize";
+    public static ps = "pageSize";
 
     public stConfig = {
         url: null,
@@ -25,7 +25,7 @@ export class BuildConfig {
             }
         },
         multiSort: {
-            key: "_sort",
+            key: "sort",
             separator: ",",
             nameSeparator: " "
         }
