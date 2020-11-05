@@ -1,6 +1,6 @@
 import {Edit, EruptFieldModel} from "../model/erupt-field.model";
 import {EruptModel, Tree} from "../model/erupt.model";
-import {ChoiceEnum, DateEnum, EditType, SaveMode, ViewType} from "../model/erupt.enum";
+import {DateEnum, EditType, ViewType} from "../model/erupt.enum";
 import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
 import {deepCopy} from "@delon/util";
 import {Inject, Injectable} from "@angular/core";
@@ -612,15 +612,14 @@ export class DataHandlerService {
                         break;
                     case EditType.CHOICE:
                         if (edit.$value || edit.$value === 0) {
-                            if (edit.choiceType.type === ChoiceEnum.SELECT_MULTI ||
-                                edit.choiceType.type === ChoiceEnum.TAGS ||
-                                edit.choiceType.type === ChoiceEnum.CHECKBOX) {
-                                let val = (<string[]>edit.$value).join(edit.choiceType.joinSeparator);
-                                if (val) {
-                                    eruptData[field.fieldName] = val;
-                                }
-                            } else {
-                                eruptData[field.fieldName] = edit.$value;
+                            eruptData[field.fieldName] = edit.$value;
+                        }
+                        break;
+                    case EditType.TAGS:
+                        if (edit.$value || edit.$value === 0) {
+                            let val = (<string[]>edit.$value).join(edit.tagsType.joinSeparator);
+                            if (val) {
+                                eruptData[field.fieldName] = val;
                             }
                         }
                         break;
@@ -863,38 +862,32 @@ export class DataHandlerService {
                         }
                         break;
                     case EditType.ATTACHMENT:
-                        if (edit.attachmentType.saveMode === SaveMode.SINGLE_COLUMN) {
-                            edit.$viewValue = [];
-                            if (object[field.fieldName]) {
-                                (<string>object[field.fieldName]).split(edit.attachmentType.fileSeparator)
-                                    .forEach(str => {
-                                        (<UploadFile[]>edit.$viewValue).push({
-                                            uid: str,
-                                            name: str,
-                                            size: 1,
-                                            type: "",
-                                            url: DataService.previewAttachment(str),
-                                            response: {
-                                                data: str
-                                            }
-                                        });
+                        edit.$viewValue = [];
+                        if (object[field.fieldName]) {
+                            (<string>object[field.fieldName]).split(edit.attachmentType.fileSeparator)
+                                .forEach(str => {
+                                    (<UploadFile[]>edit.$viewValue).push({
+                                        uid: str,
+                                        name: str,
+                                        size: 1,
+                                        type: "",
+                                        url: DataService.previewAttachment(str),
+                                        response: {
+                                            data: str
+                                        }
                                     });
-                                edit.$value = object[field.fieldName];
-                            }
-                        } else {
-
+                                });
+                            edit.$value = object[field.fieldName];
                         }
                         break;
                     case EditType.CHOICE:
-                        if (edit.choiceType.type === ChoiceEnum.SELECT_MULTI || edit.choiceType.type === ChoiceEnum.TAGS
-                            || edit.choiceType.type === ChoiceEnum.CHECKBOX) {
-                            if (object[field.fieldName]) {
-                                edit.$value = String(object[field.fieldName]).split(edit.choiceType.joinSeparator);
-                            } else {
-                                edit.$value = [];
-                            }
+                        edit.$value = object[field.fieldName] && object[field.fieldName] + '';
+                        break;
+                    case EditType.TAGS:
+                        if (object[field.fieldName]) {
+                            edit.$value = String(object[field.fieldName]).split(edit.tagsType.joinSeparator);
                         } else {
-                            edit.$value = object[field.fieldName] && object[field.fieldName] + '';
+                            edit.$value = [];
                         }
                         break;
                     default:

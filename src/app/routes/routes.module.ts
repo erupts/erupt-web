@@ -14,7 +14,7 @@ import {Exception500Component} from "./exception/500.component";
 import {ChangePwdComponent} from "./change-pwd/change-pwd.component";
 import {HomeComponent} from './home/home.component';
 import {SiteComponent} from "./site/site.component";
-import { FillComponent } from './fill/fill.component';
+import {FillComponent} from './fill/fill.component';
 
 
 const COMPONENTS = [
@@ -42,7 +42,7 @@ const COMPONENTS_NOROUNT = [
         HomeComponent,
         FillComponent
     ],
-    entryComponents: COMPONENTS_NOROUNT
+    entryComponents: [COMPONENTS_NOROUNT, ChangePwdComponent]
 })
 export class RoutesModule {
 }

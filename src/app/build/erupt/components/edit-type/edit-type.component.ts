@@ -67,11 +67,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     attachmentEnum = AttachmentEnum;
 
-    dateRanges: object = null;
-
     uploadFilesStatus: { [key: string]: boolean } = {};
-
-    private datePipe: DatePipe = new DatePipe("zh-cn");
 
     constructor(public dataService: DataService,
                 private differs: KeyValueDiffers,
@@ -83,9 +79,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     ngOnInit() {
         this.eruptModel = this.eruptBuildModel.eruptModel;
-        this.dateRanges = {
-            "今天": [this.datePipe.transform(new Date(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")]
-        };
         if (this.mode === "addNew") {
             this.dataHandlerService.loadEruptDefaultValue(this.eruptBuildModel);
         }

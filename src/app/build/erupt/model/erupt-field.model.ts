@@ -1,12 +1,4 @@
-import {
-    AttachmentEnum,
-    ChoiceEnum,
-    DateEnum,
-    EditType, HtmlEditTypeEnum,
-    SaveMode,
-    TabEnum,
-    ViewType
-} from "./erupt.enum";
+import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, PickerMode, TabEnum, ViewType} from "./erupt.enum";
 
 /**
  * Created by liyuepeng on 10/17/18.
@@ -14,7 +6,8 @@ import {
 export interface EruptFieldModel {
     fieldName: string;
     eruptFieldJson: EruptField;
-    choiceList?: VL[]
+    choiceList?: VL[];
+    tagList?: string[];
     value?: any;
 }
 
@@ -59,6 +52,7 @@ export interface Edit {
     htmlEditorType: HtmlEditorType;
     boolType: BoolType;
     choiceType: ChoiceType;
+    tagsType: TagsType;
     dateType: DateType;
     sliderType: SliderType;
     codeEditType: CodeEditType;
@@ -129,8 +123,14 @@ interface BoolType {
 interface ChoiceType {
     type: ChoiceEnum;
     vl: VL[];
+}
+
+
+interface TagsType {
+    allowExtension: boolean;
     joinSeparator: string;
 }
+
 
 export interface TabType {
     type: TabEnum;
@@ -148,6 +148,7 @@ interface SliderType {
 
 interface DateType {
     type: DateEnum;
+    pickerMode: PickerMode;
     isRange: boolean;
 }
 
@@ -158,7 +159,6 @@ interface AttachmentType {
     maxLimit: number;
     type: AttachmentEnum;
     fileSeparator: string;
-    saveMode: SaveMode;
     baseUrl: { value: string }
 }
 

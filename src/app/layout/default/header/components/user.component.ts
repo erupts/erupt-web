@@ -3,6 +3,8 @@ import {Router} from "@angular/router";
 import {SettingsService} from "@delon/theme";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {DataService} from "@shared/service/data.service";
+import {NzModalService} from "ng-zorro-antd";
+import {ChangePwdComponent} from "../../../../routes/change-pwd/change-pwd.component";
 
 @Component({
     selector: "header-user",
@@ -13,7 +15,7 @@ import {DataService} from "@shared/service/data.service";
                 {{settings.user.name}}
             </div>
             <div nz-menu class="width-sm">
-                <div nz-menu-item routerLink="/change-pwd">
+                <div nz-menu-item (click)="changePwd()">
                     <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>修改密码
                 </div>
                 <div nz-menu-item (click)="logout()">
@@ -28,7 +30,9 @@ export class HeaderUserComponent {
         public settings: SettingsService,
         private router: Router,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
-        private data: DataService
+        private data: DataService,
+        @Inject(NzModalService)
+        private modal: NzModalService,
     ) {
     }
 
@@ -36,5 +40,17 @@ export class HeaderUserComponent {
         this.data.logout().subscribe();
         this.tokenService.clear();
         this.router.navigateByUrl(this.tokenService.login_url);
+    }
+
+    changePwd() {
+        this.modal.create({
+            nzTitle: "修改密码",
+            nzMaskClosable: false,
+            nzContent: ChangePwdComponent,
+            nzFooter: null,
+            nzBodyStyle: {
+                paddingBottom: '1px'
+            }
+        });
     }
 }

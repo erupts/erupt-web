@@ -160,29 +160,32 @@
                     <!--choice-->
                     <ng-container *ngSwitchCase="editType.CHOICE">
                         <ng-container *ngIf="eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague">
-                            <ng-container
-                                    *ngIf="field.eruptFieldJson.edit.choiceType.type==choiceEnum.RADIO||field.eruptFieldJson.edit.choiceType.type==choiceEnum.SELECT_SINGLE">
-                                <div nz-col [nzXs]="24">
-                                    <se [label]="field.eruptFieldJson.edit.title"
-                                        [required]="field.eruptFieldJson.edit.notNull"
-                                        [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                        <tag-select
-                                                [expandable]="false"
+                            <div nz-col [nzXs]="24">
+                                <se [label]="field.eruptFieldJson.edit.title"
+                                    [required]="field.eruptFieldJson.edit.notNull"
+                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                    <!--                                    <nz-checkbox-wrapper style="width: 100%;margin-top: 10px;">-->
+                                    <!--                                        <div nz-row>-->
+                                    <!--                                            <div nz-col nzSpan="4" *ngFor="let vl of field.choiceList">-->
+                                    <!--                                                <label nz-checkbox [nzValue]="vl.value">{{vl.label}}</label>-->
+                                    <!--                                            </div>-->
+                                    <!--                                        </div>-->
+                                    <!--                                    </nz-checkbox-wrapper>-->
+                                    <tag-select [expandable]="true"
                                                 style="margin-left: 0;">
-                                            <nz-tag (nzCheckedChange)="changeTagAll($event,field)"
+                                        <nz-tag (nzCheckedChange)="changeTagAll($event,field)"
+                                                style="margin-right: 10px"
+                                                nzMode="checkable">全选
+                                        </nz-tag>
+                                        <ng-container *ngFor="let vl of field.choiceList">
+                                            <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"
                                                     style="margin-right: 10px"
-                                                    nzMode="checkable">全选
-                                            </nz-tag>
-                                            <ng-container *ngFor="let vl of field.choiceList">
-                                                <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"
-                                                        style="margin-right: 10px"
-                                                        nzMode="checkable"
-                                                        [(nzChecked)]="vl.$viewValue">{{vl.label}}</nz-tag>
-                                            </ng-container>
-                                        </tag-select>
-                                    </se>
-                                </div>
-                            </ng-container>
+                                                    nzMode="checkable"
+                                                    [(nzChecked)]="vl.$viewValue">{{vl.label}}</nz-tag>
+                                        </ng-container>
+                                    </tag-select>
+                                </se>
+                            </div>
                         </ng-container>
                         <ng-container *ngIf="eruptModel.mode!='search'||!field.eruptFieldJson.edit.search.vague">
                             <ng-container [ngSwitch]="field.eruptFieldJson.edit.choiceType.type">
@@ -207,7 +210,7 @@
                                         </se>
                                     </div>
                                 </ng-container>
-                                <ng-container *ngSwitchCase="choiceEnum.SELECT_SINGLE">
+                                <ng-container *ngSwitchCase="choiceEnum.SELECT">
                                     <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                                          [nzLg]="col.lg"
                                          [nzXl]="col.xl"
@@ -229,57 +232,26 @@
                                         </se>
                                     </div>
                                 </ng-container>
-                                <!--<ng-container *ngSwitchCase="choiceEnum.CHECKBOX">-->
-                                <!--<div nz-col [nzXs]="24">-->
-                                <!--<se [label]="field.eruptFieldJson.edit.title"-->
-                                <!--[required]="field.eruptFieldJson.edit.notNull"-->
-                                <!--[optionalHelp]="field.eruptFieldJson.edit.desc">-->
-                                <!--<nz-checkbox-wrapper style="width: 100%;" [(ngModel)]="field.eruptFieldJson.edit.$value" [name]="field.fieldName">-->
-                                <!--<ng-container *ngFor="let vl of field.eruptFieldJson.edit.choiceType.vl">-->
-                                <!--<label nz-checkbox [nzValue]="vl.label"-->
-                                <!--[nzDisabled]="field.eruptFieldJson.edit.readOnly">{{vl.label}}</label>-->
-                                <!--</ng-container>-->
-                                <!--</nz-checkbox-wrapper>-->
-                                <!--</se>-->
-                                <!--</div>-->
-                                <!--</ng-container>-->
-                                <ng-container *ngSwitchCase="choiceEnum.SELECT_MULTI">
-                                    <div nz-col [nzSpan]="24">
-                                        <se [label]="field.eruptFieldJson.edit.title"
-                                            [required]="field.eruptFieldJson.edit.notNull"
-                                            [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                            <nz-select [nzAllowClear]='!field.eruptFieldJson.edit.notNull'
-                                                       [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                       [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                       [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                       [name]="field.fieldName"
-                                                       [nzMode]="'multiple'">
-                                                <nz-option *ngFor="let vl of field.choiceList"
-                                                           [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
-                                            </nz-select>
-                                        </se>
-                                    </div>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="choiceEnum.TAGS">
-                                    <div nz-col [nzSpan]="24">
-                                        <se [label]="field.eruptFieldJson.edit.title"
-                                            [required]="field.eruptFieldJson.edit.notNull"
-                                            [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                            <nz-select [nzAllowClear]='!field.eruptFieldJson.edit.notNull'
-                                                       [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                       [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                       [name]="field.fieldName"
-                                                       [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                       [nzTokenSeparators]="[field.eruptFieldJson.edit.choiceType.joinSeparator]"
-                                                       [nzMode]="'tags'">
-                                                <nz-option *ngFor="let vl of field.choiceList"
-                                                           [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
-                                            </nz-select>
-                                        </se>
-                                    </div>
-                                </ng-container>
                             </ng-container>
                         </ng-container>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.TAGS">
+                        <div nz-col [nzSpan]="24">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <nz-select [nzAllowClear]='!field.eruptFieldJson.edit.notNull'
+                                           [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                           [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                           [name]="field.fieldName"
+                                           [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
+                                           [nzTokenSeparators]="[field.eruptFieldJson.edit.tagsType.joinSeparator]"
+                                           [nzMode]="field.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'">
+                                    <nz-option *ngFor="let item of field.tagList" [nzLabel]="item"
+                                               [nzValue]="item"></nz-option>
+                                </nz-select>
+                            </se>
+                        </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.CHECKBOX">
                         <div nz-col [nzSpan]="24">
@@ -334,73 +306,11 @@
                                 <ng-container *ngIf="eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague">
                                     <ng-container *ngIf="field.eruptFieldJson.edit.dateType.type==dateEnum.DATE_TIME
                                         ||field.eruptFieldJson.edit.dateType.type==dateEnum.DATE">
-                                        <nz-range-picker [nzSize]="size" class="erupt-input stander-line-height"
-                                                         [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                         [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                         [name]="field.fieldName"
-                                                         [nzShowTime]="field.eruptFieldJson.edit.dateType.type==dateEnum.DATE_TIME"
-                                                         [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                         [nzRanges]="dateRanges">
-
-                                        </nz-range-picker>
+                                        <erupt-date [field]="field" [size]="size" [range]="true"></erupt-date>
                                     </ng-container>
                                 </ng-container>
-                                <ng-container
-                                        *ngIf="eruptModel.mode!='search'||!field.eruptFieldJson.edit.search.vague">
-                                    <ng-container [ngSwitch]="field.eruptFieldJson.edit.dateType.type">
-                                        <ng-container *ngSwitchCase="dateEnum.DATE">
-                                            <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
-                                                            [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                            [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                            [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                            [name]="field.fieldName">
-                                            </nz-date-picker>
-                                        </ng-container>
-                                        <ng-container *ngSwitchCase="dateEnum.DATE_TIME">
-                                            <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
-                                                            [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                            [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                            [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                            [name]="field.fieldName"
-                                                            nzShowTime>
-                                            </nz-date-picker>
-                                        </ng-container>
-                                        <ng-container *ngSwitchCase="dateEnum.TIME">
-                                            <nz-time-picker [nzSize]="size" class="erupt-input stander-line-height"
-                                                            [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                            [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                            [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                            [name]="field.fieldName">
-
-                                            </nz-time-picker>
-                                        </ng-container>
-                                        <ng-container *ngSwitchCase="dateEnum.WEEK">
-                                            <nz-week-picker [nzSize]="size" class="erupt-input stander-line-height"
-                                                            [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                            [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                            [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                            [name]="field.fieldName">
-
-                                            </nz-week-picker>
-                                        </ng-container>
-                                        <ng-container *ngSwitchCase="dateEnum.MONTH">
-                                            <nz-month-picker [nzSize]="size" class="erupt-input stander-line-height"
-                                                             [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                             [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                             [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                             [name]="field.fieldName">
-
-                                            </nz-month-picker>
-                                        </ng-container>
-                                        <ng-container *ngSwitchCase="dateEnum.YEAR">
-                                            <nz-year-picker [nzSize]="size" class="erupt-input stander-line-height"
-                                                            [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                            [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                            [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                            [name]="field.fieldName">
-                                            </nz-year-picker>
-                                        </ng-container>
-                                    </ng-container>
+                                <ng-container *ngIf="eruptModel.mode!='search'||!field.eruptFieldJson.edit.search.vague">
+                                    <erupt-date [field]="field" [size]="size"></erupt-date>
                                 </ng-container>
                             </se>
                         </div>
@@ -583,7 +493,6 @@
                                        [(ngModel)]="field.eruptFieldJson.edit.$value"
                                        [nzAutocomplete]="autocomplete"/>
                                 <nz-autocomplete [nzBackfill]="true" #autocomplete>
-                                    <!--                                    (click)="choiceList(auto)"-->
                                     <nz-auto-option *ngFor="let val of field.eruptFieldJson.edit.autoCompleteType.items"
                                                     [nzValue]="val"
                                                     [nzLabel]="val">

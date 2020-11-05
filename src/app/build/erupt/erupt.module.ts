@@ -24,6 +24,7 @@ import {UeditorComponent} from './components/ueditor/ueditor.component';
 import { TabTreeComponent } from './components/tab-tree/tab-tree.component';
 import { CheckboxComponent } from './components/checkbox/checkbox.component';
 import { SafeTemplateComponent } from './components/safe-template/safe-template.component';
+import { DateComponent } from './components/date/date.component';
 
 @NgModule({
     imports: [
@@ -80,7 +81,8 @@ import { SafeTemplateComponent } from './components/safe-template/safe-template.
         UeditorComponent,
         TabTreeComponent,
         CheckboxComponent,
-        SafeTemplateComponent
+        SafeTemplateComponent,
+        DateComponent
     ]
 })
 export class EruptModule {

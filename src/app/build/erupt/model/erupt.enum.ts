@@ -20,6 +20,7 @@ export enum EditType {
     NUMBER = "NUMBER",
     TEXTAREA = "TEXTAREA",                     //大文本域
     CHOICE = "CHOICE",                         //选择框
+    TAGS = "TAGS",                             //标签选择
     DATE = "DATE",                             //日期
     COMBINE = "COMBINE",                       //表格合并
     REFERENCE_TABLE = "REFERENCE_TABLE",       //引用
@@ -80,6 +81,12 @@ export enum DateEnum {
     YEAR = "YEAR"
 }
 
+export enum PickerMode {
+    ALL = "ALL",
+    FUTURE = "FUTURE",  //仅可选择未来时间
+    HISTORY = "HISTORY"  //仅可选择历史时间
+}
+
 export enum AttachmentEnum {
     IMAGE = "IMAGE",
     OTHER = "OTHER",
@@ -87,16 +94,7 @@ export enum AttachmentEnum {
 
 export enum ChoiceEnum {
     RADIO = "RADIO",
-    CHECKBOX = "CHECKBOX",
-    SELECT_SINGLE = "SELECT_SINGLE",
-    SELECT_MULTI = "SELECT_MULTI",
-    TAGS = "TAGS"
-}
-
-
-export enum SaveMode {
-    SINGLE_COLUMN = "SINGLE_COLUMN",
-    MULTI_ROW = "MULTI_ROW"
+    SELECT = "SELECT",
 }
 
 export enum SelectMode {

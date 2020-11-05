@@ -32,8 +32,8 @@ export class StartupService {
             "\\ \\____\\\\ \\_\\  \\ \\____/ \\ \\ ,__/ \\ \\__\\\n" +
             " \\/____/ \\/_/   \\/___/   \\ \\ \\/   \\/__/\n" +
             "                          \\ \\_\\        \n" +
-            "                           \\/_/        ", "color:#fe5721");
-        console.log("%chttps://www.erupt.xyz", "color:#fe5721;font-size:1.3em;padding:16px 0");
+            "                           \\/_/        ", "color:#2196f3;font-weight:800");
+        console.log("%chttps://www.erupt.xyz", "color:#2196f3;font-size:1.3em;padding:16px 0;");
         console.groupEnd();
         //注入全局方法：token
         window[GlobalKeys.getAppToken] = () => {

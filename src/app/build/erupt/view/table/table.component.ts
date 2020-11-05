@@ -158,7 +158,7 @@ export class TableComponent implements OnInit {
             })
         );
         let linkTree = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
-        if (linkTree.field) {
+        if (linkTree && linkTree.field) {
             this.stConfig.req.param["linkTreeVal"] = linkTree.value;
         }
         this.st.load(1, this.stConfig.req.param);
@@ -543,7 +543,7 @@ export class TableComponent implements OnInit {
                 eruptModel: this.searchErupt
             }));
         }
-        console.log(condition)
+        console.log(condition);
         //导出接口
         this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition);
     }
