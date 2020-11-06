@@ -78,7 +78,7 @@ export class AmapComponent implements OnInit {
                 });
                 map.addControl(geolocation);
             });
-            AMap.plugin(['AMap.ControlBar',], function () {
+            AMap.plugin(['AMap.ControlBar'], function () {
                 // 添加 3D 罗盘控制
                 map.addControl(new AMap.ControlBar());
             });
@@ -93,8 +93,8 @@ export class AmapComponent implements OnInit {
                         if (status == "complete") {
                             that.autocompleteList = result.tips;
                         }
-                    })
-                })
+                    });
+                });
             }
 
             this.tipInput.nativeElement.oninput = complete;
@@ -256,11 +256,11 @@ export class AmapComponent implements OnInit {
     }
 
     clearDraw() {
-        this.map.remove(this.overlays)
+        this.map.remove(this.overlays);
     }
 
     closeDraw() {
-        this.mouseTool.close(true);//关闭，并清除覆盖物
+        this.mouseTool.close(true); //关闭，并清除覆盖物
         this.checkType = '';
     }
 
