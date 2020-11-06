@@ -20,19 +20,19 @@
     border: 1px solid #d9d9d9;outline: none;border-radius: 4px">
 
     </div>
-    <div *ngIf="openDraw" class="draw-tool">
-        <nz-radio-group [ngModel]="checkType" (ngModelChange)="draw($event)">
-            <label nz-radio val="marker" [nzValue]="'marker'">画点</label>
-            <label nz-radio val="polyline" [nzValue]="'polyline'">画折线</label>
-            <label nz-radio val="polygon" [nzValue]="'polygon'">面多边形</label>
-            <label nz-radio val="rectangle" [nzValue]="'rectangle'">画矩形</label>
-            <label nz-radio val="circle" [nzValue]="'circle'">画圆形</label>
-        </nz-radio-group>
-        <button nz-button id="clear" (click)="clearDraw()" nzType="default" [disabled]="!loaded" [nzSize]="'small'">
-            &nbsp; 清除 &nbsp;
-        </button>
-        <button nz-button id="close" (click)="closeDraw()" nzType="default" [disabled]="!loaded" [nzSize]="'small'">
-            &nbsp; 关闭绘图 &nbsp;
-        </button>
-    </div>
+<!--    <div *ngIf="openDraw" class="draw-tool">-->
+<!--        <nz-radio-group [ngModel]="checkType" (ngModelChange)="draw($event)">-->
+<!--            <label nz-radio val="marker" [nzValue]="'marker'">画点</label>-->
+<!--            <label nz-radio val="polyline" [nzValue]="'polyline'">画折线</label>-->
+<!--            <label nz-radio val="polygon" [nzValue]="'polygon'">面多边形</label>-->
+<!--            <label nz-radio val="rectangle" [nzValue]="'rectangle'">画矩形</label>-->
+<!--            <label nz-radio val="circle" [nzValue]="'circle'">画圆形</label>-->
+<!--        </nz-radio-group>-->
+<!--        <button nz-button id="clear" (click)="clearDraw()" nzType="default" [disabled]="!loaded" [nzSize]="'small'">-->
+<!--            &nbsp; 清除 &nbsp;-->
+<!--        </button>-->
+<!--        <button nz-button id="close" (click)="closeDraw()" nzType="default" [disabled]="!loaded" [nzSize]="'small'">-->
+<!--            &nbsp; 关闭绘图 &nbsp;-->
+<!--        </button>-->
+<!--    </div>-->
 </nz-spin>

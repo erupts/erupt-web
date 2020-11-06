@@ -41,14 +41,12 @@ export class AmapComponent implements OnInit {
                 private ref: ElementRef,
                 private renderer: Renderer2,
                 @Inject(NzMessageService)
-                private msg: NzMessageService,) {
+                private msg: NzMessageService) {
     }
 
     map: any;
 
     mouseTool: any;
-
-    openDraw: boolean = false;
 
     ngOnInit() {
         this.loading = true;
@@ -133,9 +131,6 @@ export class AmapComponent implements OnInit {
                     if (status === 'complete' && result.info === 'OK') {
                         placeSearch_CallBack(result);
                         that.valueChange.emit(JSON.stringify(that.value));
-                        if (that.mapType.draw) {
-                            that.openDraw = true;
-                        }
                     } else {
                         that.msg.warning("找不到该位置信息");
                     }
