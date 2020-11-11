@@ -51,6 +51,7 @@ export class DateComponent implements OnInit {
         if (this.edit.dateType.pickerMode == PickerMode.FUTURE) {
             return date.getTime() < this.startToday.getTime();
         } else if (this.edit.dateType.pickerMode == PickerMode.HISTORY) {
+
             return date.getTime() > this.endToday.getTime();
         }
     };

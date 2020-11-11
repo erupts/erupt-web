@@ -18,7 +18,7 @@ export class WindowModel {
 
     public static logoPath: string = WindowModel.config["logoPath"] || "erupt.svg";
 
-    public static logoText: string = WindowModel.config["logoText"] || "Erupt";
+    public static logoText: string = WindowModel.config["logoText"] || "";
     //注册页面地址
     public static registerPage: string = WindowModel.config["registerPage"] || undefined;
 

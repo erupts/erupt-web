@@ -182,7 +182,10 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                             text: menu.name,
                             key: menu.name,
                             linkExact: true,
-                            icon: menu.icon,
+                            icon: menu.icon || {
+                                type: "icon",
+                                value: "unordered-list"
+                            },
                             link: generateMenuPath(menu.type, menu.value),
                             children: generateTree(menus, menu.id)
                         };
