@@ -58,6 +58,7 @@ export enum ViewType {
     LINK = "LINK",
     LINK_DIALOG = "LINK_DIALOG",
     IMAGE = "IMAGE",
+    IMAGE_BASE64 = "IMAGE_BASE64",
     SWF = "SWF",
     DOWNLOAD = "DOWNLOAD",
     ATTACHMENT_DIALOG = "ATTACHMENT_DIALOG",

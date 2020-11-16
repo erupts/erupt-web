@@ -395,6 +395,33 @@ export class DataHandlerService {
                         });
                     };
                     break;
+                case ViewType.IMAGE_BASE64:
+                    obj.type = "link";
+                    obj.width = "90px";
+                    obj.className = "text-center p-sm";
+                    obj.format = (item: any) => {
+                        if (item[view.column]) {
+                            return `<img width="100%" src="${item[view.column]}" />`;
+                        } else {
+                            return "";
+                        }
+                    };
+                    obj.click = (item) => {
+                        this.modal.create({
+                            nzWrapClassName: "modal-lg",
+                            nzStyle: {top: "50px", textAlign: 'center'},
+                            nzMaskClosable: true,
+                            nzKeyboard: true,
+                            nzFooter: null,
+                            nzTitle: view.title,
+                            nzContent: ViewTypeComponent,
+                            nzComponentParams: {
+                                value: item[view.column],
+                                view: view
+                            }
+                        });
+                    };
+                    break;
                 case ViewType.ATTACHMENT_DIALOG:
                     obj.type = "link";
                     obj.className = "text-center";

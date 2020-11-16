@@ -1,16 +1,19 @@
 <ng-container *ngIf="show">
     <ng-container [ngSwitch]="view.viewType">
         <ng-container *ngSwitchCase="viewType.IMAGE">
-            <nz-carousel class="text-center" onselectstart="return false;" unselectable="on" style="-moz-user-select:none;">
+            <nz-carousel class="text-center" onselectstart="return false;" unselectable="on"
+                         style="-moz-user-select:none;">
                 <div nz-carousel-content *ngFor="let img of paths">
-                    <img class="full-max-width" [src]="img|safeUrl" ondragstart="return false;" style="display: inline-block;"/>
+                    <img class="full-max-width" [src]="img|safeUrl" ondragstart="return false;"
+                         style="display: inline-block;"/>
                 </div>
             </nz-carousel>
         </ng-container>
         <ng-container *ngSwitchCase="viewType.SWF">
             <nz-carousel class="text-center">
                 <div nz-carousel-content *ngFor="let swf of paths">
-                    <embed style="width:100%;height:600px" align="center" [src]="swf|safeUrl" type="application/x-shockwave-flash" quality="high"/>
+                    <embed style="width:100%;height:600px" align="center" [src]="swf|safeUrl"
+                           type="application/x-shockwave-flash" quality="high"/>
                 </div>
             </nz-carousel>
         </ng-container>
@@ -37,6 +40,9 @@
         </ng-container>
         <ng-container *ngSwitchCase="viewType.MAP">
             <amap [value]="value" [readonly]="true" [zoom]="18"></amap>
+        </ng-container>
+        <ng-container *ngSwitchCase="viewType.IMAGE_BASE64">
+            <img class="full-max-width" [src]="value" style="display: inline-block;"/>
         </ng-container>
     </ng-container>
 </ng-container>
