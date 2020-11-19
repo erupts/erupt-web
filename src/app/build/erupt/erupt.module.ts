@@ -21,10 +21,10 @@ import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import {CodeEditorComponent} from './components/code-editor/code-editor.component';
 import {UEditorModule} from "ngx-ueditor";
 import {UeditorComponent} from './components/ueditor/ueditor.component';
-import { TabTreeComponent } from './components/tab-tree/tab-tree.component';
-import { CheckboxComponent } from './components/checkbox/checkbox.component';
-import { SafeTemplateComponent } from './components/safe-template/safe-template.component';
-import { DateComponent } from './components/date/date.component';
+import {TabTreeComponent} from './components/tab-tree/tab-tree.component';
+import {CheckboxComponent} from './components/checkbox/checkbox.component';
+import {SafeTemplateComponent} from './components/safe-template/safe-template.component';
+import {DateComponent} from './components/date/date.component';
 
 @NgModule({
     imports: [

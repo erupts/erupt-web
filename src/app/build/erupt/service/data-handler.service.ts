@@ -162,13 +162,19 @@ export class DataHandlerService {
             //展示类型
             switch (view.viewType) {
                 case ViewType.BOOLEAN:
-                    obj.type = "yn";
                     obj.className = "text-center";
-                    if (!tfBool) {
-                        obj.yn = {
-                            truth: edit.boolType.trueText
-                        };
-                    }
+                    obj.width = "50px";
+                    // obj.type = "yn";
+                    // if (!tfBool) {
+                    //     obj.yn = {
+                    //         truth: edit.boolType.trueText
+                    //     };
+                    // }
+                    obj.type = "tag";
+                    obj.tag = {
+                        [edit.boolType.trueText]: {text: edit.boolType.trueText, color: 'green'},
+                        [edit.boolType.falseText]: {text: edit.boolType.falseText, color: 'red'},
+                    };
                     break;
                 case ViewType.NUMBER:
                     obj.className = "text-right";
@@ -178,13 +184,30 @@ export class DataHandlerService {
                     break;
                 case ViewType.LINK:
                     obj.type = "link";
+                    obj.className = "text-center";
+                    obj.width = "50px";
                     obj.click = (item) => {
                         window.open(item[view.column]);
+                    };
+                    obj.format = (item: any) => {
+                        if (item[view.column]) {
+                            return "<i class='fa fa-link' aria-hidden='true'></i>";
+                        } else {
+                            return "";
+                        }
                     };
                     break;
                 case ViewType.LINK_DIALOG:
                     obj.className = "text-center";
                     obj.type = "link";
+                    obj.width = "50px";
+                    obj.format = (item: any) => {
+                        if (item[view.column]) {
+                            return "<i class='fa fa-dot-circle-o' aria-hidden='true'></i>";
+                        } else {
+                            return "";
+                        }
+                    };
                     obj.click = (item) => {
                         this.modal.create({
                             nzWrapClassName: "modal-lg modal-body-nopadding",
@@ -204,6 +227,7 @@ export class DataHandlerService {
                 case ViewType.QR_CODE:
                     obj.className = "text-center";
                     obj.type = "link";
+                    obj.width = "50px";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-qrcode' aria-hidden='true'></i>";
@@ -229,6 +253,7 @@ export class DataHandlerService {
                 case ViewType.CODE:
                     obj.className = "text-center";
                     obj.type = "link";
+                    obj.width = "50px";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-code' aria-hidden='true'></i>";
@@ -258,6 +283,7 @@ export class DataHandlerService {
                 case ViewType.MAP:
                     obj.className = "text-center";
                     obj.type = "link";
+                    obj.width = "50px";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-map' aria-hidden='true'></i>";
@@ -320,6 +346,7 @@ export class DataHandlerService {
                     break;
                 case ViewType.HTML:
                     obj.type = "link";
+                    obj.width = "50px";
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
@@ -347,6 +374,7 @@ export class DataHandlerService {
                 case ViewType.MOBILE_HTML:
                     obj.className = "text-center";
                     obj.type = "link";
+                    obj.width = "50px";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-file-text' aria-hidden='true'></i>";
@@ -371,6 +399,7 @@ export class DataHandlerService {
                     break;
                 case ViewType.SWF:
                     obj.type = "link";
+                    obj.width = "50px";
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
@@ -425,6 +454,7 @@ export class DataHandlerService {
                 case ViewType.ATTACHMENT_DIALOG:
                     obj.type = "link";
                     obj.className = "text-center";
+                    obj.width = "50px";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return `<i class='fa fa-dot-circle-o' aria-hidden='true'></i>`;
@@ -449,6 +479,7 @@ export class DataHandlerService {
                 case ViewType.DOWNLOAD:
                     obj.type = "link";
                     obj.className = "text-center";
+                    obj.width = "50px";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return `<i class='fa fa-download' aria-hidden='true'></i>`;
@@ -463,6 +494,7 @@ export class DataHandlerService {
                 case ViewType.ATTACHMENT:
                     obj.type = "link";
                     obj.className = "text-center";
+                    obj.width = "50px";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return `<i class='fa fa-window-restore' aria-hidden='true'></i>`;

@@ -173,13 +173,18 @@ export class DefaultInterceptor implements HttpInterceptor {
                 this.goTo("/layout/404");
                 break;
             case 403: //无权限
-                this.goTo("/layout/403");
+                if (event.url.indexOf("/erupt-api/build/") != -1) {
+                    this.goTo("/layout/403");
+                } else {
+                    this.modal.warning({
+                        nzTitle: "您没有此权限"
+                    });
+                }
                 break;
             case 500:
                 event = <HttpErrorResponse>event;
                 this.modal.error({
-                    nzTitle: "Error",
-                    nzContent: event.error.message
+                    nzTitle: event.error.message
                 });
                 Object.assign(event, {
                     status: 200, ok: true, body: {

@@ -309,7 +309,8 @@
                                         <erupt-date [field]="field" [size]="size" [range]="true"></erupt-date>
                                     </ng-container>
                                 </ng-container>
-                                <ng-container *ngIf="eruptModel.mode!='search'||!field.eruptFieldJson.edit.search.vague">
+                                <ng-container
+                                        *ngIf="eruptModel.mode!='search'||!field.eruptFieldJson.edit.search.vague">
                                     <erupt-date [field]="field" [size]="size"></erupt-date>
                                 </ng-container>
                             </se>
@@ -464,10 +465,7 @@
                                                 <p class="ant-upload-text">单击或拖动文件到此区域上传</p>
                                                 <p class="ant-upload-hint"
                                                    *ngIf="field.eruptFieldJson.edit.attachmentType.fileTypes.length>0">
-                                                    文件格式：
-                                                    <span *ngFor="let type of field.eruptFieldJson.edit.attachmentType.fileTypes">
-                                                        {{type}},
-                                                    </span>
+                                                    文件格式：<span>{{field.eruptFieldJson.edit.attachmentType.fileTypes.join(" / ")}}</span>
                                                 </p>
                                                 <p class="ant-upload-hint">{{field.eruptFieldJson.edit.placeHolder}}</p>
                                             </nz-upload>
@@ -518,6 +516,15 @@
 
                                     </erupt-ueditor>
                                 </ng-container>
+                            </se>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.MARKDOWN">
+                        <div nz-col [nzSpan]="24">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                暂不支持
                             </se>
                         </div>
                     </ng-container>

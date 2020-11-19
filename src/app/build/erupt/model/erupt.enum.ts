@@ -36,6 +36,7 @@ export enum EditType {
     CHECKBOX = "CHECKBOX",
     EMPTY = "EMPTY",
     TPL = "TPL",
+    MARKDOWN = "MARKDOWN",
     HTML_EDITOR = "HTML_EDITOR",
     MAP = "MAP",
     CODE_EDITOR = "CODE_EDITOR",

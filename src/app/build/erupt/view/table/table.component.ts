@@ -420,8 +420,8 @@ export class TableComponent implements OnInit {
                 });
             } else {
                 this.modal.confirm({
-                    nzTitle: "请确认是否执行此操作",
-                    nzContent: ro.title,
+                    nzTitle: ro.title,
+                    nzContent: "请确认是否执行此操作",
                     nzOnOk: async () => {
                         this.selectedRows = [];
                         await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, ids, null)
