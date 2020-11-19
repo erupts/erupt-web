@@ -8,6 +8,7 @@ export class RestPath {
     public static tpl: string = RestPath.erupt + "/tpl";
     public static build: string = RestPath.erupt + "/build";
     public static data: string = RestPath.erupt + "/data";
+    public static dataModify: string = RestPath.data + "/modify";
     public static comp: string = RestPath.erupt + "/comp";
     public static excel: string = RestPath.erupt + "/excel";
     public static file: string = RestPath.erupt + "/file";

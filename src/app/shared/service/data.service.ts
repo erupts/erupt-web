@@ -206,17 +206,8 @@ export class DataService {
         });
     }
 
-    //增加数据
-    addEruptData(eruptName: string, data: any): Observable<any> {
-        return this._http.post<any>(RestPath.data + "/" + eruptName, data, null, {
-            observe: null,
-            headers: {
-                erupt: eruptName
-            }
-        });
-    }
 
-    //增加数据
+    //下钻新增
     addEruptDrillData(eruptName: string, code: string, val: any, data: any): Observable<any> {
         return this._http.post<any>(RestPath.data + "/add/" + eruptName + "/drill/" + code + "/" + val, data, null, {
             observe: null,
@@ -226,9 +217,19 @@ export class DataService {
         });
     }
 
+    //增加数据
+    addEruptData(eruptName: string, data: any): Observable<any> {
+        return this._http.post<any>(RestPath.dataModify + "/" + eruptName, data, null, {
+            observe: null,
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
     //修改数据
     editEruptData(eruptName: string, data: object): Observable<EruptApiModel> {
-        return this._http.put<EruptApiModel>(RestPath.data + "/" + eruptName, data, null, {
+        return this._http.put<EruptApiModel>(RestPath.dataModify + "/" + eruptName, data, null, {
             observe: null,
             headers: {
                 erupt: eruptName
@@ -238,7 +239,7 @@ export class DataService {
 
     //删除数据
     deleteEruptData(eruptName: string, id): Observable<EruptApiModel> {
-        return this._http.delete(RestPath.data + "/" + eruptName + "/" + id, null, {
+        return this._http.delete(RestPath.dataModify + "/" + eruptName + "/" + id, null, {
             headers: {
                 erupt: eruptName
             }
@@ -247,7 +248,7 @@ export class DataService {
 
     //批量删除数据
     deleteEruptDatas(eruptName: string, ids: any[]): Observable<EruptApiModel> {
-        return this._http.delete(RestPath.data + "/" + eruptName, {ids: ids}, {
+        return this._http.delete(RestPath.dataModify + "/" + eruptName, {ids: ids}, {
             headers: {
                 erupt: eruptName
             }

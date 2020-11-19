@@ -164,12 +164,6 @@ export class DataHandlerService {
                 case ViewType.BOOLEAN:
                     obj.className = "text-center";
                     obj.width = "50px";
-                    // obj.type = "yn";
-                    // if (!tfBool) {
-                    //     obj.yn = {
-                    //         truth: edit.boolType.trueText
-                    //     };
-                    // }
                     obj.type = "tag";
                     obj.tag = {
                         [edit.boolType.trueText]: {text: edit.boolType.trueText, color: 'green'},
