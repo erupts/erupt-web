@@ -7,6 +7,7 @@ export interface EruptFieldModel {
     fieldName: string;
     eruptFieldJson: EruptField;
     choiceList?: VL[];
+    choiceMap?: Map<String, VL>;
     tagList?: string[];
     value?: any;
 }

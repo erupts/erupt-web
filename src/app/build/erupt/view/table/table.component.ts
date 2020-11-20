@@ -337,7 +337,7 @@ export class TableComponent implements OnInit {
             _columns.push({
                 title: "操作",
                 fixed: "right",
-                width: tableOperators.length * 40,
+                width: tableOperators.length * 40 + 8,
                 className: "text-center",
                 buttons: tableOperators
             });

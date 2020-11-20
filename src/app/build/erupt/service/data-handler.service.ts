@@ -1,4 +1,4 @@
-import {Edit, EruptFieldModel} from "../model/erupt-field.model";
+import {Edit, EruptFieldModel, VL} from "../model/erupt-field.model";
 import {EruptModel, Tree} from "../model/erupt.model";
 import {DateEnum, EditType, ViewType} from "../model/erupt.enum";
 import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
@@ -53,6 +53,12 @@ export class DataHandlerService {
         eruptModel.eruptFieldModels.forEach(field => {
             if (!field.eruptFieldJson.edit) {
                 return;
+            }
+            if (field.choiceList) {
+                field.choiceMap = new Map<String, VL>();
+                for (let vl of field.choiceList) {
+                    field.choiceMap.set(vl.value, vl);
+                }
             }
             field.eruptFieldJson.edit.$value = field.value;
             eruptModel.eruptFieldModelMap.set(field.fieldName, field);
@@ -123,16 +129,20 @@ export class DataHandlerService {
 
     /**
      * 将view数据转换为alain table组件配置信息
-     * @param erupt
+     * @param erupt EruptModel
      * @param lineData
      *     true   数据形式为一整行txt
      *     false  数据形式为：带有层级的json
-     * @param tfBool
+     * @param dataConvert 是否需要数据转换,如bool转换，choice转换
      */
-    viewToAlainTableConfig(erupt: EruptModel, lineData: boolean, tfBool?: boolean): STColumn[] {
+    viewToAlainTableConfig(erupt: EruptModel, lineData: boolean, dataConvert?: boolean): STColumn[] {
         let cols: STColumn[] = [];
         const views = erupt.tableColumns;
         for (let view of views) {
+            let titleWidth = view.title.length * 14 + 22;
+            if (titleWidth > 150) {
+                titleWidth = 150;
+            }
             let edit = view.eruptFieldModel.eruptFieldJson.edit;
             let obj: STColumn = {
                 // width: "200px",
@@ -159,16 +169,50 @@ export class DataHandlerService {
                     })
                 };
             }
+            if (dataConvert) {
+                switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
+                    case EditType.CHOICE:
+                        obj.format = (item: any) => {
+                            if (item[view.column]) {
+                                return view.eruptFieldModel.choiceMap.get(item[view.column]).label;
+                            } else {
+                                return "";
+                            }
+                        };
+                        break;
+                    case EditType.DATE:
+                        obj.format = (item: any) => {
+                            if (item[view.column]) {
+                                if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE) {
+                                    return item[view.column].substr(0, 10);
+                                } else {
+                                    return item[view.column];
+                                }
+                            } else {
+                                return "";
+                            }
+                        };
+                        break;
+                }
+            }
             //展示类型
             switch (view.viewType) {
                 case ViewType.BOOLEAN:
                     obj.className = "text-center";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.type = "tag";
-                    obj.tag = {
-                        [edit.boolType.trueText]: {text: edit.boolType.trueText, color: 'green'},
-                        [edit.boolType.falseText]: {text: edit.boolType.falseText, color: 'red'},
-                    };
+                    if (dataConvert) {
+                        obj.tag = {
+                            true: {text: edit.boolType.trueText, color: 'green'},
+                            false: {text: edit.boolType.falseText, color: 'red'},
+                        };
+                    } else {
+                        obj.tag = {
+                            [edit.boolType.trueText]: {text: edit.boolType.trueText, color: 'green'},
+                            [edit.boolType.falseText]: {text: edit.boolType.falseText, color: 'red'},
+                        };
+                    }
+
                     break;
                 case ViewType.NUMBER:
                     obj.className = "text-right";
@@ -179,7 +223,7 @@ export class DataHandlerService {
                 case ViewType.LINK:
                     obj.type = "link";
                     obj.className = "text-center";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.click = (item) => {
                         window.open(item[view.column]);
                     };
@@ -194,7 +238,7 @@ export class DataHandlerService {
                 case ViewType.LINK_DIALOG:
                     obj.className = "text-center";
                     obj.type = "link";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-dot-circle-o' aria-hidden='true'></i>";
@@ -221,7 +265,7 @@ export class DataHandlerService {
                 case ViewType.QR_CODE:
                     obj.className = "text-center";
                     obj.type = "link";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-qrcode' aria-hidden='true'></i>";
@@ -247,7 +291,7 @@ export class DataHandlerService {
                 case ViewType.CODE:
                     obj.className = "text-center";
                     obj.type = "link";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-code' aria-hidden='true'></i>";
@@ -277,7 +321,7 @@ export class DataHandlerService {
                 case ViewType.MAP:
                     obj.className = "text-center";
                     obj.type = "link";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-map' aria-hidden='true'></i>";
@@ -340,7 +384,7 @@ export class DataHandlerService {
                     break;
                 case ViewType.HTML:
                     obj.type = "link";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
@@ -368,7 +412,7 @@ export class DataHandlerService {
                 case ViewType.MOBILE_HTML:
                     obj.className = "text-center";
                     obj.type = "link";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-file-text' aria-hidden='true'></i>";
@@ -393,7 +437,7 @@ export class DataHandlerService {
                     break;
                 case ViewType.SWF:
                     obj.type = "link";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
@@ -448,7 +492,7 @@ export class DataHandlerService {
                 case ViewType.ATTACHMENT_DIALOG:
                     obj.type = "link";
                     obj.className = "text-center";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return `<i class='fa fa-dot-circle-o' aria-hidden='true'></i>`;
@@ -473,7 +517,7 @@ export class DataHandlerService {
                 case ViewType.DOWNLOAD:
                     obj.type = "link";
                     obj.className = "text-center";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return `<i class='fa fa-download' aria-hidden='true'></i>`;
@@ -488,7 +532,7 @@ export class DataHandlerService {
                 case ViewType.ATTACHMENT:
                     obj.type = "link";
                     obj.className = "text-center";
-                    obj.width = "50px";
+                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return `<i class='fa fa-window-restore' aria-hidden='true'></i>`;
