@@ -278,13 +278,6 @@ export class TableComponent implements OnInit {
                 if (ro.icon) {
                     text = `<i class=\"${ro.icon}\"></i>`;
                 }
-                // if (ro.title) {
-                //     if (ro.icon) {
-                //         text += "&nbsp;&nbsp;" + ro.title;
-                //     } else {
-                //         text = ro.title;
-                //     }
-                // }
                 tableOperators.push({
                     type: 'link',
                     text: text,
@@ -372,7 +365,9 @@ export class TableComponent implements OnInit {
             this.modal.create({
                 nzKeyboard: true,
                 nzTitle: ro.title,
-                nzMaskClosable: true,
+                nzMaskClosable: false,
+                nzStyle: {top: "20px"},
+                // nzWrapClassName: "modal-xxl",
                 nzWrapClassName: "modal-lg",
                 nzBodyStyle: {
                     padding: 0

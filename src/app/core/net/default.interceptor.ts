@@ -177,14 +177,14 @@ export class DefaultInterceptor implements HttpInterceptor {
                     this.goTo("/layout/403");
                 } else {
                     this.modal.warning({
-                        nzTitle: "您没有此权限"
+                        nzTitle: "无操作权限！"
                     });
                 }
                 break;
             case 500:
                 event = <HttpErrorResponse>event;
                 this.modal.error({
-                    nzTitle: event.error.message
+                    nzTitle: event.error.message || 'ERROR'
                 });
                 Object.assign(event, {
                     status: 200, ok: true, body: {
