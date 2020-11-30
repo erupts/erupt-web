@@ -24,7 +24,7 @@ export class CodeEditorComponent implements OnInit {
 
     @Input() readonly: boolean = false;
 
-    @Input() height:number  = 300;
+    @Input() height: number = 300;
 
     codeEditorEvent: any;
 
@@ -45,8 +45,11 @@ export class CodeEditorComponent implements OnInit {
         } else {
             event.setValue(this.value || '');
         }
+        if (!this.readonly) {
+            this.readonly = this.edit.readOnly;
+        }
         this.codeEditorEvent = event;
-        this.nzCodeEditorService.updateDefaultOption({theme: this.dark ? 'vs-dark' : 'vs', readOnly: this.readonly})
+        this.nzCodeEditorService.updateDefaultOption({theme: this.dark ? 'vs-dark' : 'vs', readOnly: this.readonly});
     }
 
     switchChange(bool) {

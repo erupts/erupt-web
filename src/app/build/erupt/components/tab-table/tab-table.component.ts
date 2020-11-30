@@ -15,7 +15,8 @@ import {SelectMode} from "../../model/erupt.enum";
 @Component({
     selector: "tab-table",
     templateUrl: "./tab-table.component.html",
-    styles: []
+    styles: [],
+    styleUrls: ["./tab-table.component.less"]
 })
 export class TabTableComponent implements OnInit {
 
@@ -25,8 +26,6 @@ export class TabTableComponent implements OnInit {
         eruptBuildModel: EruptBuildModel;
         eruptFieldModel: EruptFieldModel;
     };
-
-    @Input() behavior: "add" | "edit" | "readonly" = "add";
 
     @Input() mode: "refer-add" | "add" = "add";
 
@@ -49,87 +48,86 @@ export class TabTableComponent implements OnInit {
         if (!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
             this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
         }
-        if (this.behavior == "readonly") {
+        if (this.tabErupt.eruptFieldModel.eruptFieldJson.edit.readOnly) {
             this.column = this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel, false, true);
         } else {
             const viewValue: STColumn[] = [];
             viewValue.push({
                 title: "",
                 type: "checkbox",
+                width: "50px",
                 fixed: "left",
                 className: "text-center",
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
             viewValue.push(...this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel, false, true));
-            if (!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.readOnly) {
-                let operators: STColumnButton[] = [];
-                if (this.mode == "add") {
-                    operators.push({
-                        icon: "edit",
-                        click: (record: any, modal: any, comp: STComponent) => {
-                            this.dataHandlerService.objectToEruptValue(record, this.tabErupt.eruptBuildModel);
-                            this.modal.create({
-                                nzWrapClassName: "modal-lg",
-                                nzStyle: {top: "20px"},
-                                nzMaskClosable: false,
-                                nzKeyboard: false,
-                                nzTitle: "编辑",
-                                nzContent: EditTypeComponent,
-                                nzComponentParams: {
-                                    col: colRules[3],
-                                    eruptBuildModel: this.tabErupt.eruptBuildModel,
-                                    parentEruptName: this.eruptBuildModel.eruptModel.eruptName
-                                },
-                                nzOnOk: async () => {
-                                    let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
-
-                                    let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName
-                                        , obj, this.eruptBuildModel.eruptModel.eruptName).toPromise().then(resp => resp);
-                                    if (result.status == Status.SUCCESS) {
-                                        let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
-                                        $value.forEach((val, index) => {
-                                            let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
-                                            if (record[tabPrimaryKeyCol] == val[tabPrimaryKeyCol]) {
-                                                $value[index] = obj;
-                                            }
-                                        });
-                                        this.st.reload();
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                }
-                            });
-                        }
-                    });
-                }
+            let operators: STColumnButton[] = [];
+            if (this.mode == "add") {
                 operators.push({
-                    icon: {
-                        type: "delete",
-                        theme: "twotone",
-                        twoToneColor: "#f00"
-                    },
-                    type: "del",
-                    click: (record, modal, comp: STComponent) => {
-                        let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
-                        for (let i in <any[]>$value) {
-                            let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
-                            if (record[tabPrimaryKeyCol] == $value[i][tabPrimaryKeyCol]) {
-                                $value.splice(i, 1);
-                                break;
+                    icon: "edit",
+                    click: (record: any, modal: any, comp: STComponent) => {
+                        this.dataHandlerService.objectToEruptValue(record, this.tabErupt.eruptBuildModel);
+                        this.modal.create({
+                            nzWrapClassName: "modal-lg",
+                            nzStyle: {top: "20px"},
+                            nzMaskClosable: false,
+                            nzKeyboard: false,
+                            nzTitle: "编辑",
+                            nzContent: EditTypeComponent,
+                            nzComponentParams: {
+                                col: colRules[3],
+                                eruptBuildModel: this.tabErupt.eruptBuildModel,
+                                parentEruptName: this.eruptBuildModel.eruptModel.eruptName
+                            },
+                            nzOnOk: async () => {
+                                let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
+
+                                let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName
+                                    , obj, this.eruptBuildModel.eruptModel.eruptName).toPromise().then(resp => resp);
+                                if (result.status == Status.SUCCESS) {
+                                    let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
+                                    $value.forEach((val, index) => {
+                                        let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+                                        if (record[tabPrimaryKeyCol] == val[tabPrimaryKeyCol]) {
+                                            $value[index] = obj;
+                                        }
+                                    });
+                                    this.st.reload();
+                                    return true;
+                                } else {
+                                    return false;
+                                }
                             }
-                        }
-                        this.st.reload();
+                        });
                     }
                 });
-                viewValue.push({
-                    title: "操作区",
-                    fixed: "right",
-                    width: "80px",
-                    className: "text-center",
-                    buttons: operators
-                });
             }
+            operators.push({
+                icon: {
+                    type: "delete",
+                    theme: "twotone",
+                    twoToneColor: "#f00"
+                },
+                type: "del",
+                click: (record, modal, comp: STComponent) => {
+                    let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
+                    for (let i in <any[]>$value) {
+                        let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+                        if (record[tabPrimaryKeyCol] == $value[i][tabPrimaryKeyCol]) {
+                            $value.splice(i, 1);
+                            break;
+                        }
+                    }
+                    this.st.reload();
+                }
+            });
+            viewValue.push({
+                title: "操作区",
+                fixed: "right",
+                width: "80px",
+                className: "text-center",
+                buttons: operators
+            });
             this.column = viewValue;
         }
     }

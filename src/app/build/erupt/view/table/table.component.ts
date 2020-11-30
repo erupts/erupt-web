@@ -195,6 +195,14 @@ export class TableComponent implements OnInit {
             tableOperators.push({
                 icon: "eye",
                 click: (record: any, modal: any) => {
+                    let eruptBuildModel = deepCopy(this.eruptBuildModel);
+                    eruptBuildModel.eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
+                    eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
+                        if (field.eruptFieldJson.edit) {
+                            field.eruptFieldJson.edit.readOnly = true;
+                        }
+                        eruptBuildModel.eruptModel.eruptFieldModelMap.set(field.fieldName , field);
+                    });
                     this.modal.create({
                         nzWrapClassName: "modal-lg",
                         nzStyle: {top: "60px"},
@@ -205,9 +213,9 @@ export class TableComponent implements OnInit {
                         nzTitle: "查看",
                         nzContent: EditComponent,
                         nzComponentParams: {
-                            eruptBuildModel: deepCopy(this.eruptBuildModel),
+                            eruptBuildModel: eruptBuildModel,
                             id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
-                            behavior: "readonly"
+                            behavior: "edit",
                         }
                     });
                 }
@@ -226,9 +234,9 @@ export class TableComponent implements OnInit {
                         nzOkText: "修改",
                         nzContent: EditComponent,
                         nzComponentParams: {
-                            behavior: "edit",
                             eruptBuildModel: this.eruptBuildModel,
-                            id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
+                            id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
+                            behavior: "edit",
                         },
                         nzOnOk: async () => {
                             let validateResult = model.getContentComponent().beforeSaveValidate();

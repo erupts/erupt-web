@@ -143,6 +143,9 @@ export class DataHandlerService {
             if (titleWidth > 150) {
                 titleWidth = 150;
             }
+            if (view.sortable) {
+                titleWidth += 20;
+            }
             let edit = view.eruptFieldModel.eruptFieldJson.edit;
             let obj: STColumn = {
                 // width: "200px",
@@ -196,10 +199,20 @@ export class DataHandlerService {
                 }
             }
             //展示类型
+            obj.width = titleWidth;
             switch (view.viewType) {
+                case ViewType.TEXT:
+                    obj.width = null;
+                    break;
+                case ViewType.NUMBER:
+                    obj.className = "text-right";
+                    break;
+                case ViewType.DATE:
+                    obj.width = null;
+                    obj.className = "date-col";
+                    break;
                 case ViewType.BOOLEAN:
                     obj.className = "text-center";
-                    obj.width = titleWidth;
                     obj.type = "tag";
                     if (dataConvert) {
                         obj.tag = {
@@ -214,16 +227,9 @@ export class DataHandlerService {
                     }
 
                     break;
-                case ViewType.NUMBER:
-                    obj.className = "text-right";
-                    break;
-                case ViewType.DATE:
-                    obj.className = "date-col";
-                    break;
                 case ViewType.LINK:
                     obj.type = "link";
                     obj.className = "text-center";
-                    obj.width = titleWidth;
                     obj.click = (item) => {
                         window.open(item[view.column]);
                     };
@@ -238,7 +244,6 @@ export class DataHandlerService {
                 case ViewType.LINK_DIALOG:
                     obj.className = "text-center";
                     obj.type = "link";
-                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-dot-circle-o' aria-hidden='true'></i>";
@@ -265,7 +270,6 @@ export class DataHandlerService {
                 case ViewType.QR_CODE:
                     obj.className = "text-center";
                     obj.type = "link";
-                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-qrcode' aria-hidden='true'></i>";
@@ -291,7 +295,6 @@ export class DataHandlerService {
                 case ViewType.CODE:
                     obj.className = "text-center";
                     obj.type = "link";
-                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-code' aria-hidden='true'></i>";
@@ -321,7 +324,6 @@ export class DataHandlerService {
                 case ViewType.MAP:
                     obj.className = "text-center";
                     obj.type = "link";
-                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-map' aria-hidden='true'></i>";
@@ -384,7 +386,6 @@ export class DataHandlerService {
                     break;
                 case ViewType.HTML:
                     obj.type = "link";
-                    obj.width = titleWidth;
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
@@ -412,7 +413,6 @@ export class DataHandlerService {
                 case ViewType.MOBILE_HTML:
                     obj.className = "text-center";
                     obj.type = "link";
-                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return "<i class='fa fa-file-text' aria-hidden='true'></i>";
@@ -437,7 +437,6 @@ export class DataHandlerService {
                     break;
                 case ViewType.SWF:
                     obj.type = "link";
-                    obj.width = titleWidth;
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
@@ -492,7 +491,6 @@ export class DataHandlerService {
                 case ViewType.ATTACHMENT_DIALOG:
                     obj.type = "link";
                     obj.className = "text-center";
-                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return `<i class='fa fa-dot-circle-o' aria-hidden='true'></i>`;
@@ -517,7 +515,6 @@ export class DataHandlerService {
                 case ViewType.DOWNLOAD:
                     obj.type = "link";
                     obj.className = "text-center";
-                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return `<i class='fa fa-download' aria-hidden='true'></i>`;
@@ -532,7 +529,6 @@ export class DataHandlerService {
                 case ViewType.ATTACHMENT:
                     obj.type = "link";
                     obj.className = "text-center";
-                    obj.width = titleWidth;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return `<i class='fa fa-window-restore' aria-hidden='true'></i>`;
@@ -543,6 +539,9 @@ export class DataHandlerService {
                     obj.click = (item) => {
                         window.open(DataService.previewAttachment(item[view.column]));
                     };
+                    break;
+                default:
+                    obj.width = null;
                     break;
             }
             if (view.template) {

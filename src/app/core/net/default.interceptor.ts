@@ -184,7 +184,8 @@ export class DefaultInterceptor implements HttpInterceptor {
             case 500:
                 event = <HttpErrorResponse>event;
                 this.modal.error({
-                    nzTitle: event.error.message || 'ERROR'
+                    nzTitle: 'Error',
+                    nzContent: event.error.message
                 });
                 Object.assign(event, {
                     status: 200, ok: true, body: {

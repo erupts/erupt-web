@@ -25,7 +25,6 @@ export interface View {
     title: string;
     desc: string;
     show: boolean;
-    sort: number;
     viewType: ViewType;
     template: string;
     sortable: boolean;

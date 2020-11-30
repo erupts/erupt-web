@@ -20,7 +20,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
     editType = EditType;
 
-    @Input() behavior: "add" | "edit" | "readonly" = "add";
+    @Input() behavior: "add" | "edit" = "add";
 
     @Output() save = new EventEmitter();
 
@@ -44,14 +44,6 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        // this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
-        if (this.behavior === "readonly") {
-            this.eruptBuildModel.eruptModel.eruptFieldModels.forEach((field) => {
-                if (field.eruptFieldJson.edit) {
-                    field.eruptFieldJson.edit.readOnly = true;
-                }
-            });
-        }
         if (this.behavior == "add") {
             this.loading = true;
             this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
@@ -62,6 +54,7 @@ export class EditComponent implements OnInit, OnDestroy {
             this.loading = true;
             this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.id).subscribe(data => {
                 this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
+                console.log(this.eruptBuildModel);
                 this.loading = false;
             });
         }

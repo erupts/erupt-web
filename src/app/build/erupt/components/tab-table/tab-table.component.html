@@ -1,15 +1,15 @@
 <ng-container *ngIf="!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.readOnly">
-    <div style="background: #fafafa;border: 1px solid #e8e8e8;padding: 10px 10px" *ngIf="behavior!='readonly'">
-        <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzType="default" [nzSize]="'default'">
+    <div style="background: #fafafa;border: 1px solid #e8e8e8;border-bottom: 0;padding: 8px 12px">
+        <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzGhost
+                nzType="primary" style="background: #fff !important;" [nzSize]="'default'">
             <i nz-icon nzType="plus" theme="outline"></i>新增
         </button>
-        <button (click)="deleteData()" nz-button nzType="danger" [nzSize]="'default'">
+        <button (click)="deleteData()" nz-button nzGhost
+                nzType="danger" style="background: #fff !important;" [nzSize]="'default'">
             <i nz-icon nzType="delete" theme="outline"></i>删除
         </button>
     </div>
 </ng-container>
-
-<!--[scroll]="{x: (tabErupt.eruptBuildModel.eruptModel.tableColumns.length * 100) + 'px'}"-->
 <st #st
     (change)="selectTableItem($event)"
     [scroll]="{x:(tabErupt.eruptBuildModel.eruptModel.tableColumns.length * 100) + 'px'}"
@@ -17,6 +17,5 @@
     [columns]="column"
     [ps]="20"
     [data]="tabErupt.eruptFieldModel.eruptFieldJson.edit.$value"
-    [bordered]="true" [page]="stConfig.stPage">
-
-</st>
+    [bordered]="true" [page]="stConfig.stPage"
+></st>
