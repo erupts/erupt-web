@@ -7,8 +7,6 @@ import {EruptBuildModel} from "../../model/erupt-build.model";
 import {Subscription} from "rxjs";
 import {Status} from "../../model/erupt-api.model";
 import {colRules} from "@shared/model/util.model";
-import {Link} from "../../model/erupt.model";
-import {EditType} from "../../model/erupt.enum";
 
 @Component({
     selector: "erupt-tree",
@@ -53,9 +51,9 @@ export class TreeComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.router$ = this.route.params.subscribe((params) => {
             this.eruptBuildModel = null;
-            this.showEdit = false;
             this.eruptName = params.name;
             this.currentKey = null;
+            this.showEdit = false;
             this.fetchTreeData();
             this.dataService.getEruptBuild(this.eruptName).subscribe(eb => {
                 this.dataHandler.initErupt(eb);
@@ -63,6 +61,10 @@ export class TreeComponent implements OnInit, OnDestroy {
             });
         });
     }
+
+    // ngAfterViewInit(): void {
+    //     setTimeout(() => this.showEdit = false, 500);
+    // }
 
 
     ngOnDestroy(): void {
@@ -116,7 +118,7 @@ export class TreeComponent implements OnInit, OnDestroy {
             if (result.status == Status.SUCCESS) {
                 this.fetchTreeData();
                 this.dataHandler.emptyEruptValue(this.eruptBuildModel);
-                console.log(this.eruptBuildModel.eruptModel)
+                console.log(this.eruptBuildModel.eruptModel);
                 this.msg.success("添加成功");
             }
         });

@@ -28,8 +28,7 @@
             </nz-tree>
         </nz-card>
     </div>
-
-    <div nz-col class="mb-sm" [nzXs]="24" [nzSm]="16" [nzMd]="16" [nzLg]="18" [hidden]="!showEdit">
+    <div nz-col class="mb-sm" [nzXs]="24" [nzSm]="16" [nzMd]="16" [nzLg]="18" *ngIf="showEdit">
         <ng-container>
             <div nz-row class="mb-sm">
                 <div nz-col [nzXs]="24">
@@ -63,19 +62,15 @@
                 </div>
             </div>
             <div [ngStyle]="{overflow: 'auto',overflowX:'hidden'}" style="height:calc(100vh - 180px)">
-                <nz-spin [nzSpinning]="loading" nzSize="large">
-                    <nz-collapse nzAccordion>
-                        <nz-collapse-panel [nzActive]="true" [nzHeader]="'基本信息'" [nzDisabled]="true">
-                            <nz-skeleton [nzActive]="true" [nzLoading]="!eruptBuildModel">
-                                <div>
-                                    <erupt-edit [eruptBuildModel]="eruptBuildModel">
+                <nz-collapse nzAccordion>
+                    <nz-collapse-panel [nzActive]="true" [nzHeader]="'基本信息'" [nzDisabled]="true">
+                        <nz-spin [nzSpinning]="loading" nzSize="large">
+                            <erupt-edit [eruptBuildModel]="eruptBuildModel">
 
-                                    </erupt-edit>
-                                </div>
-                            </nz-skeleton>
-                        </nz-collapse-panel>
-                    </nz-collapse>
-                </nz-spin>
+                            </erupt-edit>
+                        </nz-spin>
+                    </nz-collapse-panel>
+                </nz-collapse>
             </div>
         </ng-container>
     </div>
