@@ -146,6 +146,9 @@ export class DataHandlerService {
             if (view.sortable) {
                 titleWidth += 20;
             }
+            if (view.desc) {
+                titleWidth += 16;
+            }
             let edit = view.eruptFieldModel.eruptFieldJson.edit;
             let obj: STColumn = {
                 // width: "200px",

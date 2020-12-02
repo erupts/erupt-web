@@ -44,8 +44,9 @@ export enum ChartType {
     //TODO 当前g2plot版本还不支持
     Heatmap = "Heatmap",
     DensityHeatmap = "DensityHeatmap",
-    Treemap = "Treemap"
+    Treemap = "Treemap",
 
+    tpl = "tpl"
 }
 
 export interface Dimension {

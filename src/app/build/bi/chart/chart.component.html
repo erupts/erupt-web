@@ -1,12 +1,16 @@
 <nz-spin [nzSpinning]="chart.loading">
     <nz-card [nzTitle]="chart.name" nzSize="small" [nzBodyStyle]="{padding:'0'}" [nzHoverable]="true"
              [nzExtra]="extraTemplate">
-        <div [id]='chart.code' style='width:100%;' [ngStyle]="{height:chart.height+'px'}"></div>
+        <ng-container *ngIf="chart.type==chartType.tpl">
+            <iframe src="" style="width: 100%;border: 0" [ngStyle]="{height:chart.height+'px'}"></iframe>
+        </ng-container>
+        <ng-container *ngIf="chart.type!=chartType.tpl">
+            <div [id]='chart.code' style='width:100%;' [ngStyle]="{height:chart.height+'px'}"></div>
+        </ng-container>
     </nz-card>
     <ng-template #extraTemplate>
-        <nz-divider nzType="vertical"></nz-divider>
-        <i nz-icon nzType="reload" (click)="update(true)"></i>
         <ng-container *ngIf="plot">
+            <i nz-icon nzType="reload" (click)="update(true)"></i>
             <nz-divider nzType="vertical"></nz-divider>
             <i nz-icon nzType="download" (click)="downloadChart()"></i>
         </ng-container>

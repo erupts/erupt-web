@@ -11,18 +11,11 @@ import {
     ViewContainerRef
 } from "@angular/core";
 import {DOCUMENT} from "@angular/common";
-import {
-    ActivatedRoute,
-    NavigationCancel,
-    NavigationEnd,
-    NavigationError,
-    RouteConfigLoadStart,
-    Router
-} from "@angular/router";
+import {ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router} from "@angular/router";
 import {NzIconService, NzMessageService} from "ng-zorro-antd";
 import {Subscription} from "rxjs";
 import {updateHostClass} from "@delon/util";
-import {Menu, MenuIcon, MenuService, ScrollService, SettingsService} from "@delon/theme";
+import {Menu, MenuService, ScrollService, SettingsService} from "@delon/theme";
 import {
     AppstoreOutline,
     ArrowDownOutline,
@@ -45,11 +38,8 @@ import {DataService} from "@shared/service/data.service";
 import {WindowModel} from "@shared/model/window.model";
 import {environment} from "@env/environment";
 import {SettingDrawerComponent} from "./setting-drawer/setting-drawer.component";
-import {DA_SERVICE_TOKEN, TokenService, urlBase64Decode} from "@delon/auth";
-import {GlobalKeys} from "@shared/model/erupt-const";
-import {utf8Encode} from "@angular/compiler/src/util";
-import {encode} from "punycode";
-import {MenuTypeEnum, MenuVo} from "../../build/erupt/model/erupt.vo";
+import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
+import {MenuTypeEnum} from "../../build/erupt/model/erupt.vo";
 import {generateMenuPath} from "@shared/util/erupt.util";
 
 // #region icons
