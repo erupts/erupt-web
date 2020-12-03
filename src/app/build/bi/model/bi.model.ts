@@ -1,6 +1,7 @@
 import {Waterfall} from "@antv/g2plot";
 
 export interface Bi {
+    id: number;
     code: string;
     export: boolean;
     refreshTime: number;
@@ -10,6 +11,7 @@ export interface Bi {
 }
 
 export interface Chart {
+    id: number;
     code: string;
     name: string;
     grid: number;
@@ -50,6 +52,7 @@ export enum ChartType {
 }
 
 export interface Dimension {
+    id: number;
     code: string;
     title: string;
     type: DimType;

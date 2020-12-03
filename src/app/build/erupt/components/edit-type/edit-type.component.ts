@@ -1,15 +1,5 @@
-import {
-    Component,
-    DoCheck,
-    EventEmitter,
-    Inject,
-    Input,
-    KeyValueDiffers,
-    OnDestroy,
-    OnInit,
-    Output
-} from "@angular/core";
-import {Edit, EruptField, EruptFieldModel} from "../../model/erupt-field.model";
+import {Component, DoCheck, EventEmitter, Inject, Input, KeyValueDiffers, OnDestroy, OnInit, Output} from "@angular/core";
+import {EruptFieldModel} from "../../model/erupt-field.model";
 import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {TreeSelectComponent} from "../tree-select/tree-select.component";
@@ -17,7 +7,6 @@ import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
-import {DatePipe} from "@angular/common";
 import {ReferenceTableComponent} from "../reference-table/reference-table.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
@@ -107,7 +96,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 }
             }
         }
-
     }
 
     showByCheck(model: EruptFieldModel) {

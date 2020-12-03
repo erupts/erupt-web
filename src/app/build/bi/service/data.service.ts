@@ -15,10 +15,6 @@ export class BiDataService {
     constructor(private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
 
-    /**
-     * BI
-     * @param code
-     */
     //BI结构
     getBiBuild(code: string): Observable<Bi> {
         return this._http.get<any>(RestPath.bi + "/" + code, null, {
@@ -30,8 +26,8 @@ export class BiDataService {
     }
 
     //BI数据
-    getBiData(code: string, index: number, size: number, query: any): Observable<BiData> {
-        return this._http.post(RestPath.bi + "/" + code + "/data", query, {
+    getBiData(id: number, code: string, index: number, size: number, query: any): Observable<BiData> {
+        return this._http.post(RestPath.bi + "/data/" + id, query, {
             index: index,
             size: size
         }, {
@@ -42,8 +38,17 @@ export class BiDataService {
     }
 
     //图表
-    getBiChart(code: string, chart: string, query: any): Observable<Map<String, any>[]> {
-        return this._http.post(RestPath.bi + "/" + code + "/chart/" + chart, query, null, {
+    getBiChart(code: string, chartId: number, query: any): Observable<Map<String, any>[]> {
+        return this._http.post(RestPath.bi + "/chart/" + chartId, query, null, {
+            headers: {
+                erupt: code
+            }
+        });
+    }
+
+    //维度参照
+    getBiReference(code: string, id: number, query: any): Observable<Reference[]> {
+        return this._http.post(RestPath.bi + "/reference/" + id, query, null, {
             headers: {
                 erupt: code
             }
@@ -51,21 +56,17 @@ export class BiDataService {
     }
 
     //导出excel
-    exportExcel(code: string, query: any) {
-        DataService.postExcelFile(RestPath.bi + "/" + code + "/excel", {
+    exportExcel(id: number, code: string, query: any) {
+        DataService.postExcelFile(RestPath.bi + "/excel/" + id, {
             condition: encodeURIComponent(JSON.stringify(query)),
             [DataService.PARAM_ERUPT]: code,
             [DataService.PARAM_TOKEN]: this.tokenService.get().token
         });
     }
 
-
-    //维度参照
-    getBiReference(code: string, dim: string, query: any): Observable<Reference[]> {
-        return this._http.post(RestPath.bi + "/" + code + "/reference/" + dim, query, null, {
-            headers: {
-                erupt: code
-            }
-        });
+    //加载自定义图表
+    getChartTpl(id: number, code: string, query: any): string {
+        return RestPath.bi + "/custom-chart/" + id + "?_token=" + this.tokenService.get().token + "&_erupt=" + code +
+            "&condition=" + encodeURIComponent(JSON.stringify(query));
     }
 }

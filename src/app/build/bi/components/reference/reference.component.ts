@@ -34,7 +34,7 @@ export class ReferenceComponent implements OnInit {
         this.multiple = (this.dimension.type === DimType.REFERENCE_MULTI || this.dimension.type === DimType.REFERENCE_TREE_MULTI);
         let isTree = (this.dimension.type == DimType.REFERENCE_TREE_MULTI || this.dimension.type == DimType.REFERENCE_TREE_RADIO);
         this.loading = true;
-        this.dataService.getBiReference(this.code, this.dimension.code, null).subscribe((res) => {
+        this.dataService.getBiReference(this.code, this.dimension.id, null).subscribe((res) => {
             if (res) {
                 if (isTree) {
                     this.data = this.recursiveTree(res, null);

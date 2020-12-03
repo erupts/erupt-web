@@ -95,7 +95,7 @@ export class BiComponent implements OnInit, OnDestroy {
         if (this.bi.table) {
             this.querying = true;
             this.index = pageIndex;
-            this.dataService.getBiData(this.name, pageIndex, pageSize, param).subscribe(res => {
+            this.dataService.getBiData(this.bi.id, this.bi.code, pageIndex, pageSize, param).subscribe(res => {
                 this.haveNotNull = false;
                 this.querying = false;
                 this.total = res.total;
@@ -154,7 +154,7 @@ export class BiComponent implements OnInit, OnDestroy {
         if (!param) {
             return;
         }
-        this.dataService.exportExcel(this.name, param);
+        this.dataService.exportExcel(this.bi.id, this.bi.code, param);
     }
 
     ngOnDestroy(): void {

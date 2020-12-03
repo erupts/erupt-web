@@ -1,12 +1,50 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
+console.log("dev environment");
+
+let eruptSiteConfig = window["eruptSiteConfig"];
+eruptSiteConfig.domain = "http://localhost:9999";
+eruptSiteConfig.fileDomain = "http://oos.erupt.xyz";
+eruptSiteConfig.amapKey = "6ba79a8db11b51aeb1176bd4cfa049f4";
+eruptSiteConfig.r_tools = [{
+    text: "下载",
+    icon: "fa-download",
+    mobileHidden: true,
+    click: function (event) {
+        console.log(event);
+    },
+    load: function () {
+        console.log("load");
+    }
+}];
+
+
+//路由回调函数
+window["eruptRouterEvent"] = {
+    Test: {
+        load: function (e) {
+        },
+        unload: function (e) {
+        }
+    },
+    $: {
+        load: function (e) {
+        },
+        unload: function (e) {
+        }
+    }
+};
+
+//全局生命周期回调函数
+window["eruptEvent"] = {
+    startup: function () {
+        console.log(window["getAppToken"]());
+    }
+};
 
 export const environment = {
-  SERVER_URL: `./`,
-  production: false,
-  useHash: true,
-  hmr: false,
+    SERVER_URL: `./`,
+    production: false,
+    useHash: true,
+    hmr: false,
 };
 
 /*

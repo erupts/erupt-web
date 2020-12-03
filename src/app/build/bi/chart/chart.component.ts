@@ -43,6 +43,8 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     chartType = ChartType;
 
+    src: string;
+
     constructor(private ref: ElementRef, private biDataService: BiDataService,
                 private handlerService: HandlerService,
                 @Inject(NzMessageService) private msg: NzMessageService) {
@@ -54,14 +56,14 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     init() {
         let param = this.handlerService.buildDimParam(this.bi, false);
-        if (param) {
+        if (this.chart.type == ChartType.tpl) {
+            this.src = this.biDataService.getChartTpl(this.chart.id, this.bi.code, param);
+        } else {
             this.chart.loading = true;
-            this.biDataService.getBiChart(this.bi.code, this.chart.code, param).subscribe(data => {
+            this.biDataService.getBiChart(this.bi.code, this.chart.id, param).subscribe(data => {
                 this.chart.loading = false;
-                if (this.chart.type !== ChartType.tpl) {
-                    let element = this.ref.nativeElement.querySelector("#" + this.chart.code);
-                    this.render(element, data);
-                }
+                let element = this.ref.nativeElement.querySelector("#" + this.chart.code);
+                this.render(element, data);
             });
         }
     }
@@ -74,20 +76,18 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     update(loading: boolean) {
         let param = this.handlerService.buildDimParam(this.bi);
-        if (param) {
-            if (this.plot) {
-                if (loading) {
-                    this.chart.loading = true;
-                }
-                this.biDataService.getBiChart(this.bi.code, this.chart.code, param).subscribe(data => {
-                    if (this.chart.loading) {
-                        this.chart.loading = false;
-                    }
-                    this.plot.changeData(data, true);
-                });
-            } else {
-                this.init();
+        if (this.plot) {
+            if (loading) {
+                this.chart.loading = true;
             }
+            this.biDataService.getBiChart(this.bi.code, this.chart.id, param).subscribe(data => {
+                if (this.chart.loading) {
+                    this.chart.loading = false;
+                }
+                this.plot.changeData(data, true);
+            });
+        } else {
+            this.init();
         }
     }
 

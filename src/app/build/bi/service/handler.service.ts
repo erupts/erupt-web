@@ -16,6 +16,7 @@ export class HandlerService {
 
     buildDimParam(bi: Bi, tip: boolean = true): object {
         let param = {};
+        param["_random_"] = new Date().getTime();
         for (let dimension of bi.dimensions) {
             let val = dimension.$value;
             if (val) {

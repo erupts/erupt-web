@@ -5,7 +5,9 @@
                 <img class="logo" [src]="logoPath">
                 <span class="title">{{title}}</span>
             </div>
-            <div class="desc" *ngIf="desc">{{desc}}</div>
+            <div class="desc">
+                <span *ngIf="desc">{{desc}}</span>
+            </div>
         </div>
         <router-outlet></router-outlet>
         <global-footer>

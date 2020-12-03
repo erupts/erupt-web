@@ -35,7 +35,7 @@ export class ChoiceComponent implements OnInit {
 
     ngOnInit() {
         this.loading = true;
-        this.dataService.getBiReference(this.bi.code, this.dim.code, null).subscribe((res) => {
+        this.dataService.getBiReference(this.bi.code, this.dim.id, null).subscribe((res) => {
             this.data = res;
             this.loading = false;
         });
