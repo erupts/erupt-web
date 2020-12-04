@@ -27,7 +27,7 @@ export class BiDataService {
 
     //BI数据
     getBiData(id: number, code: string, index: number, size: number, query: any): Observable<BiData> {
-        return this._http.post(RestPath.bi + "/data/" + id, query, {
+        return this._http.post(RestPath.bi + "/" + code + "/data/" + id, query, {
             index: index,
             size: size
         }, {
@@ -39,7 +39,7 @@ export class BiDataService {
 
     //图表
     getBiChart(code: string, chartId: number, query: any): Observable<Map<String, any>[]> {
-        return this._http.post(RestPath.bi + "/chart/" + chartId, query, null, {
+        return this._http.post(RestPath.bi + "/" + code + "/chart/" + chartId, query, null, {
             headers: {
                 erupt: code
             }
@@ -48,7 +48,7 @@ export class BiDataService {
 
     //维度参照
     getBiReference(code: string, id: number, query: any): Observable<Reference[]> {
-        return this._http.post(RestPath.bi + "/reference/" + id, query, null, {
+        return this._http.post(RestPath.bi + "/" + code + "/reference/" + id, query, null, {
             headers: {
                 erupt: code
             }
@@ -57,7 +57,7 @@ export class BiDataService {
 
     //导出excel
     exportExcel(id: number, code: string, query: any) {
-        DataService.postExcelFile(RestPath.bi + "/excel/" + id, {
+        DataService.postExcelFile(RestPath.bi + "/" + code + "/excel/" + id, {
             condition: encodeURIComponent(JSON.stringify(query)),
             [DataService.PARAM_ERUPT]: code,
             [DataService.PARAM_TOKEN]: this.tokenService.get().token
@@ -66,7 +66,7 @@ export class BiDataService {
 
     //加载自定义图表
     getChartTpl(id: number, code: string, query: any): string {
-        return RestPath.bi + "/custom-chart/" + id + "?_token=" + this.tokenService.get().token + "&_erupt=" + code +
+        return RestPath.bi + "/" + code + "/custom-chart/" + id + "?_token=" + this.tokenService.get().token + "&_erupt=" + code +
             "&condition=" + encodeURIComponent(JSON.stringify(query));
     }
 }
