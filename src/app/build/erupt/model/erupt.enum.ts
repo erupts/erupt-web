@@ -92,7 +92,7 @@ export enum PickerMode {
 
 export enum AttachmentEnum {
     IMAGE = "IMAGE",
-    OTHER = "OTHER",
+    BASE = "BASE",
 }
 
 export enum ChoiceEnum {

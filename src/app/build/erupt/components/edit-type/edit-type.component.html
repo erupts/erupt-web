@@ -450,7 +450,7 @@
                                                 </p>
                                             </nz-upload>
                                         </ng-container>
-                                        <ng-container *ngSwitchCase="attachmentEnum.OTHER">
+                                        <ng-container *ngSwitchCase="attachmentEnum.BASE">
                                             <nz-upload nzType="drag"
                                                        *ngIf="field.eruptFieldJson.edit.$viewValue"
                                                        [nzLimit]="field.eruptFieldJson.edit.attachmentType.maxLimit"
