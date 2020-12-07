@@ -185,6 +185,9 @@ export class TabTableComponent implements OnInit {
                     this.msg.warning("请选中一条数据");
                     return false;
                 }
+                if (!edit.$value) {
+                    edit.$value = [];
+                }
                 edit.$value.push(...edit.$tempValue);
                 //去重
                 edit.$value = Array.from(new Set(edit.$value));
