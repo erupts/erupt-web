@@ -89,7 +89,6 @@ export class TreeComponent implements OnInit, OnDestroy {
         if (this.tree.getSelectedNodeList()[0]) {
             this.tree.getSelectedNodeList()[0].isSelected = false;
         }
-        this.dataHandler.emptyEruptValue(this.eruptBuildModel);
         this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
             this.loading = false;
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
@@ -118,7 +117,6 @@ export class TreeComponent implements OnInit, OnDestroy {
             if (result.status == Status.SUCCESS) {
                 this.fetchTreeData();
                 this.dataHandler.emptyEruptValue(this.eruptBuildModel);
-                console.log(this.eruptBuildModel.eruptModel);
                 this.msg.success("添加成功");
             }
         });
@@ -204,8 +202,8 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.showEdit = true;
         this.currentKey = event.node.origin.key;
         this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
-            this.loading = false;
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
+            this.loading = false;
         });
     }
 
