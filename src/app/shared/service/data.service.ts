@@ -218,11 +218,12 @@ export class DataService {
     }
 
     //增加数据
-    addEruptData(eruptName: string, data: any): Observable<any> {
+    addEruptData(eruptName: string, data: any, headers?: object): Observable<any> {
         return this._http.post<any>(RestPath.dataModify + "/" + eruptName, data, null, {
             observe: null,
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...headers
             }
         });
     }

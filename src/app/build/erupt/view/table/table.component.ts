@@ -201,7 +201,7 @@ export class TableComponent implements OnInit {
                         if (field.eruptFieldJson.edit) {
                             field.eruptFieldJson.edit.readOnly = true;
                         }
-                        eruptBuildModel.eruptModel.eruptFieldModelMap.set(field.fieldName , field);
+                        eruptBuildModel.eruptModel.eruptFieldModelMap.set(field.fieldName, field);
                     });
                     this.modal.create({
                         nzWrapClassName: "modal-lg",
@@ -459,8 +459,12 @@ export class TableComponent implements OnInit {
                             this._drill.val,
                             this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
                     } else {
+                        let header = {};
+                        if (this.linkTree) {
+                            header["link"] = this.eruptBuildModel.eruptModel.eruptJson.linkTree.value;
+                        }
                         res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                            this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
+                            this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
                     }
                     if (res.status === Status.SUCCESS) {
                         this.msg.success("新增成功");
