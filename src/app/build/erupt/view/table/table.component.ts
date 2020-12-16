@@ -461,7 +461,10 @@ export class TableComponent implements OnInit {
                     } else {
                         let header = {};
                         if (this.linkTree) {
-                            header["link"] = this.eruptBuildModel.eruptModel.eruptJson.linkTree.value;
+                            let lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
+                            if (lt.dependNode && lt.value) {
+                                header["link"] = this.eruptBuildModel.eruptModel.eruptJson.linkTree.value;
+                            }
                         }
                         res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
                             this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
