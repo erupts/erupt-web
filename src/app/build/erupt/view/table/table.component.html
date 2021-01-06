@@ -70,19 +70,17 @@
                             </div>
                         </ng-template>
                     </ng-container>
-
-                    <ng-container *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0">
-                        <div class="mb-sm float-right">
-                            <button *ngIf="!hideCondition" nz-button (click)="clearCondition()">
-                                <i nz-icon nzType="sync" nzTheme="outline"></i>重置条件
-                            </button>
-                            <button nz-button (click)="hideCondition=!hideCondition">
-                                <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
-                            </button>
-                        </div>
-                    </ng-container>
                 </div>
                 <div>
+                    <ng-container *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0">
+                        <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition">
+                            <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                        </button>
+                        <button class="mb-sm" *ngIf="!hideCondition" nz-button (click)="clearCondition()">
+                            <i nz-icon nzType="sync" nzTheme="outline"></i>重置查询条件
+                        </button>
+                        <nz-divider nzType="vertical" *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation"></nz-divider>
+                    </ng-container>
                     <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
                         <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation | keyvalue">
                             <ng-container *ngIf="item.value.mode != operationMode.SINGLE">

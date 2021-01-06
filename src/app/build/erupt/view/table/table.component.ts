@@ -547,13 +547,12 @@ export class TableComponent implements OnInit {
 
     // excel导出
     exportExcel() {
-        let condition;
+        let condition = null;
         if (this.searchErupt.eruptFieldModels.length > 0) {
             condition = this.dataHandler.eruptObjectToCondition(this.dataHandler.eruptValueToObject({
                 eruptModel: this.searchErupt
             }));
         }
-        console.log(condition);
         //导出接口
         this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition);
     }

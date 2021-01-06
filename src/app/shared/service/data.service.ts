@@ -299,9 +299,11 @@ export class DataService {
     }
 
     downloadExcel(eruptName: string, condition: any) {
-        DataService.postExcelFile(RestPath.excel + "/export/" + eruptName + "?" + this.createAuthParam(eruptName), {
-            condition: encodeURIComponent(JSON.stringify(condition))
-        });
+        let param: any = {};
+        if (condition) {
+            param.condition = encodeURIComponent(JSON.stringify(condition));
+        }
+        DataService.postExcelFile(RestPath.excel + "/export/" + eruptName + "?" + this.createAuthParam(eruptName), param);
     }
 
     createAuthParam(eruptName: string): string {
