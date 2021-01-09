@@ -618,6 +618,8 @@ export class DataHandlerService {
         return queryCondition;
     }
 
+    private datePipe: DatePipe = new DatePipe("zh-cn");
+
     searchEruptToObject(eruptBuildModel: EruptBuildModel): object {
         const obj = this.eruptValueToObject(eruptBuildModel);
         eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
@@ -660,8 +662,6 @@ export class DataHandlerService {
         });
         return obj;
     }
-
-    private datePipe: DatePipe = new DatePipe("zh-cn");
 
     dateFormat(date, edit: Edit): string {
         let format = null;
