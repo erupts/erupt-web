@@ -650,14 +650,10 @@ export class DataHandlerService {
                                 }
                             }
                             break;
-
-                    }
-                } else {
-                    switch (edit.type) {
-                        case EditType.REFERENCE_TREE:
-                        case EditType.REFERENCE_TABLE:
-                            obj[field.fieldName] = edit.$value;
-                            break;
+                        // case EditType.REFERENCE_TREE:
+                        // case EditType.REFERENCE_TABLE:
+                        //     obj[field.fieldName] = edit.$value;
+                        //     break;
                     }
                 }
             }
