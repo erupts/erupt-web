@@ -157,6 +157,15 @@
                             </se>
                         </div>
                     </ng-container>
+                    <ng-container *ngSwitchCase="editType.MARKDOWN">
+                        <div nz-col [nzSpan]="24">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                        <erupt-markdown [eruptField]="field"></erupt-markdown>
+                            </se>
+                        </div>
+                    </ng-container>
                     <!--choice-->
                     <ng-container *ngSwitchCase="editType.CHOICE">
                         <ng-container *ngIf="eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague">
@@ -516,15 +525,6 @@
 
                                     </erupt-ueditor>
                                 </ng-container>
-                            </se>
-                        </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.MARKDOWN">
-                        <div nz-col [nzSpan]="24">
-                            <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                暂不支持
                             </se>
                         </div>
                     </ng-container>

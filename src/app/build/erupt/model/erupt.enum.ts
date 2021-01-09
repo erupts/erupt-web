@@ -52,7 +52,6 @@ export enum TabEnum {
 export enum HtmlEditTypeEnum {
     CKEDITOR = "CKEDITOR",
     UEDITOR = "UEDITOR",
-    // MARKDOWN = "MARKDOWN"
 }
 
 export enum ViewType {
@@ -72,7 +71,8 @@ export enum ViewType {
     HTML = "HTML",
     DATE = "DATE",
     BOOLEAN = "BOOLEAN",
-    NUMBER = "NUMBER"
+    NUMBER = "NUMBER",
+    MARKDOWN = "MARKDOWN"
 }
 
 export enum DateEnum {
