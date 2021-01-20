@@ -12,10 +12,11 @@
             <i nz-icon nzType="search"></i>
         </ng-template>
         <br>
-        <nz-card [nzBodyStyle]="{padding:'10px',height:'calc(100vh - 220px)',overflow: 'auto'}"
-                 [nzLoading]="treeLoading"
-                 [nzBordered]="true"
-                 [nzHoverable]="true">
+        <nz-card
+                [nzBodyStyle]="{padding:'10px',height:'calc(100vh - 220px - '+(routerReuse?'40px':'0px')+')',overflow: 'auto'}"
+                [nzLoading]="treeLoading"
+                [nzBordered]="true"
+                [nzHoverable]="true">
             <nz-tree #tree
                      class="tree-container"
                      [nzShowLine]="true"

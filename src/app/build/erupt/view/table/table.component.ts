@@ -20,6 +20,7 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
+import {WindowModel} from "@shared/model/window.model";
 
 @Component({
     selector: "erupt-table",
@@ -45,6 +46,8 @@ export class TableComponent implements OnInit {
 
     @ViewChild("st", {static: false})
     st: STComponent;
+
+    linkTreeHeight: string = 'calc(100vh - 140px - ' + (WindowModel.routerReuse ? '40px' : '0px') + ')';
 
     operationMode = OperationMode;
 

@@ -6,7 +6,7 @@
         </div>
         <div nz-col [nzXs]="24" [nzMd]="linkTree?16:24" [nzLg]="linkTree?18:24" [nzXl]="linkTree?18:24"
              [hidden]="!showTable"
-             [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?'calc(100vh - 140px)':'auto'}">
+             [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?linkTreeHeight:'auto'}">
             <ng-container>
                 <div>
                     <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
@@ -55,7 +55,6 @@
                         <nz-divider nzType="vertical"></nz-divider>
                         <button nz-button nzType="default" nz-popover
                                 [(nzVisible)]="showColCtrl" [nzContent]="tableColumnCtrl"
-                                nzTitle="表格列控制"
                                 nzTrigger="click" class="mb-sm hidden-mobile">
                             <i nz-icon nzType="table" nzTheme="outline"></i>表格列控制
                         </button>
@@ -79,7 +78,8 @@
                         <button class="mb-sm" *ngIf="!hideCondition" nz-button (click)="clearCondition()">
                             <i nz-icon nzType="sync" nzTheme="outline"></i>重置查询条件
                         </button>
-                        <nz-divider nzType="vertical" *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation"></nz-divider>
+                        <nz-divider nzType="vertical"
+                                    *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation"></nz-divider>
                     </ng-container>
                     <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
                         <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation | keyvalue">

@@ -6,6 +6,7 @@ import {NzFormatEmitEvent} from "ng-zorro-antd";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {STComponent} from "@delon/abc";
 import {TreeComponent} from "../tree/tree.component";
+import {WindowModel} from "@shared/model/window.model";
 
 @Component({
     selector: 'layout-tree',
@@ -25,6 +26,8 @@ export class LayoutTreeComponent implements OnInit {
     searchValue: string;
 
     treeLoading: boolean;
+
+    linkTreeHeight: string = 'calc(100vh - 180px - ' + (WindowModel.routerReuse ? '40px' : '0px') + ')';
 
     list: any;
 

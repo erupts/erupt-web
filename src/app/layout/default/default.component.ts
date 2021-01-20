@@ -58,10 +58,7 @@ const ICONS = [
     LogoutOutline,
     EllipsisOutline,
     GlobalOutline,
-    ArrowDownOutline,
-    // Optional
-    GithubOutline,
-    AppstoreOutline
+    ArrowDownOutline
 ];
 
 // #endregion
@@ -88,7 +85,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
 
     nowYear = new Date().getFullYear();
 
-    routerReuse: boolean = WindowModel.routerReuse;
+    routerReuse = WindowModel.routerReuse;
 
     @ViewChild("settingHost", {read: ViewContainerRef, static: false})
     settingHost: ViewContainerRef;

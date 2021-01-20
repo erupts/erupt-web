@@ -14,7 +14,7 @@ export class WindowModel {
 
     public static desc: string = WindowModel.config["desc"] || undefined;
 
-    public static routerReuse: boolean = WindowModel.config["routerReuse"] || false;
+    public static routerReuse: boolean = WindowModel.config["routerReuse"] !== false;
 
     public static logoPath: string = WindowModel.config["logoPath"] || "erupt.svg";
 

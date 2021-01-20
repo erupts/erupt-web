@@ -7,6 +7,7 @@ import {EruptBuildModel} from "../../model/erupt-build.model";
 import {Subscription} from "rxjs";
 import {Status} from "../../model/erupt-api.model";
 import {colRules} from "@shared/model/util.model";
+import {WindowModel} from "@shared/model/window.model";
 
 @Component({
     selector: "erupt-tree",
@@ -32,6 +33,8 @@ export class TreeComponent implements OnInit, OnDestroy {
     nodes: any = [];
 
     selectLeaf: boolean = false;
+
+    routerReuse = WindowModel.routerReuse;
 
     private router$: Subscription;
 

@@ -34,16 +34,13 @@ import {DelonUtilModule} from "@delon/util";
 import {RouteReuseStrategy} from "@angular/router";
 import {ReuseTabService, ReuseTabStrategy} from "@delon/abc/reuse-tab";
 
-let REUSETAB_PROVIDES = [];
-if (WindowModel.routerReuse) {
-    REUSETAB_PROVIDES = [
-        {
-            provide: RouteReuseStrategy,
-            useClass: ReuseTabStrategy,
-            deps: [ReuseTabService]
-        }
-    ];
-}
+let REUSETAB_PROVIDES = [
+    {
+        provide: RouteReuseStrategy,
+        useClass: ReuseTabStrategy,
+        deps: [ReuseTabService]
+    }
+];
 // #endregion
 
 // #region global config functions

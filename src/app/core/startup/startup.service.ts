@@ -7,6 +7,7 @@ import {ICONS_AUTO} from "../../../style-icons-auto";
 import {ICONS} from "../../../style-icons";
 import {WindowModel} from "@shared/model/window.model";
 import {GlobalKeys} from "@shared/model/erupt-const";
+import {ReuseTabService} from "@delon/abc";
 
 /**
  * 用于应用启动时
@@ -15,6 +16,7 @@ import {GlobalKeys} from "@shared/model/erupt-const";
 @Injectable()
 export class StartupService {
     constructor(iconSrv: NzIconService,
+                private reuseTabService: ReuseTabService,
                 private settingService: SettingsService,
                 private titleService: TitleService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
@@ -42,6 +44,10 @@ export class StartupService {
         let eruptEvent = window["eruptEvent"];
         if (eruptEvent) {
             eruptEvent.startup && eruptEvent.startup();
+        }
+        if (false === WindowModel.routerReuse) {
+            this.reuseTabService.mode = 2;
+            this.reuseTabService.excludes = [/\d*/];
         }
         return new Promise((resolve, reject) => {
             // 应用信息：包括站点名、描述、年份

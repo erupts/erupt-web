@@ -4,10 +4,12 @@ let eruptSiteConfig = window["eruptSiteConfig"];
 eruptSiteConfig.domain = "http://localhost:9999";
 eruptSiteConfig.fileDomain = "http://oos.erupt.xyz";
 eruptSiteConfig.amapKey = "6ba79a8db11b51aeb1176bd4cfa049f4";
+eruptSiteConfig.routerReuse = true;
 eruptSiteConfig.r_tools = [{
     text: "下载",
     icon: "fa-download",
     mobileHidden: true,
+    routerReuse: true,
     click: function (event) {
         console.log(event);
     },
@@ -37,6 +39,12 @@ window["eruptRouterEvent"] = {
 window["eruptEvent"] = {
     startup: function () {
         console.log(window["getAppToken"]());
+    },
+    login: function () {
+
+    },
+    loginOut: function () {
+
     }
 };
 

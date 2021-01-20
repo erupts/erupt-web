@@ -20,7 +20,7 @@ export function generateMenuPath(menuType: string, menuValue: string) {
         case MenuTypeEnum.router:
             return "/" + menuValue;
         case MenuTypeEnum.link:
-            return "/site?url=" + menuValue;
+            return "/site?url=" + encodeURIComponent(menuValue).replace("%3A", ":");
         case MenuTypeEnum.newWindow:
             return "/new_window?url=" + menuValue;
         case MenuTypeEnum.bi:
