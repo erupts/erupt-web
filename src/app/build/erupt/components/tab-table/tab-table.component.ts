@@ -10,7 +10,7 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {ReferenceTableComponent} from "../reference-table/reference-table.component";
 import {BuildConfig} from "../../model/build-config";
 import {Status} from "../../model/erupt-api.model";
-import {SelectMode} from "../../model/erupt.enum";
+import {EditType, SelectMode} from "../../model/erupt.enum";
 
 @Component({
     selector: "tab-table",
@@ -128,6 +128,7 @@ export class TabTableComponent implements OnInit {
                 className: "text-center",
                 buttons: operators
             });
+            console.log(viewValue);
             this.column = viewValue;
         }
     }
@@ -180,6 +181,7 @@ export class TabTableComponent implements OnInit {
             },
             nzOkText: "增加",
             nzOnOk: () => {
+                let tabEruptModel = this.tabErupt.eruptBuildModel.eruptModel;
                 let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
                 if (!edit.$tempValue) {
                     this.msg.warning("请选中一条数据");
@@ -188,9 +190,30 @@ export class TabTableComponent implements OnInit {
                 if (!edit.$value) {
                     edit.$value = [];
                 }
+
+                for (let v of edit.$tempValue) {
+                    for (let key in v) {
+                        let eruptFieldModel = tabEruptModel.eruptFieldModelMap.get(key);
+                        if (eruptFieldModel) {
+                            let ed = eruptFieldModel.eruptFieldJson.edit;
+                            switch (ed.type) {
+                                case EditType.BOOLEAN:
+                                    v[key] = v[key] === ed.boolType.trueText;
+                                    break;
+                            }
+                        }
+                        if (key.indexOf("_") != -1) {
+                            let kk = key.split("_");
+                            v[kk[0]] = v[kk[0]] || {};
+                            v[kk[0]][kk[1]] = v[key];
+                        }
+                    }
+                }
+                console.log(edit.$tempValue)
                 edit.$value.push(...edit.$tempValue);
                 //去重
                 edit.$value = Array.from(new Set(edit.$value));
+
                 this.st.reload();
             }
         });
