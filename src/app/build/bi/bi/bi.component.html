@@ -1,107 +1,105 @@
 <erupt-page-header></erupt-page-header>
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!bi"></nz-skeleton>
-<ng-container *ngIf="bi">
-    <ng-container *ngIf="bi.dimensions.length>0">
-        <div class="mb-sm float-right">
-            <button nz-button *ngIf="!hideCondition" (click)="clearCondition()">
-                <i nz-icon nzType="sync" nzTheme="outline"></i>重置条件
+<div [id]="name">
+    <ng-container *ngIf="bi">
+        <ng-container *ngIf="bi.dimensions.length>0">
+            <div class="mb-sm float-right">
+                <button nz-button *ngIf="!hideCondition" (click)="clearCondition()">
+                    <i nz-icon nzType="sync" nzTheme="outline"></i>重置条件
+                </button>
+                <button nz-button (click)="hideCondition=!hideCondition">
+                    <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                </button>
+            </div>
+        </ng-container>
+        <ng-container>
+            <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query(1,size,true);">
+                <i nz-icon nzType="search" nzTheme="outline"></i>查询
             </button>
-            <button nz-button (click)="hideCondition=!hideCondition">
-                <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+        </ng-container>
+        <ng-container *ngIf="bi.export">
+            <button nz-button class="mb-sm" (click)="exportBiData()">
+                <i nz-icon nzType="download" nzTheme="outline"></i>导出
             </button>
-        </div>
-    </ng-container>
+        </ng-container>
+
+        <ng-container *ngIf="columns&&columns.length>0">
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button nzType="default" nz-popover
+                    [nzContent]="tableColumnCtrl"
+                    nzTrigger="click" class="mb-sm hidden-mobile">
+                <i nz-icon nzType="table" nzTheme="outline"></i>表格列控制
+            </button>
+            <ng-template #tableColumnCtrl>
+                <div nz-row style="max-width: 520px;">
+                    <ng-container *ngFor="let col of st.columns">
+                        <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
+                            <label nz-checkbox [(ngModel)]="col.show"
+                                   (ngModelChange)="st.resetColumns()">{{col.title}}</label>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-template>
+        </ng-container>
 
 
-    <ng-container>
-        <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query(1,size,true);">
-            <i nz-icon nzType="search" nzTheme="outline"></i>查询
-        </button>
-    </ng-container>
-    <!--    <button nz-button class="mb-sm" (click)="print()">-->
-    <!--        <i nz-icon nzType="printer" nzTheme="outline"></i>打印-->
-    <!--    </button>-->
-    <ng-container *ngIf="bi.export">
-        <button nz-button class="mb-sm" (click)="exportBiData()">
-            <i nz-icon nzType="download" nzTheme="outline"></i>导出
-        </button>
-    </ng-container>
+        <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom:8px"
+                 [hidden]="hideCondition" nzSize="small">
+            <dimension [bi]="bi">
 
-    <ng-container *ngIf="columns&&columns.length>0">
-        <nz-divider nzType="vertical"></nz-divider>
-        <button nz-button nzType="default" nz-popover
-                [nzContent]="tableColumnCtrl"
-                nzTrigger="click" class="mb-sm hidden-mobile">
-            <i nz-icon nzType="table" nzTheme="outline"></i>表格列控制
-        </button>
-        <ng-template #tableColumnCtrl>
-            <div nz-row style="max-width: 520px;">
-                <ng-container *ngFor="let col of st.columns">
-                    <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
-                        <label nz-checkbox [(ngModel)]="col.show"
-                               (ngModelChange)="st.resetColumns()">{{col.title}}</label>
+            </dimension>
+        </nz-card>
+        <ng-container *ngIf="bi.charts.length>0">
+            <div nz-row nzGutter="16">
+                <ng-container *ngFor="let chart of bi.charts">
+                    <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
+                        <bi-chart #biChart [chart]="chart" [bi]="bi"></bi-chart>
                     </div>
                 </ng-container>
             </div>
-        </ng-template>
-    </ng-container>
-
-
-    <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom:8px"
-             [hidden]="hideCondition" nzSize="small">
-        <dimension [bi]="bi">
-
-        </dimension>
-    </nz-card>
-    <ng-container *ngIf="bi.charts.length>0">
-        <div nz-row nzGutter="16">
-            <ng-container *ngFor="let chart of bi.charts">
-                <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
-                    <bi-chart #biChart [chart]="chart" [bi]="bi"></bi-chart>
-                </div>
-            </ng-container>
-        </div>
-    </ng-container>
-
-    <ng-container *ngIf="bi.table">
-        <ng-container *ngIf="haveNotNull">
-            <nz-card [nzHoverable]="true" [nzBordered]="true">
-                <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开始查询操作'">
-                    <div nz-result-extra>
-                        <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying" (click)="query(1,size)"
-                                [nzGhost]="true">
-                            <i nz-icon nzType="search" nzTheme="outline"></i>查询
-                        </button>
-                    </div>
-                </nz-result>
-                <ng-template #icon>
-                    <i nz-icon nzType="rocket" nzTheme="twotone"></i>
-                </ng-template>
-            </nz-card>
         </ng-container>
-        <ng-container *ngIf="!haveNotNull">
-            <ng-container *ngIf="columns&&columns.length>0">
-                <st [columns]="columns" [data]="data"
-                    #st
-                    style="margin-bottom: 16px"
-                    [loading]="querying"
-                    [page]="{show: false}"
-                    [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
-                    [bordered]="true"
-                    [size]="'small'">
-                </st>
-                <nz-pagination [nzPageIndex]="index"
-                               [nzPageSize]="size"
-                               [nzTotal]="total"
-                               style="text-align: center" nzShowSizeChanger nzShowQuickJumper
-                               [nzPageSizeOptions]="[5,10,20,30,50,100]"
-                               [nzSize]="'small'"
-                               [nzShowTotal]="totalTemplate"
-                               (nzPageSizeChange)="pageSizeChange($event)"
-                               (nzPageIndexChange)="pageIndexChange($event)"
-                ></nz-pagination>
-                <ng-template #totalTemplate let-total>共{{ total }}条</ng-template>
+
+        <ng-container *ngIf="bi.table">
+            <ng-container *ngIf="haveNotNull">
+                <nz-card [nzHoverable]="true" [nzBordered]="true">
+                    <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开始查询操作'">
+                        <div nz-result-extra>
+                            <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying"
+                                    (click)="query(1,size)"
+                                    [nzGhost]="true">
+                                <i nz-icon nzType="search" nzTheme="outline"></i>查询
+                            </button>
+                        </div>
+                    </nz-result>
+                    <ng-template #icon>
+                        <i nz-icon nzType="rocket" nzTheme="twotone"></i>
+                    </ng-template>
+                </nz-card>
+            </ng-container>
+            <ng-container *ngIf="!haveNotNull">
+                <ng-container *ngIf="columns&&columns.length>0">
+                    <st [columns]="columns" [data]="data"
+                        #st
+                        style="margin-bottom: 16px"
+                        [loading]="querying"
+                        [page]="{show: false}"
+                        [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
+                        [bordered]="true"
+                        [size]="'small'">
+                    </st>
+                    <nz-pagination [nzPageIndex]="index"
+                                   [nzPageSize]="size"
+                                   [nzTotal]="total"
+                                   style="text-align: center" nzShowSizeChanger nzShowQuickJumper
+                                   [nzPageSizeOptions]="[5,10,20,30,50,100]"
+                                   [nzSize]="'small'"
+                                   [nzShowTotal]="totalTemplate"
+                                   (nzPageSizeChange)="pageSizeChange($event)"
+                                   (nzPageIndexChange)="pageIndexChange($event)"
+                    ></nz-pagination>
+                    <ng-template #totalTemplate let-total>共{{ total }}条</ng-template>
+                </ng-container>
             </ng-container>
         </ng-container>
     </ng-container>
-</ng-container>
+</div>
