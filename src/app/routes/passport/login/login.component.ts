@@ -1,5 +1,5 @@
 import {SettingsService} from "@delon/theme";
-import {Component, Inject, Input, OnDestroy, OnInit, Optional} from "@angular/core";
+import {AfterViewInit, Component, Inject, Input, OnDestroy, OnInit, Optional} from "@angular/core";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
@@ -12,6 +12,7 @@ import {GlobalKeys} from "@shared/model/erupt-const";
 import {Md5} from "ts-md5";
 import {WindowModel} from "@shared/model/window.model";
 import {generateMenuPath} from "@shared/util/erupt.util";
+import {EruptAppService} from "@shared/service/erupt-app.service";
 
 @Component({
     selector: "passport-login",
@@ -19,7 +20,7 @@ import {generateMenuPath} from "@shared/util/erupt.util";
     styleUrls: ["./login.component.less"],
     providers: [SocialService]
 })
-export class UserLoginComponent implements OnDestroy, OnInit {
+export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
 
     form: FormGroup;
 
@@ -28,6 +29,8 @@ export class UserLoginComponent implements OnDestroy, OnInit {
     type = 0;
 
     loading = false;
+
+    passwordType: 'password' | 'text' = 'password';
 
     @Input() isModal: boolean = false;
 
@@ -45,6 +48,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
         private modalSrv: NzModalService,
         private settingsService: SettingsService,
         private socialService: SocialService,
+        private eruptAppService: EruptAppService,
         @Optional()
         @Inject(ReuseTabService)
         private reuseTabService: ReuseTabService,
@@ -63,6 +67,13 @@ export class UserLoginComponent implements OnDestroy, OnInit {
 
     ngOnInit(): void {
 
+    }
+
+    ngAfterViewInit(): void {
+        if (this.eruptAppService.eruptAppModel.verifyCodeCount <= 0) {
+            this.changeVerifyCode();
+            Promise.resolve(null).then(() => this.useVerifyCode = true);
+        }
     }
 
     // region: fields
@@ -84,8 +95,6 @@ export class UserLoginComponent implements OnDestroy, OnInit {
         this.type = ret.index;
     }
 
-
-    // endregion
     submit() {
         this.error = "";
         if (this.type === 0) {
@@ -138,7 +147,7 @@ export class UserLoginComponent implements OnDestroy, OnInit {
     }
 
     changeVerifyCode() {
-        this.verifyCodeUrl = DataService.getVerifyCodeUrl(this.form.controls.userName.value);
+        this.verifyCodeUrl = DataService.getVerifyCodeUrl();
     }
 
     ngOnDestroy(): void {

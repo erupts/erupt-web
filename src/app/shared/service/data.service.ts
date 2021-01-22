@@ -13,6 +13,8 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "../../build/erupt/model/erupt.vo";
+import {EruptAppModel} from "@shared/model/erupt-app.model";
+import {EruptAppService} from "@shared/service/erupt-app.service";
 
 @Injectable()
 export class DataService {
@@ -25,7 +27,9 @@ export class DataService {
 
     public excelImport: string = RestPath.excel + "/import/";
 
-    constructor(private http: HttpClient, private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
+    constructor(private http: HttpClient, private _http: _HttpClient,
+                private eruptAppService: EruptAppService,
+                @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
 
     static postExcelFile(url, params?: object) { //params是post请求需要的参数，url是请求url地址
@@ -48,8 +52,8 @@ export class DataService {
     }
 
     //获取验证码
-    static getVerifyCodeUrl(account: string): string {
-        return RestPath.erupt + "/code-img" + "?account=" + account + "&_t" + new Date().getTime();
+    static getVerifyCodeUrl(): string {
+        return RestPath.erupt + "/code-img?_t" + new Date().getTime();
     }
 
     static downloadAttachment(path: string): string {
@@ -98,15 +102,9 @@ export class DataService {
             "?_token=" + this.tokenService.get().token + "&_erupt=" + eruptName + "&ids=" + ids;
     }
 
-    // getEruptOperationTpl(eruptName: string, operationCode: string, ids: any[]) {
-    //     return this.http.post(RestPath.tpl + "/operation_tpl/" + eruptName + "/" + operationCode, ids, {
-    //         responseType: 'text',
-    //         headers: {
-    //             erupt: eruptName,
-    //             token: this.tokenService.get().token
-    //         }
-    //     });
-    // }
+    getEruptApp(): Observable<EruptAppModel> {
+        return this.http.get<EruptAppModel>(RestPath.eruptApp);
+    }
 
     //tree数据结构
     queryEruptTreeData(eruptName: string): Observable<Tree[]> {

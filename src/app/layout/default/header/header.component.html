@@ -1,7 +1,5 @@
 <div class="alain-default__header-logo" ripper color="#888">
-    <a [routerLink]="settings.user.indexPath" (click)="toIndex()"
-       class="alain-default__header-logo-link">
-<!--        [ngStyle]="{'filter':logoPath=='erupt.svg'?'invert(1) hue-rotate(180deg)':''}"-->
+    <a [routerLink]="settings.user.indexPath" (click)="toIndex()" class="alain-default__header-logo-link">
         <img [src]="logoPath" style="vertical-align: top" class="header-logo-img"/>
         <span *ngIf="logoText" class="header-logo-text">{{logoText}}</span>
     </a>
@@ -23,34 +21,6 @@
     </ul>
 
     <ul class="alain-default__nav">
-        <!--&lt;!&ndash; Notify &ndash;&gt;-->
-        <!--<li>-->
-        <!--<header-notify></header-notify>-->
-        <!--</li>-->
-        <!--&lt;!&ndash; Task &ndash;&gt;-->
-        <!--<li class="hidden-mobile">-->
-        <!--<header-task></header-task>-->
-        <!--</li>-->
-        <!--&lt;!&ndash; App Icons &ndash;&gt;-->
-        <!--<li class="hidden-mobile">-->
-        <!--<header-icon></header-icon>-->
-        <!--</li>-->
-        <!--&lt;!&ndash;Settings &ndash;&gt;-->
-        <!--<li class="hidden-mobile">-->
-        <!--<nz-dropdown nzTrigger="click" nzPlacement="bottomRight">-->
-        <!--<div class="alain-default__nav-item" nz-dropdown>-->
-        <!--<i nz-icon nzType="setting"></i>-->
-        <!--</div>-->
-        <!--<div nz-menu style="width:200px;">-->
-        <!--&lt;!&ndash;<div nz-menu-item>&ndash;&gt;-->
-        <!--&lt;!&ndash;<header-fullscreen></header-fullscreen>&ndash;&gt;-->
-        <!--&lt;!&ndash;</div>&ndash;&gt;-->
-        <!--<div nz-menu-item>-->
-        <!--<header-storage></header-storage>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</nz-dropdown>-->
-        <!--</li>-->
         <ng-container *ngFor="let r of r_tools">
             <li (click)="customToolsFun($event,r)" [ngClass]="r.mobileHidden?'hidden-mobile':''">
                 <div class="alain-default__nav-item" [title]="r.text">
@@ -75,7 +45,6 @@
                 <ng-container *ngIf="isDark">
                     <img src="assets/image/light.svg" alt="" width="24px">
                 </ng-container>
-                <!--<i nz-icon [nzType]="isDark ? 'warning' : 'copy'"></i>-->
             </div>
         </li>
 

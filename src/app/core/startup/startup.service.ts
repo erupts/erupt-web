@@ -8,6 +8,8 @@ import {ICONS} from "../../../style-icons";
 import {WindowModel} from "@shared/model/window.model";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {ReuseTabService} from "@delon/abc";
+import {EruptAppService} from "@shared/service/erupt-app.service";
+import {DataService} from "@shared/service/data.service";
 
 /**
  * 用于应用启动时
@@ -19,11 +21,13 @@ export class StartupService {
                 private reuseTabService: ReuseTabService,
                 private settingService: SettingsService,
                 private titleService: TitleService,
+                private eruptAppService: EruptAppService,
+                private dataService: DataService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
     }
 
-    load(): Promise<any> {
+    async load(): Promise<any> {
         console.group("Erupt All rights reserved.");
         console.log("%c" +
             "                               __      \n" +
@@ -49,6 +53,14 @@ export class StartupService {
             this.reuseTabService.mode = 2;
             this.reuseTabService.excludes = [/\d*/];
         }
+        await new Promise((resolve) => {
+            this.dataService.getEruptApp().toPromise().then(data => {
+                this.eruptAppService.eruptAppModel = data;
+                setTimeout(() => {
+                    resolve();
+                }, 300);
+            });
+        });
         return new Promise((resolve, reject) => {
             // 应用信息：包括站点名、描述、年份
             this.settingService.setApp({
