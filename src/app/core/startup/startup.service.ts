@@ -49,8 +49,8 @@ export class StartupService {
         if (eruptEvent) {
             eruptEvent.startup && eruptEvent.startup();
         }
+        this.reuseTabService.mode = 2;
         if (false === WindowModel.routerReuse) {
-            this.reuseTabService.mode = 2;
             this.reuseTabService.excludes = [/\d*/];
         }
         await new Promise((resolve) => {

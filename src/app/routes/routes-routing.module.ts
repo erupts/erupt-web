@@ -17,11 +17,11 @@ import {FillComponent} from "./fill/fill.component";
 
 let coreRouter: Routes = [
     {path: "", component: HomeComponent, data: {title: "首页"}},
-    {path: "site", component: SiteComponent, data: {title: "链接"}},
     {path: "change-pwd", component: ChangePwdComponent, data: {title: "修改密码"}},
     {path: "layout/403", component: Exception403Component, data: {title: "403"}},
     {path: "layout/404", component: Exception404Component, data: {title: "404"}},
     {path: "layout/500", component: Exception500Component, data: {title: "500"}},
+    {path: "site/:url", component: SiteComponent},
     {
         path: "build",
         loadChildren: () => import('../build/erupt/erupt.module').then(m => m.EruptModule),

@@ -17,13 +17,11 @@ import {Subscription} from "rxjs";
 import {updateHostClass} from "@delon/util";
 import {Menu, MenuService, ScrollService, SettingsService} from "@delon/theme";
 import {
-    AppstoreOutline,
     ArrowDownOutline,
     BellOutline,
     EllipsisOutline,
     FullscreenExitOutline,
     FullscreenOutline,
-    GithubOutline,
     GlobalOutline,
     LockOutline,
     LogoutOutline,

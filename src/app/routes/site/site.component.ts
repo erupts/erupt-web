@@ -1,13 +1,14 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {DataService} from "@shared/service/data.service";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-site',
     templateUrl: './site.component.html',
     styles: []
 })
-export class SiteComponent implements OnInit {
+export class SiteComponent implements OnInit, OnDestroy {
 
     url: string;
 
@@ -15,23 +16,24 @@ export class SiteComponent implements OnInit {
 
     spin: boolean = false;
 
+    private router$: Subscription;
+
     constructor(public route: ActivatedRoute, public dataService: DataService) {
     }
 
     ngOnInit() {
-        this.route.queryParamMap.subscribe(map => {
-            if (map.get("target") === "blank") {
-                this.targetUrl = map.get("url");
-                window.open(this.targetUrl);
-            } else {
-                this.spin = true;
-                this.url = map.get("url");
-            }
+        this.router$ = this.route.params.subscribe((params) => {
+            this.spin = true;
+            this.url = decodeURIComponent(atob(params.url));
         });
     }
 
     iframeLoad() {
         this.spin = false;
+    }
+
+    ngOnDestroy(): void {
+        this.router$.unsubscribe();
     }
 
 }
