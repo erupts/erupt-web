@@ -85,9 +85,6 @@ export class DataHandlerService {
             }
             //生成columns
             field.eruptFieldJson.views.forEach(view => {
-                if (!view.show) {
-                    return;
-                }
                 if (view.column) {
                     view.column = field.fieldName + "." + view.column.replace("\.", "_");
                 } else {
@@ -159,7 +156,7 @@ export class DataHandlerService {
                     optionalHelp: view.desc
                 }
             };
-            obj.show = true;
+            obj.show = view.show;
             if (lineData) {
                 obj.index = view.column.replace(".", "_");
             } else {
@@ -570,9 +567,6 @@ export class DataHandlerService {
                     obj.click = (item) => {
                         window.open(DataService.previewAttachment(item[view.column]));
                     };
-                    break;
-                case ViewType.HIDDEN:
-                    obj.show = false;
                     break;
                 default:
                     obj.width = null;
