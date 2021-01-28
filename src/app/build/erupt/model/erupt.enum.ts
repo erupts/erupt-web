@@ -73,7 +73,8 @@ export enum ViewType {
     DATE = "DATE",
     BOOLEAN = "BOOLEAN",
     NUMBER = "NUMBER",
-    MARKDOWN = "MARKDOWN"
+    MARKDOWN = "MARKDOWN",
+    HIDDEN = "HIDDEN"
 }
 
 export enum DateEnum {

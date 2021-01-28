@@ -185,10 +185,8 @@ export class TableComponent implements OnInit {
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
         }
-        // _columns.push({ title: "#", type: "no", fixed: "left", className: "text-center", width: "60px" });
         let viewCols = this.dataHandler.viewToAlainTableConfig(this.eruptBuildModel.eruptModel, true);
         for (let viewCol of viewCols) {
-            viewCol.show = true;
             viewCol.iif = () => {
                 return viewCol.show;
             };

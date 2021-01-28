@@ -140,6 +140,7 @@ export class DataHandlerService {
         let cols: STColumn[] = [];
         const views = erupt.tableColumns;
         for (let view of views) {
+
             let titleWidth = view.title.length * 14 + 22;
             if (titleWidth > 150) {
                 titleWidth = 150;
@@ -152,13 +153,13 @@ export class DataHandlerService {
             }
             let edit = view.eruptFieldModel.eruptFieldJson.edit;
             let obj: STColumn = {
-                // width: "200px",
                 title: {
                     text: view.title,
                     optional: "   ",
                     optionalHelp: view.desc
                 }
             };
+            obj.show = true;
             if (lineData) {
                 obj.index = view.column.replace(".", "_");
             } else {
@@ -569,6 +570,9 @@ export class DataHandlerService {
                     obj.click = (item) => {
                         window.open(DataService.previewAttachment(item[view.column]));
                     };
+                    break;
+                case ViewType.HIDDEN:
+                    obj.show = false;
                     break;
                 default:
                     obj.width = null;
