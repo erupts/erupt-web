@@ -33,6 +33,7 @@ export class SettingsComponent implements OnInit {
         if (value) {
             this.reuseTabService.mode = 0;
             this.reuseTabService.excludes = [];
+            this.toggleDark(false);
         } else {
             this.reuseTabService.mode = 2;
             this.reuseTabService.excludes = [/\d*/];
@@ -44,6 +45,7 @@ export class SettingsComponent implements OnInit {
         this.settingSrv.layout.dark = value;
         if (value) {
             document.body.className = "dark";
+            this.changeReuse(false);
         } else {
             document.body.className = "";
         }
