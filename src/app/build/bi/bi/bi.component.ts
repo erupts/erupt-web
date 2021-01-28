@@ -8,6 +8,7 @@ import {Subscription} from "rxjs";
 import {STComponent} from "@delon/abc";
 import {ChartComponent} from "../chart/chart.component";
 import {HandlerService} from "../service/handler.service";
+import {SettingsService} from "@delon/theme";
 
 @Component({
     selector: 'app-bi',
@@ -51,6 +52,7 @@ export class BiComponent implements OnInit, OnDestroy {
     constructor(private dataService: BiDataService,
                 public route: ActivatedRoute,
                 private handlerService: HandlerService,
+                public settingSrv: SettingsService,
                 @Inject(NzMessageService)
                 private msg: NzMessageService
     ) {

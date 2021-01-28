@@ -54,6 +54,8 @@ export class StartupService {
         this.settingSrv.layout.reuse = false !== this.settingSrv.layout.reuse;
         //表格边框
         this.settingSrv.layout.bordered = false !== this.settingSrv.layout.bordered;
+        //面包靴导航
+        this.settingSrv.layout.breadcrumbs = false !== this.settingSrv.layout.breadcrumbs;
 
 
         if (this.settingSrv.layout.reuse) {

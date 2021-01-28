@@ -7,6 +7,11 @@
     <nz-switch nzSize="small" [(ngModel)]="layout.reuse" (ngModelChange)="changeReuse(layout.reuse)"></nz-switch>
 </div>
 <div class="setting-item">
+    <span>面包屑导航</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout.breadcrumbs"
+               (ngModelChange)="setLayout('breadcrumbs',layout.breadcrumbs)"></nz-switch>
+</div>
+<div class="setting-item">
     <span>表格边框</span>
     <nz-switch nzSize="small" [(ngModel)]="layout.bordered"
                (ngModelChange)="setLayout('bordered', layout.bordered)"></nz-switch>
@@ -16,6 +21,7 @@
     <nz-switch nzSize="small" [(ngModel)]="layout.dark"
                (ngModelChange)="toggleDark(layout.dark)"></nz-switch>
 </div>
-<div  class="setting-item">
-    <span>清理本地缓存</span> <button nz-button [nzSize]="'small'" (click)="clear()">清理</button>
+<div class="setting-item">
+    <span>清理本地缓存</span>
+    <button nz-button [nzSize]="'small'" (click)="clear()">清理</button>
 </div>

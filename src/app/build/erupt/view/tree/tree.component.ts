@@ -45,7 +45,7 @@ export class TreeComponent implements OnInit, OnDestroy {
                 public route: ActivatedRoute,
                 @Inject(NzMessageService)
                 private msg: NzMessageService,
-                public settingService: SettingsService,
+                public settingSrv: SettingsService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 private dataHandler: DataHandlerService) {

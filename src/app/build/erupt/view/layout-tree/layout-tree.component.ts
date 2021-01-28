@@ -17,6 +17,7 @@ import {SettingsService} from "@delon/theme";
 export class LayoutTreeComponent implements OnInit {
 
     constructor(private data: DataService,
+                public settingSrv: SettingsService,
                 public settingService: SettingsService,
                 private dataHandler: DataHandlerService) {
     }

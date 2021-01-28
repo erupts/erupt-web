@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {DataService} from "@shared/service/data.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
+import {SettingsService} from "@delon/theme";
 
 @Component({
     selector: 'app-tpl',
@@ -15,7 +16,9 @@ export class TplComponent implements OnInit {
 
     private router$: Subscription;
 
-    constructor(private dataService: DataService, public route: ActivatedRoute) {
+    constructor(private dataService: DataService,
+                public settingSrv: SettingsService,
+                public route: ActivatedRoute) {
     }
 
     ngOnInit() {

@@ -15,7 +15,8 @@
 <layout-sidebar class="alain-default__aside"></layout-sidebar>
 <section class="alain-default__content">
     <reuse-tab [tabType]="'card'" *ngIf="settingSrv.layout.reuse" [tabBarGutter]="0" [tabMaxWidth]="180"></reuse-tab>
-    <router-outlet></router-outlet>
+    <router-outlet>
+    </router-outlet>
 </section>
 <nz-back-top></nz-back-top>
 <ng-template #settingHost></ng-template>

@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
+import {SettingsService} from "@delon/theme";
 
 @Component({
     selector: "erupt-table-view",
@@ -9,7 +10,8 @@ import {Subscription} from "rxjs";
 })
 export class TableViewComponent implements OnInit, OnDestroy {
 
-    constructor(public route: ActivatedRoute) {
+    constructor(public route: ActivatedRoute,
+                public settingSrv: SettingsService) {
     }
 
     private router$: Subscription;

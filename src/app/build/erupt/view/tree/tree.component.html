@@ -1,4 +1,5 @@
-<erupt-page-header></erupt-page-header>
+<erupt-page-header *ngIf="settingSrv.layout.breadcrumbs"></erupt-page-header>
+<div style="height: 16px"></div>
 <div nz-row [nzGutter]="16" *ngIf="eruptBuildModel" [id]="eruptName">
     <div nz-col [nzXs]="24" [nzSm]="8" [nzMd]="8" [nzLg]="6">
         <button nz-button nzType="dashed" style="display:block;width: 100%;" (click)="addBlock()" class="mb-sm"
@@ -13,7 +14,8 @@
         </ng-template>
         <br>
         <nz-card
-                [nzBodyStyle]="{padding:'10px',height:'calc(100vh - 220px - '+(settingService.layout.reuse?'40px':'0px')+')',overflow: 'auto'}"
+                [nzBodyStyle]="{padding:'10px',height:'calc(100vh - 220px - '+(settingSrv.layout.reuse?'40px':'0px') + ' + '+
+                (settingSrv.layout.breadcrumbs?'0px':'38px') +')',overflow: 'auto'}"
                 [nzLoading]="treeLoading"
                 [nzBordered]="true"
                 [nzHoverable]="true">
