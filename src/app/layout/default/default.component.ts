@@ -75,15 +75,11 @@ const ICONS = [
 })
 export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    // @HostBinding("@mainPageSwitchTransition") state = "activated";
-
     private notify$: Subscription;
 
     isFetching = false;
 
     nowYear = new Date().getFullYear();
-
-    routerReuse = WindowModel.routerReuse;
 
     @ViewChild("settingHost", {read: ViewContainerRef, static: false})
     settingHost: ViewContainerRef;
@@ -97,6 +93,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 public settings: SettingsService,
                 private el: ElementRef,
                 private renderer: Renderer2,
+                public settingSrv: SettingsService,
                 public route: ActivatedRoute,
                 public data: DataService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,

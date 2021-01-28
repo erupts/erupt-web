@@ -1,0 +1,21 @@
+<div class="setting-item">
+    <span>固定头和侧边栏</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout.fixed" (ngModelChange)="setLayout('fixed', layout.fixed)"></nz-switch>
+</div>
+<div class="setting-item">
+    <span>路由复用</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout.reuse" (ngModelChange)="changeReuse(layout.reuse)"></nz-switch>
+</div>
+<div class="setting-item">
+    <span>表格边框</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout.bordered"
+               (ngModelChange)="setLayout('bordered', layout.bordered)"></nz-switch>
+</div>
+<div class="setting-item">
+    <span>夜间模式</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout.dark"
+               (ngModelChange)="toggleDark(layout.dark)"></nz-switch>
+</div>
+<div  class="setting-item">
+    <span>清理本地缓存</span> <button nz-button [nzSize]="'small'" (click)="clear()">清理</button>
+</div>

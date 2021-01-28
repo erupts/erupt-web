@@ -6,7 +6,7 @@
         </div>
         <div nz-col [nzXs]="24" [nzMd]="linkTree?16:24" [nzLg]="linkTree?18:24" [nzXl]="linkTree?18:24"
              [hidden]="!showTable"
-             [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?linkTreeHeight:'auto'}">
+             [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?'calc(100vh - 140px - ' + (this.settingSrv.layout.reuse ? '40px' : '0px') + ')':'auto'}">
             <ng-container>
                 <div>
                     <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
@@ -117,7 +117,7 @@
                     [data]="stConfig.url" [columns]="columns"
                     [scroll]="{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 150 : 0) + 'px'}"
                     (change)="tableDataChange($event)"
-                    [bordered]="true"
+                    [bordered]="settingSrv.layout.bordered"
                     [multiSort]="stConfig.multiSort"
                     [page]="stConfig.stPage"
                     [req]="stConfig.req"

@@ -1,14 +1,10 @@
-<div style="width: 100%;">
-    <div nz-row>
-        <div nz-col nzSpan="12">
-            <textarea nz-input class="erupt-input" [name]="eruptField.fieldName"
-                      [nzAutosize]="{ minRows: 20, maxRows: 20 }"
-                      [(ngModel)]="eruptField.eruptFieldJson.edit.$value"></textarea>
-        </div>
-        <div nz-col nzSpan="12" style="overflow:auto;height: 430px;background: #fff">
-            <div style="padding-left: 8px">
-                <ngx-md [data]="eruptField.eruptFieldJson.edit.$value"></ngx-md>
-            </div>
-        </div>
-    </div>
+<div id="editor-md">
+    <textarea style="display:none;" *ngIf="eruptField"
+              [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
+              [name]="eruptField.fieldName">
+
+    </textarea>
+    <textarea *ngIf="value">
+            {{value}}
+    </textarea>
 </div>

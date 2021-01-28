@@ -13,7 +13,7 @@
         </ng-template>
         <br>
         <nz-card
-                [nzBodyStyle]="{padding:'10px',height:'calc(100vh - 220px - '+(routerReuse?'40px':'0px')+')',overflow: 'auto'}"
+                [nzBodyStyle]="{padding:'10px',height:'calc(100vh - 220px - '+(settingService.layout.reuse?'40px':'0px')+')',overflow: 'auto'}"
                 [nzLoading]="treeLoading"
                 [nzBordered]="true"
                 [nzHoverable]="true">

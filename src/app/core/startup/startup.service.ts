@@ -23,6 +23,7 @@ export class StartupService {
                 private titleService: TitleService,
                 private eruptAppService: EruptAppService,
                 private dataService: DataService,
+                private settingSrv: SettingsService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
     }
@@ -49,7 +50,16 @@ export class StartupService {
         if (eruptEvent) {
             eruptEvent.startup && eruptEvent.startup();
         }
-        if (false === WindowModel.routerReuse) {
+        //路由复用
+        this.settingSrv.layout.reuse = false !== this.settingSrv.layout.reuse;
+        //表格边框
+        this.settingSrv.layout.bordered = false !== this.settingSrv.layout.bordered;
+
+
+        if (this.settingSrv.layout.reuse) {
+            this.reuseTabService.mode = 0;
+            this.reuseTabService.excludes = [];
+        } else {
             this.reuseTabService.mode = 2;
             this.reuseTabService.excludes = [/\d*/];
         }

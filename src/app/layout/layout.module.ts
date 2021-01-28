@@ -17,6 +17,7 @@ import {SettingDrawerComponent} from "./default/setting-drawer/setting-drawer.co
 import {SettingDrawerItemComponent} from "./default/setting-drawer/setting-drawer-item.component";
 // passport
 import {LayoutPassportComponent} from "./passport/passport.component";
+import { SettingsComponent } from './default/header/settings/settings.component';
 
 const SETTINGDRAWER = [SettingDrawerComponent, SettingDrawerItemComponent];
 
@@ -48,7 +49,8 @@ const PASSPORT = [
   declarations: [
     ...COMPONENTS,
     ...HEADERCOMPONENTS,
-    ...PASSPORT
+    ...PASSPORT,
+    SettingsComponent
   ],
   exports: [
     ...COMPONENTS,

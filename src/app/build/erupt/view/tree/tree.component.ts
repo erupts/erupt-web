@@ -8,6 +8,7 @@ import {Subscription} from "rxjs";
 import {Status} from "../../model/erupt-api.model";
 import {colRules} from "@shared/model/util.model";
 import {WindowModel} from "@shared/model/window.model";
+import {SettingsService} from "@delon/theme";
 
 @Component({
     selector: "erupt-tree",
@@ -34,8 +35,6 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     selectLeaf: boolean = false;
 
-    routerReuse = WindowModel.routerReuse;
-
     private router$: Subscription;
 
     private currentKey: string;
@@ -46,6 +45,7 @@ export class TreeComponent implements OnInit, OnDestroy {
                 public route: ActivatedRoute,
                 @Inject(NzMessageService)
                 private msg: NzMessageService,
+                public settingService: SettingsService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 private dataHandler: DataHandlerService) {

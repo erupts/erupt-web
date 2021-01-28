@@ -12,9 +12,7 @@ import {DatePipe} from "@angular/common";
 import {CodeEditorComponent} from "../components/code-editor/code-editor.component";
 import * as moment from 'moment';
 import {QueryCondition} from "../model/erupt.vo";
-import {NgxMdComponent} from "ngx-md";
 import {MarkdownComponent} from "../components/markdown/markdown.component";
-import {MarkdownViewComponent} from "../components/markdown-view/markdown-view.component";
 
 /**
  * Created by liyuepeng on 10/31/18.
@@ -311,12 +309,13 @@ export class DataHandlerService {
                     obj.click = (item) => {
                         this.modal.create({
                             nzWrapClassName: "modal-lg",
-                            // nzStyle: {top: "60px"},
+                            nzStyle: {top: "24px"},
+                            nzBodyStyle: {padding: "0"},
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: MarkdownViewComponent,
+                            nzContent: MarkdownComponent,
                             nzComponentParams: {
                                 value: item[view.column]
                             }

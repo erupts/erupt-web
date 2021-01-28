@@ -25,9 +25,7 @@ import {TabTreeComponent} from './components/tab-tree/tab-tree.component';
 import {CheckboxComponent} from './components/checkbox/checkbox.component';
 import {SafeTemplateComponent} from './components/safe-template/safe-template.component';
 import {DateComponent} from './components/date/date.component';
-import {NgxMdModule} from "ngx-md";
 import { MarkdownComponent } from './components/markdown/markdown.component';
-import { MarkdownViewComponent } from './components/markdown-view/markdown-view.component';
 
 @NgModule({
     imports: [
@@ -36,7 +34,6 @@ import { MarkdownViewComponent } from './components/markdown-view/markdown-view.
         HttpClientModule,
         EruptRoutingModule,
         NzCodeEditorModule,
-        NgxMdModule.forRoot(),
         UEditorModule.forRoot({
             js: [
                 './assets/ueditor/ueditor.config.js',
@@ -66,7 +63,7 @@ import { MarkdownViewComponent } from './components/markdown-view/markdown-view.
         EditComponent,
         CodeEditorComponent,
         SafeTemplateComponent,
-        MarkdownViewComponent
+        MarkdownComponent
     ],
     declarations: [
         EditTypeComponent,
@@ -88,8 +85,7 @@ import { MarkdownViewComponent } from './components/markdown-view/markdown-view.
         CheckboxComponent,
         SafeTemplateComponent,
         DateComponent,
-        MarkdownComponent,
-        MarkdownViewComponent
+        MarkdownComponent
     ]
 })
 export class EruptModule {

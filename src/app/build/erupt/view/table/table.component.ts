@@ -29,25 +29,26 @@ import {WindowModel} from "@shared/model/window.model";
 })
 export class TableComponent implements OnInit {
 
-    constructor(private dataService: DataService,
-                private settingSrv: SettingsService,
-                private modalHelper: ModalHelper,
-                private drawerHelper: DrawerHelper,
-                @Inject(NzMessageService)
-                private msg: NzMessageService,
-                @Inject(NzModalService)
-                private modal: NzModalService,
-                public route: ActivatedRoute,
-                private sanitizer: DomSanitizer,
-                @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
-                private dataHandler: DataHandlerService
+    constructor(
+        public settingSrv: SettingsService,
+        private dataService: DataService,
+        private modalHelper: ModalHelper,
+        private drawerHelper: DrawerHelper,
+        @Inject(NzMessageService)
+        private msg: NzMessageService,
+        @Inject(NzModalService)
+        private modal: NzModalService,
+        public route: ActivatedRoute,
+        private sanitizer: DomSanitizer,
+        @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
+        private dataHandler: DataHandlerService,
     ) {
     }
 
     @ViewChild("st", {static: false})
     st: STComponent;
 
-    linkTreeHeight: string = 'calc(100vh - 140px - ' + (WindowModel.routerReuse ? '40px' : '0px') + ')';
+    linkTreeHeight: string = 'calc(100vh - 140px - ' + (this.settingSrv.layout.reuse ? '40px' : '0px') + ')';
 
     operationMode = OperationMode;
 

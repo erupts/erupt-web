@@ -37,15 +37,15 @@
             </div>
         </li>
 
-        <li (click)="toggleDark()">
-            <div class="alain-default__nav-item">
-                <ng-container *ngIf="!isDark">
-                    <img src="assets/image/dark.svg" alt="" width="24px">
-                </ng-container>
-                <ng-container *ngIf="isDark">
-                    <img src="assets/image/light.svg" alt="" width="24px">
-                </ng-container>
+        <li>
+            <div class="alain-default__nav-item" (click)="open()">
+                <i nz-icon nzType="setting" nzTheme="outline"></i>
             </div>
+            <nz-drawer [nzClosable]="true" [nzVisible]="drawerVisible" [nzWidth]="260"
+                       [nzBodyStyle]="{padding:'8px 24px'}"
+                       nzPlacement="right" (nzOnClose)="close()" [nzTitle]="'页面设置'">
+                <erupt-settings></erupt-settings>
+            </nz-drawer>
         </li>
 
         <li class="hidden-mobile">

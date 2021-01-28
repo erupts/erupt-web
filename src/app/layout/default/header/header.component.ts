@@ -29,7 +29,17 @@ export class HeaderComponent implements OnInit {
 
     r_tools: CustomerTool[] = WindowModel.r_tools;
 
-    isDark: boolean;
+
+
+    drawerVisible: boolean = false;
+
+    open() {
+        this.drawerVisible = true;
+    }
+
+    close(): void {
+        this.drawerVisible = false;
+    }
 
     constructor(public settings: SettingsService,
                 private router: Router,
@@ -39,10 +49,6 @@ export class HeaderComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.isDark = this.cacheService.getNone("dark") || false;
-        if (this.isDark) {
-            document.body.className = "dark";
-        }
         this.r_tools.forEach(tool => {
             tool.load && tool.load();
         });
@@ -54,16 +60,6 @@ export class HeaderComponent implements OnInit {
 
     searchToggleChange() {
         this.searchToggleStatus = !this.searchToggleStatus;
-    }
-
-    toggleDark() {
-        if (this.isDark) {
-            document.body.className = "";
-        } else {
-            document.body.className = "dark";
-        }
-        this.isDark = !this.isDark;
-        this.cacheService.set("dark", this.isDark);
     }
 
     toggleScreen() {
@@ -83,13 +79,4 @@ export class HeaderComponent implements OnInit {
         return false;
     }
 
-    refresh() {
-        // this.router.navigate([window.location.hash.substring(1)], {
-        //     queryParams: {
-        //         _: new Date().getTime()
-        //     }
-        // }).then((bool) => {
-        //     console.log(bool);
-        // });
-    }
 }

@@ -33,8 +33,13 @@
               "src/erupt.svg",
               {
                 "glob": "**/*",
-                "input": "./ueditor/",
+                "input": "./libs/ueditor/",
                 "output": "/assets/ueditor/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./libs/editor.md/",
+                "output": "/assets/editor.md/"
               },
               {
                 "glob": "**/*",

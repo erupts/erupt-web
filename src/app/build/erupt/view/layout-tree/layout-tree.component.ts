@@ -7,6 +7,7 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {STComponent} from "@delon/abc";
 import {TreeComponent} from "../tree/tree.component";
 import {WindowModel} from "@shared/model/window.model";
+import {SettingsService} from "@delon/theme";
 
 @Component({
     selector: 'layout-tree',
@@ -16,6 +17,7 @@ import {WindowModel} from "@shared/model/window.model";
 export class LayoutTreeComponent implements OnInit {
 
     constructor(private data: DataService,
+                public settingService: SettingsService,
                 private dataHandler: DataHandlerService) {
     }
 
@@ -26,8 +28,6 @@ export class LayoutTreeComponent implements OnInit {
     searchValue: string;
 
     treeLoading: boolean;
-
-    linkTreeHeight: string = 'calc(100vh - 180px - ' + (WindowModel.routerReuse ? '40px' : '0px') + ')';
 
     list: any;
 
