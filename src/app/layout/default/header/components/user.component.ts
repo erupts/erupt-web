@@ -37,9 +37,14 @@ export class HeaderUserComponent {
     }
 
     logout() {
-        this.data.logout().subscribe();
-        this.tokenService.clear();
-        this.router.navigateByUrl(this.tokenService.login_url);
+        this.modal.confirm({
+            nzTitle: "确定注销并退出系统吗？",
+            nzOnOk: () => {
+                this.data.logout().subscribe();
+                this.tokenService.clear();
+                this.router.navigateByUrl(this.tokenService.login_url);
+            }
+        });
     }
 
     changePwd() {

@@ -200,6 +200,14 @@ export class TabTableComponent implements OnInit {
                                 case EditType.BOOLEAN:
                                     v[key] = v[key] === ed.boolType.trueText;
                                     break;
+                                case EditType.CHOICE:
+                                    for (let vl of eruptFieldModel.choiceList) {
+                                        if (vl.label == v[key]) {
+                                            v[key] = vl.value;
+                                            break;
+                                        }
+                                    }
+                                    break;
                             }
                         }
                         if (key.indexOf("_") != -1) {
@@ -209,7 +217,7 @@ export class TabTableComponent implements OnInit {
                         }
                     }
                 }
-                console.log(edit.$tempValue)
+                console.log(edit.$tempValue);
                 edit.$value.push(...edit.$tempValue);
                 //去重
                 edit.$value = Array.from(new Set(edit.$value));

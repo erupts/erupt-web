@@ -13,7 +13,7 @@ import {
 } from "@angular/common/http";
 import {Observable, of, throwError} from "rxjs";
 import {catchError, mergeMap} from "rxjs/operators";
-import {NzMessageService, NzModalRef, NzModalService, NzNotificationService} from "ng-zorro-antd";
+import {NzMessageService, NzModalService, NzNotificationService} from "ng-zorro-antd";
 import {_HttpClient} from "@delon/theme";
 import {environment} from "@env/environment";
 import {EruptApiModel, PromptWay, Status} from "../../build/erupt/model/erupt-api.model";
@@ -144,30 +144,36 @@ export class DefaultInterceptor implements HttpInterceptor {
                     // return of(new HttpResponse(Object.assign(event, { body: body.response })));
                 }
                 break;
-            case 401: // 未登录状态码
+            case 401: // 未登录状态码)
                 if (this.router.url !== "/passport/login") {
                     this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
                 }
-                if (WindowModel.dialogLogin) {
-                    if (this.router.url === "/") {
-                        this.goTo("/passport/login");
-                    } else {
-                        this.modal.create({
-                            // nzWrapClassName: "modal-xs",
-                            nzMaskClosable: false,
-                            nzKeyboard: false,
-                            nzClosable: false,
-                            nzFooter: null,
-                            nzTitle: "登录",
-                            nzContent: UserLoginComponent,
-                            nzComponentParams: {
-                                isModal: true
-                            }
-                        });
-                    }
-                } else {
-                    this.goTo("/passport/login");
-                }
+                // this.modal.confirm({
+                //     nzTitle: "登录状态已过期，您可以继续留在该页面，或者重新登录？",
+                //     nzOkText: "重新登录",
+                //     nzOnOk: () => {
+                //         this.goTo("/passport/login");
+                //     }
+                // });
+
+                // if (WindowModel.dialogLogin) {
+                //     if (this.router.url === "/") {
+                //         this.goTo("/passport/login");
+                //     } else {
+                //         this.modal.create({
+                //             // nzWrapClassName: "modal-xs",
+                //             nzMaskClosable: false,
+                //             nzKeyboard: false,
+                //             nzClosable: false,
+                //             nzFooter: null,
+                //             nzTitle: "登录",
+                //             nzContent: UserLoginComponent,
+                //             nzComponentParams: {
+                //                 isModal: true
+                //             }
+                //         });
+                //     }
+                // }
                 break;
             case 404:
                 this.goTo("/layout/404");

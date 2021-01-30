@@ -179,7 +179,7 @@ export class DataHandlerService {
                     case EditType.CHOICE:
                         obj.format = (item: any) => {
                             if (item[view.column]) {
-                                return view.eruptFieldModel.choiceMap.get(item[view.column]).label;
+                                return view.eruptFieldModel.choiceMap.get(item[view.column] + "").label;
                             } else {
                                 return "";
                             }
