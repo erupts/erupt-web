@@ -65,14 +65,14 @@ export class StartupService {
             this.reuseTabService.mode = 2;
             this.reuseTabService.excludes = [/\d*/];
         }
+
         await new Promise((resolve) => {
             this.dataService.getEruptApp().toPromise().then(data => {
                 this.eruptAppService.eruptAppModel = data;
-                setTimeout(() => {
-                    resolve();
-                }, 300);
+                resolve();
             });
         });
+
         return new Promise((resolve, reject) => {
             // 应用信息：包括站点名、描述、年份
             this.settingService.setApp({

@@ -1,5 +1,6 @@
 import {Inject, Injectable, Injector} from "@angular/core";
 import {Router} from "@angular/router";
+import * as moment from 'moment';
 import {
     HttpErrorResponse,
     HttpHandler,
@@ -20,7 +21,7 @@ import {EruptApiModel, PromptWay, Status} from "../../build/erupt/model/erupt-ap
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {UserLoginComponent} from "../../routes/passport/login/login.component";
-import {WindowModel} from "@shared/model/window.model";
+import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
@@ -34,6 +35,8 @@ export class DefaultInterceptor implements HttpInterceptor {
                 private notify: NzNotificationService,
                 @Inject(NzMessageService)
                 private msg: NzMessageService,
+                @Inject(DA_SERVICE_TOKEN)
+                private tokenService: TokenService,
                 private router: Router,
                 private cacheService: CacheService) {
     }
@@ -148,32 +151,6 @@ export class DefaultInterceptor implements HttpInterceptor {
                 if (this.router.url !== "/passport/login") {
                     this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
                 }
-                // this.modal.confirm({
-                //     nzTitle: "登录状态已过期，您可以继续留在该页面，或者重新登录？",
-                //     nzOkText: "重新登录",
-                //     nzOnOk: () => {
-                //         this.goTo("/passport/login");
-                //     }
-                // });
-
-                // if (WindowModel.dialogLogin) {
-                //     if (this.router.url === "/") {
-                //         this.goTo("/passport/login");
-                //     } else {
-                //         this.modal.create({
-                //             // nzWrapClassName: "modal-xs",
-                //             nzMaskClosable: false,
-                //             nzKeyboard: false,
-                //             nzClosable: false,
-                //             nzFooter: null,
-                //             nzTitle: "登录",
-                //             nzContent: UserLoginComponent,
-                //             nzComponentParams: {
-                //                 isModal: true
-                //             }
-                //         });
-                //     }
-                // }
                 break;
             case 404:
                 this.goTo("/layout/404");
@@ -209,6 +186,9 @@ export class DefaultInterceptor implements HttpInterceptor {
         return of(event);
     }
 
+    private whiteApi: string[] = ["erupt-api/code-img", "erupt-api/login",
+        "erupt-api/erupt-app", "erupt-api/menu"];
+
     intercept(
         req: HttpRequest<any>,
         next: HttpHandler
@@ -222,6 +202,27 @@ export class DefaultInterceptor implements HttpInterceptor {
         if (!url.startsWith("https://") && !url.startsWith("http://")) {
             url = environment.SERVER_URL + url;
         }
+
+        // if (this.whiteApi.indexOf(url) == -1) {
+        //     if (this.tokenService.get()) {
+        //         let expire = moment(this.tokenService.get().expire).toDate().getTime() / 1000;
+        //         if (new Date().getTime() / 1000 >= expire) {
+        //             this.modal.create({
+        //                 // nzWrapClassName: "modal-xs",
+        //                 nzMaskClosable: false,
+        //                 nzKeyboard: false,
+        //                 nzClosable: true,
+        //                 nzFooter: null,
+        //                 nzTitle: "登录",
+        //                 nzContent: UserLoginComponent,
+        //                 nzComponentParams: {
+        //                     isModal: true
+        //                 }
+        //             });
+        //             return of(null);
+        //         }
+        //     }
+        // }
 
         const newReq = req.clone({
             url: url

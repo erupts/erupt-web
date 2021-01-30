@@ -122,10 +122,10 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
                     result.indexPath = generateMenuPath(split[0], split[1]);
                 }
                 this.settingsService.setUser({name: result.userName, indexPath: result.indexPath});
-                this.tokenService.set({token: result.token, time: new Date(), account: this.userName.value});
+                this.tokenService.set({token: result.token, expire: result.expire, account: this.userName.value});
                 this.loading = false;
                 let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
-                this.modalSrv.closeAll();
+                // this.modalSrv.closeAll();
                 if (loginBackPath) {
                     this.cacheService.remove(GlobalKeys.loginBackPath);
                     this.router.navigateByUrl(<string>loginBackPath).then();

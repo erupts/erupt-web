@@ -103,7 +103,9 @@ export class DataService {
     }
 
     getEruptApp(): Observable<EruptAppModel> {
-        return this.http.get<EruptAppModel>(RestPath.eruptApp);
+        return this.http.get<EruptAppModel>(RestPath.eruptApp, {
+            reportProgress: false
+        });
     }
 
     //tree数据结构

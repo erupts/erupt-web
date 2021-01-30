@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
 import {EruptAppModel} from "@shared/model/erupt-app.model";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class EruptAppService {
 
     get eruptAppModel(): EruptAppModel {
