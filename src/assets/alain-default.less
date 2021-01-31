@@ -25822,7 +25822,7 @@ nz-picker, nz-picker .ant-calendar-picker {
   height: 100%;
 }
 
-reuse-tab .ant-tabs-tab-arrow-show{
+reuse-tab .ant-tabs-tab-arrow-show {
   color: #FF5722;
 }
 
@@ -25833,18 +25833,18 @@ reuse-tab .ant-tabs-tab-arrow-show{
   }
 }
 
-reuse-tab ~ app-site .page-container,
-reuse-tab ~ app-home .page-container,
-reuse-tab ~ app-tpl .page-container {
-  top: @alain-default-header-hg + 40;
-}
-
 .page-container {
   position: absolute;
   left: 200px;
   right: 0;
   top: @alain-default-header-hg;
   bottom: 0;
+}
+
+reuse-tab ~ app-site .page-container,
+reuse-tab ~ app-home .page-container,
+reuse-tab ~ app-tpl .page-container {
+  top: @alain-default-header-hg + 40;
 }
 
 @media screen and (max-width: 767px) {

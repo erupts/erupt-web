@@ -151,6 +151,17 @@ export class DefaultInterceptor implements HttpInterceptor {
                 if (this.router.url !== "/passport/login") {
                     this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
                 }
+                if (this.tokenService.get().token) {
+                    this.modal.confirm({
+                        nzTitle: "登录状态已过期，您可以继续留在该页面，或者重新登录？",
+                        nzOkText: "重新登录",
+                        nzOnOk: () => {
+                            this.goTo("/passport/login");
+                        }
+                    });
+                } else {
+                    this.goTo("/passport/login");
+                }
                 break;
             case 404:
                 this.goTo("/layout/404");
