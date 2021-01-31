@@ -25851,8 +25851,14 @@ reuse-tab ~ app-tpl .page-container {
   .page-container {
     height: calc(100vh - @alain-default-header-hg);
     left: 0 !important;
-    top: 40px !important;
+    top: 0;
     margin: 0 -25px;
+  }
+
+  reuse-tab ~ app-site .page-container,
+  reuse-tab ~ app-home .page-container,
+  reuse-tab ~ app-tpl .page-container {
+    top: 40px;
   }
 }
 
