@@ -1,6 +1,6 @@
 <erupt-page-header *ngIf="settingSrv.layout.breadcrumbs"></erupt-page-header>
-<div style="height: 16px"></div>
-<div class="page-container" style="margin-top: 38px">
+<div *ngIf="settingSrv.layout.breadcrumbs" style="height: 16px"></div>
+<div class="page-container" [ngStyle]="{marginTop:settingSrv.layout.breadcrumbs?'38px':'0'}">
     <nz-spin [nzSpinning]="spin" style="height:100%;width: 100%">
         <iframe *ngIf="url" (load)="iframeLoad()" [src]="url | safeUrl" style="border: 0" height="100%" width="100%">
         </iframe>

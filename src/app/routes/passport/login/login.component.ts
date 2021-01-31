@@ -32,7 +32,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
 
     passwordType: 'password' | 'text' = 'password';
 
-    @Input() isModal: boolean = false;
+    @Input() modelFun: Function;
 
     useVerifyCode = false;
 
@@ -124,13 +124,16 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
                 this.settingsService.setUser({name: result.userName, indexPath: result.indexPath});
                 this.tokenService.set({token: result.token, expire: result.expire, account: this.userName.value});
                 this.loading = false;
-                let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
-                // this.modalSrv.closeAll();
-                if (loginBackPath) {
-                    this.cacheService.remove(GlobalKeys.loginBackPath);
-                    this.router.navigateByUrl(<string>loginBackPath).then();
+                if (!this.modelFun) {
+                    let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
+                    if (loginBackPath) {
+                        this.cacheService.remove(GlobalKeys.loginBackPath);
+                        this.router.navigateByUrl(<string>loginBackPath).then();
+                    } else {
+                        this.router.navigateByUrl(result.indexPath || '/').then();
+                    }
                 } else {
-                    this.router.navigateByUrl(result.indexPath || '/').then();
+                    this.modelFun();
                 }
             } else {
                 this.loading = false;

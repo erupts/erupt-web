@@ -1,6 +1,5 @@
 import {Inject, Injectable, Injector} from "@angular/core";
 import {Router} from "@angular/router";
-import * as moment from 'moment';
 import {
     HttpErrorResponse,
     HttpHandler,
@@ -20,8 +19,8 @@ import {environment} from "@env/environment";
 import {EruptApiModel, PromptWay, Status} from "../../build/erupt/model/erupt-api.model";
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
-import {UserLoginComponent} from "../../routes/passport/login/login.component";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
+import {DataService} from "@shared/service/data.service";
 
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
@@ -37,6 +36,7 @@ export class DefaultInterceptor implements HttpInterceptor {
                 private msg: NzMessageService,
                 @Inject(DA_SERVICE_TOKEN)
                 private tokenService: TokenService,
+                public dataService: DataService,
                 private router: Router,
                 private cacheService: CacheService) {
     }
@@ -186,8 +186,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         return of(event);
     }
 
-    private whiteApi: string[] = ["erupt-api/code-img", "erupt-api/login",
-        "erupt-api/erupt-app", "erupt-api/menu"];
+    private whiteApi: string[] = ["code-img", "login", "erupt-app", "menu"];
 
     intercept(
         req: HttpRequest<any>,
@@ -202,12 +201,13 @@ export class DefaultInterceptor implements HttpInterceptor {
         if (!url.startsWith("https://") && !url.startsWith("http://")) {
             url = environment.SERVER_URL + url;
         }
-
-        // if (this.whiteApi.indexOf(url) == -1) {
-        //     if (this.tokenService.get()) {
-        //         let expire = moment(this.tokenService.get().expire).toDate().getTime() / 1000;
+        // 对话框的方式出现登录页
+        // if (this.whiteApi.indexOf(url.split("erupt-api/")[1]) == -1) {
+        //     let token = this.tokenService.get();
+        //     if (token) {
+        //         let expire = moment(token.expire).toDate().getTime() / 1000;
         //         if (new Date().getTime() / 1000 >= expire) {
-        //             this.modal.create({
+        //             let modelRef = this.modal.create({
         //                 // nzWrapClassName: "modal-xs",
         //                 nzMaskClosable: false,
         //                 nzKeyboard: false,
@@ -216,7 +216,9 @@ export class DefaultInterceptor implements HttpInterceptor {
         //                 nzTitle: "登录",
         //                 nzContent: UserLoginComponent,
         //                 nzComponentParams: {
-        //                     isModal: true
+        //                     modelFun: () => {
+        //                         return modelRef.close();
+        //                     }
         //                 }
         //             });
         //             return of(null);
