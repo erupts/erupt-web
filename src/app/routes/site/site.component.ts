@@ -24,7 +24,7 @@ export class SiteComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.router$ = this.route.params.subscribe((params) => {
             this.spin = true;
-            this.url = decodeURIComponent(atob(params.url));
+            this.url = atob(decodeURIComponent(params.url));
         });
     }
 

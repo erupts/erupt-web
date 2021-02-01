@@ -22,7 +22,7 @@ export function generateMenuPath(menuType: string, menuValue: string) {
         case MenuTypeEnum.newWindow:
             return "/";
         case MenuTypeEnum.link:
-            return "/site/" + window.btoa(encodeURIComponent(menuValue))
+            return "/site/" + encodeURIComponent(window.btoa(menuValue))
         case MenuTypeEnum.bi:
             return "/bi/" + menuValue;
         case MenuTypeEnum.tpl:
