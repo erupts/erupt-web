@@ -6,6 +6,7 @@ import {MenuTypeEnum} from "../../build/erupt/model/erupt.vo";
  * @param menuValue 菜单值
  */
 export function generateMenuPath(menuType: string, menuValue: string) {
+    menuValue = menuValue || '';
     switch (menuType) {
         case MenuTypeEnum.table:
             return "/build/table/" + menuValue;
@@ -20,9 +21,9 @@ export function generateMenuPath(menuType: string, menuValue: string) {
         case MenuTypeEnum.router:
             return "/" + menuValue;
         case MenuTypeEnum.newWindow:
-            return "/";
+            return "/" + menuValue;
         case MenuTypeEnum.link:
-            return "/site/" + encodeURIComponent(window.btoa(menuValue))
+            return "/site/" + encodeURIComponent(window.btoa(menuValue));
         case MenuTypeEnum.bi:
             return "/bi/" + menuValue;
         case MenuTypeEnum.tpl:

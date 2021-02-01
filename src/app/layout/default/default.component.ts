@@ -184,6 +184,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
             this.menuSrv.add([{
                 group: false,
                 hideInBreadcrumb: true,
+                hide: true,
                 text: "首页",
                 link: "/"
             }]);
