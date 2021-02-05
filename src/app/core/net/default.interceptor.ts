@@ -151,16 +151,25 @@ export class DefaultInterceptor implements HttpInterceptor {
                 if (this.router.url !== "/passport/login") {
                     this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
                 }
-                if (this.tokenService.get().token) {
-                    this.modal.confirm({
-                        nzTitle: "登录状态已过期，您可以继续留在该页面，或者重新登录？",
-                        nzOkText: "重新登录",
-                        nzOnOk: () => {
-                            this.goTo("/passport/login");
-                        }
-                    });
-                } else {
+                if (event.url.indexOf("erupt-api/menu") !== -1) {
                     this.goTo("/passport/login");
+                    this.modal.closeAll();
+                } else {
+                    if (this.tokenService.get().token) {
+                        this.modal.confirm({
+                            nzTitle: "登录状态已过期，您可以继续留在该页面，或者重新登录？",
+                            nzOkText: "重新登录",
+                            nzOnOk: () => {
+                                this.goTo("/passport/login");
+                                this.modal.closeAll();
+                            },
+                            nzOnCancel: () => {
+                                this.modal.closeAll();
+                            }
+                        });
+                    } else {
+                        this.goTo("/passport/login");
+                    }
                 }
                 break;
             case 404:
