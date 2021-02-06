@@ -27,11 +27,9 @@ export class MarkdownComponent implements OnInit {
                     $(function () {
                         let editor = editormd("editor-md", {
                             width: "100%",
-                            // autoHeight: !!that.value,
-                            // readOnly: !!that.value,
                             emoji: true,
                             taskList: true,
-                            previewCodeHighlight: true,
+                            previewCodeHighlight: false,
                             tex: true, // 开启科学公式TeX语言支持，默认关闭
                             flowChart: true, // 开启流程图支持，默认关闭
                             sequenceDiagram: true,
