@@ -2,12 +2,19 @@
     <ng-container [ngSwitch]="view.viewType">
         <ng-container *ngSwitchCase="viewType.IMAGE">
             <nz-carousel class="text-center" onselectstart="return false;" unselectable="on"
-                         style="-moz-user-select:none;">
+                         style="-moz-user-select:none;" #carousel>
                 <div nz-carousel-content *ngFor="let img of paths">
                     <img class="full-max-width" [src]="img|safeUrl" ondragstart="return false;"
                          style="display: inline-block;"/>
                 </div>
             </nz-carousel>
+            <ul class="carousel-ul">
+                <li *ngFor="let img of paths;let i = index"
+                    style="list-style: none;margin-right: 8px">
+                    <img [src]="img|safeUrl" ondragstart="return false;" (click)="goToCarouselIndex(i)"
+                         style="height: 80px;" [class]="currIndex==i?'':'grayscale'"/>
+                </li>
+            </ul>
         </ng-container>
         <ng-container *ngSwitchCase="viewType.SWF">
             <nz-carousel class="text-center">
