@@ -27,7 +27,10 @@
                      [nzBlockNode]="true"
                      (nzClick)="nodeClickEvent($event)"
                      (nzDblClick)="nzDblClick($event)"
-            >
+                     [nzTreeTemplate]="nzTreeTemplate">
+                <ng-template #nzTreeTemplate let-node let-origin="origin">
+                    <span class="ant-tree-node-content-wrapper" [innerHTML]="node.title|safeHtml"></span>
+                </ng-template>
             </nz-tree>
         </nz-card>
     </div>
