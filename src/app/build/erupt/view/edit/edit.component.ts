@@ -54,7 +54,6 @@ export class EditComponent implements OnInit, OnDestroy {
             this.loading = true;
             this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.id).subscribe(data => {
                 this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
-                console.log(this.eruptBuildModel);
                 this.loading = false;
             });
         }

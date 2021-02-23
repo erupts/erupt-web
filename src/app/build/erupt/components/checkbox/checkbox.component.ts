@@ -15,6 +15,8 @@ export class CheckboxComponent implements OnInit {
 
     @Input() eruptFieldModel: EruptFieldModel;
 
+    @Input() onlyRead: boolean = false;
+
     checkbox: Checkbox[];
 
     loading = false;

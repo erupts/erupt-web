@@ -9,7 +9,7 @@ import {SelectMode} from "../../model/erupt.enum";
     selector: "app-reference-table",
     template: `
         <erupt-table
-                [referenceTable]="{eruptBuild:eruptBuild,eruptField:eruptField,mode:mode,dependVal:dependVal,parentEruptName:parentEruptName}">
+                [referenceTable]="{eruptBuild:eruptBuild,eruptField:eruptField,mode:mode,dependVal:dependVal,parentEruptName:parentEruptName,tabRef:tabRef}">
         </erupt-table>
     `,
     styleUrls: ["./reference-table.component.less"]
@@ -25,6 +25,8 @@ export class ReferenceTableComponent implements OnInit {
     @Input() dependVal: any;
 
     @Input() parentEruptName: string;
+
+    @Input() tabRef: boolean = false;
 
     constructor(private dataService: DataService,
                 @Inject(NzMessageService)

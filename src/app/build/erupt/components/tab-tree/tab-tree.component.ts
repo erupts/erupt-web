@@ -17,6 +17,8 @@ export class TabTreeComponent implements OnInit {
 
     @Input() eruptFieldModel: EruptFieldModel;
 
+    @Input() onlyRead: boolean = false;
+
     treeData: any;
 
     loading = false;

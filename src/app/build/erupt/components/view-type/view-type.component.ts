@@ -2,8 +2,9 @@ import {AfterViewInit, Component, Input, OnInit, ViewChild} from "@angular/core"
 import {View} from "../../model/erupt-field.model";
 import {EditType, ViewType} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
-import {STComponent} from "@delon/abc";
 import {NzCarouselComponent} from "ng-zorro-antd";
+import {EruptBuildModel} from "../../model/erupt-build.model";
+import {DataHandlerService} from "../../service/data-handler.service";
 
 @Component({
     selector: "erupt-view-type",
@@ -19,13 +20,19 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
 
     @Input() eruptName: string;
 
+    @Input() eruptBuildModel: EruptBuildModel;
+
+    loading: boolean = false;
+
     show: boolean = false;
 
     paths: string[] = [];
 
+    editType = EditType;
+
     viewType = ViewType;
 
-    constructor() {
+    constructor(private dataService: DataService, private dataHandler: DataHandlerService) {
     }
 
     ngOnInit() {
@@ -44,6 +51,13 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
                     this.value = [DataService.previewAttachment(this.value)];
                     break;
             }
+        }
+        if (this.view.viewType === ViewType.TAB_VIEW) {
+            this.loading = true;
+            this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.value).subscribe(data => {
+                this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
+                this.loading = false;
+            });
         }
     }
 

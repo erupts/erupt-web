@@ -2,7 +2,7 @@
  * Created by liyuepeng on 10/16/19.
  */
 import {Injectable} from "@angular/core";
-import {deepCopy, LazyService} from "@delon/util";
+import {LazyService} from "@delon/util";
 
 @Injectable()
 export class UtilsService {

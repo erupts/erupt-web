@@ -58,6 +58,7 @@ export enum HtmlEditTypeEnum {
 export enum ViewType {
     TEXT = "TEXT",
     LINK = "LINK",
+    TAB_VIEW = "TAB_VIEW",
     LINK_DIALOG = "LINK_DIALOG",
     IMAGE = "IMAGE",
     IMAGE_BASE64 = "IMAGE_BASE64",

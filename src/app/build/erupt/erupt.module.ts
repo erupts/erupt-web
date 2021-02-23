@@ -25,7 +25,8 @@ import {TabTreeComponent} from './components/tab-tree/tab-tree.component';
 import {CheckboxComponent} from './components/checkbox/checkbox.component';
 import {SafeTemplateComponent} from './components/safe-template/safe-template.component';
 import {DateComponent} from './components/date/date.component';
-import { MarkdownComponent } from './components/markdown/markdown.component';
+import {MarkdownComponent} from './components/markdown/markdown.component';
+import {UiBuildService} from "./service/ui-build.service";
 
 @NgModule({
     imports: [
@@ -46,7 +47,8 @@ import { MarkdownComponent } from './components/markdown/markdown.component';
         })
     ],
     providers: [
-        DataHandlerService
+        DataHandlerService,
+        UiBuildService
     ],
     exports: [
         EditTypeComponent,

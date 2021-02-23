@@ -21,6 +21,7 @@ import {Observable} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
+import {UiBuildService} from "../../service/ui-build.service";
 
 @Component({
     selector: "erupt-table",
@@ -42,6 +43,7 @@ export class TableComponent implements OnInit {
         private sanitizer: DomSanitizer,
         @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
         private dataHandler: DataHandlerService,
+        private uiBuildService: UiBuildService,
     ) {
     }
 
@@ -88,13 +90,17 @@ export class TableComponent implements OnInit {
 
     _reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode };
 
-    @Input() set referenceTable(reference: { eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode: SelectMode, parentEruptName?: string, dependVal?: any }) {
+    @Input() set referenceTable(reference: {
+        eruptBuild: EruptBuildModel, eruptField: EruptFieldModel, mode:
+            SelectMode, parentEruptName?: string, dependVal?: any, tabRef: boolean
+    }) {
         this._reference = reference;
         this.init(this.dataService.getEruptBuildByField(reference.eruptBuild.eruptModel.eruptName,
             reference.eruptField.fieldName, reference.parentEruptName), {
             url: RestPath.data + "/" + reference.eruptBuild.eruptModel.eruptName
-                + "/reference-table/"
-                + reference.eruptField.fieldName + (reference.dependVal ? "?dependValue=" + reference.dependVal : ''),
+                + "/reference-table/" + reference.eruptField.fieldName
+                + "?tabRef=" + reference.tabRef
+                + (reference.dependVal ? "&dependValue=" + reference.dependVal : ''),
             header: {
                 erupt: reference.eruptBuild.eruptModel.eruptName,
                 eruptParent: reference.parentEruptName || ''
@@ -185,7 +191,7 @@ export class TableComponent implements OnInit {
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
         }
-        let viewCols = this.dataHandler.viewToAlainTableConfig(this.eruptBuildModel.eruptModel, true);
+        let viewCols = this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true);
         for (let viewCol of viewCols) {
             viewCol.iif = () => {
                 return viewCol.show;

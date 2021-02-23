@@ -51,5 +51,36 @@
         <ng-container *ngSwitchCase="viewType.IMAGE_BASE64">
             <img class="full-max-width" [src]="value" style="display: inline-block;"/>
         </ng-container>
+        <ng-container *ngSwitchCase="viewType.TAB_VIEW">
+            <nz-spin [nzSpinning]="loading">
+                <ng-container [ngSwitch]="view.eruptFieldModel.eruptFieldJson.edit.type">
+                    <ng-container *ngSwitchCase="editType.TAB_TABLE_ADD">
+                        <tab-table
+                                [onlyRead]="true"
+                                [tabErupt]="{eruptBuildModel:eruptBuildModel.tabErupts[view.eruptFieldModel.fieldName]
+                                            ,eruptFieldModel:eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)}"
+                                [eruptBuildModel]="eruptBuildModel"
+                        ></tab-table>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.TAB_TABLE_REFER">
+                        <tab-table [onlyRead]="true"
+                                [tabErupt]="{eruptBuildModel:eruptBuildModel.tabErupts[view.eruptFieldModel.fieldName]
+                                ,eruptFieldModel:eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)}"
+                                [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
+                        ></tab-table>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.TAB_TREE">
+                        <erupt-tab-tree [onlyRead]="true"
+                                [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"
+                                [eruptBuildModel]="eruptBuildModel"
+                        ></erupt-tab-tree>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.CHECKBOX">
+                        <erupt-checkbox [eruptBuildModel]="eruptBuildModel" [onlyRead]="true"
+                                        [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"></erupt-checkbox>
+                    </ng-container>
+                </ng-container>
+            </nz-spin>
+        </ng-container>
     </ng-container>
 </ng-container>

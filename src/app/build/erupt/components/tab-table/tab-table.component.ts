@@ -11,6 +11,7 @@ import {ReferenceTableComponent} from "../reference-table/reference-table.compon
 import {BuildConfig} from "../../model/build-config";
 import {Status} from "../../model/erupt-api.model";
 import {EditType, SelectMode} from "../../model/erupt.enum";
+import {UiBuildService} from "../../service/ui-build.service";
 
 @Component({
     selector: "tab-table",
@@ -31,6 +32,8 @@ export class TabTableComponent implements OnInit {
 
     @ViewChild("st", {static: false}) st: STComponent;
 
+    @Input() onlyRead: boolean = false;
+
     column: STColumn[];
 
     checkedRow = [];
@@ -38,6 +41,7 @@ export class TabTableComponent implements OnInit {
     stConfig = new BuildConfig().stConfig;
 
     constructor(private dataService: DataService,
+                private uiBuildService: UiBuildService,
                 private dataHandlerService: DataHandlerService,
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService) {
@@ -48,8 +52,8 @@ export class TabTableComponent implements OnInit {
         if (!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
             this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
         }
-        if (this.tabErupt.eruptFieldModel.eruptFieldJson.edit.readOnly) {
-            this.column = this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel, false, true);
+        if (this.onlyRead || this.tabErupt.eruptFieldModel.eruptFieldJson.edit.readOnly) {
+            this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true);
         } else {
             const viewValue: STColumn[] = [];
             viewValue.push({
@@ -60,7 +64,7 @@ export class TabTableComponent implements OnInit {
                 className: "text-center",
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
-            viewValue.push(...this.dataHandlerService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel.eruptModel, false, true));
+            viewValue.push(...this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true));
             let operators: STColumnButton[] = [];
             if (this.mode == "add") {
                 operators.push({
@@ -128,7 +132,6 @@ export class TabTableComponent implements OnInit {
                 className: "text-center",
                 buttons: operators
             });
-            console.log(viewValue);
             this.column = viewValue;
         }
     }
@@ -177,7 +180,8 @@ export class TabTableComponent implements OnInit {
             nzComponentParams: {
                 eruptBuild: this.eruptBuildModel,
                 eruptField: this.tabErupt.eruptFieldModel,
-                mode: SelectMode.checkbox
+                mode: SelectMode.checkbox,
+                tabRef: true
             },
             nzOkText: "增加",
             nzOnOk: () => {
