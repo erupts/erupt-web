@@ -504,13 +504,6 @@ export class DataHandlerService {
                             edit.$value = object[field.fieldName];
                         }
                         break;
-                    case EditType.BOOLEAN:
-                        if (!object[field.fieldName] && object[field.fieldName] !== false) {
-                            edit.$value = edit.boolType.defaultValue;
-                        } else {
-                            edit.$value = object[field.fieldName];
-                        }
-                        break;
                     case EditType.ATTACHMENT:
                         edit.$viewValue = [];
                         if (object[field.fieldName]) {
@@ -588,11 +581,6 @@ export class DataHandlerService {
                                 v.$viewValue = false;
                             });
                         }
-                    }
-                    break;
-                case EditType.BOOLEAN:
-                    if (eruptBuildModel.eruptModel.mode !== "search") {
-                        ef.eruptFieldJson.edit.$value = ef.eruptFieldJson.edit.boolType.defaultValue;
                     }
                     break;
                 case EditType.INPUT:

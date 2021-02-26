@@ -117,7 +117,6 @@ export interface ReferenceTableType {
 interface BoolType {
     trueText: string;
     falseText: string;
-    defaultValue: boolean;
 }
 
 interface ChoiceType {

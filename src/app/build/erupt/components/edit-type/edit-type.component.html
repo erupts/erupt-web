@@ -162,7 +162,7 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                        <erupt-markdown [eruptField]="field"></erupt-markdown>
+                                <erupt-markdown [eruptField]="field"></erupt-markdown>
                             </se>
                         </div>
                     </ng-container>
@@ -419,13 +419,21 @@
                                         </nz-select>
                                     </ng-container>
                                     <ng-container *ngIf="eruptModel.mode!='search'">
-                                        <nz-switch class="erupt-input stander-line-height"
-                                                   [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                   [nzSize]="size"
-                                                   [name]="field.fieldName"
-                                                   [nzCheckedChildren]="field.eruptFieldJson.edit.boolType.trueText"
-                                                   [nzUnCheckedChildren]="field.eruptFieldJson.edit.boolType.falseText"
-                                                   [nzDisabled]="field.eruptFieldJson.edit.readOnly"></nz-switch>
+                                        <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                        [name]="field.fieldName" [nzSize]="size"
+                                                        [nzDisabled]="field.eruptFieldJson.edit.readOnly"
+                                                        class="erupt-input stander-line-height">
+                                            <div nz-col [nzSpan]="12">
+                                                <label nz-radio [nzValue]="true" class="ellipsis-radio stander-line-height">
+                                                    {{field.eruptFieldJson.edit.boolType.trueText}}
+                                                </label>
+                                            </div>
+                                            <div nz-col [nzSpan]="12">
+                                                <label nz-radio [nzValue]="false" class="ellipsis-radio stander-line-height">
+                                                    {{field.eruptFieldJson.edit.boolType.falseText}}
+                                                </label>
+                                            </div>
+                                        </nz-radio-group>
                                     </ng-container>
                                 </se>
                             </div>
