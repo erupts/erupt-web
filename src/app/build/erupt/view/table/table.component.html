@@ -78,16 +78,14 @@
                             </ng-template>
                         </ng-container>
                     </div>
-                    <div style="margin-left: auto;min-width: 130px">
+                    <div style="margin-left: auto;min-width: 130px;text-align: right">
                         <ng-container *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0">
-                            <div>
-                                <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition">
-                                    <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
-                                </button>
-                                <button class="mb-sm"  nz-button (click)="clearCondition()">
-                                    <i nz-icon nzType="sync" nzTheme="outline"></i>重置
-                                </button>
-                            </div>
+                            <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition">
+                                <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                            </button>
+                            <button class="mb-sm" nz-button (click)="clearCondition()">
+                                <i nz-icon nzType="sync" nzTheme="outline"></i>重置
+                            </button>
                         </ng-container>
                     </div>
                 </div>
