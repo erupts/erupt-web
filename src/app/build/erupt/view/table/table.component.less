@@ -10,6 +10,27 @@
       z-index: 1;
     }
 
+    .erupt-btn-item {
+      display: flex;
+
+      .condition-btn {
+        margin-left: auto;
+        min-width: 130px;
+        text-align: right
+      }
+    }
+
+    @media (max-width: 768px) {
+      .erupt-btn-item {
+        display: block;
+
+        .condition-btn {
+          text-align: left;
+        }
+      }
+    }
+
+
     .left-sticky-checkbox {
       min-width: 50px;
     }
