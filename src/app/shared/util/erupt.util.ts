@@ -3,7 +3,7 @@
  * @param menuType  菜单类型
  * @param menuValue 菜单值
  */
-import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
+import {MenuTypeEnum} from "@shared/model/erupt-menu";
 
 export function generateMenuPath(type: string, value: string) {
     let menuValue = value || '';
