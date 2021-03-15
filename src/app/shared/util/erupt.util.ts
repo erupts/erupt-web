@@ -5,9 +5,9 @@
  */
 import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
 
-export function generateMenuPath(menu: MenuVo) {
-    let menuValue = menu.value || '';
-    switch (menu.type) {
+export function generateMenuPath(type: string, value: string) {
+    let menuValue = value || '';
+    switch (type) {
         case MenuTypeEnum.table:
             return "/build/table/" + menuValue;
         case MenuTypeEnum.tree:
