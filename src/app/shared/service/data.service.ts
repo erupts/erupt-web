@@ -12,9 +12,9 @@ import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
-import {MenuVo} from "../../build/erupt/model/erupt.vo";
 import {EruptAppModel} from "@shared/model/erupt-app.model";
 import {EruptAppService} from "@shared/service/erupt-app.service";
+import {MenuVo} from "@shared/model/erupt-menu";
 
 @Injectable()
 export class DataService {

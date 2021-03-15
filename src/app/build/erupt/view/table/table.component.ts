@@ -50,8 +50,6 @@ export class TableComponent implements OnInit {
     @ViewChild("st", {static: false})
     st: STComponent;
 
-    linkTreeHeight: string = 'calc(100vh - 140px - ' + (this.settingSrv.layout.reuse ? '40px' : '0px') + ')';
-
     operationMode = OperationMode;
 
     showColCtrl: boolean = false;
@@ -357,7 +355,6 @@ export class TableComponent implements OnInit {
     /**
      *  自定义功能触发
      * @param code 编码
-     * @param multi 是否为多选执行
      * @param data 数据（单个执行时使用）
      */
     createOperator(code: string, data?: object) {

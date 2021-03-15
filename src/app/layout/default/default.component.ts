@@ -33,12 +33,11 @@ import {
     UserOutline
 } from "@ant-design/icons-angular/icons";
 import {DataService} from "@shared/service/data.service";
-import {WindowModel} from "@shared/model/window.model";
 import {environment} from "@env/environment";
 import {SettingDrawerComponent} from "./setting-drawer/setting-drawer.component";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
-import {MenuTypeEnum} from "../../build/erupt/model/erupt.vo";
 import {generateMenuPath} from "@shared/util/erupt.util";
+import {MenuTypeEnum} from "@shared/model/erupt-menu";
 
 // #region icons
 
@@ -168,7 +167,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                                 type: "icon",
                                 value: "unordered-list"
                             },
-                            link: generateMenuPath(menu.type, menu.value),
+                            link: generateMenuPath(menu),
                             children: generateTree(menus, menu.id)
                         };
                         if (menu.type == MenuTypeEnum.newWindow) {

@@ -1,32 +1,32 @@
-import {MenuTypeEnum} from "../../build/erupt/model/erupt.vo";
-
 /**
  * 根据菜单类型生成相应的请求路径
  * @param menuType  菜单类型
  * @param menuValue 菜单值
  */
-export function generateMenuPath(menuType: string, menuValue: string) {
-    menuValue = menuValue || '';
-    switch (menuType) {
+import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
+
+export function generateMenuPath(menu: MenuVo) {
+    let menuValue = menu.value || '';
+    switch (menu.type) {
         case MenuTypeEnum.table:
             return "/build/table/" + menuValue;
         case MenuTypeEnum.tree:
             return "/build/tree/" + menuValue;
-        case MenuTypeEnum.fill:
-            if (menuValue.startsWith("/")) {
-                return "/fill" + menuValue;
-            } else {
-                return "/fill/" + menuValue;
-            }
+        case MenuTypeEnum.bi:
+            return "/bi/" + menuValue;
+        case MenuTypeEnum.tpl:
+            return "/tpl/" + menuValue;
         case MenuTypeEnum.router:
             return "/" + menuValue;
         case MenuTypeEnum.newWindow:
             return "/" + menuValue;
         case MenuTypeEnum.link:
             return "/site/" + encodeURIComponent(window.btoa(menuValue));
-        case MenuTypeEnum.bi:
-            return "/bi/" + menuValue;
-        case MenuTypeEnum.tpl:
-            return "/tpl/" + menuValue;
+        case MenuTypeEnum.fill:
+            if (menuValue.startsWith("/")) {
+                return "/fill" + menuValue;
+            } else {
+                return "/fill/" + menuValue;
+            }
     }
 }

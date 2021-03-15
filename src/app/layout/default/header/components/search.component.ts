@@ -4,7 +4,7 @@ import {Router} from "@angular/router";
 import {NzMessageService} from "ng-zorro-antd";
 import {MenuService} from "@delon/theme";
 import {Menu} from "@delon/theme/src/services/menu/interface";
-import {MenuVo} from "../../../../build/erupt/model/erupt.vo";
+import {MenuVo} from "@shared/model/erupt-menu";
 
 @Component({
     selector: 'header-search',
