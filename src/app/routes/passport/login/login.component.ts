@@ -109,8 +109,11 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
             if (this.userName.invalid || this.password.invalid) return;
         }
         this.loading = true;
-        this.data.login(this.userName.value,
-            <string>Md5.hashStr(Md5.hashStr(this.password.value) + (new Date().getDate() + "") + this.userName.value),
+        let pwd = this.password.value;
+        if (this.eruptAppService.eruptAppModel.pwdTransferEncrypt) {
+            pwd = <string>Md5.hashStr(Md5.hashStr(this.password.value) + (new Date().getDate() + "") + this.userName.value);
+        }
+        this.data.login(this.userName.value, pwd,
             this.verifyCode.value).subscribe((result) => {
             if (result.useVerifyCode) {
                 this.changeVerifyCode();
