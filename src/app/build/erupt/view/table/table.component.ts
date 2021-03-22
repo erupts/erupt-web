@@ -419,7 +419,7 @@ export class TableComponent implements OnInit {
                     },
                     nzContent: EditTypeComponent,
                     nzComponentParams: {
-                        mode: "addNew",
+                        mode: "add",
                         eruptBuildModel: {
                             eruptModel: operationErupt
                         },

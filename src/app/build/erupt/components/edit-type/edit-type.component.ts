@@ -35,7 +35,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     @Input() layout: "horizontal" | "vertical" = "vertical";
 
     //Behavior
-    @Input() mode: "addNew" | null;
+    @Input() mode: "add" | null;
 
     @Input() parentEruptName: string;
 
@@ -60,7 +60,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     constructor(public dataService: DataService,
                 private differs: KeyValueDiffers,
-                public dataHandlerService: DataHandlerService,
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
@@ -68,9 +67,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     ngOnInit() {
         this.eruptModel = this.eruptBuildModel.eruptModel;
-        if (this.mode === "addNew") {
-            this.dataHandlerService.loadEruptDefaultValue(this.eruptBuildModel);
-        }
         for (let model of this.eruptModel.eruptFieldModels) {
             let showBy = model.eruptFieldJson.edit.showBy;
             if (showBy) {

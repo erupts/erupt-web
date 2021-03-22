@@ -145,7 +145,7 @@ export class TabTableComponent implements OnInit {
             nzTitle: "添加",
             nzContent: EditTypeComponent,
             nzComponentParams: {
-                mode: "addNew",
+                mode: "add",
                 eruptBuildModel: this.tabErupt.eruptBuildModel,
                 parentEruptName: this.eruptBuildModel.eruptModel.eruptName
             },
