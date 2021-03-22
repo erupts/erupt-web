@@ -91,8 +91,9 @@ export class UiBuildService {
                         break;
                 }
             }
-            //展示类型
+
             obj.width = titleWidth;
+            //展示类型
             switch (view.viewType) {
                 case ViewType.TEXT:
                     obj.width = null;
@@ -101,8 +102,8 @@ export class UiBuildService {
                     obj.className = "text-right";
                     break;
                 case ViewType.DATE:
-                    obj.width = null;
                     obj.className = "date-col";
+                    obj.width = 180;
                     break;
                 case ViewType.BOOLEAN:
                     obj.className = "text-center";
@@ -486,6 +487,16 @@ export class UiBuildService {
                     obj.width = null;
                     break;
             }
+            //编辑类型
+            switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
+                case EditType.DATE:
+                    if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE_TIME) {
+                        obj.width = 180;
+                    } else {
+                        obj.width = 90;
+                    }
+                    break;
+            }
             if (view.template) {
                 obj.format = (item: any) => {
                     try {
@@ -499,6 +510,9 @@ export class UiBuildService {
             }
             if (view.className) {
                 obj.className += " " + view.className;
+            }
+            if (view.width) {
+                obj.width = view.width;
             }
             cols.push(obj);
         }

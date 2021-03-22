@@ -23,6 +23,7 @@ export interface View {
     className: string;
     column: string;
     title: string;
+    width: string;
     desc: string;
     show: boolean;
     viewType: ViewType;
