@@ -12,21 +12,21 @@
                 <div class="erupt-btn-item">
                     <div>
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
-                            <button nz-button nzType="default" class="mb-sm" (click)="addRow()">
+                            <button nz-button nzType="default" class="mb-sm" (click)="addRow()" id="erupt-btn-add">
                                 <i nz-icon nzType="plus" nzTheme="outline"></i>新增
                             </button>
                         </ng-container>
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
                             <button nz-button nzType="danger" [nzGhost]="true" style="background: #fff !important;"
-                                    class="mb-sm" [nzLoading]="deleting"
+                                    class="mb-sm" [nzLoading]="deleting"  id="erupt-btn-delete"
                                     (click)="delRows()">
                                 <i nz-icon nzType="delete" nzTheme="outline"></i>删除
                             </button>
                         </ng-container>
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
-                            <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()">
+                            <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()"  id="erupt-btn-export">
                                 <i nz-icon nzType="download" nzTheme="outline"></i>下载
                             </button>
                         </ng-container>
@@ -34,7 +34,7 @@
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.importable">
                             &nbsp;
                             <nz-button-group>
-                                <button nz-button (click)="importableExcel()">
+                                <button nz-button (click)="importableExcel()"  id="erupt-btn-importable">
                                     <i nz-icon nzType="import" nzTheme="outline"></i> &nbsp;导入
                                 </button>
                                 <button nz-button nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight">
@@ -53,7 +53,7 @@
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
                             <button nz-button nzType="primary" style="background: #fff !important;" [nzGhost]="true"
-                                    class="mb-sm" [nzLoading]="st._loading"
+                                    class="mb-sm" [nzLoading]="st._loading"  id="erupt-btn-query"
                                     (click)="query()">
                                 <i nz-icon nzType="search" nzTheme="outline"></i>查询
                             </button>
@@ -83,7 +83,7 @@
                         <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition">
                             <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
                         </button>
-                        <button class="mb-sm" nz-button (click)="clearCondition()">
+                        <button class="mb-sm" nz-button (click)="clearCondition()"  id="erupt-btn-reset">
                             <i nz-icon nzType="sync" nzTheme="outline"></i>重置
                         </button>
                     </div>

@@ -12,7 +12,7 @@ import {GlobalKeys} from "@shared/model/erupt-const";
 import {Md5} from "ts-md5";
 import {WindowModel} from "@shared/model/window.model";
 import {generateMenuPath} from "@shared/util/erupt.util";
-import {EruptAppService} from "@shared/service/erupt-app.service";
+import {EruptAppData} from "@core/startup/erupt-app.data";
 
 @Component({
     selector: "passport-login",
@@ -48,7 +48,6 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         private modalSrv: NzModalService,
         private settingsService: SettingsService,
         private socialService: SocialService,
-        private eruptAppService: EruptAppService,
         @Optional()
         @Inject(ReuseTabService)
         private reuseTabService: ReuseTabService,
@@ -70,7 +69,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        if (this.eruptAppService.eruptAppModel.verifyCodeCount <= 0) {
+        if (EruptAppData.get().verifyCodeCount <= 0) {
             this.changeVerifyCode();
             Promise.resolve(null).then(() => this.useVerifyCode = true);
         }
@@ -110,7 +109,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         }
         this.loading = true;
         let pwd = this.password.value;
-        if (this.eruptAppService.eruptAppModel.pwdTransferEncrypt) {
+        if (EruptAppData.get().pwdTransferEncrypt) {
             pwd = <string>Md5.hashStr(Md5.hashStr(this.password.value) + (new Date().getDate() + "") + this.userName.value);
         }
         this.data.login(this.userName.value, pwd,

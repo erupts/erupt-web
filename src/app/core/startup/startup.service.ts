@@ -8,8 +8,8 @@ import {ICONS} from "../../../style-icons";
 import {WindowModel} from "@shared/model/window.model";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {ReuseTabService} from "@delon/abc";
-import {EruptAppService} from "@shared/service/erupt-app.service";
 import {DataService} from "@shared/service/data.service";
+import {EruptAppData} from "@core/startup/erupt-app.data";
 
 /**
  * 用于应用启动时
@@ -21,7 +21,6 @@ export class StartupService {
                 private reuseTabService: ReuseTabService,
                 private settingService: SettingsService,
                 private titleService: TitleService,
-                private eruptAppService: EruptAppService,
                 private dataService: DataService,
                 private settingSrv: SettingsService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
@@ -42,6 +41,14 @@ export class StartupService {
             "                           \\/_/        ", "color:#2196f3;font-weight:800");
         console.log("%chttps://www.erupt.xyz", "color:#2196f3;font-size:1.3em;padding:16px 0;");
         console.groupEnd();
+
+        await new Promise((resolve) => {
+            this.dataService.getEruptApp().toPromise().then(data => {
+                EruptAppData.put(data);
+                resolve();
+            });
+        });
+
         //注入全局方法：token
         window[GlobalKeys.getAppToken] = () => {
             return this.tokenService.get();
@@ -65,13 +72,6 @@ export class StartupService {
             this.reuseTabService.mode = 2;
             this.reuseTabService.excludes = [/\d*/];
         }
-
-        await new Promise((resolve) => {
-            this.dataService.getEruptApp().toPromise().then(data => {
-                this.eruptAppService.eruptAppModel = data;
-                resolve();
-            });
-        });
 
         return new Promise((resolve, reject) => {
             // 应用信息：包括站点名、描述、年份

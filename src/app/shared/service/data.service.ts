@@ -13,7 +13,6 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
 import {EruptAppModel} from "@shared/model/erupt-app.model";
-import {EruptAppService} from "@shared/service/erupt-app.service";
 import {MenuVo} from "@shared/model/erupt-menu";
 
 @Injectable()
@@ -28,7 +27,6 @@ export class DataService {
     public excelImport: string = RestPath.excel + "/import/";
 
     constructor(private http: HttpClient, private _http: _HttpClient,
-                private eruptAppService: EruptAppService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
 

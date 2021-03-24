@@ -14,8 +14,6 @@ import {EruptPageHeaderComponent} from "@shared/component/erupt-page-header.comp
 import {SafeHtmlPipe} from "@shared/pipe/safe-html.pipe";
 import {SafeScriptPipe} from "@shared/pipe/safe-script.pipe";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
-import {EruptAppService} from "@shared/service/erupt-app.service";
-
 const THIRD_MODULES = [
     NgZorroAntdModule
 ];
@@ -45,8 +43,7 @@ const DIRECTIVES = [];
         RipperDirective
     ],
     providers: [
-        DataService,
-        EruptAppService
+        DataService
     ],
     entryComponents: [
         EruptIframeComponent
