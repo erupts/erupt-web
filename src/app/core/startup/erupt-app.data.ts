@@ -1,6 +1,6 @@
 import {EruptAppModel} from "@shared/model/erupt-app.model";
 
-let eruptAppConfig = window["eruptApp"] = {};
+let eruptAppConfig = window["eruptApp"];
 
 export class EruptAppData {
 

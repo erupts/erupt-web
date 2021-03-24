@@ -3,7 +3,6 @@ import {Observable} from "rxjs";
 import {Bi, BiData, Reference} from "../model/bi.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
-import {EruptFieldModel} from "../../erupt/model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 

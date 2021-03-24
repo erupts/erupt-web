@@ -5,7 +5,6 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, SocialService, TokenService} from "@delon/auth";
 import {ReuseTabService} from "@delon/abc";
-import {StartupService} from "@core/startup/startup.service";
 import {DataService} from "@shared/service/data.service";
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
@@ -48,11 +47,11 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         private modalSrv: NzModalService,
         private settingsService: SettingsService,
         private socialService: SocialService,
+        private dataService: DataService,
         @Optional()
         @Inject(ReuseTabService)
         private reuseTabService: ReuseTabService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
-        private startupSrv: StartupService,
         private cacheService: CacheService
     ) {
         this.form = fb.group({

@@ -101,11 +101,7 @@ export class DataService {
     }
 
     getEruptApp(): Observable<EruptAppModel> {
-        return this.http.get<EruptAppModel>(RestPath.eruptApp);
-    }
-
-    getEruptTokenValid(): Observable<EruptAppModel> {
-        return this.http.get<EruptAppModel>(RestPath.erupt + '/token-valid');
+        return this._http.get<EruptAppModel>(RestPath.eruptApp);
     }
 
     //tree数据结构

@@ -10,6 +10,8 @@ import {GlobalKeys} from "@shared/model/erupt-const";
 import {ReuseTabService} from "@delon/abc";
 import {DataService} from "@shared/service/data.service";
 import {EruptAppData} from "@core/startup/erupt-app.data";
+import {RestPath} from "../../build/erupt/model/erupt.enum";
+import {EruptAppModel} from "@shared/model/erupt-app.model";
 
 /**
  * 用于应用启动时
@@ -43,10 +45,15 @@ export class StartupService {
         console.groupEnd();
 
         await new Promise((resolve) => {
-            this.dataService.getEruptApp().toPromise().then(data => {
-                EruptAppData.put(data);
-                resolve();
-            });
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', RestPath.eruptApp);
+            xhr.send();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    EruptAppData.put(<EruptAppModel>JSON.parse(xhr.responseText));
+                    resolve();
+                }
+            };
         });
 
         //注入全局方法：token
