@@ -352,6 +352,7 @@ export class TableComponent implements OnInit {
         this.columns = _columns;
     }
 
+
     /**
      *  自定义功能触发
      * @param code 编码
