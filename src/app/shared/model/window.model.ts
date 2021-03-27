@@ -21,6 +21,8 @@ export class WindowModel {
     public static registerPage: string = WindowModel.config["registerPage"] || undefined;
 
     public static dialogLogin: boolean = WindowModel.config["dialogLogin"] || false;
+
+    public static copyright: boolean = WindowModel.config["copyright"] !== false;
 }
 
 

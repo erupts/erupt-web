@@ -30,7 +30,7 @@ export class StartupService {
     }
 
     async load(): Promise<any> {
-        console.group("Erupt All rights reserved.");
+        console.group(WindowModel.copyright ? "Erupt All rights reserved." : WindowModel.title);
         console.log("%c" +
             "                               __      \n" +
             "                              /\\ \\__   \n" +

@@ -10,7 +10,7 @@
             </div>
         </div>
         <router-outlet></router-outlet>
-        <global-footer>
+        <global-footer *ngIf="copyright">
             <i nz-icon nzType="copyright" nzTheme="outline"></i> 2018 - {{nowYear}}
             <a href="https://www.erupt.xyz" target="_blank">Erupt Framework</a>&nbsp; All rights reserved.
         </global-footer>
