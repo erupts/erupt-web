@@ -4,7 +4,7 @@ window.eruptSiteConfig = {
     title: "Erupt Framework",
     desc: "通用数据管理框架",
     dialogLogin: false,
-    copyright: false, //是否保留显示版权信息
+    copyright: true, //是否保留显示版权信息
     logoPath: null,
     logoText: "Erupt",
     registerPage: null,
