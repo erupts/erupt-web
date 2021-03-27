@@ -13,6 +13,8 @@ export enum MenuTypeEnum {
     tree = "tree",
     fill = "fill",
     router = "router",
+    button = "button",
+    api = "api",
     link = "link",
     newWindow = "newWindow",
     bi = "bi",

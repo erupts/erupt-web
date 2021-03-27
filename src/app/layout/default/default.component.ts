@@ -158,6 +158,9 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
             function generateTree(menus, pid): Menu[] {
                 let result: Menu[] = [];
                 menus.forEach((menu) => {
+                    if (menu.type === MenuTypeEnum.button || menu.type === MenuTypeEnum.api) {
+                        return;
+                    }
                     if (menu.pid == pid) {
                         let option: Menu = {
                             text: menu.name,

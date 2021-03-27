@@ -10,7 +10,6 @@ import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {ReferenceTableComponent} from "../reference-table/reference-table.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
-import {DataHandlerService} from "../../service/data-handler.service";
 import {IframeHeight} from "@shared/util/window.util";
 
 @Component({
@@ -262,7 +261,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     onAutoCompleteInput(event, fieldModel: EruptFieldModel) {
         let edit = fieldModel.eruptFieldJson.edit;
         if (edit.$value && edit.autoCompleteType.triggerLength <= edit.$value.toString().trim().length) {
-            this.dataService.findAutoCompleteValue(this.eruptModel.eruptName, fieldModel.fieldName, edit.$value).subscribe(res => {
+            this.dataService.findAutoCompleteValue(this.eruptModel.eruptName, fieldModel.fieldName, edit.$value, this.parentEruptName).subscribe(res => {
                 edit.autoCompleteType.items = res;
             });
         } else {

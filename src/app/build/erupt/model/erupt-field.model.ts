@@ -123,6 +123,7 @@ interface BoolType {
 interface ChoiceType {
     type: ChoiceEnum;
     vl: VL[];
+    anewFetch: boolean;
 }
 
 
@@ -171,5 +172,6 @@ export interface VL {
     value: string;
     label: string;
     desc: string;
+    disable: boolean;
     $viewValue?: any;
 }

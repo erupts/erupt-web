@@ -173,26 +173,10 @@
                                 <se [label]="field.eruptFieldJson.edit.title"
                                     [required]="field.eruptFieldJson.edit.notNull"
                                     [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                    <!--                                    <nz-checkbox-wrapper style="width: 100%;margin-top: 10px;">-->
-                                    <!--                                        <div nz-row>-->
-                                    <!--                                            <div nz-col nzSpan="4" *ngFor="let vl of field.choiceList">-->
-                                    <!--                                                <label nz-checkbox [nzValue]="vl.value">{{vl.label}}</label>-->
-                                    <!--                                            </div>-->
-                                    <!--                                        </div>-->
-                                    <!--                                    </nz-checkbox-wrapper>-->
-                                    <tag-select [expandable]="true"
-                                                style="margin-left: 0;">
-                                        <nz-tag (nzCheckedChange)="changeTagAll($event,field)"
-                                                style="margin-right: 10px"
-                                                nzMode="checkable">全选
-                                        </nz-tag>
-                                        <ng-container *ngFor="let vl of field.choiceList">
-                                            <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"
-                                                    style="margin-right: 10px"
-                                                    nzMode="checkable"
-                                                    [(nzChecked)]="vl.$viewValue">{{vl.label}}</nz-tag>
-                                        </ng-container>
-                                    </tag-select>
+                                    <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
+                                                  [eruptParentName]="parentEruptName" [vagueSearch]="true">
+
+                                    </erupt-choice>
                                 </se>
                             </div>
                         </ng-container>
@@ -203,19 +187,10 @@
                                         <se [label]="field.eruptFieldJson.edit.title"
                                             [required]="field.eruptFieldJson.edit.notNull"
                                             [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                            <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                            [name]="field.fieldName"
-                                                            [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                            class="erupt-input stander-line-height">
-                                                <ng-container *ngIf="eruptModel.mode=='search'">
-                                                    <label nz-radio [nzValue]="">全部</label>
-                                                </ng-container>
-                                                <ng-container *ngFor="let vl of field.choiceList">
-                                                    <label nz-radio
-                                                           nz-tooltip [nzTooltipTitle]="vl.desc"
-                                                           [nzValue]="vl.value">{{vl.label}}</label>
-                                                </ng-container>
-                                            </nz-radio-group>
+                                            <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
+                                                          [eruptParentName]="parentEruptName">
+
+                                            </erupt-choice>
                                         </se>
                                     </div>
                                 </ng-container>
@@ -227,17 +202,10 @@
                                         <se [label]="field.eruptFieldJson.edit.title"
                                             [required]="field.eruptFieldJson.edit.notNull"
                                             [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                            <nz-select class="erupt-input"
-                                                       [nzAllowClear]='!field.eruptFieldJson.edit.notNull'
-                                                       [nzDisabled]="field.eruptFieldJson.edit.readOnly"
-                                                       [nzSize]="size"
-                                                       [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                       [nzShowSearch]="true"
-                                                       [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                                       [name]="field.fieldName">
-                                                <nz-option *ngFor="let vl of field.choiceList"
-                                                           [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
-                                            </nz-select>
+                                            <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
+                                                          [eruptParentName]="parentEruptName">
+
+                                            </erupt-choice>
                                         </se>
                                     </div>
                                 </ng-container>

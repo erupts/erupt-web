@@ -27,6 +27,8 @@ import {SafeTemplateComponent} from './components/safe-template/safe-template.co
 import {DateComponent} from './components/date/date.component';
 import {MarkdownComponent} from './components/markdown/markdown.component';
 import {UiBuildService} from "./service/ui-build.service";
+import {ChoiceComponent} from "./components/choice/choice.component";
+import {TagsComponent} from "./components/tags/tags.component";
 
 @NgModule({
     imports: [
@@ -87,7 +89,9 @@ import {UiBuildService} from "./service/ui-build.service";
         CheckboxComponent,
         SafeTemplateComponent,
         DateComponent,
-        MarkdownComponent
+        MarkdownComponent,
+        ChoiceComponent,
+        TagsComponent
     ]
 })
 export class EruptModule {

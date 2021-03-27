@@ -221,7 +221,6 @@ export class TabTableComponent implements OnInit {
                         }
                     }
                 }
-                console.log(edit.$tempValue);
                 edit.$value.push(...edit.$tempValue);
                 //去重
                 edit.$value = Array.from(new Set(edit.$value));

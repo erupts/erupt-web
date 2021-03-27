@@ -14,6 +14,7 @@ import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
 import {EruptAppModel} from "@shared/model/erupt-app.model";
 import {MenuVo} from "@shared/model/erupt-menu";
+import {VL} from "../../build/erupt/model/erupt-field.model";
 
 @Injectable()
 export class DataService {
@@ -100,9 +101,6 @@ export class DataService {
             "?_token=" + this.tokenService.get().token + "&_erupt=" + eruptName + "&ids=" + ids;
     }
 
-    getEruptApp(): Observable<EruptAppModel> {
-        return this._http.get<EruptAppModel>(RestPath.eruptApp);
-    }
 
     //tree数据结构
     queryEruptTreeData(eruptName: string): Observable<Tree[]> {
@@ -134,13 +132,33 @@ export class DataService {
         });
     }
 
-    findAutoCompleteValue(eruptName: string, field: string, val: string): Observable<string[]> {
+    findAutoCompleteValue(eruptName: string, field: string, val: string, eruptParentName?: string): Observable<string[]> {
         return this._http.get<string[]>(RestPath.comp + "/auto-complete/" + eruptName + "/" + field, {
             val: val.trim(),
         }, {
             observe: "body",
             headers: {
                 erupt: eruptName
+            }
+        });
+    }
+
+    findChoiceItem(eruptName: string, field: string, eruptParentName?: string): Observable<VL[]> {
+        return this._http.get<VL[]>(RestPath.component + "/choice-item/" + eruptName + "/" + field, null, {
+            observe: "body",
+            headers: {
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
+            }
+        });
+    }
+
+    findTagsItem(eruptName: string, field: string, eruptParentName?: string): Observable<string[]> {
+        return this._http.get<string[]>(RestPath.component + "/tags-item/" + eruptName + "/" + field, null, {
+            observe: "body",
+            headers: {
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
             }
         });
     }

@@ -1,48 +1,51 @@
-<!--<ng-container *ngIf="!vagueSearch">-->
-<!--    <ng-container [ngSwitch]="eruptField.eruptFieldJson.edit.choiceType.type">-->
-<!--        <ng-container *ngSwitchCase="choiceEnum.RADIO">-->
-<!--            <nz-spin nzSimple *ngIf="isLoading"></nz-spin>-->
-<!--            <nz-radio-group [(ngModel)]="eruptField.eruptFieldJson.edit.$value"-->
-<!--                            [name]="eruptField.fieldName"-->
-<!--                            [nzDisabled]="eruptField.eruptFieldJson.edit.readOnly"-->
-<!--                            class="erupt-input stander-line-height">-->
-<!--                <ng-container *ngIf="eruptModel.mode=='search'">-->
-<!--                    <label nz-radio [nzValue]="">全部</label>-->
-<!--                </ng-container>-->
-<!--                <ng-container *ngFor="let vl of optionList">-->
-<!--                    <label nz-radio nz-tooltip [nzTooltipTitle]="vl.desc"-->
-<!--                           [nzValue]="vl.value">{{vl.label}}</label>-->
-<!--                </ng-container>-->
-<!--            </nz-radio-group>-->
-<!--        </ng-container>-->
-<!--        <ng-container *ngSwitchCase="choiceEnum.SELECT">-->
-<!--            <nz-select class="erupt-input"-->
-<!--                       (nzOpenChange)="load($event)" [nzLoading]="isLoading"-->
-<!--                       [nzAllowClear]='!eruptField.eruptFieldJson.edit.notNull'-->
-<!--                       [nzDisabled]="eruptField.eruptFieldJson.edit.readOnly"-->
-<!--                       [(ngModel)]="eruptField.eruptFieldJson.edit.$value"-->
-<!--                       [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"-->
-<!--                       [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true">-->
-<!--                <nz-option *ngFor="let vl of optionList" [nzValue]="vl.value" [nzLabel]="vl.label">-->
-<!--                </nz-option>-->
-<!--                <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>-->
-<!--                    <div class="text-center">-->
-<!--                        <i nz-icon nzType="loading" class="loading-icon"></i>-->
-<!--                    </div>-->
-<!--                </nz-option>-->
-<!--            </nz-select>-->
-<!--        </ng-container>-->
-<!--    </ng-container>-->
-<!--</ng-container>-->
-<!--<ng-container *ngIf="vagueSearch">-->
-<!--    <tag-select [expandable]="true" style="margin-left: 0;">-->
-<!--        <nz-spin nzSimple *ngIf="isLoading"></nz-spin>-->
-<!--        <nz-tag (nzCheckedChange)="changeTagAll($event)" style="margin-right: 10px" nzMode="checkable">全选-->
-<!--        </nz-tag>-->
-<!--        <ng-container *ngFor="let vl of optionList">-->
-<!--            <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"-->
-<!--                    style="margin-right: 10px" nzMode="checkable"-->
-<!--                    [(nzChecked)]="vl.$viewValue">{{vl.label}}</nz-tag>-->
-<!--        </ng-container>-->
-<!--    </tag-select>-->
-<!--</ng-container>-->
+<ng-container *ngIf="!vagueSearch">
+    <ng-container [ngSwitch]="eruptField.eruptFieldJson.edit.choiceType.type">
+        <ng-container *ngSwitchCase="choiceEnum.RADIO">
+            <nz-radio-group [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
+                            [name]="eruptField.fieldName"
+                            class="erupt-input stander-line-height">
+                <ng-container *ngIf="eruptModel.mode=='search'">
+                    <label nz-radio [nzValue]="">全部</label>
+                </ng-container>
+                <ng-container *ngFor="let vl of eruptField.choiceList">
+                    <label nz-radio nz-tooltip [nzTooltipTitle]="vl.desc"
+                           [nzDisabled]="eruptField.eruptFieldJson.edit.readOnly||vl.disable"
+                           [nzValue]="vl.value">{{vl.label}}</label>
+                </ng-container>
+            </nz-radio-group>
+        </ng-container>
+        <ng-container *ngSwitchCase="choiceEnum.SELECT">
+            <nz-select class="erupt-input"
+                       (nzOpenChange)="load($event)" [nzLoading]="isLoading"
+                       [nzAllowClear]='!eruptField.eruptFieldJson.edit.notNull'
+                       [nzDisabled]="eruptField.eruptFieldJson.edit.readOnly"
+                       [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
+                       [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
+                       [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true">
+                <ng-container *ngIf="!isLoading">
+                    <nz-option *ngFor="let vl of eruptField.choiceList"
+                               [nzDisabled]="vl.disable"
+                               [nzValue]="vl.value" [nzLabel]="vl.label">
+                    </nz-option>
+                </ng-container>
+                <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+                    <div class="text-center">
+                        <i nz-icon nzType="loading" class="loading-icon"></i>
+                    </div>
+                </nz-option>
+            </nz-select>
+        </ng-container>
+    </ng-container>
+</ng-container>
+<ng-container *ngIf="vagueSearch">
+    <tag-select [expandable]="true" style="margin-left: 0;">
+        <nz-spin nzSimple *ngIf="isLoading"></nz-spin>
+        <nz-tag (nzCheckedChange)="changeTagAll($event)" style="margin-right: 10px" nzMode="checkable">全选
+        </nz-tag>
+        <ng-container *ngFor="let vl of this.eruptField.choiceList">
+            <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"
+                    style="margin-right: 10px" nzMode="checkable"
+                    [(nzChecked)]="vl.$viewValue">{{vl.label}}</nz-tag>
+        </ng-container>
+    </tag-select>
+</ng-container>
