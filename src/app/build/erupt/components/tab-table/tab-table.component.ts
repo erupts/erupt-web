@@ -137,6 +137,7 @@ export class TabTableComponent implements OnInit {
     }
 
     addData() {
+        this.dataHandlerService.emptyEruptValue(this.tabErupt.eruptBuildModel);
         this.modal.create({
             nzWrapClassName: "modal-lg",
             nzStyle: {top: "50px"},
