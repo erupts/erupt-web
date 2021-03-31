@@ -44,6 +44,7 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
         if (this.behavior == "add") {
             this.loading = true;
             this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
