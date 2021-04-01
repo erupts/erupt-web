@@ -1,8 +1,9 @@
-<h2 align="center">Erupt 通用后台管理框架前端源码</h2>
-
 ---
 
 <p align="center"><img src="./src/erupt.svg" height="150" alt="logo"/></p>
+<h2 align="center">Erupt Framework 前端源码</h2>
+<h3 align="center">可实现零前端代码快速开发管理后台</h3>
+
 <h3 align="center"><a href="https://erupt.xyz" target="_blank">https://www.erupt.xyz</a></h3>
 
 ---
@@ -26,11 +27,11 @@
     <a href="https://www.yuque.com/erupts" target="_blank"><b>📕 使用文档</b></a>
 </p>
 
----
-
 <p align="center">
     QQ交流群：<a href="https://jq.qq.com/?_wv=1027&k=MCd4plZ0">821389129 🔥</a>
 </p>
+
+---
 
 ## 仓库地址
 
