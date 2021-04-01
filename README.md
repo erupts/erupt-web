@@ -1,5 +1,5 @@
 <p align="center"><img src="./src/erupt.svg" height="150" alt="logo"/></p>
-<h1 align="center"> Erupt &nbsp; 🚀 &nbsp;  Angular </h1>
+<h1 align="center"> Erupt Web Angular </h1>
 <h3 align="center">Erupt 前端源码</h3>
 <h3 align="center"><a href="https://erupt.xyz" target="_blank">https://www.erupt.xyz</a></h3>
 
@@ -28,13 +28,36 @@
     QQ交流群：<a href="https://jq.qq.com/?_wv=1027&k=MCd4plZ0">821389129 🔥</a>
 </p>
 
-## begin
+## 简介
+通过erupt后台提供的，高度抽象json schema实现渲染
 
-1. 构建项目：
+## 环境搭建
+
+在开始之前，请确保你的开发环境中包括 Node.js 和 npm 包管理器。
+
+Angular 需要 Node.js 版本 10.9.0 或更高版本。
+
+要检查你的版本，请在终端/控制台窗口中运行 node -v
+
+## 核心技术栈
+
++ Angular
++ TypeScript
++ rxjs
++ Less
++ ng-zorro-antd
++ ng-alain
+
+## 使用方法
+
+1. 安装 yarn
+> npm install -g yarn
+
+2. 构建：
 > yarn install
 
-2. 启动项目：
+3. 启动：
 > yarn run start
 
-3. 打包编译：
+4. 打包编译：
 > yarn run build 
