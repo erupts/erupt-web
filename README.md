@@ -1,5 +1,4 @@
 <p align="center"><img src="./src/erupt.svg" height="150" alt="logo"/></p>
-<h1 align="center"> Erupt Web Angular </h1>
 <h3 align="center">Erupt 前端源码</h3>
 <h3 align="center"><a href="https://erupt.xyz" target="_blank">https://www.erupt.xyz</a></h3>
 
@@ -28,8 +27,10 @@
     QQ交流群：<a href="https://jq.qq.com/?_wv=1027&k=MCd4plZ0">821389129 🔥</a>
 </p>
 
-## 简介
-通过erupt后台提供的，高度抽象json schema实现渲染
+| |  github  | 码云 |
+|  ---- |  ----  | ----  | 
+| 后端源码 | https://github.com/erupts/erupt | https://gitee.com/erupt/erupt |
+| 前端源码 | https://github.com/erupts/erupt-web-angular | https://gitee.com/erupt/erupt-web-angular |
 
 ## 环境搭建
 
