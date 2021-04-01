@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const bundle = require('less-bundle-promise');
 
+
 const root = path.resolve(__dirname, '../');
 const allLessPath = path.join(root, '_all.less');
 const target = path.join(root, 'src/assets/alain-default.less');

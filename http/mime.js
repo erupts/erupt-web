@@ -194,4 +194,3 @@ exports.type = {
   "woff2": "application/x-font-woff",
   "ttf": "application/octet-stream"
 }
-;
