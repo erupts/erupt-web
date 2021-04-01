@@ -1,4 +1,7 @@
-<h3 align="center">Erupt 通用后台管理框架前端源码</h3>
+<h2 align="center">Erupt 通用后台管理框架前端源码</h2>
+
+---
+
 <p align="center"><img src="./src/erupt.svg" height="150" alt="logo"/></p>
 <h3 align="center"><a href="https://erupt.xyz" target="_blank">https://www.erupt.xyz</a></h3>
 
@@ -23,9 +26,13 @@
     <a href="https://www.yuque.com/erupts" target="_blank"><b>📕 使用文档</b></a>
 </p>
 
+---
+
 <p align="center">
     QQ交流群：<a href="https://jq.qq.com/?_wv=1027&k=MCd4plZ0">821389129 🔥</a>
 </p>
+
+## 仓库地址
 
 | |  github  | 码云 |
 |  ---- |  ----  | ----  | 
@@ -40,10 +47,6 @@ Angular 需要 Node.js 版本 10.9.0 或更高版本。
 
 要检查你的版本，请在终端/控制台窗口中运行 node -v
 
-## 核心技术栈
-
-Angular / TypeScript / RxJS / Less / ng-zorro-antd / ng-alain
-
 ## 使用方法
 
 1. 安装 yarn
@@ -57,3 +60,7 @@ Angular / TypeScript / RxJS / Less / ng-zorro-antd / ng-alain
 
 4. 打包编译：
 > yarn run build 
+
+## 核心技术栈
+
+Angular / TypeScript / RxJS / Less / ng-zorro-antd / ng-alain
