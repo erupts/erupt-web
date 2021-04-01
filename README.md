@@ -2,7 +2,7 @@
 
 <p align="center"><img src="./src/erupt.svg" height="150" alt="logo"/></p>
 <h2 align="center">Erupt 前端源码</h2>
-<h4 align="center">实现 '零前端代码' 能的的前端源码</h4>
+<h4 align="center">通过 JSON Schema 自动构建表单，实现了erupt零前端代码的能力</h4>
 
 <h3 align="center"><a href="https://erupt.xyz" target="_blank">https://www.erupt.xyz</a></h3>
 
