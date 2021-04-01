@@ -1,13 +1,12 @@
 {
   "name": "erupt-web-angular",
   "version": "0.0.0",
-  "description": "[erupt] web admin",
+  "description": "",
   "author": {
     "name": "YuePeng",
-    "email": "122339792@qq.com",
-    "url": "https://www.erupt.xyz"
+    "email": "erupts@126.com"
   },
-  "homepage": "",
+  "homepage": "https://www.erupt.xyz",
   "bugs": {
     "url": ""
   },

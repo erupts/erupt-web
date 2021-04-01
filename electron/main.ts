@@ -1,5 +1,5 @@
 const electron = require('electron');
-const {app, BrowserWindow, Menu,shell} = electron;
+const {app, BrowserWindow, Menu, shell} = electron;
 
 let template = [
     {
@@ -22,11 +22,11 @@ let template = [
                     if (focusedWindow.id === 1) {
                         BrowserWindow.getAllWindows().forEach(function (win) {
                             if (win.id > 1) {
-                                win.close()
+                                win.close();
                             }
-                        })
+                        });
                     }
-                    focusedWindow.reload()
+                    focusedWindow.reload();
                 }
             }
         }]
@@ -46,14 +46,14 @@ let template = [
             label: '切换开发者工具',
             accelerator: (function () {
                 if (process.platform === 'darwin') {
-                    return 'Alt+Command+I'
+                    return 'Alt+Command+I';
                 } else {
-                    return 'Ctrl+Shift+I'
+                    return 'Ctrl+Shift+I';
                 }
             })(),
             click: function (item, focusedWindow) {
                 if (focusedWindow) {
-                    focusedWindow.toggleDevTools()
+                    focusedWindow.toggleDevTools();
                 }
             }
         }, {
@@ -66,7 +66,7 @@ let template = [
         submenu: [{
             label: 'FeedBack ( 意见反馈 )',
             click: function () {
-                shell.openExternal('https://www.erupt.xyz')
+                shell.openExternal('https://www.erupt.xyz');
             }
         }]
     }
@@ -89,7 +89,7 @@ function createWindow() {
 
     // 并且为你的应用加载index.html
     win.setTitle("Erupt");
-    win.loadFile('/Users/liyuepeng/git/erupt/erupt-web/src/main/resources/public/index.html')
+    win.loadFile('/Users/liyuepeng/git/erupt/erupt-web/src/main/resources/public/index.html');
 
     // 打开开发者工具
     // win.webContents.openDevTools()
@@ -99,14 +99,14 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // 部分 API 在 ready 事件触发后才能使用。
-app.whenReady().then(createWindow)
+app.whenReady().then(createWindow);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
     // 在 macOS 上，除非用户用 Cmd + Q 确定地退出，
     // 否则绝大部分应用及其菜单栏会保持激活。
     if (process.platform !== 'darwin') {
-        app.quit()
+        app.quit();
     }
 });
 
@@ -114,6 +114,6 @@ app.on('activate', () => {
     // 在macOS上，当单击dock图标并且没有其他窗口打开时，
     // 通常在应用程序中重新创建一个窗口。
     if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow()
+        createWindow();
     }
-})
+});
