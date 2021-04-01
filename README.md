@@ -1,5 +1,5 @@
+<h3 align="center">Erupt 通用后台管理框架前端源码</h3>
 <p align="center"><img src="./src/erupt.svg" height="150" alt="logo"/></p>
-<h3 align="center">Erupt 前端源码</h3>
 <h3 align="center"><a href="https://erupt.xyz" target="_blank">https://www.erupt.xyz</a></h3>
 
 ---
@@ -42,12 +42,7 @@ Angular 需要 Node.js 版本 10.9.0 或更高版本。
 
 ## 核心技术栈
 
-+ Angular
-+ TypeScript
-+ rxjs
-+ Less
-+ ng-zorro-antd
-+ ng-alain
+Angular / TypeScript / RxJS / Less / ng-zorro-antd / ng-alain
 
 ## 使用方法
 
