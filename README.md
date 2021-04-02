@@ -40,7 +40,7 @@
 | |  github  | 码云 |
 |  ---- |  ----  | ----  | 
 | 后端源码 | https://github.com/erupts/erupt | https://gitee.com/erupt/erupt |
-| 前端源码 | https://github.com/erupts/erupt-web-angular | https://gitee.com/erupt/erupt-web-angular |
+| 前端源码 | https://github.com/erupts/erupt-web | https://gitee.com/erupt/erupt-web |
 
 ## 环境搭建
 
