@@ -6,7 +6,7 @@
 
 ---
 
-<h4 align="center">通过 JSON Schema 自动构建表单，实现了erupt零前端代码的能力</h4>
+<h4 align="center">通过 JSON Schema 自动构建表单，实现了erupt零前端代码能力</h4>
 
 ---
 
