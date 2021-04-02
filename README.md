@@ -37,6 +37,11 @@
 
 ## 仓库地址
 
+| |  后端源码  | 前端源码 |
+|  ---- |  ----  | ----  | 
+| 码云 | https://gitee.com/erupt/erupt | https://gitee.com/erupt/erupt-web |
+| github | https://github.com/erupts/erupt | https://github.com/erupts/erupt-web |
+
 | |  github  | 码云 |
 |  ---- |  ----  | ----  | 
 | 后端源码 | https://github.com/erupts/erupt | https://gitee.com/erupt/erupt |
