@@ -137,36 +137,39 @@ export class TabTableComponent implements OnInit {
     }
 
     addData() {
-        this.dataHandlerService.emptyEruptValue(this.tabErupt.eruptBuildModel);
-        this.modal.create({
-            nzWrapClassName: "modal-lg",
-            nzStyle: {top: "50px"},
-            nzMaskClosable: false,
-            nzKeyboard: false,
-            nzTitle: "添加",
-            nzContent: EditTypeComponent,
-            nzComponentParams: {
-                mode: "add",
-                eruptBuildModel: this.tabErupt.eruptBuildModel,
-                parentEruptName: this.eruptBuildModel.eruptModel.eruptName
-            },
-            nzOnOk: async () => {
-                let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
-                let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName
-                    , obj, this.eruptBuildModel.eruptModel.eruptName).toPromise().then(resp => resp);
-                if (result.status == Status.SUCCESS) {
-                    obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = -Math.floor(Math.random() * 1000);
-                    let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
-                    if (!edit.$value) {
-                        edit.$value = [];
+        // this.dataHandlerService.emptyEruptValue(this.tabErupt.eruptBuildModel);
+        this.dataService.getInitValue(this.tabErupt.eruptBuildModel.eruptModel.eruptName, this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
+            this.dataHandlerService.objectToEruptValue(data, this.tabErupt.eruptBuildModel);
+            this.modal.create({
+                nzWrapClassName: "modal-lg",
+                nzStyle: {top: "50px"},
+                nzMaskClosable: false,
+                nzKeyboard: false,
+                nzTitle: "添加",
+                nzContent: EditTypeComponent,
+                nzComponentParams: {
+                    mode: "add",
+                    eruptBuildModel: this.tabErupt.eruptBuildModel,
+                    parentEruptName: this.eruptBuildModel.eruptModel.eruptName
+                },
+                nzOnOk: async () => {
+                    let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
+                    let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName
+                        , obj, this.eruptBuildModel.eruptModel.eruptName).toPromise().then(resp => resp);
+                    if (result.status == Status.SUCCESS) {
+                        obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = -Math.floor(Math.random() * 1000);
+                        let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
+                        if (!edit.$value) {
+                            edit.$value = [];
+                        }
+                        edit.$value.push(obj);
+                        this.st.reload();
+                        return true;
+                    } else {
+                        return false;
                     }
-                    edit.$value.push(obj);
-                    this.st.reload();
-                    return true;
-                } else {
-                    return false;
                 }
-            }
+            });
         });
     }
 

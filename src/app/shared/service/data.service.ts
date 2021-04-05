@@ -123,11 +123,12 @@ export class DataService {
     }
 
     //根据id获取数据
-    getInitValue(eruptName: string): Observable<any> {
+    getInitValue(eruptName: string, eruptParentName?: string): Observable<any> {
         return this._http.get<any>(RestPath.data + "/init-value/" + eruptName, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
             }
         });
     }
@@ -138,7 +139,8 @@ export class DataService {
         }, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
             }
         });
     }
