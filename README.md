@@ -58,10 +58,13 @@ Angular 需要 Node.js 版本 10.9.0 或更高版本。
 2. 构建：
 > yarn install
 
-3. 启动：
+3. 修改配置文件：
+> /src/environments/environment.ts
+
+4. 启动：
 > yarn run start
 
-4. 打包编译：
+5. 打包编译：
 > yarn run build 
 
 ## 核心技术栈
