@@ -18,6 +18,9 @@
     }
 
     .alain-default__header-logo {
+      min-width: 200px;
+      width: auto;
+      padding: 0 12px;
       border-right: 1px solid rgba(0, 0, 0, 0.1);
     }
 
@@ -27,7 +30,7 @@
       font-size: 2em;
       letter-spacing: 2px;
       margin-left: 6px;
-      font-family: 'Courier New';
+      font-family: 'Courier New', Arial, Helvetica, sans-serif;
     }
 
     //.alain-default__search {
@@ -36,8 +39,9 @@
 
     @media (max-width: 767px) {
       .alain-default__header-logo {
-        width: auto;
-        min-width: 64px;
+        min-width: auto;
+        max-width: 190px;
+        overflow: hidden;
         margin: 0 6px;
         border-right: none;
       }
