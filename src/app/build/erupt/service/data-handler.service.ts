@@ -358,15 +358,15 @@ export class DataHandlerService {
                             }
                         }
                         break;
-                    case EditType.CODE_EDITOR:
-                        let val = edit.$viewValue;
-                        if (val) {
-                            val = val.getValue();
-                            if (val || val === 0) {
-                                eruptData[field.fieldName] = val;
-                            }
-                        }
-                        break;
+                    // case EditType.CODE_EDITOR:
+                    //     let val = edit.$viewValue;
+                    //     if (val) {
+                    //         val = val.getValue();
+                    //         if (val || val === 0) {
+                    //             eruptData[field.fieldName] = val;
+                    //         }
+                    //     }
+                    //     break;
                     default:
                         if (edit.$value || edit.$value === 0) {
                             eruptData[field.fieldName] = edit.$value;
@@ -532,6 +532,10 @@ export class DataHandlerService {
                         } else {
                             edit.$value = [];
                         }
+                        break;
+                    case EditType.CODE_EDITOR:
+                    case EditType.HTML_EDITOR:
+                        edit.$value = object[field.fieldName] || '';
                         break;
                     default:
                         edit.$value = object[field.fieldName];

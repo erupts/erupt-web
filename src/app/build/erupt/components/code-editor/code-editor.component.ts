@@ -39,12 +39,12 @@ export class CodeEditorComponent implements OnInit {
     }
 
     codeEditorInit(event) {
-        if (this.edit) {
-            this.edit.$viewValue = event;
-            event.setValue(this.edit.$value || '');
-        } else {
-            event.setValue(this.value || '');
-        }
+        // if (this.edit) {
+        //     this.edit.$viewValue = event;
+        //     event.setValue(this.edit.$value || '');
+        // } else {
+        //     event.setValue(this.value || '');
+        // }
         if (!this.readonly) {
             this.readonly = this.edit.readOnly;
         }

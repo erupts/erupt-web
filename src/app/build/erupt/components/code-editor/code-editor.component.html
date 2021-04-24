@@ -1,6 +1,7 @@
 <nz-spin [nzSpinning]="!codeEditorEvent">
     <nz-code-editor [ngStyle]="{height:height+'px'}" style="border:1px solid #ccc"
                     (nzEditorInitialized)="codeEditorInit($event)"
+                    [(ngModel)]="edit.$value"
                     [nzEditorOption]="{ language: language}">
     </nz-code-editor>
     <nz-switch nzSize="small" [ngModel]="dark"
