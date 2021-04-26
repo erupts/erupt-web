@@ -537,6 +537,10 @@ export class DataHandlerService {
                     case EditType.HTML_EDITOR:
                         edit.$value = object[field.fieldName] || '';
                         break;
+                    case EditType.TAB_TABLE_ADD:
+                    case EditType.TAB_TABLE_REFER:
+                        edit.$value = object[field.fieldName] || [];
+                        break;
                     default:
                         edit.$value = object[field.fieldName];
                         break;
