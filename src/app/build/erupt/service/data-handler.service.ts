@@ -526,7 +526,6 @@ export class DataHandlerService {
                     case EditType.CHOICE:
                         edit.$value = object[field.fieldName] && object[field.fieldName] + '';
                         break;
-
                     case EditType.TAGS:
                         if (object[field.fieldName]) {
                             edit.$value = String(object[field.fieldName]).split(edit.tagsType.joinSeparator);
