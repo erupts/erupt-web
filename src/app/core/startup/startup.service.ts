@@ -71,7 +71,6 @@ export class StartupService {
         //面包靴导航
         this.settingSrv.layout.breadcrumbs = false !== this.settingSrv.layout.breadcrumbs;
 
-
         if (this.settingSrv.layout.reuse) {
             this.reuseTabService.mode = 0;
             this.reuseTabService.excludes = [];
