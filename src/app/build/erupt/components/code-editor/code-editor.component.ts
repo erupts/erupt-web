@@ -18,8 +18,6 @@ export class CodeEditorComponent implements OnInit {
      */
     @Input() edit: Edit;
 
-    @Input() value: string;
-
     @Input() language: string;
 
     @Input() readonly: boolean = false;

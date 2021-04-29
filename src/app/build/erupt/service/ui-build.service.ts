@@ -236,7 +236,10 @@ export class UiBuildService {
                                 height: 500,
                                 readonly: true,
                                 language: view.eruptFieldModel.eruptFieldJson.edit.codeEditType.language,
-                                value: item[view.column]
+                                // @ts-ignore
+                                edit: {
+                                    $value: item[view.column]
+                                }
                             }
                         });
                     };

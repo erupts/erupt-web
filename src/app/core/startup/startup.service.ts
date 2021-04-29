@@ -65,7 +65,7 @@ export class StartupService {
             eruptEvent.startup && eruptEvent.startup();
         }
         //路由复用
-        this.settingSrv.layout.reuse = false !== this.settingSrv.layout.reuse;
+        this.settingSrv.layout.reuse = !!this.settingSrv.layout.reuse;
         //表格边框
         this.settingSrv.layout.bordered = false !== this.settingSrv.layout.bordered;
         //面包靴导航
