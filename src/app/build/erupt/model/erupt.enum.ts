@@ -1,6 +1,4 @@
-/**
- * Created by liyuepeng on 10/17/18.
- */
+
 import {WindowModel} from "@shared/model/window.model";
 
 export class RestPath {

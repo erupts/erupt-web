@@ -1,6 +1,6 @@
 {
   "name": "erupt-web",
-  "version": "0.0.0",
+  "version": "1.7.0",
   "description": "",
   "author": {
     "name": "YuePeng",
@@ -10,20 +10,20 @@
   "bugs": {
     "url": ""
   },
-  "license": "",
+  "license": "Apache License 2.0",
   "keywords": [
     "antd",
     "ng-zorro-antd",
+    "alain",
     "angular",
     "component",
     "scaffold",
     "erupt",
-    "yuepeng",
-    "alain"
+    "yuepeng"
   ],
   "scripts": {
     "ng": "ng",
-    "start": "npm run color-less && ng serve --port 4400 -o --host 127.0.0.1",
+    "start": "npm run color-less && ng serve --port 4400 -o --host 127.0.0.1 --proxy-config proxy.config.json",
     "electron": "electron --debug=5858 ./electron/main.ts",
     "hmr": "npm run color-less && ng serve -c=hmr",
     "build": "npm run color-less && ng build --prod --build-optimizer",
@@ -137,9 +137,6 @@
       "npm run lint:style",
       "prettier --write",
       "git add"
-    ],
-    "ignore": [
-      "src/assets/*"
     ]
   }
 }

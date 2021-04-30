@@ -1,8 +1,6 @@
 import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, PickerMode, TabEnum, ViewType} from "./erupt.enum";
 
-/**
- * Created by liyuepeng on 10/17/18.
- */
+
 export interface EruptFieldModel {
     fieldName: string;
     eruptFieldJson: EruptField;

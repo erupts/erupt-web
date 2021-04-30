@@ -53,44 +53,37 @@ Angular 需要 Node.js 版本 10.9.0 或更高版本。
 ## 使用方法
 
 1. 安装 yarn
-> npm install -g yarn
+```shell script
+npm install -g yarn
+```
 
-2. 构建：
-> yarn install
+2. 使用 yarn 构建：
+```shell script
+yarn install
+```
 
-3. 修改配置文件：
-> /src/environments/environment.ts
+2. 修改服务端地址
+``
+/proxy.config.json → target
+``
 
 4. 启动：
-> yarn run start
+```shell script
+yarn run start
+```
 
-5. 打包编译：
-> yarn run build 
+
+## 打包编译：
+1. 修改 angular.json projects.architect.build.options.outputPath
+
+2. 执行打包命令
+```shell script
+yarn run build
+``` 
 
 ## 核心技术栈
 
-Angular / TypeScript / RxJS / Less / ng-zorro-antd / ng-alain
+TypeScript / RxJS / Less / Angular / ng-zorro-antd / ng-alain
 
-
-## 跨域解决办法
-
-```java
-@Configuration
-public class CorsConfig {
-
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        // 根据实际情况修改如下配置的值
-        corsConfiguration.addAllowedOrigin("*"); // 允许访问源地址
-        corsConfiguration.addAllowedHeader("*"); // 允许头
-        corsConfiguration.addAllowedMethod("*"); // 允许方法
-        source.registerCorsConfiguration("/**", corsConfiguration); // 对接口配置跨域设置
-        return new CorsFilter(source);
-    }
-
-}
-``` 
 
 ---

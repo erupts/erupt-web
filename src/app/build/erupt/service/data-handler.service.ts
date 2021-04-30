@@ -11,10 +11,6 @@ import {DatePipe} from "@angular/common";
 import * as moment from 'moment';
 import {QueryCondition} from "../model/erupt.vo";
 
-/**
- * Created by liyuepeng on 10/31/18.
- */
-
 @Injectable()
 export class DataHandlerService {
 

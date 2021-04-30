@@ -1,6 +1,3 @@
-/**
- * Created by liyuepeng on 2018-12-29.
- */
 import {EruptModel, Power} from "./erupt.model";
 import {EruptFieldModel} from "./erupt-field.model";
 

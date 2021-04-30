@@ -1,9 +1,7 @@
 import {Edit, EruptFieldModel, View} from "./erupt-field.model";
 import {OperationMode, OperationType} from "./erupt.enum";
 
-/**
- * Created by liyuepeng on 10/16/18.
- */
+
 export interface EruptModel {
     eruptFieldModels: EruptFieldModel[];
     eruptJson: Erupt;

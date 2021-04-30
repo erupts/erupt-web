@@ -1,6 +1,3 @@
-/**
- * Created by liyuepeng on 10/17/18.
- */
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Checkbox, Tree} from "../../build/erupt/model/erupt.model";
@@ -12,7 +9,6 @@ import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
-import {EruptAppModel} from "@shared/model/erupt-app.model";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {VL} from "../../build/erupt/model/erupt-field.model";
 

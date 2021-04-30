@@ -1,6 +1,3 @@
-/**
- * Created by liyuepeng on 11/1/18.
- */
 export interface EruptApiModel {
     status: Status;
     success: boolean;
