@@ -51,15 +51,15 @@ Angular 需要 Node.js 版本 10.9.0 或更高版本。
 npm install -g yarn
 ```
 
-2. 使用 yarn 构建：
+2. 构建：
 ```shell script
 yarn install
 ```
 
-2. 修改服务端地址
-``
+3. 修改服务端地址
+```
 /proxy.config.json → target
-``
+```
 
 4. 启动：
 ```shell script
@@ -68,7 +68,8 @@ yarn run start
 
 
 ## 🍭 打包编译：
-1. 修改 angular.json → ``projects.architect.build.options.outputPath`` 配置
+1. 修改 angular.json 打包路径：
+> projects.architect.build.options.outputPath
 
 2. 执行打包命令
 ```shell script
@@ -85,6 +86,5 @@ TypeScript / RxJS / Less / Angular / ng-zorro-antd / ng-alain
 | 后端源码 | https://github.com/erupts/erupt | https://gitee.com/erupt/erupt |
 | 前端源码 | https://github.com/erupts/erupt-web | https://gitee.com/erupt/erupt-web |
 | 示例代码 | https://github.com/erupts/erupt-example | https://gitee.com/erupt/erupt-example |
-
 
 ---
