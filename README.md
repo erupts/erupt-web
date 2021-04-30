@@ -1,7 +1,7 @@
 ---
 
 <p align="center"><img src="./src/erupt.svg" height="150" alt="logo"/></p>
-<h2 align="center">Erupt Framework   🚀   通用后台管理框架</h2>
+<h2 align="center">Erupt Framework &nbsp; 🚀 &nbsp; 通用后台管理框架</h2>
 <h3 align="center">前端源码</h3>
 <h3 align="center"><a href="https://erupt.xyz" target="_blank">https://www.erupt.xyz</a></h3>
 
@@ -36,15 +36,7 @@
 
 ---
 
-## 🏅 代码仓库 | Git Repository
-| |  Github  | 码云 |
-|  ---- |  ----  | ----  | 
-| 后端源码 | https://github.com/erupts/erupt | https://gitee.com/erupt/erupt |
-| 前端源码 | https://github.com/erupts/erupt-web | https://gitee.com/erupt/erupt-web |
-| 示例代码 | https://github.com/erupts/erupt-example | https://gitee.com/erupt/erupt-example |
-
-
-## 环境搭建
+## ⛰ 环境搭建
 
 在开始之前，请确保你的开发环境中包括 Node.js 和 npm 包管理器。
 
@@ -52,7 +44,7 @@ Angular 需要 Node.js 版本 10.9.0 或更高版本。
 
 要检查你的版本，请在终端/控制台窗口中运行 node -v
 
-## 使用方法
+## 🥌 使用方法
 
 1. 安装 yarn
 ```shell script
@@ -75,7 +67,7 @@ yarn run start
 ```
 
 
-## 打包编译：
+## 🍭 打包编译：
 1. 修改 angular.json → ``projects.architect.build.options.outputPath`` 配置
 
 2. 执行打包命令
@@ -83,9 +75,16 @@ yarn run start
 yarn run build
 ``` 
 
-## 核心技术栈
+## 📟 核心技术栈
 
 TypeScript / RxJS / Less / Angular / ng-zorro-antd / ng-alain
+
+## 🏅 代码仓库 | Git Repository
+| |  Github  | 码云 |
+|  ---- |  ----  | ----  | 
+| 后端源码 | https://github.com/erupts/erupt | https://gitee.com/erupt/erupt |
+| 前端源码 | https://github.com/erupts/erupt-web | https://gitee.com/erupt/erupt-web |
+| 示例代码 | https://github.com/erupts/erupt-example | https://gitee.com/erupt/erupt-example |
 
 
 ---
