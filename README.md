@@ -1,7 +1,8 @@
 ---
 
 <p align="center"><img src="./src/erupt.svg" height="150" alt="logo"/></p>
-<h2 align="center">Erupt 框架前端源码</h2>
+<h2 align="center">Erupt Framework   🚀   通用后台管理框架</h2>
+<h3 align="center">前端源码</h3>
 <h3 align="center"><a href="https://erupt.xyz" target="_blank">https://www.erupt.xyz</a></h3>
 
 ---
@@ -35,12 +36,13 @@
 
 ---
 
-## 仓库地址
-
+## 🏅 代码仓库 | Git Repository
 | |  Github  | 码云 |
 |  ---- |  ----  | ----  | 
 | 后端源码 | https://github.com/erupts/erupt | https://gitee.com/erupt/erupt |
 | 前端源码 | https://github.com/erupts/erupt-web | https://gitee.com/erupt/erupt-web |
+| 示例代码 | https://github.com/erupts/erupt-example | https://gitee.com/erupt/erupt-example |
+
 
 ## 环境搭建
 
@@ -74,7 +76,7 @@ yarn run start
 
 
 ## 打包编译：
-1. 修改 angular.json projects.architect.build.options.outputPath
+1. 修改 angular.json → ``projects.architect.build.options.outputPath`` 配置
 
 2. 执行打包命令
 ```shell script
