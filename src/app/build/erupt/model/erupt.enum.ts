@@ -1,4 +1,3 @@
-
 import {WindowModel} from "@shared/model/window.model";
 
 export class RestPath {
@@ -41,6 +40,12 @@ export enum EditType {
     HTML_EDITOR = "HTML_EDITOR",
     MAP = "MAP",
     CODE_EDITOR = "CODE_EDITOR",
+}
+
+export enum Scene {
+    ADD = "add",
+    EDIT = "edit",
+    VIEW = "view"
 }
 
 export enum TabEnum {

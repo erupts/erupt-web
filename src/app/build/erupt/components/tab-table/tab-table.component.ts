@@ -10,7 +10,7 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {ReferenceTableComponent} from "../reference-table/reference-table.component";
 import {BuildConfig} from "../../model/build-config";
 import {Status} from "../../model/erupt-api.model";
-import {EditType, SelectMode} from "../../model/erupt.enum";
+import {EditType, Scene, SelectMode} from "../../model/erupt.enum";
 import {UiBuildService} from "../../service/ui-build.service";
 
 @Component({
@@ -52,7 +52,7 @@ export class TabTableComponent implements OnInit {
         if (!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
             this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
         }
-        if (this.onlyRead || this.tabErupt.eruptFieldModel.eruptFieldJson.edit.readOnly) {
+        if (this.onlyRead) {
             this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true);
         } else {
             const viewValue: STColumn[] = [];
@@ -148,7 +148,7 @@ export class TabTableComponent implements OnInit {
                 nzTitle: "添加",
                 nzContent: EditTypeComponent,
                 nzComponentParams: {
-                    mode: "add",
+                    mode: Scene.ADD,
                     eruptBuildModel: this.tabErupt.eruptBuildModel,
                     parentEruptName: this.eruptBuildModel.eruptModel.eruptName
                 },

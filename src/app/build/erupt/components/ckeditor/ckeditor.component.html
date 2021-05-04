@@ -13,7 +13,7 @@
                   [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
                   [placeholder]="'无法加载文本编辑器，建议更换或升级您的浏览器!'"
                   [required]="eruptField.eruptFieldJson.edit.notNull"
-                  [disabled]="eruptField.eruptFieldJson.edit.readOnly"
+                  [disabled]="readonly"
         ></textarea>
     </div>
 </nz-spin>

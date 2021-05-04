@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
-import {EruptFieldModel, VL} from "../../model/erupt-field.model";
+import {EruptFieldModel} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 
 @Component({
@@ -15,6 +15,8 @@ export class TagsComponent implements OnInit {
     @Input() eruptField: EruptFieldModel;
 
     @Input() size;
+
+    @Input() readonly;
 
     @Input() eruptParentName: string;
 

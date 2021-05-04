@@ -21,6 +21,8 @@ export class ChoiceComponent implements OnInit {
 
     @Input() vagueSearch: boolean = false;
 
+    @Input() readonly: boolean = false;
+
     isLoading = false;
 
     choiceEnum = ChoiceEnum;

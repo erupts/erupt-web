@@ -1,6 +1,6 @@
 import {Component, DoCheck, EventEmitter, Inject, Input, KeyValueDiffers, OnDestroy, OnInit, Output} from "@angular/core";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum} from "../../model/erupt.enum";
+import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {TreeSelectComponent} from "../tree-select/tree-select.component";
 import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
@@ -34,7 +34,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     @Input() layout: "horizontal" | "vertical" = "vertical";
 
     //Behavior
-    @Input() mode: "add" | null;
+    @Input() mode: Scene | null;
 
     @Input() parentEruptName: string;
 
@@ -75,6 +75,15 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 this.showByFieldModels.push(model);
                 this.showByCheck(model);
             }
+        }
+    }
+
+    isReadonly(eruptFieldModel: EruptFieldModel) {
+        let ro = eruptFieldModel.eruptFieldJson.edit.readOnly;
+        if (this.mode === Scene.ADD) {
+            return ro.add;
+        } else {
+            return ro.edit;
         }
     }
 

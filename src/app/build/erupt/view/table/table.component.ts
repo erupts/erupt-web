@@ -11,7 +11,7 @@ import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {deepCopy} from "@delon/util";
-import {OperationMode, OperationType, RestPath, SelectMode} from "../../model/erupt.enum";
+import {OperationMode, OperationType, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {BuildConfig} from "../../model/build-config";
@@ -205,7 +205,8 @@ export class TableComponent implements OnInit {
                     eruptBuildModel.eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
                     eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
                         if (field.eruptFieldJson.edit) {
-                            field.eruptFieldJson.edit.readOnly = true;
+                            field.eruptFieldJson.edit.readOnly.add = true;
+                            field.eruptFieldJson.edit.readOnly.edit = true;
                         }
                         eruptBuildModel.eruptModel.eruptFieldModelMap.set(field.fieldName, field);
                     });
@@ -221,7 +222,7 @@ export class TableComponent implements OnInit {
                         nzComponentParams: {
                             eruptBuildModel: eruptBuildModel,
                             id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
-                            behavior: "edit",
+                            behavior: Scene.EDIT,
                         }
                     });
                 }
@@ -242,7 +243,7 @@ export class TableComponent implements OnInit {
                         nzComponentParams: {
                             eruptBuildModel: this.eruptBuildModel,
                             id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
-                            behavior: "edit",
+                            behavior: Scene.EDIT,
                         },
                         nzOnOk: async () => {
                             let validateResult = model.getContentComponent().beforeSaveValidate();
@@ -419,7 +420,7 @@ export class TableComponent implements OnInit {
                     },
                     nzContent: EditTypeComponent,
                     nzComponentParams: {
-                        mode: "add",
+                        mode: Scene.ADD,
                         eruptBuildModel: {
                             eruptModel: operationErupt
                         },

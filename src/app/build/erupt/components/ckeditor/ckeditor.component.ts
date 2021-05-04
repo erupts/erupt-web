@@ -20,6 +20,8 @@ export class CkeditorComponent implements OnInit {
 
     @Input() value;
 
+    @Input() readonly: boolean;
+
     @Output() valueChange = new EventEmitter();
 
     public loading: boolean = true;
@@ -120,7 +122,7 @@ export class CkeditorComponent implements OnInit {
                     //     ]
                     // }
                 }).then(editor => {
-                    editor.isReadOnly = this.eruptField.eruptFieldJson.edit.readOnly;
+                    editor.isReadOnly = this.readonly;
                     that.loading = false;
                     const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
                     toolbarContainer.appendChild(editor.ui.view.toolbar.element);

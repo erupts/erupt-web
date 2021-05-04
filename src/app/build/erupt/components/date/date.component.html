@@ -1,7 +1,7 @@
 <ng-container *ngIf="range">
     <nz-range-picker [nzSize]="size" class="erupt-input stander-line-height"
                      [(ngModel)]="edit.$value"
-                     [nzDisabled]="edit.readOnly"
+                     [nzDisabled]="readonly"
                      [name]="field.fieldName"
                      [nzShowTime]="edit.dateType.type==dateEnum.DATE_TIME"
                      [nzPlaceHolder]="edit.placeHolder"
@@ -15,7 +15,7 @@
         <ng-container *ngSwitchCase="dateEnum.DATE">
             <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
                             [(ngModel)]="edit.$value"
-                            [nzDisabled]="edit.readOnly"
+                            [nzDisabled]="readonly"
                             [nzPlaceHolder]="edit.placeHolder"
                             [nzDisabledDate]="disabledDate"
                             [name]="field.fieldName">
@@ -24,7 +24,7 @@
         <ng-container *ngSwitchCase="dateEnum.DATE_TIME">
             <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
                             [(ngModel)]="edit.$value"
-                            [nzDisabled]="edit.readOnly"
+                            [nzDisabled]="readonly"
                             [nzPlaceHolder]="edit.placeHolder"
                             [nzDisabledDate]="disabledDate"
                             [name]="field.fieldName"
@@ -34,7 +34,7 @@
         <ng-container *ngSwitchCase="dateEnum.TIME">
             <nz-time-picker [nzSize]="size" class="erupt-input stander-line-height"
                             [(ngModel)]="edit.$value"
-                            [nzDisabled]="edit.readOnly"
+                            [nzDisabled]="readonly"
                             [nzPlaceHolder]="edit.placeHolder"
                             [name]="field.fieldName">
 
@@ -43,7 +43,7 @@
         <ng-container *ngSwitchCase="dateEnum.WEEK">
             <nz-week-picker [nzSize]="size" class="erupt-input stander-line-height"
                             [(ngModel)]="edit.$value"
-                            [nzDisabled]="edit.readOnly"
+                            [nzDisabled]="readonly"
                             [nzDisabledDate]="disabledDate"
                             [nzPlaceHolder]="edit.placeHolder"
                             [name]="field.fieldName">
@@ -53,7 +53,7 @@
         <ng-container *ngSwitchCase="dateEnum.MONTH">
             <nz-month-picker [nzSize]="size" class="erupt-input stander-line-height"
                              [(ngModel)]="edit.$value"
-                             [nzDisabled]="edit.readOnly"
+                             [nzDisabled]="readonly"
                              [nzPlaceHolder]="edit.placeHolder"
                              [nzDisabledDate]="disabledDate"
                              [name]="field.fieldName">
@@ -63,7 +63,7 @@
         <ng-container *ngSwitchCase="dateEnum.YEAR">
             <nz-year-picker [nzSize]="size" class="erupt-input stander-line-height"
                             [(ngModel)]="edit.$value"
-                            [nzDisabled]="edit.readOnly"
+                            [nzDisabled]="readonly"
                             [nzDisabledDate]="disabledDate"
                             [nzPlaceHolder]="edit.placeHolder"
                             [name]="field.fieldName">

@@ -18,6 +18,8 @@ export class DateComponent implements OnInit {
 
     @Input() range: boolean = false;
 
+    @Input() readonly: boolean;
+
     edit: Edit;
 
     private datePipe: DatePipe = new DatePipe("zh-cn");

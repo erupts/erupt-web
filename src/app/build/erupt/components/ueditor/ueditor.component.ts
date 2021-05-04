@@ -13,10 +13,11 @@ import {UEditorComponent} from "ngx-ueditor";
 })
 export class UeditorComponent implements OnInit {
 
-
     @Input() eruptField: EruptFieldModel;
 
     @Input() erupt: EruptModel;
+
+    @Input() readonly: boolean;
 
     @ViewChild("ue", {static: false}) ue: UEditorComponent;
 

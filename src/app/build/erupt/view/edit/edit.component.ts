@@ -1,13 +1,12 @@
 import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
-import {EditType} from "../../model/erupt.enum";
+import {EditType, Scene} from "../../model/erupt.enum";
 import {SettingsService} from "@delon/theme";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {NzFormatEmitEvent, NzMessageService, NzModalService} from "ng-zorro-antd";
+import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {DataService} from "@shared/service/data.service";
-import {NzTreeNode} from "ng-zorro-antd/core/tree/nz-tree-base-node";
 
 @Component({
     selector: "erupt-edit",
@@ -20,7 +19,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
     editType = EditType;
 
-    @Input() behavior: "add" | "edit" = "add";
+    @Input() behavior: Scene = Scene.ADD;
 
     @Output() save = new EventEmitter();
 
@@ -45,7 +44,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
-        if (this.behavior == "add") {
+        if (this.behavior == Scene.ADD) {
             this.loading = true;
             this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
                 this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
@@ -59,6 +58,15 @@ export class EditComponent implements OnInit, OnDestroy {
             });
         }
         this.eruptFieldModelMap = this.eruptBuildModel.eruptModel.eruptFieldModelMap;
+    }
+
+    isReadonly(eruptFieldModel: EruptFieldModel) {
+        let ro = eruptFieldModel.eruptFieldJson.edit.readOnly;
+        if (this.behavior === Scene.ADD) {
+            return ro.add;
+        } else {
+            return ro.edit;
+        }
     }
 
     beforeSaveValidate(): boolean {

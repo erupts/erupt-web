@@ -105,7 +105,8 @@ export class DataHandlerService {
                 field.value = null;
                 field.eruptFieldJson.edit.notNull = field.eruptFieldJson.edit.search.notNull;
                 field.eruptFieldJson.edit.show = true;
-                field.eruptFieldJson.edit.readOnly = false;
+                field.eruptFieldJson.edit.readOnly.add = false;
+                field.eruptFieldJson.edit.readOnly.edit = false;
                 field.eruptFieldJson.edit.$value = null;
                 field.eruptFieldJson.edit.$viewValue = null;
                 field.eruptFieldJson.edit.$tempValue = null;

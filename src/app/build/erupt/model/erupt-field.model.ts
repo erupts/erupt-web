@@ -38,7 +38,7 @@ export interface Edit {
     type: EditType;
     show: boolean;
     showBy: { dependField: string, expr: string };
-    readOnly: boolean;
+    readOnly: Readonly;
     placeHolder: string;
     search: Search;
     tabType: TabType;
@@ -63,6 +63,11 @@ export interface Edit {
     $beforeValue?: any;
     $l_val?: any;
     $r_val?: any;
+}
+
+interface Readonly {
+    add: boolean;
+    edit: boolean;
 }
 
 interface HtmlEditorType {
