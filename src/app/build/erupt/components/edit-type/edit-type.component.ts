@@ -67,6 +67,12 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     ngOnInit() {
         this.eruptModel = this.eruptBuildModel.eruptModel;
         for (let model of this.eruptModel.eruptFieldModels) {
+            let edit = model.eruptFieldJson.edit;
+            if (edit.type == EditType.ATTACHMENT) {
+                if (!edit.$viewValue) {
+                    edit.$viewValue = [];
+                }
+            }
             let showBy = model.eruptFieldJson.edit.showBy;
             if (showBy) {
                 if (!this.showByFieldModels) {
