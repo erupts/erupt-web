@@ -38,6 +38,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     @Input() parentEruptName: string;
 
+    @Input() readonly: boolean = false;
+
     //event
     @Output() search = new EventEmitter();
 
@@ -85,6 +87,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     isReadonly(eruptFieldModel: EruptFieldModel) {
+        if (this.readonly) {
+            return true;
+        }
         let ro = eruptFieldModel.eruptFieldJson.edit.readOnly;
         if (this.mode === Scene.ADD) {
             return ro.add;

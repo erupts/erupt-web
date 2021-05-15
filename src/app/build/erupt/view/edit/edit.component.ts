@@ -27,6 +27,8 @@ export class EditComponent implements OnInit, OnDestroy {
 
     @Input() id: any;
 
+    @Input() readonly: boolean = false;
+
     @ViewChild("eruptEdit", {static: false}) eruptEdit: EditTypeComponent;
 
     eruptFieldModelMap: Map<String, EruptFieldModel>;
@@ -61,6 +63,9 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
     isReadonly(eruptFieldModel: EruptFieldModel) {
+        if (this.readonly) {
+            return true;
+        }
         let ro = eruptFieldModel.eruptFieldJson.edit.readOnly;
         if (this.behavior === Scene.ADD) {
             return ro.add;

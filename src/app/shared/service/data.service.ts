@@ -118,7 +118,7 @@ export class DataService {
         });
     }
 
-    //根据id获取数据
+    //获取初始化数据
     getInitValue(eruptName: string, eruptParentName?: string): Observable<any> {
         return this._http.get<any>(RestPath.data + "/init-value/" + eruptName, null, {
             observe: "body",
