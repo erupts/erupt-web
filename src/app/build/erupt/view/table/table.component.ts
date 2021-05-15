@@ -201,15 +201,15 @@ export class TableComponent implements OnInit {
             tableOperators.push({
                 icon: "eye",
                 click: (record: any, modal: any) => {
-                    let eruptBuildModel = deepCopy(this.eruptBuildModel);
-                    eruptBuildModel.eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
-                    eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
-                        if (field.eruptFieldJson.edit) {
-                            field.eruptFieldJson.edit.readOnly.add = true;
-                            field.eruptFieldJson.edit.readOnly.edit = true;
-                        }
-                        eruptBuildModel.eruptModel.eruptFieldModelMap.set(field.fieldName, field);
-                    });
+                    // let eruptBuildModel = deepCopy(this.eruptBuildModel);
+                    // eruptBuildModel.eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
+                    // eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
+                    //     if (field.eruptFieldJson.edit) {
+                    //         field.eruptFieldJson.edit.readOnly.add = true;
+                    //         field.eruptFieldJson.edit.readOnly.edit = true;
+                    //     }
+                    //     eruptBuildModel.eruptModel.eruptFieldModelMap.set(field.fieldName, field);
+                    // });
                     this.modal.create({
                         nzWrapClassName: "modal-lg",
                         nzStyle: {top: "60px"},
@@ -220,7 +220,8 @@ export class TableComponent implements OnInit {
                         nzTitle: "查看",
                         nzContent: EditComponent,
                         nzComponentParams: {
-                            eruptBuildModel: eruptBuildModel,
+                            readonly: true,
+                            eruptBuildModel: this.eruptBuildModel,
                             id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
                             behavior: Scene.EDIT,
                         }
