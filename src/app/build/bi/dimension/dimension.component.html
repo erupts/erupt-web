@@ -104,6 +104,10 @@
                                     </ng-container>
                                 </ng-container>
 
+                                <ng-container *ngSwitchCase="dimType.REFERENCE_CASCADE">
+                                    <erupt-bi-cascade [dim]="dim" [bi]="bi"></erupt-bi-cascade>
+                                </ng-container>
+
                                 <ng-container *ngSwitchCase="dimType.DATE">
                                     <nz-date-picker class="full-width"
                                                     [(ngModel)]="dim.$value"

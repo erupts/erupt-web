@@ -9,9 +9,10 @@ import {BiDataService} from "./service/data.service";
 import {ChartComponent} from './chart/chart.component';
 import {ChoiceComponent} from './components/choice/choice.component';
 import {ReferenceComponent} from "./components/reference/reference.component";
+import {CascadeComponent} from './components/cascade/cascade.component';
 
 @NgModule({
-    declarations: [BiComponent, DimensionComponent, ReferenceComponent, ChartComponent, ChoiceComponent],
+    declarations: [BiComponent, DimensionComponent, ReferenceComponent, ChartComponent, ChoiceComponent, CascadeComponent],
     imports: [
         CommonModule,
         BiRoutingModule,
