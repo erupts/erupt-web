@@ -8,7 +8,7 @@
                          style="display: inline-block;"/>
                 </div>
             </nz-carousel>
-            <ul class="carousel-ul">
+            <ul class="carousel-ul" *ngIf="paths.length>1">
                 <li *ngFor="let img of paths;let i = index"
                     style="list-style: none;margin-right: 8px">
                     <img [src]="img|safeUrl" ondragstart="return false;" (click)="goToCarouselIndex(i)"
@@ -64,15 +64,15 @@
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.TAB_TABLE_REFER">
                         <tab-table [onlyRead]="true"
-                                [tabErupt]="{eruptBuildModel:eruptBuildModel.tabErupts[view.eruptFieldModel.fieldName]
+                                   [tabErupt]="{eruptBuildModel:eruptBuildModel.tabErupts[view.eruptFieldModel.fieldName]
                                 ,eruptFieldModel:eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)}"
-                                [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
+                                   [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
                         ></tab-table>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.TAB_TREE">
                         <erupt-tab-tree [onlyRead]="true"
-                                [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"
-                                [eruptBuildModel]="eruptBuildModel"
+                                        [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"
+                                        [eruptBuildModel]="eruptBuildModel"
                         ></erupt-tab-tree>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.CHECKBOX">
