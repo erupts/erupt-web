@@ -114,12 +114,18 @@ export class UiBuildService {
                             false: {text: edit.boolType.falseText, color: 'red'},
                         };
                     } else {
-                        obj.tag = {
-                            [edit.boolType.trueText]: {text: edit.boolType.trueText, color: 'green'},
-                            [edit.boolType.falseText]: {text: edit.boolType.falseText, color: 'red'},
-                        };
+                        if (edit.title) {
+                            obj.tag = {
+                                [edit.boolType.trueText]: {text: edit.boolType.trueText, color: 'green'},
+                                [edit.boolType.falseText]: {text: edit.boolType.falseText, color: 'red'},
+                            };
+                        } else {
+                            obj.tag = {
+                                true: {text: '是', color: 'green'},
+                                false: {text: '否', color: 'red'},
+                            };
+                        }
                     }
-
                     break;
                 case ViewType.LINK:
                     obj.type = "link";
