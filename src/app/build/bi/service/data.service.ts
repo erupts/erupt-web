@@ -25,8 +25,8 @@ export class BiDataService {
     }
 
     //BI数据
-    getBiData(id: number, code: string, index: number, size: number, query: any): Observable<BiData> {
-        return this._http.post(RestPath.bi + "/" + code + "/data/" + id, query, {
+    getBiData(code: string, index: number, size: number, query: any): Observable<BiData> {
+        return this._http.post(RestPath.bi + "/data/" + code, query, {
             index: index,
             size: size
         }, {
@@ -47,7 +47,7 @@ export class BiDataService {
 
     //维度参照
     getBiReference(code: string, id: number, query: any): Observable<Reference[]> {
-        return this._http.post(RestPath.bi + "/" + code + "/reference/" + id, query, null, {
+        return this._http.post(RestPath.bi + "/" + code + "/reference/" + id, query || {}, null, {
             headers: {
                 erupt: code
             }

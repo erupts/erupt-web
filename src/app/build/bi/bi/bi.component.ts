@@ -9,6 +9,7 @@ import {STComponent} from "@delon/abc";
 import {ChartComponent} from "../chart/chart.component";
 import {HandlerService} from "../service/handler.service";
 import {SettingsService} from "@delon/theme";
+import {isNotNull, isNull} from "@shared/util/erupt.util";
 
 @Component({
     selector: 'app-bi',
@@ -66,12 +67,15 @@ export class BiComponent implements OnInit, OnDestroy {
             this.data = null;
             this.dataService.getBiBuild(this.name).subscribe(res => {
                 this.bi = res;
-                //维度
                 for (let dimension of res.dimensions) {
                     if (dimension.type === DimType.NUMBER_RANGE) {
                         dimension.$value = [];
                     }
-                    if (dimension.notNull) {
+                    if (isNotNull(dimension.defaultValue)) {
+                        dimension.$value = dimension.defaultValue;
+                    }
+                    // console.log(dimension.$value, isNotNull(dimension.$value));
+                    if (dimension.notNull && isNull(dimension.$value)) {
                         this.haveNotNull = true;
                         return;
                     }
@@ -97,7 +101,7 @@ export class BiComponent implements OnInit, OnDestroy {
         if (this.bi.table) {
             this.querying = true;
             this.index = pageIndex;
-            this.dataService.getBiData(this.bi.id, this.bi.code, pageIndex, pageSize, param).subscribe(res => {
+            this.dataService.getBiData(this.bi.code, pageIndex, pageSize, param).subscribe(res => {
                 this.haveNotNull = false;
                 this.querying = false;
                 this.total = res.total;

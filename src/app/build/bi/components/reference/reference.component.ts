@@ -1,9 +1,9 @@
 import {Component, Input, OnInit, ViewChild} from "@angular/core";
 import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd";
 import {BiDataService} from "../../service/data.service";
-import {Dimension, DimType, Reference} from "../../model/bi.model";
-import {Tree} from "../../../erupt/model/erupt.model";
+import {Bi, Dimension, DimType, Reference} from "../../model/bi.model";
 import {NzTreeNode} from "ng-zorro-antd/core/tree/nz-tree-base-node";
+import {HandlerService} from "../../service/handler.service";
 
 @Component({
     selector: "erupt-reference-select",
@@ -16,6 +16,8 @@ export class ReferenceComponent implements OnInit {
 
     @Input() code: string;
 
+    @Input() bi: Bi;
+
     searchValue: string;
 
     multiple: boolean;
@@ -26,7 +28,7 @@ export class ReferenceComponent implements OnInit {
 
     @ViewChild("tree", {static: false}) tree: NzTreeBaseService;
 
-    constructor(private dataService: BiDataService) {
+    constructor(private dataService: BiDataService, private handlerService: HandlerService) {
 
     }
 
@@ -34,7 +36,8 @@ export class ReferenceComponent implements OnInit {
         this.multiple = (this.dimension.type === DimType.REFERENCE_MULTI || this.dimension.type === DimType.REFERENCE_TREE_MULTI);
         let isTree = (this.dimension.type == DimType.REFERENCE_TREE_MULTI || this.dimension.type == DimType.REFERENCE_TREE_RADIO);
         this.loading = true;
-        this.dataService.getBiReference(this.code, this.dimension.id, null).subscribe((res) => {
+
+        this.dataService.getBiReference(this.code, this.dimension.id, this.handlerService.buildDimParam(this.bi, false, true)).subscribe((res) => {
             if (res) {
                 if (isTree) {
                     this.data = this.recursiveTree(res, null);
