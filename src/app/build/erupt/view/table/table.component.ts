@@ -507,6 +507,7 @@ export class TableComponent implements OnInit {
                         let res = await this.dataService.deleteEruptDatas(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
                         this.deleting = false;
                         if (res.status == Status.SUCCESS) {
+                            this.selectedRows = [];
                             this.st.reload();
                             this.msg.success("删除成功");
                         }

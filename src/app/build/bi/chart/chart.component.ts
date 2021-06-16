@@ -75,12 +75,12 @@ export class ChartComponent implements OnInit, OnDestroy {
     }
 
     update(loading: boolean) {
-        let param = this.handlerService.buildDimParam(this.bi);
         if (this.plot) {
             if (loading) {
                 this.chart.loading = true;
             }
-            this.biDataService.getBiChart(this.bi.code, this.chart.id, param).subscribe(data => {
+            this.biDataService.getBiChart(this.bi.code, this.chart.id,
+                this.handlerService.buildDimParam(this.bi)).subscribe(data => {
                 if (this.chart.loading) {
                     this.chart.loading = false;
                 }

@@ -10,6 +10,7 @@ import {STColumn} from "@delon/abc";
 import {DatePipe} from "@angular/common";
 import * as moment from 'moment';
 import {QueryCondition} from "../model/erupt.vo";
+import {isNotNull} from "@shared/util/erupt.util";
 
 @Injectable()
 export class DataHandlerService {
@@ -521,7 +522,7 @@ export class DataHandlerService {
                         }
                         break;
                     case EditType.CHOICE:
-                        edit.$value = object[field.fieldName] && object[field.fieldName] + '';
+                        edit.$value = isNotNull(object[field.fieldName]) && object[field.fieldName] + '';
                         break;
                     case EditType.TAGS:
                         if (object[field.fieldName]) {

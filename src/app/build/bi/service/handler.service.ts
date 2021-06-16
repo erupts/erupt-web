@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {Bi, DimType} from "../model/bi.model";
+import {Bi, Dimension, DimType} from "../model/bi.model";
 import {DatePipe} from "@angular/common";
 import {NzMessageService} from "ng-zorro-antd";
 
@@ -14,7 +14,8 @@ export class HandlerService {
 
     private datePipe: DatePipe = new DatePipe("zh-cn");
 
-    buildDimParam(bi: Bi, tip: boolean = true): object {
+
+    buildDimParam(bi: Bi, tip: boolean = true, skipNotNull = false): object {
         let param = {};
         param["_random_"] = new Date().getTime();
         for (let dimension of bi.dimensions) {
@@ -53,14 +54,18 @@ export class HandlerService {
                 if (tip) {
                     this.msg.error(dimension.title + "必填");
                 }
-                return;
+                if (!skipNotNull) {
+                    return;
+                }
             }
             if (dimension.notNull && Array.isArray(dimension.$value)) {
                 if (!dimension.$value[0] && !dimension.$value[1]) {
                     if (tip) {
                         this.msg.error(dimension.title + "必填");
                     }
-                    return;
+                    if (!skipNotNull) {
+                        return;
+                    }
                 }
             }
             //赋值
