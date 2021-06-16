@@ -35,7 +35,8 @@ export class DimensionComponent implements OnInit {
             nzContent: ReferenceComponent,
             nzComponentParams: {
                 dimension: dim,
-                code: this.bi.code
+                code: this.bi.code,
+                bi: this.bi
             },
             nzOnOk: (res) => {
 

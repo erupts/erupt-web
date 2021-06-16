@@ -30,3 +30,12 @@ export function generateMenuPath(type: string, value: string) {
             }
     }
 }
+
+
+export function isNull(val: any): boolean {
+    return !val && val != 0;
+}
+
+export function isNotNull(val: any) {
+    return !isNull(val);
+}
