@@ -92,6 +92,7 @@ export class UiBuildService {
                 }
             }
 
+
             obj.width = titleWidth;
             //展示类型
             switch (view.viewType) {
