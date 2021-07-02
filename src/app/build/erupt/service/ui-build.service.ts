@@ -96,6 +96,7 @@ export class UiBuildService {
             //展示类型
             switch (view.viewType) {
                 case ViewType.TEXT:
+                    obj.className = "text-col";
                     obj.width = null;
                     break;
                 case ViewType.NUMBER:
@@ -479,7 +480,7 @@ export class UiBuildService {
                         this.modal.create({
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "50px"},
-                            nzMaskClosable: true,
+                            nzMaskClosable: false,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,

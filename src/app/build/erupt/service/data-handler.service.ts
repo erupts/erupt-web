@@ -522,7 +522,7 @@ export class DataHandlerService {
                         }
                         break;
                     case EditType.CHOICE:
-                        edit.$value = isNotNull(object[field.fieldName]) && object[field.fieldName] + '';
+                        edit.$value = isNotNull(object[field.fieldName]) ? object[field.fieldName] + '' : null;
                         break;
                     case EditType.TAGS:
                         if (object[field.fieldName]) {
@@ -575,11 +575,11 @@ export class DataHandlerService {
             if (!ef.eruptFieldJson.edit) {
                 return;
             }
-            ef.eruptFieldJson.edit.$value = null;
             ef.eruptFieldJson.edit.$viewValue = null;
             ef.eruptFieldJson.edit.$tempValue = null;
             ef.eruptFieldJson.edit.$l_val = null;
             ef.eruptFieldJson.edit.$r_val = null;
+            ef.eruptFieldJson.edit.$value = null;
             switch (ef.eruptFieldJson.edit.type) {
                 case EditType.CHOICE:
                     if (eruptBuildModel.eruptModel.mode === "search") {
