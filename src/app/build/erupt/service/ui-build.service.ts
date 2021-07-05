@@ -17,6 +17,7 @@ export class UiBuildService {
         @Inject(NzMessageService) private msg: NzMessageService) {
     }
 
+
     /**
      * 将view数据转换为alain table组件配置信息
      * @param eruptBuildModel ebm
