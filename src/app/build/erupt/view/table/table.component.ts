@@ -432,6 +432,7 @@ export class TableComponent implements OnInit {
                 this.modal.confirm({
                     nzTitle: ro.title,
                     nzContent: "请确认是否执行此操作",
+                    nzCancelText: "关闭",
                     nzOnOk: async () => {
                         this.selectedRows = [];
                         await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, ids, null)
