@@ -52,7 +52,9 @@ export class DataService {
     }
 
     static downloadAttachment(path: string): string {
-        if (WindowModel.fileDomain) {
+        if (path && (path.startsWith("http://") || path.startsWith("https://"))) {
+            return path;
+        } else if (WindowModel.fileDomain) {
             return WindowModel.fileDomain + path;
         } else {
             return RestPath.file + "/download-attachment" + path;
@@ -60,7 +62,9 @@ export class DataService {
     }
 
     static previewAttachment(path: string): string {
-        if (WindowModel.fileDomain) {
+        if (path && (path.startsWith("http://") || path.startsWith("https://"))) {
+            return path;
+        } else if (WindowModel.fileDomain) {
             return WindowModel.fileDomain + path;
         } else {
             return RestPath.eruptAttachment + path;
