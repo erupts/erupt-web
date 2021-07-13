@@ -427,6 +427,7 @@ export class DataHandlerService {
         return eruptData;
     }
 
+
     //将后台数据转化成前端可视格式
     objectToEruptValue(object: any, eruptBuild: EruptBuildModel) {
         this.emptyEruptValue(eruptBuild);
