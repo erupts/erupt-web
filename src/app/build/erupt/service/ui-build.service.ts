@@ -18,7 +18,6 @@ export class UiBuildService {
     }
 
 
-
     /**
      * 将view数据转换为alain table组件配置信息
      * @param eruptBuildModel ebm
