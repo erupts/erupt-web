@@ -393,7 +393,7 @@ export class TableComponent implements OnInit {
                     url: url
                 }
             });
-        } else {
+        } else if (ro.type === OperationType.ERUPT) {
             let operationErupt = null;
             if (this.eruptBuildModel.operationErupts) {
                 operationErupt = this.eruptBuildModel.operationErupts[code];
@@ -403,17 +403,19 @@ export class TableComponent implements OnInit {
                     nzKeyboard: false,
                     nzTitle: ro.title,
                     nzMaskClosable: false,
-                    nzCancelText: "取消",
+                    nzCancelText: "关闭",
                     nzWrapClassName: "modal-lg",
                     nzOnOk: async () => {
                         modal.getInstance().nzCancelDisabled = true;
                         let eruptValue = this.dataHandler.eruptValueToObject({eruptModel: operationErupt});
                         let res = await this.dataService.execOperatorFun(eruptModel.eruptName, code, ids, eruptValue).toPromise().then(res => res);
                         modal.getInstance().nzCancelDisabled = false;
-
                         this.selectedRows = [];
                         if (res.status === Status.SUCCESS) {
                             this.st.reload();
+                            if (res.data) {
+                                eval(res.data);
+                            }
                             return true;
                         } else {
                             return false;
@@ -432,16 +434,21 @@ export class TableComponent implements OnInit {
                 this.modal.confirm({
                     nzTitle: ro.title,
                     nzContent: "请确认是否执行此操作",
+                    nzCancelText: "关闭",
                     nzOnOk: async () => {
                         this.selectedRows = [];
-                        await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, ids, null)
+                        let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, ids, null)
                             .toPromise().then();
                         this.st.reload();
+                        if (res.data) {
+                            eval(res.data);
+                        }
                     }
                 });
             }
         }
     }
+
 
     //新增
     addRow() {
