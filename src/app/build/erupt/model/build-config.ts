@@ -3,6 +3,7 @@ export class BuildConfig {
 
     public static ps = "pageSize";
 
+
     public stConfig = {
         url: null,
         stPage: {
