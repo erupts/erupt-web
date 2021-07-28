@@ -454,7 +454,6 @@ export class TableComponent implements OnInit {
     }
 
 
-
     //新增
     addRow() {
         const modal = this.modal.create({
