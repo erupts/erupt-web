@@ -29,6 +29,7 @@ import {UiBuildService} from "../../service/ui-build.service";
 })
 export class TableComponent implements OnInit {
 
+
     constructor(
         public settingSrv: SettingsService,
         private dataService: DataService,
