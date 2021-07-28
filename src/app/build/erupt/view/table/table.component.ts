@@ -10,7 +10,6 @@ import {ActivatedRoute} from "@angular/router";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
-import {deepCopy} from "@delon/util";
 import {OperationMode, OperationType, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
@@ -20,7 +19,6 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
-import {WindowModel} from "@shared/model/window.model";
 import {UiBuildService} from "../../service/ui-build.service";
 
 @Component({
