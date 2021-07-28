@@ -21,6 +21,7 @@ import {DomSanitizer} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
 
+
 @Component({
     selector: "erupt-table",
     templateUrl: "./table.component.html",
