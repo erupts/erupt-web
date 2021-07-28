@@ -401,6 +401,7 @@ export class TableComponent implements OnInit {
                 operationErupt = this.eruptBuildModel.operationErupts[code];
             }
             if (operationErupt) {
+                this.dataHandler.emptyEruptValue(operationErupt);
                 let modal = this.modal.create({
                     nzKeyboard: false,
                     nzTitle: ro.title,
@@ -415,9 +416,7 @@ export class TableComponent implements OnInit {
                         this.selectedRows = [];
                         if (res.status === Status.SUCCESS) {
                             this.st.reload();
-                            if (res.data) {
-                                eval(res.data);
-                            }
+                            res.data && eval(res.data);
                             return true;
                         } else {
                             return false;
