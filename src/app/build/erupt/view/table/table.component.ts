@@ -76,6 +76,9 @@ export class TableComponent implements OnInit {
 
     _drill: { erupt: string, code: string, eruptParent: string, val: any };
 
+
+    adding: boolean = false; //新增行为防抖
+
     @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
         this._drill = drill;
         this.init(this.dataService.getEruptBuild(drill.erupt), {
@@ -136,6 +139,7 @@ export class TableComponent implements OnInit {
     }, callback?: Function) {
         this.selectedRows = [];
         this.showTable = true;
+        this.adding = false;
         this.eruptBuildModel = null;
         if (this.searchErupt) {
             this.searchErupt.eruptFieldModels = [];
@@ -449,7 +453,6 @@ export class TableComponent implements OnInit {
         }
     }
 
-
     //新增
     addRow() {
         const modal = this.modal.create({
@@ -464,29 +467,35 @@ export class TableComponent implements OnInit {
             },
             nzOkText: "增加",
             nzOnOk: async () => {
-                if (modal.getContentComponent().beforeSaveValidate()) {
-                    let res: EruptApiModel;
-                    if (this._drill && this._drill.val) {
-                        res = await this.dataService.addEruptDrillData(
-                            this._drill.eruptParent,
-                            this._drill.code,
-                            this._drill.val,
-                            this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
-                    } else {
-                        let header = {};
-                        if (this.linkTree) {
-                            let lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
-                            if (lt.dependNode && lt.value) {
-                                header["link"] = this.eruptBuildModel.eruptModel.eruptJson.linkTree.value;
+                if (!this.adding) {
+                    this.adding = true;
+                    setTimeout(() => {
+                        this.adding = false;
+                    }, 500);
+                    if (modal.getContentComponent().beforeSaveValidate()) {
+                        let res: EruptApiModel;
+                        if (this._drill && this._drill.val) {
+                            res = await this.dataService.addEruptDrillData(
+                                this._drill.eruptParent,
+                                this._drill.code,
+                                this._drill.val,
+                                this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
+                        } else {
+                            let header = {};
+                            if (this.linkTree) {
+                                let lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
+                                if (lt.dependNode && lt.value) {
+                                    header["link"] = this.eruptBuildModel.eruptModel.eruptJson.linkTree.value;
+                                }
                             }
+                            res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                                this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
                         }
-                        res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                            this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
-                    }
-                    if (res.status === Status.SUCCESS) {
-                        this.msg.success("新增成功");
-                        this.st.reload();
-                        return true;
+                        if (res.status === Status.SUCCESS) {
+                            this.msg.success("新增成功");
+                            this.st.reload();
+                            return true;
+                        }
                     }
                 }
                 return false;
