@@ -403,7 +403,9 @@ export class TableComponent implements OnInit {
                 operationErupt = this.eruptBuildModel.operationErupts[code];
             }
             if (operationErupt) {
-                this.dataHandler.emptyEruptValue(operationErupt);
+                this.dataHandler.emptyEruptValue({
+                    eruptModel: operationErupt
+                });
                 let modal = this.modal.create({
                     nzKeyboard: false,
                     nzTitle: ro.title,
