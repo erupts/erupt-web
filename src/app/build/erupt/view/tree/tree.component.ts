@@ -78,7 +78,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
             this.treeLoading = false;
             if (tree) {
-                this.nodes = this.dataHandler.dataTreeToZorroTree(tree);
+                this.nodes = this.dataHandler.dataTreeToZorroTree(tree, this.eruptBuildModel.eruptModel.eruptJson.tree.expandLevel);
             }
         });
     }

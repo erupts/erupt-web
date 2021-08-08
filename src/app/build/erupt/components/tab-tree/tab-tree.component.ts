@@ -31,7 +31,8 @@ export class TabTreeComponent implements OnInit {
         this.loading = true;
         this.dataService.findTabTree(this.eruptBuildModel.eruptModel.eruptName, this.eruptFieldModel.fieldName).subscribe(
             tree => {
-                this.treeData = this.dataHandlerService.dataTreeToZorroTree(tree) || [];
+                this.treeData = this.dataHandlerService.dataTreeToZorroTree(tree,
+                    this.eruptBuildModel.eruptModel.eruptJson.tree.expandLevel) || [];
                 this.loading = false;
             }
         );

@@ -140,18 +140,18 @@ export class DataHandlerService {
         return true;
     }
 
-    dataTreeToZorroTree(nodes: Tree[]) {
+    dataTreeToZorroTree(nodes: Tree[], expandLevel: number) {
         const tempNodes = [];
         nodes.forEach(node => {
             let option: any = {
                 key: node.id,
                 title: node.label,
                 data: node.data,
-                expanded: true
+                expanded: node.level <= expandLevel
             };
             if (node.children && node.children.length > 0) {
                 tempNodes.push(option);
-                option.children = this.dataTreeToZorroTree(node.children);
+                option.children = this.dataTreeToZorroTree(node.children, expandLevel);
             } else {
                 option.isLeaf = true;
                 tempNodes.push(option);

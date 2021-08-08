@@ -35,7 +35,7 @@ export class LayoutTreeComponent implements OnInit {
     ngOnInit() {
         this.treeLoading = true;
         this.data.queryDependTreeData(this.eruptModel.eruptName).subscribe(data => {
-            this.list = this.dataHandler.dataTreeToZorroTree(data);
+            this.list = this.dataHandler.dataTreeToZorroTree(data, this.eruptModel.eruptJson.tree.expandLevel);
             if (!this.eruptModel.eruptJson.linkTree.dependNode) {
                 this.list.unshift({
                     key: null,

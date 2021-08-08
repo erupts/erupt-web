@@ -31,7 +31,7 @@ export class TreeSelectComponent implements OnInit {
     ngOnInit() {
         this.data.queryReferenceTreeData(this.eruptModel.eruptName, this.eruptField.fieldName, this.dependVal, this.parentEruptName)
             .subscribe(tree => {
-                this.list = this.dataHandler.dataTreeToZorroTree(tree);
+                this.list = this.dataHandler.dataTreeToZorroTree(tree, this.eruptField.eruptFieldJson.edit.referenceTreeType.expandLevel);
             });
     }
 

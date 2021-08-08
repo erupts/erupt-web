@@ -18,12 +18,12 @@ export interface Erupt {
     tree: Tree;
     linkTree: LinkTree;
     rowOperation: { [key: string]: RowOperation };
-    drills: { [key: string]: Drill }
+    drills: { [key: string]: Drill };
 }
 
 interface LinkTree {
-    field: string
-    dependNode: boolean
+    field: string;
+    dependNode: boolean;
     value: any;
 }
 
@@ -39,6 +39,8 @@ export interface Tree {
     id: string;
     label: string;
     pid: string;
+    expandLevel: number;
+    level: number;
     linkTable: Link[];
     children?: Tree[];
     data?: any;
