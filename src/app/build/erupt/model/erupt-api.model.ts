@@ -10,7 +10,8 @@ export interface EruptApiModel {
 export enum PromptWay {
     DIALOG = "DIALOG",
     MESSAGE = "MESSAGE",
-    NOTIFY = "NOTIFY"
+    NOTIFY = "NOTIFY",
+    NONE = "NONE"
 }
 
 export enum Status {
