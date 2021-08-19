@@ -1,6 +1,6 @@
 {
   "/": {
-    "target":"http://localhost:9999",
+    "target":"http://localhost:8989",
     "secure":false,
     "logLevel":"info",
     "changeOrigin":true
