@@ -64,6 +64,8 @@ export class DefaultInterceptor implements HttpInterceptor {
                         let eruptApiBody = <EruptApiModel>body;
                         if (eruptApiBody.message) {
                             switch (eruptApiBody.promptWay) {
+                                case PromptWay.NONE:
+                                    break;
                                 case PromptWay.DIALOG:
                                     switch (eruptApiBody.status) {
                                         case Status.INFO:

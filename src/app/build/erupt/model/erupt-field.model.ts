@@ -55,7 +55,7 @@ export interface Edit {
     dateType: DateType;
     sliderType: SliderType;
     codeEditType: CodeEditType;
-    mapType: MapType
+    mapType: MapType;
     $tabTreeViewData?: any;
     $value?: any;
     $viewValue?: any;
@@ -110,6 +110,7 @@ export interface ReferenceTreeType {
     label: string;
     pid: string;
     dependField: string;
+    expandLevel: number;
 }
 
 export interface ReferenceTableType {
@@ -163,7 +164,7 @@ interface AttachmentType {
     maxLimit: number;
     type: AttachmentEnum;
     fileSeparator: string;
-    baseUrl: { value: string }
+    baseUrl: { value: string };
 }
 
 export interface MapType {

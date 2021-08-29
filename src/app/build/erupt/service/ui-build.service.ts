@@ -31,8 +31,8 @@ export class UiBuildService {
         const views = eruptBuildModel.eruptModel.tableColumns;
         for (let view of views) {
             let titleWidth = view.title.length * 14 + 22;
-            if (titleWidth > 180) {
-                titleWidth = 180;
+            if (titleWidth > 280) {
+                titleWidth = 280;
             }
             if (view.sortable) {
                 titleWidth += 20;
