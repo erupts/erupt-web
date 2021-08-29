@@ -20,7 +20,12 @@
       }
     }
 
-    @media (max-width: 768px) {
+
+    .left-sticky-checkbox {
+      min-width: 50px;
+    }
+
+    @media (max-width: 767px) {
       .erupt-btn-item {
         display: block;
 
@@ -28,11 +33,22 @@
           text-align: left;
         }
       }
-    }
 
+      st {
+        colgroup {
+          display: none;
+        }
 
-    .left-sticky-checkbox {
-      min-width: 50px;
+        tr {
+          td {
+            text-align: right !important;
+          }
+
+          .text-col {
+            max-width: initial !important;
+          }
+        }
+      }
     }
 
     st {
@@ -48,6 +64,11 @@
 
           th:last-child {
             min-width: auto;
+          }
+
+          .text-col {
+            max-width: 320px;
+            word-break: break-word;
           }
         }
       }

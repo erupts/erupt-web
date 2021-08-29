@@ -129,7 +129,7 @@ export class AmapComponent implements OnInit {
             function getDetails(id) {
                 placeSearch.getDetails(id, (status, result) => {
                     if (status === 'complete' && result.info === 'OK') {
-                        placeSearch_CallBack(result);
+                        placeSearchCallBack(result);
                         that.valueChange.emit(JSON.stringify(that.value));
                     } else {
                         that.msg.warning("找不到该位置信息");
@@ -138,7 +138,7 @@ export class AmapComponent implements OnInit {
             }
 
             //回调函数
-            function placeSearch_CallBack(data) {
+            function placeSearchCallBack(data) {
                 let poiArr = data.poiList.pois;
                 //添加marker
                 let marker = new AMap.Marker({

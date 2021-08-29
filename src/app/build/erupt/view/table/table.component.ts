@@ -10,7 +10,6 @@ import {ActivatedRoute} from "@angular/router";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
-import {deepCopy} from "@delon/util";
 import {OperationMode, OperationType, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
@@ -20,8 +19,8 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
-import {WindowModel} from "@shared/model/window.model";
 import {UiBuildService} from "../../service/ui-build.service";
+
 
 @Component({
     selector: "erupt-table",
@@ -29,6 +28,7 @@ import {UiBuildService} from "../../service/ui-build.service";
     styleUrls: ["./table.component.less"]
 })
 export class TableComponent implements OnInit {
+
 
     constructor(
         public settingSrv: SettingsService,
@@ -75,6 +75,9 @@ export class TableComponent implements OnInit {
     showTable: boolean = true;
 
     _drill: { erupt: string, code: string, eruptParent: string, val: any };
+
+
+    adding: boolean = false; //新增行为防抖
 
     @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
         this._drill = drill;
@@ -136,6 +139,7 @@ export class TableComponent implements OnInit {
     }, callback?: Function) {
         this.selectedRows = [];
         this.showTable = true;
+        this.adding = false;
         this.eruptBuildModel = null;
         if (this.searchErupt) {
             this.searchErupt.eruptFieldModels = [];
@@ -399,6 +403,9 @@ export class TableComponent implements OnInit {
                 operationErupt = this.eruptBuildModel.operationErupts[code];
             }
             if (operationErupt) {
+                this.dataHandler.emptyEruptValue({
+                    eruptModel: operationErupt
+                });
                 let modal = this.modal.create({
                     nzKeyboard: false,
                     nzTitle: ro.title,
@@ -413,9 +420,7 @@ export class TableComponent implements OnInit {
                         this.selectedRows = [];
                         if (res.status === Status.SUCCESS) {
                             this.st.reload();
-                            if (res.data) {
-                                eval(res.data);
-                            }
+                            res.data && eval(res.data);
                             return true;
                         } else {
                             return false;
@@ -449,7 +454,6 @@ export class TableComponent implements OnInit {
         }
     }
 
-
     //新增
     addRow() {
         const modal = this.modal.create({
@@ -464,29 +468,35 @@ export class TableComponent implements OnInit {
             },
             nzOkText: "增加",
             nzOnOk: async () => {
-                if (modal.getContentComponent().beforeSaveValidate()) {
-                    let res: EruptApiModel;
-                    if (this._drill && this._drill.val) {
-                        res = await this.dataService.addEruptDrillData(
-                            this._drill.eruptParent,
-                            this._drill.code,
-                            this._drill.val,
-                            this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
-                    } else {
-                        let header = {};
-                        if (this.linkTree) {
-                            let lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
-                            if (lt.dependNode && lt.value) {
-                                header["link"] = this.eruptBuildModel.eruptModel.eruptJson.linkTree.value;
+                if (!this.adding) {
+                    this.adding = true;
+                    setTimeout(() => {
+                        this.adding = false;
+                    }, 500);
+                    if (modal.getContentComponent().beforeSaveValidate()) {
+                        let res: EruptApiModel;
+                        if (this._drill && this._drill.val) {
+                            res = await this.dataService.addEruptDrillData(
+                                this._drill.eruptParent,
+                                this._drill.code,
+                                this._drill.val,
+                                this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
+                        } else {
+                            let header = {};
+                            if (this.linkTree) {
+                                let lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
+                                if (lt.dependNode && lt.value) {
+                                    header["link"] = this.eruptBuildModel.eruptModel.eruptJson.linkTree.value;
+                                }
                             }
+                            res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                                this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
                         }
-                        res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                            this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
-                    }
-                    if (res.status === Status.SUCCESS) {
-                        this.msg.success("新增成功");
-                        this.st.reload();
-                        return true;
+                        if (res.status === Status.SUCCESS) {
+                            this.msg.success("新增成功");
+                            this.st.reload();
+                            return true;
+                        }
                     }
                 }
                 return false;

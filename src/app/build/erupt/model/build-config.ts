@@ -3,11 +3,12 @@ export class BuildConfig {
 
     public static ps = "pageSize";
 
+
     public stConfig = {
         url: null,
         stPage: {
             placement: "center",
-            pageSizes: [10, 20, 30, 50, 100],
+            pageSizes: [10, 20, 30, 50, 100, 300, 500],
             showSize: true,
             showQuickJumper: true,
             total: true,
