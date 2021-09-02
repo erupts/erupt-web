@@ -50,7 +50,8 @@ export class UiBuildService {
             };
             obj.show = view.show;
             if (lineData) {
-                obj.index = view.column.replace(".", "_");
+                //修复表格显示子类属性时无法正确检索到属性值的缺陷
+                obj.index = view.column.replace(/\./g, "_");
             } else {
                 obj.index = view.column;
             }
