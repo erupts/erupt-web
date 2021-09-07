@@ -89,7 +89,15 @@ export class AmapComponent implements OnInit {
                     });
                     autoComplete.search(that.tipInput.nativeElement.value, function (status, result) {
                         if (status == "complete") {
-                            that.autocompleteList = result.tips;
+                            let tips = [];
+                            if (result.tips) {
+                                result.tips.forEach(it => {
+                                    if (it.id) {
+                                        tips.push(it);
+                                    }
+                                });
+                            }
+                            that.autocompleteList = tips;
                         }
                     });
                 });
@@ -98,7 +106,7 @@ export class AmapComponent implements OnInit {
             this.tipInput.nativeElement.oninput = complete;
 
             let placeSearch = new AMap.PlaceSearch({
-                pageSize: 10, // 单页显示结果条数
+                pageSize: 12, // 单页显示结果条数
                 children: 0, //不展示子节点数据
                 pageIndex: 1, //页码
                 extensions: 'base' //返回基本地址信息
@@ -110,6 +118,9 @@ export class AmapComponent implements OnInit {
                     this.viewValue = this.value.name;
                 }
                 if (this.value) {
+                    if (typeof (this.value) == 'string') {
+                        this.value = JSON.parse(this.value);
+                    }
                     if (!this.value["id"]) {
                         this.msg.warning("请选择有效的地址");
                         return;
