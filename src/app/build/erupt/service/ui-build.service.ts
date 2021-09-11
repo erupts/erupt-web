@@ -525,7 +525,7 @@ export class UiBuildService {
                 obj.className += " " + view.className;
             }
             if (view.width) {
-                obj.width = view.width;
+                obj.width = isNaN(Number(view.width)) ? view.width : view.width + "px";
             }
             cols.push(obj);
         }
