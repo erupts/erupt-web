@@ -52,6 +52,10 @@ export class StartupService {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     EruptAppData.put(<EruptAppModel>JSON.parse(xhr.responseText));
                     resolve();
+                } else {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 3000);
                 }
             };
         });
