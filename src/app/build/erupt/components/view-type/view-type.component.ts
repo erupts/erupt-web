@@ -44,7 +44,10 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
                     this.paths.push(DataService.previewAttachment(path));
                 }
             } else {
-                this.paths.push(DataService.previewAttachment(this.value));
+                let _paths = (<string>this.value).split("|");
+                for (let path of _paths) {
+                    this.paths.push(DataService.previewAttachment(path));
+                }
             }
             switch (this.view.viewType) {
                 case ViewType.ATTACHMENT_DIALOG:
