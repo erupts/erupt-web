@@ -293,8 +293,9 @@ export class UiBuildService {
                                 //height="50px"
                                 return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
                             } else {
+                                let img = (<string>item[view.column]).split("|")[0];
                                 //height="50px"
-                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(item[view.column])}" />`;
+                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
                             }
                         } else {
                             return "";
