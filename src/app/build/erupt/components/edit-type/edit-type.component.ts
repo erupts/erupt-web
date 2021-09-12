@@ -6,11 +6,11 @@ import {TreeSelectComponent} from "../tree-select/tree-select.component";
 import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
-import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {ReferenceTableComponent} from "../reference-table/reference-table.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {IframeHeight} from "@shared/util/window.util";
+import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 @Component({
     selector: "erupt-edit-type",
@@ -62,8 +62,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     constructor(public dataService: DataService,
                 private differs: KeyValueDiffers,
                 @Inject(NzModalService) private modal: NzModalService,
-                @Inject(NzMessageService) private msg: NzMessageService,
-                @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService) {
+                @Inject(DA_SERVICE_TOKEN) public tokenService: ITokenService,
+                @Inject(NzMessageService) private msg: NzMessageService) {
     }
 
     ngOnInit() {

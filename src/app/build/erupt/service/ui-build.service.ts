@@ -293,8 +293,9 @@ export class UiBuildService {
                                 //height="50px"
                                 return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
                             } else {
+                                let img = (<string>item[view.column]).split("|")[0];
                                 //height="50px"
-                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(item[view.column])}" />`;
+                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
                             }
                         } else {
                             return "";
@@ -524,7 +525,7 @@ export class UiBuildService {
                 obj.className += " " + view.className;
             }
             if (view.width) {
-                obj.width = view.width;
+                obj.width = isNaN(Number(view.width)) ? view.width : view.width + "px";
             }
             cols.push(obj);
         }
