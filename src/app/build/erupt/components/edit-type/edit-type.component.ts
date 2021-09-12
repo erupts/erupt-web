@@ -10,6 +10,7 @@ import {ReferenceTableComponent} from "../reference-table/reference-table.compon
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {IframeHeight} from "@shared/util/window.util";
+import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 @Component({
     selector: "erupt-edit-type",
@@ -61,6 +62,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     constructor(public dataService: DataService,
                 private differs: KeyValueDiffers,
                 @Inject(NzModalService) private modal: NzModalService,
+                @Inject(DA_SERVICE_TOKEN) public tokenService: ITokenService,
                 @Inject(NzMessageService) private msg: NzMessageService) {
     }
 
