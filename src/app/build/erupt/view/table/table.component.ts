@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {EruptModel} from "../../model/erupt.model";
+import {EruptModel, RowOperation} from "../../model/erupt.model";
 
 import {DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -108,8 +108,8 @@ export class TableComponent implements OnInit {
             }
         }, (eb: EruptBuildModel) => {
             let erupt = eb.eruptModel.eruptJson;
-            erupt.rowOperation = {};
-            erupt.drills = {};
+            erupt.rowOperation = [];
+            erupt.drills = [];
             erupt.power.add = false;
             erupt.power.delete = false;
             erupt.power.importable = false;
@@ -291,8 +291,8 @@ export class TableComponent implements OnInit {
             });
         }
         const that = this;
-        for (let key in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
-            let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[key];
+        for (let i in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
+            let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[i];
             if (ro.mode !== OperationMode.BUTTON) {
                 let text = "";
                 if (ro.icon) {
@@ -303,7 +303,7 @@ export class TableComponent implements OnInit {
                     text: text,
                     tooltip: ro.title + (ro.tip && "(" + ro.tip + ")"),
                     click: (record: any, modal: any) => {
-                        that.createOperator(key, record);
+                        that.createOperator(ro, record);
                     },
                     iif: (item) => {
                         if (ro.ifExpr) {
@@ -318,14 +318,14 @@ export class TableComponent implements OnInit {
 
         //drill
         const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
-        for (let key in eruptJson.drills) {
-            let drill = eruptJson.drills[key];
+        for (let i in eruptJson.drills) {
+            let drill = eruptJson.drills[i];
             tableOperators.push({
                 type: 'link',
                 tooltip: drill.title,
                 text: `<i class="${drill.icon}"></i>`,
                 click: (record) => {
-                    let drill = eruptJson.drills[key];
+                    let drill = eruptJson.drills[i];
                     this.modal.create({
                         nzWrapClassName: "modal-xxl",
                         nzStyle: {top: "30px"},
@@ -336,7 +336,7 @@ export class TableComponent implements OnInit {
                         nzContent: TableComponent,
                         nzComponentParams: {
                             drill: {
-                                code: key,
+                                code: drill.code,
                                 val: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
                                 erupt: drill.link.linkErupt,
                                 eruptParent: this.eruptBuildModel.eruptModel.eruptName
@@ -360,13 +360,12 @@ export class TableComponent implements OnInit {
 
     /**
      *  自定义功能触发
-     * @param code 编码
+     * @param rowOperation 行按钮对象
      * @param data 数据（单个执行时使用）
      */
-    createOperator(code: string, data?: object) {
+    createOperator(rowOperation: RowOperation, data?: object) {
         const eruptModel = this.eruptBuildModel.eruptModel;
-        const ro = eruptModel.eruptJson.rowOperation[code];
-
+        const ro = rowOperation;
         let ids = [];
         if (data) {
             ids = [data[eruptModel.eruptJson.primaryKeyCol]];
@@ -380,7 +379,7 @@ export class TableComponent implements OnInit {
             });
         }
         if (ro.type === OperationType.TPL) {
-            let url = this.dataService.getEruptOperationTpl(this.eruptBuildModel.eruptModel.eruptName, code, ids);
+            let url = this.dataService.getEruptOperationTpl(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids);
             this.modal.create({
                 nzKeyboard: true,
                 nzTitle: ro.title,
@@ -400,7 +399,7 @@ export class TableComponent implements OnInit {
         } else if (ro.type === OperationType.ERUPT) {
             let operationErupt = null;
             if (this.eruptBuildModel.operationErupts) {
-                operationErupt = this.eruptBuildModel.operationErupts[code];
+                operationErupt = this.eruptBuildModel.operationErupts[ro.code];
             }
             if (operationErupt) {
                 this.dataHandler.emptyEruptValue({
@@ -415,7 +414,7 @@ export class TableComponent implements OnInit {
                     nzOnOk: async () => {
                         modal.getInstance().nzCancelDisabled = true;
                         let eruptValue = this.dataHandler.eruptValueToObject({eruptModel: operationErupt});
-                        let res = await this.dataService.execOperatorFun(eruptModel.eruptName, code, ids, eruptValue).toPromise().then(res => res);
+                        let res = await this.dataService.execOperatorFun(eruptModel.eruptName, ro.code, ids, eruptValue).toPromise().then(res => res);
                         modal.getInstance().nzCancelDisabled = false;
                         this.selectedRows = [];
                         if (res.status === Status.SUCCESS) {
@@ -442,7 +441,7 @@ export class TableComponent implements OnInit {
                     nzCancelText: "关闭",
                     nzOnOk: async () => {
                         this.selectedRows = [];
-                        let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, code, ids, null)
+                        let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids, null)
                             .toPromise().then();
                         this.st.reload();
                         if (res.data) {
