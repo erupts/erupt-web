@@ -400,9 +400,9 @@ export class TableComponent implements OnInit {
             let operationErupt = null;
             if (this.eruptBuildModel.operationErupts) {
                 operationErupt = this.eruptBuildModel.operationErupts[ro.code];
-                this.dataHandler.initErupt({eruptModel: operationErupt});
             }
             if (operationErupt) {
+                this.dataHandler.initErupt({eruptModel: operationErupt});
                 this.dataHandler.emptyEruptValue({
                     eruptModel: operationErupt
                 });
