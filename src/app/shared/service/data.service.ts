@@ -76,6 +76,7 @@ export class DataService {
         return this._http.get<EruptBuildModel>(RestPath.build + "/" + eruptName, null, {
             observe: "body",
             headers: {
+                lang: "cn",
                 erupt: eruptName,
                 eruptParent: eruptParentName || ''
             }
