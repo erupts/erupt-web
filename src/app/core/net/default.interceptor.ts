@@ -20,7 +20,6 @@ import {EruptApiModel, PromptWay, Status} from "../../build/erupt/model/erupt-ap
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
-import {DataService} from "@shared/service/data.service";
 
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
@@ -36,7 +35,6 @@ export class DefaultInterceptor implements HttpInterceptor {
                 private msg: NzMessageService,
                 @Inject(DA_SERVICE_TOKEN)
                 private tokenService: TokenService,
-                public dataService: DataService,
                 private router: Router,
                 private cacheService: CacheService) {
     }

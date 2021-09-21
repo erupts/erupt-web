@@ -1,7 +1,7 @@
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Checkbox, Tree} from "../../build/erupt/model/erupt.model";
-import {_HttpClient} from "@delon/theme";
+import {_HttpClient, ALAIN_I18N_TOKEN} from "@delon/theme";
 import {Observable} from "rxjs";
 import {LoginModel} from "../model/user.model";
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
@@ -11,6 +11,7 @@ import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {VL} from "../../build/erupt/model/erupt-field.model";
+import {I18NService} from "@core";
 
 @Injectable()
 export class DataService {
@@ -24,6 +25,7 @@ export class DataService {
     public excelImport: string = RestPath.excel + "/import/";
 
     constructor(private http: HttpClient, private _http: _HttpClient,
+                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
 
@@ -76,7 +78,7 @@ export class DataService {
         return this._http.get<EruptBuildModel>(RestPath.build + "/" + eruptName, null, {
             observe: "body",
             headers: {
-                lang: "cn",
+                lang: this.i18n.currentLang || '',
                 erupt: eruptName,
                 eruptParent: eruptParentName || ''
             }
