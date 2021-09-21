@@ -1,6 +1,6 @@
 <div class="alain-default__header-logo" ripper color="#888">
     <a [routerLink]="settings.user.indexPath" (click)="toIndex()" class="alain-default__header-logo-link">
-        <img [src]="logoPath" style="vertical-align: top" class="header-logo-img"/>
+        <img *ngIf="logoPath" [src]="logoPath" style="vertical-align: top" class="header-logo-img" alt=""/>
         <span *ngIf="logoText" class="header-logo-text">{{logoText}}</span>
     </a>
 </div>
@@ -35,6 +35,10 @@
             <div class="alain-default__nav-item">
                 <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'"></i>
             </div>
+        </li>
+
+        <li>
+            <header-i18n></header-i18n>
         </li>
 
         <li>

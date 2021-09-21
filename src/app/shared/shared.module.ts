@@ -14,6 +14,7 @@ import {EruptPageHeaderComponent} from "@shared/component/erupt-page-header.comp
 import {SafeHtmlPipe} from "@shared/pipe/safe-html.pipe";
 import {SafeScriptPipe} from "@shared/pipe/safe-script.pipe";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
+import {TranslateModule} from "@ngx-translate/core";
 const THIRD_MODULES = [
     NgZorroAntdModule
 ];
@@ -55,6 +56,8 @@ const DIRECTIVES = [];
         RouterModule,
         AlainThemeModule,
         DelonABCModule,
+        // i18n
+        TranslateModule,
         // third libs
         ...THIRD_MODULES,
         // your components
