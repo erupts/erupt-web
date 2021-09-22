@@ -1,12 +1,13 @@
 import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
 import {EditType, Scene} from "../../model/erupt.enum";
-import {SettingsService} from "@delon/theme";
+import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {DataService} from "@shared/service/data.service";
+import {I18NService} from "@core";
 
 @Component({
     selector: "erupt-edit",
@@ -40,6 +41,7 @@ export class EditComponent implements OnInit, OnDestroy {
         private modal: NzModalService,
         private dataService: DataService,
         private settingSrv: SettingsService,
+        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
         private dataHandlerService: DataHandlerService) {
 
     }
@@ -76,13 +78,9 @@ export class EditComponent implements OnInit, OnDestroy {
 
     beforeSaveValidate(): boolean {
         if (this.loading) {
-            this.msg.warning("数据加载中无法保存!");
+            this.msg.warning(this.i18n.fanyi('global.update.loading..hint'));
             return false;
-        } else if (!this.eruptEdit.eruptEditValidate()) {
-            return false;
-        } else {
-            return true;
-        }
+        } else return this.eruptEdit.eruptEditValidate();
     }
 
     ngOnDestroy(): void {

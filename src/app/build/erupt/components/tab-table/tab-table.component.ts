@@ -12,6 +12,8 @@ import {BuildConfig} from "../../model/build-config";
 import {Status} from "../../model/erupt-api.model";
 import {EditType, Scene, SelectMode} from "../../model/erupt.enum";
 import {UiBuildService} from "../../service/ui-build.service";
+import {ALAIN_I18N_TOKEN} from "@delon/theme";
+import {I18NService} from "@core";
 
 @Component({
     selector: "tab-table",
@@ -43,6 +45,7 @@ export class TabTableComponent implements OnInit {
     constructor(private dataService: DataService,
                 private uiBuildService: UiBuildService,
                 private dataHandlerService: DataHandlerService,
+                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService) {
     }
@@ -76,7 +79,7 @@ export class TabTableComponent implements OnInit {
                             nzStyle: {top: "20px"},
                             nzMaskClosable: false,
                             nzKeyboard: false,
-                            nzTitle: "编辑",
+                            nzTitle: this.i18n.fanyi("global.editor"),
                             nzContent: EditTypeComponent,
                             nzComponentParams: {
                                 col: colRules[3],
@@ -126,7 +129,7 @@ export class TabTableComponent implements OnInit {
                 }
             });
             viewValue.push({
-                title: "操作区",
+                title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
                 width: "80px",
                 className: "text-center",
@@ -145,7 +148,7 @@ export class TabTableComponent implements OnInit {
                 nzStyle: {top: "50px"},
                 nzMaskClosable: false,
                 nzKeyboard: false,
-                nzTitle: "添加",
+                nzTitle: this.i18n.fanyi("global.add"),
                 nzContent: EditTypeComponent,
                 nzComponentParams: {
                     mode: Scene.ADD,
@@ -179,7 +182,7 @@ export class TabTableComponent implements OnInit {
             nzWrapClassName: "modal-xxl",
             nzMaskClosable: false,
             nzKeyboard: false,
-            nzTitle: "新增",
+            nzTitle: this.i18n.fanyi("global.new"),
             nzContent: ReferenceTableComponent,
             nzComponentParams: {
                 eruptBuild: this.eruptBuildModel,
@@ -187,12 +190,12 @@ export class TabTableComponent implements OnInit {
                 mode: SelectMode.checkbox,
                 tabRef: true
             },
-            nzOkText: "增加",
+            nzOkText: this.i18n.fanyi("global.add"),
             nzOnOk: () => {
                 let tabEruptModel = this.tabErupt.eruptBuildModel.eruptModel;
                 let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
                 if (!edit.$tempValue) {
-                    this.msg.warning("请选中一条数据");
+                    this.msg.warning(this.i18n.fanyi("global.select.one"));
                     return false;
                 }
                 if (!edit.$value) {
@@ -254,7 +257,7 @@ export class TabTableComponent implements OnInit {
             this.st.reload();
             this.checkedRow = [];
         } else {
-            this.msg.warning("请选中要删除的数据");
+            this.msg.warning(this.i18n.fanyi("global.delete.hint.check"));
         }
     }
 
