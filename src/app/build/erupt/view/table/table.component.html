@@ -13,7 +13,7 @@
                     <div>
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
                             <button nz-button nzType="default" class="mb-sm" (click)="addRow()" id="erupt-btn-add">
-                                <i nz-icon nzType="plus" nzTheme="outline"></i>新增
+                                <i nz-icon nzType="plus" nzTheme="outline"></i>{{'table.add'|translate}}
                             </button>
                         </ng-container>
 
@@ -21,14 +21,14 @@
                             <button nz-button nzType="danger" [nzGhost]="true" style="background: #fff !important;"
                                     class="mb-sm" [nzLoading]="deleting" id="erupt-btn-delete"
                                     (click)="delRows()">
-                                <i nz-icon nzType="delete" nzTheme="outline"></i>删除
+                                <i nz-icon nzType="delete" nzTheme="outline"></i>{{'table.delete'|translate}}
                             </button>
                         </ng-container>
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
                             <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()"
                                     id="erupt-btn-export">
-                                <i nz-icon nzType="download" nzTheme="outline"></i>下载
+                                <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|translate}}
                             </button>
                         </ng-container>
 
@@ -36,7 +36,7 @@
                             &nbsp;
                             <nz-button-group>
                                 <button nz-button (click)="importableExcel()" id="erupt-btn-importable">
-                                    <i nz-icon nzType="import" nzTheme="outline"></i> &nbsp;导入
+                                    <i nz-icon nzType="import" nzTheme="outline"></i> &nbsp;{{'table.import'|translate}}
                                 </button>
                                 <button nz-button nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight">
                                     <i nz-icon nzType="ellipsis"></i>
@@ -44,8 +44,9 @@
                             </nz-button-group>
                             <nz-dropdown-menu #menu1="nzDropdownMenu">
                                 <ul nz-menu>
-                                    <li nz-menu-item (click)="downloadExcelTemplate()"><i nz-icon nzType="build"
-                                                                                          nzTheme="outline"></i>下载模板
+                                    <li nz-menu-item (click)="downloadExcelTemplate()">
+                                        <i nz-icon nzType="build"
+                                           nzTheme="outline"></i>{{'table.download_template'|translate}}
                                     </li>
                                 </ul>
                             </nz-dropdown-menu>
@@ -56,7 +57,7 @@
                             <button nz-button nzType="primary" style="background: #fff !important;" [nzGhost]="true"
                                     class="mb-sm" [nzLoading]="st._loading" id="erupt-btn-query"
                                     (click)="query()">
-                                <i nz-icon nzType="search" nzTheme="outline"></i>查询
+                                <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
                             </button>
                         </ng-container>
 
@@ -65,13 +66,14 @@
                             <button nz-button nzType="default" nz-popover
                                     [(nzVisible)]="showColCtrl" [nzContent]="tableColumnCtrl"
                                     nzTrigger="click" class="mb-sm hidden-mobile">
-                                <i nz-icon nzType="table" nzTheme="outline"></i>表格列控制
+                                <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|translate}}
                             </button>
                             <ng-template #tableColumnCtrl>
                                 <div nz-row style="max-width: 520px;">
                                     <ng-container *ngFor="let col of columns">
-                                        <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
+                                        <div *ngIf="col.title&&col.index" nz-col nzSpan="6">
                                             <label nz-checkbox [(ngModel)]="col.show"
+                                                   style="width: 130px;" class="ellipsis"
                                                    (ngModelChange)="st.resetColumns()">{{col.title.text}}</label>
                                         </div>
                                     </ng-container>
@@ -85,7 +87,7 @@
                             <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
                         </button>
                         <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset">
-                            <i nz-icon nzType="sync" nzTheme="outline"></i>重置
+                            <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
                         </button>
                     </div>
                 </div>

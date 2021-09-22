@@ -2,7 +2,7 @@ import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel, RowOperation} from "../../model/erupt.model";
 
-import {DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
+import {ALAIN_I18N_TOKEN, DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {STColumn, STColumnButton, STComponent} from "@delon/abc";
@@ -20,6 +20,7 @@ import {Observable} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
+import {I18NService} from "@core";
 
 
 @Component({
@@ -44,6 +45,7 @@ export class TableComponent implements OnInit {
         @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
+        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     ) {
     }
 
@@ -352,7 +354,7 @@ export class TableComponent implements OnInit {
         }
         if (tableOperators.length > 0) {
             _columns.push({
-                title: "操作",
+                title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
                 width: tableOperators.length * 40 + 8,
                 className: "text-center",
@@ -414,7 +416,7 @@ export class TableComponent implements OnInit {
                     nzKeyboard: false,
                     nzTitle: ro.title,
                     nzMaskClosable: false,
-                    nzCancelText: "关闭",
+                    nzCancelText: this.i18n.fanyi("global.close"),
                     nzWrapClassName: "modal-lg",
                     nzOnOk: async () => {
                         modal.getInstance().nzCancelDisabled = true;
@@ -443,7 +445,7 @@ export class TableComponent implements OnInit {
                 this.modal.confirm({
                     nzTitle: ro.title,
                     nzContent: "请确认是否执行此操作",
-                    nzCancelText: "关闭",
+                    nzCancelText: this.i18n.fanyi("global.close"),
                     nzOnOk: async () => {
                         this.selectedRows = [];
                         let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids, null)
@@ -465,12 +467,12 @@ export class TableComponent implements OnInit {
             nzWrapClassName: "modal-lg",
             nzMaskClosable: false,
             nzKeyboard: false,
-            nzTitle: "新增",
+            nzTitle: this.i18n.fanyi("global.add"),
             nzContent: EditComponent,
             nzComponentParams: {
                 eruptBuildModel: this.eruptBuildModel
             },
-            nzOkText: "增加",
+            nzOkText: this.i18n.fanyi("global.add.ok"),
             nzOnOk: async () => {
                 if (!this.adding) {
                     this.adding = true;
@@ -497,7 +499,7 @@ export class TableComponent implements OnInit {
                                 this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
                         }
                         if (res.status === Status.SUCCESS) {
-                            this.msg.success("新增成功");
+                            this.msg.success(this.i18n.fanyi("global.add.success"));
                             this.st.reload();
                             return true;
                         }
@@ -534,7 +536,7 @@ export class TableComponent implements OnInit {
                                 this.st.reload();
                             }
                             this.selectedRows = [];
-                            this.msg.success("删除成功");
+                            this.msg.success(this.i18n.fanyi("global.delete.success"));
                         }
                     }
                 }
@@ -603,9 +605,9 @@ export class TableComponent implements OnInit {
     importableExcel() {
         let model = this.modal.create({
             nzKeyboard: true,
-            nzTitle: "Excel导入",
+            nzTitle: "Excel " + this.i18n.fanyi("table.import"),
             nzOkText: null,
-            nzCancelText: "关闭（ESC）",
+            nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzWrapClassName: "modal-lg",
             nzContent: ExcelImportComponent,
             nzComponentParams: {
