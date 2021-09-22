@@ -11,6 +11,8 @@ import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {IframeHeight} from "@shared/util/window.util";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
+import {ALAIN_I18N_TOKEN} from "@delon/theme";
+import {I18NService} from "@core";
 
 @Component({
     selector: "erupt-edit-type",
@@ -62,6 +64,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     constructor(public dataService: DataService,
                 private differs: KeyValueDiffers,
                 @Inject(NzModalService) private modal: NzModalService,
+                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) public tokenService: ITokenService,
                 @Inject(NzMessageService) private msg: NzMessageService) {
     }
@@ -186,7 +189,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             nzKeyboard: true,
             nzStyle: {top: "30px"},
             nzTitle: field.eruptFieldJson.edit.title,
-            nzCancelText: "取消（ESC）",
+            nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzContent: TreeSelectComponent,
             nzComponentParams: {
                 parentEruptName: this.parentEruptName,
@@ -227,7 +230,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             nzStyle: {top: "24px"},
             nzBodyStyle: {padding: "16px"},
             nzTitle: edit.title,
-            nzCancelText: "取消（ESC）",
+            nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzContent: ReferenceTableComponent,
             nzComponentParams: {
                 eruptBuild: this.eruptBuildModel,

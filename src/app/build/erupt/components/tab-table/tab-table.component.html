@@ -2,11 +2,11 @@
     <div style="background: #fafafa;border: 1px solid #e8e8e8;border-bottom: 0;padding: 8px 12px">
         <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzGhost
                 nzType="primary" style="background: #fff !important;" [nzSize]="'default'">
-            <i nz-icon nzType="plus" theme="outline"></i>新增
+            <i nz-icon nzType="plus" theme="outline"></i>{{'global.new'|translate}}
         </button>
         <button (click)="deleteData()" nz-button nzGhost
                 nzType="danger" style="background: #fff !important;" [nzSize]="'default'">
-            <i nz-icon nzType="delete" theme="outline"></i>删除
+            <i nz-icon nzType="delete" theme="outline"></i>{{'global.delete'|translate}}
         </button>
     </div>
 </ng-container>
