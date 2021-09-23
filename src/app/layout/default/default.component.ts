@@ -15,7 +15,7 @@ import {ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, RouteC
 import {NzIconService, NzMessageService} from "ng-zorro-antd";
 import {Subscription} from "rxjs";
 import {updateHostClass} from "@delon/util";
-import {Menu, MenuService, ScrollService, SettingsService} from "@delon/theme";
+import {ALAIN_I18N_TOKEN, Menu, MenuService, ScrollService, SettingsService} from "@delon/theme";
 import {
     ArrowDownOutline,
     BellOutline,
@@ -38,6 +38,7 @@ import {SettingDrawerComponent} from "./setting-drawer/setting-drawer.component"
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {generateMenuPath} from "@shared/util/erupt.util";
 import {MenuTypeEnum} from "@shared/model/erupt-menu";
+import {I18NService} from "@core";
 
 // #region icons
 
@@ -95,6 +96,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 public settingSrv: SettingsService,
                 public route: ActivatedRoute,
                 public data: DataService,
+                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(DOCUMENT) private doc: any) {
         iconSrv.addIcon(...ICONS);
@@ -165,6 +167,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                         let option: Menu = {
                             text: menu.name,
                             key: menu.name,
+                            i18n: menu.name,
                             linkExact: true,
                             icon: menu.icon || {
                                 type: "icon",
@@ -188,6 +191,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 hideInBreadcrumb: true,
                 hide: true,
                 text: "首页",
+                i18n: "global.home",
                 link: "/"
             }]);
             this.menuSrv.add([{

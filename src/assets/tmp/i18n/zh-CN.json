@@ -1,6 +1,7 @@
 {
+  "global.home": "首页",
   "global.all": "全部",
-  "global.check_add": "全选",
+  "global.check_all": "全选",
   "global.ok": "确定",
   "global.keyword": "请输入关键字",
   "global.close": "关闭",
@@ -65,12 +66,5 @@
   "login.button": "登录",
   "login.register": "注册",
   "login.forget_pwd": "忘记密码？",
-  "login.forget_pwd_hint": "请联系管理员",
-  "menu.lang": "语言",
-  "menu.main": "主导航",
-  "menu.dashboard": "仪表盘",
-  "menu.dashboard.v1": "默认页",
-  "menu.dashboard.analysis": "分析页",
-  "menu.dashboard.monitor": "监控页",
-  "menu.dashboard.workplace": "工作台"
+  "login.forget_pwd_hint": "请联系管理员"
 }

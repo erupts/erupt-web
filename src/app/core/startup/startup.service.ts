@@ -103,6 +103,13 @@ export class StartupService {
             ).subscribe(
                 ([langData]) => {
                     // setting language data
+                    console.log(this.i18n.defaultLang);
+                    let extra = WindowModel.i18n[this.i18n.defaultLang];
+                    if (extra) {
+                        for (let key in extra) {
+                            langData[key] = extra[key];
+                        }
+                    }
                     this.translate.setTranslation(this.i18n.defaultLang, langData);
                     this.translate.setDefaultLang(this.i18n.defaultLang);
                 },

@@ -41,7 +41,7 @@
     <tag-select [expandable]="true" style="margin-left: 0;">
         <nz-spin nzSimple *ngIf="isLoading"></nz-spin>
         <nz-tag (nzCheckedChange)="changeTagAll($event)" style="margin-right: 10px"
-                nzMode="checkable">{{'global.check_add'|translate}}
+                nzMode="checkable">{{'global.check_all'|translate}}
         </nz-tag>
         <ng-container *ngFor="let vl of this.eruptField.choiceList">
             <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"
