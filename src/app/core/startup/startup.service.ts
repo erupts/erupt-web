@@ -103,7 +103,6 @@ export class StartupService {
             ).subscribe(
                 ([langData]) => {
                     // setting language data
-                    console.log(this.i18n.defaultLang);
                     let extra = WindowModel.i18n[this.i18n.defaultLang];
                     if (extra) {
                         for (let key in extra) {

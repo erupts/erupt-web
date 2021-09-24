@@ -1,4 +1,7 @@
 {
+  "Y": "是",
+  "N": "否",
+  "global.today": "今天",
   "global.home": "首页",
   "global.all": "全部",
   "global.check_all": "全选",
