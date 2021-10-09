@@ -15,13 +15,15 @@ import {SafeHtmlPipe} from "@shared/pipe/safe-html.pipe";
 import {SafeScriptPipe} from "@shared/pipe/safe-script.pipe";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {TranslateModule} from "@ngx-translate/core";
+import {I18nComponent} from "@shared/component/i18n.component";
+
 const THIRD_MODULES = [
     NgZorroAntdModule
 ];
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS = [SafeUrlPipe, SafeHtmlPipe, SafeScriptPipe, EruptIframeComponent, EruptPageHeaderComponent];
+const COMPONENTS = [SafeUrlPipe, SafeHtmlPipe, SafeScriptPipe, EruptIframeComponent, EruptPageHeaderComponent, I18nComponent];
 const DIRECTIVES = [];
 
 // #endregion
