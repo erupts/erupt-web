@@ -11,13 +11,12 @@ import {I18NService} from '@core';
         <div *ngIf="showLangText" nz-dropdown [nzDropdownMenu]="langMenu" nzPlacement="bottomRight" class="alain-default__nav-item">
             <i nz-icon nzType="global" nzTheme="outline"></i>
         </div>
-        <i
-                *ngIf="!showLangText"
-                nz-dropdown
-                [nzDropdownMenu]="langMenu"
-                nzPlacement="bottomRight"
-                nz-icon
-                nzType="global"
+        <i *ngIf="!showLangText"
+           nz-dropdown
+           [nzDropdownMenu]="langMenu"
+           nzPlacement="bottomRight"
+           nz-icon
+           nzType="global"
         ></i>
         <nz-dropdown-menu #langMenu="nzDropdownMenu">
             <ul nz-menu>
@@ -35,7 +34,7 @@ import {I18NService} from '@core';
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderI18nComponent {
+export class I18nComponent {
     /** Whether to display language text */
     @Input() @InputBoolean() showLangText = true;
 

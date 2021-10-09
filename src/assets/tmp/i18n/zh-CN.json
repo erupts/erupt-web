@@ -1,6 +1,7 @@
 {
   "Y": "是",
   "N": "否",
+  "finish": "完成",
   "global.today": "今天",
   "global.home": "首页",
   "global.all": "全部",
@@ -69,5 +70,14 @@
   "login.button": "登录",
   "login.register": "注册",
   "login.forget_pwd": "忘记密码？",
-  "login.forget_pwd_hint": "请联系管理员"
+  "login.forget_pwd_hint": "请联系管理员",
+  "setting.config": "页面设置",
+  "setting.fixed-header": "固定头和侧边栏",
+  "setting.tab-reuse": "路由复用",
+  "setting.nav": "面包屑导航",
+  "setting.table-border": "表格边框",
+  "setting.dark": "夜间模式",
+  "setting.clear-cache": "清理本地缓存",
+  "setting.clear": "清理",
+  "setting.confirm": "确认要清理所有的本地缓存吗 ？"
 }

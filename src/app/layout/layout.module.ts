@@ -18,7 +18,6 @@ import {SettingDrawerItemComponent} from "./default/setting-drawer/setting-drawe
 // passport
 import {LayoutPassportComponent} from "./passport/passport.component";
 import {SettingsComponent} from './default/header/settings/settings.component';
-import {HeaderI18nComponent} from "./default/header/components/i18n.component";
 
 const SETTINGDRAWER = [SettingDrawerComponent, SettingDrawerItemComponent];
 
@@ -38,7 +37,6 @@ const HEADERCOMPONENTS = [
     HeaderFullScreenComponent,
     HeaderStorageComponent,
     HeaderUserComponent,
-    HeaderI18nComponent,
 ];
 
 const PASSPORT = [

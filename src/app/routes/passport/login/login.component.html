@@ -1,4 +1,6 @@
-<!--<header-i18n></header-i18n>-->
+<div style="position: absolute;right: 5%;top: 5%">
+    <header-i18n style="font-size: 1.3em;color: #000" [showLangText]="false"></header-i18n>
+</div>
 <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
     <nz-tabset [nzAnimated]="false" class="tabs" (nzSelectChange)="switch($event)">
         <nz-tab [nzTitle]="'login.account_pwd_login'|translate">
