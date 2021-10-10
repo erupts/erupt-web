@@ -4,8 +4,10 @@
   "finish": "完成",
   "global.today": "今天",
   "global.home": "首页",
+  "global.cancel": "取消",
   "global.all": "全部",
   "global.check_all": "全选",
+  "global.check_none": "不选",
   "global.ok": "确定",
   "global.keyword": "请输入关键字",
   "global.close": "关闭",
@@ -37,7 +39,7 @@
   "table.excel.import_hint": "单击或拖动Excel文件到此区域上传",
   "table.query": "查询",
   "table.col.ctrl": "表格列控制",
-  "table.reset": "重置",
+  "table.reset": "重置条件",
   "table.select_delete_item": "请选中要删除的数据！",
   "table.hint_delete_number": "确定要删除这{}条数据吗？",
   "table.require.select_one": "执行该操作时请至少选中一条数据",
@@ -79,5 +81,8 @@
   "setting.dark": "夜间模式",
   "setting.clear-cache": "清理本地缓存",
   "setting.clear": "清理",
-  "setting.confirm": "确认要清理所有的本地缓存吗 ？"
+  "setting.confirm": "确认要清理所有的本地缓存吗 ？",
+  "login_expire.tip": "登录状态已过期，您可以继续留在该页面，或者重新登录？",
+  "login_expire.retry": "重新登录",
+  "none_permission": "无权限！"
 }
