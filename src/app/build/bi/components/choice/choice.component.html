@@ -2,12 +2,13 @@
     <ng-container [ngSwitch]="dim.type">
         <ng-container *ngSwitchCase="dimType.REFERENCE_RADIO">
             <nz-radio-group [(ngModel)]="dim.$value" [name]="dim.code">
-                <label nz-radio [nzValue]="null">不选</label>
+                <label nz-radio [nzValue]="null">{{'global.check_none'|i18n}}</label>
                 <label nz-radio *ngFor="let i of data" [nzValue]="i.id">{{i.title}}</label>
             </nz-radio-group>
         </ng-container>
         <ng-container *ngSwitchCase="dimType.REFERENCE_CHECKBOX">
-            <label nz-checkbox [(nzChecked)]="dim.$viewValue" (nzCheckedChange)="checkedChangeAll($event)">全选</label>
+            <label nz-checkbox [(nzChecked)]="dim.$viewValue"
+                   (nzCheckedChange)="checkedChangeAll($event)">{{'global.check_all'|i18n}}</label>
             <nz-checkbox-wrapper (nzOnChange)="checkedChange($event)">
                 <label nz-checkbox [nzChecked]="dim.$viewValue" *ngFor="let i of data"
                        [nzValue]="i.id">{{i.title}}</label>

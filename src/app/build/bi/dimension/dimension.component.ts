@@ -3,6 +3,9 @@ import {Bi, Dimension, DimType} from "../model/bi.model";
 import {colRules} from "@shared/model/util.model";
 import {NzModalService} from "ng-zorro-antd";
 import {ReferenceComponent} from "../components/reference/reference.component";
+import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
+import {ALAIN_I18N_TOKEN} from "@delon/theme";
+import {I18NService} from "@core";
 
 @Component({
     selector: 'dimension',
@@ -31,7 +34,6 @@ export class DimensionComponent implements OnInit {
             nzKeyboard: true,
             nzStyle: {top: "30px"},
             nzTitle: dim.title,
-            nzCancelText: "取消（ESC）",
             nzContent: ReferenceComponent,
             nzComponentParams: {
                 dimension: dim,
