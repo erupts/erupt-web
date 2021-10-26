@@ -219,7 +219,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         | HttpUserEvent<any>> {
         // 统一加上服务端前缀
         let url = req.url;
-        if (!url.startsWith("https://") && !url.startsWith("http://")) {
+        if (!url.startsWith("https://") && !url.startsWith("http://") && !url.startsWith("//")) {
             url = environment.SERVER_URL + url;
         }
         // 对话框的方式出现登录页
