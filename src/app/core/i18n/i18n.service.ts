@@ -1,26 +1,18 @@
 // 请参考：https://ng-alain.com/docs/i18n
 import {Injectable} from '@angular/core';
-import {Observable, BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {filter} from 'rxjs/operators';
 
 import {registerLocaleData} from '@angular/common';
 import ngZh from '@angular/common/locales/zh';
 import ngEn from '@angular/common/locales/en';
-import ngZhTw from '@angular/common/locales/zh-Hant';
 
-import {en_US, zh_CN, zh_TW, NzI18nService} from 'ng-zorro-antd';
+import {en_US, NzI18nService, zh_CN} from 'ng-zorro-antd';
 import * as df_en from 'date-fns/locale/en';
 import * as df_zh_cn from 'date-fns/locale/zh_cn';
-import * as df_zh_tw from 'date-fns/locale/zh_tw';
 import {TranslateService} from '@ngx-translate/core';
-import {
-    SettingsService,
-    AlainI18NService,
-    DelonLocaleService,
-    en_US as delonEnUS,
-    zh_CN as delonZhCn,
-    zh_TW as delonZhTw,
-} from '@delon/theme';
+import {AlainI18NService, DelonLocaleService, en_US as delonEnUS, SettingsService, zh_CN as delonZhCn,} from '@delon/theme';
+import {EruptAppData} from "@core/startup/erupt-app.data";
 
 interface LangData {
     text: string;
@@ -81,12 +73,15 @@ export class I18NService implements AlainI18NService {
         // `@ngx-translate/core` 预先知道支持哪些语言
         const lans = this._langs.map(item => item.code);
         translate.addLangs(lans);
-
-        const defaultLan = settings.layout.lang || translate.getBrowserLang();
+        let defaultLan;
+        if (EruptAppData.get() && EruptAppData.get().locales && EruptAppData.get().locales.length > 0) {
+            defaultLan = settings.layout.lang || EruptAppData.get().locales[0];
+        } else {
+            defaultLan = settings.layout.lang || translate.getBrowserLang();
+        }
         if (lans.includes(defaultLan)) {
             this._default = defaultLan;
         }
-
         this.updateLangData(this._default);
     }
 
@@ -112,7 +107,15 @@ export class I18NService implements AlainI18NService {
 
     /** 获取语言列表 */
     getLangs() {
-        return this._langs;
+        let langs = [];
+        for (let lang of this._langs) {
+            for (let locale of EruptAppData.get().locales) {
+                if (lang.code.toLocaleLowerCase() == locale.toLocaleLowerCase()) {
+                    langs.push(lang);
+                }
+            }
+        }
+        return langs;
     }
 
     /** 翻译 */
