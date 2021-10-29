@@ -2,7 +2,7 @@
     <div class="wrap">
         <div class="top">
             <div class="head">
-                <img class="logo" [src]="logoPath">
+                <img class="logo" *ngIf="logoPath" [src]="logoPath" alt="logo">
                 <span class="title">{{title}}</span>
             </div>
             <div class="desc">

@@ -16,7 +16,7 @@ export class WindowModel {
 
     public static desc: string = WindowModel.config["desc"] || undefined;
 
-    public static logoPath: string = WindowModel.config["logoPath"] || "erupt.svg";
+    public static logoPath: string = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "erupt.svg");
 
     public static logoText: string = WindowModel.config["logoText"] || "";
     //注册页面地址
