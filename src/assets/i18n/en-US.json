@@ -56,7 +56,7 @@
   "change-pwd.confirm_password": "Confirm password",
   "change-pwd.validate.original_password": "Please enter original password!",
   "change-pwd.validate.length-sex": "Password at least six digits",
-  "change-pwd.validate.height.": "strength：height",
+  "change-pwd.validate.height": "strength：height",
   "change-pwd.validate.middle": "strength：middle",
   "change-pwd.validate.low": "strength：low",
   "change-pwd.validate.text": "Please enter at least 6 characters.Do not use easily guessed passwords.",

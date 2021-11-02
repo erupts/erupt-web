@@ -6,12 +6,26 @@ import {filter} from 'rxjs/operators';
 import {registerLocaleData} from '@angular/common';
 import ngZh from '@angular/common/locales/zh';
 import ngEn from '@angular/common/locales/en';
+import ngKO from '@angular/common/locales/ko';
+import ngJA from '@angular/common/locales/ja';
+import ngZhTw from '@angular/common/locales/zh-Hant-HK';
 
-import {en_US, NzI18nService, zh_CN} from 'ng-zorro-antd';
+import {NzI18nService, en_US, zh_CN, ko_KR, ja_JP, zh_TW} from 'ng-zorro-antd';
 import * as df_en from 'date-fns/locale/en';
 import * as df_zh_cn from 'date-fns/locale/zh_cn';
+import * as df_ko from 'date-fns/locale/ko';
+import * as df_zh_tw from 'date-fns/locale/zh_tw';
+import * as df_ja from 'date-fns/locale/ja';
+
 import {TranslateService} from '@ngx-translate/core';
-import {AlainI18NService, DelonLocaleService, en_US as delonEnUS, SettingsService, zh_CN as delonZhCn,} from '@delon/theme';
+import {
+    AlainI18NService, DelonLocaleService,
+    en_US as delonEnUS,
+    en_US as delonZhTw,
+    SettingsService,
+    ko_KR as delonKoKR,
+    zh_CN as delonZhCn,
+} from '@delon/theme';
 import {EruptAppData} from "@core/startup/erupt-app.data";
 
 interface LangData {
@@ -33,14 +47,14 @@ const LANGS: { [key: string]: LangData } = {
         delon: delonZhCn,
         abbr: '🇨🇳',
     },
-    // 'zh-TW': {
-    //     text: '繁体中文',
-    //     ng: ngZhTw,
-    //     zorro: zh_TW,
-    //     dateFns: df_zh_tw,
-    //     delon: delonZhTw,
-    //     abbr: '🇭🇰',
-    // },
+    'zh-TW': {
+        text: '繁体中文',
+        ng: ngZhTw,
+        zorro: zh_TW,
+        dateFns: df_zh_tw,
+        delon: delonZhTw,
+        abbr: '🇭🇰',
+    },
     'en-US': {
         text: 'English',
         ng: ngEn,
@@ -48,6 +62,22 @@ const LANGS: { [key: string]: LangData } = {
         dateFns: df_en,
         delon: delonEnUS,
         abbr: '🇬🇧',
+    },
+    // 'ko-KR': {
+    //     text: '한국어',
+    //     ng: ngKO,
+    //     zorro: ko_KR,
+    //     dateFns: df_ko,
+    //     delon: delonKoKR,
+    //     abbr: '🇰🇷',
+    // },
+    'ja-JP': {
+        text: '日本語',
+        ng: ngJA,
+        zorro: ja_JP,
+        dateFns: df_ja,
+        delon: delonZhCn,
+        abbr: '🇯🇵',
     },
 };
 
