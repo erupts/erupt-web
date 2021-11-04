@@ -1,7 +1,7 @@
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Checkbox, Tree} from "../../build/erupt/model/erupt.model";
-import {_HttpClient} from "@delon/theme";
+import {_HttpClient, ALAIN_I18N_TOKEN} from "@delon/theme";
 import {Observable} from "rxjs";
 import {LoginModel} from "../model/user.model";
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
@@ -11,6 +11,7 @@ import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {VL} from "../../build/erupt/model/erupt-field.model";
+import {I18NService} from "@core";
 
 @Injectable()
 export class DataService {
@@ -24,6 +25,7 @@ export class DataService {
     public excelImport: string = RestPath.excel + "/import/";
 
     constructor(private http: HttpClient, private _http: _HttpClient,
+                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
 
@@ -71,14 +73,21 @@ export class DataService {
         }
     }
 
+    getCommonHeader() {
+        return {
+            lang: this.i18n.currentLang || '',
+        };
+    }
+
+
     //获取结构
     getEruptBuild(eruptName: string, eruptParentName?: string): Observable<EruptBuildModel> {
         return this._http.get<EruptBuildModel>(RestPath.build + "/" + eruptName, null, {
             observe: "body",
             headers: {
-                lang: "cn",
                 erupt: eruptName,
-                eruptParent: eruptParentName || ''
+                eruptParent: eruptParentName || '',
+                ...this.getCommonHeader()
             }
         });
     }
@@ -88,18 +97,19 @@ export class DataService {
             observe: "body",
             headers: {
                 erupt: eruptName,
-                eruptParent: eruptParentName || ''
+                eruptParent: eruptParentName || '',
+                ...this.getCommonHeader()
             }
         });
     }
 
     getEruptTpl(name: string) {
-        return RestPath.tpl + "/" + name + "?_token=" + this.tokenService.get().token + "&_erupt=" + name;
+        return RestPath.tpl + "/" + name + "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + name;
     }
 
     getEruptOperationTpl(eruptName: string, operationCode: string, ids: any[]) {
         return RestPath.tpl + "/operation_tpl/" + eruptName + "/" + operationCode +
-            "?_token=" + this.tokenService.get().token + "&_erupt=" + eruptName + "&ids=" + ids;
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName + "&ids=" + ids;
     }
 
 
@@ -108,7 +118,8 @@ export class DataService {
         return this._http.get<Tree[]>(RestPath.data + "/tree/" + eruptName, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...this.getCommonHeader()
             }
         });
     }
@@ -118,7 +129,8 @@ export class DataService {
         return this._http.get<any>(RestPath.data + "/" + eruptName + "/" + id, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...this.getCommonHeader()
             }
         });
     }
@@ -129,7 +141,8 @@ export class DataService {
             observe: "body",
             headers: {
                 erupt: eruptName,
-                eruptParent: eruptParentName || ''
+                eruptParent: eruptParentName || '',
+                ...this.getCommonHeader()
             }
         });
     }
@@ -141,7 +154,8 @@ export class DataService {
             observe: "body",
             headers: {
                 erupt: eruptName,
-                eruptParent: eruptParentName || ''
+                eruptParent: eruptParentName || '',
+                ...this.getCommonHeader()
             }
         });
     }
@@ -151,7 +165,8 @@ export class DataService {
             observe: "body",
             headers: {
                 erupt: eruptName,
-                eruptParent: eruptParentName || ''
+                eruptParent: eruptParentName || '',
+                ...this.getCommonHeader()
             }
         });
     }
@@ -161,7 +176,8 @@ export class DataService {
             observe: "body",
             headers: {
                 erupt: eruptName,
-                eruptParent: eruptParentName || ''
+                eruptParent: eruptParentName || '',
+                ...this.getCommonHeader()
             }
         });
     }
@@ -171,7 +187,8 @@ export class DataService {
         return this._http.get<Tree[]>(RestPath.data + "/tab/tree/" + eruptName + "/" + tabFieldName, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...this.getCommonHeader()
             }
         });
     }
@@ -180,7 +197,8 @@ export class DataService {
         return this._http.get<Checkbox[]>(RestPath.data + "/" + eruptName + "/checkbox/" + fieldName, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...this.getCommonHeader()
             }
         });
     }
@@ -193,7 +211,8 @@ export class DataService {
         }, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...this.getCommonHeader()
             }
         });
     }
@@ -202,7 +221,8 @@ export class DataService {
         return this._http.get<Tree[]>(RestPath.data + "/depend-tree/" + eruptName, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...this.getCommonHeader()
             }
         });
     }
@@ -214,7 +234,8 @@ export class DataService {
             param["dependValue"] = dependVal;
         }
         let header = {
-            erupt: eruptName
+            erupt: eruptName,
+            ...this.getCommonHeader()
         };
         if (eruptParent) {
             header["eruptParent"] = eruptParent;
@@ -231,7 +252,8 @@ export class DataService {
         return this._http.post<any>(RestPath.data + "/add/" + eruptName + "/drill/" + code + "/" + val, data, null, {
             observe: null,
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...this.getCommonHeader()
             }
         });
     }
@@ -242,7 +264,8 @@ export class DataService {
             observe: null,
             headers: {
                 erupt: eruptName,
-                ...headers
+                ...headers,
+                ...this.getCommonHeader()
             }
         });
     }
@@ -252,7 +275,8 @@ export class DataService {
         return this._http.put<EruptApiModel>(RestPath.dataModify + "/" + eruptName, data, null, {
             observe: null,
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...this.getCommonHeader()
             }
         });
     }
@@ -261,7 +285,8 @@ export class DataService {
     deleteEruptData(eruptName: string, id): Observable<EruptApiModel> {
         return this._http.delete(RestPath.dataModify + "/" + eruptName + "/" + id, null, {
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...this.getCommonHeader()
             }
         });
     }
@@ -270,7 +295,8 @@ export class DataService {
     deleteEruptDatas(eruptName: string, ids: any[]): Observable<EruptApiModel> {
         return this._http.delete(RestPath.dataModify + "/" + eruptName, {ids: ids}, {
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...this.getCommonHeader()
             }
         });
     }
@@ -279,7 +305,8 @@ export class DataService {
         return this._http.post(RestPath.data + "/validate-erupt/" + eruptName, data, null, {
             headers: {
                 erupt: eruptName,
-                eruptParent: eruptParent || ""
+                eruptParent: eruptParent || "",
+                ...this.getCommonHeader()
             }
         });
     }

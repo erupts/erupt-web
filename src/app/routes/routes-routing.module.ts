@@ -10,14 +10,12 @@ import {UserLoginComponent} from "./passport/login/login.component";
 import {Exception403Component} from "./exception/403.component";
 import {Exception404Component} from "./exception/404.component";
 import {Exception500Component} from "./exception/500.component";
-import {ChangePwdComponent} from "./change-pwd/change-pwd.component";
 import {HomeComponent} from "./home/home.component";
 import {SiteComponent} from "./site/site.component";
 import {FillComponent} from "./fill/fill.component";
 
 let coreRouter: Routes = [
-    {path: "", component: HomeComponent, data: {title: "首页"}},
-    {path: "change-pwd", component: ChangePwdComponent, data: {title: "修改密码"}},
+    {path: "", component: HomeComponent, data: {titleI18n: "global.home"}},
     {path: "layout/403", component: Exception403Component, data: {title: "403"}},
     {path: "layout/404", component: Exception404Component, data: {title: "404"}},
     {path: "layout/500", component: Exception500Component, data: {title: "500"}},
@@ -50,7 +48,7 @@ const routes: Routes = [
         path: "passport",
         component: LayoutPassportComponent,
         children: [
-            {path: "login", component: UserLoginComponent, data: {title: "登录"}},
+            {path: "login", component: UserLoginComponent},
         ]
     },
     // 全屏布局

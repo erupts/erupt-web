@@ -1,13 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {NzFormatEmitEvent} from "ng-zorro-antd";
-import {EruptFieldModel} from "../../model/erupt-field.model";
-import {STComponent} from "@delon/abc";
-import {TreeComponent} from "../tree/tree.component";
-import {WindowModel} from "@shared/model/window.model";
-import {SettingsService} from "@delon/theme";
+import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
+import {I18NService} from "@core";
 
 @Component({
     selector: 'layout-tree',
@@ -19,6 +16,7 @@ export class LayoutTreeComponent implements OnInit {
     constructor(private data: DataService,
                 public settingSrv: SettingsService,
                 public settingService: SettingsService,
+                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 private dataHandler: DataHandlerService) {
     }
 
@@ -44,7 +42,7 @@ export class LayoutTreeComponent implements OnInit {
             if (!this.eruptModel.eruptJson.linkTree.dependNode) {
                 this.list.unshift({
                     key: null,
-                    title: "全部",
+                    title: this.i18n.fanyi('global.all'),
                     isLeaf: true
                 });
             }

@@ -1,5 +1,5 @@
 import {Inject, Injectable} from "@angular/core";
-import {SettingsService, TitleService} from "@delon/theme";
+import {ALAIN_I18N_TOKEN, SettingsService, TitleService} from "@delon/theme";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 import {NzIconService} from "ng-zorro-antd";
@@ -12,6 +12,11 @@ import {DataService} from "@shared/service/data.service";
 import {EruptAppData} from "@core/startup/erupt-app.data";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {EruptAppModel} from "@shared/model/erupt-app.model";
+import {I18NService} from "@core/i18n/i18n.service";
+import {HttpClient} from "@angular/common/http";
+import {zip} from "rxjs";
+import {TranslateService} from "@ngx-translate/core";
+import {catchError} from "rxjs/operators";
 
 /**
  * 用于应用启动时
@@ -25,6 +30,9 @@ export class StartupService {
                 private titleService: TitleService,
                 private dataService: DataService,
                 private settingSrv: SettingsService,
+                private httpClient: HttpClient,
+                private translate: TranslateService,
+                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
     }
@@ -84,6 +92,33 @@ export class StartupService {
         }
 
         return new Promise((resolve, reject) => {
+            zip(
+                this.httpClient.get(`assets/i18n/${this.i18n.defaultLang}.json`),
+            ).pipe(
+                // 接收其他拦截器后产生的异常消息
+                catchError(([langData]) => {
+                    resolve(null);
+                    return [langData];
+                }),
+            ).subscribe(
+                ([langData]) => {
+                    // setting language data
+                    let extra = WindowModel.i18n[this.i18n.defaultLang];
+                    if (extra) {
+                        for (let key in extra) {
+                            langData[key] = extra[key];
+                        }
+                    }
+                    console.log(langData);
+                    this.translate.setTranslation(this.i18n.defaultLang, langData);
+                    this.translate.setDefaultLang(this.i18n.defaultLang);
+                },
+                () => {
+                },
+                () => {
+                    resolve(null);
+                },
+            );
             // 应用信息：包括站点名、描述、年份
             this.settingService.setApp({
                 name: WindowModel.title,

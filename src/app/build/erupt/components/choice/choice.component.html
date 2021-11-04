@@ -5,7 +5,7 @@
                             [name]="eruptField.fieldName"
                             class="erupt-input stander-line-height">
                 <ng-container *ngIf="eruptModel.mode=='search'">
-                    <label nz-radio [nzValue]="">全部</label>
+                    <label nz-radio [nzValue]="">{{'global.all'|translate}}</label>
                 </ng-container>
                 <ng-container *ngFor="let vl of eruptField.choiceList">
                     <label nz-radio nz-tooltip [nzTooltipTitle]="vl.desc"
@@ -25,7 +25,7 @@
                 <ng-container *ngIf="!isLoading">
                     <nz-option *ngFor="let vl of eruptField.choiceList"
                                [nzDisabled]="vl.disable"
-                               [nzValue]="vl.value" [nzLabel]="vl.label">
+                               [nzValue]="vl.value" [nzLabel]="vl.label | translate">
                     </nz-option>
                 </ng-container>
                 <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
@@ -40,7 +40,8 @@
 <ng-container *ngIf="vagueSearch">
     <tag-select [expandable]="true" style="margin-left: 0;">
         <nz-spin nzSimple *ngIf="isLoading"></nz-spin>
-        <nz-tag (nzCheckedChange)="changeTagAll($event)" style="margin-right: 10px" nzMode="checkable">全选
+        <nz-tag (nzCheckedChange)="changeTagAll($event)" style="margin-right: 10px"
+                nzMode="checkable">{{'global.check_all'|translate}}
         </nz-tag>
         <ng-container *ngFor="let vl of this.eruptField.choiceList">
             <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"

@@ -1,5 +1,5 @@
 <button nz-button nzType="default" class="mb-sm" (click)="this.dataService.downloadExcelTemplate(eruptModel.eruptName)">
-    <i nz-icon nzType="download" nzTheme="outline"></i>下载模板
+    <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download_template'|translate}}
 </button>
 <nz-alert *ngIf="errorText" style="margin-bottom: 8px;" nzType="error" nzCloseable [nzDescription]="errorText">
 </nz-alert>
@@ -13,5 +13,5 @@
     <p class="ant-upload-drag-icon">
         <i nz-icon nzType="inbox"></i>
     </p>
-    <p class="ant-upload-text">单击或拖动Excel文件到此区域上传</p>
+    <p class="ant-upload-text">{{'table.excel.import_hint'|translate}}</p>
 </nz-upload>

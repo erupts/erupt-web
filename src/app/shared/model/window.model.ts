@@ -2,6 +2,8 @@ export class WindowModel {
 
     private static config: any = window["eruptSiteConfig"] || {};
 
+    public static i18n: any = window["eruptI18n"] || {};
+
     public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';
 
     public static fileDomain: string = WindowModel.config["fileDomain"] || undefined;
@@ -14,7 +16,7 @@ export class WindowModel {
 
     public static desc: string = WindowModel.config["desc"] || undefined;
 
-    public static logoPath: string = WindowModel.config["logoPath"] || "erupt.svg";
+    public static logoPath: string = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "erupt.svg");
 
     public static logoText: string = WindowModel.config["logoText"] || "";
     //注册页面地址

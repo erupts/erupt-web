@@ -7,12 +7,15 @@ import {CodeEditorComponent} from "../components/code-editor/code-editor.compone
 import {DataService} from "@shared/service/data.service";
 import {Inject, Injectable} from "@angular/core";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
+import {ALAIN_I18N_TOKEN} from "@delon/theme";
+import {I18NService} from "@core";
 
 
 @Injectable()
 export class UiBuildService {
 
     constructor(
+        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
         @Inject(NzModalService) private modal: NzModalService,
         @Inject(NzMessageService) private msg: NzMessageService) {
     }
@@ -113,19 +116,19 @@ export class UiBuildService {
                     obj.type = "tag";
                     if (dataConvert) {
                         obj.tag = {
-                            true: {text: edit.boolType.trueText, color: 'green'},
-                            false: {text: edit.boolType.falseText, color: 'red'},
+                            true: {text: this.i18n.fanyi(edit.boolType.trueText), color: 'green'},
+                            false: {text: this.i18n.fanyi(edit.boolType.falseText), color: 'red'},
                         };
                     } else {
                         if (edit.title) {
                             obj.tag = {
-                                [edit.boolType.trueText]: {text: edit.boolType.trueText, color: 'green'},
-                                [edit.boolType.falseText]: {text: edit.boolType.falseText, color: 'red'},
+                                [edit.boolType.trueText]: {text: this.i18n.fanyi(edit.boolType.trueText), color: 'green'},
+                                [edit.boolType.falseText]: {text: this.i18n.fanyi(edit.boolType.falseText), color: 'red'},
                             };
                         } else {
                             obj.tag = {
-                                true: {text: '是', color: 'green'},
-                                false: {text: '否', color: 'red'},
+                                true: {text: this.i18n.fanyi('是'), color: 'green'},
+                                false: {text: this.i18n.fanyi('否'), color: 'red'},
                             };
                         }
                     }

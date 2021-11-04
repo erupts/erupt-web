@@ -17,45 +17,45 @@ import {SettingDrawerComponent} from "./default/setting-drawer/setting-drawer.co
 import {SettingDrawerItemComponent} from "./default/setting-drawer/setting-drawer-item.component";
 // passport
 import {LayoutPassportComponent} from "./passport/passport.component";
-import { SettingsComponent } from './default/header/settings/settings.component';
+import {SettingsComponent} from './default/header/settings/settings.component';
 
 const SETTINGDRAWER = [SettingDrawerComponent, SettingDrawerItemComponent];
 
 const COMPONENTS = [
-  LayoutDefaultComponent,
-  LayoutFullScreenComponent,
-  HeaderComponent,
-  SidebarComponent,
-  ...SETTINGDRAWER
+    LayoutDefaultComponent,
+    LayoutFullScreenComponent,
+    HeaderComponent,
+    SidebarComponent,
+    ...SETTINGDRAWER
 ];
 
 const HEADERCOMPONENTS = [
-  HeaderSearchComponent,
-  HeaderNotifyComponent,
-  HeaderTaskComponent,
-  HeaderIconComponent,
-  HeaderFullScreenComponent,
-  HeaderStorageComponent,
-  HeaderUserComponent
+    HeaderSearchComponent,
+    HeaderNotifyComponent,
+    HeaderTaskComponent,
+    HeaderIconComponent,
+    HeaderFullScreenComponent,
+    HeaderStorageComponent,
+    HeaderUserComponent,
 ];
 
 const PASSPORT = [
-  LayoutPassportComponent
+    LayoutPassportComponent
 ];
 
 @NgModule({
-  imports: [SharedModule],
-  entryComponents: SETTINGDRAWER,
-  declarations: [
-    ...COMPONENTS,
-    ...HEADERCOMPONENTS,
-    ...PASSPORT,
-    SettingsComponent
-  ],
-  exports: [
-    ...COMPONENTS,
-    ...PASSPORT
-  ]
+    imports: [SharedModule],
+    entryComponents: SETTINGDRAWER,
+    declarations: [
+        ...COMPONENTS,
+        ...HEADERCOMPONENTS,
+        ...PASSPORT,
+        SettingsComponent
+    ],
+    exports: [
+        ...COMPONENTS,
+        ...PASSPORT
+    ]
 })
 export class LayoutModule {
 }

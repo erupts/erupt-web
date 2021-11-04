@@ -1,4 +1,4 @@
-import {SettingsService} from "@delon/theme";
+import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
 import {AfterViewInit, Component, Inject, Input, OnDestroy, OnInit, Optional} from "@angular/core";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -12,6 +12,7 @@ import {Md5} from "ts-md5";
 import {WindowModel} from "@shared/model/window.model";
 import {generateMenuPath} from "@shared/util/erupt.util";
 import {EruptAppData} from "@core/startup/erupt-app.data";
+import {I18NService} from "@core";
 
 @Component({
     selector: "passport-login",
@@ -48,6 +49,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         private settingsService: SettingsService,
         private socialService: SocialService,
         private dataService: DataService,
+        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
         @Optional()
         @Inject(ReuseTabService)
         private reuseTabService: ReuseTabService,
@@ -152,6 +154,10 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
 
     changeVerifyCode() {
         this.verifyCodeUrl = DataService.getVerifyCodeUrl();
+    }
+
+    forgot() {
+        this.msg.error(this.i18n.fanyi('login.forget_pwd_hint'));
     }
 
     ngOnDestroy(): void {

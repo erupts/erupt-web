@@ -1,15 +1,18 @@
+<div style="position: absolute;right: 5%;top: 5%">
+    <header-i18n style="font-size: 1.3em;color: #000" [showLangText]="false"></header-i18n>
+</div>
 <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
     <nz-tabset [nzAnimated]="false" class="tabs" (nzSelectChange)="switch($event)">
-        <nz-tab nzTitle="账户密码登录">
+        <nz-tab [nzTitle]="'login.account_pwd_login'|translate">
             <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
             <!--账号-->
             <nz-form-item>
                 <nz-form-control>
                     <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-user">
-                        <input nz-input formControlName="userName" placeholder="账号">
+                        <input nz-input formControlName="userName" [placeholder]="'login.account'|translate">
                     </nz-input-group>
                     <nz-form-explain *ngIf="userName.dirty && userName.errors">
-                        请输入账户名！
+                        {{'login.validate.account'|translate}}
                     </nz-form-explain>
                 </nz-form-control>
             </nz-form-item>
@@ -17,14 +20,17 @@
             <nz-form-item>
                 <nz-form-control>
                     <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-lock" [nzAddOnAfter]="controlPwd">
-                        <input nz-input [type]="passwordType" formControlName="password" placeholder="密码">
+                        <input nz-input [type]="passwordType" formControlName="password"
+                               [placeholder]="'login.pwd'|translate">
                     </nz-input-group>
                     <ng-template #controlPwd>
-                    <i class="fa fa-eye-slash point" [hidden]="passwordType=='text'" (click)="passwordType='text'"></i>
-                    <i class="fa fa-eye point" [hidden]="passwordType=='password'" (click)="passwordType='password'"></i>
+                        <i class="fa fa-eye-slash point" [hidden]="passwordType=='text'"
+                           (click)="passwordType='text'"></i>
+                        <i class="fa fa-eye point" [hidden]="passwordType=='password'"
+                           (click)="passwordType='password'"></i>
                     </ng-template>
                     <nz-form-explain *ngIf="password.dirty && password.errors">
-                        请输入密码！
+                        {{'login.validate.pwd'|translate}}
                     </nz-form-explain>
                 </nz-form-control>
             </nz-form-item>
@@ -32,8 +38,9 @@
             <nz-form-item *ngIf="useVerifyCode">
                 <nz-form-control>
                     <nz-input-group nzSize="large">
-                        <input nz-input type="text" [maxLength]="10" formControlName="verifyCode" placeholder="验证码">
-                        <img [src]="verifyCodeUrl" alt="验证码" (click)="changeVerifyCode()"
+                        <input nz-input type="text" [maxLength]="10" formControlName="verifyCode"
+                               [placeholder]="'login.validate_code'|translate">
+                        <img [src]="verifyCodeUrl" [alt]="'login.validate_code'|translate" (click)="changeVerifyCode()"
                              style="position: absolute;z-index: 9;right: 1px;top: 1px;">
                     </nz-input-group>
                 </nz-form-control>
@@ -42,23 +49,16 @@
     </nz-tabset>
     <nz-form-item>
         <nz-col [nzSpan]="12" class="text-left">
-            <a *ngIf="registerPage" class="forgot" [href]="registerPage">注册</a>
+            <a *ngIf="registerPage" class="forgot" [href]="registerPage">{{'login.register'|translate}}</a>
         </nz-col>
         <nz-col [nzSpan]="12" class="text-right">
-            <a class="forgot" (click)="msg.error('请联系管理员')">忘记密码？</a>
+            <a class="forgot" (click)="forgot()">{{'login.forget_pwd'|translate}}</a>
         </nz-col>
     </nz-form-item>
 
     <nz-form-item>
         <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="loading"
-                style="display:block;width: 100%;">登录
+                style="display:block;width: 100%;">{{'login.button'|translate}}
         </button>
     </nz-form-item>
 </form>
-<!--<div class="other">-->
-<!--其他登录方式-->
-<!--&lt;!&ndash;<i title="in fact Auth0 via window" (click)="open('auth0', 'window')" nz-icon type="alipay-circle" class="icon"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;<i title="in fact Github via redirect" (click)="open('taobao')" nz-icon type="taobao-circle" class="icon"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;<i title="真的是微博" (click)="open('weibo', 'window')" nz-icon type="weibo-circle" class="icon"></i>&ndash;&gt;-->
-<!--<a class="register" routerLink="/passport/register">注册账户</a>-->
-<!--</div>-->

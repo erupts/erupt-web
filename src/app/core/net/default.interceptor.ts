@@ -14,13 +14,13 @@ import {
 import {Observable, of, throwError} from "rxjs";
 import {catchError, mergeMap} from "rxjs/operators";
 import {NzMessageService, NzModalService, NzNotificationService} from "ng-zorro-antd";
-import {_HttpClient} from "@delon/theme";
+import {_HttpClient, ALAIN_I18N_TOKEN} from "@delon/theme";
 import {environment} from "@env/environment";
 import {EruptApiModel, PromptWay, Status} from "../../build/erupt/model/erupt-api.model";
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
-import {DataService} from "@shared/service/data.service";
+import {I18NService} from "@core/i18n/i18n.service";
 
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
@@ -36,8 +36,8 @@ export class DefaultInterceptor implements HttpInterceptor {
                 private msg: NzMessageService,
                 @Inject(DA_SERVICE_TOKEN)
                 private tokenService: TokenService,
-                public dataService: DataService,
                 private router: Router,
+                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 private cacheService: CacheService) {
     }
 
@@ -160,8 +160,8 @@ export class DefaultInterceptor implements HttpInterceptor {
                 } else {
                     if (this.tokenService.get().token) {
                         this.modal.confirm({
-                            nzTitle: "登录状态已过期，您可以继续留在该页面，或者重新登录？",
-                            nzOkText: "重新登录",
+                            nzTitle: this.i18n.fanyi("login_expire.tip"),
+                            nzOkText: this.i18n.fanyi("login_expire.retry"),
                             nzOnOk: () => {
                                 this.goTo("/passport/login");
                                 this.modal.closeAll();
@@ -183,7 +183,7 @@ export class DefaultInterceptor implements HttpInterceptor {
                     this.goTo("/layout/403");
                 } else {
                     this.modal.warning({
-                        nzTitle: "无操作权限！"
+                        nzTitle: this.i18n.fanyi("none_permission")
                     });
                 }
                 break;
@@ -209,8 +209,6 @@ export class DefaultInterceptor implements HttpInterceptor {
         return of(event);
     }
 
-    private whiteApi: string[] = ["code-img", "login", "erupt-app", "menu"];
-
     intercept(
         req: HttpRequest<any>,
         next: HttpHandler
@@ -221,7 +219,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         | HttpUserEvent<any>> {
         // 统一加上服务端前缀
         let url = req.url;
-        if (!url.startsWith("https://") && !url.startsWith("http://")) {
+        if (!url.startsWith("https://") && !url.startsWith("http://") && !url.startsWith("//")) {
             url = environment.SERVER_URL + url;
         }
         // 对话框的方式出现登录页
