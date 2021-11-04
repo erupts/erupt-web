@@ -7,7 +7,8 @@ import {EruptBuildModel} from "../../model/erupt-build.model";
 import {Subscription} from "rxjs";
 import {Status} from "../../model/erupt-api.model";
 import {colRules} from "@shared/model/util.model";
-import {SettingsService} from "@delon/theme";
+import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
+import {I18NService} from "@core";
 
 @Component({
     selector: "erupt-tree",
@@ -45,6 +46,7 @@ export class TreeComponent implements OnInit, OnDestroy {
                 @Inject(NzMessageService)
                 private msg: NzMessageService,
                 public settingSrv: SettingsService,
+                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 private dataHandler: DataHandlerService) {
@@ -119,7 +121,7 @@ export class TreeComponent implements OnInit, OnDestroy {
             if (result.status == Status.SUCCESS) {
                 this.fetchTreeData();
                 this.dataHandler.emptyEruptValue(this.eruptBuildModel);
-                this.msg.success("添加成功");
+                this.msg.success(this.i18n.fanyi("global.add.success"));
             }
         });
     }
@@ -131,7 +133,7 @@ export class TreeComponent implements OnInit, OnDestroy {
             this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName,
                 this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
                 if (result.status == Status.SUCCESS) {
-                    this.msg.success("修改成功");
+                    this.msg.success(this.i18n.fanyi("global.update.success"));
                     this.fetchTreeData();
                 }
                 this.loading = false;
@@ -149,7 +151,7 @@ export class TreeComponent implements OnInit, OnDestroy {
             let pid = pidEdit.$value;
             if (pid) {
                 if (id == pid) {
-                    this.msg.warning(pidEdit.title + "：不可以选择自己作为父级");
+                    this.msg.warning(pidEdit.title + ": " + this.i18n.fanyi("tree.validate.no_this_parent"));
                     return false;
                 } else {
                     if (this.tree.getSelectedNodeList().length > 0) {
@@ -157,7 +159,7 @@ export class TreeComponent implements OnInit, OnDestroy {
                         if (children.length > 0) {
                             for (let child of children) {
                                 if (pid == child.origin.key) {
-                                    this.msg.warning(pidEdit.title + "：不可以选择自己的子级作为父级");
+                                    this.msg.warning(pidEdit.title + ": " + this.i18n.fanyi("tree.validate.no_this_children_parent"));
                                     return false;
                                 }
                             }
@@ -174,14 +176,14 @@ export class TreeComponent implements OnInit, OnDestroy {
         const nzTreeNode = this.tree.getSelectedNodeList()[0];
         if (nzTreeNode.isLeaf) {
             this.modal.confirm({
-                nzTitle: "请确认是否要删除",
+                nzTitle: this.i18n.fanyi("global.delete.hint"),
                 nzContent: "",
                 nzOnOk: () => {
                     this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, nzTreeNode.origin.key)
                         .subscribe(function (res) {
                             if (res.status == Status.SUCCESS) {
                                 that.fetchTreeData();
-                                that.msg.success("删除成功");
+                                that.msg.success(that.i18n.fanyi("global.delete.success"));
                             }
                             that.showEdit = false;
                         });

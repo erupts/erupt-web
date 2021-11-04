@@ -4,7 +4,7 @@
     <div nz-col [nzXs]="24" [nzSm]="8" [nzMd]="8" [nzLg]="6">
         <button nz-button nzType="dashed" style="display:block;width: 100%;" (click)="addBlock()" class="mb-sm"
                 *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
-            <i nz-icon nzType="plus" theme="outline"></i> 新增
+            <i nz-icon nzType="plus" theme="outline"></i> {{'tree.add_button'|translate}}
         </button>
         <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
             <input type="text" nz-input placeholder="Search" [(ngModel)]="searchValue">
@@ -42,29 +42,29 @@
                     <ng-container *ngIf="selectLeaf">
                         <button nz-button (click)="save()" [disabled]="loading" id="erupt-btn-save"
                                 *ngIf="eruptBuildModel.eruptModel.eruptJson.power.edit">
-                            <i nz-icon nzType="save" theme="outline"></i>保存
+                            <i nz-icon nzType="save" theme="outline"></i>{{'tree.update'|translate}}
                         </button>
                         <button nz-button nzType="danger" style="background: #fff !important;" [nzGhost]="true"
                                 (click)="del()" [disabled]="loading" id="erupt-btn-delete"
                                 *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
-                            <i nz-icon nzType="delete" theme="outline"></i>删除
+                            <i nz-icon nzType="delete" theme="outline"></i>{{'tree.delete'|translate}}
                         </button>
-                        <button nz-button nzType="dashed" (click)="addSub()" [disabled]="loading"  id="erupt-btn-add_sub"
+                        <button nz-button nzType="dashed" (click)="addSub()" [disabled]="loading" id="erupt-btn-add_sub"
                                 *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add&&eruptBuildModel.eruptModel.eruptJson.tree.pid">
-                            <i nz-icon nzType="arrow-down" nzTheme="outline"></i>增加下级
+                            <i nz-icon nzType="arrow-down" nzTheme="outline"></i>{{'tree.add_children'|translate}}
                         </button>
                     </ng-container>
                     <ng-container *ngIf="!selectLeaf">
                         <button nz-button (click)="add()" [disabled]="loading" id="erupt-btn-add-new"
                                 *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
-                            <i nz-icon nzType="plus" theme="outline"></i>增加
+                            <i nz-icon nzType="plus" theme="outline"></i>{{'tree.add'|translate}}
                         </button>
                     </ng-container>
                 </div>
             </div>
             <div [ngStyle]="{overflow: 'auto',overflowX:'hidden'}" style="width: 100%;height:calc(100vh - 180px)">
                 <nz-collapse nzAccordion>
-                    <nz-collapse-panel [nzActive]="true" [nzHeader]="'基本信息'" [nzDisabled]="true">
+                    <nz-collapse-panel [nzActive]="true" [nzHeader]="'tree.base'|translate" [nzDisabled]="true">
                         <nz-spin [nzSpinning]="loading" nzSize="large">
                             <erupt-edit [eruptBuildModel]="eruptBuildModel">
 

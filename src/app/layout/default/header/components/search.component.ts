@@ -13,7 +13,7 @@ import {MenuVo} from "@shared/model/erupt-menu";
         <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
             <input nz-input [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()"
                    (input)="onInput($event)"
-                   [placeholder]="'搜索菜单'" [nzAutocomplete]="auto" style="padding-left: 32px">
+                   [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto" style="padding-left: 32px">
             <nz-autocomplete #auto [nzBackfill]="true">
                 <nz-auto-option *ngFor="let menu of options" [nzValue]="menu.name"
                                 [nzLabel]="menu.name">

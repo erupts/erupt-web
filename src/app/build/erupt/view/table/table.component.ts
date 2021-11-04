@@ -2,7 +2,7 @@ import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel, RowOperation} from "../../model/erupt.model";
 
-import {DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
+import {ALAIN_I18N_TOKEN, DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {STColumn, STColumnButton, STComponent} from "@delon/abc";
@@ -20,6 +20,7 @@ import {Observable} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
+import {I18NService} from "@core";
 
 
 @Component({
@@ -44,6 +45,7 @@ export class TableComponent implements OnInit {
         @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
+        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     ) {
     }
 
@@ -219,9 +221,9 @@ export class TableComponent implements OnInit {
                         nzStyle: {top: "60px"},
                         nzMaskClosable: true,
                         nzKeyboard: true,
-                        nzCancelText: "关闭（ESC）",
+                        nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
                         nzOkText: null,
-                        nzTitle: "查看",
+                        nzTitle: this.i18n.fanyi("global.view"),
                         nzContent: EditComponent,
                         nzComponentParams: {
                             readonly: true,
@@ -242,8 +244,8 @@ export class TableComponent implements OnInit {
                         nzStyle: {top: "60px"},
                         nzMaskClosable: false,
                         nzKeyboard: false,
-                        nzTitle: "编辑",
-                        nzOkText: "修改",
+                        nzTitle: this.i18n.fanyi("global.editor"),
+                        nzOkText: this.i18n.fanyi("global.update"),
                         nzContent: EditComponent,
                         nzComponentParams: {
                             eruptBuildModel: this.eruptBuildModel,
@@ -256,7 +258,7 @@ export class TableComponent implements OnInit {
                                 let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
                                 let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
                                 if (res.status === Status.SUCCESS) {
-                                    this.msg.success("修改成功");
+                                    this.msg.success(this.i18n.fanyi("global.update.success"));
                                     this.st.reload();
                                     return true;
                                 } else {
@@ -277,6 +279,7 @@ export class TableComponent implements OnInit {
                     theme: "twotone",
                     twoToneColor: "#f00"
                 },
+                pop: this.i18n.fanyi("table.delete.hint"),
                 type: "del",
                 click: (record) => {
                     this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName,
@@ -288,7 +291,7 @@ export class TableComponent implements OnInit {
                                 } else {
                                     this.st.reload();
                                 }
-                                this.msg.success("删除成功");
+                                this.msg.success(this.i18n.fanyi('global.delete.success'));
                             }
                         });
                 }
@@ -352,7 +355,7 @@ export class TableComponent implements OnInit {
         }
         if (tableOperators.length > 0) {
             _columns.push({
-                title: "操作",
+                title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
                 width: tableOperators.length * 40 + 8,
                 className: "text-center",
@@ -375,7 +378,7 @@ export class TableComponent implements OnInit {
             ids = [data[eruptModel.eruptJson.primaryKeyCol]];
         } else {
             if (ro.mode === OperationMode.MULTI && this.selectedRows.length === 0) {
-                this.msg.warning("执行该操作时请至少选中一条数据");
+                this.msg.warning(this.i18n.fanyi("table.require.select_one"));
                 return;
             }
             this.selectedRows.forEach(e => {
@@ -414,7 +417,7 @@ export class TableComponent implements OnInit {
                     nzKeyboard: false,
                     nzTitle: ro.title,
                     nzMaskClosable: false,
-                    nzCancelText: "关闭",
+                    nzCancelText: this.i18n.fanyi("global.close"),
                     nzWrapClassName: "modal-lg",
                     nzOnOk: async () => {
                         modal.getInstance().nzCancelDisabled = true;
@@ -442,8 +445,8 @@ export class TableComponent implements OnInit {
             } else {
                 this.modal.confirm({
                     nzTitle: ro.title,
-                    nzContent: "请确认是否执行此操作",
-                    nzCancelText: "关闭",
+                    nzContent: this.i18n.fanyi("table.hint.operation"),
+                    nzCancelText: this.i18n.fanyi("global.close"),
                     nzOnOk: async () => {
                         this.selectedRows = [];
                         let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids, null)
@@ -465,12 +468,12 @@ export class TableComponent implements OnInit {
             nzWrapClassName: "modal-lg",
             nzMaskClosable: false,
             nzKeyboard: false,
-            nzTitle: "新增",
+            nzTitle: this.i18n.fanyi("global.new"),
             nzContent: EditComponent,
             nzComponentParams: {
                 eruptBuildModel: this.eruptBuildModel
             },
-            nzOkText: "增加",
+            nzOkText: this.i18n.fanyi("global.add"),
             nzOnOk: async () => {
                 if (!this.adding) {
                     this.adding = true;
@@ -497,7 +500,7 @@ export class TableComponent implements OnInit {
                                 this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
                         }
                         if (res.status === Status.SUCCESS) {
-                            this.msg.success("新增成功");
+                            this.msg.success(this.i18n.fanyi("global.add.success"));
                             this.st.reload();
                             return true;
                         }
@@ -511,7 +514,7 @@ export class TableComponent implements OnInit {
     //批量删除
     delRows() {
         if (!this.selectedRows || this.selectedRows.length === 0) {
-            this.msg.warning("请选中要删除的数据");
+            this.msg.warning(this.i18n.fanyi("table.select_delete_item"));
             return;
         }
         const ids = [];
@@ -521,7 +524,7 @@ export class TableComponent implements OnInit {
         if (ids.length > 0) {
             this.modal.confirm(
                 {
-                    nzTitle: "确定要删除这" + ids.length + "条数据吗？",
+                    nzTitle: this.i18n.fanyi("table.hint_delete_number").replace("{}", ids.length),
                     nzContent: "",
                     nzOnOk: async () => {
                         this.deleting = true;
@@ -534,14 +537,13 @@ export class TableComponent implements OnInit {
                                 this.st.reload();
                             }
                             this.selectedRows = [];
-                            this.msg.success("删除成功");
+                            this.msg.success(this.i18n.fanyi("global.delete.success"));
                         }
                     }
                 }
             );
-
         } else {
-            this.msg.error("请选择要删除的数据项!");
+            this.msg.error(this.i18n.fanyi("table.select_delete_item"));
         }
     }
 
@@ -603,9 +605,9 @@ export class TableComponent implements OnInit {
     importableExcel() {
         let model = this.modal.create({
             nzKeyboard: true,
-            nzTitle: "Excel导入",
+            nzTitle: "Excel " + this.i18n.fanyi("table.import"),
             nzOkText: null,
-            nzCancelText: "关闭（ESC）",
+            nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzWrapClassName: "modal-lg",
             nzContent: ExcelImportComponent,
             nzComponentParams: {

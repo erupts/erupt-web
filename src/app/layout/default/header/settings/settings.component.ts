@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {SettingsService} from "@delon/theme";
+import {Component, Inject, OnInit} from '@angular/core';
+import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
 import {ReuseTabService} from "@delon/abc";
 import {bootloader} from "@angularclass/hmr";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
+import {I18NService} from "@core";
 
 @Component({
     selector: 'erupt-settings',
@@ -15,6 +16,7 @@ export class SettingsComponent implements OnInit {
     constructor(private settingSrv: SettingsService,
                 private confirmServ: NzModalService,
                 private messageServ: NzMessageService,
+                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 private reuseTabService: ReuseTabService) {
     }
 
@@ -53,10 +55,11 @@ export class SettingsComponent implements OnInit {
 
     clear() {
         this.confirmServ.confirm({
-            nzTitle: '确认要清理所有的本地缓存吗 ？',
+            // setting.ok
+            nzTitle: this.i18n.fanyi("setting.confirm"),
             nzOnOk: () => {
                 localStorage.clear();
-                this.messageServ.success('清理完成 ！');
+                this.messageServ.success(this.i18n.fanyi("finish"));
             }
         });
     }

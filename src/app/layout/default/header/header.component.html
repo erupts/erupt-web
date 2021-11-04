@@ -1,6 +1,6 @@
 <div class="alain-default__header-logo" ripper color="#888">
     <a [routerLink]="settings.user.indexPath" (click)="toIndex()" class="alain-default__header-logo-link">
-        <img [src]="logoPath" style="vertical-align: top" class="header-logo-img"/>
+        <img *ngIf="logoPath" [src]="logoPath" style="vertical-align: top" class="header-logo-img" alt=""/>
         <span *ngIf="logoText" class="header-logo-text">{{logoText}}</span>
     </a>
 </div>
@@ -38,12 +38,16 @@
         </li>
 
         <li>
+            <header-i18n></header-i18n>
+        </li>
+
+        <li>
             <div class="alain-default__nav-item" (click)="open()">
                 <i nz-icon nzType="setting" nzTheme="outline"></i>
             </div>
             <nz-drawer [nzClosable]="true" [nzVisible]="drawerVisible" [nzWidth]="260"
                        [nzBodyStyle]="{padding:'8px 24px'}"
-                       nzPlacement="right" (nzOnClose)="close()" [nzTitle]="'页面设置'">
+                       nzPlacement="right" (nzOnClose)="close()" [nzTitle]="'setting.config' | i18n">
                 <erupt-settings></erupt-settings>
             </nz-drawer>
         </li>

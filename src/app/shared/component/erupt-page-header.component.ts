@@ -4,7 +4,7 @@ import {StatusServiceService} from "@shared/service/status-service.service";
 @Component({
     selector: 'erupt-page-header',
     template:  `
-        <page-header [autoTitle]="false" [title]="null" *ngIf="!isFillLayout">
+        <page-header [autoTitle]="false" homeI18n="global.home" [title]="null" *ngIf="!isFillLayout">
         </page-header>
     `,
     styles: []

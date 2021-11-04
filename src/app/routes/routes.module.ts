@@ -4,7 +4,6 @@ import {SharedModule} from "@shared/shared.module";
 import {RouteRoutingModule} from "./routes-routing.module";
 // passport pages
 import {UserLoginComponent} from "./passport/login/login.component";
-import {UserRegisterResultComponent} from "./passport/register-result/register-result.component";
 // single pages
 import {Exception403Component} from "./exception/403.component";
 import {Exception404Component} from "./exception/404.component";
@@ -18,7 +17,6 @@ import {FillComponent} from './fill/fill.component';
 const COMPONENTS = [
     // passport pages
     UserLoginComponent,
-    UserRegisterResultComponent,
     // single pages
     Exception403Component,
     Exception404Component,

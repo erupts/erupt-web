@@ -6,7 +6,7 @@
         <ng-container *ngIf="bi.dimensions.length>0">
             <div class="mb-sm float-right">
                 <button nz-button *ngIf="!hideCondition" (click)="clearCondition()">
-                    <i nz-icon nzType="sync" nzTheme="outline"></i>重置条件
+                    <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|i18n}}
                 </button>
                 <button nz-button (click)="hideCondition=!hideCondition">
                     <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
@@ -15,12 +15,12 @@
         </ng-container>
         <ng-container>
             <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query(1,size,true);">
-                <i nz-icon nzType="search" nzTheme="outline"></i>查询
+                <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|i18n}}
             </button>
         </ng-container>
         <ng-container *ngIf="bi.export">
             <button nz-button class="mb-sm" (click)="exportBiData()">
-                <i nz-icon nzType="download" nzTheme="outline"></i>导出
+                <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|i18n}}
             </button>
         </ng-container>
 
@@ -29,13 +29,13 @@
             <button nz-button nzType="default" nz-popover
                     [nzContent]="tableColumnCtrl"
                     nzTrigger="click" class="mb-sm hidden-mobile">
-                <i nz-icon nzType="table" nzTheme="outline"></i>表格列控制
+                <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|i18n}}
             </button>
             <ng-template #tableColumnCtrl>
                 <div nz-row style="max-width: 520px;">
                     <ng-container *ngFor="let col of st.columns">
                         <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
-                            <label nz-checkbox [(ngModel)]="col.show"
+                            <label nz-checkbox [(ngModel)]="col.show" style="width: 130px;" class="ellipsis"
                                    (ngModelChange)="st.resetColumns()">{{col.title}}</label>
                         </div>
                     </ng-container>
@@ -68,7 +68,7 @@
                             <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying"
                                     (click)="query(1,size)"
                                     [nzGhost]="true">
-                                <i nz-icon nzType="search" nzTheme="outline"></i>查询
+                                <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|i18n}}
                             </button>
                         </div>
                     </nz-result>
