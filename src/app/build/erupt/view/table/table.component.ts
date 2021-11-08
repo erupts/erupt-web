@@ -304,6 +304,8 @@ export class TableComponent implements OnInit {
                 let text = "";
                 if (ro.icon) {
                     text = `<i class=\"${ro.icon}\"></i>`;
+                } else {
+                    text = ro.title;
                 }
                 tableOperators.push({
                     type: 'link',
@@ -366,7 +368,7 @@ export class TableComponent implements OnInit {
     }
 
     /**
-     *  自定义功能触发
+     * 自定义功能触发
      * @param rowOperation 行按钮对象
      * @param data 数据（单个执行时使用）
      */
