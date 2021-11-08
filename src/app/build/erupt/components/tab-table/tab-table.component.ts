@@ -52,7 +52,9 @@ export class TabTableComponent implements OnInit {
 
     ngOnInit() {
         this.stConfig.stPage.front = true;
-        if (!this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
+        if (this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
+
+        } else {
             this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
         }
         if (this.onlyRead) {
