@@ -2,7 +2,7 @@
     <nz-card [nzTitle]="chart.name" nzSize="small" [nzBodyStyle]="{padding:'0'}" [nzHoverable]="true"
              [nzExtra]="extraTemplate">
         <ng-container *ngIf="chart.type==chartType.tpl">
-            <erupt-iframe [url]="src" [height]="chart.height+'px'"></erupt-iframe>
+            <erupt-iframe [url]="src" [style]="{height:chart.height+'px',paddingTop:'1px'}"></erupt-iframe>
         </ng-container>
         <ng-container *ngIf="chart.type!=chartType.tpl">
             <div [id]='chart.code' style='width:100%;' [ngStyle]="{height:chart.height+'px'}"></div>
