@@ -592,7 +592,7 @@ export class TableComponent implements OnInit {
         }
         // this._drill.val
         //导出接口
-        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition,);
+        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition);
     }
 
 
