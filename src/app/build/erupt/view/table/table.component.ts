@@ -314,6 +314,7 @@ export class TableComponent implements OnInit {
                     click: (record: any, modal: any) => {
                         that.createOperator(ro, record);
                     },
+                    iifBehavior: 'disabled',
                     iif: (item) => {
                         if (ro.ifExpr) {
                             return eval(ro.ifExpr);
