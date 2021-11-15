@@ -57,6 +57,7 @@ export class UiBuildService {
                 //修复表格显示子类属性时无法正确检索到属性值的缺陷
                 obj.index = view.column.replace(/\./g, "_");
             } else {
+                //修复tab_table表格显示子类属性时无法正确检索到属性值的缺陷
                 obj.index = view.column.replace(/\_/g,".");
             }
             if (view.sortable) {
