@@ -80,7 +80,7 @@ export class DataHandlerService {
             field.eruptFieldJson.views.forEach(view => {
                 if (view.column) {
                     //修复表格显示子类属性时无法正确检索到属性值的缺陷
-                    view.column = field.fieldName + "_" + view.column.replace(/\./g, "_");
+                    view.column = field.fieldName + "." + view.column;
                 } else {
                     view.column = field.fieldName;
                 }
