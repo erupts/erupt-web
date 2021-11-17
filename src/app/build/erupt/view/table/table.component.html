@@ -27,7 +27,7 @@
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
                             <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()"
-                                    id="erupt-btn-export">
+                                    id="erupt-btn-export" [nzLoading]="downloading">
                                 <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|translate}}
                             </button>
                         </ng-container>
@@ -131,13 +131,13 @@
                     [size]="'middle'"
                     [body]="bodyTpl">
                     <ng-template #bodyTpl>
-<!--                        <ng-container>-->
-<!--                            <tr>-->
-<!--                                <td colspan="3">性别平均值</td>-->
-<!--                                <td>{{ s }}</td>-->
-<!--                                <td colspan="5"></td>-->
-<!--                            </tr>-->
-<!--                        </ng-container>-->
+                        <!--                        <ng-container>-->
+                        <!--                            <tr>-->
+                        <!--                                <td colspan="3">性别平均值</td>-->
+                        <!--                                <td>{{ s }}</td>-->
+                        <!--                                <td colspan="5"></td>-->
+                        <!--                            </tr>-->
+                        <!--                        </ng-container>-->
                     </ng-template>
                 </st>
             </ng-container>

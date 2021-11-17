@@ -76,6 +76,8 @@ export class TableComponent implements OnInit {
 
     showTable: boolean = true;
 
+    downloading: boolean = false;
+
     _drill: { erupt: string, code: string, eruptParent: string, val: any };
 
 
@@ -593,7 +595,10 @@ export class TableComponent implements OnInit {
         }
         // this._drill.val
         //导出接口
-        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition);
+        this.downloading = true;
+        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition, () => {
+            this.downloading = false;
+        });
     }
 
 
