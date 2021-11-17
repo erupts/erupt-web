@@ -1,5 +1,5 @@
 import {Inject, Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpEvent} from "@angular/common/http";
 import {Checkbox, Tree} from "../../build/erupt/model/erupt.model";
 import {_HttpClient, ALAIN_I18N_TOKEN} from "@delon/theme";
 import {Observable} from "rxjs";
@@ -12,6 +12,7 @@ import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {VL} from "../../build/erupt/model/erupt-field.model";
 import {I18NService} from "@core";
+import {downloadFile} from "@shared/util/erupt.util";
 
 @Injectable()
 export class DataService {
@@ -344,12 +345,37 @@ export class DataService {
         DataService.postExcelFile(RestPath.excel + "/template/" + eruptName + "?" + this.createAuthParam(eruptName));
     }
 
-    downloadExcel(eruptName: string, condition: any) {
+    downloadExcel2(eruptName: string, condition: any) {
         let param: any = {};
         if (condition) {
             param.condition = encodeURIComponent(JSON.stringify(condition));
         }
         DataService.postExcelFile(RestPath.excel + "/export/" + eruptName + "?" + this.createAuthParam(eruptName), param);
+    }
+
+    downloadExcel(eruptName: string, condition: any, callback) {
+        this._http.post(RestPath.excel + "/export/" + eruptName, condition, null, {
+            responseType: "arraybuffer",
+            observe: 'events',
+            headers: {
+                erupt: eruptName,
+                ...this.getCommonHeader()
+            }
+        }).subscribe((res) => {
+            if (res.type !== 4) {
+                // 还没准备好，无需处理
+                return;
+            }
+            downloadFile(res);
+            callback();
+        }, () => {
+            callback();
+        });
+        // let param: any = {};
+        // if (condition) {
+        //     param.condition = encodeURIComponent(JSON.stringify(condition));
+        // }
+        // DataService.postExcelFile(RestPath.excel + "/export/" + eruptName + "?" + this.createAuthParam(eruptName), param);
     }
 
     createAuthParam(eruptName: string): string {

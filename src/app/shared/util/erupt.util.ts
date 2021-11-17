@@ -4,6 +4,7 @@
  * @param menuValue 菜单值
  */
 import {MenuTypeEnum} from "@shared/model/erupt-menu";
+import {HttpEvent} from "@angular/common/http";
 
 export function generateMenuPath(type: string, value: string) {
     let menuValue = value || '';
@@ -29,6 +30,20 @@ export function generateMenuPath(type: string, value: string) {
                 return "/fill/" + menuValue;
             }
     }
+}
+
+
+export function downloadFile(res: HttpEvent<any>) {
+    // @ts-ignore
+    let url = window.URL.createObjectURL(new Blob([res.body]));
+    let link = document.createElement("a");
+    link.style.display = "none";
+    link.href = url;
+    // @ts-ignore
+    link.setAttribute("download", decodeURIComponent(res.headers.get('Content-Disposition').split(';')[1].split('=')[1]));
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
 }
 
 
