@@ -27,7 +27,7 @@
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
                             <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()"
-                                    id="erupt-btn-export">
+                                    id="erupt-btn-export" [nzLoading]="downloading">
                                 <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|translate}}
                             </button>
                         </ng-container>
@@ -128,26 +128,17 @@
                     [multiSort]="stConfig.multiSort"
                     [page]="stConfig.stPage"
                     [req]="stConfig.req"
-                    [size]="'middle'">
-<!--                    <ng-template #bodyTpl let-s>-->
-<!--                        <ng-container>-->
-<!--                            <tr>-->
-<!--                                <td>合计</td>-->
-<!--                                <td>{{ s }} 个</td>-->
-<!--                                <td>{{ s }}</td>-->
-<!--                                <td class="text-right">{{ s }}</td>-->
-<!--                                <td class="text-right">{{ s }}</td>-->
-<!--                                <td class="text-right">{{ s }}</td>-->
-<!--                                <td class="text-right">{{ s }}</td>-->
-<!--                                <td class="text-right">{{ s }}</td>-->
-<!--                            </tr>-->
-<!--                            <tr class="bg-grey-lighter">-->
-<!--                                <td colspan="3">性别平均值</td>-->
-<!--                                <td class="text-right">{{ s  }}</td>-->
-<!--                                <td colspan="4"></td>-->
-<!--                            </tr>-->
-<!--                        </ng-container>-->
-<!--                    </ng-template>-->
+                    [size]="'middle'"
+                    [body]="bodyTpl">
+                    <ng-template #bodyTpl>
+                        <!--                        <ng-container>-->
+                        <!--                            <tr>-->
+                        <!--                                <td colspan="3">性别平均值</td>-->
+                        <!--                                <td>{{ s }}</td>-->
+                        <!--                                <td colspan="5"></td>-->
+                        <!--                            </tr>-->
+                        <!--                        </ng-container>-->
+                    </ng-template>
                 </st>
             </ng-container>
         </div>
