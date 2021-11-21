@@ -2,16 +2,19 @@ import {Inject, Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {Bi, BiData, Reference} from "../model/bi.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
-import {_HttpClient} from "@delon/theme";
+import {_HttpClient, MenuService} from "@delon/theme";
 import {DataService} from "@shared/service/data.service";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
+import {downloadFile} from "@shared/util/erupt.util";
 
 @Injectable({
     providedIn: 'root'
 })
 export class BiDataService {
 
-    constructor(private _http: _HttpClient, @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
+    constructor(private _http: _HttpClient,
+                private menuSrv: MenuService,
+                @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
 
     //BI结构
@@ -55,11 +58,30 @@ export class BiDataService {
     }
 
     //导出excel
-    exportExcel(id: number, code: string, query: any) {
+    exportExcel_bak(id: number, code: string, query: any) {
         DataService.postExcelFile(RestPath.bi + "/" + code + "/excel/" + id, {
             condition: encodeURIComponent(JSON.stringify(query)),
             [DataService.PARAM_ERUPT]: code,
             [DataService.PARAM_TOKEN]: this.tokenService.get().token
+        });
+    }
+
+    exportExcel(id: number, code: string, query: any, callback) {
+        this._http.post(RestPath.bi + "/" + code + "/excel/" + id, query, null, {
+            responseType: "arraybuffer",
+            observe: 'events',
+            headers: {
+                erupt: code,
+            }
+        }).subscribe((res) => {
+            if (res.type !== 4) {
+                // 还没准备好，无需处理
+                return;
+            }
+            downloadFile(res);
+            callback();
+        }, () => {
+            callback();
         });
     }
 

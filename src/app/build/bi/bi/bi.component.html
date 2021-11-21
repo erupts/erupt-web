@@ -19,7 +19,7 @@
             </button>
         </ng-container>
         <ng-container *ngIf="bi.export">
-            <button nz-button class="mb-sm" (click)="exportBiData()">
+            <button nz-button class="mb-sm" (click)="exportBiData()" [nzLoading]="downloading">
                 <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|i18n}}
             </button>
         </ng-container>

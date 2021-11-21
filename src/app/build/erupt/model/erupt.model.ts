@@ -83,3 +83,14 @@ export interface Power {
     importable: boolean;
     export: boolean;
 }
+
+export interface Row {
+    color: string;
+    columns: Column[];
+}
+
+export interface Column {
+    style: string;
+    value: string;
+    colspan: number;
+}
