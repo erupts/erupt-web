@@ -1,3 +1,5 @@
+import {Input} from "@angular/core";
+
 export class WindowModel {
 
     private static config: any = window["eruptSiteConfig"] || {};
@@ -25,6 +27,8 @@ export class WindowModel {
     public static dialogLogin: boolean = WindowModel.config["dialogLogin"] || false;
 
     public static copyright: boolean = WindowModel.config["copyright"] !== false;
+
+    public static login: Function = WindowModel.config["login"] || false;
 }
 
 
