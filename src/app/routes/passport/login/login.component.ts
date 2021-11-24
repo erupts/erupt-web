@@ -126,6 +126,14 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
                 }
                 this.settingsService.setUser({name: result.userName, indexPath: result.indexPath});
                 this.tokenService.set({token: result.token, expire: result.expire, account: this.userName.value});
+                if (WindowModel.login) {
+                    WindowModel.login({
+                        token: result.token,
+                        userName: result.userName,
+                        account: this.userName.value,
+                        indexPath: result.indexPath
+                    });
+                }
                 this.loading = false;
                 if (!this.modelFun) {
                     let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);

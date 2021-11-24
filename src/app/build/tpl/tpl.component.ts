@@ -23,6 +23,7 @@ export class TplComponent implements OnInit {
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe((params) => {
+            console.log(params);
             this.url = this.dataService.getEruptTpl(params.name);
         });
     }
