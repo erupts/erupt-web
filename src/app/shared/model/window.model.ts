@@ -29,6 +29,8 @@ export class WindowModel {
     public static copyright: boolean = WindowModel.config["copyright"] !== false;
 
     public static login: Function = WindowModel.config["login"] || false;
+
+    public static logout: Function = WindowModel.config["logout"] || false;
 }
 
 

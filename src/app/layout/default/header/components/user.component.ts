@@ -6,6 +6,7 @@ import {DataService} from "@shared/service/data.service";
 import {NzModalService} from "ng-zorro-antd";
 import {ChangePwdComponent} from "../../../../routes/change-pwd/change-pwd.component";
 import {I18NService} from "@core";
+import {WindowModel} from "@shared/model/window.model";
 
 @Component({
     selector: "header-user",
@@ -43,6 +44,13 @@ export class HeaderUserComponent {
             nzTitle: this.i18n.fanyi("global.confirm_logout"),
             nzOnOk: () => {
                 this.data.logout().subscribe();
+                if (WindowModel.logout) {
+                    WindowModel.logout({
+                        account: this.tokenService.get().account,
+                        userName: this.settings.user.name,
+                        token: this.tokenService.get().token
+                    });
+                }
                 this.tokenService.clear();
                 this.router.navigateByUrl(this.tokenService.login_url);
             }
