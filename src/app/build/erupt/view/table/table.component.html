@@ -131,13 +131,14 @@
                     [size]="'middle'"
                     [body]="bodyTpl">
                     <ng-template #bodyTpl>
-                        <!--                        <ng-container>-->
-                        <!--                            <tr>-->
-                        <!--                                <td colspan="3">性别平均值</td>-->
-                        <!--                                <td>{{ s }}</td>-->
-                        <!--                                <td colspan="5"></td>-->
-                        <!--                            </tr>-->
-                        <!--                        </ng-container>-->
+                        <ng-container>
+                            <tr *ngFor="let row of extraRows" [ngClass]="row.className">
+                                <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
+                                    [ngClass]="column.className">
+                                    {{column.value}}
+                                </td>
+                            </tr>
+                        </ng-container>
                     </ng-template>
                 </st>
             </ng-container>

@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {EruptModel, RowOperation} from "../../model/erupt.model";
+import {EruptModel, Row, RowOperation} from "../../model/erupt.model";
 
 import {ALAIN_I18N_TOKEN, DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -52,6 +52,8 @@ export class TableComponent implements OnInit {
     @ViewChild("st", {static: false})
     st: STComponent;
 
+    extraRows: Row[];
+
     operationMode = OperationMode;
 
     showColCtrl: boolean = false;
@@ -85,6 +87,7 @@ export class TableComponent implements OnInit {
 
     @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
         this._drill = drill;
+        console.log(drill);
         this.init(this.dataService.getEruptBuild(drill.erupt), {
             url: RestPath.data + "/" + drill.eruptParent + "/drill/" + drill.code + "/" + drill.val,
             header: {
@@ -162,6 +165,7 @@ export class TableComponent implements OnInit {
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
                 this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
+                this.extraRowFun();
             }
         );
     }
@@ -177,7 +181,7 @@ export class TableComponent implements OnInit {
         if (linkTree && linkTree.field) {
             this.stConfig.req.param["linkTreeVal"] = linkTree.value;
         }
-        this.st.load(1, this.stConfig.req.param);
+        this.stLoad(1, this.stConfig.req.param);
     }
 
     buildTableConfig() {
@@ -261,7 +265,7 @@ export class TableComponent implements OnInit {
                                 let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
                                 if (res.status === Status.SUCCESS) {
                                     this.msg.success(this.i18n.fanyi("global.update.success"));
-                                    this.st.reload();
+                                    this.stLoad();
                                     return true;
                                 } else {
                                     return false;
@@ -289,9 +293,9 @@ export class TableComponent implements OnInit {
                         .subscribe(result => {
                             if (result.status === Status.SUCCESS) {
                                 if (this.st._data.length == 1) {
-                                    this.st.load(this.st.pi == 1 ? 1 : this.st.pi - 1);
+                                    this.stLoad(this.st.pi == 1 ? 1 : this.st.pi - 1);
                                 } else {
-                                    this.st.reload();
+                                    this.stLoad();
                                 }
                                 this.msg.success(this.i18n.fanyi('global.delete.success'));
                             }
@@ -431,7 +435,7 @@ export class TableComponent implements OnInit {
                         modal.getInstance().nzCancelDisabled = false;
                         this.selectedRows = [];
                         if (res.status === Status.SUCCESS) {
-                            this.st.reload();
+                            this.stLoad();
                             res.data && eval(res.data);
                             return true;
                         } else {
@@ -456,7 +460,7 @@ export class TableComponent implements OnInit {
                         this.selectedRows = [];
                         let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids, null)
                             .toPromise().then();
-                        this.st.reload();
+                        this.stLoad();
                         if (res.data) {
                             eval(res.data);
                         }
@@ -506,7 +510,7 @@ export class TableComponent implements OnInit {
                         }
                         if (res.status === Status.SUCCESS) {
                             this.msg.success(this.i18n.fanyi("global.add.success"));
-                            this.st.reload();
+                            this.stLoad();
                             return true;
                         }
                     }
@@ -537,9 +541,9 @@ export class TableComponent implements OnInit {
                         this.deleting = false;
                         if (res.status == Status.SUCCESS) {
                             if (this.selectedRows.length == this.st._data.length) {
-                                this.st.load(this.st.pi == 1 ? 1 : this.st.pi - 1);
+                                this.stLoad(this.st.pi == 1 ? 1 : this.st.pi - 1);
                             } else {
-                                this.st.reload();
+                                this.stLoad();
                             }
                             this.selectedRows = [];
                             this.msg.success(this.i18n.fanyi("global.delete.success"));
@@ -609,6 +613,22 @@ export class TableComponent implements OnInit {
         this.query();
     }
 
+    stLoad(pi?: number, extraParams?: {}) {
+        if (pi) {
+            this.st.load(pi, extraParams);
+        } else {
+            this.st.reload();
+        }
+        this.extraRowFun();
+    }
+
+    extraRowFun() {
+        if (this.eruptBuildModel.eruptModel.extraRow) {
+            this.dataService.extraRow(this.eruptBuildModel.eruptModel.eruptName, this.stConfig.req.param).subscribe(res => {
+                this.extraRows = res;
+            });
+        }
+    }
 
     // excel导入
     importableExcel() {
@@ -624,7 +644,7 @@ export class TableComponent implements OnInit {
             },
             nzOnCancel: () => {
                 if (model.getContentComponent().upload) {
-                    this.st.reload();
+                    this.stLoad();
                 }
             }
         });
