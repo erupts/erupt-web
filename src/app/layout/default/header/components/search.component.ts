@@ -68,7 +68,7 @@ export class HeaderSearchComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.dataService.getMenu().subscribe((res) => {
-            console.log(res)
+            // console.log(res)
             this.menuList = res;
         });
         this.qIpt = (this.el.nativeElement as HTMLElement).querySelector('.ant-input') as HTMLInputElement;
