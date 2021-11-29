@@ -1,6 +1,6 @@
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient, HttpEvent} from "@angular/common/http";
-import {Checkbox, Tree} from "../../build/erupt/model/erupt.model";
+import {Checkbox, Row, Tree} from "../../build/erupt/model/erupt.model";
 import {_HttpClient, ALAIN_I18N_TOKEN} from "@delon/theme";
 import {Observable} from "rxjs";
 import {LoginModel} from "../model/user.model";
@@ -93,6 +93,18 @@ export class DataService {
         });
     }
 
+    //自定义行
+    extraRow(eruptName: string, condition?: object): Observable<Row[]> {
+        console.log(eruptName);
+        return this._http.post(RestPath.data + "/extra-row/" + eruptName, condition, null, {
+            observe: 'body',
+            headers: {
+                erupt: eruptName,
+                ...this.getCommonHeader()
+            }
+        });
+    }
+
     getEruptBuildByField(eruptName: string, field: string, eruptParentName?: string): Observable<EruptBuildModel> {
         return this._http.get<EruptBuildModel>(RestPath.build + "/" + eruptName + "/" + field, null, {
             observe: "body",
@@ -105,7 +117,13 @@ export class DataService {
     }
 
     getEruptTpl(name: string) {
-        return RestPath.tpl + "/" + name + "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + name;
+        let params = "_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + name;
+        if (name.indexOf("?") == -1) {
+            return RestPath.tpl + "/" + name + "?" + params;
+        } else {
+            return RestPath.tpl + "/" + name + "&" + params;
+        }
+        // return RestPath.tpl + "/" + name + "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + name;
     }
 
     getEruptOperationTpl(eruptName: string, operationCode: string, ids: any[]) {
