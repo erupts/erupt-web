@@ -6,6 +6,7 @@ export interface EruptModel {
     eruptFieldModels: EruptFieldModel[];
     eruptJson: Erupt;
     eruptName: string;
+    extraRow: boolean;
     //# customer prop
     eruptFieldModelMap?: Map<String, EruptFieldModel>;
     tableColumns?: View[];
@@ -85,12 +86,12 @@ export interface Power {
 }
 
 export interface Row {
-    color: string;
+    className?: string;
     columns: Column[];
 }
 
 export interface Column {
-    style: string;
+    className?: string;
     value: string;
-    colspan: number;
+    colspan?: number;
 }

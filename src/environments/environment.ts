@@ -3,6 +3,14 @@ console.log("dev environment");
 let eruptSiteConfig = window["eruptSiteConfig"];
 eruptSiteConfig.fileDomain = "http://oos.erupt.xyz";
 eruptSiteConfig.amapKey = "6ba79a8db11b51aeb1176bd4cfa049f4";
+eruptSiteConfig.login = function (e) {
+    console.log(e);
+};
+
+eruptSiteConfig.logout = function (e) {
+    console.log(e);
+};
+
 eruptSiteConfig.r_tools = [{
     text: "下载",
     icon: "fa-download",
