@@ -157,6 +157,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
         this.setClass();
         //fill menu
         this.data.getMenu().subscribe(res => {
+
             function generateTree(menus, pid): Menu[] {
                 let result: Menu[] = [];
                 menus.forEach((menu) => {
