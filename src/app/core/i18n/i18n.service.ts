@@ -63,14 +63,14 @@ const LANGS: { [key: string]: LangData } = {
         delon: delonEnUS,
         abbr: '🇬🇧',
     },
-    // 'ko-KR': {
-    //     text: '한국어',
-    //     ng: ngKO,
-    //     zorro: ko_KR,
-    //     dateFns: df_ko,
-    //     delon: delonKoKR,
-    //     abbr: '🇰🇷',
-    // },
+    'ko-KR': {
+        text: '한국어',
+        ng: ngKO,
+        zorro: ko_KR,
+        dateFns: df_ko,
+        delon: delonKoKR,
+        abbr: '🇰🇷',
+    },
     'ja-JP': {
         text: '日本語',
         ng: ngJA,

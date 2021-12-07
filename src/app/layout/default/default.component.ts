@@ -157,6 +157,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
         this.setClass();
         //fill menu
         this.data.getMenu().subscribe(res => {
+
             function generateTree(menus, pid): Menu[] {
                 let result: Menu[] = [];
                 menus.forEach((menu) => {
@@ -209,6 +210,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 let linkEle = ele.getElementsByClassName("sidebar-nav__item-link")[0];
                 if (linkEle) {
                     let menu = this.menuSrv.getItem(linkEle.getElementsByClassName("sidebar-nav__item-text")[0].innerText);
+                    console.log(menu);
                     if (menu.link) {
                         linkEle.href = "#" + menu.link;
                         linkEle.onclick = function () {
