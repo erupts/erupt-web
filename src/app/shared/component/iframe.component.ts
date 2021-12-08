@@ -39,7 +39,7 @@ export class EruptIframeComponent implements OnInit, OnChanges {
     };
 
     ngOnChanges(changes: import("@angular/core").SimpleChanges): void {
-        console.log(changes.url.firstChange);
+        // console.log(changes.url.firstChange);
         if (!changes.url.firstChange) {
             this.spin = true;
         }

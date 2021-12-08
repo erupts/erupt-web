@@ -95,7 +95,6 @@ export class DataService {
 
     //自定义行
     extraRow(eruptName: string, condition?: object): Observable<Row[]> {
-        console.log(eruptName);
         return this._http.post(RestPath.data + "/extra-row/" + eruptName, condition, null, {
             observe: 'body',
             headers: {
