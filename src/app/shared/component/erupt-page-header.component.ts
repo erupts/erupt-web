@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {StatusServiceService} from "@shared/service/status-service.service";
+import {StatusService} from "@shared/service/status.service";
 
 @Component({
     selector: 'erupt-page-header',
@@ -13,7 +13,7 @@ export class EruptPageHeaderComponent implements OnInit {
 
     isFillLayout: boolean;
 
-    constructor(private statusService: StatusServiceService) {
+    constructor(private statusService: StatusService) {
 
     }
 
