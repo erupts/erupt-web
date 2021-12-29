@@ -116,7 +116,7 @@ export class BiComponent implements OnInit, OnDestroy {
                     this.data = [];
                 } else {
                     this.columns.push({
-                        title: 'No',
+                        title: '#',
                         type: 'no',
                         width: '82px',
                         className: "text-center",
