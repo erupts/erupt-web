@@ -1,0 +1,13 @@
+<nz-table #borderedTable nzBordered [nzData]="data" [nzSize]="'small'" [nzShowPagination]="false"
+          *ngIf="data&&data.length>0">
+    <thead>
+    <tr>
+        <th *ngFor="let data of data[0] | keyvalue">{{data.key}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let ds of data">
+        <td *ngFor="let data of ds | keyvalue">{{data.value}}</td>
+    </tr>
+    </tbody>
+</nz-table>

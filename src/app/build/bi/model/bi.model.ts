@@ -48,7 +48,9 @@ export enum ChartType {
     DensityHeatmap = "DensityHeatmap",
     Treemap = "Treemap",
 
-    tpl = "tpl"
+    tpl = "tpl",
+
+    table = "table"
 }
 
 export interface Dimension {
