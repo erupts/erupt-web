@@ -158,6 +158,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
         this.notify$ = this.settings.notify.subscribe(() => this.setClass());
         this.setClass();
         //fill menu
+        this.tokenService.get().indexPath && this.router.navigateByUrl(this.tokenService.get().indexPath).then();
         this.data.getMenu().subscribe(res => {
             // this.statusService.menus = res;
             function generateTree(menus, pid): Menu[] {
@@ -236,7 +237,6 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                     }, 800);
                 });
             }
-
         });
     }
 

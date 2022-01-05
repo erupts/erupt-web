@@ -125,7 +125,12 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
                     result.indexPath = generateMenuPath(split[0], split[1]);
                 }
                 this.settingsService.setUser({name: result.userName, indexPath: result.indexPath});
-                this.tokenService.set({token: result.token, expire: result.expire, account: this.userName.value});
+                this.tokenService.set({
+                    token: result.token,
+                    expire: result.expire,
+                    account: this.userName.value,
+                    indexPath: result.indexPath
+                });
                 if (WindowModel.login) {
                     WindowModel.login({
                         token: result.token,
@@ -141,7 +146,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
                         this.cacheService.remove(GlobalKeys.loginBackPath);
                         this.router.navigateByUrl(<string>loginBackPath).then();
                     } else {
-                        this.router.navigateByUrl(result.indexPath || '/').then();
+                        this.router.navigateByUrl("/").then();
                     }
                 } else {
                     this.modelFun();
