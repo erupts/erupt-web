@@ -5,6 +5,7 @@ export interface LoginModel {
     pass: boolean;
     reason: string;
     userName: string;
+    resetPwd: boolean;
     indexPath?: string;
-    indexMenu?: string
+    indexMenu?: string;
 }
