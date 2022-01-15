@@ -13,26 +13,19 @@
             <i nz-icon nzType="search"></i>
         </ng-template>
         <br>
-        <nz-card
-                [nzBodyStyle]="{padding:'10px',height:'calc(100vh - 220px - '+(settingSrv.layout.reuse?'40px':'0px') + ' + '+
-                (settingSrv.layout.breadcrumbs?'0px':'38px') +')',overflow: 'auto'}"
-                [nzLoading]="treeLoading"
-                [nzBordered]="true"
-                [nzHoverable]="true">
-            <nz-tree #tree
-                     class="tree-container"
-                     [nzShowLine]="true"
-                     [nzData]="nodes"
-                     [nzSearchValue]="searchValue"
-                     [nzBlockNode]="true"
-                     (nzClick)="nodeClickEvent($event)"
-                     (nzDblClick)="nzDblClick($event)">
-                <!--                [nzTreeTemplate]="nzTreeTemplate"-->
-                <!--                <ng-template #nzTreeTemplate let-node let-origin="origin">-->
-                <!--                    <span class="ant-tree-node-content-wrapper" [innerHTML]="node.title|safeHtml"></span>-->
-                <!--                </ng-template>-->
-            </nz-tree>
-        </nz-card>
+        <div [ngStyle]="{height:'calc(100vh - 220px - '+(settingSrv.layout.reuse?'40px':'0px') + ' + ' + (settingSrv.layout.breadcrumbs?'0px':'38px') +')',overflow: 'auto'}"
+             style="padding: 10px;background: #fff;border: 1px solid #d9d9d9" [scrollTop]="treeScrollTop" #treeDiv>
+            <nz-skeleton [nzLoading]="treeLoading&&this.nodes.length==0" [nzActive]="true">
+                <nz-tree #tree class="tree-container"
+                         [nzShowLine]="true"
+                         [nzData]="nodes"
+                         [nzSearchValue]="searchValue"
+                         [nzBlockNode]="true"
+                         (nzClick)="nodeClickEvent($event)"
+                         (nzDblClick)="nzDblClick($event)">
+                </nz-tree>
+            </nz-skeleton>
+        </div>
     </div>
     <!--    [hidden]="!showEdit"-->
     <div nz-col class="mb-sm" [nzXs]="24" [nzSm]="16" [nzMd]="16" [nzLg]="18">
