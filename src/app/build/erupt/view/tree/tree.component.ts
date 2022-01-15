@@ -195,7 +195,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         let st = this.treeDiv.nativeElement.scrollTop;
         setTimeout(() => {
             this.treeScrollTop = st;
-        }, 1500);
+        }, 500);
     }
 
     nzDblClick(event: NzFormatEmitEvent) {
