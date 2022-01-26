@@ -77,12 +77,15 @@
     </div>
 </div>
 <script>
-    var __t__ = new Date().getTime();
-    document.write(
-        "<link rel=\"stylesheet\" href=\"app.css?_=" + __t__ + "\" type=\"text/css\"/>" +
-        "<script type=\"text/javascript\" src=\"app.js?_" + __t__ + "\"><\/script>" +
-        "<script type=\"module\" src=\"app.module.js?_" + __t__ + "\" ><\/script>"
-    );
+    (function () {
+        var date = new Date();
+        var __t__ = '' + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours();
+        document.write(
+            "<link rel=\"stylesheet\" href=\"app.css?_=" + __t__ + "\" type=\"text/css\"/>" +
+            "<script type=\"text/javascript\" src=\"app.js?_=" + __t__ + "\"><\/script>" +
+            "<script type=\"module\" src=\"app.module.js?_=" + __t__ + "\" ><\/script>"
+        );
+    })()
 </script>
 </body>
 </html>
