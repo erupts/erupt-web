@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>erupt</title>
+    <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <meta name="renderer" content="webkit">
+
     <style type="text/css">
         .preloader {
             position: fixed;
@@ -48,20 +49,12 @@
             color: #fff;
             text-align: center
         }
-
     </style>
     <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1976d2">
 </head>
 <body>
-<script>
-    //创建一个script标签
-    var t = new Date().getTime();
-    document.write("<link rel=\"stylesheet\" href=\"app.css?_=" + t + "\" type=\"text/css\"/>");
-    document.write("<script type=\"text/javascript\" src=\"app.js?_" + t + "\"><\/script>");
-    document.write("<script type=\"module\" src=\"app.module.js?_" + t + "\" ><\/script>");
-</script>
 <!--[if lt IE 11]>
 <style>
     .preloader {
@@ -83,5 +76,13 @@
         </div>
     </div>
 </div>
+<script>
+    var __t__ = new Date().getTime();
+    document.write(
+        "<link rel=\"stylesheet\" href=\"app.css?_=" + __t__ + "\" type=\"text/css\"/>" +
+        "<script type=\"text/javascript\" src=\"app.js?_" + __t__ + "\"><\/script>" +
+        "<script type=\"module\" src=\"app.module.js?_" + __t__ + "\" ><\/script>"
+    );
+</script>
 </body>
 </html>
