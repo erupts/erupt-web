@@ -5,6 +5,7 @@ import {NzFormatEmitEvent} from "ng-zorro-antd";
 import {NzTreeNode} from "ng-zorro-antd/core/tree/nz-tree-base-node";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {DataService} from "@shared/service/data.service";
+import {calcChecks} from "@shared/util/zorro.util";
 
 @Component({
     selector: 'erupt-tab-tree',
@@ -40,7 +41,7 @@ export class TabTreeComponent implements OnInit {
     }
 
     checkBoxChange(event: NzFormatEmitEvent) {
-        this.eruptFieldModel.eruptFieldJson.edit.$tempValue = event.checkedKeys;
+        console.log(calcChecks(event.checkedKeys))
         this.eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
     }
 
