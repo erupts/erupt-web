@@ -5,7 +5,6 @@ export function calcChecks(nodes: NzTreeNode[]): any[] {
 
     function putParents(node: NzTreeNode) {
         if (node.getParentNode()) {
-
             set.add(node.getParentNode().key);
             putParents(node.parentNode);
         }
