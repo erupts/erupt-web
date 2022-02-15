@@ -115,13 +115,13 @@ export class BiComponent implements OnInit, OnDestroy {
                     });
                     this.data = [];
                 } else {
-                    this.columns.push({
-                        title: '#',
-                        type: 'no',
-                        width: '82px',
-                        className: "text-center",
-                        fixed: "left",
-                    });
+                    // this.columns.push({
+                    //     title: '#',
+                    //     type: 'no',
+                    //     width: '82px',
+                    //     className: "text-center",
+                    //     fixed: "left",
+                    // });
                     for (let column of res.columns) {
                         let col = {
                             title: column.name,
