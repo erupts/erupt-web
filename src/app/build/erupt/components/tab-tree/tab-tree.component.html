@@ -9,7 +9,7 @@
 <nz-spin [nzSpinning]="loading" *ngIf="treeData">
     <nz-tree [nzCheckable]="true"
              [nzShowLine]="true"
-             [nzCheckStrictly]="true"
+             [nzCheckStrictly]="false"
              [nzData]="treeData"
              (nzCheckBoxChange)="checkBoxChange($event)"
              [nzSearchValue]="eruptFieldModel.eruptFieldJson.edit.$tempValue"

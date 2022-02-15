@@ -40,6 +40,7 @@ export class TabTreeComponent implements OnInit {
     }
 
     checkBoxChange(event: NzFormatEmitEvent) {
+        this.eruptFieldModel.eruptFieldJson.edit.$tempValue = event.checkedKeys;
         this.eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
     }
 
