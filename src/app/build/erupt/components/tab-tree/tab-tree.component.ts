@@ -41,8 +41,8 @@ export class TabTreeComponent implements OnInit {
     }
 
     checkBoxChange(event: NzFormatEmitEvent) {
-        console.log(calcChecks(event.checkedKeys))
-        this.eruptFieldModel.eruptFieldJson.edit.$value = event.keys;
+        this.eruptFieldModel.eruptFieldJson.edit.$value =
+            Array.from(new Set([...this.eruptFieldModel.eruptFieldJson.edit.$value, ...calcChecks([event.node])]));
     }
 
     arrayAnyToString(array: any[]): string[] {
