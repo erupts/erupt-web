@@ -31,7 +31,6 @@
               "src/app.js",
               "src/app.module.js",
               "src/home.html",
-              "src/home.$.html",
               "src/erupt.svg",
               {
                 "glob": "**/*",
