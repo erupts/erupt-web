@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NzModalService} from "ng-zorro-antd";
+import {EruptAppData} from "@core/startup/erupt-app.data";
 
 @Component({
     selector: 'app-home',
@@ -16,7 +17,7 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.url = "home.$.html";
+        this.url = "home.html?v=" + EruptAppData.get().hash;
     }
 
     iframeLoad() {
