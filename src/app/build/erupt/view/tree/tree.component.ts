@@ -168,6 +168,13 @@ export class TreeComponent implements OnInit, OnDestroy {
                         .subscribe(res => {
                             if (res.status == Status.SUCCESS) {
                                 nzTreeNode.remove();
+                                if (nzTreeNode.parentNode) {
+                                    if (nzTreeNode.parentNode.getChildren().length == 0) {
+                                        this.fetchTreeData();
+                                    }
+                                } else {
+                                    this.fetchTreeData();
+                                }
                                 this.addBlock();
                                 this.msg.success(this.i18n.fanyi("global.delete.success"));
                             }
