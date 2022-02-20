@@ -5,6 +5,7 @@ import {NzMessageService} from "ng-zorro-antd";
 import {MenuService} from "@delon/theme";
 import {Menu} from "@delon/theme/src/services/menu/interface";
 import {MenuVo} from "@shared/model/erupt-menu";
+import {StatusService} from "@shared/service/status.service";
 
 @Component({
     selector: 'header-search',
@@ -63,12 +64,12 @@ export class HeaderSearchComponent implements AfterViewInit {
                 @Inject(NzMessageService)
                 private msg: NzMessageService,
                 public menuSrv: MenuService,
+                private statusService: StatusService,
                 private dataService: DataService) {
     }
 
     ngAfterViewInit() {
         this.dataService.getMenu().subscribe((res) => {
-            // console.log(res)
             this.menuList = res;
         });
         this.qIpt = (this.el.nativeElement as HTMLElement).querySelector('.ant-input') as HTMLInputElement;
