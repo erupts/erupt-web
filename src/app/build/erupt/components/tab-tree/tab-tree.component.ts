@@ -41,8 +41,27 @@ export class TabTreeComponent implements OnInit {
     }
 
     checkBoxChange(event: NzFormatEmitEvent) {
-        this.eruptFieldModel.eruptFieldJson.edit.$value =
-            Array.from(new Set([...this.eruptFieldModel.eruptFieldJson.edit.$value, ...calcChecks([event.node])]));
+        if (event.node.isChecked) {
+            this.eruptFieldModel.eruptFieldJson.edit.$value = Array.from(
+                new Set([...this.eruptFieldModel.eruptFieldJson.edit.$value, ...calcChecks([event.node])])
+            );
+        } else {
+            let value = this.eruptFieldModel.eruptFieldJson.edit.$value;
+            let checks = calcChecks([event.node]);
+            let result = [];
+            if (checks && checks.length > 0) {
+                let checkMaps = {};
+                for (let r of checks) {
+                    checkMaps[r] = r;
+                }
+                for (let i = 0; i < value.length; i++) {
+                    if (!checkMaps[value[i]]) {
+                        result.push(value[i]);
+                    }
+                }
+            }
+            this.eruptFieldModel.eruptFieldJson.edit.$value = result;
+        }
     }
 
     arrayAnyToString(array: any[]): string[] {

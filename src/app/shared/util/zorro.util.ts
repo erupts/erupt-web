@@ -21,7 +21,9 @@ export function calcChecks(nodes: NzTreeNode[]): any[] {
 
     for (let node of nodes) {
         arr.push(node.key);
-        putParents(node);
+        if (node.isChecked) {
+            putParents(node);
+        }
         putChildren(node);
     }
 
