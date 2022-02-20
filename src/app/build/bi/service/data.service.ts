@@ -85,9 +85,13 @@ export class BiDataService {
         });
     }
 
+
     //加载自定义图表
     getChartTpl(id: number, code: string, query: any): string {
-        return RestPath.bi + "/" + code + "/custom-chart/" + id + "?_token=" + this.tokenService.get().token + "&_erupt=" + code +
+        return RestPath.bi + "/" + code + "/custom-chart/" + id + "?_token=" + this.tokenService.get().token +
+            "&_t=" + new Date().getTime() +
+            "&_erupt=" + code +
             "&condition=" + encodeURIComponent(JSON.stringify(query));
     }
+
 }

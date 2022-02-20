@@ -13,6 +13,7 @@ import {WindowModel} from "@shared/model/window.model";
 import {generateMenuPath} from "@shared/util/erupt.util";
 import {EruptAppData} from "@core/startup/erupt-app.data";
 import {I18NService} from "@core";
+import {ChangePwdComponent} from "../../change-pwd/change-pwd.component";
 
 @Component({
     selector: "passport-login",
@@ -49,6 +50,8 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         private settingsService: SettingsService,
         private socialService: SocialService,
         private dataService: DataService,
+        @Inject(NzModalService)
+        private modal: NzModalService,
         @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
         @Optional()
         @Inject(ReuseTabService)
@@ -125,7 +128,12 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
                     result.indexPath = generateMenuPath(split[0], split[1]);
                 }
                 this.settingsService.setUser({name: result.userName, indexPath: result.indexPath});
-                this.tokenService.set({token: result.token, expire: result.expire, account: this.userName.value});
+                this.tokenService.set({
+                    token: result.token,
+                    expire: result.expire,
+                    account: this.userName.value,
+                    indexPath: result.indexPath
+                });
                 if (WindowModel.login) {
                     WindowModel.login({
                         token: result.token,
@@ -141,7 +149,18 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
                         this.cacheService.remove(GlobalKeys.loginBackPath);
                         this.router.navigateByUrl(<string>loginBackPath).then();
                     } else {
-                        this.router.navigateByUrl(result.indexPath || '/').then();
+                        this.router.navigateByUrl("/").then();
+                    }
+                    if (result.resetPwd) {
+                        this.modal.create({
+                            nzTitle: this.i18n.fanyi("global.reset_pwd"),
+                            nzMaskClosable: false,
+                            nzContent: ChangePwdComponent,
+                            nzFooter: null,
+                            nzBodyStyle: {
+                                paddingBottom: '1px'
+                            }
+                        });
                     }
                 } else {
                     this.modelFun();

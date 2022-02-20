@@ -45,6 +45,8 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     src: string;
 
+    data: any[];
+
     constructor(private ref: ElementRef, private biDataService: BiDataService,
                 private handlerService: HandlerService,
                 @Inject(NzMessageService) private msg: NzMessageService) {
@@ -62,8 +64,12 @@ export class ChartComponent implements OnInit, OnDestroy {
             this.chart.loading = true;
             this.biDataService.getBiChart(this.bi.code, this.chart.id, param).subscribe(data => {
                 this.chart.loading = false;
-                let element = this.ref.nativeElement.querySelector("#" + this.chart.code);
-                this.render(element, data);
+                if (this.chart.type == ChartType.table) {
+                    this.data = data;
+                } else {
+                    let element = this.ref.nativeElement.querySelector("#" + this.chart.code);
+                    this.render(element, data);
+                }
             });
         }
     }

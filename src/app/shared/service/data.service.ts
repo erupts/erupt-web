@@ -1,5 +1,5 @@
 import {Inject, Injectable} from "@angular/core";
-import {HttpClient, HttpEvent} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {Checkbox, Row, Tree} from "../../build/erupt/model/erupt.model";
 import {_HttpClient, ALAIN_I18N_TOKEN} from "@delon/theme";
 import {Observable} from "rxjs";
@@ -95,7 +95,6 @@ export class DataService {
 
     //自定义行
     extraRow(eruptName: string, condition?: object): Observable<Row[]> {
-        console.log(eruptName);
         return this._http.post(RestPath.data + "/extra-row/" + eruptName, condition, null, {
             observe: 'body',
             headers: {
@@ -344,6 +343,7 @@ export class DataService {
         return this._http.post(RestPath.erupt + "/logout");
     }
 
+
     changePwd(account: string, pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
         return this._http.post(RestPath.erupt + "/change-pwd", {}, {
                 account: account,
@@ -359,16 +359,25 @@ export class DataService {
         return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", null);
     }
 
-    downloadExcelTemplate(eruptName: string) {
-        DataService.postExcelFile(RestPath.excel + "/template/" + eruptName + "?" + this.createAuthParam(eruptName));
-    }
-
-    downloadExcel2(eruptName: string, condition: any) {
-        let param: any = {};
-        if (condition) {
-            param.condition = encodeURIComponent(JSON.stringify(condition));
-        }
-        DataService.postExcelFile(RestPath.excel + "/export/" + eruptName + "?" + this.createAuthParam(eruptName), param);
+    downloadExcelTemplate(eruptName: string, callback?) {
+        this._http.get(RestPath.excel + "/template/" + eruptName, null, {
+            responseType: "arraybuffer",
+            observe: 'events',
+            headers: {
+                erupt: eruptName,
+                ...this.getCommonHeader()
+            }
+        }).subscribe((res) => {
+            if (res.type !== 4) {
+                // 还没准备好，无需处理
+                return;
+            }
+            downloadFile(res);
+            callback();
+        }, () => {
+            callback();
+        });
+        // DataService.postExcelFile(RestPath.excel + "/template/" + eruptName + "?" + this.createAuthParam(eruptName));
     }
 
     downloadExcel(eruptName: string, condition: any, callback) {
@@ -394,6 +403,14 @@ export class DataService {
         //     param.condition = encodeURIComponent(JSON.stringify(condition));
         // }
         // DataService.postExcelFile(RestPath.excel + "/export/" + eruptName + "?" + this.createAuthParam(eruptName), param);
+    }
+
+    downloadExcel2(eruptName: string, condition: any) {
+        let param: any = {};
+        if (condition) {
+            param.condition = encodeURIComponent(JSON.stringify(condition));
+        }
+        DataService.postExcelFile(RestPath.excel + "/export/" + eruptName + "?" + this.createAuthParam(eruptName), param);
     }
 
     createAuthParam(eruptName: string): string {

@@ -8,7 +8,6 @@ import {ICONS} from "../../../style-icons";
 import {WindowModel} from "@shared/model/window.model";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {ReuseTabService} from "@delon/abc";
-import {DataService} from "@shared/service/data.service";
 import {EruptAppData} from "@core/startup/erupt-app.data";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {EruptAppModel} from "@shared/model/erupt-app.model";
@@ -28,7 +27,6 @@ export class StartupService {
                 private reuseTabService: ReuseTabService,
                 private settingService: SettingsService,
                 private titleService: TitleService,
-                private dataService: DataService,
                 private settingSrv: SettingsService,
                 private httpClient: HttpClient,
                 private translate: TranslateService,

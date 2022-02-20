@@ -10,9 +10,10 @@ import {ChartComponent} from './chart/chart.component';
 import {ChoiceComponent} from './components/choice/choice.component';
 import {ReferenceComponent} from "./components/reference/reference.component";
 import {CascadeComponent} from './components/cascade/cascade.component';
+import { ChartTableComponent } from './chart-table/chart-table.component';
 
 @NgModule({
-    declarations: [BiComponent, DimensionComponent, ReferenceComponent, ChartComponent, ChoiceComponent, CascadeComponent],
+    declarations: [BiComponent, DimensionComponent, ReferenceComponent, ChartComponent, ChoiceComponent, CascadeComponent, ChartTableComponent],
     imports: [
         CommonModule,
         BiRoutingModule,

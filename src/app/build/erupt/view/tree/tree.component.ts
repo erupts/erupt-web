@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
 import {ActivatedRoute} from "@angular/router";
 import {NzFormatEmitEvent, NzMessageService, NzModalService, NzTreeBaseService} from "ng-zorro-antd";
@@ -39,6 +39,11 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     private currentKey: string;
 
+    treeScrollTop: number = 0;
+
+    @ViewChild("treeDiv", {static: false})
+    treeDiv: ElementRef;
+
     @ViewChild("tree", {static: false}) tree: NzTreeBaseService;
 
     constructor(private dataService: DataService,
@@ -63,25 +68,6 @@ export class TreeComponent implements OnInit, OnDestroy {
                 this.eruptBuildModel = eb;
                 this.fetchTreeData();
             });
-        });
-    }
-
-    // ngAfterViewInit(): void {
-    //     setTimeout(() => this.showEdit = false, 500);
-    // }
-
-
-    ngOnDestroy(): void {
-        this.router$.unsubscribe();
-    }
-
-    fetchTreeData() {
-        this.treeLoading = true;
-        this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
-            this.treeLoading = false;
-            if (tree) {
-                this.nodes = this.dataHandler.dataTreeToZorroTree(tree, this.eruptBuildModel.eruptModel.eruptJson.tree.expandLevel);
-            }
         });
     }
 
@@ -172,7 +158,6 @@ export class TreeComponent implements OnInit, OnDestroy {
     }
 
     del() {
-        const that = this;
         const nzTreeNode = this.tree.getSelectedNodeList()[0];
         if (nzTreeNode.isLeaf) {
             this.modal.confirm({
@@ -180,24 +165,53 @@ export class TreeComponent implements OnInit, OnDestroy {
                 nzContent: "",
                 nzOnOk: () => {
                     this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, nzTreeNode.origin.key)
-                        .subscribe(function (res) {
+                        .subscribe(res => {
                             if (res.status == Status.SUCCESS) {
-                                that.fetchTreeData();
-                                that.msg.success(that.i18n.fanyi("global.delete.success"));
+                                nzTreeNode.remove();
+                                if (nzTreeNode.parentNode) {
+                                    if (nzTreeNode.parentNode.getChildren().length == 0) {
+                                        this.fetchTreeData();
+                                    }
+                                } else {
+                                    this.fetchTreeData();
+                                }
+                                this.addBlock();
+                                this.msg.success(this.i18n.fanyi("global.delete.success"));
                             }
-                            that.showEdit = false;
+                            this.showEdit = false;
                         });
                 }
             });
         } else {
             this.msg.error("存在叶节点不允许直接删除");
         }
+    }
 
+    fetchTreeData() {
+        this.treeLoading = true;
+        this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
+            this.treeLoading = false;
+            if (tree) {
+                this.nodes = this.dataHandler.dataTreeToZorroTree(tree, this.eruptBuildModel.eruptModel.eruptJson.tree.expandLevel);
+                this.rollTreePoint();
+            }
+        });
+    }
+
+    private rollTreePoint() {
+        let st = this.treeDiv.nativeElement.scrollTop;
+        setTimeout(() => {
+            this.treeScrollTop = st;
+        }, 900);
     }
 
     nzDblClick(event: NzFormatEmitEvent) {
         event.node.isExpanded = !event.node.isExpanded;
         event.event.stopPropagation();
+    }
+
+    ngOnDestroy(): void {
+        this.router$.unsubscribe();
     }
 
     nodeClickEvent(event: NzFormatEmitEvent): void {

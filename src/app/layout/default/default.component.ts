@@ -39,6 +39,7 @@ import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {generateMenuPath} from "@shared/util/erupt.util";
 import {MenuTypeEnum} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
+import {StatusService} from "@shared/service/status.service";
 
 // #region icons
 
@@ -96,6 +97,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 public settingSrv: SettingsService,
                 public route: ActivatedRoute,
                 public data: DataService,
+                private statusService: StatusService,
                 @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(DOCUMENT) private doc: any) {
@@ -156,8 +158,11 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
         this.notify$ = this.settings.notify.subscribe(() => this.setClass());
         this.setClass();
         //fill menu
+        if (this.router.url === "/") {
+            this.tokenService.get().indexPath && this.router.navigateByUrl(this.tokenService.get().indexPath).then();
+        }
         this.data.getMenu().subscribe(res => {
-
+            // this.statusService.menus = res;
             function generateTree(menus, pid): Menu[] {
                 let result: Menu[] = [];
                 menus.forEach((menu) => {
@@ -210,7 +215,6 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 let linkEle = ele.getElementsByClassName("sidebar-nav__item-link")[0];
                 if (linkEle) {
                     let menu = this.menuSrv.getItem(linkEle.getElementsByClassName("sidebar-nav__item-text")[0].innerText);
-                    console.log(menu);
                     if (menu.link) {
                         linkEle.href = "#" + menu.link;
                         linkEle.onclick = function () {
@@ -235,7 +239,6 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                     }, 800);
                 });
             }
-
         });
     }
 

@@ -87,7 +87,6 @@ export class TableComponent implements OnInit {
 
     @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
         this._drill = drill;
-        console.log(drill);
         this.init(this.dataService.getEruptBuild(drill.erupt), {
             url: RestPath.data + "/" + drill.eruptParent + "/drill/" + drill.code + "/" + drill.val,
             header: {
@@ -366,7 +365,7 @@ export class TableComponent implements OnInit {
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                width: tableOperators.length * 40 + 8,
+                width: tableOperators.length * 38 + 8,
                 className: "text-center",
                 buttons: tableOperators
             });
