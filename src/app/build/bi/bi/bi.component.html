@@ -58,24 +58,26 @@
             </div>
         </ng-container>
 
-        <ng-container *ngIf="bi.table">
-            <ng-container *ngIf="haveNotNull">
-                <nz-card [nzHoverable]="true" [nzBordered]="true">
-                    <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开始查询操作'">
-                        <div nz-result-extra>
-                            <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying"
-                                    (click)="query(1,size)"
-                                    [nzGhost]="true">
-                                <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|i18n}}
-                            </button>
-                        </div>
-                    </nz-result>
-                    <ng-template #icon>
-                        <i nz-icon nzType="rocket" nzTheme="twotone"></i>
-                    </ng-template>
-                </nz-card>
-            </ng-container>
-            <ng-container *ngIf="!haveNotNull">
+        <ng-container *ngIf="haveNotNull">
+            <nz-card [nzHoverable]="true" [nzBordered]="true">
+                <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开始查询操作'">
+                    <div nz-result-extra>
+                        <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying"
+                                (click)="query(1,size)"
+                                [nzGhost]="true">
+                            <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|i18n}}
+                        </button>
+                    </div>
+                </nz-result>
+                <ng-template #icon>
+                    <i nz-icon nzType="rocket" nzTheme="twotone"></i>
+                </ng-template>
+            </nz-card>
+        </ng-container>
+
+
+        <ng-container *ngIf="!haveNotNull">
+            <ng-container *ngIf="bi.table">
                 <ng-container *ngIf="columns&&columns.length>0">
                     <st [columns]="columns" [data]="data"
                         #st
