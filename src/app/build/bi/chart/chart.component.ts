@@ -26,6 +26,7 @@ import BasePlot from "@antv/g2plot/lib/base/plot";
 import {NzMessageService} from "ng-zorro-antd";
 import {HandlerService} from "../service/handler.service";
 
+// 图表版本暂不能升级，g2plot 需要 TypeScript 4.0版本，但是 angular8 又不支持 ts 4
 @Component({
     selector: 'bi-chart',
     templateUrl: "./chart.component.html",
