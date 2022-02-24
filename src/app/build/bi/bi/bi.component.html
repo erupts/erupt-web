@@ -42,42 +42,42 @@
                 </div>
             </ng-template>
         </ng-container>
-
-
         <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom:8px"
                  [hidden]="hideCondition" nzSize="small">
-            <dimension [bi]="bi">
-
-            </dimension>
+            <dimension [bi]="bi"></dimension>
         </nz-card>
         <ng-container *ngIf="bi.charts.length>0">
             <div nz-row nzGutter="16">
-                <ng-container *ngFor="let chart of bi.charts">
-                    <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
-                        <bi-chart #biChart [chart]="chart" [bi]="bi"></bi-chart>
-                    </div>
+                <ng-container *ngIf="!haveNotNull">
+                    <ng-container *ngFor="let chart of bi.charts">
+                        <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
+                            <bi-chart #biChart [chart]="chart" [bi]="bi"></bi-chart>
+                        </div>
+                    </ng-container>
                 </ng-container>
             </div>
         </ng-container>
 
-        <ng-container *ngIf="bi.table">
-            <ng-container *ngIf="haveNotNull">
-                <nz-card [nzHoverable]="true" [nzBordered]="true">
-                    <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开始查询操作'">
-                        <div nz-result-extra>
-                            <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying"
-                                    (click)="query(1,size)"
-                                    [nzGhost]="true">
-                                <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|i18n}}
-                            </button>
-                        </div>
-                    </nz-result>
-                    <ng-template #icon>
-                        <i nz-icon nzType="rocket" nzTheme="twotone"></i>
-                    </ng-template>
-                </nz-card>
-            </ng-container>
-            <ng-container *ngIf="!haveNotNull">
+        <ng-container *ngIf="haveNotNull">
+            <nz-card [nzHoverable]="true" [nzBordered]="true">
+                <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开始查询操作'">
+                    <div nz-result-extra>
+                        <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying"
+                                (click)="query(1,size)"
+                                [nzGhost]="true">
+                            <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|i18n}}
+                        </button>
+                    </div>
+                </nz-result>
+                <ng-template #icon>
+                    <i nz-icon nzType="rocket" nzTheme="twotone"></i>
+                </ng-template>
+            </nz-card>
+        </ng-container>
+
+
+        <ng-container *ngIf="!haveNotNull">
+            <ng-container *ngIf="bi.table">
                 <ng-container *ngIf="columns&&columns.length>0">
                     <st [columns]="columns" [data]="data"
                         #st
