@@ -97,6 +97,7 @@ export class BiComponent implements OnInit, OnDestroy {
         if (!param) {
             return;
         }
+        this.haveNotNull = false;
         if (updateChart) {
             this.biCharts.forEach(chart => chart.update(chartLoading));
         }
@@ -104,7 +105,6 @@ export class BiComponent implements OnInit, OnDestroy {
             this.querying = true;
             this.index = pageIndex;
             this.dataService.getBiData(this.bi.code, pageIndex, pageSize, param).subscribe(res => {
-                this.haveNotNull = false;
                 this.querying = false;
                 this.total = res.total;
                 this.columns = [];

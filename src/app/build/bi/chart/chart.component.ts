@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {
     Area,
     Bubble,
@@ -26,12 +26,13 @@ import BasePlot from "@antv/g2plot/lib/base/plot";
 import {NzMessageService} from "ng-zorro-antd";
 import {HandlerService} from "../service/handler.service";
 
+// 图表版本暂不能升级，g2plot 需要 TypeScript 4.0版本，但是 angular8 又不支持 ts 4
 @Component({
     selector: 'bi-chart',
     templateUrl: "./chart.component.html",
     styles: []
 })
-export class ChartComponent implements OnInit, OnDestroy {
+export class ChartComponent implements OnInit, OnDestroy, AfterViewInit {
 
     @Input() chart: Chart;
 
@@ -56,6 +57,11 @@ export class ChartComponent implements OnInit, OnDestroy {
         this.init();
     }
 
+    ngAfterViewInit(): void {
+
+    }
+
+
     init() {
         let param = this.handlerService.buildDimParam(this.bi, false);
         if (this.chart.type == ChartType.tpl) {
@@ -67,6 +73,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                 if (this.chart.type == ChartType.table) {
                     this.data = data;
                 } else {
+                    console.log(this.chart.code);
                     let element = this.ref.nativeElement.querySelector("#" + this.chart.code);
                     this.render(element, data);
                 }
@@ -237,8 +244,6 @@ export class ChartComponent implements OnInit, OnDestroy {
                 break;
             //TODO 升级G2plot版本再添加如下类型图表支持
             case ChartType.WordCloud:
-                // const arr = ['#5B8FF9', '#5AD8A6', '#5D7092', '#F6BD16', '#E8684A',
-                //     '#6DC8EC', '#9270CA', '#FF9D4D', '#269A99', '#FF99C3'];
                 this.plot = new WordCloud(element, Object.assign(props, {
                     wordField: x,
                     weightField: y,
@@ -263,5 +268,6 @@ export class ChartComponent implements OnInit, OnDestroy {
         }
         this.plot && this.plot.render();
     }
+
 
 }
