@@ -97,15 +97,17 @@ export class BiComponent implements OnInit, OnDestroy {
         if (!param) {
             return;
         }
-        this.haveNotNull = false;
         if (updateChart) {
             this.biCharts.forEach(chart => chart.update(chartLoading));
+            this.haveNotNull = false;
         }
         if (this.bi.table) {
             this.querying = true;
+            this.haveNotNull = false;
             this.index = pageIndex;
             this.dataService.getBiData(this.bi.code, pageIndex, pageSize, param).subscribe(res => {
                 this.querying = false;
+                this.haveNotNull = false;
                 this.total = res.total;
                 this.columns = [];
                 if (!res.columns) {
