@@ -119,3 +119,7 @@ export enum OperationMode {
 export enum OperationType {
     ERUPT = "ERUPT", TPL = "TPL",
 }
+
+export enum OperationIfExprBehavior {
+    HIDE = "HIDE", DISABLE = "DISABLE",
+}
