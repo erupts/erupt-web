@@ -10,7 +10,7 @@ import {ActivatedRoute} from "@angular/router";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
-import {OperationMode, OperationType, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
+import {OperationMode, OperationType, OperationIfExprBehavior, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {BuildConfig} from "../../model/build-config";
@@ -319,7 +319,7 @@ export class TableComponent implements OnInit {
                     click: (record: any, modal: any) => {
                         that.createOperator(ro, record);
                     },
-                    iifBehavior: 'disabled',
+                    iifBehavior: ro.ifExprBehavior == OperationIfExprBehavior.DISABLE ? "disabled" : "hide",
                     iif: (item) => {
                         if (ro.ifExpr) {
                             return eval(ro.ifExpr);

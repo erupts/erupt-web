@@ -1,5 +1,5 @@
 import {Edit, EruptFieldModel, View} from "./erupt-field.model";
-import {OperationMode, OperationType} from "./erupt.enum";
+import {OperationMode, OperationType, OperationIfExprBehavior} from "./erupt.enum";
 
 
 export interface EruptModel {
@@ -66,6 +66,7 @@ export interface RowOperation {
     type: OperationType;
     tip: string;
     ifExpr: string;
+    ifExprBehavior: OperationIfExprBehavior;
 }
 
 
