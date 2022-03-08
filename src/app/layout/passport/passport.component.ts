@@ -11,7 +11,7 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     nowYear = new Date().getFullYear();
 
-    logoPath: string = WindowModel.logoPath;
+    logoPath: string = WindowModel.loginLogoPath;
 
     desc = WindowModel.desc;
 
