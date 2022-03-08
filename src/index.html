@@ -49,6 +49,29 @@
             color: #fff;
             text-align: center
         }
+
+        @keyframes tipFadeIn {
+            0% {
+                opacity: 0;
+            }
+            90% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        #preloader-tip {
+            text-align: center;
+            color: #fff;
+            font-size: 1.1em;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 26px;
+            animation: tipFadeIn 7s;
+        }
     </style>
     <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
     <link rel="manifest" href="manifest.json">
@@ -74,6 +97,9 @@
         <div class="cs-loader-inner">
             <img src="assets/image/loading.svg" alt="">
         </div>
+    </div>
+    <div id="preloader-tip">
+        页面长时间处于加载状态，可使用 ctrl + shift + r 清空缓存重新加载
     </div>
 </div>
 <script>

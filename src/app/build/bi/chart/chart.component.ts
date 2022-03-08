@@ -73,7 +73,6 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (this.chart.type == ChartType.table) {
                     this.data = data;
                 } else {
-                    console.log(this.chart.code);
                     let element = this.ref.nativeElement.querySelector("#" + this.chart.code);
                     this.render(element, data);
                 }
