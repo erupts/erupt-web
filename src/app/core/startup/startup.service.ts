@@ -60,8 +60,8 @@ export class StartupService {
                     resolve();
                 } else if (xhr.status !== 200) {
                     setTimeout(() => {
-                        location.reload();
-                    }, 3000);
+                        location.href = location.href.split("#")[0];
+                    }, 2500);
                 }
             };
         });

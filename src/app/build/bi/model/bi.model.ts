@@ -6,6 +6,7 @@ export interface Bi {
     export: boolean;
     refreshTime: number;
     table: boolean;
+    pageType: pageType;
     dimensions: Dimension[];
     charts: Chart[];
 }
@@ -53,6 +54,13 @@ export enum ChartType {
     table = "table"
 }
 
+
+export enum pageType {
+    'backend' = "backend",
+    'front' = 'front',
+    'none' = 'none'
+}
+
 export interface Dimension {
     id: number;
     code: string;
@@ -97,6 +105,8 @@ export interface BiData {
 
 export interface Column {
     name: string;
+    width: number;
+    sortable: boolean;
 }
 
 export interface Reference {
