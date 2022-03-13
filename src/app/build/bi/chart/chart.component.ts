@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {
     Area,
     Bubble,
@@ -32,7 +32,7 @@ import {HandlerService} from "../service/handler.service";
     templateUrl: "./chart.component.html",
     styles: []
 })
-export class ChartComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ChartComponent implements OnInit, OnDestroy {
 
     @Input() chart: Chart;
 
@@ -43,6 +43,8 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewInit {
     plot: BasePlot;
 
     chartType = ChartType;
+
+    ready: boolean = true;
 
     src: string;
 
@@ -57,13 +59,16 @@ export class ChartComponent implements OnInit, OnDestroy, AfterViewInit {
         this.init();
     }
 
-    ngAfterViewInit(): void {
-
-    }
-
 
     init() {
         let param = this.handlerService.buildDimParam(this.bi, false);
+        for (let dimension of this.bi.dimensions) {
+            if (dimension.notNull && (!param || null === param[dimension.code])) {
+                this.ready = false;
+                return;
+            }
+        }
+        this.ready = true;
         if (this.chart.type == ChartType.tpl) {
             this.src = this.biDataService.getChartTpl(this.chart.id, this.bi.code, param);
         } else {
