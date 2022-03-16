@@ -20,6 +20,8 @@ export class WindowModel {
 
     public static logoPath: string = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "erupt.svg");
 
+    public static loginLogoPath: string = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
+
     public static logoText: string = WindowModel.config["logoText"] || "";
     //注册页面地址
     public static registerPage: string = WindowModel.config["registerPage"] || undefined;

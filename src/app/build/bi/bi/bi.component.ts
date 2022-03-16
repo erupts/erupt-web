@@ -1,11 +1,11 @@
 import {Component, Inject, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {Bi, DimType} from "../model/bi.model";
+import {Bi, DimType, pageType} from "../model/bi.model";
 import {NzMessageService} from "ng-zorro-antd";
-import {STColumn} from "@delon/abc/table/table.interfaces";
+import {STColumn, STPage} from "@delon/abc/table/table.interfaces";
 import {BiDataService} from "../service/data.service";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
-import {STComponent} from "@delon/abc";
+import {STComponent, STData} from "@delon/abc";
 import {ChartComponent} from "../chart/chart.component";
 import {HandlerService} from "../service/handler.service";
 import {SettingsService} from "@delon/theme";
@@ -23,10 +23,6 @@ export class BiComponent implements OnInit, OnDestroy {
 
     name: string;
 
-    columns: STColumn[];
-
-    data: any;
-
     haveNotNull: boolean = false;
 
     querying: boolean = false;
@@ -39,12 +35,43 @@ export class BiComponent implements OnInit, OnDestroy {
 
     @ViewChildren('biChart') biCharts: QueryList<ChartComponent>;
 
-    //page
-    index: number = 1;
+    pageType = pageType;
 
-    size: number = 10;
+    sort: {
+        column?: string,
+        direction?: 'ascend' | 'descend' | null
+    } = {
+        direction: null
+    };
 
-    total: number = 0;
+    biTable: {
+
+        data?: any,
+
+        columns?: STColumn[],
+
+        index: number;
+
+        size: number;
+
+        total: number;
+
+        pageType?: pageType;
+
+        page: STPage
+
+    } = {
+        index: 1,
+
+        size: 10,
+
+        total: 0,
+
+        page: {
+            show: false
+        }
+
+    };
 
     private router$: Subscription;
 
@@ -65,10 +92,20 @@ export class BiComponent implements OnInit, OnDestroy {
         this.router$ = this.route.params.subscribe(params => {
             this.timer && clearInterval(this.timer);
             this.name = params.name;
-            this.columns = [];
-            this.data = null;
+            this.biTable.columns = [];
+            this.biTable.data = null;
             this.dataService.getBiBuild(this.name).subscribe(res => {
                 this.bi = res;
+                if (this.bi.pageType == pageType.front) {
+                    this.biTable.page = {
+                        show: true,
+                        front: true,
+                        placement: "center",
+                        pageSizes: [10, 20, 50, 100, 200],
+                        showSize: true,
+                        showQuickJumper: true
+                    };
+                }
                 for (let dimension of res.dimensions) {
                     if (dimension.type === DimType.NUMBER_RANGE) {
                         dimension.$value = [];
@@ -82,73 +119,102 @@ export class BiComponent implements OnInit, OnDestroy {
                         return;
                     }
                 }
-                this.query(1, this.size);
+                this.query({
+                    pageIndex: 1,
+                    pageSize: this.biTable.size
+                });
                 if (this.bi.refreshTime) {
                     this.timer = setInterval(() => {
-                        this.query(this.index, this.size, true, false);
+                        this.query({
+                            pageIndex: this.biTable.index,
+                            pageSize: this.biTable.size
+                        }, true, false);
                     }, this.bi.refreshTime * 1000);
                 }
             });
         });
     }
 
-    query(pageIndex: number, pageSize: number, updateChart?: boolean, chartLoading: boolean = true) {
+    query(page: {
+        pageIndex: number,
+        pageSize: number
+    }, updateChart?: boolean, chartLoading: boolean = true) {
         let param = this.handlerService.buildDimParam(this.bi);
         if (!param) {
             return;
         }
         if (updateChart) {
             this.biCharts.forEach(chart => chart.update(chartLoading));
-            this.haveNotNull = false;
         }
         if (this.bi.table) {
             this.querying = true;
-            this.haveNotNull = false;
-            this.index = pageIndex;
-            this.dataService.getBiData(this.bi.code, pageIndex, pageSize, param).subscribe(res => {
+            this.biTable.index = page.pageIndex;
+            this.dataService.getBiData(this.bi.code, page.pageIndex, page.pageSize, this.sort.column, this.sort.direction, param).subscribe(res => {
                 this.querying = false;
                 this.haveNotNull = false;
-                this.total = res.total;
-                this.columns = [];
+                this.biTable.total = res.total;
+                this.biTable.pageType = this.bi.pageType;
+                this.biTable.columns = [];
                 if (!res.columns) {
-                    this.columns.push({
+                    this.biTable.columns.push({
                         title: "暂无数据",
                         className: "text-center"
                     });
-                    this.data = [];
+                    this.biTable.data = [];
                 } else {
-                    // this.columns.push({
-                    //     title: '#',
-                    //     type: 'no',
-                    //     width: '82px',
-                    //     className: "text-center",
-                    //     fixed: "left",
-                    // });
                     for (let column of res.columns) {
-                        let col = {
+                        let col: STColumn = {
                             title: column.name,
                             index: column.name,
                             className: "text-center",
+                            width: column.width,
                             show: true,
                             iif: () => {
                                 return col.show;
                             }
                         };
-                        this.columns.push(col);
+                        if (column.sortable) {
+                            col.sort = {
+                                key: column.name,
+                                default: (this.sort.column == column.name) ? this.sort.direction : null
+                            };
+                        }
+                        this.biTable.columns.push(col);
                     }
-                    this.data = res.list;
+                    this.biTable.data = res.list;
                 }
             });
         }
     }
 
+    biTableChange(e) {
+        if (e.type == 'sort') {
+            this.sort = {
+                column: e.sort.column.indexKey
+            };
+            if (e.sort.value) {
+                this.sort.direction = e.sort.value;
+            }
+            this.query({
+                pageIndex: 1,
+                pageSize: this.biTable.size
+            });
+        }
+    }
+
     pageIndexChange(index) {
-        this.query(index, this.size);
+        this.query({
+            pageIndex: index,
+            pageSize: this.biTable.size
+        });
     }
 
     pageSizeChange(size) {
-        this.size = size;
-        this.query(1, size);
+        this.biTable.size = size;
+        this.query({
+            pageIndex: 1,
+            pageSize: size
+        });
     }
 
     clearCondition() {
