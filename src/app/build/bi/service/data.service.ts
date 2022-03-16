@@ -28,11 +28,16 @@ export class BiDataService {
     }
 
     //BI数据
-    getBiData(code: string, index: number, size: number, query: any): Observable<BiData> {
-        return this._http.post(RestPath.bi + "/data/" + code, query, {
-            index: index,
-            size: size
-        }, {
+    getBiData(code: string, index: number, size: number, sort: string, direction: string, query: any): Observable<BiData> {
+        let params = {
+            index,
+            size,
+        };
+        if (sort && direction) {
+            params["sort"] = sort;
+            params["direction"] = direction ? (direction === "ascend") : null;
+        }
+        return this._http.post(RestPath.bi + "/data/" + code, query, params, {
             headers: {
                 erupt: code
             }

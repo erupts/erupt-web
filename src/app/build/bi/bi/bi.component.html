@@ -14,7 +14,10 @@
             </div>
         </ng-container>
         <ng-container>
-            <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query(1,biTable.size,true);">
+            <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query({
+                            pageIndex: 1,
+                            pageSize: biTable.size
+                        },true);">
                 <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|i18n}}
             </button>
         </ng-container>
@@ -48,7 +51,7 @@
         </nz-card>
         <ng-container *ngIf="bi.charts.length>0">
             <div nz-row nzGutter="16">
-                <ng-container >
+                <ng-container>
                     <ng-container *ngFor="let chart of bi.charts">
                         <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
                             <bi-chart #biChart [chart]="chart" [bi]="bi"></bi-chart>
@@ -63,7 +66,7 @@
                 <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开始查询操作'">
                     <div nz-result-extra>
                         <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying"
-                                (click)="query(1,biTable.size)"
+                                (click)="query({pageIndex: 1,pageSize: biTable.size})"
                                 [nzGhost]="true">
                             <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|i18n}}
                         </button>
@@ -80,7 +83,7 @@
             <ng-container *ngIf="bi.table">
                 <ng-container *ngIf="biTable.columns&&biTable.columns.length>0">
                     <st [columns]="biTable.columns" [data]="biTable.data"
-                        #st
+                        #st (change)="biTableChange($event)"
                         style="margin-bottom: 16px"
                         [loading]="querying"
                         [page]="biTable.page"
