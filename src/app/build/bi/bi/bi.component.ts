@@ -37,6 +37,13 @@ export class BiComponent implements OnInit, OnDestroy {
 
     pageType = pageType;
 
+    sort: {
+        column?: string,
+        direction?: 'ascend' | 'descend' | null
+    } = {
+        direction: null
+    };
+
     biTable: {
 
         data?: any,
@@ -112,17 +119,26 @@ export class BiComponent implements OnInit, OnDestroy {
                         return;
                     }
                 }
-                this.query(1, this.biTable.size);
+                this.query({
+                    pageIndex: 1,
+                    pageSize: this.biTable.size
+                });
                 if (this.bi.refreshTime) {
                     this.timer = setInterval(() => {
-                        this.query(this.biTable.index, this.biTable.size, true, false);
+                        this.query({
+                            pageIndex: this.biTable.index,
+                            pageSize: this.biTable.size
+                        }, true, false);
                     }, this.bi.refreshTime * 1000);
                 }
             });
         });
     }
 
-    query(pageIndex: number, pageSize: number, updateChart?: boolean, chartLoading: boolean = true) {
+    query(page: {
+        pageIndex: number,
+        pageSize: number
+    }, updateChart?: boolean, chartLoading: boolean = true) {
         let param = this.handlerService.buildDimParam(this.bi);
         if (!param) {
             return;
@@ -132,8 +148,8 @@ export class BiComponent implements OnInit, OnDestroy {
         }
         if (this.bi.table) {
             this.querying = true;
-            this.biTable.index = pageIndex;
-            this.dataService.getBiData(this.bi.code, pageIndex, pageSize, param).subscribe(res => {
+            this.biTable.index = page.pageIndex;
+            this.dataService.getBiData(this.bi.code, page.pageIndex, page.pageSize, this.sort.column, this.sort.direction, param).subscribe(res => {
                 this.querying = false;
                 this.haveNotNull = false;
                 this.biTable.total = res.total;
@@ -150,24 +166,19 @@ export class BiComponent implements OnInit, OnDestroy {
                         let col: STColumn = {
                             title: column.name,
                             index: column.name,
-                            sortable: column.sortable,
                             className: "text-center",
                             width: column.width,
                             show: true,
-                            sort: column.sortable ? {
-                                reName: {
-                                    ascend: "asc",
-                                    descend: "desc"
-                                },
-                                key: column.name,
-                                // compare: ((a: STData, b: STData) => {
-                                //     return a[view.column] > b[view.column] ? 1 : -1;
-                                // })
-                            } : true,
                             iif: () => {
                                 return col.show;
                             }
                         };
+                        if (column.sortable) {
+                            col.sort = {
+                                key: column.name,
+                                default: (this.sort.column == column.name) ? this.sort.direction : null
+                            };
+                        }
                         this.biTable.columns.push(col);
                     }
                     this.biTable.data = res.list;
@@ -176,13 +187,34 @@ export class BiComponent implements OnInit, OnDestroy {
         }
     }
 
+    biTableChange(e) {
+        if (e.type == 'sort') {
+            this.sort = {
+                column: e.sort.column.indexKey
+            };
+            if (e.sort.value) {
+                this.sort.direction = e.sort.value;
+            }
+            this.query({
+                pageIndex: 1,
+                pageSize: this.biTable.size
+            });
+        }
+    }
+
     pageIndexChange(index) {
-        this.query(index, this.biTable.size);
+        this.query({
+            pageIndex: index,
+            pageSize: this.biTable.size
+        });
     }
 
     pageSizeChange(size) {
         this.biTable.size = size;
-        this.query(1, size);
+        this.query({
+            pageIndex: 1,
+            pageSize: size
+        });
     }
 
     clearCondition() {
