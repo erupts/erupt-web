@@ -61,9 +61,9 @@
             </div>
         </ng-container>
 
-        <ng-container *ngIf="haveNotNull">
+        <ng-container *ngIf="haveNotNull&&this.bi.table">
             <nz-card [nzHoverable]="true" [nzBordered]="true">
-                <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开始查询操作'">
+                <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开启查询操作'">
                     <div nz-result-extra>
                         <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying"
                                 (click)="query({pageIndex: 1,pageSize: biTable.size})"
