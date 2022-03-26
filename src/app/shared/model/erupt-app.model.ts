@@ -4,4 +4,5 @@ export interface EruptAppModel {
     locales: string[];
     hash: number;
     version: string;
+    loginPagePath: string;
 }
