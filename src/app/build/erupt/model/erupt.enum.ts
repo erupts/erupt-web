@@ -76,6 +76,7 @@ export enum ViewType {
     CODE = "CODE",
     HTML = "HTML",
     DATE = "DATE",
+    DATE_TIME = "DATE_TIME",
     BOOLEAN = "BOOLEAN",
     NUMBER = "NUMBER",
     MARKDOWN = "MARKDOWN",
