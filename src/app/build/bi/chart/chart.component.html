@@ -1,6 +1,6 @@
 <nz-spin [nzSpinning]="chart.loading">
     <nz-card [nzTitle]="chart.name" nzSize="small" [nzBodyStyle]="{padding:'0'}" [nzHoverable]="true"
-             [nzExtra]="extraTemplate">
+             [nzExtra]="extraTemplate" style="margin-bottom: 12px">
         <ng-container *ngIf="!ready">
             <div [id]='chart.code'
                  style='width:100%;display: flex;flex-direction: column;align-items:center;justify-content: center;'

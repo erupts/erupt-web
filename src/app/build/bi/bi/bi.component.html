@@ -45,12 +45,12 @@
                 </div>
             </ng-template>
         </ng-container>
-        <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom:8px"
+        <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom: 12px;margin-top: 4px"
                  [hidden]="hideCondition" nzSize="small">
             <dimension [bi]="bi"></dimension>
         </nz-card>
         <ng-container *ngIf="bi.charts.length>0">
-            <div nz-row nzGutter="16">
+            <div nz-row nzGutter="12">
                 <ng-container>
                     <ng-container *ngFor="let chart of bi.charts">
                         <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
@@ -84,7 +84,7 @@
                 <ng-container *ngIf="biTable.columns&&biTable.columns.length>0">
                     <st [columns]="biTable.columns" [data]="biTable.data"
                         #st (change)="biTableChange($event)"
-                        style="margin-bottom: 16px"
+                        style="margin-bottom: 12px"
                         [loading]="querying"
                         [page]="biTable.page"
                         [scroll]="{x: (clientWidth > 768 ? biTable.columns.length * 150 : 0) + 'px'}"
