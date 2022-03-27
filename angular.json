@@ -31,6 +31,7 @@
               "src/app.js",
               "src/app.module.js",
               "src/home.html",
+              "src/auth.html",
               "src/erupt.svg",
               "src/erupt2.svg",
               "src/erupt-logo.svg",

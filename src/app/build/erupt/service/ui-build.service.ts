@@ -81,19 +81,6 @@ export class UiBuildService {
                             }
                         };
                         break;
-                    case EditType.DATE:
-                        obj.format = (item: any) => {
-                            if (item[view.column]) {
-                                if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE) {
-                                    return item[view.column].substr(0, 10);
-                                } else {
-                                    return item[view.column];
-                                }
-                            } else {
-                                return "";
-                            }
-                        };
-                        break;
                 }
             }
 
@@ -108,6 +95,21 @@ export class UiBuildService {
                     obj.className = "text-right";
                     break;
                 case ViewType.DATE:
+                    obj.className = "date-col";
+                    obj.width = 90;
+                    obj.format = (item: any) => {
+                        if (item[view.column]) {
+                            if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE) {
+                                return item[view.column].substr(0, 10);
+                            } else {
+                                return item[view.column];
+                            }
+                        } else {
+                            return "";
+                        }
+                    };
+                    break;
+                case ViewType.DATE_TIME:
                     obj.className = "date-col";
                     obj.width = 180;
                     break;
@@ -503,14 +505,21 @@ export class UiBuildService {
                     obj.width = null;
                     break;
             }
-            //编辑类型
             switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
-                case EditType.DATE:
-                    if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE_TIME) {
-                        obj.width = 180;
-                    } else {
-                        obj.width = 90;
-                    }
+                case EditType.TAGS:
+                    obj.className = "text-center";
+                    obj.format = (item: any) => {
+                        let value = item[view.column];
+                        if (value) {
+                            let result = "";
+                            for (let ele of value.split(view.eruptFieldModel.eruptFieldJson.edit.tagsType.joinSeparator)) {
+                                result += "<span class='e-tag'>" + ele + "</span>";
+                            }
+                            return result;
+                        } else {
+                            return value;
+                        }
+                    };
                     break;
             }
             if (view.template) {

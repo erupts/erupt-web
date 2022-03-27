@@ -92,6 +92,7 @@ export class ChartComponent implements OnInit, OnDestroy {
     }
 
     update(loading: boolean) {
+        this.handlerService.buildDimParam(this.bi, true);
         if (this.plot) {
             if (loading) {
                 this.chart.loading = true;

@@ -2,15 +2,6 @@
     <form nz-form nzLayout="horizontal" se-container>
         <ng-container *ngFor="let dim of bi.dimensions;">
             <ng-container [ngSwitch]="dim.type">
-                <ng-container *ngSwitchCase="dimType.TAG">
-                    <div nz-col>
-                        <se [label]="dim.title"
-                            [required]="dim.notNull" style="width: 100%">
-                            <nz-select [nzMode]="'tags'" [(ngModel)]="dim.$value" [name]="dim.code">
-                            </nz-select>
-                        </se>
-                    </div>
-                </ng-container>
                 <ng-container *ngSwitchCase="dimType.REFERENCE_RADIO">
                     <div nz-col>
                         <se [label]="dim.title"
@@ -34,6 +25,10 @@
                          [nzXXl]="col.xxl">
                         <se [label]="dim.title" [required]="dim.notNull" style="width: 100%">
                             <ng-container [ngSwitch]="dim.type">
+                                <ng-container *ngSwitchCase="dimType.TAG">
+                                    <nz-select [nzMode]="'tags'" [(ngModel)]="dim.$value" [name]="dim.code">
+                                    </nz-select>
+                                </ng-container>
                                 <ng-container *ngSwitchCase="dimType.INPUT">
                                     <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input">
                                         <input nz-input autocomplete="off"

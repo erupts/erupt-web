@@ -1,6 +1,6 @@
 <nz-spin [nzSpinning]="chart.loading">
     <nz-card [nzTitle]="chart.name" nzSize="small" [nzBodyStyle]="{padding:'0'}" [nzHoverable]="true"
-             [nzExtra]="extraTemplate">
+             [nzExtra]="extraTemplate" style="margin-bottom: 12px">
         <ng-container *ngIf="!ready">
             <div [id]='chart.code'
                  style='width:100%;display: flex;flex-direction: column;align-items:center;justify-content: center;'
@@ -23,10 +23,10 @@
         </ng-container>
     </nz-card>
     <ng-template #extraTemplate>
-        <i nz-icon nzType="reload" (click)="update(true)"></i>
         <ng-container *ngIf="plot">
-            <nz-divider nzType="vertical"></nz-divider>
             <i nz-icon nzType="download" (click)="downloadChart()"></i>
+            &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
         </ng-container>
+        <i nz-icon nzType="reload" (click)="update(true)"></i>
     </ng-template>
 </nz-spin>
