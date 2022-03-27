@@ -69,7 +69,9 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-
+        if (EruptAppData.get().loginPagePath) {
+            window.location.href = EruptAppData.get().loginPagePath;
+        }
     }
 
     ngAfterViewInit(): void {
@@ -130,7 +132,6 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
                 this.settingsService.setUser({name: result.userName, indexPath: result.indexPath});
                 this.tokenService.set({
                     token: result.token,
-                    expire: result.expire,
                     account: this.userName.value,
                     indexPath: result.indexPath
                 });

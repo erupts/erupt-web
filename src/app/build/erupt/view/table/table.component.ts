@@ -365,7 +365,7 @@ export class TableComponent implements OnInit {
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                width: tableOperators.length * 38 + 8,
+                width: tableOperators.length * 32 + 18,
                 className: "text-center",
                 buttons: tableOperators
             });

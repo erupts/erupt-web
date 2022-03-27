@@ -189,15 +189,23 @@ export class DefaultInterceptor implements HttpInterceptor {
                 break;
             case 500:
                 event = <HttpErrorResponse>event;
-                this.modal.error({
-                    nzTitle: 'Error',
-                    nzContent: event.error.message
-                });
-                Object.assign(event, {
-                    status: 200, ok: true, body: {
-                        status: Status.ERROR
-                    }
-                });
+                if (event.url.indexOf("/erupt-api/build/") != -1) {
+                    this.router.navigate(["/layout/500"], {
+                        queryParams: {
+                            message: event.error.message
+                        }
+                    });
+                } else {
+                    this.modal.error({
+                        nzTitle: 'Error',
+                        nzContent: event.error.message
+                    });
+                    Object.assign(event, {
+                        status: 200, ok: true, body: {
+                            status: Status.ERROR
+                        }
+                    });
+                }
                 return of(new HttpResponse(event));
             default:
                 if (event instanceof HttpErrorResponse) {
