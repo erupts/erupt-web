@@ -23,10 +23,10 @@
         </ng-container>
     </nz-card>
     <ng-template #extraTemplate>
-        <i nz-icon nzType="reload" (click)="update(true)"></i>
         <ng-container *ngIf="plot">
-            <nz-divider nzType="vertical"></nz-divider>
             <i nz-icon nzType="download" (click)="downloadChart()"></i>
+            <nz-divider nzType="vertical"></nz-divider>
         </ng-container>
+        <i nz-icon nzType="reload" (click)="update(true)"></i>
     </ng-template>
 </nz-spin>
