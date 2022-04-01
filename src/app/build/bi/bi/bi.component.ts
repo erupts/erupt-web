@@ -163,23 +163,25 @@ export class BiComponent implements OnInit, OnDestroy {
                     this.biTable.data = [];
                 } else {
                     for (let column of res.columns) {
-                        let col: STColumn = {
-                            title: column.name,
-                            index: column.name,
-                            className: "text-center",
-                            width: column.width,
-                            show: true,
-                            iif: () => {
-                                return col.show;
-                            }
-                        };
-                        if (column.sortable) {
-                            col.sort = {
-                                key: column.name,
-                                default: (this.sort.column == column.name) ? this.sort.direction : null
+                        if (column.display) {
+                            let col: STColumn = {
+                                title: column.name,
+                                index: column.name,
+                                className: "text-center",
+                                width: column.width,
+                                show: true,
+                                iif: () => {
+                                    return col.show;
+                                }
                             };
+                            if (column.sortable) {
+                                col.sort = {
+                                    key: column.name,
+                                    default: (this.sort.column == column.name) ? this.sort.direction : null
+                                };
+                            }
+                            this.biTable.columns.push(col);
                         }
-                        this.biTable.columns.push(col);
                     }
                     this.biTable.data = res.list;
                 }

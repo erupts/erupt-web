@@ -107,6 +107,7 @@ export interface Column {
     name: string;
     width: number;
     sortable: boolean;
+    display: boolean;
 }
 
 export interface Reference {
