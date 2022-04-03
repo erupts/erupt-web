@@ -12,6 +12,12 @@ export class TplComponent implements OnInit, OnDestroy {
 
     url: string;
 
+    renderType: string;
+
+    microName: string;
+
+    microUrl: string;
+
     spin: boolean = true;
 
 
@@ -25,6 +31,16 @@ export class TplComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.router$ = this.route.params.subscribe((params) => {
             this.url = this.dataService.getEruptTpl(params.name);
+            // TODO: 应该从dataService中获取渲染类型
+            this.renderType = 'micro-app'; // micro-app, iframe
+            this.microName = params.name;
+            this.microUrl = (window as any).location.origin +"/" + this.url
+            // TODO: 模拟micro-app加载完成
+            if(this.renderType === 'micro-app'){
+                setTimeout(() => {
+                    this.spin = false; 
+                }, 1000);
+            }
         });
     }
 
