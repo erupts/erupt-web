@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {NgModule,CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
 import {TplComponent} from './tpl.component';
@@ -12,6 +12,9 @@ import {SharedModule} from "@shared/shared.module";
         CommonModule,
         TplRoutingModule,
         SharedModule,
+    ],
+    schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
     ]
 })
 export class TplModule {
