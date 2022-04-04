@@ -61,6 +61,8 @@
     "@delon/mock": "^8.8.0",
     "@delon/theme": "^8.8.0",
     "@delon/util": "^8.8.0",
+    "@ngx-translate/core": "^11.0.1",
+    "@ngx-translate/http-loader": "^4.0.0",
     "classlist.js": "^1.1.20150312",
     "font-awesome": "^4.7.0",
     "intl": "^1.2.5",
@@ -74,9 +76,7 @@
     "ts-md5": "^1.2.7",
     "tslib": "^1.10.0",
     "web-animations-js": "^2.3.2",
-    "zone.js": "~0.9.1",
-    "@ngx-translate/core": "^11.0.1",
-    "@ngx-translate/http-loader": "^4.0.0"
+    "zone.js": "^0.11.5"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.803.14",
