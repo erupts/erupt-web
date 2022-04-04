@@ -4,6 +4,6 @@
     <nz-spin [nzSpinning]="spin" style="height:100%;width: 100%">
         <iframe *ngIf="renderType == 'iframe' && url" (load)="iframeLoad()" [src]="url | safeUrl" style="border: 0" height="100%" width="100%">
         </iframe>
-        <micro-app keep-alive *ngIf="renderType == 'micro-app' && microUrl" [attr.name]="microName" [attr.url]="microUrl" style="border: 0;height: 100%;width:100%;"></micro-app>
+        <micro-app #micro keep-alive *ngIf="renderType == 'micro-app' && microUrl" (mounted)="iframeLoad()" [attr.name]="microName" [attr.url]="microUrl" style="border: 0;height: 100%;width:100%;"></micro-app>
     </nz-spin>
 </div>
