@@ -84,6 +84,24 @@ export class UiBuildService {
                 }
             }
 
+            switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
+                case EditType.TAGS:
+                    obj.className = "text-center";
+                    obj.format = (item: any) => {
+                        let value = item[view.column];
+                        if (value) {
+                            let result = "";
+                            for (let ele of value.split(view.eruptFieldModel.eruptFieldJson.edit.tagsType.joinSeparator)) {
+                                result += "<span class='e-tag'>" + ele + "</span>";
+                            }
+                            return result;
+                        } else {
+                            return value;
+                        }
+                    };
+                    break;
+            }
+
             obj.width = titleWidth;
             //展示类型
             switch (view.viewType) {
@@ -503,23 +521,6 @@ export class UiBuildService {
                     break;
                 default:
                     obj.width = null;
-                    break;
-            }
-            switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
-                case EditType.TAGS:
-                    obj.className = "text-center";
-                    obj.format = (item: any) => {
-                        let value = item[view.column];
-                        if (value) {
-                            let result = "";
-                            for (let ele of value.split(view.eruptFieldModel.eruptFieldJson.edit.tagsType.joinSeparator)) {
-                                result += "<span class='e-tag'>" + ele + "</span>";
-                            }
-                            return result;
-                        } else {
-                            return value;
-                        }
-                    };
                     break;
             }
             if (view.template) {

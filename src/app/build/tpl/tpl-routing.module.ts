@@ -17,4 +17,5 @@ const routes: Routes = [{
     exports: [RouterModule]
 })
 export class TplRoutingModule {
+
 }
