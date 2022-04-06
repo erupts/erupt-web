@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DataService} from "@shared/service/data.service";
 import {Subscription} from "rxjs";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 import {SettingsService} from "@delon/theme";
 
 @Component({
@@ -12,16 +12,13 @@ export class TplComponent implements OnInit, OnDestroy {
 
     url: string;
 
-    renderType: string;
+    renderType: 'micro-app' | 'iframe' = "iframe";
 
-    microName: string;
-
-    microUrl: string;
+    name: string;
 
     spin: boolean = true;
 
     @ViewChild('micro', {static: false}) microApp: ElementRef;
-
 
     private router$: Subscription;
 
@@ -32,22 +29,22 @@ export class TplComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe((params) => {
-            // TODO: 应该从dataService中获取渲染类型
-            this.renderType = 'micro-app'; // micro-app, iframe
-            this.microName = params.name;
+            this.name = params.name;
             this.url = this.dataService.getEruptTpl(params.name);
-            this.microUrl = (window as any).location.origin +"/" + this.url
+            if (this.renderType === 'micro-app') {
+                this.url = window.location.origin + window.location.pathname + this.url;
+            }
         });
     }
 
     ngOnDestroy(): void {
         this.router$.unsubscribe();
-        var appName = this.microApp && this.microApp.nativeElement && this.microApp.nativeElement.appName;
-        if(appName) {
+        let appName = this.microApp && this.microApp.nativeElement && this.microApp.nativeElement.appName;
+        if (appName) {
             // 卸载micro-app
-            (window as any).exports.unmountApp(appName, { clearAliveState: true }).then(() => {
+            (window as any).exports.unmountApp(appName, {clearAliveState: true}).then(() => {
                 // 卸载成功
-            })
+            });
         }
     }
 

@@ -39,8 +39,6 @@ export class AppComponent implements OnInit {
     beforeMatch = null;
 
     ngOnInit() {
-        // 启动micro-app
-        (window as any).exports.default.start()
         const eruptRouterEvent = window["eruptRouterEvent"];
         if (!this.tokenService.get().token) {
             this.tokenService.set({token: "@", time: new Date()});
