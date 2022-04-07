@@ -22,7 +22,8 @@
             </button>
         </ng-container>
         <ng-container *ngIf="bi.export">
-            <button nz-button class="mb-sm" (click)="exportBiData()" [nzLoading]="downloading">
+            <button nz-button class="mb-sm" (click)="exportBiData()" [nzLoading]="downloading"
+                    [disabled]="!biTable.data||biTable.data.length<=0">
                 <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|i18n}}
             </button>
         </ng-container>
@@ -81,6 +82,11 @@
 
         <ng-container *ngIf="!haveNotNull">
             <ng-container *ngIf="bi.table">
+                <ng-container *ngIf="biTable.columns.length<=0">
+                    <nz-card>
+                        <nz-empty></nz-empty>
+                    </nz-card>
+                </ng-container>
                 <ng-container *ngIf="biTable.columns&&biTable.columns.length>0">
                     <st [columns]="biTable.columns" [data]="biTable.data"
                         #st (change)="biTableChange($event)"

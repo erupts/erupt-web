@@ -156,10 +156,6 @@ export class BiComponent implements OnInit, OnDestroy {
                 this.biTable.pageType = this.bi.pageType;
                 this.biTable.columns = [];
                 if (!res.columns) {
-                    this.biTable.columns.push({
-                        title: "暂无数据",
-                        className: "text-center"
-                    });
                     this.biTable.data = [];
                 } else {
                     for (let column of res.columns) {
