@@ -58,7 +58,9 @@ export class BiComponent implements OnInit, OnDestroy {
 
         pageType?: pageType;
 
-        page: STPage
+        page: STPage;
+
+        pageSizeOptions?: number[];
 
     } = {
         index: 1,
@@ -101,11 +103,12 @@ export class BiComponent implements OnInit, OnDestroy {
                         show: true,
                         front: true,
                         placement: "center",
-                        pageSizes: [10, 20, 50, 100, 200],
                         showSize: true,
-                        showQuickJumper: true
+                        showQuickJumper: true,
                     };
                 }
+                this.biTable.size = this.bi.pageSize;
+                this.biTable.page.pageSizes = this.bi.pageSizeOptions;
                 for (let dimension of res.dimensions) {
                     if (dimension.type === DimType.NUMBER_RANGE) {
                         dimension.$value = [];

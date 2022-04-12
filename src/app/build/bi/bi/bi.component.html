@@ -92,17 +92,18 @@
                         #st (change)="biTableChange($event)"
                         style="margin-bottom: 12px"
                         [loading]="querying"
+                        [ps]="biTable.size"
                         [page]="biTable.page"
                         [scroll]="{x: (clientWidth > 768 ? biTable.columns.length * 150 : 0) + 'px'}"
                         [bordered]="settingSrv.layout.bordered"
                         [size]="'small'">
                     </st>
-                    <ng-container *ngIf="this.biTable.pageType==pageType.backend">
-                        <nz-pagination [nzPageIndex]="biTable.index"
+                    <ng-container *ngIf="biTable.pageType == pageType.backend">
+                        <nz-pagination style="text-align: center" nzShowSizeChanger nzShowQuickJumper
+                                       [nzPageIndex]="biTable.index"
                                        [nzPageSize]="biTable.size"
                                        [nzTotal]="biTable.total"
-                                       style="text-align: center" nzShowSizeChanger nzShowQuickJumper
-                                       [nzPageSizeOptions]="[10,20,50,100,200]"
+                                       [nzPageSizeOptions]="biTable.page.pageSizes"
                                        [nzSize]="'small'"
                                        [nzShowTotal]="totalTemplate"
                                        (nzPageSizeChange)="pageSizeChange($event)"
