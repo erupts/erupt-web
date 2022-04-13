@@ -75,7 +75,7 @@ export class ChartComponent implements OnInit, OnDestroy {
             this.chart.loading = true;
             this.biDataService.getBiChart(this.bi.code, this.chart.id, param).subscribe(data => {
                 this.chart.loading = false;
-                if (this.chart.type == ChartType.table) {
+                if (this.chart.type == ChartType.table || this.chart.type == ChartType.Number) {
                     this.data = data;
                 } else {
                     let element = this.ref.nativeElement.querySelector("#" + this.chart.code);

@@ -17,6 +17,14 @@
                     <app-chart-table [data]="data"></app-chart-table>
                 </div>
             </ng-container>
+            <ng-container *ngSwitchCase="chartType.Number">
+                <div style="padding: 16px;text-align: center">
+                    <nz-statistic
+                            [nzValue]="11123.28"
+                            [nzTitle]="data[0]"
+                    ></nz-statistic>
+                </div>
+            </ng-container>
             <ng-container *ngSwitchDefault>
                 <div [id]='chart.code' style='width:100%;' [ngStyle]="{height:chart.height+'px'}"></div>
             </ng-container>

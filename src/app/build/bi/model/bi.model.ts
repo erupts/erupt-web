@@ -27,6 +27,7 @@ export interface Chart {
 }
 
 export enum ChartType {
+    Number = "Number",
     Line = "Line",
     StepLine = "StepLine",
     Bar = "Bar",
