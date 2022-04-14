@@ -14,7 +14,7 @@ import {WindowModel} from "@shared/model/window.model";
         <nz-dropdown nzPlacement="bottomRight">
             <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown>
                 <nz-avatar [nzText]="settings.user.name&&settings.user.name.substr(0,1)" nzSize="default" class="mr-sm"></nz-avatar>
-                {{settings.user.name}}
+                <span class="hidden-mobile">{{settings.user.name}}</span>
             </div>
             <div nz-menu class="width-sm">
                 <div nz-menu-item (click)="changePwd()">
