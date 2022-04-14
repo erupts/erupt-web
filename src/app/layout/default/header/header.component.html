@@ -1,7 +1,7 @@
 <div class="alain-default__header-logo" ripper color="#888">
     <a [routerLink]="settings.user.indexPath" (click)="toIndex()" class="alain-default__header-logo-link">
         <img *ngIf="logoPath" [src]="logoPath" style="vertical-align: top" class="header-logo-img" alt=""/>
-        <span *ngIf="logoText" class="header-logo-text">{{logoText}}</span>
+        <span *ngIf="logoText" class="header-logo-text hidden-mobile">{{logoText}}</span>
     </a>
 </div>
 <div class="alain-default__nav-wrap">
@@ -52,7 +52,7 @@
             </nz-drawer>
         </li>
 
-        <li class="hidden-mobile">
+        <li>
             <header-user></header-user>
         </li>
     </ul>

@@ -21,10 +21,10 @@ import {LazyService} from "@delon/util";
 export class TplModule {
 
     constructor(private lazy: LazyService) {
-        (window as any).exports = {};
-        lazy.loadScript("assets/js/micro-app.min.js").then(() => {
-            // 启动micro-app
-            (window as any).exports.default.start();
-        });
+        // (window as any).exports = {};
+        // lazy.loadScript("assets/js/micro-app.min.js").then(() => {
+        //     // 启动micro-app
+        //     (window as any).exports.default.start();
+        // });
     }
 }
