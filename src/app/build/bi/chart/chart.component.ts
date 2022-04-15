@@ -30,6 +30,7 @@ import {HandlerService} from "../service/handler.service";
 @Component({
     selector: 'bi-chart',
     templateUrl: "./chart.component.html",
+    styleUrls: ['./chart.component.less'],
     styles: []
 })
 export class ChartComponent implements OnInit, OnDestroy {
@@ -48,7 +49,9 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     src: string;
 
-    data: any[];
+    data: any[] = [];
+
+    dataKeys: string[] = [];
 
     constructor(private ref: ElementRef, private biDataService: BiDataService,
                 private handlerService: HandlerService,
@@ -56,6 +59,9 @@ export class ChartComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        if (this.chart.chartOption) {
+            this.chart.chartOption = JSON.parse(this.chart.chartOption);
+        }
         this.init();
     }
 
@@ -76,6 +82,9 @@ export class ChartComponent implements OnInit, OnDestroy {
             this.biDataService.getBiChart(this.bi.code, this.chart.id, param).subscribe(data => {
                 this.chart.loading = false;
                 if (this.chart.type == ChartType.table || this.chart.type == ChartType.Number) {
+                    if (data[0]) {
+                        this.dataKeys = Object.keys(data[0]);
+                    }
                     this.data = data;
                 } else {
                     let element = this.ref.nativeElement.querySelector("#" + this.chart.code);
@@ -147,7 +156,7 @@ export class ChartComponent implements OnInit, OnDestroy {
             // theme: 'dark',
         };
         if (this.chart.chartOption) {
-            Object.assign(props, JSON.parse(this.chart.chartOption));
+            Object.assign(props, this.chart.chartOption);
         }
         switch (this.chart.type) {
             case ChartType.Line:

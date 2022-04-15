@@ -18,11 +18,18 @@
                 </div>
             </ng-container>
             <ng-container *ngSwitchCase="chartType.Number">
-                <div style="padding: 16px;text-align: center">
-                    <nz-statistic
-                            [nzValue]="11123.28"
-                            [nzTitle]="data[0]"
-                    ></nz-statistic>
+                <div style="padding: 16px 16px 0;text-align: center;">
+                    <div sg-container="{{data.length}}">
+                        <ng-container *ngFor="let d of data">
+                            <sg>
+                                <nz-statistic style="margin-bottom: 16px;"
+                                              [nzValue]="d[dataKeys[0]]||0"
+                                              [nzTitle]="d[dataKeys[1]]"
+                                              [nzValueStyle]="this.chart.chartOption"
+                                ></nz-statistic>
+                            </sg>
+                        </ng-container>
+                    </div>
                 </div>
             </ng-container>
             <ng-container *ngSwitchDefault>
