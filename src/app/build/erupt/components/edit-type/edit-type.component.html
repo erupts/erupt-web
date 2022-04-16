@@ -518,7 +518,7 @@
                     <ng-container *ngSwitchCase="editType.TPL">
                         <div nz-col [nzSpan]="24">
                             <iframe [src]="dataService.getFieldTplPath(eruptBuildModel.eruptModel.eruptName,field.fieldName) | safeUrl"
-                                    style="width:100%;border: none" (load)="iframeHeight($event)">
+                                    style="width:100%;border: none;vertical-align: bottom;" (load)="iframeHeight($event)">
                             </iframe>
                         </div>
                     </ng-container>
