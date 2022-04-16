@@ -9,6 +9,8 @@ export interface Bi {
     pageType: pageType;
     dimensions: Dimension[];
     charts: Chart[];
+    pageSize: number;
+    pageSizeOptions: number[];
 }
 
 export interface Chart {
@@ -25,6 +27,7 @@ export interface Chart {
 }
 
 export enum ChartType {
+    Number = "Number",
     Line = "Line",
     StepLine = "StepLine",
     Bar = "Bar",
@@ -107,6 +110,7 @@ export interface Column {
     name: string;
     width: number;
     sortable: boolean;
+    display: boolean;
 }
 
 export interface Reference {
