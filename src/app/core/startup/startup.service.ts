@@ -49,7 +49,7 @@ export class StartupService {
             "                           \\/_/        ", "color:#2196f3;font-weight:800");
         console.log("%chttps://www.erupt.xyz", "color:#2196f3;font-size:1.3em;padding:16px 0;");
         console.groupEnd();
-
+        (window as any).eruptWebSuccess = true;
         await new Promise((resolve) => {
             let xhr = new XMLHttpRequest();
             xhr.open('GET', RestPath.eruptApp);
@@ -65,7 +65,6 @@ export class StartupService {
                 }
             };
         });
-
         //注入全局方法：token
         window[GlobalKeys.getAppToken] = () => {
             return this.tokenService.get();
