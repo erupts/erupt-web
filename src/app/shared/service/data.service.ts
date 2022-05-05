@@ -329,6 +329,33 @@ export class DataService {
         });
     }
 
+    eruptTabAdd(eruptName: string, tabName: string, data: any): Observable<EruptApiModel> {
+        return this._http.post(RestPath.dataModify + "/tab-add/" + eruptName + "/" + tabName, data, null, {
+            headers: {
+                erupt: eruptName,
+                ...this.getCommonHeader()
+            }
+        });
+    }
+
+    eruptTabUpdate(eruptName: string, tabName: string, data: any): Observable<EruptApiModel> {
+        return this._http.post(RestPath.dataModify + "/tab-update/" + eruptName + "/" + tabName, data, null, {
+            headers: {
+                erupt: eruptName,
+                ...this.getCommonHeader()
+            }
+        });
+    }
+
+    eruptTabDelete(eruptName: string, tabName: string, data: any): Observable<EruptApiModel> {
+        return this._http.post(RestPath.dataModify + "/tab-delete/" + eruptName + "/" + tabName, data, null, {
+            headers: {
+                erupt: eruptName,
+                ...this.getCommonHeader()
+            }
+        });
+    }
+
     //登录
     login(account: string, pwd: string, verifyCode?: any): Observable<LoginModel> {
         return this._http.post(RestPath.erupt + "/login", {}, {

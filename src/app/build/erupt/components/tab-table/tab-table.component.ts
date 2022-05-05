@@ -90,10 +90,11 @@ export class TabTableComponent implements OnInit {
                             },
                             nzOnOk: async () => {
                                 let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
-                                let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName
-                                    , obj, this.eruptBuildModel.eruptModel.eruptName).toPromise().then(resp => resp);
-                                this.objToLine(obj);
+                                let result = await this.dataService.eruptTabUpdate(this.eruptBuildModel.eruptModel.eruptName, this.tabErupt.eruptBuildModel.eruptModel.eruptName, obj)
+                                    .toPromise().then(resp => resp);
                                 if (result.status == Status.SUCCESS) {
+                                    obj = result.data;
+                                    this.objToLine(obj);
                                     let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
                                     $value.forEach((val, index) => {
                                         let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
@@ -159,9 +160,9 @@ export class TabTableComponent implements OnInit {
                 },
                 nzOnOk: async () => {
                     let obj: any = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
-                    let result = await this.dataService.eruptDataValidate(this.tabErupt.eruptBuildModel.eruptModel.eruptName
-                        , obj, this.eruptBuildModel.eruptModel.eruptName).toPromise().then(resp => resp);
+                    let result = await this.dataService.eruptTabAdd(this.eruptBuildModel.eruptModel.eruptName, this.tabErupt.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(resp => resp);
                     if (result.status == Status.SUCCESS) {
+                        obj = result.data;
                         obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = -Math.floor(Math.random() * 1000);
                         let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
                         this.objToLine(obj);
