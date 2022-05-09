@@ -12,7 +12,7 @@
 </ng-container>
 <st #st
     (change)="selectTableItem($event)"
-    [scroll]="{x:(tabErupt.eruptBuildModel.eruptModel.tableColumns.length * 130) + 'px'}"
+    [scroll]="{x: (clientWidth > 768 ? (tabErupt.eruptBuildModel.eruptModel.tableColumns.length * 130) : 0) + 'px'}"
     [size]="'small'"
     [columns]="column"
     [ps]="20"
