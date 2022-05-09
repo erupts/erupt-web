@@ -107,10 +107,12 @@ export interface BiData {
 }
 
 export interface Column {
+    code: number;
     name: string;
     width: number;
     sortable: boolean;
     display: boolean;
+    drill: boolean;
 }
 
 export interface Reference {
