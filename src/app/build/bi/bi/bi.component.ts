@@ -1,15 +1,16 @@
 import {Component, Inject, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {Bi, DimType, pageType} from "../model/bi.model";
-import {NzMessageService} from "ng-zorro-antd";
+import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {STColumn, STPage} from "@delon/abc/table/table.interfaces";
 import {BiDataService} from "../service/data.service";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
-import {STComponent, STData} from "@delon/abc";
+import {STComponent} from "@delon/abc";
 import {ChartComponent} from "../chart/chart.component";
 import {HandlerService} from "../service/handler.service";
 import {SettingsService} from "@delon/theme";
 import {isNotNull, isNull} from "@shared/util/erupt.util";
+import {DrillComponent} from "../drill/drill.component";
 
 @Component({
     selector: 'app-bi',
@@ -85,8 +86,8 @@ export class BiComponent implements OnInit, OnDestroy {
                 public route: ActivatedRoute,
                 private handlerService: HandlerService,
                 public settingSrv: SettingsService,
-                @Inject(NzMessageService)
-                private msg: NzMessageService
+                @Inject(NzMessageService) private msg: NzMessageService,
+                @Inject(NzModalService) private modal: NzModalService
     ) {
     }
 
@@ -177,6 +178,25 @@ export class BiComponent implements OnInit, OnDestroy {
                                 col.sort = {
                                     key: column.name,
                                     default: (this.sort.column == column.name) ? this.sort.direction : null
+                                };
+                            }
+                            if (column.drill) {
+                                col.type = "link";
+                                col.click = (row) => {
+                                    this.modal.create({
+                                        nzWrapClassName: "modal-lg",
+                                        nzKeyboard: false,
+                                        nzMaskClosable: false,
+                                        nzStyle: {top: "30px"},
+                                        nzTitle: column.name,
+                                        nzContent: DrillComponent,
+                                        nzComponentParams: {
+                                            drillCode: column.code,
+                                            bi: this.bi,
+                                            row: row
+                                        },
+                                        nzFooter: null
+                                    });
                                 };
                             }
                             this.biTable.columns.push(col);

@@ -11,9 +11,10 @@ import {ChoiceComponent} from './components/choice/choice.component';
 import {ReferenceComponent} from "./components/reference/reference.component";
 import {CascadeComponent} from './components/cascade/cascade.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
+import { DrillComponent } from './drill/drill.component';
 
 @NgModule({
-    declarations: [BiComponent, DimensionComponent, ReferenceComponent, ChartComponent, ChoiceComponent, CascadeComponent, ChartTableComponent],
+    declarations: [BiComponent, DimensionComponent, ReferenceComponent, ChartComponent, ChoiceComponent, CascadeComponent, ChartTableComponent, DrillComponent],
     imports: [
         CommonModule,
         BiRoutingModule,
@@ -23,7 +24,8 @@ import { ChartTableComponent } from './chart-table/chart-table.component';
         BiDataService
     ],
     entryComponents: [
-        ReferenceComponent
+        ReferenceComponent,
+        DrillComponent
     ]
 })
 export class BiModule {
