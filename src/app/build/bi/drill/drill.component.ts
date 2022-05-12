@@ -70,8 +70,12 @@ export class DrillComponent implements OnInit {
     }
 
     ngOnInit() {
-        // delete this.row._values;
-        this.dataService.getBiDrillData(this.bi.code, this.drillCode.toString(), 0, 10, this.row).subscribe(res => {
+        this.query(1, this.bi.pageSize);
+    }
+
+    query(pageIndex: number, pageSize: number) {
+        this.querying = true;
+        this.dataService.getBiDrillData(this.bi.code, this.drillCode.toString(), pageIndex, pageSize, this.row).subscribe(res => {
             this.querying = false;
             this.biTable.total = res.total;
             this.biTable.columns = [];
@@ -96,6 +100,15 @@ export class DrillComponent implements OnInit {
                 this.biTable.data = res.list;
             }
         });
+    }
+
+    pageIndexChange(index) {
+        this.query(index, this.biTable.size);
+    }
+
+    pageSizeChange(size) {
+        this.biTable.size = size;
+        this.query(1, size);
     }
 
 }
