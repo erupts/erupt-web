@@ -70,6 +70,7 @@ export class DrillComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.biTable.size = this.bi.pageSize;
         this.query(1, this.bi.pageSize);
     }
 
