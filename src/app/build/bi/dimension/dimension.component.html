@@ -112,6 +112,7 @@
                                 <ng-container *ngSwitchCase="dimType.DATE_RANGE">
                                     <nz-range-picker class="full-width"
                                                      [(ngModel)]="dim.$value"
+                                                     [nzRanges]="dateRanges"
                                                      [name]="dim.code" nzShowToday>
                                     </nz-range-picker>
                                 </ng-container>
@@ -131,6 +132,7 @@
                                     <nz-range-picker class="full-width"
                                                      [(ngModel)]="dim.$value"
                                                      [name]="dim.code"
+                                                     [nzRanges]="dateRanges"
                                                      nzShowToday
                                                      nzShowTime>
                                     </nz-range-picker>

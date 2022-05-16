@@ -112,7 +112,14 @@ export interface Column {
     width: number;
     sortable: boolean;
     display: boolean;
-    drill: boolean;
+    type: columnType;
+}
+
+export enum columnType {
+    STRING = "string",
+    NUMBER = 'number',
+    DATE = "date",
+    DRILL = 'drill'
 }
 
 export interface Reference {
