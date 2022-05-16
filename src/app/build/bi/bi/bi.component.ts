@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import {Bi, DimType, pageType} from "../model/bi.model";
+import {Bi, columnType, DimType, pageType} from "../model/bi.model";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {STColumn, STPage} from "@delon/abc/table/table.interfaces";
 import {BiDataService} from "../service/data.service";
@@ -167,8 +167,8 @@ export class BiComponent implements OnInit, OnDestroy {
                             let col: STColumn = {
                                 title: column.name,
                                 index: column.name,
-                                className: "text-center",
                                 width: column.width,
+                                className: "text-center",
                                 show: true,
                                 iif: () => {
                                     return col.show;
@@ -180,7 +180,12 @@ export class BiComponent implements OnInit, OnDestroy {
                                     default: (this.sort.column == column.name) ? this.sort.direction : null
                                 };
                             }
-                            if (column.drill) {
+                            if (column.type == columnType.STRING) {
+                            } else if (column.type == columnType.NUMBER) {
+                                col.type = "number";
+                            } else if (column.type == columnType.DATE) {
+                                col.type = "date";
+                            } else if (column.type == columnType.DRILL) {
                                 col.type = "link";
                                 col.click = (row) => {
                                     this.modal.create({
