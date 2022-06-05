@@ -77,13 +77,19 @@
             left: 0;
             right: 0;
             bottom: 26px;
-            animation: tipFadeIn 7s;
+            animation: tipFadeIn 5s;
         }
     </style>
     <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1976d2">
     <script>
+        //如果固定周期内未成功启动则重新刷新页面
+        window.setTimeout(function () {
+            if (!window.eruptWebSuccess){
+                location.reload(true)
+            }
+        }, 1000 * 10);
         (function (date) {
             var __t__ = '' + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes();
             document.write(

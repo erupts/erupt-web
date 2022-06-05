@@ -431,6 +431,7 @@
                                     <ng-container [ngSwitch]="field.eruptFieldJson.edit.attachmentType.type">
                                         <ng-container *ngSwitchCase="attachmentEnum.IMAGE">
                                             <nz-upload nzListType="picture-card"
+                                                       [nzAccept]="['.bmp','.jpg','.jpeg','.png','.gif','.webp','.heic','.avif','.svg']"
                                                        [nzDisabled]="isReadonly(field)"
                                                        [nzMultiple]="false"
                                                        [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
@@ -447,6 +448,7 @@
                                         </ng-container>
                                         <ng-container *ngSwitchCase="attachmentEnum.BASE">
                                             <nz-upload nzType="drag" *ngIf="field.eruptFieldJson.edit.$viewValue"
+                                                       [nzAccept]="field.eruptFieldJson.edit.attachmentType.fileTypes"
                                                        [nzLimit]="field.eruptFieldJson.edit.attachmentType.maxLimit"
                                                        [nzDisabled]="isReadonly(field)||field.eruptFieldJson.edit.$viewValue.length==field.eruptFieldJson.edit.attachmentType.maxLimit"
                                                        (nzChange)="upLoadNzChange($event,field)"
@@ -518,7 +520,8 @@
                     <ng-container *ngSwitchCase="editType.TPL">
                         <div nz-col [nzSpan]="24">
                             <iframe [src]="dataService.getFieldTplPath(eruptBuildModel.eruptModel.eruptName,field.fieldName) | safeUrl"
-                                    style="width:100%;border: none;vertical-align: bottom;" (load)="iframeHeight($event)">
+                                    style="width:100%;border: none;vertical-align: bottom;"
+                                    (load)="iframeHeight($event)">
                             </iframe>
                         </div>
                     </ng-container>

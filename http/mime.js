@@ -1,5 +1,5 @@
 /**
- * Created by roc on 11/6/18.
+ * Created by yuepeng on 11/6/18.
  */
 exports.type = {
   "*": "application/octet-stream",

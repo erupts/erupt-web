@@ -212,17 +212,8 @@ export class TableComponent implements OnInit {
             tableOperators.push({
                 icon: "eye",
                 click: (record: any, modal: any) => {
-                    // let eruptBuildModel = deepCopy(this.eruptBuildModel);
-                    // eruptBuildModel.eruptModel.eruptFieldModelMap = new Map<String, EruptFieldModel>();
-                    // eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
-                    //     if (field.eruptFieldJson.edit) {
-                    //         field.eruptFieldJson.edit.readOnly.add = true;
-                    //         field.eruptFieldJson.edit.readOnly.edit = true;
-                    //     }
-                    //     eruptBuildModel.eruptModel.eruptFieldModelMap.set(field.fieldName, field);
-                    // });
                     this.modal.create({
-                        nzWrapClassName: "modal-lg",
+                        nzWrapClassName: "modal-lg edit-modal-lg",
                         nzStyle: {top: "60px"},
                         nzMaskClosable: true,
                         nzKeyboard: true,
@@ -245,7 +236,7 @@ export class TableComponent implements OnInit {
                 icon: "edit",
                 click: (record: any) => {
                     const model = this.modal.create({
-                        nzWrapClassName: "modal-lg",
+                        nzWrapClassName: "modal-lg edit-modal-lg",
                         nzStyle: {top: "60px"},
                         nzMaskClosable: false,
                         nzKeyboard: false,
@@ -473,7 +464,7 @@ export class TableComponent implements OnInit {
     addRow() {
         const modal = this.modal.create({
             nzStyle: {top: "60px"},
-            nzWrapClassName: "modal-lg",
+            nzWrapClassName: "modal-lg edit-modal-lg",
             nzMaskClosable: false,
             nzKeyboard: false,
             nzTitle: this.i18n.fanyi("global.new"),
