@@ -44,6 +44,18 @@ export class BiDataService {
         });
     }
 
+    getBiDrillData(code: string, drillCode: string, pageIndex: number, pageSize: number, query: any): Observable<BiData> {
+        let params = {
+            pageIndex,
+            pageSize,
+        };
+        return this._http.post(RestPath.bi + "/drill/data/" + code + "/" + drillCode, query, params, {
+            headers: {
+                erupt: code
+            }
+        });
+    }
+
     //图表
     getBiChart(code: string, chartId: number, query: any): Observable<Map<String, any>[]> {
         return this._http.post(RestPath.bi + "/" + code + "/chart/" + chartId, query, null, {

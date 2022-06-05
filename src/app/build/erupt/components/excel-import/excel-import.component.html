@@ -4,6 +4,7 @@
 <nz-alert *ngIf="errorText" style="margin-bottom: 8px;" nzType="error" nzCloseable [nzDescription]="errorText">
 </nz-alert>
 <nz-upload nzType="drag"
+           [nzAccept]="['.xls','.xlsx']"
            [(nzFileList)]="fileList"
            [nzLimit]="1"
            [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
