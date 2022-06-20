@@ -104,7 +104,7 @@ const APP_INIT_PROVIDES = [
         RoutesModule,
         ...GLOBAL_THIRD_MODULES,
         ...I18NSERVICE_MODULES,
-        ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})
+        // ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})
     ],
     providers: [
         ...LANG_PROVIDES,
