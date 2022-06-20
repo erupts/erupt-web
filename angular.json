@@ -98,7 +98,7 @@
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
                 }
-              ],
+              ]
             },
             "hmr": {
               "fileReplacements": [

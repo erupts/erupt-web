@@ -253,13 +253,6 @@
   dependencies:
     tslib "^1.9.0"
 
-"@angular/service-worker@~8.2.11":
-  version "8.2.14"
-  resolved "https://registry.npm.taobao.org/@angular/service-worker/download/@angular/service-worker-8.2.14.tgz#fbea3899863cfa09196ce69fa470b163f25666ad"
-  integrity sha1-++o4mYY8+gkZbOafpHCxY/JWZq0=
-  dependencies:
-    tslib "^1.9.0"
-
 "@angularclass/hmr@^2.1.3":
   version "2.1.3"
   resolved "https://registry.npm.taobao.org/@angularclass/hmr/download/@angularclass/hmr-2.1.3.tgz#34e658ed3da37f23b0a200e2da5a89be92bb209f"
