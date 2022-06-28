@@ -82,6 +82,7 @@ interface Search {
 
 interface CodeEditType {
     language: string;
+    height: number;
 }
 
 //Edit Type
