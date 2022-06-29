@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
+import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel, Row, RowOperation} from "../../model/erupt.model";
 
@@ -85,6 +85,8 @@ export class TableComponent implements OnInit {
 
     adding: boolean = false; //新增行为防抖
 
+    @Output() descEvent = new EventEmitter<string>();
+
     @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
         this._drill = drill;
         this.init(this.dataService.getEruptBuild(drill.erupt), {
@@ -132,6 +134,8 @@ export class TableComponent implements OnInit {
             header: {
                 erupt: value
             }
+        }, (eb: EruptBuildModel) => {
+            this.descEvent.emit(eb.eruptModel.eruptJson.desc);
         });
     }
 
