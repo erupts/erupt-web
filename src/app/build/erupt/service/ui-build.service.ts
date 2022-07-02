@@ -255,6 +255,7 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
+                        let codeEditType = view.eruptFieldModel.eruptFieldJson.edit.codeEditType;
                         this.modal.create({
                             nzWrapClassName: "modal-lg",
                             // nzStyle: {top: "60px"},
@@ -267,7 +268,7 @@ export class UiBuildService {
                             nzComponentParams: {
                                 height: 500,
                                 readonly: true,
-                                language: view.eruptFieldModel.eruptFieldJson.edit.codeEditType.language,
+                                language: codeEditType ? codeEditType.language : 'text',
                                 // @ts-ignore
                                 edit: {
                                     $value: item[view.column]

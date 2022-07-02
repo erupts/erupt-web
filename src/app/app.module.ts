@@ -7,9 +7,9 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 // 参考：https://ng-alain.com/docs/i18n
 import {default as ngLang} from "@angular/common/locales/zh";
 import {NZ_I18N, zh_CN as zorroLang} from "ng-zorro-antd";
-import {DELON_LOCALE, zh_CN as delonLang} from "@delon/theme";
+import {ALAIN_I18N_TOKEN, DELON_LOCALE, zh_CN as delonLang} from "@delon/theme";
 // register angular
-import {DatePipe, registerLocaleData} from "@angular/common";
+import {registerLocaleData} from "@angular/common";
 import {SimpleInterceptor} from "@delon/auth";
 import {DefaultInterceptor} from "@core/net/default.interceptor";
 // #region Startup Service
@@ -20,13 +20,10 @@ import {SharedModule} from "@shared/shared.module";
 import {AppComponent} from "./app.component";
 import {RoutesModule} from "./routes/routes.module";
 import {LayoutModule} from "./layout/layout.module";
-import {ServiceWorkerModule} from '@angular/service-worker';
-import {environment} from '@env/environment';
 
 // #region i18n services
-import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {ALAIN_I18N_TOKEN} from '@delon/theme';
 import {I18NService} from '@core';
 
 const LANG = {
@@ -103,8 +100,7 @@ const APP_INIT_PROVIDES = [
         LayoutModule,
         RoutesModule,
         ...GLOBAL_THIRD_MODULES,
-        ...I18NSERVICE_MODULES,
-        ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})
+        ...I18NSERVICE_MODULES
     ],
     providers: [
         ...LANG_PROVIDES,
