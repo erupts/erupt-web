@@ -15,6 +15,7 @@ export interface EruptModel {
 
 export interface Erupt {
     primaryKeyCol: string;
+    desc: string;
     power: Power;
     tree: Tree;
     linkTree: LinkTree;

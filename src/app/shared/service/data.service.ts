@@ -115,14 +115,13 @@ export class DataService {
         });
     }
 
-    getEruptTpl(name: string) {
-        let params = "_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + name;
+    getEruptTpl(name: string, query?: string) {
+        let params = "_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + name + (query && ("&" + query));
         if (name.indexOf("?") == -1) {
             return RestPath.tpl + "/" + name + "?" + params;
         } else {
             return RestPath.tpl + "/" + name + "&" + params;
         }
-        // return RestPath.tpl + "/" + name + "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + name;
     }
 
     getEruptOperationTpl(eruptName: string, operationCode: string, ids: any[]) {
