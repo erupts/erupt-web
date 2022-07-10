@@ -2,7 +2,7 @@ import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core
 import {DataService} from "@shared/service/data.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
-import {MenuService, SettingsService} from "@delon/theme";
+import {SettingsService} from "@delon/theme";
 
 @Component({
     selector: 'app-tpl',
@@ -30,7 +30,7 @@ export class TplComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe((params) => {
-            this.name = this.router.url.replace("/tpl", "");
+            this.name = this.router.url.replace("/tpl/", "");
             this.url = this.dataService.getEruptTpl(this.name);
             if (this.renderType === 'micro-app') {
                 this.url = window.location.origin + window.location.pathname + this.url;
