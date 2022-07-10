@@ -1,5 +1,5 @@
 import {NgModule} from "@angular/core";
-import {RouterModule, Routes} from "@angular/router";
+import {RouterModule, Routes, UrlSegment} from "@angular/router";
 import {environment} from "@env/environment";
 // layout
 import {LayoutDefaultComponent} from "../layout/default/default.component";
@@ -29,11 +29,10 @@ let coreRouter: Routes = [
         loadChildren: () => import( "../build/bi/bi.module").then(m => m.BiModule),
         pathMatch: "full"
     },
-    {
-        path: "tpl/:name",
-        loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule),
-        pathMatch: "full"
-    }
+    {path: "tpl/:name", pathMatch: "full", loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)},
+    {path: 'tpl/:name/:name1', pathMatch: "full", loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)},
+    {path: 'tpl/:name/:name2/:name3', pathMatch: "full", loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)},
+    {path: 'tpl/:name/:name2/:name3/:name4', pathMatch: "full", loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)}
 ];
 
 const routes: Routes = [
