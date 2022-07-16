@@ -16,13 +16,13 @@ export function generateMenuPath(type: string, value: string) {
         case MenuTypeEnum.bi:
             return "/bi/" + menuValue;
         case MenuTypeEnum.tpl:
-            return "/tpl/" + menuValue.replace("?", "#");
+            return "/tpl/" + menuValue;
         case MenuTypeEnum.router:
             return "/" + menuValue;
         case MenuTypeEnum.newWindow:
             return "/" + menuValue;
         case MenuTypeEnum.link:
-            return "/site/" + encodeURIComponent(window.btoa(menuValue));
+            return "/site/" + window.btoa(encodeURIComponent(menuValue));
         case MenuTypeEnum.fill:
             if (menuValue.startsWith("/")) {
                 return "/fill" + menuValue;
