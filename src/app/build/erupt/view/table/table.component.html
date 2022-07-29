@@ -1,8 +1,19 @@
-<script src="../../../../../../../../../低代码平台/ajiansoft/erupt-web - 副本/src/app/build/erupt/view/table/table.component.ts"></script>
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!eruptBuildModel"></nz-skeleton>
 <div id="tableTopFragmentDIV" class="fragment-base-container" *ngIf="pageTopFragmentView"
      [innerHTML]="pageTopFragmentView"></div>
-<ng-container *ngIf="eruptBuildModel">
+<div class="tab-panel-container" *ngIf="eruptBuildModel && tabsPage.length>0">
+    <nz-tabset>
+        <nz-tab *ngFor="let tab of tabsPage" [nzTitle]="tab.tabName">
+            <ng-template nz-tab>
+                <iframe [src]="tab.url|safeUrl"
+                        style="width:100%;border: none;vertical-align: bottom;"
+                        (load)="iframeHeight($event)">
+                </iframe>
+            </ng-template>
+        </nz-tab>
+    </nz-tabset>
+</div>
+<ng-container *ngIf="eruptBuildModel && tabsPage.length<=0">
     <div nz-row [nzGutter]="16">
         <div nz-col *ngIf="linkTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="6">
             <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
