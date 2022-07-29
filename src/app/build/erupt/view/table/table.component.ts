@@ -10,14 +10,21 @@ import {ActivatedRoute} from "@angular/router";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
-import {OperationMode, OperationType, OperationIfExprBehavior, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
+import {
+    OperationMode,
+    OperationType,
+    OperationIfExprBehavior,
+    RestPath,
+    Scene,
+    SelectMode
+} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {BuildConfig} from "../../model/build-config";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
-import {DomSanitizer} from "@angular/platform-browser";
+import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
@@ -86,6 +93,8 @@ export class TableComponent implements OnInit {
 
 
     adding: boolean = false; //新增行为防抖
+
+    pageTopFragmentView: SafeHtml;
 
     @Output() descEvent = new EventEmitter<string>();
 
@@ -166,6 +175,7 @@ export class TableComponent implements OnInit {
                     this.showTable = !dt.dependNode;
                 }
                 this.dataHandler.initErupt(eb);
+                this.loadPageTopFragment(eb.eruptModel.eruptJson.param);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
@@ -645,6 +655,29 @@ export class TableComponent implements OnInit {
                 }
             }
         });
+    }
+
+    /**
+     * 根据@Erupt的param参数中的_fragmentURL配置，拉取对应的自定义页面头显示在表格顶部
+     * @param eruptModelParam
+     */
+    loadPageTopFragment(eruptModelParam: any) {
+        if (eruptModelParam && eruptModelParam._fragmentURL) {
+            this.route.params.subscribe((params) => {
+                let url = this.dataService.getEruptTpl(eruptModelParam._fragmentURL.value);
+                console.log('fragment url:', url);
+                this.http.get<string>(url,
+                    {
+                        headers: {token: this.tokenService.get().token},
+                        observe: 'body',
+                        reportProgress: false,
+                        responseType: 'text' as 'json',
+                        withCredentials: true
+                    }).subscribe((data: string) => {
+                    this.pageTopFragmentView = this.sanitizer.bypassSecurityTrustHtml(data)
+                });
+            });
+        }
     }
 
 }
