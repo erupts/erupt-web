@@ -603,6 +603,12 @@ export class TableComponent implements OnInit {
 
     // excel导出
     exportExcel() {
+        //如果有选中的行，则下载选中行数据，否则下载远程查询的数据
+        if (this.selectedRows && this.selectedRows.length > 0) {
+            this.st.export(this.selectedRows);
+            return;
+        }
+
         let condition = null;
         if (this.searchErupt.eruptFieldModels.length > 0) {
             condition = this.dataHandler.eruptObjectToCondition(this.dataHandler.eruptValueToObject({
