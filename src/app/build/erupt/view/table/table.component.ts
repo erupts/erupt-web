@@ -29,6 +29,7 @@ import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
 import {IframeHeight} from "@shared/util/window.util";
+import {HttpClient} from "@angular/common/http";
 
 
 @Component({
@@ -54,6 +55,7 @@ export class TableComponent implements OnInit {
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
         @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+        private http: HttpClient,
     ) {
     }
 
