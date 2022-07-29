@@ -28,6 +28,7 @@ import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
+import {IframeHeight} from "@shared/util/window.util";
 
 
 @Component({
@@ -95,6 +96,9 @@ export class TableComponent implements OnInit {
     adding: boolean = false; //新增行为防抖
 
     pageTopFragmentView: SafeHtml;
+
+    tabsPage: any[];
+    iframeHeight = IframeHeight;
 
     @Output() descEvent = new EventEmitter<string>();
 
@@ -169,6 +173,7 @@ export class TableComponent implements OnInit {
         this.stConfig.req.headers = req.header;
         this.stConfig.url = req.url;
         observable.subscribe(eb => {
+                this.renderPageTabs(eb.eruptModel.eruptJson.param);
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
                 if (dt) {
@@ -678,6 +683,39 @@ export class TableComponent implements OnInit {
                 });
             });
         }
+    }
+
+    /**
+     * 通过获取@Erupt的param参数中的"_tabHeader#xxx"配置来构建一个在表格页面显示的tab组件<br/>
+     * 如：
+     * <pre>
+         @Erupt(name = '测试tab效果', param = [
+             @KV(key = '_tabHeader#基础信息', value = '/build/table/Test1'),
+             @KV(key = '_tabHeader#活动配置', value = '/tpl/t1'),
+             @KV(key = '_tabHeader#用户列表', value = '/tpl/t2')]
+         )
+     * <pre>
+     * 目前问题：每一个tab都通过iframe进行加载，加载时都会显示loading.svg的动画效果，体验起来稍显迟钝，可有优化方案？
+     * @param eruptModelParam
+     */
+    renderPageTabs(eruptModelParam: any) {
+        let tabs = [];
+        for (let k in eruptModelParam) {
+            if (k.startsWith('_tabHeader#')) {
+                let url = eruptModelParam[(k)].value || '#';
+                url = url.startsWith('/fill/') ? url : '/fill/' + url;
+                url = url.replace('//', '/');
+                this.route.params.subscribe((params) => {
+                    url = window.location.origin + window.location.pathname + '#' + url;
+                });
+
+                tabs.push({
+                    'tabName': k.split('#')[1],
+                    'url': url
+                })
+            }
+        }
+        this.tabsPage = tabs || [];
     }
 
 }
