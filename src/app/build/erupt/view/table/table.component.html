@@ -1,4 +1,7 @@
+<script src="../../../../../../../../../低代码平台/ajiansoft/erupt-web - 副本/src/app/build/erupt/view/table/table.component.ts"></script>
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!eruptBuildModel"></nz-skeleton>
+<div id="tableTopFragmentDIV" class="fragment-base-container" *ngIf="pageTopFragmentView"
+     [innerHTML]="pageTopFragmentView"></div>
 <ng-container *ngIf="eruptBuildModel">
     <div nz-row [nzGutter]="16">
         <div nz-col *ngIf="linkTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="6">
