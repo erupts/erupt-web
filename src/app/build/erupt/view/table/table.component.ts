@@ -10,26 +10,17 @@ import {ActivatedRoute} from "@angular/router";
 import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
-import {
-    OperationMode,
-    OperationType,
-    OperationIfExprBehavior,
-    RestPath,
-    Scene,
-    SelectMode
-} from "../../model/erupt.enum";
+import {OperationMode, OperationType, OperationIfExprBehavior, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {BuildConfig} from "../../model/build-config";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
-import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import {DomSanitizer} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
-import {IframeHeight} from "@shared/util/window.util";
-import {HttpClient} from "@angular/common/http";
 
 
 @Component({
@@ -55,7 +46,6 @@ export class TableComponent implements OnInit {
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
         @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-        private http: HttpClient,
     ) {
     }
 
@@ -96,11 +86,6 @@ export class TableComponent implements OnInit {
 
 
     adding: boolean = false; //新增行为防抖
-
-    pageTopFragmentView: SafeHtml;
-
-    tabsPage: any[];
-    iframeHeight = IframeHeight;
 
     @Output() descEvent = new EventEmitter<string>();
 
@@ -175,14 +160,12 @@ export class TableComponent implements OnInit {
         this.stConfig.req.headers = req.header;
         this.stConfig.url = req.url;
         observable.subscribe(eb => {
-                this.renderPageTabs(eb.eruptModel.eruptJson.param);
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
                 if (dt) {
                     this.showTable = !dt.dependNode;
                 }
                 this.dataHandler.initErupt(eb);
-                this.loadPageTopFragment(eb.eruptModel.eruptJson.param);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
@@ -605,12 +588,6 @@ export class TableComponent implements OnInit {
 
     // excel导出
     exportExcel() {
-        //如果有选中的行，则下载选中行数据，否则下载远程查询的数据
-        if (this.selectedRows && this.selectedRows.length > 0) {
-            this.st.export(this.selectedRows);
-            return;
-        }
-
         let condition = null;
         if (this.searchErupt.eruptFieldModels.length > 0) {
             condition = this.dataHandler.eruptObjectToCondition(this.dataHandler.eruptValueToObject({
@@ -668,62 +645,6 @@ export class TableComponent implements OnInit {
                 }
             }
         });
-    }
-
-    /**
-     * 根据@Erupt的param参数中的_fragmentURL配置，拉取对应的自定义页面头显示在表格顶部
-     * @param eruptModelParam
-     */
-    loadPageTopFragment(eruptModelParam: any) {
-        if (eruptModelParam && eruptModelParam._fragmentURL) {
-            this.route.params.subscribe((params) => {
-                let url = this.dataService.getEruptTpl(eruptModelParam._fragmentURL.value);
-                console.log('fragment url:', url);
-                this.http.get<string>(url,
-                    {
-                        headers: {token: this.tokenService.get().token},
-                        observe: 'body',
-                        reportProgress: false,
-                        responseType: 'text' as 'json',
-                        withCredentials: true
-                    }).subscribe((data: string) => {
-                    this.pageTopFragmentView = this.sanitizer.bypassSecurityTrustHtml(data)
-                });
-            });
-        }
-    }
-
-    /**
-     * 通过获取@Erupt的param参数中的"_tabHeader#xxx"配置来构建一个在表格页面显示的tab组件<br/>
-     * 如：
-     * <pre>
-         @Erupt(name = '测试tab效果', param = [
-             @KV(key = '_tabHeader#基础信息', value = '/build/table/Test1'),
-             @KV(key = '_tabHeader#活动配置', value = '/tpl/t1'),
-             @KV(key = '_tabHeader#用户列表', value = '/tpl/t2')]
-         )
-     * <pre>
-     * 目前问题：每一个tab都通过iframe进行加载，加载时都会显示loading.svg的动画效果，体验起来稍显迟钝，可有优化方案？
-     * @param eruptModelParam
-     */
-    renderPageTabs(eruptModelParam: any) {
-        let tabs = [];
-        for (let k in eruptModelParam) {
-            if (k.startsWith('_tabHeader#')) {
-                let url = eruptModelParam[(k)].value || '#';
-                url = url.startsWith('/fill/') ? url : '/fill/' + url;
-                url = url.replace('//', '/');
-                this.route.params.subscribe((params) => {
-                    url = window.location.origin + window.location.pathname + '#' + url;
-                });
-
-                tabs.push({
-                    'tabName': k.split('#')[1],
-                    'url': url
-                })
-            }
-        }
-        this.tabsPage = tabs || [];
     }
 
 }

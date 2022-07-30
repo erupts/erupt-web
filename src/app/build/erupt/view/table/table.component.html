@@ -1,19 +1,5 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!eruptBuildModel"></nz-skeleton>
-<div id="tableTopFragmentDIV" class="fragment-base-container" *ngIf="pageTopFragmentView"
-     [innerHTML]="pageTopFragmentView"></div>
-<div class="tab-panel-container" *ngIf="eruptBuildModel && tabsPage.length>0">
-    <nz-tabset>
-        <nz-tab *ngFor="let tab of tabsPage" [nzTitle]="tab.tabName">
-            <ng-template nz-tab>
-                <iframe [src]="tab.url|safeUrl"
-                        style="width:100%;border: none;vertical-align: bottom;"
-                        (load)="iframeHeight($event)">
-                </iframe>
-            </ng-template>
-        </nz-tab>
-    </nz-tabset>
-</div>
-<ng-container *ngIf="eruptBuildModel && tabsPage.length<=0">
+<ng-container *ngIf="eruptBuildModel">
     <div nz-row [nzGutter]="16">
         <div nz-col *ngIf="linkTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="6">
             <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
@@ -67,14 +53,13 @@
                             &nbsp;
                         </ng-container>
 
-                        <!-- 将此处查询按钮移动到搜索条件框之后显示
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
                             <button nz-button nzType="primary" style="background: #fff !important;" [nzGhost]="true"
                                     class="mb-sm" [nzLoading]="st._loading" id="erupt-btn-query"
                                     (click)="query()">
                                 <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
                             </button>
-                        </ng-container>-->
+                        </ng-container>
 
                         <ng-container>
                             <nz-divider nzType="vertical" class="hidden-mobile"></nz-divider>
@@ -133,13 +118,6 @@
                     >
 
                     </erupt-edit-type>
-                    <div *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query" style="text-align: right;">
-                        <button nz-button nzType="primary" style="background: #fff !important;" [nzGhost]="true"
-                                class="mb-sm" [nzLoading]="st._loading" id="erupt-btn-query"
-                                (click)="query()">
-                            <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
-                        </button>
-                    </div>
                 </nz-card>
                 <st #st
                     [widthMode]="{strictBehavior:'wrap'}"
