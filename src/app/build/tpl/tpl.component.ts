@@ -32,9 +32,7 @@ export class TplComponent implements OnInit, OnDestroy {
         this.router$ = this.route.params.subscribe((params) => {
             let url = this.router.url;
             let tpl = '/tpl/';
-            //this.name = url.substring(url.indexOf(tpl) + tpl.length);
-            //初测发现此处会造成使用fill/tpl/xx时会造成页面无法全屏的问题，暂时使用上个版本代码替换！！
-            this.name = params.name;
+            this.name = url.substring(url.indexOf(tpl) + tpl.length);
             console.log(this.name);
             this.url = this.dataService.getEruptTpl(this.name);
             if (this.renderType === 'micro-app') {
