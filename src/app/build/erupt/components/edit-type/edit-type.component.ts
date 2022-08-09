@@ -227,7 +227,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 return;
             }
         }
-        let model = this.modal.create({
+        this.modal.create({
             nzWrapClassName: "modal-xxl",
             nzKeyboard: true,
             nzStyle: {top: "24px"},
@@ -283,11 +283,19 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         }
     }
 
+    getFromData(): any {
+        let result = {};
+        for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
+            result[eruptFieldModel.fieldName] = eruptFieldModel.eruptFieldJson.edit.$value;
+        }
+        return result;
+    }
+
 
     onAutoCompleteInput(event, fieldModel: EruptFieldModel) {
         let edit = fieldModel.eruptFieldJson.edit;
         if (edit.$value && edit.autoCompleteType.triggerLength <= edit.$value.toString().trim().length) {
-            this.dataService.findAutoCompleteValue(this.eruptModel.eruptName, fieldModel.fieldName, edit.$value, this.parentEruptName).subscribe(res => {
+            this.dataService.findAutoCompleteValue(this.eruptModel.eruptName, fieldModel.fieldName, this.getFromData(), edit.$value, this.parentEruptName).subscribe(res => {
                 edit.autoCompleteType.items = res;
             });
         } else {

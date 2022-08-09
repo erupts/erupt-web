@@ -360,10 +360,10 @@
     "@antv/scale" "~0.3.1"
     "@antv/util" "~2.0.4"
 
-"@antv/g2plot@~0.11.32":
+"@antv/g2plot@~0.11.40":
   version "0.11.41"
-  resolved "https://registry.npm.taobao.org/@antv/g2plot/download/@antv/g2plot-0.11.41.tgz#80e7ce935ad0d620093615bf1e9a0dcfe1a095a4"
-  integrity sha1-gOfOk1rQ1iAJNhW/HpoNz+GglaQ=
+  resolved "https://registry.npmmirror.com/@antv/g2plot/-/g2plot-0.11.41.tgz#80e7ce935ad0d620093615bf1e9a0dcfe1a095a4"
+  integrity sha512-hXSlGQu9KnpRbp9FM2a7pfb+LkxH6rZ7+CWF3P8cvd6hjKgteqDicgE+hAWNiDNbdZUnfff6XR7QhwNpG8OOFw==
   dependencies:
     "@antv/g-gesture" "~0.1.0"
     "@antv/g2" "~3.6.0-beta.21"

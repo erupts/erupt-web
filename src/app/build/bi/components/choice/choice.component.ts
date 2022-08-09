@@ -28,6 +28,7 @@ export class ChoiceComponent implements OnInit {
     loading: boolean;
 
     dimType = DimType;
+
     data: Reference[];
 
     constructor(private dataService: BiDataService) {

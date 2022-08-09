@@ -2,7 +2,7 @@
     <ng-container [ngSwitch]="dim.type">
         <ng-container *ngSwitchCase="dimType.REFERENCE_RADIO">
             <nz-radio-group [(ngModel)]="dim.$value" [name]="dim.code">
-                <label nz-radio [nzValue]="null">{{'global.check_none'|i18n}}</label>
+                <label nz-radio [nzValue]="null" *ngIf="!dim.notNull">{{'global.check_none'|i18n}}</label>
                 <label nz-radio *ngFor="let i of data" [nzValue]="i.id">{{i.title}}</label>
             </nz-radio-group>
         </ng-container>
