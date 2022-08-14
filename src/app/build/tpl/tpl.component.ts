@@ -30,7 +30,10 @@ export class TplComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe((params) => {
-            this.name = this.router.url.replace("/tpl/", "");
+            let url = this.router.url;
+            let tpl = '/tpl/';
+            this.name = url.substring(url.indexOf(tpl) + tpl.length);
+            console.log(this.name);
             this.url = this.dataService.getEruptTpl(this.name);
             if (this.renderType === 'micro-app') {
                 this.url = window.location.origin + window.location.pathname + this.url;
