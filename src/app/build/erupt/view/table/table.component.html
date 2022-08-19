@@ -122,7 +122,7 @@
                 <st #st
                     [widthMode]="{strictBehavior:'wrap'}"
                     [data]="stConfig.url" [columns]="columns"
-                    [scroll]="{x: (clientWidth > 768 ? eruptBuildModel.eruptModel.tableColumns.length * 150 : 0) + 'px'}"
+                    [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
                     (change)="tableDataChange($event)"
                     [bordered]="settingSrv.layout.bordered"
                     [multiSort]="stConfig.multiSort"

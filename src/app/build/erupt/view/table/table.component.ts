@@ -74,6 +74,8 @@ export class TableComponent implements OnInit {
 
     columns: STColumn[];
 
+    showColumnLength: number;
+
     linkTree: boolean = false;
 
     showTable: boolean = true;
@@ -366,6 +368,7 @@ export class TableComponent implements OnInit {
             });
         }
         this.columns = _columns;
+        this.showColumnLength = this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length
     }
 
     /**
