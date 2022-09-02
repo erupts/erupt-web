@@ -68,6 +68,7 @@ export interface RowOperation {
     type: OperationType;
     tip: string;
     ifExpr: string;
+    tplWidth: string;
     ifExprBehavior: OperationIfExprBehavior;
 }
 
