@@ -371,6 +371,7 @@ export class TableComponent implements OnInit {
         this.showColumnLength = this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length
     }
 
+
     /**
      * 自定义功能触发
      * @param rowOperation 行按钮对象
