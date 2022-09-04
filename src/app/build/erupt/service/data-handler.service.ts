@@ -97,6 +97,7 @@ export class DataHandlerService {
         let copyErupt = <EruptModel>deepCopy(eruptBuildModel.eruptModel);
         const searchFieldModels = [];
         const searchFieldModelsMap: Map<String, EruptFieldModel> = new Map();
+        let searchCondition = eruptBuildModel.eruptModel.searchCondition;
         copyErupt.eruptFieldModels.forEach((field) => {
             if (!field.eruptFieldJson.edit) {
                 return;
@@ -108,7 +109,7 @@ export class DataHandlerService {
                 field.eruptFieldJson.edit.show = true;
                 field.eruptFieldJson.edit.readOnly.add = false;
                 field.eruptFieldJson.edit.readOnly.edit = false;
-                field.eruptFieldJson.edit.$value = null;
+                field.eruptFieldJson.edit.$value = searchCondition && searchCondition[field.fieldName];
                 field.eruptFieldJson.edit.$viewValue = null;
                 field.eruptFieldJson.edit.$tempValue = null;
                 searchFieldModels.push(field);
@@ -190,7 +191,7 @@ export class DataHandlerService {
                             obj[field.fieldName] = arr;
                             break;
                         case EditType.NUMBER:
-                            if (edit.$l_val && edit.$r_val) {
+                            if ((edit.$l_val || edit.$l_val == 0) && (edit.$r_val || edit.$r_val == 0)) {
                                 obj[field.fieldName] = [edit.$l_val, edit.$r_val];
                             }
                             break;

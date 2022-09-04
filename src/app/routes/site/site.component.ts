@@ -26,7 +26,7 @@ export class SiteComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.router$ = this.route.params.subscribe((params) => {
             this.spin = true;
-            let url = decodeURIComponent(atob(params.url));
+            let url = decodeURIComponent(atob(decodeURIComponent(params.url)));
             url += (url.indexOf("?") === -1 ? "?" : "&") + "_token=" + this.tokenService.get().token;
             this.url = url;
         });

@@ -5,9 +5,10 @@ import {StatusService} from "@shared/service/status.service";
     selector: 'erupt-page-header',
     template: `
         <page-header [syncTitle]="" [autoTitle]="false" homeI18n="global.home" [title]="null" *ngIf="!isFillLayout">
-            <div *ngIf="desc" style="margin-top: 8px" [innerHTML]="desc|safeHtml"></div>
+            <div class="desc" *ngIf="desc"[innerHTML]="desc|safeHtml"></div>
         </page-header>
     `,
+    styleUrls: ["./erupt-page-header.component.less"],
     styles: []
 })
 export class EruptPageHeaderComponent implements OnInit {

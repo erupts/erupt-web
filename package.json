@@ -51,7 +51,7 @@
     "@angular/platform-browser-dynamic": "~8.2.11",
     "@angular/pwa": "^0.901.1",
     "@angular/router": "~8.2.11",
-    "@antv/g2plot": "~0.11.32",
+    "@antv/g2plot": "~0.11.40",
     "@delon/abc": "^8.8.0",
     "@delon/acl": "^8.8.0",
     "@delon/auth": "^8.8.0",

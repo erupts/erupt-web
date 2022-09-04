@@ -164,8 +164,8 @@ export class DataService {
         });
     }
 
-    findAutoCompleteValue(eruptName: string, field: string, val: string, eruptParentName?: string): Observable<string[]> {
-        return this._http.get<string[]>(RestPath.comp + "/auto-complete/" + eruptName + "/" + field, {
+    findAutoCompleteValue(eruptName: string, field: string, formData: any, val: string, eruptParentName?: string): Observable<string[]> {
+        return this._http.post(RestPath.comp + "/auto-complete/" + eruptName + "/" + field, formData, {
             val: val.trim(),
         }, {
             observe: "body",

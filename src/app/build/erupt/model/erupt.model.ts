@@ -11,6 +11,7 @@ export interface EruptModel {
     eruptFieldModelMap?: Map<String, EruptFieldModel>;
     tableColumns?: View[];
     mode?: "edit" | "search";
+    searchCondition: any;
 }
 
 export interface Erupt {
@@ -67,6 +68,7 @@ export interface RowOperation {
     type: OperationType;
     tip: string;
     ifExpr: string;
+    tplWidth: string;
     ifExprBehavior: OperationIfExprBehavior;
 }
 
