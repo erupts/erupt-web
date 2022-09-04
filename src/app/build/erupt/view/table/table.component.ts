@@ -74,6 +74,8 @@ export class TableComponent implements OnInit {
 
     columns: STColumn[];
 
+    showColumnLength: number;
+
     linkTree: boolean = false;
 
     showTable: boolean = true;
@@ -366,7 +368,9 @@ export class TableComponent implements OnInit {
             });
         }
         this.columns = _columns;
+        this.showColumnLength = this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length
     }
+
 
     /**
      * 自定义功能触发
@@ -394,9 +398,10 @@ export class TableComponent implements OnInit {
                 nzKeyboard: true,
                 nzTitle: ro.title,
                 nzMaskClosable: false,
+                nzWidth: ro.tplWidth,
                 nzStyle: {top: "20px"},
                 // nzWrapClassName: "modal-xxl",
-                nzWrapClassName: "modal-lg",
+                nzWrapClassName: ro.tplWidth || "modal-lg",
                 nzBodyStyle: {
                     padding: 0
                 },

@@ -33,7 +33,6 @@ export class TplComponent implements OnInit, OnDestroy {
             let url = this.router.url;
             let tpl = '/tpl/';
             this.name = url.substring(url.indexOf(tpl) + tpl.length);
-            console.log(this.name);
             this.url = this.dataService.getEruptTpl(this.name);
             if (this.renderType === 'micro-app') {
                 this.url = window.location.origin + window.location.pathname + this.url;
