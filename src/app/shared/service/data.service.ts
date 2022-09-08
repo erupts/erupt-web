@@ -366,7 +366,7 @@ export class DataService {
     }
 
     logout() {
-        return this._http.post(RestPath.erupt + "/logout");
+        return this._http.get(RestPath.erupt + "/logout");
     }
 
 
