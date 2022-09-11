@@ -185,6 +185,9 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                         if (menu.type == MenuTypeEnum.newWindow) {
                             option.target = "_blank";
                             option.externalLink = menu.value;
+                        } else if (menu.type == MenuTypeEnum.selfWindow) {
+                            option.target = "_self";
+                            option.externalLink = menu.value;
                         }
                         result.push(option);
                     }
