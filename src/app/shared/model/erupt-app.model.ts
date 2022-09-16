@@ -5,5 +5,4 @@ export interface EruptAppModel {
     hash: number;
     version: string;
     loginPagePath: string;
-    forceResetPwd: boolean;
 }
