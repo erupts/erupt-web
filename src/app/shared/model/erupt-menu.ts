@@ -17,6 +17,7 @@ export enum MenuTypeEnum {
     api = "api",
     link = "link",
     newWindow = "newWindow",
+    selfWindow = "selfWindow",
     bi = "bi",
     tpl = "tpl",
 }

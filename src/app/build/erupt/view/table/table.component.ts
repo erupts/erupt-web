@@ -368,7 +368,7 @@ export class TableComponent implements OnInit {
             });
         }
         this.columns = _columns;
-        this.showColumnLength = this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length
+        this.showColumnLength = this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length;
     }
 
 
@@ -435,7 +435,11 @@ export class TableComponent implements OnInit {
                         this.selectedRows = [];
                         if (res.status === Status.SUCCESS) {
                             this.stLoad();
-                            res.data && eval(res.data);
+                            try {
+                                res.data && eval(res.data);
+                            } catch (e) {
+                                this.msg.error(e);
+                            }
                             return true;
                         } else {
                             return false;
@@ -461,7 +465,11 @@ export class TableComponent implements OnInit {
                             .toPromise().then();
                         this.stLoad();
                         if (res.data) {
-                            eval(res.data);
+                            try {
+                                eval(res.data);
+                            } catch (e) {
+                                this.msg.error(e);
+                            }
                         }
                     }
                 });

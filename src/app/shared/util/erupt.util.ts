@@ -21,6 +21,8 @@ export function generateMenuPath(type: string, value: string) {
             return "/" + menuValue;
         case MenuTypeEnum.newWindow:
             return "/" + menuValue;
+        case MenuTypeEnum.selfWindow:
+            return "/" + menuValue;
         case MenuTypeEnum.link:
             return "/site/" + encodeURIComponent(window.btoa(encodeURIComponent(menuValue)));
         case MenuTypeEnum.fill:
