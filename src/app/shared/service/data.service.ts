@@ -357,7 +357,7 @@ export class DataService {
 
     //登录
     login(account: string, pwd: string, verifyCode?: any): Observable<LoginModel> {
-        return this._http.post(RestPath.erupt + "/login", {}, {
+        return this._http.get(RestPath.erupt + "/login", {
                 account: account,
                 pwd: pwd,
                 verifyCode: verifyCode
@@ -366,12 +366,12 @@ export class DataService {
     }
 
     logout() {
-        return this._http.post(RestPath.erupt + "/logout");
+        return this._http.get(RestPath.erupt + "/logout");
     }
 
 
     changePwd(account: string, pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
-        return this._http.post(RestPath.erupt + "/change-pwd", {}, {
+        return this._http.get(RestPath.erupt + "/change-pwd", {
                 account: account,
                 pwd: pwd,
                 newPwd: newPwd,

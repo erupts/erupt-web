@@ -156,8 +156,8 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
                         this.modal.create({
                             nzTitle: this.i18n.fanyi("global.reset_pwd"),
                             nzMaskClosable: false,
-                            nzKeyboard: !EruptAppData.get().forceResetPwd,
-                            nzClosable: !EruptAppData.get().forceResetPwd,
+                            nzClosable: false,
+                            nzKeyboard: true,
                             nzContent: ChangePwdComponent,
                             nzFooter: null,
                             nzBodyStyle: {
