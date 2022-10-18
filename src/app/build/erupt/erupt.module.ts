@@ -29,6 +29,7 @@ import {MarkdownComponent} from './components/markdown/markdown.component';
 import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
+import { CardComponent } from './components/card/card.component';
 
 @NgModule({
     imports: [
@@ -67,7 +68,8 @@ import {TagsComponent} from "./components/tags/tags.component";
         EditComponent,
         CodeEditorComponent,
         SafeTemplateComponent,
-        MarkdownComponent
+        MarkdownComponent,
+        CardComponent
     ],
     declarations: [
         EditTypeComponent,
@@ -91,7 +93,8 @@ import {TagsComponent} from "./components/tags/tags.component";
         DateComponent,
         MarkdownComponent,
         ChoiceComponent,
-        TagsComponent
+        TagsComponent,
+        CardComponent,
     ]
 })
 export class EruptModule {

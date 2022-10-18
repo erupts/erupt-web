@@ -20,8 +20,15 @@ export interface Erupt {
     power: Power;
     tree: Tree;
     linkTree: LinkTree;
+    cardView: CardView;
     rowOperation: RowOperation[];
     drills: Drill[];
+}
+
+interface CardView {
+    galleryField: string;
+    galleryCover: string;
+    viewFields: string[];
 }
 
 interface LinkTree {
