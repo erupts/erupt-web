@@ -124,7 +124,7 @@
                 </nz-card>
                 <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">
                     <div style="margin: 16px 0">
-                        <erupt-card></erupt-card>
+                        <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>
                     </div>
                 </ng-container>
                 <st #st
