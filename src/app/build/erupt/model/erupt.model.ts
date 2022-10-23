@@ -45,6 +45,15 @@ export interface Drill {
     link: Link;
 }
 
+export interface Page {
+    pageIndex: number;
+    pageSize: number;
+    totalPage: number;
+    total: number;
+    sort: string;
+    list: any[];
+}
+
 export interface Tree {
     id: string;
     label: string;
