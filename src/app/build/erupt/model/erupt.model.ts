@@ -25,10 +25,15 @@ export interface Erupt {
     drills: Drill[];
 }
 
-interface CardView {
+export interface CardView {
     galleryField: string;
-    galleryCover: string;
+    galleryCover: GalleryCover;
     viewFields: string[];
+}
+
+export enum GalleryCover {
+    FIT = "FIT", //适应
+    CLIP = "CLIP", //剪裁
 }
 
 interface LinkTree {
@@ -48,10 +53,10 @@ export interface Drill {
 export interface Page {
     pageIndex: number;
     pageSize: number;
-    totalPage: number;
-    total: number;
-    sort: string;
-    list: any[];
+    totalPage?: number;
+    total?: number;
+    sort?: string;
+    list?: any[];
 }
 
 export interface Tree {
