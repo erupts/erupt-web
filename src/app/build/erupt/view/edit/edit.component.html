@@ -4,7 +4,7 @@
                          [mode]="behavior"></erupt-edit-type>
         <nz-tabset *ngIf="eruptBuildModel.tabErupts" [nzType]="'card'" style="margin-top: 5px">
             <ng-container *ngFor="let item of eruptBuildModel.tabErupts | keyvalue">
-                <nz-tab [nzTitle]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.title"
+                <nz-tab [nzTitle]="tabTitle"
                         *ngIf="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.show">
                     <ng-container [ngSwitch]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.type">
                         <ng-container *ngSwitchCase="editType.TAB_TABLE_ADD">
@@ -26,6 +26,13 @@
                         </ng-container>
                     </ng-container>
                 </nz-tab>
+                <ng-template #tabTitle>
+                    {{eruptFieldModelMap.get(item.key).eruptFieldJson.edit.title}}
+                    <ng-container *ngIf="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.desc">
+                        <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+                           [nzTooltipTitle]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.desc"></i>
+                    </ng-container>
+                </ng-template>
             </ng-container>
         </nz-tabset>
     </nz-spin>
