@@ -1,32 +1,49 @@
 <div nz-row [nzGutter]="16">
-    <div *ngFor="let i of [1,2,3,4,5,6,7,8,9]" nz-col [nzXl]="6" [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXs]="24">
-        <nz-card [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'12px'}" [nzHoverable]="true" [nzBordered]="true"
-                 [nzActions]="[actionEye,actionEdit,actionDelete,actionEllipsis]">
-            <h1>哈哈</h1>
-            <h3>😁😁😁😁😁</h3>
-        </nz-card>
-        <ng-template #coverTemplate>
-            <img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"/>
-        </ng-template>
-        <ng-template #actionEye>
-            <i nz-icon nzType="eye"></i>
-        </ng-template>
-        <ng-template #actionEdit>
-            <i nz-icon nzType="edit" nzTheme="twotone"></i>
-        </ng-template>
-        <ng-template #actionDelete>
-            <i nz-icon nzType="delete" nzTheme="twotone" [twoToneColor]="'#f00'"
-               nz-popconfirm nzPopconfirmTitle="确认删除吗 ?" nzPopconfirmPlacement="top"></i>
-        </ng-template>
-        <ng-template #actionEllipsis>
-            <i nz-icon nzType="ellipsis" nz-dropdown [nzDropdownMenu]="menu"></i>
-            <nz-dropdown-menu #menu="nzDropdownMenu">
-                <ul nz-menu nzSelectable>
-                    <li nz-menu-item *ngFor="let i of [1,2,3,4,5,6,7,8,9]">
-                        <i nz-icon nzType="edit" nzTheme="twotone"></i>1st menu item
-                    </li>
-                </ul>
-            </nz-dropdown-menu>
-        </ng-template>
-    </div>
+    <ng-container *ngIf="page">
+        <ng-container *ngFor="let data of page.list">
+            <div nz-col [nzXl]="6" [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXs]="24">
+                <nz-card [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'12px'}" [nzHoverable]="true"
+                         [nzBordered]="true" class="erupt-card"
+                         [nzActions]="[actionEye,actionEdit,actionDelete,actionEllipsis]" [nzLoading]="!page">
+                    <ng-container *ngFor="let field of cardView.viewFields">
+                        <p>{{data[field] || '--'}}</p>
+                    </ng-container>
+                </nz-card>
+                <ng-template #coverTemplate>
+                    <div class="card-img">
+                        <ng-container *ngIf="data[cardView.galleryField]">
+                            <img [src]="viewImage(data[cardView.galleryField])"
+                                 [ngStyle]="{
+                                    height:cardView.galleryCover == galleryCover.FIT?'100%':'auto',
+                                    width:cardView.galleryCover == galleryCover.CLIP?'100%':'auto'
+                                 }" alt=""/>
+                        </ng-container>
+                        <ng-container *ngIf="!data[cardView.galleryField]">
+                            <img src="assets/image/no-img.svg" alt="" width="44px" class="no-image">
+                        </ng-container>
+                    </div>
+                </ng-template>
+                <ng-template #actionEye>
+                    <i nz-icon nzType="eye"></i>
+                </ng-template>
+                <ng-template #actionEdit>
+                    <i nz-icon nzType="edit" nzTheme="twotone"></i>
+                </ng-template>
+                <ng-template #actionDelete>
+                    <i nz-icon nzType="delete" nzTheme="twotone" [twoToneColor]="'#f00'"
+                       nz-popconfirm nzPopconfirmTitle="确认删除吗 ?" nzPopconfirmPlacement="top"></i>
+                </ng-template>
+                <ng-template #actionEllipsis>
+                    <i nz-icon nzType="ellipsis" nz-dropdown [nzDropdownMenu]="menu"></i>
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                        <ul nz-menu nzSelectable>
+                            <li nz-menu-item *ngFor="let i of [1,2,3,4,5,6,7,8,9]">
+                                <i nz-icon nzType="edit" nzTheme="twotone"></i>1st menu item
+                            </li>
+                        </ul>
+                    </nz-dropdown-menu>
+                </ng-template>
+            </div>
+        </ng-container>
+    </ng-container>
 </div>
