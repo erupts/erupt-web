@@ -1,23 +1,19 @@
-<div nz-row [nzGutter]="16">
-    <ng-container *ngIf="page">
+<ng-container *ngIf="page">
+    <div nz-row [nzGutter]="16">
         <ng-container *ngFor="let data of page.list">
-            <div nz-col [nzXXl]="eruptBuildModel.eruptModel.eruptJson.linkTree ? 6 : 4" [nzXl]="6" [nzLg]="8" [nzMd]="12"
-                 [nzSm]="12" [nzXs]="24">
+            <div nz-col [nzXXl]="eruptBuildModel.eruptModel.eruptJson.linkTree ? 6 : 4"
+                 [nzXl]="6" [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXs]="24">
                 <nz-card [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'12px'}" [nzHoverable]="true"
                          [nzBordered]="true" class="erupt-card"
                          [nzActions]="[actionEye,actionEdit,actionDelete,actionEllipsis]" [nzLoading]="!page">
-                    <ng-container *ngFor="let field of cardView.viewFields">
-                        <p>{{data[field] || '--'}}</p>
+                    <ng-container *ngFor="let field of cardView.viewFields,let i = index">
+                        <p [ngClass]="i==0?'title':''">{{data[field] || '&nbsp;' }}</p>
                     </ng-container>
                 </nz-card>
                 <ng-template #coverTemplate>
-                    <div class="card-img">
+                    <div class="card-img-container">
                         <ng-container *ngIf="data[cardView.galleryField]">
-                            <img [src]="viewImage(data[cardView.galleryField])"
-                                 [ngStyle]="{
-                                    height:cardView.galleryCover == galleryCover.FIT?'100%':'auto',
-                                    width:cardView.galleryCover == galleryCover.CLIP?'100%':'auto'
-                                 }" alt=""/>
+                            <div class="card-img" [ngStyle]="viewImageStyle(data[cardView.galleryField])"></div>
                         </ng-container>
                         <ng-container *ngIf="!data[cardView.galleryField]">
                             <img src="assets/image/no-img.svg" alt="" width="44px" class="no-image">
@@ -46,15 +42,18 @@
                 </ng-template>
             </div>
         </ng-container>
-    </ng-container>
-</div>
-<div style="text-align: center;margin-top: 12px">
-    <nz-pagination
-            [(nzPageIndex)]="page.pageIndex"
-            [nzTotal]="page.total"
-            [nzSize]="'small'"
-            [nzPageSizeOptions]="[12, 24, 48]"
-            nzShowSizeChanger
-            nzShowQuickJumper
-    ></nz-pagination>
-</div>
+    </div>
+    <div style="text-align: center;margin-top: 12px">
+        <nz-pagination
+                [(nzPageIndex)]="page.pageIndex"
+                [nzTotal]="page.total"
+                [nzSize]="'small'"
+                (nzPageIndexChange)="pageIndexChange($event)"
+                (nzPageSizeChange)="pageSizeChange($event)"
+                [nzPageSizeOptions]="[12, 24, 48]"
+                nzShowSizeChanger
+                nzShowQuickJumper
+        ></nz-pagination>
+    </div>
+</ng-container>
+
