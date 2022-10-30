@@ -30,7 +30,7 @@ export class CardComponent implements OnInit {
         this.cardView = eruptModel.eruptJson.cardView;
         this.dataService.queryEruptTableData(eruptModel.eruptName, {
             pageIndex: 1,
-            pageSize: 9
+            pageSize: 12
         }).subscribe(page => {
             this.page = page;
         });

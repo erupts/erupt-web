@@ -1,7 +1,8 @@
 <div nz-row [nzGutter]="16">
     <ng-container *ngIf="page">
         <ng-container *ngFor="let data of page.list">
-            <div nz-col [nzXl]="6" [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXs]="24">
+            <div nz-col [nzXXl]="eruptBuildModel.eruptModel.eruptJson.linkTree ? 6 : 4" [nzXl]="6" [nzLg]="8" [nzMd]="12"
+                 [nzSm]="12" [nzXs]="24">
                 <nz-card [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'12px'}" [nzHoverable]="true"
                          [nzBordered]="true" class="erupt-card"
                          [nzActions]="[actionEye,actionEdit,actionDelete,actionEllipsis]" [nzLoading]="!page">
@@ -37,7 +38,7 @@
                     <i nz-icon nzType="ellipsis" nz-dropdown [nzDropdownMenu]="menu"></i>
                     <nz-dropdown-menu #menu="nzDropdownMenu">
                         <ul nz-menu nzSelectable>
-                            <li nz-menu-item *ngFor="let i of [1,2,3,4,5,6,7,8,9]">
+                            <li nz-menu-item *ngFor="let i of [1,2,3,4]">
                                 <i nz-icon nzType="edit" nzTheme="twotone"></i>1st menu item
                             </li>
                         </ul>
@@ -46,4 +47,14 @@
             </div>
         </ng-container>
     </ng-container>
+</div>
+<div style="text-align: center;margin-top: 12px">
+    <nz-pagination
+            [(nzPageIndex)]="page.pageIndex"
+            [nzTotal]="page.total"
+            [nzSize]="'small'"
+            [nzPageSizeOptions]="[12, 24, 48]"
+            nzShowSizeChanger
+            nzShowQuickJumper
+    ></nz-pagination>
 </div>
