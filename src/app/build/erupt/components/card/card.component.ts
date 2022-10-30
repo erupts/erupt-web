@@ -23,22 +23,47 @@ export class CardComponent implements OnInit {
 
     cardView: CardView;
 
-    galleryCover = GalleryCover;
+    index = 1;
+
+    size = 12;
 
     ngOnInit() {
         let eruptModel = this.eruptBuildModel.eruptModel;
         this.cardView = eruptModel.eruptJson.cardView;
+        this.query();
+    }
+
+    query() {
+        let eruptModel = this.eruptBuildModel.eruptModel;
         this.dataService.queryEruptTableData(eruptModel.eruptName, {
-            pageIndex: 1,
-            pageSize: 12
+            pageIndex: this.index,
+            pageSize: this.size
         }).subscribe(page => {
             this.page = page;
         });
-
     }
+
 
     viewImage(path: string): string {
         return DataService.previewAttachment(path);
     }
+
+    viewImageStyle(path: string): object {
+        return {
+            backgroundImage: 'url(' + DataService.previewAttachment(path) + ')',
+            backgroundSize: this.cardView.galleryCover == GalleryCover.FIT ? "contain" : "cover"
+        };
+    }
+
+    pageIndexChange(index) {
+        this.index = index;
+        this.query();
+    }
+
+    pageSizeChange(size) {
+        this.size = size;
+        this.query();
+    }
+
 
 }
