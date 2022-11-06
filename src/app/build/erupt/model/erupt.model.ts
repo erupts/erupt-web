@@ -20,8 +20,20 @@ export interface Erupt {
     power: Power;
     tree: Tree;
     linkTree: LinkTree;
+    cardView: CardView;
     rowOperation: RowOperation[];
     drills: Drill[];
+}
+
+export interface CardView {
+    galleryField: string;
+    galleryCover: GalleryCover;
+    viewFields: string[];
+}
+
+export enum GalleryCover {
+    FIT = "FIT", //适应
+    CLIP = "CLIP", //剪裁
 }
 
 interface LinkTree {
@@ -36,6 +48,15 @@ export interface Drill {
     icon: string;
     column: string;
     link: Link;
+}
+
+export interface Page {
+    pageIndex: number;
+    pageSize: number;
+    totalPage?: number;
+    total?: number;
+    sort?: string;
+    list?: any[];
 }
 
 export interface Tree {
