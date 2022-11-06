@@ -1,5 +1,8 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!eruptBuildModel"></nz-skeleton>
 <ng-container *ngIf="eruptBuildModel">
+<!--    <div>-->
+<!--        <iframe src="https://www.baidu.com/" frameborder="0" style="width: 100%"></iframe>-->
+<!--    </div>-->
     <div nz-row [nzGutter]="16">
         <div nz-col *ngIf="linkTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="6">
             <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
@@ -119,6 +122,11 @@
 
                     </erupt-edit-type>
                 </nz-card>
+                <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">
+                    <div style="margin: 16px 0">
+                        <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>
+                    </div>
+                </ng-container>
                 <st #st
                     [widthMode]="{strictBehavior:'wrap'}"
                     [data]="stConfig.url" [columns]="columns"

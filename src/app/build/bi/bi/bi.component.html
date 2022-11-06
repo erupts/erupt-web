@@ -54,7 +54,7 @@
             <div nz-row nzGutter="12">
                 <ng-container>
                     <ng-container *ngFor="let chart of bi.charts">
-                        <div nz-col [nzMd]="24/chart.grid" [nzXs]="24">
+                        <div nz-col [nzMd]="chart.grid" [nzXs]="24">
                             <bi-chart #biChart [chart]="chart" [bi]="bi"></bi-chart>
                         </div>
                     </ng-container>

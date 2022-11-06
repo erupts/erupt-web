@@ -1,6 +1,6 @@
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {Checkbox, Row, Tree} from "../../build/erupt/model/erupt.model";
+import {Checkbox, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
 import {_HttpClient, ALAIN_I18N_TOKEN} from "@delon/theme";
 import {Observable} from "rxjs";
 import {LoginModel} from "../model/user.model";
@@ -127,6 +127,17 @@ export class DataService {
     getEruptOperationTpl(eruptName: string, operationCode: string, ids: any[]) {
         return RestPath.tpl + "/operation_tpl/" + eruptName + "/" + operationCode +
             "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName + "&ids=" + ids;
+    }
+
+    //分页数据对象
+    queryEruptTableData(eruptName: string, page: Page): Observable<Page> {
+        return this._http.post(RestPath.data + "/table/" + eruptName, page, null, {
+            observe: "body",
+            headers: {
+                erupt: eruptName,
+                ...this.getCommonHeader()
+            }
+        });
     }
 
 
