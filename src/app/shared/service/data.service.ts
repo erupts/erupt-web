@@ -50,8 +50,8 @@ export class DataService {
     }
 
     //获取验证码
-    static getVerifyCodeUrl(): string {
-        return RestPath.erupt + "/code-img?_t" + new Date().getTime();
+    static getVerifyCodeUrl(mark: any): string {
+        return RestPath.erupt + "/code-img?mark=" + mark;
     }
 
     static downloadAttachment(path: string): string {
@@ -367,11 +367,12 @@ export class DataService {
     }
 
     //登录
-    login(account: string, pwd: string, verifyCode?: any): Observable<LoginModel> {
+    login(account: string, pwd: string, verifyCode?: any, verifyCodeMark?: any): Observable<LoginModel> {
         return this._http.get(RestPath.erupt + "/login", {
                 account: account,
                 pwd: pwd,
-                verifyCode: verifyCode
+                verifyCode: verifyCode,
+                verifyCodeMark: verifyCodeMark
             }
         );
     }

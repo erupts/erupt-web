@@ -41,6 +41,8 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
 
     registerPage: string = WindowModel.registerPage;
 
+    verifyCodeMark: number;
+
     constructor(
         fb: FormBuilder,
         private data: DataService,
@@ -118,8 +120,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         if (EruptAppData.get().pwdTransferEncrypt) {
             pwd = <string>Md5.hashStr(Md5.hashStr(this.password.value) + (new Date().getDate() + "") + this.userName.value);
         }
-        this.data.login(this.userName.value, pwd,
-            this.verifyCode.value).subscribe((result) => {
+        this.data.login(this.userName.value, pwd, this.verifyCode.value, this.verifyCodeMark).subscribe((result) => {
             if (result.useVerifyCode) {
                 this.changeVerifyCode();
             }
@@ -183,7 +184,8 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
     }
 
     changeVerifyCode() {
-        this.verifyCodeUrl = DataService.getVerifyCodeUrl();
+        this.verifyCodeMark = Math.ceil(Math.random() * new Date().getTime());
+        this.verifyCodeUrl = DataService.getVerifyCodeUrl(this.verifyCodeMark);
     }
 
     forgot() {
