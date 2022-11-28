@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {Checkbox, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
 import {_HttpClient, ALAIN_I18N_TOKEN} from "@delon/theme";
 import {Observable} from "rxjs";
-import {LoginModel} from "../model/user.model";
+import {LoginModel, Userinfo} from "../model/user.model";
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
@@ -394,7 +394,11 @@ export class DataService {
 
     //获取菜单
     getMenu(): Observable<MenuVo[]> {
-        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", null);
+        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu");
+    }
+
+    getUserinfo(): Observable<Userinfo> {
+        return this._http.get<Userinfo>(RestPath.erupt + "/userinfo");
     }
 
     downloadExcelTemplate(eruptName: string, callback?) {

@@ -121,27 +121,17 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
             pwd = <string>Md5.hashStr(Md5.hashStr(this.password.value) + (new Date().getDate() + "") + this.userName.value);
         }
         this.data.login(this.userName.value, pwd, this.verifyCode.value, this.verifyCodeMark).subscribe((result) => {
-            if (result.useVerifyCode) {
-                this.changeVerifyCode();
-            }
+            if (result.useVerifyCode) this.changeVerifyCode();
             this.useVerifyCode = result.useVerifyCode;
             if (result.pass) {
-                if (result.indexMenu) {
-                    let split = result.indexMenu.split("||");
-                    result.indexPath = generateMenuPath(split[0], split[1]);
-                }
-                this.settingsService.setUser({name: result.userName, indexPath: result.indexPath});
                 this.tokenService.set({
                     token: result.token,
-                    account: this.userName.value,
-                    indexPath: result.indexPath
+                    account: this.userName.value
                 });
                 if (WindowModel.login) {
                     WindowModel.login({
                         token: result.token,
-                        userName: result.userName,
-                        account: this.userName.value,
-                        indexPath: result.indexPath
+                        account: this.userName.value
                     });
                 }
                 this.loading = false;
@@ -152,19 +142,6 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
                         this.router.navigateByUrl(<string>loginBackPath).then();
                     } else {
                         this.router.navigateByUrl("/").then();
-                    }
-                    if (result.resetPwd) {
-                        this.modal.create({
-                            nzTitle: this.i18n.fanyi("global.reset_pwd"),
-                            nzMaskClosable: false,
-                            nzClosable: false,
-                            nzKeyboard: true,
-                            nzContent: ChangePwdComponent,
-                            nzFooter: null,
-                            nzBodyStyle: {
-                                paddingBottom: '1px'
-                            }
-                        });
                     }
                 } else {
                     this.modelFun();
