@@ -382,9 +382,8 @@ export class DataService {
     }
 
 
-    changePwd(account: string, pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
+    changePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
         return this._http.get(RestPath.erupt + "/change-pwd", {
-                account: account,
                 pwd: pwd,
                 newPwd: newPwd,
                 newPwd2: newPwd2

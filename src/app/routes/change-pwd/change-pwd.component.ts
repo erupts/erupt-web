@@ -88,7 +88,7 @@ export class ChangePwdComponent {
         }
         if (this.form.invalid) return;
         this.loading = true;
-        this.data.changePwd(this.tokenService.get().account, this.pwd.value, this.newPwd.value, this.newPwd2.value)
+        this.data.changePwd(this.pwd.value, this.newPwd.value, this.newPwd2.value)
             .subscribe(api => {
                 this.loading = false;
                 if (api.status == Status.SUCCESS) {
