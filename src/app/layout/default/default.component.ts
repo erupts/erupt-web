@@ -167,7 +167,9 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 name: userinfo.nickname,
                 indexPath: path
             });
-            path && this.router.navigateByUrl(path).then();
+            if (this.router.url === "/") {
+                path && this.router.navigateByUrl(path).then();
+            }
             if (userinfo.resetPwd) {
                 this.modal.create({
                     nzTitle: this.i18n.fanyi("global.reset_pwd"),
