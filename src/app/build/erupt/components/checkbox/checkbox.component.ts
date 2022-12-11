@@ -7,7 +7,7 @@ import {Checkbox} from "../../model/erupt.model";
 @Component({
     selector: 'erupt-checkbox',
     templateUrl: './checkbox.component.html',
-    styles: []
+    styleUrls: ['./checkbox.component.less']
 })
 export class CheckboxComponent implements OnInit {
 
