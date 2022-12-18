@@ -12,7 +12,6 @@
         let arr = paramsArr[i].split('=')
         param[arr[0]] = arr[1];
     }
-    document.writeln(JSON.stringify(param))
     localStorage.setItem("_token", param["token"]);
     window.location = "./index.html";
 </script>
