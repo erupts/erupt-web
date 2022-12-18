@@ -6,9 +6,8 @@
 </head>
 <body>
 <script>
-    var auth = JSON.parse(window.decodeURIComponent(window.atob(location.search.substring(1))));
     localStorage.setItem("_token", JSON.stringify({
-        token: auth.token
+        token: location.search.substring(1)
     }));
     window.location = "./index.html";
 </script>
