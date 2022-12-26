@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {NzModalService} from "ng-zorro-antd";
 import {EruptAppData} from "@core/startup/erupt-app.data";
+import {SettingsService} from "@delon/theme";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-home',
@@ -13,11 +14,16 @@ export class HomeComponent implements OnInit {
 
     spin: boolean = true;
 
-    constructor(private modal: NzModalService) {
+    constructor(private settingsService: SettingsService, private router: Router) {
     }
 
     ngOnInit() {
-        this.url = "home.html?v=" + EruptAppData.get().hash;
+        let path = this.settingsService.user.indexPath;
+        if (path) {
+            this.router.navigateByUrl(path).then();
+        } else {
+            this.url = "home.html?v=" + EruptAppData.get().hash;
+        }
     }
 
     iframeLoad() {

@@ -34,6 +34,7 @@ export class TableComponent implements OnInit {
     constructor(
         public settingSrv: SettingsService,
         private dataService: DataService,
+        private dataHandlerService: DataHandlerService,
         private modalHelper: ModalHelper,
         private drawerHelper: DrawerHelper,
         @Inject(NzMessageService)
@@ -412,7 +413,7 @@ export class TableComponent implements OnInit {
                 }
             });
         } else if (ro.type === OperationType.ERUPT) {
-            let operationErupt = null;
+            let operationErupt: EruptModel = null;
             if (this.eruptBuildModel.operationErupts) {
                 operationErupt = this.eruptBuildModel.operationErupts[ro.code];
             }
@@ -453,6 +454,11 @@ export class TableComponent implements OnInit {
                         },
                         parentEruptName: this.eruptBuildModel.eruptModel.eruptName
                     }
+                });
+                this.dataService.getInitValue(operationErupt.eruptName, this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
+                    this.dataHandlerService.objectToEruptValue(data, {
+                        eruptModel: operationErupt
+                    });
                 });
             } else {
                 this.modal.confirm({

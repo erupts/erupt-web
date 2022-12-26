@@ -12,7 +12,7 @@ import {
 } from "@angular/core";
 import {DOCUMENT} from "@angular/common";
 import {ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router} from "@angular/router";
-import {NzIconService, NzMessageService} from "ng-zorro-antd";
+import {NzIconService, NzMessageService, NzModalService} from "ng-zorro-antd";
 import {Subscription} from "rxjs";
 import {updateHostClass} from "@delon/util";
 import {ALAIN_I18N_TOKEN, Menu, MenuService, ScrollService, SettingsService} from "@delon/theme";
@@ -40,6 +40,7 @@ import {generateMenuPath} from "@shared/util/erupt.util";
 import {MenuTypeEnum} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
 import {StatusService} from "@shared/service/status.service";
+import {ChangePwdComponent} from "../../routes/change-pwd/change-pwd.component";
 
 // #region icons
 
@@ -97,7 +98,10 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 public settingSrv: SettingsService,
                 public route: ActivatedRoute,
                 public data: DataService,
+                private settingsService: SettingsService,
                 private statusService: StatusService,
+                @Inject(NzModalService)
+                private modal: NzModalService,
                 @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(DOCUMENT) private doc: any) {
@@ -157,10 +161,29 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
     ngOnInit() {
         this.notify$ = this.settings.notify.subscribe(() => this.setClass());
         this.setClass();
-        //fill menu
-        if (this.router.url === "/") {
-            this.tokenService.get().indexPath && this.router.navigateByUrl(this.tokenService.get().indexPath).then();
-        }
+        this.data.getUserinfo().subscribe(userinfo => {
+            let path = generateMenuPath(userinfo.indexMenuType, userinfo.indexMenuValue);
+            this.settingsService.setUser({
+                name: userinfo.nickname,
+                indexPath: path
+            });
+            if (this.router.url === "/") {
+                path && this.router.navigateByUrl(path).then();
+            }
+            if (userinfo.resetPwd) {
+                this.modal.create({
+                    nzTitle: this.i18n.fanyi("global.reset_pwd"),
+                    nzMaskClosable: false,
+                    nzClosable: true,
+                    nzKeyboard: true,
+                    nzContent: ChangePwdComponent,
+                    nzFooter: null,
+                    nzBodyStyle: {
+                        paddingBottom: '1px'
+                    }
+                });
+            }
+        });
         this.data.getMenu().subscribe(res => {
             // this.statusService.menus = res;
             function generateTree(menus, pid): Menu[] {
