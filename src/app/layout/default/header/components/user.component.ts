@@ -46,7 +46,6 @@ export class HeaderUserComponent {
                 this.data.logout().subscribe();
                 if (WindowModel.logout) {
                     WindowModel.logout({
-                        account: this.tokenService.get().account,
                         userName: this.settings.user.name,
                         token: this.tokenService.get().token
                     });

@@ -4,8 +4,11 @@ export interface LoginModel {
     useVerifyCode: boolean;
     pass: boolean;
     reason: string;
-    userName: string;
+}
+
+export interface Userinfo {
+    nickname: string;
+    indexMenuType: string;
+    indexMenuValue: string;
     resetPwd: boolean;
-    indexPath?: string;
-    indexMenu?: string;
 }
