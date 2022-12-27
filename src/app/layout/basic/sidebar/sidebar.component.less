@@ -1,0 +1,46 @@
+@import '@delon/theme/theme-default.less';
+
+:host {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  z-index: 14;
+  width: 200px;
+  margin-top: 44px;
+  overflow: hidden;
+  background-color: #fff;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transition: width .2s cubic-bezier(.25, 0, .15, 1), translate .2s cubic-bezier(.25, 0, .15, 1);
+  -webkit-overflow-scrolling: touch;
+
+  .fold {
+    position: absolute;
+    z-index: 0;
+    padding: 8px;
+    bottom: 0;
+    width: 100%;
+    color: @alain-default-aside-nav-text-color;
+    background: @alain-default-aside-bg;
+    text-align: center;
+    cursor: pointer;
+    transition: .4s all;
+    box-shadow: 0 -1px 0 0 #dadfe6;
+  }
+
+  .fold:hover {
+    color: @primary-color;
+  }
+}
+
+::ng-deep {
+  .alain-default__collapsed {
+    .sidebar-nav__item-link {
+      padding: 14px 0 !important;
+    }
+
+    .sidebar-nav__item-icon {
+      font-size: 20px !important;
+    }
+  }
+}

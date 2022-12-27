@@ -3,8 +3,8 @@
  * @param menuType  菜单类型
  * @param menuValue 菜单值
  */
-import {MenuTypeEnum} from "@shared/model/erupt-menu";
 import {HttpEvent} from "@angular/common/http";
+import {MenuTypeEnum} from "../model/erupt-menu";
 
 export function generateMenuPath(type: string, value: string) {
     let menuValue = value || '';
@@ -32,6 +32,7 @@ export function generateMenuPath(type: string, value: string) {
                 return "/fill/" + menuValue;
             }
     }
+    return null;
 }
 
 

@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import { NzModalService } from 'ng-zorro-antd';
+import {NzModalService} from "ng-zorro-antd/modal";
 
 @Component({
   selector: 'exception-403',

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {EruptFieldModel, VL} from "../../model/erupt-field.model";
+import {EruptFieldModel} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {ChoiceEnum} from "../../model/erupt.enum";

@@ -1,9 +1,9 @@
 import {Component, Input, OnInit} from "@angular/core";
-import {EruptFieldModel, ReferenceTreeType} from "../../model/erupt-field.model";
+import {EruptFieldModel} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
-import {EruptModel, Tree} from "../../model/erupt.model";
+import {EruptModel} from "../../model/erupt.model";
 import {DataHandlerService} from "../../service/data-handler.service";
-import {NzFormatEmitEvent} from "ng-zorro-antd";
+import {NzFormatEmitEvent, NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
 
 @Component({
     selector: "app-tree-select",
@@ -20,7 +20,7 @@ export class TreeSelectComponent implements OnInit {
 
     @Input() dependVal: any;
 
-    list: Tree[];
+    list: NzTreeNodeOptions[];
 
     searchValue: string;
 

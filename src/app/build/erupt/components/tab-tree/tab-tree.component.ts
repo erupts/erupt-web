@@ -1,11 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {NzFormatEmitEvent} from "ng-zorro-antd";
 import {NzTreeNode} from "ng-zorro-antd/core/tree/nz-tree-base-node";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {DataService} from "@shared/service/data.service";
 import {calcChecks} from "@shared/util/zorro.util";
+import {NzFormatEmitEvent} from "ng-zorro-antd/core/tree";
 
 @Component({
     selector: 'erupt-tab-tree',

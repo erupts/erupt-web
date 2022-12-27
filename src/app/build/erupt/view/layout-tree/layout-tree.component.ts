@@ -2,9 +2,9 @@ import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/c
 import {EruptModel} from "../../model/erupt.model";
 import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../service/data-handler.service";
-import {NzFormatEmitEvent} from "ng-zorro-antd";
 import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
 import {I18NService} from "@core";
+import {NzFormatEmitEvent} from "ng-zorro-antd/core/tree";
 
 @Component({
     selector: 'layout-tree',

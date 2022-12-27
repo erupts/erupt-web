@@ -1,5 +1,5 @@
 <button nz-button nzType="default" class="mb-sm" (click)="this.dataService.downloadExcelTemplate(eruptModel.eruptName)">
-    <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download_template'|translate}}
+    <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download_template'|i18n}}
 </button>
 <nz-alert *ngIf="errorText" style="margin-bottom: 8px;" nzType="error" nzCloseable [nzDescription]="errorText">
 </nz-alert>
@@ -14,5 +14,5 @@
     <p class="ant-upload-drag-icon">
         <i nz-icon nzType="inbox"></i>
     </p>
-    <p class="ant-upload-text">{{'table.excel.import_hint'|translate}}</p>
+    <p class="ant-upload-text">{{'table.excel.import_hint'|i18n}}</p>
 </nz-upload>

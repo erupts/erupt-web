@@ -17,7 +17,6 @@ import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
 import {TableComponent} from './view/table/table.component';
 import {LayoutTreeComponent} from './view/layout-tree/layout-tree.component';
-import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import {CodeEditorComponent} from './components/code-editor/code-editor.component';
 import {UEditorModule} from "ngx-ueditor";
 import {UeditorComponent} from './components/ueditor/ueditor.component';
@@ -29,7 +28,9 @@ import {MarkdownComponent} from './components/markdown/markdown.component';
 import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
-import { CardComponent } from './components/card/card.component';
+import {CardComponent} from './components/card/card.component';
+import {QRModule} from "@delon/abc/qr";
+import {TagSelectModule} from "@delon/abc/tag-select";
 
 @NgModule({
     imports: [
@@ -37,7 +38,6 @@ import { CardComponent } from './components/card/card.component';
         SharedModule,
         HttpClientModule,
         EruptRoutingModule,
-        NzCodeEditorModule,
         UEditorModule.forRoot({
             js: [
                 './assets/ueditor/ueditor.config.js',
@@ -47,7 +47,9 @@ import { CardComponent } from './components/card/card.component';
             options: {
                 UEDITOR_HOME_URL: './assets/ueditor/'
             }
-        })
+        }),
+        QRModule,
+        TagSelectModule
     ],
     providers: [
         DataHandlerService,

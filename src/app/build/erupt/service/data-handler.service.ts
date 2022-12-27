@@ -1,7 +1,6 @@
 import {Edit, EruptFieldModel, VL} from "../model/erupt-field.model";
 import {EruptModel, Tree} from "../model/erupt.model";
 import {DateEnum, EditType} from "../model/erupt.enum";
-import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
 import {deepCopy} from "@delon/util";
 import {Inject, Injectable} from "@angular/core";
 import {EruptBuildModel} from "../model/erupt-build.model";
@@ -10,6 +9,10 @@ import {DatePipe} from "@angular/common";
 import * as moment from 'moment';
 import {QueryCondition} from "../model/erupt.vo";
 import {isNotNull} from "@shared/util/erupt.util";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzUploadFile} from "ng-zorro-antd/upload/interface";
+import {NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
 
 @Injectable()
 export class DataHandlerService {
@@ -141,8 +144,8 @@ export class DataHandlerService {
         return true;
     }
 
-    dataTreeToZorroTree(nodes: Tree[], expandLevel: number) {
-        const tempNodes = [];
+    dataTreeToZorroTree(nodes: Tree[], expandLevel: number): NzTreeNodeOptions[] {
+        const tempNodes: NzTreeNodeOptions[] = [];
         nodes.forEach(node => {
             let option: any = {
                 key: node.id,
@@ -332,7 +335,7 @@ export class DataHandlerService {
                     case EditType.ATTACHMENT:
                         if (edit.$viewValue) {
                             const $value: string[] = [];
-                            (<UploadFile[]>edit.$viewValue).forEach(val => {
+                            (<NzUploadFile[]>edit.$viewValue).forEach(val => {
                                 $value.push(val.response.data);
                             });
                             eruptData[field.fieldName] = $value.join(edit.attachmentType.fileSeparator);
@@ -509,7 +512,7 @@ export class DataHandlerService {
                         if (object[field.fieldName]) {
                             (<string>object[field.fieldName]).split(edit.attachmentType.fileSeparator)
                                 .forEach(str => {
-                                    (<UploadFile[]>edit.$viewValue).push({
+                                    (<NzUploadFile[]>edit.$viewValue).push({
                                         uid: str,
                                         name: str,
                                         size: 1,

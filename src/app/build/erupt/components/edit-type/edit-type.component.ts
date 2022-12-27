@@ -3,7 +3,6 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {TreeSelectComponent} from "../tree-select/tree-select.component";
-import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
 import {ReferenceTableComponent} from "../reference-table/reference-table.component";
@@ -13,6 +12,9 @@ import {IframeHeight} from "@shared/util/window.util";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzUploadFile} from "ng-zorro-antd/upload/interface";
 
 @Component({
     selector: "erupt-edit-type",
@@ -166,7 +168,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     }
 
 
-    previewImageHandler = (file: UploadFile) => {
+    previewImageHandler = (file: NzUploadFile) => {
         if (file.url) {
             window.open(file.url);
         } else if (file.response && file.response.data) {
@@ -211,6 +213,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 field.eruptFieldJson.edit.$viewValue = tempVal.label;
                 field.eruptFieldJson.edit.$value = tempVal.id;
                 field.eruptFieldJson.edit.$tempValue = null;
+                return true;
             }
         });
     }
@@ -253,6 +256,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 edit.$viewValue = radioValue[edit.referenceTableType.label
                     .replace(".", "_")] || '-----';
                 edit.$tempValue = radioValue;
+                return true;
             }
         });
     }
