@@ -1,14 +1,15 @@
 import {EruptBuildModel} from "../model/erupt-build.model";
-import {STColumn, STData} from "@delon/abc";
 import {DateEnum, EditType, ViewType} from "../model/erupt.enum";
 import {ViewTypeComponent} from "../components/view-type/view-type.component";
 import {MarkdownComponent} from "../components/markdown/markdown.component";
 import {CodeEditorComponent} from "../components/code-editor/code-editor.component";
 import {DataService} from "@shared/service/data.service";
 import {Inject, Injectable} from "@angular/core";
-import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
+import {STColumn, STData} from "@delon/abc/st";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 
 @Injectable()
@@ -51,7 +52,7 @@ export class UiBuildService {
                     optionalHelp: view.desc
                 }
             };
-            obj.show = view.show;
+            obj["show"] = view.show;
             if (lineData) {
                 //修复表格显示子类属性时无法正确检索到属性值的缺陷
                 obj.index = view.column.replace(/\./g, "_");
@@ -142,8 +143,14 @@ export class UiBuildService {
                     } else {
                         if (edit.title) {
                             obj.tag = {
-                                [edit.boolType.trueText]: {text: this.i18n.fanyi(edit.boolType.trueText), color: 'green'},
-                                [edit.boolType.falseText]: {text: this.i18n.fanyi(edit.boolType.falseText), color: 'red'},
+                                [edit.boolType.trueText]: {
+                                    text: this.i18n.fanyi(edit.boolType.trueText),
+                                    color: 'green'
+                                },
+                                [edit.boolType.falseText]: {
+                                    text: this.i18n.fanyi(edit.boolType.falseText),
+                                    color: 'red'
+                                },
                             };
                         } else {
                             obj.tag = {
@@ -259,7 +266,7 @@ export class UiBuildService {
                         this.modal.create({
                             nzWrapClassName: "modal-lg",
                             // nzStyle: {top: "60px"},
-                            nzBodyStyle: {padding: 0},
+                            nzBodyStyle: {padding: "0"},
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
@@ -291,7 +298,7 @@ export class UiBuildService {
                         this.modal.create({
                             nzWrapClassName: "modal-lg",
                             nzBodyStyle: {
-                                padding: 0
+                                padding: "0"
                             },
                             nzMaskClosable: true,
                             nzKeyboard: true,

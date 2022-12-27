@@ -5,12 +5,17 @@ import {EruptModel, Row, RowOperation} from "../../model/erupt.model";
 import {ALAIN_I18N_TOKEN, DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
-import {STColumn, STColumnButton, STComponent} from "@delon/abc";
 import {ActivatedRoute} from "@angular/router";
-import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
-import {OperationMode, OperationType, OperationIfExprBehavior, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
+import {
+    OperationMode,
+    OperationType,
+    OperationIfExprBehavior,
+    RestPath,
+    Scene,
+    SelectMode
+} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {BuildConfig} from "../../model/build-config";
@@ -21,6 +26,10 @@ import {DomSanitizer} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
+import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
 
 
 @Component({
@@ -178,16 +187,16 @@ export class TableComponent implements OnInit {
 
 
     query() {
-        this.stConfig.req.param["condition"] = this.dataHandler.eruptObjectToCondition(
+        this.stConfig.req.params["condition"] = this.dataHandler.eruptObjectToCondition(
             this.dataHandler.searchEruptToObject({
                 eruptModel: this.searchErupt
             })
         );
         let linkTree = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
         if (linkTree && linkTree.field) {
-            this.stConfig.req.param["linkTreeVal"] = linkTree.value;
+            this.stConfig.req.params["linkTreeVal"] = linkTree.value;
         }
-        this.stLoad(1, this.stConfig.req.param);
+        this.stLoad(1, this.stConfig.req.params);
     }
 
     buildTableConfig() {
@@ -210,7 +219,7 @@ export class TableComponent implements OnInit {
         let viewCols = this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true);
         for (let viewCol of viewCols) {
             viewCol.iif = () => {
-                return viewCol.show;
+                return viewCol['show'];
             };
         }
         _columns.push(...viewCols);
@@ -404,7 +413,7 @@ export class TableComponent implements OnInit {
                 // nzWrapClassName: "modal-xxl",
                 nzWrapClassName: ro.tplWidth || "modal-lg",
                 nzBodyStyle: {
-                    padding: 0
+                    padding: "0"
                 },
                 nzFooter: null,
                 nzContent: EruptIframeComponent,
@@ -422,17 +431,17 @@ export class TableComponent implements OnInit {
                 this.dataHandler.emptyEruptValue({
                     eruptModel: operationErupt
                 });
-                let modal = this.modal.create({
+                let modal: NzModalRef = this.modal.create({
                     nzKeyboard: false,
                     nzTitle: ro.title,
                     nzMaskClosable: false,
                     nzCancelText: this.i18n.fanyi("global.close"),
                     nzWrapClassName: "modal-lg",
                     nzOnOk: async () => {
-                        modal.getInstance().nzCancelDisabled = true;
+                        modal.componentInstance.nzCancelDisabled = true;
                         let eruptValue = this.dataHandler.eruptValueToObject({eruptModel: operationErupt});
                         let res = await this.dataService.execOperatorFun(eruptModel.eruptName, ro.code, ids, eruptValue).toPromise().then(res => res);
-                        modal.getInstance().nzCancelDisabled = false;
+                        modal.componentInstance.nzCancelDisabled = false;
                         this.selectedRows = [];
                         if (res.status === Status.SUCCESS) {
                             this.stLoad();
@@ -546,7 +555,7 @@ export class TableComponent implements OnInit {
         if (ids.length > 0) {
             this.modal.confirm(
                 {
-                    nzTitle: this.i18n.fanyi("table.hint_delete_number").replace("{}", ids.length),
+                    nzTitle: this.i18n.fanyi("table.hint_delete_number").replace("{}", ids.length + ""),
                     nzContent: "",
                     nzOnOk: async () => {
                         this.deleting = true;
@@ -637,7 +646,7 @@ export class TableComponent implements OnInit {
 
     extraRowFun() {
         if (this.eruptBuildModel.eruptModel.extraRow) {
-            this.dataService.extraRow(this.eruptBuildModel.eruptModel.eruptName, this.stConfig.req.param).subscribe(res => {
+            this.dataService.extraRow(this.eruptBuildModel.eruptModel.eruptName, this.stConfig.req.params).subscribe(res => {
                 this.extraRows = res;
             });
         }

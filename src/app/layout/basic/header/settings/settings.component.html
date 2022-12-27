@@ -1,0 +1,27 @@
+<div class="setting-item">
+    <span>{{'setting.fixed-header' | i18n}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout.fixed" (ngModelChange)="setLayout('fixed', layout.fixed)"></nz-switch>
+</div>
+<div class="setting-item">
+    <span>{{'setting.tab-reuse' | i18n}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout.reuse" (ngModelChange)="changeReuse(layout.reuse)"></nz-switch>
+</div>
+<div class="setting-item">
+    <span>{{'setting.nav' | i18n}}</span>
+    <nz-switch [nzSize]="'small'" [(ngModel)]="layout.breadcrumbs"
+               (ngModelChange)="setLayout('breadcrumbs',layout.breadcrumbs)"></nz-switch>
+</div>
+<!--<div class="setting-item">-->
+<!--    <span>{{'setting.table-border' | i18n}}</span>-->
+<!--    <nz-switch [nzSize]="'small'" [(ngModel)]="layout.bordered"-->
+<!--               (ngModelChange)="setLayout('bordered', layout.bordered)"></nz-switch>-->
+<!--</div>-->
+<!--<div class="setting-item">-->
+<!--    <span>{{'setting.dark' | i18n}}</span>-->
+<!--    <nz-switch nzSize="small" [(ngModel)]="layout.dark"-->
+<!--               (ngModelChange)="toggleDark(layout.dark)"></nz-switch>-->
+<!--</div>-->
+<div class="setting-item">
+    <span>{{'setting.clear-cache' | i18n}}</span>
+    <button nz-button [nzSize]="'small'" (click)="clear()">{{'setting.clear' | i18n}}</button>
+</div>

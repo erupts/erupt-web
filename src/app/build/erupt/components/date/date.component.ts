@@ -14,7 +14,7 @@ import {I18NService} from "@core";
 })
 export class DateComponent implements OnInit {
 
-    @Input() size: 'large' | 'small';
+    @Input() size: 'large' | 'small' | "default";
 
     @Input() field: EruptFieldModel;
 
@@ -61,6 +61,7 @@ export class DateComponent implements OnInit {
 
             return date.getTime() > this.endToday.getTime();
         }
+        return null;
     };
 
 

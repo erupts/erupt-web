@@ -22,7 +22,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe(params => {
-            this.eruptName = params.name;
+            this.eruptName = params["name"];
         });
     }
 

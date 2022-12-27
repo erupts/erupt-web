@@ -1,11 +1,11 @@
 <nz-spin [nzSpinning]="loading">
     <div [hidden]="readonly" class="search-container" style="">
-        <input nz-input [value]="viewValue" [nzAutocomplete]="auto" [placeholder]="'global.keyword'|translate"
+        <input nz-input [value]="viewValue" [nzAutocomplete]="auto" [placeholder]="'global.keyword'|i18n"
                nzSize="default"
                style="width: 300px" #tipInput [disabled]="!loaded" (blur)="blur()"/> &nbsp;
-        <button nz-button nzType="default" [disabled]="!loaded" id="mapOk">&nbsp; {{"global.ok"|translate}} &nbsp;
+        <button nz-button nzType="default" [disabled]="!loaded" id="mapOk">&nbsp; {{"global.ok"|i18n}} &nbsp;
         </button>
-        <button nz-button nzType="danger" [disabled]="!loaded" *ngIf="value" [nzGhost]="true"
+        <button nz-button nzType="default" nzDanger [disabled]="!loaded" *ngIf="value" [nzGhost]="true"
                 style="background: #fff !important;"
                 class="mb-sm"
                 (click)="clearLocation()">

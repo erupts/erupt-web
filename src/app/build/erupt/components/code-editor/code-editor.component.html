@@ -1,19 +1,19 @@
-<nz-spin [nzSpinning]="!codeEditorEvent">
-    <nz-code-editor [ngStyle]="{height:height+'px'}" style="border:1px solid #ccc"
-                    (nzEditorInitialized)="codeEditorInit($event)"
-                    [(ngModel)]="edit.$value"
-                    [nzEditorOption]="{ language: language}">
-    </nz-code-editor>
-    <nz-switch nzSize="small" [ngModel]="dark"
-               [nzUnCheckedChildren]="unchecked"
-               [nzCheckedChildren]="checked"
-               (ngModelChange)="switchChange($event)"
-               style="position: absolute;right: 22px;bottom: 10px"
-    ></nz-switch>
-    <ng-template #unchecked>
-        <i nz-icon nzType="bulb"></i>
-    </ng-template>
-    <ng-template #checked>
-        <i nz-icon nzType="poweroff"></i>
-    </ng-template>
-</nz-spin>
+<!--<nz-spin [nzSpinning]="!codeEditorEvent">-->
+<!--    <nz-code-editor [ngStyle]="{height:height+'px'}" style="border:1px solid #ccc"-->
+<!--                    (nzEditorInitialized)="codeEditorInit($event)"-->
+<!--                    [(ngModel)]="edit.$value"-->
+<!--                    [nzEditorOption]="{ language: language}">-->
+<!--    </nz-code-editor>-->
+<!--    <nz-switch nzSize="small" [ngModel]="dark"-->
+<!--               [nzUnCheckedChildren]="unchecked"-->
+<!--               [nzCheckedChildren]="checked"-->
+<!--               (ngModelChange)="switchChange($event)"-->
+<!--               style="position: absolute;right: 22px;bottom: 10px"-->
+<!--    ></nz-switch>-->
+<!--    <ng-template #unchecked>-->
+<!--        <i nz-icon nzType="bulb"></i>-->
+<!--    </ng-template>-->
+<!--    <ng-template #checked>-->
+<!--        <i nz-icon nzType="poweroff"></i>-->
+<!--    </ng-template>-->
+<!--</nz-spin>-->

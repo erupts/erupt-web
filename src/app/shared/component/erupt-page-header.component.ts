@@ -13,9 +13,9 @@ import {StatusService} from "@shared/service/status.service";
 })
 export class EruptPageHeaderComponent implements OnInit {
 
-    isFillLayout: boolean;
+    isFillLayout: boolean = false;
 
-    @Input() desc: string;
+    @Input() desc: string | undefined;
 
     constructor(private statusService: StatusService) {
 

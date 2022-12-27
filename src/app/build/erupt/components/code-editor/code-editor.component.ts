@@ -1,8 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Edit, EruptFieldModel} from "../../model/erupt-field.model";
-import {NzCodeEditorService} from "ng-zorro-antd/code-editor";
+import {Edit} from "../../model/erupt-field.model";
 import {CacheService} from "@delon/cache";
-import {GlobalKeys} from "@shared/model/erupt-const";
+import {NzConfigService} from "ng-zorro-antd/core/config";
 
 let codeEditorDarkKey = "code_editor_dark";
 
@@ -28,7 +27,7 @@ export class CodeEditorComponent implements OnInit {
 
     dark = false;
 
-    constructor(private nzCodeEditorService: NzCodeEditorService, private cacheService: CacheService) {
+    constructor(private nzConfigService: NzConfigService, private cacheService: CacheService) {
 
     }
 
@@ -36,21 +35,36 @@ export class CodeEditorComponent implements OnInit {
         this.dark = this.cacheService.getNone(codeEditorDarkKey) || false;
     }
 
-    codeEditorInit(event) {
-        // if (this.edit) {
-        //     this.edit.$viewValue = event;
-        //     event.setValue(this.edit.$value || '');
-        // } else {
-        //     event.setValue(this.value || '');
-        // }
-        this.codeEditorEvent = event;
-        this.nzCodeEditorService.updateDefaultOption({theme: this.dark ? 'vs-dark' : 'vs', readOnly: this.readonly});
-    }
-
-    switchChange(bool) {
-        this.dark = bool;
-        this.cacheService.set(codeEditorDarkKey, bool);
-        this.nzCodeEditorService.updateDefaultOption({theme: bool ? 'vs-dark' : 'vs'});
-    }
+    // codeEditorInit(event) {
+    //     // if (this.edit) {
+    //     //     this.edit.$viewValue = event;
+    //     //     event.setValue(this.edit.$value || '');
+    //     // } else {
+    //     //     event.setValue(this.value || '');
+    //     // }
+    //     this.codeEditorEvent = event;
+    //     const defaultEditorOption = this.nzConfigService.getConfigForComponent('codeEditor')?.defaultEditorOption || {};
+    //     this.nzConfigService.set('codeEditor', {
+    //         defaultEditorOption: {
+    //             ...defaultEditorOption,
+    //             theme: this.dark ? 'vs-dark' : 'vs',
+    //             readOnly: this.readonly
+    //         }
+    //     });
+    // }
+    //
+    // switchChange(bool) {
+    //     this.dark = bool;
+    //     this.cacheService.set(codeEditorDarkKey, bool);
+    //
+    //     const defaultEditorOption = this.nzConfigService.getConfigForComponent('codeEditor')?.defaultEditorOption || {};
+    //     this.nzConfigService.set('codeEditor', {
+    //         defaultEditorOption: {
+    //             ...defaultEditorOption,
+    //             theme: this.dark ? 'vs-dark' : 'vs',
+    //             readOnly: this.readonly
+    //         }
+    //     });
+    // }
 
 }

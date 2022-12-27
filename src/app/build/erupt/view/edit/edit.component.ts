@@ -4,10 +4,11 @@ import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {DataService} from "@shared/service/data.service";
 import {I18NService} from "@core";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzModalService} from "ng-zorro-antd/modal";
 
 @Component({
     selector: "erupt-edit",

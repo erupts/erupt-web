@@ -9,29 +9,29 @@
         </div>
         <div nz-col [nzXs]="24" [nzMd]="linkTree?16:24" [nzLg]="linkTree?18:24" [nzXl]="linkTree?18:24"
              [hidden]="!showTable"
-             [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?'calc(100vh - 140px - ' + (this.settingSrv.layout.reuse ? '40px' : '0px') +' + '+
-                (settingSrv.layout.breadcrumbs?'0px':'38px')+ ')':'auto'}">
+             [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?'calc(100vh - 140px - ' + (this.settingSrv.layout['reuse'] ? '40px' : '0px') +' + '+
+                (settingSrv.layout['breadcrumbs']?'0px':'38px')+ ')':'auto'}">
             <ng-container>
                 <div class="erupt-btn-item">
                     <div>
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
                             <button nz-button nzType="default" class="mb-sm" (click)="addRow()" id="erupt-btn-add">
-                                <i nz-icon nzType="plus" nzTheme="outline"></i>{{'table.add'|translate}}
+                                <i nz-icon nzType="plus" nzTheme="outline"></i>{{'table.add'|i18n}}
                             </button>
                         </ng-container>
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
-                            <button nz-button nzType="danger" [nzGhost]="true" style="background: #fff !important;"
+                            <button nz-button nzType="default" nzDanger [nzGhost]="true" style="background: #fff !important;"
                                     class="mb-sm" [nzLoading]="deleting" id="erupt-btn-delete"
                                     (click)="delRows()">
-                                <i nz-icon nzType="delete" nzTheme="outline"></i>{{'table.delete'|translate}}
+                                <i nz-icon nzType="delete" nzTheme="outline"></i>{{'table.delete'|i18n}}
                             </button>
                         </ng-container>
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
                             <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()"
                                     id="erupt-btn-export" [nzLoading]="downloading">
-                                <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|translate}}
+                                <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|i18n}}
                             </button>
                         </ng-container>
 
@@ -39,7 +39,7 @@
                             &nbsp;
                             <nz-button-group>
                                 <button nz-button (click)="importableExcel()" id="erupt-btn-importable">
-                                    <i nz-icon nzType="import" nzTheme="outline"></i> &nbsp;{{'table.import'|translate}}
+                                    <i nz-icon nzType="import" nzTheme="outline"></i> &nbsp;{{'table.import'|i18n}}
                                 </button>
                                 <button nz-button nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight">
                                     <i nz-icon nzType="ellipsis"></i>
@@ -49,7 +49,7 @@
                                 <ul nz-menu>
                                     <li nz-menu-item (click)="downloadExcelTemplate()">
                                         <i nz-icon nzType="build"
-                                           nzTheme="outline"></i>{{'table.download_template'|translate}}
+                                           nzTheme="outline"></i>{{'table.download_template'|i18n}}
                                     </li>
                                 </ul>
                             </nz-dropdown-menu>
@@ -60,24 +60,24 @@
                             <button nz-button nzType="primary" style="background: #fff !important;" [nzGhost]="true"
                                     class="mb-sm" [nzLoading]="st._loading" id="erupt-btn-query"
                                     (click)="query()">
-                                <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
+                                <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|i18n}}
                             </button>
                         </ng-container>
 
                         <ng-container>
                             <nz-divider nzType="vertical" class="hidden-mobile"></nz-divider>
                             <button nz-button nzType="default" nz-popover
-                                    [(nzVisible)]="showColCtrl" [nzContent]="tableColumnCtrl"
-                                    nzTrigger="click" class="mb-sm hidden-mobile">
-                                <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|translate}}
+                                    [(nzPopoverVisible)]="showColCtrl" [nzPopoverContent]="tableColumnCtrl"
+                                    nzPopoverTrigger="click" class="mb-sm hidden-mobile">
+                                <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|i18n}}
                             </button>
                             <ng-template #tableColumnCtrl>
                                 <div nz-row style="max-width: 520px;">
                                     <ng-container *ngFor="let col of columns">
                                         <div *ngIf="col.title&&col.index" nz-col nzSpan="6">
-                                            <label nz-checkbox [(ngModel)]="col.show"
+                                            <label nz-checkbox [(ngModel)]="col['show']"
                                                    style="width: 130px;" class="ellipsis"
-                                                   (ngModelChange)="st.resetColumns()">{{col.title.text}}</label>
+                                                   (ngModelChange)="st.resetColumns()">{{col.title['text']}}</label>
                                         </div>
                                     </ng-container>
                                 </div>
@@ -90,7 +90,7 @@
                             <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
                         </button>
                         <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset">
-                            <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
+                            <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|i18n}}
                         </button>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                     <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
                         <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation">
                             <ng-container *ngIf="item.mode != operationMode.SINGLE">
-                                <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.tip"
+                                <button nz-button nzType="default" nzDanger class="mb-sm" [nz-tooltip]="item.tip"
                                         (click)="createOperator(item)">
                                     <i class="fa" [ngClass]="item.icon"></i>
                                     <span style="margin-left: 8px;">{{item.title}}</span>
@@ -132,7 +132,7 @@
                     [data]="stConfig.url" [columns]="columns"
                     [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
                     (change)="tableDataChange($event)"
-                    [bordered]="settingSrv.layout.bordered"
+                    [bordered]="settingSrv.layout['bordered']"
                     [multiSort]="stConfig.multiSort"
                     [page]="stConfig.stPage"
                     [req]="stConfig.req"
