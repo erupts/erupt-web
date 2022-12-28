@@ -387,10 +387,10 @@
                                                    [nzMode]="'default'"
                                                    nzAllowClear>
                                             <nz-option
-                                                    [nzLabel]="field.eruptFieldJson.edit.boolType.trueText | i18n"
+                                                    [nzLabel]="field.eruptFieldJson.edit.boolType.trueText | translate"
                                                     [nzValue]="true"></nz-option>
                                             <nz-option
-                                                    [nzLabel]="field.eruptFieldJson.edit.boolType.falseText | i18n"
+                                                    [nzLabel]="field.eruptFieldJson.edit.boolType.falseText | translate"
                                                     [nzValue]="false"></nz-option>
                                         </nz-select>
                                     </ng-container>
@@ -402,13 +402,13 @@
                                             <div nz-col [nzSpan]="12">
                                                 <label nz-radio [nzValue]="true"
                                                        class="ellipsis-radio stander-line-height">
-                                                    {{field.eruptFieldJson.edit.boolType.trueText | i18n}}
+                                                    {{field.eruptFieldJson.edit.boolType.trueText | translate}}
                                                 </label>
                                             </div>
                                             <div nz-col [nzSpan]="12">
                                                 <label nz-radio [nzValue]="false"
                                                        class="ellipsis-radio stander-line-height">
-                                                    {{field.eruptFieldJson.edit.boolType.falseText | i18n}}
+                                                    {{field.eruptFieldJson.edit.boolType.falseText | translate}}
                                                 </label>
                                             </div>
                                         </nz-radio-group>

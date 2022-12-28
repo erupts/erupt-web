@@ -31,6 +31,7 @@ import {TagsComponent} from "./components/tags/tags.component";
 import {CardComponent} from './components/card/card.component';
 import {QRModule} from "@delon/abc/qr";
 import {TagSelectModule} from "@delon/abc/tag-select";
+import {TranslateModule} from "@ngx-translate/core";
 
 @NgModule({
     imports: [
@@ -49,7 +50,8 @@ import {TagSelectModule} from "@delon/abc/tag-select";
             }
         }),
         QRModule,
-        TagSelectModule
+        TagSelectModule,
+        TranslateModule
     ],
     providers: [
         DataHandlerService,

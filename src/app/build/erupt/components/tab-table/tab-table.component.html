@@ -2,11 +2,11 @@
     <div style="background: #fafafa;border: 1px solid #e8e8e8;border-bottom: 0;padding: 8px 12px">
         <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzGhost
                 nzType="primary" style="background: #fff !important;" [nzSize]="'default'">
-            <i nz-icon nzType="plus" theme="outline"></i>{{'global.new'|i18n}}
+            <i nz-icon nzType="plus" theme="outline"></i>{{'global.new'|translate}}
         </button>
         <button (click)="deleteData()" nz-button nzGhost
                 nzType="default" nzDanger style="background: #fff !important;" [nzSize]="'default'">
-            <i nz-icon nzType="delete" theme="outline"></i>{{'global.delete'|i18n}}
+            <i nz-icon nzType="delete" theme="outline"></i>{{'global.delete'|translate}}
         </button>
     </div>
 </ng-container>
