@@ -1,50 +1,48 @@
 export class WindowModel {
 
-  private static config: any = window["eruptSiteConfig" as any] || {};
+    private static config: any = window["eruptSiteConfig"] || {};
 
-  public static i18n: any = window["eruptI18n" as any] || {};
+    public static i18n: any = window["eruptI18n"] || {};
 
-  public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';
+    public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';
 
-  public static fileDomain: string = WindowModel.config["fileDomain"] || undefined;
+    public static fileDomain: string = WindowModel.config["fileDomain"] || undefined;
 
-  public static r_tools: CustomerTool[] = WindowModel.config["r_tools"] || [];
+    public static r_tools: CustomerTool[] = WindowModel.config["r_tools"] || [];
 
-  public static amapKey: string = WindowModel.config["amapKey"];
+    public static amapKey: string = WindowModel.config["amapKey"];
 
-  public static title: string = WindowModel.config["title"] || 'Erupt Framework';
+    public static title: string = WindowModel.config["title"] || 'Erupt Framework';
 
-  public static desc: string = WindowModel.config["desc"] || undefined;
+    public static desc: string = WindowModel.config["desc"] || undefined;
 
-  public static logoPath: string = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "erupt.svg");
+    public static logoPath: string = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "erupt.svg");
 
-  public static loginLogoPath: string = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
+    public static loginLogoPath: string = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
 
-  public static logoText: string = WindowModel.config["logoText"] || "";
-  //注册页面地址
-  public static registerPage: string = WindowModel.config["registerPage"] || undefined;
+    public static logoText: string = WindowModel.config["logoText"] || "";
+    //注册页面地址
+    public static registerPage: string = WindowModel.config["registerPage"] || undefined;
 
-  public static dialogLogin: boolean = WindowModel.config["dialogLogin"] || false;
+    public static dialogLogin: boolean = WindowModel.config["dialogLogin"] || false;
 
-  public static copyright: boolean = WindowModel.config["copyright"] !== false;
+    public static copyright: boolean = WindowModel.config["copyright"] !== false;
 
-  public static login: Function = WindowModel.config["login"] || false;
+    public static login: Function = WindowModel.config["login"] || false;
 
-  public static logout: Function = WindowModel.config["logout"] || false;
-
+    public static logout: Function = WindowModel.config["logout"] || false;
 }
 
 
 export interface CustomerTool {
 
-  icon: string;
+    icon: string;
 
-  text: string;
+    text: string;
 
-  mobileHidden: boolean;
+    mobileHidden: boolean;
 
-  load(): void;
+    load(): void;
 
-  click(event: Event): void;
-
+    click(event: Event): void;
 }

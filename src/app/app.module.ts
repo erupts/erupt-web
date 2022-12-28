@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 /* eslint-disable import/no-duplicates */
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {default as ngLang} from '@angular/common/locales/zh';
 import {APP_INITIALIZER, LOCALE_ID, NgModule, Type} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
@@ -36,6 +36,21 @@ const LANG_PROVIDES = [
 
 // #region i18n services
 
+// 加载i18n语言文件
+export function I18nHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, `assets/i18n/`, '.json');
+}
+
+const I18NSERVICE_MODULES = [
+    TranslateModule.forRoot({
+        loader: {
+            provide: TranslateLoader,
+            useFactory: I18nHttpLoaderFactory,
+            deps: [HttpClient],
+        },
+    }),
+];
+
 const I18NSERVICE_PROVIDES = [{provide: ALAIN_I18N_TOKEN, useClass: I18NService, multi: false}];
 
 // #endregion
@@ -64,7 +79,7 @@ const INTERCEPTOR_PROVIDES = [
 // #region Startup Service
 import {StartupService} from '@core';
 
-export function StartupServiceFactory(startupService: StartupService): () => Observable<void> {
+export function StartupServiceFactory(startupService: StartupService): Function{
     return () => startupService.load();
 }
 
@@ -87,6 +102,8 @@ import {RoutesModule} from './routes/routes.module';
 import {SharedModule} from './shared/shared.module';
 import {Observable} from 'rxjs';
 import {AppRoutingModule} from "./app-routing.module";
+import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 
 @NgModule({
     declarations: [AppComponent],
@@ -101,7 +118,8 @@ import {AppRoutingModule} from "./app-routing.module";
         RoutesModule,
         NzNotificationModule,
         ...GLOBAL_THIRD_MODULES,
-        AppRoutingModule
+        AppRoutingModule,
+        ...I18NSERVICE_MODULES
     ],
     providers: [...LANG_PROVIDES, ...INTERCEPTOR_PROVIDES, ...I18NSERVICE_PROVIDES, ...APP_INIT_PROVIDES],
     bootstrap: [AppComponent]

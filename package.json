@@ -1,92 +1,92 @@
 {
-  "name": "ng-alain",
-  "version": "14.3.0",
-  "description": "ng-zorro-antd admin panel front-end framework",
-  "author": "cipchk <cipchk@qq.com>",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ng-alain/ng-alain.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ng-alain/ng-alain/issues"
-  },
-  "homepage": "https://ng-alain.com",
-  "license": "MIT",
-  "keywords": [
-    "delon",
-    "antd",
-    "ng-zorro-antd",
-    "angular",
-    "component",
-    "scaffold"
-  ],
-  "scripts": {
-    "ng-high-memory": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng",
-    "ng": "ng",
-    "start": "ng s -o",
-    "build": "npm run ng-high-memory build",
-    "analyze": "npm run ng-high-memory build -- --source-map",
-    "analyze:view": "source-map-explorer dist/**/*.js",
-    "lint": "npm run lint:ts && npm run lint:style",
-    "lint:ts": "ng lint --fix",
-    "lint:style": "npx stylelint 'src/**/*.less'",
-    "color-less": "ng-alain-plugin-theme -t=colorLess",
-    "theme": "ng-alain-plugin-theme -t=themeCss",
-    "icon": "ng g ng-alain:plugin icon"
-  },
-  "dependencies": {
-    "@angular/animations": "^14.2.0",
-    "@angular/common": "^14.2.0",
-    "@angular/compiler": "^14.2.0",
-    "@angular/core": "^14.2.0",
-    "@angular/forms": "^14.2.0",
-    "@angular/platform-browser": "^14.2.0",
-    "@angular/platform-browser-dynamic": "^14.2.0",
-    "@angular/router": "^14.2.0",
-    "rxjs": "~7.5.0",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.11.4",
-    "ng-zorro-antd": "^14.0.0",
-    "@delon/abc": "^14.3.0",
-    "@delon/acl": "^14.3.0",
-    "@delon/auth": "^14.3.0",
-    "@delon/cache": "^14.3.0",
-    "@delon/form": "^14.3.0",
-    "@delon/mock": "^14.3.0",
-    "@delon/theme": "^14.3.0",
-    "@delon/chart": "^14.3.0",
-    "@delon/util": "^14.3.0",
-    "ngx-tinymce": "^14.0.0",
-    "screenfull": "^6.0.2",
-    "ts-md5": "^1.2.7",
-
-    "font-awesome": "^4.7.0",
-    "intl": "^1.2.5",
-    "moment": "^2.24.0",
-    "monaco-editor": "^0.14.0",
-    "ngx-ueditor": "^2.1.3",
-    "qrious": "^4.0.2",
-    "web-animations-js": "^2.3.2"
-  },
-  "devDependencies": {
-    "@angular-devkit/build-angular": "^14.2.1",
-    "@angular/cli": "~14.2.1",
-    "@angular/compiler-cli": "^14.2.0",
-    "@types/node": "^12.11.1",
-    "typescript": "~4.7.4",
-    "@angular/language-service": "^14.2.0",
-    "source-map-explorer": "^2.5.2",
-    "ts-node": "~10.9.1",
-    "node-fetch": "^2.6.1",
-    "ng-alain": "^14.3.0",
-    "ng-alain-plugin-theme": "^14.0.0"
-  },
-  "lint-staged": {
-    "(src)/**/*.{html,ts}": [
-      "eslint --fix"
+    "name": "ng-alain",
+    "version": "14.3.0",
+    "description": "ng-zorro-antd admin panel front-end framework",
+    "author": "cipchk <cipchk@qq.com>",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ng-alain/ng-alain.git"
+    },
+    "bugs": {
+        "url": "https://github.com/ng-alain/ng-alain/issues"
+    },
+    "homepage": "https://ng-alain.com",
+    "license": "MIT",
+    "keywords": [
+        "delon",
+        "antd",
+        "ng-zorro-antd",
+        "angular",
+        "component",
+        "scaffold"
     ],
-    "(src)/**/*.less": [
-      "npm run lint:style"
-    ]
-  }
+    "scripts": {
+        "ng-high-memory": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng",
+        "ng": "ng",
+        "start": "ng s -o",
+        "build": "npm run ng-high-memory build",
+        "analyze": "npm run ng-high-memory build -- --source-map",
+        "analyze:view": "source-map-explorer dist/**/*.js",
+        "lint": "npm run lint:ts && npm run lint:style",
+        "lint:ts": "ng lint --fix",
+        "lint:style": "npx stylelint 'src/**/*.less'",
+        "color-less": "ng-alain-plugin-theme -t=colorLess",
+        "theme": "ng-alain-plugin-theme -t=themeCss",
+        "icon": "ng g ng-alain:plugin icon"
+    },
+    "dependencies": {
+        "@angular/animations": "^14.2.0",
+        "@angular/common": "^14.2.0",
+        "@angular/compiler": "^14.2.0",
+        "@angular/core": "^14.2.0",
+        "@angular/forms": "^14.2.0",
+        "@angular/platform-browser": "^14.2.0",
+        "@angular/platform-browser-dynamic": "^14.2.0",
+        "@angular/router": "^14.2.0",
+        "@ngx-translate/core": "^11.0.1",
+        "@ngx-translate/http-loader": "^4.0.0",
+        "rxjs": "~7.5.0",
+        "tslib": "^2.3.0",
+        "zone.js": "~0.11.4",
+        "ng-zorro-antd": "^14.0.0",
+        "@delon/abc": "^14.3.0",
+        "@delon/auth": "^14.3.0",
+        "@delon/cache": "^14.3.0",
+        "@delon/form": "^14.3.0",
+        "@delon/mock": "^14.3.0",
+        "@delon/theme": "^14.3.0",
+        "@delon/chart": "^14.3.0",
+        "@delon/util": "^14.3.0",
+        "ngx-tinymce": "^14.0.0",
+        "screenfull": "^6.0.2",
+        "ts-md5": "^1.2.7",
+        "font-awesome": "^4.7.0",
+        "intl": "^1.2.5",
+        "moment": "^2.24.0",
+        "monaco-editor": "^0.14.0",
+        "ngx-ueditor": "^2.1.3",
+        "qrious": "^4.0.2",
+        "web-animations-js": "^2.3.2"
+    },
+    "devDependencies": {
+        "@angular-devkit/build-angular": "^14.2.1",
+        "@angular/cli": "~14.2.1",
+        "@angular/compiler-cli": "^14.2.0",
+        "@types/node": "^12.11.1",
+        "typescript": "~4.7.4",
+        "@angular/language-service": "^14.2.0",
+        "source-map-explorer": "^2.5.2",
+        "ts-node": "~10.9.1",
+        "node-fetch": "^2.6.1",
+        "ng-alain": "^14.3.0",
+        "ng-alain-plugin-theme": "^14.0.0"
+    },
+    "lint-staged": {
+        "(src)/**/*.{html,ts}": [
+            "eslint --fix"
+        ],
+        "(src)/**/*.less": [
+            "npm run lint:style"
+        ]
+    }
 }
