@@ -1,157 +1,161 @@
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "version": 1,
-  "newProjectRoot": "projects",
-  "projects": {
-    "erupt": {
-      "projectType": "application",
-      "root": "",
-      "sourceRoot": "src",
-      "prefix": "app",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "less"
-        },
-        "@schematics/angular:application": {
-          "strict": true
-        }
-      },
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "tsConfig": "tsconfig.app.json",
-            "polyfills": "src/polyfills.ts",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              "src/erupt",
-              "src/app.css",
-              "src/app.js",
-              "src/app.module.js",
-              "src/home.html",
-              "src/auth.html",
-              "src/erupt.svg",
-              "src/erupt2.svg",
-              "src/erupt-logo.svg",
-              {
-                "glob": "**/*",
-                "input": "./libs/ueditor/",
-                "output": "/assets/ueditor/"
-              },
-              {
-                "glob": "**/*",
-                "input": "./libs/editor.md/",
-                "output": "/assets/editor.md/"
-              },
-              {
-                "glob": "**/*",
-                "input": "./node_modules/font-awesome/fonts/",
-                "output": "/assets/font-awesome/fonts/"
-              },
-              {
-                "glob": "**/*",
-                "input": "./node_modules/font-awesome/css/",
-                "output": "/assets/font-awesome/css/"
-              },
-              {
-                "glob": "**/*",
-                "input": "./node_modules/monaco-editor/min/vs/",
-                "output": "/assets/vs/"
-              }
-            ],
-            "styles": [
-              "src/styles.less"
-            ],
-            "scripts": [],
-            "allowedCommonJsDependencies": [
-              "ajv",
-              "ajv-formats",
-              "mockjs",
-              "file-saver",
-              "extend"
-            ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "node_modules/"
-              ]
-            }
-          },
-          "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "outputHashing": "all",
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "6mb"
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+        "erupt": {
+            "projectType": "application",
+            "root": "",
+            "sourceRoot": "src",
+            "prefix": "app",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "style": "less"
                 },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                "@schematics/angular:application": {
+                    "strict": true
                 }
-              ]
             },
-            "development": {
-              "buildOptimizer": false,
-              "optimization": false,
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:browser",
+                    "options": {
+                        "outputPath": "dist",
+                        "index": "src/index.html",
+                        "main": "src/main.ts",
+                        "tsConfig": "tsconfig.app.json",
+                        "polyfills": "src/polyfills.ts",
+                        "assets": [
+                            "src/favicon.ico",
+                            "src/assets",
+                            "src/erupt",
+                            "src/manifest.json",
+                            "src/pre.css",
+                            "src/pre.js",
+                            "src/app.css",
+                            "src/app.js",
+                            "src/app.module.js",
+                            "src/home.html",
+                            "src/auth.html",
+                            "src/erupt.svg",
+                            "src/erupt2.svg",
+                            "src/erupt-logo.svg",
+                            {
+                                "glob": "**/*",
+                                "input": "./libs/ueditor/",
+                                "output": "/assets/ueditor/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "./libs/editor.md/",
+                                "output": "/assets/editor.md/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "./node_modules/font-awesome/fonts/",
+                                "output": "/assets/font-awesome/fonts/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "./node_modules/font-awesome/css/",
+                                "output": "/assets/font-awesome/css/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "./node_modules/monaco-editor/min/vs/",
+                                "output": "/assets/vs/"
+                            }
+                        ],
+                        "styles": [
+                            "src/styles.less"
+                        ],
+                        "scripts": [],
+                        "allowedCommonJsDependencies": [
+                            "ajv",
+                            "ajv-formats",
+                            "mockjs",
+                            "file-saver",
+                            "extend"
+                        ],
+                        "stylePreprocessorOptions": {
+                            "includePaths": [
+                                "node_modules/"
+                            ]
+                        }
+                    },
+                    "configurations": {
+                        "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "outputHashing": "all",
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "2mb",
+                                    "maximumError": "6mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb",
+                                    "maximumError": "10kb"
+                                }
+                            ]
+                        },
+                        "development": {
+                            "buildOptimizer": false,
+                            "optimization": false,
+                            "vendorChunk": true,
+                            "extractLicenses": false,
+                            "sourceMap": true,
+                            "namedChunks": true
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "serve": {
+                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "options": {
+                        "browserTarget": "erupt:build",
+                        "proxyConfig": "proxy.conf.js"
+                    },
+                    "configurations": {
+                        "production": {
+                            "browserTarget": "erupt:build:production"
+                        },
+                        "development": {
+                            "browserTarget": "erupt:build:development"
+                        }
+                    },
+                    "defaultConfiguration": "development"
+                },
+                "extract-i18n": {
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "options": {
+                        "browserTarget": "erupt:build"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-eslint/builder:lint",
+                    "options": {
+                        "lintFilePatterns": [
+                            "src/**/*.ts",
+                            "src/**/*.html"
+                        ]
+                    }
+                }
             }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "erupt:build",
-            "proxyConfig": "proxy.conf.js"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "erupt:build:production"
-            },
-            "development": {
-              "browserTarget": "erupt:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "erupt:build"
-          }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
-          }
         }
-      }
+    },
+    "cli": {
+        "packageManager": "yarn",
+        "schematicCollections": [
+            "@schematics/angular",
+            "erupt"
+        ],
+        "analytics": "f2ae5cb3-075a-4c45-85b4-b94fae41e239"
     }
-  },
-  "cli": {
-    "packageManager": "yarn",
-    "schematicCollections": [
-      "@schematics/angular", "erupt"
-    ],
-    "analytics": "f2ae5cb3-075a-4c45-85b4-b94fae41e239"
-  }
 }
