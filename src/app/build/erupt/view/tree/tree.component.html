@@ -1,8 +1,7 @@
-<erupt-page-header *ngIf="settingSrv.layout['breadcrumbs']"></erupt-page-header>
-<div style="height: 16px"></div>
+<erupt-page-header></erupt-page-header>
 <div nz-row [nzGutter]="16" *ngIf="eruptBuildModel" [id]="eruptName">
     <div nz-col [nzXs]="24" [nzSm]="8" [nzMd]="8" [nzLg]="6">
-        <button nz-button nzType="default" nzDanger style="display:block;width: 100%;" (click)="addBlock()" class="mb-sm"
+        <button nz-button nzType="dashed" style="display:block;width: 100%;" (click)="addBlock()" class="mb-sm"
                 *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
             <i nz-icon nzType="plus" theme="outline"></i> {{'tree.add_button'|translate}}
         </button>
@@ -27,7 +26,6 @@
             </nz-skeleton>
         </div>
     </div>
-    <!--    [hidden]="!showEdit"-->
     <div nz-col class="mb-sm" [nzXs]="24" [nzSm]="16" [nzMd]="16" [nzLg]="18">
         <ng-container>
             <div nz-row class="mb-sm">

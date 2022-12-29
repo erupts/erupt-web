@@ -36,7 +36,8 @@ const HEADER_COMPONENTS = [
     SettingsComponent,
     HeaderI18nComponent,
     SettingDrawerItemComponent,
-    SettingDrawerComponent
+    SettingDrawerComponent,
+    HeaderRTLComponent
     // SettingsComponent
 ];
 
@@ -61,6 +62,7 @@ import {NzTableModule} from "ng-zorro-antd/table";
 import {SharedModule} from "@shared/shared.module";
 import {NzBackTopModule} from "ng-zorro-antd/back-top";
 import {ReuseTabModule} from "@delon/abc/reuse-tab";
+import {HeaderRTLComponent} from "./default/header/components/rtl.component";
 
 const PASSPORT = [LayoutPassportComponent];
 
