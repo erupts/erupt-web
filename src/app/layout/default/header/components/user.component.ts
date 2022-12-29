@@ -3,10 +3,10 @@ import {Router} from "@angular/router";
 import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {DataService} from "@shared/service/data.service";
-import {ChangePwdComponent} from "../../../../routes/change-pwd/change-pwd.component";
 import {I18NService} from "@core";
 import {WindowModel} from "@shared/model/window.model";
 import {NzModalService} from "ng-zorro-antd/modal";
+import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.component";
 
 @Component({
     selector: "header-user",
@@ -60,7 +60,7 @@ export class HeaderUserComponent {
         this.modal.create({
             nzTitle: this.i18n.fanyi("global.reset_pwd"),
             nzMaskClosable: false,
-            nzContent: ChangePwdComponent,
+            nzContent: ResetPwdComponent,
             nzFooter: null,
             nzBodyStyle: {
                 paddingBottom: '1px'

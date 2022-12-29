@@ -207,11 +207,11 @@ export class DefaultInterceptor implements HttpInterceptor {
                 }
                 break;
             case 404:
-                this.goTo("/layout/404");
+                this.goTo("/exception/404");
                 break;
             case 403: //无权限
                 if (event.url.indexOf("/erupt-api/build/") != -1) {
-                    this.goTo("/layout/403");
+                    this.goTo("/exception/403");
                 } else {
                     this.modal.warning({
                         nzTitle: this.i18n.fanyi("none_permission")
@@ -221,7 +221,7 @@ export class DefaultInterceptor implements HttpInterceptor {
             case 500:
                 event = <HttpErrorResponse>event;
                 if (event.url.indexOf("/erupt-api/build/") != -1) {
-                    this.router.navigate(["/layout/500"], {
+                    this.router.navigate(["/exception/500"], {
                         queryParams: {
                             message: event.error.message
                         }

@@ -9,12 +9,12 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 
 @Component({
-    selector: "app-change-pwd",
-    templateUrl: "./change-pwd.component.html",
-    styleUrls: ["./change-pwd.component.less"],
+    selector: "reset-pwd",
+    templateUrl: "./reset-pwd.component.html",
+    styleUrls: ["./reset-pwd.component.less"],
     styles: []
 })
-export class ChangePwdComponent {
+export class ResetPwdComponent {
 
     form: FormGroup;
     error = "";
@@ -39,8 +39,8 @@ export class ChangePwdComponent {
     ) {
         this.form = fb.group({
             pwd: [null, [Validators.required]],
-            newPwd: [null, [Validators.required, Validators.minLength(6), ChangePwdComponent.checkPassword.bind(this)]],
-            newPwd2: [null, [Validators.required, ChangePwdComponent.passwordEquar]]
+            newPwd: [null, [Validators.required, Validators.minLength(6), ResetPwdComponent.checkPassword.bind(this)]],
+            newPwd2: [null, [Validators.required, ResetPwdComponent.passwordEquar]]
         });
     }
 

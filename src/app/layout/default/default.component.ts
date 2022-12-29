@@ -40,10 +40,10 @@ import {generateMenuPath} from "@shared/util/erupt.util";
 import {MenuTypeEnum} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
 import {StatusService} from "@shared/service/status.service";
-import {ChangePwdComponent} from "../../routes/change-pwd/change-pwd.component";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzIconService} from "ng-zorro-antd/icon";
+import {ResetPwdComponent} from "../../routes/reset-pwd/reset-pwd.component";
 
 // #region icons
 
@@ -179,7 +179,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                     nzMaskClosable: false,
                     nzClosable: true,
                     nzKeyboard: true,
-                    nzContent: ChangePwdComponent,
+                    nzContent: ResetPwdComponent,
                     nzFooter: null,
                     nzBodyStyle: {
                         paddingBottom: '1px'

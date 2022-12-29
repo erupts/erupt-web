@@ -27,9 +27,6 @@
         "build": "npm run ng-high-memory build",
         "analyze": "npm run ng-high-memory build -- --source-map",
         "analyze:view": "source-map-explorer dist/**/*.js",
-        "lint": "npm run lint:ts && npm run lint:style",
-        "lint:ts": "ng lint --fix",
-        "lint:style": "npx stylelint 'src/**/*.less'",
         "color-less": "ng-alain-plugin-theme -t=colorLess",
         "theme": "ng-alain-plugin-theme -t=themeCss",
         "icon": "ng g ng-alain:plugin icon"
@@ -57,16 +54,15 @@
         "@delon/theme": "^14.3.0",
         "@delon/chart": "^14.3.0",
         "@delon/util": "^14.3.0",
-        "ngx-tinymce": "^14.0.0",
         "screenfull": "^6.0.2",
-        "ts-md5": "^1.2.7",
+        "ts-md5": "^1.3.1",
         "font-awesome": "^4.7.0",
         "intl": "^1.2.5",
-        "moment": "^2.24.0",
-        "monaco-editor": "^0.14.0",
-        "ngx-ueditor": "^2.1.3",
-        "qrious": "^4.0.2",
-        "web-animations-js": "^2.3.2"
+        "moment": "^2.29.4",
+        "monaco-editor": "^0.34.1",
+        "ngx-ueditor": "^14.0.0",
+        "ngx-tinymce": "^14.0.0",
+        "qrious": "^4.0.2"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "^14.2.1",

@@ -23,10 +23,10 @@
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==0&&
                                                              field.eruptFieldJson.edit.inputType.suffix.length==0">
-                                    <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size">
+                                    <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size"
+                                                    [ngStyle]="{borderStyle:(eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague)?'dashed':''}">
                                         <input nz-input [nzSize]="size" autocomplete="off"
                                                [type]="field.eruptFieldJson.edit.inputType.type"
-                                               [ngStyle]="{borderStyle:(eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague)?'dashed':''}"
                                                (keyup)="enterEvent($event)"
                                                [maxLength]="field.eruptFieldJson.edit.inputType.length"
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
@@ -302,103 +302,99 @@
                     </ng-container>
                     <!--reference-->
                     <ng-container *ngSwitchCase="editType.REFERENCE_TREE">
-                        <div class="stander-line-height">
-                            <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
-                                 [nzXl]="col.xl"
-                                 [nzXXl]="col.xxl">
-                                <se [label]="field.eruptFieldJson.edit.title"
-                                    [required]="field.eruptFieldJson.edit.notNull"
-                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                    <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
-                                        <input nz-input [nzSize]="size"
-                                               autocomplete="off"
-                                               [required]="field.eruptFieldJson.edit.notNull"
-                                               (click)="createRefTreeModal(field)"
-                                               [readOnly]="true"
-                                               [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                               [disabled]="isReadonly(field)"
-                                               [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
-                                               [name]="field.fieldName">
-                                    </nz-input-group>
-                                    <ng-template #refBtn>
-                                        <ng-container *ngIf="field.eruptFieldJson.edit.$value">
-                                            <i nz-icon nzType="close-circle" theme="fill" class="point"
-                                               (click)="isReadonly(field)||clearReferValue(field)"></i>
-                                        </ng-container>
-                                        <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
-                                            <i nz-icon
-                                               (click)="isReadonly(field)||createRefTreeModal(field)"
-                                               nzType="database" theme="fill" class="point"></i>
-                                        </ng-container>
-                                    </ng-template>
-                                </se>
-                            </div>
+                        <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <se [label]="field.eruptFieldJson.edit.title" class="stander-line-height"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
+                                    <input nz-input [nzSize]="size"
+                                           autocomplete="off"
+                                           [required]="field.eruptFieldJson.edit.notNull"
+                                           (click)="createRefTreeModal(field)"
+                                           [readOnly]="true"
+                                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                           [disabled]="isReadonly(field)"
+                                           [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
+                                           [name]="field.fieldName">
+                                </nz-input-group>
+                                <ng-template #refBtn>
+                                    <ng-container *ngIf="field.eruptFieldJson.edit.$value">
+                                        <i nz-icon nzType="close-circle" theme="fill" class="point"
+                                           (click)="isReadonly(field)||clearReferValue(field)"></i>
+                                    </ng-container>
+                                    <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
+                                        <i nz-icon
+                                           (click)="isReadonly(field)||createRefTreeModal(field)"
+                                           nzType="database" theme="fill" class="point"></i>
+                                    </ng-container>
+                                </ng-template>
+                            </se>
                         </div>
                     </ng-container>
 
                     <ng-container *ngSwitchCase="editType.REFERENCE_TABLE">
-                        <div class="stander-line-height">
-                            <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
-                                 [nzXl]="col.xl"
-                                 [nzXXl]="col.xxl">
-                                <se [label]="field.eruptFieldJson.edit.title"
-                                    [required]="field.eruptFieldJson.edit.notNull"
-                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                    <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
-                                        <input nz-input [nzSize]="size"
-                                               autocomplete="off"
-                                               [required]="field.eruptFieldJson.edit.notNull"
-                                               (click)="createRefTableModal(field)"
-                                               [readOnly]="true"
-                                               [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                               [disabled]="isReadonly(field)"
-                                               [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
-                                               [name]="field.fieldName">
-                                    </nz-input-group>
-                                    <ng-template #refBtn>
-                                        <ng-container *ngIf="field.eruptFieldJson.edit.$value">
-                                            <i nz-icon nzType="close-circle" theme="fill" class="point"
-                                               (click)="isReadonly(field)||clearReferValue(field)"></i>
-                                        </ng-container>
-                                        <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
-                                            <i nz-icon
-                                               (click)="isReadonly(field)||createRefTableModal(field)"
-                                               nzType="database" theme="fill" class="point"></i>
-                                        </ng-container>
-                                    </ng-template>
-                                </se>
-                            </div>
+                        <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <se [label]="field.eruptFieldJson.edit.title" class="stander-line-height"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
+                                    <input nz-input [nzSize]="size"
+                                           autocomplete="off"
+                                           [required]="field.eruptFieldJson.edit.notNull"
+                                           (click)="createRefTableModal(field)"
+                                           [readOnly]="true"
+                                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                           [disabled]="isReadonly(field)"
+                                           [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
+                                           [name]="field.fieldName">
+                                </nz-input-group>
+                                <ng-template #refBtn>
+                                    <ng-container *ngIf="field.eruptFieldJson.edit.$value">
+                                        <i nz-icon nzType="close-circle" theme="fill" class="point"
+                                           (click)="isReadonly(field)||clearReferValue(field)"></i>
+                                    </ng-container>
+                                    <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
+                                        <i nz-icon
+                                           (click)="isReadonly(field)||createRefTableModal(field)"
+                                           nzType="database" theme="fill" class="point"></i>
+                                    </ng-container>
+                                </ng-template>
+                            </se>
                         </div>
                     </ng-container>
                     <!--bool-->
                     <ng-container *ngSwitchCase="editType.BOOLEAN">
-                        <div class="stander-line-height">
-                            <div class="col-div" nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
-                                 [nzXl]="col.xl"
-                                 [nzXXl]="col.xxl">
-                                <se [label]="field.eruptFieldJson.edit.title"
-                                    [required]="field.eruptFieldJson.edit.notNull"
-                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                    <ng-container *ngIf="eruptModel.mode=='search'">
-                                        <nz-select class="erupt-input"
-                                                   [nzDisabled]="isReadonly(field)"
-                                                   [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                   [name]="field.fieldName"
-                                                   [nzMode]="'default'"
-                                                   nzAllowClear>
-                                            <nz-option
-                                                    [nzLabel]="field.eruptFieldJson.edit.boolType.trueText | translate"
-                                                    [nzValue]="true"></nz-option>
-                                            <nz-option
-                                                    [nzLabel]="field.eruptFieldJson.edit.boolType.falseText | translate"
-                                                    [nzValue]="false"></nz-option>
-                                        </nz-select>
-                                    </ng-container>
-                                    <ng-container *ngIf="eruptModel.mode!='search'">
-                                        <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                        [name]="field.fieldName" [nzSize]="size"
-                                                        [nzDisabled]="isReadonly(field)"
-                                                        class="erupt-input stander-line-height">
+                        <div class="col-div" nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc" class="stander-line-height">
+                                <ng-container *ngIf="eruptModel.mode=='search'">
+                                    <nz-select class="erupt-input"
+                                               [nzDisabled]="isReadonly(field)"
+                                               [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [name]="field.fieldName"
+                                               [nzMode]="'default'"
+                                               nzAllowClear>
+                                        <nz-option
+                                            [nzLabel]="field.eruptFieldJson.edit.boolType.trueText | translate"
+                                            [nzValue]="true"></nz-option>
+                                        <nz-option
+                                            [nzLabel]="field.eruptFieldJson.edit.boolType.falseText | translate"
+                                            [nzValue]="false"></nz-option>
+                                    </nz-select>
+                                </ng-container>
+                                <ng-container *ngIf="eruptModel.mode!='search'">
+                                    <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                    [name]="field.fieldName" [nzSize]="size"
+                                                    [nzDisabled]="isReadonly(field)"
+                                                    class="erupt-input stander-line-height">
+                                        <div nz-row>
                                             <div nz-col [nzSpan]="12">
                                                 <label nz-radio [nzValue]="true"
                                                        class="ellipsis-radio stander-line-height">
@@ -411,10 +407,10 @@
                                                     {{field.eruptFieldJson.edit.boolType.falseText | translate}}
                                                 </label>
                                             </div>
-                                        </nz-radio-group>
-                                    </ng-container>
-                                </se>
-                            </div>
+                                        </div>
+                                    </nz-radio-group>
+                                </ng-container>
+                            </se>
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.DIVIDE">
