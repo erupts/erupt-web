@@ -249,7 +249,6 @@
                         <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl" [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
-                                class="stander-line-height"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <ng-container *ngIf="eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague">
@@ -305,7 +304,7 @@
                         <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
-                            <se [label]="field.eruptFieldJson.edit.title" class="stander-line-height"
+                            <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
@@ -338,7 +337,7 @@
                         <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
-                            <se [label]="field.eruptFieldJson.edit.title" class="stander-line-height"
+                            <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
@@ -373,7 +372,7 @@
                              [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc" class="stander-line-height">
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <ng-container *ngIf="eruptModel.mode=='search'">
                                     <nz-select class="erupt-input"
                                                [nzDisabled]="isReadonly(field)"
@@ -393,7 +392,7 @@
                                     <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                     [name]="field.fieldName" [nzSize]="size"
                                                     [nzDisabled]="isReadonly(field)"
-                                                    class="erupt-input stander-line-height">
+                                                    class="erupt-input">
                                         <div nz-row>
                                             <div nz-col [nzSpan]="12">
                                                 <label nz-radio [nzValue]="true"
