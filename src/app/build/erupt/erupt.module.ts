@@ -32,6 +32,7 @@ import {CardComponent} from './components/card/card.component';
 import {QRModule} from "@delon/abc/qr";
 import {TagSelectModule} from "@delon/abc/tag-select";
 import {TranslateModule} from "@ngx-translate/core";
+import {NzI18nModule} from "ng-zorro-antd/i18n";
 
 @NgModule({
     imports: [
@@ -39,6 +40,7 @@ import {TranslateModule} from "@ngx-translate/core";
         SharedModule,
         HttpClientModule,
         EruptRoutingModule,
+        NzI18nModule,
         UEditorModule.forRoot({
             js: [
                 './assets/ueditor/ueditor.config.js',

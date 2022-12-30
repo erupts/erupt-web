@@ -98,7 +98,7 @@
                     <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
                         <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation">
                             <ng-container *ngIf="item.mode != operationMode.SINGLE">
-                                <button nz-button nzType="default" nzDanger class="mb-sm" [nz-tooltip]="item.tip"
+                                <button nz-button nzType="default" class="mb-sm" [nz-tooltip]="item.tip"
                                         (click)="createOperator(item)">
                                     <i class="fa" [ngClass]="item.icon"></i>
                                     <span style="margin-left: 8px;">{{item.title}}</span>

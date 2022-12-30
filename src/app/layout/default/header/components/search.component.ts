@@ -14,7 +14,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
         <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
             <input nz-input [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()"
                    (input)="onInput($event)"
-                   [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto" style="padding-left: 32px">
+                   [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto">
             <nz-autocomplete #auto [nzBackfill]="true">
                 <nz-auto-option *ngFor="let menu of options" [nzValue]="menu.name"
                                 [nzLabel]="menu.name">
