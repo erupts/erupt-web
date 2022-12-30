@@ -4,22 +4,24 @@ import {preloaderFinished} from '@delon/theme';
 import {AppModule} from './app/app.module';
 import {environment} from '@env/environment';
 
+preloaderFinished();
 setTimeout(() => {
-        preloaderFinished();
+    if (window['SW']) {
         window['SW'].stop();
         window['SW'] = null;
-        if (environment.production) {
-            enableProdMode();
-        }
-        platformBrowserDynamic().bootstrapModule(AppModule, {
-            defaultEncapsulation: ViewEncapsulation.Emulated,
-            preserveWhitespaces: false
-        }).then(res => {
-            const win = window as any;
-            if (win && win.appBootstrap) {
-                win.appBootstrap();
-            }
-            return res;
-        }).catch(err => console.error(err));
-    }, 500
-)
+    }
+}, 5000)
+
+if (environment.production) {
+    enableProdMode();
+}
+platformBrowserDynamic().bootstrapModule(AppModule, {
+    defaultEncapsulation: ViewEncapsulation.Emulated,
+    preserveWhitespaces: false
+}).then(res => {
+    const win = window as any;
+    if (win && win.appBootstrap) {
+        win.appBootstrap();
+    }
+    return res;
+}).catch(err => console.error(err));
