@@ -34,6 +34,7 @@ import {TagSelectModule} from "@delon/abc/tag-select";
 import {TranslateModule} from "@ngx-translate/core";
 import {NzI18nModule} from "ng-zorro-antd/i18n";
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
+import { SearchComponent } from './components/search/search.component';
 
 @NgModule({
     imports: [
@@ -103,6 +104,7 @@ import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
         ChoiceComponent,
         TagsComponent,
         CardComponent,
+        SearchComponent,
     ]
 })
 export class EruptModule {
