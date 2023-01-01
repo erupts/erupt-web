@@ -265,7 +265,6 @@ export class UiBuildService {
                         let codeEditType = view.eruptFieldModel.eruptFieldJson.edit.codeEditType;
                         this.modal.create({
                             nzWrapClassName: "modal-lg",
-                            // nzStyle: {top: "60px"},
                             nzBodyStyle: {padding: "0"},
                             nzMaskClosable: true,
                             nzKeyboard: true,
