@@ -22,6 +22,8 @@ export class CodeEditorComponent implements OnInit {
 
     @Input() height: number = 300;
 
+    @Input() parentEruptName: string;
+
     initComplete: boolean = false;
 
     codeEditorEvent: any;
@@ -29,6 +31,8 @@ export class CodeEditorComponent implements OnInit {
     dark = false;
 
     theme: 'vs-dark' | 'vs';
+
+    fullScreen = false;
 
     constructor(private cacheService: CacheService) {
 
@@ -47,6 +51,13 @@ export class CodeEditorComponent implements OnInit {
         this.dark = bool;
         this.theme = this.dark ? 'vs-dark' : 'vs';
         this.cacheService.set(codeEditorDarkKey, this.dark);
+    }
+
+    toggleFullScreen(): void {
+        // this.fullScreen = !this.fullScreen;
+        // this.renderer.setStyle(this.document.body, 'overflow-y', this.fullScreen ? 'hidden' : null);
+        // this.editorComponent?.layout();
+        // this.tooltip?.hide();
     }
 
 }
