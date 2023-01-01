@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Edit} from "../../model/erupt-field.model";
 import {CacheService} from "@delon/cache";
-import {NzConfigService} from "ng-zorro-antd/core/config";
 
 let codeEditorDarkKey = "code_editor_dark";
 
@@ -23,48 +22,31 @@ export class CodeEditorComponent implements OnInit {
 
     @Input() height: number = 300;
 
+    initComplete: boolean = false;
+
     codeEditorEvent: any;
 
     dark = false;
 
-    constructor(private nzConfigService: NzConfigService, private cacheService: CacheService) {
+    theme: 'vs-dark' | 'vs';
+
+    constructor(private cacheService: CacheService) {
 
     }
 
     ngOnInit() {
         this.dark = this.cacheService.getNone(codeEditorDarkKey) || false;
+        this.theme = this.dark ? 'vs-dark' : 'vs';
     }
 
-    // codeEditorInit(event) {
-    //     // if (this.edit) {
-    //     //     this.edit.$viewValue = event;
-    //     //     event.setValue(this.edit.$value || '');
-    //     // } else {
-    //     //     event.setValue(this.value || '');
-    //     // }
-    //     this.codeEditorEvent = event;
-    //     const defaultEditorOption = this.nzConfigService.getConfigForComponent('codeEditor')?.defaultEditorOption || {};
-    //     this.nzConfigService.set('codeEditor', {
-    //         defaultEditorOption: {
-    //             ...defaultEditorOption,
-    //             theme: this.dark ? 'vs-dark' : 'vs',
-    //             readOnly: this.readonly
-    //         }
-    //     });
-    // }
-    //
-    // switchChange(bool) {
-    //     this.dark = bool;
-    //     this.cacheService.set(codeEditorDarkKey, bool);
-    //
-    //     const defaultEditorOption = this.nzConfigService.getConfigForComponent('codeEditor')?.defaultEditorOption || {};
-    //     this.nzConfigService.set('codeEditor', {
-    //         defaultEditorOption: {
-    //             ...defaultEditorOption,
-    //             theme: this.dark ? 'vs-dark' : 'vs',
-    //             readOnly: this.readonly
-    //         }
-    //     });
-    // }
+    codeEditorInit(event) {
+        this.initComplete = true;
+    }
+
+    switchChange(bool) {
+        this.dark = bool;
+        this.theme = this.dark ? 'vs-dark' : 'vs';
+        this.cacheService.set(codeEditorDarkKey, this.dark);
+    }
 
 }
