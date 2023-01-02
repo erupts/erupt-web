@@ -35,6 +35,8 @@ import {TranslateModule} from "@ngx-translate/core";
 import {NzI18nModule} from "ng-zorro-antd/i18n";
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import { SearchComponent } from './components/search/search.component';
+import { AutoCompleteComponent } from './components/auto-complete/auto-complete.component';
+import { ReferenceComponent } from './components/reference/reference.component';
 
 @NgModule({
     imports: [
@@ -105,6 +107,8 @@ import { SearchComponent } from './components/search/search.component';
         TagsComponent,
         CardComponent,
         SearchComponent,
+        AutoCompleteComponent,
+        ReferenceComponent,
     ]
 })
 export class EruptModule {

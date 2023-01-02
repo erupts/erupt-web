@@ -1,35 +1,33 @@
 <div nz-row [nzGutter]="16">
     <form nz-form [nzLayout]="'inline'" se-container>
         <ng-container *ngFor="let field of eruptModel.eruptFieldModels">
-            <ng-container
-                *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.search.value">
+            <ng-container *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.search.value">
                 <ng-container [ngSwitch]="field.eruptFieldJson.edit.type">
                     <ng-container *ngSwitchCase="editType.INPUT || editType.TEXTAREA || editType.HTML_EDITOR || editType.CODE_EDITOR">
-                        <ng-container *ngIf="field.eruptFieldJson.edit.inputType.fullSpan">
-                            <div nz-col [nzSpan]="24">
-                                <se [label]="field.eruptFieldJson.edit.title"
-                                    [required]="field.eruptFieldJson.edit.notNull"
-                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                    <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size"
-                                                    [ngStyle]="{borderStyle:(eruptModel.mode=='search'&&field.eruptFieldJson.edit.search.vague)?'dashed':''}">
-                                        <input nz-input [nzSize]="size" autocomplete="off"
-                                               [type]="field.eruptFieldJson.edit.inputType.type"
-                                               (keyup)="enterEvent($event)"
-                                               [maxLength]="field.eruptFieldJson.edit.inputType.length"
-                                               [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                               [name]="field.fieldName"
-                                               [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                               [required]="field.eruptFieldJson.edit.notNull">
-                                    </nz-input-group>
-                                    <ng-template #suffixTemplate>
-                                        <i nz-icon class="ant-input-clear-icon" nzTheme="fill"
-                                           nzType="close-circle"
-                                           *ngIf="field.eruptFieldJson.edit.$value"
-                                           (click)="field.eruptFieldJson.edit.$value = null"></i>
-                                    </ng-template>
-                                </se>
-                            </div>
-                        </ng-container>
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                             [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.search.notNull">
+                                <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size"
+                                                [ngStyle]="{borderStyle:(field.eruptFieldJson.edit.search.vague)?'dashed':''}">
+                                    <input nz-input [nzSize]="size" autocomplete="off"
+                                           [type]="field.eruptFieldJson.edit.inputType.type"
+                                           (keyup)="enterEvent($event)"
+                                           [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                           [name]="field.fieldName"
+                                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                           [required]="field.eruptFieldJson.edit.search.notNull">
+                                </nz-input-group>
+                                <ng-template #suffixTemplate>
+                                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill"
+                                       nzType="close-circle"
+                                       *ngIf="field.eruptFieldJson.edit.$value"
+                                       (click)="field.eruptFieldJson.edit.$value = null"></i>
+                                </ng-template>
+                            </se>
+                        </div>
                     </ng-container>
                     <!-- number-->
                     <ng-container *ngSwitchCase="editType.NUMBER">
@@ -38,8 +36,7 @@
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                [required]="field.eruptFieldJson.edit.search.notNull">
                                 <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
                                     <nz-input-group [nzSize]="size" class="erupt-input">
                                         <nz-input-number [nzSize]="size" style="width: 45%;"
@@ -81,10 +78,8 @@
                         <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
                             <div nz-col [nzXs]="24">
                                 <se [label]="field.eruptFieldJson.edit.title"
-                                    [required]="field.eruptFieldJson.edit.notNull"
-                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                    <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
-                                                  [eruptParentName]="parentEruptName" [vagueSearch]="true">
+                                    [required]="field.eruptFieldJson.edit.search.notNull">
+                                    <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size" [vagueSearch]="true">
 
                                     </erupt-choice>
                                 </se>
@@ -95,10 +90,8 @@
                                 <ng-container *ngSwitchCase="choiceEnum.RADIO">
                                     <div nz-col [nzXs]="24">
                                         <se [label]="field.eruptFieldJson.edit.title"
-                                            [required]="field.eruptFieldJson.edit.notNull"
-                                            [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                            <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
-                                                          [eruptParentName]="parentEruptName">
+                                            [required]="field.eruptFieldJson.edit.search.notNull">
+                                            <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size">
 
                                             </erupt-choice>
                                         </se>
@@ -110,10 +103,8 @@
                                          [nzXl]="col.xl"
                                          [nzXXl]="col.xxl">
                                         <se [label]="field.eruptFieldJson.edit.title"
-                                            [required]="field.eruptFieldJson.edit.notNull"
-                                            [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                            <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
-                                                          [eruptParentName]="parentEruptName">
+                                            [required]="field.eruptFieldJson.edit.search.notNull">
+                                            <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size">
 
                                             </erupt-choice>
                                         </se>
@@ -125,8 +116,7 @@
                     <ng-container *ngSwitchCase="editType.TAGS">
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                [required]="field.eruptFieldJson.edit.search.notNull">
                                 <nz-select [nzAllowClear]='!field.eruptFieldJson.edit.notNull'
                                            [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
                                            [name]="field.fieldName"
@@ -143,8 +133,7 @@
                         <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl" [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                [required]="field.eruptFieldJson.edit.search.notNull">
                                 <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
                                     <nz-slider class="erupt-input" nzRange
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
@@ -173,8 +162,7 @@
                         <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
-                            <se [label]="field.eruptFieldJson.edit.title" [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                            <se [label]="field.eruptFieldJson.edit.title" [required]="field.eruptFieldJson.edit.search.notNull">
                                 <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
                                     <ng-container *ngIf="field.eruptFieldJson.edit.dateType.type==dateEnum.DATE_TIME
                                         ||field.eruptFieldJson.edit.dateType.type==dateEnum.DATE">
@@ -188,66 +176,13 @@
                         </div>
                     </ng-container>
                     <!--reference-->
-                    <ng-container *ngSwitchCase="editType.REFERENCE_TREE">
+                    <ng-container *ngSwitchCase="editType.REFERENCE_TREE || editType.REFERENCE_TABLE">
                         <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
-                                    <input nz-input [nzSize]="size"
-                                           autocomplete="off"
-                                           [required]="field.eruptFieldJson.edit.notNull"
-                                           (click)="createRefTreeModal(field)"
-                                           [readOnly]="true"
-                                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                           [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
-                                           [name]="field.fieldName">
-                                </nz-input-group>
-                                <ng-template #refBtn>
-                                    <ng-container *ngIf="field.eruptFieldJson.edit.$value">
-                                        <i nz-icon nzType="close-circle" theme="fill" class="point"
-                                           (click)="clearReferValue(field)"></i>
-                                    </ng-container>
-                                    <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
-                                        <i nz-icon
-                                           (click)="createRefTreeModal(field)"
-                                           nzType="database" theme="fill" class="point"></i>
-                                    </ng-container>
-                                </ng-template>
-                            </se>
-                        </div>
-                    </ng-container>
-
-                    <ng-container *ngSwitchCase="editType.REFERENCE_TABLE">
-                        <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
-                             [nzXl]="col.xl"
-                             [nzXXl]="col.xxl">
-                            <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <nz-input-group [nzSize]="size" class="erupt-input" [nzAddOnAfter]="refBtn">
-                                    <input nz-input [nzSize]="size"
-                                           autocomplete="off"
-                                           [required]="field.eruptFieldJson.edit.notNull"
-                                           (click)="createRefTableModal(field)"
-                                           [readOnly]="true"
-                                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                           [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
-                                           [name]="field.fieldName">
-                                </nz-input-group>
-                                <ng-template #refBtn>
-                                    <ng-container *ngIf="field.eruptFieldJson.edit.$value">
-                                        <i nz-icon nzType="close-circle" theme="fill" class="point"
-                                           (click)="clearReferValue(field)"></i>
-                                    </ng-container>
-                                    <ng-container *ngIf="!field.eruptFieldJson.edit.$value">
-                                        <i nz-icon
-                                           (click)="createRefTableModal(field)"
-                                           nzType="database" theme="fill" class="point"></i>
-                                    </ng-container>
-                                </ng-template>
+                                [required]="field.eruptFieldJson.edit.search.notNull">
+                                <erupt-reference [eruptModel]="eruptModel" [field]="field" [readonly]="false" [size]="size"></erupt-reference>
                             </se>
                         </div>
                     </ng-container>
@@ -257,8 +192,7 @@
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                [required]="field.eruptFieldJson.edit.search.notNull">
                                 <nz-select class="erupt-input"
                                            [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
                                            [name]="field.fieldName"
@@ -279,22 +213,8 @@
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <input nz-input
-                                       [nzSize]="size"
-                                       (input)="onAutoCompleteInput($event, field)"
-                                       [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                       [name]="field.fieldName"
-                                       [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                       [nzAutocomplete]="autocomplete"/>
-                                <nz-autocomplete [nzBackfill]="true" #autocomplete>
-                                    <nz-auto-option *ngFor="let val of field.eruptFieldJson.edit.autoCompleteType.items"
-                                                    [nzValue]="val"
-                                                    [nzLabel]="val">
-                                        {{val}}
-                                    </nz-auto-option>
-                                </nz-autocomplete>
+                                [required]="field.eruptFieldJson.edit.search.notNull">
+                                <erupt-auto-complete [size]="size" [field]="field" [eruptModel]="eruptModel"></erupt-auto-complete>
                             </se>
                         </div>
                     </ng-container>
