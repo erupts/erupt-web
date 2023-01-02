@@ -37,6 +37,8 @@ import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import { SearchComponent } from './components/search/search.component';
 import { AutoCompleteComponent } from './components/auto-complete/auto-complete.component';
 import { ReferenceComponent } from './components/reference/reference.component';
+import { SearchSeComponent } from './components/search-se/search-se.component';
+import {NzPipesModule} from "ng-zorro-antd/pipes";
 
 @NgModule({
     imports: [
@@ -58,7 +60,8 @@ import { ReferenceComponent } from './components/reference/reference.component';
         QRModule,
         TagSelectModule,
         TranslateModule,
-        NzCodeEditorModule
+        NzCodeEditorModule,
+        NzPipesModule
     ],
     providers: [
         DataHandlerService,
@@ -109,6 +112,7 @@ import { ReferenceComponent } from './components/reference/reference.component';
         SearchComponent,
         AutoCompleteComponent,
         ReferenceComponent,
+        SearchSeComponent,
     ]
 })
 export class EruptModule {

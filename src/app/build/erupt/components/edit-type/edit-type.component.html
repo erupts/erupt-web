@@ -26,7 +26,6 @@
                                     <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size">
                                         <input nz-input [nzSize]="size" autocomplete="off"
                                                [type]="field.eruptFieldJson.edit.inputType.type"
-                                               (keyup)="enterEvent($event)"
                                                [maxLength]="field.eruptFieldJson.edit.inputType.length"
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                [name]="field.fieldName"
@@ -328,21 +327,8 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <input nz-input
-                                       [nzSize]="size"
-                                       (input)="onAutoCompleteInput($event, field)"
-                                       [disabled]="isReadonly(field)"
-                                       [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                       [name]="field.fieldName"
-                                       [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                       [nzAutocomplete]="autocomplete"/>
-                                <nz-autocomplete [nzBackfill]="true" #autocomplete>
-                                    <nz-auto-option *ngFor="let val of field.eruptFieldJson.edit.autoCompleteType.items"
-                                                    [nzValue]="val"
-                                                    [nzLabel]="val">
-                                        {{val}}
-                                    </nz-auto-option>
-                                </nz-autocomplete>
+                                <erupt-auto-complete [size]="size" [field]="field" [parentEruptName]="parentEruptName"
+                                                     [eruptModel]="eruptModel"></erupt-auto-complete>
                             </se>
                         </div>
                     </ng-container>
@@ -392,16 +378,16 @@
 
                         </div>
                     </ng-container>
-                    <ng-container *ngSwitchCase="editType.COMBINE">
-                        <div nz-col [nzSpan]="24">
-                            <nz-collapse nzAccordion>
-                                <nz-collapse-panel [nzActive]="true" [nzHeader]="field.eruptFieldJson.edit.title">
-                                    <erupt-edit-type
-                                        [eruptBuildModel]="{eruptModel:eruptBuildModel.combineErupts[field.fieldName]}"></erupt-edit-type>
-                                </nz-collapse-panel>
-                            </nz-collapse>
-                        </div>
-                    </ng-container>
+<!--                    <ng-container *ngSwitchCase="editType.COMBINE">-->
+<!--                        <div nz-col [nzSpan]="24">-->
+<!--                            <nz-collapse nzAccordion>-->
+<!--                                <nz-collapse-panel [nzActive]="true" [nzHeader]="field.eruptFieldJson.edit.title">-->
+<!--                                    <erupt-edit-type-->
+<!--                                        [eruptBuildModel]="{eruptModel:eruptBuildModel.combineErupts[field.fieldName]}"></erupt-edit-type>-->
+<!--                                </nz-collapse-panel>-->
+<!--                            </nz-collapse>-->
+<!--                        </div>-->
+<!--                    </ng-container>-->
                     <ng-container *ngSwitchCase="editType.CODE_EDITOR">
                         <div nz-col [nzSpan]="24" *ngIf="!loading">
                             <se [label]="field.eruptFieldJson.edit.title"

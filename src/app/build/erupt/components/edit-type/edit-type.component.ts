@@ -1,11 +1,19 @@
-import {Component, DoCheck, EventEmitter, Inject, Input, KeyValueDiffers, OnDestroy, OnInit, Output} from "@angular/core";
+import {
+    Component,
+    DoCheck,
+    EventEmitter,
+    Inject,
+    Input,
+    KeyValueDiffers,
+    OnDestroy,
+    OnInit,
+    Output
+} from "@angular/core";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
-import {TreeSelectComponent} from "../tree-select/tree-select.component";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
-import {ReferenceTableComponent} from "../reference-table/reference-table.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {IframeHeight} from "@shared/util/window.util";
@@ -44,9 +52,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     @Input() readonly: boolean = false;
 
-    //event
-    @Output() search = new EventEmitter();
-
     private showByFieldModels: EruptFieldModel[];
 
     eruptModel: EruptModel;
@@ -56,8 +61,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     htmlEditorType = HtmlEditTypeEnum;
 
     choiceEnum = ChoiceEnum;
-
-    dateEnum = DateEnum;
 
     attachmentEnum = AttachmentEnum;
 
@@ -141,12 +144,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         return true;
     }
 
-    enterEvent(event) {
-        if (event.which === 13) {
-            this.search.emit();
-        }
-    }
-
     upLoadNzChange({file, fileList}, field: EruptFieldModel) {
         const status = file.status;
         if (file.status === "uploading") {
@@ -190,17 +187,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         return result;
     }
 
-
-    onAutoCompleteInput(event, fieldModel: EruptFieldModel) {
-        let edit = fieldModel.eruptFieldJson.edit;
-        if (edit.$value && edit.autoCompleteType.triggerLength <= edit.$value.toString().trim().length) {
-            this.dataService.findAutoCompleteValue(this.eruptModel.eruptName, fieldModel.fieldName, this.getFromData(), edit.$value, this.parentEruptName).subscribe(res => {
-                edit.autoCompleteType.items = res;
-            });
-        } else {
-            edit.autoCompleteType.items = [];
-        }
-    }
 
     iframeHeight = IframeHeight;
 
