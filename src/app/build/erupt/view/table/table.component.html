@@ -112,15 +112,9 @@
                          [nzBodyStyle]="{padding:'10px'}"
                          class="search-card"
                          [hidden]="hideCondition">
-                    <erupt-edit-type
-                            [eruptBuildModel]="{eruptModel:searchErupt,referenceErupts:eruptBuildModel.referenceErupts}"
-                            [col]="{ xs: 24, sm: 24, md: 12, lg: 8, xl: 8, xxl: 6 }"
-                            (search)="query()"
-                            size="default"
-                            layout="horizontal"
-                    >
+                    <erupt-search [eruptModel]="eruptBuildModel.eruptModel" (search)="query()" [size]="'default'">
 
-                    </erupt-edit-type>
+                    </erupt-search>
                 </nz-card>
                 <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">
                     <div style="margin: 16px 0">
