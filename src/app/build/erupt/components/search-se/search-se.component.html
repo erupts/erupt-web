@@ -1,0 +1,12 @@
+<div style="display: flex;margin-top:8px">
+    <div style="display: flex;justify-content:flex-end">
+        <label style="line-height: 32px;width: 100px;">
+            <span style="color: #f00">{{field.eruptFieldJson.edit.search.notNull ? '*' : ''}}</span>
+            <span style="margin:0 5px">{{field.eruptFieldJson.edit.title | nzEllipsis:6:'...'}}</span>
+            <span>:</span>
+        </label>
+    </div>
+    <div style="flex: 1;width: 100%">
+        <ng-content></ng-content>
+    </div>
+</div>

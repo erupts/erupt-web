@@ -19,7 +19,7 @@ export class SearchComponent implements OnInit {
 
     editType = EditType;
 
-    col = colRules[3];
+    col = colRules[4];
 
     choiceEnum = ChoiceEnum;
 
