@@ -4,7 +4,7 @@
             <nz-radio-group [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
                             [name]="eruptField.fieldName"
                             class="erupt-input stander-line-height">
-                <ng-container *ngIf="eruptModel.mode=='search'">
+                <ng-container *ngIf="checkAll">
                     <label nz-radio [nzValue]="">{{'global.all'|translate}}</label>
                 </ng-container>
                 <ng-container *ngFor="let vl of eruptField.choiceList">

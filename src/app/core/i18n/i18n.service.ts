@@ -92,7 +92,7 @@ export class I18NService extends AlainI18nBaseService {
   }
 
   loadLangData(lang: string): Observable<NzSafeAny> {
-    return this.http.get(`assets/tmp/i18n/${lang}.json`);
+    return this.http.get(`assets/i18n/${lang}.json`);
   }
 
   use(lang: string, data: Record<string, unknown>): void {
@@ -101,6 +101,7 @@ export class I18NService extends AlainI18nBaseService {
     this._data = this.flatData(data, []);
 
     const item = LANGS[lang];
+    console.log(item)
     registerLocaleData(item.ng);
     this.nzI18nService.setLocale(item.zorro);
     this.nzI18nService.setDateLocale(item.date);

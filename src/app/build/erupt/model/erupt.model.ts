@@ -10,7 +10,6 @@ export interface EruptModel {
     //# customer prop
     eruptFieldModelMap?: Map<String, EruptFieldModel>;
     tableColumns?: View[];
-    mode?: "edit" | "search";
     searchCondition: any;
 }
 

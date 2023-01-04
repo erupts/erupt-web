@@ -76,8 +76,8 @@
                                     <ng-container *ngFor="let col of columns">
                                         <div *ngIf="col.title&&col.index" nz-col nzSpan="6">
                                             <label nz-checkbox [(ngModel)]="col['show']"
-                                                   style="width: 130px;" class="ellipsis"
-                                                   (ngModelChange)="st.resetColumns()">{{col.title['text']}}</label>
+                                                   style="width: 130px;"
+                                                   (ngModelChange)="st.resetColumns()">{{col.title['text'] | nzEllipsis:6:'...'}}</label>
                                         </div>
                                     </ng-container>
                                 </div>
@@ -86,7 +86,7 @@
                     </div>
                     <div *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0"
                          class="condition-btn">
-                        <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition">
+                        <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
                             <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
                         </button>
                         <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset">
@@ -112,7 +112,7 @@
                          [nzBodyStyle]="{padding:'10px'}"
                          class="search-card"
                          [hidden]="hideCondition">
-                    <erupt-search [eruptModel]="eruptBuildModel.eruptModel" (search)="query()" [size]="'default'">
+                    <erupt-search [eruptModel]="searchErupt" (search)="query()" [size]="'default'">
 
                     </erupt-search>
                 </nz-card>

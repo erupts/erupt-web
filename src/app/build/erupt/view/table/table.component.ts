@@ -30,6 +30,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
 import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
+import {deepCopy} from "@delon/util";
 
 
 @Component({
@@ -179,7 +180,7 @@ export class TableComponent implements OnInit {
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
-                this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
+                this.searchErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
                 this.extraRowFun();
             }
         );
@@ -369,6 +370,7 @@ export class TableComponent implements OnInit {
             });
         }
         if (tableOperators.length > 0) {
+            console.log(this.i18n.fanyi("table.operation"))
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",

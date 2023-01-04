@@ -14,6 +14,7 @@
                                            [type]="field.eruptFieldJson.edit.inputType.type"
                                            [(ngModel)]="field.eruptFieldJson.edit.$value"
                                            [name]="field.fieldName"
+                                           (keydown)="enterEvent($event)"
                                            [placeholder]="field.eruptFieldJson.edit.placeHolder"
                                            [required]="field.eruptFieldJson.edit.search.notNull">
                                 </nz-input-group>
@@ -62,6 +63,7 @@
                                                      [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                      [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
                                                      [name]="field.fieldName"
+                                                     (keydown)="enterEvent($event)"
                                                      [nzMin]="field.eruptFieldJson.edit.numberType.min"
                                                      [nzMax]="field.eruptFieldJson.edit.numberType.max"
                                                      [nzStep]="1"></nz-input-number>
@@ -75,7 +77,7 @@
                             <div nz-col [nzXs]="24">
                                 <erupt-search-se [field]="field">
                                     <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
-                                                  [vagueSearch]="true">
+                                                  [vagueSearch]="true" [checkAll]="true">
 
                                     </erupt-choice>
                                 </erupt-search-se>
