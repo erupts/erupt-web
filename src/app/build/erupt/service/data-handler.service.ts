@@ -95,35 +95,6 @@ export class DataHandlerService {
         });
     }
 
-
-    buildSearchErupt(eruptBuildModel: EruptBuildModel): EruptModel {
-        let copyErupt = <EruptModel>deepCopy(eruptBuildModel.eruptModel);
-        const searchFieldModels = [];
-        const searchFieldModelsMap: Map<String, EruptFieldModel> = new Map();
-        let searchCondition = eruptBuildModel.eruptModel.searchCondition;
-        copyErupt.eruptFieldModels.forEach((field) => {
-            if (!field.eruptFieldJson.edit) {
-                return;
-            }
-            searchFieldModelsMap.set(field.fieldName, field);
-            if (field.eruptFieldJson.edit.search.value) {
-                field.value = null;
-                field.eruptFieldJson.edit.notNull = field.eruptFieldJson.edit.search.notNull;
-                field.eruptFieldJson.edit.show = true;
-                field.eruptFieldJson.edit.readOnly.add = false;
-                field.eruptFieldJson.edit.readOnly.edit = false;
-                field.eruptFieldJson.edit.$value = searchCondition && searchCondition[field.fieldName];
-                field.eruptFieldJson.edit.$viewValue = null;
-                field.eruptFieldJson.edit.$tempValue = null;
-                searchFieldModels.push(field);
-            }
-        });
-        copyErupt.mode = "search";
-        copyErupt.eruptFieldModels = searchFieldModels;
-        copyErupt.eruptFieldModelMap = searchFieldModelsMap;
-        return copyErupt;
-    }
-
     //非空验证
     validateNotNull(eruptModel: EruptModel, combineErupt?: { [key: string]: EruptModel }): boolean {
         for (let field of eruptModel.eruptFieldModels) {
@@ -587,12 +558,10 @@ export class DataHandlerService {
             ef.eruptFieldJson.edit.$value = null;
             switch (ef.eruptFieldJson.edit.type) {
                 case EditType.CHOICE:
-                    if (eruptBuildModel.eruptModel.mode === "search") {
-                        if (ef.eruptFieldJson.edit.choiceType.vl) {
-                            ef.eruptFieldJson.edit.choiceType.vl.forEach(v => {
-                                v.$viewValue = false;
-                            });
-                        }
+                    if (ef.eruptFieldJson.edit.choiceType.vl) {
+                        ef.eruptFieldJson.edit.choiceType.vl.forEach(v => {
+                            v.$viewValue = false;
+                        });
                     }
                     break;
                 case EditType.INPUT:

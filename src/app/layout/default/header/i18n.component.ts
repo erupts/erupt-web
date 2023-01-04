@@ -28,9 +28,9 @@ import { BooleanInput, InputBoolean } from '@delon/util/decorator';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderI18nComponent {
-  static ngAcceptInputType_showLangText: BooleanInput;
+
   /** Whether to display language text */
-  @Input() @InputBoolean() showLangText = true;
+  @Input() @InputBoolean() showLangText = false;
 
   get langs(): Array<{ code: string; text: string; abbr: string }> {
     return this.i18n.getLangs();
@@ -43,10 +43,6 @@ export class HeaderI18nComponent {
   constructor(private settings: SettingsService, @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, @Inject(DOCUMENT) private doc: any) {}
 
   change(lang: string): void {
-    const spinEl = this.doc.createElement('div');
-    spinEl.setAttribute('class', `page-loading ant-spin ant-spin-lg ant-spin-spinning`);
-    spinEl.innerHTML = `<span class="ant-spin-dot ant-spin-dot-spin"><i></i><i></i><i></i><i></i></span>`;
-    this.doc.body.appendChild(spinEl);
 
     this.i18n.loadLangData(lang).subscribe(res => {
       this.i18n.use(lang, res);

@@ -23,6 +23,8 @@ export class ChoiceComponent implements OnInit {
 
     @Input() readonly: boolean = false;
 
+    @Input() checkAll: boolean = false;
+
     isLoading = false;
 
     choiceEnum = ChoiceEnum;
