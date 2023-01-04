@@ -1,16 +1,6 @@
-import {
-    Component,
-    DoCheck,
-    EventEmitter,
-    Inject,
-    Input,
-    KeyValueDiffers,
-    OnDestroy,
-    OnInit,
-    Output
-} from "@angular/core";
+import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
+import {AttachmentEnum, ChoiceEnum, EditType, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
