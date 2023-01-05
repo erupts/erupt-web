@@ -1,50 +1,69 @@
 @import '@delon/theme/theme-default.less';
 
 :host {
-  ::ng-deep {
-    #erupt_logo_svg {
-      path {
-        fill: #fff !important;
-      }
-    }
+    ::ng-deep {
+        .header-logo {
+            padding: 0 12px;
+        }
 
-    .header-logo-img {
-      height: @alain-default-header-hg;
-      padding: 6px 0
-    }
+        #erupt_logo_svg {
+            path {
+                fill: #fff !important;
+            }
+        }
 
-    .alain-default__header {
-      box-shadow: none !important;
-    }
+        .header-logo-img {
+            box-sizing: border-box;
+            vertical-align: top;
+            height: 44px;
+            padding: 4px 0
+        }
 
-    .alain-default__header-logo {
-      min-width: 200px;
-      width: auto;
-      padding: 0 12px;
-      border-right: 1px solid rgba(0, 0, 0, 0.1);
-    }
+        .alain-default__header {
+            box-shadow: none !important;
+        }
 
-    .header-logo-text {
-      color: #fff;
-      line-height: @alain-default-header-hg;
-      font-size: 1.8em;
-      letter-spacing: 2px;
-      margin-left: 6px;
-      font-family: 'Courier New', Arial, Helvetica, sans-serif;
-    }
+        .alain-default__header-logo {
+            min-width: 200px;
+            text-align: center;
+            width: auto;
+            padding: 0 12px;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+        }
 
-    .alain-default__search {
-      //margin: 0 16px;
-    }
+        .header-logo-text {
+            color: #fff;
+            line-height: 44px;
+            font-size: 1.8em;
+            letter-spacing: 2px;
+            margin-left: 6px;
+            font-family: 'Courier New', Arial, Helvetica, sans-serif;
+        }
 
-    @media (max-width: 767px) {
-      .alain-default__header-logo {
-        min-width: auto;
-        max-width: 190px;
-        overflow: hidden;
-        margin: 0 6px;
-        border-right: none;
-      }
+        .alain-default__search {
+            //margin: 0 16px;
+        }
+
+        @media (max-width: 767px) {
+            .alain-default__header-logo {
+                min-width: auto;
+                max-width: 190px;
+                overflow: hidden;
+                margin: 0 6px;
+                border-right: none;
+            }
+        }
     }
-  }
+}
+
+::ng-deep {
+    .alain-default__collapsed {
+        .header-logo-text {
+            display: none;
+        }
+
+        .alain-default__header-logo {
+            min-width: 64px;
+        }
+    }
 }
