@@ -2,7 +2,7 @@ import {Component, Inject, Input, OnInit} from '@angular/core';
 import {Edit, EruptFieldModel} from "../../model/erupt-field.model";
 import {DateEnum, PickerMode} from "../../model/erupt.enum";
 import {DatePipe} from "@angular/common";
-import {DisabledDateFn, PresetRanges} from "ng-zorro-antd/date-picker/standard-types";
+import {DisabledDateFn, NzDateMode, PresetRanges} from "ng-zorro-antd/date-picker/standard-types";
 import * as moment from 'moment';
 import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
@@ -34,6 +34,8 @@ export class DateComponent implements OnInit {
 
     endToday: Date;
 
+    rangeMode: NzDateMode;
+
     constructor(@Inject(ALAIN_I18N_TOKEN) private i18n: I18NService) {
 
     }
@@ -49,6 +51,23 @@ export class DateComponent implements OnInit {
             上月: [this.datePipe.transform(moment().add(-1, 'month').toDate(), "yyyy-MM-01 00:00:00"), this.datePipe.transform(moment().add(-1, 'month').endOf("month").toDate(), "yyyy-MM-dd 23:59:59")]
         };
         this.edit = this.field.eruptFieldJson.edit;
+        if (this.range) {
+            switch (this.field.eruptFieldJson.edit.dateType.type) {
+                case DateEnum.DATE:
+                case DateEnum.DATE_TIME:
+                    this.rangeMode = 'date'
+                    break;
+                case DateEnum.WEEK:
+                    this.rangeMode = 'week'
+                    break;
+                case DateEnum.MONTH:
+                    this.rangeMode = 'month'
+                    break;
+                case DateEnum.YEAR:
+                    this.rangeMode = 'year'
+                    break;
+            }
+        }
     }
 
     disabledDate: DisabledDateFn = (date) => {
