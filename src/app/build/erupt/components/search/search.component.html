@@ -43,11 +43,10 @@
                                                          [nzMin]="field.eruptFieldJson.edit.numberType.min"
                                                          [nzMax]="field.eruptFieldJson.edit.numberType.max"
                                                          [nzStep]="1"></nz-input-number>
-                                        <nz-input-group [nzSize]="size" style="width: 10%;">
-                                            <div style="line-height: 100%;text-align: center">
-                                                ~
-                                            </div>
-                                        </nz-input-group>
+                                        <input [nzSize]="size" disabled nz-input placeholder="~"
+                                            style="width: 30px; border-left: 0; border-right: 0; pointer-events: none;background-color: rgb(255, 255, 255);"
+                                        />
+
                                         <nz-input-number [nzSize]="size" style="width: 45%;"
                                                          [(ngModel)]="field.eruptFieldJson.edit.$r_val"
                                                          [name]="field.fieldName"
@@ -158,15 +157,7 @@
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <erupt-search-se [field]="field">
-                                <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
-                                    <ng-container *ngIf="field.eruptFieldJson.edit.dateType.type==dateEnum.DATE_TIME
-                                        ||field.eruptFieldJson.edit.dateType.type==dateEnum.DATE">
-                                        <erupt-date [field]="field" [size]="size" [range]="true"></erupt-date>
-                                    </ng-container>
-                                </ng-container>
-                                <ng-container *ngIf="!field.eruptFieldJson.edit.search.vague">
-                                    <erupt-date [field]="field" [size]="size"></erupt-date>
-                                </ng-container>
+                                <erupt-date [field]="field" [size]="size" [range]="field.eruptFieldJson.edit.search.vague"></erupt-date>
                             </erupt-search-se>
                         </div>
                     </ng-container>
