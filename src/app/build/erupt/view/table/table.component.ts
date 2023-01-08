@@ -582,6 +582,7 @@ export class TableComponent implements OnInit {
 
     clearCondition() {
         this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt});
+        this.query();
     }
 
     // table checkBox 触发事件
