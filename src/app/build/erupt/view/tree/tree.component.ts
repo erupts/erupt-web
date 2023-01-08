@@ -60,7 +60,7 @@ export class TreeComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.router$ = this.route.params.subscribe((params:any) => {
+        this.router$ = this.route.params.subscribe((params: any) => {
             this.eruptBuildModel = null;
             this.eruptName = params.name;
             this.currentKey = null;
