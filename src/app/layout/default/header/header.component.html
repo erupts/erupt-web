@@ -1,24 +1,24 @@
 <div class="alain-default__header-logo" ripper color="#000">
-    <a [routerLink]="settings.user['indexPath']" (click)="toIndex()" class="header-link">
+    <a [routerLink]="settings.user['indexPath']" (click)="toIndex()" class="header-link" style="user-select:none">
         <img *ngIf="logoPath" [src]="logoPath" class="header-logo-img" alt=""/>
-        <span *ngIf="logoText" class="header-logo-text hidden-mobile" style="user-select:none">{{logoText}}</span>
+        <span *ngIf="logoText" class="header-logo-text hidden-mobile">{{logoText}}</span>
     </a>
 </div>
 
 <div class="alain-default__nav-wrap">
     <ul class="alain-default__nav">
         <!-- Search Button -->
-        <li class="hidden-pc" (click)="searchToggleChange()">
-            <div class="alain-default__nav-item">
-                <i nz-icon nzType="search"></i>
-            </div>
-        </li>
         <li class="hidden-pc">
             <div class="alain-default__nav-item" (click)="toggleCollapsedSidebar()">
                 <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
             </div>
         </li>
-        <header-search class="alain-default__search" [toggleChange]="searchToggleStatus"></header-search>
+<!--        <li class="hidden-pc" (click)="searchToggleChange()">-->
+<!--            <div class="alain-default__nav-item">-->
+<!--                <i nz-icon nzType="search"></i>-->
+<!--            </div>-->
+<!--        </li>-->
+<!--        <header-search class="alain-default__search" [toggleChange]="searchToggleStatus"></header-search>-->
     </ul>
 
     <ul class="alain-default__nav">
@@ -31,6 +31,12 @@
         </ng-container>
 
         <nz-divider nzType="vertical" class="hidden-mobile" *ngIf="r_tools.length>0"></nz-divider>
+
+        <li>
+            <div class="alain-default__nav-item" (click)="search()">
+                <i nz-icon nzType="search"></i>
+            </div>
+        </li>
 
         <li class="hidden-mobile" (click)="toggleScreen()">
             <div class="alain-default__nav-item">
@@ -45,13 +51,13 @@
         </li>
 
         <li>
-            <div class="alain-default__nav-item">
+            <div class="alain-default__nav-item hidden-mobile">
                 <header-rtl></header-rtl>
             </div>
         </li>
 
         <li>
-            <div class="alain-default__nav-item" (click)="open()">
+            <div class="alain-default__nav-item hidden-mobile" (click)="open()">
                 <i nz-icon nzType="setting" nzTheme="outline"></i>
             </div>
             <nz-drawer [nzClosable]="true" [nzVisible]="drawerVisible" [nzWidth]="260"
