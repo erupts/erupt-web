@@ -1,23 +1,21 @@
-import {Component, HostBinding, Input, ElementRef, AfterViewInit, Inject} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostBinding, Inject, Input} from '@angular/core';
 import {DataService} from "@shared/service/data.service";
 import {Router} from "@angular/router";
 import {MenuService} from "@delon/theme";
-import {Menu} from "@delon/theme/src/services/menu/interface";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {StatusService} from "@shared/service/status.service";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {generateMenuPath} from "@shared/util/erupt.util";
 
 @Component({
     selector: 'header-search',
     template: `
-        <!--(keydown.enter)="toMenu()"-->
         <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
-            <input nz-input [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()"
-                   (input)="onInput($event)"
+            <input nz-input [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()" (input)="onInput($event)"
                    [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto">
-            <nz-autocomplete #auto [nzBackfill]="true">
+            <nz-autocomplete #auto [nzBackfill]="false">
                 <nz-auto-option *ngFor="let menu of options" [nzValue]="menu.name"
-                                [nzLabel]="menu.name">
+                                [nzLabel]="menu.name" (click)="toMenu(menu)" [nzDisabled]="!menu.value">
                     <i *ngIf="menu.icon" [class]="menu.icon"></i>
                     <i *ngIf="!menu.icon" nz-icon nzType="unordered-list" nzTheme="outline"></i>
                     &nbsp; {{ menu.name }}
@@ -26,10 +24,10 @@ import {NzMessageService} from "ng-zorro-antd/message";
         </nz-input-group>
         <ng-template #prefixTemplateInfo>
             <i nz-icon nzType="search" nzTheme="outline"
-               [ngStyle]="{color:focus?'#000':'#fff'}" style="margin-top: 2px"></i>&nbsp;&nbsp;
+               [ngStyle]="{color:focus?'#000':'#999'}" style="margin-top: 2px;transition: all 500ms"></i>&nbsp;&nbsp;
         </ng-template>
         <ng-template #suffixTemplateInfo>
-            <i nz-icon nzType="arrow-right" nzTheme="outline" *ngIf="text" (click)="toMenu()"
+            <i nz-icon nzType="arrow-right" nzTheme="outline" *ngIf="text"
                style="cursor: pointer;transition:.5s all;"
                [ngStyle]="{color:focus?'#000':'#fff'}"></i>
         </ng-template>
@@ -49,7 +47,7 @@ export class HeaderSearchComponent implements AfterViewInit {
 
     menuList: MenuVo[];
 
-    options: any[] = [];
+    options: MenuVo[] = [];
 
     @Input()
     set toggleChange(value: boolean) {
@@ -94,13 +92,9 @@ export class HeaderSearchComponent implements AfterViewInit {
         this.searchToggled = false;
     }
 
-    toMenu() {
-        let menu: Menu = this.menuSrv.getItem(this.text);
-        if (!menu) {
-            this.msg.warning("请选择有效菜单！");
-            return;
-        }
-        this.router.navigateByUrl(menu.link);
+    toMenu(menu: MenuVo) {
+        if (!menu.value) return;
+        this.router.navigateByUrl(generateMenuPath(menu.type, menu.value));
         this.text = null;
     }
 }

@@ -5,6 +5,9 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {CustomerTool, WindowModel} from "@shared/model/window.model";
 import {CacheService} from "@delon/cache";
 import {Router} from "@angular/router";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {ViewTypeComponent} from "../../../build/erupt/components/view-type/view-type.component";
+import {HeaderSearchComponent} from "./components/search.component";
 
 @Component({
     selector: "layout-header",
@@ -42,8 +45,7 @@ export class HeaderComponent implements OnInit {
     constructor(public settings: SettingsService,
                 private router: Router,
                 @Inject(DA_SERVICE_TOKEN)
-                private tokenService: ITokenService,
-                private cacheService: CacheService) {
+                @Inject(NzModalService) private modal: NzModalService) {
     }
 
     ngOnInit() {
@@ -75,6 +77,20 @@ export class HeaderComponent implements OnInit {
     toIndex() {
         this.router.navigateByUrl(this.settings.user['indexPath']);
         return false;
+    }
+
+    search() {
+        this.modal.create({
+            nzWrapClassName: "modal-xs",
+            nzMaskClosable: true,
+            nzKeyboard: true,
+            nzFooter: null,
+            nzClosable: false,
+            nzBodyStyle: {
+                padding: "12px"
+            },
+            nzContent: HeaderSearchComponent
+        })
     }
 
 }
