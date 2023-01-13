@@ -164,9 +164,7 @@ export class TableComponent implements OnInit {
         this.showTable = true;
         this.adding = false;
         this.eruptBuildModel = null;
-        if (this.searchErupt) {
-            this.searchErupt.eruptFieldModels = [];
-        }
+        this.searchErupt = null;
         //put table api header
         this.stConfig.req.headers = req.header;
         this.stConfig.url = req.url;
@@ -180,7 +178,13 @@ export class TableComponent implements OnInit {
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
-                this.searchErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
+                let eruptModel = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
+                for (let it of eruptModel.eruptFieldModels) {
+                    if (it.eruptFieldJson.edit.search.value){
+                        this.searchErupt = eruptModel;
+                        return;
+                    }
+                }
                 this.extraRowFun();
             }
         );

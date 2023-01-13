@@ -84,7 +84,7 @@
                             </ng-template>
                         </ng-container>
                     </div>
-                    <div *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0"
+                    <div *ngIf="searchErupt"
                          class="condition-btn">
                         <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
                             <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
@@ -108,10 +108,7 @@
                     </ng-container>
                 </div>
 
-                <nz-card *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0"
-                         [nzBodyStyle]="{padding:'10px'}"
-                         class="search-card"
-                         [hidden]="hideCondition">
+                <nz-card *ngIf="searchErupt" [nzBodyStyle]="{padding:'10px'}" class="search-card" [hidden]="hideCondition">
                     <erupt-search [eruptModel]="searchErupt" (search)="query()" [size]="'default'">
 
                     </erupt-search>
