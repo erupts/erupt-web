@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, ElementRef, HostBinding, Inject, Input} from '@angular/core';
 import {DataService} from "@shared/service/data.service";
 import {Router} from "@angular/router";
-import {MenuService} from "@delon/theme";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {StatusService} from "@shared/service/status.service";
 import {NzMessageService} from "ng-zorro-antd/message";
@@ -12,7 +11,8 @@ import {generateMenuPath} from "@shared/util/erupt.util";
     template: `
         <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
             <input nz-input [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()" (input)="onInput($event)"
-                   [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto">
+                   [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto"
+                   (keydown.enter)="search($event)">
             <nz-autocomplete #auto [nzBackfill]="false">
                 <nz-auto-option *ngFor="let menu of options" [nzValue]="menu.name"
                                 [nzLabel]="menu.name" (click)="toMenu(menu)" [nzDisabled]="!menu.value">
@@ -61,7 +61,6 @@ export class HeaderSearchComponent implements AfterViewInit {
                 private router: Router,
                 @Inject(NzMessageService)
                 private msg: NzMessageService,
-                public menuSrv: MenuService,
                 private statusService: StatusService,
                 private dataService: DataService) {
     }
@@ -97,4 +96,14 @@ export class HeaderSearchComponent implements AfterViewInit {
         this.router.navigateByUrl(generateMenuPath(menu.type, menu.value));
         this.text = null;
     }
+
+    search(event) {
+        let r = this.menuList.filter((ml) => {
+            return (<string>ml.name).toLocaleLowerCase().indexOf(this.text) !== -1;
+        }) || []
+        if (r[0]) {
+            this.toMenu(r[0])
+        }
+    }
+
 }
