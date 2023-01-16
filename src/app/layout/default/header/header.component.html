@@ -57,13 +57,17 @@
         </li>
 
         <li>
-            <div class="alain-default__nav-item hidden-mobile" (click)="open()">
+            <div class="alain-default__nav-item hidden-mobile" (click)="openDrawer()">
                 <i nz-icon nzType="setting" nzTheme="outline"></i>
             </div>
             <nz-drawer [nzClosable]="true" [nzVisible]="drawerVisible" [nzWidth]="260"
-                       [nzBodyStyle]="{padding:'8px 24px'}"
-                       nzPlacement="right" (nzOnClose)="close()" [nzTitle]="'setting.config' | translate">
-                <erupt-settings></erupt-settings>
+                       [nzBodyStyle]="{padding:'8px 24px'}" (nzOnClose)="closeDrawer()"
+                       [nzTitle]="'setting.config' | translate" nzPlacement="right" >
+                <ng-container *nzDrawerContent>
+                    <erupt-settings>
+
+                    </erupt-settings>
+                </ng-container>
             </nz-drawer>
         </li>
 

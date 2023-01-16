@@ -1,5 +1,5 @@
 <div nz-row [nzGutter]="16">
-    <form nz-form [nzLayout]="layout" se-container>
+    <form nz-form [nzLayout]="layout" se-container style="width: 100%">
         <ng-container *ngFor="let field of eruptModel.eruptFieldModels;">
             <ng-container
                     *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.show&&field.eruptFieldJson.edit.title">
@@ -311,7 +311,7 @@
                                             <p class="ant-upload-text">单击或拖动文件到此区域上传</p>
                                             <p class="ant-upload-hint"
                                                *ngIf="field.eruptFieldJson.edit.attachmentType.fileTypes.length>0">
-                                                文件格式：<span>{{field.eruptFieldJson.edit.attachmentType.fileTypes.join(" / ")}}</span>
+                                                文件格式：<span>{{field.eruptFieldJson.edit.attachmentType.fileTypes.join("&nbsp; / &nbsp;")}}</span>
                                             </p>
                                             <p class="ant-upload-hint">{{field.eruptFieldJson.edit.placeHolder}}</p>
                                         </nz-upload>
