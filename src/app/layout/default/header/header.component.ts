@@ -34,11 +34,11 @@ export class HeaderComponent implements OnInit {
 
     drawerVisible: boolean = false;
 
-    open() {
+    openDrawer() {
         this.drawerVisible = true;
     }
 
-    close(): void {
+    closeDrawer(): void {
         this.drawerVisible = false;
     }
 
