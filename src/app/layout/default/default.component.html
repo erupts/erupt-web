@@ -1,6 +1,6 @@
 <div class="alain-default__progress-bar erupt-global__progress" *ngIf="isFetching"></div>
 <div class="erupt-global__progress" *ngIf="isFetching"></div>
-<layout-header class="alain-default__header erupt-header"></layout-header>
+<layout-header class="alain-default__header erupt-header" [menu]="menu"></layout-header>
 <layout-sidebar class="alain-default__aside erupt-side"></layout-sidebar>
 <section class="erupt_content">
     <reuse-tab [tabType]="'card'" *ngIf="settingSrv.layout['reuse']" [tabBarGutter]="0" [tabMaxWidth]="180"></reuse-tab>

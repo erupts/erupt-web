@@ -63,6 +63,9 @@ import {SharedModule} from "@shared/shared.module";
 import {NzBackTopModule} from "ng-zorro-antd/back-top";
 import {ReuseTabModule} from "@delon/abc/reuse-tab";
 import {HeaderRTLComponent} from "./default/header/components/rtl.component";
+import {MenuComponent} from './default/menu/menu.component';
+import {BreadcrumbComponent} from './default/header/components/breadcrumb.component';
+import {NzBreadCrumbModule} from "ng-zorro-antd/breadcrumb";
 
 const PASSPORT = [LayoutPassportComponent];
 
@@ -96,9 +99,10 @@ const PASSPORT = [LayoutPassportComponent];
         NzTableModule,
         SharedModule,
         NzBackTopModule,
-        ReuseTabModule
+        ReuseTabModule,
+        NzBreadCrumbModule
     ],
-    declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT],
+    declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT, MenuComponent, BreadcrumbComponent],
     exports: [...COMPONENTS, ...PASSPORT, HeaderI18nComponent]
 })
 export class LayoutModule {

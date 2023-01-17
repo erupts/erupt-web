@@ -1,13 +1,12 @@
-import {Component, Inject, OnInit} from "@angular/core";
+import {Component, Inject, Input, OnInit} from "@angular/core";
 import {SettingsService} from "@delon/theme";
 import screenfull from 'screenfull';
-import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
+import {DA_SERVICE_TOKEN} from "@delon/auth";
 import {CustomerTool, WindowModel} from "@shared/model/window.model";
-import {CacheService} from "@delon/cache";
 import {Router} from "@angular/router";
 import {NzModalService} from "ng-zorro-antd/modal";
-import {ViewTypeComponent} from "../../../build/erupt/components/view-type/view-type.component";
 import {HeaderSearchComponent} from "./components/search.component";
+import {MenuVo} from "@shared/model/erupt-menu";
 
 @Component({
     selector: "layout-header",
@@ -17,6 +16,8 @@ import {HeaderSearchComponent} from "./components/search.component";
     ]
 })
 export class HeaderComponent implements OnInit {
+
+    @Input() menu: MenuVo[];
 
     searchToggleStatus: boolean;
 
@@ -89,7 +90,10 @@ export class HeaderComponent implements OnInit {
             nzBodyStyle: {
                 padding: "12px"
             },
-            nzContent: HeaderSearchComponent
+            nzContent: HeaderSearchComponent,
+            nzComponentParams: {
+                menu: this.menu
+            }
         })
     }
 

@@ -374,7 +374,6 @@ export class TableComponent implements OnInit {
             });
         }
         if (tableOperators.length > 0) {
-            console.log(this.i18n.fanyi("table.operation"))
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
