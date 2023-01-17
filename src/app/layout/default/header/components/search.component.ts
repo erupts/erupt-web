@@ -9,31 +9,35 @@ import {generateMenuPath} from "@shared/util/erupt.util";
 @Component({
     selector: 'header-search',
     template: `
-        <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
-            <input nz-input [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()" (input)="onInput($event)"
-                   [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto"
-                   (keydown.enter)="search($event)">
-            <nz-autocomplete #auto [nzBackfill]="false">
-                <nz-auto-option *ngFor="let menu of options" [nzValue]="menu.name"
-                                [nzLabel]="menu.name" (click)="toMenu(menu)" [nzDisabled]="!menu.value">
-                    <i *ngIf="menu.icon" [class]="menu.icon"></i>
-                    <i *ngIf="!menu.icon" nz-icon nzType="unordered-list" nzTheme="outline"></i>
-                    &nbsp; {{ menu.name }}
-                </nz-auto-option>
-            </nz-autocomplete>
-        </nz-input-group>
-        <ng-template #prefixTemplateInfo>
-            <i nz-icon nzType="search" nzTheme="outline"
-               [ngStyle]="{color:focus?'#000':'#999'}" style="margin-top: 2px;transition: all 500ms"></i>&nbsp;&nbsp;
-        </ng-template>
-        <ng-template #suffixTemplateInfo>
-            <i nz-icon nzType="arrow-right" nzTheme="outline" *ngIf="text"
-               style="cursor: pointer;transition:.5s all;"
-               [ngStyle]="{color:focus?'#000':'#fff'}"></i>
-        </ng-template>
+        <ng-container *ngIf="menu">
+            <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
+                <input nz-input [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()" (input)="onInput($event)"
+                       [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto"
+                       (keydown.enter)="search($event)">
+                <nz-autocomplete #auto [nzBackfill]="false">
+                    <nz-auto-option *ngFor="let menu of options" [nzValue]="menu.name"
+                                    [nzLabel]="menu.name" (click)="toMenu(menu)" [nzDisabled]="!menu.value">
+                        <i *ngIf="menu.icon" [class]="menu.icon"></i>
+                        <i *ngIf="!menu.icon" nz-icon nzType="unordered-list" nzTheme="outline"></i>
+                        &nbsp; {{ menu.name }}
+                    </nz-auto-option>
+                </nz-autocomplete>
+            </nz-input-group>
+            <ng-template #prefixTemplateInfo>
+                <i nz-icon nzType="search" nzTheme="outline"
+                   [ngStyle]="{color:focus?'#000':'#999'}" style="margin-top: 2px;transition: all 500ms"></i>&nbsp;&nbsp;
+            </ng-template>
+            <ng-template #suffixTemplateInfo>
+                <i nz-icon nzType="arrow-right" nzTheme="outline" *ngIf="text"
+                   style="cursor: pointer;transition:.5s all;"
+                   [ngStyle]="{color:focus?'#000':'#fff'}"></i>
+            </ng-template>
+        </ng-container>
     `,
 })
 export class HeaderSearchComponent implements AfterViewInit {
+
+    @Input() menu: MenuVo[];
 
     text: any;
 
@@ -44,8 +48,6 @@ export class HeaderSearchComponent implements AfterViewInit {
 
     @HostBinding('class.alain-default__search-toggled')
     searchToggled = false;
-
-    menuList: MenuVo[];
 
     options: MenuVo[] = [];
 
@@ -66,9 +68,6 @@ export class HeaderSearchComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.dataService.getMenu().subscribe((res) => {
-            this.menuList = res;
-        });
         this.qIpt = (this.el.nativeElement as HTMLElement).querySelector('.ant-input') as HTMLInputElement;
     }
 
@@ -77,8 +76,8 @@ export class HeaderSearchComponent implements AfterViewInit {
         if (!value) {
             return;
         }
-        this.options = this.menuList.filter((ml) => {
-            return (<string>ml.name).toLocaleLowerCase().indexOf(value.toLowerCase()) !== -1;
+        this.options = this.menu.filter((ml) => {
+            return ml.name.toLocaleLowerCase().indexOf(value.toLowerCase()) !== -1;
         }) || [];
     }
 
@@ -98,11 +97,13 @@ export class HeaderSearchComponent implements AfterViewInit {
     }
 
     search(event) {
-        let r = this.menuList.filter((ml) => {
-            return (<string>ml.name).toLocaleLowerCase().indexOf(this.text) !== -1;
-        }) || []
-        if (r[0]) {
-            this.toMenu(r[0])
+        if (this.text) {
+            let r = this.menu.filter((ml) => {
+                return ml.name.toLocaleLowerCase().indexOf(this.text.toLocaleLowerCase()) !== -1;
+            }) || []
+            if (r[0]) {
+                this.toMenu(r[0])
+            }
         }
     }
 

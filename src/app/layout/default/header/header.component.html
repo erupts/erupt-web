@@ -13,12 +13,15 @@
                 <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
             </div>
         </li>
-<!--        <li class="hidden-pc" (click)="searchToggleChange()">-->
-<!--            <div class="alain-default__nav-item">-->
-<!--                <i nz-icon nzType="search"></i>-->
-<!--            </div>-->
-<!--        </li>-->
-<!--        <header-search class="alain-default__search" [toggleChange]="searchToggleStatus"></header-search>-->
+        <!--        <li>-->
+        <!--            <erupt-breadcrumb></erupt-breadcrumb>-->
+        <!--        </li>-->
+        <!--        <li class="hidden-pc" (click)="searchToggleChange()">-->
+        <!--            <div class="alain-default__nav-item">-->
+        <!--                <i nz-icon nzType="search"></i>-->
+        <!--            </div>-->
+        <!--        </li>-->
+        <!--        <header-search class="alain-default__search" [toggleChange]="searchToggleStatus"></header-search>-->
     </ul>
 
     <ul class="alain-default__nav">
@@ -32,7 +35,7 @@
 
         <nz-divider nzType="vertical" class="hidden-mobile" *ngIf="r_tools.length>0"></nz-divider>
 
-        <li>
+        <li *ngIf="menu">
             <div class="alain-default__nav-item" (click)="search()">
                 <i nz-icon nzType="search"></i>
             </div>
@@ -62,7 +65,7 @@
             </div>
             <nz-drawer [nzClosable]="true" [nzVisible]="drawerVisible" [nzWidth]="260"
                        [nzBodyStyle]="{padding:'8px 24px'}" (nzOnClose)="closeDrawer()"
-                       [nzTitle]="'setting.config' | translate" nzPlacement="right" >
+                       [nzTitle]="'setting.config' | translate" nzPlacement="right">
                 <ng-container *nzDrawerContent>
                     <erupt-settings>
 

@@ -39,6 +39,7 @@ import { AutoCompleteComponent } from './components/auto-complete/auto-complete.
 import { ReferenceComponent } from './components/reference/reference.component';
 import { SearchSeComponent } from './components/search-se/search-se.component';
 import {NzPipesModule} from "ng-zorro-antd/pipes";
+import {NzImageModule} from "ng-zorro-antd/image";
 
 @NgModule({
     imports: [
@@ -61,7 +62,8 @@ import {NzPipesModule} from "ng-zorro-antd/pipes";
         TagSelectModule,
         TranslateModule,
         NzCodeEditorModule,
-        NzPipesModule
+        NzPipesModule,
+        NzImageModule
     ],
     providers: [
         DataHandlerService,

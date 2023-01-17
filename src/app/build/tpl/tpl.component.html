@@ -1,7 +1,9 @@
-<erupt-page-header></erupt-page-header>
-<div class="page-container" [ngStyle]="{marginTop:settingSrv.layout['breadcrumbs']?'39px':'0'}">
+<div style="margin: 0 16px">
+    <erupt-page-header></erupt-page-header>
+</div>
+<div class="page-container">
     <nz-spin [nzSpinning]="spin" style="height:100%;width: 100%">
-        <iframe *ngIf="renderType == 'iframe'" (load)="iframeLoad()" [src]="url | safeUrl"
+        <iframe (load)="iframeLoad()" [src]="url | safeUrl"
                 style="border: 0;vertical-align:bottom" height="100%" width="100%">
         </iframe>
     </nz-spin>

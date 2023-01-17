@@ -59,19 +59,8 @@ reuse-tab .ant-tabs-tab-arrow-show {
 }
 
 
-//iframe page-container style start
-.alain-default__collapsed {
-  .page-container {
-    left: @alain-default-aside-collapsed-wd;
-  }
-}
-
 .page-container {
-  position: absolute;
-  left: 200px;
-  right: 0;
-  top: @alain-default-header-hg;
-  bottom: 0;
+    height: calc(100vh - @alain-default-header-hg);
 }
 
 erupt-fill .page-container {
@@ -83,7 +72,7 @@ erupt-fill .page-container {
 reuse-tab ~ app-site .page-container,
 reuse-tab ~ app-home .page-container,
 reuse-tab ~ app-tpl .page-container {
-  top: @alain-default-header-hg + 40;
+    height: calc(100vh - @alain-default-header-hg - 44.62px);
 }
 
 @media (min-width: 992px) {
@@ -92,39 +81,12 @@ reuse-tab ~ app-tpl .page-container {
   }
 }
 
-
 @media screen and (max-width: 767px) {
-  .page-container {
-    height: calc(100vh - @alain-default-header-hg);
-    left: 0 !important;
-    top: 0;
-    margin: 0 -25px;
-  }
 
   reuse-tab ~ app-site .page-container,
   reuse-tab ~ app-home .page-container,
   reuse-tab ~ app-tpl .page-container {
     top: 40px;
   }
+
 }
-
-//::-webkit-scrollbar {
-//  width: 6px;
-//  height: 7px;
-//  background-color: rgba(0, 0, 0, 0);
-//  -ms-overflow-style: -ms-autohiding-scrollbar;
-//}
-//
-//::-webkit-scrollbar-thumb {
-//  border-radius: 5px;
-//  background-color: #ddd;
-//}
-//
-//
-//::-webkit-scrollbar-track {
-//  border-radius: 0;
-//  background-color: rgba(0, 0, 0, 0);
-//}
-
-
-//iframe page-container style end

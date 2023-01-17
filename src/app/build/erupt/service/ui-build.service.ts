@@ -10,12 +10,14 @@ import {I18NService} from "@core";
 import {STColumn, STData} from "@delon/abc/st";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {NzImageService} from "ng-zorro-antd/image";
 
 
 @Injectable()
 export class UiBuildService {
 
     constructor(
+        private imageService: NzImageService,
         @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
         @Inject(NzModalService) private modal: NzModalService,
         @Inject(NzMessageService) private msg: NzMessageService) {
@@ -263,6 +265,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let codeEditType = view.eruptFieldModel.eruptFieldJson.edit.codeEditType;
+                        // @ts-ignore
                         this.modal.create({
                             nzWrapClassName: "modal-lg",
                             nzBodyStyle: {padding: "0"},
@@ -318,33 +321,23 @@ export class UiBuildService {
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
+                            let img;
                             if (attachmentType) {
-                                let img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
-                                //height="50px"
-                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
+                                img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
                             } else {
-                                let img = (<string>item[view.column]).split("|")[0];
-                                //height="50px"
-                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
+                                img = (<string>item[view.column]).split("|")[0];
                             }
+                            return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
                         } else {
-                            return "";
+                            return '';
                         }
                     };
                     obj.click = (item) => {
-                        this.modal.create({
-                            nzWrapClassName: "modal-lg",
-                            nzStyle: {top: "50px"},
-                            nzMaskClosable: true,
-                            nzKeyboard: true,
-                            nzFooter: null,
-                            nzTitle: view.title,
-                            nzContent: ViewTypeComponent,
-                            nzComponentParams: {
-                                value: item[view.column],
-                                view: view
+                        this.imageService.preview(item[view.column].split("|").map(it => {
+                            return {
+                                src: DataService.previewAttachment(it.trim())
                             }
-                        });
+                        }))
                     };
                     break;
                 case ViewType.HTML:

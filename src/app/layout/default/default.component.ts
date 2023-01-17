@@ -37,7 +37,7 @@ import {environment} from "@env/environment";
 import {SettingDrawerComponent} from "./setting-drawer/setting-drawer.component";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {generateMenuPath} from "@shared/util/erupt.util";
-import {MenuTypeEnum} from "@shared/model/erupt-menu";
+import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
 import {StatusService} from "@shared/service/status.service";
 import {NzMessageService} from "ng-zorro-antd/message";
@@ -85,6 +85,8 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
     isFetching = false;
 
     nowYear = new Date().getFullYear();
+
+    menu: MenuVo[];
 
     @ViewChild("settingHost", {read: ViewContainerRef, static: false})
     settingHost: ViewContainerRef;
@@ -188,6 +190,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
             }
         });
         this.data.getMenu().subscribe(res => {
+            this.menu = res;
             // this.statusService.menus = res;
             function generateTree(menus, pid): Menu[] {
                 let result: Menu[] = [];
