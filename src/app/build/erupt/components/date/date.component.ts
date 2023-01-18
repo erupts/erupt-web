@@ -36,7 +36,7 @@ export class DateComponent implements OnInit {
 
     rangeMode: NzDateMode;
 
-    constructor(@Inject(ALAIN_I18N_TOKEN) private i18n: I18NService) {
+    constructor(private i18n: I18NService) {
 
     }
 

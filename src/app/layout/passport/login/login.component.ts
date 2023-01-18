@@ -53,7 +53,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         private dataService: DataService,
         @Inject(NzModalService)
         private modal: NzModalService,
-        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+        private i18n: I18NService,
         @Optional()
         @Inject(ReuseTabService)
         private reuseTabService: ReuseTabService,

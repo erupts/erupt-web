@@ -8,7 +8,7 @@
             <!--账号-->
             <nz-form-item>
                 <nz-form-control [nzErrorTip]="accountTip">
-                    <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-user">
+                    <nz-input-group nzSize="large" nzPrefixIcon="user">
                         <input nz-input formControlName="userName" [placeholder]="'login.account'|translate">
                     </nz-input-group>
                     <ng-template #accountTip>
@@ -21,7 +21,7 @@
             <!--密码-->
             <nz-form-item>
                 <nz-form-control [nzErrorTip]="pwdTip">
-                    <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-lock" [nzAddOnAfter]="controlPwd">
+                    <nz-input-group nzSize="large" nzPrefixIcon="lock" [nzAddOnAfter]="controlPwd">
                         <input nz-input [type]="passwordType" formControlName="password"
                                [placeholder]="'login.pwd'|translate">
                     </nz-input-group>

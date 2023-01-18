@@ -107,7 +107,7 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
                 private statusService: StatusService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+                private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(DOCUMENT) private doc: any) {
         iconSrv.addIcon(...ICONS);

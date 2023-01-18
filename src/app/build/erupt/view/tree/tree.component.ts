@@ -53,7 +53,7 @@ export class TreeComponent implements OnInit, OnDestroy {
                 @Inject(NzMessageService)
                 private msg: NzMessageService,
                 public settingSrv: SettingsService,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+                private i18n: I18NService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 private dataHandler: DataHandlerService) {
