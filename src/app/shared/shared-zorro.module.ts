@@ -59,7 +59,6 @@ export const SHARED_ZORRO_MODULES = [
     NzTimePickerModule,
     NzTagModule,
     NzInputNumberModule,
-    NzBreadCrumbModule,
     NzListModule,
     NzSwitchModule,
     NzRadioModule,
