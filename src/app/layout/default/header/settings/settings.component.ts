@@ -16,7 +16,7 @@ export class SettingsComponent implements OnInit {
     constructor(private settingSrv: SettingsService,
                 private confirmServ: NzModalService,
                 private messageServ: NzMessageService,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+                private i18n: I18NService,
                 private reuseTabService: ReuseTabService) {
     }
 

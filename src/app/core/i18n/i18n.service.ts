@@ -4,115 +4,178 @@ import {registerLocaleData} from '@angular/common';
 import ngEn from '@angular/common/locales/en';
 import ngZh from '@angular/common/locales/zh';
 import ngZhTw from '@angular/common/locales/zh-Hant';
+import ngKO from '@angular/common/locales/ko';
+import ngJA from '@angular/common/locales/ja';
 import {Injectable} from '@angular/core';
 import {
     DelonLocaleService,
-    en_US as delonEnUS,
     SettingsService,
+    en_US as delonEnUS,
     zh_CN as delonZhCn,
     zh_TW as delonZhTw,
+    ja_JP as delonJp,
+    ko_KR as delonKo,
     _HttpClient,
     AlainI18nBaseService
 } from '@delon/theme';
 import {AlainConfigService} from '@delon/util/config';
-import {enUS as dfEn, zhCN as dfZhCn, zhTW as dfZhTw} from 'date-fns/locale';
+import {enUS as dfEn, zhCN as dfZhCn, zhTW as dfZhTw, ko as dfKo, ja as dfJp} from 'date-fns/locale';
 import {NzSafeAny} from 'ng-zorro-antd/core/types';
-import {en_US as zorroEnUS, NzI18nService, zh_CN as zorroZhCN, zh_TW as zorroZhTW} from 'ng-zorro-antd/i18n';
-import {Observable} from 'rxjs';
+import {
+    en_US as zorroEnUS,
+    ja_JP,
+    ko_KR,
+    NzI18nService,
+    zh_CN as zorroZhCN,
+    zh_TW as zorroZhTW
+} from 'ng-zorro-antd/i18n';
+import {Observable, tap, zip} from 'rxjs';
+import {WindowModel} from "@shared/model/window.model";
+import {HttpClient} from "@angular/common/http";
+import {catchError} from "rxjs/operators";
+import {error} from "@angular/compiler-cli/src/transformers/util";
+import {RestPath} from "../../build/erupt/model/erupt.enum";
+import {EruptAppData, EruptAppModel} from "@shared/model/erupt-app.model";
 
 interface LangConfigData {
     abbr: string;
     text: string;
+    date: NzSafeAny;
     ng: NzSafeAny;
     zorro: NzSafeAny;
-    date: NzSafeAny;
     delon: NzSafeAny;
 }
 
-const DEFAULT = 'zh-CN';
 const LANGS: { [key: string]: LangConfigData } = {
     'zh-CN': {
+        abbr: '🇨🇳',
         text: '简体中文',
         ng: ngZh,
-        zorro: zorroZhCN,
         date: dfZhCn,
+        zorro: zorroZhCN,
         delon: delonZhCn,
-        abbr: '🇨🇳'
     },
     'zh-TW': {
+        abbr: '🇭🇰',
         text: '繁体中文',
+        date: dfZhTw,
         ng: ngZhTw,
         zorro: zorroZhTW,
-        date: dfZhTw,
         delon: delonZhTw,
-        abbr: '🇭🇰'
+
     },
     'en-US': {
+        abbr: '🇬🇧',
         text: 'English',
+        date: dfEn,
         ng: ngEn,
         zorro: zorroEnUS,
-        date: dfEn,
         delon: delonEnUS,
-        abbr: '🇬🇧'
+    },
+    'ja-JP': {
+        abbr: '🇯🇵',
+        text: '日本語',
+        date: dfJp,
+        ng: ngJA,
+        zorro: ja_JP,
+        delon: delonJp,
+    },
+    'ko-KR': {
+        abbr: '🇰🇷',
+        text: '한국어',
+        date: dfKo,
+        ng: ngKO,
+        zorro: ko_KR,
+        delon: delonKo,
     }
 };
 
-@Injectable({providedIn: 'root'})
-export class I18NService extends AlainI18nBaseService {
-    protected override _defaultLang = DEFAULT;
-    private _langs = Object.keys(LANGS).map(code => {
-        const item = LANGS[code];
-        return {code, text: item.text, abbr: item.abbr};
-    });
+
+@Injectable()
+export class I18NService {
+
+    currentLang: string;
+
+    langMapping: { [key: string]: string };
 
     constructor(
-        private http: _HttpClient,
+        private http: HttpClient,
         private settings: SettingsService,
         private nzI18nService: NzI18nService,
         private delonLocaleService: DelonLocaleService,
-        private platform: Platform,
-        cogSrv: AlainConfigService
+        private platform: Platform
     ) {
-        super(cogSrv);
-
         const defaultLang = this.getDefaultLang();
-        this._defaultLang = this._langs.findIndex(w => w.code === defaultLang) === -1 ? DEFAULT : defaultLang;
+        this.currentLang = LANGS[defaultLang] ? defaultLang : 'en-US'
     }
 
     private getDefaultLang(): string {
-        if (!this.platform.isBrowser) {
-            return DEFAULT;
-        }
         if (this.settings.layout.lang) {
             return this.settings.layout.lang;
+        }
+        if (!this.platform.isBrowser) {
+            return 'zh-CN';
         }
         let res = (navigator.languages ? navigator.languages[0] : null) || navigator.language;
         const arr = res.split('-');
         return arr.length <= 1 ? res : `${arr[0]}-${arr[1].toUpperCase()}`;
     }
 
-    loadLangData(lang: string): Observable<NzSafeAny> {
-        return this.http.get(`assets/i18n/${lang}.json`);
+    loadLangData(success) {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', "assets/erupt.i18n.csv?v=123");
+        xhr.send();
+        xhr.onreadystatechange = () => {
+            let langMapping = {};
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                let allRows = xhr.responseText.split(/\r?\n|\r/);
+                let header = allRows[0].split(',');
+                let index;
+                for (let i = 0; i < header.length; i++) {
+                    if (header[i] == this.currentLang) {
+                        index = i;
+                    }
+                }
+                allRows.forEach(it => {
+                    let row = it.split(',');
+                    langMapping[row[0]] = row[index];
+                })
+
+                let extra = WindowModel.i18n[this.currentLang];
+                if (extra) {
+                    for (let key in extra) {
+                        langMapping[key] = extra[key];
+                    }
+                }
+                this.langMapping = langMapping;
+                success();
+            }
+        };
+
     }
 
-    use(lang: string, data: Record<string, unknown>): void {
-        if (this._currentLang === lang) return;
-
-        this._data = this.flatData(data, []);
-
+    use(lang: string): void {
+        if (this.currentLang === lang) return;
         const item = LANGS[lang];
-        registerLocaleData(item.ng);
+        registerLocaleData(item.ng, item.abbr);
         this.nzI18nService.setLocale(item.zorro);
         this.nzI18nService.setDateLocale(item.date);
         this.delonLocaleService.setLocale(item.delon);
-        this._currentLang = lang;
-
-        this._change$.next(lang);
+        this.currentLang = lang;
     }
 
     getLangs(): Array<{ code: string; text: string; abbr: string }> {
-        return this._langs;
+        return Object.keys(LANGS).map(it => {
+            return {
+                code: it,
+                text: LANGS[it].text,
+                abbr: LANGS[it].abbr
+            }
+        })
     }
 
-    [key: string]: NzSafeAny;
+    fanyi(key: string) {
+        return this.langMapping[key] || key;
+    }
+
 }

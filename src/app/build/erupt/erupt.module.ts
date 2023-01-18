@@ -31,7 +31,6 @@ import {TagsComponent} from "./components/tags/tags.component";
 import {CardComponent} from './components/card/card.component';
 import {QRModule} from "@delon/abc/qr";
 import {TagSelectModule} from "@delon/abc/tag-select";
-import {TranslateModule} from "@ngx-translate/core";
 import {NzI18nModule} from "ng-zorro-antd/i18n";
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import { SearchComponent } from './components/search/search.component';
@@ -60,7 +59,6 @@ import {NzImageModule} from "ng-zorro-antd/image";
         }),
         QRModule,
         TagSelectModule,
-        TranslateModule,
         NzCodeEditorModule,
         NzPipesModule,
         NzImageModule

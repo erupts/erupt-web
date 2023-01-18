@@ -14,7 +14,7 @@ import {SafeScriptPipe} from "@shared/pipe/safe-script.pipe";
 import {SafeUrlPipe} from "@shared/pipe/safe-url.pipe";
 import {EruptPageHeaderComponent} from "@shared/component/erupt-page-header.component";
 import {DataService} from "@shared/service/data.service";
-import {TranslateModule} from "@ngx-translate/core";
+import {I18nPipe} from "@shared/pipe/i18n.pipe";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -24,7 +24,7 @@ const THIRDMODULES: Array<Type<any>> = [];
 
 // #region your componets & directives
 const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, EruptPageHeaderComponent];
-const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe];
+const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, I18nPipe];
 
 // #endregion
 
@@ -36,7 +36,6 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
         ReactiveFormsModule,
         AlainThemeModule.forChild(),
         DelonACLModule,
-        TranslateModule,
         ...SHARED_DELON_MODULES,
         ...SHARED_ZORRO_MODULES,
         // third libs

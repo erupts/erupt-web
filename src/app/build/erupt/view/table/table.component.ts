@@ -56,7 +56,7 @@ export class TableComponent implements OnInit {
         @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
-        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+        private i18n: I18NService,
     ) {
     }
 

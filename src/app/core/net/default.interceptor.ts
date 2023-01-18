@@ -42,7 +42,7 @@ export class DefaultInterceptor implements HttpInterceptor {
                 private router: Router,
                 @Inject(NzNotificationService)
                 private notification: NzNotificationService,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+                private i18n: I18NService,
                 private cacheService: CacheService) {
     }
 

@@ -42,7 +42,7 @@ export class EditComponent implements OnInit, OnDestroy {
         private modal: NzModalService,
         private dataService: DataService,
         private settingSrv: SettingsService,
-        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+        private i18n: I18NService,
         private dataHandlerService: DataHandlerService) {
 
     }

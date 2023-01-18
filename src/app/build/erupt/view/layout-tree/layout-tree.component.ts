@@ -16,7 +16,7 @@ export class LayoutTreeComponent implements OnInit {
     constructor(private data: DataService,
                 public settingSrv: SettingsService,
                 public settingService: SettingsService,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+                private i18n: I18NService,
                 private dataHandler: DataHandlerService) {
     }
 
@@ -41,7 +41,7 @@ export class LayoutTreeComponent implements OnInit {
             }
             if (!this.eruptModel.eruptJson.linkTree.dependNode) {
                 this.list.unshift({
-                    key: null,
+                    key: undefined,
                     title: this.i18n.fanyi('global.all'),
                     isLeaf: true
                 });

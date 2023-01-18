@@ -53,7 +53,6 @@ import {HeaderFullScreenComponent} from "./default/header/components/fullscreen.
 import {HeaderUserComponent} from "./default/header/components/user.component";
 import {LayoutDefaultComponent} from "./default/default.component";
 import {SettingsComponent} from "./default/header/settings/settings.component";
-import {TranslateModule} from "@ngx-translate/core";
 import {HeaderI18nComponent} from "./default/header/i18n.component";
 import {SettingDrawerItemComponent} from "./default/setting-drawer/setting-drawer-item.component";
 import {SettingDrawerComponent} from "./default/setting-drawer/setting-drawer.component";
@@ -94,7 +93,6 @@ const PASSPORT = [LayoutPassportComponent];
         NzCardModule,
         NzDrawerModule,
         NzDividerModule,
-        TranslateModule,
         NzAlertModule,
         NzTableModule,
         SharedModule,

@@ -31,7 +31,7 @@ export class ReferenceComponent implements OnInit {
 
     constructor(@Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) {
+                private i18n: I18NService,) {
     }
 
     ngOnInit(): void {
@@ -98,6 +98,7 @@ export class ReferenceComponent implements OnInit {
                 return;
             }
         }
+        // @ts-ignore
         this.modal.create({
             nzWrapClassName: "modal-xxl",
             nzKeyboard: true,

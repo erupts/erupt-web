@@ -32,7 +32,7 @@ export class HeaderUserComponent {
         public settings: SettingsService,
         private router: Router,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
-        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+        private i18n: I18NService,
         private data: DataService,
         @Inject(NzModalService)
         private modal: NzModalService,

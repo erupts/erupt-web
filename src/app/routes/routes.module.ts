@@ -6,14 +6,13 @@ import {SiteComponent} from "./site/site.component";
 import {HomeComponent} from "./home/home.component";
 import {UserLoginComponent} from "../layout/passport/login/login.component";
 import {LayoutModule} from "../layout/layout.module";
-import {TranslateModule} from "@ngx-translate/core";
 import {FillComponent} from "./fill/fill.component";
 import {ResetPwdComponent} from "./reset-pwd/reset-pwd.component";
 
 const COMPONENTS: Array<Type<any>> = [SiteComponent, FillComponent, HomeComponent, ResetPwdComponent, UserLoginComponent];
 
 @NgModule({
-    imports: [SharedModule, RouteRoutingModule, LayoutModule, TranslateModule],
+    imports: [SharedModule, RouteRoutingModule, LayoutModule],
     declarations: [...COMPONENTS]
 })
 export class RoutesModule {
