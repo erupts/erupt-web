@@ -1,24 +1,25 @@
 {
-    "name": "ng-alain",
+    "name": "erut-web",
     "version": "14.3.0",
-    "description": "ng-zorro-antd admin panel front-end framework",
-    "author": "cipchk <cipchk@qq.com>",
+    "description": "erupt framework front-end",
+    "author": "yuepeng <erupts@126.com>",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ng-alain/ng-alain.git"
+        "url": "git+https://github.com/erupts/erupt-web.git"
     },
     "bugs": {
-        "url": "https://github.com/ng-alain/ng-alain/issues"
+        "url": "https://github.com/erupts/erupt-web/issues"
     },
-    "homepage": "https://ng-alain.com",
-    "license": "MIT",
+    "homepage": "https://www.erupt.xyz",
+    "license": "Apache License 2.0",
     "keywords": [
-        "delon",
+        "erupt",
+        "yuepeng",
         "antd",
         "ng-zorro-antd",
+        "alain",
         "angular",
-        "component",
-        "scaffold"
+        "component"
     ],
     "scripts": {
         "ng-high-memory": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng",
