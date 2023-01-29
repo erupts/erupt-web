@@ -67,18 +67,18 @@ const ICONS = [
 // #endregion
 
 @Component({
-    selector: "layout-default",
-    templateUrl: "./default.component.html",
+    selector: "layout-erupt",
+    templateUrl: "./erupt.component.html",
     preserveWhitespaces: false,
     host: {
         "[class.alain-default]": "true"
     },
     styleUrls: [
-        "./default.component.less"
+        "./erupt.component.less"
     ]
     // animations: [mainPageSwitchTransition]
 })
-export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy {
+export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private notify$: Subscription;
 
@@ -237,23 +237,10 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
             }]);
             this.router.navigateByUrl(this.router.url).then();
 
-            //将所有菜单元素增加水波纹效果，动态写入href
+            // 将所有菜单元素增加水波纹效果
             let menuEle = this.el.nativeElement.getElementsByClassName("sidebar-nav__item");
             for (let i = 0; i < menuEle.length; i++) {
                 let ele = menuEle.item(i);
-                let linkEle = ele.getElementsByClassName("sidebar-nav__item-link")[0];
-                if (linkEle) {
-                    let menu = this.menuSrv.getItem(linkEle.getElementsByClassName("sidebar-nav__item-text")[0].innerText);
-                    if (menu.link) {
-                        linkEle.href = "#" + menu.link;
-                        linkEle.onclick = function () {
-                            return false;
-                        };
-                    }
-                    if (menu.externalLink) {
-                        linkEle.href = menu.externalLink;
-                    }
-                }
                 ele.style.position = "relative";
                 ele.style.overflow = "hidden";
                 ele.addEventListener("click", (e) => {

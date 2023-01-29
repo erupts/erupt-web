@@ -13,19 +13,10 @@
                 <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
             </div>
         </li>
-        <li>
-            <nz-breadcrumb>
-                <nz-breadcrumb-item>
-                    <i nz-icon nzType="home"></i>
-                </nz-breadcrumb-item>
-                <nz-breadcrumb-item>
-                    <a>
-                        <i nz-icon nzType="user"></i>
-                        <span>Application List</span>
-                    </a>
-                </nz-breadcrumb-item>
-                <nz-breadcrumb-item>Application</nz-breadcrumb-item>
-            </nz-breadcrumb>
+        <li class="hidden-mobile">
+            <div class="alain-default__nav-item" style="padding:0 18px">
+                <erupt-breadcrumb></erupt-breadcrumb>
+            </div>
         </li>
         <!--        <li>-->
         <!--            <erupt-breadcrumb></erupt-breadcrumb>-->

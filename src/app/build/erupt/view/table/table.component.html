@@ -1,8 +1,5 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!eruptBuildModel"></nz-skeleton>
 <ng-container *ngIf="eruptBuildModel">
-<!--    <div>-->
-<!--        <iframe src="https://www.baidu.com/" frameborder="0" style="width: 100%"></iframe>-->
-<!--    </div>-->
     <div nz-row [nzGutter]="16">
         <div nz-col *ngIf="linkTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="6">
             <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
@@ -98,7 +95,7 @@
                     <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
                         <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation">
                             <ng-container *ngIf="item.mode != operationMode.SINGLE">
-                                <button nz-button nzType="default" class="mb-sm" [nz-tooltip]="item.tip"
+                                <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.tip"
                                         (click)="createOperator(item)">
                                     <i class="fa" [ngClass]="item.icon"></i>
                                     <span style="margin-left: 8px;">{{item.title}}</span>

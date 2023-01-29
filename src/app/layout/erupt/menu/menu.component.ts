@@ -17,10 +17,10 @@ import {
 } from '@angular/core';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {NavigationEnd, Router} from '@angular/router';
-import {Subject, filter, takeUntil} from 'rxjs';
+import {filter, Subject, takeUntil} from 'rxjs';
 
 import {Menu, MenuIcon, MenuInner, MenuService, SettingsService} from '@delon/theme';
-import {BooleanInput, InputBoolean, InputNumber, NumberInput, ZoneOutside} from '@delon/util/decorator';
+import {InputBoolean, InputNumber, ZoneOutside} from '@delon/util/decorator';
 import {WINDOW} from '@delon/util/token';
 import type {NzSafeAny} from 'ng-zorro-antd/core/types';
 
@@ -45,12 +45,6 @@ const FLOATINGCLS = 'sidebar-nav__floating';
     encapsulation: ViewEncapsulation.None
 })
 export class MenuComponent implements OnInit, OnDestroy {
-
-    static ngAcceptInputType_disabledAcl: BooleanInput;
-    static ngAcceptInputType_autoCloseUnderPad: BooleanInput;
-    static ngAcceptInputType_recursivePath: BooleanInput;
-    static ngAcceptInputType_openStrictly: BooleanInput;
-    static ngAcceptInputType_maxLevelIcon: NumberInput;
 
     private bodyEl!: HTMLBodyElement;
 

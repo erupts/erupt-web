@@ -14,7 +14,7 @@ import {I18NService} from "@core";
 })
 export class DateComponent implements OnInit {
 
-    @Input() size: 'large' | 'small' | "default";
+    @Input() size: 'large' | 'small' | "default" = "default";
 
     @Input() field: EruptFieldModel;
 

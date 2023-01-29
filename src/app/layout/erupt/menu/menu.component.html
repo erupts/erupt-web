@@ -12,7 +12,7 @@
             [nzRotate]="i.rotate"
         ></i>
         <i *ngSwitchCase="'iconfont'" class="sidebar-nav__item-icon" nz-icon [nzIconfont]="i.iconfont"></i>
-        <img *ngSwitchCase="'img'" [src]="i.value" class="sidebar-nav__item-icon sidebar-nav__item-img" />
+        <img *ngSwitchCase="'img'" [src]="i.value" class="sidebar-nav__item-icon sidebar-nav__item-img"/>
         <span *ngSwitchCase="'svg'" class="sidebar-nav__item-icon sidebar-nav__item-svg" [innerHTML]="i.value"></span>
         <i *ngSwitchDefault class="sidebar-nav__item-icon {{ i.value }}"></i>
     </ng-container>
@@ -26,21 +26,22 @@
             [class.sidebar-nav__open]="i.open"
         >
             <!-- link -->
-            <a
-                *ngIf="i.children.length === 0"
-                (click)="to(i)"
-                [attr.data-id]="i._id"
-                class="sidebar-nav__item-link"
-                [ngClass]="{ 'sidebar-nav__item-disabled': i.disabled }"
-                (mouseenter)="closeSubMenu()"
-            >
+            <a *ngIf="i.children.length === 0"
+               (click)="to(i)"
+               [attr.data-id]="i._id"
+               class="sidebar-nav__item-link"
+               [ngClass]="{ 'sidebar-nav__item-disabled': i.disabled }"
+               (mouseenter)="closeSubMenu()"
+               [href]="'#'+i.link">
                 <ng-container *ngIf="i._needIcon">
                     <ng-container *ngIf="!collapsed">
-                        <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
+                        <ng-template [ngTemplateOutlet]="icon"
+                                     [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
                     </ng-container>
                     <span *ngIf="collapsed" nz-tooltip nzTooltipPlacement="right" [nzTooltipTitle]="i.text">
-            <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
-          </span>
+                        <ng-template [ngTemplateOutlet]="icon"
+                                     [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
+                    </span>
                 </ng-container>
                 <span class="sidebar-nav__item-text" [innerHTML]="i._text" [attr.title]="i.text"></span>
             </a>
@@ -56,9 +57,11 @@
                 <i class="sidebar-nav__sub-arrow"></i>
             </a>
             <!-- badge -->
-            <nz-badge *ngIf="i.badge" [nzCount]="i.badge" [nzDot]="i.badgeDot" nzStandalone [nzOverflowCount]="9"></nz-badge>
+            <nz-badge *ngIf="i.badge" [nzCount]="i.badge" [nzDot]="i.badgeDot" nzStandalone
+                      [nzOverflowCount]="9"></nz-badge>
             <ul *ngIf="i.children.length > 0" class="sidebar-nav sidebar-nav__sub sidebar-nav__depth{{ i._depth }}">
-                <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: i.children }"></ng-template>
+                <ng-template [ngTemplateOutlet]="tree"
+                             [ngTemplateOutletContext]="{ $implicit: i.children }"></ng-template>
             </ul>
         </li>
     </ng-container>

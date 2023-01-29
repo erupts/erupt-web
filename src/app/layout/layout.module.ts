@@ -23,7 +23,7 @@ import {NzSpinModule} from 'ng-zorro-antd/spin';
 // eslint-disable-next-line import/order
 import {LayoutBlankComponent} from './blank/blank.component';
 
-const COMPONENTS = [LayoutDefaultComponent, LayoutBlankComponent];
+const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent];
 
 const HEADER_COMPONENTS = [
     HeaderSearchComponent,
@@ -43,28 +43,28 @@ const HEADER_COMPONENTS = [
 
 // passport
 import {LayoutPassportComponent} from './passport/passport.component';
-import {HeaderComponent} from "./default/header/header.component";
+import {HeaderComponent} from "./erupt/header/header.component";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzDrawerModule} from "ng-zorro-antd/drawer";
 import {NzDividerModule} from "ng-zorro-antd/divider";
-import {SidebarComponent} from "./default/sidebar/sidebar.component";
-import {HeaderSearchComponent} from "./default/header/components/search.component";
-import {HeaderFullScreenComponent} from "./default/header/components/fullscreen.component";
-import {HeaderUserComponent} from "./default/header/components/user.component";
-import {LayoutDefaultComponent} from "./default/default.component";
-import {SettingsComponent} from "./default/header/settings/settings.component";
-import {HeaderI18nComponent} from "./default/header/i18n.component";
-import {SettingDrawerItemComponent} from "./default/setting-drawer/setting-drawer-item.component";
-import {SettingDrawerComponent} from "./default/setting-drawer/setting-drawer.component";
+import {SidebarComponent} from "./erupt/sidebar/sidebar.component";
+import {HeaderSearchComponent} from "./erupt/header/components/search.component";
+import {HeaderFullScreenComponent} from "./erupt/header/components/fullscreen.component";
+import {HeaderUserComponent} from "./erupt/header/components/user.component";
+import {SettingsComponent} from "./erupt/header/settings/settings.component";
+import {HeaderI18nComponent} from "./erupt/header/i18n.component";
+import {SettingDrawerItemComponent} from "./erupt/setting-drawer/setting-drawer-item.component";
+import {SettingDrawerComponent} from "./erupt/setting-drawer/setting-drawer.component";
 import {NzAlertModule} from "ng-zorro-antd/alert";
 import {NzTableModule} from "ng-zorro-antd/table";
 import {SharedModule} from "@shared/shared.module";
 import {NzBackTopModule} from "ng-zorro-antd/back-top";
 import {ReuseTabModule} from "@delon/abc/reuse-tab";
-import {HeaderRTLComponent} from "./default/header/components/rtl.component";
-import {MenuComponent} from './default/menu/menu.component';
-import {BreadcrumbComponent} from './default/header/components/breadcrumb.component';
+import {HeaderRTLComponent} from "./erupt/header/components/rtl.component";
+import {MenuComponent} from './erupt/menu/menu.component';
+import {BreadcrumbComponent} from './erupt/header/components/breadcrumb.component';
 import {NzBreadCrumbModule} from "ng-zorro-antd/breadcrumb";
+import {LayoutEruptComponent} from "./erupt/erupt.component";
 
 const PASSPORT = [LayoutPassportComponent];
 
