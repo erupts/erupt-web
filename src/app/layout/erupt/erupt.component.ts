@@ -34,7 +34,6 @@ import {
 } from "@ant-design/icons-angular/icons";
 import {DataService} from "@shared/service/data.service";
 import {environment} from "@env/environment";
-import {SettingDrawerComponent} from "./setting-drawer/setting-drawer.component";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {generateMenuPath} from "@shared/util/erupt.util";
 import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
@@ -154,12 +153,12 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit(): void {
         // Setting componet for only developer
         if (!environment.production) {
-            setTimeout(() => {
-                const settingFactory = this.resolver.resolveComponentFactory(
-                    SettingDrawerComponent
-                );
-                this.settingHost.createComponent(settingFactory);
-            }, 22);
+            // setTimeout(() => {
+            //     const settingFactory = this.resolver.resolveComponentFactory(
+            //         SettingDrawerComponent
+            //     );
+            //     this.settingHost.createComponent(settingFactory);
+            // }, 22);
         }
     }
 

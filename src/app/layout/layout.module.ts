@@ -35,8 +35,6 @@ const HEADER_COMPONENTS = [
     SidebarComponent,
     SettingsComponent,
     HeaderI18nComponent,
-    SettingDrawerItemComponent,
-    SettingDrawerComponent,
     HeaderRTLComponent
     // SettingsComponent
 ];
@@ -53,8 +51,6 @@ import {HeaderFullScreenComponent} from "./erupt/header/components/fullscreen.co
 import {HeaderUserComponent} from "./erupt/header/components/user.component";
 import {SettingsComponent} from "./erupt/header/settings/settings.component";
 import {HeaderI18nComponent} from "./erupt/header/i18n.component";
-import {SettingDrawerItemComponent} from "./erupt/setting-drawer/setting-drawer-item.component";
-import {SettingDrawerComponent} from "./erupt/setting-drawer/setting-drawer.component";
 import {NzAlertModule} from "ng-zorro-antd/alert";
 import {NzTableModule} from "ng-zorro-antd/table";
 import {SharedModule} from "@shared/shared.module";
