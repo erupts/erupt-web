@@ -214,7 +214,7 @@ export class TableComponent implements OnInit {
         } else {
             _columns.push({
                 title: "",
-                width: "50px",
+                width: "33px",
                 type: "checkbox",
                 fixed: "left",
                 className: "text-center left-sticky-checkbox",

@@ -4,13 +4,13 @@ import {PreloadOptionalModules} from '@delon/theme';
 import {environment} from '@env/environment';
 import {LayoutPassportComponent} from "../layout/passport/passport.component";
 import {UserLoginComponent} from "../layout/passport/login/login.component";
-import {LayoutDefaultComponent} from "../layout/default/default.component";
 import {Exception403Component} from "./exception/403.component";
 import {Exception500Component} from "./exception/500.component";
 import {Exception404Component} from "./exception/404.component";
 import {HomeComponent} from "./home/home.component";
 import {FillComponent} from "./fill/fill.component";
 import {SiteComponent} from "./site/site.component";
+import {LayoutEruptComponent} from "../layout/erupt/erupt.component";
 
 // layout
 
@@ -34,10 +34,10 @@ let coreRouter: Routes = [
 ];
 
 const routes: Routes = [
-    // default
+    // erupt
     {
         path: "",
-        component: LayoutDefaultComponent,
+        component: LayoutEruptComponent,
         children: coreRouter
     },
     // passport

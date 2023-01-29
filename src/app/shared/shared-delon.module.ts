@@ -2,4 +2,4 @@ import {PageHeaderModule} from '@delon/abc/page-header';
 import {STModule} from '@delon/abc/st';
 import {SEModule} from "@delon/abc/se";
 
-export const SHARED_DELON_MODULES = [STModule, PageHeaderModule, SEModule];
+export const SHARED_DELON_MODULES = [STModule, SEModule];

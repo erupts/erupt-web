@@ -9,17 +9,14 @@ import ngJA from '@angular/common/locales/ja';
 import {Injectable} from '@angular/core';
 import {
     DelonLocaleService,
-    SettingsService,
     en_US as delonEnUS,
-    zh_CN as delonZhCn,
-    zh_TW as delonZhTw,
     ja_JP as delonJp,
     ko_KR as delonKo,
-    _HttpClient,
-    AlainI18nBaseService
+    SettingsService,
+    zh_CN as delonZhCn,
+    zh_TW as delonZhTw
 } from '@delon/theme';
-import {AlainConfigService} from '@delon/util/config';
-import {enUS as dfEn, zhCN as dfZhCn, zhTW as dfZhTw, ko as dfKo, ja as dfJp} from 'date-fns/locale';
+import {enUS as dfEn, ja as dfJp, ko as dfKo, zhCN as dfZhCn, zhTW as dfZhTw} from 'date-fns/locale';
 import {NzSafeAny} from 'ng-zorro-antd/core/types';
 import {
     en_US as zorroEnUS,
@@ -29,13 +26,8 @@ import {
     zh_CN as zorroZhCN,
     zh_TW as zorroZhTW
 } from 'ng-zorro-antd/i18n';
-import {Observable, tap, zip} from 'rxjs';
 import {WindowModel} from "@shared/model/window.model";
 import {HttpClient} from "@angular/common/http";
-import {catchError} from "rxjs/operators";
-import {error} from "@angular/compiler-cli/src/transformers/util";
-import {RestPath} from "../../build/erupt/model/erupt.enum";
-import {EruptAppData, EruptAppModel} from "@shared/model/erupt-app.model";
 
 interface LangConfigData {
     abbr: string;
