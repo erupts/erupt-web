@@ -117,7 +117,7 @@ export class UiBuildService {
                     break;
                 case ViewType.DATE:
                     obj.className = "date-col";
-                    obj.width = 90;
+                    obj.width = 110;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE) {
