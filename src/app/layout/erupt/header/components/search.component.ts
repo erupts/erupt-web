@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, HostBinding, Inject, Input} from '@angular/core';
 import {DataService} from "@shared/service/data.service";
 import {Router} from "@angular/router";
-import {MenuVo} from "@shared/model/erupt-menu";
+import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
 import {StatusService} from "@shared/service/status.service";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {generateMenuPath} from "@shared/util/erupt.util";
@@ -62,9 +62,7 @@ export class HeaderSearchComponent implements AfterViewInit {
     constructor(private el: ElementRef,
                 private router: Router,
                 @Inject(NzMessageService)
-                private msg: NzMessageService,
-                private statusService: StatusService,
-                private dataService: DataService) {
+                private msg: NzMessageService) {
     }
 
     ngAfterViewInit() {
@@ -77,6 +75,9 @@ export class HeaderSearchComponent implements AfterViewInit {
             return;
         }
         this.options = this.menu.filter((ml) => {
+            if (ml.type == MenuTypeEnum.button || ml.type == MenuTypeEnum.api) {
+                return false;
+            }
             return ml.name.toLocaleLowerCase().indexOf(value.toLowerCase()) !== -1;
         }) || [];
     }
