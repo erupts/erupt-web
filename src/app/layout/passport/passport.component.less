@@ -2,27 +2,6 @@
 
 :host {
     ::ng-deep {
-        .banner-bg {
-            height: 350px;
-            position: fixed;
-            left: 0;
-            right: 0;
-            z-index: 1;
-            background-color: #3776FF;
-            background-image: -webkit-linear-gradient(left, #3776FF, #548AFF);
-
-            .mask{
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                background-image: url(https://s2.kaoshixing.com/static/website-5.0/images/regist/header-bg-line.png);
-                background-repeat: no-repeat;
-                background-size: auto 600px;
-                background-position: top center;
-            }
-        }
 
         .container {
             display: flex;
@@ -41,9 +20,33 @@
             margin-bottom: 24px;
         }
 
+        .pass-form {
+            width: 360px;
+            margin: 8px;
+            padding: 32px 26px;
+            border-top: 6px solid @primary-color;
+            box-shadow: 0 2px 20px 0 rgb(0 0 0 / 10%);
+            background: rgba(255, 255, 255);
+            border-radius: 3px;
+            overflow: hidden;
+            //animation: showCard 2s alternate;
+            //animation-delay: 1s;
+        }
+
+        @keyframes showCard {
+            0% {
+                transform: skewX(10px);
+                //opacity: 0;
+            }
+            100% {
+                transform: skewX(1000px);
+                opacity: 1;
+            }
+        }
+
         @media (min-width: @screen-md-min) {
             .container {
-                //background-image: url('/image/login-bg.svg');
+                background-image: url(/assets/image/login-bg.svg);
                 background-repeat: no-repeat;
                 background-position: center 110px;
                 background-size: 100%;
@@ -75,11 +78,11 @@
         .title {
             font-size: 33px;
             color: @heading-color;
-            font-family: sohne-var, sohne-woff, Helvetica Neue, Arial, sans-serif;
-            //font-family: 'Myriad Pro', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            font-family: Courier New, Menlo, Monaco, Consolas, monospace;
             font-weight: 600;
             position: relative;
             vertical-align: middle;
+            //letter-spacing: 8px;
         }
 
         .desc {

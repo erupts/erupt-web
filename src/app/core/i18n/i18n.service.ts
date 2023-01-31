@@ -115,7 +115,7 @@ export class I18NService {
 
     loadLangData(success) {
         let xhr = new XMLHttpRequest();
-        xhr.open('GET', "assets/erupt.i18n.csv?v=123");
+        xhr.open('GET', "assets/erupt.i18n.csv");
         xhr.send();
         xhr.onreadystatechange = () => {
             let langMapping = {};
@@ -132,7 +132,6 @@ export class I18NService {
                     let row = it.split(',');
                     langMapping[row[0]] = row[index];
                 })
-
                 let extra = WindowModel.i18n[this.currentLang];
                 if (extra) {
                     for (let key in extra) {

@@ -1,9 +1,4 @@
-<div style="position: absolute;right: 5%;top: 5%">
-    <header-i18n style="font-size: 1.3em;color: #000" [showLangText]="false"></header-i18n>
-</div>
-<form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form" class="login-form">
-    <h3 style="margin-bottom: 26px;text-align: center">{{'login.account_pwd_login'|translate}}</h3>
-
+<form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
     <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
     <!--账号-->
     <nz-form-item>
@@ -59,7 +54,7 @@
         </nz-col>
     </nz-form-item>
 
-    <nz-form-item>
+    <nz-form-item style="margin-bottom: 0">
         <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="loading"
                 style="display:block;width: 100%;">{{'login.button'|translate}}
         </button>

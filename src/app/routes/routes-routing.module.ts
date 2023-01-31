@@ -13,7 +13,6 @@ import {SiteComponent} from "./site/site.component";
 import {LayoutEruptComponent} from "../layout/erupt/erupt.component";
 
 // layout
-
 let coreRouter: Routes = [
     {path: "", component: HomeComponent, data: {titleI18n: "global.home"}},
     {path: "exception", loadChildren: () => import( "./exception/exception.module").then(m => m.ExceptionModule)},
@@ -27,10 +26,26 @@ let coreRouter: Routes = [
     //     loadChildren: () => import( "../build/bi/bi.module").then(m => m.BiModule),
     //     pathMatch: "full"
     // },
-    {path: "tpl/:name", pathMatch: "full", loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)},
-    {path: 'tpl/:name/:name1', pathMatch: "full", loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)},
-    {path: 'tpl/:name/:name2/:name3', pathMatch: "full", loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)},
-    {path: 'tpl/:name/:name2/:name3/:name4', pathMatch: "full", loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)}
+    {
+        path: "tpl/:name",
+        pathMatch: "full",
+        loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)
+    },
+    {
+        path: 'tpl/:name/:name1',
+        pathMatch: "full",
+        loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)
+    },
+    {
+        path: 'tpl/:name/:name2/:name3',
+        pathMatch: "full",
+        loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)
+    },
+    {
+        path: 'tpl/:name/:name2/:name3/:name4',
+        pathMatch: "full",
+        loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)
+    }
 ];
 
 const routes: Routes = [
@@ -45,7 +60,7 @@ const routes: Routes = [
         path: "passport",
         component: LayoutPassportComponent,
         children: [
-            {path: "login", component: UserLoginComponent},
+            {path: "login", component: UserLoginComponent, data: {title: "Login"}},
         ]
     },
     // 全屏布局
@@ -56,9 +71,9 @@ const routes: Routes = [
     },
     // 单页不包裹Layout
     // {path: "lock", component: UserLockComponent, data: {title: "锁屏", titleI18n: "lock"}},
-    {path: "403", component: Exception403Component},
-    {path: "404", component: Exception404Component},
-    {path: "500", component: Exception500Component},
+    {path: "403", component: Exception403Component, data: {title: "403"}},
+    {path: "404", component: Exception404Component, data: {title: "404"}},
+    {path: "500", component: Exception500Component, data: {title: "500"}},
     {path: "**", redirectTo: ""}
 ];
 
