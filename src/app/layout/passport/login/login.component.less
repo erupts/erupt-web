@@ -1,36 +1,11 @@
 @import '@delon/theme/theme-default.less';
 
-@media (max-width: 368px) {
-    :host {
-        width: 300px !important;
-    }
-}
-
 :host {
     display: block;
     max-width: 368px;
     margin: 0 auto;
 
     ::ng-deep {
-
-        .login-form {
-            padding: 26px !important;
-            margin: 8px !important;
-            background: rgba(255, 255, 255);
-            border-radius: 3px;
-            box-shadow: 0 2px 20px 0 rgb(0 0 0 / 10%);
-        }
-
-        .ant-tabs .ant-tabs-bar {
-            border-bottom: 0;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-
-        .ant-tabs-tab {
-            font-size: 16px;
-            line-height: 24px;
-        }
 
         .ant-input-affix-wrapper .ant-input:not(:first-child) {
             padding-left: 8px;
@@ -46,20 +21,6 @@
 
             &:hover {
                 color: @primary-color;
-            }
-        }
-
-        .other {
-            text-align: left;
-            margin-top: 24px;
-            line-height: 22px;
-
-            nz-tooltip {
-                vertical-align: middle;
-            }
-
-            .register {
-                float: right;
             }
         }
 

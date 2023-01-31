@@ -1,4 +1,3 @@
-import {PageHeaderModule} from '@delon/abc/page-header';
 import {STModule} from '@delon/abc/st';
 import {SEModule} from "@delon/abc/se";
 
