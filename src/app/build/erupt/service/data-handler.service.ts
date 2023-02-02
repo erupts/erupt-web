@@ -13,14 +13,20 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzUploadFile} from "ng-zorro-antd/upload/interface";
 import {NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
+import {I18NService} from "@core";
 
 @Injectable()
 export class DataHandlerService {
 
+    private datePipe: DatePipe;
+
     constructor(
         @Inject(NzModalService) private modal: NzModalService,
-        @Inject(NzMessageService) private msg: NzMessageService) {
+        @Inject(NzMessageService) private msg: NzMessageService,
+        private i18n: I18NService) {
+        this.datePipe = i18n.datePipe;
     }
+
 
     initErupt(em: EruptBuildModel) {
         this.buildErupt(em.eruptModel);
@@ -145,8 +151,6 @@ export class DataHandlerService {
         }
         return queryCondition;
     }
-
-    private datePipe: DatePipe = new DatePipe("zh-cn");
 
     searchEruptToObject(eruptBuildModel: EruptBuildModel): object {
         const obj = this.eruptValueToObject(eruptBuildModel);
