@@ -1,6 +1,6 @@
 // 请参考：https://ng-alain.com/docs/i18n
 import {Platform} from '@angular/cdk/platform';
-import {registerLocaleData} from '@angular/common';
+import {DatePipe, registerLocaleData} from '@angular/common';
 import ngEn from '@angular/common/locales/en';
 import ngZh from '@angular/common/locales/zh';
 import ngZhTw from '@angular/common/locales/zh-Hant';
@@ -82,6 +82,10 @@ const LANGS: { [key: string]: LangConfigData } = {
     }
 };
 
+for (let key in LANGS) {
+    registerLocaleData(LANGS[key].ng);
+}
+
 
 @Injectable()
 export class I18NService {
@@ -90,16 +94,7 @@ export class I18NService {
 
     langMapping: { [key: string]: string };
 
-    constructor(
-        private http: HttpClient,
-        private settings: SettingsService,
-        private nzI18nService: NzI18nService,
-        private delonLocaleService: DelonLocaleService,
-        private platform: Platform
-    ) {
-        const defaultLang = this.getDefaultLang();
-        this.currentLang = LANGS[defaultLang] ? defaultLang : 'en-US'
-    }
+    public datePipe: DatePipe;
 
     private getDefaultLang(): string {
         if (this.settings.layout.lang) {
@@ -111,6 +106,19 @@ export class I18NService {
         let res = (navigator.languages ? navigator.languages[0] : null) || navigator.language;
         const arr = res.split('-');
         return arr.length <= 1 ? res : `${arr[0]}-${arr[1].toUpperCase()}`;
+    }
+
+    constructor(
+        private http: HttpClient,
+        private settings: SettingsService,
+        private nzI18nService: NzI18nService,
+        private delonLocaleService: DelonLocaleService,
+        private platform: Platform
+    ) {
+        const defaultLang = this.getDefaultLang();
+        this.currentLang = LANGS[defaultLang] ? defaultLang : 'en-US'
+        this.use(this.currentLang);
+        this.datePipe = new DatePipe(this.currentLang);
     }
 
     loadLangData(success) {
@@ -146,7 +154,6 @@ export class I18NService {
     }
 
     use(lang: string): void {
-        if (this.currentLang === lang) return;
         const item = LANGS[lang];
         registerLocaleData(item.ng, item.abbr);
         this.nzI18nService.setLocale(item.zorro);

@@ -1,10 +1,9 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Edit, EruptFieldModel} from "../../model/erupt-field.model";
 import {DateEnum, PickerMode} from "../../model/erupt.enum";
 import {DatePipe} from "@angular/common";
 import {DisabledDateFn, NzDateMode, PresetRanges} from "ng-zorro-antd/date-picker/standard-types";
 import * as moment from 'moment';
-import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
 
 @Component({
@@ -22,9 +21,9 @@ export class DateComponent implements OnInit {
 
     @Input() readonly: boolean;
 
-    edit: Edit;
+    private datePipe: DatePipe;
 
-    private datePipe: DatePipe = new DatePipe("zh-cn");
+    edit: Edit;
 
     dateRanges: PresetRanges = {};
 
@@ -37,7 +36,7 @@ export class DateComponent implements OnInit {
     rangeMode: NzDateMode;
 
     constructor(private i18n: I18NService) {
-
+        this.datePipe = i18n.datePipe;
     }
 
     ngOnInit() {
