@@ -21,11 +21,11 @@ let coreRouter: Routes = [
         path: "build",
         loadChildren: () => import('../build/erupt/erupt.module').then(m => m.EruptModule),
     },
-    // {
-    //     path: "bi/:name",
-    //     loadChildren: () => import( "../build/bi/bi.module").then(m => m.BiModule),
-    //     pathMatch: "full"
-    // },
+    {
+        path: "bi/:name",
+        loadChildren: () => import( "../build/bi/bi.module").then(m => m.BiModule),
+        pathMatch: "full"
+    },
     {
         path: "tpl/:name",
         pathMatch: "full",
