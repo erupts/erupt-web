@@ -8,7 +8,6 @@ import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {IframeHeight} from "@shared/util/window.util";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
-import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
@@ -58,9 +57,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     constructor(public dataService: DataService,
                 private differs: KeyValueDiffers,
-                @Inject(NzModalService) private modal: NzModalService,
                 private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) public tokenService: ITokenService,
+                @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService) {
     }
 

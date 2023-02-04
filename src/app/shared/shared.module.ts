@@ -15,6 +15,7 @@ import {SafeUrlPipe} from "@shared/pipe/safe-url.pipe";
 import {EruptPageHeaderComponent} from "@shared/component/erupt-page-header.component";
 import {DataService} from "@shared/service/data.service";
 import {I18nPipe} from "@shared/pipe/i18n.pipe";
+import {PageHeaderModule} from "@shared/page-header/page-header.module";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -39,7 +40,8 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
         ...SHARED_DELON_MODULES,
         ...SHARED_ZORRO_MODULES,
         // third libs
-        ...THIRDMODULES
+        ...THIRDMODULES,
+        PageHeaderModule
     ],
     declarations: [
         // your components

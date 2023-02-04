@@ -31,6 +31,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
 import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
 import {deepCopy} from "@delon/util";
+import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
 
 
 @Component({
@@ -180,7 +181,7 @@ export class TableComponent implements OnInit {
                 this.buildTableConfig();
                 let eruptModel = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
                 for (let it of eruptModel.eruptFieldModels) {
-                    if (it.eruptFieldJson.edit.search.value){
+                    if (it.eruptFieldJson.edit.search.value) {
                         this.searchErupt = eruptModel;
                         return;
                     }
@@ -269,6 +270,11 @@ export class TableComponent implements OnInit {
                             id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
                             behavior: Scene.EDIT,
                         },
+                        // nzFooter: [
+                        //     {
+                        //         label:"asdf"
+                        //     }
+                        // ],
                         nzOnOk: async () => {
                             let validateResult = model.getContentComponent().beforeSaveValidate();
                             if (validateResult) {
@@ -356,6 +362,7 @@ export class TableComponent implements OnInit {
                     this.modal.create({
                         nzWrapClassName: "modal-xxl",
                         nzStyle: {top: "30px"},
+                        nzBodyStyle: {padding: "18px"},
                         nzMaskClosable: false,
                         nzKeyboard: false,
                         nzTitle: drill.title,

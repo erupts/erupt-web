@@ -4,6 +4,7 @@ import {BiDataService} from "../service/data.service";
 import {HandlerService} from "../service/handler.service";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {Plot} from "@antv/g2plot/src/core/plot";
+import {Area, Bar, Column, Funnel, Line, Pie, Radar, Rose, Scatter, Waterfall, WordCloud} from "@antv/g2plot";
 
 @Component({
     selector: 'bi-chart',
@@ -19,7 +20,7 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     @Output() buildDimParam = new EventEmitter();
 
-    plot: Plot<any>;
+    plot;
 
     chartType = ChartType;
 
@@ -129,7 +130,7 @@ export class ChartComponent implements OnInit, OnDestroy {
         let props = {
             data: data,
             xField: x,
-            yField: y,
+            yField: y
             // theme: 'dark',
         };
         if (this.chart.chartOption) {
@@ -137,116 +138,103 @@ export class ChartComponent implements OnInit, OnDestroy {
         }
 
         switch (this.chart.type) {
-            // case ChartType.Line:
-            //     this.plot = new Line(this.chart.code, Object.assign(props, {
-            //         seriesField: series,
-            //     }));
-            //     break;
-            // case ChartType.StepLine:
-            //     this.plot = new StepLine(this.chart.code, Object.assign(props, {
-            //         seriesField: series
-            //     }));
-            //     break;
-            // case ChartType.Bar:
-            //     this.plot = new GroupBar(this.chart.code, Object.assign(props, {
-            //         groupField: series,
-            //     }));
-            //     break;
-            // case ChartType.PercentStackedBar:
-            //     // @ts-ignore
-            //     this.plot = new PercentageStackBar(this.chart.code, Object.assign(props, {
-            //         stackField: series,
-            //     }));
-            //     break;
-            // case ChartType.Waterfall:
-            //     this.plot = new Waterfall(this.chart.code, Object.assign(props, {}));
-            //     break;
-            // case ChartType.Column:
-            //     this.plot = new GroupColumn(this.chart.code, Object.assign(props, {
-            //         groupField: series
-            //     }));
-            //     break;
-            // case ChartType.StackedColumn:
-            //     this.plot = new StackColumn(this.chart.code, Object.assign(props, {
-            //         stackField: series
-            //     }));
-            //     break;
-            // case ChartType.Area:
-            //     if (series) {
-            //         this.plot = new StackArea(this.chart.code, Object.assign(props, {
-            //             stackField: series
-            //         }));
-            //     } else {
-            //         this.plot = new Area(this.chart.code, props);
-            //     }
-            //     break;
-            // case ChartType.PercentageArea:
-            //     // @ts-ignore
-            //     this.plot = new PercentageStackArea(this.chart.code, Object.assign(props, {
-            //         stackField: series,
-            //     }));
-            //     break;
-            // case ChartType.Pie:
-            //     this.plot = new Pie(this.chart.code, Object.assign(props, {
-            //         angleField: y,
-            //         colorField: x,
-            //     }));
-            //     break;
-            // case ChartType.Ring:
-            //     this.plot = new Ring(this.chart.code, Object.assign(props, {
-            //         angleField: y,
-            //         colorField: x,
-            //     }));
-            //     break;
-            // case ChartType.Rose:
-            //     this.plot = new Rose(this.chart.code, Object.assign(props, {
-            //         radiusField: y,
-            //         categoryField: x,
-            //         colorField: x,
-            //         stackField: series,
-            //     }));
-            //     break;
-            // case ChartType.Funnel:
-            //     this.plot = new Funnel(this.chart.code, Object.assign(props, {}));
-            //     break;
-            // case ChartType.Radar:
-            //     this.plot = new Radar(this.chart.code, Object.assign(props, {
-            //         angleField: x,
-            //         radiusField: y,
-            //         seriesField: series,
-            //         line: {
-            //             visible: true,
-            //         },
-            //         point: {
-            //             visible: true,
-            //             shape: 'circle',
-            //         },
-            //     }));
-            //     break;
-            // case ChartType.Scatter:
-            //     this.plot = new Scatter(this.chart.code, Object.assign(props, {
-            //         colorField: series
-            //     }));
-            //     break;
-            // case ChartType.Bubble:
-            //     this.plot = new Bubble(this.chart.code, Object.assign(props, {
-            //         colorField: series,
-            //         sizeField: size
-            //     }));
-            //     break;
-            // //TODO 升级G2plot版本再添加如下类型图表支持
-            // case ChartType.WordCloud:
-            //     this.plot = new WordCloud(this.chart.code, Object.assign(props, {
-            //         wordField: x,
-            //         weightField: y,
-            //         wordStyle: {
-            //             fontSize: [20, 100],
-            //             // color: (word, weight) => {
-            //             //     return arr[Math.floor(Math.random() * (arr.length - 1))];
-            //             // },
-            //         },
-            //     }));
-            //     break;
+            case ChartType.Line:
+                this.plot = new Line(this.chart.code, Object.assign(props, {
+                    seriesField: series,
+                }));
+                break;
+            case ChartType.StepLine:
+                this.plot = new Line(this.chart.code, Object.assign(props, {
+                    seriesField: series,
+                    stepType: 'vh',
+                }));
+                break;
+            case ChartType.Bar:
+                this.plot = new Bar(this.chart.code, Object.assign(props, {
+                    seriesField: series,
+                }));
+                break;
+            case ChartType.PercentStackedBar:
+                this.plot = new Bar(this.chart.code, Object.assign(props, {
+                    stackField: series,
+                    isPercent: true,
+                    isStack: true
+                }));
+                break;
+            case ChartType.Waterfall:
+                this.plot = new Waterfall(this.chart.code, Object.assign(props, {}));
+                break;
+            case ChartType.Column:
+                this.plot = new Column(this.chart.code, Object.assign(props, {
+                    seriesField: series
+                }));
+                break;
+            case ChartType.StackedColumn:
+                this.plot = new Column(this.chart.code, Object.assign(props, {
+                    isStack: true,
+                    seriesField: series
+                }));
+                break;
+            case ChartType.Area:
+                this.plot = new Area(this.chart.code, Object.assign(props, {
+                    seriesField: series
+                }));
+                break;
+            case ChartType.PercentageArea:
+                this.plot = new Area(this.chart.code, Object.assign(props, {
+                    seriesField: series,
+                    isPercent: true,
+                }));
+                break;
+            case ChartType.Pie:
+                this.plot = new Pie(this.chart.code, Object.assign(props, {
+                    angleField: y,
+                    colorField: x,
+                }));
+                break;
+            case ChartType.Ring:
+                this.plot = new Pie(this.chart.code, Object.assign(props, {
+                    angleField: y,
+                    colorField: x,
+                    innerRadius: 0.6,
+                    radius: 1,
+                }));
+                break;
+            case ChartType.Rose:
+                this.plot = new Rose(this.chart.code, Object.assign(props, {
+                    seriesField: series
+                }));
+                break;
+            case ChartType.Funnel:
+                this.plot = new Funnel(this.chart.code, Object.assign(props, {
+                    seriesField: series
+                }));
+                break;
+            case ChartType.Radar:
+                this.plot = new Radar(this.chart.code, Object.assign(props, {
+                    seriesField: series,
+                }));
+                break;
+            case ChartType.Scatter:
+                this.plot = new Scatter(this.chart.code, Object.assign(props, {
+                    colorField: series
+                }));
+                break;
+            case ChartType.Bubble:
+                this.plot = new Scatter(this.chart.code, Object.assign(props, {
+                    colorField: series,
+                    sizeField: size
+                }));
+                break;
+
+
+            case ChartType.WordCloud:
+                this.plot = new WordCloud(this.chart.code, Object.assign(props, {
+                    wordField: x,
+                    weightField: y,
+                    wordStyle: {},
+                }));
+                break;
             // case ChartType.Heatmap:
             //     this.plot = new Heatmap(this.chart.code, Object.assign(props, {
             //         colorField: series,

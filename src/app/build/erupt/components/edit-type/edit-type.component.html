@@ -1,17 +1,17 @@
 <div nz-row [nzGutter]="16">
-    <form nz-form [nzLayout]="layout" se-container style="width: 100%">
+    <form nz-form [nzLayout]="layout" se-container style="width: 100%" class="erupt-form">
         <ng-container *ngFor="let field of eruptModel.eruptFieldModels;">
             <ng-container
                     *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.show&&field.eruptFieldJson.edit.title">
                 <ng-container [ngSwitch]="field.eruptFieldJson.edit.type">
                     <ng-container *ngSwitchCase="editType.INPUT">
                         <ng-container *ngIf="field.eruptFieldJson.edit.inputType.fullSpan">
-                            <div class="col-div" nz-col [nzSpan]="24">
+                            <div nz-col [nzSpan]="24">
                                 <ng-container [ngTemplateOutlet]="inputSe"></ng-container>
                             </div>
                         </ng-container>
                         <ng-container *ngIf="!field.eruptFieldJson.edit.inputType.fullSpan">
-                            <div class="col-div" nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                            <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                                  [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
                                 <ng-container [ngTemplateOutlet]="inputSe"></ng-container>
                             </div>
@@ -91,7 +91,7 @@
                     </ng-container>
                     <!-- number-->
                     <ng-container *ngSwitchCase="editType.NUMBER">
-                        <div class="col-div" nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                              [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
@@ -151,7 +151,7 @@
                                 </div>
                             </ng-container>
                             <ng-container *ngSwitchCase="choiceEnum.SELECT">
-                                <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                                <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                                      [nzLg]="col.lg"
                                      [nzXl]="col.xl"
                                      [nzXXl]="col.xxl">
@@ -197,7 +197,7 @@
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.SLIDER">
-                        <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl" [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
@@ -216,7 +216,7 @@
                     </ng-container>
                     <!--date-->
                     <ng-container *ngSwitchCase="editType.DATE">
-                        <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title" [required]="field.eruptFieldJson.edit.notNull"
@@ -227,7 +227,7 @@
                     </ng-container>
                     <!--reference-->
                     <ng-container *ngSwitchCase="editType.REFERENCE_TREE || editType.REFERENCE_TABLE">
-                        <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
@@ -240,7 +240,7 @@
                     </ng-container>
                     <!--bool-->
                     <ng-container *ngSwitchCase="editType.BOOLEAN">
-                        <div class="col-div" nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
@@ -266,11 +266,6 @@
                                     </div>
                                 </nz-radio-group>
                             </se>
-                        </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.DIVIDE">
-                        <div nz-col [nzSpan]="24">
-                            <nz-divider [nzDashed]="false" [nzText]="field.eruptFieldJson.edit.title"></nz-divider>
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.ATTACHMENT">
@@ -321,7 +316,7 @@
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.AUTO_COMPLETE">
-                        <div nz-col class="col-div" [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
@@ -372,7 +367,7 @@
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.EMPTY">
-                        <div class="col-div" nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
 
@@ -399,6 +394,11 @@
                                                    [language]="field.eruptFieldJson.edit.codeEditType.language">
                                 </erupt-code-editor>
                             </se>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.DIVIDE">
+                        <div nz-col [nzSpan]="24" style="margin-bottom: 0">
+                            <nz-divider [nzDashed]="false" [nzText]="field.eruptFieldJson.edit.title"></nz-divider>
                         </div>
                     </ng-container>
                     <ng-container *ngSwitchDefault>

@@ -1,8 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
-import {ChoiceEnum, DateEnum, EditType, Scene} from "../../model/erupt.enum";
+import {ChoiceEnum, DateEnum, EditType} from "../../model/erupt.enum";
 import {colRules} from "@shared/model/util.model";
-import {EruptFieldModel} from "../../model/erupt-field.model";
 
 @Component({
     selector: 'erupt-search',

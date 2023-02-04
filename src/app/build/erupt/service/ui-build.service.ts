@@ -44,7 +44,7 @@ export class UiBuildService {
                 titleWidth += 20;
             }
             if (view.desc) {
-                titleWidth += 16;
+                titleWidth += 18;
             }
             let edit = view.eruptFieldModel.eruptFieldJson.edit;
             let obj: STColumn = {
@@ -316,8 +316,7 @@ export class UiBuildService {
                     break;
                 case ViewType.IMAGE:
                     obj.type = "link";
-                    obj.width = "90px";
-                    obj.className = "text-center p-sm";
+                    obj.className = "text-center p-mini";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
@@ -327,7 +326,9 @@ export class UiBuildService {
                             } else {
                                 img = (<string>item[view.column]).split("|")[0];
                             }
-                            return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
+                            return `<div style="text-align: center;display:table-cell;">
+                                        <img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" alt=""/>
+                                    </div>`;
                         } else {
                             return '';
                         }
