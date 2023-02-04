@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {EruptField, EruptFieldModel} from "../../model/erupt-field.model";
+import {EruptFieldModel} from "../../model/erupt-field.model";
 
 @Component({
     selector: 'erupt-search-se',

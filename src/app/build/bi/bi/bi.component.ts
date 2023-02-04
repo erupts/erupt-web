@@ -249,6 +249,10 @@ export class BiComponent implements OnInit, OnDestroy {
             dimension.$value = null;
             dimension.$viewValue = null;
         }
+        this.query({
+            pageIndex: 1,
+            pageSize: this.biTable.size
+        })
     }
 
     //导出报表数据

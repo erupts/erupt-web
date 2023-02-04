@@ -114,7 +114,7 @@
                         <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>
                     </div>
                 </ng-container>
-                <st #st
+                <st #st resizable
                     [widthMode]="{strictBehavior:'wrap'}"
                     [data]="stConfig.url" [columns]="columns"
                     [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
