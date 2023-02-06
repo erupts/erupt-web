@@ -41,7 +41,7 @@
         "@angular/platform-browser": "^14.2.0",
         "@angular/platform-browser-dynamic": "^14.2.0",
         "@angular/router": "^14.2.0",
-        "@antv/g2plot": "^2.4.23",
+        "@antv/g2plot": "^2.3.40",
         "@delon/abc": "^14.3.0",
         "@delon/auth": "^14.3.0",
         "@delon/cache": "^14.3.0",
