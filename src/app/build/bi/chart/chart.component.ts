@@ -3,7 +3,6 @@ import {Bi, Chart, ChartType} from "../model/bi.model";
 import {BiDataService} from "../service/data.service";
 import {HandlerService} from "../service/handler.service";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {Plot} from "@antv/g2plot/src/core/plot";
 import {Area, Bar, Column, Funnel, Line, Pie, Radar, Rose, Scatter, Waterfall, WordCloud} from "@antv/g2plot";
 
 @Component({
@@ -130,7 +129,10 @@ export class ChartComponent implements OnInit, OnDestroy {
         let props = {
             data: data,
             xField: x,
-            yField: y
+            yField: y,
+            legend: {
+                position: "bottom"
+            }
             // theme: 'dark',
         };
         if (this.chart.chartOption) {
@@ -139,22 +141,27 @@ export class ChartComponent implements OnInit, OnDestroy {
 
         switch (this.chart.type) {
             case ChartType.Line:
+                // @ts-ignore
                 this.plot = new Line(this.chart.code, Object.assign(props, {
                     seriesField: series,
+                    renderer: "canvas",
                 }));
                 break;
             case ChartType.StepLine:
+                // @ts-ignore
                 this.plot = new Line(this.chart.code, Object.assign(props, {
                     seriesField: series,
                     stepType: 'vh',
                 }));
                 break;
             case ChartType.Bar:
+                // @ts-ignore
                 this.plot = new Bar(this.chart.code, Object.assign(props, {
                     seriesField: series,
                 }));
                 break;
             case ChartType.PercentStackedBar:
+                // @ts-ignore
                 this.plot = new Bar(this.chart.code, Object.assign(props, {
                     stackField: series,
                     isPercent: true,
@@ -162,37 +169,47 @@ export class ChartComponent implements OnInit, OnDestroy {
                 }));
                 break;
             case ChartType.Waterfall:
-                this.plot = new Waterfall(this.chart.code, Object.assign(props, {}));
+                // @ts-ignore
+                this.plot = new Waterfall(this.chart.code, Object.assign(props, {
+                    legend: false
+                }));
                 break;
             case ChartType.Column:
+                // @ts-ignore
                 this.plot = new Column(this.chart.code, Object.assign(props, {
+                    isGroup: true,
                     seriesField: series
                 }));
                 break;
             case ChartType.StackedColumn:
+                // @ts-ignore
                 this.plot = new Column(this.chart.code, Object.assign(props, {
                     isStack: true,
                     seriesField: series
                 }));
                 break;
             case ChartType.Area:
+                // @ts-ignore
                 this.plot = new Area(this.chart.code, Object.assign(props, {
                     seriesField: series
                 }));
                 break;
             case ChartType.PercentageArea:
+                // @ts-ignore
                 this.plot = new Area(this.chart.code, Object.assign(props, {
                     seriesField: series,
                     isPercent: true,
                 }));
                 break;
             case ChartType.Pie:
+                // @ts-ignore
                 this.plot = new Pie(this.chart.code, Object.assign(props, {
                     angleField: y,
                     colorField: x,
                 }));
                 break;
             case ChartType.Ring:
+                // @ts-ignore
                 this.plot = new Pie(this.chart.code, Object.assign(props, {
                     angleField: y,
                     colorField: x,
@@ -201,34 +218,43 @@ export class ChartComponent implements OnInit, OnDestroy {
                 }));
                 break;
             case ChartType.Rose:
+                // @ts-ignore
                 this.plot = new Rose(this.chart.code, Object.assign(props, {
-                    seriesField: series
+                    seriesField: series,
+                    isStack: !!series,
                 }));
                 break;
             case ChartType.Funnel:
+                // @ts-ignore
                 this.plot = new Funnel(this.chart.code, Object.assign(props, {
                     seriesField: series
                 }));
                 break;
             case ChartType.Radar:
+                // @ts-ignore
                 this.plot = new Radar(this.chart.code, Object.assign(props, {
                     seriesField: series,
+                    point: {
+                        size: 2,
+                    },
                 }));
                 break;
             case ChartType.Scatter:
+                // @ts-ignore
                 this.plot = new Scatter(this.chart.code, Object.assign(props, {
                     colorField: series
                 }));
                 break;
             case ChartType.Bubble:
+                // @ts-ignore
                 this.plot = new Scatter(this.chart.code, Object.assign(props, {
                     colorField: series,
                     sizeField: size
                 }));
                 break;
 
-
             case ChartType.WordCloud:
+                // @ts-ignore
                 this.plot = new WordCloud(this.chart.code, Object.assign(props, {
                     wordField: x,
                     weightField: y,
