@@ -67,10 +67,15 @@
     </ng-container>
 </ng-template>
 <ul class="sidebar-nav">
-    <ng-container *ngFor="let group of list">
-        <li class="sidebar-nav__item sidebar-nav__group-title" *ngIf="group.group">
-            <span [innerHTML]="group._text"></span>
-        </li>
-        <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: group.children }"></ng-template>
+    <ng-container *ngIf="loading">
+        <nz-skeleton [nzParagraph]="{ rows: 12 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>
+    </ng-container>
+    <ng-container *ngIf="!loading">
+        <ng-container *ngFor="let group of list">
+            <li class="sidebar-nav__item sidebar-nav__group-title" *ngIf="group.group">
+                <span [innerHTML]="group._text"></span>
+            </li>
+            <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: group.children }"></ng-template>
+        </ng-container>
     </ng-container>
 </ul>

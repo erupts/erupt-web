@@ -216,6 +216,7 @@ export class TableComponent implements OnInit {
             _columns.push({
                 title: "",
                 width: "40px",
+                resizable: false,
                 type: "checkbox",
                 fixed: "left",
                 className: "text-center left-sticky-checkbox",
@@ -386,7 +387,8 @@ export class TableComponent implements OnInit {
                 fixed: "right",
                 width: tableOperators.length * 32 + 18,
                 className: "text-center",
-                buttons: tableOperators
+                buttons: tableOperators,
+                resizable: false
             });
         }
         this.columns = _columns;

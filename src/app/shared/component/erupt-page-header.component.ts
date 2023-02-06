@@ -6,10 +6,10 @@ import {SettingsService} from "@delon/theme";
     selector: 'erupt-page-header',
     template: `
         <ng-container *ngIf="settingSrv.layout['breadcrumbs']">
-<!--            <div style="height: 16px"></div>-->
-            <page-header [syncTitle]="" [autoTitle]="false" homeI18n="global.home" [title]="null" *ngIf="!isFillLayout">
-                <div class="desc" *ngIf="desc" [innerHTML]="desc|safeHtml"></div>
-            </page-header>
+            <div style="height: 16px"></div>
+<!--            <page-header [syncTitle]="" [autoTitle]="false" homeI18n="global.home" [title]="null" *ngIf="!isFillLayout">-->
+<!--                <div class="desc" *ngIf="desc" [innerHTML]="desc|safeHtml"></div>-->
+<!--            </page-header>-->
         </ng-container>
         <ng-container *ngIf="!settingSrv.layout['breadcrumbs']">
             <div style="height: 16px"></div>
