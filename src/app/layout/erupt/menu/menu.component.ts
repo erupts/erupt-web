@@ -56,6 +56,8 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     list: Nav[] = [];
 
+    loading: boolean = true;
+
     @Input() @InputBoolean() disabledAcl = false;
 
     @Input() @InputBoolean() autoCloseUnderPad = true;
@@ -252,6 +254,7 @@ export class MenuComponent implements OnInit, OnDestroy {
                 }
             });
             this.fixHide(data);
+            this.loading = false;
             this.list = data.filter((w: Nav) => w._hidden !== true);
             cdr.detectChanges();
         });
