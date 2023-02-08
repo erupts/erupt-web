@@ -11,7 +11,14 @@ import {
     ViewContainerRef
 } from "@angular/core";
 import {DOCUMENT} from "@angular/common";
-import {ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router} from "@angular/router";
+import {
+    ActivatedRoute,
+    NavigationCancel,
+    NavigationEnd,
+    NavigationError,
+    RouteConfigLoadStart,
+    Router
+} from "@angular/router";
 
 import {Subscription} from "rxjs";
 import {ScrollService, updateHostClass} from "@delon/util";
@@ -190,6 +197,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         });
         this.data.getMenu().subscribe(res => {
             this.menu = res;
+
             // this.statusService.menus = res;
             function generateTree(menus, pid): Menu[] {
                 let result: Menu[] = [];
@@ -225,6 +233,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 hideInBreadcrumb: true,
                 hide: true,
                 text: "首页",
+                // icon: "home",
                 i18n: "global.home",
                 link: "/"
             }]);

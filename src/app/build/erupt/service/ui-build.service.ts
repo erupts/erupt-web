@@ -5,7 +5,6 @@ import {MarkdownComponent} from "../components/markdown/markdown.component";
 import {CodeEditorComponent} from "../components/code-editor/code-editor.component";
 import {DataService} from "@shared/service/data.service";
 import {Inject, Injectable} from "@angular/core";
-import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
 import {STColumn, STData} from "@delon/abc/st";
 import {NzModalService} from "ng-zorro-antd/modal";

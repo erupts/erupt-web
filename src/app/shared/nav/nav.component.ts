@@ -28,31 +28,34 @@ import {BooleanInput, InputBoolean, InputNumber, NumberInput} from '@delon/util/
 import {NzAffixComponent} from 'ng-zorro-antd/affix';
 import type {NzSafeAny} from 'ng-zorro-antd/core/types';
 import {I18NService} from "@core";
+import {MenuIcon} from "@delon/theme/src/services/menu/interface";
 
 interface PageHeaderPath {
     title?: string;
     link?: string[];
+    icon?: { type: string, value: string } | null;
 }
 
 @Component({
-    selector: 'page-header',
-    exportAs: 'pageHeader',
-    templateUrl: './page-header.component.html',
+    selector: 'erupt-nav',
+    templateUrl: './nav.component.html',
+    styleUrls: ['./nav.component.less'],
     preserveWhitespaces: false,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class PageHeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
-    static ngAcceptInputType_loading: BooleanInput;
-    static ngAcceptInputType_autoTitle: BooleanInput;
-    static ngAcceptInputType_syncTitle: BooleanInput;
-    static ngAcceptInputType_fixed: BooleanInput;
+export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
     private destroy$ = new Subject<void>();
+
     @ViewChild('conTpl', {static: false}) private conTpl!: ElementRef;
+
     @ViewChild('affix', {static: false}) private affix!: NzAffixComponent;
+
     inited = false;
+
     isBrowser = true;
+
     dir: Direction = 'ltr';
 
     private get menus(): Menu[] {
@@ -154,12 +157,17 @@ export class PageHeaderComponent implements OnInit, OnChanges, AfterViewInit, On
             if (typeof item.hideInBreadcrumb !== 'undefined' && item.hideInBreadcrumb) return;
             let title = item.text;
             if (item.i18n && this.i18nSrv) title = this.i18n.fanyi(item.i18n);
-            paths.push({title, link: (item.link && [item.link]) as string[]});
+            paths.push({
+                title: title,
+                link: (item.link && [item.link]) as string[],
+                icon: item.icon ? {type: 'class', value: item.icon['value']} : null
+            });
         });
         // add home
         if (this.home) {
             paths.splice(0, 0, {
-                title: (this.homeI18n && this.i18nSrv && this.i18n.fanyi(this.homeI18n)) || this.home,
+                title: null,
+                icon: {type: "icon", value: 'home'},
                 link: [this.homeLink!]
             });
         }
