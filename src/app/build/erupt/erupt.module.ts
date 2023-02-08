@@ -31,7 +31,6 @@ import {TagsComponent} from "./components/tags/tags.component";
 import {CardComponent} from './components/card/card.component';
 import {QRModule} from "@delon/abc/qr";
 import {TagSelectModule} from "@delon/abc/tag-select";
-import {NzI18nModule} from "ng-zorro-antd/i18n";
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import { SearchComponent } from './components/search/search.component';
 import { AutoCompleteComponent } from './components/auto-complete/auto-complete.component';
@@ -46,7 +45,6 @@ import {SearchSeComponent} from "./components/search-se/search-se.component";
         SharedModule,
         HttpClientModule,
         EruptRoutingModule,
-        NzI18nModule,
         UEditorModule.forRoot({
             js: [
                 './assets/ueditor/ueditor.config.js',

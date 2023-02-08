@@ -7,9 +7,9 @@ import {SettingsService} from "@delon/theme";
     template: `
         <ng-container *ngIf="settingSrv.layout['breadcrumbs']">
             <div style="height: 16px"></div>
-<!--            <page-header [syncTitle]="" [autoTitle]="false" homeI18n="global.home" [title]="null" *ngIf="!isFillLayout">-->
-<!--                <div class="desc" *ngIf="desc" [innerHTML]="desc|safeHtml"></div>-->
-<!--            </page-header>-->
+            <erupt-nav  [title]="null" >
+                <div class="desc" *ngIf="desc" [innerHTML]="desc|safeHtml"></div>
+            </erupt-nav>
         </ng-container>
         <ng-container *ngIf="!settingSrv.layout['breadcrumbs']">
             <div style="height: 16px"></div>

@@ -15,7 +15,8 @@ import {SafeUrlPipe} from "@shared/pipe/safe-url.pipe";
 import {EruptPageHeaderComponent} from "@shared/component/erupt-page-header.component";
 import {DataService} from "@shared/service/data.service";
 import {I18nPipe} from "@shared/pipe/i18n.pipe";
-import {PageHeaderModule} from "@shared/page-header/page-header.module";
+import {NavComponent} from "@shared/nav/nav.component";
+import {NzAffixModule} from "ng-zorro-antd/affix";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -24,7 +25,7 @@ const THIRDMODULES: Array<Type<any>> = [];
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, EruptPageHeaderComponent];
+const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, EruptPageHeaderComponent,NavComponent];
 const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, I18nPipe];
 
 // #endregion
@@ -41,7 +42,7 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
         ...SHARED_ZORRO_MODULES,
         // third libs
         ...THIRDMODULES,
-        PageHeaderModule
+        NzAffixModule
     ],
     declarations: [
         // your components
