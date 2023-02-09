@@ -12,7 +12,6 @@ import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {SafeHtmlPipe} from "@shared/pipe/safe-html.pipe";
 import {SafeScriptPipe} from "@shared/pipe/safe-script.pipe";
 import {SafeUrlPipe} from "@shared/pipe/safe-url.pipe";
-import {EruptPageHeaderComponent} from "@shared/component/erupt-page-header.component";
 import {DataService} from "@shared/service/data.service";
 import {I18nPipe} from "@shared/pipe/i18n.pipe";
 import {NavComponent} from "@shared/nav/nav.component";
@@ -25,7 +24,7 @@ const THIRDMODULES: Array<Type<any>> = [];
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, EruptPageHeaderComponent,NavComponent];
+const COMPONENTS: Array<Type<any>> = [EruptIframeComponent,NavComponent];
 const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, I18nPipe];
 
 // #endregion

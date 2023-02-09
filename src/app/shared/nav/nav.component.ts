@@ -33,7 +33,7 @@ import {MenuIcon} from "@delon/theme/src/services/menu/interface";
 interface PageHeaderPath {
     title?: string;
     link?: string[];
-    icon?: { type: string, value: string } | null;
+    icon?: string;
 }
 
 @Component({
@@ -47,10 +47,6 @@ interface PageHeaderPath {
 export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
     private destroy$ = new Subject<void>();
-
-    @ViewChild('conTpl', {static: false}) private conTpl!: ElementRef;
-
-    @ViewChild('affix', {static: false}) private affix!: NzAffixComponent;
 
     inited = false;
 
@@ -127,12 +123,6 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
             fixed: false,
             fixedOffsetTop: 64
         });
-        settings.notify
-            .pipe(
-                takeUntil(this.destroy$),
-                filter(w => this.affix && w.type === 'layout' && w.name === 'collapsed')
-            )
-            .subscribe(() => this.affix.updatePosition({} as NzSafeAny));
 
         merge(menuSrv.change, router.events.pipe(filter(ev => ev instanceof NavigationEnd)), i18nSrv.change)
             .pipe(
@@ -160,14 +150,14 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
             paths.push({
                 title: title,
                 link: (item.link && [item.link]) as string[],
-                icon: item.icon ? {type: 'class', value: item.icon['value']} : null
+                icon: item.icon ? item.icon['value'] : null
             });
         });
         // add home
         if (this.home) {
             paths.splice(0, 0, {
-                title: null,
-                icon: {type: "icon", value: 'home'},
+                title: this.home,
+                icon: 'fa fa-home',
                 link: [this.homeLink!]
             });
         }
@@ -196,14 +186,6 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
         return this;
     }
 
-    checkContent(): void {
-        if (isEmpty(this.conTpl.nativeElement)) {
-            this.renderer.setAttribute(this.conTpl.nativeElement, 'hidden', '');
-        } else {
-            this.renderer.removeAttribute(this.conTpl.nativeElement, 'hidden');
-        }
-    }
-
     ngOnInit(): void {
         this.dir = this.directionality.value;
         this.directionality.change?.pipe(takeUntil(this.destroy$)).subscribe((direction: Direction) => {
@@ -215,7 +197,6 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
     }
 
     ngAfterViewInit(): void {
-        this.checkContent();
     }
 
     ngOnChanges(): void {
@@ -228,4 +209,5 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
         this.destroy$.next();
         this.destroy$.complete();
     }
+
 }
