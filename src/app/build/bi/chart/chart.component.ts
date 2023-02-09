@@ -130,6 +130,7 @@ export class ChartComponent implements OnInit, OnDestroy {
             data: data,
             xField: x,
             yField: y,
+            appendPadding: 16,
             legend: {
                 position: "bottom"
             }
@@ -221,7 +222,16 @@ export class ChartComponent implements OnInit, OnDestroy {
                 // @ts-ignore
                 this.plot = new Rose(this.chart.code, Object.assign(props, {
                     seriesField: series,
-                    isStack: !!series,
+                    isGroup: !!series,
+                    radius: 0.9,
+                    label: {
+                        offset: -15,
+                    },
+                    interactions: [
+                        {
+                            type: 'element-active',
+                        }
+                    ]
                 }));
                 break;
             case ChartType.Funnel:
@@ -249,7 +259,9 @@ export class ChartComponent implements OnInit, OnDestroy {
                 // @ts-ignore
                 this.plot = new Scatter(this.chart.code, Object.assign(props, {
                     colorField: series,
-                    sizeField: size
+                    sizeField: size,
+                    size: [3, 30],
+                    shape: 'circle'
                 }));
                 break;
 
