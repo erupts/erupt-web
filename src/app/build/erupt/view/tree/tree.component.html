@@ -12,7 +12,7 @@
                 <i nz-icon nzType="search"></i>
             </ng-template>
             <br>
-            <div [ngStyle]="{height:'calc(100vh - 220px - '+(settingSrv.layout['reuse']?'40px':'0px') + ' + ' + (settingSrv.layout['breadcrumbs']?'0px':'38px') +')',overflow: 'auto'}"
+            <div [ngStyle]="{height:'calc(100vh - 178px - '+(settingSrv.layout['reuse']?'40px':'0px') +')',overflow: 'auto'}"
                  style="padding: 10px;background: #fff;border: 1px solid #d9d9d9" [scrollTop]="treeScrollTop" #treeDiv>
                 <nz-skeleton [nzLoading]="treeLoading&&this.nodes.length==0" [nzActive]="true">
                     <nz-tree #tree class="tree-container"
