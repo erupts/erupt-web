@@ -33,7 +33,7 @@ export class BiComponent implements OnInit, OnDestroy {
 
     hideCondition: boolean = false;
 
-    @ViewChild("st", {static: false}) st: STComponent;
+    @ViewChild("st") st: STComponent;
 
     @ViewChildren('biChart') biCharts: QueryList<ChartComponent>;
 
@@ -159,10 +159,10 @@ export class BiComponent implements OnInit, OnDestroy {
                 this.haveNotNull = false;
                 this.biTable.total = res.total;
                 this.biTable.pageType = this.bi.pageType;
-                this.biTable.columns = [];
                 if (!res.columns) {
                     this.biTable.data = [];
                 } else {
+                    let columns = [];
                     for (let column of res.columns) {
                         if (column.display) {
                             let col: STColumn = {
@@ -170,7 +170,6 @@ export class BiComponent implements OnInit, OnDestroy {
                                 index: column.name,
                                 width: column.width,
                                 className: "text-center",
-                                // show: true,
                                 iif: () => {
                                     return column['show'];
                                 }
@@ -205,9 +204,10 @@ export class BiComponent implements OnInit, OnDestroy {
                                     });
                                 };
                             }
-                            this.biTable.columns.push(col);
+                            columns.push(col);
                         }
                     }
+                    this.biTable.columns = columns;
                     this.biTable.data = res.list;
                 }
             });
