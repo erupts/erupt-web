@@ -260,7 +260,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                 this.plot = new Scatter(this.chart.code, Object.assign(props, {
                     colorField: series,
                     sizeField: size,
-                    size: [3, 30],
+                    size: [3, 20],
                     shape: 'circle'
                 }));
                 break;
