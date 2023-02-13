@@ -14,12 +14,12 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 
 @Component({
-    selector: 'app-bi',
-    templateUrl: './bi.component.html',
-    styleUrls: ["./bi.component.less"],
+    selector: 'bi-skeleton',
+    templateUrl: './skeleton.component.html',
+    styleUrls: ["./skeleton.component.less"],
     styles: []
 })
-export class BiComponent implements OnInit, OnDestroy {
+export class SkeletonComponent implements OnInit, OnDestroy {
 
     bi: Bi;
 
@@ -50,8 +50,6 @@ export class BiComponent implements OnInit, OnDestroy {
 
         data?: any,
 
-        columns?: STColumn[],
-
         index: number;
 
         size: number;
@@ -74,14 +72,16 @@ export class BiComponent implements OnInit, OnDestroy {
         page: {
             show: false
         }
-
     };
 
-    private router$: Subscription;
+
+    columns: STColumn[] = [];
 
     timer: NodeJS.Timer;
 
     downloading: boolean = false;
+
+    private router$: Subscription;
 
     constructor(private dataService: BiDataService,
                 public route: ActivatedRoute,
@@ -96,7 +96,6 @@ export class BiComponent implements OnInit, OnDestroy {
         this.router$ = this.route.params.subscribe(params => {
             this.timer && clearInterval(this.timer);
             this.name = params['name'];
-            this.biTable.columns = [];
             this.biTable.data = null;
             this.dataService.getBiBuild(this.name).subscribe(res => {
                 this.bi = res;
@@ -207,7 +206,7 @@ export class BiComponent implements OnInit, OnDestroy {
                             columns.push(col);
                         }
                     }
-                    this.biTable.columns = columns;
+                    this.columns = columns;
                     this.biTable.data = res.list;
                 }
             });

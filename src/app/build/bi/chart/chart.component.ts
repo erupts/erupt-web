@@ -172,7 +172,11 @@ export class ChartComponent implements OnInit, OnDestroy {
             case ChartType.Waterfall:
                 // @ts-ignore
                 this.plot = new Waterfall(this.chart.code, Object.assign(props, {
-                    legend: false
+                    legend: false,
+                    label: {
+                        style: {fontSize: 10},
+                        layout: [{type: 'interval-adjust-position'}],
+                    },
                 }));
                 break;
             case ChartType.Column:
@@ -237,7 +241,9 @@ export class ChartComponent implements OnInit, OnDestroy {
             case ChartType.Funnel:
                 // @ts-ignore
                 this.plot = new Funnel(this.chart.code, Object.assign(props, {
-                    seriesField: series
+                    seriesField: series,
+                    appendPadding: [12, 38],
+                    shape: 'pyramid',
                 }));
                 break;
             case ChartType.Radar:
@@ -247,12 +253,53 @@ export class ChartComponent implements OnInit, OnDestroy {
                     point: {
                         size: 2,
                     },
+                    xAxis: {
+                        line: null,
+                        tickLine: null,
+                        grid: {
+                            line: {
+                                style: {
+                                    lineDash: null,
+                                },
+                            },
+                        },
+                    },
+                    yAxis: {
+                        line: null,
+                        tickLine: null,
+                        grid: {
+                            line: {
+                                type: 'line',
+                                style: {
+                                    lineDash: null,
+                                },
+                            },
+                            alternateColor: 'rgba(0, 0, 0, 0.04)',
+                        },
+                    },
+                    area: {},
                 }));
                 break;
             case ChartType.Scatter:
                 // @ts-ignore
                 this.plot = new Scatter(this.chart.code, Object.assign(props, {
-                    colorField: series
+                    colorField: series,
+                    shape: 'circle',
+                    yAxis: {
+                        nice: true,
+                        line: {
+                            style: {
+                                stroke: '#aaa',
+                            },
+                        },
+                    },
+                    xAxis: {
+                        line: {
+                            style: {
+                                stroke: '#aaa',
+                            },
+                        },
+                    },
                 }));
                 break;
             case ChartType.Bubble:
@@ -260,7 +307,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                 this.plot = new Scatter(this.chart.code, Object.assign(props, {
                     colorField: series,
                     sizeField: size,
-                    size: [3, 20],
+                    size: [3, 36],
                     shape: 'circle'
                 }));
                 break;

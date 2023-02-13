@@ -2,7 +2,6 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
 import {BiRoutingModule} from './bi-routing.module';
-import {BiComponent} from './bi/bi.component';
 import {SharedModule} from "@shared/shared.module";
 import {DimensionComponent} from './dimension/dimension.component';
 import {BiDataService} from "./service/data.service";
@@ -19,9 +18,10 @@ import {NzStatisticModule} from "ng-zorro-antd/statistic";
 import {NzCascaderModule} from "ng-zorro-antd/cascader";
 import {SearchSeComponent} from "./components/search-se/search-se.component";
 import {NzPipesModule} from "ng-zorro-antd/pipes";
+import {SkeletonComponent} from "./skeleton/skeleton.component";
 
 @NgModule({
-    declarations: [BiComponent, DimensionComponent, ReferenceComponent, ChartComponent,
+    declarations: [SkeletonComponent, DimensionComponent, ReferenceComponent, ChartComponent,
         ChoiceComponent, CascadeComponent, ChartTableComponent, DrillComponent, SearchSeComponent],
     imports: [
         CommonModule,
