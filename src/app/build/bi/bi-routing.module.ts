@@ -1,11 +1,11 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {BiComponent} from "./bi/bi.component";
+import {SkeletonComponent} from "./skeleton/skeleton.component";
 
 const routes: Routes = [
   {
     path: "",
-    component: BiComponent,
+    component: SkeletonComponent,
     data: {
       desc: "BI",
       status: true
