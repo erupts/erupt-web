@@ -4,10 +4,10 @@
         <ng-container *ngIf="bi">
             <ng-container *ngIf="bi.dimensions.length>0">
                 <div class="mb-sm float-right">
-                    <button nz-button *ngIf="!hideCondition" (click)="clearCondition()">
+                    <button nz-button *ngIf="!hideCondition" (click)="clearCondition()" [disabled]="querying">
                         <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
                     </button>
-                    <button nz-button (click)="hideCondition=!hideCondition">
+                    <button nz-button (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
                         <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
                     </button>
                 </div>
@@ -27,7 +27,7 @@
                 </button>
             </ng-container>
 
-            <ng-container *ngIf="biTable.columns&&biTable.columns.length>0">
+            <ng-container *ngIf="columns&&columns.length>0">
                 <nz-divider nzType="vertical"></nz-divider>
                 <button nz-button nzType="default" nz-popover
                         [nzPopoverContent]="tableColumnCtrl"
@@ -81,19 +81,19 @@
 
             <ng-container *ngIf="!haveNotNull">
                 <ng-container *ngIf="bi.table">
-                    <ng-container *ngIf="biTable.columns.length<=0">
+                    <ng-container *ngIf="columns.length <= 0">
                         <nz-card>
                             <nz-empty></nz-empty>
                         </nz-card>
                     </ng-container>
-                    <ng-container *ngIf="biTable.columns&&biTable.columns.length>0">
-                        <st [columns]="biTable.columns" [data]="biTable.data"
+                    <ng-container *ngIf="columns && columns.length > 0">
+                        <st [columns]="columns" [data]="biTable.data"
                             #st (change)="biTableChange($event)"
                             style="margin-bottom: 12px"
                             [loading]="querying"
                             [ps]="biTable.size"
                             [page]="biTable.page"
-                            [scroll]="{x: (clientWidth > 768 ? biTable.columns.length * 150 : 0) + 'px'}"
+                            [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
                             [bordered]="settingSrv.layout['bordered']"
                             [size]="'small'">
                         </st>
