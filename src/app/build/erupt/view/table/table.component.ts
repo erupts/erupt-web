@@ -203,6 +203,7 @@ export class TableComponent implements OnInit {
             this.stConfig.req.params["linkTreeVal"] = linkTree.value;
         }
         this.stLoad(1, this.stConfig.req.params);
+        this.selectedRows = [];
     }
 
     buildTableConfig() {
