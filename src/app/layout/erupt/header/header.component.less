@@ -40,12 +40,15 @@
 
         @media (max-width: 767px) {
             .alain-default__header-logo {
-                min-width: 50px;
-                max-width: 80px;
+                min-width: 64px;
                 overflow: hidden;
                 margin: 0 6px;
-                border-right: none;
+                border-right: none !important;
                 padding: 0;
+
+                img {
+                    width: auto;
+                }
             }
         }
     }
@@ -59,7 +62,18 @@
 
         .alain-default__header-logo {
             min-width: 64px;
+
+            img {
+                width: 36px;
+            }
+
+            @media (max-width: 767px) {
+                img {
+                    width: auto;
+                }
+            }
         }
+
     }
 }
 

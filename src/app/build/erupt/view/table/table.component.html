@@ -17,14 +17,6 @@
                             </button>
                         </ng-container>
 
-                        <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
-                            <button nz-button nzType="default" nzDanger [nzGhost]="true"
-                                    class="mb-sm" [nzLoading]="deleting" id="erupt-btn-delete"
-                                    (click)="delRows()">
-                                <i nz-icon nzType="delete" nzTheme="outline"></i>{{'table.delete'|translate}}
-                            </button>
-                        </ng-container>
-
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
                             <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()"
                                     id="erupt-btn-export" [nzLoading]="downloading">
@@ -53,10 +45,18 @@
                         </ng-container>
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
-                            <button nz-button nzType="primary" [nzGhost]="true"
+                            <button nz-button nzType="default" [nzSearch]="true"
                                     class="mb-sm" [nzLoading]="st._loading" id="erupt-btn-query"
                                     (click)="query()">
                                 <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
+                            </button>
+                        </ng-container>
+
+                        <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
+                            <button nz-button nzType="default" nzDanger
+                                    class="mb-sm" [nzLoading]="deleting" id="erupt-btn-delete"
+                                    (click)="delRows()">
+                                <i nz-icon nzType="delete" nzTheme="outline"></i>{{'table.delete'|translate}}
                             </button>
                         </ng-container>
 
@@ -85,7 +85,7 @@
                         <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
                             <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
                         </button>
-                        <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset">
+                        <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset" [disabled]="st._loading">
                             <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
                         </button>
                     </div>
