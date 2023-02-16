@@ -134,7 +134,6 @@ export class ChartComponent implements OnInit, OnDestroy {
             legend: {
                 position: "bottom"
             }
-            // theme: 'dark',
         };
         if (this.chart.chartOption) {
             Object.assign(props, this.chart.chartOption);
@@ -145,7 +144,6 @@ export class ChartComponent implements OnInit, OnDestroy {
                 // @ts-ignore
                 this.plot = new Line(this.chart.code, Object.assign(props, {
                     seriesField: series,
-                    renderer: "canvas",
                 }));
                 break;
             case ChartType.StepLine:
@@ -153,6 +151,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                 this.plot = new Line(this.chart.code, Object.assign(props, {
                     seriesField: series,
                     stepType: 'vh',
+                    slider:{}
                 }));
                 break;
             case ChartType.Bar:
@@ -183,14 +182,16 @@ export class ChartComponent implements OnInit, OnDestroy {
                 // @ts-ignore
                 this.plot = new Column(this.chart.code, Object.assign(props, {
                     isGroup: true,
-                    seriesField: series
+                    seriesField: series,
                 }));
                 break;
             case ChartType.StackedColumn:
                 // @ts-ignore
                 this.plot = new Column(this.chart.code, Object.assign(props, {
                     isStack: true,
-                    seriesField: series
+                    seriesField: series,
+
+                    slider:{}
                 }));
                 break;
             case ChartType.Area:
@@ -285,6 +286,9 @@ export class ChartComponent implements OnInit, OnDestroy {
                 this.plot = new Scatter(this.chart.code, Object.assign(props, {
                     colorField: series,
                     shape: 'circle',
+                    brush: {
+                        enabled: true,
+                    },
                     yAxis: {
                         nice: true,
                         line: {
@@ -308,7 +312,10 @@ export class ChartComponent implements OnInit, OnDestroy {
                     colorField: series,
                     sizeField: size,
                     size: [3, 36],
-                    shape: 'circle'
+                    shape: 'circle',
+                    brush: {
+                        enabled: true,
+                    },
                 }));
                 break;
 
