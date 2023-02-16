@@ -1,3 +1,4 @@
+var start = true;
 window.eruptSiteConfig = {
     domain: "",
     fileDomain: "https://oos.erupt.xyz",
