@@ -72,7 +72,8 @@
         width: 100%;
         height: 44px;
         padding: 0 16px;
-        box-shadow: 0 1px 10px rgb(0 0 0 / 20%);
+        border-bottom: 1px solid #e5e5e5;
+        //box-shadow: 0 1px 10px rgb(0 0 0 / 20%);
     }
 
     .erupt-side {
@@ -128,31 +129,31 @@
             margin-top: 0 !important;
         }
 
-        //.reuse-tab__card {
-        //    padding-top: 0;
-        //    padding-left: 0;
-        //    padding-right: 0;
-        //
-        //    .ant-tabs-bar {
-        //        margin: 0;
-        //    }
-        //
-        //    .ant-tabs-tab {
-        //        border-radius: 0 !important;
-        //        border-left: 0 !important;
-        //        border-top: 0 !important;
-        //        min-width: 130px !important;
-        //        text-align: center;
-        //    }
-        //
-        //    .ant-tabs-tab-active {
-        //        border-bottom: 1px dashed #e8e8e8 !important;
-        //    }
-        //
-        //    .ant-tabs-nav-container {
-        //        padding: 0 !important;
-        //    }
-        //}
+        .reuse-tab__card {
+            padding-top: 0;
+            padding-left: 0;
+            padding-right: 0;
+
+            .ant-tabs-bar {
+                margin: 0;
+            }
+
+            .ant-tabs-tab {
+                border-radius: 0 !important;
+                border-left: 0 !important;
+                border-top: 0 !important;
+                min-width: 130px !important;
+                justify-content: center;
+            }
+
+            .ant-tabs-tab-active {
+                border-bottom: 1px dashed #e8e8e8 !important;
+            }
+
+            .ant-tabs-nav-container {
+                padding: 0 !important;
+            }
+        }
 
     }
 
@@ -163,6 +164,7 @@
         ::ng-deep {
             .erupt-header {
                 background: #141414;
+                border-bottom: 1px solid #434343;
                 box-shadow: 0 6px 16px -8px rgb(0 0 0 / 32%), 0 9px 28px 0 rgb(0 0 0 / 20%), 0 12px 48px 16px rgb(0 0 0 / 12%);
             }
 
