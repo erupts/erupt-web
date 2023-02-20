@@ -3,9 +3,8 @@
 <layout-header class="erupt-header" [menu]="menu"></layout-header>
 <layout-sidebar class="alain-default__aside erupt-side"></layout-sidebar>
 <section class="erupt_content">
-    <reuse-tab [tabType]="'card'" *ngIf="settingSrv.layout['reuse']" [tabBarGutter]="0" [tabMaxWidth]="180"></reuse-tab>
-    <router-outlet>
-    </router-outlet>
+    <reuse-tab *ngIf="settingSrv.layout['reuse']" tabType="card" [tabBarGutter]="0" [tabMaxWidth]="180"></reuse-tab>
+    <router-outlet></router-outlet>
 </section>
 <theme-btn [devTips]="null">
 </theme-btn>

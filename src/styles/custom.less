@@ -79,16 +79,18 @@ erupt-fill .page-container {
     margin-top: 0 !important;
 }
 
-reuse-tab ~ app-site .page-container,
-reuse-tab ~ app-home .page-container,
-reuse-tab ~ app-tpl .page-container {
-    height: calc(100vh - @alain-default-header-hg - 44.62px);
-}
 
 @media (min-width: 992px) {
     .edit-modal-lg .ant-modal {
         max-width: 935px !important;
     }
+}
+
+
+reuse-tab ~ app-site .page-container,
+reuse-tab ~ app-home .page-container,
+reuse-tab ~ app-tpl .page-container {
+    height: calc(100vh - @alain-default-header-hg - 44.62px);
 }
 
 @media screen and (max-width: 767px) {

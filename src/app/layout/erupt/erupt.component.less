@@ -6,6 +6,13 @@
         transition: all 300ms;
     }
 
+    @media (min-width: 768px) {
+        .alain-default__fixed .reuse-tab + router-outlet {
+            display: block;
+            height: 38px;
+        }
+    }
+
     .ltr {
         .erupt_content {
             margin-top: @header-h;
@@ -74,22 +81,6 @@
         padding: 0 16px;
         border-bottom: 1px solid #e5e5e5;
         //box-shadow: 0 1px 10px rgb(0 0 0 / 20%);
-    }
-
-    .erupt-side {
-        //box-shadow: 1px 0 10px rgb(0 0 0 / 20%);
-        //position: absolute;
-        //top: 0;
-        //bottom: 0;
-        //z-index: 14;
-        //width: 200px;
-        //margin-top: 44px !important;
-        //overflow: hidden;
-        //background-color: #fff;
-        //-webkit-backface-visibility: hidden;
-        //backface-visibility: hidden;
-        //transition: width 0.2s cubic-bezier(0.25, 0, 0.15, 1), translate 0.2s cubic-bezier(0.25, 0, 0.15, 1);
-        //-webkit-overflow-scrolling: touch;
     }
 
     footer.licence {
