@@ -59,26 +59,6 @@
                                 <i nz-icon nzType="delete" nzTheme="outline"></i>{{'table.delete'|translate}}
                             </button>
                         </ng-container>
-
-                        <ng-container>
-                            <nz-divider nzType="vertical" class="hidden-mobile"></nz-divider>
-                            <button nz-button nzType="default" nz-popover
-                                    [(nzPopoverVisible)]="showColCtrl" [nzPopoverContent]="tableColumnCtrl"
-                                    nzPopoverTrigger="click" class="mb-sm hidden-mobile">
-                                <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|translate}}
-                            </button>
-                            <ng-template #tableColumnCtrl>
-                                <div nz-row style="max-width: 520px;">
-                                    <ng-container *ngFor="let col of columns">
-                                        <div *ngIf="col.title&&col.index" nz-col nzSpan="6">
-                                            <label nz-checkbox [(ngModel)]="col['show']"
-                                                   style="width: 130px;"
-                                                   (ngModelChange)="st.resetColumns()">{{col.title['text'] | nzEllipsis:6:'...'}}</label>
-                                        </div>
-                                    </ng-container>
-                                </div>
-                            </ng-template>
-                        </ng-container>
                     </div>
                     <div *ngIf="searchErupt"
                          class="condition-btn">
@@ -88,7 +68,26 @@
                         <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset" [disabled]="st._loading">
                             <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
                         </button>
+                        <nz-divider nzType="vertical"></nz-divider>
                     </div>
+                    <ng-container>
+                        <button nz-button nzType="default" nz-popover
+                                [(nzPopoverVisible)]="showColCtrl" [nzPopoverContent]="tableColumnCtrl"
+                                nzPopoverTrigger="click" class="mb-sm hidden-mobile">
+                            <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|translate}}
+                        </button>
+                        <ng-template #tableColumnCtrl>
+                            <div nz-row style="max-width: 520px;">
+                                <ng-container *ngFor="let col of columns">
+                                    <div *ngIf="col.title&&col.index" nz-col nzSpan="6">
+                                        <label nz-checkbox [(ngModel)]="col['show']"
+                                               style="width: 130px;"
+                                               (ngModelChange)="st.resetColumns()">{{col.title['text'] | nzEllipsis:6:'...'}}</label>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-template>
+                    </ng-container>
                 </div>
                 <div>
                     <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
