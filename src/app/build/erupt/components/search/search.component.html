@@ -10,7 +10,7 @@
                                 <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size"
                                                 [ngStyle]="{borderStyle:(field.eruptFieldJson.edit.search.vague)?'dashed':''}">
                                     <input nz-input [nzSize]="size" autocomplete="off"
-                                           [type]="field.eruptFieldJson.edit.inputType.type"
+                                           [type]="field.eruptFieldJson.edit.inputType?field.eruptFieldJson.edit.inputType.type:'text'"
                                            [(ngModel)]="field.eruptFieldJson.edit.$value"
                                            [name]="field.fieldName"
                                            (keydown)="enterEvent($event)"
