@@ -60,17 +60,16 @@
                             </button>
                         </ng-container>
                     </div>
-                    <div *ngIf="searchErupt"
-                         class="condition-btn">
-                        <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
-                            <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
-                        </button>
-                        <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset" [disabled]="st._loading">
-                            <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
-                        </button>
-                        <nz-divider nzType="vertical"></nz-divider>
-                    </div>
-                    <ng-container>
+                    <div class="condition-btn">
+                        <ng-container *ngIf="searchErupt">
+                            <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
+                                <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                            </button>
+                            <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset" [disabled]="st._loading">
+                                <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
+                            </button>
+                            <nz-divider nzType="vertical"></nz-divider>
+                        </ng-container>
                         <button nz-button nzType="default" nz-popover
                                 [(nzPopoverVisible)]="showColCtrl" [nzPopoverContent]="tableColumnCtrl"
                                 nzPopoverTrigger="click" class="mb-sm hidden-mobile">
@@ -87,7 +86,7 @@
                                 </ng-container>
                             </div>
                         </ng-template>
-                    </ng-container>
+                    </div>
                 </div>
                 <div>
                     <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">

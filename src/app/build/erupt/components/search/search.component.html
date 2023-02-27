@@ -3,8 +3,7 @@
         <ng-container *ngFor="let field of eruptModel.eruptFieldModels">
             <ng-container *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.search.value">
                 <ng-container [ngSwitch]="field.eruptFieldJson.edit.type">
-                    <ng-container
-                        *ngSwitchCase="editType.INPUT || editType.TEXTAREA || editType.HTML_EDITOR || editType.CODE_EDITOR">
+                    <ng-template #inputTpl>
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <erupt-search-se [field]="field">
@@ -26,8 +25,11 @@
                                 </ng-template>
                             </erupt-search-se>
                         </div>
-                    </ng-container>
-                    <!-- number-->
+                    </ng-template>
+                    <ng-container *ngSwitchCase="editType.INPUT" [ngTemplateOutlet]="inputTpl"></ng-container>
+                    <ng-container *ngSwitchCase="editType.TEXTAREA" [ngTemplateOutlet]="inputTpl"></ng-container>
+                    <ng-container *ngSwitchCase="editType.HTML_EDITOR" [ngTemplateOutlet]="inputTpl"></ng-container>
+                    <ng-container *ngSwitchCase=" editType.CODE_EDITOR" [ngTemplateOutlet]="inputTpl"></ng-container>
                     <ng-container *ngSwitchCase="editType.NUMBER">
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                              [nzLg]="col.lg"
@@ -35,7 +37,8 @@
                              [nzXXl]="col.xxl">
                             <erupt-search-se [field]="field">
                                 <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
-                                    <nz-input-group [nzSize]="size" class="erupt-input" style="display: flex;align-items: center">
+                                    <nz-input-group [nzSize]="size" class="erupt-input"
+                                                    style="display: flex;align-items: center">
                                         <nz-input-number [nzSize]="size" style="width: 45%;"
                                                          [(ngModel)]="field.eruptFieldJson.edit.$l_val"
                                                          [name]="field.fieldName"
@@ -44,7 +47,7 @@
                                                          [nzMax]="field.eruptFieldJson.edit.numberType.max"
                                                          [nzStep]="1"></nz-input-number>
                                         <input [nzSize]="size" disabled nz-input placeholder="~"
-                                            style="width: 30px; border-left: 0; border-right: 0; pointer-events: none;background-color: rgb(255, 255, 255);"
+                                               style="width: 30px; border-left: 0; border-right: 0; pointer-events: none;background-color: rgb(255, 255, 255);"
                                         />
 
                                         <nz-input-number [nzSize]="size" style="width: 45%;"
@@ -157,12 +160,23 @@
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <erupt-search-se [field]="field">
-                                <erupt-date [field]="field" [size]="size" [range]="field.eruptFieldJson.edit.search.vague"></erupt-date>
+                                <erupt-date [field]="field" [size]="size"
+                                            [range]="field.eruptFieldJson.edit.search.vague"></erupt-date>
                             </erupt-search-se>
                         </div>
                     </ng-container>
                     <!--reference-->
-                    <ng-container *ngSwitchCase="editType.REFERENCE_TREE || editType.REFERENCE_TABLE">
+                    <ng-container *ngSwitchCase="editType.REFERENCE_TABLE">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <erupt-search-se [field]="field">
+                                <erupt-reference [eruptModel]="eruptModel" [field]="field" [readonly]="false"
+                                                 [size]="size"></erupt-reference>
+                            </erupt-search-se>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.REFERENCE_TREE">
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
