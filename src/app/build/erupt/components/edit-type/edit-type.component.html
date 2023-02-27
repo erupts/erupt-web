@@ -1,8 +1,7 @@
 <div nz-row [nzGutter]="16">
     <form nz-form [nzLayout]="layout" se-container style="width: 100%" class="erupt-form">
         <ng-container *ngFor="let field of eruptModel.eruptFieldModels;">
-            <ng-container
-                    *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.show&&field.eruptFieldJson.edit.title">
+            <ng-container *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.show&&field.eruptFieldJson.edit.title">
                 <ng-container [ngSwitch]="field.eruptFieldJson.edit.type">
                     <ng-container *ngSwitchCase="editType.INPUT">
                         <ng-container *ngIf="field.eruptFieldJson.edit.inputType.fullSpan">
@@ -72,7 +71,7 @@
                                     </ng-template>
                                     <ng-template #addOnAfterTemplate>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.inputType.suffix.length==1">
-                                            {{field.eruptFieldJson.edit.inputType.suffix[0].label}}
+                                            {{field.eruptFieldJson.edit.inputType.suffix[0]['label']}}
                                         </ng-container>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.inputType.suffix.length>1">
                                             <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType.suffixValue"
@@ -225,7 +224,19 @@
                         </div>
                     </ng-container>
                     <!--reference-->
-                    <ng-container *ngSwitchCase="editType.REFERENCE_TREE || editType.REFERENCE_TABLE">
+                    <ng-container *ngSwitchCase="editType.REFERENCE_TREE">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <erupt-reference [eruptModel]="eruptModel" [field]="field" [size]="size"
+                                                 [readonly]="isReadonly(field)" [parentEruptName]="parentEruptName"></erupt-reference>
+                            </se>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.REFERENCE_TABLE">
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
