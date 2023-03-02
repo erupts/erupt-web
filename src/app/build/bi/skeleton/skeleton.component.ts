@@ -167,11 +167,11 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                             let col: STColumn = {
                                 title: column.name,
                                 index: column.name,
-                                width: column.width,
+                                width: column.width || 100,
                                 className: "text-center",
-                                iif: () => {
-                                    return column['show'];
-                                }
+                                // iif: () => {
+                                //     return column['show'];
+                                // }
                             };
                             if (column.sortable) {
                                 col.sort = {
@@ -208,6 +208,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                     }
                     this.columns = columns;
                     this.biTable.data = res.list;
+
                 }
             });
         }
