@@ -87,15 +87,15 @@
                         </nz-card>
                     </ng-container>
                     <ng-container *ngIf="columns && columns.length > 0">
-                        <st [columns]="columns" [data]="biTable.data"
-                            #st (change)="biTableChange($event)"
-                            style="margin-bottom: 12px"
+                        <st #st [columns]="columns"
+                            [data]="biTable.data"
+                            (change)="biTableChange($event)"
                             [loading]="querying"
                             [ps]="biTable.size"
                             [page]="biTable.page"
                             [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
                             [bordered]="settingSrv.layout['bordered']"
-                            [size]="'small'">
+                            [size]="'small'" style="margin-bottom: 12px">
                         </st>
                         <ng-container *ngIf="biTable.pageType == pageType.backend">
                             <nz-pagination style="text-align: center" nzShowSizeChanger nzShowQuickJumper
