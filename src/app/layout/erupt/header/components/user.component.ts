@@ -1,6 +1,6 @@
 import {Component, Inject} from "@angular/core";
 import {Router} from "@angular/router";
-import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
+import {SettingsService} from "@delon/theme";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {DataService} from "@shared/service/data.service";
 import {I18NService} from "@core";

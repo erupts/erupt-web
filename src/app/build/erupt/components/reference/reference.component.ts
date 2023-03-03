@@ -6,7 +6,6 @@ import {EditType, SelectMode} from "../../model/erupt.enum";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {EruptModel} from "../../model/erupt.model";
-import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
 import {TableComponent} from "../../view/table/table.component";
 

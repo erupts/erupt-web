@@ -1,5 +1,5 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
+import {Component, OnInit} from '@angular/core';
+import {SettingsService} from "@delon/theme";
 import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";

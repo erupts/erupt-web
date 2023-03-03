@@ -5,9 +5,8 @@ import {ReferenceComponent} from "../components/reference/reference.component";
 import {PresetRanges} from "ng-zorro-antd/date-picker/standard-types";
 import * as moment from 'moment';
 import {DatePipe} from "@angular/common";
-import {ALAIN_I18N_TOKEN} from "@delon/theme";
-import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
+import {I18NService} from "@core";
 
 @Component({
     selector: 'bi-dimension',
@@ -29,7 +28,7 @@ export class DimensionComponent implements OnInit {
 
     private datePipe: DatePipe = new DatePipe("zh-cn");
 
-    constructor(@Inject(NzModalService) private modal: NzModalService, @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService) {
+    constructor(@Inject(NzModalService) private modal: NzModalService,  private i18n: I18NService) {
     }
 
     ngOnInit() {

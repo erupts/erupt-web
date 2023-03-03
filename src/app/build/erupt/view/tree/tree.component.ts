@@ -6,7 +6,7 @@ import {EruptBuildModel} from "../../model/erupt-build.model";
 import {Subscription} from "rxjs";
 import {Status} from "../../model/erupt-api.model";
 import {colRules} from "@shared/model/util.model";
-import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
+import {SettingsService} from "@delon/theme";
 import {I18NService} from "@core";
 import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd/core/tree";
 import {NzMessageService} from "ng-zorro-antd/message";

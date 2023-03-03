@@ -2,48 +2,49 @@
     <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!bi"></nz-skeleton>
     <div [id]="name">
         <ng-container *ngIf="bi">
-            <ng-container>
-                <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query({
+            <div style="display: flex">
+                <ng-container>
+                    <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query({
                             pageIndex: 1,
                             pageSize: biTable.size
                         },true);">
-                    <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
-                </button>
-            </ng-container>
-            <ng-container *ngIf="bi.export">
-                <button nz-button class="mb-sm" (click)="exportBiData()" [nzLoading]="downloading"
-                        [disabled]="!biTable.data||biTable.data.length<=0">
-                    <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|translate}}
-                </button>
-            </ng-container>
-
-            <div class="mb-sm float-right">
-                <ng-container *ngIf="bi.dimensions.length > 0">
-                    <button nz-button *ngIf="!hideCondition" (click)="clearCondition()" [disabled]="querying">
-                        <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
-                    </button>
-                    <button nz-button (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
-                        <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                        <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
                     </button>
                 </ng-container>
-                <ng-container *ngIf="columns && columns.length > 0">
-                    <nz-divider nzType="vertical" *ngIf="bi.dimensions.length > 0"></nz-divider>
-                    <button nz-button nzType="default" nz-popover
-                            [nzPopoverContent]="tableColumnCtrl"
-                            nzPopoverTrigger="click" class="mb-sm hidden-mobile">
-                        <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|translate}}
+                <ng-container *ngIf="bi.export">
+                    <button nz-button class="mb-sm"  (click)="exportBiData()" [nzLoading]="downloading"
+                            [disabled]="!biTable.data||biTable.data.length<=0">
+                        <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|translate}}
                     </button>
-                    <ng-template #tableColumnCtrl>
-                        <div nz-row style="max-width: 520px;">
-                            <ng-container *ngFor="let col of st.columns">
-                                <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
-                                    <label nz-checkbox [(ngModel)]="col['show']" style="width: 130px;"
-                                           (ngModelChange)="st.resetColumns()">{{col.title}}</label>
-                                </div>
-                            </ng-container>
-                        </div>
-                    </ng-template>
                 </ng-container>
+                <div style="margin-left: auto">
+                    <ng-container *ngIf="bi.dimensions.length > 0">
+                        <button nz-button class="mb-sm"  *ngIf="!hideCondition" (click)="clearCondition()" [disabled]="querying">
+                            <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
+                        </button>
+                        <button nz-button class="mb-sm"  (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
+                            <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                        </button>
+                    </ng-container>
+                    <ng-container *ngIf="columns && columns.length > 0">
+                        <nz-divider nzType="vertical" *ngIf="bi.dimensions.length > 0"></nz-divider>
+                        <button nz-button nzType="default" nz-popover
+                                [nzPopoverContent]="tableColumnCtrl"
+                                nzPopoverTrigger="click" class="mb-sm hidden-mobile">
+                            <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|translate}}
+                        </button>
+                        <ng-template #tableColumnCtrl>
+                            <div nz-row style="max-width: 520px;">
+                                <ng-container *ngFor="let col of st.columns">
+                                    <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
+                                        <label nz-checkbox [(ngModel)]="col['show']" style="width: 130px;"
+                                               (ngModelChange)="st.resetColumns()">{{col.title}}</label>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-template>
+                    </ng-container>
+                </div>
             </div>
 
             <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom: 12px;margin-top: 4px"
