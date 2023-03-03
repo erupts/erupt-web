@@ -10,7 +10,6 @@ import {BuildConfig} from "../../model/build-config";
 import {Status} from "../../model/erupt-api.model";
 import {EditType, Scene, SelectMode} from "../../model/erupt.enum";
 import {UiBuildService} from "../../service/ui-build.service";
-import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
 import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
 import {NzMessageService} from "ng-zorro-antd/message";

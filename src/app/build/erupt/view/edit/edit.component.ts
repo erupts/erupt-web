@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
 import {EditType, Scene} from "../../model/erupt.enum";
-import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
+import {SettingsService} from "@delon/theme";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {EruptFieldModel} from "../../model/erupt-field.model";

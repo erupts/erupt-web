@@ -1,8 +1,8 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../service/data-handler.service";
-import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
+import {SettingsService} from "@delon/theme";
 import {I18NService} from "@core";
 import {NzFormatEmitEvent} from "ng-zorro-antd/core/tree";
 

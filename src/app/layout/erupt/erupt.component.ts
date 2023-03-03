@@ -22,7 +22,7 @@ import {
 
 import {Subscription} from "rxjs";
 import {ScrollService, updateHostClass} from "@delon/util";
-import {ALAIN_I18N_TOKEN, Menu, MenuService, SettingsService} from "@delon/theme";
+import {Menu, MenuService, SettingsService} from "@delon/theme";
 import {
     ArrowDownOutline,
     BellOutline,

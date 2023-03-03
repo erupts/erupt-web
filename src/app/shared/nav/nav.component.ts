@@ -5,7 +5,6 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    ElementRef,
     Inject,
     Input,
     OnChanges,
@@ -14,21 +13,17 @@ import {
     Optional,
     Renderer2,
     TemplateRef,
-    ViewChild,
     ViewEncapsulation
 } from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
-import {merge, Subject, filter, takeUntil} from 'rxjs';
+import {filter, merge, Subject, takeUntil} from 'rxjs';
 
 import {ReuseTabService} from '@delon/abc/reuse-tab';
-import {AlainI18NService, ALAIN_I18N_TOKEN, Menu, MenuService, SettingsService, TitleService} from '@delon/theme';
-import {isEmpty} from '@delon/util/browser';
+import {Menu, MenuService, SettingsService, TitleService} from '@delon/theme';
 import {AlainConfigService} from '@delon/util/config';
-import {BooleanInput, InputBoolean, InputNumber, NumberInput} from '@delon/util/decorator';
-import {NzAffixComponent} from 'ng-zorro-antd/affix';
+import {InputBoolean, InputNumber} from '@delon/util/decorator';
 import type {NzSafeAny} from 'ng-zorro-antd/core/types';
 import {I18NService} from "@core";
-import {MenuIcon} from "@delon/theme/src/services/menu/interface";
 
 interface PageHeaderPath {
     title?: string;
@@ -103,7 +98,6 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
         private renderer: Renderer2,
         private router: Router,
         private menuSrv: MenuService,
-        @Optional() @Inject(ALAIN_I18N_TOKEN) private i18nSrv: AlainI18NService,
         @Optional() @Inject(TitleService) private titleSrv: TitleService,
         @Optional() @Inject(ReuseTabService) private reuseSrv: ReuseTabService,
         private cdr: ChangeDetectorRef,
@@ -114,7 +108,7 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
     ) {
         this.isBrowser = platform.isBrowser;
         configSrv.attach(this, 'pageHeader', {
-            home: '首页',
+            home: this.i18n.fanyi("global.home"),
             homeLink: '/',
             autoBreadcrumb: true,
             recursiveBreadcrumb: false,
@@ -124,7 +118,7 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
             fixedOffsetTop: 64
         });
 
-        merge(menuSrv.change, router.events.pipe(filter(ev => ev instanceof NavigationEnd)), i18nSrv.change)
+        merge(menuSrv.change, router.events.pipe(filter(ev => ev instanceof NavigationEnd)))
             .pipe(
                 filter(() => this.inited),
                 takeUntil(this.destroy$)
@@ -146,7 +140,7 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
         this.menus.forEach(item => {
             if (typeof item.hideInBreadcrumb !== 'undefined' && item.hideInBreadcrumb) return;
             let title = item.text;
-            if (item.i18n && this.i18nSrv) title = this.i18n.fanyi(item.i18n);
+            if (item.i18n && this.i18n) title = this.i18n.fanyi(item.i18n);
             paths.push({
                 title: title,
                 link: (item.link && [item.link]) as string[],
@@ -168,7 +162,7 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
         if (this._title == null && this._titleTpl == null && this.autoTitle && this.menus.length > 0) {
             const item = this.menus[this.menus.length - 1];
             let title = item.text;
-            if (item.i18n && this.i18nSrv) {
+            if (item.i18n && this.i18n) {
                 title = this.i18n.fanyi(item.i18n);
             }
             this._titleVal = title!;

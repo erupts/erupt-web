@@ -1,4 +1,4 @@
-import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
+import {SettingsService} from "@delon/theme";
 import {AfterViewInit, Component, Inject, Input, OnDestroy, OnInit, Optional} from "@angular/core";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
