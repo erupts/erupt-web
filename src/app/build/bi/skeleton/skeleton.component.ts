@@ -167,11 +167,12 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                             let col: STColumn = {
                                 title: column.name,
                                 index: column.name,
-                                width: column.width || 100,
+                                width: column.width,
                                 className: "text-center",
-                                // iif: () => {
-                                //     return column['show'];
-                                // }
+                                iif: (item) => {
+                                    return item['show'];
+                                },
+                                ...{show: true}
                             };
                             if (column.sortable) {
                                 col.sort = {
