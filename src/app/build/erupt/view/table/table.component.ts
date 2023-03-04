@@ -182,7 +182,6 @@ export class TableComponent implements OnInit {
                 for (let it of eruptModel.eruptFieldModels) {
                     if (it.eruptFieldJson.edit.search.value) {
                         this.searchErupt = eruptModel;
-                        return;
                     }
                 }
                 this.extraRowFun();
