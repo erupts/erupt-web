@@ -50,7 +50,8 @@
                             <nz-dropdown-menu #menu1="nzDropdownMenu">
                                 <ul nz-menu>
                                     <li nz-menu-item (click)="downloadExcelTemplate()">
-                                        <i nz-icon nzType="build" nzTheme="outline"></i> &nbsp;{{'table.download_template'|translate}}
+                                        <i nz-icon nzType="build" nzTheme="outline"></i>
+                                        &nbsp;{{'table.download_template'|translate}}
                                     </li>
                                 </ul>
                             </nz-dropdown-menu>
@@ -72,21 +73,27 @@
                                 <i nz-icon nzType="delete" nzTheme="outline"></i>{{'table.delete'|translate}}
                             </button>
                         </ng-container>
+                        <ng-container *ngIf="operationButtonNum <= 3">
+                            <ng-template [ngTemplateOutlet]="operationButtons"></ng-template>
+                        </ng-container>
                     </div>
                     <div class="condition-btn">
                         <ng-container *ngIf="searchErupt">
-                            <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
+                            <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition"
+                                    style="padding: 4px 8px">
                                 <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
                             </button>
-                            <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset" [disabled]="st._loading">
+                            <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset"
+                                    [disabled]="st._loading">
                                 <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
                             </button>
-                            <nz-divider nzType="vertical"></nz-divider>
+                            <nz-divider class="hidden-mobile" nzType="vertical"></nz-divider>
                         </ng-container>
-                        <button nz-button nzType="default" nz-popover
+                        <button nz-button nzType="default" nz-popover style="padding: 4px 8px"
                                 [(nzPopoverVisible)]="showColCtrl" [nzPopoverContent]="tableColumnCtrl"
                                 nzPopoverTrigger="click" class="mb-sm hidden-mobile">
-                            <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|translate}}
+                            <i nz-icon nzType="table" nzTheme="outline"></i>
+<!--                            {{'table.col.ctrl'|translate}}-->
                         </button>
                         <ng-template #tableColumnCtrl>
                             <div nz-row style="max-width: 520px;">
@@ -101,11 +108,12 @@
                         </ng-template>
                     </div>
                 </div>
-                <div>
+                <div *ngIf="operationButtonNum > 3">
                     <ng-template [ngTemplateOutlet]="operationButtons"></ng-template>
                 </div>
 
-                <nz-card *ngIf="searchErupt" [nzBodyStyle]="{padding:'10px'}" class="search-card" [hidden]="hideCondition">
+                <nz-card *ngIf="searchErupt" [nzBodyStyle]="{padding:'10px'}" class="search-card"
+                         [hidden]="hideCondition">
                     <erupt-search [eruptModel]="searchErupt" (search)="query()" [size]="'default'">
 
                     </erupt-search>

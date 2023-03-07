@@ -93,6 +93,9 @@ export class TableComponent implements OnInit {
 
     downloading: boolean = false;
 
+    //操作按钮数量
+    operationButtonNum = 0;
+
     _drill: { erupt: string, code: string, eruptParent: string, val: any };
 
 
@@ -165,10 +168,16 @@ export class TableComponent implements OnInit {
         this.adding = false;
         this.eruptBuildModel = null;
         this.searchErupt = null;
+        this.operationButtonNum = 0;
         //put table api header
         this.stConfig.req.headers = req.header;
         this.stConfig.url = req.url;
         observable.subscribe(eb => {
+                eb.eruptModel.eruptJson.rowOperation.forEach((item) => {
+                    if (item.mode != OperationMode.SINGLE) {
+                        this.operationButtonNum++;
+                    }
+                })
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
                 if (dt) {
@@ -182,6 +191,7 @@ export class TableComponent implements OnInit {
                 for (let it of eruptModel.eruptFieldModels) {
                     if (it.eruptFieldJson.edit.search.value) {
                         this.searchErupt = eruptModel;
+                        break;
                     }
                 }
                 this.extraRowFun();
