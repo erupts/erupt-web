@@ -7,7 +7,8 @@
 </ng-template>
 <br>
 <nz-spin [nzSpinning]="loading" *ngIf="treeData">
-    <nz-tree [nzCheckable]="true"
+    <nz-tree style="max-height: 420px;overflow: auto"
+             [nzCheckable]="true"
              [nzShowLine]="true"
              [nzCheckStrictly]="true"
              [nzData]="treeData"
