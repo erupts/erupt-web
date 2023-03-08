@@ -85,13 +85,12 @@
 
     footer.licence {
         position: fixed;
-        bottom: -54px;
+        bottom: -55px;
         left: 0;
         right: 0;
-        z-index: 9999;
+        z-index: -1;
         height: 55px;
         padding-top: 3px;
-        //border-top: 1px dashed #262625;
         line-height: 25px;
         text-align: center;
         color: #000;
@@ -173,6 +172,12 @@
 
             .header-logo-text {
                 color: #fff;
+            }
+
+            .reuse-tab__card {
+                .ant-tabs-tab-active {
+                    border-bottom: 1px dashed #2e2e2e !important;
+                }
             }
         }
     }
