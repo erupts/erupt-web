@@ -1,7 +1,26 @@
 <html>
+<head>
+    <style>
+        .box {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 1s;
+            cursor: pointer;
+            width: 80px;
+        }
+
+        .box:hover {
+            width: 110px;
+        }
+    </style>
+</head>
 <body>
-<h1 style="text-align: center;margin: 30px 0;color: #09f;font-family:Courier New, Menlo, Monaco, Consolas, monospace">
-    Erupt Framework
-</h1>
+<div>
+    <div class="box">
+        <img src="assets/give.gif" draggable="false" width="100%">
+    </div>
+</div>
 </body>
 </html>
