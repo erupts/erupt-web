@@ -232,9 +232,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 group: false,
                 hideInBreadcrumb: true,
                 hide: true,
-                text: "首页",
-                // icon: "home",
-                i18n: "global.home",
+                text: this.i18n.fanyi("global.home"),
                 link: "/"
             }]);
             this.menuSrv.add([{
