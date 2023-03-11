@@ -135,6 +135,7 @@ export class UiBuildService {
                     break;
                 case ViewType.BOOLEAN:
                     obj.className = "text-center";
+                    obj.width += 12;
                     obj.type = "tag";
                     if (dataConvert) {
                         obj.tag = {
