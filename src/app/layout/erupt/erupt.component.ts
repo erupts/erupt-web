@@ -153,7 +153,6 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             true
         );
-
         this.doc.body.classList[layout.colorWeak ? "add" : "remove"]("color-weak");
     }
 

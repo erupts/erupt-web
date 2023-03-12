@@ -35,7 +35,7 @@ export class SettingsComponent implements OnInit {
         if (value) {
             this.reuseTabService.mode = 0;
             this.reuseTabService.excludes = [];
-            this.toggleDark(false);
+            this.toggleColorWeak(false);
         } else {
             this.reuseTabService.mode = 2;
             this.reuseTabService.excludes = [/\d*/];
@@ -43,13 +43,13 @@ export class SettingsComponent implements OnInit {
         this.settingSrv.setLayout('reuse', value);
     }
 
-    toggleDark(value: boolean) {
-        this.settingSrv.layout['dark'] = value;
+    toggleColorWeak(value: boolean) {
+        this.settingSrv.setLayout("colorWeak", value)
         if (value) {
-            document.body.className = "dark";
+            document.body.classList.add("color-weak");
             this.changeReuse(false);
         } else {
-            document.body.className = "";
+            document.body.classList.remove("color-weak");
         }
     }
 

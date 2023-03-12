@@ -32,9 +32,7 @@
                     <ng-container *ngSwitchCase=" editType.CODE_EDITOR" [ngTemplateOutlet]="inputTpl"></ng-container>
                     <ng-container *ngSwitchCase="editType.NUMBER">
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
-                             [nzLg]="col.lg"
-                             [nzXl]="col.xl"
-                             [nzXXl]="col.xxl">
+                             [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
                             <erupt-search-se [field]="field">
                                 <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
                                     <nz-input-group [nzSize]="size" class="erupt-input"
@@ -47,7 +45,7 @@
                                                          [nzMax]="field.eruptFieldJson.edit.numberType.max"
                                                          [nzStep]="1"></nz-input-number>
                                         <input [nzSize]="size" disabled nz-input placeholder="~"
-                                               style="width: 30px; border-left: 0; border-right: 0; pointer-events: none;background-color: rgb(255, 255, 255);"
+                                               style="width: 30px; border-left: 0; border-right: 0; pointer-events: none;"
                                         />
 
                                         <nz-input-number [nzSize]="size" style="width: 45%;"
