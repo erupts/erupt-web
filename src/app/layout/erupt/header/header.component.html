@@ -14,7 +14,7 @@
             </div>
         </li>
 
-        <div class="hidden-mobile">
+        <div class="hidden-mobile" *ngIf="settings.layout['breadcrumbs']">
             <div class="alain-default__nav-item" style="padding:0 18px">
                 <erupt-nav></erupt-nav>
             </div>
@@ -46,7 +46,7 @@
 
         <li>
             <div class="alain-default__nav-item">
-                <header-i18n></header-i18n>
+                <i18n-choice></i18n-choice>
             </div>
         </li>
 

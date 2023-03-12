@@ -70,9 +70,10 @@
 :host {
     .erupt-header {
         background: #fff;
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
+        right: 0;
         z-index: 19;
         display: flex;
         align-items: center;
@@ -81,6 +82,10 @@
         padding: 0 16px;
         border-bottom: 1px solid #e5e5e5;
         //box-shadow: 0 1px 10px rgb(0 0 0 / 20%);
+    }
+
+    .erupt-header_fixed {
+        position: fixed;
     }
 
     footer.licence {

@@ -16,6 +16,7 @@ import {DataService} from "@shared/service/data.service";
 import {I18nPipe} from "@shared/pipe/i18n.pipe";
 import {NavComponent} from "@shared/nav/nav.component";
 import {NzAffixModule} from "ng-zorro-antd/affix";
+import {HeaderI18nComponent} from "@shared/component/i18n.component";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -24,7 +25,7 @@ const THIRDMODULES: Array<Type<any>> = [];
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: Array<Type<any>> = [EruptIframeComponent,NavComponent];
+const COMPONENTS: Array<Type<any>> = [EruptIframeComponent,NavComponent,HeaderI18nComponent];
 const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, I18nPipe];
 
 // #endregion

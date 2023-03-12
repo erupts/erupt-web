@@ -4,11 +4,10 @@ import {I18NService} from '@core';
 import {SettingsService} from '@delon/theme';
 
 @Component({
-    selector: 'header-i18n',
+    selector: 'i18n-choice',
     template: `
         <i nz-dropdown [nzDropdownMenu]="langMenu" *ngIf="langs.length > 1"
-           nzPlacement="bottomRight"
-           nz-icon
+           nzPlacement="bottomRight" nz-icon
            nzType="global"></i>
         <nz-dropdown-menu #langMenu>
             <ul nz-menu nzSelectable>

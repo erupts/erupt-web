@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {EruptModel, Row, RowOperation} from "../../model/erupt.model";
+import {Drill, EruptModel, Row, RowOperation} from "../../model/erupt.model";
 
 import {DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -31,6 +31,8 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
 import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
 import {deepCopy} from "@delon/util";
+import {NzSafeAny} from "ng-zorro-antd/core/types";
+import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
 
 
 @Component({
@@ -263,6 +265,87 @@ export class TableComponent implements OnInit {
                 }
             });
         }
+        let tableButtons: STColumnButton[] = []
+        let editButtons: ModalButtonOptions[] = [];
+        const that = this;
+        for (let i in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
+            let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[i];
+            if (ro.mode !== OperationMode.BUTTON) {
+                let text = "";
+                if (ro.icon) {
+                    text = `<i class=\"${ro.icon}\"></i>`;
+                } else {
+                    text = ro.title;
+                }
+                tableButtons.push({
+                    type: 'link',
+                    text: text,
+                    tooltip: ro.title + (ro.tip && "(" + ro.tip + ")"),
+                    click: (record: any, modal: any) => {
+                        that.createOperator(ro, record);
+                    },
+                    iifBehavior: ro.ifExprBehavior == OperationIfExprBehavior.DISABLE ? "disabled" : "hide",
+                    iif: (item) => {
+                        if (ro.ifExpr) {
+                            return eval(ro.ifExpr);
+                        } else {
+                            return true;
+                        }
+                    }
+                });
+            }
+        }
+
+        //drill
+        const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
+
+        let createDrillModel = (drill: Drill, id) => {
+            this.modal.create({
+                nzWrapClassName: "modal-xxl",
+                nzStyle: {top: "30px"},
+                nzBodyStyle: {padding: "18px"},
+                nzMaskClosable: false,
+                nzKeyboard: false,
+                nzTitle: drill.title,
+                nzFooter: null,
+                nzContent: TableComponent,
+                nzComponentParams: {
+                    drill: {
+                        code: drill.code,
+                        val: id,
+                        erupt: drill.link.linkErupt,
+                        eruptParent: this.eruptBuildModel.eruptModel.eruptName
+                    }
+                }
+            });
+        }
+
+        for (let i in eruptJson.drills) {
+            let drill = eruptJson.drills[i];
+            tableButtons.push({
+                type: 'link',
+                tooltip: drill.title,
+                text: `<i class="${drill.icon}"></i>`,
+                click: (record) => {
+                    createDrillModel(drill, record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
+                }
+            });
+            editButtons.push({
+                label: drill.title,
+                type: 'dashed',
+                onClick(options: ModalButtonOptions<string>) {
+                    createDrillModel(drill, options['id']);
+                }
+            })
+        }
+
+        let getEditButtons = (record): ModalButtonOptions[] => {
+            for (let editButton of editButtons) {
+                editButton['id'] = record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
+            }
+            return editButtons;
+        }
+
         if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
             tableOperators.push({
                 icon: "edit",
@@ -280,11 +363,22 @@ export class TableComponent implements OnInit {
                             id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
                             behavior: Scene.EDIT,
                         },
-                        // nzFooter: [
-                        //     {
-                        //         label:"asdf"
-                        //     }
-                        // ],
+                        nzFooter: [
+                            {
+                                label: this.i18n.fanyi("global.cancel"),
+                                onClick: () => {
+                                    model.close();
+                                }
+                            },
+                            ...getEditButtons(record),
+                            {
+                                label: this.i18n.fanyi("global.update"),
+                                type: "primary",
+                                onClick: () => {
+                                    return model.triggerOk();
+                                }
+                            },
+                        ],
                         nzOnOk: async () => {
                             let validateResult = model.getContentComponent().beforeSaveValidate();
                             if (validateResult) {
@@ -330,66 +424,7 @@ export class TableComponent implements OnInit {
                 }
             });
         }
-        const that = this;
-        for (let i in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
-            let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[i];
-            if (ro.mode !== OperationMode.BUTTON) {
-                let text = "";
-                if (ro.icon) {
-                    text = `<i class=\"${ro.icon}\"></i>`;
-                } else {
-                    text = ro.title;
-                }
-                tableOperators.push({
-                    type: 'link',
-                    text: text,
-                    tooltip: ro.title + (ro.tip && "(" + ro.tip + ")"),
-                    click: (record: any, modal: any) => {
-                        that.createOperator(ro, record);
-                    },
-                    iifBehavior: ro.ifExprBehavior == OperationIfExprBehavior.DISABLE ? "disabled" : "hide",
-                    iif: (item) => {
-                        if (ro.ifExpr) {
-                            return eval(ro.ifExpr);
-                        } else {
-                            return true;
-                        }
-                    }
-                });
-            }
-        }
-
-        //drill
-        const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
-        for (let i in eruptJson.drills) {
-            let drill = eruptJson.drills[i];
-            tableOperators.push({
-                type: 'link',
-                tooltip: drill.title,
-                text: `<i class="${drill.icon}"></i>`,
-                click: (record) => {
-                    let drill = eruptJson.drills[i];
-                    this.modal.create({
-                        nzWrapClassName: "modal-xxl",
-                        nzStyle: {top: "30px"},
-                        nzBodyStyle: {padding: "18px"},
-                        nzMaskClosable: false,
-                        nzKeyboard: false,
-                        nzTitle: drill.title,
-                        nzFooter: null,
-                        nzContent: TableComponent,
-                        nzComponentParams: {
-                            drill: {
-                                code: drill.code,
-                                val: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
-                                erupt: drill.link.linkErupt,
-                                eruptParent: this.eruptBuildModel.eruptModel.eruptName
-                            }
-                        }
-                    });
-                }
-            });
-        }
+        tableOperators.push(...tableButtons);
         if (tableOperators.length > 0) {
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),

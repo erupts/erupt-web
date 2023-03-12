@@ -112,39 +112,41 @@
                     <ng-template [ngTemplateOutlet]="operationButtons"></ng-template>
                 </div>
 
-                <nz-card *ngIf="searchErupt" [nzBodyStyle]="{padding:'10px'}" class="search-card"
-                         [hidden]="hideCondition">
-                    <erupt-search [eruptModel]="searchErupt" (search)="query()" [size]="'default'">
+                <ng-container>
+                    <nz-card *ngIf="searchErupt" [nzBodyStyle]="{padding:'10px'}" class="search-card"
+                             [hidden]="hideCondition">
+                        <erupt-search [eruptModel]="searchErupt" (search)="query()" [size]="'default'">
 
-                    </erupt-search>
-                </nz-card>
-                <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">
-                    <div style="margin: 16px 0">
-                        <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>
-                    </div>
+                        </erupt-search>
+                    </nz-card>
+                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">
+                        <div style="margin: 16px 0">
+                            <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>
+                        </div>
+                    </ng-container>
+                    <st #st resizable
+                        [widthMode]="{strictBehavior:'wrap'}"
+                        [data]="stConfig.url" [columns]="columns"
+                        [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
+                        (change)="tableDataChange($event)"
+                        [bordered]="settingSrv.layout['bordered']"
+                        [multiSort]="stConfig.multiSort"
+                        [page]="stConfig.stPage"
+                        [req]="stConfig.req"
+                        [size]="'middle'"
+                        [body]="bodyTpl">
+                        <ng-template #bodyTpl>
+                            <ng-container>
+                                <tr *ngFor="let row of extraRows" [ngClass]="row.className">
+                                    <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
+                                        [ngClass]="column.className">
+                                        {{column.value}}
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-template>
+                    </st>
                 </ng-container>
-                <st #st resizable
-                    [widthMode]="{strictBehavior:'wrap'}"
-                    [data]="stConfig.url" [columns]="columns"
-                    [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
-                    (change)="tableDataChange($event)"
-                    [bordered]="settingSrv.layout['bordered']"
-                    [multiSort]="stConfig.multiSort"
-                    [page]="stConfig.stPage"
-                    [req]="stConfig.req"
-                    [size]="'middle'"
-                    [body]="bodyTpl">
-                    <ng-template #bodyTpl>
-                        <ng-container>
-                            <tr *ngFor="let row of extraRows" [ngClass]="row.className">
-                                <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
-                                    [ngClass]="column.className">
-                                    {{column.value}}
-                                </td>
-                            </tr>
-                        </ng-container>
-                    </ng-template>
-                </st>
             </ng-container>
         </div>
     </div>

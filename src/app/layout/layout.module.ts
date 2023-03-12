@@ -22,6 +22,26 @@ import {NzSpinModule} from 'ng-zorro-antd/spin';
 
 // eslint-disable-next-line import/order
 import {LayoutBlankComponent} from './blank/blank.component';
+// passport
+import {LayoutPassportComponent} from './passport/passport.component';
+import {HeaderComponent} from "./erupt/header/header.component";
+import {NzButtonModule} from "ng-zorro-antd/button";
+import {NzDrawerModule} from "ng-zorro-antd/drawer";
+import {NzDividerModule} from "ng-zorro-antd/divider";
+import {SidebarComponent} from "./erupt/sidebar/sidebar.component";
+import {HeaderSearchComponent} from "./erupt/header/components/search.component";
+import {HeaderFullScreenComponent} from "./erupt/header/components/fullscreen.component";
+import {HeaderUserComponent} from "./erupt/header/components/user.component";
+import {SettingsComponent} from "./erupt/header/settings/settings.component";
+import {NzAlertModule} from "ng-zorro-antd/alert";
+import {NzTableModule} from "ng-zorro-antd/table";
+import {SharedModule} from "@shared/shared.module";
+import {NzBackTopModule} from "ng-zorro-antd/back-top";
+import {ReuseTabModule} from "@delon/abc/reuse-tab";
+import {HeaderRTLComponent} from "./erupt/header/components/rtl.component";
+import {MenuComponent} from './erupt/menu/menu.component';
+import {NzBreadCrumbModule} from "ng-zorro-antd/breadcrumb";
+import {LayoutEruptComponent} from "./erupt/erupt.component";
 
 const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent];
 
@@ -34,32 +54,9 @@ const HEADER_COMPONENTS = [
     HeaderComponent,
     SidebarComponent,
     SettingsComponent,
-    HeaderI18nComponent,
     HeaderRTLComponent
     // SettingsComponent
 ];
-
-// passport
-import {LayoutPassportComponent} from './passport/passport.component';
-import {HeaderComponent} from "./erupt/header/header.component";
-import {NzButtonModule} from "ng-zorro-antd/button";
-import {NzDrawerModule} from "ng-zorro-antd/drawer";
-import {NzDividerModule} from "ng-zorro-antd/divider";
-import {SidebarComponent} from "./erupt/sidebar/sidebar.component";
-import {HeaderSearchComponent} from "./erupt/header/components/search.component";
-import {HeaderFullScreenComponent} from "./erupt/header/components/fullscreen.component";
-import {HeaderUserComponent} from "./erupt/header/components/user.component";
-import {SettingsComponent} from "./erupt/header/settings/settings.component";
-import {HeaderI18nComponent} from "./erupt/header/i18n.component";
-import {NzAlertModule} from "ng-zorro-antd/alert";
-import {NzTableModule} from "ng-zorro-antd/table";
-import {SharedModule} from "@shared/shared.module";
-import {NzBackTopModule} from "ng-zorro-antd/back-top";
-import {ReuseTabModule} from "@delon/abc/reuse-tab";
-import {HeaderRTLComponent} from "./erupt/header/components/rtl.component";
-import {MenuComponent} from './erupt/menu/menu.component';
-import {NzBreadCrumbModule} from "ng-zorro-antd/breadcrumb";
-import {LayoutEruptComponent} from "./erupt/erupt.component";
 
 const PASSPORT = [LayoutPassportComponent];
 
@@ -96,7 +93,7 @@ const PASSPORT = [LayoutPassportComponent];
         NzBreadCrumbModule
     ],
     declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT, MenuComponent],
-    exports: [...COMPONENTS, ...PASSPORT, HeaderI18nComponent]
+    exports: [...COMPONENTS, ...PASSPORT]
 })
 export class LayoutModule {
 }
