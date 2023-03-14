@@ -14,7 +14,7 @@ import {LayoutEruptComponent} from "../layout/erupt/erupt.component";
 
 // layout
 let coreRouter: Routes = [
-    {path: "", component: HomeComponent, data: {titleI18n: "global.home"}},
+    {path: "", component: HomeComponent, data: {title: "首页"}},
     {path: "exception", loadChildren: () => import( "./exception/exception.module").then(m => m.ExceptionModule)},
     {path: "site/:url", component: SiteComponent},
     {

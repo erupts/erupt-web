@@ -82,7 +82,6 @@ export class StartupService {
             this.reuseTabService.mode = 2;
             this.reuseTabService.excludes = [/\d*/];
         }
-
         return new Promise((resolve) => {
             // 应用信息：包括站点名、描述、年份
             this.settingService.setApp({
@@ -92,7 +91,7 @@ export class StartupService {
             // 设置页面标题的后缀
             this.titleService.suffix = WindowModel.title;
             this.titleService.default = "";
-            this.i18n.loadLangData(()=>{
+            this.i18n.loadLangData(() => {
                 resolve(null);
             })
         });
