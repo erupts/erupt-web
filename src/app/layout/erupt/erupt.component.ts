@@ -5,7 +5,7 @@ import {
     ElementRef,
     Inject,
     OnDestroy,
-    OnInit,
+    OnInit, Optional,
     Renderer2,
     ViewChild,
     ViewContainerRef
@@ -22,7 +22,7 @@ import {
 
 import {Subscription} from "rxjs";
 import {ScrollService, updateHostClass} from "@delon/util";
-import {Menu, MenuService, SettingsService} from "@delon/theme";
+import {Menu, MenuService, SettingsService, TitleService} from "@delon/theme";
 import {
     ArrowDownOutline,
     BellOutline,
@@ -50,6 +50,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzIconService} from "ng-zorro-antd/icon";
 import {ResetPwdComponent} from "../../routes/reset-pwd/reset-pwd.component";
+import {ReuseTabService} from "@delon/abc/reuse-tab";
 
 // #region icons
 
@@ -113,14 +114,22 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private statusService: StatusService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
+                private titleService: TitleService,
                 private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
+                @Optional()
+                @Inject(ReuseTabService)
+                private reuseTabService: ReuseTabService,
                 @Inject(DOCUMENT) private doc: any) {
         iconSrv.addIcon(...ICONS);
-        // scroll to top in change page
+        let initReuseTab = false;
         router.events.subscribe(evt => {
             if (!this.isFetching && evt instanceof RouteConfigLoadStart) {
                 this.isFetching = true;
+            }
+            if (!initReuseTab) {
+                this.reuseTabService.clear();
+                initReuseTab = true;
             }
             if (evt instanceof NavigationError || evt instanceof NavigationCancel) {
                 this.isFetching = false;
@@ -157,7 +166,9 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
-        // Setting componet for only developer
+        setTimeout(() => {
+            this.reuseTabService.clear(true);
+        }, 500)
         if (!environment.production) {
             // setTimeout(() => {
             //     const settingFactory = this.resolver.resolveComponentFactory(

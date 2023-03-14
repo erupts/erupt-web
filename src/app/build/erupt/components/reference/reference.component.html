@@ -4,6 +4,7 @@
            [required]="field.eruptFieldJson.edit.notNull"
            (click)="createReferenceModal(field)"
            [readOnly]="true"
+           [disabled]="readonly"
            [placeholder]="field.eruptFieldJson.edit.placeHolder"
            [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
            [name]="field.fieldName">

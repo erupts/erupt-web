@@ -18,7 +18,7 @@ export function generateMenuPath(type: string, value: string) {
         case MenuTypeEnum.tpl:
             return "/tpl/" + menuValue;
         case MenuTypeEnum.router:
-            return "/" + menuValue;
+            return menuValue;
         case MenuTypeEnum.newWindow:
             return "/" + menuValue;
         case MenuTypeEnum.selfWindow:

@@ -78,34 +78,35 @@
                         </ng-container>
                     </div>
                     <div class="condition-btn">
-                        <ng-container *ngIf="searchErupt">
-                            <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition"
-                                    style="padding: 4px 8px">
-                                <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                        <div>
+                            <button nz-button nzType="default" nz-popover style="padding: 4px 8px"
+                                    [(nzPopoverVisible)]="showColCtrl" [nzPopoverContent]="tableColumnCtrl"
+                                    nzPopoverTrigger="click" class="mb-sm hidden-mobile">
+                                <i nz-icon nzType="table" nzTheme="outline"></i>
                             </button>
-                            <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset"
-                                    [disabled]="st._loading">
-                                <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
-                            </button>
-                            <nz-divider class="hidden-mobile" nzType="vertical"></nz-divider>
-                        </ng-container>
-                        <button nz-button nzType="default" nz-popover style="padding: 4px 8px"
-                                [(nzPopoverVisible)]="showColCtrl" [nzPopoverContent]="tableColumnCtrl"
-                                nzPopoverTrigger="click" class="mb-sm hidden-mobile">
-                            <i nz-icon nzType="table" nzTheme="outline"></i>
-<!--                            {{'table.col.ctrl'|translate}}-->
-                        </button>
-                        <ng-template #tableColumnCtrl>
-                            <div nz-row style="max-width: 520px;">
-                                <ng-container *ngFor="let col of columns">
-                                    <div *ngIf="col.title&&col.index" nz-col nzSpan="6">
-                                        <label nz-checkbox [(ngModel)]="col['show']"
-                                               style="width: 130px;"
-                                               (ngModelChange)="st.resetColumns()">{{col.title['text'] | nzEllipsis:6:'...'}}</label>
-                                    </div>
-                                </ng-container>
-                            </div>
-                        </ng-template>
+                            <ng-template #tableColumnCtrl>
+                                <div nz-row style="max-width: 520px;">
+                                    <ng-container *ngFor="let col of columns">
+                                        <div *ngIf="col.title&&col.index" nz-col nzSpan="6">
+                                            <label nz-checkbox [(ngModel)]="col['show']"
+                                                   style="width: 130px;"
+                                                   (ngModelChange)="st.resetColumns()">{{col.title['text'] | nzEllipsis:6:'...'}}</label>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-template>
+                            <ng-container *ngIf="searchErupt">
+                                <nz-divider class="hidden-mobile" nzType="vertical"></nz-divider>
+                                <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition"
+                                        style="padding: 4px 8px">
+                                    <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                                </button>
+                                <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset"
+                                        [disabled]="st._loading">
+                                    <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
+                                </button>
+                            </ng-container>
+                        </div>
                     </div>
                 </div>
                 <div *ngIf="operationButtonNum > 3">
