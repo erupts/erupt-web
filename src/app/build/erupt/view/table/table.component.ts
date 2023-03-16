@@ -268,6 +268,18 @@ export class TableComponent implements OnInit {
         let tableButtons: STColumnButton[] = []
         let editButtons: ModalButtonOptions[] = [];
         const that = this;
+        let exprEval = (expr, item) => {
+            try {
+                if (expr) {
+                    return eval(expr);
+                } else {
+                    return true;
+                }
+            } catch (e) {
+                // this.msg.error(e);
+                return false;
+            }
+        }
         for (let i in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
             let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[i];
             if (ro.mode !== OperationMode.BUTTON) {
@@ -277,6 +289,7 @@ export class TableComponent implements OnInit {
                 } else {
                     text = ro.title;
                 }
+
                 tableButtons.push({
                     type: 'link',
                     text: text,
@@ -286,13 +299,19 @@ export class TableComponent implements OnInit {
                     },
                     iifBehavior: ro.ifExprBehavior == OperationIfExprBehavior.DISABLE ? "disabled" : "hide",
                     iif: (item) => {
-                        if (ro.ifExpr) {
-                            return eval(ro.ifExpr);
-                        } else {
-                            return true;
-                        }
+                        return exprEval(ro.ifExpr, item);
                     }
                 });
+                editButtons.push({
+                    label: ro.title,
+                    type: 'dashed',
+                    show: (options: ModalButtonOptions<any>) => {
+                        return !ro.ifExpr;
+                    },
+                    onClick(options: ModalButtonOptions<any>) {
+                        that.createOperator(ro, options);
+                    }
+                })
             }
         }
 
@@ -333,7 +352,7 @@ export class TableComponent implements OnInit {
             editButtons.push({
                 label: drill.title,
                 type: 'dashed',
-                onClick(options: ModalButtonOptions<string>) {
+                onClick(options: ModalButtonOptions<any>) {
                     createDrillModel(drill, options['id']);
                 }
             })
@@ -342,6 +361,7 @@ export class TableComponent implements OnInit {
         let getEditButtons = (record): ModalButtonOptions[] => {
             for (let editButton of editButtons) {
                 editButton['id'] = record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
+                editButton['data'] = record
             }
             return editButtons;
         }
