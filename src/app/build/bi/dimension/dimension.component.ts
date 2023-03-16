@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {Bi, Dimension, DimType} from "../model/bi.model";
 import {colRules} from "@shared/model/util.model";
 import {NzModalService} from "ng-zorro-antd";
@@ -19,6 +19,8 @@ export class DimensionComponent implements OnInit {
 
     @Input() bi: Bi;
 
+    @Output() search = new EventEmitter();
+
     col = colRules[3];
 
     dimType = DimType;
@@ -31,7 +33,7 @@ export class DimensionComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.dateRanges =  <any>{
+        this.dateRanges = <any>{
             [this.i18n.fanyi("global.today")]: [this.datePipe.transform(new Date(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
             近7天: [this.datePipe.transform(moment().add(-7, 'day').toDate(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
             近30天: [this.datePipe.transform(moment().add(-30, 'day').toDate(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
@@ -40,6 +42,12 @@ export class DimensionComponent implements OnInit {
             // obj['本周'] = [this.datePipe.transform(moment().add(-7, 'day').toDate(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")];
             // obj['上周'] = [this.datePipe.transform(moment().add(-7, 'day').toDate(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")];
         };
+    }
+
+    enterEvent(event) {
+        if (event.which === 13) {
+            this.search.emit();
+        }
     }
 
     ref(dim: Dimension) {
