@@ -31,7 +31,7 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="dimType.INPUT">
                                     <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input">
-                                        <input nz-input autocomplete="off"
+                                        <input nz-input autocomplete="off" (keyup)="enterEvent($event)"
                                                class="full-width" [(ngModel)]="dim.$value"
                                                [name]="dim.code" [required]="dim.notNull">
                                     </nz-input-group>
@@ -42,7 +42,7 @@
                                     </ng-template>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="dimType.NUMBER">
-                                    <nz-input-number [(ngModel)]="dim.$value" class="full-width"
+                                    <nz-input-number [(ngModel)]="dim.$value" class="full-width" (keyup)="enterEvent($event)"
                                                      [name]="dim.code"></nz-input-number>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="dimType.NUMBER_RANGE">
