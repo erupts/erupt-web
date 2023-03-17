@@ -461,7 +461,7 @@
                                                 <p class="ant-upload-text">单击或拖动文件到此区域上传</p>
                                                 <p class="ant-upload-hint"
                                                    *ngIf="field.eruptFieldJson.edit.attachmentType.fileTypes.length>0">
-                                                    文件格式：<span>{{field.eruptFieldJson.edit.attachmentType.fileTypes.join(" / ")}}</span>
+                                                    文件格式：<span>{{field.eruptFieldJson.edit.attachmentType.fileTypes.join("&nbsp; / &nbsp;")}}</span>
                                                 </p>
                                                 <p class="ant-upload-hint">{{field.eruptFieldJson.edit.placeHolder}}</p>
                                             </nz-upload>

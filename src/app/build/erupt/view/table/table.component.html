@@ -1,8 +1,5 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!eruptBuildModel"></nz-skeleton>
 <ng-container *ngIf="eruptBuildModel">
-<!--    <div>-->
-<!--        <iframe src="https://www.baidu.com/" frameborder="0" style="width: 100%"></iframe>-->
-<!--    </div>-->
     <div nz-row [nzGutter]="16">
         <div nz-col *ngIf="linkTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="6">
             <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
@@ -89,7 +86,7 @@
                         <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition">
                             <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
                         </button>
-                        <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset">
+                        <button class="mb-sm" nz-button (click)="clearCondition();query()" id="erupt-btn-reset">
                             <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
                         </button>
                     </div>

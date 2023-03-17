@@ -77,9 +77,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 if (!edit.$viewValue) {
                     edit.$viewValue = [];
                 }
-                edit.attachmentType.fileTypes = edit.attachmentType.fileTypes.map(it => {
-                    return "." + it;
-                });
             }
             let showBy = model.eruptFieldJson.edit.showBy;
             if (showBy) {
