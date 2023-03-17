@@ -48,7 +48,10 @@
         </ng-container>
         <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom: 12px;margin-top: 4px"
                  [hidden]="hideCondition" nzSize="small">
-            <bi-dimension [bi]="bi"></bi-dimension>
+            <bi-dimension [bi]="bi" (search)="query({
+                            pageIndex: 1,
+                            pageSize: biTable.size
+                        },true)"></bi-dimension>
         </nz-card>
         <ng-container *ngIf="bi.charts.length>0">
             <div nz-row nzGutter="12">
