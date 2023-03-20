@@ -2,7 +2,7 @@
     <nz-checkbox-wrapper style="width: 100%;" (nzOnChange)="change($event)">
         <div nz-row>
             <div nz-col [nzXs]="12" [nzSm]="8" [nzMd]="8" [nzLg]="4" *ngFor="let c of checkbox">
-                <label nz-checkbox [nzDisabled]="onlyRead" [nzValue]="c.id"
+                <label nz-checkbox [nzDisabled]="onlyRead" [nzValue]="c.id" nz-tooltip [nzTooltipTitle]="c.label"
                        [nzChecked]="edit.$value&&edit.$value.indexOf(c.id)!=-1">{{c.label}}</label>
             </div>
         </div>
