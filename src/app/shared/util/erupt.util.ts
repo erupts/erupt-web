@@ -8,6 +8,16 @@ import {MenuTypeEnum} from "../model/erupt-menu";
 
 export function generateMenuPath(type: string, value: string) {
     let menuValue = value || '';
+    if (menuValue.indexOf("fill=true") != -1) {
+        return '/fill' + joinPath(type, value);
+    } else {
+        return joinPath(type, value);
+    }
+}
+
+//关联路径
+function joinPath(type: string, value: string): string {
+    let menuValue = value || '';
     switch (type) {
         case MenuTypeEnum.table:
             return "/build/table/" + menuValue;
