@@ -14,7 +14,7 @@ module.exports = {
         secure: false, // Ignore invalid SSL certificates
         changeOrigin: true,
         // target: 'https://www.erupt.xyz/demo',
-        // secure: true, // Ignore invalid SSL certificates
+        // secure: true, // SSL certificates
         // changeOrigin: true
     }
 };
