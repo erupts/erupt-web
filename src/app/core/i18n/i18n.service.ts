@@ -3,6 +3,7 @@ import {Platform} from '@angular/cdk/platform';
 import {DatePipe, registerLocaleData} from '@angular/common';
 import ngEn from '@angular/common/locales/en';
 import ngZh from '@angular/common/locales/zh';
+import ngFr from '@angular/common/locales/fr';
 import ngZhTw from '@angular/common/locales/zh-Hant';
 import ngKO from '@angular/common/locales/ko';
 import ngJA from '@angular/common/locales/ja';
@@ -14,9 +15,10 @@ import {
     ko_KR as delonKo,
     SettingsService,
     zh_CN as delonZhCn,
-    zh_TW as delonZhTw
+    zh_TW as delonZhTw,
+    fr_FR as delonFr
 } from '@delon/theme';
-import {enUS as dfEn, ja as dfJp, ko as dfKo, zhCN as dfZhCn, zhTW as dfZhTw} from 'date-fns/locale';
+import {enUS as dfEn, ja as dfJp, ko as dfKo, zhCN as dfZhCn, zhTW as dfZhTw,fr as dfFr} from 'date-fns/locale';
 import {NzSafeAny} from 'ng-zorro-antd/core/types';
 import {
     en_US as zorroEnUS,
@@ -24,7 +26,8 @@ import {
     ko_KR,
     NzI18nService,
     zh_CN as zorroZhCN,
-    zh_TW as zorroZhTW
+    zh_TW as zorroZhTW,
+    fr_FR as zorroFr
 } from 'ng-zorro-antd/i18n';
 import {WindowModel} from "@shared/model/window.model";
 import {HttpClient} from "@angular/common/http";
@@ -64,6 +67,14 @@ const LANGS: { [key: string]: LangConfigData } = {
         zorro: zorroEnUS,
         delon: delonEnUS,
     },
+    'fr-FR': {
+        abbr: '🇫🇷',
+        text: 'En français',
+        date: dfFr,
+        ng: ngFr,
+        zorro: zorroFr,
+        delon: delonFr,
+    },
     'ja-JP': {
         abbr: '🇯🇵',
         text: '日本語',
@@ -79,7 +90,23 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngKO,
         zorro: ko_KR,
         delon: delonKo,
-    }
+    },
+    // 'ru-RU': {
+    //     abbr: '🇷🇺',
+    //     text: 'русск',
+    //     date: dfEn,
+    //     ng: ngEn,
+    //     zorro: zorroEnUS,
+    //     delon: delonEnUS,
+    // },
+    // 'es-ES': {
+    //     abbr: '🇪🇸',
+    //     text: 'español',
+    //     date: dfEn,
+    //     ng: ngEn,
+    //     zorro: zorroEnUS,
+    //     delon: delonEnUS,
+    // }
 };
 
 for (let key in LANGS) {

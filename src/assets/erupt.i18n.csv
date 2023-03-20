@@ -1,92 +1,93 @@
-key,zh-CN,zh-TW,en-US,ja-JP,ko-KR
-Y,是,是,Yes,はい、,네
-N,否,否,No,いいえ、,아니오
-finish,完成,完成,Finish,完了,완성
-global.today,今天,今天,Today,今日,오늘
-global.date.last_7_day,近7天,近7天,Last  7 day,7日近くです,최근 7일
-global.date.last_30_day,近30天,近30天,Last  30 day,30日近くです,근 30일
-global.date.this_month,本月,本月,This month,今の月,지난
-global.date.last_month,上月,上月,Last month,先月,지난달
-global.home,首页,首頁,Home,最初のページ,홈페이지
-global.cancel,取消,取消,Cancel,キャンセル,취소
-global.all,全部,全部,All,全部,전부
-global.check_all,全选,全選,Check all,すべて選択,전체선택
-global.check_none,不选,不選,Uncheck,選択しない,선택하지않음
-global.ok,确定,確定,OK,を選択します,확실합니다
-global.keyword,请输入关键字,請輸入關鍵字,Please enter key words,キーワードを入力してください,키워드를입력하세요
-global.close,关闭,關閉,Close,閉じる,닫기
-global.view,查看,查看,View,表示,보기
-global.delete,删除,刪除,Delete,削除,삭제
-global.new,新增,新增,New,追加,새로추가
-global.add,增加,增加,Add,增加,증가
-global.editor,编辑,編輯,Edit,編集,편집
-global.update,修改,修改,Modify,変更,수정
-global.add.success,添加成功,添加成功,Add success,追加成功,성공추가
-global.select.one,请选中一条数据,請選中一條數據,Please select one data,データを選択してください。,데이터를선택하십시오
-global.update.success,修改成功,修改成功,Update success,修正成功,수정성공
-global.delete.success,删除成功,刪除成功,Delete success,削除に成功しました,삭제성공
-global.delete.hint,请确认是否要删除,請確認是否要刪除,Please confirm to delete,削除するかどうか確認してください。,삭제할지확인하세요
-global.delete.hint.check,请选中要删除的数据,請選中要刪除的數據,Please select delete data,削除するデータを選択してください。,삭제할데이터를선택하십시오
-global.reset_pwd,修改密码,修改密碼,Change password,パスワードを変更,비밀번호수정
-global.logout,退出登录,退出登錄,Log out,ログアウト,로그인종료
-global.search.hint,搜索菜单,搜索菜單,Search menu,検索メニュー,검색메뉴
-global.confirm_logout,确定注销并退出系统吗？,確定註銷並退出系統嗎？,Are you sure to log out and exit the system?,ログアウトしてシステムを終了しますか？,로그아웃하고시스템을종료하시겠습니까?
-global.confirm_delete,确认删除吗？,確認刪除嗎？,Are you sure to delete?,削除を確認しますか？,삭제확인하시겠습니까?
-global.update.loading..hint,数据加载中无法保存!,數據加載中無法保存!,Data cannot be saved while loading!,データ読み込み中に保存できません。,데이터불러오는중저장할수없습니다!
-table.operation,操作,操作,Operation,操作,조작
-table.delete.hint,确认删除吗？,確認刪除嗎？,Are you sure to delete?,削除を確認しますか？,삭제확인하시겠습니까?
-table.add,新增,新增,Add,追加,새로추가
-table.delete,删除,刪除,Delete,削除,삭제
-table.download,下载,下載,Download,ダウンロード,다운로드
-table.import,导入,導入,Import,インポート,가져오기
-table.download_template,下载模板,下載模板,Download template,テンプレートをダウンロード,템플릿다운로드
-table.excel.import_hint,单击或拖动Excel文件到此区域上传,單擊或拖動Excel文件到此區域上傳,Click or drag the Excel file to this area to upload,Excelファイルをクリックまたはドラッグしてこのエリアにアップロードします。,Excel파일을이지역에업로드하려면누르거나드래그하십시오
-table.query,查询,查詢,Query,クエリー,조회
-table.col.ctrl,表格列控制,表格列控製,Table Control,テーブル列制御,표열제어
-table.reset,重置条件,重置條件,Reset,条件をリセット,조건초기화
-table.select_delete_item,请选中要删除的数据！,請選中要刪除的數據！,Please select delete data!,削除するデータを選択してください。,삭제할데이터를선택하십시오!
-table.hint_delete_number,确定要删除这{}条数据吗？,確定要刪除這{}條數據嗎？,Are you sure want to delete this {} data?,この{}データを削除しますか？,이{}개의데이터를삭제하시겠습니까?
-table.require.select_one,执行该操作时请至少选中一条数据,執行該操作時請至少選中一條數據,Select at least one data before performing this operation,この操作を行う場合は、少なくとも一つのデータを選択してください。,이작업을수행할때최소한하나의데이터를선택하십시오
-table.hint.operation,请确认是否执行此操作,請確認是否執行此操作,Confirm whether to perform this operation,この操作を実行するかどうか確認してください。,이동작을실행할지확인하십시오
-table.validate.required_one_select,执行该操作时请至少选中一条数据,執行該操作時請至少選中一條數據,Select at least one data before performing this operation,この操作を行う場合は、少なくとも一つのデータを選択してください。,이작업을수행할때최소한하나의데이터를선택하십시오
-tree.base,基本信息,基本信息,Basic information,基本情報,기본정보
-tree.update,更新,更新,Update,更新,업데이트
-tree.add_button,新增,新增,Add,追加,새로추가
-tree.add,保存,增加,Add,増加,증가
-tree.add_children,增加下级,增加下級,Add subordinate,部下を増やす,하급자증가
-tree.delete,删除,刪除,Delete,削除,삭제
-tree.validate.no_this_parent,不可以选择自己作为父级,不可以選擇自己作為父級,You cannot choose yourself as a parent,自分を父親として選んではいけません。,부모로서자신을선택할수없습니다
-tree.validate.no_this_children_parent,不可以选择自己的子级作为父级,不可以選擇自己的子級作為父級,You cannot select your own child as the parent,自分のサブを父親として選んではいけません。,자신의하위레벨을부모레벨로선택할수없습니다
-change-pwd.original_password,原始密码,原始密碼,Original password,元のパスワード,원본비밀번호
-change-pwd.confirm_password,确认密码,確認密碼,Confirm password,パスワードを確認する,비밀번호확인
-change-pwd.validate.original_password,请输入原始密码！,請輸入原始密碼！,Please enter original password!,オリジナルのパスワードを入力してください。,원본암호를입력하십시오!
-change-pwd.validate.length-sex,密码至少六位,密碼至少六位,Password at least six digits,パスワードは少なくとも六桁です,비밀번호는최소6자리
-change-pwd.validate.height,强度：强,強度：強,strength：height,強度:強い,강도강함
-change-pwd.validate.middle,强度：中,強度：中,strength：middle,強度:,강도중
-change-pwd.validate.low,强度：太短,強度：太短,strength：low,強度:短すぎる,강도너무짧음
-change-pwd.validate.text,请至少输入6个字符。请不要使用容易被猜到的密码。,請至少輸入6個字符。請不要使用容易被猜到的密碼。,Please enter at least 6 characters.Do not use easily guessed passwords.,少なくとも6文字を入力してください。当てやすいパスワードは使わないでください。,최소6자를입력하십시오.쉽게맞힐수있는비밀번호를사용하지마십시오.
-change-pwd.validate.confirm_password,请确认密码！,請確認密碼！,Please confirm password!,パスワードを確認してください,비밀번호를확인하세요!
-change-pwd.validate.password_not_match,两次输入的密码不匹配！,兩次輸入的密碼不匹配！,The two passwords entered do not match!,二回入力したパスワードが一致しません。,두번입력한비밀번호가일치하지않습니다!
-login.account_pwd_login,账户密码登录,賬戶密碼登錄,Account password login,アカウントのパスワード,계정비밀번호로그인
-login.account,用户名,用戶名,Username,ユーザ名,사용자이름
-login.validate.account,请输入账户名！,請輸入賬戶名！,Please enter your username!,アカウント名を入力してください。,계정이름을입력하세요!
-login.pwd,密码,密碼,Password,パスワード,비밀번호
-login.validate.pwd,请输入密码！,請輸入密碼！,Please enter the password!,パスワードを入力してください,비밀번호를입력하세요!
-login.validate_code,验证码,驗證碼,Verification code,認証コード,인증코드
-login.button,登录,登錄,Login,ログイン,로그인
-login.register,注册,註冊,Register,登録する,등록
-login.forget_pwd,忘记密码？,忘記密碼？,Forget password?,パスワードを忘れますか？,비밀번호를잊어버렸어요?
-login.forget_pwd_hint,请联系管理员,請聯系管理員,Please contact the administrator,管理者に連絡してください,관리자에게연락하세요
-setting.config,页面设置,頁面設置,Page config,ページの設定,페이지설정
-setting.fixed-header,固定头和侧边栏,固定頭和側邊欄,Fixed Header & Nav,고정헤드와사이드바,고정헤드와사이드바
-setting.tab-reuse,多页签,多頁簽,MultiTab,何枚かのくじです,다중 탭
-setting.nav,面包屑导航,面包屑導航,Breadcrumb nav,パン粉ナビゲーション,빵부스러기내비게이션
-setting.table-border,表格边框,表格邊框,Table bordered,表の境界線,표테두리
-setting.colorWeak,色弱模式,色弱模式,Color weak mode,色弱モードです,색약 패턴
-setting.dark,夜间模式,夜間模式,Dark mode,ナイトモード,야간모드
-setting.clear-cache,清理本地缓存,清理本地緩存,Clear Local Cache,로컬캐시지우기,로컬캐시청소
-setting.clear,清理,清理,Clear,整理する,청소
-setting.confirm,确认要清理所有的本地缓存吗？,確認要清理所有的本地緩存嗎？,Are you sure you want to clean up all local caches?,全てのローカルキャッシュをクリアしますか？,로컬캐시를모두청소하시겠습니까?
-login_expire.tip,登录状态已过期，您可以继续留在该页面，或者重新登录？,登錄狀態已過期，您可以繼續留在該頁面，或者重新登錄？,Login status has expired. Can you stay on the page or log in again?,ログイン状態が失効しました。このページに残してもいいですか？それとも再登録してもいいですか？,로그인상태가만료되었습니다.이페이지에계속머무르거나다시로그인할수있습니까?
-login_expire.retry,重新登录,重新登錄,login again,再登録,다시로그인
-none_permission,无权限！,無權限！,Without permission!,権限がありません,권한이없습니다!
+key,zh-CN,zh-TW,en-US,ja-JP,ko-KR,fr-FR,ru-RU,es-ES
+Y,是,是,Yes,はい、,네,est,эт,es
+N,否,否,No,いいえ、,아니오,oui,нет,si
+finish,完成,完成,Finish,完了,완성,L’achèvement du,законч,completar
+global.today,今天,今天,Today,今日,오늘,aujourd’hui,сегодн,hoy
+global.date.last_7_day,近7天,近7天,Last  7 day,7日近くです,최근 7일,7 derniers jours,Почти семь дней.,Últimos 7 días
+global.date.last_30_day,近30天,近30天,Last  30 day,30日近くです,근 30일,Près de 30 jours,Почти 30 дней.,Casi 30 días
+global.date.this_month,本月,本月,This month,今の月,지난,"Ce mois-ci,",месяц,Este mes
+global.date.last_month,上月,上月,Last month,先月,지난달,"Le mois dernier,",Прошл месяц,El último mes
+global.home,首页,首頁,Home,最初のページ,홈페이지,La page de couverture,Главн страниц,En la primera página
+global.cancel,取消,取消,Cancel,キャンセル,취소,La suppression des,отмен,cancelación
+global.all,全部,全部,All,全部,전부,La totalité des,все,total
+global.check_all,全选,全選,Check all,すべて選択,전체선택,Aléatoire!,выбира,QuanXuan
+global.check_none,不选,不選,Uncheck,選択しない,선택하지않음,ne,Не выбра,No seleccionado
+global.ok,确定,確定,OK,を選択します,확실합니다,déterminer,увер,determinar
+global.keyword,请输入关键字,請輸入關鍵字,Please enter key words,キーワードを入力してください,키워드를입력하세요,Veuillez entrer un mot-clé,Введите ключевое слово,Por favor introduzca una palabra clave
+global.close,关闭,關閉,Close,閉じる,닫기,La fermeture,закр,cierre
+global.view,查看,查看,View,表示,보기,voir,провер,ver
+global.delete,删除,刪除,Delete,削除,삭제,supprimé,удал,borrar
+global.new,新增,新增,New,追加,새로추가,nouveaux,нов,nuevos
+global.add,增加,增加,Add,增加,증가,Une augmentation,увелич,aumento
+global.editor,编辑,編輯,Edit,編集,편집,Rédacteur en chef,редактор,editor
+global.update,修改,修改,Modify,変更,수정,La modification,модификац,La modificación
+global.add.success,添加成功,添加成功,Add success,追加成功,성공추가,Ajouté avec succès,Добавить успех,Añadido con éxito
+global.select.one,请选中一条数据,請選中一條數據,Please select one data,データを選択してください。,데이터를선택하십시오,Veuillez sélectionner une donnée,"Пожалуйста, выберите сообщение","Por favor, seleccione un dato"
+global.update.success,修改成功,修改成功,Update success,修正成功,수정성공,Modifié avec succès,Модификация завершена.,Modificado con éxito
+global.delete.success,删除成功,刪除成功,Delete success,削除に成功しました,삭제성공,Supprimé avec succès,Удаление удалено.,Eliminado con éxito
+global.delete.hint,请确认是否要删除,請確認是否要刪除,Please confirm to delete,削除するかどうか確認してください。,삭제할지확인하세요,Veuillez confirmer si vous souhaitez supprimer,"Пожалуйста, подтвердите удаление",Confirme si desea eliminar
+global.delete.hint.check,请选中要删除的数据,請選中要刪除的數據,Please select delete data,削除するデータを選択してください。,삭제할데이터를선택하십시오,Veuillez cocher les données que vous souhaitez supprimer,"Пожалуйста, выберите удаленные данные",Seleccione los datos que desea eliminar
+global.reset_pwd,修改密码,修改密碼,Change password,パスワードを変更,비밀번호수정,Changer votre mot de passe,Измени код.,Cambiar mi contraseña
+global.logout,退出登录,退出登錄,Log out,ログアウト,로그인종료,Déconnexion du login,Выход из системы.,Salir del login
+global.search.hint,搜索菜单,搜索菜單,Search menu,検索メニュー,검색메뉴,Rechercher le menu,Меню поиска.,Buscar el menú
+global.confirm_logout,确定注销并退出系统吗？,確定註銷並退出系統嗎？,Are you sure to log out and exit the system?,ログアウトしてシステムを終了しますか？,로그아웃하고시스템을종료하시겠습니까?,Sûr de se déconnecter et quitter le système?,"Вы уверены, что система списана и выведена из строя?",¿Seguro de salir y salir del sistema?
+global.confirm_delete,确认删除吗？,確認刪除嗎？,Are you sure to delete?,削除を確認しますか？,삭제확인하시겠습니까?,Confirmer la suppression?,Подтвердите удаление?,¿Confirmar la eliminación?
+global.update.loading..hint,数据加载中无法保存!,數據加載中無法保存!,Data cannot be saved while loading!,データ読み込み中に保存できません。,데이터불러오는중저장할수없습니다!,Les données ne peuvent pas être sauvegardées lors du chargement!,Данные не сохраняются в загрузке!,¡Los datos no se pueden guardar en la carga!
+table.operation,操作,操作,Operation,操作,조작,opérations,операцион,La operación
+table.delete.hint,确认删除吗？,確認刪除嗎？,Are you sure to delete?,削除を確認しますか？,삭제확인하시겠습니까?,Confirmer la suppression?,Подтвердите удаление?,¿Confirmar la eliminación?
+table.add,新增,新增,Add,追加,새로추가,nouveaux,нов,nuevos
+table.delete,删除,刪除,Delete,削除,삭제,supprimé,удал,borrar
+table.download,下载,下載,Download,ダウンロード,다운로드,Le téléchargement,загрузк,descargar
+table.import,导入,導入,Import,インポート,가져오기,importations,импортирова,importación
+table.download_template,下载模板,下載模板,Download template,テンプレートをダウンロード,템플릿다운로드,Télécharger le template,Загрузка шаблона,Descargar la plantilla
+table.excel.import_hint,单击或拖动Excel文件到此区域上传,單擊或拖動Excel文件到此區域上傳,Click or drag the Excel file to this area to upload,Excelファイルをクリックまたはドラッグしてこのエリアにアップロードします。,Excel파일을이지역에업로드하려면누르거나드래그하십시오,Cliquez ou faites glisser le fichier Excel dans cette zone pour le télécharger,Нажмите или перетащите файл Excel в эту область,Haga clic o arrastre el archivo Excel a esta área para subir
+table.query,查询,查詢,Query,クエリー,조회,enquêtes,запрос,consulta
+table.col.ctrl,表格列控制,表格列控製,Table Control,テーブル列制御,표열제어,Contrôle des colonnes tabulaires,Управление колонкой таблиц,Control de columnas tabulares
+table.reset,重置条件,重置條件,Reset,条件をリセット,조건초기화,Réinitialiser les conditions,Условие сброса,Restablecer las condiciones
+table.select_delete_item,请选中要删除的数据！,請選中要刪除的數據！,Please select delete data!,削除するデータを選択してください。,삭제할데이터를선택하십시오!,Veuillez cocher les données que vous souhaitez supprimer!,"Пожалуйста, выберите удаленные данные!","Por favor, seleccione los datos que desea eliminar!"
+table.hint_delete_number,确定要删除这{}条数据吗？,確定要刪除這{}條數據嗎？,Are you sure want to delete this {} data?,この{}データを削除しますか？,이{}개의데이터를삭제하시겠습니까?,Sûr de vouloir supprimer ces {} données?,"Вы уверены, что хотите удалить эту информацию?",¿Seguro de que desea eliminar estos {} datos?
+table.require.select_one,执行该操作时请至少选中一条数据,執行該操作時請至少選中一條數據,Select at least one data before performing this operation,この操作を行う場合は、少なくとも一つのデータを選択してください。,이작업을수행할때최소한하나의데이터를선택하십시오,Veuillez sélectionner au moins une donnée pour effectuer cette opération,"При выполнении этой операции, пожалуйста, выберите хотя бы Один файл","Por favor, seleccione al menos un dato para realizar esta operación"
+table.hint.operation,请确认是否执行此操作,請確認是否執行此操作,Confirm whether to perform this operation,この操作を実行するかどうか確認してください。,이동작을실행할지확인하십시오,Veuillez confirmer si cette action est effectuée,"Пожалуйста, подтвердите выполнение этой операции",Confirme si realiza esta acción
+table.validate.required_one_select,执行该操作时请至少选中一条数据,執行該操作時請至少選中一條數據,Select at least one data before performing this operation,この操作を行う場合は、少なくとも一つのデータを選択してください。,이작업을수행할때최소한하나의데이터를선택하십시오,Veuillez sélectionner au moins une donnée pour effectuer cette opération,"При выполнении этой операции, пожалуйста, выберите хотя бы Один файл","Por favor, seleccione al menos un dato para realizar esta operación"
+tree.base,基本信息,基本信息,Basic information,基本情報,기본정보,Les informations essentielles,Основная информация.,La información básica
+tree.update,更新,更新,Update,更新,업데이트,Mise à jour,обновля,actualización
+tree.add_button,新增,新增,Add,追加,새로추가,nouveaux,нов,nuevos
+tree.add,保存,增加,Add,増加,증가,La conservation,сохран,guardar
+tree.add_children,增加下级,增加下級,Add subordinate,部下を増やす,하급자증가,Ajouter un sous-niveau,Увеличить нижний уровень.,Añadir un subnivel
+tree.delete,删除,刪除,Delete,削除,삭제,supprimé,удал,borrar
+tree.validate.no_this_parent,不可以选择自己作为父级,不可以選擇自己作為父級,You cannot choose yourself as a parent,自分を父親として選んではいけません。,부모로서자신을선택할수없습니다,Vous ne pouvez pas vous sélectionner comme parent,Я не могу выбирать себя в качестве отца,No se puede seleccionar como padre
+tree.validate.no_this_children_parent,不可以选择自己的子级作为父级,不可以選擇自己的子級作為父級,You cannot select your own child as the parent,自分のサブを父親として選んではいけません。,자신의하위레벨을부모레벨로선택할수없습니다,Vous ne pouvez pas choisir votre propre enfant comme parent,Не может быть выбора собственного сына в качестве отца,No es posible seleccionar su propio hijo como padre
+change-pwd.original_password,原始密码,原始密碼,Original password,元のパスワード,원본비밀번호,Le mot de passe original,Оригинальный код.,La contraseña original
+change-pwd.new_password,新密码,新密碼,New password,新しいパスワードです,새 비밀번호,Nouveau mot de passe,Новый пароль.,Una nueva contraseña
+change-pwd.confirm_password,确认密码,確認密碼,Confirm password,パスワードを確認する,비밀번호확인,Confirmer le mot de passe,Подтвердите код.,Confirme su contraseña
+change-pwd.validate.original_password,请输入原始密码！,請輸入原始密碼！,Please enter original password!,オリジナルのパスワードを入力してください。,원본암호를입력하십시오!,Veuillez entrer le mot de passe original!,Введите оригинальный код!,Por favor ingrese la contraseña original!
+change-pwd.validate.length-sex,密码至少六位,密碼至少六位,Password at least six digits,パスワードは少なくとも六桁です,비밀번호는최소6자리,Mot de passe d’au moins six caractères,Пароль минимум шесть цифр,Contraseña con al menos seis dígitos
+change-pwd.validate.height,强度：强,強度：強,strength：height,強度:強い,강도강함,Force: fort,Сила: сила,Fuerza: fuerte
+change-pwd.validate.middle,强度：中,強度：中,strength：middle,強度:,강도중,Intensité: moyen,Интенсивность:,Intensidad: medio
+change-pwd.validate.low,强度：太短,強度：太短,strength：low,強度:短すぎる,강도너무짧음,Force: trop courte,Слишком коротко,Fuerza: demasiado corto
+change-pwd.validate.text,请至少输入6个字符。请不要使用容易被猜到的密码。,請至少輸入6個字符。請不要使用容易被猜到的密碼。,Please enter at least 6 characters.Do not use easily guessed passwords.,少なくとも6文字を入力してください。当てやすいパスワードは使わないでください。,최소6자를입력하십시오.쉽게맞힐수있는비밀번호를사용하지마십시오.,Veuillez saisir au moins 6 caractères. Veuillez ne pas utiliser de mots de passe facilement devinables.,"Пожалуйста, введите хотя бы шесть символов. Пожалуйста, не используй пароль, который легко догадаться.","Por favor, introduzca al menos 6 caracteres. Por favor, no utilice contraseñas fáciles de adivinar."
+change-pwd.validate.confirm_password,请确认密码！,請確認密碼！,Please confirm password!,パスワードを確認してください,비밀번호를확인하세요!,Veuillez confirmer le mot de passe!,"Пожалуйста, подтвердите код!",Por favor confirme la contraseña!
+change-pwd.validate.password_not_match,两次输入的密码不匹配！,兩次輸入的密碼不匹配！,The two passwords entered do not match!,二回入力したパスワードが一致しません。,두번입력한비밀번호가일치하지않습니다!,Les mots de passe entrés deux fois ne correspondent pas!,Два входных пароля не совпадают!,¡Las contraseñas introducidas dos veces no coinciden!
+login.account_pwd_login,账户密码登录,賬戶密碼登錄,Account password login,アカウントのパスワード,계정비밀번호로그인,Compte mot de passe connexion,Пароль доступа.,Cuenta contraseña login
+login.account,用户名,用戶名,Username,ユーザ名,사용자이름,Nom de l’utilisateur,Имя пользователя.,Nombre de usuario
+login.validate.account,请输入账户名！,請輸入賬戶名！,Please enter your username!,アカウント名を入力してください。,계정이름을입력하세요!,Veuillez entrer le nom du compte!,"Введите имя счета, пожалуйста!",Por favor ingrese el nombre de la cuenta!
+login.pwd,密码,密碼,Password,パスワード,비밀번호,Les mots de passe,код,La contraseña
+login.validate.pwd,请输入密码！,請輸入密碼！,Please enter the password!,パスワードを入力してください,비밀번호를입력하세요!,Veuillez entrer le code!,"Введите код, пожалуйста!","Por favor, introduzca el código!"
+login.validate_code,验证码,驗證碼,Verification code,認証コード,인증코드,Code de vérification,Код подтверждения.,Código de verificación
+login.button,登录,登錄,Login,ログイン,로그인,connexion,залогин,inicio
+login.register,注册,註冊,Register,登録する,등록,l’enregistrement,зарегистрирова,El registro
+login.forget_pwd,忘记密码？,忘記密碼？,Forget password?,パスワードを忘れますか？,비밀번호를잊어버렸어요?,Mot de passe oublié?,Забыл пароль?,¿Olvidó su contraseña?
+login.forget_pwd_hint,请联系管理员,請聯系管理員,Please contact the administrator,管理者に連絡してください,관리자에게연락하세요,Veuillez contacter l’administrateur,Свяжитесь с администратором.,Por favor contacte al administrador
+setting.config,页面设置,頁面設置,Page config,ページの設定,페이지설정,Configuration de page,Настройка страницы.,Configuración de página
+setting.fixed-header,固定头和侧边栏,固定頭和側邊欄,Fixed Header & Nav,고정헤드와사이드바,고정헤드와사이드바,Tête fixe et sidebar,Закрепи голову и боковую панель,Cabeza fija y barra lateral
+setting.tab-reuse,多页签,多頁簽,MultiTab,何枚かのくじです,다중 탭,Plusieurs onglets de page,Подпиши несколько страниц.,Múltiples pestañas
+setting.nav,面包屑导航,面包屑導航,Breadcrumb nav,パン粉ナビゲーション,빵부스러기내비게이션,Navigation sur breadcrumb,Навигация по хлебным крошкам,Navegación por breadcrumb
+setting.table-border,表格边框,表格邊框,Table bordered,表の境界線,표테두리,Bordure de table,Табличная боковая рама,Borde de tabla
+setting.colorWeak,色弱模式,色弱模式,Color weak mode,色弱モードです,색약 패턴,Mode faible couleur,Слабая модель цвета,Modo débil de color
+setting.dark,夜间模式,夜間模式,Dark mode,ナイトモード,야간모드,Le mode nuit,Ночной режим,Modo nocturno
+setting.clear-cache,清理本地缓存,清理本地緩存,Clear Local Cache,로컬캐시지우기,로컬캐시청소,Nettoyer votre cache local,Очистка местного кэша,Limpiar el caché local
+setting.clear,清理,清理,Clear,整理する,청소,nettoyage,очист,limpieza
+setting.confirm,确认要清理所有的本地缓存吗？,確認要清理所有的本地緩存嗎？,Are you sure you want to clean up all local caches?,全てのローカルキャッシュをクリアしますか？,로컬캐시를모두청소하시겠습니까?,Confirmez que vous voulez nettoyer tout votre cache local?,Подтверждаю.,Confirma que quieres limpiar todo el caché local?
+login_expire.tip,登录状态已过期，您可以继续留在该页面，或者重新登录？,登錄狀態已過期，您可以繼續留在該頁面，或者重新登錄？,Login status has expired. Can you stay on the page or log in again?,ログイン状態が失効しました。このページに残してもいいですか？それとも再登録してもいいですか？,로그인상태가만료되었습니다.이페이지에계속머무르거나다시로그인할수있습니까?,Le statut de connexion a expiré. Pouvez-vous rester sur cette page ou vous reconnecter?,"Регистрация просрочена, вы можете остаться на странице или повторно войти?",El estado de inicio de sesión ha expirado. ¿Puede permanecer en la página o volver a iniciar sesión?
+login_expire.retry,重新登录,重新登錄,login again,再登録,다시로그인,Connectez-vous de nouveau,Перезагрузка.,Volver a iniciar sesión
+none_permission,无权限！,無權限！,Without permission!,権限がありません,권한이없습니다!,Aucune autorisation!,Нет!,¡Sin permiso!

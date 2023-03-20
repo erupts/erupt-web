@@ -7,6 +7,7 @@ import {SettingsService} from "@delon/theme";
 import {Status} from "../../build/erupt/model/erupt-api.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
+import {I18NService} from "@core";
 
 @Component({
     selector: "reset-pwd",
@@ -30,10 +31,11 @@ export class ResetPwdComponent {
     };
 
     constructor(fb: FormBuilder,
-                public router: Router,
                 public msg: NzMessageService,
                 public modal: NzModalService,
+                public router: Router,
                 public data: DataService,
+                private i18n: I18NService,
                 public settingsService: SettingsService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService
     ) {
@@ -63,6 +65,10 @@ export class ResetPwdComponent {
             return {equar: true};
         }
         return null;
+    }
+
+    fanyi(key: string) {
+        return this.i18n.fanyi(key);
     }
 
     // region: fields

@@ -10,12 +10,9 @@
         </button>
     </div>
 </ng-container>
-<st #st
-    (change)="selectTableItem($event)"
+<st #st resizable (change)="selectTableItem($event)"
     [scroll]="{x: (clientWidth > 768 ? ((tabErupt.eruptBuildModel.eruptModel.tableColumns.length * 130) + 'px') : '460px')}"
-    [size]="'small'"
-    [columns]="column"
-    [ps]="20"
+    [size]="'small'" [columns]="column" [ps]="20"
     [data]="tabErupt.eruptFieldModel.eruptFieldJson.edit.$value"
     [bordered]="true" [page]="stConfig.stPage"
 ></st>
