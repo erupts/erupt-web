@@ -99,7 +99,7 @@ export class ResetPwdComponent {
             .subscribe(api => {
                 this.loading = false;
                 if (api.status == Status.SUCCESS) {
-                    this.msg.success("密码修改成功");
+                    this.msg.success(this.i18n.fanyi("global.update.success"));
                     this.modal.closeAll();
                     for (const i in this.form.controls) {
                         this.form.controls[i].markAsDirty();
