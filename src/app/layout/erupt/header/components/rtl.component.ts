@@ -5,7 +5,7 @@ import {RTLService} from '@delon/theme';
     selector: 'header-rtl',
     template: `
         <i nz-icon [nzType]="rtl.nextDir === 'rtl' ? 'border-left' : 'border-right'"></i>
-        {{ rtl.nextDir }}
+        {{ rtl.nextDir == 'ltr' ? 'LTR' : 'RTL' }}
     `,
     host: {
         '[class.flex-1]': 'true'
