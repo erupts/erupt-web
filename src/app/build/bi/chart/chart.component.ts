@@ -4,6 +4,7 @@ import {BiDataService} from "../service/data.service";
 import {HandlerService} from "../service/handler.service";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {Area, Bar, Column, Funnel, Line, Pie, Radar, Rose, Scatter, Waterfall, WordCloud} from "@antv/g2plot";
+import {PivotSheet} from "@antv/s2";
 
 @Component({
     selector: 'bi-chart',
@@ -59,7 +60,7 @@ export class ChartComponent implements OnInit, OnDestroy {
             this.chart.loading = true;
             this.biDataService.getBiChart(this.bi.code, this.chart.id, param).subscribe(data => {
                 this.chart.loading = false;
-                if (this.chart.type == ChartType.table || this.chart.type == ChartType.Number) {
+                if (this.chart.type == ChartType.Number) {
                     if (data[0]) {
                         this.dataKeys = Object.keys(data[0]);
                     }
@@ -151,7 +152,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                 this.plot = new Line(this.chart.code, Object.assign(props, {
                     seriesField: series,
                     stepType: 'vh',
-                    slider:{}
+                    slider: {}
                 }));
                 break;
             case ChartType.Bar:
@@ -191,7 +192,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                     isStack: true,
                     seriesField: series,
 
-                    slider:{}
+                    slider: {}
                 }));
                 break;
             case ChartType.Area:

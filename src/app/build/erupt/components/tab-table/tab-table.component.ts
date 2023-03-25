@@ -11,9 +11,10 @@ import {Status} from "../../model/erupt-api.model";
 import {EditType, Scene, SelectMode} from "../../model/erupt.enum";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
-import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
+import {STChange, STColumn, STColumnButton, STComponent} from "@delon/abc/st";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
+
 
 @Component({
     selector: "tab-table",
@@ -54,10 +55,11 @@ export class TabTableComponent implements OnInit {
 
     ngOnInit() {
         this.stConfig.stPage.front = true;
-        if (this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
+        let tabEdit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
+        if (tabEdit.$value) {
 
         } else {
-            this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
+            tabEdit.$value = [];
         }
         if (this.onlyRead) {
             this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true);
@@ -71,6 +73,14 @@ export class TabTableComponent implements OnInit {
                 className: "text-center",
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
+            // viewValue.push({
+            //     title: "No",
+            //     type: "no",
+            //     fixed: "left",
+            //     className: "text-center",
+            //     width: 60,
+            //     key: this.NO
+            // });
             viewValue.push(...this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true));
             let operators: STColumnButton[] = [];
             if (this.mode == "add") {
@@ -256,10 +266,25 @@ export class TabTableComponent implements OnInit {
         }
     }
 
-    selectTableItem(event) {
+    selectTableItem(event: STChange) {
         if (event.type === "checkbox") {
             this.checkedRow = event.checkbox;
         }
+        // if (event.type == "loaded") {
+        //     if (this.mode == 'add') {
+        //         if (event.loaded && event.loaded.length > 0) {
+        //             let tabEdit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
+        //             let pk = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+        //             if (tabEdit.$value instanceof Array) {
+        //                 for (let data of (<any[]>tabEdit.$value)) {
+        //                     if (!data[pk]) {
+        //                         data[pk] = -Math.floor(Math.random() * 1000);
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     deleteData() {
