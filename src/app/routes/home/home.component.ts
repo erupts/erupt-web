@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {SettingsService, TitleService} from "@delon/theme";
+import {SettingsService} from "@delon/theme";
 import {Router} from "@angular/router";
 import {EruptAppData} from "@shared/model/erupt-app.model";
-import {I18NService} from "@core";
 
 @Component({
     templateUrl: './home.component.html',
@@ -15,8 +14,7 @@ export class HomeComponent implements OnInit {
     spin: boolean = true;
 
     constructor(private settingsService: SettingsService,
-                private i18n: I18NService,
-                private router: Router, private titleService: TitleService) {
+                private router: Router) {
 
     }
 

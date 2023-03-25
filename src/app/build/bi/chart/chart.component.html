@@ -14,7 +14,7 @@
             </ng-container>
             <ng-container *ngSwitchCase="chartType.table">
                 <div [ngStyle]="{height:chart.height+'px'}" style="overflow: auto">
-                    <app-chart-table [data]="data"></app-chart-table>
+                    <erupt-chart-table [data]="data"></erupt-chart-table>
                 </div>
             </ng-container>
             <ng-container *ngSwitchCase="chartType.Number">
