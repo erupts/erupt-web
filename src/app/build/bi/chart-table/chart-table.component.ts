@@ -1,5 +1,15 @@
-import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
-import {PivotSheet} from "@antv/s2";
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
+import {Fields, Meta, PivotSheet, S2Options, TableSheet} from "@antv/s2";
 
 @Component({
     selector: 'erupt-chart-table',
@@ -12,29 +22,50 @@ export class ChartTableComponent implements OnInit, AfterViewInit {
     constructor() {
     }
 
-    @ViewChild('chartTable') chartTable: ElementRef;
+    s2: TableSheet;
 
-    @Input() data: any[];
+    @ViewChild('s2t') chartTable: ElementRef;
 
     ngOnInit() {
-
     }
 
     ngAfterViewInit(): void {
-        // const s2Options = {
-        //     // width: 100,
-        //     // height: 300,
-        // };
-        // console.log(this.chartTable.nativeElement)
-        // const s2 = new PivotSheet(document.getElementById(this.chartTable.nativeElement), {
-        //     data: [],
-        //     fields: {}
-        // }, s2Options);
-        // s2.render();
+        this.s2 = new TableSheet(this.chartTable.nativeElement, {
+            data: [],
+            fields: {},
+        }, null);
+        this.s2.render();
     }
 
-    query(data: any[]) {
-
+    render(data: any[]) {
+        let metas: Meta[] = [];
+        let columns: string[] = [];
+        if (data && data.length > 0) {
+            for (let key in data[0]) {
+                metas.push({field: key, name: key});
+                columns.push(key);
+            }
+        }
+        this.s2.setDataCfg({
+            data: data,
+            fields: {
+                columns: columns
+            },
+            meta: metas,
+            showDefaultHeaderActionIcon: true
+        })
+        this.onResize();
+        this.s2.render(true);
     }
+
+    @HostListener('window:resize', ['$event'])
+    onResize() {
+        if (this.s2) {
+            let ele = this.chartTable.nativeElement;
+            this.s2.changeSheetSize(ele.offsetWidth, ele.offsetHeight)
+            this.s2.render(false) // 不重新加载数据
+        }
+    }
+
 
 }
