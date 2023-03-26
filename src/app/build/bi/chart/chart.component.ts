@@ -1,10 +1,10 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Bi, Chart, ChartType} from "../model/bi.model";
 import {BiDataService} from "../service/data.service";
 import {HandlerService} from "../service/handler.service";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {Area, Bar, Column, Funnel, Line, Pie, Radar, Rose, Scatter, Waterfall, WordCloud} from "@antv/g2plot";
-import {PivotSheet} from "@antv/s2";
+import {ChartTableComponent} from "../chart-table/chart-table.component";
 
 @Component({
     selector: 'bi-chart',
@@ -19,6 +19,8 @@ export class ChartComponent implements OnInit, OnDestroy {
     @Input() bi: Bi;
 
     @Output() buildDimParam = new EventEmitter();
+
+    @ViewChild('chartTable', {static: false}) chartTable: ChartTableComponent | null;
 
     plot;
 
@@ -65,6 +67,8 @@ export class ChartComponent implements OnInit, OnDestroy {
                         this.dataKeys = Object.keys(data[0]);
                     }
                     this.data = data;
+                } else if (this.chart.type == ChartType.table) {
+                    this.chartTable.render(data);
                 } else {
                     this.render(data);
                 }
