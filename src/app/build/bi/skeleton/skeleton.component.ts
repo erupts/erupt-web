@@ -190,7 +190,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                 col.click = (row) => {
                                     this.modal.create({
                                         nzWrapClassName: "modal-lg",
-                                        nzKeyboard: false,
+                                        nzKeyboard: true,
                                         nzMaskClosable: false,
                                         nzStyle: {top: "30px"},
                                         nzTitle: column.name,

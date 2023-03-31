@@ -99,7 +99,7 @@
                             [ps]="biTable.size"
                             [page]="biTable.page"
                             [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
-                            [bordered]="settingSrv.layout['bordered']"
+                            [bordered]="settingSrv.layout['bordered']" [resizable]="true"
                             [size]="'small'" style="margin-bottom: 12px">
                         </st>
                         <ng-container *ngIf="biTable.pageType == pageType.backend">
