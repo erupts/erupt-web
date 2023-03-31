@@ -32,7 +32,8 @@
                                     <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input">
                                         <input nz-input autocomplete="off"
                                                class="full-width" [(ngModel)]="dim.$value"
-                                               [name]="dim.code" [required]="dim.notNull" (keydown)="enterEvent($event)">
+                                               [name]="dim.code" [required]="dim.notNull"
+                                               (keydown)="enterEvent($event)">
                                     </nz-input-group>
                                     <ng-template #suffixTemplate>
                                         <i nz-icon nz-tooltip class="ant-input-clear-icon" nzTheme="fill"
@@ -45,17 +46,15 @@
                                                      (keydown)="enterEvent($event)" [name]="dim.code"></nz-input-number>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="dimType.NUMBER_RANGE">
-                                    <nz-input-number style="width: 45%;"
-                                                     [(ngModel)]="dim.$value[0]"
-                                                     [name]="dim.code"></nz-input-number>
-                                    <nz-input-group style="width: 10%;">
-                                        <div style="line-height: 100%;text-align: center">
-                                            ~
-                                        </div>
+                                    <nz-input-group class="erupt-input" style="display: flex;align-items: center">
+                                        <nz-input-number style="width: 45%;" [(ngModel)]="dim.$value[0]"
+                                                         [name]="dim.code"></nz-input-number>
+                                        <input disabled nz-input placeholder="~"
+                                               style="width: 30px; border-left: 0; border-right: 0; pointer-events: none;"
+                                        />
+                                        <nz-input-number style="width: 45%;" [(ngModel)]="dim.$value[1]"
+                                                         [name]="dim.code"></nz-input-number>
                                     </nz-input-group>
-                                    <nz-input-number style="width: 45%;"
-                                                     [(ngModel)]="dim.$value[1]"
-                                                     [name]="dim.code"></nz-input-number>
                                 </ng-container>
                                 <ng-container>
                                     <ng-template #refBtn>

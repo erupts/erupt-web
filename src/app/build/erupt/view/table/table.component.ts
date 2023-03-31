@@ -693,7 +693,7 @@ export class TableComponent implements OnInit {
     // excel导出
     exportExcel() {
         let condition = null;
-        if (this.searchErupt.eruptFieldModels.length > 0) {
+        if (this.searchErupt && this.searchErupt.eruptFieldModels.length > 0) {
             condition = this.dataHandler.eruptObjectToCondition(this.dataHandler.eruptValueToObject({
                 eruptModel: this.searchErupt
             }));
