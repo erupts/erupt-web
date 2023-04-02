@@ -118,7 +118,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         //校验菜单和合法性
         if (this.validateParentIdValue()) {
             this.loading = true;
-            this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName,
+            this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName,
                 this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
                 if (result.status == Status.SUCCESS) {
                     this.msg.success(this.i18n.fanyi("global.update.success"));

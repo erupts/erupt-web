@@ -28,7 +28,7 @@ export class DimensionComponent implements OnInit {
 
     private datePipe: DatePipe = new DatePipe("zh-cn");
 
-    constructor(@Inject(NzModalService) private modal: NzModalService,  private i18n: I18NService) {
+    constructor(@Inject(NzModalService) private modal: NzModalService, private i18n: I18NService) {
     }
 
     ngOnInit() {
