@@ -299,8 +299,8 @@ export class DataService {
     }
 
     //修改数据
-    editEruptData(eruptName: string, data: object): Observable<EruptApiModel> {
-        return this._http.put<EruptApiModel>(RestPath.dataModify + "/" + eruptName, data, null, {
+    updateEruptData(eruptName: string, data: object): Observable<any> {
+        return this._http.post<EruptApiModel>(RestPath.dataModify + "/" + eruptName + "/update", data, null, {
             observe: null,
             headers: {
                 erupt: eruptName,
@@ -311,17 +311,12 @@ export class DataService {
 
     //删除数据
     deleteEruptData(eruptName: string, id): Observable<EruptApiModel> {
-        return this._http.delete(RestPath.dataModify + "/" + eruptName + "/" + id, null, {
-            headers: {
-                erupt: eruptName,
-                ...this.getCommonHeader()
-            }
-        });
+        return this.deleteEruptDatas(eruptName, [id]);
     }
 
     //批量删除数据
     deleteEruptDatas(eruptName: string, ids: any[]): Observable<EruptApiModel> {
-        return this._http.delete(RestPath.dataModify + "/" + eruptName, {ids: ids}, {
+        return this._http.post(RestPath.dataModify + "/" + eruptName + "/delete", ids, null,{
             headers: {
                 erupt: eruptName,
                 ...this.getCommonHeader()

@@ -403,7 +403,7 @@ export class TableComponent implements OnInit {
                             let validateResult = model.getContentComponent().beforeSaveValidate();
                             if (validateResult) {
                                 let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
-                                let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
+                                let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
                                 if (res.status === Status.SUCCESS) {
                                     this.msg.success(this.i18n.fanyi("global.update.success"));
                                     this.stLoad();
