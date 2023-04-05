@@ -311,11 +311,11 @@ export class DataService {
 
     //删除数据
     deleteEruptData(eruptName: string, id): Observable<EruptApiModel> {
-        return this.deleteEruptDatas(eruptName, [id]);
+        return this.deleteEruptDataList(eruptName, [id]);
     }
 
     //批量删除数据
-    deleteEruptDatas(eruptName: string, ids: any[]): Observable<EruptApiModel> {
+    deleteEruptDataList(eruptName: string, ids: any[]): Observable<EruptApiModel> {
         return this._http.post(RestPath.dataModify + "/" + eruptName + "/delete", ids, null,{
             headers: {
                 erupt: eruptName,

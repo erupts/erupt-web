@@ -54,8 +54,8 @@
                     </div>
                 </div>
                 <div [ngStyle]="{overflow: 'auto',overflowX:'hidden'}" style="width: 100%;height:calc(100vh - 180px)">
-                    <nz-collapse nzAccordion>
-                        <nz-collapse-panel [nzActive]="true" [nzHeader]="'tree.base'|translate" [nzDisabled]="true">
+                    <nz-collapse nzAccordion nzExpandIconPosition="right">
+                        <nz-collapse-panel [nzActive]="true" [nzHeader]="'tree.base'|translate" [nzDisabled]="true" [nzShowArrow]="false">
                             <nz-spin [nzSpinning]="loading" nzSize="large">
                                 <erupt-edit [eruptBuildModel]="eruptBuildModel">
 
