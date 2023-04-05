@@ -465,7 +465,7 @@ export class TableComponent implements OnInit {
      * @param rowOperation 行按钮对象
      * @param data 数据（单个执行时使用）
      */
-    createOperator(rowOperation: RowOperation, data?: object) {
+    createOperator(rowOperation: RowOperation, data?: object, reloadModal?: boolean) {
         const eruptModel = this.eruptBuildModel.eruptModel;
         const ro = rowOperation;
         let ids = [];
@@ -637,7 +637,7 @@ export class TableComponent implements OnInit {
                     nzContent: "",
                     nzOnOk: async () => {
                         this.deleting = true;
-                        let res = await this.dataService.deleteEruptDatas(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
+                        let res = await this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
                         this.deleting = false;
                         if (res.status == Status.SUCCESS) {
                             if (this.selectedRows.length == this.st._data.length) {

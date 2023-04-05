@@ -527,7 +527,9 @@ export class DataHandlerService {
         }
         if (eruptBuild.combineErupts) {
             for (let key in eruptBuild.combineErupts) {
-                this.objectToEruptValue(object[key], {eruptModel: eruptBuild.combineErupts[key]});
+                if (object[key]) {
+                    this.objectToEruptValue(object[key], {eruptModel: eruptBuild.combineErupts[key]});
+                }
             }
         }
 

@@ -94,3 +94,6 @@ setting.confirm,确认要清理所有的本地缓存吗？,確認要清理所有
 login_expire.tip,登录状态已过期，您可以继续留在该页面，或者重新登录？,登錄狀態已過期，您可以繼續留在該頁面，或者重新登錄？,Login status has expired. Can you stay on the page or log in again?,Le statut de connexion a expiré. Pouvez-vous rester sur cette page ou vous reconnecter?,ログイン状態が失効しました。このページに残してもいいですか？それとも再登録してもいいですか？,로그인상태가만료되었습니다.이페이지에계속머무르거나다시로그인할수있습니까?,"Регистрация просрочена, вы можете остаться на странице или повторно войти?",El estado de inicio de sesión ha expirado. ¿Puede permanecer en la página o volver a iniciar sesión?
 login_expire.retry,重新登录,重新登錄,login again,Connectez-vous de nouveau,再登録,다시로그인,Перезагрузка.,Volver a iniciar sesión
 none_permission,无权限！,無權限！,Without permission!,Aucune autorisation!,権限がありません,권한이없습니다!,Нет!,¡Sin permiso!
+theme.default,默认主题,默認主題,Default theme,Thème par défaut,デフォルトテーマ,기본 테마,По умолчанию.,Tema por defecto
+theme.dark,黑夜主题,黑夜主題,Dark theme,Thème nuit noire,夜のテーマです,어두운 테마,♪ тема ночи ♪,Tema de noche
+theme.compact,紧凑主题,緊湊主題,Compact theme,Un thème compact,コンパクトなテーマです,주제를 잘 정리하다,Компактный предмет,Tema compacto
