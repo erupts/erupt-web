@@ -126,7 +126,7 @@
                         </div>
                     </ng-container>
                     <st #st resizable
-                        [widthMode]="{strictBehavior:'wrap'}"
+                        [widthMode]="{strictBehavior:'truncate'}"
                         [data]="stConfig.url" [columns]="columns"
                         [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
                         (change)="tableDataChange($event)"
