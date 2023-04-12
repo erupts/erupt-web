@@ -326,22 +326,20 @@ export class UiBuildService {
                             } else {
                                 img = (<string>item[view.column]).split("|")[0];
                             }
-                            return `<div style="text-align: center;display:table-cell;">
-                                        <img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" alt=""/>
+                            // return `<img width="100%" class="text-center e-table-img" src="${DataService.previewAttachment(img)}" alt=""/>`;
+                            let imgs;
+                            if (attachmentType) {
+                                imgs = (<string>item[view.column]).split(attachmentType.fileSeparator);
+                            } else {
+                                imgs = (<string>item[view.column]).split("|");
+                            }
+                            let imgElements = [];
+                            for (let i in imgs) {
+                                imgElements[i] = `<img width="100%" class="e-table-img" src="${DataService.previewAttachment(imgs[i])}" alt=""/>`;
+                            }
+                            return `<div style="text-align: center;display:flex;justify-content: center;">
+                                        ${imgElements.join("")}
                                     </div>`;
-                            // let imgs;
-                            // if (attachmentType) {
-                            //     imgs = (<string>item[view.column]).split(attachmentType.fileSeparator);
-                            // } else {
-                            //     imgs = (<string>item[view.column]).split("|");
-                            // }
-                            // let imgElements = [];
-                            // for (let i in imgs) {
-                            //     imgElements[i] = `<img width="100%" class="text-center" src="${DataService.previewAttachment(imgs[i])}" alt=""/>`;
-                            // }
-                            // return `<div style="text-align: center;display:flex;">
-                            //             ${imgElements.join("")}
-                            //         </div>`;
                         } else {
                             return '';
                         }
