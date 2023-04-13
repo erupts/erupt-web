@@ -326,7 +326,6 @@ export class UiBuildService {
                             } else {
                                 img = (<string>item[view.column]).split("|")[0];
                             }
-                            // return `<img width="100%" class="text-center e-table-img" src="${DataService.previewAttachment(img)}" alt=""/>`;
                             let imgs;
                             if (attachmentType) {
                                 imgs = (<string>item[view.column]).split(attachmentType.fileSeparator);
@@ -338,7 +337,7 @@ export class UiBuildService {
                                 imgElements[i] = `<img width="100%" class="e-table-img" src="${DataService.previewAttachment(imgs[i])}" alt=""/>`;
                             }
                             return `<div style="text-align: center;display:flex;justify-content: center;">
-                                        ${imgElements.join("")}
+                                        ${imgElements.join(" ")}
                                     </div>`;
                         } else {
                             return '';
