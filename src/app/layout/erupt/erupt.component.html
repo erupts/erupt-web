@@ -4,6 +4,7 @@
                [menu]="menu"></layout-header>
 <layout-sidebar class="erupt-side alain-default__aside"></layout-sidebar>
 <section class="erupt_content">
+    <!--<erupt-nav class="hidden-pc" style="padding: 8px 12px;background: #fff !important;"></erupt-nav>-->
     <reuse-tab *ngIf="settingSrv.layout['reuse']" [max]="30" tabType="card" [tabBarGutter]="0"
                [tabMaxWidth]="180"></reuse-tab>
     <router-outlet></router-outlet>

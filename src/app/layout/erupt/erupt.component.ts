@@ -228,7 +228,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                             key: menu.name,
                             i18n: menu.name,
                             linkExact: true,
-                            icon: menu.icon || null,
+                            icon: menu.icon || (menu.pid ? null : 'fa fa-list-ul'),
                             link: generateMenuPath(menu.type, menu.value),
                             children: generateTree(menus, menu.id)
                         };
