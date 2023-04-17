@@ -29,7 +29,6 @@ import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
 import {CardComponent} from './components/card/card.component';
-import {QRModule} from "@delon/abc/qr";
 import {TagSelectModule} from "@delon/abc/tag-select";
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import { SearchComponent } from './components/search/search.component';
@@ -38,6 +37,7 @@ import { ReferenceComponent } from './components/reference/reference.component';
 import {NzPipesModule} from "ng-zorro-antd/pipes";
 import {NzImageModule} from "ng-zorro-antd/image";
 import {SearchSeComponent} from "./components/search-se/search-se.component";
+import {NzQRCodeModule} from "ng-zorro-antd/qr-code";
 
 @NgModule({
     imports: [
@@ -55,11 +55,11 @@ import {SearchSeComponent} from "./components/search-se/search-se.component";
                 UEDITOR_HOME_URL: './assets/ueditor/'
             }
         }),
-        QRModule,
         TagSelectModule,
         NzCodeEditorModule,
         NzPipesModule,
-        NzImageModule
+        NzImageModule,
+        NzQRCodeModule
     ],
     providers: [
         DataHandlerService,

@@ -9,10 +9,7 @@ import {environment} from '@env/environment';
 const alainConfig: AlainConfig = {
     st: {modal: {size: 'lg'}},
     pageHeader: {homeI18n: 'home'},
-    auth: {login_url: '/passport/login'},
-    qr: {
-        lib: '/assets/qrious/qrious.min.js'
-    }
+    auth: {login_url: '/passport/login'}
 };
 
 const alainModules: any[] = [AlainThemeModule.forRoot(), DelonACLModule.forRoot()];
