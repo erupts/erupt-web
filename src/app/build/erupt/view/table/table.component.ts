@@ -31,7 +31,6 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
 import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
 import {deepCopy} from "@delon/util";
-import {NzSafeAny} from "ng-zorro-antd/core/types";
 import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
 
 

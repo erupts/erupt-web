@@ -18,21 +18,13 @@
                     </button>
                 </ng-container>
                 <div style="margin-left: auto">
-                    <ng-container *ngIf="bi.dimensions.length > 0">
-                        <button nz-button class="mb-sm"  *ngIf="!hideCondition" (click)="clearCondition()" [disabled]="querying">
-                            <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
-                        </button>
-                        <button nz-button class="mb-sm"  (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
-                            <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
-                        </button>
-                    </ng-container>
                     <ng-container *ngIf="columns && columns.length > 0">
-                        <nz-divider nzType="vertical" *ngIf="bi.dimensions.length > 0"></nz-divider>
                         <button nz-button nzType="default" nz-popover
                                 [nzPopoverContent]="tableColumnCtrl"
                                 nzPopoverTrigger="click" class="mb-sm hidden-mobile">
                             <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|translate}}
                         </button>
+                        <nz-divider nzType="vertical" *ngIf="bi.dimensions.length > 0"></nz-divider>
                         <ng-template #tableColumnCtrl>
                             <div nz-row style="max-width: 520px;">
                                 <ng-container *ngFor="let col of st.columns">
@@ -43,6 +35,14 @@
                                 </ng-container>
                             </div>
                         </ng-template>
+                    </ng-container>
+                    <ng-container *ngIf="bi.dimensions.length > 0">
+                        <button nz-button class="mb-sm"  *ngIf="!hideCondition" (click)="clearCondition()" [disabled]="querying">
+                            <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
+                        </button>
+                        <button nz-button class="mb-sm"  (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
+                            <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                        </button>
                     </ng-container>
                 </div>
             </div>
