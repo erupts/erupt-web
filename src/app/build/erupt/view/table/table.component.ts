@@ -32,6 +32,7 @@ import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
 import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
 import {deepCopy} from "@delon/util";
 import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
+import {STChange} from "@delon/abc/st/st.interfaces";
 
 
 @Component({
@@ -661,14 +662,12 @@ export class TableComponent implements OnInit {
     }
 
     // table checkBox 触发事件
-    tableDataChange(event: any) {
+    tableDataChange(event: STChange) {
         if (this._reference) {
             if (this._reference.mode == SelectMode.radio) {
                 if (event.type === "click") {
-                    for (let datum of this.st._data) {
-                        datum.checked = false;
-                    }
-                    event.click.item.checked = true;
+                    this.st.clearRadio();
+                    this.st.setRow(event.click.index, { checked: true })
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = event.click.item;
                 } else if (event.type === "radio") {
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = event.radio;
