@@ -42,6 +42,7 @@ import {HeaderRTLComponent} from "./erupt/header/components/rtl.component";
 import {MenuComponent} from './erupt/menu/menu.component';
 import {NzBreadCrumbModule} from "ng-zorro-antd/breadcrumb";
 import {LayoutEruptComponent} from "./erupt/erupt.component";
+import {NzWaterMarkModule} from "ng-zorro-antd/water-mark";
 
 const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent];
 
@@ -90,7 +91,8 @@ const PASSPORT = [LayoutPassportComponent];
         SharedModule,
         NzBackTopModule,
         ReuseTabModule,
-        NzBreadCrumbModule
+        NzBreadCrumbModule,
+        NzWaterMarkModule
     ],
     declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT, MenuComponent],
     exports: [...COMPONENTS, ...PASSPORT]
