@@ -100,6 +100,8 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
 
     themes = [];
 
+    nickName: string;
+
     constructor(iconSrv: NzIconService,
                 private router: Router,
                 scroll: ScrollService,
@@ -191,6 +193,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setClass();
         this.data.getUserinfo().subscribe(userinfo => {
             let path = generateMenuPath(userinfo.indexMenuType, userinfo.indexMenuValue);
+            this.nickName = userinfo.nickname;
             this.settingsService.setUser({
                 name: userinfo.nickname,
                 indexPath: path
