@@ -1,16 +1,15 @@
 <ng-container *ngIf="!onlyRead">
-    <div style="background: #fafafa;border: 1px solid #e8e8e8;border-bottom: 0;padding: 8px 12px">
-        <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzGhost
-                nzType="primary" style="background: #fff !important;" [nzSize]="'default'">
+    <div class="tab-bar">
+        <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzGhost nzType="primary"  [nzSize]="'default'">
             <i nz-icon nzType="plus" theme="outline"></i>{{'global.new'|translate}}
         </button>
-        <button (click)="deleteData()" nz-button nzGhost
-                nzType="default" nzDanger style="background: #fff !important;" [nzSize]="'default'">
+        <button (click)="deleteData()" nz-button
+                nzType="default" nzDanger [nzSize]="'default'">
             <i nz-icon nzType="delete" theme="outline"></i>{{'global.delete'|translate}}
         </button>
     </div>
 </ng-container>
-<st #st resizable (change)="selectTableItem($event)"
+<st #st resizable (change)="stChange($event)"
     [scroll]="{x: (clientWidth > 768 ? ((tabErupt.eruptBuildModel.eruptModel.tableColumns.length * 130) + 'px') : '460px')}"
     [size]="'small'" [columns]="column" [ps]="20"
     [data]="tabErupt.eruptFieldModel.eruptFieldJson.edit.$value"
