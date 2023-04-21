@@ -20,7 +20,7 @@
                             ></tab-table>
                         </ng-container>
                         <ng-container *ngSwitchCase="editType.TAB_TREE">
-                            <erupt-tab-tree [eruptFieldModel]="eruptFieldModelMap.get(item.key)" style="margin: 8px"
+                            <erupt-tab-tree [eruptFieldModel]="eruptFieldModelMap.get(item.key)"
                                             [eruptBuildModel]="eruptBuildModel" [onlyRead]="isReadonly(eruptFieldModelMap.get(item.key))"
                             ></erupt-tab-tree>
                         </ng-container>

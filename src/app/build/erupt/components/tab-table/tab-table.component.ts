@@ -245,11 +245,7 @@ export class TabTableComponent implements OnInit {
                     }
                 }
                 edit.$value.push(...edit.$tempValue);
-                //去重
-                edit.$value = Array.from(new Set(edit.$value));
-
-                this.st.reload();
-
+                edit.$value = [...new Set(edit.$value)]; //去重
                 return true;
             }
         });
@@ -266,7 +262,7 @@ export class TabTableComponent implements OnInit {
         }
     }
 
-    selectTableItem(event: STChange) {
+    stChange(event: STChange) {
         if (event.type === "checkbox") {
             this.checkedRow = event.checkbox;
         }

@@ -673,6 +673,7 @@ export class TableComponent implements OnInit {
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = event.radio;
                 }
             } else if (this._reference.mode == SelectMode.checkbox) {
+                // this.st.setRow(event.click.index, {checked: !event.click.item.checked})
                 if (event.type === "checkbox") {
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = event.checkbox;
                 }
