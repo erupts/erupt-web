@@ -120,11 +120,11 @@
 
                         </erupt-search>
                     </nz-card>
-                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">
-                        <div style="margin: 16px 0">
-                            <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>
-                        </div>
-                    </ng-container>
+<!--                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">-->
+<!--                        <div style="margin: 16px 0">-->
+<!--                            <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>-->
+<!--                        </div>-->
+<!--                    </ng-container>-->
                     <st #st resizable
                         [widthMode]="{strictBehavior:'truncate'}" [body]="bodyTpl"
                         [data]="stConfig.url" [columns]="columns"

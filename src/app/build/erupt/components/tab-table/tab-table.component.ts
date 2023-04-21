@@ -45,6 +45,8 @@ export class TabTableComponent implements OnInit {
 
     stConfig = new BuildConfig().stConfig;
 
+    loading = true;
+
     constructor(private dataService: DataService,
                 private uiBuildService: UiBuildService,
                 private dataHandlerService: DataHandlerService,
@@ -61,6 +63,9 @@ export class TabTableComponent implements OnInit {
         } else {
             tabEdit.$value = [];
         }
+        setTimeout(() => {
+            this.loading = false;
+        }, 300);
         if (this.onlyRead) {
             this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true);
         } else {

@@ -302,16 +302,16 @@ export class TableComponent implements OnInit {
                         return exprEval(ro.ifExpr, item);
                     }
                 });
-                editButtons.push({
-                    label: ro.title,
-                    type: 'dashed',
-                    show: (options: ModalButtonOptions<any>) => {
-                        return !ro.ifExpr;
-                    },
-                    onClick(options: ModalButtonOptions<any>) {
-                        that.createOperator(ro, options);
-                    }
-                })
+                // editButtons.push({
+                //     label: ro.title,
+                //     type: 'dashed',
+                //     show: (options: ModalButtonOptions<any>) => {
+                //         return !ro.ifExpr;
+                //     },
+                //     onClick(options: ModalButtonOptions<any>) {
+                //         that.createOperator(ro, options);
+                //     }
+                // })
             }
         }
 
