@@ -51,6 +51,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzIconService} from "ng-zorro-antd/icon";
 import {ResetPwdComponent} from "../../routes/reset-pwd/reset-pwd.component";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
+import {EruptAppData} from "@shared/model/erupt-app.model";
 
 // #region icons
 
@@ -193,7 +194,9 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setClass();
         this.data.getUserinfo().subscribe(userinfo => {
             let path = generateMenuPath(userinfo.indexMenuType, userinfo.indexMenuValue);
-            this.nickName = userinfo.nickname;
+            if (EruptAppData.get().waterMark) {
+                this.nickName = userinfo.nickname;
+            }
             this.settingsService.setUser({
                 name: userinfo.nickname,
                 indexPath: path

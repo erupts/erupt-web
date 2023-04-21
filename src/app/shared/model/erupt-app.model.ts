@@ -5,6 +5,7 @@ export interface EruptAppModel {
     hash: number;
     version: string;
     loginPagePath: string;
+    waterMark: boolean;
 }
 
 let eruptAppConfig: EruptAppModel = window["eruptApp"] || {};
