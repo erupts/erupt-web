@@ -12,6 +12,8 @@ export class WindowModel {
 
     public static amapKey: string = WindowModel.config["amapKey"];
 
+    public static amapSecurityJsCode: string = WindowModel.config["amapSecurityJsCode"];
+
     public static title: string = WindowModel.config["title"] || 'Erupt Framework';
 
     public static desc: string = WindowModel.config["desc"] || undefined;

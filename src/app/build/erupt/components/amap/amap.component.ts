@@ -49,6 +49,17 @@ export class AmapComponent implements OnInit {
 
     ngOnInit() {
         this.loading = true;
+        if (!WindowModel.amapSecurityJsCode) {
+            this.msg.error("not config amapSecurityJsCode")
+            return;
+        }
+        if (!WindowModel.amapKey) {
+            this.msg.error("not config amapKey")
+            return;
+        }
+        window["_AMapSecurityConfig"] = {
+            securityJsCode: WindowModel.amapSecurityJsCode,
+        }
         this.lazy.loadScript("https://webapi.amap.com/maps?v=2.0&key=" + WindowModel.amapKey).then(() => {
             if (this.value) {
                 this.value = JSON.parse(this.value);
@@ -110,6 +121,8 @@ export class AmapComponent implements OnInit {
                             });
                         }
                         that.autocompleteList = tips;
+                    } else {
+                        that.msg.warning(result)
                     }
                 });
             };
@@ -187,7 +200,8 @@ export class AmapComponent implements OnInit {
             return;
         }
 
-        if (typeof this.value === 'object') {
+        if (typeof this.value !== 'object') {
+            console.log(this.value)
             this.value = JSON.parse(this.value);
         }
         if (this.value.name != this.tipInput.nativeElement.value) {
