@@ -10,7 +10,8 @@ window.eruptSiteConfig = {
     loginLogoPath: null,
     logoText: "Erupt",
     registerPage: null,
-    amapKey: null,
+    amapKey: '6ed167be6d22b8f8fa8e0402724df150',
+    amapSecurityJsCode: "ee3e78fcb019e6078fcfc5b53b0a63ec",
     r_tools: [{
         text: "qq",
         mobileHidden: true,
