@@ -33,6 +33,7 @@ export enum EditType {
     TAB_TABLE_REFER = "TAB_TABLE_REFER",
     DIVIDE = "DIVIDE",                         //分割线
     SLIDER = "SLIDER",                         //数字滑块
+    RATE = "RATE",
     CHECKBOX = "CHECKBOX",
     EMPTY = "EMPTY",
     TPL = "TPL",

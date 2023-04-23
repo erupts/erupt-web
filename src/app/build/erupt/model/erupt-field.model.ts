@@ -1,4 +1,13 @@
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, PickerMode, TabEnum, ViewType} from "./erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    DateEnum,
+    EditType,
+    HtmlEditTypeEnum,
+    PickerMode,
+    TabEnum,
+    ViewType
+} from "./erupt.enum";
 
 
 export interface EruptFieldModel {
@@ -49,6 +58,7 @@ export interface Edit {
     attachmentType: AttachmentType;
     autoCompleteType: AutoCompleteType;
     htmlEditorType: HtmlEditorType;
+    rateType: RateType;
     boolType: BoolType;
     choiceType: ChoiceType;
     tagsType: TagsType;
@@ -72,6 +82,12 @@ interface Readonly {
 
 interface HtmlEditorType {
     value: HtmlEditTypeEnum;
+}
+
+interface RateType {
+    character: string;
+    allowHalf: string;
+    count: number;
 }
 
 interface Search {

@@ -213,6 +213,25 @@
                             </se>
                         </div>
                     </ng-container>
+                    <ng-container *ngSwitchCase="editType.RATE">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl" [nzXXl]="col.xxl">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <nz-rate [(ngModel)]="field.eruptFieldJson.edit.$value" [nzAllowClear]="!field.eruptFieldJson.edit.notNull"
+                                         [nzCharacter]="field.eruptFieldJson.edit.rateType.character&&characterIcon"
+                                         [nzDisabled]="isReadonly(field)"
+                                         [nzCount]="field.eruptFieldJson.edit.rateType.count"
+                                         [name]="field.fieldName"
+                                         [nzAllowHalf]="field.eruptFieldJson.edit.rateType.allowHalf">
+                                    <ng-template #characterIcon>
+                                        <span>{{field.eruptFieldJson.edit.rateType.character}}</span>
+                                    </ng-template>
+                                </nz-rate>
+                            </se>
+                        </div>
+                    </ng-container>
                     <!--date-->
                     <ng-container *ngSwitchCase="editType.DATE">
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"

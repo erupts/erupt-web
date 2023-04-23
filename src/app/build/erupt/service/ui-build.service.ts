@@ -144,16 +144,18 @@ export class UiBuildService {
                         };
                     } else {
                         if (edit.title) {
-                            obj.tag = {
-                                [edit.boolType.trueText]: {
-                                    text: this.i18n.fanyi(edit.boolType.trueText),
-                                    color: 'green'
-                                },
-                                [edit.boolType.falseText]: {
-                                    text: this.i18n.fanyi(edit.boolType.falseText),
-                                    color: 'red'
-                                },
-                            };
+                            if (edit.boolType){
+                                obj.tag = {
+                                    [edit.boolType.trueText]: {
+                                        text: this.i18n.fanyi(edit.boolType.trueText),
+                                        color: 'green'
+                                    },
+                                    [edit.boolType.falseText]: {
+                                        text: this.i18n.fanyi(edit.boolType.falseText),
+                                        color: 'red'
+                                    },
+                                };
+                            }
                         } else {
                             obj.tag = {
                                 true: {text: this.i18n.fanyi('是'), color: 'green'},
