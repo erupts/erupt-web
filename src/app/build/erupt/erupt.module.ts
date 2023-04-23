@@ -38,6 +38,7 @@ import {NzPipesModule} from "ng-zorro-antd/pipes";
 import {NzImageModule} from "ng-zorro-antd/image";
 import {SearchSeComponent} from "./components/search-se/search-se.component";
 import {NzQRCodeModule} from "ng-zorro-antd/qr-code";
+import {NzRateModule} from "ng-zorro-antd/rate";
 
 @NgModule({
     imports: [
@@ -59,7 +60,8 @@ import {NzQRCodeModule} from "ng-zorro-antd/qr-code";
         NzCodeEditorModule,
         NzPipesModule,
         NzImageModule,
-        NzQRCodeModule
+        NzQRCodeModule,
+        NzRateModule
     ],
     providers: [
         DataHandlerService,
