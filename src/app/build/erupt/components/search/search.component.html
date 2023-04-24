@@ -152,6 +152,25 @@
                             </erupt-search-se>
                         </div>
                     </ng-container>
+                    <ng-container *ngSwitchCase="editType.RATE">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl" [nzXXl]="col.xxl">
+                            <erupt-search-se [field]="field">
+                                <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
+                                    <nz-slider class="erupt-input" nzRange [name]="field.fieldName"
+                                               [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [nzMax]="field.eruptFieldJson.edit.rateType.count"
+                                               [nzMin]="0"></nz-slider>
+                                </ng-container>
+                                <ng-container *ngIf="!field.eruptFieldJson.edit.search.vague">
+                                    <nz-slider class="erupt-input" [name]="field.fieldName"
+                                               [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [nzMax]="field.eruptFieldJson.edit.rateType.count"
+                                               [nzMin]="0"></nz-slider>
+                                </ng-container>
+                            </erupt-search-se>
+                        </div>
+                    </ng-container>
                     <!--date-->
                     <ng-container *ngSwitchCase="editType.DATE">
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"

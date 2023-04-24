@@ -122,7 +122,7 @@ export class AmapComponent implements OnInit {
                         }
                         that.autocompleteList = tips;
                     } else {
-                        that.msg.warning(result)
+                        // that.msg.warning(result)
                     }
                 });
             };
