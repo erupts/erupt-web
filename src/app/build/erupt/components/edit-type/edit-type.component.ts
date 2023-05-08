@@ -55,12 +55,15 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     uploadFilesStatus: { [key: string]: boolean } = {};
 
+    supportCopy: boolean;
+
     constructor(public dataService: DataService,
                 private differs: KeyValueDiffers,
                 private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) public tokenService: ITokenService,
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService) {
+        this.supportCopy = "clipboard" in navigator
     }
 
     ngOnInit() {
@@ -171,6 +174,14 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             result[eruptFieldModel.fieldName] = eruptFieldModel.eruptFieldJson.edit.$value;
         }
         return result;
+    }
+
+    copy(val) {
+        if (val) {
+            navigator.clipboard.writeText(val).then(() => {
+                this.msg.success(this.i18n.fanyi("global.copy_success"))
+            });
+        }
     }
 
 

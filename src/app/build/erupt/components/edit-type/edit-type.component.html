@@ -23,7 +23,8 @@
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==0&&
                                                              field.eruptFieldJson.edit.inputType.suffix.length==0">
-                                    <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size">
+                                    <nz-input-group [nzAddOnBefore]="supportCopy&&prefixTemplate"
+                                                    [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size">
                                         <input nz-input [nzSize]="size" autocomplete="off"
                                                [type]="field.eruptFieldJson.edit.inputType.type"
                                                [maxLength]="field.eruptFieldJson.edit.inputType.length"
@@ -33,6 +34,10 @@
                                                [required]="field.eruptFieldJson.edit.notNull"
                                                [disabled]="isReadonly(field)">
                                     </nz-input-group>
+                                    <ng-template #prefixTemplate>
+                                        <span nz-icon nzType="copy" (click)="copy(field.eruptFieldJson.edit.$value)"
+                                              style="cursor: pointer" nzTheme="outline"></span>
+                                    </ng-template>
                                     <ng-template #suffixTemplate>
                                         <i nz-icon class="ant-input-clear-icon" nzTheme="fill"
                                            nzType="close-circle"
@@ -219,7 +224,8 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <nz-rate [(ngModel)]="field.eruptFieldJson.edit.$value" [nzAllowClear]="!field.eruptFieldJson.edit.notNull"
+                                <nz-rate [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                         [nzAllowClear]="!field.eruptFieldJson.edit.notNull"
                                          [nzCharacter]="field.eruptFieldJson.edit.rateType.character&&characterIcon"
                                          [nzDisabled]="isReadonly(field)"
                                          [nzCount]="field.eruptFieldJson.edit.rateType.count"
