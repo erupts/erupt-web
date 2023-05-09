@@ -547,7 +547,7 @@
                     <ng-container *ngSwitchCase="editType.COMBINE">
                         <ng-container *ngIf="eruptModel.mode!='search'">
                             <div nz-col [nzSpan]="24">
-                                <nz-collapse nzAccordion>
+                                <nz-collapse nzAccordion style="margin: 8px 0">
                                     <nz-collapse-panel [nzActive]="true" [nzHeader]="field.eruptFieldJson.edit.title">
                                         <erupt-edit-type
                                                 [eruptBuildModel]="{eruptModel:eruptBuildModel.combineErupts[field.fieldName]}"></erupt-edit-type>
