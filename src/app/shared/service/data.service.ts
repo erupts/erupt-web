@@ -316,7 +316,7 @@ export class DataService {
 
     //批量删除数据
     deleteEruptDataList(eruptName: string, ids: any[]): Observable<EruptApiModel> {
-        return this._http.post(RestPath.dataModify + "/" + eruptName + "/delete", ids, null,{
+        return this._http.post(RestPath.dataModify + "/" + eruptName + "/delete", ids, null, {
             headers: {
                 erupt: eruptName,
                 ...this.getCommonHeader()
@@ -376,12 +376,20 @@ export class DataService {
         return this._http.get(RestPath.erupt + "/logout");
     }
 
+    pwdEncode(str: string, count: number): string {
+        str = encodeURIComponent(str);
+        for (; count > 0; count--) {
+            str = btoa(str)
+        }
+        return str;
+    }
+
 
     changePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
         return this._http.get(RestPath.erupt + "/change-pwd", {
-                pwd: pwd,
-                newPwd: newPwd,
-                newPwd2: newPwd2
+                pwd: this.pwdEncode(pwd, 3),
+                newPwd: this.pwdEncode(newPwd, 3),
+                newPwd2: this.pwdEncode(newPwd2, 3)
             }
         );
     }
