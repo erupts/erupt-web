@@ -26,6 +26,10 @@
                                     <nz-input-group [nzAddOnBefore]="supportCopy&&prefixTemplate"
                                                     [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size">
                                         <input nz-input [nzSize]="size" autocomplete="off"
+                                               nz-tooltip
+                                               nzTooltipTrigger="focus"
+                                               nzTooltipPlacement="topLeft"
+                                               [nzTooltipTitle]="field.eruptFieldJson.edit.$value"
                                                [type]="field.eruptFieldJson.edit.inputType.type"
                                                [maxLength]="field.eruptFieldJson.edit.inputType.length"
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
