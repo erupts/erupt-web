@@ -177,11 +177,12 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     copy(val) {
-        if (val) {
-            navigator.clipboard.writeText(val).then(() => {
-                this.msg.success(this.i18n.fanyi("global.copy_success"))
-            });
+        if (!val) {
+            val = "";
         }
+        navigator.clipboard.writeText(val).then(() => {
+            this.msg.success(this.i18n.fanyi("global.copy_success"))
+        });
     }
 
 
