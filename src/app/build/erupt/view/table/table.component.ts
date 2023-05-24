@@ -493,7 +493,8 @@ export class TableComponent implements OnInit {
             nzTitle: this.i18n.fanyi("global.new"),
             nzContent: EditComponent,
             nzComponentParams: {
-                eruptBuildModel: this.eruptBuildModel
+                eruptBuildModel: this.eruptBuildModel,
+                _drill: this._drill
             },
             nzOkText: this.i18n.fanyi("global.add"),
             nzOnOk: async () => {

@@ -164,8 +164,8 @@ export class DataService {
     }
 
     //获取初始化数据
-    getInitValue(eruptName: string, eruptParentName?: string): Observable<any> {
-        return this._http.get<any>(RestPath.data + "/init-value/" + eruptName, null, {
+    getInitValue(eruptName: string, eruptParentName?: string, drill?: { erupt: string, code: string, eruptParent: string, val: any }): Observable<any> {
+        return this._http.get<any>(RestPath.data + "/init-value/" + eruptName, drill, {
             observe: "body",
             headers: {
                 erupt: eruptName,

@@ -34,6 +34,8 @@ export class EditComponent implements OnInit, OnDestroy {
 
     eruptFieldModelMap: Map<String, EruptFieldModel>;
 
+    _drill: { erupt: string, code: string, eruptParent: string, val: any };
+
     constructor(
         @Inject(NzMessageService)
         private msg: NzMessageService,
@@ -50,7 +52,7 @@ export class EditComponent implements OnInit, OnDestroy {
         this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
         if (this.behavior == Scene.ADD) {
             this.loading = true;
-            this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
+            this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName, null, this._drill).subscribe(data => {
                 this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
                 this.loading = false;
             });
