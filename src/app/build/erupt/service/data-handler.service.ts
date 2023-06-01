@@ -336,12 +336,8 @@ export class DataHandlerService {
                         }
                         break;
                     // case EditType.CODE_EDITOR:
-                    //     let val = edit.$viewValue;
-                    //     if (val) {
-                    //         val = val.getValue();
-                    //         if (val || val === 0) {
-                    //             eruptData[field.fieldName] = val;
-                    //         }
+                    //     if (edit.$value || edit.$value === 0) {
+                    //         eruptData[field.fieldName] = btoa(encodeURIComponent(edit.$value))
                     //     }
                     //     break;
                     default:
