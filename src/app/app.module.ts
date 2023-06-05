@@ -19,6 +19,7 @@ import {RoutesModule} from './routes/routes.module';
 import {SharedModule} from '@shared/shared.module';
 import {AppRoutingModule} from "./app-routing.module";
 import {I18nPipe} from "@shared/pipe/i18n.pipe";
+import {AppViewService} from "@shared/service/app-view.service";
 
 
 // #region global third module
@@ -68,7 +69,7 @@ const APP_INIT_PROVIDES = [
         ...GLOBAL_THIRD_MODULES,
         AppRoutingModule
     ],
-    providers: [...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService],
+    providers: [...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, AppViewService],
     bootstrap: [AppComponent]
 })
 export class AppModule {
