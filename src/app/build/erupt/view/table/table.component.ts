@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from "@angular/core";
+import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
 import {Drill, EruptModel, Row, RowOperation} from "../../model/erupt.model";
 
@@ -33,6 +33,7 @@ import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
 import {deepCopy} from "@delon/util";
 import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
 import {STChange} from "@delon/abc/st/st.interfaces";
+import {AppViewService} from "@shared/service/app-view.service";
 
 
 @Component({
@@ -55,6 +56,7 @@ export class TableComponent implements OnInit {
         private modal: NzModalService,
         public route: ActivatedRoute,
         private sanitizer: DomSanitizer,
+        private appViewService: AppViewService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
@@ -102,8 +104,6 @@ export class TableComponent implements OnInit {
 
 
     adding: boolean = false; //新增行为防抖
-
-    @Output() descEvent = new EventEmitter<string>();
 
     @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
         this._drill = drill;
@@ -153,7 +153,7 @@ export class TableComponent implements OnInit {
                 erupt: value
             }
         }, (eb: EruptBuildModel) => {
-            this.descEvent.emit(eb.eruptModel.eruptJson.desc);
+            this.appViewService.setRouterViewDesc(eb.eruptModel.eruptJson.desc);
         });
     }
 
@@ -667,7 +667,7 @@ export class TableComponent implements OnInit {
             if (this._reference.mode == SelectMode.radio) {
                 if (event.type === "click") {
                     this.st.clearRadio();
-                    this.st.setRow(event.click.index, { checked: true })
+                    this.st.setRow(event.click.index, {checked: true})
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = event.click.item;
                 } else if (event.type === "radio") {
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = event.radio;

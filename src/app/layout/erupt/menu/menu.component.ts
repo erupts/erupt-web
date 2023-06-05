@@ -23,6 +23,7 @@ import {Menu, MenuIcon, MenuInner, MenuService, SettingsService} from '@delon/th
 import {InputBoolean, InputNumber, ZoneOutside} from '@delon/util/decorator';
 import {WINDOW} from '@delon/util/token';
 import type {NzSafeAny} from 'ng-zorro-antd/core/types';
+import {AppViewService} from "@shared/service/app-view.service";
 
 export interface Nav extends MenuInner {
     _needIcon?: boolean;
@@ -86,6 +87,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         private cdr: ChangeDetectorRef,
         private ngZone: NgZone,
         private sanitizer: DomSanitizer,
+        private appViewService: AppViewService,
         @Inject(DOCUMENT) private doc: NzSafeAny,
         @Inject(WINDOW) private win: NzSafeAny,
         @Optional() private directionality: Directionality
@@ -209,6 +211,7 @@ export class MenuComponent implements OnInit, OnDestroy {
             }
             return;
         }
+        this.appViewService.setRouterViewDesc(null)
         this.ngZone.run(() => this.router.navigateByUrl(item.link!));
     }
 

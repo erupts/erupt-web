@@ -1,12 +1,12 @@
 import {Component, Inject, Input, OnInit} from "@angular/core";
 import {SettingsService} from "@delon/theme";
 import screenfull from 'screenfull';
-import {DA_SERVICE_TOKEN} from "@delon/auth";
 import {CustomerTool, WindowModel} from "@shared/model/window.model";
 import {Router} from "@angular/router";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {HeaderSearchComponent} from "./components/search.component";
 import {MenuVo} from "@shared/model/erupt-menu";
+import {AppViewService} from "@shared/service/app-view.service";
 
 @Component({
     selector: "layout-header",
@@ -35,6 +35,8 @@ export class HeaderComponent implements OnInit {
 
     drawerVisible: boolean = false;
 
+    desc: string;
+
     openDrawer() {
         this.drawerVisible = true;
     }
@@ -45,7 +47,7 @@ export class HeaderComponent implements OnInit {
 
     constructor(public settings: SettingsService,
                 private router: Router,
-                @Inject(DA_SERVICE_TOKEN)
+                private appViewService: AppViewService,
                 @Inject(NzModalService) private modal: NzModalService) {
     }
 
@@ -53,6 +55,9 @@ export class HeaderComponent implements OnInit {
         this.r_tools.forEach(tool => {
             tool.load && tool.load();
         });
+        this.appViewService.routerViewDescSubject.subscribe(value => {
+            this.desc = value;
+        })
     }
 
     toggleCollapsedSidebar() {

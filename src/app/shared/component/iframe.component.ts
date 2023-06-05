@@ -5,7 +5,7 @@ import {IframeHeight} from "@shared/util/window.util";
   selector: 'erupt-iframe',
   template: `
     <nz-spin [nzSpinning]="spin">
-      <iframe [src]="url|safeUrl" style="width: 100%;border: 0;display: block" [ngStyle]="style"
+      <iframe [src]="url|safeUrl" style="width: 100%;border: 0;display: block;vertical-align: bottom;" [ngStyle]="style"
               (load)="iframeHeight($event)">
 
       </iframe>

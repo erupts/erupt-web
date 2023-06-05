@@ -25,7 +25,7 @@ const THIRDMODULES: Array<Type<any>> = [];
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: Array<Type<any>> = [EruptIframeComponent,NavComponent,HeaderI18nComponent];
+const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, NavComponent, HeaderI18nComponent];
 const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, I18nPipe];
 
 // #endregion
