@@ -9,6 +9,7 @@ export interface Bi {
     charts: Chart[];
     pageSize: number;
     pageSizeOptions: number[];
+    remark: string;
 }
 
 export interface Chart {
