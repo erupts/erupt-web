@@ -11,6 +11,7 @@ import {I18NService} from "@core";
 import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd/core/tree";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
+import {AppViewService} from "@shared/service/app-view.service";
 
 @Component({
     selector: "erupt-tree",
@@ -54,6 +55,7 @@ export class TreeComponent implements OnInit, OnDestroy {
                 private msg: NzMessageService,
                 public settingSrv: SettingsService,
                 private i18n: I18NService,
+                private appViewService: AppViewService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 private dataHandler: DataHandlerService) {
@@ -66,6 +68,7 @@ export class TreeComponent implements OnInit, OnDestroy {
             this.currentKey = null;
             this.showEdit = false;
             this.dataService.getEruptBuild(this.eruptName).subscribe(eb => {
+                this.appViewService.setRouterViewDesc(eb.eruptModel.eruptJson.desc);
                 this.dataHandler.initErupt(eb);
                 this.eruptBuildModel = eb;
                 this.fetchTreeData();
