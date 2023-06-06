@@ -5,7 +5,7 @@
                     [nzSize]="'default'">
                 <i nz-icon nzType="plus" theme="outline"></i>{{'global.new'|translate}}
             </button>
-            <button (click)="deleteData()" nz-button
+            <button (click)="deleteData()" nz-button *ngIf="checkedRow.length>0"
                     nzType="default" nzDanger [nzSize]="'default'">
                 <i nz-icon nzType="delete" theme="outline"></i>{{'global.delete'|translate}}
             </button>

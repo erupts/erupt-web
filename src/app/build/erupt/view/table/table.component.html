@@ -67,7 +67,7 @@
                         </ng-container>
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
-                            <button nz-button nzType="default" nzDanger
+                            <button nz-button nzType="default" nzDanger *ngIf="selectedRows.length>0"
                                     class="mb-sm" [nzLoading]="deleting" id="erupt-btn-delete"
                                     (click)="delRows()">
                                 <i nz-icon nzType="delete" nzTheme="outline"></i>{{'table.delete'|translate}}
@@ -120,11 +120,11 @@
 
                         </erupt-search>
                     </nz-card>
-<!--                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">-->
-<!--                        <div style="margin: 16px 0">-->
-<!--                            <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>-->
-<!--                        </div>-->
-<!--                    </ng-container>-->
+                    <!--                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">-->
+                    <!--                        <div style="margin: 16px 0">-->
+                    <!--                            <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>-->
+                    <!--                        </div>-->
+                    <!--                    </ng-container>-->
                     <st #st resizable
                         [widthMode]="{strictBehavior:'truncate'}" [body]="bodyTpl"
                         [data]="stConfig.url" [columns]="columns"
