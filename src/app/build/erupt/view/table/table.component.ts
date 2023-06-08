@@ -486,10 +486,10 @@ export class TableComponent implements OnInit {
                 nzKeyboard: true,
                 nzTitle: ro.title,
                 nzMaskClosable: false,
-                nzWidth: ro.tplWidth,
+                nzWidth: ro.tpl.width,
                 nzStyle: {top: "20px"},
                 // nzWrapClassName: "modal-xxl",
-                nzWrapClassName: ro.tplWidth || "modal-lg",
+                nzWrapClassName: ro.tpl.width || "modal-lg",
                 nzBodyStyle: {
                     padding: "0"
                 },

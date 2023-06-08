@@ -125,8 +125,13 @@ export class DataService {
     }
 
     getEruptOperationTpl(eruptName: string, operationCode: string, ids: any[]) {
-        return RestPath.tpl + "/operation_tpl/" + eruptName + "/" + operationCode +
+        return RestPath.tpl + "/operation-tpl/" + eruptName + "/" + operationCode +
             "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName + "&ids=" + ids;
+    }
+
+    getEruptViewTpl(eruptName: string, field: string, id: any) {
+        return RestPath.tpl + "/view-tpl/" + eruptName + "/" + field + "/" + id +
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
     }
 
     //分页数据对象

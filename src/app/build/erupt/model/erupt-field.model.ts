@@ -26,6 +26,11 @@ export interface EruptField {
     edit?: Edit;
 }
 
+export interface Tpl {
+    enable: boolean;
+    width: string;
+}
+
 export interface View {
     className: string;
     column: string;
@@ -36,6 +41,7 @@ export interface View {
     viewType: ViewType;
     template: string;
     sortable: boolean;
+    tpl: Tpl;
     //extra
     eruptFieldModel?: EruptFieldModel;
 }
