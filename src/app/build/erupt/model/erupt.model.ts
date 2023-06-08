@@ -1,4 +1,4 @@
-import {EruptFieldModel, View} from "./erupt-field.model";
+import {EruptFieldModel, Tpl, View} from "./erupt-field.model";
 import {OperationIfExprBehavior, OperationMode, OperationType} from "./erupt.enum";
 
 
@@ -88,8 +88,8 @@ export interface RowOperation {
     type: OperationType;
     tip: string;
     ifExpr: string;
-    tplWidth: string;
     ifExprBehavior: OperationIfExprBehavior;
+    tpl: Tpl;
 }
 
 export interface Power {

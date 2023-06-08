@@ -10,6 +10,7 @@ import {STColumn, STData} from "@delon/abc/st";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzImageService} from "ng-zorro-antd/image";
+import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 
 @Injectable()
@@ -18,6 +19,7 @@ export class UiBuildService {
     constructor(
         private imageService: NzImageService,
         private i18n: I18NService,
+        private dataService: DataService,
         @Inject(NzModalService) private modal: NzModalService,
         @Inject(NzMessageService) private msg: NzMessageService) {
     }
@@ -144,7 +146,7 @@ export class UiBuildService {
                         };
                     } else {
                         if (edit.title) {
-                            if (edit.boolType){
+                            if (edit.boolType) {
                                 obj.tag = {
                                     [edit.boolType.trueText]: {
                                         text: this.i18n.fanyi(edit.boolType.trueText),
@@ -552,6 +554,30 @@ export class UiBuildService {
             }
             if (view.width) {
                 obj.width = isNaN(Number(view.width)) ? view.width : view.width + "px";
+            }
+            if (view.tpl.enable) {
+                obj.type = "link"
+                obj.click = (item) => {
+                    let url = this.dataService.getEruptViewTpl(eruptBuildModel.eruptModel.eruptName,
+                        view.eruptFieldModel.fieldName,
+                        item[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
+                    this.modal.create({
+                        nzKeyboard: true,
+                        nzMaskClosable: false,
+                        nzTitle: view.title,
+                        nzWidth: view.tpl.width,
+                        nzStyle: {top: "20px"},
+                        nzWrapClassName: view.tpl.width || "modal-lg",
+                        nzBodyStyle: {
+                            padding: "0"
+                        },
+                        nzFooter: null,
+                        nzContent: EruptIframeComponent,
+                        nzComponentParams: {
+                            url: url,
+                        }
+                    });
+                };
             }
             cols.push(obj);
         }
