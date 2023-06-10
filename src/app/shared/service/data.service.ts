@@ -377,7 +377,7 @@ export class DataService {
         );
     }
 
-    logout() {
+    logout(): Observable<any> {
         return this._http.get(RestPath.erupt + "/logout");
     }
 

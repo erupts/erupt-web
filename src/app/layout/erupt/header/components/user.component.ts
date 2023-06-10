@@ -11,8 +11,10 @@ import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.componen
 @Component({
     selector: "header-user",
     template: `
-        <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown nzPlacement="bottomRight" [nzDropdownMenu]="avatarMenu">
-            <nz-avatar [nzText]="settings.user.name&&settings.user.name.substr(0,1)" nzSize="default" class="mr-sm"></nz-avatar>
+        <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown nzPlacement="bottomRight"
+             [nzDropdownMenu]="avatarMenu">
+            <nz-avatar [nzText]="settings.user.name&&settings.user.name.substr(0,1)" nzSize="default"
+                       class="mr-sm"></nz-avatar>
             <span class="hidden-mobile">{{settings.user.name}}</span>
         </div>
         <nz-dropdown-menu #avatarMenu>
@@ -33,7 +35,7 @@ export class HeaderUserComponent {
         private router: Router,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
         private i18n: I18NService,
-        private data: DataService,
+        private dataService: DataService,
         @Inject(NzModalService)
         private modal: NzModalService,
     ) {
@@ -43,15 +45,16 @@ export class HeaderUserComponent {
         this.modal.confirm({
             nzTitle: this.i18n.fanyi("global.confirm_logout"),
             nzOnOk: () => {
-                this.data.logout().subscribe();
-                if (WindowModel.logout) {
-                    WindowModel.logout({
-                        userName: this.settings.user.name,
-                        token: this.tokenService.get().token
-                    });
-                }
-                this.tokenService.clear();
-                this.router.navigateByUrl(this.tokenService.login_url);
+                this.dataService.logout().subscribe(data => {
+                    if (WindowModel.logout) {
+                        WindowModel.logout({
+                            userName: this.settings.user.name,
+                            token: this.tokenService.get().token
+                        });
+                    }
+                    this.tokenService.clear();
+                    this.router.navigateByUrl(this.tokenService.login_url);
+                });
             }
         });
     }
