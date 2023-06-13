@@ -233,7 +233,7 @@ export class TabTableComponent implements OnInit {
                                     v[key] = v[key] === ed.boolType.trueText;
                                     break;
                                 case EditType.CHOICE:
-                                    for (let vl of eruptFieldModel.choiceList) {
+                                    for (let vl of eruptFieldModel.componentValue) {
                                         if (vl.label == v[key]) {
                                             v[key] = vl.value;
                                             break;

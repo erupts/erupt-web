@@ -57,9 +57,9 @@ export class DataHandlerService {
             if (!field.eruptFieldJson.edit) {
                 return;
             }
-            if (field.choiceList) {
+            if (field.componentValue) {
                 field.choiceMap = new Map<String, VL>();
-                for (let vl of field.choiceList) {
+                for (let vl of field.componentValue) {
                     field.choiceMap.set(vl.value, vl);
                 }
             }
@@ -161,7 +161,7 @@ export class DataHandlerService {
                     switch (edit.type) {
                         case EditType.CHOICE:
                             let arr = [];
-                            for (let vl of field.choiceList) {
+                            for (let vl of field.componentValue) {
                                 if (vl.$viewValue) {
                                     arr.push(vl.value);
                                 }

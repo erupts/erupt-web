@@ -119,7 +119,7 @@
                                            [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
                                            [nzTokenSeparators]="[field.eruptFieldJson.edit.tagsType.joinSeparator]"
                                            [nzMode]="field.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'">
-                                    <nz-option *ngFor="let item of field.tagList" [nzLabel]="item"
+                                    <nz-option *ngFor="let item of field.componentValue" [nzLabel]="item"
                                                [nzValue]="item"></nz-option>
                                 </nz-select>
                             </erupt-search-se>
