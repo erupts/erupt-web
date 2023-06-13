@@ -163,7 +163,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     };
 
     changeTagAll($event, field: EruptFieldModel) {
-        for (let vl of field.choiceList) {
+        for (let vl of field.componentValue) {
             vl.$viewValue = $event;
         }
     }

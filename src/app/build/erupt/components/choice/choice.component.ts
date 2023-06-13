@@ -48,16 +48,15 @@ export class ChoiceComponent implements OnInit {
             if (this.eruptField.eruptFieldJson.edit.choiceType.anewFetch) {
                 this.isLoading = true;
                 this.dataService.findChoiceItem(this.eruptModel.eruptName, this.eruptField.fieldName, this.eruptParentName).subscribe(data => {
-                    this.eruptField.choiceList = data;
+                    this.eruptField.componentValue = data;
                     this.isLoading = false;
                 });
             }
-
         }
     }
 
     changeTagAll($event) {
-        for (let vl of this.eruptField.choiceList) {
+        for (let vl of this.eruptField.componentValue) {
             vl.$viewValue = $event;
         }
     }

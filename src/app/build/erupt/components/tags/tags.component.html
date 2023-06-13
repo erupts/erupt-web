@@ -5,7 +5,7 @@
            [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
            [nzTokenSeparators]="[eruptField.eruptFieldJson.edit.tagsType.joinSeparator]"
            [nzMode]="eruptField.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'">
-    <nz-option *ngFor="let item of this.eruptField.tagList" [nzLabel]="item"
+    <nz-option *ngFor="let item of this.eruptField.componentValue" [nzLabel]="item"
                [nzValue]="item"></nz-option>
     <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
         <div class="text-center">
