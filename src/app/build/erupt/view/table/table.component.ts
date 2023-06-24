@@ -9,6 +9,7 @@ import {ActivatedRoute} from "@angular/router";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {
+    FormSize,
     OperationIfExprBehavior,
     OperationMode,
     OperationType,
@@ -46,7 +47,7 @@ export class TableComponent implements OnInit {
 
     constructor(
         public settingSrv: SettingsService,
-        private dataService: DataService,
+        public dataService: DataService,
         private dataHandlerService: DataHandlerService,
         private modalHelper: ModalHelper,
         private drawerHelper: DrawerHelper,
@@ -172,7 +173,10 @@ export class TableComponent implements OnInit {
         this.searchErupt = null;
         this.operationButtonNum = 0;
         //put table api header
-        this.stConfig.req.headers = req.header;
+        this.stConfig.req.headers = {
+            ...req.header,
+            ...this.dataService.getCommonHeader()
+        };
         this.stConfig.url = req.url;
         observable.subscribe(eb => {
                 eb.eruptModel.eruptJson.rowOperation.forEach((item) => {
@@ -243,11 +247,13 @@ export class TableComponent implements OnInit {
         _columns.push(...viewCols);
         const tableOperators: STColumnButton[] = [];
         if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
+            let fullLine = this.eruptBuildModel.eruptModel.eruptJson.layout.formSize == FormSize.FULL_LINE
             tableOperators.push({
                 icon: "eye",
                 click: (record: any, modal: any) => {
                     this.modal.create({
-                        nzWrapClassName: "modal-lg edit-modal-lg",
+                        nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+                        nzWidth: fullLine ? 550 : null,
                         nzStyle: {top: "60px"},
                         nzMaskClosable: true,
                         nzKeyboard: true,
@@ -367,11 +373,13 @@ export class TableComponent implements OnInit {
         }
 
         if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
+            let fullLine = this.eruptBuildModel.eruptModel.eruptJson.layout.formSize == FormSize.FULL_LINE
             tableOperators.push({
                 icon: "edit",
                 click: (record: any) => {
                     const model = this.modal.create({
-                        nzWrapClassName: "modal-lg edit-modal-lg",
+                        nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+                        nzWidth: fullLine ? 550 : null,
                         nzStyle: {top: "60px"},
                         nzMaskClosable: false,
                         nzKeyboard: false,
@@ -523,10 +531,13 @@ export class TableComponent implements OnInit {
                         this.selectedRows = [];
                         if (res.status === Status.SUCCESS) {
                             this.stLoad();
-                            try {
-                                res.data && eval(res.data);
-                            } catch (e) {
-                                this.msg.error(e);
+                            if (res.data) {
+                                try {
+                                    let msg = this.msg;
+                                    eval(res.data);
+                                } catch (e) {
+                                    this.msg.error(e);
+                                }
                             }
                             return true;
                         } else {
@@ -559,6 +570,7 @@ export class TableComponent implements OnInit {
                         this.stLoad();
                         if (res.data) {
                             try {
+                                let msg = this.msg;
                                 eval(res.data);
                             } catch (e) {
                                 this.msg.error(e);
@@ -572,9 +584,11 @@ export class TableComponent implements OnInit {
 
     //新增
     addRow() {
+        let fullLine = this.eruptBuildModel.eruptModel.eruptJson.layout.formSize == FormSize.FULL_LINE
         const modal = this.modal.create({
             nzStyle: {top: "60px"},
-            nzWrapClassName: "modal-lg edit-modal-lg",
+            nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+            nzWidth: fullLine ? 550 : null,
             nzMaskClosable: false,
             nzKeyboard: false,
             nzTitle: this.i18n.fanyi("global.new"),

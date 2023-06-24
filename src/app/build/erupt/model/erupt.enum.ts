@@ -125,3 +125,9 @@ export enum OperationType {
 export enum OperationIfExprBehavior {
     HIDE = "HIDE", DISABLE = "DISABLE",
 }
+
+
+export enum FormSize {
+    DEFAULT = "DEFAULT",
+    FULL_LINE = "FULL_LINE"
+}
