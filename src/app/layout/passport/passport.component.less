@@ -30,18 +30,14 @@
             background: rgba(255, 255, 255);
             border-radius: 3px;
             overflow: hidden;
-            //animation: showCard 2s alternate;
-            //animation-delay: 1s;
         }
 
-        @keyframes showCard {
+        @keyframes transPass {
             0% {
-                transform: skewX(10px);
-                //opacity: 0;
+                height: 0;
             }
             100% {
-                transform: skewX(1000px);
-                opacity: 1;
+                height: 200px;
             }
         }
 

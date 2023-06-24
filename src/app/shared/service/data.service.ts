@@ -74,7 +74,7 @@ export class DataService {
         }
     }
 
-    getCommonHeader() {
+    getCommonHeader(): any {
         return {
             lang: this.i18n.currentLang || '',
         };
@@ -401,7 +401,10 @@ export class DataService {
 
     //获取菜单
     getMenu(): Observable<MenuVo[]> {
-        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu");
+        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", null, {
+            observe: "body",
+            headers: this.getCommonHeader()
+        });
     }
 
     getUserinfo(): Observable<Userinfo> {

@@ -1,5 +1,5 @@
 import {EruptFieldModel, Tpl, View} from "./erupt-field.model";
-import {OperationIfExprBehavior, OperationMode, OperationType} from "./erupt.enum";
+import {FormSize, OperationIfExprBehavior, OperationMode, OperationType} from "./erupt.enum";
 
 
 export interface EruptModel {
@@ -22,6 +22,7 @@ export interface Erupt {
     cardView: CardView;
     rowOperation: RowOperation[];
     drills: Drill[];
+    layout: Layout;
 }
 
 export interface CardView {
@@ -34,6 +35,13 @@ export enum GalleryCover {
     FIT = "FIT", //适应
     CLIP = "CLIP", //剪裁
 }
+
+interface Layout {
+    formSize: FormSize;
+    tableLeftFixed: number;
+    tableRightFixed: number;
+}
+
 
 interface LinkTree {
     field: string;

@@ -36,6 +36,9 @@ export class UiBuildService {
     viewToAlainTableConfig(eruptBuildModel: EruptBuildModel, lineData: boolean, dataConvert?: boolean): STColumn[] {
         let cols: STColumn[] = [];
         const views = eruptBuildModel.eruptModel.tableColumns;
+        let leftFixed = eruptBuildModel.eruptModel.eruptJson.layout.tableLeftFixed;
+        let rightFixed = eruptBuildModel.eruptModel.eruptJson.layout.tableRightFixed;
+        let i = 0;
         for (let view of views) {
             let titleWidth = view.title.length * 14 + 22;
             if (titleWidth > 280) {
@@ -141,19 +144,19 @@ export class UiBuildService {
                     obj.type = "tag";
                     if (dataConvert) {
                         obj.tag = {
-                            true: {text: this.i18n.fanyi(edit.boolType.trueText), color: 'green'},
-                            false: {text: this.i18n.fanyi(edit.boolType.falseText), color: 'red'},
+                            true: {text: edit.boolType.trueText, color: 'green'},
+                            false: {text: edit.boolType.falseText, color: 'red'},
                         };
                     } else {
                         if (edit.title) {
                             if (edit.boolType) {
                                 obj.tag = {
                                     [edit.boolType.trueText]: {
-                                        text: this.i18n.fanyi(edit.boolType.trueText),
+                                        text: edit.boolType.trueText,
                                         color: 'green'
                                     },
                                     [edit.boolType.falseText]: {
-                                        text: this.i18n.fanyi(edit.boolType.falseText),
+                                        text: edit.boolType.falseText,
                                         color: 'red'
                                     },
                                 };
@@ -579,7 +582,17 @@ export class UiBuildService {
                     });
                 };
             }
+            if (i < leftFixed) {
+                obj.fixed = 'left';
+            }
+            if (i >= views.length - rightFixed) {
+                obj.fixed = 'right';
+            }
+            if (null != obj.fixed && null == obj.width) {
+                obj.width = titleWidth + 50;
+            }
             cols.push(obj);
+            i++;
         }
         return cols;
     }

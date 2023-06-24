@@ -1,6 +1,6 @@
 import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {AttachmentEnum, ChoiceEnum, EditType, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
+import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
@@ -68,6 +68,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     ngOnInit() {
         this.eruptModel = this.eruptBuildModel.eruptModel;
+        if (this.eruptModel.eruptJson.layout.formSize == FormSize.FULL_LINE) {
+            this.col = colRules[1];
+        }
         for (let model of this.eruptModel.eruptFieldModels) {
             let edit = model.eruptFieldJson.edit;
             if (edit.type == EditType.ATTACHMENT) {
