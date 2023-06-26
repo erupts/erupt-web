@@ -60,7 +60,7 @@ export class ReferenceComponent implements OnInit {
             nzWrapClassName: "modal-xs",
             nzKeyboard: true,
             nzStyle: {top: "30px"},
-            nzTitle: field.eruptFieldJson.edit.title,
+            nzTitle: field.eruptFieldJson.edit.title + (field.eruptFieldJson.edit.$viewValue ? "【" + field.eruptFieldJson.edit.$viewValue + "】" : ""),
             nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzContent: TreeSelectComponent,
             nzComponentParams: {
@@ -103,7 +103,7 @@ export class ReferenceComponent implements OnInit {
             nzKeyboard: true,
             nzStyle: {top: "24px"},
             nzBodyStyle: {padding: "16px"},
-            nzTitle: edit.title,
+            nzTitle: edit.title + (field.eruptFieldJson.edit.$viewValue ? "【" + field.eruptFieldJson.edit.$viewValue + "】" : ""),
             nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzContent: TableComponent,
             nzComponentParams: {
