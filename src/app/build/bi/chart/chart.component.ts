@@ -3,7 +3,22 @@ import {Bi, Chart, ChartType} from "../model/bi.model";
 import {BiDataService} from "../service/data.service";
 import {HandlerService} from "../service/handler.service";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {Area, Bar, Column, Funnel, Line, Pie, Radar, Rose, Scatter, Waterfall, WordCloud} from "@antv/g2plot";
+import {
+    Area,
+    Bar,
+    Column,
+    Funnel,
+    Line,
+    Pie,
+    Radar,
+    Rose,
+    Scatter,
+    Waterfall,
+    WordCloud,
+    RadialBar,
+    Chord,
+    Sankey
+} from "@antv/g2plot";
 import {ChartTableComponent} from "../chart-table/chart-table.component";
 
 @Component({
@@ -329,7 +344,35 @@ export class ChartComponent implements OnInit, OnDestroy {
                 this.plot = new WordCloud(this.chart.code, Object.assign(props, {
                     wordField: x,
                     weightField: y,
+                    colorField: series,
                     wordStyle: {},
+                }));
+                break;
+            case ChartType.Sankey:
+                // @ts-ignore
+                this.plot = new Sankey(this.chart.code, Object.assign(props, {
+                    sourceField: x,
+                    weightField: y,
+                    targetField: series,
+                    nodeDraggable: true,
+                    nodeWidthRatio: 0.008,
+                    nodePaddingRatio: 0.03,
+                }));
+                break;
+            case ChartType.Chord:
+                // @ts-ignore
+                this.plot = new Chord(this.chart.code, Object.assign(props, {
+                    sourceField: x,
+                    weightField: y,
+                    targetField: series,
+                }));
+                break;
+            case ChartType.RadialBar:
+                // @ts-ignore
+                this.plot = new RadialBar(this.chart.code, Object.assign(props, {
+                    colorField: series,
+                    isStack: true,
+                    maxAngle: 270,
                 }));
                 break;
             // case ChartType.Heatmap:

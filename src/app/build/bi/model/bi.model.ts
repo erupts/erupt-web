@@ -45,14 +45,15 @@ export enum ChartType {
     Funnel = "Funnel",
     Bubble = "Bubble",
 
+    Sankey = "Sankey",
+    RadialBar = "RadialBar",
+    Chord = "Chord",
 
-    //TODO 当前g2plot版本还不支持
     Heatmap = "Heatmap",
     DensityHeatmap = "DensityHeatmap",
     Treemap = "Treemap",
 
     tpl = "tpl",
-
     table = "table"
 }
 
