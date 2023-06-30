@@ -1,15 +1,5 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    HostListener,
-    Input,
-    OnInit,
-    Output,
-    ViewChild
-} from '@angular/core';
-import {Fields, Meta, PivotSheet, S2Options, TableSheet} from "@antv/s2";
+import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {Meta, TableSheet} from "@antv/s2";
 
 @Component({
     selector: 'erupt-chart-table',
@@ -55,6 +45,33 @@ export class ChartTableComponent implements OnInit, AfterViewInit {
             showDefaultHeaderActionIcon: true
         })
         this.onResize();
+        const s2Palette = {
+            basicColors: [
+                '#FFFFFF',
+                '#F8F5FE',
+                '#EDE1FD',
+                '#873BF4',
+                '#7232CF',
+                '#7232CF',
+                '#7232CF',
+                '#AB76F7',
+                '#FFFFFF',
+                '#DDC7FC',
+                '#9858F5',
+                '#B98EF8',
+                '#873BF4',
+                '#282B33',
+                '#121826',
+            ],
+            semanticColors: {
+                red: '#FF4D4F',
+                green: '#29A294',
+            },
+        };
+        this.s2.setThemeCfg({
+            name: 'gray',
+            // palette: s2Palette
+        });
         this.s2.render(true);
     }
 

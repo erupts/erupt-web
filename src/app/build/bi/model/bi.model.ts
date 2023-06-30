@@ -49,9 +49,8 @@ export enum ChartType {
     RadialBar = "RadialBar",
     Chord = "Chord",
 
-    Heatmap = "Heatmap",
-    DensityHeatmap = "DensityHeatmap",
-    Treemap = "Treemap",
+    // Heatmap = "Heatmap",
+    // DensityHeatmap = "DensityHeatmap",
 
     tpl = "tpl",
     table = "table"
