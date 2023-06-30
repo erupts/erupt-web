@@ -6,18 +6,18 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {
     Area,
     Bar,
+    Chord,
     Column,
     Funnel,
     Line,
     Pie,
     Radar,
+    RadialBar,
     Rose,
+    Sankey,
     Scatter,
     Waterfall,
-    WordCloud,
-    RadialBar,
-    Chord,
-    Sankey
+    WordCloud
 } from "@antv/g2plot";
 import {ChartTableComponent} from "../chart-table/chart-table.component";
 
@@ -150,6 +150,7 @@ export class ChartComponent implements OnInit, OnDestroy {
             data: data,
             xField: x,
             yField: y,
+            slider: {},
             appendPadding: 16,
             legend: {
                 position: "bottom"
@@ -171,7 +172,6 @@ export class ChartComponent implements OnInit, OnDestroy {
                 this.plot = new Line(this.chart.code, Object.assign(props, {
                     seriesField: series,
                     stepType: 'vh',
-                    slider: {}
                 }));
                 break;
             case ChartType.Bar:
@@ -375,16 +375,6 @@ export class ChartComponent implements OnInit, OnDestroy {
                     maxAngle: 270,
                 }));
                 break;
-            // case ChartType.Heatmap:
-            //     this.plot = new Heatmap(this.chart.code, Object.assign(props, {
-            //         colorField: series,
-            //         sizeField: size || series,
-            //         legend: null
-            //     }));
-            //     break;
-            // case ChartType.DensityHeatmap:
-            //
-            //     break;
         }
         this.plot && this.plot.render();
     }
