@@ -91,22 +91,22 @@ const LANGS: { [key: string]: LangConfigData } = {
         zorro: ko_KR,
         delon: delonKo,
     },
-    // 'ru-RU': {
-    //     abbr: '🇷🇺',
-    //     text: 'русск',
-    //     date: dfEn,
-    //     ng: ngEn,
-    //     zorro: zorroEnUS,
-    //     delon: delonEnUS,
-    // },
-    // 'es-ES': {
-    //     abbr: '🇪🇸',
-    //     text: 'español',
-    //     date: dfEn,
-    //     ng: ngEn,
-    //     zorro: zorroEnUS,
-    //     delon: delonEnUS,
-    // }
+    'ru-RU': {
+        abbr: '🇷🇺',
+        text: 'русск',
+        date: dfEn,
+        ng: ngEn,
+        zorro: zorroEnUS,
+        delon: delonEnUS,
+    },
+    'es-ES': {
+        abbr: '🇪🇸',
+        text: 'español',
+        date: dfEn,
+        ng: ngEn,
+        zorro: zorroEnUS,
+        delon: delonEnUS,
+    }
 };
 
 for (let key in LANGS) {
