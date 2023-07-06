@@ -2,8 +2,6 @@ export class WindowModel {
 
     private static config: any = window["eruptSiteConfig"] || {};
 
-    public static i18n: any = window["eruptI18n"] || {};
-
     public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';
 
     public static fileDomain: string = WindowModel.config["fileDomain"] || undefined;
