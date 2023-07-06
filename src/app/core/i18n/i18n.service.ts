@@ -4,6 +4,8 @@ import {DatePipe, registerLocaleData} from '@angular/common';
 import ngEn from '@angular/common/locales/en';
 import ngZh from '@angular/common/locales/zh';
 import ngFr from '@angular/common/locales/fr';
+import ngEs from '@angular/common/locales/es';
+import ngRu from '@angular/common/locales/ru';
 import ngZhTw from '@angular/common/locales/zh-Hant';
 import ngKO from '@angular/common/locales/ko';
 import ngJA from '@angular/common/locales/ja';
@@ -16,9 +18,19 @@ import {
     SettingsService,
     zh_CN as delonZhCn,
     zh_TW as delonZhTw,
-    fr_FR as delonFr
+    fr_FR as delonFr,
+    es_ES as delonEs
 } from '@delon/theme';
-import {enUS as dfEn, ja as dfJp, ko as dfKo, zhCN as dfZhCn, zhTW as dfZhTw,fr as dfFr} from 'date-fns/locale';
+import {
+    enUS as dfEn,
+    ja as dfJp,
+    ko as dfKo,
+    zhCN as dfZhCn,
+    zhTW as dfZhTw,
+    fr as dfFr,
+    ru as dfRu,
+    es as dfEs
+} from 'date-fns/locale';
 import {NzSafeAny} from 'ng-zorro-antd/core/types';
 import {
     en_US as zorroEnUS,
@@ -27,7 +39,9 @@ import {
     NzI18nService,
     zh_CN as zorroZhCN,
     zh_TW as zorroZhTW,
-    fr_FR as zorroFr
+    fr_FR as zorroFr,
+    es_ES as zorroEs,
+    ru_RU as zorroRu
 } from 'ng-zorro-antd/i18n';
 import {WindowModel} from "@shared/model/window.model";
 import {HttpClient} from "@angular/common/http";
@@ -94,17 +108,17 @@ const LANGS: { [key: string]: LangConfigData } = {
     'ru-RU': {
         abbr: '🇷🇺',
         text: 'русск',
-        date: dfEn,
-        ng: ngEn,
-        zorro: zorroEnUS,
-        delon: delonEnUS,
+        date: dfRu,
+        ng: ngRu,
+        zorro: zorroRu,
+        delon: delonEs,
     },
     'es-ES': {
         abbr: '🇪🇸',
         text: 'español',
-        date: dfEn,
-        ng: ngEn,
-        zorro: zorroEnUS,
+        date: dfEs,
+        ng: ngEs,
+        zorro: zorroEs,
         delon: delonEnUS,
     }
 };
@@ -167,12 +181,6 @@ export class I18NService {
                     let row = it.split(',');
                     langMapping[row[0]] = row[index];
                 })
-                let extra = WindowModel.i18n[this.currentLang];
-                if (extra) {
-                    for (let key in extra) {
-                        langMapping[key] = extra[key];
-                    }
-                }
                 this.langMapping = langMapping;
                 success();
             }
