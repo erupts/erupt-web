@@ -1,6 +1,6 @@
 {
   "name": "erut-web",
-  "version": "14.3.0",
+  "version": "0.0.0",
   "description": "erupt framework front-end",
   "author": "yuepeng <erupts@126.com>",
   "repository": {
@@ -21,7 +21,7 @@
     "angular"
   ],
   "scripts": {
-    "ng-high-memory": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng",
+    "ng-high-memory": "node --max_old_space_size=6000 ./node_modules/@angular/cli/bin/ng",
     "ng": "ng",
     "start": "ng s -o",
     "build": "npm run ng-high-memory build",

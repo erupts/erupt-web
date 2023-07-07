@@ -58,7 +58,7 @@ yarn install
 
 3. 修改服务端地址
 ```
-/proxy.config.json → target
+/proxy.config.js → target
 ```
 
 4. 启动：
