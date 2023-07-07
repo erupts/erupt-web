@@ -17,6 +17,7 @@ import {I18nPipe} from "@shared/pipe/i18n.pipe";
 import {NavComponent} from "@shared/nav/nav.component";
 import {NzAffixModule} from "ng-zorro-antd/affix";
 import {HeaderI18nComponent} from "@shared/component/i18n.component";
+import {NzIconModule} from "ng-zorro-antd/icon";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';

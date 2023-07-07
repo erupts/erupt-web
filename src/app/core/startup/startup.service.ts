@@ -3,7 +3,6 @@ import {SettingsService, TitleService} from "@delon/theme";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 import {ICONS_AUTO} from "../../../style-icons-auto";
-import {ICONS} from "../../../style-icons";
 import {WindowModel} from "@shared/model/window.model";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
@@ -27,7 +26,7 @@ export class StartupService {
                 private httpClient: HttpClient,
                 private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
-        iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
+        iconSrv.addIcon(...ICONS_AUTO);
     }
 
     async load(): Promise<any> {
