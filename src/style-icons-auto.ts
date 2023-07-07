@@ -20,6 +20,7 @@ import {
     DeleteOutline,
     DeleteTwoTone,
     DownloadOutline,
+    EditFill,
     EllipsisOutline,
     EyeOutline,
     FullscreenExitOutline,
@@ -32,6 +33,7 @@ import {
     MinusSquareOutline,
     PieChartTwoTone,
     PlusOutline,
+    PlusSquareOutline,
     PoweroffOutline,
     QuestionCircleOutline,
     ReloadOutline,
@@ -41,9 +43,7 @@ import {
     SearchOutline,
     SettingOutline,
     SyncOutline,
-    TableOutline,
-    EditFill,
-    PlusSquareOutline
+    TableOutline
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -86,4 +86,5 @@ export const ICONS_AUTO = [
     DeleteTwoTone,
     MinusSquareOutline,
     EditFill,
+    PlusSquareOutline
 ];
