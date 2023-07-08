@@ -557,7 +557,7 @@ export class UiBuildService {
             if (view.width) {
                 obj.width = isNaN(Number(view.width)) ? view.width : view.width + "px";
             }
-            if (view.tpl.enable) {
+            if (view.tpl && view.tpl.enable) {
                 obj.type = "link"
                 obj.click = (item) => {
                     let url = this.dataService.getEruptViewTpl(eruptBuildModel.eruptModel.eruptName,
