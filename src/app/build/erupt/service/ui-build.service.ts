@@ -36,8 +36,7 @@ export class UiBuildService {
     viewToAlainTableConfig(eruptBuildModel: EruptBuildModel, lineData: boolean, dataConvert?: boolean): STColumn[] {
         let cols: STColumn[] = [];
         const views = eruptBuildModel.eruptModel.tableColumns;
-        let leftFixed = eruptBuildModel.eruptModel.eruptJson.layout.tableLeftFixed;
-        let rightFixed = eruptBuildModel.eruptModel.eruptJson.layout.tableRightFixed;
+        let layout = eruptBuildModel.eruptModel.eruptJson.layout;
         let i = 0;
         for (let view of views) {
             let titleWidth = view.title.length * 14 + 22;
@@ -582,12 +581,15 @@ export class UiBuildService {
                     });
                 };
             }
-            if (i < leftFixed) {
-                obj.fixed = 'left';
+            if (layout) {
+                if (i < layout.tableLeftFixed) {
+                    obj.fixed = 'left';
+                }
+                if (i >= views.length - layout.tableRightFixed) {
+                    obj.fixed = 'right';
+                }
             }
-            if (i >= views.length - rightFixed) {
-                obj.fixed = 'right';
-            }
+
             if (null != obj.fixed && null == obj.width) {
                 obj.width = titleWidth + 50;
             }
