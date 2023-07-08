@@ -249,7 +249,7 @@ export class TableComponent implements OnInit {
         if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
             let fullLine = false;
             let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
-            if (layout.formSize == FormSize.FULL_LINE) {
+            if (layout && layout.formSize == FormSize.FULL_LINE) {
                 fullLine = true;
             }
             tableOperators.push({
@@ -379,7 +379,7 @@ export class TableComponent implements OnInit {
         if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
             let fullLine = false;
             let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
-            if (layout.formSize == FormSize.FULL_LINE) {
+            if (layout && layout.formSize == FormSize.FULL_LINE) {
                 fullLine = true;
             }
             tableOperators.push({
@@ -594,7 +594,7 @@ export class TableComponent implements OnInit {
     addRow() {
         let fullLine = false;
         let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
-        if (layout.formSize == FormSize.FULL_LINE) {
+        if (layout && layout.formSize == FormSize.FULL_LINE) {
             fullLine = true;
         }
         const modal = this.modal.create({
