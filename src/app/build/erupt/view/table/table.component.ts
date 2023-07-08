@@ -247,7 +247,11 @@ export class TableComponent implements OnInit {
         _columns.push(...viewCols);
         const tableOperators: STColumnButton[] = [];
         if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
-            let fullLine = this.eruptBuildModel.eruptModel.eruptJson.layout.formSize == FormSize.FULL_LINE
+            let fullLine = false;
+            let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
+            if (layout.formSize == FormSize.FULL_LINE) {
+                fullLine = true;
+            }
             tableOperators.push({
                 icon: "eye",
                 click: (record: any, modal: any) => {
@@ -373,7 +377,11 @@ export class TableComponent implements OnInit {
         }
 
         if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
-            let fullLine = this.eruptBuildModel.eruptModel.eruptJson.layout.formSize == FormSize.FULL_LINE
+            let fullLine = false;
+            let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
+            if (layout.formSize == FormSize.FULL_LINE) {
+                fullLine = true;
+            }
             tableOperators.push({
                 icon: "edit",
                 click: (record: any) => {
@@ -584,7 +592,11 @@ export class TableComponent implements OnInit {
 
     //新增
     addRow() {
-        let fullLine = this.eruptBuildModel.eruptModel.eruptJson.layout.formSize == FormSize.FULL_LINE
+        let fullLine = false;
+        let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
+        if (layout.formSize == FormSize.FULL_LINE) {
+            fullLine = true;
+        }
         const modal = this.modal.create({
             nzStyle: {top: "60px"},
             nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
