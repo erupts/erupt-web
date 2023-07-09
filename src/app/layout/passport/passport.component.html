@@ -1,3 +1,6 @@
+<div style="position: absolute;right: 5%;top: 5%;z-index: 999">
+    <i18n-choice style="font-size: 1.3em;color: #000"></i18n-choice>
+</div>
 <div class="container">
     <div class="wrap">
         <div class="top">
@@ -9,7 +12,12 @@
                 <span *ngIf="desc">{{desc}}</span>
             </div>
         </div>
-        <router-outlet></router-outlet>
+        <div style="display: flex; justify-content: center;">
+            <div class="pass-form">
+                <h3 style="margin-bottom: 26px;text-align: center">{{'login.account_pwd_login'|translate}}</h3>
+                <router-outlet></router-outlet>
+            </div>
+        </div>
         <global-footer *ngIf="copyright">
             <i nz-icon nzType="copyright" nzTheme="outline"></i> 2018 - {{nowYear}}
             <a href="https://www.erupt.xyz" target="_blank">Erupt Framework</a>&nbsp; All rights reserved.

@@ -1,85 +1,81 @@
 :host {
-  ::ng-deep {
+    ::ng-deep {
 
-    label[nz-checkbox] {
-      max-width: 140px;
-      line-height: initial;
-      margin-left: 0;
-      margin-bottom: 12px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-
-    label[nz-radio] {
-      min-width: 120px;
-      margin-bottom: 12px;
-    }
-
-    .edui-editor {
-      width: 100% !important;
-    }
-
-    se {
-      width: 100%;
-      //min-height: 40px;
-      .ant-form-item-label {
-        width: auto !important;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-    }
-
-    //nz-input-group {
-    //  width: 100%;
-    //}
-
-    .ant-collapse-header {
-      padding: 4px 40px !important;
-      font-size: 12px
-    }
-
-    .erupt-input {
-      width: 100%;
-    }
-
-    .stander-line-height {
-      line-height: 38px;
-    }
-
-    .ant-slider-with-marks {
-      margin-bottom: 0;
-    }
-
-
-    form.ant-form-horizontal {
-      se .ant-form-item-label {
-        max-width: 120px;
-        min-width: 70px;
-      }
-    }
-
-    .se__horizontal .se__item .se__label {
-      justify-content: normal !important;
-    }
-
-    .ant-form-horizontal {
-      @media (max-width: 768px) {
-        .col-div {
-          height: auto !important;
+        label[nz-checkbox] {
+            max-width: 140px;
+            line-height: initial;
+            margin-left: 0;
+            margin-bottom: 12px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
-      }
-    }
 
-    .ant-form-vertical {
-      se {
-        margin-bottom: 5px;
-      }
+        label[nz-radio] {
+            min-width: 120px;
+        }
 
-      .col-div {
-        height: 70px;
-        margin-bottom: 5px;
-      }
+        .edui-editor {
+            width: 100% !important;
+        }
+
+        se {
+            width: 100%;
+            //min-height: 40px;
+            .ant-form-item-label {
+                width: auto !important;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        nz-input-group {
+            width: 100%;
+        }
+
+        .ant-collapse-header {
+            padding: 8px 16px !important;
+        }
+
+        .erupt-input {
+            width: 100%;
+        }
+
+        .stander-line-height {
+            line-height: 38px;
+        }
+
+        .ant-slider-with-marks {
+            margin-bottom: 0;
+        }
+
+
+        form.ant-form-horizontal {
+            se .ant-form-item-label {
+                max-width: 120px;
+                min-width: 70px;
+            }
+        }
+
+        .se__horizontal .se__item .se__label {
+            justify-content: normal !important;
+        }
+
+        .erupt-form > div {
+            margin-bottom: 8px;
+        }
+
+        .ant-input-affix-wrapper-disabled {
+            pointer-events: auto;
+        }
+
+        .ant-input-disabled, .ant-input-number-disabled {
+            pointer-events: auto;
+        }
+
+        .ant-input[type='color'] {
+            height: 28px;
+        }
+
     }
-  }
 }

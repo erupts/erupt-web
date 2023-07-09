@@ -1,19 +1,29 @@
-<nz-spin [nzSpinning]="!codeEditorEvent">
+<div style="position: relative">
     <nz-code-editor [ngStyle]="{height:height+'px'}" style="border:1px solid #ccc"
                     (nzEditorInitialized)="codeEditorInit($event)"
                     [(ngModel)]="edit.$value"
-                    [nzEditorOption]="{ language: language}">
+                    [nzLoading]="!initComplete"
+                    [nzEditorOption]="{ language: language, theme: theme, readOnly: readonly}">
     </nz-code-editor>
-    <nz-switch nzSize="small" [ngModel]="dark"
-               [nzUnCheckedChildren]="unchecked"
-               [nzCheckedChildren]="checked"
-               (ngModelChange)="switchChange($event)"
-               style="position: absolute;right: 22px;bottom: 10px"
-    ></nz-switch>
-    <ng-template #unchecked>
-        <i nz-icon nzType="bulb"></i>
-    </ng-template>
-    <ng-template #checked>
-        <i nz-icon nzType="poweroff"></i>
-    </ng-template>
-</nz-spin>
+    <div class="toolbar">
+<!--        <i-->
+<!--            nz-icon-->
+<!--            [class.active]="fullScreen"-->
+<!--            nz-tooltip-->
+<!--            [nzType]="fullScreen ? 'fullscreen-exit' : 'fullscreen'"-->
+<!--            (click)="toggleFullScreen()"-->
+<!--        ></i>-->
+<!--        &nbsp;&nbsp;&nbsp;-->
+        <nz-switch nzSize="small" [ngModel]="dark"
+                   [nzUnCheckedChildren]="unchecked"
+                   [nzCheckedChildren]="checked"
+                   (ngModelChange)="switchChange($event)"
+        ></nz-switch>
+        <ng-template #unchecked>
+            <i nz-icon nzType="bulb"></i>
+        </ng-template>
+        <ng-template #checked>
+            <i nz-icon nzType="poweroff"></i>
+        </ng-template>
+    </div>
+</div>

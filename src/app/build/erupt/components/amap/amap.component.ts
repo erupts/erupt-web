@@ -1,9 +1,8 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, Renderer2, ViewChild} from "@angular/core";
 import {LazyService} from "@delon/util";
 import {WindowModel} from "@shared/model/window.model";
-import {NzMessageService} from "ng-zorro-antd";
-import {isObject} from "util";
 import {MapType} from "../../model/erupt-field.model";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 declare const AMap;
 
@@ -50,6 +49,17 @@ export class AmapComponent implements OnInit {
 
     ngOnInit() {
         this.loading = true;
+        if (!WindowModel.amapSecurityJsCode) {
+            this.msg.error("not config amapSecurityJsCode")
+            return;
+        }
+        if (!WindowModel.amapKey) {
+            this.msg.error("not config amapKey")
+            return;
+        }
+        window["_AMapSecurityConfig"] = {
+            securityJsCode: WindowModel.amapSecurityJsCode,
+        }
         this.lazy.loadScript("https://webapi.amap.com/maps?v=2.0&key=" + WindowModel.amapKey).then(() => {
             if (this.value) {
                 this.value = JSON.parse(this.value);
@@ -111,6 +121,8 @@ export class AmapComponent implements OnInit {
                             });
                         }
                         that.autocompleteList = tips;
+                    } else {
+                        // that.msg.warning(result)
                     }
                 });
             };
@@ -187,7 +199,9 @@ export class AmapComponent implements OnInit {
             this.viewValue = null;
             return;
         }
-        if (!isObject(this.value)) {
+
+        if (typeof this.value !== 'object') {
+            console.log(this.value)
             this.value = JSON.parse(this.value);
         }
         if (this.value.name != this.tipInput.nativeElement.value) {

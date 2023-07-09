@@ -1,27 +1,32 @@
 <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!eruptBuildModel"></nz-skeleton>
 <ng-container *ngIf="eruptBuildModel">
-    <div nz-row [nzGutter]="16">
-        <div nz-col *ngIf="linkTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="6">
+    <div nz-row [nzGutter]="12">
+        <div nz-col *ngIf="linkTree" [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="4">
             <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
         </div>
-        <div nz-col [nzXs]="24" [nzMd]="linkTree?16:24" [nzLg]="linkTree?18:24" [nzXl]="linkTree?18:24"
+        <div nz-col [nzXs]="24" [nzMd]="linkTree?16:24" [nzLg]="linkTree?18:24" [nzXl]="linkTree?20:24"
              [hidden]="!showTable"
-             [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?'calc(100vh - 140px - ' + (this.settingSrv.layout.reuse ? '40px' : '0px') +' + '+
-                (settingSrv.layout.breadcrumbs?'0px':'38px')+ ')':'auto'}">
+             [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?'calc(100vh - 103px - ' + (this.settingSrv.layout['reuse'] ? '40px' : '0px') +' + '+
+                (settingSrv.layout['breadcrumbs']?'0px':'38px')+ ')':'auto'}">
             <ng-container>
+                <ng-template #operationButtons>
+                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
+                        <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation">
+                            <ng-container *ngIf="item.mode != operationMode.SINGLE">
+                                <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.tip"
+                                        (click)="createOperator(item)">
+                                    <i class="fa" [ngClass]="item.icon"></i>
+                                    <span style="margin-left: 8px;">{{item.title}}</span>
+                                </button>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                </ng-template>
                 <div class="erupt-btn-item">
                     <div>
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
                             <button nz-button nzType="default" class="mb-sm" (click)="addRow()" id="erupt-btn-add">
                                 <i nz-icon nzType="plus" nzTheme="outline"></i>{{'table.add'|translate}}
-                            </button>
-                        </ng-container>
-
-                        <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
-                            <button nz-button nzType="danger" [nzGhost]="true" style="background: #fff !important;"
-                                    class="mb-sm" [nzLoading]="deleting" id="erupt-btn-delete"
-                                    (click)="delRows()">
-                                <i nz-icon nzType="delete" nzTheme="outline"></i>{{'table.delete'|translate}}
                             </button>
                         </ng-container>
 
@@ -45,8 +50,8 @@
                             <nz-dropdown-menu #menu1="nzDropdownMenu">
                                 <ul nz-menu>
                                     <li nz-menu-item (click)="downloadExcelTemplate()">
-                                        <i nz-icon nzType="build"
-                                           nzTheme="outline"></i>{{'table.download_template'|translate}}
+                                        <i nz-icon nzType="build" nzTheme="outline"></i>
+                                        &nbsp;{{'table.download_template'|translate}}
                                     </li>
                                 </ul>
                             </nz-dropdown-menu>
@@ -54,98 +59,91 @@
                         </ng-container>
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
-                            <button nz-button nzType="primary" style="background: #fff !important;" [nzGhost]="true"
+                            <button nz-button nzType="default" [nzSearch]="true"
                                     class="mb-sm" [nzLoading]="st._loading" id="erupt-btn-query"
                                     (click)="query()">
                                 <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
                             </button>
                         </ng-container>
 
-                        <ng-container>
-                            <nz-divider nzType="vertical" class="hidden-mobile"></nz-divider>
-                            <button nz-button nzType="default" nz-popover
-                                    [(nzVisible)]="showColCtrl" [nzContent]="tableColumnCtrl"
-                                    nzTrigger="click" class="mb-sm hidden-mobile">
-                                <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|translate}}
+                        <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.delete">
+                            <button nz-button nzType="default" nzDanger *ngIf="selectedRows.length>0"
+                                    class="mb-sm" [nzLoading]="deleting" id="erupt-btn-delete"
+                                    (click)="delRows()">
+                                <i nz-icon nzType="delete" nzTheme="outline"></i>{{'table.delete'|translate}}
+                            </button>
+                        </ng-container>
+                        <ng-container *ngIf="operationButtonNum <= 3">
+                            <ng-template [ngTemplateOutlet]="operationButtons"></ng-template>
+                        </ng-container>
+                    </div>
+                    <div class="condition-btn">
+                        <div>
+                            <button nz-button nzType="default" nz-popover style="padding: 4px 8px"
+                                    [(nzPopoverVisible)]="showColCtrl" [nzPopoverContent]="tableColumnCtrl"
+                                    nzPopoverTrigger="click" class="mb-sm hidden-mobile">
+                                <i nz-icon nzType="table" nzTheme="outline"></i>
                             </button>
                             <ng-template #tableColumnCtrl>
                                 <div nz-row style="max-width: 520px;">
                                     <ng-container *ngFor="let col of columns">
                                         <div *ngIf="col.title&&col.index" nz-col nzSpan="6">
-                                            <label nz-checkbox [(ngModel)]="col.show"
-                                                   style="width: 130px;" class="ellipsis"
-                                                   (ngModelChange)="st.resetColumns()">{{col.title.text}}</label>
+                                            <label nz-checkbox [(ngModel)]="col['show']"
+                                                   style="width: 130px;"
+                                                   (ngModelChange)="st.resetColumns()">{{col.title['text'] | nzEllipsis:6:'...'}}</label>
                                         </div>
                                     </ng-container>
                                 </div>
                             </ng-template>
-                        </ng-container>
-                    </div>
-                    <div *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0"
-                         class="condition-btn">
-                        <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition">
-                            <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
-                        </button>
-                        <button class="mb-sm" nz-button (click)="clearCondition();query()" id="erupt-btn-reset">
-                            <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
-                        </button>
-                    </div>
-                </div>
-                <div>
-                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
-                        <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation">
-                            <ng-container *ngIf="item.mode != operationMode.SINGLE">
-                                <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.tip"
-                                        (click)="createOperator(item)">
-                                    <i class="fa" [ngClass]="item.icon"></i>
-                                    <span style="margin-left: 8px;">{{item.title}}</span>
+                            <ng-container *ngIf="searchErupt">
+                                <nz-divider class="hidden-mobile" nzType="vertical"></nz-divider>
+                                <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition"
+                                        style="padding: 4px 8px">
+                                    <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                                </button>
+                                <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset"
+                                        [disabled]="st._loading">
+                                    <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
                                 </button>
                             </ng-container>
-                        </ng-container>
-                    </ng-container>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="operationButtonNum > 3">
+                    <ng-template [ngTemplateOutlet]="operationButtons"></ng-template>
                 </div>
 
-                <nz-card *ngIf="searchErupt.eruptFieldModels&&searchErupt.eruptFieldModels.length>0"
-                         [nzBodyStyle]="{padding:'10px'}"
-                         class="search-card"
-                         [hidden]="hideCondition">
-                    <erupt-edit-type
-                            [eruptBuildModel]="{eruptModel:searchErupt,referenceErupts:eruptBuildModel.referenceErupts}"
-                            [col]="{ xs: 24, sm: 24, md: 12, lg: 8, xl: 8, xxl: 6 }"
-                            (search)="query()"
-                            size="default"
-                            layout="horizontal"
-                    >
+                <ng-container>
+                    <nz-card *ngIf="searchErupt" [nzBodyStyle]="{padding:'10px'}" class="search-card"
+                             [hidden]="hideCondition">
+                        <erupt-search [eruptModel]="searchErupt" (search)="query()" [size]="'default'">
 
-                    </erupt-edit-type>
-                </nz-card>
-                <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">
-                    <div style="margin: 16px 0">
-                        <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>
-                    </div>
+                        </erupt-search>
+                    </nz-card>
+                    <!--                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">-->
+                    <!--                        <div style="margin: 16px 0">-->
+                    <!--                            <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>-->
+                    <!--                        </div>-->
+                    <!--                    </ng-container>-->
+                    <st #st resizable
+                        [widthMode]="{strictBehavior:'truncate'}" [body]="bodyTpl"
+                        [data]="stConfig.url" [columns]="columns"
+                        [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
+                        (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
+                        [multiSort]="stConfig.multiSort" [page]="stConfig.stPage" [req]="stConfig.req" [size]="'middle'"
+                    >
+                        <ng-template #bodyTpl>
+                            <ng-container>
+                                <tr *ngFor="let row of extraRows" [ngClass]="row.className">
+                                    <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
+                                        [ngClass]="column.className">
+                                        {{column.value}}
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-template>
+                    </st>
                 </ng-container>
-                <st #st
-                    [widthMode]="{strictBehavior:'wrap'}"
-                    [data]="stConfig.url" [columns]="columns"
-                    [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
-                    (change)="tableDataChange($event)"
-                    [bordered]="settingSrv.layout.bordered"
-                    [multiSort]="stConfig.multiSort"
-                    [page]="stConfig.stPage"
-                    [req]="stConfig.req"
-                    [size]="'middle'"
-                    [body]="bodyTpl">
-                    <ng-template #bodyTpl>
-                        <ng-container>
-                            <tr *ngFor="let row of extraRows" [ngClass]="row.className">
-                                <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
-                                    [ngClass]="column.className">
-                                    {{column.value}}
-                                </td>
-                            </tr>
-                        </ng-container>
-                    </ng-template>
-                </st>
             </ng-container>
         </div>
     </div>

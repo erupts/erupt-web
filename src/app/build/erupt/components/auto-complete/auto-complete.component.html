@@ -1,0 +1,14 @@
+<input nz-input
+       [nzSize]="size"
+       (input)="onAutoCompleteInput($event, field)"
+       [placeholder]="field.eruptFieldJson.edit.placeHolder"
+       [name]="field.fieldName"
+       [(ngModel)]="field.eruptFieldJson.edit.$value"
+       [nzAutocomplete]="autocomplete"/>
+<nz-autocomplete [nzBackfill]="true" #autocomplete>
+    <nz-auto-option *ngFor="let val of field.eruptFieldJson.edit.autoCompleteType.items"
+                    [nzValue]="val"
+                    [nzLabel]="val">
+        {{val}}
+    </nz-auto-option>
+</nz-autocomplete>

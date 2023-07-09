@@ -1,18 +1,18 @@
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {Checkbox, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
-import {_HttpClient, ALAIN_I18N_TOKEN} from "@delon/theme";
+import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
 import {LoginModel, Userinfo} from "../model/user.model";
-import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
-import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
-import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
-import {VL} from "../../build/erupt/model/erupt-field.model";
 import {I18NService} from "@core";
 import {downloadFile} from "@shared/util/erupt.util";
+import {RestPath} from "../../build/erupt/model/erupt.enum";
+import {VL} from "../../build/erupt/model/erupt-field.model";
+import {Checkbox, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
+import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
+import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 
 @Injectable()
 export class DataService {
@@ -26,11 +26,11 @@ export class DataService {
     public excelImport: string = RestPath.excel + "/import/";
 
     constructor(private http: HttpClient, private _http: _HttpClient,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+                private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
 
-    static postExcelFile(url, params?: object) { //params是post请求需要的参数，url是请求url地址
+    static postExcelFile(url: string, params?: any) { //params是post请求需要的参数，url是请求url地址
         let form = document.createElement("form");
         form.style.display = "none";
         form.action = url;
@@ -74,7 +74,7 @@ export class DataService {
         }
     }
 
-    getCommonHeader() {
+    getCommonHeader(): any {
         return {
             lang: this.i18n.currentLang || '',
         };
@@ -125,8 +125,13 @@ export class DataService {
     }
 
     getEruptOperationTpl(eruptName: string, operationCode: string, ids: any[]) {
-        return RestPath.tpl + "/operation_tpl/" + eruptName + "/" + operationCode +
+        return RestPath.tpl + "/operation-tpl/" + eruptName + "/" + operationCode +
             "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName + "&ids=" + ids;
+    }
+
+    getEruptViewTpl(eruptName: string, field: string, id: any) {
+        return RestPath.tpl + "/view-tpl/" + eruptName + "/" + field + "/" + id +
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
     }
 
     //分页数据对象
@@ -299,8 +304,8 @@ export class DataService {
     }
 
     //修改数据
-    editEruptData(eruptName: string, data: object): Observable<EruptApiModel> {
-        return this._http.put<EruptApiModel>(RestPath.dataModify + "/" + eruptName, data, null, {
+    updateEruptData(eruptName: string, data: object): Observable<any> {
+        return this._http.post<EruptApiModel>(RestPath.dataModify + "/" + eruptName + "/update", data, null, {
             observe: null,
             headers: {
                 erupt: eruptName,
@@ -311,17 +316,12 @@ export class DataService {
 
     //删除数据
     deleteEruptData(eruptName: string, id): Observable<EruptApiModel> {
-        return this._http.delete(RestPath.dataModify + "/" + eruptName + "/" + id, null, {
-            headers: {
-                erupt: eruptName,
-                ...this.getCommonHeader()
-            }
-        });
+        return this.deleteEruptDataList(eruptName, [id]);
     }
 
     //批量删除数据
-    deleteEruptDatas(eruptName: string, ids: any[]): Observable<EruptApiModel> {
-        return this._http.delete(RestPath.dataModify + "/" + eruptName, {ids: ids}, {
+    deleteEruptDataList(eruptName: string, ids: any[]): Observable<EruptApiModel> {
+        return this._http.post(RestPath.dataModify + "/" + eruptName + "/delete", ids, null, {
             headers: {
                 erupt: eruptName,
                 ...this.getCommonHeader()
@@ -372,12 +372,12 @@ export class DataService {
                 account: account,
                 pwd: pwd,
                 verifyCode: verifyCode,
-                verifyCodeMark: verifyCodeMark
+                verifyCodeMark: verifyCodeMark || null
             }
         );
     }
 
-    logout() {
+    logout(): Observable<any> {
         return this._http.get(RestPath.erupt + "/logout");
     }
 
@@ -401,7 +401,10 @@ export class DataService {
 
     //获取菜单
     getMenu(): Observable<MenuVo[]> {
-        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu");
+        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", null, {
+            observe: "body",
+            headers: this.getCommonHeader()
+        });
     }
 
     getUserinfo(): Observable<Userinfo> {
@@ -429,7 +432,7 @@ export class DataService {
         // DataService.postExcelFile(RestPath.excel + "/template/" + eruptName + "?" + this.createAuthParam(eruptName));
     }
 
-    downloadExcel(eruptName: string, condition: any, callback) {
+    downloadExcel(eruptName: string, condition: any, callback: Function) {
         this._http.post(RestPath.excel + "/export/" + eruptName, condition, null, {
             responseType: "arraybuffer",
             observe: 'events',

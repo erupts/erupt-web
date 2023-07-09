@@ -1,3 +1,5 @@
+import {STPage, STReq} from "@delon/abc/st/st.interfaces";
+
 export class BuildConfig {
     public static pi = "pageIndex";
 
@@ -6,17 +8,17 @@ export class BuildConfig {
 
     public stConfig = {
         url: null,
-        stPage: {
+        stPage: <STPage>{
             placement: "center",
             pageSizes: [10, 20, 30, 50, 100, 300, 500],
             showSize: true,
             showQuickJumper: true,
             total: true,
             toTop: true,
-            front: false
+            front: false,
         },
-        req: {
-            param: {},
+        req: <STReq>{
+            params: {},
             headers: {},
             method: "POST",
             allInBody: true,

@@ -5,11 +5,9 @@
                style="width: 300px" #tipInput [disabled]="!loaded" (blur)="blur()"/> &nbsp;
         <button nz-button nzType="default" [disabled]="!loaded" id="mapOk">&nbsp; {{"global.ok"|translate}} &nbsp;
         </button>
-        <button nz-button nzType="danger" [disabled]="!loaded" *ngIf="value" [nzGhost]="true"
-                style="background: #fff !important;"
+        <button nz-button nzType="default" nzDanger [disabled]="!loaded" *ngIf="value" style="padding: 4px 10px"
                 class="mb-sm"
-                (click)="clearLocation()">
-            &nbsp; <i nz-icon nzType="close" nzTheme="outline"></i> &nbsp;
+                (click)="clearLocation()"><i nz-icon nzType="close" nzTheme="outline"></i>
         </button>
     </div>
 
@@ -19,8 +17,7 @@
                         [nzLabel]="auto.name">{{auto.name}}
         </nz-auto-option>
     </nz-autocomplete>
-    <div id="amap" tabindex="0" style="min-height: 550px;
-    border: 1px solid #d9d9d9;outline: none;border-radius: 4px">
+    <div id="amap" tabindex="0" style="min-height: 550px;border: 1px solid #d9d9d9;outline: none;border-radius: 4px">
 
     </div>
     <!--    <div *ngIf="openDraw" class="draw-tool">-->

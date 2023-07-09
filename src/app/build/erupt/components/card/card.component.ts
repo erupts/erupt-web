@@ -3,6 +3,7 @@ import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {CardView, GalleryCover, Page} from "../../model/erupt.model";
 import {WindowModel} from "@shared/model/window.model";
+import {NzImageService} from "ng-zorro-antd/image";
 
 @Component({
     selector: 'erupt-card',
@@ -12,7 +13,7 @@ import {WindowModel} from "@shared/model/window.model";
 })
 export class CardComponent implements OnInit {
 
-    constructor(private dataService: DataService) {
+    constructor(private dataService: DataService, private imageService: NzImageService,) {
     }
 
     @Input() eruptBuildModel: EruptBuildModel;
@@ -50,9 +51,17 @@ export class CardComponent implements OnInit {
 
     viewImageStyle(path: string): object {
         return {
-            backgroundImage: 'url(' + DataService.previewAttachment(path) + ')',
+            backgroundImage: 'url(' + DataService.previewAttachment(path.split("|")[0]) + ')',
             backgroundSize: this.cardView.galleryCover == GalleryCover.FIT ? "contain" : "cover"
         };
+    }
+
+    previewImage(path: string) {
+        this.imageService.preview(path.split("|").map(it => {
+            return {
+                src: DataService.previewAttachment(it.trim())
+            }
+        }))
     }
 
     pageIndexChange(index) {

@@ -1,0 +1,16 @@
+<div class="alain-default__progress-bar erupt-global__progress" *ngIf="isFetching"></div>
+<div class="erupt-global__progress" *ngIf="isFetching"></div>
+<nz-water-mark [nzContent]="nickName" [nzZIndex]="999999">
+    <layout-header class="erupt-header" [ngClass]="settings.layout['fixed']?'erupt-header_fixed':''"
+                   [menu]="menu"></layout-header>
+    <layout-sidebar class="erupt-side alain-default__aside"></layout-sidebar>
+    <section class="erupt_content">
+        <reuse-tab *ngIf="settingSrv.layout['reuse']" [max]="30" tabType="card" [tabBarGutter]="0"
+                   [tabMaxWidth]="180"></reuse-tab>
+        <router-outlet></router-outlet>
+    </section>
+</nz-water-mark>
+<theme-btn [devTips]="null" [types]="themes"></theme-btn>
+<nz-back-top></nz-back-top>
+<ng-template #settingHost></ng-template>
+<footer class="licence">Powered by Erupt © 2018 - {{nowYear}}</footer>

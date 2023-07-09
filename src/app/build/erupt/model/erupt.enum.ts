@@ -33,6 +33,7 @@ export enum EditType {
     TAB_TABLE_REFER = "TAB_TABLE_REFER",
     DIVIDE = "DIVIDE",                         //分割线
     SLIDER = "SLIDER",                         //数字滑块
+    RATE = "RATE",
     CHECKBOX = "CHECKBOX",
     EMPTY = "EMPTY",
     TPL = "TPL",
@@ -123,4 +124,10 @@ export enum OperationType {
 
 export enum OperationIfExprBehavior {
     HIDE = "HIDE", DISABLE = "DISABLE",
+}
+
+
+export enum FormSize {
+    DEFAULT = "DEFAULT",
+    FULL_LINE = "FULL_LINE"
 }

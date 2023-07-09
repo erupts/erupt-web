@@ -1,12 +1,12 @@
 import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
 import {Bi} from "../model/bi.model";
-import {STColumn, STPage} from "@delon/abc/table/table.interfaces";
 import {BiDataService} from "../service/data.service";
 import {ActivatedRoute} from "@angular/router";
 import {HandlerService} from "../service/handler.service";
 import {SettingsService} from "@delon/theme";
-import {NzMessageService} from "ng-zorro-antd";
-import {STComponent} from "@delon/abc";
+import {STColumn, STComponent} from "@delon/abc/st";
+import {STPage} from "@delon/abc/st/st.interfaces";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
     selector: 'erupt-drill',
@@ -89,11 +89,7 @@ export class DrillComponent implements OnInit {
                             title: column.name,
                             index: column.name,
                             className: "text-center",
-                            width: column.width,
-                            show: true,
-                            iif: () => {
-                                return col.show;
-                            }
+                            width: column.width
                         };
                         this.biTable.columns.push(col);
                     }

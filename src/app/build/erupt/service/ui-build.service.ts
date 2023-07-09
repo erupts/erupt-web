@@ -1,21 +1,25 @@
 import {EruptBuildModel} from "../model/erupt-build.model";
-import {STColumn, STData} from "@delon/abc";
 import {DateEnum, EditType, ViewType} from "../model/erupt.enum";
 import {ViewTypeComponent} from "../components/view-type/view-type.component";
 import {MarkdownComponent} from "../components/markdown/markdown.component";
 import {CodeEditorComponent} from "../components/code-editor/code-editor.component";
 import {DataService} from "@shared/service/data.service";
 import {Inject, Injectable} from "@angular/core";
-import {NzMessageService, NzModalService} from "ng-zorro-antd";
-import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
+import {STColumn, STData} from "@delon/abc/st";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzImageService} from "ng-zorro-antd/image";
+import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 
 @Injectable()
 export class UiBuildService {
 
     constructor(
-        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+        private imageService: NzImageService,
+        private i18n: I18NService,
+        private dataService: DataService,
         @Inject(NzModalService) private modal: NzModalService,
         @Inject(NzMessageService) private msg: NzMessageService) {
     }
@@ -32,6 +36,8 @@ export class UiBuildService {
     viewToAlainTableConfig(eruptBuildModel: EruptBuildModel, lineData: boolean, dataConvert?: boolean): STColumn[] {
         let cols: STColumn[] = [];
         const views = eruptBuildModel.eruptModel.tableColumns;
+        let layout = eruptBuildModel.eruptModel.eruptJson.layout;
+        let i = 0;
         for (let view of views) {
             let titleWidth = view.title.length * 14 + 22;
             if (titleWidth > 280) {
@@ -41,7 +47,7 @@ export class UiBuildService {
                 titleWidth += 20;
             }
             if (view.desc) {
-                titleWidth += 16;
+                titleWidth += 18;
             }
             let edit = view.eruptFieldModel.eruptFieldJson.edit;
             let obj: STColumn = {
@@ -51,7 +57,7 @@ export class UiBuildService {
                     optionalHelp: view.desc
                 }
             };
-            obj.show = view.show;
+            obj["show"] = view.show;
             if (lineData) {
                 //修复表格显示子类属性时无法正确检索到属性值的缺陷
                 obj.index = view.column.replace(/\./g, "_");
@@ -114,7 +120,7 @@ export class UiBuildService {
                     break;
                 case ViewType.DATE:
                     obj.className = "date-col";
-                    obj.width = 90;
+                    obj.width = 110;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE) {
@@ -133,18 +139,27 @@ export class UiBuildService {
                     break;
                 case ViewType.BOOLEAN:
                     obj.className = "text-center";
+                    obj.width += 12;
                     obj.type = "tag";
                     if (dataConvert) {
                         obj.tag = {
-                            true: {text: this.i18n.fanyi(edit.boolType.trueText), color: 'green'},
-                            false: {text: this.i18n.fanyi(edit.boolType.falseText), color: 'red'},
+                            true: {text: edit.boolType.trueText, color: 'green'},
+                            false: {text: edit.boolType.falseText, color: 'red'},
                         };
                     } else {
                         if (edit.title) {
-                            obj.tag = {
-                                [edit.boolType.trueText]: {text: this.i18n.fanyi(edit.boolType.trueText), color: 'green'},
-                                [edit.boolType.falseText]: {text: this.i18n.fanyi(edit.boolType.falseText), color: 'red'},
-                            };
+                            if (edit.boolType) {
+                                obj.tag = {
+                                    [edit.boolType.trueText]: {
+                                        text: edit.boolType.trueText,
+                                        color: 'green'
+                                    },
+                                    [edit.boolType.falseText]: {
+                                        text: edit.boolType.falseText,
+                                        color: 'red'
+                                    },
+                                };
+                            }
                         } else {
                             obj.tag = {
                                 true: {text: this.i18n.fanyi('是'), color: 'green'},
@@ -256,10 +271,10 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let codeEditType = view.eruptFieldModel.eruptFieldJson.edit.codeEditType;
+                        // @ts-ignore
                         this.modal.create({
                             nzWrapClassName: "modal-lg",
-                            // nzStyle: {top: "60px"},
-                            nzBodyStyle: {padding: 0},
+                            nzBodyStyle: {padding: "0"},
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
@@ -291,7 +306,7 @@ export class UiBuildService {
                         this.modal.create({
                             nzWrapClassName: "modal-lg",
                             nzBodyStyle: {
-                                padding: 0
+                                padding: "0"
                             },
                             nzMaskClosable: true,
                             nzKeyboard: true,
@@ -307,38 +322,39 @@ export class UiBuildService {
                     break;
                 case ViewType.IMAGE:
                     obj.type = "link";
-                    obj.width = "90px";
-                    obj.className = "text-center p-sm";
+                    obj.className = "text-center p-mini";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
+                            let img;
                             if (attachmentType) {
-                                let img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
-                                //height="50px"
-                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
+                                img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
                             } else {
-                                let img = (<string>item[view.column]).split("|")[0];
-                                //height="50px"
-                                return `<img width="100%" class="text-center" src="${DataService.previewAttachment(img)}" />`;
+                                img = (<string>item[view.column]).split("|")[0];
                             }
+                            let imgs;
+                            if (attachmentType) {
+                                imgs = (<string>item[view.column]).split(attachmentType.fileSeparator);
+                            } else {
+                                imgs = (<string>item[view.column]).split("|");
+                            }
+                            let imgElements = [];
+                            for (let i in imgs) {
+                                imgElements[i] = `<img width="100%" class="e-table-img" src="${DataService.previewAttachment(imgs[i])}" alt=""/>`;
+                            }
+                            return `<div style="text-align: center;display:flex;justify-content: center;">
+                                        ${imgElements.join(" ")}
+                                    </div>`;
                         } else {
-                            return "";
+                            return '';
                         }
                     };
                     obj.click = (item) => {
-                        this.modal.create({
-                            nzWrapClassName: "modal-lg",
-                            nzStyle: {top: "50px"},
-                            nzMaskClosable: true,
-                            nzKeyboard: true,
-                            nzFooter: null,
-                            nzTitle: view.title,
-                            nzContent: ViewTypeComponent,
-                            nzComponentParams: {
-                                value: item[view.column],
-                                view: view
+                        this.imageService.preview(item[view.column].split("|").map(it => {
+                            return {
+                                src: DataService.previewAttachment(it.trim())
                             }
-                        });
+                        }))
                     };
                     break;
                 case ViewType.HTML:
@@ -541,7 +557,44 @@ export class UiBuildService {
             if (view.width) {
                 obj.width = isNaN(Number(view.width)) ? view.width : view.width + "px";
             }
+            if (view.tpl && view.tpl.enable) {
+                obj.type = "link"
+                obj.click = (item) => {
+                    let url = this.dataService.getEruptViewTpl(eruptBuildModel.eruptModel.eruptName,
+                        view.eruptFieldModel.fieldName,
+                        item[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
+                    this.modal.create({
+                        nzKeyboard: true,
+                        nzMaskClosable: false,
+                        nzTitle: view.title,
+                        nzWidth: view.tpl.width,
+                        nzStyle: {top: "20px"},
+                        nzWrapClassName: view.tpl.width || "modal-lg",
+                        nzBodyStyle: {
+                            padding: "0"
+                        },
+                        nzFooter: null,
+                        nzContent: EruptIframeComponent,
+                        nzComponentParams: {
+                            url: url,
+                        }
+                    });
+                };
+            }
+            if (layout) {
+                if (i < layout.tableLeftFixed) {
+                    obj.fixed = 'left';
+                }
+                if (i >= views.length - layout.tableRightFixed) {
+                    obj.fixed = 'right';
+                }
+            }
+
+            if (null != obj.fixed && null == obj.width) {
+                obj.width = titleWidth + 50;
+            }
             cols.push(obj);
+            i++;
         }
         return cols;
     }

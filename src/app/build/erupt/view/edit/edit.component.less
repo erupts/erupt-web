@@ -1,27 +1,59 @@
 :host {
-  ::ng-deep {
-    nz-tree > ul {
-      max-height: 420px;
-      overflow: auto;
-    }
+    ::ng-deep {
+        //nz-tree > ul {
+        //  max-height: 420px;
+        //  overflow: auto;
+        //}
 
-    .ant-tabs-bar {
-      margin: 0;
-    }
+        //.ant-tabs-tab {
+        //  min-width: 130px;
+        //  margin-right: 8px !important;
+        //  border-radius: 0 !important;
+        //  text-align: center;
+        //}
+        //
 
-    .ant-tabs-tab {
-      min-width: 130px;
-      margin-right: 8px !important;
-      border-radius: 0 !important;
-      text-align: center;
-    }
+        .ant-tabs {
+            border: 1px solid #e8e8e8;
 
-    .ant-tabs-content {
-      border: 1px solid #e8e8e8;
-      border-top: none;
-      padding: 10px 6px;
-    }
+            .ant-tabs-nav {
+                margin: 0;
+            }
 
-  }
+            .ant-tabs-tab-active {
+                border-bottom: 1px solid #e8e8e8 !important;
+            }
+
+            .ant-tabs-tab {
+                padding: 8px 30px;
+                border-top: none;
+                border-left: none;
+                margin-left: 0 !important;
+            }
+
+            .ant-tabs-content {
+                padding: 12px;
+            }
+
+        }
+    }
 }
 
+
+[data-theme='dark'] {
+    :host {
+        ::ng-deep {
+            .ant-tabs {
+                border: 1px solid #434343;
+
+                .ant-tabs-nav {
+                    margin: 0;
+                }
+
+                .ant-tabs-tab-active {
+                    border-bottom: 1px solid #434343 !important;
+                }
+            }
+        }
+    }
+}

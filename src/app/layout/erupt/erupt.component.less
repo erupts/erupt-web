@@ -1,0 +1,198 @@
+::ng-deep {
+
+    @header-h: 44px;
+
+    .alain-default__aside {
+        min-height: calc(100vh - 44px);
+    }
+
+    .erupt_content {
+        transition: all 300ms;
+    }
+
+    @media (min-width: 768px) {
+        .alain-default__fixed .reuse-tab + router-outlet {
+            display: block;
+            height: 38px !important;
+        }
+    }
+
+    .ltr {
+        .erupt_content {
+            margin-top: @header-h;
+            margin-left: 200px;
+        }
+
+        .alain-default__collapsed .erupt_content {
+            margin-left: 64px;
+        }
+
+        @media (max-width: 767px) {
+            .erupt_content {
+                margin-top: @header-h;
+                margin-left: 0;
+                transform: translate3d(200px, 0, 0);
+            }
+
+            .alain-default__collapsed .erupt_content {
+                margin-top: @header-h;
+                margin-left: 0;
+                transform: translateZ(0)
+            }
+
+        }
+    }
+
+    .rtl {
+        .erupt_content {
+            margin-top: @header-h;
+            margin-right: 200px;
+        }
+
+        .alain-default__collapsed .erupt_content {
+            margin-right: 64px;
+        }
+
+        @media (max-width: 767px) {
+            .erupt_content {
+                margin-top: @header-h;
+                margin-right: 0;
+                transform: translate3d(-200px, 0, 0);
+            }
+
+            .alain-default__collapsed .erupt_content {
+                margin-right: 0;
+                transform: translateZ(0)
+            }
+
+        }
+    }
+
+}
+
+
+:host {
+    .erupt-header {
+        background: #fff;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 19;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 44px;
+        padding: 0 16px;
+        border-bottom: 1px solid #e5e5e5;
+        //box-shadow: 0 1px 10px rgb(0 0 0 / 20%);
+    }
+
+    .erupt-header_fixed {
+        position: fixed;
+    }
+
+    footer.licence {
+        position: fixed;
+        bottom: -55px;
+        left: 0;
+        right: 0;
+        z-index: -1;
+        height: 55px;
+        padding-top: 3px;
+        line-height: 25px;
+        text-align: center;
+        color: #000;
+    }
+
+    ::ng-deep {
+        .ant-back-top {
+            bottom: 30px;
+            right: 30px;
+
+            .ant-back-top-content {
+                border-radius: 4px;
+            }
+        }
+
+        .theme-btn {
+            right: 36px;
+            bottom: 90px;
+        }
+
+        .alain-default__nav-item, .alain-default__nav nz-badge {
+            color: #000;
+        }
+
+        .alain-default__header {
+            box-shadow: none;
+            border-bottom: 1px solid #efe3e5;
+        }
+
+        .reuse-tab {
+            margin-top: 0 !important;
+
+            .ant-tabs-nav .ant-tabs-tab .reuse-tab__name-width {
+                display: block;
+            }
+        }
+
+        .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab + .ant-tabs-tab {
+            margin-left: 0;
+        }
+
+        .reuse-tab__card {
+            padding-top: 0;
+            padding-left: 0;
+            padding-right: 0;
+
+            .ant-tabs-bar {
+                margin: 0;
+            }
+
+            .ant-tabs-tab {
+                border-radius: 0 !important;
+                border-left: 0 !important;
+                border-top: 0 !important;
+                min-width: 130px !important;
+                justify-content: center;
+            }
+
+            .ant-tabs-tab-active {
+                border-bottom: 1px dashed #e8e8e8 !important;
+            }
+
+            .ant-tabs-nav-container {
+                padding: 0 !important;
+            }
+        }
+
+    }
+
+}
+
+[data-theme='dark'] {
+    :host {
+        ::ng-deep {
+            .erupt-header {
+                background: #141414;
+                border-bottom: 1px solid #434343;
+                box-shadow: 0 6px 16px -8px rgb(0 0 0 / 32%), 0 9px 28px 0 rgb(0 0 0 / 20%), 0 12px 48px 16px rgb(0 0 0 / 12%);
+            }
+
+            .alain-default__nav-item, .alain-default__nav nz-badge {
+                color: #fff;
+            }
+
+            .header-logo-text {
+                color: #fff;
+            }
+
+            .reuse-tab__card {
+                .ant-tabs-tab-active {
+                    border-bottom: 1px dashed #2e2e2e !important;
+                }
+            }
+        }
+    }
+}

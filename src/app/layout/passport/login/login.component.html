@@ -1,0 +1,62 @@
+<form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
+    <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
+    <!--账号-->
+    <nz-form-item>
+        <nz-form-control [nzErrorTip]="accountTip">
+            <nz-input-group nzSize="large" nzPrefixIcon="user">
+                <input nz-input formControlName="userName" [placeholder]="'login.account'|translate">
+            </nz-input-group>
+            <ng-template #accountTip>
+                <ng-container *ngIf="userName.dirty && userName.errors">
+                    {{'login.validate.account'|translate}}
+                </ng-container>
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+    <!--密码-->
+    <nz-form-item>
+        <nz-form-control [nzErrorTip]="pwdTip">
+            <nz-input-group nzSize="large" nzPrefixIcon="lock" [nzAddOnAfter]="controlPwd">
+                <input nz-input [type]="passwordType" formControlName="password"
+                       [placeholder]="'login.pwd'|translate">
+            </nz-input-group>
+            <ng-template #controlPwd>
+                <i class="fa fa-eye-slash point" [hidden]="passwordType=='text'"
+                   (click)="passwordType='text'"></i>
+                <i class="fa fa-eye point" [hidden]="passwordType=='password'"
+                   (click)="passwordType='password'"></i>
+            </ng-template>
+            <ng-template #pwdTip>
+                <ng-container *ngIf="password.dirty && password.errors">
+                    {{'login.validate.pwd'|translate}}
+                </ng-container>
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+    <!--图形验证码-->
+    <nz-form-item *ngIf="useVerifyCode">
+        <nz-form-control>
+            <nz-input-group nzSize="large">
+                <input nz-input type="text" [maxLength]="10" formControlName="verifyCode"
+                       [placeholder]="'login.validate_code'|translate">
+                <img [src]="verifyCodeUrl" [alt]="'login.validate_code'|translate" (click)="changeVerifyCode()"
+                     style="position: absolute;z-index: 9;right: 1px;top: 1px;">
+            </nz-input-group>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-col [nzSpan]="12" class="text-left">
+            <a *ngIf="registerPage" class="forgot" [href]="registerPage">{{'login.register'|translate}}</a>
+        </nz-col>
+        <nz-col [nzSpan]="12" class="text-right">
+            <a class="forgot" (click)="forgot()">{{'login.forget_pwd'|translate}}</a>
+        </nz-col>
+    </nz-form-item>
+
+    <nz-form-item style="margin-bottom: 0">
+        <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="loading"
+                style="display:block;width: 100%;">{{'login.button'|translate}}
+        </button>
+    </nz-form-item>
+</form>

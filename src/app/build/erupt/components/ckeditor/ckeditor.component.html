@@ -7,11 +7,11 @@
         </div>
     </div>
     <div *ngIf="editorError">
-        <p style="color: red">'无法加载文本编辑器，建议更换或升级您的浏览器!'</p>
+        <p style="color: red">The text editor cannot be loaded. It is recommended to replace or upgrade your browser</p>
         <textarea nz-input class="erupt-input" [name]="eruptField.fieldName"
                   [nzAutosize]="{ minRows: 3, maxRows: 20 }"
                   [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
-                  [placeholder]="'无法加载文本编辑器，建议更换或升级您的浏览器!'"
+                  [placeholder]="'The text editor cannot be loaded. It is recommended to replace or upgrade your browser'"
                   [required]="eruptField.eruptFieldJson.edit.notNull"
                   [disabled]="readonly"
         ></textarea>

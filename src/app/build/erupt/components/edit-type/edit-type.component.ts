@@ -1,18 +1,17 @@
-import {Component, DoCheck, EventEmitter, Inject, Input, KeyValueDiffers, OnDestroy, OnInit, Output} from "@angular/core";
+import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
+import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
-import {TreeSelectComponent} from "../tree-select/tree-select.component";
-import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
-import {ReferenceTableComponent} from "../reference-table/reference-table.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {IframeHeight} from "@shared/util/window.util";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
-import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzUploadFile} from "ng-zorro-antd/upload/interface";
 
 @Component({
     selector: "erupt-edit-type",
@@ -42,9 +41,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     @Input() readonly: boolean = false;
 
-    //event
-    @Output() search = new EventEmitter();
-
     private showByFieldModels: EruptFieldModel[];
 
     eruptModel: EruptModel;
@@ -55,22 +51,27 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     choiceEnum = ChoiceEnum;
 
-    dateEnum = DateEnum;
-
     attachmentEnum = AttachmentEnum;
 
     uploadFilesStatus: { [key: string]: boolean } = {};
 
+    supportCopy: boolean;
+
     constructor(public dataService: DataService,
                 private differs: KeyValueDiffers,
-                @Inject(NzModalService) private modal: NzModalService,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+                private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) public tokenService: ITokenService,
+                @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService) {
+        this.supportCopy = "clipboard" in navigator
     }
 
     ngOnInit() {
         this.eruptModel = this.eruptBuildModel.eruptModel;
+        let layout = this.eruptModel.eruptJson.layout;
+        if (layout && layout.formSize == FormSize.FULL_LINE) {
+            this.col = colRules[1];
+        }
         for (let model of this.eruptModel.eruptFieldModels) {
             let edit = model.eruptFieldJson.edit;
             if (edit.type == EditType.ATTACHMENT) {
@@ -136,12 +137,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         return true;
     }
 
-    enterEvent(event) {
-        if (event.which === 13) {
-            this.search.emit();
-        }
-    }
-
     upLoadNzChange({file, fileList}, field: EruptFieldModel) {
         const status = file.status;
         if (file.status === "uploading") {
@@ -163,7 +158,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     }
 
 
-    previewImageHandler = (file: UploadFile) => {
+    previewImageHandler = (file: NzUploadFile) => {
         if (file.url) {
             window.open(file.url);
         } else if (file.response && file.response.data) {
@@ -171,111 +166,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         }
     };
 
-
-    createRefTreeModal(field: EruptFieldModel) {
-        let depend = field.eruptFieldJson.edit.referenceTreeType.dependField;
-        let dependVal = null;
-        if (depend) {
-            const dependField: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(depend);
-            if (dependField.eruptFieldJson.edit.$value) {
-                dependVal = dependField.eruptFieldJson.edit.$value;
-            } else {
-                this.msg.warning("请先选择" + dependField.eruptFieldJson.edit.title);
-                return;
-            }
-        }
-        this.modal.create({
-            nzWrapClassName: "modal-xs",
-            nzKeyboard: true,
-            nzStyle: {top: "30px"},
-            nzTitle: field.eruptFieldJson.edit.title,
-            nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
-            nzContent: TreeSelectComponent,
-            nzComponentParams: {
-                parentEruptName: this.parentEruptName,
-                eruptModel: this.eruptModel,
-                eruptField: field,
-                dependVal: dependVal
-            }, nzOnOk: () => {
-                const tempVal = field.eruptFieldJson.edit.$tempValue;
-                if (!tempVal) {
-                    this.msg.warning("请选中一条数据");
-                    return false;
-                }
-                if (tempVal.id != field.eruptFieldJson.edit.$value) {
-                    this.clearReferValue(field);
-                }
-                field.eruptFieldJson.edit.$viewValue = tempVal.label;
-                field.eruptFieldJson.edit.$value = tempVal.id;
-                field.eruptFieldJson.edit.$tempValue = null;
-            }
-        });
-    }
-
-    createRefTableModal(field: EruptFieldModel) {
-        let edit = field.eruptFieldJson.edit;
-        let dependVal: string;
-        if (edit.referenceTableType.dependField) {
-            const dependField: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(edit.referenceTableType.dependField);
-            if (dependField.eruptFieldJson.edit.$value) {
-                dependVal = dependField.eruptFieldJson.edit.$value;
-            } else {
-                this.msg.warning("请先选择" + dependField.eruptFieldJson.edit.title);
-                return;
-            }
-        }
-        this.modal.create({
-            nzWrapClassName: "modal-xxl",
-            nzKeyboard: true,
-            nzStyle: {top: "24px"},
-            nzBodyStyle: {padding: "16px"},
-            nzTitle: edit.title,
-            nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
-            nzContent: ReferenceTableComponent,
-            nzComponentParams: {
-                eruptBuild: this.eruptBuildModel,
-                eruptField: field,
-                parentEruptName: this.parentEruptName,
-                dependVal: dependVal
-            }, nzOnOk: () => {
-                let radioValue = edit.$tempValue;
-                if (!radioValue) {
-                    this.msg.warning("请选中一条数据");
-                    return false;
-                }
-                if (radioValue[edit.referenceTableType.id] != field.eruptFieldJson.edit.$value) {
-                    this.clearReferValue(field);
-                }
-                edit.$value = radioValue[edit.referenceTableType.id];
-                edit.$viewValue = radioValue[edit.referenceTableType.label
-                    .replace(".", "_")] || '-----';
-                edit.$tempValue = radioValue;
-            }
-        });
-    }
-
-    clearReferValue(field: EruptFieldModel) {
-        field.eruptFieldJson.edit.$value = null;
-        field.eruptFieldJson.edit.$viewValue = null;
-        field.eruptFieldJson.edit.$tempValue = null;
-        for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
-            let edit = eruptFieldModel.eruptFieldJson.edit;
-            if (edit.type == EditType.REFERENCE_TREE) {
-                if (edit.referenceTreeType.dependField == field.fieldName) {
-                    this.clearReferValue(eruptFieldModel);
-                }
-            }
-            if (edit.type == EditType.REFERENCE_TABLE) {
-                if (edit.referenceTableType.dependField == field.fieldName) {
-                    this.clearReferValue(eruptFieldModel);
-                }
-            }
-        }
-    }
-
-
     changeTagAll($event, field: EruptFieldModel) {
-        for (let vl of field.choiceList) {
+        for (let vl of field.componentValue) {
             vl.$viewValue = $event;
         }
     }
@@ -288,17 +180,15 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         return result;
     }
 
-
-    onAutoCompleteInput(event, fieldModel: EruptFieldModel) {
-        let edit = fieldModel.eruptFieldJson.edit;
-        if (edit.$value && edit.autoCompleteType.triggerLength <= edit.$value.toString().trim().length) {
-            this.dataService.findAutoCompleteValue(this.eruptModel.eruptName, fieldModel.fieldName, this.getFromData(), edit.$value, this.parentEruptName).subscribe(res => {
-                edit.autoCompleteType.items = res;
-            });
-        } else {
-            edit.autoCompleteType.items = [];
+    copy(val) {
+        if (!val) {
+            val = "";
         }
+        navigator.clipboard.writeText(val).then(() => {
+            this.msg.success(this.i18n.fanyi("global.copy_success"))
+        });
     }
+
 
     iframeHeight = IframeHeight;
 

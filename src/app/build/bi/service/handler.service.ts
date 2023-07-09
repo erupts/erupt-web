@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
-import {Bi, Dimension, DimType} from "../model/bi.model";
+import {Bi, DimType} from "../model/bi.model";
 import {DatePipe} from "@angular/common";
-import {NzMessageService} from "ng-zorro-antd";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 @Injectable({
     providedIn: 'root'
@@ -54,7 +54,7 @@ export class HandlerService {
                     this.msg.error(dimension.title + "必填");
                 }
                 if (!skipNotNull) {
-                    return;
+                    return null;
                 }
             }
             if (dimension.notNull && Array.isArray(dimension.$value)) {
@@ -63,7 +63,7 @@ export class HandlerService {
                         this.msg.error(dimension.title + "必填");
                     }
                     if (!skipNotNull) {
-                        return;
+                        return null;
                     }
                 }
             }

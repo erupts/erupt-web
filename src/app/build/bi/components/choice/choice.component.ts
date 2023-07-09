@@ -13,9 +13,8 @@ import {BiDataService} from "../../service/data.service";
 
         label[nz-checkbox] {
             min-width: 120px;
-            line-height: initial;
+            line-height: 32px;
             margin-left: 0;
-            margin-bottom: 12px;
         }
     `]
 })

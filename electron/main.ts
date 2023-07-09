@@ -89,7 +89,7 @@ function createWindow() {
 
     // 并且为你的应用加载index.html
     win.setTitle("Erupt");
-    win.loadFile('/Users/liyuepeng/git/erupt/erupt-web/src/main/resources/public/index.html');
+    win.loadFile('/Users/liyuepeng/git/erupt/erupt-web/src/erupt/resources/public/index.html');
 
     // 打开开发者工具
     // win.webContents.openDevTools()

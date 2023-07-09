@@ -17,7 +17,6 @@ import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
 import {TableComponent} from './view/table/table.component';
 import {LayoutTreeComponent} from './view/layout-tree/layout-tree.component';
-import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import {CodeEditorComponent} from './components/code-editor/code-editor.component';
 import {UEditorModule} from "ngx-ueditor";
 import {UeditorComponent} from './components/ueditor/ueditor.component';
@@ -29,7 +28,17 @@ import {MarkdownComponent} from './components/markdown/markdown.component';
 import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
-import { CardComponent } from './components/card/card.component';
+import {CardComponent} from './components/card/card.component';
+import {TagSelectModule} from "@delon/abc/tag-select";
+import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
+import { SearchComponent } from './components/search/search.component';
+import { AutoCompleteComponent } from './components/auto-complete/auto-complete.component';
+import { ReferenceComponent } from './components/reference/reference.component';
+import {NzPipesModule} from "ng-zorro-antd/pipes";
+import {NzImageModule} from "ng-zorro-antd/image";
+import {SearchSeComponent} from "./components/search-se/search-se.component";
+import {NzQRCodeModule} from "ng-zorro-antd/qr-code";
+import {NzRateModule} from "ng-zorro-antd/rate";
 
 @NgModule({
     imports: [
@@ -37,7 +46,6 @@ import { CardComponent } from './components/card/card.component';
         SharedModule,
         HttpClientModule,
         EruptRoutingModule,
-        NzCodeEditorModule,
         UEditorModule.forRoot({
             js: [
                 './assets/ueditor/ueditor.config.js',
@@ -47,7 +55,13 @@ import { CardComponent } from './components/card/card.component';
             options: {
                 UEDITOR_HOME_URL: './assets/ueditor/'
             }
-        })
+        }),
+        TagSelectModule,
+        NzCodeEditorModule,
+        NzPipesModule,
+        NzImageModule,
+        NzQRCodeModule,
+        NzRateModule
     ],
     providers: [
         DataHandlerService,
@@ -95,6 +109,10 @@ import { CardComponent } from './components/card/card.component';
         ChoiceComponent,
         TagsComponent,
         CardComponent,
+        SearchComponent,
+        AutoCompleteComponent,
+        ReferenceComponent,
+        SearchSeComponent,
     ]
 })
 export class EruptModule {

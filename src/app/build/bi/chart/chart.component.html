@@ -14,11 +14,11 @@
             </ng-container>
             <ng-container *ngSwitchCase="chartType.table">
                 <div [ngStyle]="{height:chart.height+'px'}" style="overflow: auto">
-                    <app-chart-table [data]="data"></app-chart-table>
+                    <erupt-chart-table #chartTable></erupt-chart-table>
                 </div>
             </ng-container>
             <ng-container *ngSwitchCase="chartType.Number">
-                <div style="padding: 16px 16px 0;text-align: center;">
+                <div style="padding: 12px;text-align: center;">
                     <div sg-container="{{data.length}}">
                         <ng-container *ngFor="let d of data">
                             <sg>
