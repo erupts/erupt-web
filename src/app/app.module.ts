@@ -1,72 +1,39 @@
-import {APP_INITIALIZER, LOCALE_ID, NgModule} from "@angular/core";
+/* eslint-disable import/order */
+/* eslint-disable import/no-duplicates */
 // #region Http Interceptors
-import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from "@angular/common/http";
-import {BrowserModule} from "@angular/platform-browser";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-// #region default language
-// 参考：https://ng-alain.com/docs/i18n
-import {default as ngLang} from "@angular/common/locales/zh";
-import {NZ_I18N, zh_CN as zorroLang} from "ng-zorro-antd";
-import {ALAIN_I18N_TOKEN, DELON_LOCALE, zh_CN as delonLang} from "@delon/theme";
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {APP_INITIALIZER, NgModule, Type} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {SimpleInterceptor} from '@delon/auth';
+import {NzNotificationModule} from 'ng-zorro-antd/notification';
+
+import {DefaultInterceptor, I18NService, StartupService} from '@core';
 // register angular
-import {registerLocaleData} from "@angular/common";
-import {SimpleInterceptor} from "@delon/auth";
-import {DefaultInterceptor} from "@core/net/default.interceptor";
-// #region Startup Service
-import {StartupService} from "@core/startup/startup.service";
-import {DelonModule} from "./delon.module";
-import {CoreModule} from "@core/core.module";
-import {SharedModule} from "@shared/shared.module";
-import {AppComponent} from "./app.component";
-import {RoutesModule} from "./routes/routes.module";
-import {LayoutModule} from "./layout/layout.module";
-
-// #region i18n services
-import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
-import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import {I18NService} from '@core';
-
-const LANG = {
-    abbr: "zh",
-    ng: ngLang,
-    zorro: zorroLang,
-    delon: delonLang
-};
+import {BidiModule} from '@angular/cdk/bidi';
+import {AppComponent} from './app.component';
+import {CoreModule} from './core/core.module';
+import {GlobalConfigModule} from './global-config.module';
+import {LayoutModule} from './layout/layout.module';
+import {RoutesModule} from './routes/routes.module';
+import {SharedModule} from '@shared/shared.module';
+import {AppRoutingModule} from "./app-routing.module";
+import {I18nPipe} from "@shared/pipe/i18n.pipe";
+import {AppViewService} from "@shared/service/app-view.service";
 
 
-// 加载i18n语言文件
-export function I18nHttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, `assets/i18n/`, '.json');
-}
+// #region global third module
 
-const I18NSERVICE_MODULES = [
-    TranslateModule.forRoot({
-        loader: {
-            provide: TranslateLoader,
-            useFactory: I18nHttpLoaderFactory,
-            deps: [HttpClient],
-        },
-    }),
-];
+const GLOBAL_THIRD_MODULES: Array<Type<any>> = [BidiModule];
 
-const I18NSERVICE_PROVIDES = [{provide: ALAIN_I18N_TOKEN, useClass: I18NService, multi: false}];
+// #endregion
 
-registerLocaleData(LANG.ng);
-const LANG_PROVIDES = [
-    {provide: LOCALE_ID, useValue: LANG.abbr},
-    {provide: NZ_I18N, useValue: LANG.zorro},
-    {provide: DELON_LOCALE, useValue: LANG.delon}
-];
 // #endregion
 
 const INTERCEPTOR_PROVIDES = [
     {provide: HTTP_INTERCEPTORS, useClass: SimpleInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true}
 ];
-// #endregion
-
-// #region global third module
-const GLOBAL_THIRD_MODULES = [];
 
 // #endregion
 
@@ -87,27 +54,22 @@ const APP_INIT_PROVIDES = [
 // #endregion
 
 @NgModule({
-    declarations: [
-        AppComponent
-    ],
+    declarations: [AppComponent],
+    exports: [],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
         HttpClientModule,
-        DelonModule.forRoot(),
+        GlobalConfigModule.forRoot(),
         CoreModule,
         SharedModule,
         LayoutModule,
         RoutesModule,
+        NzNotificationModule,
         ...GLOBAL_THIRD_MODULES,
-        ...I18NSERVICE_MODULES
+        AppRoutingModule
     ],
-    providers: [
-        ...LANG_PROVIDES,
-        ...INTERCEPTOR_PROVIDES,
-        ...I18NSERVICE_PROVIDES,
-        ...APP_INIT_PROVIDES
-    ],
+    providers: [...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, AppViewService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

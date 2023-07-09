@@ -1,0 +1,147 @@
+@import '@delon/theme/theme-default.less';
+
+@page-header-prefix: ~'.page-header';
+
+@{page-header-prefix} {
+  display: block;
+  padding: @page-header-padding;
+  background-color: @page-header-bg;
+  border-bottom: @border-width-base @border-style-base @border-color-split;
+
+  &__wide {
+    max-width: @page-header-wide;
+    margin: auto;
+  }
+  .@{ant-prefix}-breadcrumb {
+    margin-bottom: @margin-md;
+  }
+  .@{ant-prefix}-tabs {
+    margin: 0 0 (-(@margin-md + 1)) 0;
+
+    &-bar {
+      border-bottom: @border-width-base @border-style-base @border-color-split;
+    }
+  }
+
+  &__detail {
+    display: flex;
+  }
+
+  &__row {
+    display: flex;
+    width: 100%;
+  }
+
+  &__logo {
+    flex: 0 1 auto;
+    margin-right: @margin-md;
+    padding-top: 1px;
+
+    img {
+      display: block;
+      width: 28px;
+      height: 28px;
+      border-radius: @border-radius-base;
+    }
+  }
+
+  &__title {
+    color: @heading-color;
+    font-weight: 500;
+    font-size: 20px;
+
+    small {
+      padding-left: @layout-gutter;
+      font-weight: normal;
+      font-size: 14px;
+    }
+  }
+
+  &__action {
+    min-width: 266px;
+    margin-left: 56px;
+  }
+
+  &__title,
+  &__desc {
+    flex: auto;
+  }
+
+  &__action,
+  &__extra,
+  &__main {
+    flex: 0 1 auto;
+  }
+
+  &__main {
+    width: 100%;
+  }
+
+  &__title,
+  &__action {
+    margin-bottom: @margin-md;
+  }
+
+  &__logo,
+  &__desc,
+  &__extra {
+    margin-bottom: @margin-md;
+  }
+
+  &__action,
+  &__extra {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__extra {
+    min-width: 242px;
+    margin-left: 88px;
+  }
+  @media screen and (max-width: @screen-xl) {
+    &__extra {
+      margin-left: 44px;
+    }
+  }
+  @media screen and (max-width: @screen-lg) {
+    &__extra {
+      margin-left: 20px;
+    }
+  }
+  @media screen and (max-width: @screen-md) {
+    &__row {
+      display: block;
+    }
+
+    &__action,
+    &__extra {
+      justify-content: start;
+      margin-left: 0;
+    }
+  }
+  @media screen and (max-width: @screen-sm) {
+    &__detail {
+      display: block;
+    }
+  }
+  @media screen and (max-width: @screen-xs) {
+    &__action {
+      .@{ant-prefix}-btn-group,
+      .@{ant-prefix}-btn {
+        display: block;
+        margin-bottom: 8px;
+      }
+      .@{ant-prefix}-input-search-enter-button {
+        .@{ant-prefix}-btn {
+          margin-bottom: 0;
+        }
+      }
+      .@{ant-prefix}-btn-group > .@{ant-prefix}-btn {
+        display: inline-block;
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+@import 'rtl.less';

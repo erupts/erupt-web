@@ -1,10 +1,9 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Edit, EruptFieldModel} from "../../model/erupt-field.model";
 import {DateEnum, PickerMode} from "../../model/erupt.enum";
 import {DatePipe} from "@angular/common";
-import {DisabledDateFn, PresetRanges} from "ng-zorro-antd/date-picker/standard-types";
+import {DisabledDateFn, NzDateMode, PresetRanges} from "ng-zorro-antd/date-picker/standard-types";
 import * as moment from 'moment';
-import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
 
 @Component({
@@ -14,7 +13,7 @@ import {I18NService} from "@core";
 })
 export class DateComponent implements OnInit {
 
-    @Input() size: 'large' | 'small';
+    @Input() size: 'large' | 'small' | "default" = "default";
 
     @Input() field: EruptFieldModel;
 
@@ -22,9 +21,9 @@ export class DateComponent implements OnInit {
 
     @Input() readonly: boolean;
 
-    edit: Edit;
+    private datePipe: DatePipe;
 
-    private datePipe: DatePipe = new DatePipe("zh-cn");
+    edit: Edit;
 
     dateRanges: PresetRanges = {};
 
@@ -34,8 +33,10 @@ export class DateComponent implements OnInit {
 
     endToday: Date;
 
-    constructor(@Inject(ALAIN_I18N_TOKEN) private i18n: I18NService) {
+    rangeMode: NzDateMode;
 
+    constructor(private i18n: I18NService) {
+        this.datePipe = i18n.datePipe;
     }
 
     ngOnInit() {
@@ -43,12 +44,29 @@ export class DateComponent implements OnInit {
         this.endToday = moment(moment().format("yyyy-MM-DD 23:59:59")).toDate();
         this.dateRanges = <any>{
             [this.i18n.fanyi("global.today")]: [this.datePipe.transform(new Date(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
-            近7天: [this.datePipe.transform(moment().add(-7, 'day').toDate(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
-            近30天: [this.datePipe.transform(moment().add(-30, 'day').toDate(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
-            本月: [this.datePipe.transform(moment().toDate(), "yyyy-MM-01 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
-            上月: [this.datePipe.transform(moment().add(-1, 'month').toDate(), "yyyy-MM-01 00:00:00"), this.datePipe.transform(moment().add(-1, 'month').endOf("month").toDate(), "yyyy-MM-dd 23:59:59")]
+            [this.i18n.fanyi("global.date.last_7_day")]: [this.datePipe.transform(moment().add(-7, 'day').toDate(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
+            [this.i18n.fanyi("global.date.last_30_day")]: [this.datePipe.transform(moment().add(-30, 'day').toDate(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
+            [this.i18n.fanyi("global.date.this_month")]: [this.datePipe.transform(moment().toDate(), "yyyy-MM-01 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
+            [this.i18n.fanyi("global.date.last_month")]: [this.datePipe.transform(moment().add(-1, 'month').toDate(), "yyyy-MM-01 00:00:00"), this.datePipe.transform(moment().add(-1, 'month').endOf("month").toDate(), "yyyy-MM-dd 23:59:59")]
         };
         this.edit = this.field.eruptFieldJson.edit;
+        if (this.range) {
+            switch (this.field.eruptFieldJson.edit.dateType.type) {
+                case DateEnum.DATE:
+                case DateEnum.DATE_TIME:
+                    this.rangeMode = 'date'
+                    break;
+                case DateEnum.WEEK:
+                    this.rangeMode = 'week'
+                    break;
+                case DateEnum.MONTH:
+                    this.rangeMode = 'month'
+                    break;
+                case DateEnum.YEAR:
+                    this.rangeMode = 'year'
+                    break;
+            }
+        }
     }
 
     disabledDate: DisabledDateFn = (date) => {
@@ -61,6 +79,7 @@ export class DateComponent implements OnInit {
 
             return date.getTime() > this.endToday.getTime();
         }
+        return null;
     };
 
 

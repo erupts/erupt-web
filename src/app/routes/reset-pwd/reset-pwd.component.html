@@ -1,0 +1,73 @@
+<form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form" autocomplete='off'>
+    <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
+    <nz-form-item>
+        <nz-form-control>
+            <nz-input-group class="full-width" nzSize="large" nzAddOnBeforeIcon="user">
+                <input nz-input [value]="settingsService.user.name" disabled="disabled">
+            </nz-input-group>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-control>
+            <nz-input-group class="full-width" nzSize="large" nzAddOnBeforeIcon="lock">
+                <input nz-input type="password" formControlName="pwd"
+                       [placeholder]="fanyi('change-pwd.original_password')">
+            </nz-input-group>
+            <ng-template #pwdTip>
+                <ng-container *ngIf="pwd.dirty && pwd.errors">
+                    <ng-container
+                        *ngIf="pwd.errors['required']">{{'change-pwd.validate.original_password'|translate}}</ng-container>
+                </ng-container>
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-control [nzErrorTip]="newPwdTip">
+            <nz-input-group class="full-width" nzSize="large" nz-popover nzPopoverPlacement="right"
+                            [nzPopoverContent]="nzTemplate" nzAddOnBeforeIcon="lock">
+                <input nz-input type="password" formControlName="newPwd" [placeholder]="fanyi('change-pwd.new_password')">
+            </nz-input-group>
+            <ng-template #newPwdTip>
+                <ng-container
+                    *ngIf="newPwd.dirty && newPwd.errors">{{'change-pwd.validate.length-sex'|translate}}</ng-container>
+            </ng-template>
+            <ng-template #nzTemplate>
+                <div style="padding: 4px 0;">
+                    <ng-container [ngSwitch]="status">
+                        <div *ngSwitchCase="'ok'" class="success">{{'change-pwd.validate.height'|translate}}</div>
+                        <div *ngSwitchCase="'pass'" class="warning">{{'change-pwd.validate.middle'|translate}}</div>
+                        <div *ngSwitchDefault class="error">{{'change-pwd.validate.low'|translate}}</div>
+                    </ng-container>
+                    <div class="progress-{{status}}">
+                        <nz-progress [nzPercent]="progress" [nzStatus]="passwordProgressMap[status]" [nzStrokeWidth]="6"
+                                     [nzShowInfo]="false"></nz-progress>
+                    </div>
+                    <p class="mt-sm">{{'change-pwd.validate.text'|translate}}</p>
+                </div>
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-control [nzErrorTip]="pwd2Tip">
+            <nz-input-group class="full-width" nzSize="large" nzAddOnBeforeIcon="lock">
+                <input nz-input type="password" formControlName="newPwd2"
+                       [placeholder]="fanyi('change-pwd.confirm_password')">
+            </nz-input-group>
+            <ng-template #pwd2Tip>
+                <ng-container *ngIf="newPwd2.dirty && newPwd2.errors">
+                    <ng-container
+                        *ngIf="newPwd2.errors['required']">{{'change-pwd.validate.confirm_password'|translate}}</ng-container>
+                    <ng-container
+                        *ngIf="newPwd2.errors['equar']">{{'change-pwd.validate.password_not_match'|translate}}</ng-container>
+                </ng-container>
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <button nz-button nzType="primary" nzSize="large" type="submit" class="submit"
+                style="display:block;width: 100%;" [nzLoading]="loading">
+            <span>{{'global.update'|translate}}</span>
+        </button>
+    </nz-form-item>
+</form>

@@ -1,16 +1,22 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from "@angular/core";
+import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {EruptModel, Row, RowOperation} from "../../model/erupt.model";
+import {Drill, EruptModel, Row, RowOperation} from "../../model/erupt.model";
 
-import {ALAIN_I18N_TOKEN, DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
+import {DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
-import {STColumn, STColumnButton, STComponent} from "@delon/abc";
 import {ActivatedRoute} from "@angular/router";
-import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
-import {OperationMode, OperationType, OperationIfExprBehavior, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
+import {
+    FormSize,
+    OperationIfExprBehavior,
+    OperationMode,
+    OperationType,
+    RestPath,
+    Scene,
+    SelectMode
+} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {BuildConfig} from "../../model/build-config";
@@ -21,6 +27,14 @@ import {DomSanitizer} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
+import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
+import {deepCopy} from "@delon/util";
+import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
+import {STChange} from "@delon/abc/st/st.interfaces";
+import {AppViewService} from "@shared/service/app-view.service";
 
 
 @Component({
@@ -33,7 +47,7 @@ export class TableComponent implements OnInit {
 
     constructor(
         public settingSrv: SettingsService,
-        private dataService: DataService,
+        public dataService: DataService,
         private dataHandlerService: DataHandlerService,
         private modalHelper: ModalHelper,
         private drawerHelper: DrawerHelper,
@@ -43,10 +57,11 @@ export class TableComponent implements OnInit {
         private modal: NzModalService,
         public route: ActivatedRoute,
         private sanitizer: DomSanitizer,
+        private appViewService: AppViewService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
-        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+        private i18n: I18NService,
     ) {
     }
 
@@ -83,12 +98,13 @@ export class TableComponent implements OnInit {
 
     downloading: boolean = false;
 
+    //操作按钮数量
+    operationButtonNum = 0;
+
     _drill: { erupt: string, code: string, eruptParent: string, val: any };
 
 
     adding: boolean = false; //新增行为防抖
-
-    @Output() descEvent = new EventEmitter<string>();
 
     @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
         this._drill = drill;
@@ -138,7 +154,7 @@ export class TableComponent implements OnInit {
                 erupt: value
             }
         }, (eb: EruptBuildModel) => {
-            this.descEvent.emit(eb.eruptModel.eruptJson.desc);
+            this.appViewService.setRouterViewDesc(eb.eruptModel.eruptJson.desc);
         });
     }
 
@@ -154,13 +170,20 @@ export class TableComponent implements OnInit {
         this.showTable = true;
         this.adding = false;
         this.eruptBuildModel = null;
-        if (this.searchErupt) {
-            this.searchErupt.eruptFieldModels = [];
-        }
+        this.searchErupt = null;
+        this.operationButtonNum = 0;
         //put table api header
-        this.stConfig.req.headers = req.header;
+        this.stConfig.req.headers = {
+            ...req.header,
+            ...this.dataService.getCommonHeader()
+        };
         this.stConfig.url = req.url;
         observable.subscribe(eb => {
+                eb.eruptModel.eruptJson.rowOperation.forEach((item) => {
+                    if (item.mode != OperationMode.SINGLE) {
+                        this.operationButtonNum++;
+                    }
+                })
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
                 if (dt) {
@@ -170,7 +193,13 @@ export class TableComponent implements OnInit {
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
-                this.searchErupt = this.dataHandler.buildSearchErupt(this.eruptBuildModel);
+                let eruptModel = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
+                for (let it of eruptModel.eruptFieldModels) {
+                    if (it.eruptFieldJson.edit.search.value) {
+                        this.searchErupt = eruptModel;
+                        break;
+                    }
+                }
                 this.extraRowFun();
             }
         );
@@ -178,16 +207,17 @@ export class TableComponent implements OnInit {
 
 
     query() {
-        this.stConfig.req.param["condition"] = this.dataHandler.eruptObjectToCondition(
+        this.stConfig.req.params["condition"] = this.dataHandler.eruptObjectToCondition(
             this.dataHandler.searchEruptToObject({
                 eruptModel: this.searchErupt
             })
         );
         let linkTree = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
         if (linkTree && linkTree.field) {
-            this.stConfig.req.param["linkTreeVal"] = linkTree.value;
+            this.stConfig.req.params["linkTreeVal"] = linkTree.value;
         }
-        this.stLoad(1, this.stConfig.req.param);
+        this.stLoad(1, this.stConfig.req.params);
+        this.selectedRows = [];
     }
 
     buildTableConfig() {
@@ -200,7 +230,8 @@ export class TableComponent implements OnInit {
         } else {
             _columns.push({
                 title: "",
-                width: "50px",
+                width: "40px",
+                resizable: false,
                 type: "checkbox",
                 fixed: "left",
                 className: "text-center left-sticky-checkbox",
@@ -210,17 +241,23 @@ export class TableComponent implements OnInit {
         let viewCols = this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true);
         for (let viewCol of viewCols) {
             viewCol.iif = () => {
-                return viewCol.show;
+                return viewCol['show'];
             };
         }
         _columns.push(...viewCols);
         const tableOperators: STColumnButton[] = [];
         if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
+            let fullLine = false;
+            let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
+            if (layout && layout.formSize == FormSize.FULL_LINE) {
+                fullLine = true;
+            }
             tableOperators.push({
                 icon: "eye",
                 click: (record: any, modal: any) => {
                     this.modal.create({
-                        nzWrapClassName: "modal-lg edit-modal-lg",
+                        nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+                        nzWidth: fullLine ? 550 : null,
                         nzStyle: {top: "60px"},
                         nzMaskClosable: true,
                         nzKeyboard: true,
@@ -238,12 +275,119 @@ export class TableComponent implements OnInit {
                 }
             });
         }
+        let tableButtons: STColumnButton[] = []
+        let editButtons: ModalButtonOptions[] = [];
+        const that = this;
+        let exprEval = (expr, item) => {
+            try {
+                if (expr) {
+                    return eval(expr);
+                } else {
+                    return true;
+                }
+            } catch (e) {
+                // this.msg.error(e);
+                return false;
+            }
+        }
+        for (let i in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
+            let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[i];
+            if (ro.mode !== OperationMode.BUTTON) {
+                let text = "";
+                if (ro.icon) {
+                    text = `<i class=\"${ro.icon}\"></i>`;
+                } else {
+                    text = ro.title;
+                }
+
+                tableButtons.push({
+                    type: 'link',
+                    text: text,
+                    tooltip: ro.title + (ro.tip && "(" + ro.tip + ")"),
+                    click: (record: any, modal: any) => {
+                        that.createOperator(ro, record);
+                    },
+                    iifBehavior: ro.ifExprBehavior == OperationIfExprBehavior.DISABLE ? "disabled" : "hide",
+                    iif: (item) => {
+                        return exprEval(ro.ifExpr, item);
+                    }
+                });
+                // editButtons.push({
+                //     label: ro.title,
+                //     type: 'dashed',
+                //     show: (options: ModalButtonOptions<any>) => {
+                //         return !ro.ifExpr;
+                //     },
+                //     onClick(options: ModalButtonOptions<any>) {
+                //         that.createOperator(ro, options);
+                //     }
+                // })
+            }
+        }
+
+        //drill
+        const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
+
+        let createDrillModel = (drill: Drill, id) => {
+            this.modal.create({
+                nzWrapClassName: "modal-xxl",
+                nzStyle: {top: "30px"},
+                nzBodyStyle: {padding: "18px"},
+                nzMaskClosable: false,
+                nzKeyboard: false,
+                nzTitle: drill.title,
+                nzFooter: null,
+                nzContent: TableComponent,
+                nzComponentParams: {
+                    drill: {
+                        code: drill.code,
+                        val: id,
+                        erupt: drill.link.linkErupt,
+                        eruptParent: this.eruptBuildModel.eruptModel.eruptName
+                    }
+                }
+            });
+        }
+
+        for (let i in eruptJson.drills) {
+            let drill = eruptJson.drills[i];
+            tableButtons.push({
+                type: 'link',
+                tooltip: drill.title,
+                text: `<i class="${drill.icon}"></i>`,
+                click: (record) => {
+                    createDrillModel(drill, record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
+                }
+            });
+            editButtons.push({
+                label: drill.title,
+                type: 'dashed',
+                onClick(options: ModalButtonOptions<any>) {
+                    createDrillModel(drill, options['id']);
+                }
+            })
+        }
+
+        let getEditButtons = (record): ModalButtonOptions[] => {
+            for (let editButton of editButtons) {
+                editButton['id'] = record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
+                editButton['data'] = record
+            }
+            return editButtons;
+        }
+
         if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
+            let fullLine = false;
+            let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
+            if (layout && layout.formSize == FormSize.FULL_LINE) {
+                fullLine = true;
+            }
             tableOperators.push({
                 icon: "edit",
                 click: (record: any) => {
                     const model = this.modal.create({
-                        nzWrapClassName: "modal-lg edit-modal-lg",
+                        nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+                        nzWidth: fullLine ? 550 : null,
                         nzStyle: {top: "60px"},
                         nzMaskClosable: false,
                         nzKeyboard: false,
@@ -255,11 +399,27 @@ export class TableComponent implements OnInit {
                             id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
                             behavior: Scene.EDIT,
                         },
+                        nzFooter: [
+                            {
+                                label: this.i18n.fanyi("global.cancel"),
+                                onClick: () => {
+                                    model.close();
+                                }
+                            },
+                            ...getEditButtons(record),
+                            {
+                                label: this.i18n.fanyi("global.update"),
+                                type: "primary",
+                                onClick: () => {
+                                    return model.triggerOk();
+                                }
+                            },
+                        ],
                         nzOnOk: async () => {
                             let validateResult = model.getContentComponent().beforeSaveValidate();
                             if (validateResult) {
                                 let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
-                                let res = await this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
+                                let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
                                 if (res.status === Status.SUCCESS) {
                                     this.msg.success(this.i18n.fanyi("global.update.success"));
                                     this.stLoad();
@@ -300,72 +460,15 @@ export class TableComponent implements OnInit {
                 }
             });
         }
-        const that = this;
-        for (let i in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
-            let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[i];
-            if (ro.mode !== OperationMode.BUTTON) {
-                let text = "";
-                if (ro.icon) {
-                    text = `<i class=\"${ro.icon}\"></i>`;
-                } else {
-                    text = ro.title;
-                }
-                tableOperators.push({
-                    type: 'link',
-                    text: text,
-                    tooltip: ro.title + (ro.tip && "(" + ro.tip + ")"),
-                    click: (record: any, modal: any) => {
-                        that.createOperator(ro, record);
-                    },
-                    iifBehavior: ro.ifExprBehavior == OperationIfExprBehavior.DISABLE ? "disabled" : "hide",
-                    iif: (item) => {
-                        if (ro.ifExpr) {
-                            return eval(ro.ifExpr);
-                        } else {
-                            return true;
-                        }
-                    }
-                });
-            }
-        }
-
-        //drill
-        const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
-        for (let i in eruptJson.drills) {
-            let drill = eruptJson.drills[i];
-            tableOperators.push({
-                type: 'link',
-                tooltip: drill.title,
-                text: `<i class="${drill.icon}"></i>`,
-                click: (record) => {
-                    let drill = eruptJson.drills[i];
-                    this.modal.create({
-                        nzWrapClassName: "modal-xxl",
-                        nzStyle: {top: "30px"},
-                        nzMaskClosable: false,
-                        nzKeyboard: false,
-                        nzTitle: drill.title,
-                        nzFooter: null,
-                        nzContent: TableComponent,
-                        nzComponentParams: {
-                            drill: {
-                                code: drill.code,
-                                val: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
-                                erupt: drill.link.linkErupt,
-                                eruptParent: this.eruptBuildModel.eruptModel.eruptName
-                            }
-                        }
-                    });
-                }
-            });
-        }
+        tableOperators.push(...tableButtons);
         if (tableOperators.length > 0) {
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
                 width: tableOperators.length * 32 + 18,
                 className: "text-center",
-                buttons: tableOperators
+                buttons: tableOperators,
+                resizable: false
             });
         }
         this.columns = _columns;
@@ -378,7 +481,7 @@ export class TableComponent implements OnInit {
      * @param rowOperation 行按钮对象
      * @param data 数据（单个执行时使用）
      */
-    createOperator(rowOperation: RowOperation, data?: object) {
+    createOperator(rowOperation: RowOperation, data?: object, reloadModal?: boolean) {
         const eruptModel = this.eruptBuildModel.eruptModel;
         const ro = rowOperation;
         let ids = [];
@@ -399,12 +502,12 @@ export class TableComponent implements OnInit {
                 nzKeyboard: true,
                 nzTitle: ro.title,
                 nzMaskClosable: false,
-                nzWidth: ro.tplWidth,
+                nzWidth: ro.tpl.width,
                 nzStyle: {top: "20px"},
                 // nzWrapClassName: "modal-xxl",
-                nzWrapClassName: ro.tplWidth || "modal-lg",
+                nzWrapClassName: ro.tpl.width || "modal-lg",
                 nzBodyStyle: {
-                    padding: 0
+                    padding: "0"
                 },
                 nzFooter: null,
                 nzContent: EruptIframeComponent,
@@ -422,24 +525,27 @@ export class TableComponent implements OnInit {
                 this.dataHandler.emptyEruptValue({
                     eruptModel: operationErupt
                 });
-                let modal = this.modal.create({
+                let modal: NzModalRef = this.modal.create({
                     nzKeyboard: false,
                     nzTitle: ro.title,
                     nzMaskClosable: false,
                     nzCancelText: this.i18n.fanyi("global.close"),
                     nzWrapClassName: "modal-lg",
                     nzOnOk: async () => {
-                        modal.getInstance().nzCancelDisabled = true;
+                        modal.componentInstance.nzCancelDisabled = true;
                         let eruptValue = this.dataHandler.eruptValueToObject({eruptModel: operationErupt});
                         let res = await this.dataService.execOperatorFun(eruptModel.eruptName, ro.code, ids, eruptValue).toPromise().then(res => res);
-                        modal.getInstance().nzCancelDisabled = false;
+                        modal.componentInstance.nzCancelDisabled = false;
                         this.selectedRows = [];
                         if (res.status === Status.SUCCESS) {
                             this.stLoad();
-                            try {
-                                res.data && eval(res.data);
-                            } catch (e) {
-                                this.msg.error(e);
+                            if (res.data) {
+                                try {
+                                    let msg = this.msg;
+                                    eval(res.data);
+                                } catch (e) {
+                                    this.msg.error(e);
+                                }
                             }
                             return true;
                         } else {
@@ -472,6 +578,7 @@ export class TableComponent implements OnInit {
                         this.stLoad();
                         if (res.data) {
                             try {
+                                let msg = this.msg;
                                 eval(res.data);
                             } catch (e) {
                                 this.msg.error(e);
@@ -485,9 +592,15 @@ export class TableComponent implements OnInit {
 
     //新增
     addRow() {
+        let fullLine = false;
+        let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
+        if (layout && layout.formSize == FormSize.FULL_LINE) {
+            fullLine = true;
+        }
         const modal = this.modal.create({
             nzStyle: {top: "60px"},
-            nzWrapClassName: "modal-lg edit-modal-lg",
+            nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+            nzWidth: fullLine ? 550 : null,
             nzMaskClosable: false,
             nzKeyboard: false,
             nzTitle: this.i18n.fanyi("global.new"),
@@ -546,11 +659,11 @@ export class TableComponent implements OnInit {
         if (ids.length > 0) {
             this.modal.confirm(
                 {
-                    nzTitle: this.i18n.fanyi("table.hint_delete_number").replace("{}", ids.length),
+                    nzTitle: this.i18n.fanyi("table.hint_delete_number").replace("{}", ids.length + ""),
                     nzContent: "",
                     nzOnOk: async () => {
                         this.deleting = true;
-                        let res = await this.dataService.deleteEruptDatas(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
+                        let res = await this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
                         this.deleting = false;
                         if (res.status == Status.SUCCESS) {
                             if (this.selectedRows.length == this.st._data.length) {
@@ -571,22 +684,22 @@ export class TableComponent implements OnInit {
 
     clearCondition() {
         this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt});
+        this.query();
     }
 
     // table checkBox 触发事件
-    tableDataChange(event: any) {
+    tableDataChange(event: STChange) {
         if (this._reference) {
             if (this._reference.mode == SelectMode.radio) {
                 if (event.type === "click") {
-                    for (let datum of this.st._data) {
-                        datum.checked = false;
-                    }
-                    event.click.item.checked = true;
+                    this.st.clearRadio();
+                    this.st.setRow(event.click.index, {checked: true})
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = event.click.item;
                 } else if (event.type === "radio") {
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = event.radio;
                 }
             } else if (this._reference.mode == SelectMode.checkbox) {
+                // this.st.setRow(event.click.index, {checked: !event.click.item.checked})
                 if (event.type === "checkbox") {
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = event.checkbox;
                 }
@@ -605,7 +718,7 @@ export class TableComponent implements OnInit {
     // excel导出
     exportExcel() {
         let condition = null;
-        if (this.searchErupt.eruptFieldModels.length > 0) {
+        if (this.searchErupt && this.searchErupt.eruptFieldModels.length > 0) {
             condition = this.dataHandler.eruptObjectToCondition(this.dataHandler.eruptValueToObject({
                 eruptModel: this.searchErupt
             }));
@@ -637,7 +750,7 @@ export class TableComponent implements OnInit {
 
     extraRowFun() {
         if (this.eruptBuildModel.eruptModel.extraRow) {
-            this.dataService.extraRow(this.eruptBuildModel.eruptModel.eruptName, this.stConfig.req.param).subscribe(res => {
+            this.dataService.extraRow(this.eruptBuildModel.eruptModel.eruptName, this.stConfig.req.params).subscribe(res => {
                 this.extraRows = res;
             });
         }

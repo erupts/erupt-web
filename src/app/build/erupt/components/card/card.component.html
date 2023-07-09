@@ -13,7 +13,7 @@
                 <ng-template #coverTemplate>
                     <div class="card-img-container">
                         <ng-container *ngIf="data[cardView.galleryField]">
-                            <div class="card-img" [ngStyle]="viewImageStyle(data[cardView.galleryField])"></div>
+                            <div class="card-img" (click)="previewImage(data[cardView.galleryField])" [ngStyle]="viewImageStyle(data[cardView.galleryField])"></div>
                         </ng-container>
                         <ng-container *ngIf="!data[cardView.galleryField]">
                             <img src="assets/image/no-img.svg" alt="" width="44px" class="no-image">

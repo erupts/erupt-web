@@ -30,10 +30,10 @@ export class TagsComponent implements OnInit {
 
     load(open) {
         if (open) {
-            if (this.eruptField.tagList && this.eruptField.tagList.length == 0) {
+            if (this.eruptField.componentValue && this.eruptField.componentValue.length == 0) {
                 this.isLoading = true;
                 this.dataService.findTagsItem(this.eruptModel.eruptName, this.eruptField.fieldName, this.eruptParentName).subscribe(data => {
-                    this.eruptField.tagList = data;
+                    this.eruptField.componentValue = data;
                     this.isLoading = false;
                 });
             }

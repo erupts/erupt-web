@@ -42,7 +42,7 @@
         </ng-container>
         <ng-container *ngSwitchCase="viewType.QR_CODE">
             <div style="width: 100%;text-align: center">
-                <qr [value]="value"></qr>
+                <nz-qrcode [nzValue]="value" [nzLevel]="'M'"></nz-qrcode>
             </div>
         </ng-container>
         <ng-container *ngSwitchCase="viewType.MAP">

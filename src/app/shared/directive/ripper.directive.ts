@@ -8,12 +8,14 @@ export class RipperDirective {
     constructor() {
     }
 
-    @Input() color: string;
+    @Input() color: string = "#eee";
 
-    @Input() radius: number;
+    @Input() radius: number = 10;
+
+    @Input() lifecycle: number = 1000;
 
     @HostListener('click', ['$event'])
-    private onClick(e) {
+    private onClick(e: any) {
         let ele = e.currentTarget;
         ele.style.position = "relative";
         ele.style.overflow = "hidden";
@@ -31,7 +33,7 @@ export class RipperDirective {
         ele.appendChild(spanRipper);
         setTimeout(() => {
             ele.removeChild(spanRipper);
-        }, 800);
+        }, this.lifecycle);
     }
 
 }

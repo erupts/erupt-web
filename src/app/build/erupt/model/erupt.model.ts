@@ -1,5 +1,5 @@
-import {Edit, EruptFieldModel, View} from "./erupt-field.model";
-import {OperationMode, OperationType, OperationIfExprBehavior} from "./erupt.enum";
+import {EruptFieldModel, Tpl, View} from "./erupt-field.model";
+import {FormSize, OperationIfExprBehavior, OperationMode, OperationType} from "./erupt.enum";
 
 
 export interface EruptModel {
@@ -10,7 +10,6 @@ export interface EruptModel {
     //# customer prop
     eruptFieldModelMap?: Map<String, EruptFieldModel>;
     tableColumns?: View[];
-    mode?: "edit" | "search";
     searchCondition: any;
 }
 
@@ -23,6 +22,7 @@ export interface Erupt {
     cardView: CardView;
     rowOperation: RowOperation[];
     drills: Drill[];
+    layout: Layout;
 }
 
 export interface CardView {
@@ -35,6 +35,13 @@ export enum GalleryCover {
     FIT = "FIT", //适应
     CLIP = "CLIP", //剪裁
 }
+
+interface Layout {
+    formSize: FormSize;
+    tableLeftFixed: number;
+    tableRightFixed: number;
+}
+
 
 interface LinkTree {
     field: string;
@@ -89,15 +96,8 @@ export interface RowOperation {
     type: OperationType;
     tip: string;
     ifExpr: string;
-    tplWidth: string;
     ifExprBehavior: OperationIfExprBehavior;
-}
-
-
-interface CodeAndEdit {
-    edit: Edit;
-    codeType: string;
-    code: string;
+    tpl: Tpl;
 }
 
 export interface Power {

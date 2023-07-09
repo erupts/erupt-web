@@ -13,14 +13,15 @@ import {
 } from "@angular/common/http";
 import {Observable, of, throwError} from "rxjs";
 import {catchError, mergeMap} from "rxjs/operators";
-import {NzMessageService, NzModalService, NzNotificationService} from "ng-zorro-antd";
-import {_HttpClient, ALAIN_I18N_TOKEN} from "@delon/theme";
 import {environment} from "@env/environment";
 import {EruptApiModel, PromptWay, Status} from "../../build/erupt/model/erupt-api.model";
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
-import {I18NService} from "@core/i18n/i18n.service";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {NzNotificationService} from "ng-zorro-antd/notification";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {I18NService} from "../i18n/i18n.service";
 
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
@@ -37,7 +38,9 @@ export class DefaultInterceptor implements HttpInterceptor {
                 @Inject(DA_SERVICE_TOKEN)
                 private tokenService: TokenService,
                 private router: Router,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+                @Inject(NzNotificationService)
+                private notification: NzNotificationService,
+                private i18n: I18NService,
                 private cacheService: CacheService) {
     }
 
@@ -47,8 +50,7 @@ export class DefaultInterceptor implements HttpInterceptor {
     }
 
     private handleData(event: HttpResponse<any> | HttpErrorResponse): Observable<any> {
-        // 可能会因为 `throw` 导出无法执行 `_HttpClient` 的 `end()` 操作
-        this.injector.get(_HttpClient).end();
+        // this.checkStatus(event)
         // 业务处理：一些通用操作
         switch (event.status) {
             case 200:
@@ -176,11 +178,11 @@ export class DefaultInterceptor implements HttpInterceptor {
                 }
                 break;
             case 404:
-                this.goTo("/layout/404");
+                this.goTo("/exception/404");
                 break;
             case 403: //无权限
                 if (event.url.indexOf("/erupt-api/build/") != -1) {
-                    this.goTo("/layout/403");
+                    this.goTo("/exception/403");
                 } else {
                     this.modal.warning({
                         nzTitle: this.i18n.fanyi("none_permission")
@@ -190,7 +192,7 @@ export class DefaultInterceptor implements HttpInterceptor {
             case 500:
                 event = <HttpErrorResponse>event;
                 if (event.url.indexOf("/erupt-api/build/") != -1) {
-                    this.router.navigate(["/layout/500"], {
+                    this.router.navigate(["/exception/500"], {
                         queryParams: {
                             message: event.error.message
                         }
@@ -228,7 +230,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         // 统一加上服务端前缀
         let url = req.url;
         if (!url.startsWith("https://") && !url.startsWith("http://") && !url.startsWith("//")) {
-            url = environment.SERVER_URL + url;
+            url = environment.api.baseUrl + url;
         }
         // 对话框的方式出现登录页
         // if (this.whiteApi.indexOf(url.split("erupt-api/")[1]) == -1) {

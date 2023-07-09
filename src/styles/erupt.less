@@ -1,35 +1,54 @@
 @import "./theme";
 
 span.ripple {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  pointer-events: none;
-  background: @primary-color;
-  opacity: .07;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  animation: ripple 1.5s;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+    background: @primary-color;
+    opacity: .07;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    z-index: 99;
+    animation: ripple 1.5s;
+    transition: all 300ms;
 }
 
 @keyframes ripple {
-  100% {
-    transform: scale(40);
-  }
+    100% {
+        transform: scale(40);
+    }
+}
+
+.e-table-img {
+    max-width: 32px;
+    max-height: 32px;
+    margin-right: 4px;
+    vertical-align: middle;
+    border-radius: 4px;
 }
 
 .e-tag {
-  text-align: center;
-  display: inline-block;
-  padding: 0 7px;
-  line-height: 20px;
-  color: #000000d9;
-  background: #fafafa;
-  border: 1px solid #d9d9d9;
-  border-radius: 5px;
-  margin-right: 6px;
-  font-size: 12px
+    text-align: center;
+    display: inline-block;
+    padding: 0 7px;
+    line-height: 20px;
+    color: #000000d9;
+    background: #fafafa;
+    border: 1px solid #d9d9d9;
+    border-radius: 5px;
+    margin-right: 6px;
+    font-size: 12px
+}
+
+.cell-center {
+    display: table-cell !important;
+    text-align: center;
+}
+
+.p-mini {
+    padding: 6px !important;
 }

@@ -1,21 +1,19 @@
-<div nz-row [nzGutter]="16">
-    <form nz-form nzLayout="horizontal" se-container>
+<form nz-form nzLayout="horizontal">
+    <div nz-row [nzGutter]="16">
         <ng-container *ngFor="let dim of bi.dimensions;">
             <ng-container [ngSwitch]="dim.type">
                 <ng-container *ngSwitchCase="dimType.REFERENCE_RADIO">
                     <div nz-col>
-                        <se [label]="dim.title"
-                            [required]="dim.notNull" style="width: 100%">
+                        <bi-search-se [dimension]="dim">
                             <erupt-bi-choice [dim]="dim" [bi]="bi"></erupt-bi-choice>
-                        </se>
+                        </bi-search-se>
                     </div>
                 </ng-container>
                 <ng-container *ngSwitchCase="dimType.REFERENCE_CHECKBOX">
                     <div nz-col>
-                        <se [label]="dim.title"
-                            [required]="dim.notNull" style="width: 100%">
+                        <bi-search-se [dimension]="dim">
                             <erupt-bi-choice [dim]="dim" [bi]="bi"></erupt-bi-choice>
-                        </se>
+                        </bi-search-se>
                     </div>
                 </ng-container>
                 <ng-container *ngSwitchDefault>
@@ -23,17 +21,19 @@
                          [nzLg]="col.lg"
                          [nzXl]="col.xl"
                          [nzXXl]="col.xxl">
-                        <se [label]="dim.title" [required]="dim.notNull" style="width: 100%">
+                        <bi-search-se [dimension]="dim">
                             <ng-container [ngSwitch]="dim.type">
                                 <ng-container *ngSwitchCase="dimType.TAG">
-                                    <nz-select [nzMode]="'tags'" [(ngModel)]="dim.$value" [name]="dim.code">
+                                    <nz-select [nzMode]="'tags'" [(ngModel)]="dim.$value" [name]="dim.code"
+                                               style="width: 100%">
                                     </nz-select>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="dimType.INPUT">
                                     <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input">
-                                        <input nz-input autocomplete="off" (keyup)="enterEvent($event)"
+                                        <input nz-input autocomplete="off"
                                                class="full-width" [(ngModel)]="dim.$value"
-                                               [name]="dim.code" [required]="dim.notNull">
+                                               [name]="dim.code" [required]="dim.notNull"
+                                               (keydown)="enterEvent($event)">
                                     </nz-input-group>
                                     <ng-template #suffixTemplate>
                                         <i nz-icon nz-tooltip class="ant-input-clear-icon" nzTheme="fill"
@@ -42,21 +42,19 @@
                                     </ng-template>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="dimType.NUMBER">
-                                    <nz-input-number [(ngModel)]="dim.$value" class="full-width" (keyup)="enterEvent($event)"
-                                                     [name]="dim.code"></nz-input-number>
+                                    <nz-input-number [(ngModel)]="dim.$value" class="full-width"
+                                                     (keydown)="enterEvent($event)" [name]="dim.code"></nz-input-number>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="dimType.NUMBER_RANGE">
-                                    <nz-input-number style="width: 45%;"
-                                                     [(ngModel)]="dim.$value[0]"
-                                                     [name]="dim.code"></nz-input-number>
-                                    <nz-input-group style="width: 10%;">
-                                        <div style="line-height: 100%;text-align: center">
-                                            ~
-                                        </div>
+                                    <nz-input-group class="erupt-input" style="display: flex;align-items: center">
+                                        <nz-input-number style="width: 45%;" [(ngModel)]="dim.$value[0]"
+                                                         [name]="dim.code"></nz-input-number>
+                                        <input disabled nz-input placeholder="~"
+                                               style="width: 30px; border-left: 0; border-right: 0; pointer-events: none;"
+                                        />
+                                        <nz-input-number style="width: 45%;" [(ngModel)]="dim.$value[1]"
+                                                         [name]="dim.code"></nz-input-number>
                                     </nz-input-group>
-                                    <nz-input-number style="width: 45%;"
-                                                     [(ngModel)]="dim.$value[1]"
-                                                     [name]="dim.code"></nz-input-number>
                                 </ng-container>
                                 <ng-container>
                                     <ng-template #refBtn>
@@ -154,11 +152,10 @@
                                     </nz-year-picker>
                                 </ng-container>
                             </ng-container>
-
-                        </se>
+                        </bi-search-se>
                     </div>
                 </ng-container>
             </ng-container>
         </ng-container>
-    </form>
-</div>
+    </div>
+</form>

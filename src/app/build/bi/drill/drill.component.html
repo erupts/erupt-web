@@ -1,27 +1,20 @@
-<ng-container *ngIf="biTable.columns&&biTable.columns.length>0">
-<!--    <div style="text-align: right;margin-bottom: 16px">-->
-<!--        <button nz-button nzType="primary" [nzSize]="'small'">-->
-<!--            <i nz-icon nzType="download"></i>下载-->
-<!--        </button>-->
-<!--    </div>-->
-    <st [columns]="biTable.columns" [data]="biTable.data" #st
-        style="margin-bottom: 12px"
-        [loading]="querying"
-        [ps]="biTable.size"
-        [page]="biTable.page"
-        [scroll]="{x: (clientWidth > 768 ? biTable.columns.length * 150 : 0) + 'px'}"
-        [bordered]="settingSrv.layout.bordered"
-        [size]="'small'">
-    </st>
-    <nz-pagination style="text-align: center" nzShowSizeChanger nzShowQuickJumper
-                   [nzPageIndex]="biTable.index"
-                   [nzPageSize]="biTable.size"
-                   [nzTotal]="biTable.total"
-                   [nzPageSizeOptions]="this.bi.pageSizeOptions"
-                   [nzSize]="'small'"
-                   (nzPageSizeChange)="pageSizeChange($event)"
-                   (nzPageIndexChange)="pageIndexChange($event)"
-                   [nzShowTotal]="totalTemplate"
-    ></nz-pagination>
-    <ng-template #totalTemplate let-total>共{{ biTable.total }}条</ng-template>
-</ng-container>
+<nz-spin [nzSpinning]="querying" style="width: 100%;text-align: center;min-height: 80px">
+    <ng-container *ngIf="biTable.columns && biTable.columns.length > 0">
+        <st [columns]="biTable.columns" [data]="biTable.data" #st
+            style="margin-bottom: 12px" [ps]="biTable.size" [page]="biTable.page"
+            [scroll]="{x: (clientWidth > 768 ? biTable.columns.length * 150 : 0) + 'px'}"
+            [bordered]="settingSrv.layout['bordered']" [size]="'small'" >
+        </st>
+        <nz-pagination style="text-align: center" nzShowSizeChanger nzShowQuickJumper
+                       [nzPageIndex]="biTable.index" [nzPageSize]="biTable.size" [nzTotal]="biTable.total"
+                       [nzPageSizeOptions]="this.bi.pageSizeOptions" [nzSize]="'small'"
+                       (nzPageSizeChange)="pageSizeChange($event)" (nzPageIndexChange)="pageIndexChange($event)"
+                       [nzShowTotal]="totalTemplate"
+        ></nz-pagination>
+        <ng-template #totalTemplate let-total>共{{ biTable.total }}条</ng-template>
+
+    </ng-container>
+    <ng-container *ngIf="!biTable.columns || biTable.columns.length == 0">
+        <nz-list [nzDataSource]="[]"></nz-list>
+    </ng-container>
+</nz-spin>

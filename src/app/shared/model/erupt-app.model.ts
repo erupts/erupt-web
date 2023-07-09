@@ -5,4 +5,19 @@ export interface EruptAppModel {
     hash: number;
     version: string;
     loginPagePath: string;
+    waterMark: boolean;
+}
+
+let eruptAppConfig: EruptAppModel = window["eruptApp"] || {};
+
+export class EruptAppData {
+
+    static get() {
+        return eruptAppConfig;
+    }
+
+    static put(value: EruptAppModel) {
+        eruptAppConfig = value;
+    }
+
 }
