@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {EruptFieldModel, VL} from "../../model/erupt-field.model";
+import {EruptFieldModel} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {ChoiceEnum} from "../../model/erupt.enum";
@@ -22,6 +22,8 @@ export class ChoiceComponent implements OnInit {
     @Input() vagueSearch: boolean = false;
 
     @Input() readonly: boolean = false;
+
+    @Input() checkAll: boolean = false;
 
     isLoading = false;
 
@@ -46,16 +48,15 @@ export class ChoiceComponent implements OnInit {
             if (this.eruptField.eruptFieldJson.edit.choiceType.anewFetch) {
                 this.isLoading = true;
                 this.dataService.findChoiceItem(this.eruptModel.eruptName, this.eruptField.fieldName, this.eruptParentName).subscribe(data => {
-                    this.eruptField.choiceList = data;
+                    this.eruptField.componentValue = data;
                     this.isLoading = false;
                 });
             }
-
         }
     }
 
     changeTagAll($event) {
-        for (let vl of this.eruptField.choiceList) {
+        for (let vl of this.eruptField.componentValue) {
             vl.$viewValue = $event;
         }
     }

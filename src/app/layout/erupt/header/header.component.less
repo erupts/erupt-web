@@ -1,0 +1,88 @@
+:host {
+    ::ng-deep {
+        .header-logo {
+            padding: 0 12px;
+        }
+
+        #erupt_logo_svg {
+            path {
+                fill: #fff !important;
+            }
+        }
+
+        .header-logo-img {
+            box-sizing: border-box;
+            vertical-align: top;
+            height: 44px;
+            padding: 4px 0
+        }
+
+        .alain-default__header {
+            box-shadow: none !important;
+        }
+
+        .alain-default__header-logo {
+            min-width: 200px;
+            text-align: center;
+            width: auto;
+            padding: 0 12px;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .header-logo-text {
+            color: #000;
+            line-height: 44px;
+            font-size: 1.8em;
+            letter-spacing: 2px;
+            margin-left: 6px;
+            font-family: 'Courier New', Arial, Helvetica, sans-serif;
+        }
+
+        @media (max-width: 767px) {
+            .alain-default__header-logo {
+                min-width: 64px;
+                overflow: hidden;
+                margin: 0 6px;
+                border-right: none !important;
+                padding: 0;
+
+                img {
+                    width: auto;
+                }
+            }
+        }
+    }
+}
+
+::ng-deep {
+    .alain-default__collapsed {
+        .header-logo-text {
+            display: none;
+        }
+
+        .alain-default__header-logo {
+            min-width: 64px;
+
+            img {
+                width: 36px;
+            }
+
+            @media (max-width: 767px) {
+                img {
+                    width: auto;
+                }
+            }
+        }
+
+    }
+}
+
+[data-theme='dark'] {
+    :host {
+        ::ng-deep {
+            .alain-default__header-logo {
+                border-right: 1px solid #303030;
+            }
+        }
+    }
+}

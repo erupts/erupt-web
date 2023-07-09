@@ -1,18 +1,13 @@
-// 可以通过 https://ng-alain.github.io/ng-alain/ 获取主题参数代码
-// The theme paraments can be generated at https://ng-alain.github.io/ng-alain/
+// You can directly set the default theme
+// - `default` Default theme
+// - `dark` Import the official dark less style file
+// - `compact` Import the official compact less style file
+@import '@delon/theme/theme-default';
 
-//#25b864; 绿
-//#2196f3; 蓝
-@primary-color: #2196f3;
-@alain-default-header-bg: @primary-color;
-@alain-default-aside-nav-text-hover-color: @primary-color;
-@alain-default-aside-nav-selected-text-color: @primary-color;
-@alain-default-header-hg: 44px;
-@alain-default-content-padding: 16px;
+@alain-default-header-hg: 44px !important;
+@router-animation-enabled: true;
+//@primary-color: #035dff;
 
-@alain-default-aside-bg: #fff;
-//@alain-default-aside-nav-selected-bg:#e3e8f0;
-@alain-default-aside-nav-text-color: rgba(0, 0, 0, 0.65);
-@alain-default-aside-collapsed-wd: 56px;
-//@router-animation-duration: 10s;
-//@router-animation-duration: antFadeIn;
+body.color-weak{
+    background: #121212;
+}

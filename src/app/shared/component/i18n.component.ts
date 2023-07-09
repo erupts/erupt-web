@@ -1,64 +1,43 @@
 import {DOCUMENT} from '@angular/common';
-import {ChangeDetectionStrategy, Component, Inject, Input} from '@angular/core';
-import {ALAIN_I18N_TOKEN, SettingsService} from '@delon/theme';
-import {InputBoolean} from '@delon/util';
-
+import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
 import {I18NService} from '@core';
+import {SettingsService} from '@delon/theme';
 
 @Component({
-    selector: 'header-i18n',
+    selector: 'i18n-choice',
     template: `
-        <div *ngIf="showLangText" nz-dropdown [nzDropdownMenu]="langMenu" nzPlacement="bottomRight" class="alain-default__nav-item">
-            <i nz-icon nzType="global" nzTheme="outline"></i>
-        </div>
-        <i *ngIf="!showLangText"
-           nz-dropdown
-           [nzDropdownMenu]="langMenu"
-           nzPlacement="bottomRight"
-           nz-icon
-           nzType="global"
-        ></i>
-        <nz-dropdown-menu #langMenu="nzDropdownMenu">
-            <ul nz-menu>
-                <li
-                        nz-menu-item
-                        *ngFor="let item of langs"
-                        [nzSelected]="item.code === curLangCode"
-                        (click)="change(item.code)"
-                >
+        <i nz-dropdown [nzDropdownMenu]="langMenu" *ngIf="langs.length > 1"
+           nzPlacement="bottomRight" nz-icon
+           nzType="global"></i>
+        <nz-dropdown-menu #langMenu>
+            <ul nz-menu nzSelectable>
+                <li nz-menu-item *ngFor="let item of langs" [nzSelected]="item.code == curLangCode"
+                    (click)="change(item.code)">
                     <span role="img" [attr.aria-label]="item.text" class="pr-xs">{{ item.abbr }}</span>
                     {{ item.text }}
                 </li>
             </ul>
         </nz-dropdown-menu>
     `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    host: {
+        '[class.flex-1]': 'true'
+    },
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class I18nComponent {
-    /** Whether to display language text */
-    @Input() @InputBoolean() showLangText = true;
+export class HeaderI18nComponent {
 
-    get langs() {
-        return this.i18n.getLangs();
+    langs: Array<{ code: string; text: string; abbr: string }> = [];
+
+    curLangCode: string;
+
+    constructor(private settings: SettingsService,
+                private i18n: I18NService,
+                @Inject(DOCUMENT) private doc: any) {
+        this.langs = this.i18n.getLangs();
+        this.curLangCode = this.settings.layout.lang;
     }
 
-    get curLangCode() {
-        return this.settings.layout.lang;
-    }
-
-    constructor(
-        private settings: SettingsService,
-        @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-        @Inject(DOCUMENT) private doc: any,
-    ) {
-    }
-
-    change(lang: string) {
-        const spinEl = this.doc.createElement('div');
-        spinEl.setAttribute('class', `page-loading ant-spin ant-spin-lg ant-spin-spinning`);
-        spinEl.innerHTML = `<span class="ant-spin-dot ant-spin-dot-spin"><i></i><i></i><i></i><i></i></span>`;
-        this.doc.body.appendChild(spinEl);
-
+    change(lang: string): void {
         this.i18n.use(lang);
         this.settings.setLayout('lang', lang);
         setTimeout(() => this.doc.location.reload());

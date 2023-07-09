@@ -3,10 +3,20 @@
  * @param menuType  菜单类型
  * @param menuValue 菜单值
  */
-import {MenuTypeEnum} from "@shared/model/erupt-menu";
 import {HttpEvent} from "@angular/common/http";
+import {MenuTypeEnum} from "../model/erupt-menu";
 
 export function generateMenuPath(type: string, value: string) {
+    let menuValue = value || '';
+    if (menuValue.indexOf("fill=true") != -1) {
+        return '/fill' + joinPath(type, value);
+    } else {
+        return joinPath(type, value);
+    }
+}
+
+//关联路径
+function joinPath(type: string, value: string): string {
     let menuValue = value || '';
     switch (type) {
         case MenuTypeEnum.table:
@@ -32,6 +42,7 @@ export function generateMenuPath(type: string, value: string) {
                 return "/fill/" + menuValue;
             }
     }
+    return null;
 }
 
 

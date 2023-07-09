@@ -5,8 +5,7 @@
     <i nz-icon nzType="search"></i>
 </ng-template>
 <nz-card [nzBodyStyle]="{padding:'10px',overflow: 'auto'}" [nzLoading]="treeLoading"
-         [ngStyle]="{height: 'calc(100vh - 180px - ' + (settingService.layout.reuse ? '40px' : '0px') + ' + '+
-                (settingSrv.layout.breadcrumbs?'0px':'38px') + ')'}"
+         [ngStyle]="{height: 'calc(100vh - 140px - ' + (settingService.layout['reuse'] ? '40px' : '0px') + ')'}"
          style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);overflow: auto"
          [nzBordered]="true">
     <nz-tree class="tree-container"

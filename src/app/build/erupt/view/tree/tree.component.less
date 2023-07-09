@@ -1,8 +1,26 @@
 :host {
-  ::ng-deep {
-    .ant-collapse-header {
-      padding: 4px 40px !important;
-      font-size: 12px
+    ::ng-deep {
+        .ant-collapse-header {
+            padding: 6px 18px !important;
+            //font-size: 12px;
+            //line-height: 18px !important;
+        }
+
+        .layout-tree-view {
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #d9d9d9;
+        }
     }
-  }
+}
+
+[data-theme='dark'] {
+    :host {
+        ::ng-deep {
+            .layout-tree-view {
+                background: #141414;
+                border: 1px solid #434343;
+            }
+        }
+    }
 }

@@ -4,10 +4,10 @@
             <nz-radio-group [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
                             [name]="eruptField.fieldName"
                             class="erupt-input stander-line-height">
-                <ng-container *ngIf="eruptModel.mode=='search'">
+                <ng-container *ngIf="checkAll">
                     <label nz-radio [nzValue]="">{{'global.all'|translate}}</label>
                 </ng-container>
-                <ng-container *ngFor="let vl of eruptField.choiceList">
+                <ng-container *ngFor="let vl of eruptField.componentValue">
                     <label nz-radio nz-tooltip [nzTooltipTitle]="vl.desc"
                            [nzDisabled]="readonly||vl.disable"
                            [nzValue]="vl.value">{{vl.label}}</label>
@@ -23,7 +23,7 @@
                        [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
                        [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true">
                 <ng-container *ngIf="!isLoading">
-                    <nz-option *ngFor="let vl of eruptField.choiceList"
+                    <nz-option *ngFor="let vl of eruptField.componentValue"
                                [nzDisabled]="vl.disable"
                                [nzValue]="vl.value" [nzLabel]="vl.label | translate">
                     </nz-option>
@@ -43,7 +43,7 @@
         <nz-tag (nzCheckedChange)="changeTagAll($event)" style="margin-right: 10px"
                 nzMode="checkable">{{'global.check_all'|translate}}
         </nz-tag>
-        <ng-container *ngFor="let vl of this.eruptField.choiceList">
+        <ng-container *ngFor="let vl of this.eruptField.componentValue">
             <nz-tag (nzCheckedChange)="vl.$viewValue = !vl.$viewValue;"
                     style="margin-right: 10px" nzMode="checkable"
                     [(nzChecked)]="vl.$viewValue">{{vl.label}}</nz-tag>

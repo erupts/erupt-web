@@ -14,9 +14,9 @@ declare const DecoupledDocumentEditor;
 })
 export class CkeditorComponent implements OnInit {
 
-    @Input() private eruptField: EruptFieldModel;
+    @Input() eruptField: EruptFieldModel;
 
-    @Input() private erupt: EruptModel;
+    @Input() erupt: EruptModel;
 
     @Input() value;
 

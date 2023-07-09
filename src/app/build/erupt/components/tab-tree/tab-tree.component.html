@@ -1,18 +1,21 @@
-<nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
-    <input type="text" nz-input placeholder="Search"
-           [(ngModel)]="eruptFieldModel.eruptFieldJson.edit.$tempValue">
-</nz-input-group>
-<ng-template #suffixIcon>
-    <i nz-icon nzType="search"></i>
-</ng-template>
-<br>
-<nz-spin [nzSpinning]="loading" *ngIf="treeData">
-    <nz-tree [nzCheckable]="true"
-             [nzShowLine]="true"
-             [nzCheckStrictly]="true"
-             [nzData]="treeData"
-             (nzCheckBoxChange)="checkBoxChange($event)"
-             [nzSearchValue]="eruptFieldModel.eruptFieldJson.edit.$tempValue"
-             [nzCheckedKeys]="arrayAnyToString(eruptFieldModel.eruptFieldJson.edit.$value)">
-    </nz-tree>
-</nz-spin>
+<div>
+    <nz-spin [nzSpinning]="loading">
+        <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm">
+            <input type="text" nz-input placeholder="Search"
+                   [(ngModel)]="eruptFieldModel.eruptFieldJson.edit.$tempValue">
+        </nz-input-group>
+        <ng-template #suffixIcon>
+            <i nz-icon nzType="search"></i>
+        </ng-template>
+        <nz-tree style="max-height: 420px;overflow: auto"
+                 *ngIf="treeData"
+                 [nzCheckable]="true"
+                 [nzShowLine]="true"
+                 [nzCheckStrictly]="true"
+                 [nzData]="treeData"
+                 (nzCheckBoxChange)="checkBoxChange($event)"
+                 [nzSearchValue]="eruptFieldModel.eruptFieldJson.edit.$tempValue"
+                 [nzCheckedKeys]="arrayAnyToString(eruptFieldModel.eruptFieldJson.edit.$value)">
+        </nz-tree>
+    </nz-spin>
+</div>

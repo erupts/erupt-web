@@ -1,10 +1,8 @@
 import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
-import {STColumn, STColumnButton, STComponent} from "@delon/abc";
 import {EditTypeComponent} from "../edit-type/edit-type.component";
 import {colRules} from "@shared/model/util.model";
-import {NzMessageService, NzModalService} from "ng-zorro-antd";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {ReferenceTableComponent} from "../reference-table/reference-table.component";
@@ -12,8 +10,11 @@ import {BuildConfig} from "../../model/build-config";
 import {Status} from "../../model/erupt-api.model";
 import {EditType, Scene, SelectMode} from "../../model/erupt.enum";
 import {UiBuildService} from "../../service/ui-build.service";
-import {ALAIN_I18N_TOKEN} from "@delon/theme";
 import {I18NService} from "@core";
+import {STChange, STColumn, STColumnButton, STComponent} from "@delon/abc/st";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzModalService} from "ng-zorro-antd/modal";
+
 
 @Component({
     selector: "tab-table",
@@ -44,21 +45,27 @@ export class TabTableComponent implements OnInit {
 
     stConfig = new BuildConfig().stConfig;
 
+    loading = true;
+
     constructor(private dataService: DataService,
                 private uiBuildService: UiBuildService,
                 private dataHandlerService: DataHandlerService,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+                private i18n: I18NService,
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService) {
     }
 
     ngOnInit() {
         this.stConfig.stPage.front = true;
-        if (this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value) {
+        let tabEdit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
+        if (tabEdit.$value) {
 
         } else {
-            this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value = [];
+            tabEdit.$value = [];
         }
+        setTimeout(() => {
+            this.loading = false;
+        }, 300);
         if (this.onlyRead) {
             this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true);
         } else {
@@ -71,6 +78,14 @@ export class TabTableComponent implements OnInit {
                 className: "text-center",
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
+            // viewValue.push({
+            //     title: "No",
+            //     type: "no",
+            //     fixed: "left",
+            //     className: "text-center",
+            //     width: 60,
+            //     key: this.NO
+            // });
             viewValue.push(...this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true));
             let operators: STColumnButton[] = [];
             if (this.mode == "add") {
@@ -218,7 +233,7 @@ export class TabTableComponent implements OnInit {
                                     v[key] = v[key] === ed.boolType.trueText;
                                     break;
                                 case EditType.CHOICE:
-                                    for (let vl of eruptFieldModel.choiceList) {
+                                    for (let vl of eruptFieldModel.componentValue) {
                                         if (vl.label == v[key]) {
                                             v[key] = vl.value;
                                             break;
@@ -235,10 +250,8 @@ export class TabTableComponent implements OnInit {
                     }
                 }
                 edit.$value.push(...edit.$tempValue);
-                //去重
-                edit.$value = Array.from(new Set(edit.$value));
-
-                this.st.reload();
+                edit.$value = [...new Set(edit.$value)]; //去重
+                return true;
             }
         });
     }
@@ -254,10 +267,25 @@ export class TabTableComponent implements OnInit {
         }
     }
 
-    selectTableItem(event) {
+    stChange(event: STChange) {
         if (event.type === "checkbox") {
             this.checkedRow = event.checkbox;
         }
+        // if (event.type == "loaded") {
+        //     if (this.mode == 'add') {
+        //         if (event.loaded && event.loaded.length > 0) {
+        //             let tabEdit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
+        //             let pk = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+        //             if (tabEdit.$value instanceof Array) {
+        //                 for (let data of (<any[]>tabEdit.$value)) {
+        //                     if (!data[pk]) {
+        //                         data[pk] = -Math.floor(Math.random() * 1000);
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     deleteData() {

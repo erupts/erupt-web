@@ -1,11 +1,7 @@
-<erupt-page-header *ngIf="settingSrv.layout.breadcrumbs"></erupt-page-header>
-<div *ngIf="settingSrv.layout.breadcrumbs" style="height: 16px"></div>
-<div class="page-container" [ngStyle]="{marginTop:settingSrv.layout.breadcrumbs?'38px':'0'}">
+<div class="page-container">
     <nz-spin [nzSpinning]="spin" style="height:100%;width: 100%">
-        <iframe *ngIf="renderType == 'iframe'" (load)="iframeLoad()" [src]="url | safeUrl"
+        <iframe (load)="iframeLoad()" [src]="url | safeUrl"
                 style="border: 0;vertical-align:bottom" height="100%" width="100%">
         </iframe>
-<!--        <micro-app #micro keep-alive *ngIf="renderType == 'micro-app'" (mounted)="iframeLoad()" [attr.name]="name"-->
-<!--                   [attr.url]="url" style="border: 0;height: 100%;width:100%;"></micro-app>-->
     </nz-spin>
 </div>

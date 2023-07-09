@@ -1,130 +1,127 @@
 @import "theme";
 
-//修复st表格中checkbox显示bug
-.ant-table .ant-checkbox-checked .ant-checkbox-inner::after {
-  left: 3px;
+.ant-slider-with-marks {
+    margin-bottom: auto;
 }
 
-//page-header .page-header {
-//  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2)
-//}
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > thead > tr > .ant-table-cell-fix-right-first::after,
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table > thead > tr > .ant-table-cell-fix-right-first::after,
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-body > table > thead > tr > .ant-table-cell-fix-right-first::after,
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-summary > table > thead > tr > .ant-table-cell-fix-right-first::after,
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > tbody > tr > .ant-table-cell-fix-right-first::after,
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table > tbody > tr > .ant-table-cell-fix-right-first::after,
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-body > table > tbody > tr > .ant-table-cell-fix-right-first::after,
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-summary > table > tbody > tr > .ant-table-cell-fix-right-first::after,
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > tfoot > tr > .ant-table-cell-fix-right-first::after,
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table > tfoot > tr > .ant-table-cell-fix-right-first::after,
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-body > table > tfoot > tr > .ant-table-cell-fix-right-first::after,
+.ant-table.ant-table-bordered > .ant-table-container > .ant-table-summary > table > tfoot > tr > .ant-table-cell-fix-right-first::after {
+    border-right: none;
+}
+
+.ant-modal-body {
+    padding: 16px 18px;
+}
+
+.ant-modal-header {
+    padding: 18px;
+}
+
+.st .text-truncate.ant-table-cell-fix-left-last::after {
+    transform: translateX(90%);
+}
+
+.st .text-truncate.ant-table-cell-fix-right-first::after {
+    transform: translateX(-90%);
+}
 
 .hidden {
-  display: none !important
+    display: none !important
+}
+
+.ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .full-max-width {
-  max-width: 100% !important;
+    max-width: 100% !important;
 }
 
 .full-width {
-  width: 100% !important;
+    width: 100% !important;
 }
 
 .modal-xxl .ant-modal {
-  width: auto !important;
-  max-width: 85% !important;
+    width: auto !important;
+    max-width: 85% !important;
 }
 
 .ant-table {
-  .date-col {
-    min-width: 120px;
-    text-align: center;
-  }
+    .date-col {
+        min-width: 120px;
+        text-align: center;
+    }
 }
 
 nz-input-group {
-  width: 100%;
+    width: 100%;
 }
 
 page-header .page-header {
-  padding: 8px 24px 0 !important;
+    padding: 8px 24px 0 !important;
 
-  .ant-breadcrumb {
-    margin-bottom: 8px !important;
-  }
+    .ant-breadcrumb {
+        margin-bottom: 8px !important;
+    }
 }
 
 nz-picker, nz-picker .ant-calendar-picker {
-  width: 100% !important;
+    width: 100% !important;
 }
 
 .ant-spin-container {
-  height: 100%;
+    height: 100%;
 }
 
 
 reuse-tab .ant-tabs-tab-arrow-show {
-  color: #FF5722;
+    color: #FF5722;
 }
 
-
-//iframe page-container style start
-.alain-default__collapsed {
-  .page-container {
-    left: @alain-default-aside-collapsed-wd;
-  }
-}
 
 .page-container {
-  position: absolute;
-  left: 200px;
-  right: 0;
-  top: @alain-default-header-hg;
-  bottom: 0;
+    height: calc(100vh - @alain-default-header-hg);
 }
 
 erupt-fill .page-container {
-  left: 0;
-  top: 0;
-  margin-top: 0 !important;
+    left: 0;
+    top: 0;
+    height: 100vh !important;
+    margin-top: 0 !important;
 }
+
+
+@media (min-width: 992px) {
+    .edit-modal-lg .ant-modal {
+        max-width: 935px !important;
+    }
+}
+
 
 reuse-tab ~ app-site .page-container,
 reuse-tab ~ app-home .page-container,
 reuse-tab ~ app-tpl .page-container {
-  top: @alain-default-header-hg + 40;
+    height: calc(100vh - @alain-default-header-hg - 44.62px);
 }
-
-@media (min-width: 992px) {
-  .edit-modal-lg .ant-modal {
-    max-width: 935px !important;
-  }
-}
-
 
 @media screen and (max-width: 767px) {
-  .page-container {
-    height: calc(100vh - @alain-default-header-hg);
-    left: 0 !important;
-    top: 0;
-    margin: 0 -25px;
-  }
 
-  reuse-tab ~ app-site .page-container,
-  reuse-tab ~ app-home .page-container,
-  reuse-tab ~ app-tpl .page-container {
-    top: 40px;
-  }
+    reuse-tab ~ app-site .page-container,
+    reuse-tab ~ app-home .page-container,
+    reuse-tab ~ app-tpl .page-container {
+        top: 40px;
+    }
+
 }
-
-//::-webkit-scrollbar {
-//  width: 6px;
-//  height: 7px;
-//  background-color: rgba(0, 0, 0, 0);
-//  -ms-overflow-style: -ms-autohiding-scrollbar;
-//}
-//
-//::-webkit-scrollbar-thumb {
-//  border-radius: 5px;
-//  background-color: #ddd;
-//}
-//
-//
-//::-webkit-scrollbar-track {
-//  border-radius: 0;
-//  background-color: rgba(0, 0, 0, 0);
-//}
-
-
-//iframe page-container style end

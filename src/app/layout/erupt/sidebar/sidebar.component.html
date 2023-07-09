@@ -1,0 +1,8 @@
+<div class="alain-default__aside-wrap">
+    <div class="alain-default__aside-inner" style="overflow: scroll">
+        <erupt-menu [autoCloseUnderPad]="true" class="d-block" style="padding-top: 0 !important;padding-bottom:38px;"></erupt-menu>
+        <div class="fold" (click)="toggleCollapsedSidebar()" style="height: 38px">
+            <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}" style="font-size: 1.2em"></i>
+        </div>
+    </div>
+</div>
