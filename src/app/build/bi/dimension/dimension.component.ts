@@ -70,10 +70,4 @@ export class DimensionComponent implements OnInit {
         dim.$value = null;
     }
 
-    enterEvent(event) {
-        if (event.which === 13) {
-            this.search.emit();
-        }
-    }
-
 }
