@@ -9,19 +9,20 @@
                     <ng-container [ngSwitch]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.type">
                         <ng-container *ngSwitchCase="editType.TAB_TABLE_ADD">
                             <tab-table [onlyRead]="isReadonly(eruptFieldModelMap.get(item.key))"
-                                    [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptFieldModelMap.get(item.key)}"
-                                    [eruptBuildModel]="eruptBuildModel"
+                                       [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptFieldModelMap.get(item.key)}"
+                                       [eruptBuildModel]="eruptBuildModel"
                             ></tab-table>
                         </ng-container>
                         <ng-container *ngSwitchCase="editType.TAB_TABLE_REFER">
                             <tab-table [onlyRead]="isReadonly(eruptFieldModelMap.get(item.key))"
-                                    [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptFieldModelMap.get(item.key)}"
-                                    [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
+                                       [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptFieldModelMap.get(item.key)}"
+                                       [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
                             ></tab-table>
                         </ng-container>
                         <ng-container *ngSwitchCase="editType.TAB_TREE">
                             <erupt-tab-tree [eruptFieldModel]="eruptFieldModelMap.get(item.key)"
-                                            [eruptBuildModel]="eruptBuildModel" [onlyRead]="isReadonly(eruptFieldModelMap.get(item.key))"
+                                            [eruptBuildModel]="eruptBuildModel"
+                                            [onlyRead]="isReadonly(eruptFieldModelMap.get(item.key))"
                             ></erupt-tab-tree>
                         </ng-container>
                     </ng-container>

@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../service/data-handler.service";
-import {NzFormatEmitEvent} from "ng-zorro-antd";
-import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
+import {SettingsService} from "@delon/theme";
 import {I18NService} from "@core";
+import {NzFormatEmitEvent} from "ng-zorro-antd/core/tree";
 
 @Component({
     selector: 'layout-tree',
@@ -16,7 +16,7 @@ export class LayoutTreeComponent implements OnInit {
     constructor(private data: DataService,
                 public settingSrv: SettingsService,
                 public settingService: SettingsService,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+                private i18n: I18NService,
                 private dataHandler: DataHandlerService) {
     }
 
@@ -41,7 +41,7 @@ export class LayoutTreeComponent implements OnInit {
             }
             if (!this.eruptModel.eruptJson.linkTree.dependNode) {
                 this.list.unshift({
-                    key: null,
+                    key: undefined,
                     title: this.i18n.fanyi('global.all'),
                     isLeaf: true
                 });

@@ -1,17 +1,27 @@
 <ng-container *ngIf="range">
-    <nz-range-picker [nzSize]="size" class="erupt-input stander-line-height"
-                     [(ngModel)]="edit.$value"
-                     [nzDisabled]="readonly"
-                     [name]="field.fieldName"
-                     [nzShowTime]="edit.dateType.type==dateEnum.DATE_TIME"
-                     [nzPlaceHolder]="edit.placeHolder"
-                     [nzDisabledDate]="disabledDate"
-                     [nzRanges]="dateRanges">
-
-    </nz-range-picker>
+    <ng-container *ngIf="edit.dateType.type != dateEnum.TIME">
+        <nz-range-picker [nzSize]="size" class="erupt-input stander-line-height"
+                         [name]="field.fieldName"
+                         [(ngModel)]="edit.$value"
+                         [nzDisabled]="readonly"
+                         [nzShowTime]="edit.dateType.type == dateEnum.DATE_TIME"
+                         [nzMode]="rangeMode"
+                         [nzPlaceHolder]="edit.placeHolder"
+                         [nzDisabledDate]="disabledDate"
+                         [nzRanges]="dateRanges">
+        </nz-range-picker>
+    </ng-container>
+<!--    <ng-container *ngIf="edit.dateType.type == dateEnum.TIME">-->
+<!--        <nz-time-picker [nzSize]="size" class="erupt-input stander-line-height"-->
+<!--                        [(ngModel)]="edit.$value"-->
+<!--                        [nzDisabled]="readonly"-->
+<!--                        [nzPlaceHolder]="edit.placeHolder"-->
+<!--                        [name]="field.fieldName">-->
+<!--        </nz-time-picker>-->
+<!--    </ng-container>-->
 </ng-container>
 <ng-container *ngIf="!range">
-    <ng-container [ngSwitch]="field.eruptFieldJson.edit.dateType.type">
+    <ng-container [ngSwitch]="edit.dateType.type">
         <ng-container *ngSwitchCase="dateEnum.DATE">
             <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
                             [(ngModel)]="edit.$value"

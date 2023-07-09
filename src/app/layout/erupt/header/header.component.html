@@ -1,0 +1,86 @@
+<div class="alain-default__header-logo" ripper color="#000">
+    <a [routerLink]="settings.user['indexPath']" (click)="toIndex()" class="header-link" style="user-select:none">
+        <img *ngIf="logoPath" [src]="logoPath" class="header-logo-img" alt=""/>
+        <span *ngIf="logoText" class="header-logo-text hidden-mobile">{{logoText}}</span>
+    </a>
+</div>
+
+<div class="alain-default__nav-wrap">
+    <ul class="alain-default__nav">
+        <!-- Search Button -->
+        <li class="hidden-pc">
+            <div class="alain-default__nav-item" (click)="toggleCollapsedSidebar()">
+                <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
+            </div>
+        </li>
+        <div class="hidden-mobile" *ngIf="settings.layout['breadcrumbs']">
+            <div class="alain-default__nav-item" style="padding:0 10px 0 18px">
+                <erupt-nav></erupt-nav>
+            </div>
+        </div>
+        <li *ngIf="desc">
+            <span nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="descTpl">
+            </span>
+            <ng-template #descTpl>
+                <div [innerHTML]="desc|html">
+
+                </div>
+            </ng-template>
+        </li>
+    </ul>
+
+    <ul class="alain-default__nav">
+        <ng-container *ngFor="let r of r_tools">
+            <li (click)="customToolsFun($event,r)" [ngClass]="r.mobileHidden?'hidden-mobile':''">
+                <div class="alain-default__nav-item" [title]="r.text">
+                    <i class="fa {{r.icon}}"></i>
+                </div>
+            </li>&nbsp;
+        </ng-container>
+
+        <nz-divider nzType="vertical" class="hidden-mobile" *ngIf="r_tools.length>0"></nz-divider>
+
+        <li *ngIf="menu">
+            <div class="alain-default__nav-item" (click)="search()">
+                <i nz-icon nzType="search"></i>
+            </div>
+        </li>
+
+        <li class="hidden-mobile" (click)="toggleScreen()">
+            <div class="alain-default__nav-item">
+                <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'"></i>
+            </div>
+        </li>
+
+        <li>
+            <div class="alain-default__nav-item">
+                <i18n-choice></i18n-choice>
+            </div>
+        </li>
+
+        <li>
+            <div class="alain-default__nav-item">
+                <header-rtl></header-rtl>
+            </div>
+        </li>
+
+        <li>
+            <div class="alain-default__nav-item hidden-mobile" (click)="openDrawer()">
+                <i nz-icon nzType="setting" nzTheme="outline"></i>
+            </div>
+            <nz-drawer [nzClosable]="true" [nzVisible]="drawerVisible" [nzWidth]="260"
+                       [nzBodyStyle]="{padding:'8px 24px'}" (nzOnClose)="closeDrawer()"
+                       [nzTitle]="'setting.config' | translate" nzPlacement="right">
+                <ng-container *nzDrawerContent>
+                    <erupt-settings>
+
+                    </erupt-settings>
+                </ng-container>
+            </nz-drawer>
+        </li>
+
+        <li>
+            <header-user></header-user>
+        </li>
+    </ul>
+</div>

@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from "@angular/core";
 import {BiDataService} from "../../service/data.service";
 import {Bi, Dimension, Reference} from "../../model/bi.model";
 import {HandlerService} from "../../service/handler.service";
+import {I18NService} from "@core";
 
 @Component({
     selector: "erupt-bi-cascade",
@@ -18,8 +19,12 @@ export class CascadeComponent implements OnInit {
 
     data: any;
 
-    constructor(private dataService: BiDataService, private handlerService: HandlerService) {
+    constructor(private dataService: BiDataService, private handlerService: HandlerService, private i18nService: I18NService) {
 
+    }
+
+    fanyi(key: string): string {
+        return this.i18nService.fanyi("")
     }
 
     ngOnInit() {

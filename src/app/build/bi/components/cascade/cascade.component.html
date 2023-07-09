@@ -1,8 +1,7 @@
 <nz-spin [nzSpinning]="loading">
-    <nz-cascader [(ngModel)]="dim.$value"
-            [nzChangeOnSelect]="true"
-            [nzNotFoundContent]="'暂无数据'"
-            [nzOptions]="data"
-            [nzShowSearch]="true">
+    <nz-cascader [(ngModel)]="dim.$value" style="width: 100%"
+            [nzChangeOnSelect]="true" [nzShowSearch]="true"
+            [nzNotFoundContent]="fanyi('global.no_data')"
+            [nzOptions]="data">
     </nz-cascader>
 </nz-spin>

@@ -1,9 +1,9 @@
 import {Component, Input, OnInit, ViewChild} from "@angular/core";
-import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd";
 import {BiDataService} from "../../service/data.service";
 import {Bi, Dimension, DimType, Reference} from "../../model/bi.model";
 import {NzTreeNode} from "ng-zorro-antd/core/tree/nz-tree-base-node";
 import {HandlerService} from "../../service/handler.service";
+import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd/core/tree";
 
 @Component({
     selector: "erupt-reference-select",

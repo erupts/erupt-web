@@ -1,14 +1,17 @@
 import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
 import {ActivatedRoute} from "@angular/router";
-import {NzFormatEmitEvent, NzMessageService, NzModalService, NzTreeBaseService} from "ng-zorro-antd";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {Subscription} from "rxjs";
 import {Status} from "../../model/erupt-api.model";
 import {colRules} from "@shared/model/util.model";
-import {ALAIN_I18N_TOKEN, SettingsService} from "@delon/theme";
+import {SettingsService} from "@delon/theme";
 import {I18NService} from "@core";
+import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd/core/tree";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {AppViewService} from "@shared/service/app-view.service";
 
 @Component({
     selector: "erupt-tree",
@@ -51,19 +54,21 @@ export class TreeComponent implements OnInit, OnDestroy {
                 @Inject(NzMessageService)
                 private msg: NzMessageService,
                 public settingSrv: SettingsService,
-                @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+                private i18n: I18NService,
+                private appViewService: AppViewService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 private dataHandler: DataHandlerService) {
     }
 
     ngOnInit(): void {
-        this.router$ = this.route.params.subscribe((params) => {
+        this.router$ = this.route.params.subscribe((params: any) => {
             this.eruptBuildModel = null;
             this.eruptName = params.name;
             this.currentKey = null;
             this.showEdit = false;
             this.dataService.getEruptBuild(this.eruptName).subscribe(eb => {
+                this.appViewService.setRouterViewDesc(eb.eruptModel.eruptJson.desc);
                 this.dataHandler.initErupt(eb);
                 this.eruptBuildModel = eb;
                 this.fetchTreeData();
@@ -116,7 +121,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         //校验菜单和合法性
         if (this.validateParentIdValue()) {
             this.loading = true;
-            this.dataService.editEruptData(this.eruptBuildModel.eruptModel.eruptName,
+            this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName,
                 this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
                 if (result.status == Status.SUCCESS) {
                     this.msg.success(this.i18n.fanyi("global.update.success"));

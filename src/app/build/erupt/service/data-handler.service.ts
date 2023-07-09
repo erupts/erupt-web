@@ -1,7 +1,6 @@
 import {Edit, EruptFieldModel, VL} from "../model/erupt-field.model";
 import {EruptModel, Tree} from "../model/erupt.model";
 import {DateEnum, EditType} from "../model/erupt.enum";
-import {NzMessageService, NzModalService, UploadFile} from "ng-zorro-antd";
 import {deepCopy} from "@delon/util";
 import {Inject, Injectable} from "@angular/core";
 import {EruptBuildModel} from "../model/erupt-build.model";
@@ -10,14 +9,24 @@ import {DatePipe} from "@angular/common";
 import * as moment from 'moment';
 import {QueryCondition} from "../model/erupt.vo";
 import {isNotNull} from "@shared/util/erupt.util";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzUploadFile} from "ng-zorro-antd/upload/interface";
+import {NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
+import {I18NService} from "@core";
 
 @Injectable()
 export class DataHandlerService {
 
+    private datePipe: DatePipe;
+
     constructor(
         @Inject(NzModalService) private modal: NzModalService,
-        @Inject(NzMessageService) private msg: NzMessageService) {
+        @Inject(NzMessageService) private msg: NzMessageService,
+        private i18n: I18NService) {
+        this.datePipe = i18n.datePipe;
     }
+
 
     initErupt(em: EruptBuildModel) {
         this.buildErupt(em.eruptModel);
@@ -48,9 +57,9 @@ export class DataHandlerService {
             if (!field.eruptFieldJson.edit) {
                 return;
             }
-            if (field.choiceList) {
+            if (field.componentValue) {
                 field.choiceMap = new Map<String, VL>();
-                for (let vl of field.choiceList) {
+                for (let vl of field.componentValue) {
                     field.choiceMap.set(vl.value, vl);
                 }
             }
@@ -92,35 +101,6 @@ export class DataHandlerService {
         });
     }
 
-
-    buildSearchErupt(eruptBuildModel: EruptBuildModel): EruptModel {
-        let copyErupt = <EruptModel>deepCopy(eruptBuildModel.eruptModel);
-        const searchFieldModels = [];
-        const searchFieldModelsMap: Map<String, EruptFieldModel> = new Map();
-        let searchCondition = eruptBuildModel.eruptModel.searchCondition;
-        copyErupt.eruptFieldModels.forEach((field) => {
-            if (!field.eruptFieldJson.edit) {
-                return;
-            }
-            searchFieldModelsMap.set(field.fieldName, field);
-            if (field.eruptFieldJson.edit.search.value) {
-                field.value = null;
-                field.eruptFieldJson.edit.notNull = field.eruptFieldJson.edit.search.notNull;
-                field.eruptFieldJson.edit.show = true;
-                field.eruptFieldJson.edit.readOnly.add = false;
-                field.eruptFieldJson.edit.readOnly.edit = false;
-                field.eruptFieldJson.edit.$value = searchCondition && searchCondition[field.fieldName];
-                field.eruptFieldJson.edit.$viewValue = null;
-                field.eruptFieldJson.edit.$tempValue = null;
-                searchFieldModels.push(field);
-            }
-        });
-        copyErupt.mode = "search";
-        copyErupt.eruptFieldModels = searchFieldModels;
-        copyErupt.eruptFieldModelMap = searchFieldModelsMap;
-        return copyErupt;
-    }
-
     //非空验证
     validateNotNull(eruptModel: EruptModel, combineErupt?: { [key: string]: EruptModel }): boolean {
         for (let field of eruptModel.eruptFieldModels) {
@@ -141,8 +121,8 @@ export class DataHandlerService {
         return true;
     }
 
-    dataTreeToZorroTree(nodes: Tree[], expandLevel: number) {
-        const tempNodes = [];
+    dataTreeToZorroTree(nodes: Tree[], expandLevel: number): NzTreeNodeOptions[] {
+        const tempNodes: NzTreeNodeOptions[] = [];
         nodes.forEach(node => {
             let option: any = {
                 key: node.id,
@@ -172,8 +152,6 @@ export class DataHandlerService {
         return queryCondition;
     }
 
-    private datePipe: DatePipe = new DatePipe("zh-cn");
-
     searchEruptToObject(eruptBuildModel: EruptBuildModel): object {
         const obj = this.eruptValueToObject(eruptBuildModel);
         eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
@@ -183,7 +161,7 @@ export class DataHandlerService {
                     switch (edit.type) {
                         case EditType.CHOICE:
                             let arr = [];
-                            for (let vl of field.choiceList) {
+                            for (let vl of field.componentValue) {
                                 if (vl.$viewValue) {
                                     arr.push(vl.value);
                                 }
@@ -332,7 +310,7 @@ export class DataHandlerService {
                     case EditType.ATTACHMENT:
                         if (edit.$viewValue) {
                             const $value: string[] = [];
-                            (<UploadFile[]>edit.$viewValue).forEach(val => {
+                            (<NzUploadFile[]>edit.$viewValue).forEach(val => {
                                 $value.push(val.response.data);
                             });
                             eruptData[field.fieldName] = $value.join(edit.attachmentType.fileSeparator);
@@ -358,12 +336,8 @@ export class DataHandlerService {
                         }
                         break;
                     // case EditType.CODE_EDITOR:
-                    //     let val = edit.$viewValue;
-                    //     if (val) {
-                    //         val = val.getValue();
-                    //         if (val || val === 0) {
-                    //             eruptData[field.fieldName] = val;
-                    //         }
+                    //     if (edit.$value || edit.$value === 0) {
+                    //         eruptData[field.fieldName] = btoa(encodeURIComponent(edit.$value))
                     //     }
                     //     break;
                     default:
@@ -509,7 +483,7 @@ export class DataHandlerService {
                         if (object[field.fieldName]) {
                             (<string>object[field.fieldName]).split(edit.attachmentType.fileSeparator)
                                 .forEach(str => {
-                                    (<UploadFile[]>edit.$viewValue).push({
+                                    (<NzUploadFile[]>edit.$viewValue).push({
                                         uid: str,
                                         name: str,
                                         size: 1,
@@ -586,12 +560,10 @@ export class DataHandlerService {
             ef.eruptFieldJson.edit.$value = null;
             switch (ef.eruptFieldJson.edit.type) {
                 case EditType.CHOICE:
-                    if (eruptBuildModel.eruptModel.mode === "search") {
-                        if (ef.eruptFieldJson.edit.choiceType.vl) {
-                            ef.eruptFieldJson.edit.choiceType.vl.forEach(v => {
-                                v.$viewValue = false;
-                            });
-                        }
+                    if (ef.eruptFieldJson.edit.choiceType.vl) {
+                        ef.eruptFieldJson.edit.choiceType.vl.forEach(v => {
+                            v.$viewValue = false;
+                        });
                     }
                     break;
                 case EditType.INPUT:

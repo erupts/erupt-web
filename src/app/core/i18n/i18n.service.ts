@@ -1,165 +1,214 @@
 // 请参考：https://ng-alain.com/docs/i18n
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {filter} from 'rxjs/operators';
-
-import {registerLocaleData} from '@angular/common';
-import ngZh from '@angular/common/locales/zh';
+import {Platform} from '@angular/cdk/platform';
+import {DatePipe, registerLocaleData} from '@angular/common';
 import ngEn from '@angular/common/locales/en';
+import ngZh from '@angular/common/locales/zh';
+import ngFr from '@angular/common/locales/fr';
+import ngEs from '@angular/common/locales/es';
+import ngRu from '@angular/common/locales/ru';
+import ngZhTw from '@angular/common/locales/zh-Hant';
 import ngKO from '@angular/common/locales/ko';
 import ngJA from '@angular/common/locales/ja';
-import ngZhTw from '@angular/common/locales/zh-Hant-HK';
-
-import {NzI18nService, en_US, zh_CN, ko_KR, ja_JP, zh_TW} from 'ng-zorro-antd';
-import * as df_en from 'date-fns/locale/en';
-import * as df_zh_cn from 'date-fns/locale/zh_cn';
-import * as df_ko from 'date-fns/locale/ko';
-import * as df_zh_tw from 'date-fns/locale/zh_tw';
-import * as df_ja from 'date-fns/locale/ja';
-
-import {TranslateService} from '@ngx-translate/core';
+import {Injectable} from '@angular/core';
 import {
-    AlainI18NService, DelonLocaleService,
+    DelonLocaleService,
     en_US as delonEnUS,
-    en_US as delonZhTw,
+    ja_JP as delonJp,
+    ko_KR as delonKo,
     SettingsService,
-    ko_KR as delonKoKR,
     zh_CN as delonZhCn,
+    zh_TW as delonZhTw,
+    fr_FR as delonFr,
+    es_ES as delonEs
 } from '@delon/theme';
-import {EruptAppData} from "@core/startup/erupt-app.data";
+import {
+    enUS as dfEn,
+    ja as dfJp,
+    ko as dfKo,
+    zhCN as dfZhCn,
+    zhTW as dfZhTw,
+    fr as dfFr,
+    ru as dfRu,
+    es as dfEs
+} from 'date-fns/locale';
+import {NzSafeAny} from 'ng-zorro-antd/core/types';
+import {
+    en_US as zorroEnUS,
+    ja_JP,
+    ko_KR,
+    NzI18nService,
+    zh_CN as zorroZhCN,
+    zh_TW as zorroZhTW,
+    fr_FR as zorroFr,
+    es_ES as zorroEs,
+    ru_RU as zorroRu
+} from 'ng-zorro-antd/i18n';
+import {WindowModel} from "@shared/model/window.model";
+import {HttpClient} from "@angular/common/http";
 
-interface LangData {
-    text: string;
-    ng: any;
-    zorro: any;
-    dateFns: any;
-    delon: any;
+interface LangConfigData {
     abbr: string;
+    text: string;
+    date: NzSafeAny;
+    ng: NzSafeAny;
+    zorro: NzSafeAny;
+    delon: NzSafeAny;
 }
 
-const DEFAULT = 'zh-CN';
-const LANGS: { [key: string]: LangData } = {
+const LANGS: { [key: string]: LangConfigData } = {
     'zh-CN': {
+        abbr: '🇨🇳',
         text: '简体中文',
         ng: ngZh,
-        zorro: zh_CN,
-        dateFns: df_zh_cn,
+        date: dfZhCn,
+        zorro: zorroZhCN,
         delon: delonZhCn,
-        abbr: '🇨🇳',
     },
     'zh-TW': {
-        text: '繁体中文',
-        ng: ngZhTw,
-        zorro: zh_TW,
-        dateFns: df_zh_tw,
-        delon: delonZhTw,
         abbr: '🇭🇰',
+        text: '繁体中文',
+        date: dfZhTw,
+        ng: ngZhTw,
+        zorro: zorroZhTW,
+        delon: delonZhTw,
+
     },
     'en-US': {
-        text: 'English',
-        ng: ngEn,
-        zorro: en_US,
-        dateFns: df_en,
-        delon: delonEnUS,
         abbr: '🇬🇧',
+        text: 'English',
+        date: dfEn,
+        ng: ngEn,
+        zorro: zorroEnUS,
+        delon: delonEnUS,
     },
-    'ko-KR': {
-        text: '한국어',
-        ng: ngKO,
-        zorro: ko_KR,
-        dateFns: df_ko,
-        delon: delonKoKR,
-        abbr: '🇰🇷',
+    'fr-FR': {
+        abbr: '🇫🇷',
+        text: 'En français',
+        date: dfFr,
+        ng: ngFr,
+        zorro: zorroFr,
+        delon: delonFr,
     },
     'ja-JP': {
+        abbr: '🇯🇵',
         text: '日本語',
+        date: dfJp,
         ng: ngJA,
         zorro: ja_JP,
-        dateFns: df_ja,
-        delon: delonZhCn,
-        abbr: '🇯🇵',
+        delon: delonJp,
     },
+    'ko-KR': {
+        abbr: '🇰🇷',
+        text: '한국어',
+        date: dfKo,
+        ng: ngKO,
+        zorro: ko_KR,
+        delon: delonKo,
+    },
+    'ru-RU': {
+        abbr: '🇷🇺',
+        text: 'русск',
+        date: dfRu,
+        ng: ngRu,
+        zorro: zorroRu,
+        delon: delonEs,
+    },
+    'es-ES': {
+        abbr: '🇪🇸',
+        text: 'español',
+        date: dfEs,
+        ng: ngEs,
+        zorro: zorroEs,
+        delon: delonEnUS,
+    }
 };
 
-@Injectable({providedIn: 'root'})
-export class I18NService implements AlainI18NService {
-
-    private _default = DEFAULT;
-
-    private change$ = new BehaviorSubject<string | null>(null);
+for (let key in LANGS) {
+    registerLocaleData(LANGS[key].ng);
+}
 
 
-    private _langs = Object.keys(LANGS).map(code => {
-        const item = LANGS[code];
-        return {code, text: item.text, abbr: item.abbr};
-    });
+@Injectable()
+export class I18NService {
+
+    currentLang: string;
+
+    langMapping: { [key: string]: string };
+
+    public datePipe: DatePipe;
+
+    private getDefaultLang(): string {
+        if (this.settings.layout.lang) {
+            return this.settings.layout.lang;
+        }
+        if (!this.platform.isBrowser) {
+            return 'zh-CN';
+        }
+        let res = (navigator.languages ? navigator.languages[0] : null) || navigator.language;
+        const arr = res.split('-');
+        return arr.length <= 1 ? res : `${arr[0]}-${arr[1].toUpperCase()}`;
+    }
 
     constructor(
-        settings: SettingsService,
+        private http: HttpClient,
+        private settings: SettingsService,
         private nzI18nService: NzI18nService,
         private delonLocaleService: DelonLocaleService,
-        private translate: TranslateService,
+        private platform: Platform
     ) {
-        // `@ngx-translate/core` 预先知道支持哪些语言
-        const lans = this._langs.map(item => item.code);
-        translate.addLangs(lans);
-        let defaultLan;
-        if (EruptAppData.get() && EruptAppData.get().locales && EruptAppData.get().locales.length > 0) {
-            defaultLan = settings.layout.lang || EruptAppData.get().locales[0];
-        } else {
-            defaultLan = settings.layout.lang || translate.getBrowserLang();
-        }
-        if (lans.includes(defaultLan)) {
-            this._default = defaultLan;
-        }
-        this.updateLangData(this._default);
+        const defaultLang = this.getDefaultLang();
+        this.currentLang = LANGS[defaultLang] ? defaultLang : 'en-US'
+        this.use(this.currentLang);
+        this.datePipe = new DatePipe(this.currentLang);
     }
 
-    private updateLangData(lang: string) {
-        const item = LANGS[lang];
-        registerLocaleData(item.ng);
-        this.nzI18nService.setLocale(item.zorro);
-        // this.nzI18nService.setDateLocale(item.dateFns);
-        (window as any).__locale__ = item.dateFns;
-        this.delonLocaleService.setLocale(item.delon);
-    }
+    loadLangData(success) {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', "assets/erupt.i18n.csv");
+        xhr.send();
+        xhr.onreadystatechange = () => {
+            let langMapping = {};
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                let allRows = xhr.responseText.split(/\r?\n|\r/);
+                let header = allRows[0].split(',');
+                let index;
+                for (let i = 0; i < header.length; i++) {
+                    if (header[i] == this.currentLang) {
+                        index = i;
+                    }
+                }
+                allRows.forEach(it => {
+                    let row = it.split(',');
+                    langMapping[row[0]] = row[index];
+                })
+                this.langMapping = langMapping;
+                success();
+            }
+        };
 
-    get change(): Observable<string> {
-        return this.change$.asObservable().pipe(filter(w => w != null)) as Observable<string>;
     }
 
     use(lang: string): void {
-        lang = lang || this.translate.getDefaultLang();
-        if (this.currentLang === lang) return;
-        this.updateLangData(lang);
-        this.translate.use(lang).subscribe(() => this.change$.next(lang));
+        const item = LANGS[lang];
+        registerLocaleData(item.ng, item.abbr);
+        this.nzI18nService.setLocale(item.zorro);
+        this.nzI18nService.setDateLocale(item.date);
+        this.delonLocaleService.setLocale(item.delon);
+        this.currentLang = lang;
     }
 
-    /** 获取语言列表 */
-    getLangs() {
-        let langs = [];
-        for (let lang of this._langs) {
-            for (let locale of EruptAppData.get().locales) {
-                if (lang.code.toLocaleLowerCase() == locale.toLocaleLowerCase()) {
-                    langs.push(lang);
-                }
+    getLangs(): Array<{ code: string; text: string; abbr: string }> {
+        return Object.keys(LANGS).map(it => {
+            return {
+                code: it,
+                text: LANGS[it].text,
+                abbr: LANGS[it].abbr
             }
-        }
-        return langs;
+        })
     }
 
-    /** 翻译 */
-    fanyi(key: string, interpolateParams?: {}) {
-        return this.translate.instant(key, interpolateParams);
+    fanyi(key: string) {
+        return this.langMapping[key] || key;
     }
 
-    /** 默认语言 */
-    get defaultLang() {
-        return this._default;
-    }
-
-    /** 当前语言 */
-    get currentLang() {
-        return this.translate.currentLang || this.translate.getDefaultLang() || this._default;
-    }
 }

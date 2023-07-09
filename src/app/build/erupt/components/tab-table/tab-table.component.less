@@ -1,7 +1,25 @@
 :host {
-  ::ng-deep {
-    .ant-table {
-      border-radius: 0;
+    ::ng-deep {
+        .ant-table {
+            border-radius: 0;
+        }
+
+        .tab-bar {
+            background: #fafafa;
+            border: 1px solid #e8e8e8;
+            border-bottom: 0;
+            padding: 8px 12px
+        }
     }
-  }
+}
+
+[data-theme='dark'] {
+    :host {
+        ::ng-deep {
+            .tab-bar {
+                background: #1f1f1f;
+                border: 1px solid #434343;
+            }
+        }
+    }
 }

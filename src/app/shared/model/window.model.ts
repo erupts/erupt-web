@@ -1,10 +1,6 @@
-import {Input} from "@angular/core";
-
 export class WindowModel {
 
     private static config: any = window["eruptSiteConfig"] || {};
-
-    public static i18n: any = window["eruptI18n"] || {};
 
     public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';
 
@@ -13,6 +9,8 @@ export class WindowModel {
     public static r_tools: CustomerTool[] = WindowModel.config["r_tools"] || [];
 
     public static amapKey: string = WindowModel.config["amapKey"];
+
+    public static amapSecurityJsCode: string = WindowModel.config["amapSecurityJsCode"];
 
     public static title: string = WindowModel.config["title"] || 'Erupt Framework';
 

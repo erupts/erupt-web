@@ -1,0 +1,241 @@
+<form nz-form [nzLayout]="'horizontal'">
+    <div nz-row [nzGutter]="16">
+        <ng-container *ngFor="let field of eruptModel.eruptFieldModels">
+            <ng-container *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.search.value">
+                <ng-container [ngSwitch]="field.eruptFieldJson.edit.type">
+                    <ng-template #inputTpl>
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <erupt-search-se [field]="field">
+                                <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size"
+                                                [ngStyle]="{borderStyle:(field.eruptFieldJson.edit.search.vague)?'dashed':''}">
+                                    <input nz-input [nzSize]="size" autocomplete="off"
+                                           [type]="field.eruptFieldJson.edit.inputType?field.eruptFieldJson.edit.inputType.type:'text'"
+                                           [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                           [name]="field.fieldName"
+                                           (keydown)="enterEvent($event)"
+                                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                           [required]="field.eruptFieldJson.edit.search.notNull">
+                                </nz-input-group>
+                                <ng-template #suffixTemplate>
+                                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill"
+                                       nzType="close-circle"
+                                       *ngIf="field.eruptFieldJson.edit.$value"
+                                       (click)="field.eruptFieldJson.edit.$value = null"></i>
+                                </ng-template>
+                            </erupt-search-se>
+                        </div>
+                    </ng-template>
+                    <ng-container *ngSwitchCase="editType.INPUT" [ngTemplateOutlet]="inputTpl"></ng-container>
+                    <ng-container *ngSwitchCase="editType.TEXTAREA" [ngTemplateOutlet]="inputTpl"></ng-container>
+                    <ng-container *ngSwitchCase="editType.HTML_EDITOR" [ngTemplateOutlet]="inputTpl"></ng-container>
+                    <ng-container *ngSwitchCase=" editType.CODE_EDITOR" [ngTemplateOutlet]="inputTpl"></ng-container>
+                    <ng-container *ngSwitchCase="editType.NUMBER">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                             [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
+                            <erupt-search-se [field]="field">
+                                <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
+                                    <nz-input-group [nzSize]="size" class="erupt-input"
+                                                    style="display: flex;align-items: center">
+                                        <nz-input-number [nzSize]="size" style="width: 45%;"
+                                                         [(ngModel)]="field.eruptFieldJson.edit.$l_val"
+                                                         [name]="field.fieldName"
+                                                         [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
+                                                         [nzMin]="field.eruptFieldJson.edit.numberType.min"
+                                                         [nzMax]="field.eruptFieldJson.edit.numberType.max"
+                                                         [nzStep]="1"></nz-input-number>
+                                        <input [nzSize]="size" disabled nz-input placeholder="~"
+                                               style="width: 30px; border-left: 0; border-right: 0; pointer-events: none;"
+                                        />
+
+                                        <nz-input-number [nzSize]="size" style="width: 45%;"
+                                                         [(ngModel)]="field.eruptFieldJson.edit.$r_val"
+                                                         [name]="field.fieldName"
+                                                         [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
+                                                         [nzMin]="field.eruptFieldJson.edit.numberType.min"
+                                                         [nzMax]="field.eruptFieldJson.edit.numberType.max"
+                                                         [nzStep]="1"></nz-input-number>
+                                    </nz-input-group>
+                                </ng-container>
+                                <ng-container
+                                    *ngIf="!field.eruptFieldJson.edit.search.vague">
+                                    <nz-input-number class="erupt-input" [nzSize]="size"
+                                                     [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                     [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
+                                                     [name]="field.fieldName"
+                                                     (keydown)="enterEvent($event)"
+                                                     [nzMin]="field.eruptFieldJson.edit.numberType.min"
+                                                     [nzMax]="field.eruptFieldJson.edit.numberType.max"
+                                                     [nzStep]="1"></nz-input-number>
+                                </ng-container>
+                            </erupt-search-se>
+                        </div>
+                    </ng-container>
+                    <!--choice-->
+                    <ng-container *ngSwitchCase="editType.CHOICE">
+                        <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
+                            <div nz-col [nzXs]="24">
+                                <erupt-search-se [field]="field">
+                                    <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
+                                                  [vagueSearch]="true" [checkAll]="true">
+
+                                    </erupt-choice>
+                                </erupt-search-se>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="!field.eruptFieldJson.edit.search.vague">
+                            <ng-container [ngSwitch]="field.eruptFieldJson.edit.choiceType.type">
+                                <ng-container *ngSwitchCase="choiceEnum.RADIO">
+                                    <div nz-col [nzXs]="24">
+                                        <erupt-search-se [field]="field">
+                                            <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size">
+
+                                            </erupt-choice>
+                                        </erupt-search-se>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="choiceEnum.SELECT">
+                                    <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                                         [nzLg]="col.lg"
+                                         [nzXl]="col.xl"
+                                         [nzXXl]="col.xxl">
+                                        <erupt-search-se [field]="field">
+                                            <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size">
+
+                                            </erupt-choice>
+                                        </erupt-search-se>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.TAGS">
+                        <div nz-col [nzSpan]="24">
+                            <erupt-search-se [field]="field">
+                                <nz-select [nzAllowClear]='!field.eruptFieldJson.edit.notNull'
+                                           style="width: 100%"
+                                           [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                           [name]="field.fieldName"
+                                           [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
+                                           [nzTokenSeparators]="[field.eruptFieldJson.edit.tagsType.joinSeparator]"
+                                           [nzMode]="field.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'">
+                                    <nz-option *ngFor="let item of field.componentValue" [nzLabel]="item"
+                                               [nzValue]="item"></nz-option>
+                                </nz-select>
+                            </erupt-search-se>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.SLIDER">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl" [nzXXl]="col.xxl">
+                            <erupt-search-se [field]="field">
+                                <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
+                                    <nz-slider class="erupt-input" nzRange
+                                               [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [nzMarks]="field.eruptFieldJson.edit.sliderType.marks"
+                                               [nzDots]="field.eruptFieldJson.edit.sliderType.dots"
+                                               [nzStep]="field.eruptFieldJson.edit.sliderType.dots?null:field.eruptFieldJson.edit.sliderType.step"
+                                               [name]="field.fieldName"
+                                               [nzMax]="field.eruptFieldJson.edit.sliderType.max"
+                                               [nzMin]="field.eruptFieldJson.edit.sliderType.min"></nz-slider>
+                                </ng-container>
+                                <ng-container *ngIf="!field.eruptFieldJson.edit.search.vague">
+                                    <nz-slider class="erupt-input"
+                                               [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [nzMarks]="field.eruptFieldJson.edit.sliderType.marks"
+                                               [nzDots]="field.eruptFieldJson.edit.sliderType.dots"
+                                               [nzStep]="field.eruptFieldJson.edit.sliderType.step"
+                                               [name]="field.fieldName"
+                                               [nzMax]="field.eruptFieldJson.edit.sliderType.max"
+                                               [nzMin]="field.eruptFieldJson.edit.sliderType.min"></nz-slider>
+                                </ng-container>
+                            </erupt-search-se>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.RATE">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl" [nzXXl]="col.xxl">
+                            <erupt-search-se [field]="field">
+                                <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
+                                    <nz-slider class="erupt-input" nzRange [name]="field.fieldName"
+                                               [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [nzMax]="field.eruptFieldJson.edit.rateType.count"
+                                               [nzMin]="0"></nz-slider>
+                                </ng-container>
+                                <ng-container *ngIf="!field.eruptFieldJson.edit.search.vague">
+                                    <nz-slider class="erupt-input" [name]="field.fieldName"
+                                               [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [nzMax]="field.eruptFieldJson.edit.rateType.count"
+                                               [nzMin]="0"></nz-slider>
+                                </ng-container>
+                            </erupt-search-se>
+                        </div>
+                    </ng-container>
+                    <!--date-->
+                    <ng-container *ngSwitchCase="editType.DATE">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <erupt-search-se [field]="field">
+                                <erupt-date [field]="field" [size]="size"
+                                            [range]="field.eruptFieldJson.edit.search.vague"></erupt-date>
+                            </erupt-search-se>
+                        </div>
+                    </ng-container>
+                    <!--reference-->
+                    <ng-container *ngSwitchCase="editType.REFERENCE_TABLE">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <erupt-search-se [field]="field">
+                                <erupt-reference [eruptModel]="eruptModel" [field]="field" [readonly]="false"
+                                                 [size]="size"></erupt-reference>
+                            </erupt-search-se>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.REFERENCE_TREE">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <erupt-search-se [field]="field">
+                                <erupt-reference [eruptModel]="eruptModel" [field]="field" [readonly]="false"
+                                                 [size]="size"></erupt-reference>
+                            </erupt-search-se>
+                        </div>
+                    </ng-container>
+                    <!--bool-->
+                    <ng-container *ngSwitchCase="editType.BOOLEAN">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <erupt-search-se [field]="field">
+                                <nz-select class="erupt-input"
+                                           [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                           [name]="field.fieldName"
+                                           [nzMode]="'default'"
+                                           nzAllowClear>
+                                    <nz-option
+                                        [nzLabel]="field.eruptFieldJson.edit.boolType.trueText | translate"
+                                        [nzValue]="true"></nz-option>
+                                    <nz-option
+                                        [nzLabel]="field.eruptFieldJson.edit.boolType.falseText | translate"
+                                        [nzValue]="false"></nz-option>
+                                </nz-select>
+                            </erupt-search-se>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.AUTO_COMPLETE">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <erupt-search-se [field]="field">
+                                <erupt-auto-complete [size]="size" [field]="field"
+                                                     [eruptModel]="eruptModel"></erupt-auto-complete>
+                            </erupt-search-se>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+    </div>
+</form>

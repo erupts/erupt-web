@@ -19,7 +19,7 @@ export class UeditorComponent implements OnInit {
 
     @Input() readonly: boolean;
 
-    @ViewChild("ue", {static: false}) ue: UEditorComponent;
+    @ViewChild("ue") ue: UEditorComponent;
 
     serverPath: string;
 

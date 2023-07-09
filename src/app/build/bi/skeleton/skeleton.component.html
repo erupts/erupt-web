@@ -1,0 +1,124 @@
+<div style="padding: 16px">
+    <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!bi"></nz-skeleton>
+    <div [id]="name">
+        <ng-container *ngIf="bi">
+            <div style="display: flex">
+                <ng-container>
+                    <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query({
+                            pageIndex: 1,
+                            pageSize: biTable.size
+                        },true);">
+                        <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
+                    </button>
+                </ng-container>
+                <ng-container *ngIf="bi.export">
+                    <button nz-button class="mb-sm"  (click)="exportBiData()" [nzLoading]="downloading"
+                            [disabled]="!biTable.data||biTable.data.length<=0">
+                        <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|translate}}
+                    </button>
+                </ng-container>
+                <div style="margin-left: auto">
+                    <ng-container *ngIf="columns && columns.length > 0">
+                        <button nz-button nzType="default" nz-popover
+                                [nzPopoverContent]="tableColumnCtrl"
+                                nzPopoverTrigger="click" class="mb-sm hidden-mobile">
+                            <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|translate}}
+                        </button>
+                        <nz-divider nzType="vertical" *ngIf="bi.dimensions.length > 0"></nz-divider>
+                        <ng-template #tableColumnCtrl>
+                            <div nz-row style="max-width: 520px;">
+                                <ng-container *ngFor="let col of st.columns">
+                                    <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
+                                        <label nz-checkbox [(ngModel)]="col['show']" style="width: 130px;"
+                                               (ngModelChange)="st.resetColumns()">{{col.title}}</label>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-template>
+                    </ng-container>
+                    <ng-container *ngIf="bi.dimensions.length > 0">
+                        <button nz-button class="mb-sm"  *ngIf="!hideCondition" (click)="clearCondition()" [disabled]="querying">
+                            <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
+                        </button>
+                        <button nz-button class="mb-sm"  (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
+                            <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                        </button>
+                    </ng-container>
+                </div>
+            </div>
+
+            <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom: 12px;margin-top: 4px"
+                     [hidden]="hideCondition" nzSize="small">
+                <bi-dimension [bi]="bi" (search)="query({
+                            pageIndex: 1,
+                            pageSize: biTable.size
+                        },true)"></bi-dimension>
+            </nz-card>
+            <ng-container *ngIf="bi.charts.length>0">
+                <div nz-row nzGutter="12">
+                    <ng-container>
+                        <ng-container *ngFor="let chart of bi.charts">
+                            <div nz-col [nzMd]="chart.grid" [nzXs]="24">
+                                <bi-chart #biChart [chart]="chart" [bi]="bi"></bi-chart>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="haveNotNull&&this.bi.table">
+                <nz-card [nzHoverable]="true" [nzBordered]="true">
+                    <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开启查询操作'">
+                        <div nz-result-extra>
+                            <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying"
+                                    (click)="query({pageIndex: 1,pageSize: biTable.size})"
+                                    [nzGhost]="true">
+                                <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
+                            </button>
+                        </div>
+                    </nz-result>
+                    <ng-template #icon>
+                        <i nz-icon nzType="rocket" nzTheme="twotone"></i>
+                    </ng-template>
+                </nz-card>
+            </ng-container>
+
+
+            <ng-container *ngIf="!haveNotNull">
+                <ng-container *ngIf="bi.table">
+                    <ng-container *ngIf="columns.length <= 0">
+                        <nz-card>
+                            <nz-empty></nz-empty>
+                        </nz-card>
+                    </ng-container>
+                    <ng-container *ngIf="columns && columns.length > 0">
+                        <st #st [columns]="columns"
+                            [data]="biTable.data"
+                            (change)="biTableChange($event)"
+                            [loading]="querying"
+                            [ps]="biTable.size"
+                            [page]="biTable.page"
+                            [scroll]="{x: (clientWidth > 768 ? columns.length * 150 : 0) + 'px'}"
+                            [bordered]="settingSrv.layout['bordered']" [resizable]="true"
+                            [size]="'small'" style="margin-bottom: 12px">
+                        </st>
+                        <ng-container *ngIf="biTable.pageType == pageType.backend">
+                            <nz-pagination style="text-align: center" nzShowSizeChanger nzShowQuickJumper
+                                           [nzPageIndex]="biTable.index"
+                                           [nzPageSize]="biTable.size"
+                                           [nzTotal]="biTable.total"
+                                           [nzPageSizeOptions]="biTable.page.pageSizes"
+                                           [nzSize]="'small'"
+                                           [nzShowTotal]="totalTemplate"
+                                           (nzPageSizeChange)="pageSizeChange($event)"
+                                           (nzPageIndexChange)="pageIndexChange($event)"
+                            ></nz-pagination>
+                            <ng-template #totalTemplate let-total>共{{ biTable.total }}条</ng-template>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+    </div>
+</div>
+

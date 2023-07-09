@@ -1,5 +1,4 @@
 import {EruptModel, Power} from "./erupt.model";
-import {EruptFieldModel} from "./erupt-field.model";
 
 export interface EruptBuildModel {
     eruptModel: EruptModel;
@@ -10,8 +9,3 @@ export interface EruptBuildModel {
     operationErupts?: { [key: string]: EruptModel };
 }
 
-export interface EruptAndEruptFieldModel {
-    eruptModel: EruptModel;
-    eruptFieldModel: EruptFieldModel;
-    alainTableConfig?: any[];
-}
