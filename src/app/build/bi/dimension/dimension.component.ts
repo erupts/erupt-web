@@ -41,6 +41,12 @@ export class DimensionComponent implements OnInit {
         };
     }
 
+    enterEvent(event) {
+        if (event.which === 13) {
+            this.search.emit();
+        }
+    }
+
     ref(dim: Dimension) {
         this.modal.create({
             nzWrapClassName: "modal-xs",
