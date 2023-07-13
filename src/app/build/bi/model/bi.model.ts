@@ -111,6 +111,7 @@ export interface Column {
     width: number;
     sortable: boolean;
     display: boolean;
+    remark: string;
     type: columnType;
 }
 

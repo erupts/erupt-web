@@ -168,9 +168,14 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                     for (let column of res.columns) {
                         if (column.display) {
                             let col: STColumn = {
-                                title: column.name,
+                                title: {
+                                    text: column.name,
+                                    optional: "   ",
+                                    optionalHelp: column.remark
+                                },
                                 index: column.name,
                                 width: column.width,
+
                                 className: "text-center",
                                 iif: (item) => {
                                     return item['show'];
