@@ -109,9 +109,12 @@ export class TableComponent implements OnInit {
     @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
         this._drill = drill;
         this.init(this.dataService.getEruptBuild(drill.erupt), {
-            url: RestPath.data + "/" + drill.eruptParent + "/drill/" + drill.code + "/" + drill.val,
+            url: RestPath.data + "/table/" + drill.erupt,
             header: {
-                erupt: drill.eruptParent
+                erupt: drill.erupt,
+                drill: drill.code,
+                drillSourceErupt: drill.eruptParent,
+                drillValue: drill.val
             }
         });
     }
