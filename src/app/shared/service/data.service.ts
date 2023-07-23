@@ -54,6 +54,14 @@ export class DataService {
         return RestPath.erupt + "/code-img?mark=" + mark;
     }
 
+    public static drillToHeader(source: string, code: string, val: any): object {
+        return {
+            drill: code,
+            drillSourceErupt: source,
+            drillValue: val
+        }
+    }
+
     static downloadAttachment(path: string): string {
         if (path && (path.startsWith("http://") || path.startsWith("https://"))) {
             return path;
@@ -432,12 +440,13 @@ export class DataService {
         // DataService.postExcelFile(RestPath.excel + "/template/" + eruptName + "?" + this.createAuthParam(eruptName));
     }
 
-    downloadExcel(eruptName: string, condition: any, callback: Function) {
+    downloadExcel(eruptName: string, condition: any, header: any, callback: Function) {
         this._http.post(RestPath.excel + "/export/" + eruptName, condition, null, {
             responseType: "arraybuffer",
             observe: 'events',
             headers: {
                 erupt: eruptName,
+                ...header,
                 ...this.getCommonHeader()
             }
         }).subscribe((res) => {

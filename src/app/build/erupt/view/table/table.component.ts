@@ -112,9 +112,7 @@ export class TableComponent implements OnInit {
             url: RestPath.data + "/table/" + drill.erupt,
             header: {
                 erupt: drill.erupt,
-                drill: drill.code,
-                drillSourceErupt: drill.eruptParent,
-                drillValue: drill.val
+                ...DataService.drillToHeader(drill.eruptParent, drill.code, drill.val)
             }
         });
     }
@@ -726,12 +724,14 @@ export class TableComponent implements OnInit {
                 eruptModel: this.searchErupt
             }));
         }
-        // this._drill.val
         //导出接口
         this.downloading = true;
-        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition, () => {
-            this.downloading = false;
-        });
+        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition,
+            this._drill ? DataService.drillToHeader(this._drill.eruptParent, this._drill.code, this._drill.val) : {},
+            () => {
+                this.downloading = false;
+            }
+        );
     }
 
 
