@@ -617,24 +617,18 @@ export class TableComponent implements OnInit {
                         this.adding = false;
                     }, 500);
                     if (modal.getContentComponent().beforeSaveValidate()) {
-                        let res: EruptApiModel;
-                        if (this._drill && this._drill.val) {
-                            res = await this.dataService.addEruptDrillData(
-                                this._drill.eruptParent,
-                                this._drill.code,
-                                this._drill.val,
-                                this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
-                        } else {
-                            let header = {};
-                            if (this.linkTree) {
-                                let lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
-                                if (lt.dependNode && lt.value) {
-                                    header["link"] = this.eruptBuildModel.eruptModel.eruptJson.linkTree.value;
-                                }
+                        let header = {};
+                        if (this.linkTree) {
+                            let lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
+                            if (lt.dependNode && lt.value) {
+                                header["link"] = this.eruptBuildModel.eruptModel.eruptJson.linkTree.value;
                             }
-                            res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                                this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
                         }
+                        if (this._drill) {
+                            Object.assign(header, DataService.drillToHeader(this._drill.eruptParent, this._drill.code, this._drill.val));
+                        }
+                        let res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                            this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
                         if (res.status === Status.SUCCESS) {
                             this.msg.success(this.i18n.fanyi("global.add.success"));
                             this.stLoad();
