@@ -10,7 +10,7 @@ import {I18NService} from "@core";
 import {downloadFile} from "@shared/util/erupt.util";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {VL} from "../../build/erupt/model/erupt-field.model";
-import {Checkbox, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
+import {Checkbox, DrillInput, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 
@@ -54,11 +54,11 @@ export class DataService {
         return RestPath.erupt + "/code-img?mark=" + mark;
     }
 
-    public static drillToHeader(source: string, code: string, val: any): object {
+    public static drillToHeader(drillInput: DrillInput): object {
         return {
-            drill: code,
-            drillSourceErupt: source,
-            drillValue: val
+            drill: drillInput.code,
+            drillSourceErupt: drillInput.eruptParent,
+            drillValue: drillInput.val
         }
     }
 

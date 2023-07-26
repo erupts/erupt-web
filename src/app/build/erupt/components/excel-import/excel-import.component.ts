@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnInit} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {EruptModel} from "../../model/erupt.model";
+import {DrillInput, EruptModel} from "../../model/erupt.model";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {NzModalService} from "ng-zorro-antd/modal";
@@ -16,20 +16,30 @@ export class ExcelImportComponent implements OnInit {
 
     @Input() eruptModel: EruptModel;
 
+    @Input() drillInput: DrillInput;
+
     upload: boolean = false;
 
     fileList = [];
 
     errorText: string;
 
+    header: object;
+
     constructor(public dataService: DataService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService,
                 @Inject(DA_SERVICE_TOKEN) public tokenService: TokenService) {
+
     }
 
     ngOnInit() {
+        this.header = {
+            token: this.tokenService.get().token,
+            erupt: this.eruptModel.eruptName,
+            ...DataService.drillToHeader(this.drillInput)
+        }
     }
 
 
