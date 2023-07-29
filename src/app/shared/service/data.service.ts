@@ -10,7 +10,7 @@ import {I18NService} from "@core";
 import {downloadFile} from "@shared/util/erupt.util";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {VL} from "../../build/erupt/model/erupt-field.model";
-import {Checkbox, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
+import {Checkbox, DrillInput, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 
@@ -52,6 +52,14 @@ export class DataService {
     //获取验证码
     static getVerifyCodeUrl(mark: any): string {
         return RestPath.erupt + "/code-img?mark=" + mark;
+    }
+
+    public static drillToHeader(drillInput: DrillInput): object {
+        return {
+            drill: drillInput.code,
+            drillSourceErupt: drillInput.eruptParent,
+            drillValue: drillInput.val
+        }
     }
 
     static downloadAttachment(path: string): string {
@@ -432,12 +440,13 @@ export class DataService {
         // DataService.postExcelFile(RestPath.excel + "/template/" + eruptName + "?" + this.createAuthParam(eruptName));
     }
 
-    downloadExcel(eruptName: string, condition: any, callback: Function) {
+    downloadExcel(eruptName: string, condition: any, header: any, callback: Function) {
         this._http.post(RestPath.excel + "/export/" + eruptName, condition, null, {
             responseType: "arraybuffer",
             observe: 'events',
             headers: {
                 erupt: eruptName,
+                ...header,
                 ...this.getCommonHeader()
             }
         }).subscribe((res) => {

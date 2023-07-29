@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {Drill, EruptModel, Row, RowOperation} from "../../model/erupt.model";
+import {Drill, DrillInput, EruptModel, Row, RowOperation} from "../../model/erupt.model";
 
 import {DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -20,7 +20,7 @@ import {
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {BuildConfig} from "../../model/build-config";
-import {EruptApiModel, Status} from "../../model/erupt-api.model";
+import {Status} from "../../model/erupt-api.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
@@ -101,17 +101,18 @@ export class TableComponent implements OnInit {
     //操作按钮数量
     operationButtonNum = 0;
 
-    _drill: { erupt: string, code: string, eruptParent: string, val: any };
+    _drill: DrillInput;
 
 
     adding: boolean = false; //新增行为防抖
 
-    @Input() set drill(drill: { erupt: string, code: string, eruptParent: string, val: any }) {
+    @Input() set drill(drill: DrillInput) {
         this._drill = drill;
         this.init(this.dataService.getEruptBuild(drill.erupt), {
-            url: RestPath.data + "/" + drill.eruptParent + "/drill/" + drill.code + "/" + drill.val,
+            url: RestPath.data + "/table/" + drill.erupt,
             header: {
-                erupt: drill.eruptParent
+                erupt: drill.erupt,
+                ...DataService.drillToHeader(drill)
             }
         });
     }
@@ -616,24 +617,18 @@ export class TableComponent implements OnInit {
                         this.adding = false;
                     }, 500);
                     if (modal.getContentComponent().beforeSaveValidate()) {
-                        let res: EruptApiModel;
-                        if (this._drill && this._drill.val) {
-                            res = await this.dataService.addEruptDrillData(
-                                this._drill.eruptParent,
-                                this._drill.code,
-                                this._drill.val,
-                                this.dataHandler.eruptValueToObject(this.eruptBuildModel)).toPromise().then(res => res);
-                        } else {
-                            let header = {};
-                            if (this.linkTree) {
-                                let lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
-                                if (lt.dependNode && lt.value) {
-                                    header["link"] = this.eruptBuildModel.eruptModel.eruptJson.linkTree.value;
-                                }
+                        let header = {};
+                        if (this.linkTree) {
+                            let lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
+                            if (lt.dependNode && lt.value) {
+                                header["link"] = this.eruptBuildModel.eruptModel.eruptJson.linkTree.value;
                             }
-                            res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                                this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
                         }
+                        if (this._drill) {
+                            Object.assign(header, DataService.drillToHeader(this._drill));
+                        }
+                        let res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                            this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
                         if (res.status === Status.SUCCESS) {
                             this.msg.success(this.i18n.fanyi("global.add.success"));
                             this.stLoad();
@@ -723,12 +718,14 @@ export class TableComponent implements OnInit {
                 eruptModel: this.searchErupt
             }));
         }
-        // this._drill.val
         //导出接口
         this.downloading = true;
-        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition, () => {
-            this.downloading = false;
-        });
+        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition,
+            this._drill ? DataService.drillToHeader(this._drill) : {},
+            () => {
+                this.downloading = false;
+            }
+        );
     }
 
 
@@ -758,6 +755,7 @@ export class TableComponent implements OnInit {
 
     // excel导入
     importableExcel() {
+        console.log(this._drill)
         let model = this.modal.create({
             nzKeyboard: true,
             nzTitle: "Excel " + this.i18n.fanyi("table.import"),
@@ -766,7 +764,8 @@ export class TableComponent implements OnInit {
             nzWrapClassName: "modal-lg",
             nzContent: ExcelImportComponent,
             nzComponentParams: {
-                eruptModel: this.eruptBuildModel.eruptModel
+                eruptModel: this.eruptBuildModel.eruptModel,
+                drillInput: this._drill
             },
             nzOnCancel: () => {
                 if (model.getContentComponent().upload) {
