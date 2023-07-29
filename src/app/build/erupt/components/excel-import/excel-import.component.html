@@ -7,7 +7,7 @@
            [nzAccept]="['.xls','.xlsx']"
            [(nzFileList)]="fileList"
            [nzLimit]="1"
-           [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName}"
+           [nzHeaders]="header"
            [nzAction]="dataService.excelImport + eruptModel.eruptName"
            [nzShowButton]="true"
            (nzChange)="upLoadNzChange($event)">

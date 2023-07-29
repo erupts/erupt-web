@@ -31,6 +31,13 @@ export interface CardView {
     viewFields: string[];
 }
 
+export interface DrillInput {
+    eruptParent: string,
+    code: string,
+    erupt: string,
+    val: any
+}
+
 export enum GalleryCover {
     FIT = "FIT", //适应
     CLIP = "CLIP", //剪裁
