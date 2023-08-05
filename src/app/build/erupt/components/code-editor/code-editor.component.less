@@ -9,5 +9,19 @@
             display: flex;
             align-items: center;
         }
+
+        .code-editor-style {
+            border: 1px solid rgb(217 217 217)
+        }
+    }
+}
+
+[data-theme='dark'] {
+    :host {
+        ::ng-deep {
+            .code-editor-style {
+                border: 1px solid #434343
+            }
+        }
     }
 }
