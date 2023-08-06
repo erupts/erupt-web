@@ -560,8 +560,8 @@ export class DataHandlerService {
             ef.eruptFieldJson.edit.$value = null;
             switch (ef.eruptFieldJson.edit.type) {
                 case EditType.CHOICE:
-                    if (ef.eruptFieldJson.edit.choiceType.vl) {
-                        ef.eruptFieldJson.edit.choiceType.vl.forEach(v => {
+                    if (ef.componentValue) {
+                        ef.componentValue.forEach(v => {
                             v.$viewValue = false;
                         });
                     }
