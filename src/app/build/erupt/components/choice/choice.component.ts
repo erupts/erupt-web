@@ -1,8 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {EruptFieldModel} from "../../model/erupt-field.model";
+import {EruptFieldModel, VL} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {ChoiceEnum} from "../../model/erupt.enum";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
     selector: 'erupt-choice',
@@ -29,7 +30,9 @@ export class ChoiceComponent implements OnInit {
 
     choiceEnum = ChoiceEnum;
 
-    constructor(private dataService: DataService) {
+    choiceVL: VL[];
+
+    constructor(private dataService: DataService, private msg: NzMessageService) {
     }
 
     ngOnInit() {
@@ -41,16 +44,36 @@ export class ChoiceComponent implements OnInit {
                 this.load(true);
             }
         }
+        this.choiceVL = this.eruptField.componentValue;
     }
 
     load(open) {
+        let choiceType = this.eruptField.eruptFieldJson.edit.choiceType;
         if (open) {
-            if (this.eruptField.eruptFieldJson.edit.choiceType.anewFetch) {
+            if (choiceType.anewFetch) {
                 this.isLoading = true;
                 this.dataService.findChoiceItem(this.eruptModel.eruptName, this.eruptField.fieldName, this.eruptParentName).subscribe(data => {
                     this.eruptField.componentValue = data;
                     this.isLoading = false;
                 });
+            }
+            if (choiceType.dependField) {
+                for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
+                    if (eruptFieldModel.fieldName == choiceType.dependField) {
+                        let dependValue = eruptFieldModel.eruptFieldJson.edit.$value;
+                        if (null == dependValue) {
+                            this.msg.warning("请先选择" + eruptFieldModel.eruptFieldJson.edit.title)
+                        } else {
+                            console.log(dependValue)
+                            this.choiceVL = this.eruptField.componentValue.filter(item => {
+                                console.log(item.value);
+                                console.log(eval(choiceType.dependExpr))
+                                return eval(choiceType.dependExpr);
+                            })
+                            console.log(this.choiceVL);
+                        }
+                    }
+                }
             }
         }
     }
