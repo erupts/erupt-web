@@ -64,13 +64,9 @@ export class ChoiceComponent implements OnInit {
                         if (null == dependValue) {
                             this.msg.warning("请先选择" + eruptFieldModel.eruptFieldJson.edit.title)
                         } else {
-                            console.log(dependValue)
                             this.choiceVL = this.eruptField.componentValue.filter(item => {
-                                console.log(item.value);
-                                console.log(eval(choiceType.dependExpr))
                                 return eval(choiceType.dependExpr);
                             })
-                            console.log(this.choiceVL);
                         }
                     }
                 }
