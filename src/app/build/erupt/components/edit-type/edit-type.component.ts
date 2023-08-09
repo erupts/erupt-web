@@ -43,6 +43,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     private showByFieldModels: EruptFieldModel[];
 
+    //是否执行变化检查
+    private doChangeCheck: boolean = false;
+
     eruptModel: EruptModel;
 
     editType = EditType;
@@ -78,6 +81,10 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 if (!edit.$viewValue) {
                     edit.$viewValue = [];
                 }
+            } else if (edit.type == EditType.CHOICE) {
+                if (edit.choiceType.dependField) {
+                    this.doChangeCheck = true;
+                }
             }
             let showBy = model.eruptFieldJson.edit.showBy;
             if (showBy) {
@@ -112,6 +119,25 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                     this.showByFieldModels.forEach(m => {
                         this.showByCheck(m);
                     });
+                }
+            }
+
+        }
+        if (this.doChangeCheck) {
+            for (let model of this.eruptModel.eruptFieldModels) {
+                let edit = model.eruptFieldJson.edit;
+                if (edit.type == EditType.CHOICE && edit.choiceType.dependField) {
+                    let depField = this.eruptModel.eruptFieldModelMap.get(edit.choiceType.dependField);
+                    if (depField) {
+                        let depEdit = depField.eruptFieldJson.edit;
+                        if (depEdit.$beforeValue == null) {
+                            depEdit.$beforeValue = depEdit.$value;
+                        }
+                        if (depEdit.$beforeValue != depEdit.$value) {
+                            depEdit.$beforeValue = depEdit.$value;
+                            edit.$value = null;
+                        }
+                    }
                 }
             }
         }
