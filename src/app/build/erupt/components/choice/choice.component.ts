@@ -4,6 +4,7 @@ import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {ChoiceEnum} from "../../model/erupt.enum";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {I18NService} from "@core";
 
 @Component({
     selector: 'erupt-choice',
@@ -32,7 +33,7 @@ export class ChoiceComponent implements OnInit {
 
     choiceVL: VL[];
 
-    constructor(private dataService: DataService, private msg: NzMessageService) {
+    constructor(private dataService: DataService, private msg: NzMessageService, private i18n: I18NService) {
     }
 
     ngOnInit() {
@@ -62,9 +63,10 @@ export class ChoiceComponent implements OnInit {
                     if (eruptFieldModel.fieldName == choiceType.dependField) {
                         let dependValue = eruptFieldModel.eruptFieldJson.edit.$value;
                         if (null == dependValue) {
-                            this.msg.warning("请先选择" + eruptFieldModel.eruptFieldJson.edit.title)
+                            this.msg.warning(this.i18n.fanyi("global.pre_select") + eruptFieldModel.eruptFieldJson.edit.title)
                         } else {
-                            this.choiceVL = this.eruptField.componentValue.filter(item => {
+                            this.choiceVL = this.eruptField.componentValue.filter(vl => {
+                                console.log(choiceType.dependExpr)
                                 return eval(choiceType.dependExpr);
                             })
                         }
