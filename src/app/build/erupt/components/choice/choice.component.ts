@@ -31,7 +31,7 @@ export class ChoiceComponent implements OnInit {
 
     choiceEnum = ChoiceEnum;
 
-    choiceVL: VL[];
+    choiceVL: VL[] = [];
 
     constructor(private dataService: DataService, private msg: NzMessageService, private i18n: I18NService) {
     }
@@ -45,7 +45,19 @@ export class ChoiceComponent implements OnInit {
                 this.load(true);
             }
         }
-        this.choiceVL = this.eruptField.componentValue;
+        let choiceType = this.eruptField.eruptFieldJson.edit.choiceType;
+        choiceType.onVLChange = () => {
+            if (choiceType.dependField) {
+                for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
+                    if (eruptFieldModel.fieldName == choiceType.dependField) {
+                        let dependValue = eruptFieldModel.eruptFieldJson.edit.$value;
+                        this.choiceVL = this.eruptField.componentValue.filter(vl => {
+                            return eval(choiceType.dependExpr);
+                        })
+                    }
+                }
+            }
+        }
     }
 
     load(open) {
@@ -62,13 +74,9 @@ export class ChoiceComponent implements OnInit {
                 for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
                     if (eruptFieldModel.fieldName == choiceType.dependField) {
                         let dependValue = eruptFieldModel.eruptFieldJson.edit.$value;
-                        if (null == dependValue) {
+                        if (null == dependValue || "" == dependValue) {
                             this.msg.warning(this.i18n.fanyi("global.pre_select") + eruptFieldModel.eruptFieldJson.edit.title)
-                        } else {
-                            this.choiceVL = this.eruptField.componentValue.filter(vl => {
-                                console.log(choiceType.dependExpr)
-                                return eval(choiceType.dependExpr);
-                            })
+                            this.choiceVL = [];
                         }
                     }
                 }

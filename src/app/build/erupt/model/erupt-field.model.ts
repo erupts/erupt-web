@@ -152,7 +152,8 @@ interface ChoiceType {
     anewFetch: boolean;
     dependField: string;
     dependExpr: string;
-    items: VL[]
+    items: VL[],
+    onVLChange?: Function
 }
 
 

@@ -130,12 +130,12 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                     let depField = this.eruptModel.eruptFieldModelMap.get(edit.choiceType.dependField);
                     if (depField) {
                         let depEdit = depField.eruptFieldJson.edit;
-                        if (depEdit.$beforeValue == null) {
-                            depEdit.$beforeValue = depEdit.$value;
-                        }
                         if (depEdit.$beforeValue != depEdit.$value) {
                             depEdit.$beforeValue = depEdit.$value;
-                            edit.$value = null;
+                            edit.choiceType.onVLChange && edit.choiceType.onVLChange();
+                            if (null == depEdit.$value) {
+                                edit.$value = null;
+                            }
                         }
                     }
                 }
