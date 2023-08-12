@@ -12,6 +12,7 @@ import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzUploadFile} from "ng-zorro-antd/upload/interface";
+import {DataHandlerService} from "../../service/data-handler.service";
 
 @Component({
     selector: "erupt-edit-type",
@@ -63,6 +64,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     constructor(public dataService: DataService,
                 private differs: KeyValueDiffers,
                 private i18n: I18NService,
+                private dataHandlerService: DataHandlerService,
                 @Inject(DA_SERVICE_TOKEN) public tokenService: ITokenService,
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService) {
@@ -124,21 +126,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
         }
         if (this.doChangeCheck) {
-            for (let model of this.eruptModel.eruptFieldModels) {
-                let edit = model.eruptFieldJson.edit;
-                if (edit.type == EditType.CHOICE && edit.choiceType.dependField) {
-                    let depField = this.eruptModel.eruptFieldModelMap.get(edit.choiceType.dependField);
-                    if (depField) {
-                        let depEdit = depField.eruptFieldJson.edit;
-                        if (depEdit.$beforeValue != depEdit.$value) {
-                            depEdit.$beforeValue = depEdit.$value;
-                            edit.choiceType.onVLChange && edit.choiceType.onVLChange();
-                            if (null == depEdit.$value) {
-                                edit.$value = null;
-                            }
-                        }
-                    }
-                }
+            for (let field of this.eruptModel.eruptFieldModels) {
+                this.dataHandlerService.eruptFieldModelChangeHook(this.eruptModel, field);
             }
         }
     }

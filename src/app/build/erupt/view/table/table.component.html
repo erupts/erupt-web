@@ -114,8 +114,7 @@
                 </div>
 
                 <ng-container>
-                    <nz-card *ngIf="searchErupt" [nzBodyStyle]="{padding:'10px'}" class="search-card"
-                             [hidden]="hideCondition">
+                    <nz-card *ngIf="searchErupt" [nzBodyStyle]="{padding:'10px'}" class="search-card" [hidden]="hideCondition">
                         <erupt-search [eruptModel]="searchErupt" (search)="query()" [size]="'default'">
 
                         </erupt-search>
