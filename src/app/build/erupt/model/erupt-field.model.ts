@@ -153,7 +153,7 @@ interface ChoiceType {
     dependField: string;
     dependExpr: string;
     items: VL[],
-    onVLChange?: Function
+    onVLChange(value, oldValue): void;
 }
 
 

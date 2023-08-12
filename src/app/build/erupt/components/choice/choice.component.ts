@@ -46,14 +46,14 @@ export class ChoiceComponent implements OnInit {
             }
         }
         let choiceType = this.eruptField.eruptFieldJson.edit.choiceType;
-        choiceType.onVLChange = () => {
+        choiceType.onVLChange = (dependValue, oldValue) => {
             if (choiceType.dependField) {
                 for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
                     if (eruptFieldModel.fieldName == choiceType.dependField) {
-                        let dependValue = eruptFieldModel.eruptFieldJson.edit.$value;
                         this.choiceVL = this.eruptField.componentValue.filter(vl => {
                             return eval(choiceType.dependExpr);
                         })
+                        break;
                     }
                 }
             }
