@@ -1,4 +1,14 @@
-import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
+import {
+    Component,
+    DoCheck,
+    Inject,
+    Input,
+    KeyValueDiffers,
+    OnDestroy,
+    OnInit,
+    QueryList,
+    ViewChildren
+} from "@angular/core";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
@@ -13,6 +23,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzUploadFile} from "ng-zorro-antd/upload/interface";
 import {DataHandlerService} from "../../service/data-handler.service";
+import {ChoiceComponent} from "../choice/choice.component";
 
 @Component({
     selector: "erupt-edit-type",
@@ -42,10 +53,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     @Input() readonly: boolean = false;
 
-    private showByFieldModels: EruptFieldModel[];
+    @ViewChildren('choice') choices: QueryList<ChoiceComponent>;
 
-    //是否执行变化检查
-    private doChangeCheck: boolean = false;
+    private showByFieldModels: EruptFieldModel[];
 
     eruptModel: EruptModel;
 
@@ -83,10 +93,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 if (!edit.$viewValue) {
                     edit.$viewValue = [];
                 }
-            } else if (edit.type == EditType.CHOICE) {
-                if (edit.choiceType.dependField) {
-                    this.doChangeCheck = true;
-                }
             }
             let showBy = model.eruptFieldJson.edit.showBy;
             if (showBy) {
@@ -123,11 +129,14 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                     });
                 }
             }
-
         }
-        if (this.doChangeCheck) {
-            for (let field of this.eruptModel.eruptFieldModels) {
-                this.dataHandlerService.eruptFieldModelChangeHook(this.eruptModel, field);
+        if (this.choices && this.choices.length > 0) {
+            for (let choice of this.choices) {
+                this.dataHandlerService.eruptFieldModelChangeHook(this.eruptModel, choice.eruptField, (value) => {
+                    for (let choice of this.choices) {
+                        choice.dependChange(value);
+                    }
+                });
             }
         }
     }

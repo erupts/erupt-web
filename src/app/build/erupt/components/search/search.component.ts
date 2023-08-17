@@ -1,21 +1,25 @@
-import {Component, DoCheck, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {ChoiceEnum, DateEnum, EditType} from "../../model/erupt.enum";
 import {colRules} from "@shared/model/util.model";
 import {DataHandlerService} from "../../service/data-handler.service";
+import {ChoiceComponent} from "../choice/choice.component";
 
 @Component({
     selector: 'erupt-search',
     templateUrl: './search.component.html',
     styleUrls: ['./search.component.less']
 })
-export class SearchComponent implements OnInit, DoCheck {
+export class SearchComponent implements OnInit {
 
-    @Input() eruptModel: EruptModel;
+    @Input() searchEruptModel: EruptModel;
 
     @Output() search = new EventEmitter();
 
     @Input() size: "large" | "small" | "default" = "large";
+
+
+    @ViewChildren('choice') choices: QueryList<ChoiceComponent>;
 
     editType = EditType;
 
@@ -25,31 +29,24 @@ export class SearchComponent implements OnInit, DoCheck {
 
     dateEnum = DateEnum;
 
-    private doChangeCheck: boolean = false;
-
 
     constructor(private dataHandlerService: DataHandlerService) {
     }
 
-    ngDoCheck(): void {
-        if (this.doChangeCheck) {
-            // for (let field of this.eruptModel.eruptFieldModels) {
-            //     if (field.eruptFieldJson.edit.search) {
-            //         this.dataHandlerService.eruptFieldModelChangeHook(this.eruptModel, field);
-            //     }
-            // }
-        }
-    }
+    // ngDoCheck(): void {
+    //     if (this.choices && this.choices.length > 0) {
+    //         for (let choice of this.choices) {
+    //             this.dataHandlerService.eruptFieldModelChangeHook(this.searchEruptModel, choice.eruptField, (value) => {
+    //                 for (let choice of this.choices) {
+    //                     choice.dependChange(value);
+    //                 }
+    //             });
+    //         }
+    //     }
+    // }
 
     ngOnInit(): void {
-        for (let model of this.eruptModel.eruptFieldModels) {
-            let edit = model.eruptFieldJson.edit;
-            if (edit.search.value && edit.type == EditType.CHOICE) {
-                if (edit.choiceType.dependField) {
-                    this.doChangeCheck = true;
-                }
-            }
-        }
+
     }
 
     enterEvent(event) {

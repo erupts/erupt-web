@@ -1,6 +1,6 @@
 <form nz-form [nzLayout]="'horizontal'">
     <div nz-row [nzGutter]="16">
-        <ng-container *ngFor="let field of eruptModel.eruptFieldModels">
+        <ng-container *ngFor="let field of searchEruptModel.eruptFieldModels">
             <ng-container *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.search.value">
                 <ng-container [ngSwitch]="field.eruptFieldJson.edit.type">
                     <ng-template #inputTpl>
@@ -76,8 +76,9 @@
                         <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
                             <div nz-col [nzXs]="24">
                                 <erupt-search-se [field]="field">
-                                    <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
-                                                  [vagueSearch]="true" [checkAll]="true">
+                                    <erupt-choice [eruptModel]="searchEruptModel" [eruptField]="field" [size]="size"
+                                                  [vagueSearch]="true" [checkAll]="true" #choice
+                                                  [dependLinkage]="false">
 
                                     </erupt-choice>
                                 </erupt-search-se>
@@ -88,7 +89,8 @@
                                 <ng-container *ngSwitchCase="choiceEnum.RADIO">
                                     <div nz-col [nzXs]="24">
                                         <erupt-search-se [field]="field">
-                                            <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size">
+                                            <erupt-choice [eruptModel]="searchEruptModel" [eruptField]="field"
+                                                          [size]="size" #choice [dependLinkage]="false">
 
                                             </erupt-choice>
                                         </erupt-search-se>
@@ -100,7 +102,8 @@
                                          [nzXl]="col.xl"
                                          [nzXXl]="col.xxl">
                                         <erupt-search-se [field]="field">
-                                            <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size">
+                                            <erupt-choice [eruptModel]="searchEruptModel" [eruptField]="field"
+                                                          [size]="size" [dependLinkage]="false" #choice>
 
                                             </erupt-choice>
                                         </erupt-search-se>
@@ -188,7 +191,7 @@
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <erupt-search-se [field]="field">
-                                <erupt-reference [eruptModel]="eruptModel" [field]="field" [readonly]="false"
+                                <erupt-reference [eruptModel]="searchEruptModel" [field]="field" [readonly]="false"
                                                  [size]="size"></erupt-reference>
                             </erupt-search-se>
                         </div>
@@ -198,7 +201,7 @@
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
                             <erupt-search-se [field]="field">
-                                <erupt-reference [eruptModel]="eruptModel" [field]="field" [readonly]="false"
+                                <erupt-reference [eruptModel]="searchEruptModel" [field]="field" [readonly]="false"
                                                  [size]="size"></erupt-reference>
                             </erupt-search-se>
                         </div>
@@ -230,7 +233,7 @@
                              [nzXXl]="col.xxl">
                             <erupt-search-se [field]="field">
                                 <erupt-auto-complete [size]="size" [field]="field"
-                                                     [eruptModel]="eruptModel"></erupt-auto-complete>
+                                                     [eruptModel]="searchEruptModel"></erupt-auto-complete>
                             </erupt-search-se>
                         </div>
                     </ng-container>
