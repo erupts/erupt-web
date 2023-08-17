@@ -9,6 +9,7 @@ import {I18NService} from "@core";
 @Component({
     selector: 'erupt-choice',
     templateUrl: './choice.component.html',
+    styleUrls: ['./choice.component.less'],
     styles: []
 })
 export class ChoiceComponent implements OnInit {
@@ -26,6 +27,9 @@ export class ChoiceComponent implements OnInit {
     @Input() readonly: boolean = false;
 
     @Input() checkAll: boolean = false;
+
+    //是否开启联动功能
+    @Input() dependLinkage = true;
 
     isLoading = false;
 
@@ -45,16 +49,22 @@ export class ChoiceComponent implements OnInit {
                 this.load(true);
             }
         }
+        if (!this.dependLinkage) {
+            this.choiceVL = this.eruptField.componentValue
+        }
+    }
+
+    //依赖值发生变化
+    dependChange(value) {
         let choiceType = this.eruptField.eruptFieldJson.edit.choiceType;
-        choiceType.onVLChange = (dependValue, oldValue) => {
-            if (choiceType.dependField) {
-                for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
-                    if (eruptFieldModel.fieldName == choiceType.dependField) {
-                        this.choiceVL = this.eruptField.componentValue.filter(vl => {
-                            return eval(choiceType.dependExpr);
-                        })
-                        break;
-                    }
+        if (choiceType.dependField) {
+            let dependValue = value;
+            for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
+                if (eruptFieldModel.fieldName == choiceType.dependField) {
+                    this.choiceVL = this.eruptField.componentValue.filter(vl => {
+                        return eval(choiceType.dependExpr);
+                    })
+                    break;
                 }
             }
         }
@@ -70,7 +80,7 @@ export class ChoiceComponent implements OnInit {
                     this.isLoading = false;
                 });
             }
-            if (choiceType.dependField) {
+            if (this.dependLinkage && choiceType.dependField) {
                 for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
                     if (eruptFieldModel.fieldName == choiceType.dependField) {
                         let dependValue = eruptFieldModel.eruptFieldJson.edit.$value;

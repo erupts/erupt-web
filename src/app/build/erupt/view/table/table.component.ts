@@ -194,10 +194,9 @@ export class TableComponent implements OnInit {
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
-                let eruptModel = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
-                for (let it of eruptModel.eruptFieldModels) {
+                for (let it of this.eruptBuildModel.eruptModel.eruptFieldModels) {
                     if (it.eruptFieldJson.edit.search.value) {
-                        this.searchErupt = eruptModel;
+                        this.searchErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
                         break;
                     }
                 }

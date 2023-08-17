@@ -589,14 +589,14 @@ export class DataHandlerService {
     /**
      * eruptModel value值数据变换触发钩子
      */
-    eruptFieldModelChangeHook(eruptModel: EruptModel, field: EruptFieldModel) {
+    eruptFieldModelChangeHook(eruptModel: EruptModel, field: EruptFieldModel, callback: Function) {
         let edit = field.eruptFieldJson.edit;
         if (edit.type == EditType.CHOICE && edit.choiceType.dependField) {
             let depField = eruptModel.eruptFieldModelMap.get(edit.choiceType.dependField);
             if (depField) {
                 let depEdit = depField.eruptFieldJson.edit;
                 if (depEdit.$beforeValue != depEdit.$value) {
-                    edit.choiceType.onVLChange && edit.choiceType.onVLChange(depEdit.$value, depEdit.$beforeValue);
+                    callback(depEdit.$value)
                     null != depEdit.$beforeValue && (edit.$value = null);
                     depEdit.$beforeValue = depEdit.$value;
                 }
