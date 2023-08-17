@@ -89,7 +89,7 @@ export class ChoiceComponent implements OnInit {
                 for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
                     if (eruptFieldModel.fieldName == choiceType.dependField) {
                         let dependValue = eruptFieldModel.eruptFieldJson.edit.$value;
-                        if (null == dependValue || "" == dependValue) {
+                        if (null === dependValue || "" === dependValue || undefined === dependValue) {
                             this.msg.warning(this.i18n.fanyi("global.pre_select") + eruptFieldModel.eruptFieldJson.edit.title)
                             this.choiceVL = [];
                         }
