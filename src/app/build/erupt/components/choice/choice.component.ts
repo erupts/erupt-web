@@ -44,12 +44,13 @@ export class ChoiceComponent implements OnInit {
         if (this.vagueSearch) {
             return;
         }
-        if (this.eruptField.eruptFieldJson.edit.choiceType.anewFetch) {
-            if (this.eruptField.eruptFieldJson.edit.choiceType.type == ChoiceEnum.RADIO) {
+        let choiceType = this.eruptField.eruptFieldJson.edit.choiceType;
+        if (choiceType.anewFetch) {
+            if (choiceType.type == ChoiceEnum.RADIO) {
                 this.load(true);
             }
         }
-        if (!this.dependLinkage) {
+        if (!this.dependLinkage || !choiceType.dependField) {
             this.choiceVL = this.eruptField.componentValue
         }
     }
