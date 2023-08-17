@@ -63,7 +63,11 @@ export class ChoiceComponent implements OnInit {
             for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
                 if (eruptFieldModel.fieldName == choiceType.dependField) {
                     this.choiceVL = this.eruptField.componentValue.filter(vl => {
-                        return eval(choiceType.dependExpr);
+                        try {
+                            return eval(choiceType.dependExpr);
+                        } catch (e) {
+                            this.msg.error(e);
+                        }
                     })
                     break;
                 }
