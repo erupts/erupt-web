@@ -1,7 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {ChoiceEnum, DateEnum, EditType} from "../../model/erupt.enum";
 import {colRules} from "@shared/model/util.model";
+import {DataHandlerService} from "../../service/data-handler.service";
+import {ChoiceComponent} from "../choice/choice.component";
 
 @Component({
     selector: 'erupt-search',
@@ -10,11 +12,14 @@ import {colRules} from "@shared/model/util.model";
 })
 export class SearchComponent implements OnInit {
 
-    @Input() eruptModel: EruptModel;
+    @Input() searchEruptModel: EruptModel;
+
+    @Output() search = new EventEmitter();
 
     @Input() size: "large" | "small" | "default" = "large";
 
-    @Output() search = new EventEmitter();
+
+    @ViewChildren('choice') choices: QueryList<ChoiceComponent>;
 
     editType = EditType;
 
@@ -25,10 +30,23 @@ export class SearchComponent implements OnInit {
     dateEnum = DateEnum;
 
 
-    constructor() {
+    constructor(private dataHandlerService: DataHandlerService) {
     }
 
+    // ngDoCheck(): void {
+    //     if (this.choices && this.choices.length > 0) {
+    //         for (let choice of this.choices) {
+    //             this.dataHandlerService.eruptFieldModelChangeHook(this.searchEruptModel, choice.eruptField, (value) => {
+    //                 for (let choice of this.choices) {
+    //                     choice.dependChange(value);
+    //                 }
+    //             });
+    //         }
+    //     }
+    // }
+
     ngOnInit(): void {
+
     }
 
     enterEvent(event) {

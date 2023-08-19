@@ -37,9 +37,12 @@ export class ExcelImportComponent implements OnInit {
     ngOnInit() {
         this.header = {
             token: this.tokenService.get().token,
-            erupt: this.eruptModel.eruptName,
-            ...DataService.drillToHeader(this.drillInput)
+            erupt: this.eruptModel.eruptName
         }
+        if (this.drillInput) {
+            Object.assign(this.header, DataService.drillToHeader(this.drillInput))
+        }
+        console.log(this.header)
     }
 
 

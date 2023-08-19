@@ -560,8 +560,8 @@ export class DataHandlerService {
             ef.eruptFieldJson.edit.$value = null;
             switch (ef.eruptFieldJson.edit.type) {
                 case EditType.CHOICE:
-                    if (ef.eruptFieldJson.edit.choiceType.vl) {
-                        ef.eruptFieldJson.edit.choiceType.vl.forEach(v => {
+                    if (ef.componentValue) {
+                        ef.componentValue.forEach(v => {
                             v.$viewValue = false;
                         });
                     }
@@ -583,6 +583,24 @@ export class DataHandlerService {
             this.emptyEruptValue({
                 eruptModel: eruptBuildModel.combineErupts[key]
             });
+        }
+    }
+
+    /**
+     * eruptModel value值数据变换触发钩子
+     */
+    eruptFieldModelChangeHook(eruptModel: EruptModel, field: EruptFieldModel, callback: Function) {
+        let edit = field.eruptFieldJson.edit;
+        if (edit.type == EditType.CHOICE && edit.choiceType.dependField) {
+            let depField = eruptModel.eruptFieldModelMap.get(edit.choiceType.dependField);
+            if (depField) {
+                let depEdit = depField.eruptFieldJson.edit;
+                if (depEdit.$beforeValue != depEdit.$value) {
+                    callback(depEdit.$value)
+                    null != depEdit.$beforeValue && (edit.$value = null);
+                    depEdit.$beforeValue = depEdit.$value;
+                }
+            }
         }
     }
 

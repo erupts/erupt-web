@@ -1,19 +1,11 @@
 <div style="position: relative">
-    <nz-code-editor [ngStyle]="{height:height+'px'}" style="border:1px solid #ccc"
+    <nz-code-editor [ngStyle]="{height:height+'px'}" class="code-editor-style"
                     (nzEditorInitialized)="codeEditorInit($event)"
                     [(ngModel)]="edit.$value"
                     [nzLoading]="!initComplete"
                     [nzEditorOption]="{ language: language, theme: theme, readOnly: readonly}">
     </nz-code-editor>
     <div class="toolbar">
-<!--        <i-->
-<!--            nz-icon-->
-<!--            [class.active]="fullScreen"-->
-<!--            nz-tooltip-->
-<!--            [nzType]="fullScreen ? 'fullscreen-exit' : 'fullscreen'"-->
-<!--            (click)="toggleFullScreen()"-->
-<!--        ></i>-->
-<!--        &nbsp;&nbsp;&nbsp;-->
         <nz-switch nzSize="small" [ngModel]="dark"
                    [nzUnCheckedChildren]="unchecked"
                    [nzCheckedChildren]="checked"
