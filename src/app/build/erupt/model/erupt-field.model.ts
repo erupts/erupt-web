@@ -15,6 +15,7 @@ export interface EruptFieldModel {
     eruptFieldJson: EruptField;
     choiceMap?: Map<String, VL>;
     componentValue?: any;
+
     value?: any;
 }
 
@@ -148,8 +149,11 @@ interface BoolType {
 
 interface ChoiceType {
     type: ChoiceEnum;
-    vl: VL[];
     anewFetch: boolean;
+    dependField: string;
+    dependExpr: string;
+    items: VL[],
+    onVLChange(value, oldValue): void;
 }
 
 
