@@ -114,7 +114,8 @@
                 </div>
 
                 <ng-container>
-                    <nz-card *ngIf="searchErupt" [nzBodyStyle]="{padding:'10px'}" class="search-card" [hidden]="hideCondition">
+                    <nz-card *ngIf="searchErupt" [nzBodyStyle]="{padding:'10px'}" class="search-card"
+                             [hidden]="hideCondition">
                         <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'">
 
                         </erupt-search>
@@ -128,7 +129,7 @@
                         [widthMode]="{strictBehavior:'truncate'}" [body]="bodyTpl"
                         [data]="stConfig.url" [columns]="columns"
                         [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
-                        (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
+                        (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']" [ps]="ps"
                         [multiSort]="stConfig.multiSort" [page]="stConfig.stPage" [req]="stConfig.req" [size]="'middle'"
                     >
                         <ng-template #bodyTpl>
