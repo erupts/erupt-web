@@ -103,6 +103,8 @@ export class TableComponent implements OnInit {
 
     _drill: DrillInput;
 
+    ps: number;
+
 
     adding: boolean = false; //新增行为防抖
 
@@ -172,6 +174,7 @@ export class TableComponent implements OnInit {
         this.adding = false;
         this.eruptBuildModel = null;
         this.searchErupt = null;
+        this.ps = 10;
         this.operationButtonNum = 0;
         //put table api header
         this.stConfig.req.headers = {
@@ -185,6 +188,13 @@ export class TableComponent implements OnInit {
                         this.operationButtonNum++;
                     }
                 })
+                let layout = eb.eruptModel.eruptJson.layout;
+                if (layout) {
+                    if (layout.pageSizes) {
+                        this.stConfig.stPage.pageSizes = layout.pageSizes;
+                        this.ps = layout.pageSize || 10;
+                    }
+                }
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
                 if (dt) {
