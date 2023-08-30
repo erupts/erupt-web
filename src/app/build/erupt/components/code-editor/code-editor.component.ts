@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Edit} from "../../model/erupt-field.model";
 import {CacheService} from "@delon/cache";
+import {JoinedEditorOptions} from "ng-zorro-antd/code-editor/typings";
 
 let codeEditorDarkKey = "code_editor_dark";
 
@@ -34,6 +35,8 @@ export class CodeEditorComponent implements OnInit {
 
     fullScreen = false;
 
+    editorOption: JoinedEditorOptions;
+
     constructor(private cacheService: CacheService) {
 
     }
@@ -41,6 +44,20 @@ export class CodeEditorComponent implements OnInit {
     ngOnInit() {
         this.dark = this.cacheService.getNone(codeEditorDarkKey) || false;
         this.theme = this.dark ? 'vs-dark' : 'vs';
+        this.editorOption = {
+            language: this.language,
+            theme: this.theme,
+            readOnly: this.readonly,
+            suggestOnTriggerCharacters: true
+        };
+        // monaco.languages.registerCompletionItemProvider(this.edit.codeEditType.language, {
+        //     provideCompletionItems(model, position) {
+        //         return {
+        //             suggestions: []
+        //         };
+        //     },
+        //     triggerCharacters: ['$'] // 触发提示的字符，可以写多个
+        // });
     }
 
     codeEditorInit(event) {
