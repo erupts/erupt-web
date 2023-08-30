@@ -164,7 +164,7 @@ export class I18NService {
 
     loadLangData(success) {
         let xhr = new XMLHttpRequest();
-        xhr.open('GET', "assets/erupt.i18n.csv?v=" + EruptAppData.get().hash);
+        xhr.open('GET', "erupt.i18n.csv?v=" + EruptAppData.get().hash);
         xhr.send();
         xhr.onreadystatechange = () => {
             let langMapping = {};
