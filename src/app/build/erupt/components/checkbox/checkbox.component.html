@@ -1,8 +1,9 @@
 <nz-spin [nzSpinning]="loading">
-    <nz-checkbox-wrapper style="width: 100%;" (nzOnChange)="change($event)">
+    <nz-checkbox-wrapper style="width: 100%;max-height: 205px;overflow: auto" (nzOnChange)="change($event)">
         <div nz-row>
             <div nz-col [nzXs]="12" [nzSm]="8" [nzMd]="8" [nzLg]="4" *ngFor="let c of checkbox">
-                <label nz-checkbox [nzDisabled]="onlyRead" [nzValue]="c.id" nz-tooltip [nzTooltipTitle]="c.label"
+                <label nz-checkbox [nzDisabled]="onlyRead" [nzValue]="c.id"
+                       nz-tooltip [nzTooltipTitle]="c.remark"
                        [nzChecked]="edit.$value&&edit.$value.indexOf(c.id)!=-1">{{c.label}}</label>
             </div>
         </div>

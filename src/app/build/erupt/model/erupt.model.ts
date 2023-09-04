@@ -89,6 +89,7 @@ export interface Tree {
 export interface Checkbox {
     id: any;
     label: any;
+    remark: any
     checked: boolean;
 }
 
