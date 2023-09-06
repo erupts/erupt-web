@@ -1,11 +1,11 @@
-<div #s2t style="width: 100%;height: 100%">
+<!--<div #s2t style="width: 100%;height: 100%">-->
 
-</div>
-<!--<table *ngIf="data&&data.length>0">-->
-<!--    <tr>-->
-<!--        <th *ngFor="let data of data[0] | keyvalue">{{data.key}}</th>-->
-<!--    </tr>-->
-<!--    <tr *ngFor="let ds of data">-->
-<!--        <td *ngFor="let data of ds | keyvalue">{{data.value}}</td>-->
-<!--    </tr>-->
-<!--</table>-->
+<!--</div>-->
+<table *ngIf="data&&data.length>0">
+    <tr>
+        <th *ngFor="let data of data[0] | keyvalue">{{data.key}}</th>
+    </tr>
+    <tr *ngFor="let ds of data">
+        <td *ngFor="let data of ds | keyvalue">{{data.value}}</td>
+    </tr>
+</table>
