@@ -9,6 +9,7 @@ import {BiDataService} from "../../service/data.service";
         label[nz-radio] {
             min-width: 120px;
             margin-right: 0;
+            line-height: 32px;
         }
 
         label[nz-checkbox] {
