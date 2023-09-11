@@ -4,6 +4,7 @@ import {Bi, Dimension, DimType, Reference} from "../../model/bi.model";
 import {NzTreeNode} from "ng-zorro-antd/core/tree/nz-tree-base-node";
 import {HandlerService} from "../../service/handler.service";
 import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd/core/tree";
+import {NzTreeComponent} from "ng-zorro-antd/tree";
 
 @Component({
     selector: "erupt-reference-select",
@@ -26,7 +27,7 @@ export class ReferenceComponent implements OnInit {
 
     loading: boolean = false;
 
-    @ViewChild("tree", {static: false}) tree: NzTreeBaseService;
+    @ViewChild("tree", {static: false}) tree: NzTreeComponent;
 
     constructor(private dataService: BiDataService, private handlerService: HandlerService) {
 
@@ -123,28 +124,29 @@ export class ReferenceComponent implements OnInit {
         return result;
     }
 
-    nodeClickEvent(event: NzFormatEmitEvent) {
-        this.dimension.$viewValue = event.node.origin.title;
-        this.dimension.$value = event.node.origin.key;
-    }
-
-
-    nodeCheck(event: NzFormatEmitEvent) {
-        let treeNodes: NzTreeNode[] = this.findAllNode(event.checkedKeys);
-        let viewValues = [];
-        let values = [];
-        treeNodes.forEach(e => {
-            if (e.origin.key) {
-                values.push(e.origin.key);
-                viewValues.push(e.origin.title);
+    confirmNodeChecked() {
+        if (this.multiple) {
+            let treeNodes: NzTreeNode[] = this.tree.getCheckedNodeList();
+            let viewValues = [];
+            let values = [];
+            treeNodes.forEach(e => {
+                if (e.origin.key) {
+                    values.push(e.origin.key);
+                    viewValues.push(e.origin.title);
+                }
+            });
+            if (values.length + 1 === this.findAllNode(this.data).length) {
+                this.dimension.$value = [];
+            } else {
+                this.dimension.$value = values;
             }
-        });
-        if (values.length + 1 === this.findAllNode(this.data).length) {
-            this.dimension.$value = [];
+            this.dimension.$viewValue = viewValues.join(" | ");
         } else {
-            this.dimension.$value = values;
+            if (this.tree.getSelectedNodeList().length > 0) {
+                this.dimension.$viewValue = this.tree.getSelectedNodeList()[0].title;
+                this.dimension.$value = this.tree.getSelectedNodeList()[0].key;
+            }
         }
-        this.dimension.$viewValue = viewValues.join(" | ");
     }
 
     //递归获取所有选中的值

@@ -60,7 +60,7 @@ export class DimensionComponent implements OnInit {
                 bi: this.bi
             },
             nzOnOk: (res) => {
-
+                res.confirmNodeChecked();
             }
         });
     }
