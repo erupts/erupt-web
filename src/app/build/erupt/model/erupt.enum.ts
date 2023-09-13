@@ -131,3 +131,12 @@ export enum FormSize {
     DEFAULT = "DEFAULT",
     FULL_LINE = "FULL_LINE"
 }
+
+export enum PagingType {
+    //后端分页
+    BACKEND = "BACKEND",
+    //前端分页
+    FRONT = "FRONT",
+    //不分页
+    NONE = "NONE"
+}
