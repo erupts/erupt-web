@@ -46,11 +46,11 @@ export class HeaderUserComponent {
             nzTitle: this.i18n.fanyi("global.confirm_logout"),
             nzOnOk: () => {
                 this.dataService.logout().subscribe(data => {
-                    if (WindowModel.logout) {
-                        WindowModel.logout({
+                    if (WindowModel.eruptEvent && WindowModel.eruptEvent.logout) {
+                        WindowModel.eruptEvent.logout({
                             userName: this.settings.user.name,
                             token: this.tokenService.get().token
-                        });
+                        })
                     }
                     this.tokenService.clear();
                     this.router.navigateByUrl(this.tokenService.login_url);
