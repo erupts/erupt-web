@@ -43,7 +43,10 @@ import {
     SearchOutline,
     SettingOutline,
     SyncOutline,
-    TableOutline, UserOutline
+    TableOutline,
+    UnorderedListOutline,
+    UserOutline,
+    ArrowRightOutline
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -89,5 +92,7 @@ export const ICONS_AUTO = [
     PlusSquareOutline,
     GlobalOutline,
     LockOutline,
-    UserOutline
+    UnorderedListOutline,
+    UserOutline,
+    ArrowRightOutline
 ];
