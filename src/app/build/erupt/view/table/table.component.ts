@@ -12,7 +12,7 @@ import {
     FormSize,
     OperationIfExprBehavior,
     OperationMode,
-    OperationType,
+    OperationType, PagingType,
     RestPath,
     Scene,
     SelectMode
@@ -81,6 +81,8 @@ export class TableComponent implements OnInit {
     hideCondition = false;
 
     searchErupt: EruptModel;
+
+    hasSearchFields: boolean = false;
 
     eruptBuildModel: EruptBuildModel;
 
@@ -174,6 +176,7 @@ export class TableComponent implements OnInit {
         this.adding = false;
         this.eruptBuildModel = null;
         this.searchErupt = null;
+        this.hasSearchFields = false;
         this.ps = 10;
         this.operationButtonNum = 0;
         //put table api header
@@ -194,6 +197,20 @@ export class TableComponent implements OnInit {
                         this.stConfig.stPage.pageSizes = layout.pageSizes;
                         this.ps = layout.pageSize || 10;
                     }
+                    if (layout.pagingType) {
+                        if (layout.pagingType == PagingType.FRONT) {
+                            Object.assign(this.stConfig.stPage, {
+                                show: true,
+                                front: true
+                            })
+                        } else if (layout.pagingType == PagingType.NONE) {
+                            this.ps = layout.pageSizes[layout.pageSizes.length - 1] * 10;
+                            Object.assign(this.stConfig.stPage, {
+                                show: false,
+                                front: true,
+                            })
+                        }
+                    }
                 }
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
@@ -204,9 +221,10 @@ export class TableComponent implements OnInit {
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
+                this.searchErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
                 for (let it of this.eruptBuildModel.eruptModel.eruptFieldModels) {
                     if (it.eruptFieldJson.edit.search.value) {
-                        this.searchErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
+                        this.hasSearchFields = true;
                         break;
                     }
                 }
@@ -740,6 +758,7 @@ export class TableComponent implements OnInit {
 
     clickTreeNode(event) {
         this.showTable = true;
+        console.log(this.searchErupt)
         this.eruptBuildModel.eruptModel.eruptJson.linkTree.value = event;
         this.searchErupt.eruptJson.linkTree.value = event;
         this.query();

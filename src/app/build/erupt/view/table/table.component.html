@@ -95,7 +95,7 @@
                                     </ng-container>
                                 </div>
                             </ng-template>
-                            <ng-container *ngIf="searchErupt">
+                            <ng-container *ngIf="hasSearchFields">
                                 <nz-divider class="hidden-mobile" nzType="vertical"></nz-divider>
                                 <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition"
                                         style="padding: 4px 8px">
@@ -114,7 +114,7 @@
                 </div>
 
                 <ng-container>
-                    <nz-card *ngIf="searchErupt" [nzBodyStyle]="{padding:'10px'}" class="search-card"
+                    <nz-card *ngIf="hasSearchFields" [nzBodyStyle]="{padding:'10px'}" class="search-card"
                              [hidden]="hideCondition">
                         <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'">
 
