@@ -38,13 +38,13 @@ export class WindowModel {
     } = window["eruptEvent"] || {};
 
     public static eruptRouterEvent: {
-        login?: Cycle,
-        $?: Cycle,
-        [key: string]: Cycle;
+        login?: EventCycle,
+        $?: EventCycle,
+        [key: string]: EventCycle;
     } = window["eruptRouterEvent"] || {};
 }
 
-interface Cycle {
+interface EventCycle {
     load: (e?: any) => void,
     unload: (e?: any) => void,
 }
