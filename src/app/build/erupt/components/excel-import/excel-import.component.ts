@@ -42,7 +42,6 @@ export class ExcelImportComponent implements OnInit {
         if (this.drillInput) {
             Object.assign(this.header, DataService.drillToHeader(this.drillInput))
         }
-        console.log(this.header)
     }
 
 

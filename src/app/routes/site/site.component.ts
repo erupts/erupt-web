@@ -31,11 +31,7 @@ export class SiteComponent implements OnInit, OnDestroy {
             let url = decodeURIComponent(atob(decodeURIComponent(params["url"])));
             url += (url.indexOf("?") === -1 ? "?" : "&") + "_token=" + this.tokenService.get().token;
             this.url = url;
-            console.log(url)
         });
-        // this.reuseTabService.change.subscribe((notify) => {
-        //     console.log(notify);
-        // })
     }
 
     iframeLoad() {
