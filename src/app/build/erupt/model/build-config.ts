@@ -14,7 +14,7 @@ export class BuildConfig {
             showSize: true,
             showQuickJumper: true,
             total: true,
-            toTop: true,
+            toTop: false,
             front: false,
         },
         req: <STReq>{

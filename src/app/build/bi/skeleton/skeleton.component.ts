@@ -120,7 +120,6 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                     if (isNotNull(dimension.defaultValue)) {
                         dimension.$value = dimension.defaultValue;
                     }
-                    // console.log(dimension.$value, isNotNull(dimension.$value));
                     if (dimension.notNull && isNull(dimension.$value)) {
                         this.haveNotNull = true;
                         return;
