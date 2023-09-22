@@ -19,7 +19,6 @@ import {
 } from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
-import {BuildConfig} from "../../model/build-config";
 import {Status} from "../../model/erupt-api.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
@@ -34,7 +33,6 @@ import {deepCopy} from "@delon/util";
 import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
 import {STChange, STPage} from "@delon/abc/st/st.interfaces";
 import {AppViewService} from "@shared/service/app-view.service";
-import {pageType} from "../../../bi/model/bi.model";
 
 
 @Component({

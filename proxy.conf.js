@@ -10,10 +10,6 @@ module.exports = {
      * The following means that all requests are directed to the backend `https://localhost:9000/`
      */
     '/': {
-        // target: 'https://zeus-pre.ideamake.cn/daas-admin',
-        // secure: true, // Ignore invalid SSL certificates
-        // target: 'https://www.erupt.xyz/demo',
-        // secure: true,
         target: 'http://localhost:9999',
         changeOrigin: true,
         // target: 'https://www.erupt.xyz/demo',
