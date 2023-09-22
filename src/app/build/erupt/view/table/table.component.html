@@ -125,12 +125,11 @@
                     <!--                            <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>-->
                     <!--                        </div>-->
                     <!--                    </ng-container>-->
-                    <st #st resizable
-                        [widthMode]="{strictBehavior:'truncate'}" [body]="bodyTpl"
-                        [data]="stConfig.url" [columns]="columns"
+                    <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
+                        [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
                         [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
-                        (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']" [ps]="ps"
-                        [multiSort]="stConfig.multiSort" [page]="stConfig.stPage" [req]="stConfig.req" [size]="'middle'"
+                        (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
+                        [multiSort]="stConfig.multiSort" [page]="dataPage.page" [size]="'middle'"
                     >
                         <ng-template #bodyTpl>
                             <ng-container>
@@ -143,6 +142,17 @@
                             </ng-container>
                         </ng-template>
                     </st>
+                    <ng-container *ngIf="dataPage.showPagination">
+                        <nz-pagination style="text-align: center;margin-top: 12px" nzShowSizeChanger nzShowQuickJumper
+                                       [nzPageIndex]="dataPage.pi" [nzShowTotal]="totalTemplate"
+                                       [nzPageSize]="dataPage.ps"
+                                       [nzTotal]="dataPage.total"
+                                       [nzPageSizeOptions]="dataPage.pageSizes" [nzSize]="'small'"
+                                       (nzPageSizeChange)="pageSizeChange($event)"
+                                       (nzPageIndexChange)="pageIndexChange($event)"
+                        ></nz-pagination>
+                        <ng-template #totalTemplate let-total>共 {{ dataPage.total }} 条</ng-template>
+                    </ng-container>
                 </ng-container>
             </ng-container>
         </div>

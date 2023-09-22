@@ -1,4 +1,4 @@
-import {STPage, STReq} from "@delon/abc/st/st.interfaces";
+import {STPage, STReq, STRes} from "@delon/abc/st/st.interfaces";
 
 export class BuildConfig {
     public static pi = "pageIndex";
@@ -31,6 +31,7 @@ export class BuildConfig {
             key: "sort",
             separator: ",",
             nameSeparator: " "
-        }
+        },
+        res: <STRes>{}
     };
 }
