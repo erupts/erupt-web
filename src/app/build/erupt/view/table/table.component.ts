@@ -107,6 +107,7 @@ export class TableComponent implements OnInit {
         pi: number;
         total: number;
         data: any[];
+        multiSort?: string[]
         page: STPage;
     } = {
         querying: false,
@@ -116,8 +117,10 @@ export class TableComponent implements OnInit {
         pi: 1,
         total: 0,
         data: [],
+        multiSort: [],
         page: {
-            show: false
+            show: false,
+            toTop: false
         }
     };
 

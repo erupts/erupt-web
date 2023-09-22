@@ -129,7 +129,7 @@
                         [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
                         [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
                         (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
-                        [multiSort]="stConfig.multiSort" [page]="dataPage.page" [size]="'middle'"
+                        [page]="dataPage.page" [size]="'middle'"
                     >
                         <ng-template #bodyTpl>
                             <ng-container>
