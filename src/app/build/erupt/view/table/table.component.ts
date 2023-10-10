@@ -103,6 +103,7 @@ export class TableComponent implements OnInit {
         pageSizes: number[],
         ps: number;
         pi: number;
+        sort: object | null;
         total: number;
         data: any[];
         multiSort?: string[]
@@ -115,6 +116,7 @@ export class TableComponent implements OnInit {
         pi: 1,
         total: 0,
         data: [],
+        sort: null,
         multiSort: [],
         page: {
             show: false,
@@ -244,7 +246,7 @@ export class TableComponent implements OnInit {
         );
     }
 
-    query(page?: number, size?: number) {
+    query(page?: number, size?: number, sort?: object) {
         let query = {};
         query["condition"] = this.dataHandler.eruptObjectToCondition(
             this.dataHandler.searchEruptToObject({
@@ -257,10 +259,20 @@ export class TableComponent implements OnInit {
         }
         this.dataPage.pi = page || this.dataPage.pi;
         this.dataPage.ps = size || this.dataPage.ps;
+        this.dataPage.sort = sort || this.dataPage.sort;
+        let sortString = null;
+        if (this.dataPage.sort) {
+            let arr = [];
+            for (let key in this.dataPage.sort) {
+                arr.push(key + ' ' + this.dataPage.sort[key]);
+            }
+            sortString = arr.join(",")
+        }
         this.dataPage.querying = true;
         this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, {
             pageIndex: this.dataPage.pi,
             pageSize: this.dataPage.ps,
+            sort: sortString,
             ...query
         }).subscribe(page => {
             this.st.data = page.list;
@@ -763,6 +775,13 @@ export class TableComponent implements OnInit {
             if (event.type === "checkbox") {
                 this.selectedRows = event.checkbox;
             }
+        }
+        if (event.type == "sort") {
+            let layout = this.eruptBuildModel.eruptModel.eruptJson.layout
+            if (layout && layout.pagingType && layout.pagingType != 'BACKEND') {
+                return;
+            }
+            this.query(1, this.dataPage.ps, event.sort.map);
         }
     }
 
