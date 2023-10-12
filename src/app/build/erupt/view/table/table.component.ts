@@ -235,10 +235,13 @@ export class TableComponent implements OnInit {
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
                 this.searchErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
-                for (let it of this.eruptBuildModel.eruptModel.eruptFieldModels) {
-                    if (it.eruptFieldJson.edit.search.value) {
-                        this.hasSearchFields = true;
-                        break;
+                for (let fieldModel of this.searchErupt.eruptFieldModels) {
+                    let edit = fieldModel.eruptFieldJson.edit;
+                    if (edit) {
+                        if (edit.search.value) {
+                            this.hasSearchFields = true;
+                            fieldModel.eruptFieldJson.edit.$value = this.searchErupt.searchCondition[fieldModel.fieldName]
+                        }
                     }
                 }
                 this.query(1);
