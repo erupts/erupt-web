@@ -1,9 +1,22 @@
 :host {
-  ::ng-deep {
-    @media (min-width: 1600px) {
-      .ant-col-xxl-2 {
-        width: 16.6666666% !important;
-      }
+    ::ng-deep {
+        @media (min-width: 1600px) {
+            .ant-col-xxl-2 {
+                width: 16.6666666% !important;
+            }
+        }
+
+        .card-show {
+            height: auto;
+            transition: .5s height;
+        }
+
+        .card-hide {
+            height: 0;
+            overflow: auto;
+            transition: .5s height;
+        }
+
+
     }
-  }
 }

@@ -37,6 +37,8 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     @ViewChild('chartTable', {static: false}) chartTable: ChartTableComponent | null;
 
+    open: boolean = true;
+
     plot;
 
     chartType = ChartType;

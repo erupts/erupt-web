@@ -11,7 +11,6 @@ module.exports = {
      */
     '/': {
         target: 'http://localhost:9999',
-        secure: false, // Ignore invalid SSL certificates
         changeOrigin: true,
         // target: 'https://www.erupt.xyz/demo',
         // secure: true, // SSL certificates

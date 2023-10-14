@@ -63,9 +63,8 @@ export class StartupService {
         window[GlobalKeys.getAppToken] = () => {
             return this.tokenService.get();
         };
-        let eruptEvent = window["eruptEvent"];
-        if (eruptEvent) {
-            eruptEvent.startup && eruptEvent.startup();
+        if (WindowModel.eruptEvent) {
+            WindowModel.eruptEvent.startup && WindowModel.eruptEvent.startup();
         }
         //路由复用
         this.settingSrv.layout['reuse'] = !!this.settingSrv.layout['reuse'];

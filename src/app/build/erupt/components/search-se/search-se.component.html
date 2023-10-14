@@ -1,12 +1,12 @@
 <div style="display: flex;margin:4px 0">
     <div style="display: flex;justify-content:flex-end">
-        <label style="line-height: 32px;width: 90px;text-align: right;" class="ellipsis">
+        <label style="line-height: 32px;width: 90px;text-align: left;" class="ellipsis">
             <span style="color: #f00">{{field.eruptFieldJson.edit.search.notNull ? '*' : ''}}</span>
             <span style="margin:0 3px" [title]="field.eruptFieldJson.edit.title">{{field.eruptFieldJson.edit.title}} :</span>
             &nbsp;
         </label>
     </div>
-    <div style="flex: 1;width: 100%">
+    <div style="flex: 1 0 0;width: 100%;overflow: auto">
         <ng-content></ng-content>
     </div>
 </div>

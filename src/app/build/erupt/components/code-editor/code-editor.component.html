@@ -3,7 +3,7 @@
                     (nzEditorInitialized)="codeEditorInit($event)"
                     [(ngModel)]="edit.$value"
                     [nzLoading]="!initComplete"
-                    [nzEditorOption]="{ language: language, theme: theme, readOnly: readonly}">
+                    [nzEditorOption]="editorOption">
     </nz-code-editor>
     <div class="toolbar">
         <nz-switch nzSize="small" [ngModel]="dark"

@@ -20,9 +20,9 @@
                 <div style="margin-left: auto">
                     <ng-container *ngIf="columns && columns.length > 0">
                         <button nz-button nzType="default" nz-popover
-                                [nzPopoverContent]="tableColumnCtrl"
+                                [nzPopoverContent]="tableColumnCtrl" style="padding: 4px 8px"
                                 nzPopoverTrigger="click" class="mb-sm hidden-mobile">
-                            <i nz-icon nzType="table" nzTheme="outline"></i>{{'table.col.ctrl'|translate}}
+                            <i nz-icon nzType="table" nzTheme="outline"></i>
                         </button>
                         <nz-divider nzType="vertical" *ngIf="bi.dimensions.length > 0"></nz-divider>
                         <ng-template #tableColumnCtrl>
@@ -30,7 +30,7 @@
                                 <ng-container *ngFor="let col of st.columns">
                                     <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
                                         <label nz-checkbox [(ngModel)]="col['show']" style="width: 130px;"
-                                               (ngModelChange)="st.resetColumns()">{{col.title}}</label>
+                                               (ngModelChange)="st.resetColumns()">{{col.title["text"]}}</label>
                                     </div>
                                 </ng-container>
                             </div>

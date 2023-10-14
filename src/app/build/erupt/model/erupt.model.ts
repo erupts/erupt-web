@@ -1,5 +1,5 @@
 import {EruptFieldModel, Tpl, View} from "./erupt-field.model";
-import {FormSize, OperationIfExprBehavior, OperationMode, OperationType} from "./erupt.enum";
+import {FormSize, OperationIfExprBehavior, OperationMode, OperationType, PagingType} from "./erupt.enum";
 
 
 export interface EruptModel {
@@ -45,8 +45,11 @@ export enum GalleryCover {
 
 interface Layout {
     formSize: FormSize;
+    pagingType: PagingType;
     tableLeftFixed: number;
     tableRightFixed: number;
+    pageSize: number;
+    pageSizes: number[];
 }
 
 
@@ -87,6 +90,7 @@ export interface Tree {
 export interface Checkbox {
     id: any;
     label: any;
+    remark: any
     checked: boolean;
 }
 

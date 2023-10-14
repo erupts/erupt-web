@@ -38,9 +38,11 @@
                             "src/home.html",
                             "src/auth.html",
                             "src/logo.png",
+                            "src/logo-1x.png",
                             "src/erupt.svg",
                             "src/erupt2.svg",
                             "src/erupt-logo.svg",
+                            "src/erupt.i18n.csv",
                             {
                                 "glob": "**/*",
                                 "input": "./libs/ueditor/",
