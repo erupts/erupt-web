@@ -28,9 +28,25 @@ export class WindowModel {
 
     public static copyright: boolean = WindowModel.config["copyright"] !== false;
 
-    public static login: Function = WindowModel.config["login"] || false;
+    public static upload: Function = WindowModel.config["upload"] || false;
 
-    public static logout: Function = WindowModel.config["logout"] || false;
+    public static eruptEvent: {
+        login?: Function,
+        logout?: Function,
+        startup?: Function
+        upload?: Function;
+    } = window["eruptEvent"] || {};
+
+    public static eruptRouterEvent: {
+        login?: EventCycle,
+        $?: EventCycle,
+        [key: string]: EventCycle;
+    } = window["eruptRouterEvent"] || {};
+}
+
+interface EventCycle {
+    load: (e?: any) => void,
+    unload: (e?: any) => void,
 }
 
 

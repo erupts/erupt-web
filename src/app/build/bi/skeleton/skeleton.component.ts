@@ -120,7 +120,6 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                     if (isNotNull(dimension.defaultValue)) {
                         dimension.$value = dimension.defaultValue;
                     }
-                    // console.log(dimension.$value, isNotNull(dimension.$value));
                     if (dimension.notNull && isNull(dimension.$value)) {
                         this.haveNotNull = true;
                         return;
@@ -167,6 +166,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                     let columns = [];
                     for (let column of res.columns) {
                         if (column.display) {
+                            let titleWidth = column.name.length * 14 + 22;
                             let col: STColumn = {
                                 title: {
                                     text: column.name,
@@ -174,7 +174,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                     optionalHelp: column.remark
                                 },
                                 index: column.name,
-                                width: column.width,
+                                width: column.width || titleWidth,
 
                                 className: "text-center",
                                 iif: (item) => {
@@ -193,6 +193,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                 col.type = "number";
                             } else if (column.type == columnType.DATE) {
                                 col.type = "date";
+                                col.width = 180;
                             } else if (column.type == columnType.DRILL) {
                                 col.type = "link";
                                 col.click = (row) => {

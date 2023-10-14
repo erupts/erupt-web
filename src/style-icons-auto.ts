@@ -24,10 +24,10 @@ import {
     EllipsisOutline,
     EyeOutline,
     FullscreenExitOutline,
-    FullscreenOutline,
+    FullscreenOutline, GlobalOutline,
     ImportOutline,
     InboxOutline,
-    LoadingOutline,
+    LoadingOutline, LockOutline,
     MenuFoldOutline,
     MenuUnfoldOutline,
     MinusSquareOutline,
@@ -43,7 +43,10 @@ import {
     SearchOutline,
     SettingOutline,
     SyncOutline,
-    TableOutline
+    TableOutline,
+    UnorderedListOutline,
+    UserOutline,
+    ArrowRightOutline
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -86,5 +89,10 @@ export const ICONS_AUTO = [
     DeleteTwoTone,
     MinusSquareOutline,
     EditFill,
-    PlusSquareOutline
+    PlusSquareOutline,
+    GlobalOutline,
+    LockOutline,
+    UnorderedListOutline,
+    UserOutline,
+    ArrowRightOutline
 ];

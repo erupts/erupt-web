@@ -67,11 +67,15 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
             mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
             remember: [true]
         });
+
     }
 
     ngOnInit(): void {
         if (EruptAppData.get().loginPagePath) {
             window.location.href = EruptAppData.get().loginPagePath;
+        }
+        if (WindowModel.eruptRouterEvent.login) {
+            WindowModel.eruptRouterEvent.login.load();
         }
     }
 
@@ -127,8 +131,8 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
                     token: result.token,
                     account: this.userName.value
                 });
-                if (WindowModel.login) {
-                    WindowModel.login({
+                if (WindowModel.eruptEvent && WindowModel.eruptEvent.login) {
+                    WindowModel.eruptEvent.login({
                         token: result.token,
                         account: this.userName.value
                     });
@@ -169,6 +173,8 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
     }
 
     ngOnDestroy(): void {
-
+        if (WindowModel.eruptRouterEvent.login) {
+            WindowModel.eruptRouterEvent.login.unload();
+        }
     }
 }

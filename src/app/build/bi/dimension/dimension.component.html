@@ -3,7 +3,7 @@
         <ng-container *ngFor="let dim of bi.dimensions;">
             <ng-container [ngSwitch]="dim.type">
                 <ng-container *ngSwitchCase="dimType.REFERENCE_RADIO">
-                    <div nz-col>
+                    <div nz-col [nzXs]="24">
                         <bi-search-se [dimension]="dim">
                             <erupt-bi-choice [dim]="dim" [bi]="bi"></erupt-bi-choice>
                         </bi-search-se>

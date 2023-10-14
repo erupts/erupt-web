@@ -2,28 +2,26 @@ import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
 import {Drill, DrillInput, EruptModel, Row, RowOperation} from "../../model/erupt.model";
 
-import {DrawerHelper, ModalHelper, SettingsService} from "@delon/theme";
+import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {ActivatedRoute} from "@angular/router";
-import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {
     FormSize,
     OperationIfExprBehavior,
     OperationMode,
     OperationType,
+    PagingType,
     RestPath,
     Scene,
     SelectMode
 } from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
-import {BuildConfig} from "../../model/build-config";
 import {Status} from "../../model/erupt-api.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
-import {DomSanitizer} from "@angular/platform-browser";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
@@ -33,7 +31,7 @@ import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
 import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
 import {deepCopy} from "@delon/util";
 import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
-import {STChange} from "@delon/abc/st/st.interfaces";
+import {STChange, STPage} from "@delon/abc/st/st.interfaces";
 import {AppViewService} from "@shared/service/app-view.service";
 
 
@@ -49,16 +47,12 @@ export class TableComponent implements OnInit {
         public settingSrv: SettingsService,
         public dataService: DataService,
         private dataHandlerService: DataHandlerService,
-        private modalHelper: ModalHelper,
-        private drawerHelper: DrawerHelper,
         @Inject(NzMessageService)
         private msg: NzMessageService,
         @Inject(NzModalService)
         private modal: NzModalService,
         public route: ActivatedRoute,
-        private sanitizer: DomSanitizer,
         private appViewService: AppViewService,
-        @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
         private i18n: I18NService,
@@ -82,9 +76,9 @@ export class TableComponent implements OnInit {
 
     searchErupt: EruptModel;
 
-    eruptBuildModel: EruptBuildModel;
+    hasSearchFields: boolean = false;
 
-    stConfig = new BuildConfig().stConfig;
+    eruptBuildModel: EruptBuildModel;
 
     selectedRows: any[] = [];
 
@@ -103,6 +97,32 @@ export class TableComponent implements OnInit {
 
     _drill: DrillInput;
 
+    dataPage: {
+        querying: boolean,
+        showPagination: boolean
+        pageSizes: number[],
+        ps: number;
+        pi: number;
+        sort: object | null;
+        total: number;
+        data: any[];
+        multiSort?: string[]
+        page: STPage;
+    } = {
+        querying: false,
+        showPagination: true,
+        pageSizes: [10, 20, 50, 100, 300, 500],
+        ps: 10,
+        pi: 1,
+        total: 0,
+        data: [],
+        sort: null,
+        multiSort: [],
+        page: {
+            show: false,
+            toTop: false
+        }
+    };
 
     adding: boolean = false; //新增行为防抖
 
@@ -172,19 +192,39 @@ export class TableComponent implements OnInit {
         this.adding = false;
         this.eruptBuildModel = null;
         this.searchErupt = null;
+        this.hasSearchFields = false;
         this.operationButtonNum = 0;
-        //put table api header
-        this.stConfig.req.headers = {
-            ...req.header,
-            ...this.dataService.getCommonHeader()
-        };
-        this.stConfig.url = req.url;
         observable.subscribe(eb => {
                 eb.eruptModel.eruptJson.rowOperation.forEach((item) => {
                     if (item.mode != OperationMode.SINGLE) {
                         this.operationButtonNum++;
                     }
                 })
+                let layout = eb.eruptModel.eruptJson.layout;
+                if (layout) {
+                    if (layout.pageSizes) {
+                        this.dataPage.pageSizes = layout.pageSizes;
+                    }
+                    if (layout.pageSize) {
+                        this.dataPage.ps = layout.pageSize;
+                    }
+                    if (layout.pagingType) {
+                        if (layout.pagingType == PagingType.FRONT) {
+                            let page = this.dataPage.page;
+                            page.front = true;
+                            page.show = true;
+                            page.placement = "center";
+                            page.showQuickJumper = true;
+                            page.showSize = true;
+                            page.pageSizes = layout.pageSizes;
+                            this.dataPage.showPagination = false;
+                        } else if (layout.pagingType == PagingType.NONE) {
+                            this.dataPage.ps = layout.pageSizes[layout.pageSizes.length - 1] * 10;
+                            this.dataPage.showPagination = false;
+                            this.dataPage.page.show = false;
+                        }
+                    }
+                }
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
                 if (dt) {
@@ -194,30 +234,58 @@ export class TableComponent implements OnInit {
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
-                for (let it of this.eruptBuildModel.eruptModel.eruptFieldModels) {
-                    if (it.eruptFieldJson.edit.search.value) {
-                        this.searchErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
-                        break;
+                this.searchErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
+                for (let fieldModel of this.searchErupt.eruptFieldModels) {
+                    let edit = fieldModel.eruptFieldJson.edit;
+                    if (edit) {
+                        if (edit.search.value) {
+                            this.hasSearchFields = true;
+                            fieldModel.eruptFieldJson.edit.$value = this.searchErupt.searchCondition[fieldModel.fieldName]
+                        }
                     }
                 }
-                this.extraRowFun();
+                this.query(1);
             }
         );
     }
 
-
-    query() {
-        this.stConfig.req.params["condition"] = this.dataHandler.eruptObjectToCondition(
+    query(page?: number, size?: number, sort?: object) {
+        let query = {};
+        query["condition"] = this.dataHandler.eruptObjectToCondition(
             this.dataHandler.searchEruptToObject({
                 eruptModel: this.searchErupt
             })
         );
         let linkTree = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
         if (linkTree && linkTree.field) {
-            this.stConfig.req.params["linkTreeVal"] = linkTree.value;
+            query["linkTreeVal"] = linkTree.value;
         }
-        this.stLoad(1, this.stConfig.req.params);
-        this.selectedRows = [];
+        this.dataPage.pi = page || this.dataPage.pi;
+        this.dataPage.ps = size || this.dataPage.ps;
+        this.dataPage.sort = sort || this.dataPage.sort;
+        let sortString = null;
+        if (this.dataPage.sort) {
+            let arr = [];
+            for (let key in this.dataPage.sort) {
+                arr.push(key + ' ' + this.dataPage.sort[key]);
+            }
+            sortString = arr.join(",")
+        }
+        this.dataPage.querying = true;
+        this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, {
+            pageIndex: this.dataPage.pi,
+            pageSize: this.dataPage.ps,
+            sort: sortString,
+            ...query
+        }).subscribe(page => {
+            this.st.data = page.list;
+            this.dataPage.ps = page.pageSize;
+            this.dataPage.pi = page.pageIndex;
+            this.dataPage.querying = false;
+            this.dataPage.data = page.list;
+            this.dataPage.total = page.total;
+        })
+        this.extraRowFun(query);
     }
 
     buildTableConfig() {
@@ -422,7 +490,7 @@ export class TableComponent implements OnInit {
                                 let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
                                 if (res.status === Status.SUCCESS) {
                                     this.msg.success(this.i18n.fanyi("global.update.success"));
-                                    this.stLoad();
+                                    this.query();
                                     return true;
                                 } else {
                                     return false;
@@ -450,9 +518,9 @@ export class TableComponent implements OnInit {
                         .subscribe(result => {
                             if (result.status === Status.SUCCESS) {
                                 if (this.st._data.length == 1) {
-                                    this.stLoad(this.st.pi == 1 ? 1 : this.st.pi - 1);
+                                    this.query(this.st.pi == 1 ? 1 : this.st.pi - 1);
                                 } else {
-                                    this.stLoad();
+                                    this.query(this.st.pi);
                                 }
                                 this.msg.success(this.i18n.fanyi('global.delete.success'));
                             }
@@ -538,7 +606,7 @@ export class TableComponent implements OnInit {
                         modal.componentInstance.nzCancelDisabled = false;
                         this.selectedRows = [];
                         if (res.status === Status.SUCCESS) {
-                            this.stLoad();
+                            this.query(1);
                             if (res.data) {
                                 try {
                                     let msg = this.msg;
@@ -575,7 +643,7 @@ export class TableComponent implements OnInit {
                         this.selectedRows = [];
                         let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids, null)
                             .toPromise().then();
-                        this.stLoad();
+                        this.query(1);
                         if (res.data) {
                             try {
                                 let msg = this.msg;
@@ -630,7 +698,7 @@ export class TableComponent implements OnInit {
                             this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
                         if (res.status === Status.SUCCESS) {
                             this.msg.success(this.i18n.fanyi("global.add.success"));
-                            this.stLoad();
+                            this.query();
                             return true;
                         }
                     }
@@ -638,6 +706,14 @@ export class TableComponent implements OnInit {
                 return false;
             }
         });
+    }
+
+    pageIndexChange(index) {
+        this.query(index, this.dataPage.ps);
+    }
+
+    pageSizeChange(size) {
+        this.query(1, size);
     }
 
     //批量删除
@@ -661,9 +737,9 @@ export class TableComponent implements OnInit {
                         this.deleting = false;
                         if (res.status == Status.SUCCESS) {
                             if (this.selectedRows.length == this.st._data.length) {
-                                this.stLoad(this.st.pi == 1 ? 1 : this.st.pi - 1);
+                                this.query(this.st.pi == 1 ? 1 : this.st.pi - 1);
                             } else {
-                                this.stLoad();
+                                this.query(this.st.pi);
                             }
                             this.selectedRows = [];
                             this.msg.success(this.i18n.fanyi("global.delete.success"));
@@ -678,7 +754,7 @@ export class TableComponent implements OnInit {
 
     clearCondition() {
         this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt});
-        this.query();
+        this.query(1);
     }
 
     // table checkBox 触发事件
@@ -702,6 +778,13 @@ export class TableComponent implements OnInit {
             if (event.type === "checkbox") {
                 this.selectedRows = event.checkbox;
             }
+        }
+        if (event.type == "sort") {
+            let layout = this.eruptBuildModel.eruptModel.eruptJson.layout
+            if (layout && layout.pagingType && layout.pagingType != 'BACKEND') {
+                return;
+            }
+            this.query(1, this.dataPage.ps, event.sort.map);
         }
     }
 
@@ -732,21 +815,12 @@ export class TableComponent implements OnInit {
         this.showTable = true;
         this.eruptBuildModel.eruptModel.eruptJson.linkTree.value = event;
         this.searchErupt.eruptJson.linkTree.value = event;
-        this.query();
+        this.query(1);
     }
 
-    stLoad(pi?: number, extraParams?: {}) {
-        if (pi) {
-            this.st.load(pi, extraParams);
-        } else {
-            this.st.reload();
-        }
-        this.extraRowFun();
-    }
-
-    extraRowFun() {
+    extraRowFun(condition: any) {
         if (this.eruptBuildModel.eruptModel.extraRow) {
-            this.dataService.extraRow(this.eruptBuildModel.eruptModel.eruptName, this.stConfig.req.params).subscribe(res => {
+            this.dataService.extraRow(this.eruptBuildModel.eruptModel.eruptName, condition).subscribe(res => {
                 this.extraRows = res;
             });
         }
@@ -754,7 +828,6 @@ export class TableComponent implements OnInit {
 
     // excel导入
     importableExcel() {
-        console.log(this._drill)
         let model = this.modal.create({
             nzKeyboard: true,
             nzTitle: "Excel " + this.i18n.fanyi("table.import"),
@@ -768,7 +841,7 @@ export class TableComponent implements OnInit {
             },
             nzOnCancel: () => {
                 if (model.getContentComponent().upload) {
-                    this.stLoad();
+                    this.query();
                 }
             }
         });

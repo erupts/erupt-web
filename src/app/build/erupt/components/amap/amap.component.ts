@@ -201,7 +201,6 @@ export class AmapComponent implements OnInit {
         }
 
         if (typeof this.value !== 'object') {
-            console.log(this.value)
             this.value = JSON.parse(this.value);
         }
         if (this.value.name != this.tipInput.nativeElement.value) {

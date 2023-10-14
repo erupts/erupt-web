@@ -23,9 +23,9 @@
                        [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
                        [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true">
                 <ng-container *ngIf="!isLoading">
-                    <nz-option *ngFor="let vl of choiceVL"
-                               [nzDisabled]="vl.disable"
-                               [nzValue]="vl.value" [nzLabel]="vl.label | translate">
+                    <nz-option *ngFor="let vl of choiceVL" nzCustomContent
+                               [nzDisabled]="vl.disable" [nzValue]="vl.value" [nzLabel]="vl.label">
+                        <div nz-tooltip [nzTooltipPlacement]="'left'" [nzTooltipTitle]="vl.desc">{{vl.label}}</div>
                     </nz-option>
                 </ng-container>
                 <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
