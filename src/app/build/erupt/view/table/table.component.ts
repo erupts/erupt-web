@@ -277,7 +277,7 @@ export class TableComponent implements OnInit {
             pageSize: this.dataPage.ps,
             sort: sortString,
             ...query
-        }).subscribe(page => {
+        }, this._drill ? DataService.drillToHeader(this._drill) : null).subscribe(page => {
             this.st.data = page.list;
             this.dataPage.ps = page.pageSize;
             this.dataPage.pi = page.pageIndex;
