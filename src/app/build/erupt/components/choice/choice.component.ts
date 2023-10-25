@@ -42,6 +42,7 @@ export class ChoiceComponent implements OnInit {
 
     ngOnInit() {
         if (this.vagueSearch) {
+            this.choiceVL = this.eruptField.componentValue
             return;
         }
         let choiceType = this.eruptField.eruptFieldJson.edit.choiceType;
