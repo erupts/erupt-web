@@ -126,6 +126,8 @@ export class TableComponent implements OnInit {
 
     adding: boolean = false; //新增行为防抖
 
+    header: object;
+
     @Input() set drill(drill: DrillInput) {
         this._drill = drill;
         this.init(this.dataService.getEruptBuild(drill.erupt), {
@@ -194,6 +196,7 @@ export class TableComponent implements OnInit {
         this.searchErupt = null;
         this.hasSearchFields = false;
         this.operationButtonNum = 0;
+        this.header = req.header;
         observable.subscribe(eb => {
                 eb.eruptModel.eruptJson.rowOperation.forEach((item) => {
                     if (item.mode != OperationMode.SINGLE) {
@@ -277,7 +280,7 @@ export class TableComponent implements OnInit {
             pageSize: this.dataPage.ps,
             sort: sortString,
             ...query
-        }, this._drill ? DataService.drillToHeader(this._drill) : null).subscribe(page => {
+        }, this.header).subscribe(page => {
             this.st.data = page.list;
             this.dataPage.ps = page.pageSize;
             this.dataPage.pi = page.pageIndex;
