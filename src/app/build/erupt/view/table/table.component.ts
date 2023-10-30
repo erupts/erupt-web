@@ -235,9 +235,6 @@ export class TableComponent implements OnInit {
                 }
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
-                if (dt) {
-                    this.showTable = !dt.dependNode;
-                }
                 this.dataHandler.initErupt(eb);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
@@ -250,6 +247,12 @@ export class TableComponent implements OnInit {
                             this.hasSearchFields = true;
                             fieldModel.eruptFieldJson.edit.$value = this.searchErupt.searchCondition[fieldModel.fieldName]
                         }
+                    }
+                }
+                if (dt) {
+                    this.showTable = !dt.dependNode;
+                    if (dt.dependNode) {
+                        return;
                     }
                 }
                 this.query(1);
@@ -280,7 +283,6 @@ export class TableComponent implements OnInit {
             sortString = arr.join(",")
         }
         this.dataPage.querying = true;
-
         this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url, {
             pageIndex: this.dataPage.pi,
             pageSize: this.dataPage.ps,
