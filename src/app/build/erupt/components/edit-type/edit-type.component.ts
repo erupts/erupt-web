@@ -93,9 +93,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 if (!edit.$viewValue) {
                     edit.$viewValue = [];
                 }
-                edit.attachmentType.fileTypes = edit.attachmentType.fileTypes.map(it => {
-                    return '.' + it;
-                })
             }
             let showBy = model.eruptFieldJson.edit.showBy;
             if (showBy) {
@@ -214,6 +211,10 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         navigator.clipboard.writeText(val).then(() => {
             this.msg.success(this.i18n.fanyi("global.copy_success"))
         });
+    }
+
+    uploadAccept(accept: string[]): string[] {
+        return accept.map(it => '.' + it)
     }
 
 
