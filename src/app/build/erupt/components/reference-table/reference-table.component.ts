@@ -11,7 +11,14 @@ import {TableComponent} from "../../view/table/table.component";
     selector: "app-reference-table",
     template: `
         <erupt-table #et
-                [referenceTable]="{eruptBuild:eruptBuild,eruptField:eruptField,mode:mode,dependVal:dependVal,parentEruptName:parentEruptName,tabRef:tabRef}">
+                     [referenceTable]="{
+                         eruptBuild:eruptBuild,
+                         eruptField:eruptField,mode:mode,
+                         dependVal:dependVal,
+                         parentEruptName:parentEruptName,
+                         tabRef:tabRef
+                     }"
+        >
         </erupt-table>
     `,
     styleUrls: ["./reference-table.component.less"]

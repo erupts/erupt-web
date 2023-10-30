@@ -35,13 +35,13 @@ export class CardComponent implements OnInit {
     }
 
     query() {
-        let eruptModel = this.eruptBuildModel.eruptModel;
-        this.dataService.queryEruptTableData(eruptModel.eruptName, {
-            pageIndex: this.index,
-            pageSize: this.size
-        }).subscribe(page => {
-            this.page = page;
-        });
+        // let eruptModel = this.eruptBuildModel.eruptModel;
+        // this.dataService.queryEruptTableData(eruptModel.eruptName, {
+        //     pageIndex: this.index,
+        //     pageSize: this.size
+        // }).subscribe(page => {
+        //     this.page = page;
+        // });
     }
 
 

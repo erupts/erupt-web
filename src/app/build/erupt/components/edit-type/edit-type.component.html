@@ -334,7 +334,7 @@
                                     </ng-container>
                                     <ng-container *ngSwitchCase="attachmentEnum.BASE">
                                         <nz-upload nzType="drag" *ngIf="field.eruptFieldJson.edit.$viewValue"
-                                                   [nzAccept]="field.eruptFieldJson.edit.attachmentType.fileTypes"
+                                                   [nzAccept]="uploadAccept(field.eruptFieldJson.edit.attachmentType.fileTypes)"
                                                    [nzLimit]="field.eruptFieldJson.edit.attachmentType.maxLimit"
                                                    [nzDisabled]="isReadonly(field)||field.eruptFieldJson.edit.$viewValue.length==field.eruptFieldJson.edit.attachmentType.maxLimit"
                                                    (nzChange)="upLoadNzChange($event,field)"
