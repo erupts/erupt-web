@@ -290,8 +290,8 @@ export class TableComponent implements OnInit {
             ...query
         }, this.header).subscribe(page => {
             this.st.data = page.list;
-            this.dataPage.ps = page.pageSize;
-            this.dataPage.pi = page.pageIndex;
+            // this.dataPage.ps = page.pageSize;
+            // this.dataPage.pi = page.pageIndex;
             this.dataPage.querying = false;
             this.dataPage.data = page.list;
             this.dataPage.total = page.total;
