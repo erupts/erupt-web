@@ -197,20 +197,18 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                             } else if (column.type == columnType.DRILL) {
                                 col.type = "link";
                                 col.click = (row) => {
-                                    this.modal.create({
+                                    let model = this.modal.create({
                                         nzWrapClassName: "modal-lg",
                                         nzKeyboard: true,
                                         nzMaskClosable: false,
                                         nzStyle: {top: "30px"},
                                         nzTitle: column.name,
                                         nzContent: DrillComponent,
-                                        nzComponentParams: {
-                                            drillCode: column.code,
-                                            bi: this.bi,
-                                            row: row
-                                        },
                                         nzFooter: null
                                     });
+                                    model.getContentComponent().bi = this.bi;
+                                    model.getContentComponent().drillCode = column.code;
+                                    model.getContentComponent().row = row;
                                 };
                             }
                             columns.push(col);

@@ -193,19 +193,20 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-lg modal-body-nopadding",
                             nzStyle: {top: "20px"},
                             nzMaskClosable: false,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: ViewTypeComponent,
-                            nzComponentParams: {
-                                value: item[view.column],
-                                view: view
-                            }
+                            nzContent: ViewTypeComponent
                         });
+                        Object.assign(ref.getContentComponent(), {
+                            value: item[view.column],
+                            view: view
+                        });
+
                     };
                     break;
                 case ViewType.QR_CODE:
@@ -219,17 +220,17 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-sm",
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: ViewTypeComponent,
-                            nzComponentParams: {
-                                value: item[view.column],
-                                view: view
-                            }
+                            nzContent: ViewTypeComponent
+                        });
+                        Object.assign(ref.getContentComponent(), {
+                            value: item[view.column],
+                            view: view
                         });
                     };
                     break;
@@ -244,7 +245,7 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "24px"},
                             nzBodyStyle: {padding: "0"},
@@ -252,11 +253,12 @@ export class UiBuildService {
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: MarkdownComponent,
-                            nzComponentParams: {
-                                value: item[view.column]
-                            }
+                            nzContent: MarkdownComponent
                         });
+                        Object.assign(ref.getContentComponent(), {
+                            value: item[view.column]
+                        });
+
                     };
                     break;
                 case ViewType.CODE:
@@ -271,25 +273,25 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let codeEditType = view.eruptFieldModel.eruptFieldJson.edit.codeEditType;
-                        // @ts-ignore
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-lg",
                             nzBodyStyle: {padding: "0"},
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: CodeEditorComponent,
-                            nzComponentParams: {
-                                height: 500,
-                                readonly: true,
-                                language: codeEditType ? codeEditType.language : 'text',
-                                // @ts-ignore
-                                edit: {
-                                    $value: item[view.column]
-                                }
+                            nzContent: CodeEditorComponent
+                        });
+                        Object.assign(ref.getContentComponent(), {
+                            height: 500,
+                            readonly: true,
+                            language: codeEditType ? codeEditType.language : 'text',
+                            // @ts-ignore
+                            edit: {
+                                $value: item[view.column]
                             }
                         });
+
                     };
                     break;
                 case ViewType.MAP:
@@ -303,7 +305,7 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-lg",
                             nzBodyStyle: {
                                 padding: "0"
@@ -312,12 +314,13 @@ export class UiBuildService {
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: ViewTypeComponent,
-                            nzComponentParams: {
-                                value: item[view.column],
-                                view: view
-                            }
+                            nzContent: ViewTypeComponent
                         });
+                        Object.assign(ref.getContentComponent(), {
+                            value: item[view.column],
+                            view: view
+                        });
+
                     };
                     break;
                 case ViewType.IMAGE:
@@ -368,18 +371,18 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "50px"},
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: ViewTypeComponent,
-                            nzComponentParams: {
-                                value: item[view.column],
-                                view: view
-                            }
+                            nzContent: ViewTypeComponent
+                        });
+                        Object.assign(ref.getContentComponent(), {
+                            value: item[view.column],
+                            view: view
                         });
                     };
                     break;
@@ -394,18 +397,19 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-xs",
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: ViewTypeComponent,
-                            nzComponentParams: {
-                                value: item[view.column],
-                                view: view
-                            }
+                            nzContent: ViewTypeComponent
                         });
+                        Object.assign(ref.getContentComponent(), {
+                            value: item[view.column],
+                            view: view
+                        });
+
                     };
                     break;
                 case ViewType.SWF:
@@ -419,19 +423,19 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-lg modal-body-nopadding",
                             nzStyle: {top: "40px"},
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: ViewTypeComponent,
-                            nzComponentParams: {
-                                value: item[view.column],
-                                view: view
-                            }
+                            nzContent: ViewTypeComponent
                         });
+                        Object.assign(ref.getContentComponent(), {
+                            value: item[view.column],
+                            view: view
+                        })
                     };
                     break;
                 case ViewType.IMAGE_BASE64:
@@ -446,18 +450,18 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "50px", textAlign: 'center'},
                             nzMaskClosable: true,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: ViewTypeComponent,
-                            nzComponentParams: {
-                                value: item[view.column],
-                                view: view
-                            }
+                            nzContent: ViewTypeComponent
+                        });
+                        Object.assign(ref.getContentComponent(), {
+                            value: item[view.column],
+                            view: view
                         });
                     };
                     break;
@@ -472,16 +476,16 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-lg modal-body-nopadding",
                             nzStyle: {top: "30px"},
                             nzKeyboard: true,
                             nzFooter: null,
-                            nzContent: ViewTypeComponent,
-                            nzComponentParams: {
-                                value: item[view.column],
-                                view: view
-                            }
+                            nzContent: ViewTypeComponent
+                        });
+                        Object.assign(ref.getContentComponent(), {
+                            value: item[view.column],
+                            view: view
                         });
                     };
                     break;
@@ -520,20 +524,21 @@ export class UiBuildService {
                         return `<i class='fa fa-adjust' aria-hidden='true'></i>`;
                     };
                     obj.click = (item) => {
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "50px"},
                             nzMaskClosable: false,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
-                            nzContent: ViewTypeComponent,
-                            nzComponentParams: {
-                                value: item[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
-                                eruptBuildModel: eruptBuildModel,
-                                view: view
-                            }
+                            nzContent: ViewTypeComponent
                         });
+                        Object.assign(ref.getContentComponent(), {
+                            value: item[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
+                            eruptBuildModel: eruptBuildModel,
+                            view: view
+                        });
+
                     };
                     break;
                 default:
@@ -563,7 +568,7 @@ export class UiBuildService {
                     let url = this.dataService.getEruptViewTpl(eruptBuildModel.eruptModel.eruptName,
                         view.eruptFieldModel.fieldName,
                         item[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
-                    this.modal.create({
+                    let ref = this.modal.create({
                         nzKeyboard: true,
                         nzMaskClosable: false,
                         nzTitle: view.title,
@@ -574,11 +579,9 @@ export class UiBuildService {
                             padding: "0"
                         },
                         nzFooter: null,
-                        nzContent: EruptIframeComponent,
-                        nzComponentParams: {
-                            url: url,
-                        }
+                        nzContent: EruptIframeComponent
                     });
+                    ref.getContentComponent().url = url;
                 };
             }
             if (layout) {
