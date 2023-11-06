@@ -60,7 +60,9 @@ export class AppComponent implements OnInit {
                             beforeEvent && beforeEvent.unload && beforeEvent.unload(ev);
                         }
                         let event = WindowModel.eruptRouterEvent[match];
-                        WindowModel.eruptRouterEvent.$.load && WindowModel.eruptRouterEvent.$.load(ev);
+                        if (WindowModel.eruptRouterEvent.$) {
+                            WindowModel.eruptRouterEvent.$.load && WindowModel.eruptRouterEvent.$.load(ev);
+                        }
                         event && event.load && event.load(ev);
                     }
                     this.beforeMatch = match;
