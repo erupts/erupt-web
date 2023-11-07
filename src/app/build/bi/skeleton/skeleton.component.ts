@@ -174,8 +174,6 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                     optionalHelp: column.remark
                                 },
                                 index: column.name,
-                                width: column.width || titleWidth,
-
                                 className: "text-center",
                                 iif: (item) => {
                                     return item['show'];
