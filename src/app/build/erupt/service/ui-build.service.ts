@@ -39,7 +39,7 @@ export class UiBuildService {
         let layout = eruptBuildModel.eruptModel.eruptJson.layout;
         let i = 0;
         for (let view of views) {
-            let titleWidth = view.title.length * 14 + 22;
+            let titleWidth = view.title.length * 16 + 22;
             if (titleWidth > 280) {
                 titleWidth = 280;
             }
@@ -112,8 +112,8 @@ export class UiBuildService {
             //展示类型
             switch (view.viewType) {
                 case ViewType.TEXT:
-                    obj.className = "text-col";
                     obj.width = null;
+                    obj.className = "text-col";
                     break;
                 case ViewType.NUMBER:
                     obj.className = "text-right";
@@ -139,7 +139,7 @@ export class UiBuildService {
                     break;
                 case ViewType.BOOLEAN:
                     obj.className = "text-center";
-                    obj.width += 12;
+                    obj.width = titleWidth + 18;
                     obj.type = "tag";
                     if (dataConvert) {
                         obj.tag = {
@@ -326,15 +326,10 @@ export class UiBuildService {
                 case ViewType.IMAGE:
                     obj.type = "link";
                     obj.className = "text-center p-mini";
+                    obj.width = titleWidth + 30;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
-                            let img;
-                            if (attachmentType) {
-                                img = (<string>item[view.column]).split(attachmentType.fileSeparator)[0];
-                            } else {
-                                img = (<string>item[view.column]).split("|")[0];
-                            }
                             let imgs;
                             if (attachmentType) {
                                 imgs = (<string>item[view.column]).split(attachmentType.fileSeparator);
@@ -558,6 +553,9 @@ export class UiBuildService {
             }
             if (view.className) {
                 obj.className += " " + view.className;
+            }
+            if (obj.width && obj.width < titleWidth) {
+                obj.width = titleWidth;
             }
             if (view.width) {
                 obj.width = isNaN(Number(view.width)) ? view.width : view.width + "px";
