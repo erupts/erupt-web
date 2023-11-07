@@ -405,7 +405,7 @@ export class TableComponent implements OnInit {
         //drill
         const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
 
-        let createDrillModel = (drill: Drill, id) => {
+        let createDrillModel = (drill: Drill, id: any) => {
             let ref = this.modal.create({
                 nzWrapClassName: "modal-xxl",
                 nzStyle: {top: "30px"},
@@ -431,14 +431,14 @@ export class TableComponent implements OnInit {
                 tooltip: drill.title,
                 text: `<i class="${drill.icon}"></i>`,
                 click: (record) => {
-                    createDrillModel(drill, record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
+                    createDrillModel(drill, record[eruptJson.primaryKeyCol]);
                 }
             });
             editButtons.push({
                 label: drill.title,
                 type: 'dashed',
                 onClick(options: ModalButtonOptions<any>) {
-                    createDrillModel(drill, options['id']);
+                    createDrillModel(drill, options[eruptJson.primaryKeyCol]);
                 }
             })
         }
