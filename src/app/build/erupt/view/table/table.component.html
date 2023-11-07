@@ -127,7 +127,7 @@
                     <!--                    </ng-container>-->
                     <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
                         [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
-                        [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
+                        [scroll]="{x: (clientWidth > 768 ? showColumnLength * 160 : 0) + 'px'}"
                         (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
                         [page]="dataPage.page" [size]="'middle'"
                     >
