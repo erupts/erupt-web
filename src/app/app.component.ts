@@ -45,7 +45,7 @@ export class AppComponent implements OnInit {
             }
             if (ev instanceof NavigationEnd) {
                 this.titleSrv.setTitle();
-                this.modalSrv.closeAll();
+                // this.modalSrv.closeAll();
                 if (WindowModel.eruptRouterEvent) {
                     let url: string = ev["url"];
                     url = url.substring(0, (url.indexOf("?") === -1 ? url.length : url.indexOf("?")));
