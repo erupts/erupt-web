@@ -1,6 +1,6 @@
 <div class="alain-default__progress-bar erupt-global__progress" *ngIf="isFetching"></div>
 <div class="erupt-global__progress" *ngIf="isFetching"></div>
-<nz-water-mark [nzContent]="nickName" [nzZIndex]="999999">
+<nz-water-mark [nzContent]="nickName" [nzZIndex]="999999" style="position: static" [nzFont]="{fontSize:13}">
     <layout-header class="erupt-header" [ngClass]="settings.layout['fixed']?'erupt-header_fixed':''"
                    [menu]="menu"></layout-header>
     <layout-sidebar class="erupt-side alain-default__aside"></layout-sidebar>
