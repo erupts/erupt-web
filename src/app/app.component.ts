@@ -45,7 +45,7 @@ export class AppComponent implements OnInit {
             }
             if (ev instanceof NavigationEnd) {
                 this.titleSrv.setTitle();
-                this.modalSrv.closeAll();
+                // this.modalSrv.closeAll();
                 if (WindowModel.eruptRouterEvent) {
                     let url: string = ev["url"];
                     url = url.substring(0, (url.indexOf("?") === -1 ? url.length : url.indexOf("?")));
@@ -60,7 +60,9 @@ export class AppComponent implements OnInit {
                             beforeEvent && beforeEvent.unload && beforeEvent.unload(ev);
                         }
                         let event = WindowModel.eruptRouterEvent[match];
-                        WindowModel.eruptRouterEvent.$.load && WindowModel.eruptRouterEvent.$.load(ev);
+                        if (WindowModel.eruptRouterEvent.$) {
+                            WindowModel.eruptRouterEvent.$.load && WindowModel.eruptRouterEvent.$.load(ev);
+                        }
                         event && event.load && event.load(ev);
                     }
                     this.beforeMatch = match;

@@ -22,7 +22,9 @@ import {SkeletonComponent} from "./skeleton/skeleton.component";
 
 @NgModule({
     declarations: [SkeletonComponent, DimensionComponent, ReferenceComponent, ChartComponent,
-        ChoiceComponent, CascadeComponent, ChartTableComponent, DrillComponent, SearchSeComponent],
+        ChoiceComponent, CascadeComponent, ChartTableComponent, DrillComponent, SearchSeComponent,
+        ReferenceComponent,
+        DrillComponent],
     imports: [
         CommonModule,
         BiRoutingModule,
@@ -36,10 +38,6 @@ import {SkeletonComponent} from "./skeleton/skeleton.component";
     ],
     providers: [
         BiDataService
-    ],
-    entryComponents: [
-        ReferenceComponent,
-        DrillComponent
     ]
 })
 export class BiModule {

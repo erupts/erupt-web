@@ -86,7 +86,7 @@ export class HeaderComponent implements OnInit {
     }
 
     search() {
-        this.modal.create({
+        let model = this.modal.create({
             nzWrapClassName: "modal-xs",
             nzMaskClosable: true,
             nzKeyboard: true,
@@ -95,11 +95,9 @@ export class HeaderComponent implements OnInit {
             nzBodyStyle: {
                 padding: "12px"
             },
-            nzContent: HeaderSearchComponent,
-            nzComponentParams: {
-                menu: this.menu
-            }
-        })
+            nzContent: HeaderSearchComponent
+        });
+        model.getContentComponent().menu = this.menu
     }
 
 }

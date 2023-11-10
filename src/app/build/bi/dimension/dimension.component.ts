@@ -48,21 +48,21 @@ export class DimensionComponent implements OnInit {
     }
 
     ref(dim: Dimension) {
-        this.modal.create({
+        let ref = this.modal.create({
             nzWrapClassName: "modal-xs",
             nzKeyboard: true,
             nzStyle: {top: "30px"},
             nzTitle: dim.title,
             nzContent: ReferenceComponent,
-            nzComponentParams: {
-                dimension: dim,
-                code: this.bi.code,
-                bi: this.bi
-            },
             nzOnOk: (res) => {
                 res.confirmNodeChecked();
             }
         });
+        Object.assign(ref.getContentComponent(), {
+            dimension: dim,
+            code: this.bi.code,
+            bi: this.bi
+        })
     }
 
     clearRef(dim: Dimension) {
