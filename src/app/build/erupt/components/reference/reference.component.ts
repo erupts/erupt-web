@@ -56,19 +56,14 @@ export class ReferenceComponent implements OnInit {
                 return;
             }
         }
-        this.modal.create({
+        let ref = this.modal.create({
             nzWrapClassName: "modal-xs",
             nzKeyboard: true,
             nzStyle: {top: "30px"},
             nzTitle: field.eruptFieldJson.edit.title + (field.eruptFieldJson.edit.$viewValue ? "【" + field.eruptFieldJson.edit.$viewValue + "】" : ""),
             nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzContent: TreeSelectComponent,
-            nzComponentParams: {
-                parentEruptName: this.parentEruptName,
-                eruptModel: this.eruptModel,
-                eruptField: field,
-                dependVal: dependVal
-            }, nzOnOk: () => {
+            nzOnOk: () => {
                 const tempVal = field.eruptFieldJson.edit.$tempValue;
                 if (!tempVal) {
                     this.msg.warning("请选中一条数据");
@@ -83,6 +78,12 @@ export class ReferenceComponent implements OnInit {
                 return true;
             }
         });
+        Object.assign(ref.getContentComponent(), {
+            parentEruptName: this.parentEruptName,
+            eruptModel: this.eruptModel,
+            eruptField: field,
+            dependVal: dependVal
+        })
     }
 
     createRefTableModal(field: EruptFieldModel) {
@@ -98,7 +99,7 @@ export class ReferenceComponent implements OnInit {
             }
         }
         // @ts-ignore
-        this.modal.create({
+        let ref = this.modal.create({
             nzWrapClassName: "modal-xxl",
             nzKeyboard: true,
             nzStyle: {top: "24px"},
@@ -106,18 +107,7 @@ export class ReferenceComponent implements OnInit {
             nzTitle: edit.title + (field.eruptFieldJson.edit.$viewValue ? "【" + field.eruptFieldJson.edit.$viewValue + "】" : ""),
             nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzContent: TableComponent,
-            nzComponentParams: {
-                referenceTable: {
-                    eruptBuild: {
-                        eruptModel: this.eruptModel
-                    },
-                    eruptField: field,
-                    mode: SelectMode.radio,
-                    dependVal: dependVal,
-                    parentEruptName: this.parentEruptName,
-                    tabRef: false
-                }
-            }, nzOnOk: () => {
+            nzOnOk: () => {
                 let radioValue = edit.$tempValue;
                 if (!radioValue) {
                     this.msg.warning("请选中一条数据");
@@ -133,6 +123,16 @@ export class ReferenceComponent implements OnInit {
                 return true;
             }
         });
+        ref.getContentComponent().referenceTable = {
+            eruptBuild: {
+                eruptModel: this.eruptModel
+            },
+            eruptField: field,
+            mode: SelectMode.radio,
+            dependVal: dependVal,
+            parentEruptName: this.parentEruptName,
+            tabRef: false
+        };
     }
 
     clearReferValue(field: EruptFieldModel) {

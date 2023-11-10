@@ -72,19 +72,6 @@ import {NzRateModule} from "ng-zorro-antd/rate";
         ViewTypeComponent,
         TabTableComponent
     ],
-    entryComponents: [
-        EditTypeComponent,
-        ViewTypeComponent,
-        TreeSelectComponent,
-        ExcelImportComponent,
-        ReferenceTableComponent,
-        TableComponent,
-        EditComponent,
-        CodeEditorComponent,
-        SafeTemplateComponent,
-        MarkdownComponent,
-        CardComponent
-    ],
     declarations: [
         EditTypeComponent,
         TreeSelectComponent,
@@ -113,6 +100,18 @@ import {NzRateModule} from "ng-zorro-antd/rate";
         AutoCompleteComponent,
         ReferenceComponent,
         SearchSeComponent,
+
+        EditTypeComponent,
+        ViewTypeComponent,
+        TreeSelectComponent,
+        ExcelImportComponent,
+        ReferenceTableComponent,
+        TableComponent,
+        EditComponent,
+        CodeEditorComponent,
+        SafeTemplateComponent,
+        MarkdownComponent,
+        CardComponent
     ]
 })
 export class EruptModule {
