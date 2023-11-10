@@ -27,6 +27,8 @@ export class HeaderComponent implements OnInit {
 
     title = WindowModel.title;
 
+    i18nChoice = WindowModel.i18nChoice;
+
     logoPath: string = WindowModel.logoPath;
 
     logoText: string = WindowModel.logoText;

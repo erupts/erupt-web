@@ -30,6 +30,8 @@ export class WindowModel {
 
     public static hiddenResetPassword: boolean = WindowModel.config["hiddenResetPassword"] == true;
 
+    public static i18nChoice: boolean = WindowModel.config["i18nChoice"] !== false;
+
     public static upload: Function = WindowModel.config["upload"] || false;
 
     public static eruptEvent: {

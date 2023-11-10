@@ -19,6 +19,8 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     copyright = WindowModel.copyright;
 
+    i18nChoice = WindowModel.i18nChoice;
+
     constructor(private modalSrv: NzModalService) {
     }
 
