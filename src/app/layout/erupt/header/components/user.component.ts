@@ -7,6 +7,7 @@ import {I18NService} from "@core";
 import {WindowModel} from "@shared/model/window.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.component";
+import {EruptAppData} from "@shared/model/erupt-app.model";
 
 @Component({
     selector: "header-user",
@@ -19,7 +20,7 @@ import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.componen
         </div>
         <nz-dropdown-menu #avatarMenu>
             <div nz-menu class="width-sm">
-                <div nz-menu-item (click)="changePwd()">
+                <div nz-menu-item (click)="changePwd()"  *ngIf="resetPassword">
                     <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>{{'global.reset_pwd'|translate}}
                 </div>
                 <div nz-menu-item (click)="logout()">
@@ -30,6 +31,9 @@ import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.componen
     `
 })
 export class HeaderUserComponent {
+
+    resetPassword = EruptAppData.get().resetPwd;
+ 
     constructor(
         public settings: SettingsService,
         private router: Router,
