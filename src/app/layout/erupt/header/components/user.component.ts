@@ -19,7 +19,7 @@ import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.componen
         </div>
         <nz-dropdown-menu #avatarMenu>
             <div nz-menu class="width-sm">
-                <div nz-menu-item (click)="changePwd()">
+                <div nz-menu-item (click)="changePwd()" *ngIf="!hiddenResetPassword">
                     <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>{{'global.reset_pwd'|translate}}
                 </div>
                 <div nz-menu-item (click)="logout()">
@@ -30,6 +30,8 @@ import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.componen
     `
 })
 export class HeaderUserComponent {
+    hiddenResetPassword = WindowModel.hiddenResetPassword
+
     constructor(
         public settings: SettingsService,
         private router: Router,
@@ -38,8 +40,10 @@ export class HeaderUserComponent {
         private dataService: DataService,
         @Inject(NzModalService)
         private modal: NzModalService,
+        
     ) {
     }
+
 
     logout() {
         this.modal.confirm({

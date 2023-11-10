@@ -53,6 +53,8 @@ import {ResetPwdComponent} from "../../routes/reset-pwd/reset-pwd.component";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 
+import {WindowModel} from "@shared/model/window.model";
+
 // #region icons
 
 const ICONS = [
@@ -204,7 +206,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.router.url === "/") {
                 path && this.router.navigateByUrl(path).then();
             }
-            if (userinfo.resetPwd) {
+            if (userinfo.resetPwd && !WindowModel.hiddenResetPassword) {
                 this.modal.create({
                     nzTitle: this.i18n.fanyi("global.reset_pwd"),
                     nzMaskClosable: false,

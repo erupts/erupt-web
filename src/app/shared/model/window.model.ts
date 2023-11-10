@@ -28,6 +28,8 @@ export class WindowModel {
 
     public static copyright: boolean = WindowModel.config["copyright"] !== false;
 
+    public static hiddenResetPassword: boolean = WindowModel.config["hiddenResetPassword"] == true;
+
     public static upload: Function = WindowModel.config["upload"] || false;
 
     public static eruptEvent: {
