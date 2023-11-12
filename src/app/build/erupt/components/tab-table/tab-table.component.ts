@@ -93,18 +93,13 @@ export class TabTableComponent implements OnInit {
                     icon: "edit",
                     click: (record: any, modal: any, comp: STComponent) => {
                         this.dataHandlerService.objectToEruptValue(record, this.tabErupt.eruptBuildModel);
-                        this.modal.create({
+                        let ref = this.modal.create({
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "20px"},
                             nzMaskClosable: false,
                             nzKeyboard: false,
                             nzTitle: this.i18n.fanyi("global.editor"),
                             nzContent: EditTypeComponent,
-                            nzComponentParams: {
-                                col: colRules[3],
-                                eruptBuildModel: this.tabErupt.eruptBuildModel,
-                                parentEruptName: this.eruptBuildModel.eruptModel.eruptName
-                            },
                             nzOnOk: async () => {
                                 let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
                                 let result = await this.dataService.eruptTabUpdate(this.eruptBuildModel.eruptModel.eruptName, this.tabErupt.eruptFieldModel.fieldName, obj)
@@ -126,6 +121,9 @@ export class TabTableComponent implements OnInit {
                                 }
                             }
                         });
+                        ref.getContentComponent().col = colRules[3]
+                        ref.getContentComponent().eruptBuildModel = this.tabErupt.eruptBuildModel
+                        ref.getContentComponent().parentEruptName = this.eruptBuildModel.eruptModel.eruptName;
                     }
                 });
             }
@@ -163,18 +161,13 @@ export class TabTableComponent implements OnInit {
         // this.dataHandlerService.emptyEruptValue(this.tabErupt.eruptBuildModel);
         this.dataService.getInitValue(this.tabErupt.eruptBuildModel.eruptModel.eruptName, this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
             this.dataHandlerService.objectToEruptValue(data, this.tabErupt.eruptBuildModel);
-            this.modal.create({
+            let ref = this.modal.create({
                 nzWrapClassName: "modal-lg",
                 nzStyle: {top: "50px"},
                 nzMaskClosable: false,
                 nzKeyboard: false,
                 nzTitle: this.i18n.fanyi("global.add"),
                 nzContent: EditTypeComponent,
-                nzComponentParams: {
-                    mode: Scene.ADD,
-                    eruptBuildModel: this.tabErupt.eruptBuildModel,
-                    parentEruptName: this.eruptBuildModel.eruptModel.eruptName
-                },
                 nzOnOk: async () => {
                     let obj: any = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
                     let result = await this.dataService.eruptTabAdd(this.eruptBuildModel.eruptModel.eruptName, this.tabErupt.eruptFieldModel.fieldName, obj).toPromise().then(resp => resp);
@@ -194,23 +187,20 @@ export class TabTableComponent implements OnInit {
                     }
                 }
             });
+            ref.getContentComponent().mode = Scene.ADD;
+            ref.getContentComponent().eruptBuildModel = this.tabErupt.eruptBuildModel;
+            ref.getContentComponent().parentEruptName = this.eruptBuildModel.eruptModel.eruptName;
         });
     }
 
     addDataByRefer() {
-        this.modal.create({
+        let ref = this.modal.create({
             nzStyle: {top: "20px"},
             nzWrapClassName: "modal-xxl",
             nzMaskClosable: false,
             nzKeyboard: false,
             nzTitle: this.i18n.fanyi("global.new"),
             nzContent: ReferenceTableComponent,
-            nzComponentParams: {
-                eruptBuild: this.eruptBuildModel,
-                eruptField: this.tabErupt.eruptFieldModel,
-                mode: SelectMode.checkbox,
-                tabRef: true
-            },
             nzOkText: this.i18n.fanyi("global.add"),
             nzOnOk: () => {
                 let tabEruptModel = this.tabErupt.eruptBuildModel.eruptModel;
@@ -254,6 +244,12 @@ export class TabTableComponent implements OnInit {
                 return true;
             }
         });
+        Object.assign(ref.getContentComponent(), {
+            eruptBuild: this.eruptBuildModel,
+            eruptField: this.tabErupt.eruptFieldModel,
+            mode: SelectMode.checkbox,
+            tabRef: true
+        })
     }
 
 

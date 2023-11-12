@@ -7,6 +7,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {HeaderSearchComponent} from "./components/search.component";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {AppViewService} from "@shared/service/app-view.service";
+import {EruptAppData} from "@shared/model/erupt-app.model";
 
 @Component({
     selector: "layout-header",
@@ -37,6 +38,8 @@ export class HeaderComponent implements OnInit {
 
     desc: string;
 
+    showI18n: boolean = true;
+
     openDrawer() {
         this.drawerVisible = true;
     }
@@ -58,6 +61,9 @@ export class HeaderComponent implements OnInit {
         this.appViewService.routerViewDescSubject.subscribe(value => {
             this.desc = value;
         })
+        if (EruptAppData.get().locales.length <= 1) {
+            this.showI18n = false;
+        }
     }
 
     toggleCollapsedSidebar() {
@@ -86,7 +92,7 @@ export class HeaderComponent implements OnInit {
     }
 
     search() {
-        this.modal.create({
+        let model = this.modal.create({
             nzWrapClassName: "modal-xs",
             nzMaskClosable: true,
             nzKeyboard: true,
@@ -95,11 +101,9 @@ export class HeaderComponent implements OnInit {
             nzBodyStyle: {
                 padding: "12px"
             },
-            nzContent: HeaderSearchComponent,
-            nzComponentParams: {
-                menu: this.menu
-            }
-        })
+            nzContent: HeaderSearchComponent
+        });
+        model.getContentComponent().menu = this.menu
     }
 
 }
