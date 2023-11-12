@@ -1,23 +1,26 @@
 import {DOCUMENT} from '@angular/common';
-import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core';
 import {I18NService} from '@core';
 import {SettingsService} from '@delon/theme';
+import {EruptAppData} from "@shared/model/erupt-app.model";
 
 @Component({
     selector: 'i18n-choice',
     template: `
-        <i nz-dropdown [nzDropdownMenu]="langMenu" *ngIf="langs.length > 1"
-           nzPlacement="bottomRight" nz-icon
-           nzType="global"></i>
-        <nz-dropdown-menu #langMenu>
-            <ul nz-menu nzSelectable>
-                <li nz-menu-item *ngFor="let item of langs" [nzSelected]="item.code == curLangCode"
-                    (click)="change(item.code)">
-                    <span role="img" [attr.aria-label]="item.text" class="pr-xs">{{ item.abbr }}</span>
-                    {{ item.text }}
-                </li>
-            </ul>
-        </nz-dropdown-menu>
+        <ng-container *ngIf="langs.length > 1">
+            <i nz-dropdown [nzDropdownMenu]="langMenu"
+               nzPlacement="bottomRight" nz-icon
+               nzType="global"></i>
+            <nz-dropdown-menu #langMenu>
+                <ul nz-menu nzSelectable>
+                    <li nz-menu-item *ngFor="let item of langs" [nzSelected]="item.code == curLangCode"
+                        (click)="change(item.code)">
+                        <span role="img" [attr.aria-label]="item.text" class="pr-xs">{{ item.abbr }}</span>
+                        {{ item.text }}
+                    </li>
+                </ul>
+            </nz-dropdown-menu>
+        </ng-container>
     `,
     host: {
         '[class.flex-1]': 'true'
@@ -33,8 +36,17 @@ export class HeaderI18nComponent {
     constructor(private settings: SettingsService,
                 private i18n: I18NService,
                 @Inject(DOCUMENT) private doc: any) {
-        this.langs = this.i18n.getLangs();
-        this.curLangCode = this.settings.layout.lang;
+        let locales = EruptAppData.get().locales;
+        let localesObj = {};
+        for (let key of locales) {
+            localesObj[key] = key;
+        }
+        for (let lang of this.i18n.getLangs()) {
+            if (localesObj[lang.code]) {
+                this.langs.push(lang);
+            }
+        }
+        console.log(this.langs)
     }
 
     change(lang: string): void {
@@ -42,4 +54,5 @@ export class HeaderI18nComponent {
         this.settings.setLayout('lang', lang);
         setTimeout(() => this.doc.location.reload());
     }
+
 }

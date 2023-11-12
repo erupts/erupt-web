@@ -204,7 +204,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.router.url === "/") {
                 path && this.router.navigateByUrl(path).then();
             }
-            if (userinfo.resetPwd) {
+            if (userinfo.resetPwd && EruptAppData.get().resetPwd) {
                 this.modal.create({
                     nzTitle: this.i18n.fanyi("global.reset_pwd"),
                     nzMaskClosable: false,

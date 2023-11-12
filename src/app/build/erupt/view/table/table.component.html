@@ -25,7 +25,7 @@
                 <div class="erupt-btn-item">
                     <div>
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
-                            <button nz-button nzType="default" class="mb-sm" (click)="addRow()" id="erupt-btn-add">
+                            <button nz-button nzType="default" class="mb-sm" (click)="addData()" id="erupt-btn-add">
                                 <i nz-icon nzType="plus" nzTheme="outline"></i>{{'table.add'|translate}}
                             </button>
                         </ng-container>
@@ -127,7 +127,7 @@
                     <!--                    </ng-container>-->
                     <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
                         [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
-                        [scroll]="{x: (clientWidth > 768 ? showColumnLength * 150 : 0) + 'px'}"
+                        [scroll]="{x: (clientWidth > 768 ? showColumnLength * 160 : 0) + 'px'}"
                         (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
                         [page]="dataPage.page" [size]="'middle'"
                     >

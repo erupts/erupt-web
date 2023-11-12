@@ -9,7 +9,7 @@ import ngRu from '@angular/common/locales/ru';
 import ngZhTw from '@angular/common/locales/zh-Hant';
 import ngKO from '@angular/common/locales/ko';
 import ngJA from '@angular/common/locales/ja';
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {
     DelonLocaleService,
     en_US as delonEnUS,
@@ -129,7 +129,7 @@ for (let key in LANGS) {
 
 
 @Injectable()
-export class I18NService {
+export class I18NService implements OnInit{
 
     currentLang: string;
 
@@ -137,12 +137,9 @@ export class I18NService {
 
     public datePipe: DatePipe;
 
-    private getDefaultLang(): string {
+    public getDefaultLang(): string {
         if (this.settings.layout.lang) {
             return this.settings.layout.lang;
-        }
-        if (!this.platform.isBrowser) {
-            return 'zh-CN';
         }
         let res = (navigator.languages ? navigator.languages[0] : null) || navigator.language;
         const arr = res.split('-');
@@ -150,16 +147,14 @@ export class I18NService {
     }
 
     constructor(
-        private http: HttpClient,
         private settings: SettingsService,
         private nzI18nService: NzI18nService,
         private delonLocaleService: DelonLocaleService,
         private platform: Platform
     ) {
-        const defaultLang = this.getDefaultLang();
-        this.currentLang = LANGS[defaultLang] ? defaultLang : 'en-US'
-        this.use(this.currentLang);
-        this.datePipe = new DatePipe(this.currentLang);
+    }
+
+    ngOnInit(): void {
     }
 
     loadLangData(success) {
@@ -194,6 +189,7 @@ export class I18NService {
         this.nzI18nService.setLocale(item.zorro);
         this.nzI18nService.setDateLocale(item.date);
         this.delonLocaleService.setLocale(item.delon);
+        this.datePipe = new DatePipe(lang);
         this.currentLang = lang;
     }
 

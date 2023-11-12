@@ -246,12 +246,15 @@ export class DefaultInterceptor implements HttpInterceptor {
         //                 nzFooter: null,
         //                 nzTitle: "登录",
         //                 nzContent: UserLoginComponent,
-        //                 nzComponentParams: {
+        //                 nzData: {
         //                     modelFun: () => {
         //                         return modelRef.close();
         //                     }
         //                 }
         //             });
+        //             modelRef.getContentComponent().modelFun = () => {
+        //                 return modelRef.close();
+        //             }
         //             return of(null);
         //         }
         //     }
