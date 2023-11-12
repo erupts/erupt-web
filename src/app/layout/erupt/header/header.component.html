@@ -51,8 +51,7 @@
                 <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'"></i>
             </div>
         </li>
-
-        <li>
+        <li [hidden]="!showI18n">
             <div class="alain-default__nav-item">
                 <i18n-choice></i18n-choice>
             </div>
