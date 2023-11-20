@@ -46,7 +46,6 @@ export class HeaderI18nComponent {
                 this.langs.push(lang);
             }
         }
-        console.log(this.langs)
     }
 
     change(lang: string): void {
