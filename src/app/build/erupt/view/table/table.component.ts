@@ -812,7 +812,6 @@ export class TableComponent implements OnInit {
         this.showTable = true;
         this.eruptBuildModel.eruptModel.eruptJson.linkTree.value = event;
         this.searchErupt.eruptJson.linkTree.value = event;
-        console.log(this.dataPage)
         this.query(1);
     }
 
