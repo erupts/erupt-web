@@ -19,7 +19,16 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     copyright = WindowModel.copyright;
 
+    copyrightTxt = WindowModel.copyrightTxt;
+
     constructor(private modalSrv: NzModalService) {
+        if (WindowModel.copyrightTxt) {
+            if (typeof (WindowModel.copyrightTxt) === 'function') {
+                this.copyrightTxt = WindowModel.copyrightTxt();
+            } else {
+                this.copyrightTxt = WindowModel.copyrightTxt;
+            }
+        }
     }
 
     ngAfterViewInit(): void {

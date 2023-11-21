@@ -21,12 +21,12 @@ export class WindowModel {
     public static loginLogoPath: string = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
 
     public static logoText: string = WindowModel.config["logoText"] || "";
-    //注册页面地址
-    public static registerPage: string = WindowModel.config["registerPage"] || undefined;
 
-    public static dialogLogin: boolean = WindowModel.config["dialogLogin"] || false;
+    public static registerPage: string = WindowModel.config["registerPage"] || undefined; //注册页面地址
 
-    public static copyright: boolean = WindowModel.config["copyright"] !== false;
+    public static copyright: boolean = WindowModel.config["copyright"];
+
+    public static copyrightTxt: any = WindowModel.config["copyrightTxt"]; //授权文本
 
     public static upload: Function = WindowModel.config["upload"] || false;
 
