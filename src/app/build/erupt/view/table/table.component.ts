@@ -261,6 +261,9 @@ export class TableComponent implements OnInit {
     }
 
     query(page?: number, size?: number, sort?: object) {
+        if (!this.eruptBuildModel.power.query) {
+            return;
+        }
         let query = {};
         query["condition"] = this.dataHandler.eruptObjectToCondition(
             this.dataHandler.searchEruptToObject({
