@@ -60,7 +60,7 @@
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
                             <button nz-button nzType="default" [nzSearch]="true"
-                                    class="mb-sm" [nzLoading]="st._loading" id="erupt-btn-query"
+                                    class="mb-sm" [nzLoading]="st?._loading" id="erupt-btn-query"
                                     (click)="query()">
                                 <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
                             </button>
@@ -77,7 +77,7 @@
                             <ng-template [ngTemplateOutlet]="operationButtons"></ng-template>
                         </ng-container>
                     </div>
-                    <div class="condition-btn">
+                    <div class="condition-btn" *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
                         <div>
                             <button nz-button nzType="default" nz-popover style="padding: 4px 8px"
                                     [(nzPopoverVisible)]="showColCtrl" [nzPopoverContent]="tableColumnCtrl"
@@ -90,7 +90,7 @@
                                         <div *ngIf="col.title&&col.index" nz-col nzSpan="6">
                                             <label nz-checkbox [(ngModel)]="col['show']"
                                                    style="width: 130px;"
-                                                   (ngModelChange)="st.resetColumns()">{{col.title['text'] | nzEllipsis:6:'...'}}</label>
+                                                   (ngModelChange)="st?.resetColumns()">{{col.title['text'] | nzEllipsis:6:'...'}}</label>
                                         </div>
                                     </ng-container>
                                 </div>
@@ -102,7 +102,7 @@
                                     <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
                                 </button>
                                 <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset"
-                                        [disabled]="st._loading">
+                                        [disabled]="st?._loading">
                                     <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
                                 </button>
                             </ng-container>
@@ -113,7 +113,7 @@
                     <ng-template [ngTemplateOutlet]="operationButtons"></ng-template>
                 </div>
 
-                <ng-container>
+                <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
                     <nz-card *ngIf="hasSearchFields" [nzBodyStyle]="{padding:'10px'}" class="search-card"
                              [hidden]="hideCondition">
                         <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'">
