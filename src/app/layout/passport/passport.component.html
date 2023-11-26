@@ -19,8 +19,13 @@
             </div>
         </div>
         <global-footer *ngIf="copyright">
-            <i nz-icon nzType="copyright" nzTheme="outline"></i> 2018 - {{nowYear}}
-            <a href="https://www.erupt.xyz" target="_blank">Erupt Framework</a>&nbsp; All rights reserved.
+            <ng-container *ngIf="copyrightTxt">
+                {{copyrightTxt}}
+            </ng-container>
+            <ng-container *ngIf="!copyrightTxt">
+                <i nz-icon nzType="copyright" nzTheme="outline"></i> 2018 - {{nowYear}}
+                <a href="https://www.erupt.xyz" target="_blank">Erupt Framework</a>&nbsp; All rights reserved.
+            </ng-container>
         </global-footer>
     </div>
 </div>

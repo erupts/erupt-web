@@ -29,7 +29,7 @@ export class StartupService {
     }
 
     async load(): Promise<any> {
-        console.group(WindowModel.copyright ? "Erupt All rights reserved." : WindowModel.title);
+        console.group(WindowModel.title);
         console.log("%c" +
             "                               __      \n" +
             "                              /\\ \\__   \n" +
@@ -39,8 +39,8 @@ export class StartupService {
             "\\ \\____\\\\ \\_\\  \\ \\____/ \\ \\ ,__/ \\ \\__\\\n" +
             " \\/____/ \\/_/   \\/___/   \\ \\ \\/   \\/__/\n" +
             "                          \\ \\_\\        \n" +
-            "                           \\/_/        ", "color:#2196f3;font-weight:800");
-        console.log("%chttps://www.erupt.xyz", "color:#2196f3;font-size:1.3em;padding:16px 0;");
+            "                           \\/_/          \n" +
+            "https://www.erupt.xyz", "color:#2196f3;font-weight:800");
         console.groupEnd();
         (window as any).eruptWebSuccess = true;
         await new Promise<void>((resolve) => {

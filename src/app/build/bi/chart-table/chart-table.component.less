@@ -20,3 +20,25 @@
     }
   }
 }
+
+[data-theme='dark'] {
+    :host {
+        ::ng-deep {
+            table {
+                tr {
+                    td, th {
+                        color: #dcdcdc !important;
+                        color: rgba(0, 0, 0, 0.65);
+                        font-size: 14px;
+                        line-height: 1;
+                        border: 1px solid #333;
+                    }
+
+                    &:hover {
+
+                    }
+                }
+            }
+        }
+    }
+}
