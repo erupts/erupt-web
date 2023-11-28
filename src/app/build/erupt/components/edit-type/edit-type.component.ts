@@ -214,6 +214,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     uploadAccept(accept: string[]): string[] {
+        if (!accept || accept.length == 0) {
+            return null;
+        }
         return accept.map(it => '.' + it)
     }
 
