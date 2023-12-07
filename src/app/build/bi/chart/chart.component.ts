@@ -131,7 +131,7 @@ export class ChartComponent implements OnInit, OnDestroy {
         }
     }
 
-    downloadChart() {
+    downloadChartImage() {
         if (!this.plot) {
             this.init();
         }
@@ -150,6 +150,13 @@ export class ChartComponent implements OnInit, OnDestroy {
         } else {
             window.open(src);
         }
+    }
+
+    downloadChartData() {
+        let param = this.handlerService.buildDimParam(this.bi, false);
+        this.biDataService.exportChartExcel(this.bi.code, this.chart.id, param, () => {
+
+        })
     }
 
     render(data: any[]) {
@@ -175,7 +182,6 @@ export class ChartComponent implements OnInit, OnDestroy {
         if (this.chart.chartOption) {
             Object.assign(props, this.chart.chartOption);
         }
-
         switch (this.chart.type) {
             case ChartType.Line:
                 this.plot = new Line(
@@ -218,8 +224,8 @@ export class ChartComponent implements OnInit, OnDestroy {
                     Object.assign(props, {
                         legend: false,
                         label: {
-                            style: { fontSize: 10 },
-                            layout: [{ type: "interval-adjust-position" }]
+                            style: {fontSize: 10},
+                            layout: [{type: "interval-adjust-position"}]
                         }
                     }) as WaterfallOptions
                 );
