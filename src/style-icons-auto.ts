@@ -5,6 +5,7 @@
 
 import {
     ArrowDownOutline,
+    ArrowRightOutline,
     BuildOutline,
     BulbOutline,
     BulbTwoTone,
@@ -23,11 +24,14 @@ import {
     EditFill,
     EllipsisOutline,
     EyeOutline,
+    FileImageOutline,
     FullscreenExitOutline,
-    FullscreenOutline, GlobalOutline,
+    FullscreenOutline,
+    GlobalOutline,
     ImportOutline,
     InboxOutline,
-    LoadingOutline, LockOutline,
+    LoadingOutline,
+    LockOutline,
     MenuFoldOutline,
     MenuUnfoldOutline,
     MinusSquareOutline,
@@ -45,8 +49,7 @@ import {
     SyncOutline,
     TableOutline,
     UnorderedListOutline,
-    UserOutline,
-    ArrowRightOutline
+    UserOutline
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -94,5 +97,6 @@ export const ICONS_AUTO = [
     LockOutline,
     UnorderedListOutline,
     UserOutline,
-    ArrowRightOutline
+    ArrowRightOutline,
+    FileImageOutline
 ];
