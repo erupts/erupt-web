@@ -51,9 +51,11 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     @ViewChild('chartTable', {static: false}) chartTable: ChartTableComponent | null;
 
+    downloading: boolean = false;
+
     open: boolean = true;
 
-    plot;
+    plot = null;
 
     chartType = ChartType;
 
@@ -80,6 +82,9 @@ export class ChartComponent implements OnInit, OnDestroy {
 
     init() {
         let param = this.handlerService.buildDimParam(this.bi, false);
+        if (!param) {
+            return;
+        }
         for (let dimension of this.bi.dimensions) {
             if (dimension.notNull && (!param || null === param[dimension.code])) {
                 this.ready = false;
@@ -93,11 +98,11 @@ export class ChartComponent implements OnInit, OnDestroy {
             this.chart.loading = true;
             this.biDataService.getBiChart(this.bi.code, this.chart.id, param).subscribe(data => {
                 this.chart.loading = false;
+                this.data = data;
                 if (this.chart.type == ChartType.Number) {
                     if (data[0]) {
                         this.dataKeys = Object.keys(data[0]);
                     }
-                    this.data = data;
                 } else if (this.chart.type == ChartType.table) {
                     this.chartTable.render(data);
                 } else {
@@ -114,20 +119,21 @@ export class ChartComponent implements OnInit, OnDestroy {
     }
 
     update(loading: boolean) {
-        this.handlerService.buildDimParam(this.bi, true);
-        if (this.plot) {
-            if (loading) {
-                this.chart.loading = true;
-            }
-            this.biDataService.getBiChart(this.bi.code, this.chart.id,
-                this.handlerService.buildDimParam(this.bi)).subscribe(data => {
-                if (this.chart.loading) {
-                    this.chart.loading = false;
+        let param = this.handlerService.buildDimParam(this.bi, true);
+        if (param) {
+            if (this.plot) {
+                if (loading) {
+                    this.chart.loading = true;
                 }
-                this.plot.changeData(data);
-            });
-        } else {
-            this.init();
+                this.biDataService.getBiChart(this.bi.code, this.chart.id, param).subscribe(data => {
+                    if (this.chart.loading) {
+                        this.chart.loading = false;
+                    }
+                    this.plot.changeData(data);
+                });
+            } else {
+                this.init();
+            }
         }
     }
 
@@ -153,10 +159,13 @@ export class ChartComponent implements OnInit, OnDestroy {
     }
 
     downloadChartData() {
-        let param = this.handlerService.buildDimParam(this.bi, false);
-        this.biDataService.exportChartExcel(this.bi.code, this.chart.id, param, () => {
-
-        })
+        let param = this.handlerService.buildDimParam(this.bi, true);
+        if (param) {
+            this.downloading = true;
+            this.biDataService.exportChartExcel(this.bi.code, this.chart.id, param, () => {
+                this.downloading = false;
+            })
+        }
     }
 
     render(data: any[]) {
