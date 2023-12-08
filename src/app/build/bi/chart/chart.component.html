@@ -39,13 +39,18 @@
         </div>
     </nz-card>
     <ng-template #extraTemplate>
+        <ng-container *ngIf="chart.remark">
+            <span nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="chart.remark"></span>
+            &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
+        </ng-container>
         <ng-container *ngIf="plot">
             <i nz-icon nzType="file-image" nzTheme="outline" (click)="downloadChartImage()"></i>
             &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
-            <ng-container *ngIf="bi.export">
-                <i nz-icon nzType="download" nzTheme="outline" (click)="downloadChartData()"></i>
-                &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
-            </ng-container>
+        </ng-container>
+        <ng-container *ngIf="bi.export && data && data.length>0">
+            <i nz-icon [nzType]="'loading'" *ngIf="downloading"></i>
+            <i nz-icon nzType="download" *ngIf="!downloading" nzTheme="outline" (click)="downloadChartData()"></i>
+            &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
         </ng-container>
         <i nz-icon nzType="reload" (click)="update(true)"></i>
         &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;

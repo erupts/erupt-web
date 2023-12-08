@@ -22,6 +22,7 @@ export interface Chart {
     linkage: boolean;
     option: object;
     chartOption: any;
+    remark?: string;
     loading?: boolean;
 }
 
