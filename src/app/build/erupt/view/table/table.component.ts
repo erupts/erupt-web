@@ -629,7 +629,7 @@ export class TableComponent implements OnInit {
                 modal.getContentComponent().mode = Scene.ADD;
                 modal.getContentComponent().eruptBuildModel = {eruptModel: operationErupt};
                 modal.getContentComponent().parentEruptName = this.eruptBuildModel.eruptModel.eruptName;
-                this.dataService.getInitValue(operationErupt.eruptName, this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
+                this.dataService.getInitValue(operationErupt.eruptName, this.eruptBuildModel.eruptModel.eruptName,this._drill ? DataService.drillToHeader(this._drill) : {}).subscribe(data => {
                     this.dataHandlerService.objectToEruptValue(data, {
                         eruptModel: operationErupt
                     });
@@ -704,6 +704,7 @@ export class TableComponent implements OnInit {
             }
         });
         modal.getContentComponent().eruptBuildModel = this.eruptBuildModel
+        modal.getContentComponent().header = this._drill ? DataService.drillToHeader(this._drill) : {};
     }
 
     pageIndexChange(index) {
