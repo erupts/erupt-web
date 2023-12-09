@@ -60,7 +60,7 @@
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
                             <button nz-button nzType="default" [nzSearch]="true"
-                                    class="mb-sm" [nzLoading]="st?._loading" id="erupt-btn-query"
+                                    class="mb-sm" [nzLoading]="dataPage.querying" id="erupt-btn-query"
                                     (click)="query()">
                                 <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
                             </button>
@@ -102,7 +102,7 @@
                                     <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
                                 </button>
                                 <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset"
-                                        [disabled]="st?._loading">
+                                        [disabled]="dataPage.querying">
                                     <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
                                 </button>
                             </ng-container>
