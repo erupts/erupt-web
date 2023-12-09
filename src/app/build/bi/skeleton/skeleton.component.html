@@ -11,8 +11,8 @@
                         <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
                     </button>
                 </ng-container>
-                <ng-container *ngIf="bi.export">
-                    <button nz-button class="mb-sm"  (click)="exportBiData()" [nzLoading]="downloading"
+                <ng-container *ngIf="bi.table&&bi.export">
+                    <button nz-button class="mb-sm" (click)="exportBiData()" [nzLoading]="downloading"
                             [disabled]="!biTable.data||biTable.data.length<=0">
                         <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|translate}}
                     </button>
@@ -37,10 +37,11 @@
                         </ng-template>
                     </ng-container>
                     <ng-container *ngIf="bi.dimensions.length > 0">
-                        <button nz-button class="mb-sm"  *ngIf="!hideCondition" (click)="clearCondition()" [disabled]="querying">
+                        <button nz-button class="mb-sm" *ngIf="!hideCondition" (click)="clearCondition()"
+                                [disabled]="querying">
                             <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
                         </button>
-                        <button nz-button class="mb-sm"  (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
+                        <button nz-button class="mb-sm" (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
                             <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
                         </button>
                     </ng-container>
@@ -82,7 +83,6 @@
                     </ng-template>
                 </nz-card>
             </ng-container>
-
 
             <ng-container *ngIf="!haveNotNull">
                 <ng-container *ngIf="bi.table">
