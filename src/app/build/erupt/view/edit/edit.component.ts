@@ -31,6 +31,8 @@ export class EditComponent implements OnInit, OnDestroy {
 
     @Input() readonly: boolean = false;
 
+    @Input() header: object = {};
+
     @ViewChild("eruptEdit", {static: false}) eruptEdit: EditTypeComponent;
 
     eruptFieldModelMap: Map<String, EruptFieldModel>;
@@ -51,7 +53,7 @@ export class EditComponent implements OnInit, OnDestroy {
         this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
         if (this.behavior == Scene.ADD) {
             this.loading = true;
-            this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
+            this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName, null, this.header).subscribe(data => {
                 this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
                 this.loading = false;
             });

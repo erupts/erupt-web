@@ -252,7 +252,11 @@ export class SkeletonComponent implements OnInit, OnDestroy {
 
     clearCondition() {
         for (let dimension of this.bi.dimensions) {
-            dimension.$value = null;
+            if (dimension.type == DimType.NUMBER_RANGE || dimension.type == DimType.DATETIME_RANGE || dimension.type == DimType.DATE_RANGE) {
+                dimension.$value = [];
+            } else {
+                dimension.$value = null;
+            }
             dimension.$viewValue = null;
         }
         this.query({

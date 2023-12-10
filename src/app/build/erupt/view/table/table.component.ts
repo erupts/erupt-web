@@ -5,7 +5,6 @@ import {Drill, DrillInput, EruptModel, Row, RowOperation} from "../../model/erup
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
-import {ActivatedRoute} from "@angular/router";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {
     FormSize,
@@ -51,7 +50,6 @@ export class TableComponent implements OnInit {
         private msg: NzMessageService,
         @Inject(NzModalService)
         private modal: NzModalService,
-        public route: ActivatedRoute,
         private appViewService: AppViewService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
@@ -292,12 +290,12 @@ export class TableComponent implements OnInit {
             sort: sortString,
             ...query
         }, this.header).subscribe(page => {
-            this.st.data = page.list;
-            // this.dataPage.ps = page.pageSize;
-            // this.dataPage.pi = page.pageIndex;
             this.dataPage.querying = false;
-            this.dataPage.data = page.list;
+            this.dataPage.data = page.list
             this.dataPage.total = page.total;
+            // for (let ele of spliceArr(page.list, 20)) {
+            //     this.dataPage.data.push(...ele)
+            // }
         })
         this.extraRowFun(query);
     }
@@ -631,7 +629,7 @@ export class TableComponent implements OnInit {
                 modal.getContentComponent().mode = Scene.ADD;
                 modal.getContentComponent().eruptBuildModel = {eruptModel: operationErupt};
                 modal.getContentComponent().parentEruptName = this.eruptBuildModel.eruptModel.eruptName;
-                this.dataService.getInitValue(operationErupt.eruptName, this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
+                this.dataService.getInitValue(operationErupt.eruptName, this.eruptBuildModel.eruptModel.eruptName,this._drill ? DataService.drillToHeader(this._drill) : {}).subscribe(data => {
                     this.dataHandlerService.objectToEruptValue(data, {
                         eruptModel: operationErupt
                     });
@@ -706,6 +704,7 @@ export class TableComponent implements OnInit {
             }
         });
         modal.getContentComponent().eruptBuildModel = this.eruptBuildModel
+        modal.getContentComponent().header = this._drill ? DataService.drillToHeader(this._drill) : {};
     }
 
     pageIndexChange(index) {

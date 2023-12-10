@@ -178,13 +178,14 @@ export class DataService {
     }
 
     //获取初始化数据
-    getInitValue(eruptName: string, eruptParentName?: string): Observable<any> {
+    getInitValue(eruptName: string, eruptParentName?: string, header?: object): Observable<any> {
         return this._http.get<any>(RestPath.data + "/init-value/" + eruptName, null, {
             observe: "body",
             headers: {
                 erupt: eruptName,
                 eruptParent: eruptParentName || '',
-                ...this.getCommonHeader()
+                ...this.getCommonHeader(),
+                ...header
             }
         });
     }
