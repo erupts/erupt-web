@@ -83,8 +83,27 @@ export class BiDataService {
         });
     }
 
-    exportExcel(id: number, code: string, query: any, callback) {
+    exportExcel(id: number, code: string, query: any, callback?: Function) {
         this._http.post(RestPath.bi + "/" + code + "/excel/" + id, query, null, {
+            responseType: "arraybuffer",
+            observe: 'events',
+            headers: {
+                erupt: code,
+            }
+        }).subscribe((res) => {
+            if (res.type !== 4) {
+                // 还没准备好，无需处理
+                return;
+            }
+            downloadFile(res);
+            callback();
+        }, () => {
+            callback();
+        });
+    }
+
+    exportChartExcel(code: string, chartId: any, query: any, callback?: Function) {
+        this._http.post(RestPath.bi + "/" + code + "/export/chart/" + chartId, query, null, {
             responseType: "arraybuffer",
             observe: 'events',
             headers: {

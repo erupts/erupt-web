@@ -67,3 +67,12 @@ export function isNull(val: any): boolean {
 export function isNotNull(val: any) {
     return !isNull(val);
 }
+
+export function spliceArr(arr: any[], length: number): any[][] {
+    const res: any[][] = [];
+    while (arr.length > 0) {
+        const chunk: any[] = arr.splice(0, length);
+        res.push(chunk);
+    }
+    return res;
+}
