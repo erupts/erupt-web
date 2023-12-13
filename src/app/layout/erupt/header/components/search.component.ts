@@ -1,8 +1,6 @@
 import {AfterViewInit, Component, ElementRef, HostBinding, Inject, Input} from '@angular/core';
-import {DataService} from "@shared/service/data.service";
 import {Router} from "@angular/router";
 import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
-import {StatusService} from "@shared/service/status.service";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {generateMenuPath} from "@shared/util/erupt.util";
 
@@ -11,7 +9,7 @@ import {generateMenuPath} from "@shared/util/erupt.util";
     template: `
         <ng-container *ngIf="menu">
             <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
-                <input nz-input [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()" (input)="onInput($event)"
+                <input nz-input autofocus [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()" (input)="onInput($event)"
                        [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto"
                        (keydown.enter)="search($event)">
                 <nz-autocomplete #auto [nzBackfill]="false">
