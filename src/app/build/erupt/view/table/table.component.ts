@@ -32,7 +32,6 @@ import {deepCopy} from "@delon/util";
 import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
 import {STChange, STPage} from "@delon/abc/st/st.interfaces";
 import {AppViewService} from "@shared/service/app-view.service";
-import {EruptStorageService} from "@shared/service/erupt-storage.service";
 
 
 @Component({
@@ -54,8 +53,7 @@ export class TableComponent implements OnInit {
         private appViewService: AppViewService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
-        private eruptStorageService: EruptStorageService,
-        private i18n: I18NService,
+        private i18n: I18NService
     ) {
     }
 
