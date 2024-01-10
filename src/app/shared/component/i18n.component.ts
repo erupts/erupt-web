@@ -1,5 +1,5 @@
 import {DOCUMENT} from '@angular/common';
-import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
 import {I18NService} from '@core';
 import {SettingsService} from '@delon/theme';
 import {EruptAppData} from "@shared/model/erupt-app.model";
@@ -46,6 +46,7 @@ export class HeaderI18nComponent {
                 this.langs.push(lang);
             }
         }
+        this.curLangCode = this.settings.getLayout()['lang']
     }
 
     change(lang: string): void {
