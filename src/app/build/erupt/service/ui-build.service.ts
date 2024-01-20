@@ -340,7 +340,7 @@ export class UiBuildService {
                             for (let i in imgs) {
                                 imgElements[i] = `<img width="100%" class="e-table-img" src="${DataService.previewAttachment(imgs[i])}" alt=""/>`;
                             }
-                            return `<div style="text-align: center;display:flex;justify-content: center;">
+                            return `<div style="text-align: center;display:flex;justify-content: center;" title="${view.title}">
                                         ${imgElements.join(" ")}
                                     </div>`;
                         } else {
