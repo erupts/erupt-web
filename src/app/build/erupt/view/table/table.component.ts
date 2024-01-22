@@ -586,7 +586,7 @@ export class TableComponent implements OnInit {
                 nzFooter: null,
                 nzContent: EruptIframeComponent,
                 nzOnCancel: () => {
-                    this.query();
+                    // this.query();
                 }
             });
             ref.getContentComponent().url = url;
