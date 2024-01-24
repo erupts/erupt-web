@@ -176,7 +176,7 @@ export class UiBuildService {
                     };
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return "<i class='fa fa-link' aria-hidden='true'></i>";
+                            return "<i class='fa fa-link' aria-hidden='true' title=''></i>";
                         } else {
                             return "";
                         }
@@ -187,7 +187,7 @@ export class UiBuildService {
                     obj.type = "link";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return "<i class='fa fa-dot-circle-o' aria-hidden='true'></i>";
+                            return "<i class='fa fa-dot-circle-o' aria-hidden='true' title=''></i>";
                         } else {
                             return "";
                         }
@@ -214,7 +214,7 @@ export class UiBuildService {
                     obj.type = "link";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return "<i class='fa fa-qrcode' aria-hidden='true'></i>";
+                            return "<i class='fa fa-qrcode' aria-hidden='true' title=''></i>";
                         } else {
                             return "";
                         }
@@ -239,7 +239,7 @@ export class UiBuildService {
                     obj.type = "link";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return "<i class='fa fa-file-text' aria-hidden='true'></i>";
+                            return "<i class='fa fa-file-text' aria-hidden='true' title=''></i>";
                         } else {
                             return "";
                         }
@@ -266,7 +266,7 @@ export class UiBuildService {
                     obj.type = "link";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return "<i class='fa fa-code' aria-hidden='true'></i>";
+                            return "<i class='fa fa-code' aria-hidden='true' title=''></i>";
                         } else {
                             return "";
                         }
@@ -299,7 +299,7 @@ export class UiBuildService {
                     obj.type = "link";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return "<i class='fa fa-map' aria-hidden='true'></i>";
+                            return "<i class='fa fa-map' aria-hidden='true' title=''></i>";
                         } else {
                             return "";
                         }
@@ -360,7 +360,7 @@ export class UiBuildService {
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return `<i class='fa fa-file-text' aria-hidden='true'></i>`;
+                            return `<i class='fa fa-file-text' aria-hidden='true' title=''></i>`;
                         } else {
                             return "";
                         }
@@ -386,7 +386,7 @@ export class UiBuildService {
                     obj.type = "link";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return "<i class='fa fa-file-text' aria-hidden='true'></i>";
+                            return "<i class='fa fa-file-text' aria-hidden='true' title=''></i>";
                         } else {
                             return "";
                         }
@@ -412,7 +412,7 @@ export class UiBuildService {
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return `<i class='fa fa-file-image-o' aria-hidden='true'></i>`;
+                            return `<i class='fa fa-file-image-o' aria-hidden='true' title=''></i>`;
                         } else {
                             return "";
                         }
@@ -439,7 +439,7 @@ export class UiBuildService {
                     obj.className = "text-center p-sm";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return `<img width="100%" src="${item[view.column]}" />`;
+                            return `<img width="100%" src="${item[view.column]}" title=""/>`;
                         } else {
                             return "";
                         }
@@ -465,7 +465,7 @@ export class UiBuildService {
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return `<i class='fa fa-dot-circle-o' aria-hidden='true'></i>`;
+                            return `<i class='fa fa-dot-circle-o' aria-hidden='true' title=""></i>`;
                         } else {
                             return "";
                         }
@@ -489,7 +489,7 @@ export class UiBuildService {
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return `<i class='fa fa-download' aria-hidden='true'></i>`;
+                            return `<i class='fa fa-download' aria-hidden='true' title=""></i>`;
                         } else {
                             return "";
                         }
@@ -503,7 +503,7 @@ export class UiBuildService {
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return `<i class='fa fa-window-restore' aria-hidden='true'></i>`;
+                            return `<i class='fa fa-window-restore' aria-hidden='true' title=""></i>`;
                         } else {
                             return "";
                         }
@@ -516,7 +516,7 @@ export class UiBuildService {
                     obj.type = "link";
                     obj.className = "text-center";
                     obj.format = (item: any) => {
-                        return `<i class='fa fa-adjust' aria-hidden='true'></i>`;
+                        return `<i class='fa fa-adjust' aria-hidden='true' title=""></i>`;
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
