@@ -12,6 +12,7 @@ import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd/core/tree";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {AppViewService} from "@shared/service/app-view.service";
+import {Scene} from "../../model/erupt.enum";
 
 @Component({
     selector: "erupt-tree",
@@ -32,7 +33,9 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     treeLoading = false;
 
-    searchValue;
+    behavior: Scene = Scene.ADD;
+
+    searchValue: string;
 
     nodes: any = [];
 
@@ -84,6 +87,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         if (this.tree.getSelectedNodeList()[0]) {
             this.tree.getSelectedNodeList()[0].isSelected = false;
         }
+        this.behavior = Scene.ADD;
         this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
             this.loading = false;
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
@@ -92,6 +96,7 @@ export class TreeComponent implements OnInit, OnDestroy {
     }
 
     addSub() {
+        this.behavior = Scene.ADD;
         let eruptFieldModelMap = this.eruptBuildModel.eruptModel.eruptFieldModelMap;
         let id = eruptFieldModelMap.get(this.eruptBuildModel.eruptModel.eruptJson.tree.id).eruptFieldJson.edit.$value;
         let label = eruptFieldModelMap.get(this.eruptBuildModel.eruptModel.eruptJson.tree.label).eruptFieldJson.edit.$value;
@@ -106,6 +111,7 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     add() {
         this.loading = true;
+        this.behavior = Scene.ADD;
         this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
             this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
             this.loading = false;
@@ -169,6 +175,7 @@ export class TreeComponent implements OnInit, OnDestroy {
                 nzTitle: this.i18n.fanyi("global.delete.hint"),
                 nzContent: "",
                 nzOnOk: () => {
+                    this.behavior = Scene.ADD;
                     this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, nzTreeNode.origin.key)
                         .subscribe(res => {
                             if (res.status == Status.SUCCESS) {
@@ -224,6 +231,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.loading = true;
         this.showEdit = true;
         this.currentKey = event.node.origin.key;
+        this.behavior = Scene.EDIT;
         this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
             this.loading = false;
