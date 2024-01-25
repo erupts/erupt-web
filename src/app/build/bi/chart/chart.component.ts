@@ -409,6 +409,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                         wordField: x,
                         weightField: y,
                         colorField: series,
+                        interactions: [{ type: 'element-active' }],
                         wordStyle: {}
                     }) as WordCloudOptions
                 );
