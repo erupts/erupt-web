@@ -1,6 +1,8 @@
-<!--<div #s2t style="width: 100%;height: 100%">-->
+<div *ngIf="!data||data.length==0" class="flex-center-center">
+    <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null">
 
-<!--</div>-->
+    </nz-empty>
+</div>
 <table *ngIf="data&&data.length>0">
     <tr>
         <th *ngFor="let data of data[0] | keyvalue">{{data.key}}</th>

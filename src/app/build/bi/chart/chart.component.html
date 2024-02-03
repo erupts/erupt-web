@@ -8,32 +8,49 @@
                     <i nz-icon nzType="pie-chart" nzTheme="twotone" style="font-size: 36px"></i>
                 </div>
             </ng-container>
-            <ng-container *ngIf="ready" [ngSwitch]="chart.type">
-                <ng-container *ngSwitchCase="chartType.tpl">
-                    <erupt-iframe [url]="src" [style]="{height:chart.height+'px',paddingTop:'1px'}"></erupt-iframe>
-                </ng-container>
-                <ng-container *ngSwitchCase="chartType.table">
-                    <div [ngStyle]="{height:chart.height+'px'}" style="overflow: auto">
-                        <erupt-chart-table #chartTable [id]="chart.code"></erupt-chart-table>
-                    </div>
-                </ng-container>
-                <ng-container *ngSwitchCase="chartType.Number">
-                    <div style="padding: 12px;text-align: center;" [id]="chart.code">
-                        <div sg-container="{{data.length}}">
-                            <ng-container *ngFor="let d of data">
-                                <sg>
-                                    <nz-statistic style="margin-bottom: 16px;"
-                                                  [nzValue]="d[dataKeys[0]]||0"
-                                                  [nzTitle]="d[dataKeys[1]]"
-                                                  [nzValueStyle]="this.chart.chartOption"
-                                    ></nz-statistic>
-                                </sg>
+            <ng-container *ngIf="ready">
+                <ng-container [ngSwitch]="chart.type">
+                    <ng-container *ngSwitchCase="chartType.tpl">
+                        <erupt-iframe [url]="src" [style]="{height:chart.height+'px',paddingTop:'1px'}">
+
+                        </erupt-iframe>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="chartType.table">
+                        <div [ngStyle]="{height:chart.height+'px'}" style="overflow: auto">
+                            <erupt-chart-table #chartTable [id]="chart.code"></erupt-chart-table>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="chartType.Number">
+                        <ng-container *ngIf="!data||data.length==0">
+                            <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" class="flex-center-center">
+
+                            </nz-empty>
+                        </ng-container>
+                        <ng-container *ngIf="data&&data.length">
+                            <div style="padding: 12px;text-align: center;" [id]="chart.code">
+                                <div sg-container="{{data.length}}">
+                                    <ng-container *ngFor="let d of data">
+                                        <sg>
+                                            <nz-statistic style="margin-bottom: 16px;"
+                                                          [nzValue]="d[dataKeys[0]]||0"
+                                                          [nzTitle]="d[dataKeys[1]]"
+                                                          [nzValueStyle]="this.chart.chartOption"
+                                            ></nz-statistic>
+                                        </sg>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngSwitchDefault>
+                        <div [id]='chart.code' style='width:100%;' [ngStyle]="{height:chart.height+'px'}">
+                            <ng-container *ngIf="!data||data.length==0">
+                                <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" class="flex-center-center">
+
+                                </nz-empty>
                             </ng-container>
                         </div>
-                    </div>
-                </ng-container>
-                <ng-container *ngSwitchDefault>
-                    <div [id]='chart.code' style='width:100%;' [ngStyle]="{height:chart.height+'px'}"></div>
+                    </ng-container>
                 </ng-container>
             </ng-container>
         </div>
