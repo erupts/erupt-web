@@ -300,8 +300,8 @@ export class ChartComponent implements OnInit, OnDestroy {
                 this.plot = new Rose(
                     this.chart.code,
                     Object.assign(props, {
-                        seriesField: series,
-                        isGroup: !!series,
+                        seriesField: x,
+                        // isStack: !!series,
                         radius: 0.9,
                         label: {
                             offset: -15
@@ -409,6 +409,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                         wordField: x,
                         weightField: y,
                         colorField: series,
+                        interactions: [{ type: 'element-active' }],
                         wordStyle: {}
                     }) as WordCloudOptions
                 );

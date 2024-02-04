@@ -88,7 +88,7 @@
                 <ng-container *ngIf="bi.table">
                     <ng-container *ngIf="columns.length <= 0">
                         <nz-card>
-                            <nz-empty></nz-empty>
+                            <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null"></nz-empty>
                         </nz-card>
                     </ng-container>
                     <ng-container *ngIf="columns && columns.length > 0">

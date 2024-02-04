@@ -17,7 +17,7 @@ import {I18nPipe} from "@shared/pipe/i18n.pipe";
 import {NavComponent} from "@shared/nav/nav.component";
 import {NzAffixModule} from "ng-zorro-antd/affix";
 import {HeaderI18nComponent} from "@shared/component/i18n.component";
-import {NzIconModule} from "ng-zorro-antd/icon";
+import {EruptStorageService} from "@shared/service/erupt-storage.service";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -51,7 +51,8 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
         ...DIRECTIVES,
     ],
     providers: [
-        DataService
+        DataService,
+        EruptStorageService
     ],
     exports: [
         CommonModule,

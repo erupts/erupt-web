@@ -53,7 +53,7 @@ export class TableComponent implements OnInit {
         private appViewService: AppViewService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
-        private i18n: I18NService,
+        private i18n: I18NService
     ) {
     }
 
@@ -584,7 +584,10 @@ export class TableComponent implements OnInit {
                     padding: "0"
                 },
                 nzFooter: null,
-                nzContent: EruptIframeComponent
+                nzContent: EruptIframeComponent,
+                nzOnCancel: () => {
+                    // this.query();
+                }
             });
             ref.getContentComponent().url = url;
         } else if (ro.type === OperationType.ERUPT) {
@@ -610,7 +613,7 @@ export class TableComponent implements OnInit {
                         modal.componentInstance.nzCancelDisabled = false;
                         this.selectedRows = [];
                         if (res.status === Status.SUCCESS) {
-                            this.query(1);
+                            this.query();
                             if (res.data) {
                                 try {
                                     let msg = this.msg;
@@ -629,7 +632,7 @@ export class TableComponent implements OnInit {
                 modal.getContentComponent().mode = Scene.ADD;
                 modal.getContentComponent().eruptBuildModel = {eruptModel: operationErupt};
                 modal.getContentComponent().parentEruptName = this.eruptBuildModel.eruptModel.eruptName;
-                this.dataService.getInitValue(operationErupt.eruptName, this.eruptBuildModel.eruptModel.eruptName,this._drill ? DataService.drillToHeader(this._drill) : {}).subscribe(data => {
+                this.dataService.getInitValue(operationErupt.eruptName, this.eruptBuildModel.eruptModel.eruptName, this._drill ? DataService.drillToHeader(this._drill) : {}).subscribe(data => {
                     this.dataHandlerService.objectToEruptValue(data, {
                         eruptModel: operationErupt
                     });
@@ -643,7 +646,7 @@ export class TableComponent implements OnInit {
                         this.selectedRows = [];
                         let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids, null)
                             .toPromise().then();
-                        this.query(1);
+                        this.query();
                         if (res.data) {
                             try {
                                 let msg = this.msg;
