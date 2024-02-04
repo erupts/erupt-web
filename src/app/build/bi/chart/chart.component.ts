@@ -301,6 +301,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                     this.chart.code,
                     Object.assign(props, {
                         seriesField: x,
+                        // isStack: !!series,
                         radius: 0.9,
                         label: {
                             offset: -15
