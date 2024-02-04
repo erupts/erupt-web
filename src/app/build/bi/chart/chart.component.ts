@@ -300,8 +300,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                 this.plot = new Rose(
                     this.chart.code,
                     Object.assign(props, {
-                        seriesField: series,
-                        isGroup: !!series,
+                        seriesField: x,
                         radius: 0.9,
                         label: {
                             offset: -15
