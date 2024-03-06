@@ -115,6 +115,11 @@ export class UiBuildService {
                     obj.width = null;
                     obj.className = "text-col";
                     break;
+                case ViewType.SAFE_TEXT:
+                    obj.width = null;
+                    obj.className = "text-col";
+                    obj.safeType = "text"
+                    break
                 case ViewType.NUMBER:
                     obj.className = "text-right";
                     break;
