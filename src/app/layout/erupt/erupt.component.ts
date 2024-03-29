@@ -5,7 +5,8 @@ import {
     ElementRef,
     Inject,
     OnDestroy,
-    OnInit, Optional,
+    OnInit,
+    Optional,
     Renderer2,
     ViewChild,
     ViewContainerRef
@@ -172,6 +173,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             true
         );
+        this.doc.body.classList[layout["colorGray"] ? "add" : "remove"]("color-gray");
         this.doc.body.classList[layout.colorWeak ? "add" : "remove"]("color-weak");
     }
 
