@@ -53,6 +53,15 @@ export class SettingsComponent implements OnInit {
         }
     }
 
+    toggleColorGray(value: boolean) {
+        this.settingSrv.setLayout("colorGray", value)
+        if (value) {
+            document.body.classList.add("color-gray");
+        } else {
+            document.body.classList.remove("color-gray");
+        }
+    }
+
     clear() {
         this.confirmServ.confirm({
             // setting.ok
