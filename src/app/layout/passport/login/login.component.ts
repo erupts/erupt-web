@@ -121,7 +121,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         this.loading = true;
         let pwd = this.password.value;
         if (EruptAppData.get().pwdTransferEncrypt) {
-            pwd = <string>Md5.hashStr(Md5.hashStr(this.password.value) + (new Date().getDate() + "") + this.userName.value);
+            pwd = <string>Md5.hashStr(Md5.hashStr(this.password.value) + this.userName.value);
         }
         this.data.login(this.userName.value, pwd, this.verifyCode.value, this.verifyCodeMark).subscribe((result) => {
             if (result.useVerifyCode) this.changeVerifyCode();
