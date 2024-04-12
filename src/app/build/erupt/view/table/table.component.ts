@@ -32,6 +32,7 @@ import {deepCopy} from "@delon/util";
 import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
 import {STChange, STPage} from "@delon/abc/st/st.interfaces";
 import {AppViewService} from "@shared/service/app-view.service";
+import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 
 
 @Component({
@@ -616,7 +617,7 @@ export class TableComponent implements OnInit {
                             this.query();
                             if (res.data) {
                                 try {
-                                    let msg = this.msg;
+                                    let {msg, codeModal} = this.evalVar();
                                     eval(res.data);
                                 } catch (e) {
                                     this.msg.error(e);
@@ -649,7 +650,7 @@ export class TableComponent implements OnInit {
                         this.query();
                         if (res.data) {
                             try {
-                                let msg = this.msg;
+                                let {msg, codeModal} = this.evalVar();
                                 eval(res.data);
                             } catch (e) {
                                 this.msg.error(e);
@@ -845,6 +846,29 @@ export class TableComponent implements OnInit {
         });
         model.getContentComponent().eruptModel = this.eruptBuildModel.eruptModel;
         model.getContentComponent().drillInput = this._drill;
+    }
+
+    //提供自定义表达式可调用函数
+    evalVar() {
+        return {
+            msg: this.msg,
+            codeModal: (lang: string, code: any) => {
+                let ref = this.modal.create({
+                    nzKeyboard: true,
+                    nzMaskClosable: true,
+                    nzCancelText: this.i18n.fanyi("global.close"),
+                    nzWrapClassName: "modal-lg",
+                    nzContent: CodeEditorComponent,
+                    nzFooter: null,
+                    nzBodyStyle: {padding: '0'}
+                });
+                ref.getContentComponent().height = 500;
+                ref.getContentComponent().readonly = true;
+                ref.getContentComponent().language = lang;
+                // @ts-ignore
+                ref.getContentComponent().edit = {$value: code}
+            }
+        }
     }
 
 }
