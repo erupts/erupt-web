@@ -3,11 +3,10 @@ import {BiDataService} from "../../service/data.service";
 import {Bi, Dimension, DimType, Reference} from "../../model/bi.model";
 import {NzTreeNode} from "ng-zorro-antd/core/tree/nz-tree-base-node";
 import {HandlerService} from "../../service/handler.service";
-import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd/core/tree";
 import {NzTreeComponent} from "ng-zorro-antd/tree";
 
 @Component({
-    selector: "erupt-reference-select",
+    selector: "erupt-bi-reference-select",
     templateUrl: "./reference.component.html",
     styles: []
 })
