@@ -617,7 +617,9 @@ export class TableComponent implements OnInit {
                             this.query();
                             if (res.data) {
                                 try {
-                                    let {msg, codeModal} = this.evalVar();
+                                    let ev = this.evalVar();
+                                    let msg = ev.msg;
+                                    let codeModal = ev.codeModal;
                                     eval(res.data);
                                 } catch (e) {
                                     this.msg.error(e);
@@ -651,7 +653,9 @@ export class TableComponent implements OnInit {
                             this.query();
                             if (res.data) {
                                 try {
-                                    let {msg, codeModal} = this.evalVar();
+                                    let ev = this.evalVar();
+                                    let msg = ev.msg;
+                                    let codeModal = ev.codeModal;
                                     eval(res.data);
                                 } catch (e) {
                                     this.msg.error(e);
@@ -666,7 +670,9 @@ export class TableComponent implements OnInit {
                         this.msg.remove(msgLoading.messageId);
                         if (res.data) {
                             try {
-                                let {msg, codeModal} = this.evalVar();
+                                let ev = this.evalVar();
+                                let msg = ev.msg;
+                                let codeModal = ev.codeModal;
                                 eval(res.data);
                             } catch (e) {
                                 this.msg.error(e);
