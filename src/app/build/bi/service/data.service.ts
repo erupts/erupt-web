@@ -74,6 +74,15 @@ export class BiDataService {
         });
     }
 
+    //参照表格
+    getBiReferenceTable(code: string, id: number): Observable<BiData> {
+        return this._http.post(RestPath.bi + "/" + code + "/reference-table/" + id, {}, null, {
+            headers: {
+                erupt: code
+            }
+        });
+    }
+
     //导出excel
     exportExcel_bak(id: number, code: string, query: any) {
         DataService.postExcelFile(RestPath.bi + "/" + code + "/excel/" + id, {

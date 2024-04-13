@@ -95,6 +95,20 @@
                                                    [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
                                         </nz-input-group>
                                     </ng-container>
+                                    <ng-container *ngSwitchCase="dimType.REFERENCE_TABLE_RADIO">
+                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                                            <input nz-input autocomplete="off" [required]="dim.notNull"
+                                                   [readOnly]="true"
+                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="refTable(dim)">
+                                        </nz-input-group>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="dimType.REFERENCE_TABLE_MULTI">
+                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                                            <input nz-input autocomplete="off" [required]="dim.notNull"
+                                                   [readOnly]="true"
+                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="refTable(dim)">
+                                        </nz-input-group>
+                                    </ng-container>
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="dimType.REFERENCE_CASCADE">
