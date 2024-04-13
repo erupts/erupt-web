@@ -7,6 +7,7 @@ import * as moment from 'moment';
 import {DatePipe} from "@angular/common";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {I18NService} from "@core";
+import {ReferenceTableComponent} from "../components/reference-table/reference-table.component";
 
 @Component({
     selector: 'bi-dimension',
@@ -56,6 +57,27 @@ export class DimensionComponent implements OnInit {
             nzContent: ReferenceComponent,
             nzOnOk: (res) => {
                 res.confirmNodeChecked();
+            }
+        });
+        Object.assign(ref.getContentComponent(), {
+            dimension: dim,
+            code: this.bi.code,
+            bi: this.bi
+        })
+    }
+
+    refTable(dim: Dimension) {
+        let ref = this.modal.create({
+            nzStyle: {top: "20px"},
+            nzWrapClassName: "modal-xxl",
+            nzBodyStyle: {
+                padding: '0',
+            },
+            nzKeyboard: false,
+            nzTitle: dim.title,
+            nzContent: ReferenceTableComponent,
+            nzOnOk: (res) => {
+                res.confirmChecked();
             }
         });
         Object.assign(ref.getContentComponent(), {
