@@ -639,15 +639,31 @@ export class TableComponent implements OnInit {
                     });
                 });
             } else {
-                this.modal.confirm({
-                    nzTitle: ro.title,
-                    nzContent: this.i18n.fanyi("table.hint.operation"),
-                    nzCancelText: this.i18n.fanyi("global.close"),
-                    nzOnOk: async () => {
-                        this.selectedRows = [];
-                        let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids, null)
-                            .toPromise().then();
-                        this.query();
+                if (ro.callHint) {
+                    this.modal.confirm({
+                        nzTitle: ro.title,
+                        nzContent: ro.callHint,
+                        nzCancelText: this.i18n.fanyi("global.close"),
+                        nzOnOk: async () => {
+                            this.selectedRows = [];
+                            let res = await this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids, null)
+                                .toPromise().then();
+                            this.query();
+                            if (res.data) {
+                                try {
+                                    let {msg, codeModal} = this.evalVar();
+                                    eval(res.data);
+                                } catch (e) {
+                                    this.msg.error(e);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    this.selectedRows = [];
+                    let msgLoading = this.msg.loading(ro.title);
+                    this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids, null).subscribe(res => {
+                        this.msg.remove(msgLoading.messageId);
                         if (res.data) {
                             try {
                                 let {msg, codeModal} = this.evalVar();
@@ -656,8 +672,9 @@ export class TableComponent implements OnInit {
                                 this.msg.error(e);
                             }
                         }
-                    }
-                });
+                    });
+
+                }
             }
         }
     }
