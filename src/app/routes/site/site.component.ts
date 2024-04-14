@@ -34,7 +34,7 @@ export class SiteComponent implements OnInit, OnDestroy {
         });
         setTimeout(() => {
             this.spin = false;
-        }, 3500)
+        }, 3000)
     }
 
     iframeLoad() {

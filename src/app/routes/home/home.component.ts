@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit {
         }
         setTimeout(() => {
             this.spin = false;
-        }, 3500)
+        }, 3000)
     }
 
     iframeLoad() {
