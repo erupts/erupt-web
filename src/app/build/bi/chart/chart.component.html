@@ -11,9 +11,16 @@
             <ng-container *ngIf="ready">
                 <ng-container [ngSwitch]="chart.type">
                     <ng-container *ngSwitchCase="chartType.tpl">
-                        <erupt-iframe [url]="src" [style]="{height:chart.height+'px',paddingTop:'1px'}">
+                        <ng-container *ngIf="!src">
+                            <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" class="flex-center-center" [style]="{height:chart.height+'px'}">
 
-                        </erupt-iframe>
+                            </nz-empty>
+                        </ng-container>
+                        <ng-container *ngIf="src">
+                            <erupt-iframe [url]="src" [style]="{height:chart.height+'px',paddingTop:'1px'}">
+
+                            </erupt-iframe>
+                        </ng-container>
                     </ng-container>
                     <ng-container *ngSwitchCase="chartType.table">
                         <div [ngStyle]="{height:chart.height+'px'}" style="overflow: auto">

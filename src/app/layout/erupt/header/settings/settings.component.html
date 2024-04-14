@@ -17,9 +17,14 @@
                (ngModelChange)="setLayout('bordered', layout['bordered'])"></nz-switch>
 </div>
 <div class="setting-item">
-    <span>{{'setting.colorWeak' | translate}}</span>
+    <span>{{'setting.color-weak' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout.colorWeak"
                (ngModelChange)="toggleColorWeak(layout.colorWeak)"></nz-switch>
+</div>
+<div class="setting-item">
+    <span>{{'setting.color-gray' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout['colorGray']"
+               (ngModelChange)="toggleColorGray(layout['colorGray'])"></nz-switch>
 </div>
 <!--<div class="setting-item">-->
 <!--    <span>{{'setting.clear-cache' | translate}}</span>-->

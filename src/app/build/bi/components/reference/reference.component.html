@@ -9,6 +9,7 @@
     <div style="max-height: 450px;min-height: 300px;overflow: auto;">
         <nz-tree #tree
                  nzDraggable
+                 [nzVirtualHeight]="data.length > 50 ? '500px' : null"
                  class="tree-container"
                  [nzCheckStrictly]="false"
                  [nzCheckable]="multiple"

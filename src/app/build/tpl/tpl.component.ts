@@ -31,6 +31,9 @@ export class TplComponent implements OnInit, OnDestroy {
             this.name = url.substring(url.indexOf(tpl) + tpl.length);
             this.url = this.dataService.getEruptTpl(this.name);
         });
+        setTimeout(() => {
+            this.spin = false;
+        }, 3000)
     }
 
     ngOnDestroy(): void {

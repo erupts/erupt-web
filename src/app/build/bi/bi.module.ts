@@ -19,12 +19,14 @@ import {NzCascaderModule} from "ng-zorro-antd/cascader";
 import {SearchSeComponent} from "./components/search-se/search-se.component";
 import {NzPipesModule} from "ng-zorro-antd/pipes";
 import {SkeletonComponent} from "./skeleton/skeleton.component";
+import {ReferenceTableComponent} from './components/reference-table/reference-table.component';
 
 @NgModule({
     declarations: [SkeletonComponent, DimensionComponent, ReferenceComponent, ChartComponent,
         ChoiceComponent, CascadeComponent, ChartTableComponent, DrillComponent, SearchSeComponent,
         ReferenceComponent,
-        DrillComponent],
+        DrillComponent,
+        ReferenceTableComponent],
     imports: [
         CommonModule,
         BiRoutingModule,

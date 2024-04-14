@@ -49,11 +49,6 @@
                                 "output": "/assets/ueditor/"
                             },
                             {
-                                "glob": "**/qrious.min.js",
-                                "input": "./node_modules/qrious/dist",
-                                "output": "assets/qrious/"
-                            },
-                            {
                                 "glob": "**/*",
                                 "input": "./libs/editor.md/",
                                 "output": "/assets/editor.md/"

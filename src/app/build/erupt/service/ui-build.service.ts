@@ -39,7 +39,7 @@ export class UiBuildService {
         let layout = eruptBuildModel.eruptModel.eruptJson.layout;
         let i = 0;
         for (let view of views) {
-            let titleWidth = view.title.length * 16 + 22;
+            let titleWidth: number = view.title.length * 16 + 22;
             if (titleWidth > 280) {
                 titleWidth = 280;
             }
@@ -115,6 +115,11 @@ export class UiBuildService {
                     obj.width = null;
                     obj.className = "text-col";
                     break;
+                case ViewType.SAFE_TEXT:
+                    obj.width = null;
+                    obj.className = "text-col";
+                    obj.safeType = "text"
+                    break
                 case ViewType.NUMBER:
                     obj.className = "text-right";
                     break;
@@ -439,7 +444,7 @@ export class UiBuildService {
                     obj.className = "text-center p-sm";
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            return `<img width="100%" src="${item[view.column]}" title=""/>`;
+                            return `<img width="100%" alt="${obj.title}" src="${item[view.column]}" title=""/>`;
                         } else {
                             return "";
                         }
@@ -554,7 +559,7 @@ export class UiBuildService {
             if (view.className) {
                 obj.className += " " + view.className;
             }
-            if (obj.width && obj.width < titleWidth) {
+            if (obj.width && <number>obj.width < titleWidth) {
                 obj.width = titleWidth;
             }
             if (view.width) {

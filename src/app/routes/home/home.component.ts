@@ -25,6 +25,9 @@ export class HomeComponent implements OnInit {
         } else {
             this.url = "home.html?v=" + EruptAppData.get().hash;
         }
+        setTimeout(() => {
+            this.spin = false;
+        }, 3000)
     }
 
     iframeLoad() {

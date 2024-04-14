@@ -10,6 +10,7 @@
         <nz-tree #tree
                  nzDraggable
                  class="tree-container"
+                 [nzVirtualHeight]="list.length > 50 ? '450px' : null"
                  (nzClick)="nodeClickEvent($event)"
                  [nzShowLine]="true"
                  [nzHideUnMatched]="true"
