@@ -5,12 +5,6 @@ import {AppModule} from './app/app.module';
 import {environment} from '@env/environment';
 
 preloaderFinished();
-setTimeout(() => {
-    if (window['SW']) {
-        window['SW'].stop();
-        window['SW'] = null;
-    }
-}, 5000)
 
 if (environment.production) {
     enableProdMode();

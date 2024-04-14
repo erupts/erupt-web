@@ -642,7 +642,7 @@ export class TableComponent implements OnInit {
                 });
             } else {
                 // 兼容旧版本, 无callHint配置的情况
-                if (null === ro.callHint) {
+                if (null == ro.callHint) {
                     ro.callHint = this.i18n.fanyi("table.hint.operation");
                 }
                 if (ro.callHint) {
