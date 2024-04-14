@@ -7,7 +7,6 @@ import {WindowModel} from "@shared/model/window.model";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {EruptAppData, EruptAppModel} from "@shared/model/erupt-app.model";
-import {HttpClient} from "@angular/common/http";
 import {NzIconService} from "ng-zorro-antd/icon";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {I18NService} from "../i18n/i18n.service";
@@ -22,7 +21,6 @@ export class StartupService {
                 private reuseTabService: ReuseTabService,
                 private titleService: TitleService,
                 private settingSrv: SettingsService,
-                private httpClient: HttpClient,
                 private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         iconSrv.addIcon(...ICONS_AUTO);
@@ -49,6 +47,12 @@ export class StartupService {
             xhr.send();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
+                    setTimeout(() => {
+                        if (window['SW']) {
+                            window['SW'].stop();
+                            window['SW'] = null;
+                        }
+                    }, 2000)
                     EruptAppData.put(<EruptAppModel>JSON.parse(xhr.responseText));
                     resolve();
                 } else if (xhr.status !== 200) {

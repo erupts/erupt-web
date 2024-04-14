@@ -17,8 +17,7 @@
         <ng-container *ngSwitchCase="choiceEnum.SELECT">
             <nz-select class="erupt-input"
                        (nzOpenChange)="load($event)" [nzLoading]="isLoading"
-                       [nzAllowClear]='!eruptField.eruptFieldJson.edit.notNull'
-                       [nzDisabled]="readonly"
+                       [nzDisabled]="readonly" nzAllowClear
                        [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
                        [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
                        [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true">

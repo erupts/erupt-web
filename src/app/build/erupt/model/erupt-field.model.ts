@@ -56,22 +56,22 @@ export interface Edit {
     readOnly: Readonly;
     placeHolder: string;
     search: Search;
-    tabType: TabType;
-    inputType: InputType;
-    numberType: NumberType;
-    referenceTreeType: ReferenceTreeType;
-    referenceTableType: ReferenceTableType;
-    attachmentType: AttachmentType;
-    autoCompleteType: AutoCompleteType;
-    htmlEditorType: HtmlEditorType;
-    rateType: RateType;
-    boolType: BoolType;
-    choiceType: ChoiceType;
-    tagsType: TagsType;
-    dateType: DateType;
-    sliderType: SliderType;
-    codeEditType: CodeEditType;
-    mapType: MapType;
+    tabType?: TabType;
+    inputType?: InputType;
+    numberType?: NumberType;
+    referenceTreeType?: ReferenceTreeType;
+    referenceTableType?: ReferenceTableType;
+    attachmentType?: AttachmentType;
+    autoCompleteType?: AutoCompleteType;
+    htmlEditorType?: HtmlEditorType;
+    rateType?: RateType;
+    boolType?: BoolType;
+    choiceType?: ChoiceType;
+    tagsType?: TagsType;
+    dateType?: DateType;
+    sliderType?: SliderType;
+    codeEditType?: CodeEditType;
+    mapType?: MapType;
     $tabTreeViewData?: any;
     $value?: any;
     $viewValue?: any;
@@ -153,6 +153,7 @@ interface ChoiceType {
     dependField: string;
     dependExpr: string;
     items: VL[],
+
     onVLChange(value, oldValue): void;
 }
 

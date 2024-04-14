@@ -62,6 +62,7 @@ export enum HtmlEditTypeEnum {
 
 export enum ViewType {
     TEXT = "TEXT",
+    SAFE_TEXT = "SAFE_TEXT",
     LINK = "LINK",
     TAB_VIEW = "TAB_VIEW",
     LINK_DIALOG = "LINK_DIALOG",

@@ -32,6 +32,9 @@ export class SiteComponent implements OnInit, OnDestroy {
             url += (url.indexOf("?") === -1 ? "?" : "&") + "_token=" + this.tokenService.get().token;
             this.url = url;
         });
+        setTimeout(() => {
+            this.spin = false;
+        }, 3000)
     }
 
     iframeLoad() {

@@ -11,6 +11,7 @@
                  *ngIf="treeData"
                  [nzCheckable]="true"
                  [nzShowLine]="true"
+                 [nzVirtualHeight]="treeData.length > 50 ? '420px' : null"
                  [nzCheckStrictly]="true"
                  [nzData]="treeData"
                  (nzCheckBoxChange)="checkBoxChange($event)"

@@ -8,7 +8,7 @@ import {MenuTypeEnum} from "../model/erupt-menu";
 
 export function generateMenuPath(type: string, value: string) {
     let menuValue = value || '';
-    if (menuValue.indexOf("fill=true") != -1) {
+    if (menuValue.indexOf("fill=1") != -1 || menuValue.indexOf("fill=true") != -1) {
         return '/fill' + joinPath(type, value);
     } else {
         return joinPath(type, value);

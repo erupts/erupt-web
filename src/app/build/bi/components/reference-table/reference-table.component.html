@@ -1,0 +1,18 @@
+<div>
+    <nz-spin [nzSpinning]="loading">
+        <ng-container *ngIf="columns.length <= 0">
+            <nz-card>
+                <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null"></nz-empty>
+            </nz-card>
+        </ng-container>
+        <ng-container *ngIf="columns && columns.length > 0">
+            <st #st [columns]="columns" [virtualScroll]="data.length > 50 ? '600px' : null"
+                [data]="data" [loading]="loading" [ps]="100" [page]="biTable.page"
+                [scroll]="{x: (clientWidth > 768 ? columns.length * 200 : 0) + 'px', y: '560px'}"
+                [bordered]="settingSrv.layout['bordered']" (change)="change($event)"
+                [resizable]="false"
+                [size]="'small'">
+            </st>
+        </ng-container>
+    </nz-spin>
+</div>
