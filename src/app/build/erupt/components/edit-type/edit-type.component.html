@@ -117,6 +117,35 @@
                             </se>
                         </div>
                     </ng-container>
+                    <!--COLOR-->
+                    <ng-container *ngSwitchCase="editType.COLOR">
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                             [nzLg]="col.lg"
+                             [nzXl]="col.xl"
+                             [nzXXl]="col.xxl">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size">
+                                    <input nz-input [nzSize]="size" autocomplete="off" nz-tooltip
+                                           nzTooltipTrigger="focus"
+                                           nzTooltipPlacement="topLeft"
+                                           type="color"
+                                           [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                           [name]="field.fieldName"
+                                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                           [required]="field.eruptFieldJson.edit.notNull"
+                                           [disabled]="isReadonly(field)">
+                                </nz-input-group>
+                                <ng-template #suffixTemplate>
+                                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill"
+                                       nzType="close-circle"
+                                       *ngIf="field.eruptFieldJson.edit.$value&&!isReadonly(field)"
+                                       (click)="field.eruptFieldJson.edit.$value = null"></i>
+                                </ng-template>
+                            </se>
+                        </div>
+                    </ng-container>
                     <!--text area-->
                     <ng-container *ngSwitchCase="editType.TEXTAREA">
                         <div nz-col [nzSpan]="24">
