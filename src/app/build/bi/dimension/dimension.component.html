@@ -95,15 +95,25 @@
                                                    [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
                                         </nz-input-group>
                                     </ng-container>
+                                    <ng-template #refTableBtn>
+                                        <ng-container *ngIf="dim.$value">
+                                            <i nz-icon nzType="close-circle" theme="fill" class="point"
+                                               (click)="clearRef(dim)"></i>
+                                        </ng-container>
+                                        <ng-container *ngIf="!dim.$value">
+                                            <i nz-icon nzType="database" theme="fill" class="point"
+                                               (click)="refTable(dim)"></i>
+                                        </ng-container>
+                                    </ng-template>
                                     <ng-container *ngSwitchCase="dimType.REFERENCE_TABLE_RADIO">
-                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                                        <nz-input-group class="full-width" [nzAddOnAfter]="refTableBtn">
                                             <input nz-input autocomplete="off" [required]="dim.notNull"
                                                    [readOnly]="true"
                                                    [value]="dim.$viewValue||null" [name]="dim.code" (click)="refTable(dim)">
                                         </nz-input-group>
                                     </ng-container>
                                     <ng-container *ngSwitchCase="dimType.REFERENCE_TABLE_MULTI">
-                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                                        <nz-input-group class="full-width" [nzAddOnAfter]="refTableBtn">
                                             <input nz-input autocomplete="off" [required]="dim.notNull"
                                                    [readOnly]="true"
                                                    [value]="dim.$viewValue||null" [name]="dim.code" (click)="refTable(dim)">
