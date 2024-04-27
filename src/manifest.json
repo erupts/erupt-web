@@ -18,7 +18,7 @@
         },
         {
             "src": "assets/logo-2x.png",
-            "sizes": "256x256",
+            "sizes": "300x300",
             "type": "image/png",
             "purpose": "any"
         }
