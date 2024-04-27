@@ -8,13 +8,13 @@
                             pageIndex: 1,
                             pageSize: biTable.size
                         },true);">
-                        <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
+                        <i nz-icon nzType="search" nzTheme="outline"></i>{{ 'table.query'|translate }}
                     </button>
                 </ng-container>
                 <ng-container *ngIf="bi.table&&bi.export">
                     <button nz-button class="mb-sm" (click)="exportBiData()" [nzLoading]="downloading"
                             [disabled]="!biTable.data||biTable.data.length<=0">
-                        <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|translate}}
+                        <i nz-icon nzType="download" nzTheme="outline"></i>{{ 'table.download'|translate }}
                     </button>
                 </ng-container>
                 <div style="margin-left: auto">
@@ -30,7 +30,7 @@
                                 <ng-container *ngFor="let col of st.columns">
                                     <div *ngIf="col.title&&col.index" nz-col nzSpan="6" style="min-width: 130px;">
                                         <label nz-checkbox [(ngModel)]="col['show']" style="width: 130px;"
-                                               (ngModelChange)="st.resetColumns()">{{col.title["text"]}}</label>
+                                               (ngModelChange)="st.resetColumns()">{{ col.title["text"] }}</label>
                                     </div>
                                 </ng-container>
                             </div>
@@ -39,7 +39,7 @@
                     <ng-container *ngIf="bi.dimensions.length > 0">
                         <button nz-button class="mb-sm" *ngIf="!hideCondition" (click)="clearCondition()"
                                 [disabled]="querying">
-                            <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
+                            <i nz-icon nzType="sync" nzTheme="outline"></i>{{ 'table.reset'|translate }}
                         </button>
                         <button nz-button class="mb-sm" (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
                             <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
@@ -74,7 +74,7 @@
                             <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying"
                                     (click)="query({pageIndex: 1,pageSize: biTable.size})"
                                     [nzGhost]="true">
-                                <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
+                                <i nz-icon nzType="search" nzTheme="outline"></i>{{ 'table.query'|translate }}
                             </button>
                         </div>
                     </nz-result>
@@ -93,12 +93,13 @@
                     </ng-container>
                     <ng-container *ngIf="columns && columns.length > 0">
                         <st #st [columns]="columns"
+                            [virtualScroll]="biTable.data.length >= 100"
                             [data]="biTable.data"
                             (change)="biTableChange($event)"
                             [loading]="querying"
                             [ps]="biTable.size"
                             [page]="biTable.page"
-                            [scroll]="{x: (clientWidth > 768 ? columns.length * 200 : 0) + 'px'}"
+                            [scroll]="{x: (clientWidth > 768 ? columns.length * 200 : 0) + 'px',y: (525) + 'px'}"
                             [bordered]="settingSrv.layout['bordered']" [resizable]="true"
                             [size]="'small'" style="margin-bottom: 12px">
                         </st>
