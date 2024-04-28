@@ -18,6 +18,7 @@ export class RestPath {
 export enum EditType {
     INPUT = "INPUT",                           //输入框
     NUMBER = "NUMBER",
+    COLOR = "COLOR",
     TEXTAREA = "TEXTAREA",                     //大文本域
     CHOICE = "CHOICE",                         //选择框
     TAGS = "TAGS",                             //标签选择
@@ -62,6 +63,7 @@ export enum HtmlEditTypeEnum {
 
 export enum ViewType {
     TEXT = "TEXT",
+    COLOR = "COLOR",
     SAFE_TEXT = "SAFE_TEXT",
     LINK = "LINK",
     TAB_VIEW = "TAB_VIEW",

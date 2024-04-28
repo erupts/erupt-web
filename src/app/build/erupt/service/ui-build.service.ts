@@ -123,6 +123,17 @@ export class UiBuildService {
                 case ViewType.NUMBER:
                     obj.className = "text-right";
                     break;
+                case ViewType.COLOR:
+                    obj.className = "text-center";
+                    obj.type = "link";
+                    obj.format = (item: any) => {
+                        if (item[view.column]) {
+                            return `<i class="fa fa-square" style="color: ${item[view.column]};font-size: 1.2rem" aria-hidden="true"></i>`;
+                        } else {
+                            return "";
+                        }
+                    };
+                    break;
                 case ViewType.DATE:
                     obj.className = "date-col";
                     obj.width = 110;
