@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
+import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
 import {Drill, DrillInput, EruptModel, Row, RowOperation} from "../../model/erupt.model";
 
@@ -40,7 +40,7 @@ import {CodeEditorComponent} from "../../components/code-editor/code-editor.comp
     templateUrl: "./table.component.html",
     styleUrls: ["./table.component.less"]
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, OnDestroy {
 
 
     constructor(
@@ -129,6 +129,8 @@ export class TableComponent implements OnInit {
 
     header: object;
 
+    refreshTimeInterval: any;
+
     @Input() set drill(drill: DrillInput) {
         this._drill = drill;
         this.init(this.dataService.getEruptBuild(drill.erupt), {
@@ -188,6 +190,10 @@ export class TableComponent implements OnInit {
 
     }
 
+    ngOnDestroy(): void {
+        this.refreshTimeInterval && clearInterval(this.refreshTimeInterval);
+    }
+
     init(observable: Observable<EruptBuildModel>, req: {
         url: string,
         header: any
@@ -230,6 +236,11 @@ export class TableComponent implements OnInit {
                             this.dataPage.showPagination = false;
                             this.dataPage.page.show = false;
                         }
+                    }
+                    if (layout.refreshTime && layout.refreshTime > 0) {
+                        this.refreshTimeInterval = setInterval(() => {
+                            this.query(1);
+                        }, layout.refreshTime);
                     }
                 }
                 let dt = eb.eruptModel.eruptJson.linkTree;

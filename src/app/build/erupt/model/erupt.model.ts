@@ -50,6 +50,7 @@ interface Layout {
     tableRightFixed: number;
     pageSize: number;
     pageSizes: number[];
+    refreshTime: number;
 }
 
 
