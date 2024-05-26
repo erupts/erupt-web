@@ -259,9 +259,9 @@ export class DefaultInterceptor implements HttpInterceptor {
         //         }
         //     }
         // }
-
         const newReq = req.clone({
-            url: url
+            url: url,
+            headers: req.headers.set("lang", this.i18n.currentLang || '')
         });
         return next.handle(newReq).pipe(
             mergeMap((event: any) => {
