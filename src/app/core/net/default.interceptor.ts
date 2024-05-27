@@ -178,6 +178,9 @@ export class DefaultInterceptor implements HttpInterceptor {
                 }
                 break;
             case 404:
+                if (event.url.indexOf("/form-value") != -1) {
+                    break;
+                }
                 this.goTo("/exception/404");
                 break;
             case 403: //无权限
