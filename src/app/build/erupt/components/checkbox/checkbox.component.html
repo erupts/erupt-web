@@ -3,8 +3,8 @@
         <div nz-row>
             <div nz-col [nzXs]="12" [nzSm]="8" [nzMd]="8" [nzLg]="4" *ngFor="let c of checkbox">
                 <label nz-checkbox [nzDisabled]="onlyRead" [nzValue]="c.id"
-                       nz-tooltip [nzTooltipTitle]="c.remark"
-                       [nzChecked]="edit.$value&&edit.$value.indexOf(c.id)!=-1">{{c.label}}</label>
+                       nz-tooltip [nzTooltipTitle]="c.remark" [title]="c.label"
+                       [nzChecked]="edit.$value&&edit.$value.indexOf(c.id)!=-1">{{ c.label }}</label>
             </div>
         </div>
     </nz-checkbox-wrapper>

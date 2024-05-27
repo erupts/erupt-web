@@ -5,12 +5,12 @@
                             [name]="eruptField.fieldName"
                             class="erupt-input stander-line-height">
                 <ng-container *ngIf="checkAll">
-                    <label nz-radio [nzValue]="">{{'global.all'|translate}}</label>
+                    <label nz-radio [nzValue]="">{{ 'global.all'|translate }}</label>
                 </ng-container>
                 <ng-container *ngFor="let vl of choiceVL">
                     <label nz-radio nz-tooltip [nzTooltipTitle]="vl.desc"
                            [nzDisabled]="readonly||vl.disable"
-                           [nzValue]="vl.value">{{vl.label}}</label>
+                           [nzValue]="vl.value">{{ vl.label }}</label>
                 </ng-container>
             </nz-radio-group>
         </ng-container>
@@ -24,7 +24,7 @@
                 <ng-container *ngIf="!isLoading">
                     <nz-option *ngFor="let vl of choiceVL" nzCustomContent
                                [nzDisabled]="vl.disable" [nzValue]="vl.value" [nzLabel]="vl.label">
-                        <div nz-tooltip [nzTooltipPlacement]="'left'" [nzTooltipTitle]="vl.desc">{{vl.label}}</div>
+                        <div nz-tooltip [nzTooltipPlacement]="'left'" [nzTooltipTitle]="vl.desc">{{ vl.label }}</div>
                     </nz-option>
                 </ng-container>
                 <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
@@ -40,10 +40,10 @@
     <tag-select [expandable]="true" style="margin-left: 0;">
         <nz-spin nzSimple *ngIf="isLoading"></nz-spin>
         <nz-tag (nzCheckedChange)="changeTagAll($event)" style="margin-right: 10px"
-                nzMode="checkable">{{'global.check_all'|translate}}
+                nzMode="checkable">{{ 'global.check_all'|translate }}
         </nz-tag>
         <ng-container *ngFor="let vl of choiceVL">
-            <nz-tag style="margin-right: 10px" nzMode="checkable" [(nzChecked)]="vl.$viewValue">{{vl.label}}</nz-tag>
+            <nz-tag style="margin-right: 10px" nzMode="checkable" [(nzChecked)]="vl.$viewValue">{{ vl.label }}</nz-tag>
         </ng-container>
     </tag-select>
 </ng-container>
