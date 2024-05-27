@@ -646,10 +646,12 @@ export class TableComponent implements OnInit, OnDestroy {
                 modal.getContentComponent().mode = Scene.ADD;
                 modal.getContentComponent().eruptBuildModel = {eruptModel: operationErupt};
                 modal.getContentComponent().parentEruptName = this.eruptBuildModel.eruptModel.eruptName;
-                this.dataService.getInitValue(operationErupt.eruptName, this.eruptBuildModel.eruptModel.eruptName, this._drill ? DataService.drillToHeader(this._drill) : {}).subscribe(data => {
-                    this.dataHandlerService.objectToEruptValue(data, {
-                        eruptModel: operationErupt
-                    });
+                this.dataService.operatorFormValue(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids).subscribe(data => {
+                    if (data) {
+                        this.dataHandlerService.objectToEruptValue(data, {
+                            eruptModel: operationErupt
+                        });
+                    }
                 });
             } else {
                 // 兼容旧版本, 无callHint配置的情况
