@@ -2,7 +2,7 @@
     <ng-container [ngSwitch]="eruptField.eruptFieldJson.edit.choiceType.type">
         <ng-container *ngSwitchCase="choiceEnum.RADIO">
             <nz-radio-group [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
-                            [name]="eruptField.fieldName"
+                            [name]="eruptField.fieldName" (ngModelChange)="valueChange($event)"
                             class="erupt-input stander-line-height">
                 <ng-container *ngIf="checkAll">
                     <label nz-radio [nzValue]="">{{ 'global.all'|translate }}</label>
@@ -19,6 +19,7 @@
                        (nzOpenChange)="load($event)" [nzLoading]="isLoading"
                        [nzDisabled]="readonly" nzAllowClear
                        [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
+                       (ngModelChange)="valueChange($event)"
                        [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
                        [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true">
                 <ng-container *ngIf="!isLoading">
