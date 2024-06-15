@@ -188,6 +188,18 @@ export class DataService {
         });
     }
 
+    choiceTrigger(eruptName: string, field: string, val: any, eruptParentName?: string): any {
+        return this._http.get<any>(RestPath.component + "/choice-trigger/" + eruptName + "/" + field, {
+            val: val
+        }, {
+            observe: "body",
+            headers: {
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
+            }
+        });
+    }
+
     findChoiceItem(eruptName: string, field: string, eruptParentName?: string): Observable<VL[]> {
         return this._http.get<VL[]>(RestPath.component + "/choice-item/" + eruptName + "/" + field, null, {
             observe: "body",

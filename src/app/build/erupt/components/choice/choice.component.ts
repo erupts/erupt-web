@@ -5,6 +5,7 @@ import {EruptModel} from "../../model/erupt.model";
 import {ChoiceEnum} from "../../model/erupt.enum";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {I18NService} from "@core";
+import {EditTypeComponent} from "../edit-type/edit-type.component";
 
 @Component({
     selector: 'erupt-choice',
@@ -18,7 +19,7 @@ export class ChoiceComponent implements OnInit {
 
     @Input() eruptField: EruptFieldModel;
 
-    @Input() size;
+    @Input() editType: EditTypeComponent;
 
     @Input() eruptParentName: string;
 
@@ -27,6 +28,8 @@ export class ChoiceComponent implements OnInit {
     @Input() readonly: boolean = false;
 
     @Input() checkAll: boolean = false;
+
+    @Input() size: 'large' | 'small' | "default" = "default";
 
     //是否开启联动功能
     @Input() dependLinkage = true;
@@ -53,6 +56,20 @@ export class ChoiceComponent implements OnInit {
         }
         if (!this.dependLinkage || !choiceType.dependField) {
             this.choiceVL = this.eruptField.componentValue
+        }
+    }
+
+    valueChange(val: any) {
+        if (this.eruptField.eruptFieldJson.edit.choiceType.trigger) {
+            if (this.editType) {
+                this.isLoading = true;
+                this.dataService.choiceTrigger(this.eruptModel.eruptName, this.eruptField.fieldName, val, this.eruptParentName).subscribe(data => {
+                    if (data) {
+                        this.editType.fillForm(data);
+                    }
+                    this.isLoading = false;
+                })
+            }
         }
     }
 
