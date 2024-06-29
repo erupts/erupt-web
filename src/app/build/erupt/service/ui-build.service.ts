@@ -1,5 +1,5 @@
 import {EruptBuildModel} from "../model/erupt-build.model";
-import {DateEnum, EditType, ViewType} from "../model/erupt.enum";
+import {DateEnum, EditType, PagingType, ViewType} from "../model/erupt.enum";
 import {ViewTypeComponent} from "../components/view-type/view-type.component";
 import {MarkdownComponent} from "../components/markdown/markdown.component";
 import {CodeEditorComponent} from "../components/code-editor/code-editor.component";
@@ -597,6 +597,17 @@ export class UiBuildService {
                     });
                     ref.getContentComponent().url = url;
                 };
+            }
+            if (layout.pagingType == PagingType.BACKEND) {
+                if (view.sortable) {
+                    obj.sort = {
+                        compare: null,
+                        reName: {
+                            ascend: 'asc',
+                            descend: 'desc'
+                        }
+                    }
+                }
             }
             if (layout) {
                 if (i < layout.tableLeftFixed) {
