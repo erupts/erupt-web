@@ -824,7 +824,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         if (event.type == "sort") {
             let layout = this.eruptBuildModel.eruptModel.eruptJson.layout
-            if (layout && layout.pagingType && layout.pagingType != 'BACKEND') {
+            if (layout && layout.pagingType && layout.pagingType != PagingType.BACKEND) {
                 return;
             }
             this.query(1, this.dataPage.ps, event.sort.map);
