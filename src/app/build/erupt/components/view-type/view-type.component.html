@@ -24,6 +24,16 @@
                 </div>
             </nz-carousel>
         </ng-container>
+
+        <ng-container *ngSwitchCase="viewType.LINK_DIALOG">
+            <iframe [src]="value|safeUrl" [frameBorder]="0" style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="viewType.ATTACHMENT_DIALOG">
+            <iframe [src]="value|safeUrl" [frameBorder]="0" style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
+        </ng-container>
+
+
         <ng-container *ngSwitchCase="viewType.HTML">
             <div [innerHTML]="value|html" class="view_inner_html">
 
@@ -33,12 +43,6 @@
             <div [innerHTML]="value|html" class="view_inner_html">
 
             </div>
-        </ng-container>
-        <ng-container *ngSwitchCase="viewType.LINK_DIALOG">
-            <iframe [src]="value|safeUrl" [frameBorder]="0" style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
-        </ng-container>
-        <ng-container *ngSwitchCase="viewType.ATTACHMENT_DIALOG">
-            <iframe [src]="value|safeUrl" [frameBorder]="0" style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
         </ng-container>
         <ng-container *ngSwitchCase="viewType.QR_CODE">
             <div style="width: 100%;text-align: center">

@@ -11,6 +11,8 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzImageService} from "ng-zorro-antd/image";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
+import {View} from "../model/erupt-field.model";
+import {AttachmentSelectComponent} from "../components/attachment-select/attachment-select.component";
 
 
 @Injectable()
@@ -487,17 +489,7 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        let ref = this.modal.create({
-                            nzWrapClassName: "modal-lg modal-body-nopadding",
-                            nzStyle: {top: "30px"},
-                            nzKeyboard: true,
-                            nzFooter: null,
-                            nzContent: ViewTypeComponent
-                        });
-                        Object.assign(ref.getContentComponent(), {
-                            value: item[view.column],
-                            view: view
-                        });
+                        this.attachmentView(view, item[view.column]);
                     };
                     break;
                 case ViewType.DOWNLOAD:
@@ -511,7 +503,7 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        window.open(DataService.downloadAttachment(item[view.column]));
+                        this.attachmentView(view, item[view.column]);
                     };
                     break;
                 case ViewType.ATTACHMENT:
@@ -525,7 +517,7 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
-                        window.open(DataService.previewAttachment(item[view.column]));
+                        this.attachmentView(view, item[view.column]);
                     };
                     break;
                 case ViewType.TAB_VIEW:
@@ -625,5 +617,46 @@ export class UiBuildService {
             i++;
         }
         return cols;
+    }
+
+    attachmentView(view: View, path: string) {
+        let viewType = view.viewType;
+        let $paths: string[];
+        if (view.eruptFieldModel.eruptFieldJson.edit.type === EditType.ATTACHMENT) {
+            const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
+            $paths = (<string>path).split(attachmentType.fileSeparator);
+        } else {
+            $paths = (path).split("|");
+        }
+        if ($paths.length == 1) {
+            if (viewType == ViewType.DOWNLOAD || viewType == ViewType.ATTACHMENT) {
+                window.open(DataService.downloadAttachment(path));
+            } else if (viewType == ViewType.ATTACHMENT_DIALOG) {
+                let ref = this.modal.create({
+                    nzWrapClassName: "modal-lg modal-body-nopadding",
+                    nzStyle: {top: "30px"},
+                    nzKeyboard: true,
+                    nzFooter: null,
+                    nzContent: ViewTypeComponent
+                });
+                Object.assign(ref.getContentComponent(), {
+                    value: path,
+                    view: view
+                });
+            }
+        } else {
+            let ref = this.modal.create({
+                nzWrapClassName: "modal-xs modal-body-nopadding",
+                nzStyle: {top: "30px"},
+                nzKeyboard: true,
+                nzFooter: null,
+                nzTitle: view.title,
+                nzContent: AttachmentSelectComponent
+            });
+            Object.assign(ref.getContentComponent(), {
+                paths: $paths,
+                view: view
+            });
+        }
     }
 }

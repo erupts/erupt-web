@@ -66,7 +66,7 @@
                                     <!--prefix and suffix template-->
                                     <ng-template #addOnBeforeTemplate>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==1">
-                                            {{field.eruptFieldJson.edit.inputType.prefix[0].label}}
+                                            {{ field.eruptFieldJson.edit.inputType.prefix[0].label }}
                                         </ng-container>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length>1">
                                             <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType.prefixValue"
@@ -80,7 +80,7 @@
                                     </ng-template>
                                     <ng-template #addOnAfterTemplate>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.inputType.suffix.length==1">
-                                            {{field.eruptFieldJson.edit.inputType.suffix[0]['label']}}
+                                            {{ field.eruptFieldJson.edit.inputType.suffix[0]['label'] }}
                                         </ng-container>
                                         <ng-container *ngIf="field.eruptFieldJson.edit.inputType.suffix.length>1">
                                             <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType.suffixValue"
@@ -215,6 +215,7 @@
                                            [name]="field.fieldName"
                                            [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
                                            [nzTokenSeparators]="[field.eruptFieldJson.edit.tagsType.joinSeparator]"
+                                           [nzMaxMultipleCount]="field.eruptFieldJson.edit.tagsType.maxTagCount"
                                            [nzMode]="field.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'">
                                     <nz-option *ngFor="let item of field.componentValue" [nzLabel]="item"
                                                [nzValue]="item"></nz-option>
@@ -264,7 +265,7 @@
                                          [name]="field.fieldName"
                                          [nzAllowHalf]="field.eruptFieldJson.edit.rateType.allowHalf">
                                     <ng-template #characterIcon>
-                                        <span>{{field.eruptFieldJson.edit.rateType.character}}</span>
+                                        <span>{{ field.eruptFieldJson.edit.rateType.character }}</span>
                                     </ng-template>
                                 </nz-rate>
                             </se>
@@ -324,13 +325,13 @@
                                         <div nz-col [nzSpan]="12">
                                             <label nz-radio [nzValue]="true"
                                                    class="ellipsis-radio stander-line-height">
-                                                {{field.eruptFieldJson.edit.boolType.trueText | translate}}
+                                                {{ field.eruptFieldJson.edit.boolType.trueText | translate }}
                                             </label>
                                         </div>
                                         <div nz-col [nzSpan]="12">
                                             <label nz-radio [nzValue]="false"
                                                    class="ellipsis-radio stander-line-height">
-                                                {{field.eruptFieldJson.edit.boolType.falseText | translate}}
+                                                {{ field.eruptFieldJson.edit.boolType.falseText | translate }}
                                             </label>
                                         </div>
                                     </div>
@@ -373,13 +374,13 @@
                                             <p class="ant-upload-drag-icon">
                                                 <i nz-icon nzType="inbox"></i>
                                             </p>
-                                            <p class="ant-upload-text">{{'component.attachment.upload_hint'|translate}}</p>
+                                            <p class="ant-upload-text">{{ 'component.attachment.upload_hint'|translate }}</p>
                                             <p class="ant-upload-hint"
                                                *ngIf="field.eruptFieldJson.edit.attachmentType.fileTypes.length>0">
-                                                {{'component.attachment.upload_format'|translate}}
-                                                ：<span>{{field.eruptFieldJson.edit.attachmentType.fileTypes.join("&nbsp; / &nbsp;")}}</span>
+                                                {{ 'component.attachment.upload_format'|translate }}
+                                                ：<span>{{ field.eruptFieldJson.edit.attachmentType.fileTypes.join("&nbsp; / &nbsp;") }}</span>
                                             </p>
-                                            <p class="ant-upload-hint">{{field.eruptFieldJson.edit.placeHolder}}</p>
+                                            <p class="ant-upload-hint">{{ field.eruptFieldJson.edit.placeHolder }}</p>
                                         </nz-upload>
                                     </ng-container>
                                 </ng-container>

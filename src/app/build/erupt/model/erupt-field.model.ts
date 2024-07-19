@@ -162,6 +162,7 @@ interface ChoiceType {
 interface TagsType {
     allowExtension: boolean;
     joinSeparator: string;
+    maxTagCount: number;
 }
 
 

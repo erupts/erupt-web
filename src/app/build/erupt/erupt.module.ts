@@ -39,6 +39,7 @@ import {NzImageModule} from "ng-zorro-antd/image";
 import {SearchSeComponent} from "./components/search-se/search-se.component";
 import {NzQRCodeModule} from "ng-zorro-antd/qr-code";
 import {NzRateModule} from "ng-zorro-antd/rate";
+import {AttachmentSelectComponent} from './components/attachment-select/attachment-select.component';
 
 @NgModule({
     imports: [
@@ -111,7 +112,8 @@ import {NzRateModule} from "ng-zorro-antd/rate";
         CodeEditorComponent,
         SafeTemplateComponent,
         MarkdownComponent,
-        CardComponent
+        CardComponent,
+        AttachmentSelectComponent
     ]
 })
 export class EruptModule {
