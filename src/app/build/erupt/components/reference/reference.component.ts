@@ -48,7 +48,7 @@ export class ReferenceComponent implements OnInit {
         let depend = field.eruptFieldJson.edit.referenceTreeType.dependField;
         let dependVal = null;
         if (depend) {
-            const dependField: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(depend);
+            const dependField: EruptFieldModel = this.eruptModel.eruptFieldModels.find(item=> item.fieldName == depend);
             if (dependField.eruptFieldJson.edit.$value) {
                 dependVal = dependField.eruptFieldJson.edit.$value;
             } else {
