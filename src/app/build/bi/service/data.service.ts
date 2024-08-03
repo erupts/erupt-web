@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {Observable} from "rxjs";
-import {Bi, BiData, Reference} from "../model/bi.model";
+import {Bi, BiData, ChartApi, Reference} from "../model/bi.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient, MenuService} from "@delon/theme";
 import {DataService} from "@shared/service/data.service";
@@ -57,7 +57,7 @@ export class BiDataService {
     }
 
     //图表
-    getBiChart(code: string, chartId: number, query: any): Observable<Map<String, any>[]> {
+    getBiChart(code: string, chartId: number, query: any): Observable<ChartApi> {
         return this._http.post(RestPath.bi + "/" + code + "/chart/" + chartId, query, null, {
             headers: {
                 erupt: code

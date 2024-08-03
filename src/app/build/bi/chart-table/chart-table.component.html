@@ -1,13 +1,15 @@
-<div *ngIf="!data||data.length==0" class="flex-center-center">
+<div *ngIf="!chart || !chart.columns || chart.columns.length == 0" class="flex-center-center">
     <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null">
 
     </nz-empty>
 </div>
-<table *ngIf="data&&data.length>0">
+<table *ngIf="chart && chart.columns && chart.columns.length > 0">
     <tr>
-        <th *ngFor="let data of data[0] | keyvalue">{{data.key}}</th>
+        <th *ngFor="let column of chart.columns">{{ column.name }}</th>
     </tr>
-    <tr *ngFor="let ds of data">
-        <td *ngFor="let data of ds | keyvalue">{{data.value}}</td>
+    <tr *ngFor="let data of chart.data">
+        <td *ngFor="let key of data | keys;index as i">
+            {{ data[chart.columns[i].name] }}
+        </td>
     </tr>
 </table>

@@ -26,6 +26,16 @@ export interface Chart {
     loading?: boolean;
 }
 
+export interface ChartApi {
+    data: Map<String, any>[];
+    columns: ChartColumn[];
+
+}
+
+export interface ChartColumn {
+    name: string;
+}
+
 export enum ChartType {
     Number = "Number",
     Line = "Line",
