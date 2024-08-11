@@ -22,10 +22,16 @@ export class HandlerService {
             if (val) {
                 switch (dimension.type) {
                     case DimType.DATE_RANGE:
+                        if (!val[1]){
+                            break;
+                        }
                         val[0] = this.datePipe.transform(val[0], "yyyy-MM-dd 00:00:00");
                         val[1] = this.datePipe.transform(val[1], "yyyy-MM-dd 23:59:59");
                         break;
                     case DimType.DATETIME_RANGE:
+                        if (!val[1]){
+                            break;
+                        }
                         val[0] = this.datePipe.transform(val[0], "yyyy-MM-dd HH:mm:ss");
                         val[1] = this.datePipe.transform(val[1], "yyyy-MM-dd HH:mm:ss");
                         break;
