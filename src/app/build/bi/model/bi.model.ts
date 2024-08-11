@@ -132,6 +132,9 @@ export enum columnType {
     STRING = "string",
     NUMBER = 'number',
     DATE = "date",
+    LONG_TEXT = "long_text",
+    LINK = "link",
+    LINK_DIALOG = "link_dialog",
     DRILL = 'drill'
 }
 
