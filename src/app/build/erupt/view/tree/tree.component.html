@@ -17,7 +17,7 @@
                 class="layout-tree-view" [scrollTop]="treeScrollTop" #treeDiv>
                 <nz-skeleton [nzLoading]="treeLoading&&this.nodes.length==0" [nzActive]="true">
                     <nz-tree #tree class="tree-container"
-                             [nzVirtualHeight]="nodes.length > 50 ? 'calc(100vh - 178px - ' + (settingSrv.layout['reuse']?'40px':'0px') + ')' : null"
+                             [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 200px - ' + (settingSrv.layout['reuse']?'40px':'0px') + ')' : null"
                              [nzShowLine]="true"
                              [nzData]="nodes"
                              [nzSearchValue]="searchValue"

@@ -261,6 +261,13 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                         return null;
                                     }
                                 };
+                            } else if (column.type == columnType.PERCENT) {
+                                col.type = "widget"
+                                col.className = "text-center"
+                                col.widget = {
+                                    type: 'progress', params: ({record}) => ({value: record[column.name]})
+                                };
+                                col.width = "160px"
                             }
                             columns.push(col);
                         }

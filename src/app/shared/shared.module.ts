@@ -18,6 +18,8 @@ import {NavComponent} from "@shared/nav/nav.component";
 import {NzAffixModule} from "ng-zorro-antd/affix";
 import {HeaderI18nComponent} from "@shared/component/i18n.component";
 import {EruptStorageService} from "@shared/service/erupt-storage.service";
+import {StProgressComponent} from "@shared/component/st-progress/st-progress.component";
+import {STWidgetRegistry} from "@delon/abc/st";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -26,7 +28,7 @@ const THIRDMODULES: Array<Type<any>> = [];
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, NavComponent, HeaderI18nComponent];
+const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, NavComponent, HeaderI18nComponent, StProgressComponent];
 const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, I18nPipe];
 
 // #endregion
@@ -71,4 +73,11 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
     ]
 })
 export class SharedModule {
+
+    constructor(
+        private widgetRegistry: STWidgetRegistry,
+    ) {
+        this.widgetRegistry.register("progress", StProgressComponent);
+    }
+
 }
