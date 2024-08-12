@@ -134,6 +134,7 @@ export enum columnType {
     DATE = "date",
     LONG_TEXT = "long_text",
     LINK = "link",
+    PERCENT = "percent",
     LINK_DIALOG = "link_dialog",
     DRILL = 'drill'
 }
