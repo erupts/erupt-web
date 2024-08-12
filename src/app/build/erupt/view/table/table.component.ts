@@ -295,6 +295,7 @@ export class TableComponent implements OnInit, OnDestroy {
             }
             sortString = arr.join(",")
         }
+        this.selectedRows = [];
         this.dataPage.querying = true;
         this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url, {
             pageIndex: this.dataPage.pi,
