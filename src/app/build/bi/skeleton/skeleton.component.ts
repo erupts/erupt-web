@@ -34,6 +34,8 @@ export class SkeletonComponent implements OnInit, OnDestroy {
 
     clientWidth = document.body.clientWidth;
 
+    clientHeight: number = document.body.clientHeight;
+
     hideCondition: boolean = false;
 
     @ViewChild("st") st: STComponent;
