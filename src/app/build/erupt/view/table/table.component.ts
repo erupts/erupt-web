@@ -69,7 +69,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
     deleting: boolean = false;
 
-    clientWidth = document.body.clientWidth;
+    clientWidth: number = document.body.clientWidth;
+
+    clientHeight: number = document.body.clientHeight;
 
     hideCondition = false;
 
