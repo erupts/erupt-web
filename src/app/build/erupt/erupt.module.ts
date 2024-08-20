@@ -18,8 +18,7 @@ import {EditComponent} from "./view/edit/edit.component";
 import {TableComponent} from './view/table/table.component';
 import {LayoutTreeComponent} from './view/layout-tree/layout-tree.component';
 import {CodeEditorComponent} from './components/code-editor/code-editor.component';
-import {UEditorModule} from "ngx-ueditor";
-import {UeditorComponent} from './components/ueditor/ueditor.component';
+import {EruptUeditorComponent} from './components/ueditor/erupt-ueditor.component';
 import {TabTreeComponent} from './components/tab-tree/tab-tree.component';
 import {CheckboxComponent} from './components/checkbox/checkbox.component';
 import {SafeTemplateComponent} from './components/safe-template/safe-template.component';
@@ -47,16 +46,6 @@ import {AttachmentSelectComponent} from './components/attachment-select/attachme
         SharedModule,
         HttpClientModule,
         EruptRoutingModule,
-        UEditorModule.forRoot({
-            js: [
-                './assets/ueditor/ueditor.config.js',
-                './assets/ueditor/ueditor.all.min.js',
-            ],
-            // 默认前端配置项
-            options: {
-                UEDITOR_HOME_URL: './assets/ueditor/'
-            }
-        }),
         TagSelectModule,
         NzCodeEditorModule,
         NzPipesModule,
@@ -88,7 +77,7 @@ import {AttachmentSelectComponent} from './components/attachment-select/attachme
         TableComponent,
         LayoutTreeComponent,
         CodeEditorComponent,
-        UeditorComponent,
+        EruptUeditorComponent,
         TabTreeComponent,
         CheckboxComponent,
         SafeTemplateComponent,

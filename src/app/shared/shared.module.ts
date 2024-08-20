@@ -20,6 +20,7 @@ import {HeaderI18nComponent} from "@shared/component/i18n.component";
 import {EruptStorageService} from "@shared/service/erupt-storage.service";
 import {StProgressComponent} from "@shared/component/st-progress/st-progress.component";
 import {STWidgetRegistry} from "@delon/abc/st";
+import {UEditorComponent} from "@shared/component/ueditor/ueditor.component";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -28,7 +29,7 @@ const THIRDMODULES: Array<Type<any>> = [];
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, NavComponent, HeaderI18nComponent, StProgressComponent];
+const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent];
 const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, I18nPipe];
 
 // #endregion
