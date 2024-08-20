@@ -1,14 +1,4 @@
-import {
-    Component,
-    DoCheck,
-    Inject,
-    Input,
-    KeyValueDiffers,
-    OnDestroy,
-    OnInit,
-    QueryList,
-    ViewChildren
-} from "@angular/core";
+import {Component, DoCheck, Inject, Input, OnDestroy, OnInit, QueryList, ViewChildren} from "@angular/core";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
@@ -71,8 +61,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     supportCopy: boolean;
 
+    iframeHeight = IframeHeight;
+
     constructor(public dataService: DataService,
-                private differs: KeyValueDiffers,
                 private i18n: I18NService,
                 private dataHandlerService: DataHandlerService,
                 @Inject(DA_SERVICE_TOKEN) public tokenService: ITokenService,
@@ -228,8 +219,5 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             }
         }
     }
-
-
-    iframeHeight = IframeHeight;
 
 }
