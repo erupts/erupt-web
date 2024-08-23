@@ -189,7 +189,9 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
                 }
                 this.onReady.emit(this);
                 this.flushInterval = setInterval(() => {
-                    this.onChange(this.instance.getContent())
+                    if (this.value != this.instance.getContent()) {
+                        this.onChange(this.instance.getContent())
+                    }
                 }, 1000)
             });
             ueditor.addListener('contentChange', () => {
