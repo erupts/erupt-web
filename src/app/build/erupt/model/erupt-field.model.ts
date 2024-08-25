@@ -29,6 +29,21 @@ export interface EruptField {
 export interface Tpl {
     enable: boolean;
     width: string;
+    height: string;
+    openWay: OpenWay;
+    drawerPlacement: DrawerPlacement;
+}
+
+export enum OpenWay {
+    MODAL = "MODAL",
+    DRAWER = "DRAWER"
+}
+
+export enum DrawerPlacement {
+    LEFT = "left",
+    RIGHT = "right",
+    TOP = "top",
+    BOTTOM = "bottom"
 }
 
 export interface View {
