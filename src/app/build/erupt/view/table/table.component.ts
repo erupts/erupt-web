@@ -19,7 +19,7 @@ import {
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
-import {EruptFieldModel} from "../../model/erupt-field.model";
+import {EruptFieldModel, OpenWay} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
@@ -33,6 +33,7 @@ import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
 import {STChange, STPage} from "@delon/abc/st/st.interfaces";
 import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
+import {NzDrawerService} from "ng-zorro-antd/drawer";
 
 
 @Component({
@@ -54,7 +55,9 @@ export class TableComponent implements OnInit, OnDestroy {
         private appViewService: AppViewService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
-        private i18n: I18NService
+        private i18n: I18NService,
+        @Inject(NzDrawerService)
+        private drawerService: NzDrawerService
     ) {
     }
 
@@ -350,21 +353,34 @@ export class TableComponent implements OnInit, OnDestroy {
             tableOperators.push({
                 icon: "eye",
                 click: (record: any, modal: any) => {
-                    let ref = this.modal.create({
-                        nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-                        nzWidth: fullLine ? 550 : null,
-                        nzStyle: {top: "60px"},
-                        nzMaskClosable: true,
-                        nzKeyboard: true,
-                        nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
-                        nzOkText: null,
-                        nzTitle: this.i18n.fanyi("global.view"),
-                        nzContent: EditComponent
-                    });
-                    ref.getContentComponent().readonly = true;
-                    ref.getContentComponent().eruptBuildModel = this.eruptBuildModel;
-                    ref.getContentComponent().behavior = Scene.EDIT;
-                    ref.getContentComponent().id = record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
+                    let params = {
+                        readonly: true,
+                        eruptBuildModel: this.eruptBuildModel,
+                        behavior: Scene.EDIT,
+                        id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
+                    };
+                    if (this.settingSrv.layout['drawDraw']) {
+                        //抽屉方式打开详情
+                        this.drawerService.create({
+                            nzTitle: this.i18n.fanyi("global.view"),
+                            nzWidth: "75%",
+                            nzContent: EditComponent,
+                            nzContentParams: params
+                        });
+                    } else {
+                        let ref = this.modal.create({
+                            nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+                            nzWidth: fullLine ? 550 : null,
+                            nzStyle: {top: "60px"},
+                            nzMaskClosable: true,
+                            nzKeyboard: true,
+                            nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
+                            nzOkText: null,
+                            nzTitle: this.i18n.fanyi("global.view"),
+                            nzContent: EditComponent
+                        });
+                        Object.assign(ref.getContentComponent(), params)
+                    }
                 }
             });
         }
@@ -476,6 +492,11 @@ export class TableComponent implements OnInit, OnDestroy {
             tableOperators.push({
                 icon: "edit",
                 click: (record: any) => {
+                    let params = {
+                        eruptBuildModel: this.eruptBuildModel,
+                        id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
+                        behavior: Scene.EDIT
+                    }
                     const model = this.modal.create({
                         nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
                         nzWidth: fullLine ? 550 : null,
@@ -518,9 +539,7 @@ export class TableComponent implements OnInit, OnDestroy {
                             }
                         }
                     });
-                    model.getContentComponent().eruptBuildModel = this.eruptBuildModel;
-                    model.getContentComponent().id = record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
-                    model.getContentComponent().behavior = Scene.EDIT;
+                    Object.assign(model.getContentComponent(), params)
                 }
             });
         }
@@ -587,24 +606,44 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         if (ro.type === OperationType.TPL) {
             let url = this.dataService.getEruptOperationTpl(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids);
-            let ref = this.modal.create({
-                nzKeyboard: true,
-                nzTitle: ro.title,
-                nzMaskClosable: false,
-                nzWidth: ro.tpl.width,
-                nzStyle: {top: "20px"},
-                // nzWrapClassName: "modal-xxl",
-                nzWrapClassName: ro.tpl.width || "modal-lg",
-                nzBodyStyle: {
-                    padding: "0"
-                },
-                nzFooter: null,
-                nzContent: EruptIframeComponent,
-                nzOnCancel: () => {
-                    // this.query();
-                }
-            });
-            ref.getContentComponent().url = url;
+            if (!ro.tpl.openWay || ro.tpl.openWay == OpenWay.MODAL) {
+                let ref = this.modal.create({
+                    nzKeyboard: true,
+                    nzTitle: ro.title,
+                    nzMaskClosable: false,
+                    nzWidth: ro.tpl.width,
+                    nzStyle: {top: "20px"},
+                    // nzWrapClassName: "modal-xxl",
+                    nzWrapClassName: ro.tpl.width || "modal-lg",
+                    nzBodyStyle: {
+                        padding: "0"
+                    },
+                    nzFooter: null,
+                    nzContent: EruptIframeComponent,
+                    nzOnCancel: () => {
+                        // this.query();
+                    }
+                });
+                ref.getContentComponent().url = url;
+            } else {
+                this.drawerService.create({
+                    nzTitle: ro.title,
+                    nzKeyboard: true,
+                    nzMaskClosable: true,
+                    // @ts-ignore
+                    nzPlacement: ro.tpl.drawerPlacement.toLowerCase(),
+                    nzWidth: ro.tpl.width || "40%",
+                    nzHeight: ro.tpl.height || "40%",
+                    nzBodyStyle: {
+                        padding: 0
+                    },
+                    nzFooter: null,
+                    nzContent: EruptIframeComponent,
+                    nzContentParams: {
+                        url: url
+                    }
+                })
+            }
         } else if (ro.type === OperationType.ERUPT) {
             let operationErupt: EruptModel = null;
             if (this.eruptBuildModel.operationErupts) {
