@@ -14,6 +14,11 @@ let port = 8086;
 let pathFolder = "../dist";
 //创建服务器
 http.createServer(function (request, response) {
+    if (path.normalize(decodeURI(request.url)) !== decodeURI(request.url)) {
+        response.statusCode = 403;
+        response.end();
+        return;
+    }
     //解析请求，包括文件名
     let pathname = url.parse(request.url).pathname;
     let realPath = path.join(pathFolder, pathname);
