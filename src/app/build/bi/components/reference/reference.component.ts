@@ -24,6 +24,8 @@ export class ReferenceComponent implements OnInit {
 
     data: any[];
 
+    dataLength: number = 0;
+
     loading: boolean = false;
 
     @ViewChild("tree", {static: false}) tree: NzTreeComponent;
@@ -39,6 +41,7 @@ export class ReferenceComponent implements OnInit {
 
         this.dataService.getBiReference(this.code, this.dimension.id, this.handlerService.buildDimParam(this.bi, false, true)).subscribe((res) => {
             if (res) {
+                this.dataLength = res.length;
                 if (isTree) {
                     this.data = this.recursiveTree(res, null);
                 } else {

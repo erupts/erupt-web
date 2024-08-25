@@ -1,10 +1,12 @@
-import {Component, ElementRef, OnInit, Renderer2} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, Renderer2} from '@angular/core';
 import {NavigationEnd, NavigationError, RouteConfigLoadStart, Router} from '@angular/router';
 import {TitleService, VERSION as VERSION_ALAIN} from '@delon/theme';
 import {environment} from '@env/environment';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {VERSION as VERSION_ZORRO} from 'ng-zorro-antd/version';
 import {WindowModel} from "@shared/model/window.model";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzNotificationService} from "ng-zorro-antd/notification";
 
 @Component({
     selector: 'app-root',
@@ -18,7 +20,10 @@ export class AppComponent implements OnInit {
         renderer: Renderer2,
         private router: Router,
         private titleSrv: TitleService,
-        private modalSrv: NzModalService
+        private modalSrv: NzModalService,
+        @Inject(NzModalService) private modal: NzModalService,
+        @Inject(NzMessageService) private msg: NzMessageService,
+        @Inject(NzNotificationService) private notification: NzNotificationService
     ) {
         renderer.setAttribute(el.nativeElement, 'ng-alain-version', VERSION_ALAIN.full);
         renderer.setAttribute(el.nativeElement, 'ng-zorro-version', VERSION_ZORRO.full);
@@ -28,6 +33,9 @@ export class AppComponent implements OnInit {
     beforeMatch = null;
 
     ngOnInit(): void {
+        window["msg"] = this.msg;
+        window["modal"] = this.modal;
+        window["notify"] = this.notification;
         let configLoad = false;
         this.router.events.subscribe(ev => {
             if (ev instanceof RouteConfigLoadStart) {

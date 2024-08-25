@@ -99,7 +99,7 @@
                             [loading]="querying"
                             [ps]="biTable.size"
                             [page]="biTable.page"
-                            [scroll]="{x: (clientWidth > 768 ? columns.length * 200 : 0) + 'px',y: (525) + 'px'}"
+                            [scroll]="{x: (clientWidth > 768 ? columns.length * 200 : 0) + 'px',y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
                             [bordered]="settingSrv.layout['bordered']" [resizable]="true"
                             [size]="'small'" style="margin-bottom: 12px">
                         </st>

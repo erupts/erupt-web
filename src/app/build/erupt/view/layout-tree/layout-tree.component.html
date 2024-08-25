@@ -9,6 +9,7 @@
          style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);overflow: auto"
          [nzBordered]="true">
     <nz-tree class="tree-container"
+             [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 165px - ' + (settingSrv.layout['reuse']?'40px':'0px') + ')' : null"
              [nzData]="list"
              [nzShowLine]="true"
              [nzSearchValue]="searchValue"

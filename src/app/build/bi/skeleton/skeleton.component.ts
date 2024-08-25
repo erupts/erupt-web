@@ -13,6 +13,8 @@ import {STPage} from "@delon/abc/st/st.interfaces";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {AppViewService} from "@shared/service/app-view.service";
+import {CodeEditorComponent} from "../../erupt/components/code-editor/code-editor.component";
+import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 @Component({
     selector: 'bi-skeleton',
@@ -31,6 +33,8 @@ export class SkeletonComponent implements OnInit, OnDestroy {
     querying: boolean = false;
 
     clientWidth = document.body.clientWidth;
+
+    clientHeight: number = document.body.clientHeight;
 
     hideCondition: boolean = false;
 
@@ -208,6 +212,64 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                     model.getContentComponent().drillCode = column.code;
                                     model.getContentComponent().row = row;
                                 };
+                            } else if (column.type == columnType.LONG_TEXT) {
+                                col.type = "link"
+                                col.format = (item: any) => {
+                                    if (item[column.name]) {
+                                        return `<i class='fa fa-file-text' aria-hidden='true' title=''></i>`;
+                                    } else {
+                                        return null;
+                                    }
+                                }
+                                col.click = (item) => {
+                                    let model = this.modal.create({
+                                        nzWrapClassName: "modal-lg",
+                                        nzKeyboard: true,
+                                        nzBodyStyle: {
+                                            padding: '0',
+                                        },
+                                        nzMaskClosable: false,
+                                        nzStyle: {top: "30px"},
+                                        nzTitle: column.name,
+                                        nzContent: CodeEditorComponent,
+                                        nzFooter: null
+                                    });
+                                    // @ts-ignore
+                                    model.getContentComponent().edit = {$value: item[column.name]}
+                                    model.getContentComponent().height = 500;
+                                }
+                            } else if (column.type == columnType.LINK || column.type == columnType.LINK_DIALOG) {
+                                col.type = "link"
+                                col.click = (item) => {
+                                    if (column.type == columnType.LINK) {
+                                        window.open(item[column.name]);
+                                    } else {
+                                        let ref = this.modal.create({
+                                            nzWrapClassName: "modal-lg modal-body-nopadding",
+                                            nzStyle: {top: "20px"},
+                                            nzMaskClosable: false,
+                                            nzKeyboard: true,
+                                            nzFooter: null,
+                                            nzTitle: column.name,
+                                            nzContent: EruptIframeComponent
+                                        });
+                                        ref.getContentComponent().url = item[column.name];
+                                    }
+                                };
+                                col.format = (item: any) => {
+                                    if (item[column.name]) {
+                                        return "<i class='fa fa-link' aria-hidden='true' title=''></i>";
+                                    } else {
+                                        return null;
+                                    }
+                                };
+                            } else if (column.type == columnType.PERCENT) {
+                                col.type = "widget"
+                                col.className = "text-center"
+                                col.widget = {
+                                    type: 'progress', params: ({record}) => ({value: record[column.name]})
+                                };
+                                col.width = "160px"
                             }
                             columns.push(col);
                         }

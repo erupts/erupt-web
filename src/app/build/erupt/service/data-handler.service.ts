@@ -169,7 +169,7 @@ export class DataHandlerService {
                             obj[field.fieldName] = arr;
                             break;
                         case EditType.NUMBER:
-                            if ((edit.$l_val || edit.$l_val == 0) && (edit.$r_val || edit.$r_val == 0)) {
+                            if ((edit.$l_val || edit.$l_val === 0) && (edit.$r_val || edit.$r_val === 0)) {
                                 obj[field.fieldName] = [edit.$l_val, edit.$r_val];
                             }
                             break;

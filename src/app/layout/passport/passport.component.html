@@ -20,7 +20,7 @@
         </div>
         <global-footer *ngIf="copyright">
             <ng-container *ngIf="copyrightTxt">
-                {{copyrightTxt}}
+                <p [innerHTML]="copyrightTxt"></p>
             </ng-container>
             <ng-container *ngIf="!copyrightTxt">
                 <i nz-icon nzType="copyright" nzTheme="outline"></i> 2018 - {{nowYear}}

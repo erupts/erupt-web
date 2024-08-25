@@ -96,17 +96,17 @@ export class ChartComponent implements OnInit, OnDestroy {
             this.src = this.biDataService.getChartTpl(this.chart.id, this.bi.code, param);
         } else {
             this.chart.loading = true;
-            this.biDataService.getBiChart(this.bi.code, this.chart.id, param).subscribe(data => {
+            this.biDataService.getBiChart(this.bi.code, this.chart.id, param).subscribe(chart => {
                 this.chart.loading = false;
-                this.data = data;
+                this.data = chart.data || [];
                 if (this.chart.type == ChartType.Number) {
-                    if (data[0]) {
-                        this.dataKeys = Object.keys(data[0]);
+                    if (this.data[0]) {
+                        this.dataKeys = Object.keys(this.data[0]);
                     }
                 } else if (this.chart.type == ChartType.table) {
-                    this.chartTable.render(data);
+                    this.chartTable.render(chart);
                 } else {
-                    this.render(data);
+                    this.render(this.data);
                 }
             });
         }
@@ -129,7 +129,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                     if (this.chart.loading) {
                         this.chart.loading = false;
                     }
-                    this.plot.changeData(data);
+                    this.plot.changeData(data?.data);
                 });
             } else {
                 this.init();
@@ -172,6 +172,9 @@ export class ChartComponent implements OnInit, OnDestroy {
         if (this.plot) {
             this.plot.destroy();
             this.plot = null;
+        }
+        if (!data || !data.length) {
+            return;
         }
         let keys = Object.keys(data[0]);
         let x = keys[0];
@@ -409,7 +412,7 @@ export class ChartComponent implements OnInit, OnDestroy {
                         wordField: x,
                         weightField: y,
                         colorField: series,
-                        interactions: [{ type: 'element-active' }],
+                        interactions: [{type: 'element-active'}],
                         wordStyle: {}
                     }) as WordCloudOptions
                 );

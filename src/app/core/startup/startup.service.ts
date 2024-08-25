@@ -27,19 +27,21 @@ export class StartupService {
     }
 
     async load(): Promise<any> {
-        console.group(WindowModel.title);
-        console.log("%c" +
-            "                               __      \n" +
-            "                              /\\ \\__   \n" +
-            "   __   _ __   __  __   _____ \\ \\ ,_\\  \n" +
-            " /'__`\\/\\`'__\\/\\ \\/\\ \\ /\\ '__`\\\\ \\ \\/  \n" +
-            "/\\  __/\\ \\ \\/ \\ \\ \\_\\ \\\\ \\ \\L\\ \\\\ \\ \\_ \n" +
-            "\\ \\____\\\\ \\_\\  \\ \\____/ \\ \\ ,__/ \\ \\__\\\n" +
-            " \\/____/ \\/_/   \\/___/   \\ \\ \\/   \\/__/\n" +
-            "                          \\ \\_\\        \n" +
-            "                           \\/_/          \n" +
-            "https://www.erupt.xyz", "color:#2196f3;font-weight:800");
-        console.groupEnd();
+        if (WindowModel.copyright) {
+            console.group(WindowModel.title);
+            console.log("%c" +
+                "                               __      \n" +
+                "                              /\\ \\__   \n" +
+                "   __   _ __   __  __   _____ \\ \\ ,_\\  \n" +
+                " /'__`\\/\\`'__\\/\\ \\/\\ \\ /\\ '__`\\\\ \\ \\/  \n" +
+                "/\\  __/\\ \\ \\/ \\ \\ \\_\\ \\\\ \\ \\L\\ \\\\ \\ \\_ \n" +
+                "\\ \\____\\\\ \\_\\  \\ \\____/ \\ \\ ,__/ \\ \\__\\\n" +
+                " \\/____/ \\/_/   \\/___/   \\ \\ \\/   \\/__/\n" +
+                "                          \\ \\_\\        \n" +
+                "                           \\/_/          \n" +
+                "https://www.erupt.xyz", "color:#2196f3;font-weight:800");
+            console.groupEnd();
+        }
         (window as any).eruptWebSuccess = true;
         await new Promise<void>((resolve) => {
             let xhr = new XMLHttpRequest();
