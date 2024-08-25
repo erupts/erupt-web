@@ -16,7 +16,7 @@
                                 <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.tip"
                                         (click)="createOperator(item)">
                                     <i class="fa" [ngClass]="item.icon"></i>
-                                    <span style="margin-left: 8px;">{{item.title}}</span>
+                                    <span style="margin-left: 8px;">{{ item.title }}</span>
                                 </button>
                             </ng-container>
                         </ng-container>
@@ -26,14 +26,14 @@
                     <div>
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
                             <button nz-button nzType="default" class="mb-sm" (click)="addData()" id="erupt-btn-add">
-                                <i nz-icon nzType="plus" nzTheme="outline"></i>{{'table.add'|translate}}
+                                <i nz-icon nzType="plus" nzTheme="outline"></i>{{ 'table.add'|translate }}
                             </button>
                         </ng-container>
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
                             <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()"
                                     id="erupt-btn-export" [nzLoading]="downloading">
-                                <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download'|translate}}
+                                <i nz-icon nzType="download" nzTheme="outline"></i>{{ 'table.download'|translate }}
                             </button>
                         </ng-container>
 
@@ -41,7 +41,8 @@
                             &nbsp;
                             <nz-button-group>
                                 <button nz-button (click)="importableExcel()" id="erupt-btn-importable">
-                                    <i nz-icon nzType="import" nzTheme="outline"></i> &nbsp;{{'table.import'|translate}}
+                                    <i nz-icon nzType="import" nzTheme="outline"></i>
+                                    &nbsp;{{ 'table.import'|translate }}
                                 </button>
                                 <button nz-button nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight">
                                     <i nz-icon nzType="ellipsis"></i>
@@ -51,7 +52,7 @@
                                 <ul nz-menu>
                                     <li nz-menu-item (click)="downloadExcelTemplate()">
                                         <i nz-icon nzType="build" nzTheme="outline"></i>
-                                        &nbsp;{{'table.download_template'|translate}}
+                                        &nbsp;{{ 'table.download_template'|translate }}
                                     </li>
                                 </ul>
                             </nz-dropdown-menu>
@@ -62,7 +63,7 @@
                             <button nz-button nzType="default" [nzSearch]="true"
                                     class="mb-sm" [nzLoading]="dataPage.querying" id="erupt-btn-query"
                                     (click)="query()">
-                                <i nz-icon nzType="search" nzTheme="outline"></i>{{'table.query'|translate}}
+                                <i nz-icon nzType="search" nzTheme="outline"></i>{{ 'table.query'|translate }}
                             </button>
                         </ng-container>
 
@@ -70,7 +71,7 @@
                             <button nz-button nzType="default" nzDanger *ngIf="selectedRows.length>0"
                                     class="mb-sm" [nzLoading]="deleting" id="erupt-btn-delete"
                                     (click)="delRows()">
-                                <i nz-icon nzType="delete" nzTheme="outline"></i>{{'table.delete'|translate}}
+                                <i nz-icon nzType="delete" nzTheme="outline"></i>{{ 'table.delete'|translate }}
                             </button>
                         </ng-container>
                         <ng-container *ngIf="operationButtonNum <= 3">
@@ -90,7 +91,7 @@
                                         <div *ngIf="col.title&&col.index" nz-col nzSpan="6">
                                             <label nz-checkbox [(ngModel)]="col['show']"
                                                    style="width: 130px;"
-                                                   (ngModelChange)="st?.resetColumns()">{{col.title['text'] | nzEllipsis:6:'...'}}</label>
+                                                   (ngModelChange)="st?.resetColumns()">{{ col.title['text'] | nzEllipsis:6:'...' }}</label>
                                         </div>
                                     </ng-container>
                                 </div>
@@ -103,7 +104,7 @@
                                 </button>
                                 <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset"
                                         [disabled]="dataPage.querying">
-                                    <i nz-icon nzType="sync" nzTheme="outline"></i>{{'table.reset'|translate}}
+                                    <i nz-icon nzType="sync" nzTheme="outline"></i>{{ 'table.reset'|translate }}
                                 </button>
                             </ng-container>
                         </div>
@@ -126,8 +127,9 @@
                     <!--                        </div>-->
                     <!--                    </ng-container>-->
                     <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
-                        [body]="bodyTpl" [data]="dataPage.data" [columns]="columns" [virtualScroll]="dataPage.data.length >= 100"
-                        [scroll]="{x: (clientWidth > 768 ? showColumnLength * 160 : 0) + 'px', y: (525) + 'px'}"
+                        [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
+                        [virtualScroll]="dataPage.data.length >= 100"
+                        [scroll]="{x: (clientWidth > 768 ? showColumnLength * 160 : 0) + 'px', y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
                         (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
                         [page]="dataPage.page" [size]="'middle'"
                     >
@@ -136,7 +138,7 @@
                                 <tr *ngFor="let row of extraRows" [ngClass]="row.className">
                                     <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
                                         [ngClass]="column.className">
-                                        {{column.value}}
+                                        {{ column.value }}
                                     </td>
                                 </tr>
                             </ng-container>

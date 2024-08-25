@@ -4,14 +4,18 @@ import {EruptModel} from "../../model/erupt.model";
 import {RestPath} from "../../model/erupt.enum";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
-import {UEditorComponent} from "ngx-ueditor";
+import {UEditorComponent} from "@shared/component/ueditor/ueditor.component";
 
 @Component({
     selector: 'erupt-ueditor',
-    templateUrl: './ueditor.component.html',
+    template: `
+        <ueditor #ue [name]="eruptField.fieldName" [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
+                 [config]="{serverUrl:serverPath,readonly:readonly}"></ueditor>
+
+    `,
     styles: []
 })
-export class UeditorComponent implements OnInit {
+export class EruptUeditorComponent implements OnInit {
 
     @Input() eruptField: EruptFieldModel;
 
@@ -19,9 +23,10 @@ export class UeditorComponent implements OnInit {
 
     @Input() readonly: boolean;
 
-    @ViewChild("ue") ue: UEditorComponent;
+    @ViewChild("ue", {static: false}) ue: UEditorComponent;
 
     serverPath: string;
+
 
     constructor(@Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
@@ -33,7 +38,6 @@ export class UeditorComponent implements OnInit {
         }
         this.serverPath = rf + "/upload-ueditor/" + this.erupt.eruptName + "/" +
             this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token;
-
     }
 
 }

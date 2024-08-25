@@ -81,9 +81,11 @@ export class EditComponent implements OnInit, OnDestroy {
 
     beforeSaveValidate(): boolean {
         if (this.loading) {
-            this.msg.warning(this.i18n.fanyi('global.update.loading..hint'));
+            this.msg.warning(this.i18n.fanyi('global.update.loading.hint'));
             return false;
-        } else return this.eruptEdit.eruptEditValidate();
+        } else {
+            return this.eruptEdit.eruptEditValidate();
+        }
     }
 
     ngOnDestroy(): void {

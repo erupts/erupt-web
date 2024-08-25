@@ -39,6 +39,8 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     nodes: any = [];
 
+    dataLength: number = 0;
+
     selectLeaf: boolean = false;
 
     private router$: Subscription;
@@ -204,6 +206,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
             this.treeLoading = false;
             if (tree) {
+                this.dataLength = tree.length;
                 this.nodes = this.dataHandler.dataTreeToZorroTree(tree, this.eruptBuildModel.eruptModel.eruptJson.tree.expandLevel);
                 this.rollTreePoint();
             }

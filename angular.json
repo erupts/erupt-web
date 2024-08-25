@@ -49,11 +49,6 @@
                             },
                             {
                                 "glob": "**/*",
-                                "input": "./libs/editor.md/",
-                                "output": "/assets/editor.md/"
-                            },
-                            {
-                                "glob": "**/*",
                                 "input": "./node_modules/font-awesome/fonts/",
                                 "output": "/assets/font-awesome/fonts/"
                             },
