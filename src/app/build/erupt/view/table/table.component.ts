@@ -671,7 +671,6 @@ export class TableComponent implements OnInit, OnDestroy {
                             if (res.data) {
                                 try {
                                     let ev = this.evalVar();
-                                    let msg = ev.msg;
                                     let codeModal = ev.codeModal;
                                     eval(res.data);
                                 } catch (e) {
@@ -713,7 +712,6 @@ export class TableComponent implements OnInit, OnDestroy {
                             if (res.data) {
                                 try {
                                     let ev = this.evalVar();
-                                    let msg = ev.msg;
                                     let codeModal = ev.codeModal;
                                     eval(res.data);
                                 } catch (e) {
@@ -730,7 +728,6 @@ export class TableComponent implements OnInit, OnDestroy {
                         if (res.data) {
                             try {
                                 let ev = this.evalVar();
-                                let msg = ev.msg;
                                 let codeModal = ev.codeModal;
                                 eval(res.data);
                             } catch (e) {
@@ -933,7 +930,6 @@ export class TableComponent implements OnInit, OnDestroy {
     //提供自定义表达式可调用函数
     evalVar() {
         return {
-            msg: this.msg,
             codeModal: (lang: string, code: any) => {
                 let ref = this.modal.create({
                     nzKeyboard: true,
