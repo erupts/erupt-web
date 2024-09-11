@@ -309,7 +309,7 @@ export class TableComponent implements OnInit, OnDestroy {
             ...query
         }, this.header).subscribe(page => {
             this.dataPage.querying = false;
-            this.dataPage.data = page.list
+            this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
             // for (let ele of spliceArr(page.list, 20)) {
             //     this.dataPage.data.push(...ele)
