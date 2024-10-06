@@ -39,6 +39,7 @@ import {SearchSeComponent} from "./components/search-se/search-se.component";
 import {NzQRCodeModule} from "ng-zorro-antd/qr-code";
 import {NzRateModule} from "ng-zorro-antd/rate";
 import {AttachmentSelectComponent} from './components/attachment-select/attachment-select.component';
+import {NzEmptyModule} from "ng-zorro-antd/empty";
 
 @NgModule({
     imports: [
@@ -51,7 +52,8 @@ import {AttachmentSelectComponent} from './components/attachment-select/attachme
         NzPipesModule,
         NzImageModule,
         NzQRCodeModule,
-        NzRateModule
+        NzRateModule,
+        NzEmptyModule
     ],
     providers: [
         DataHandlerService,
