@@ -401,7 +401,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         for (let i in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
             let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[i];
-            if (ro.mode !== OperationMode.BUTTON) {
+            if (ro.mode !== OperationMode.BUTTON && ro.mode !== OperationMode.MULTI_ONLY) {
                 let text = "";
                 if (ro.icon) {
                     text = `<i class=\"${ro.icon}\"></i>`;
