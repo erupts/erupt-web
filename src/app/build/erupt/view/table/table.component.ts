@@ -589,14 +589,14 @@ export class TableComponent implements OnInit, OnDestroy {
      * @param rowOperation 行按钮对象
      * @param data 数据（单个执行时使用）
      */
-    createOperator(rowOperation: RowOperation, data?: object, reloadModal?: boolean) {
+    createOperator(rowOperation: RowOperation, data?: object) {
         const eruptModel = this.eruptBuildModel.eruptModel;
         const ro = rowOperation;
         let ids = [];
         if (data) {
             ids = [data[eruptModel.eruptJson.primaryKeyCol]];
         } else {
-            if (ro.mode === OperationMode.MULTI && this.selectedRows.length === 0) {
+            if ((ro.mode === OperationMode.MULTI || ro.mode === OperationMode.MULTI_ONLY) && this.selectedRows.length === 0) {
                 this.msg.warning(this.i18n.fanyi("table.require.select_one"));
                 return;
             }
