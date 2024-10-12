@@ -15,17 +15,15 @@ import {EruptAppData} from "@shared/model/erupt-app.model";
 
 @Component({
     selector: "passport-login",
-    templateUrl: "./login.component.html",
-    styleUrls: ["./login.component.less"],
+    templateUrl: "./tenant-login.component.html",
+    styleUrls: ["./tenant-login.component.less"],
     providers: [SocialService]
 })
-export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
+export class UserTenantLoginComponent implements OnDestroy, OnInit, AfterViewInit {
 
     form: FormGroup;
 
     error = "";
-
-    type = 0;
 
     loading = false;
 
@@ -59,6 +57,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
     ) {
         this.tenantLogin = !!EruptAppData.get().properties["erupt-tenant"]
         this.form = fb.group({
+            tenantCode: [null, Validators.required],
             userName: [null, [Validators.required, Validators.minLength(1)]],
             password: [null, Validators.required],
             verifyCode: [null],
@@ -86,6 +85,10 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
 
     // region: fields
 
+    get tenantCode() {
+        return this.form.controls['tenantCode'];
+    }
+
     get userName() {
         return this.form.controls['userName'];
     }
@@ -98,30 +101,25 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         return this.form.controls['verifyCode'];
     }
 
-    // endregion
-    switch(ret: any) {
-        this.type = ret.index;
-    }
-
     submit() {
         this.error = "";
-        if (this.type === 0) {
-            this.userName.markAsDirty();
+        this.tenantCode.markAsDirty();
+        this.tenantCode.updateValueAndValidity();
+        this.userName.markAsDirty();
+        this.userName.updateValueAndValidity();
+        this.password.markAsDirty();
+        this.password.updateValueAndValidity();
+        if (this.useVerifyCode) {
+            this.verifyCode.markAsDirty();
             this.userName.updateValueAndValidity();
-            this.password.markAsDirty();
-            this.password.updateValueAndValidity();
-            if (this.useVerifyCode) {
-                this.verifyCode.markAsDirty();
-                this.userName.updateValueAndValidity();
-            }
-            if (this.userName.invalid || this.password.invalid) return;
         }
+        if (this.userName.invalid || this.password.invalid) return;
         this.loading = true;
         let pwd = this.password.value;
         if (EruptAppData.get().pwdTransferEncrypt) {
             pwd = <string>Md5.hashStr(Md5.hashStr(this.password.value) + this.userName.value);
         }
-        this.data.login(this.userName.value, pwd, this.verifyCode.value, this.verifyCodeMark).subscribe((result) => {
+        this.data.tenantLogin(this.tenantCode.value, this.userName.value, pwd, this.verifyCode.value, this.verifyCodeMark).subscribe((result) => {
             if (result.useVerifyCode) this.changeVerifyCode();
             this.useVerifyCode = result.useVerifyCode;
             if (result.pass) {
@@ -170,8 +168,8 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         this.msg.error(this.i18n.fanyi('login.forget_pwd_hint'));
     }
 
-    toTenant() {
-        this.router.navigateByUrl('/passport/tenant').then(r => true)
+    toLogin() {
+        this.router.navigateByUrl('/passport/login').then(r => true)
     }
 
     ngOnDestroy(): void {

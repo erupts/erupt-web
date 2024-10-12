@@ -382,6 +382,17 @@ export class DataService {
         );
     }
 
+    tenantLogin(tenantCode: string, account: string, pwd: string, verifyCode?: any, verifyCodeMark?: any): Observable<LoginModel> {
+        return this._http.get(RestPath.erupt + "/tenant/login", {
+                tenantCode: tenantCode,
+                account: account,
+                pwd: pwd,
+                verifyCode: verifyCode,
+                verifyCodeMark: verifyCodeMark || null
+            }
+        );
+    }
+
     logout(): Observable<any> {
         return this._http.get(RestPath.erupt + "/logout");
     }

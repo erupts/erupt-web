@@ -8,8 +8,9 @@ import {UserLoginComponent} from "../layout/passport/login/login.component";
 import {LayoutModule} from "../layout/layout.module";
 import {FillComponent} from "./fill/fill.component";
 import {ResetPwdComponent} from "./reset-pwd/reset-pwd.component";
+import {UserTenantLoginComponent} from "../layout/passport/tenant-login/tenant-login.component";
 
-const COMPONENTS: Array<Type<any>> = [SiteComponent, FillComponent, HomeComponent, ResetPwdComponent, UserLoginComponent];
+const COMPONENTS: Array<Type<any>> = [SiteComponent, FillComponent, HomeComponent, ResetPwdComponent, UserLoginComponent, UserTenantLoginComponent];
 
 @NgModule({
     imports: [SharedModule, RouteRoutingModule, LayoutModule],
