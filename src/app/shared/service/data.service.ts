@@ -393,6 +393,19 @@ export class DataService {
         );
     }
 
+    tenantChangePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
+        return this._http.get(RestPath.erupt + "/tenant/change-pwd", {
+                pwd: this.pwdEncode(pwd, 3),
+                newPwd: this.pwdEncode(newPwd, 3),
+                newPwd2: this.pwdEncode(newPwd2, 3)
+            }
+        );
+    }
+
+    tenantUserinfo(): Observable<Userinfo> {
+        return this._http.get<Userinfo>(RestPath.erupt + "/tenant/userinfo");
+    }
+
     logout(): Observable<any> {
         return this._http.get(RestPath.erupt + "/logout");
     }
@@ -422,7 +435,7 @@ export class DataService {
         });
     }
 
-    getUserinfo(): Observable<Userinfo> {
+    userinfo(): Observable<Userinfo> {
         return this._http.get<Userinfo>(RestPath.erupt + "/userinfo");
     }
 

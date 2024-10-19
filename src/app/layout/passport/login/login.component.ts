@@ -57,7 +57,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
         private cacheService: CacheService
     ) {
-        this.tenantLogin = !!EruptAppData.get().properties["erupt-tenant"]
+        this.tenantLogin = !!(EruptAppData.get().properties && EruptAppData.get().properties["erupt-tenant"])
         this.form = fb.group({
             userName: [null, [Validators.required, Validators.minLength(1)]],
             password: [null, Validators.required],

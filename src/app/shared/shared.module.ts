@@ -21,6 +21,8 @@ import {EruptStorageService} from "@shared/service/erupt-storage.service";
 import {StProgressComponent} from "@shared/component/st-progress/st-progress.component";
 import {STWidgetRegistry} from "@delon/abc/st";
 import {UEditorComponent} from "@shared/component/ueditor/ueditor.component";
+import {EruptContextService} from "@shared/service/erupt-context.service";
+import {UtilsService} from "@shared/service/utils.service";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -55,6 +57,8 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
     ],
     providers: [
         DataService,
+        UtilsService,
+        EruptContextService,
         EruptStorageService
     ],
     exports: [
