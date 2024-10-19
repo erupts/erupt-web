@@ -15,7 +15,7 @@ export class UtilsService {
     }
 
     isTenantToken(): boolean {
-        return this.tokenService.get().token.split(".").length == 2
+        return this.tokenService.get().token.split(".").length == 3
     }
 
     async loadScript(src: string) {
