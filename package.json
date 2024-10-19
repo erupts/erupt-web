@@ -1,7 +1,7 @@
 {
     "name": "erut-web",
     "version": "0.0.0",
-    "description": "erupt framework front-end",
+    "description": "erupt front-end",
     "author": "yuepeng <erupts@126.com>",
     "repository": {
         "type": "git",
