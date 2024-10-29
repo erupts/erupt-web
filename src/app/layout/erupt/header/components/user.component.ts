@@ -21,6 +21,9 @@ import {UtilsService} from "@shared/service/utils.service";
         </div>
         <nz-dropdown-menu #avatarMenu>
             <div nz-menu class="width-sm">
+                <div *ngIf="settings.user['tenantName']" style="padding: 8px 12px;border-bottom:1px solid #eee">
+                    {{ settings.user['tenantName'] }}
+                </div>
                 <div nz-menu-item (click)="changePwd()" *ngIf="resetPassword">
                     <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>{{ 'global.reset_pwd'|translate }}
                 </div>
