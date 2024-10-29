@@ -265,6 +265,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.settingsService.setUser({
                 name: userinfo.nickname,
+                tenantName: userinfo.tenantName || null,
                 indexPath: path
             });
             if (this.router.url === "/") {
