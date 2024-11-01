@@ -20,7 +20,7 @@ import {UtilsService} from "@shared/service/utils.service";
             <span class="hidden-mobile">{{ settings.user.name }}</span>
         </div>
         <nz-dropdown-menu #avatarMenu>
-            <div nz-menu class="width-sm">
+            <div nz-menu class="width-sm" style="padding: 0">
                 <div *ngIf="settings.user['tenantName']" style="padding: 8px 12px;border-bottom:1px solid #eee">
                     {{ settings.user['tenantName'] }}
                 </div>
