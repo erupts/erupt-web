@@ -72,9 +72,6 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         if (EruptAppData.get().loginPagePath) {
             window.location.href = EruptAppData.get().loginPagePath;
         }
-        if (WindowModel.eruptRouterEvent.login) {
-            WindowModel.eruptRouterEvent.login.load();
-        }
     }
 
     ngAfterViewInit(): void {
@@ -175,8 +172,6 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
     }
 
     ngOnDestroy(): void {
-        if (WindowModel.eruptRouterEvent.login) {
-            WindowModel.eruptRouterEvent.login.unload();
-        }
+
     }
 }
