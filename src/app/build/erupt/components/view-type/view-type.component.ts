@@ -36,31 +36,37 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        if (this.value) {
-            if (this.view.eruptFieldModel.eruptFieldJson.edit.type === EditType.ATTACHMENT) {
-                const attachmentType = this.view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
-                let _paths = (<string>this.value).split(attachmentType.fileSeparator);
-                for (let path of _paths) {
-                    this.paths.push(DataService.previewAttachment(path));
+        switch (this.view.viewType) {
+            case ViewType.TAB_VIEW:
+                this.loading = true;
+                this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.value).subscribe(data => {
+                    this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
+                    this.loading = false;
+                });
+                break
+            case ViewType.ATTACHMENT_DIALOG:
+            case ViewType.ATTACHMENT:
+            case ViewType.DOWNLOAD:
+            case ViewType.IMAGE:
+            case ViewType.SWF:
+                if (this.value) {
+                    if (this.view.eruptFieldModel.eruptFieldJson.edit.type === EditType.ATTACHMENT) {
+                        const attachmentType = this.view.eruptFieldModel.eruptFieldJson.edit.attachmentType;
+                        let _paths = (<string>this.value).split(attachmentType.fileSeparator);
+                        for (let path of _paths) {
+                            this.paths.push(DataService.previewAttachment(path));
+                        }
+                    } else {
+                        let _paths = (<string>this.value).split("|");
+                        for (let path of _paths) {
+                            this.paths.push(DataService.previewAttachment(path));
+                        }
+                    }
+                    if (this.view.viewType == ViewType.ATTACHMENT_DIALOG) {
+                        this.value = [DataService.previewAttachment(this.value)];
+                    }
                 }
-            } else {
-                let _paths = (<string>this.value).split("|");
-                for (let path of _paths) {
-                    this.paths.push(DataService.previewAttachment(path));
-                }
-            }
-            switch (this.view.viewType) {
-                case ViewType.ATTACHMENT_DIALOG:
-                    this.value = [DataService.previewAttachment(this.value)];
-                    break;
-            }
-        }
-        if (this.view.viewType === ViewType.TAB_VIEW) {
-            this.loading = true;
-            this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.value).subscribe(data => {
-                this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
-                this.loading = false;
-            });
+                break;
         }
     }
 
