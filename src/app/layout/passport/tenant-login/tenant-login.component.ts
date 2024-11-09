@@ -9,7 +9,6 @@ import {Md5} from "ts-md5";
 import {WindowModel} from "@shared/model/window.model";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {NzModalService} from "ng-zorro-antd/modal";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 
@@ -46,8 +45,6 @@ export class UserTenantLoginComponent implements OnDestroy, OnInit, AfterViewIni
         private data: DataService,
         private router: Router,
         public msg: NzMessageService,
-        @Inject(NzModalService)
-        private modal: NzModalService,
         private i18n: I18NService,
         @Optional()
         @Inject(ReuseTabService)
@@ -70,9 +67,6 @@ export class UserTenantLoginComponent implements OnDestroy, OnInit, AfterViewIni
     ngOnInit(): void {
         if (EruptAppData.get().loginPagePath) {
             window.location.href = EruptAppData.get().loginPagePath;
-        }
-        if (WindowModel.eruptRouterEvent.login) {
-            WindowModel.eruptRouterEvent.login.load();
         }
     }
 
@@ -173,8 +167,5 @@ export class UserTenantLoginComponent implements OnDestroy, OnInit, AfterViewIni
     }
 
     ngOnDestroy(): void {
-        if (WindowModel.eruptRouterEvent.login) {
-            WindowModel.eruptRouterEvent.login.unload();
-        }
     }
 }
