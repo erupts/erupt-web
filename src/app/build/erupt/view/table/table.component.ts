@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {Drill, DrillInput, EruptModel, Row, RowOperation} from "../../model/erupt.model";
+import {Drill, DrillInput, EruptModel, Power, Row, RowOperation} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -34,6 +34,7 @@ import {STChange, STPage} from "@delon/abc/st/st.interfaces";
 import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {TableStyle} from "../../model/erupt.vo";
 
 
 @Component({
@@ -381,6 +382,12 @@ export class TableComponent implements OnInit, OnDestroy {
                         });
                         Object.assign(ref.getContentComponent(), params)
                     }
+                },
+                iif: (item) => {
+                    if (item[TableStyle.power]) {
+                        return (<Power>item[TableStyle.power]).viewDetails !== false
+                    }
+                    return true;
                 }
             });
         }
@@ -540,6 +547,12 @@ export class TableComponent implements OnInit, OnDestroy {
                         }
                     });
                     Object.assign(model.getContentComponent(), params)
+                },
+                iif: (item) => {
+                    if (item[TableStyle.power]) {
+                        return (<Power>item[TableStyle.power]).edit !== false
+                    }
+                    return true;
                 }
             });
         }
@@ -565,6 +578,12 @@ export class TableComponent implements OnInit, OnDestroy {
                                 this.msg.success(this.i18n.fanyi('global.delete.success'));
                             }
                         });
+                },
+                iif: (item) => {
+                    if (item[TableStyle.power]) {
+                        return (<Power>item[TableStyle.power]).delete !== false
+                    }
+                    return true;
                 }
             });
         }
