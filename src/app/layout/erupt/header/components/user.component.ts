@@ -8,6 +8,7 @@ import {WindowModel} from "@shared/model/window.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.component";
 import {EruptAppData} from "@shared/model/erupt-app.model";
+import {UtilsService} from "@shared/service/utils.service";
 
 @Component({
     selector: "header-user",
@@ -16,15 +17,18 @@ import {EruptAppData} from "@shared/model/erupt-app.model";
              [nzDropdownMenu]="avatarMenu">
             <nz-avatar [nzText]="settings.user.name&&settings.user.name.substr(0,1)" nzSize="default"
                        class="mr-sm"></nz-avatar>
-            <span class="hidden-mobile">{{settings.user.name}}</span>
+            <span class="hidden-mobile">{{ settings.user.name }}</span>
         </div>
         <nz-dropdown-menu #avatarMenu>
-            <div nz-menu class="width-sm">
-                <div nz-menu-item (click)="changePwd()"  *ngIf="resetPassword">
-                    <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>{{'global.reset_pwd'|translate}}
+            <div nz-menu class="width-sm" style="padding: 0">
+                <div *ngIf="settings.user['tenantName']" style="padding: 8px 12px;border-bottom:1px solid #eee">
+                    {{ settings.user['tenantName'] }}
+                </div>
+                <div nz-menu-item (click)="changePwd()" *ngIf="resetPassword">
+                    <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>{{ 'global.reset_pwd'|translate }}
                 </div>
                 <div nz-menu-item (click)="logout()">
-                    <i nz-icon nzType="logout" nzTheme="outline" class="mr-sm"></i>{{'global.logout'|translate}}
+                    <i nz-icon nzType="logout" nzTheme="outline" class="mr-sm"></i>{{ 'global.logout'|translate }}
                 </div>
             </div>
         </nz-dropdown-menu>
@@ -33,7 +37,7 @@ import {EruptAppData} from "@shared/model/erupt-app.model";
 export class HeaderUserComponent {
 
     resetPassword = EruptAppData.get().resetPwd;
- 
+
     constructor(
         public settings: SettingsService,
         private router: Router,
@@ -42,6 +46,7 @@ export class HeaderUserComponent {
         private dataService: DataService,
         @Inject(NzModalService)
         private modal: NzModalService,
+        private utilsService: UtilsService
     ) {
     }
 
@@ -50,14 +55,18 @@ export class HeaderUserComponent {
             nzTitle: this.i18n.fanyi("global.confirm_logout"),
             nzOnOk: () => {
                 this.dataService.logout().subscribe(data => {
+                    let token = this.tokenService.get().token;
                     if (WindowModel.eruptEvent && WindowModel.eruptEvent.logout) {
                         WindowModel.eruptEvent.logout({
                             userName: this.settings.user.name,
-                            token: this.tokenService.get().token
+                            token: token
                         })
                     }
-                    this.tokenService.clear();
-                    this.router.navigateByUrl(this.tokenService.login_url);
+                    if (this.utilsService.isTenantToken()) {
+                        this.router.navigateByUrl("/passport/tenant");
+                    } else {
+                        this.router.navigateByUrl(this.tokenService.login_url);
+                    }
                 });
             }
         });

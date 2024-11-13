@@ -118,7 +118,7 @@ export enum SelectMode {
 }
 
 export enum OperationMode {
-    SINGLE = "SINGLE", MULTI = "MULTI", BUTTON = "BUTTON"
+    SINGLE = "SINGLE", MULTI = "MULTI", BUTTON = "BUTTON", MULTI_ONLY = "MULTI_ONLY"
 }
 
 export enum OperationType {

@@ -7,6 +7,7 @@ export interface EruptAppModel {
     loginPagePath: string;
     waterMark: boolean;
     resetPwd: boolean;
+    properties: object;
 }
 
 let eruptAppConfig: EruptAppModel = window["eruptApp"] || {};

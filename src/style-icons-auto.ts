@@ -4,6 +4,7 @@
  */
 
 import {
+    ApartmentOutline,
     ArrowDownOutline,
     ArrowRightOutline,
     BuildOutline,
@@ -98,5 +99,6 @@ export const ICONS_AUTO = [
     UnorderedListOutline,
     UserOutline,
     ArrowRightOutline,
-    FileImageOutline
+    FileImageOutline,
+    ApartmentOutline
 ];

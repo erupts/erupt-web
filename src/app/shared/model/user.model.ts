@@ -11,4 +11,6 @@ export interface Userinfo {
     indexMenuType: string;
     indexMenuValue: string;
     resetPwd: boolean;
+    tenantId: string;
+    tenantName: string;
 }

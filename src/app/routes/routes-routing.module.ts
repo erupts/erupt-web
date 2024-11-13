@@ -11,6 +11,7 @@ import {HomeComponent} from "./home/home.component";
 import {FillComponent} from "./fill/fill.component";
 import {SiteComponent} from "./site/site.component";
 import {LayoutEruptComponent} from "../layout/erupt/erupt.component";
+import {UserTenantLoginComponent} from "../layout/passport/tenant-login/tenant-login.component";
 
 // layout
 let coreRouter: Routes = [
@@ -61,6 +62,7 @@ const routes: Routes = [
         component: LayoutPassportComponent,
         children: [
             {path: "login", component: UserLoginComponent, data: {title: "Login"}},
+            {path: "tenant", component: UserTenantLoginComponent, data: {title: "Login"}},
         ]
     },
     // 全屏布局

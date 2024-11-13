@@ -46,7 +46,6 @@ export class EruptStorageService {
             data = JSON.parse(dataStr);
         }
         data[key] = query;
-        console.log(code)
         localStorage.setItem(code, JSON.stringify(data));
     }
 
