@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {Drill, DrillInput, EruptModel, Row, RowOperation} from "../../model/erupt.model";
+import {Drill, DrillInput, EruptModel, Power, Row, RowOperation} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -34,6 +34,7 @@ import {STChange, STPage} from "@delon/abc/st/st.interfaces";
 import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {TableStyle} from "../../model/erupt.vo";
 
 
 @Component({
@@ -309,7 +310,7 @@ export class TableComponent implements OnInit, OnDestroy {
             ...query
         }, this.header).subscribe(page => {
             this.dataPage.querying = false;
-            this.dataPage.data = page.list
+            this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
             // for (let ele of spliceArr(page.list, 20)) {
             //     this.dataPage.data.push(...ele)
@@ -381,6 +382,12 @@ export class TableComponent implements OnInit, OnDestroy {
                         });
                         Object.assign(ref.getContentComponent(), params)
                     }
+                },
+                iif: (item) => {
+                    if (item[TableStyle.power]) {
+                        return (<Power>item[TableStyle.power]).viewDetails !== false
+                    }
+                    return true;
                 }
             });
         }
@@ -401,7 +408,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         for (let i in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
             let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[i];
-            if (ro.mode !== OperationMode.BUTTON) {
+            if (ro.mode !== OperationMode.BUTTON && ro.mode !== OperationMode.MULTI_ONLY) {
                 let text = "";
                 if (ro.icon) {
                     text = `<i class=\"${ro.icon}\"></i>`;
@@ -540,6 +547,12 @@ export class TableComponent implements OnInit, OnDestroy {
                         }
                     });
                     Object.assign(model.getContentComponent(), params)
+                },
+                iif: (item) => {
+                    if (item[TableStyle.power]) {
+                        return (<Power>item[TableStyle.power]).edit !== false
+                    }
+                    return true;
                 }
             });
         }
@@ -565,6 +578,12 @@ export class TableComponent implements OnInit, OnDestroy {
                                 this.msg.success(this.i18n.fanyi('global.delete.success'));
                             }
                         });
+                },
+                iif: (item) => {
+                    if (item[TableStyle.power]) {
+                        return (<Power>item[TableStyle.power]).delete !== false
+                    }
+                    return true;
                 }
             });
         }
@@ -589,14 +608,14 @@ export class TableComponent implements OnInit, OnDestroy {
      * @param rowOperation 行按钮对象
      * @param data 数据（单个执行时使用）
      */
-    createOperator(rowOperation: RowOperation, data?: object, reloadModal?: boolean) {
+    createOperator(rowOperation: RowOperation, data?: object) {
         const eruptModel = this.eruptBuildModel.eruptModel;
         const ro = rowOperation;
         let ids = [];
         if (data) {
             ids = [data[eruptModel.eruptJson.primaryKeyCol]];
         } else {
-            if (ro.mode === OperationMode.MULTI && this.selectedRows.length === 0) {
+            if ((ro.mode === OperationMode.MULTI || ro.mode === OperationMode.MULTI_ONLY) && this.selectedRows.length === 0) {
                 this.msg.warning(this.i18n.fanyi("table.require.select_one"));
                 return;
             }

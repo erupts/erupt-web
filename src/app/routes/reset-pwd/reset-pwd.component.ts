@@ -4,10 +4,12 @@ import {Router} from "@angular/router";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {DataService} from "@shared/service/data.service";
 import {SettingsService} from "@delon/theme";
-import {Status} from "../../build/erupt/model/erupt-api.model";
+import {EruptApiModel, Status} from "../../build/erupt/model/erupt-api.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {I18NService} from "@core";
+import {Observable} from "rxjs";
+import {UtilsService} from "@shared/service/utils.service";
 
 @Component({
     selector: "reset-pwd",
@@ -37,6 +39,7 @@ export class ResetPwdComponent {
                 public data: DataService,
                 private i18n: I18NService,
                 public settingsService: SettingsService,
+                private utilsService: UtilsService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService
     ) {
         this.form = fb.group({
@@ -95,21 +98,28 @@ export class ResetPwdComponent {
         }
         if (this.form.invalid) return;
         this.loading = true;
-        this.data.changePwd(this.pwd.value, this.newPwd.value, this.newPwd2.value)
-            .subscribe(api => {
-                this.loading = false;
-                if (api.status == Status.SUCCESS) {
-                    this.msg.success(this.i18n.fanyi("global.update.success"));
-                    this.modal.closeAll();
-                    for (const i in this.form.controls) {
-                        this.form.controls[i].markAsDirty();
-                        this.form.controls[i].updateValueAndValidity();
-                        this.form.controls[i].setValue(null);
-                    }
-                } else {
-                    this.error = api.message;
+
+        let pwdObservable: Observable<EruptApiModel>;
+
+        if (this.utilsService.isTenantToken()) {
+            pwdObservable = this.data.tenantChangePwd(this.pwd.value, this.newPwd.value, this.newPwd2.value)
+        } else {
+            pwdObservable = this.data.changePwd(this.pwd.value, this.newPwd.value, this.newPwd2.value)
+        }
+        pwdObservable.subscribe(api => {
+            this.loading = false;
+            if (api.status == Status.SUCCESS) {
+                this.msg.success(this.i18n.fanyi("global.update.success"));
+                this.modal.closeAll();
+                for (const i in this.form.controls) {
+                    this.form.controls[i].markAsDirty();
+                    this.form.controls[i].updateValueAndValidity();
+                    this.form.controls[i].setValue(null);
                 }
-            });
+            } else {
+                this.error = api.message;
+            }
+        });
     }
 
 }

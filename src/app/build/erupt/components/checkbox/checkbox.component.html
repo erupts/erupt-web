@@ -8,4 +8,8 @@
             </div>
         </div>
     </nz-checkbox-wrapper>
+    <ng-container *ngIf="!checkbox || !checkbox.length">
+        <nz-empty [nzNotFoundImage]="'simple'" [nzNotFoundContent]="null">
+        </nz-empty>
+    </ng-container>
 </nz-spin>

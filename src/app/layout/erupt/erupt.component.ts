@@ -1,7 +1,6 @@
 import {
     AfterViewInit,
     Component,
-    ComponentFactoryResolver,
     ElementRef,
     Inject,
     OnDestroy,
@@ -12,18 +11,11 @@ import {
     ViewContainerRef
 } from "@angular/core";
 import {DOCUMENT} from "@angular/common";
-import {
-    ActivatedRoute,
-    NavigationCancel,
-    NavigationEnd,
-    NavigationError,
-    RouteConfigLoadStart,
-    Router
-} from "@angular/router";
+import {NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router} from "@angular/router";
 
-import {Subscription} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {ScrollService, updateHostClass} from "@delon/util";
-import {Menu, MenuService, SettingsService, TitleService} from "@delon/theme";
+import {Menu, MenuService, SettingsService} from "@delon/theme";
 import {
     ArrowDownOutline,
     BellOutline,
@@ -42,17 +34,18 @@ import {
 } from "@ant-design/icons-angular/icons";
 import {DataService} from "@shared/service/data.service";
 import {environment} from "@env/environment";
-import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {generateMenuPath} from "@shared/util/erupt.util";
 import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
-import {StatusService} from "@shared/service/status.service";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzIconService} from "ng-zorro-antd/icon";
 import {ResetPwdComponent} from "../../routes/reset-pwd/reset-pwd.component";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {EruptAppData} from "@shared/model/erupt-app.model";
+import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
+import {Userinfo} from "@shared/model/user.model";
+import {UtilsService} from "@shared/service/utils.service";
 
 // #region icons
 
@@ -108,21 +101,18 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private router: Router,
                 scroll: ScrollService,
                 _message: NzMessageService,
-                private resolver: ComponentFactoryResolver,
                 public menuSrv: MenuService,
                 public settings: SettingsService,
                 private el: ElementRef,
                 private renderer: Renderer2,
                 public settingSrv: SettingsService,
-                public route: ActivatedRoute,
                 public data: DataService,
                 private settingsService: SettingsService,
-                private statusService: StatusService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
-                private titleService: TitleService,
+                @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
                 private i18n: I18NService,
-                @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
+                private utilsService: UtilsService,
                 @Optional()
                 @Inject(ReuseTabService)
                 private reuseTabService: ReuseTabService,
@@ -194,32 +184,6 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnInit() {
         this.notify$ = this.settings.notify.subscribe(() => this.setClass());
         this.setClass();
-        this.data.getUserinfo().subscribe(userinfo => {
-            let path = generateMenuPath(userinfo.indexMenuType, userinfo.indexMenuValue);
-            if (EruptAppData.get().waterMark) {
-                this.nickName = userinfo.nickname;
-            }
-            this.settingsService.setUser({
-                name: userinfo.nickname,
-                indexPath: path
-            });
-            if (this.router.url === "/") {
-                path && this.router.navigateByUrl(path).then();
-            }
-            if (userinfo.resetPwd && EruptAppData.get().resetPwd) {
-                this.modal.create({
-                    nzTitle: this.i18n.fanyi("global.reset_pwd"),
-                    nzMaskClosable: false,
-                    nzClosable: true,
-                    nzKeyboard: true,
-                    nzContent: ResetPwdComponent,
-                    nzFooter: null,
-                    nzBodyStyle: {
-                        paddingBottom: '1px'
-                    }
-                });
-            }
-        });
         this.data.getMenu().subscribe(res => {
             this.menu = res;
 
@@ -284,6 +248,40 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                     setTimeout(() => {
                         ele.removeChild(spanRipper);
                     }, 800);
+                });
+            }
+        });
+        let userinfoObservable: Observable<Userinfo>;
+
+        if (this.utilsService.isTenantToken()) {
+            userinfoObservable = this.data.tenantUserinfo()
+        } else {
+            userinfoObservable = this.data.userinfo();
+        }
+        userinfoObservable.subscribe(userinfo => {
+            let path = generateMenuPath(userinfo.indexMenuType, userinfo.indexMenuValue);
+            if (EruptAppData.get().waterMark) {
+                this.nickName = userinfo.nickname;
+            }
+            this.settingsService.setUser({
+                name: userinfo.nickname,
+                tenantName: userinfo.tenantName || null,
+                indexPath: path
+            });
+            if (this.router.url === "/") {
+                path && this.router.navigateByUrl(path).then();
+            }
+            if (userinfo.resetPwd && EruptAppData.get().resetPwd) {
+                this.modal.create({
+                    nzTitle: this.i18n.fanyi("global.reset_pwd"),
+                    nzMaskClosable: false,
+                    nzClosable: true,
+                    nzKeyboard: true,
+                    nzContent: ResetPwdComponent,
+                    nzFooter: null,
+                    nzBodyStyle: {
+                        paddingBottom: '1px'
+                    }
                 });
             }
         });
