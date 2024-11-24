@@ -12,6 +12,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {EruptAppData} from "@shared/model/erupt-app.model";
+import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 
 @Component({
     selector: "passport-login",
@@ -43,6 +44,8 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
 
     tenantLogin: boolean;
 
+    tenantDomainInfo = EruptTenantInfoData.get();
+
     constructor(
         fb: FormBuilder,
         private data: DataService,
@@ -65,7 +68,9 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
             mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
             remember: [true]
         });
-
+        if (this.tenantDomainInfo) {
+            this.router.navigateByUrl('/passport/tenant').then(r => true)
+        }
     }
 
     ngOnInit(): void {
