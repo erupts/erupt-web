@@ -14,10 +14,7 @@ import {R} from "../../build/erupt/model/erupt-api.model";
 import {EruptTenantInfoData, TenantDomainInfo} from "../../build/erupt/model/erupt-tenant";
 import {NzMessageService} from "ng-zorro-antd/message";
 
-/**
- * 用于应用启动时
- * 一般用来获取应用所需要的基础数据等
- */
+
 @Injectable()
 export class StartupService {
     constructor(iconSrv: NzIconService,
@@ -31,6 +28,7 @@ export class StartupService {
     }
 
     async load(): Promise<any> {
+        WindowModel.init();
         if (WindowModel.copyright) {
             console.group(WindowModel.title);
             console.log("%c" +
@@ -84,7 +82,7 @@ export class StartupService {
                                             that.msg.error("tenant js err: " + e)
                                         }
                                     }
-                                    Object.assign(WindowModel, WindowModel.config)
+                                    WindowModel.init();
                                 }
                                 resolve();
                             }
