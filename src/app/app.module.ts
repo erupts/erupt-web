@@ -18,7 +18,6 @@ import {LayoutModule} from './layout/layout.module';
 import {RoutesModule} from './routes/routes.module';
 import {SharedModule} from '@shared/shared.module';
 import {AppRoutingModule} from "./app-routing.module";
-import {I18nPipe} from "@shared/pipe/i18n.pipe";
 import {AppViewService} from "@shared/service/app-view.service";
 
 
