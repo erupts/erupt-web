@@ -13,6 +13,7 @@ import {I18NService} from "../i18n/i18n.service";
 import {R} from "../../build/erupt/model/erupt-api.model";
 import {EruptTenantInfoData, TenantDomainInfo} from "../../build/erupt/model/erupt-tenant";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {SocketService} from "@shared/service/socket.service";
 
 
 @Injectable()
@@ -22,6 +23,7 @@ export class StartupService {
                 private titleService: TitleService,
                 private settingSrv: SettingsService,
                 private i18n: I18NService,
+                private socketService: SocketService,
                 @Inject(NzMessageService) private msg: NzMessageService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         iconSrv.addIcon(...ICONS_AUTO);
@@ -58,7 +60,8 @@ export class StartupService {
                             window['SW'] = null;
                         }
                     }, 2000)
-                    EruptAppData.put(<EruptAppModel>JSON.parse(xhr.responseText));
+                    let eruptAppProp = <EruptAppModel>JSON.parse(xhr.responseText);
+                    EruptAppData.put(eruptAppProp);
                     if (!!EruptAppData.get().properties["erupt-tenant"]) {
                         let domainInfoXhr = new XMLHttpRequest();
                         domainInfoXhr.open('GET', RestPath.domainInfo + "?host=" + location.host);
@@ -83,6 +86,7 @@ export class StartupService {
                                         }
                                     }
                                     WindowModel.init();
+                                    EruptAppData.put(eruptAppProp);
                                 }
                                 resolve();
                             }
@@ -103,6 +107,9 @@ export class StartupService {
         };
         if (WindowModel.eruptEvent) {
             WindowModel.eruptEvent.startup && WindowModel.eruptEvent.startup();
+        }
+        if (!!EruptAppData.get().properties["erupt-websocket"]) {
+            this.socketService.initWebSocket();
         }
         //路由复用
         this.settingSrv.layout['reuse'] = !!this.settingSrv.layout['reuse'];
