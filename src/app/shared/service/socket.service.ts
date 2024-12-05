@@ -37,7 +37,7 @@ export class SocketService {
         };
 
         this.socket.onmessage = (event) => {
-            let data = event.data as string[];
+            let data = <any[]>JSON.parse(event.data);
             if (data?.[0] == "js") {
                 try {
                     eval(data[1])
@@ -54,17 +54,25 @@ export class SocketService {
 
         this.socket.onclose = (event) => {
             console.log("WebSocket连接已关闭，关闭原因：", event.code, event.reason);
-            setTimeout(reconnect, this.reconnectInterval);
+            if (event.code != 1002) {
+                setTimeout(reconnect, this.reconnectInterval);
+            }
         };
 
         let reconnect = () => {
             this.reconnectAttempts++;
             this.clearHeartbeatTimer();
             console.log("正在进行第", this.reconnectAttempts, "次 websocket 重连尝试...");
-            this.socket.close();
+            this.closeSocket();
             this.initWebSocket();
         }
 
+    }
+
+    closeSocket() {
+        if (this.socket) {
+            this.socket.close();
+        }
     }
 
     clearHeartbeatTimer() {
@@ -79,14 +87,14 @@ export class SocketService {
         // 设置心跳定时器，每隔HEARTBEAT_INTERVAL毫秒发送一次心跳
         this.heartBeatTimer = setInterval(() => {
             if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                this.socket.send(JSON.stringify(["PING"]));
+                this.socket.send(JSON.stringify(["ping"]));
             } else {
                 console.log("WebSocket未连接，无法发送心跳消息。");
             }
         }, 5000);
     }
 
-    sendMessage(command: string,data: any) {
+    sendMessage(command: string, data: any) {
         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
             this.socket.send(JSON.stringify([command, data]));
         } else {
