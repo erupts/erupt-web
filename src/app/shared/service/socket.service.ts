@@ -54,6 +54,7 @@ export class SocketService {
 
         this.socket.onclose = (event) => {
             console.log("WebSocket连接已关闭，关闭原因：", event.code, event.reason);
+            //1002 token error
             if (event.code != 1002) {
                 setTimeout(reconnect, this.reconnectInterval);
             }

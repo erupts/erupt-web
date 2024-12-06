@@ -106,6 +106,7 @@ export interface RowOperation {
     title: string;
     mode: OperationMode;
     type: OperationType;
+    fold: boolean;
     tip: string;
     callHint: string;
     ifExpr: string;
