@@ -64,7 +64,7 @@ export class StartupService {
                         let domainInfoXhr = new XMLHttpRequest();
                         domainInfoXhr.open('GET', RestPath.domainInfo + "?host=" + location.host);
                         domainInfoXhr.send();
-                        domainInfoXhr.onreadystatechange = function () {
+                        domainInfoXhr.onreadystatechange = () => {
                             if (domainInfoXhr.readyState == 4 && domainInfoXhr.status == 200) {
                                 let tenantDomainInfo = (<R<TenantDomainInfo>>JSON.parse(domainInfoXhr.responseText)).data;
                                 if (tenantDomainInfo) {
