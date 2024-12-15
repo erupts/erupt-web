@@ -8,6 +8,8 @@ import {HeaderSearchComponent} from "./components/search.component";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {AppViewService} from "@shared/service/app-view.service";
 import {EruptAppData} from "@shared/model/erupt-app.model";
+import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
+import {DataService} from "@shared/service/data.service";
 
 @Component({
     selector: "layout-header",
@@ -26,8 +28,6 @@ export class HeaderComponent implements OnInit {
 
     collapse: boolean = false;
 
-    title = WindowModel.title;
-
     logoPath: string = WindowModel.logoPath;
 
     logoText: string = WindowModel.logoText;
@@ -39,6 +39,8 @@ export class HeaderComponent implements OnInit {
     desc: string;
 
     showI18n: boolean = true;
+
+    tenantDomainInfo = EruptTenantInfoData.get();
 
     openDrawer() {
         this.drawerVisible = true;
@@ -52,6 +54,11 @@ export class HeaderComponent implements OnInit {
                 private router: Router,
                 private appViewService: AppViewService,
                 @Inject(NzModalService) private modal: NzModalService) {
+        if (this.tenantDomainInfo) {
+            if (this.tenantDomainInfo.logo) {
+                this.logoPath = DataService.previewAttachment(this.tenantDomainInfo.logo)
+            }
+        }
     }
 
     ngOnInit() {

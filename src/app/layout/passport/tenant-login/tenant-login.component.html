@@ -1,7 +1,7 @@
-<h3 style="margin-bottom: 26px;text-align: center">{{ '租户登录'|translate }}</h3>
+<h3 style="margin-bottom: 26px;text-align: center">{{ (tenantDomainInfo ? 'login.account_pwd_login' : '租户登录')|translate }}</h3>
 <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
     <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
-    <nz-form-item>
+    <nz-form-item [hidden]="tenantDomainInfo">
         <nz-form-control>
             <nz-input-group nzSize="large" nzPrefixIcon="apartment">
                 <input nz-input formControlName="tenantCode" [placeholder]="'企业ID'">
@@ -67,7 +67,7 @@
                 style="display:block;width: 100%;">{{ 'login.button'|translate }}
         </button>
     </nz-form-item>
-    <p style="text-align: center;margin-top: 16px;">
+    <p style="text-align: center;margin-top: 16px;" *ngIf="!tenantDomainInfo">
         <a *ngIf="tenantLogin" (click)="toLogin()">{{ '平台登录' }}</a>
     </p>
 </form>

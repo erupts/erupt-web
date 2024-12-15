@@ -46,6 +46,7 @@ import {EruptAppData} from "@shared/model/erupt-app.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {Userinfo} from "@shared/model/user.model";
 import {UtilsService} from "@shared/service/utils.service";
+import {SocketService} from "@shared/service/socket.service";
 
 // #region icons
 
@@ -110,6 +111,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private settingsService: SettingsService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
+                private socketService: SocketService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
                 private i18n: I18NService,
                 private utilsService: UtilsService,
@@ -182,6 +184,9 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit() {
+        if (!!EruptAppData.get().properties["erupt-websocket"]) {
+            this.socketService.initWebSocket();
+        }
         this.notify$ = this.settings.notify.subscribe(() => this.setClass());
         this.setClass();
         this.data.getMenu().subscribe(res => {

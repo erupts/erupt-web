@@ -10,11 +10,11 @@ import {EruptAppData, EruptAppModel} from "@shared/model/erupt-app.model";
 import {NzIconService} from "ng-zorro-antd/icon";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {I18NService} from "../i18n/i18n.service";
+import {R} from "../../build/erupt/model/erupt-api.model";
+import {EruptTenantInfoData, TenantDomainInfo} from "../../build/erupt/model/erupt-tenant";
+import {NzMessageService} from "ng-zorro-antd/message";
 
-/**
- * 用于应用启动时
- * 一般用来获取应用所需要的基础数据等
- */
+
 @Injectable()
 export class StartupService {
     constructor(iconSrv: NzIconService,
@@ -22,11 +22,13 @@ export class StartupService {
                 private titleService: TitleService,
                 private settingSrv: SettingsService,
                 private i18n: I18NService,
+                @Inject(NzMessageService) private msg: NzMessageService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         iconSrv.addIcon(...ICONS_AUTO);
     }
 
     async load(): Promise<any> {
+        WindowModel.init();
         if (WindowModel.copyright) {
             console.group(WindowModel.title);
             console.log("%c" +
@@ -43,11 +45,12 @@ export class StartupService {
             console.groupEnd();
         }
         (window as any).eruptWebSuccess = true;
-        await new Promise<void>((resolve) => {
+        let that = this;
+        await new Promise<void>((resolve, reject) => {
             let xhr = new XMLHttpRequest();
             xhr.open('GET', RestPath.eruptApp);
             xhr.send();
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = () => {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     setTimeout(() => {
                         if (window['SW']) {
@@ -55,8 +58,40 @@ export class StartupService {
                             window['SW'] = null;
                         }
                     }, 2000)
-                    EruptAppData.put(<EruptAppModel>JSON.parse(xhr.responseText));
-                    resolve();
+                    let eruptAppProp = <EruptAppModel>JSON.parse(xhr.responseText);
+                    EruptAppData.put(eruptAppProp);
+                    if (!!EruptAppData.get().properties["erupt-tenant"]) {
+                        let domainInfoXhr = new XMLHttpRequest();
+                        domainInfoXhr.open('GET', RestPath.domainInfo + "?host=" + location.host);
+                        domainInfoXhr.send();
+                        domainInfoXhr.onreadystatechange = () => {
+                            if (domainInfoXhr.readyState == 4 && domainInfoXhr.status == 200) {
+                                let tenantDomainInfo = (<R<TenantDomainInfo>>JSON.parse(domainInfoXhr.responseText)).data;
+                                if (tenantDomainInfo) {
+                                    WindowModel.config.title = tenantDomainInfo.name;
+                                    WindowModel.config.logoText = tenantDomainInfo.name;
+                                    EruptTenantInfoData.put(tenantDomainInfo);
+                                    if (tenantDomainInfo.css) {
+                                        const styleElement = document.createElement('style');
+                                        styleElement.textContent = tenantDomainInfo.css;
+                                        document.head.appendChild(styleElement);
+                                    }
+                                    if (tenantDomainInfo.js) {
+                                        try {
+                                            eval(tenantDomainInfo.js)
+                                        } catch (e) {
+                                            that.msg.error("tenant js err: " + e)
+                                        }
+                                    }
+                                    WindowModel.init();
+                                    EruptAppData.put(eruptAppProp);
+                                }
+                                resolve();
+                            }
+                        }
+                    } else {
+                        resolve();
+                    }
                 } else if (xhr.status !== 200) {
                     setTimeout(() => {
                         location.href = location.href.split("#")[0];

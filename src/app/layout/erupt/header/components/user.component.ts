@@ -9,6 +9,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.component";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {UtilsService} from "@shared/service/utils.service";
+import {SocketService} from "@shared/service/socket.service";
 
 @Component({
     selector: "header-user",
@@ -46,7 +47,8 @@ export class HeaderUserComponent {
         private dataService: DataService,
         @Inject(NzModalService)
         private modal: NzModalService,
-        private utilsService: UtilsService
+        private utilsService: UtilsService,
+        private socketService: SocketService,
     ) {
     }
 
@@ -55,6 +57,7 @@ export class HeaderUserComponent {
             nzTitle: this.i18n.fanyi("global.confirm_logout"),
             nzOnOk: () => {
                 this.dataService.logout().subscribe(data => {
+                    this.socketService.closeSocket();
                     let token = this.tokenService.get().token;
                     if (WindowModel.eruptEvent && WindowModel.eruptEvent.logout) {
                         WindowModel.eruptEvent.logout({
@@ -67,6 +70,7 @@ export class HeaderUserComponent {
                     } else {
                         this.router.navigateByUrl(this.tokenService.login_url);
                     }
+                    this.tokenService.clear();
                 });
             }
         });

@@ -7,6 +7,14 @@ export interface EruptApiModel {
     promptWay: PromptWay;
 }
 
+export interface R<T> {
+    status: Status;
+    success: boolean;
+    message: string;
+    data: T;
+    promptWay: PromptWay;
+}
+
 export enum PromptWay {
     DIALOG = "DIALOG",
     MESSAGE = "MESSAGE",

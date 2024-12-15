@@ -23,6 +23,7 @@ import {STWidgetRegistry} from "@delon/abc/st";
 import {UEditorComponent} from "@shared/component/ueditor/ueditor.component";
 import {EruptContextService} from "@shared/service/erupt-context.service";
 import {UtilsService} from "@shared/service/utils.service";
+import {SocketService} from "@shared/service/socket.service";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -59,7 +60,8 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
         DataService,
         UtilsService,
         EruptContextService,
-        EruptStorageService
+        EruptStorageService,
+        SocketService
     ],
     exports: [
         CommonModule,

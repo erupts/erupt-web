@@ -1,34 +1,49 @@
 export class WindowModel {
 
-    private static config: any = window["eruptSiteConfig"] || {};
+    public static config: any = window["eruptSiteConfig"] || {};
 
     public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';
 
     public static fileDomain: string = WindowModel.config["fileDomain"] || undefined;
 
-    public static r_tools: CustomerTool[] = WindowModel.config["r_tools"] || [];
+    public static r_tools: CustomerTool[];
 
-    public static amapKey: string = WindowModel.config["amapKey"];
+    public static amapKey: string;
 
-    public static amapSecurityJsCode: string = WindowModel.config["amapSecurityJsCode"];
+    public static amapSecurityJsCode: string;
 
-    public static title: string = WindowModel.config["title"] || 'Erupt Framework';
+    public static title: string;
 
-    public static desc: string = WindowModel.config["desc"] || undefined;
+    public static desc: string;
 
-    public static logoPath: string = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "erupt.svg");
+    public static logoPath: string;
 
-    public static loginLogoPath: string = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
+    public static loginLogoPath: string;
 
-    public static logoText: string = WindowModel.config["logoText"] || "";
+    public static logoText: string;
 
-    public static registerPage: string = WindowModel.config["registerPage"] || undefined; //注册页面地址
+    public static registerPage: string; //注册页面地址
 
-    public static copyright: boolean = WindowModel.config["copyright"];
+    public static copyright: boolean;
 
-    public static copyrightTxt: any = WindowModel.config["copyrightTxt"]; //授权文本
+    public static copyrightTxt: any; //授权文本
 
-    public static upload: Function = WindowModel.config["upload"] || false;
+    public static upload: Function;
+
+    public static init() {
+        WindowModel.r_tools = WindowModel.config["r_tools"] || [];
+        WindowModel.amapKey = WindowModel.config["amapKey"];
+        WindowModel.amapSecurityJsCode = WindowModel.config["amapSecurityJsCode"];
+        WindowModel.title = WindowModel.config["title"] || 'Erupt Framework';
+        WindowModel.desc = WindowModel.config["desc"] || undefined;
+        WindowModel.logoPath = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "erupt.svg");
+        WindowModel.loginLogoPath = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
+        WindowModel.logoText = WindowModel.config["logoText"] || "";
+        WindowModel.registerPage = WindowModel.config["registerPage"] || undefined; //注册页面地址
+        WindowModel.copyright = WindowModel.config["copyright"];
+        WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //授权文本
+        WindowModel.upload = WindowModel.config["upload"] || false;
+    }
 
     public static eruptEvent: {
         login?: Function,

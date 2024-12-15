@@ -1,6 +1,8 @@
 import {AfterViewInit, Component} from "@angular/core";
 import {WindowModel} from "@shared/model/window.model";
 import {NzModalService} from "ng-zorro-antd/modal";
+import {EruptTenantInfoData} from "../../build/erupt/model/erupt-tenant";
+import {DataService} from "@shared/service/data.service";
 
 @Component({
     selector: "layout-passport",
@@ -21,12 +23,19 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     copyrightTxt = WindowModel.copyrightTxt;
 
+    tenantDomainInfo = EruptTenantInfoData.get();
+
     constructor(private modalSrv: NzModalService) {
         if (WindowModel.copyrightTxt) {
             if (typeof (WindowModel.copyrightTxt) === 'function') {
                 this.copyrightTxt = WindowModel.copyrightTxt();
             } else {
                 this.copyrightTxt = WindowModel.copyrightTxt;
+            }
+        }
+        if (this.tenantDomainInfo) {
+            if (this.tenantDomainInfo.logo) {
+                this.logoPath = DataService.previewAttachment(this.tenantDomainInfo.logo)
             }
         }
     }
