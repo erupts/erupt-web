@@ -6,10 +6,6 @@ import {TplComponent} from "./tpl.component";
 const routes: Routes = [{
     path: "",
     component: TplComponent,
-    data: {
-        desc: "tpl",
-        status: true
-    }
 }];
 
 @NgModule({

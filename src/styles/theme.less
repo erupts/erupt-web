@@ -18,3 +18,27 @@ body.color-gray{
     transition: filter 0.5s;
     background: #fff;
 }
+
+
+
+
+/* 滚动条轨道样式 */
+::-webkit-scrollbar-track {
+    background: #f1f1f1; /* 轨道颜色 */
+}
+
+/* 滚动条滑块样式 */
+::-webkit-scrollbar-thumb {
+    background-color: #888888; /* 滑块颜色 */
+    border-radius: 4px; /* 滑块圆角 */
+}
+
+/* 滑块悬停时的样式 */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #767676; /* 滑块悬停时颜色 */
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #888888 #f1f1f1;
+}

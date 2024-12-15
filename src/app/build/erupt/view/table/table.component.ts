@@ -406,38 +406,32 @@ export class TableComponent implements OnInit, OnDestroy {
                 return false;
             }
         }
+        let foldButtons = [];
         for (let i in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
             let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[i];
             if (ro.mode !== OperationMode.BUTTON && ro.mode !== OperationMode.MULTI_ONLY) {
-                let text = "";
-                if (ro.icon) {
-                    text = `<i class=\"${ro.icon}\"></i>`;
+                if (ro.fold) {
+                    foldButtons.push(ro)
                 } else {
-                    text = ro.title;
-                }
-
-                tableButtons.push({
-                    type: 'link',
-                    text: text,
-                    tooltip: ro.title + (ro.tip && "(" + ro.tip + ")"),
-                    click: (record: any, modal: any) => {
-                        that.createOperator(ro, record);
-                    },
-                    iifBehavior: ro.ifExprBehavior == OperationIfExprBehavior.DISABLE ? "disabled" : "hide",
-                    iif: (item) => {
-                        return exprEval(ro.ifExpr, item);
+                    let text = "";
+                    if (ro.icon) {
+                        text = `<i class=\"${ro.icon}\"></i>`;
+                    } else {
+                        text = ro.title;
                     }
-                });
-                // editButtons.push({
-                //     label: ro.title,
-                //     type: 'dashed',
-                //     show: (options: ModalButtonOptions<any>) => {
-                //         return !ro.ifExpr;
-                //     },
-                //     onClick(options: ModalButtonOptions<any>) {
-                //         that.createOperator(ro, options);
-                //     }
-                // })
+                    tableButtons.push({
+                        type: 'link',
+                        text: text,
+                        tooltip: ro.title + (ro.tip && "(" + ro.tip + ")"),
+                        click: (record: any, modal: any) => {
+                            that.createOperator(ro, record);
+                        },
+                        iifBehavior: ro.ifExprBehavior == OperationIfExprBehavior.DISABLE ? "disabled" : "hide",
+                        iif: (item) => {
+                            return exprEval(ro.ifExpr, item);
+                        }
+                    });
+                }
             }
         }
 
@@ -588,11 +582,28 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         tableOperators.push(...tableButtons);
+        if (foldButtons.length > 0) {
+            let children: STColumnButton[] = [];
+            for (let btn of foldButtons) {
+                children.push({
+                    // icon: btn.icon && `<i class="${btn.icon}"></i>`,
+                    text: btn.title,
+                    iifBehavior: 'disabled',
+                    tooltip: btn.tooltip,
+                    iif: (item) => exprEval(btn.ifExpr, item),
+                    click: (record) => that.createOperator(btn, record)
+                })
+            }
+            tableOperators.push({
+                text: this.i18n.fanyi("global.more") + " ",
+                children: children
+            });
+        }
         if (tableOperators.length > 0) {
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                width: tableOperators.length * 35 + 18,
+                width: tableOperators.length * 35 + 18 + (foldButtons.length ? 60 : 0),
                 className: "text-center",
                 buttons: tableOperators,
                 resizable: false

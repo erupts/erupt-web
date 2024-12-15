@@ -16,5 +16,11 @@ module.exports = {
         // target: 'https://www.erupt.xyz/demo',
         // secure: true, // SSL certificates
         // changeOrigin: true
+    },
+    "/erupt": {
+        target: 'http://localhost:9999',
+        secure: false,
+        changeOrigin: true,
+        ws: true,
     }
 };

@@ -13,6 +13,8 @@ import {SiteComponent} from "./site/site.component";
 import {LayoutEruptComponent} from "../layout/erupt/erupt.component";
 import {UserTenantLoginComponent} from "../layout/passport/tenant-login/tenant-login.component";
 
+let tplLoad = import( "../build/tpl/tpl.module");
+
 // layout
 let coreRouter: Routes = [
     {path: "", component: HomeComponent, data: {title: "首页"}},
@@ -33,19 +35,24 @@ let coreRouter: Routes = [
         loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)
     },
     {
-        path: 'tpl/:name/:name1',
+        path: 'tpl/:name/:name2',
         pathMatch: "full",
-        loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)
+        loadChildren: () => tplLoad.then(m => m.TplModule)
     },
     {
         path: 'tpl/:name/:name2/:name3',
         pathMatch: "full",
-        loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)
+        loadChildren: () => tplLoad.then(m => m.TplModule)
     },
     {
         path: 'tpl/:name/:name2/:name3/:name4',
         pathMatch: "full",
-        loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)
+        loadChildren: () => tplLoad.then(m => m.TplModule)
+    },
+    {
+        path: 'tpl/:name/:name2/:name3/:name4/:name5',
+        pathMatch: "full",
+        loadChildren: () => tplLoad.then(m => m.TplModule)
     }
 ];
 
