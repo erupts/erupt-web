@@ -25,11 +25,11 @@ export class SocketService {
         this.reconnectAttempts = 0;
         let websocketUrl: string;
         if (WindowModel.domain) {
-            websocketUrl = (WindowModel.domain.startsWith('http:') ? 'ws:' : 'wss:') + location.host.split(":")[1];
+            websocketUrl = (WindowModel.domain.startsWith('http:') ? 'ws:' : 'wss:') + location.host.split(":")[1] + "/";
         } else {
-            websocketUrl = (location.protocol === 'http:' ? 'ws:' : 'wss:') + "//" + location.host;
+            websocketUrl = (location.protocol === 'http:' ? 'ws:' : 'wss:') + "//" + location.host + location.pathname;
         }
-        this.socket = new WebSocket(websocketUrl + '/erupt?token=' + this.tokenService.get().token);
+        this.socket = new WebSocket(websocketUrl + 'erupt?token=' + this.tokenService.get().token);
 
         this.socket.onopen = () => {
             // 启动心跳
