@@ -908,9 +908,11 @@ export class TableComponent implements OnInit, OnDestroy {
     exportExcel() {
         let condition = null;
         if (this.searchErupt && this.searchErupt.eruptFieldModels.length > 0) {
-            condition = this.dataHandler.eruptObjectToCondition(this.dataHandler.eruptValueToObject({
-                eruptModel: this.searchErupt
-            }));
+            condition = this.dataHandler.eruptObjectToCondition(
+                this.dataHandler.searchEruptToObject({
+                    eruptModel: this.searchErupt
+                })
+            );
         }
         //导出接口
         this.downloading = true;
