@@ -75,7 +75,15 @@ export interface Page {
     total?: number;
     sort?: string;
     list?: any[];
+    alert?: Alert;
 }
+
+export interface Alert {
+    message: string;
+    closeable: boolean;
+    uiType: "success" | "info" | "warning" | "error";
+}
+
 
 export interface Tree {
     id: string;

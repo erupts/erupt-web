@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {Drill, DrillInput, EruptModel, Power, Row, RowOperation} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -77,7 +77,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
     clientHeight: number = document.body.clientHeight;
 
-    hideCondition = false;
+    hideCondition: boolean = false;
+
+    alert: Alert;
 
     searchErupt: EruptModel;
 
@@ -312,9 +314,7 @@ export class TableComponent implements OnInit, OnDestroy {
             this.dataPage.querying = false;
             this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
-            // for (let ele of spliceArr(page.list, 20)) {
-            //     this.dataPage.data.push(...ele)
-            // }
+            this.alert = page.alert;
         })
         this.extraRowFun(query);
     }
