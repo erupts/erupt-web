@@ -2,7 +2,7 @@
     <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }" *ngIf="!bi"></nz-skeleton>
     <div [id]="name">
         <ng-container *ngIf="bi">
-            <div style="display: flex">
+            <div style="display: flex;margin-bottom: 4px">
                 <ng-container>
                     <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query({
                             pageIndex: 1,
@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom: 12px;margin-top: 4px"
+            <nz-card *ngIf="bi.dimensions.length>0" [nzHoverable]="true" style="margin-bottom: 12px"
                      [hidden]="hideCondition" nzSize="small">
                 <bi-dimension [bi]="bi" (search)="query({
                             pageIndex: 1,
