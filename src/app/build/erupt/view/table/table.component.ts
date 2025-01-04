@@ -19,7 +19,7 @@ import {
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
-import {EruptFieldModel, OpenWay} from "../../model/erupt-field.model";
+import {DrawerPlacement, EruptFieldModel, OpenWay} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
@@ -656,12 +656,13 @@ export class TableComponent implements OnInit, OnDestroy {
                 });
                 ref.getContentComponent().url = url;
             } else {
+                let placement = ro.tpl.drawerPlacement;
                 this.drawerService.create({
-                    nzTitle: ro.title,
+                    nzClosable: false,
                     nzKeyboard: true,
                     nzMaskClosable: true,
                     // @ts-ignore
-                    nzPlacement: ro.tpl.drawerPlacement.toLowerCase(),
+                    nzPlacement: placement.toLowerCase(),
                     nzWidth: ro.tpl.width || "40%",
                     nzHeight: ro.tpl.height || "40%",
                     nzBodyStyle: {
@@ -670,7 +671,9 @@ export class TableComponent implements OnInit, OnDestroy {
                     nzFooter: null,
                     nzContent: EruptIframeComponent,
                     nzContentParams: {
-                        url: url
+                        url: url,
+                        height: (placement == DrawerPlacement.LEFT || placement == DrawerPlacement.RIGHT) ? "100vh" : ro.tpl.height,
+                        width: (placement == DrawerPlacement.TOP || placement == DrawerPlacement.BOTTOM) ? "100vw" : ro.tpl.width
                     }
                 })
             }
