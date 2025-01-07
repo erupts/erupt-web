@@ -339,11 +339,6 @@ export class DataHandlerService {
                             }
                         }
                         break;
-                    // case EditType.CODE_EDITOR:
-                    //     if (edit.$value || edit.$value === 0) {
-                    //         eruptData[field.fieldName] = btoa(encodeURIComponent(edit.$value))
-                    //     }
-                    //     break;
                     default:
                         if (edit.$value || edit.$value === 0) {
                             eruptData[field.fieldName] = edit.$value;
