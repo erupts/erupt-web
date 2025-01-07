@@ -4,6 +4,7 @@ import {
     DateEnum,
     EditType,
     HtmlEditTypeEnum,
+    MultiChoiceEnum,
     PickerMode,
     TabEnum,
     ViewType
@@ -82,6 +83,7 @@ export interface Edit {
     rateType?: RateType;
     boolType?: BoolType;
     choiceType?: ChoiceType;
+    multiChoiceType?: MultiChoiceType;
     tagsType?: TagsType;
     dateType?: DateType;
     sliderType?: SliderType;
@@ -173,6 +175,9 @@ interface ChoiceType {
     onVLChange(value, oldValue): void;
 }
 
+interface MultiChoiceType{
+    type: MultiChoiceEnum;
+}
 
 interface TagsType {
     allowExtension: boolean;
