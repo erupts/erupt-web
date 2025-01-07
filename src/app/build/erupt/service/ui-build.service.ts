@@ -138,13 +138,14 @@ export class UiBuildService {
                     break;
                 case ViewType.DATE:
                     obj.className = "date-col";
-                    obj.width = 110;
+                    obj.width = 115;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE) {
-                                return item[view.column].substr(0, 10);
+                            let val = <string>item[view.column];
+                            if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE && !val.startsWith("<") && !val.endsWith(">")) {
+                                return val.substring(0, 10);
                             } else {
-                                return item[view.column];
+                                return val;
                             }
                         } else {
                             return "";
