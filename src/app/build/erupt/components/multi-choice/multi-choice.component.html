@@ -1,6 +1,5 @@
 <ng-container [ngSwitch]="eruptField.eruptFieldJson.edit.multiChoiceType.type">
     <ng-container *ngSwitchCase="multiChoiceEnum.CHECKBOX">
-        {{ this.eruptField.eruptFieldJson.edit.$value }}
         <nz-checkbox-wrapper (nzOnChange)="checkboxChange($event)" class="erupt-input stander-line-height">
             <nz-row>
                 <ng-container *ngFor="let vl of eruptField.componentValue">
