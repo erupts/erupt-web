@@ -207,7 +207,7 @@
                                     <ng-container [ngTemplateOutlet]="multiChoiceTpl"></ng-container>
                                 </div>
                             </ng-container>
-                            <ng-container *ngSwitchCase="multiChoiceEnum.SELECT_MULTI">
+                            <ng-container *ngSwitchCase="multiChoiceEnum.SELECT">
                                 <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                                      [nzLg]="col.lg"
                                      [nzXl]="col.xl"
@@ -219,7 +219,7 @@
                                 <se [label]="field.eruptFieldJson.edit.title"
                                     [required]="field.eruptFieldJson.edit.notNull"
                                     [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                    <erupt-multi-choice [eruptModel]="eruptModel" [eruptField]="field"
+                                    <erupt-multi-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
                                                         [readonly]="isReadonly(field)">
 
                                     </erupt-multi-choice>

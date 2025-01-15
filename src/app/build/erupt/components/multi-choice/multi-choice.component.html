@@ -14,4 +14,14 @@
             </nz-row>
         </nz-checkbox-wrapper>
     </ng-container>
+
+    <ng-container *ngSwitchCase="multiChoiceEnum.SELECT">
+        <nz-select [(ngModel)]="this.eruptField.eruptFieldJson.edit.$value" [nzSize]="size" nzMode="multiple"
+                   style="width:100%">
+            <nz-option *ngFor="let vl of eruptField.componentValue" [nzLabel]="vl.label"
+                       [nzDisabled]="readonly||vl.disable"
+                       [nzValue]="isNumeric(vl.value)?parseInt(vl.value):vl.value">
+            </nz-option>
+        </nz-select>
+    </ng-container>
 </ng-container>
