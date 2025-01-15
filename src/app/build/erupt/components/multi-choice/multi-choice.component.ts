@@ -4,11 +4,11 @@ import {EruptModel} from "../../model/erupt.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 
 @Component({
-  selector: 'erupt-multi-choice',
-  templateUrl: './multi-choice.component.html',
-  styleUrls: ['./multi-choice.component.less']
+    selector: 'erupt-multi-choice',
+    templateUrl: './multi-choice.component.html',
+    styleUrls: ['./multi-choice.component.less']
 })
-export class MultiChoiceComponent {
+export class MultiChoiceComponent  {
 
     @Input() eruptModel: EruptModel;
 
@@ -16,7 +16,13 @@ export class MultiChoiceComponent {
 
     @Input() readonly: boolean = false;
 
+    @Input() size: 'large' | 'small' | "default" = "default";
+
     multiChoiceEnum = MultiChoiceEnum;
+
+    isNumeric(str:string): boolean {
+        return !isNaN(parseFloat(str)) && isFinite(parseFloat(str));
+    }
 
     includes(arr: any[], ele: any) {
         if (arr) {
@@ -28,4 +34,6 @@ export class MultiChoiceComponent {
     checkboxChange(e: any[]) {
         this.eruptField.eruptFieldJson.edit.$value = e;
     }
+
+    protected readonly parseInt = parseInt;
 }

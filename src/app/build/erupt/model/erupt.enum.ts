@@ -115,7 +115,7 @@ export enum ChoiceEnum {
 }
 
 export enum MultiChoiceEnum {
-    SELECT_MULTI = "SELECT_MULTI",
+    SELECT = "SELECT",
     CHECKBOX = "CHECKBOX"
 }
 
