@@ -14,7 +14,8 @@ export class TplComponent implements OnInit, OnDestroy {
 
     name: string;
 
-    spin: boolean = true;
+    //是否使用微前端嵌入
+    micro: boolean = false;
 
     private router$: Subscription;
 
@@ -25,23 +26,22 @@ export class TplComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.router$ = this.route.params.subscribe((params) => {
+        this.router$ = this.route.params.subscribe(() => {
             let url = this.router.url;
             let tpl = '/tpl/';
+            let mtpl = '/mtpl/';
+            if (url.startsWith(mtpl)) {
+                tpl = mtpl;
+            }
             this.name = url.substring(url.indexOf(tpl) + tpl.length);
             this.url = this.dataService.getEruptTpl(this.name);
+            this.micro = this.route.snapshot.data['micro']
         });
-        setTimeout(() => {
-            this.spin = false;
-        }, 3000)
+
     }
 
     ngOnDestroy(): void {
         this.router$.unsubscribe();
-    }
-
-    iframeLoad() {
-        this.spin = false;
     }
 
 }

@@ -27,6 +27,8 @@ function joinPath(type: string, value: string): string {
             return "/bi/" + menuValue;
         case MenuTypeEnum.tpl:
             return "/tpl/" + menuValue;
+        case MenuTypeEnum.mtpl:
+            return "/mtpl/" + menuValue;
         case MenuTypeEnum.router:
             return menuValue;
         case MenuTypeEnum.newWindow:

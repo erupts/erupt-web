@@ -1,8 +1,9 @@
 import {Injectable} from "@angular/core";
 
+//Global Context Service
 
 export enum ContextKey {
-
+    INIT_MICRO_APP
 }
 
 @Injectable()
@@ -18,4 +19,7 @@ export class EruptContextService {
         return this.contextValue[key];
     }
 
+    has(key: ContextKey): boolean {
+        return !!this.contextValue[key];
+    }
 }
