@@ -5,12 +5,13 @@ import {ContextKey, EruptContextService} from "@shared/service/erupt-context.ser
 @Component({
     selector: 'erupt-micro-app',
     template: `
-        <micro-app #microApp name="erupt-micro-app-ele"
+        <micro-app #microApp name="erupt-micro-app-ele" id="erupt-micro-app-ele"
                    style="width: 100%;height: 100%;display: block">
 
         </micro-app>
     `,
-    styles: []
+    styles: [],
+    styleUrls: ['./micro-app.component.less'],
 })
 export class EruptMicroAppComponent implements AfterViewInit {
 
