@@ -1,11 +1,12 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {IframeHeight} from "@shared/util/window.util";
 
 @Component({
     selector: 'erupt-iframe',
     template: `
-        <nz-spin [nzSpinning]="spin">
-            <iframe [src]="url|safeUrl" style="width: 100%;border: 0;display: block;vertical-align: bottom;"
+        <nz-spin [nzSpinning]="spin" style="height: 100%;width: 100%">
+            <iframe [src]="url|safeUrl" height="100%"
+                    style="width: 100%;height: 100%;border: 0;display: block;vertical-align: bottom;"
                     [ngStyle]="style"
                     (load)="iframeLoad($event)">
 
@@ -14,7 +15,7 @@ import {IframeHeight} from "@shared/util/window.util";
     `,
     styles: []
 })
-export class EruptIframeComponent implements OnInit, OnChanges {
+export class EruptIframeComponent implements OnInit {
 
     @Input() url: string | null;
 
@@ -32,13 +33,22 @@ export class EruptIframeComponent implements OnInit, OnChanges {
 
     ngOnInit() {
         this.spin = true;
+        if (this.height) {
+            this.style["height"] = this.height;
+        } else {
+            this.style["height"] = "100%";
+        }
+        if (this.width) {
+            this.style["width"] = this.width;
+        }
+        setTimeout(()=>{
+            this.spin = false;
+        },3000)
     }
 
     iframeLoad(event: any) {
         this.spin = false;
-        if (this.height) {
-            this.style["height"] = this.height;
-        } else {
+        if (!this.height) {
             try {
                 IframeHeight(event);
             } catch (e) {
@@ -46,17 +56,7 @@ export class EruptIframeComponent implements OnInit, OnChanges {
                 console.error(e)
             }
         }
-        if (this.width) {
-            this.style["width"] = this.width;
-        }
         this.spin = false;
     };
-
-    ngOnChanges(changes: SimpleChanges): void {
-        // if (!changes.url.firstChange) {
-        //   this.spin = true;
-        // }
-    }
-
 
 }

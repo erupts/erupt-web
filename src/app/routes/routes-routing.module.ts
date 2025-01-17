@@ -32,7 +32,7 @@ let coreRouter: Routes = [
     {
         path: "tpl/:name",
         pathMatch: "full",
-        loadChildren: () => import( "../build/tpl/tpl.module").then(m => m.TplModule)
+        loadChildren: () => tplLoad.then(m => m.TplModule)
     },
     {
         path: 'tpl/:name/:name2',
@@ -52,6 +52,47 @@ let coreRouter: Routes = [
     {
         path: 'tpl/:name/:name2/:name3/:name4/:name5',
         pathMatch: "full",
+        loadChildren: () => tplLoad.then(m => m.TplModule)
+    },
+
+    {
+        path: "mtpl/:name",
+        pathMatch: "full",
+        data: {
+            micro: true
+        },
+        loadChildren: () => tplLoad.then(m => m.TplModule)
+    },
+    {
+        path: 'mtpl/:name/:name2',
+        pathMatch: "full",
+        data: {
+            micro: true
+        },
+        loadChildren: () => tplLoad.then(m => m.TplModule)
+    },
+    {
+        path: 'mtpl/:name/:name2/:name3',
+        pathMatch: "full",
+        data: {
+            micro: true
+        },
+        loadChildren: () => tplLoad.then(m => m.TplModule)
+    },
+    {
+        path: 'mtpl/:name/:name2/:name3/:name4',
+        pathMatch: "full",
+        data: {
+            micro: true
+        },
+        loadChildren: () => tplLoad.then(m => m.TplModule)
+    },
+    {
+        path: 'mtpl/:name/:name2/:name3/:name4/:name5',
+        pathMatch: "full",
+        data: {
+            micro: true
+        },
         loadChildren: () => tplLoad.then(m => m.TplModule)
     }
 ];
