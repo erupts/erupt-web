@@ -4,7 +4,9 @@
             <ng-container *ngIf="ready && data && data.length">
                 <nz-alert nzType="info" [nzMessage]="alertMessage" style="margin-bottom: 12px"></nz-alert>
                 <ng-template #alertMessage>
-                    <span [innerHTML]="data.length && data[0]?.x | safeHtml"></span>
+                    <ng-container *ngFor="let d of data">
+                        <p [innerHTML]="d.x | safeHtml" style="margin-bottom: 0"></p>
+                    </ng-container>
                 </ng-template>
             </ng-container>
         </ng-container>
@@ -22,7 +24,8 @@
                         <ng-container [ngSwitch]="chart.type">
                             <ng-container *ngSwitchCase="chartType.tpl">
                                 <ng-container *ngIf="!src">
-                                    <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" class="flex-center-center"
+                                    <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null"
+                                              class="flex-center-center"
                                               [style]="{height:chart.height+'px'}">
 
                                     </nz-empty>
@@ -87,7 +90,8 @@
                 </ng-container>
                 <ng-container *ngIf="bi.export && data && data.length>0">
                     <i nz-icon [nzType]="'loading'" *ngIf="downloading"></i>
-                    <i nz-icon nzType="download" *ngIf="!downloading" nzTheme="outline" (click)="downloadChartData()"></i>
+                    <i nz-icon nzType="download" *ngIf="!downloading" nzTheme="outline"
+                       (click)="downloadChartData()"></i>
                     &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
                 </ng-container>
                 <i nz-icon nzType="reload" (click)="update(true)"></i>
