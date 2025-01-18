@@ -6,6 +6,7 @@ import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
+import  {cloneDeep}  from "lodash";
 import {
     FormSize,
     OperationIfExprBehavior,
@@ -28,7 +29,6 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
 import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
-import {deepCopy} from "@delon/util";
 import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
 import {STChange, STPage} from "@delon/abc/st/st.interfaces";
 import {AppViewService} from "@shared/service/app-view.service";
@@ -258,7 +258,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
-                this.searchErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
+                this.searchErupt = <EruptModel>cloneDeep(this.eruptBuildModel.eruptModel);
                 for (let fieldModel of this.searchErupt.eruptFieldModels) {
                     let edit = fieldModel.eruptFieldJson.edit;
                     if (edit) {
