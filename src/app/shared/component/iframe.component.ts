@@ -41,9 +41,9 @@ export class EruptIframeComponent implements OnInit {
         if (this.width) {
             this.style["width"] = this.width;
         }
-        setTimeout(()=>{
+        setTimeout(() => {
             this.spin = false;
-        },3000)
+        }, 3000)
     }
 
     iframeLoad(event: any) {

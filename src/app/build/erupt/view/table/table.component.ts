@@ -19,7 +19,7 @@ import {
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
-import {DrawerPlacement, EruptFieldModel, OpenWay} from "../../model/erupt-field.model";
+import {DrawerPlacement, EruptFieldModel, OpenWay, PageEmbedType} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
@@ -35,6 +35,7 @@ import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {TableStyle} from "../../model/erupt.vo";
+import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 
 
 @Component({
@@ -637,6 +638,7 @@ export class TableComponent implements OnInit, OnDestroy {
         if (ro.type === OperationType.TPL) {
             let url = this.dataService.getEruptOperationTpl(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids);
             if (!ro.tpl.openWay || ro.tpl.openWay == OpenWay.MODAL) {
+                let isIframe = !ro.tpl.embedType || ro.tpl.embedType == PageEmbedType.IFRAME;
                 let ref = this.modal.create({
                     nzKeyboard: true,
                     nzTitle: ro.title,
@@ -649,7 +651,8 @@ export class TableComponent implements OnInit, OnDestroy {
                         padding: "0"
                     },
                     nzFooter: null,
-                    nzContent: EruptIframeComponent,
+                    // @ts-ignore
+                    nzContent: isIframe ? EruptIframeComponent : EruptMicroAppComponent,
                     nzOnCancel: () => {
                         // this.query();
                     }

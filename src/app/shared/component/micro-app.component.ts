@@ -25,13 +25,13 @@ export class EruptMicroAppComponent implements AfterViewInit {
         if (!this.eruptContextService.has(ContextKey.INIT_MICRO_APP)) {
             this.eruptContextService.set(ContextKey.INIT_MICRO_APP, true);
             microApp.start({
-                'router-mode': 'pure'
+                'router-mode': 'native',
+                // shadowDOM: true
             });
         }
     }
 
     ngAfterViewInit() {
-        console.log(this.url)
         this.microApp.nativeElement.setAttribute('url', this.url);
     }
 

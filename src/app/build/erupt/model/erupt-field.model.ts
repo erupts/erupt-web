@@ -32,7 +32,13 @@ export interface Tpl {
     width: string;
     height: string;
     openWay: OpenWay;
+    embedType: PageEmbedType
     drawerPlacement: DrawerPlacement;
+}
+
+export enum PageEmbedType {
+    IFRAME = "IFRAME",
+    MICRO_FRONTEND = "MICRO_FRONTEND"
 }
 
 export enum OpenWay {
@@ -175,7 +181,7 @@ interface ChoiceType {
     onVLChange(value, oldValue): void;
 }
 
-interface MultiChoiceType{
+interface MultiChoiceType {
     type: MultiChoiceEnum;
 }
 
