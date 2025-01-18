@@ -194,6 +194,19 @@ export class TabTableComponent implements OnInit {
     }
 
     addDataByRefer() {
+        let eruptModel = this.eruptBuildModel.eruptModel;
+        let depend = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.referenceTableType.dependField;
+        let dependVal = null;
+        if (depend) {
+            const dependField: EruptFieldModel = eruptModel.eruptFieldModelMap.get(depend);
+            if (dependField.eruptFieldJson.edit.$value) {
+                dependVal = dependField.eruptFieldJson.edit.$value;
+            } else {
+                this.msg.warning("请先选择" + dependField.eruptFieldJson.edit.title);
+                return;
+            }
+        }
+
         let ref = this.modal.create({
             nzStyle: {top: "20px"},
             nzWrapClassName: "modal-xxl",
@@ -248,7 +261,8 @@ export class TabTableComponent implements OnInit {
             eruptBuild: this.eruptBuildModel,
             eruptField: this.tabErupt.eruptFieldModel,
             mode: SelectMode.checkbox,
-            tabRef: true
+            tabRef: true,
+            dependVal:dependVal
         })
     }
 
