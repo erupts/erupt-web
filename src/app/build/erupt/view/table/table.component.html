@@ -13,7 +13,8 @@
                     <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
                         <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation">
                             <ng-container *ngIf="item.mode != operationMode.SINGLE">
-                                <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.tip" (click)="createOperator(item)">
+                                <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.tip"
+                                        (click)="createOperator(item)">
                                     <i *ngIf="item.icon" class="fa" [ngClass]="item.icon" style="margin-right: 8px"></i>
                                     <span>{{ item.title }}</span>
                                 </button>
@@ -114,6 +115,14 @@
                 </div>
 
                 <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
+                    <ng-container *ngIf="alert">
+                        <nz-alert style="margin-bottom:8px" [nzMessage]="alertMessage" [nzType]="alert.uiType"
+                                  [nzCloseable]="alert.closeable" (nzOnClose)="alert = null">
+                        </nz-alert>
+                        <ng-template #alertMessage>
+                            <span [innerHTML]="alert.message | safeHtml"></span>
+                        </ng-template>
+                    </ng-container>
                     <nz-card *ngIf="hasSearchFields" [nzBodyStyle]="{padding:'10px'}" class="search-card"
                              [hidden]="hideCondition">
                         <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'">

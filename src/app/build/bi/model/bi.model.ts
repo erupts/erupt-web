@@ -37,6 +37,7 @@ export interface ChartColumn {
 }
 
 export enum ChartType {
+    Alert = "Alert",
     Number = "Number",
     Line = "Line",
     StepLine = "StepLine",

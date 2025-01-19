@@ -21,7 +21,8 @@ export enum EditType {
     NUMBER = "NUMBER",
     COLOR = "COLOR",
     TEXTAREA = "TEXTAREA",                     //大文本域
-    CHOICE = "CHOICE",                         //选择框
+    CHOICE = "CHOICE",                         //单个选择
+    MULTI_CHOICE = "MULTI_CHOICE",             //多选
     TAGS = "TAGS",                             //标签选择
     DATE = "DATE",                             //日期
     COMBINE = "COMBINE",                       //表格合并
@@ -111,6 +112,11 @@ export enum AttachmentEnum {
 export enum ChoiceEnum {
     RADIO = "RADIO",
     SELECT = "SELECT",
+}
+
+export enum MultiChoiceEnum {
+    SELECT = "SELECT",
+    CHECKBOX = "CHECKBOX"
 }
 
 export enum SelectMode {

@@ -1,11 +1,12 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {Drill, DrillInput, EruptModel, Power, Row, RowOperation} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
+import  {cloneDeep}  from "lodash";
 import {
     FormSize,
     OperationIfExprBehavior,
@@ -19,7 +20,7 @@ import {
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
-import {EruptFieldModel, OpenWay} from "../../model/erupt-field.model";
+import {DrawerPlacement, EruptFieldModel, OpenWay, PageEmbedType} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
@@ -28,13 +29,13 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
 import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
-import {deepCopy} from "@delon/util";
 import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
 import {STChange, STPage} from "@delon/abc/st/st.interfaces";
 import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {TableStyle} from "../../model/erupt.vo";
+import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 
 
 @Component({
@@ -77,7 +78,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
     clientHeight: number = document.body.clientHeight;
 
-    hideCondition = false;
+    hideCondition: boolean = false;
+
+    alert: Alert;
 
     searchErupt: EruptModel;
 
@@ -255,7 +258,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
                 this.buildTableConfig();
-                this.searchErupt = <EruptModel>deepCopy(this.eruptBuildModel.eruptModel);
+                this.searchErupt = <EruptModel>cloneDeep(this.eruptBuildModel.eruptModel);
                 for (let fieldModel of this.searchErupt.eruptFieldModels) {
                     let edit = fieldModel.eruptFieldJson.edit;
                     if (edit) {
@@ -312,9 +315,7 @@ export class TableComponent implements OnInit, OnDestroy {
             this.dataPage.querying = false;
             this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
-            // for (let ele of spliceArr(page.list, 20)) {
-            //     this.dataPage.data.push(...ele)
-            // }
+            this.alert = page.alert;
         })
         this.extraRowFun(query);
     }
@@ -637,6 +638,7 @@ export class TableComponent implements OnInit, OnDestroy {
         if (ro.type === OperationType.TPL) {
             let url = this.dataService.getEruptOperationTpl(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids);
             if (!ro.tpl.openWay || ro.tpl.openWay == OpenWay.MODAL) {
+                let isIframe = !ro.tpl.embedType || ro.tpl.embedType == PageEmbedType.IFRAME;
                 let ref = this.modal.create({
                     nzKeyboard: true,
                     nzTitle: ro.title,
@@ -649,19 +651,21 @@ export class TableComponent implements OnInit, OnDestroy {
                         padding: "0"
                     },
                     nzFooter: null,
-                    nzContent: EruptIframeComponent,
+                    // @ts-ignore
+                    nzContent: isIframe ? EruptIframeComponent : EruptMicroAppComponent,
                     nzOnCancel: () => {
                         // this.query();
                     }
                 });
                 ref.getContentComponent().url = url;
             } else {
+                let placement = ro.tpl.drawerPlacement;
                 this.drawerService.create({
-                    nzTitle: ro.title,
+                    nzClosable: false,
                     nzKeyboard: true,
                     nzMaskClosable: true,
                     // @ts-ignore
-                    nzPlacement: ro.tpl.drawerPlacement.toLowerCase(),
+                    nzPlacement: placement.toLowerCase(),
                     nzWidth: ro.tpl.width || "40%",
                     nzHeight: ro.tpl.height || "40%",
                     nzBodyStyle: {
@@ -670,7 +674,9 @@ export class TableComponent implements OnInit, OnDestroy {
                     nzFooter: null,
                     nzContent: EruptIframeComponent,
                     nzContentParams: {
-                        url: url
+                        url: url,
+                        height: (placement == DrawerPlacement.LEFT || placement == DrawerPlacement.RIGHT) ? "100vh" : ro.tpl.height,
+                        width: (placement == DrawerPlacement.TOP || placement == DrawerPlacement.BOTTOM) ? "100vw" : ro.tpl.width
                     }
                 })
             }
@@ -908,9 +914,11 @@ export class TableComponent implements OnInit, OnDestroy {
     exportExcel() {
         let condition = null;
         if (this.searchErupt && this.searchErupt.eruptFieldModels.length > 0) {
-            condition = this.dataHandler.eruptObjectToCondition(this.dataHandler.eruptValueToObject({
-                eruptModel: this.searchErupt
-            }));
+            condition = this.dataHandler.eruptObjectToCondition(
+                this.dataHandler.searchEruptToObject({
+                    eruptModel: this.searchErupt
+                })
+            );
         }
         //导出接口
         this.downloading = true;

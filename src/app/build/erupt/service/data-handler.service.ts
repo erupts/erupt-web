@@ -144,9 +144,13 @@ export class DataHandlerService {
     eruptObjectToCondition(obj: Object): QueryCondition[] {
         let queryCondition: QueryCondition[] = [];
         for (let key in obj) {
+            let val = obj[key];
+            if (typeof val == "string") {
+                val = val.trim();
+            }
             queryCondition.push({
                 key: key,
-                value: obj[key]
+                value: val
             });
         }
         return queryCondition;
@@ -335,11 +339,6 @@ export class DataHandlerService {
                             }
                         }
                         break;
-                    // case EditType.CODE_EDITOR:
-                    //     if (edit.$value || edit.$value === 0) {
-                    //         eruptData[field.fieldName] = btoa(encodeURIComponent(edit.$value))
-                    //     }
-                    //     break;
                     default:
                         if (edit.$value || edit.$value === 0) {
                             eruptData[field.fieldName] = edit.$value;

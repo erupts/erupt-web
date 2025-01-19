@@ -26,11 +26,13 @@
         </ng-container>
 
         <ng-container *ngSwitchCase="viewType.LINK_DIALOG">
-            <iframe [src]="value|safeUrl" [frameBorder]="0" style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
+            <iframe [src]="value|safeUrl" [frameBorder]="0"
+                    style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
         </ng-container>
 
         <ng-container *ngSwitchCase="viewType.ATTACHMENT_DIALOG">
-            <iframe [src]="value|safeUrl" [frameBorder]="0" style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
+            <iframe [src]="value|safeUrl" [frameBorder]="0"
+                    style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
         </ng-container>
 
 
@@ -60,28 +62,34 @@
                 <ng-container [ngSwitch]="view.eruptFieldModel.eruptFieldJson.edit.type">
                     <ng-container *ngSwitchCase="editType.TAB_TABLE_ADD">
                         <tab-table
-                                [onlyRead]="true"
-                                [tabErupt]="{eruptBuildModel:eruptBuildModel.tabErupts[view.eruptFieldModel.fieldName]
+                            [onlyRead]="true"
+                            [tabErupt]="{eruptBuildModel:eruptBuildModel.tabErupts[view.eruptFieldModel.fieldName]
                                             ,eruptFieldModel:eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)}"
-                                [eruptBuildModel]="eruptBuildModel"
+                            [eruptBuildModel]="eruptBuildModel"
                         ></tab-table>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.TAB_TABLE_REFER">
                         <tab-table [onlyRead]="true"
                                    [tabErupt]="{eruptBuildModel:eruptBuildModel.tabErupts[view.eruptFieldModel.fieldName]
-                                ,eruptFieldModel:eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)}"
+                                            ,eruptFieldModel:eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)}"
                                    [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
                         ></tab-table>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.TAB_TREE">
                         <erupt-tab-tree [onlyRead]="true"
                                         [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"
-                                        [eruptBuildModel]="eruptBuildModel"
-                        ></erupt-tab-tree>
+                                        [eruptBuildModel]="eruptBuildModel"></erupt-tab-tree>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.CHECKBOX">
                         <erupt-checkbox [eruptBuildModel]="eruptBuildModel" [onlyRead]="true"
-                                        [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"></erupt-checkbox>
+                                        [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)">
+                        </erupt-checkbox>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.MULTI_CHOICE">
+                        <erupt-multi-choice [eruptModel]="eruptBuildModel.eruptModel"
+                                            [eruptField]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"
+                                            [readonly]="true">
+                        </erupt-multi-choice>
                     </ng-container>
                 </ng-container>
             </nz-spin>

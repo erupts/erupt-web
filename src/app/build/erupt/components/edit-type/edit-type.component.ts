@@ -1,6 +1,14 @@
 import {Component, DoCheck, Inject, Input, OnDestroy, OnInit, QueryList, ViewChildren} from "@angular/core";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, Scene} from "../../model/erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    EditType,
+    FormSize,
+    HtmlEditTypeEnum,
+    MultiChoiceEnum,
+    Scene
+} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
@@ -54,6 +62,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     htmlEditorType = HtmlEditTypeEnum;
 
     choiceEnum = ChoiceEnum;
+
+    multiChoiceEnum = MultiChoiceEnum;
 
     attachmentEnum = AttachmentEnum;
 

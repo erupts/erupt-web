@@ -11,8 +11,9 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzImageService} from "ng-zorro-antd/image";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
-import {View} from "../model/erupt-field.model";
+import {PageEmbedType, View} from "../model/erupt-field.model";
 import {AttachmentSelectComponent} from "../components/attachment-select/attachment-select.component";
+import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 
 
 @Injectable()
@@ -138,13 +139,14 @@ export class UiBuildService {
                     break;
                 case ViewType.DATE:
                     obj.className = "date-col";
-                    obj.width = 110;
+                    obj.width = 115;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
-                            if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE) {
-                                return item[view.column].substr(0, 10);
+                            let val = <string>item[view.column];
+                            if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE && !val.startsWith("<") && !val.endsWith(">")) {
+                                return val.substring(0, 10);
                             } else {
-                                return item[view.column];
+                                return val;
                             }
                         } else {
                             return "";
@@ -574,6 +576,7 @@ export class UiBuildService {
                     let url = this.dataService.getEruptViewTpl(eruptBuildModel.eruptModel.eruptName,
                         view.eruptFieldModel.fieldName,
                         item[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
+                    let isIframe = !view.tpl.embedType || view.tpl.embedType == PageEmbedType.IFRAME;
                     let ref = this.modal.create({
                         nzKeyboard: true,
                         nzMaskClosable: false,
@@ -585,7 +588,8 @@ export class UiBuildService {
                             padding: "0"
                         },
                         nzFooter: null,
-                        nzContent: EruptIframeComponent
+                        // @ts-ignore
+                        nzContent: isIframe ? EruptIframeComponent : EruptMicroAppComponent
                     });
                     ref.getContentComponent().url = url;
                 };

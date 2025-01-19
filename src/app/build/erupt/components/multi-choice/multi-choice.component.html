@@ -1,0 +1,27 @@
+<ng-container [ngSwitch]="eruptField.eruptFieldJson.edit.multiChoiceType.type">
+    <ng-container *ngSwitchCase="multiChoiceEnum.CHECKBOX">
+        <nz-checkbox-wrapper (nzOnChange)="checkboxChange($event)" style="width:100%">
+            <nz-row>
+                <ng-container *ngFor="let vl of eruptField.componentValue">
+                    <nz-col nzSpan="4">
+                        <label nz-checkbox [nzValue]="vl.value" nz-tooltip [nzDisabled]="readonly||vl.disable"
+                               [nzTooltipTitle]="vl.desc"
+                               [nzChecked]="includes(this.eruptField.eruptFieldJson.edit.$value, vl.value)">
+                            {{ vl.label }}
+                        </label>
+                    </nz-col>
+                </ng-container>
+            </nz-row>
+        </nz-checkbox-wrapper>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="multiChoiceEnum.SELECT">
+        <nz-select [(ngModel)]="this.eruptField.eruptFieldJson.edit.$value" [nzSize]="size" nzMode="multiple"
+                   style="width:100%">
+            <nz-option *ngFor="let vl of eruptField.componentValue" [nzLabel]="vl.label"
+                       [nzDisabled]="readonly||vl.disable"
+                       [nzValue]="isNumeric(vl.value)?parseInt(vl.value):vl.value">
+            </nz-option>
+        </nz-select>
+    </ng-container>
+</ng-container>
