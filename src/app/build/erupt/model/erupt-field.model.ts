@@ -4,6 +4,7 @@ import {
     DateEnum,
     EditType,
     HtmlEditTypeEnum,
+    MultiChoiceEnum,
     PickerMode,
     TabEnum,
     ViewType
@@ -31,7 +32,13 @@ export interface Tpl {
     width: string;
     height: string;
     openWay: OpenWay;
+    embedType: PageEmbedType
     drawerPlacement: DrawerPlacement;
+}
+
+export enum PageEmbedType {
+    IFRAME = "IFRAME",
+    MICRO_FRONTEND = "MICRO_FRONTEND"
 }
 
 export enum OpenWay {
@@ -82,6 +89,7 @@ export interface Edit {
     rateType?: RateType;
     boolType?: BoolType;
     choiceType?: ChoiceType;
+    multiChoiceType?: MultiChoiceType;
     tagsType?: TagsType;
     dateType?: DateType;
     sliderType?: SliderType;
@@ -173,6 +181,9 @@ interface ChoiceType {
     onVLChange(value, oldValue): void;
 }
 
+interface MultiChoiceType {
+    type: MultiChoiceEnum;
+}
 
 interface TagsType {
     allowExtension: boolean;

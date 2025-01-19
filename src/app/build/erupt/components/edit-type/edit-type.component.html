@@ -175,15 +175,7 @@
                         <ng-container [ngSwitch]="field.eruptFieldJson.edit.choiceType.type">
                             <ng-container *ngSwitchCase="choiceEnum.RADIO">
                                 <div nz-col [nzXs]="24">
-                                    <se [label]="field.eruptFieldJson.edit.title"
-                                        [required]="field.eruptFieldJson.edit.notNull"
-                                        [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                        <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
-                                                      [eruptParentName]="parentEruptName" [editType]="this"
-                                                      [readonly]="isReadonly(field)" #choice>
-
-                                        </erupt-choice>
-                                    </se>
+                                    <ng-container [ngTemplateOutlet]="choiceTpl"></ng-container>
                                 </div>
                             </ng-container>
                             <ng-container *ngSwitchCase="choiceEnum.SELECT">
@@ -191,17 +183,48 @@
                                      [nzLg]="col.lg"
                                      [nzXl]="col.xl"
                                      [nzXXl]="col.xxl">
-                                    <se [label]="field.eruptFieldJson.edit.title"
-                                        [required]="field.eruptFieldJson.edit.notNull"
-                                        [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                        <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
-                                                      [eruptParentName]="parentEruptName" [editType]="this"
-                                                      [readonly]="isReadonly(field)" #choice>
-
-                                        </erupt-choice>
-                                    </se>
+                                    <ng-container [ngTemplateOutlet]="choiceTpl"></ng-container>
                                 </div>
                             </ng-container>
+                            <ng-template #choiceTpl>
+                                <se [label]="field.eruptFieldJson.edit.title"
+                                    [required]="field.eruptFieldJson.edit.notNull"
+                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                    <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
+                                                  [eruptParentName]="parentEruptName" [editType]="this"
+                                                  [readonly]="isReadonly(field)" #choice>
+
+                                    </erupt-choice>
+                                </se>
+                            </ng-template>
+                        </ng-container>
+                    </ng-container>
+                    <!--multi-choice-->
+                    <ng-container *ngSwitchCase="editType.MULTI_CHOICE">
+                        <ng-container [ngSwitch]="field.eruptFieldJson.edit.multiChoiceType.type">
+                            <ng-container *ngSwitchCase="multiChoiceEnum.CHECKBOX">
+                                <div nz-col [nzXs]="24">
+                                    <ng-container [ngTemplateOutlet]="multiChoiceTpl"></ng-container>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="multiChoiceEnum.SELECT">
+                                <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                                     [nzLg]="col.lg"
+                                     [nzXl]="col.xl"
+                                     [nzXXl]="col.xxl">
+                                    <ng-container [ngTemplateOutlet]="multiChoiceTpl"></ng-container>
+                                </div>
+                            </ng-container>
+                            <ng-template #multiChoiceTpl>
+                                <se [label]="field.eruptFieldJson.edit.title"
+                                    [required]="field.eruptFieldJson.edit.notNull"
+                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                    <erupt-multi-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
+                                                        [readonly]="isReadonly(field)">
+
+                                    </erupt-multi-choice>
+                                </se>
+                            </ng-template>
                         </ng-container>
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.TAGS">

@@ -1,84 +1,104 @@
 <nz-spin [nzSpinning]="chart.loading">
-    <nz-card [nzTitle]="chart.name" nzSize="small" [nzBodyStyle]="{padding:'0'}" [nzHoverable]="true"
-             [nzExtra]="extraTemplate" style="margin-bottom: 12px">
-        <div [ngClass]="open?'card-show':'card-hide'">
-            <ng-container *ngIf="!ready">
-                <div [id]='chart.code' [ngStyle]="{height:chart.height+'px'}"
-                     style='width:100%;display: flex;flex-direction: column;align-items:center;justify-content: center;'>
-                    <i nz-icon nzType="pie-chart" nzTheme="twotone" style="font-size: 36px"></i>
-                </div>
-            </ng-container>
-            <ng-container *ngIf="ready">
-                <ng-container [ngSwitch]="chart.type">
-                    <ng-container *ngSwitchCase="chartType.tpl">
-                        <ng-container *ngIf="!src">
-                            <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" class="flex-center-center" [style]="{height:chart.height+'px'}">
-
-                            </nz-empty>
-                        </ng-container>
-                        <ng-container *ngIf="src">
-                            <erupt-iframe [url]="src" [style]="{height:chart.height+'px',paddingTop:'1px'}">
-
-                            </erupt-iframe>
-                        </ng-container>
+    <ng-container [ngSwitch]="chart.type">
+        <ng-container *ngSwitchCase="chartType.Alert">
+            <ng-container *ngIf="ready && data && data.length">
+                <nz-alert nzType="info" [nzMessage]="alertMessage" style="margin-bottom: 12px"></nz-alert>
+                <ng-template #alertMessage>
+                    <ng-container *ngFor="let d of data">
+                        <p [innerHTML]="d.x | safeHtml" style="margin-bottom: 0"></p>
                     </ng-container>
-                    <ng-container *ngSwitchCase="chartType.table">
-                        <div [ngStyle]="{height:chart.height+'px'}" style="overflow: auto">
-                            <erupt-chart-table #chartTable [id]="chart.code"></erupt-chart-table>
+                </ng-template>
+            </ng-container>
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+            <nz-card [nzTitle]="chart.name" nzSize="small" [nzBodyStyle]="{padding:'0'}" [nzHoverable]="true"
+                     [nzExtra]="extraTemplate" style="margin-bottom: 12px">
+                <div [ngClass]="open?'card-show':'card-hide'">
+                    <ng-container *ngIf="!ready">
+                        <div [id]='chart.code' [ngStyle]="{height:chart.height+'px'}"
+                             style='width:100%;display: flex;flex-direction: column;align-items:center;justify-content: center;'>
+                            <i nz-icon nzType="pie-chart" nzTheme="twotone" style="font-size: 36px"></i>
                         </div>
                     </ng-container>
-                    <ng-container *ngSwitchCase="chartType.Number">
-                        <ng-container *ngIf="!data||data.length==0">
-                            <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" class="flex-center-center">
+                    <ng-container *ngIf="ready">
+                        <ng-container [ngSwitch]="chart.type">
+                            <ng-container *ngSwitchCase="chartType.tpl">
+                                <ng-container *ngIf="!src">
+                                    <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null"
+                                              class="flex-center-center"
+                                              [style]="{height:chart.height+'px'}">
 
-                            </nz-empty>
-                        </ng-container>
-                        <ng-container *ngIf="data&&data.length">
-                            <div style="padding: 12px;text-align: center;" [id]="chart.code">
-                                <div sg-container="{{data.length}}">
-                                    <ng-container *ngFor="let d of data">
-                                        <sg>
-                                            <nz-statistic style="margin-bottom: 16px;"
-                                                          [nzValue]="d[dataKeys[0]]||0"
-                                                          [nzTitle]="d[dataKeys[1]]"
-                                                          [nzValueStyle]="this.chart.chartOption"
-                                            ></nz-statistic>
-                                        </sg>
+                                    </nz-empty>
+                                </ng-container>
+                                <ng-container *ngIf="src">
+                                    <erupt-iframe [url]="src" [style]="{height:chart.height+'px',paddingTop:'1px'}">
+
+                                    </erupt-iframe>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="chartType.table">
+                                <div [ngStyle]="{height:chart.height+'px'}" style="overflow: auto">
+                                    <erupt-chart-table #chartTable [id]="chart.code"></erupt-chart-table>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="chartType.Number">
+                                <ng-container *ngIf="!data||data.length==0">
+                                    <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null"
+                                              class="flex-center-center">
+
+                                    </nz-empty>
+                                </ng-container>
+                                <ng-container *ngIf="data&&data.length">
+                                    <div style="padding: 12px;text-align: center;" [id]="chart.code">
+                                        <div sg-container="{{data.length}}">
+                                            <ng-container *ngFor="let d of data">
+                                                <sg>
+                                                    <nz-statistic style="margin-bottom: 16px;"
+                                                                  [nzValue]="d[dataKeys[0]]||0"
+                                                                  [nzTitle]="d[dataKeys[1]]"
+                                                                  [nzValueStyle]="this.chart.chartOption"
+                                                    ></nz-statistic>
+                                                </sg>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container *ngSwitchDefault>
+                                <div [id]='chart.code' style='width:100%;' [ngStyle]="{height:chart.height+'px'}">
+                                    <ng-container *ngIf="!data||data.length==0">
+                                        <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null"
+                                                  class="flex-center-center">
+
+                                        </nz-empty>
                                     </ng-container>
                                 </div>
-                            </div>
+                            </ng-container>
                         </ng-container>
                     </ng-container>
-                    <ng-container *ngSwitchDefault>
-                        <div [id]='chart.code' style='width:100%;' [ngStyle]="{height:chart.height+'px'}">
-                            <ng-container *ngIf="!data||data.length==0">
-                                <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" class="flex-center-center">
-
-                                </nz-empty>
-                            </ng-container>
-                        </div>
-                    </ng-container>
+                </div>
+            </nz-card>
+            <ng-template #extraTemplate>
+                <ng-container *ngIf="chart.remark">
+                <span nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+                      [nzTooltipTitle]="chart.remark"></span>
+                    &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
                 </ng-container>
-            </ng-container>
-        </div>
-    </nz-card>
-    <ng-template #extraTemplate>
-        <ng-container *ngIf="chart.remark">
-            <span nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="chart.remark"></span>
-            &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
+                <ng-container *ngIf="plot">
+                    <i nz-icon nzType="file-image" nzTheme="outline" (click)="downloadChartImage()"></i>
+                    &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
+                </ng-container>
+                <ng-container *ngIf="bi.export && data && data.length>0">
+                    <i nz-icon [nzType]="'loading'" *ngIf="downloading"></i>
+                    <i nz-icon nzType="download" *ngIf="!downloading" nzTheme="outline"
+                       (click)="downloadChartData()"></i>
+                    &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
+                </ng-container>
+                <i nz-icon nzType="reload" (click)="update(true)"></i>
+                &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
+                <span nz-icon nzType="down" nzTheme="outline" *ngIf="open" (click)="open=false"></span>
+                <span nz-icon nzType="left" nzTheme="outline" *ngIf="!open" (click)="open=true"></span>
+            </ng-template>
         </ng-container>
-        <ng-container *ngIf="plot">
-            <i nz-icon nzType="file-image" nzTheme="outline" (click)="downloadChartImage()"></i>
-            &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
-        </ng-container>
-        <ng-container *ngIf="bi.export && data && data.length>0">
-            <i nz-icon [nzType]="'loading'" *ngIf="downloading"></i>
-            <i nz-icon nzType="download" *ngIf="!downloading" nzTheme="outline" (click)="downloadChartData()"></i>
-            &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
-        </ng-container>
-        <i nz-icon nzType="reload" (click)="update(true)"></i>
-        &nbsp;<nz-divider nzType="vertical"></nz-divider>&nbsp;
-        <span nz-icon nzType="down" nzTheme="outline" *ngIf="open" (click)="open=false"></span>
-        <span nz-icon nzType="left" nzTheme="outline" *ngIf="!open" (click)="open=true"></span>
-    </ng-template>
+    </ng-container>
 </nz-spin>

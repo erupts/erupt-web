@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {NgModule, Type} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule, Type} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {DelonACLModule} from '@delon/acl';
@@ -24,6 +24,7 @@ import {UEditorComponent} from "@shared/component/ueditor/ueditor.component";
 import {EruptContextService} from "@shared/service/erupt-context.service";
 import {UtilsService} from "@shared/service/utils.service";
 import {SocketService} from "@shared/service/socket.service";
+import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -32,7 +33,7 @@ const THIRDMODULES: Array<Type<any>> = [];
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent];
+const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent];
 const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, I18nPipe];
 
 // #endregion
@@ -77,6 +78,9 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
         // your components
         ...COMPONENTS,
         ...DIRECTIVES
+    ],
+    schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
     ]
 })
 export class SharedModule {

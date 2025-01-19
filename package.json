@@ -47,6 +47,7 @@
         "@delon/form": "^15.2.1",
         "@delon/theme": "^15.2.1",
         "@delon/util": "^15.2.1",
+        "@micro-zoe/micro-app": "^1.0.0-rc.19",
         "@ng-util/lazy": "^14.0.0",
         "@ng-util/util": "^14.0.0",
         "font-awesome": "^4.7.0",
@@ -58,7 +59,8 @@
         "screenfull": "^6.0.2",
         "ts-md5": "^1.3.1",
         "tslib": "^2.3.0",
-        "zone.js": "~0.11.4"
+        "zone.js": "~0.11.4",
+        "lodash": "~4.17.21"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "^15.2.0",

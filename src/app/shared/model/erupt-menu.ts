@@ -20,4 +20,5 @@ export enum MenuTypeEnum {
     selfWindow = "selfWindow",
     bi = "bi",
     tpl = "tpl",
+    mtpl = "mtpl",
 }

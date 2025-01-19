@@ -1,24 +1,27 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {IframeHeight} from "@shared/util/window.util";
 
 @Component({
     selector: 'erupt-iframe',
     template: `
-        <nz-spin [nzSpinning]="spin">
-            <iframe [src]="url|safeUrl" style="width: 100%;border: 0;display: block;vertical-align: bottom;"
+        <nz-spin [nzSpinning]="spin" style="height: 100%;width: 100%">
+            <iframe [src]="url|safeUrl" height="100%"
+                    style="width: 100%;height: 100%;border: 0;display: block;vertical-align: bottom;"
                     [ngStyle]="style"
-                    (load)="iframeHeight($event)">
+                    (load)="iframeLoad($event)">
 
             </iframe>
         </nz-spin>
     `,
     styles: []
 })
-export class EruptIframeComponent implements OnInit, OnChanges {
+export class EruptIframeComponent implements OnInit {
 
-    @Input() url: string | undefined;
+    @Input() url: string | null;
 
-    @Input() height: string | undefined;
+    @Input() height: string | null;
+
+    @Input() width: string | null;
 
     @Input() style: object = {};
 
@@ -30,9 +33,20 @@ export class EruptIframeComponent implements OnInit, OnChanges {
 
     ngOnInit() {
         this.spin = true;
+        if (this.height) {
+            this.style["height"] = this.height;
+        } else {
+            this.style["height"] = "100%";
+        }
+        if (this.width) {
+            this.style["width"] = this.width;
+        }
+        setTimeout(() => {
+            this.spin = false;
+        }, 3000)
     }
 
-    iframeHeight(event: any) {
+    iframeLoad(event: any) {
         this.spin = false;
         if (!this.height) {
             try {
@@ -41,17 +55,8 @@ export class EruptIframeComponent implements OnInit, OnChanges {
                 this.style["height"] = "600px"
                 console.error(e)
             }
-        } else {
-            this.style["height"] = this.height;
         }
         this.spin = false;
     };
-
-    ngOnChanges(changes: SimpleChanges): void {
-        // if (!changes.url.firstChange) {
-        //   this.spin = true;
-        // }
-    }
-
 
 }
