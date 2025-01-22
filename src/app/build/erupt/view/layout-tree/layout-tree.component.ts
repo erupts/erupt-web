@@ -28,6 +28,8 @@ export class LayoutTreeComponent implements OnInit {
 
     treeLoading: boolean;
 
+    selectedKeys: any[];
+
     list: any;
 
     dataLength: number = 0;
@@ -42,12 +44,18 @@ export class LayoutTreeComponent implements OnInit {
             } else {
                 this.list = this.dataHandler.dataTreeToZorroTree(data, this.eruptModel.eruptJson.tree.expandLevel);
             }
-            if (!this.eruptModel.eruptJson.linkTree.dependNode) {
+            if (this.eruptModel.eruptJson.linkTree.dependNode) {
+                if (data.length > 0) {
+                    this.trigger.emit(data[0].id);
+                    this.selectedKeys = [data[0].id];
+                }
+            } else {
                 this.list.unshift({
                     key: undefined,
                     title: this.i18n.fanyi('global.all'),
                     isLeaf: true
                 });
+                this.selectedKeys = [undefined];
             }
             this.treeLoading = false;
         });
@@ -61,12 +69,15 @@ export class LayoutTreeComponent implements OnInit {
     nodeClickEvent(event: NzFormatEmitEvent): void {
         if (event.node.origin.key == null) {
             this.trigger.emit(null);
+            this.selectedKeys = [undefined];
         } else {
             let dt = this.eruptModel.eruptJson.linkTree;
             if (!event.node.origin.selected && !dt.dependNode) {
                 this.trigger.emit(null);
+                this.selectedKeys = [undefined];
             } else {
                 this.trigger.emit(event.node.origin.key);
+                this.selectedKeys = [event.node.origin.key];
             }
         }
         // this.data.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
