@@ -152,19 +152,18 @@
                     <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
                         [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
                         [virtualScroll]="dataPage.data.length >= 100"
+                        [virtualItemSize]="47"
                         [scroll]="{x: (clientWidth > 768 ? showColumnLength * 160 : 0) + 'px', y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
                         (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
                         [page]="dataPage.page" [size]="'middle'"
                     >
                         <ng-template #bodyTpl>
-                            <ng-container>
-                                <tr *ngFor="let row of extraRows" [ngClass]="row.className">
-                                    <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
-                                        [ngClass]="column.className">
-                                        {{ column.value }}
-                                    </td>
-                                </tr>
-                            </ng-container>
+                            <tr *ngFor="let row of extraRows" [ngClass]="row.className">
+                                <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
+                                    [ngClass]="column.className">
+                                    {{ column.value }}
+                                </td>
+                            </tr>
                         </ng-template>
                     </st>
                     <ng-container *ngIf="dataPage.showPagination">
