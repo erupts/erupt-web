@@ -6,7 +6,7 @@ import {Inject, Injectable} from "@angular/core";
 import {EruptBuildModel} from "../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {DatePipe} from "@angular/common";
-import * as moment from 'moment';
+import moment from 'moment';
 import {QueryCondition} from "../model/erupt.vo";
 import {isNotNull} from "@shared/util/erupt.util";
 import {NzModalService} from "ng-zorro-antd/modal";

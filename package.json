@@ -71,6 +71,7 @@
         "@angular/compiler-cli": "^16.2.12",
         "@angular/language-service": "^16.2.12",
         "@types/node": "^12.11.1",
+        "@types/lodash": "~4.17.15",
         "node-fetch": "^2.6.1",
         "source-map-explorer": "^2.5.2",
         "ts-node": "~10.9.1",
