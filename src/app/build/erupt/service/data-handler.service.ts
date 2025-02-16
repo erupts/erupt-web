@@ -456,7 +456,6 @@ export class DataHandlerService {
                                     break;
                             }
                         }
-
                         break;
                     case EditType.REFERENCE_TREE:
                         if (object[field.fieldName]) {
@@ -513,6 +512,7 @@ export class DataHandlerService {
                     case EditType.TAB_TABLE_ADD:
                     case EditType.TAB_TABLE_REFER:
                         edit.$value = object[field.fieldName] || [];
+                        // edit.$value.forEach(val => this.objectToEruptValue(val, eruptBuild.tabErupts[field.fieldName]))
                         break;
                     default:
                         edit.$value = object[field.fieldName];
