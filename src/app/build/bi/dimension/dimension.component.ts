@@ -3,7 +3,7 @@ import {Bi, Dimension, DimType} from "../model/bi.model";
 import {colRules} from "@shared/model/util.model";
 import {ReferenceComponent} from "../components/reference/reference.component";
 import {PresetRanges} from "ng-zorro-antd/date-picker/standard-types";
-import * as moment from 'moment';
+import moment from 'moment';
 import {DatePipe} from "@angular/common";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {I18NService} from "@core";
