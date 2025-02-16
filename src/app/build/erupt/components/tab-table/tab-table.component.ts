@@ -66,6 +66,7 @@ export class TabTableComponent implements OnInit {
         setTimeout(() => {
             this.loading = false;
         }, 300);
+
         if (this.onlyRead) {
             this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true);
         } else {
@@ -78,14 +79,7 @@ export class TabTableComponent implements OnInit {
                 className: "text-center",
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
-            // viewValue.push({
-            //     title: "No",
-            //     type: "no",
-            //     fixed: "left",
-            //     className: "text-center",
-            //     width: 60,
-            //     key: this.NO
-            // });
+
             viewValue.push(...this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true));
             let operators: STColumnButton[] = [];
             if (this.mode == "add") {
@@ -262,7 +256,7 @@ export class TabTableComponent implements OnInit {
             eruptField: this.tabErupt.eruptFieldModel,
             mode: SelectMode.checkbox,
             tabRef: true,
-            dependVal:dependVal
+            dependVal: dependVal
         })
     }
 
@@ -281,21 +275,6 @@ export class TabTableComponent implements OnInit {
         if (event.type === "checkbox") {
             this.checkedRow = event.checkbox;
         }
-        // if (event.type == "loaded") {
-        //     if (this.mode == 'add') {
-        //         if (event.loaded && event.loaded.length > 0) {
-        //             let tabEdit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
-        //             let pk = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
-        //             if (tabEdit.$value instanceof Array) {
-        //                 for (let data of (<any[]>tabEdit.$value)) {
-        //                     if (!data[pk]) {
-        //                         data[pk] = -Math.floor(Math.random() * 1000);
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
     }
 
     deleteData() {
@@ -315,6 +294,5 @@ export class TabTableComponent implements OnInit {
             this.msg.warning(this.i18n.fanyi("global.delete.hint.check"));
         }
     }
-
 
 }
