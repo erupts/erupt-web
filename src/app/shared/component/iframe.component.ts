@@ -6,7 +6,7 @@ import {IframeHeight} from "@shared/util/window.util";
     template: `
         <nz-spin [nzSpinning]="spin" style="height: 100%;width: 100%">
             <iframe [src]="url|safeUrl" height="100%"
-                    style="width: 100%;height: 100%;border: 0;display: block;vertical-align: bottom;"
+                    style="width: 100%;border: 0;display: block;vertical-align: bottom;"
                     [ngStyle]="style"
                     (load)="iframeLoad($event)">
 
@@ -35,8 +35,6 @@ export class EruptIframeComponent implements OnInit {
         this.spin = true;
         if (this.height) {
             this.style["height"] = this.height;
-        } else {
-            this.style["height"] = "100%";
         }
         if (this.width) {
             this.style["width"] = this.width;

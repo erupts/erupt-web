@@ -9,19 +9,6 @@
              [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?'calc(100vh - 103px - ' + (this.settingSrv.layout['reuse'] ? '40px' : '0px') +' + '+
                 (settingSrv.layout['breadcrumbs']?'0px':'38px')+ ')':'auto'}">
             <ng-container>
-                <ng-template #operationButtons>
-                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
-                        <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation">
-                            <ng-container *ngIf="item.mode != operationMode.SINGLE">
-                                <button nz-button nzType="dashed" class="mb-sm" [nz-tooltip]="item.tip"
-                                        (click)="createOperator(item)">
-                                    <i *ngIf="item.icon" class="fa" [ngClass]="item.icon" style="margin-right: 8px"></i>
-                                    <span>{{ item.title }}</span>
-                                </button>
-                            </ng-container>
-                        </ng-container>
-                    </ng-container>
-                </ng-template>
                 <div class="erupt-btn-item">
                     <div>
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.add">
@@ -29,7 +16,6 @@
                                 <i nz-icon nzType="plus" nzTheme="outline"></i>{{ 'table.add'|translate }}
                             </button>
                         </ng-container>
-
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.export">
                             <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()"
                                     id="erupt-btn-export" [nzLoading]="downloading">
@@ -38,7 +24,6 @@
                         </ng-container>
 
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.importable">
-                            &nbsp;
                             <nz-button-group>
                                 <button nz-button (click)="importableExcel()" id="erupt-btn-importable">
                                     <i nz-icon nzType="import" nzTheme="outline"></i>
@@ -74,8 +59,41 @@
                                 <i nz-icon nzType="delete" nzTheme="outline"></i>{{ 'table.delete'|translate }}
                             </button>
                         </ng-container>
-                        <ng-container *ngIf="operationButtonNum <= 3">
-                            <ng-template [ngTemplateOutlet]="operationButtons"></ng-template>
+                        <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.rowOperation">
+                            &nbsp;
+                            <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation">
+                                <ng-container *ngIf="item.mode != operationMode.SINGLE">
+                                    <ng-container *ngIf="!item.fold">
+                                        <button nz-button nzType="dashed" class="mb-sm"
+                                                style="margin-right: 8px;margin-left: 0" [nz-tooltip]="item.tip"
+                                                (click)="createOperator(item)">
+                                            <i *ngIf="item.icon" class="fa" [ngClass]="item.icon"
+                                               style="margin-right: 8px"></i>
+                                            <span>{{ item.title }}</span>
+                                        </button>
+                                    </ng-container>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container *ngIf="existMultiRowFoldButtons">
+                                <button nz-button nz-dropdown [nzDropdownMenu]="moreButtons" nzPlacement="bottomRight" style="margin-right: 8px;margin-left: 0" class="mb-sm">
+                                    <i nz-icon nzType="ellipsis"></i>
+                                </button>
+                                <nz-dropdown-menu #moreButtons="nzDropdownMenu">
+                                    <ul nz-menu>
+                                        <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation">
+                                            <ng-container *ngIf="item.mode != operationMode.SINGLE">
+                                                <ng-container *ngIf="item.fold">
+                                                    <li nz-menu-item [nz-tooltip]="item.tip"
+                                                        (click)="createOperator(item)">
+                                                        <i *ngIf="item.icon" class="fa" [ngClass]="item.icon" style="margin-right: 8px"></i>
+                                                        <span>{{ item.title }}</span>
+                                                    </li>
+                                                </ng-container>
+                                            </ng-container>
+                                        </ng-container>
+                                    </ul>
+                                </nz-dropdown-menu>
+                            </ng-container>
                         </ng-container>
                     </div>
                     <div class="condition-btn" *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
@@ -110,10 +128,6 @@
                         </div>
                     </div>
                 </div>
-                <div *ngIf="operationButtonNum > 3">
-                    <ng-template [ngTemplateOutlet]="operationButtons"></ng-template>
-                </div>
-
                 <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
                     <ng-container *ngIf="alert">
                         <nz-alert style="margin-bottom:8px" [nzMessage]="alertMessage" [nzType]="alert.uiType"
@@ -137,19 +151,18 @@
                     <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
                         [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
                         [virtualScroll]="dataPage.data.length >= 100"
+                        [virtualItemSize]="47"
                         [scroll]="{x: (clientWidth > 768 ? showColumnLength * 160 : 0) + 'px', y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
                         (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
                         [page]="dataPage.page" [size]="'middle'"
                     >
                         <ng-template #bodyTpl>
-                            <ng-container>
-                                <tr *ngFor="let row of extraRows" [ngClass]="row.className">
-                                    <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
-                                        [ngClass]="column.className">
-                                        {{ column.value }}
-                                    </td>
-                                </tr>
-                            </ng-container>
+                            <tr *ngFor="let row of extraRows" [ngClass]="row.className">
+                                <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
+                                    [ngClass]="column.className">
+                                    {{ column.value }}
+                                </td>
+                            </tr>
                         </ng-template>
                     </st>
                     <ng-container *ngIf="dataPage.showPagination">

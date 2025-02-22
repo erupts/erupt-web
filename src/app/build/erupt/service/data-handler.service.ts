@@ -6,7 +6,7 @@ import {Inject, Injectable} from "@angular/core";
 import {EruptBuildModel} from "../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {DatePipe} from "@angular/common";
-import * as moment from 'moment';
+import moment from 'moment';
 import {QueryCondition} from "../model/erupt.vo";
 import {isNotNull} from "@shared/util/erupt.util";
 import {NzModalService} from "ng-zorro-antd/modal";
@@ -456,7 +456,6 @@ export class DataHandlerService {
                                     break;
                             }
                         }
-
                         break;
                     case EditType.REFERENCE_TREE:
                         if (object[field.fieldName]) {
@@ -513,6 +512,7 @@ export class DataHandlerService {
                     case EditType.TAB_TABLE_ADD:
                     case EditType.TAB_TABLE_REFER:
                         edit.$value = object[field.fieldName] || [];
+                        // edit.$value.forEach(val => this.objectToEruptValue(val, eruptBuild.tabErupts[field.fieldName]))
                         break;
                     default:
                         edit.$value = object[field.fieldName];

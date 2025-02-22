@@ -29,7 +29,7 @@ import {EruptAppData} from "@shared/model/erupt-app.model";
 })
 export class HeaderI18nComponent {
 
-    langs: Array<{ code: string; text: string; abbr: string }> = [];
+    langs: { code: string; text: string; abbr: string }[] = [];
 
     curLangCode: string;
 
