@@ -58,7 +58,8 @@ export class UiBuildService {
                     text: view.title,
                     optional: "   ",
                     optionalHelp: view.desc
-                }
+                },
+                iif: () => view.show,
             };
             obj["show"] = view.show;
             if (lineData) {

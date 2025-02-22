@@ -40,7 +40,7 @@
 
 在开始之前，请确保你的开发环境中包括 Node.js 和 npm 包管理器。
 
-Angular 需要 Node.js 版本 10.9.0 或更高版本。
+Angular 需要 Node.js 版本 16.14.0 或更高版本。
 
 要检查你的版本，请在终端/控制台窗口中运行 node -v
 
@@ -63,7 +63,7 @@ yarn install
 
 4. 启动：
 ```shell script
-yarn run start
+yarn start
 ```
 
 

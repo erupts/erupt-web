@@ -6,7 +6,7 @@ import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
-import  {cloneDeep}  from "lodash";
+import {cloneDeep} from "lodash";
 import {
     FormSize,
     OperationIfExprBehavior,
@@ -100,9 +100,6 @@ export class TableComponent implements OnInit, OnDestroy {
 
     downloading: boolean = false;
 
-    //操作按钮数量
-    operationButtonNum = 0;
-
     _drill: DrillInput;
 
     dataPage: {
@@ -139,6 +136,8 @@ export class TableComponent implements OnInit, OnDestroy {
     header: object;
 
     refreshTimeInterval: any;
+
+    existMultiRowFoldButtons: boolean = false;
 
     @Input() set drill(drill: DrillInput) {
         this._drill = drill;
@@ -213,13 +212,15 @@ export class TableComponent implements OnInit, OnDestroy {
         this.eruptBuildModel = null;
         this.searchErupt = null;
         this.hasSearchFields = false;
-        this.operationButtonNum = 0;
+        this.existMultiRowFoldButtons = false;
         this.header = req.header;
         this.dataPage.url = req.url;
         observable.subscribe(eb => {
                 eb.eruptModel.eruptJson.rowOperation.forEach((item) => {
                     if (item.mode != OperationMode.SINGLE) {
-                        this.operationButtonNum++;
+                        if (item.fold) {
+                            this.existMultiRowFoldButtons = true;
+                        }
                     }
                 })
                 let layout = eb.eruptModel.eruptJson.layout;
@@ -407,12 +408,12 @@ export class TableComponent implements OnInit, OnDestroy {
                 return false;
             }
         }
-        let foldButtons = [];
+        let isFoldButtons = false;
         for (let i in this.eruptBuildModel.eruptModel.eruptJson.rowOperation) {
             let ro = this.eruptBuildModel.eruptModel.eruptJson.rowOperation[i];
             if (ro.mode !== OperationMode.BUTTON && ro.mode !== OperationMode.MULTI_ONLY) {
                 if (ro.fold) {
-                    foldButtons.push(ro)
+                    isFoldButtons = true;
                 } else {
                     let text = "";
                     if (ro.icon) {
@@ -460,14 +461,18 @@ export class TableComponent implements OnInit, OnDestroy {
 
         for (let i in eruptJson.drills) {
             let drill = eruptJson.drills[i];
-            tableButtons.push({
-                type: 'link',
-                tooltip: drill.title,
-                text: `<i class="${drill.icon}"></i>`,
-                click: (record) => {
-                    createDrillModel(drill, record[eruptJson.primaryKeyCol]);
-                }
-            });
+            if (drill.fold) {
+                isFoldButtons = true;
+            } else {
+                tableButtons.push({
+                    type: 'link',
+                    tooltip: drill.title,
+                    text: `<i class="${drill.icon}"></i>`,
+                    click: (record) => {
+                        createDrillModel(drill, record[eruptJson.primaryKeyCol]);
+                    }
+                });
+            }
             editButtons.push({
                 label: drill.title,
                 type: 'dashed',
@@ -583,18 +588,27 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         tableOperators.push(...tableButtons);
-        if (foldButtons.length > 0) {
+        if (isFoldButtons) {
             let children: STColumnButton[] = [];
-            for (let btn of foldButtons) {
-                children.push({
-                    // icon: btn.icon && `<i class="${btn.icon}"></i>`,
-                    text: btn.title,
+            eruptJson.rowOperation.forEach(ro => {
+                if (ro.mode !== OperationMode.BUTTON && ro.mode !== OperationMode.MULTI_ONLY) {
+                    ro.fold && children.push({
+                        text: ro.title,
+                        iifBehavior: 'disabled',
+                        tooltip: ro.tip,
+                        iif: (item) => exprEval(ro.ifExpr, item),
+                        click: (record) => that.createOperator(ro, record)
+                    })
+                }
+            });
+            eruptJson.drills.forEach(drill => {
+                drill.fold && children.push({
+                    text: drill.title,
                     iifBehavior: 'disabled',
-                    tooltip: btn.tooltip,
-                    iif: (item) => exprEval(btn.ifExpr, item),
-                    click: (record) => that.createOperator(btn, record)
+                    // tooltip: drill.title,
+                    click: (record) => createDrillModel(drill, record[eruptJson.primaryKeyCol])
                 })
-            }
+            });
             tableOperators.push({
                 text: this.i18n.fanyi("global.more") + " ",
                 children: children
@@ -604,7 +618,7 @@ export class TableComponent implements OnInit, OnDestroy {
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                width: tableOperators.length * 35 + 18 + (foldButtons.length ? 60 : 0),
+                width: tableOperators.length * 35 + 18 + (isFoldButtons ? 60 : 0),
                 className: "text-center",
                 buttons: tableOperators,
                 resizable: false
@@ -645,7 +659,6 @@ export class TableComponent implements OnInit, OnDestroy {
                     nzMaskClosable: false,
                     nzWidth: ro.tpl.width,
                     nzStyle: {top: "20px"},
-                    // nzWrapClassName: "modal-xxl",
                     nzWrapClassName: ro.tpl.width || "modal-lg",
                     nzBodyStyle: {
                         padding: "0"
@@ -658,6 +671,7 @@ export class TableComponent implements OnInit, OnDestroy {
                     }
                 });
                 ref.getContentComponent().url = url;
+                ref.getContentComponent().height = ro.tpl.height;
             } else {
                 let placement = ro.tpl.drawerPlacement;
                 this.drawerService.create({

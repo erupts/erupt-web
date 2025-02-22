@@ -209,6 +209,13 @@ export class TreeComponent implements OnInit, OnDestroy {
                 this.dataLength = tree.length;
                 this.nodes = this.dataHandler.dataTreeToZorroTree(tree, this.eruptBuildModel.eruptModel.eruptJson.tree.expandLevel);
                 this.rollTreePoint();
+                if (this.searchValue) {
+                    let temp = this.searchValue;
+                    this.searchValue = null;
+                    setTimeout(() => {
+                        this.searchValue = temp;
+                    }, 0)
+                }
             }
         });
     }

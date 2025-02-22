@@ -63,6 +63,7 @@ interface LinkTree {
 export interface Drill {
     code: string;
     title: string;
+    fold: boolean;
     icon: string;
     column: string;
     link: Link;
