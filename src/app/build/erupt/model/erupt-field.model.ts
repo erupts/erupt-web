@@ -9,6 +9,8 @@ import {
     TabEnum,
     ViewType
 } from "./erupt.enum";
+import {KeyValueDiffer} from "@angular/core";
+import {Subject} from "rxjs";
 
 
 export interface EruptFieldModel {
@@ -96,7 +98,11 @@ export interface Edit {
     codeEditType?: CodeEditType;
     mapType?: MapType;
     $tabTreeViewData?: any;
+
+    $valueDiff?: KeyValueDiffer<any, any>;
+    $valueSubject?: Subject<any>
     $value?: any;
+
     $viewValue?: any;
     $tempValue?: any;
     $beforeValue?: any;
@@ -183,6 +189,7 @@ interface ChoiceType {
 
 interface MultiChoiceType {
     type: MultiChoiceEnum;
+    dependField: string;
 }
 
 interface TagsType {
@@ -232,5 +239,4 @@ export interface VL {
     label: string;
     desc: string;
     disable: boolean;
-    $viewValue?: any;
 }

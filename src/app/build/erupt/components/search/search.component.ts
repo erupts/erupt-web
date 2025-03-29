@@ -1,16 +1,26 @@
-import {Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import {
+    Component,
+    DoCheck,
+    EventEmitter,
+    Input,
+    KeyValueDiffers,
+    OnInit,
+    Output,
+    QueryList,
+    ViewChildren
+} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
-import {ChoiceEnum, DateEnum, EditType} from "../../model/erupt.enum";
+import {ChoiceEnum, EditType} from "../../model/erupt.enum";
 import {colRules} from "@shared/model/util.model";
-import {DataHandlerService} from "../../service/data-handler.service";
 import {ChoiceComponent} from "../choice/choice.component";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
     selector: 'erupt-search',
     templateUrl: './search.component.html',
     styleUrls: ['./search.component.less']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, DoCheck {
 
     @Input() searchEruptModel: EruptModel;
 
@@ -27,26 +37,23 @@ export class SearchComponent implements OnInit {
 
     choiceEnum = ChoiceEnum;
 
-    dateEnum = DateEnum;
 
-
-    constructor(private dataHandlerService: DataHandlerService) {
+    constructor(private differs: KeyValueDiffers,) {
     }
 
-    // ngDoCheck(): void {
-    //     if (this.choices && this.choices.length > 0) {
-    //         for (let choice of this.choices) {
-    //             this.dataHandlerService.eruptFieldModelChangeHook(this.searchEruptModel, choice.eruptField, (value) => {
-    //                 for (let choice of this.choices) {
-    //                     choice.dependChange(value);
-    //                 }
-    //             });
-    //         }
-    //     }
-    // }
+    ngDoCheck(): void {
+        for (let eruptFieldModel of this.searchEruptModel.eruptFieldModels) {
+            if (eruptFieldModel.eruptFieldJson.edit.$valueDiff.diff(eruptFieldModel.eruptFieldJson.edit)) {
+                eruptFieldModel.eruptFieldJson.edit.$valueSubject.next(eruptFieldModel.eruptFieldJson.edit.$value);
+            }
+        }
+    }
 
     ngOnInit(): void {
-
+        for (let model of this.searchEruptModel.eruptFieldModels) {
+            model.eruptFieldJson.edit.$valueDiff = this.differs.find(model.eruptFieldJson.edit).create();
+            model.eruptFieldJson.edit.$valueSubject = new BehaviorSubject<any>(null);
+        }
     }
 
     enterEvent(event) {
