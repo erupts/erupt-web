@@ -43,7 +43,6 @@ import {
     zh_CN as zorroZhCN,
     zh_TW as zorroZhTW
 } from 'ng-zorro-antd/i18n';
-import {HttpClient} from "@angular/common/http";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 
 interface LangConfigData {
@@ -129,7 +128,7 @@ for (let key in LANGS) {
 
 
 @Injectable()
-export class I18NService implements OnInit{
+export class I18NService implements OnInit {
 
     currentLang: string;
 
@@ -173,11 +172,42 @@ export class I18NService implements OnInit{
                     }
                 }
                 allRows.forEach(it => {
-                    let row = it.split(',');
+                    let row = parseCSVRow(it);
                     langMapping[row[0]] = row[index];
                 })
                 this.langMapping = langMapping;
                 success();
+            }
+
+            function parseCSVRow(row): any[] {
+                let result = [];
+                let field = '';
+                let inQuotes = false;
+                let escapeNext = false;
+
+                for (let i = 0; i < row.length; i++) {
+                    let char = row[i];
+
+                    if (escapeNext) {
+                        field += char;
+                        escapeNext = false;
+                    } else if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(field);
+                        field = '';
+                    } else if (char === '\\') {
+                        escapeNext = true;
+                    } else {
+                        field += char;
+                    }
+                }
+
+                if (field.length > 0) {
+                    result.push(field);
+                }
+
+                return result;
             }
         };
 
