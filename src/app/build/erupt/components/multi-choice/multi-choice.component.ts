@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MultiChoiceEnum} from "../../model/erupt.enum";
 import {EruptModel} from "../../model/erupt.model";
-import {EruptFieldModel, VL} from "../../model/erupt-field.model";
+import {EruptFieldModel} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 
 @Component({
@@ -33,10 +33,17 @@ export class MultiChoiceComponent implements OnInit {
                 .eruptFieldJson.edit.$valueSubject?.asObservable().subscribe(val => {
                 this.dataService.findChoiceItemFilter(this.eruptModel.eruptName, this.eruptField.fieldName, this.getFromData(), this.eruptParentName).subscribe(data => {
                     this.eruptField.componentValue = data;
+                    if (this.eruptField.eruptFieldJson.edit.$value) {
+                        this.eruptField.eruptFieldJson.edit.$value = this.eruptField.eruptFieldJson.edit.$value.filter((value) => {
+                            return this.eruptField.componentValue.some(cv => cv.value == String(value));
+                        })
+
+                        //
+                        // if (this.eruptField.componentValue.filter((it: VL) => this.eruptField.eruptFieldJson.edit.$value?.some(value => String(value) === it.value)).length == 0) {
+                        //     this.eruptField.eruptFieldJson.edit.$value = [];
+                        // }
+                    }
                 })
-                if (this.eruptField.componentValue.filter((it: VL) => this.eruptField.eruptFieldJson.edit.$value?.some(value => String(value) === it.value)).length == 0) {
-                    this.eruptField.eruptFieldJson.edit.$value = [];
-                }
             })
         }
     }
