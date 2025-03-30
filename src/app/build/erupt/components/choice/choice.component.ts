@@ -44,9 +44,15 @@ export class ChoiceComponent implements OnInit {
         if (this.eruptField.eruptFieldJson.edit.choiceType.dependField) {
             this.eruptModel.eruptFieldModelMap.get(this.eruptField.eruptFieldJson.edit.choiceType.dependField).eruptFieldJson.edit.$valueSubject?.asObservable().subscribe(val => {
                 let choiceType = this.eruptField.eruptFieldJson.edit.choiceType;
+                let clean = () => {
+                    if (this.choiceVL.filter(it => it.value == this.eruptField.eruptFieldJson.edit.$value).length == 0) {
+                        this.eruptField.eruptFieldJson.edit.$value = null;
+                    }
+                }
                 if (choiceType.dependExpr == '') {
                     this.dataService.findChoiceItemFilter(this.eruptModel.eruptName, this.eruptField.fieldName, this.getFromData(), this.eruptParentName).subscribe(data => {
                         this.choiceVL = data;
+                        clean();
                     })
                 } else {
                     this.choiceVL = this.eruptField.componentValue.filter(vl => {
@@ -54,12 +60,12 @@ export class ChoiceComponent implements OnInit {
                             return eval(choiceType.dependExpr);
                         } catch (e) {
                             this.msg.error(e);
+                        } finally {
+                            clean();
                         }
                     })
                 }
-                if (this.choiceVL.filter(it => it.value == this.eruptField.eruptFieldJson.edit.$value).length == 0) {
-                    this.eruptField.eruptFieldJson.edit.$value = null;
-                }
+
             })
         } else {
             this.choiceVL = this.eruptField.componentValue
