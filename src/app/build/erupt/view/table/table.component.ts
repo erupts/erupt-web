@@ -92,8 +92,6 @@ export class TableComponent implements OnInit, OnDestroy {
 
     columns: STColumn[];
 
-    showColumnLength: number;
-
     linkTree: boolean = false;
 
     showTable: boolean = true;
@@ -138,6 +136,8 @@ export class TableComponent implements OnInit, OnDestroy {
     refreshTimeInterval: any;
 
     existMultiRowFoldButtons: boolean = false;
+
+    tableWidth: string;
 
     @Input() set drill(drill: DrillInput) {
         this._drill = drill;
@@ -615,6 +615,8 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         if (tableOperators.length > 0) {
+            console.log(tableOperators.length * 35 + 18 + (isFoldButtons ? 60 : 0))
+            console.log(tableOperators)
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
@@ -625,7 +627,11 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         this.columns = _columns;
-        this.showColumnLength = this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length;
+        if (eruptJson.layout.tableWidth && eruptJson.layout.tableWidth > 0) {
+            this.tableWidth = eruptJson.layout.tableWidth + "px";
+        } else {
+            this.tableWidth = (this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length * 160) + "px"
+        }
     }
 
 

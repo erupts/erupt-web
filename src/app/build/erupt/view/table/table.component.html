@@ -75,17 +75,20 @@
                                 </ng-container>
                             </ng-container>
                             <ng-container *ngIf="existMultiRowFoldButtons">
-                                <button nz-button nz-dropdown [nzDropdownMenu]="moreButtons" nzPlacement="bottomRight" style="margin-right: 8px;margin-left: 0" class="mb-sm">
+                                <button nz-button nz-dropdown [nzDropdownMenu]="moreButtons" nzPlacement="bottomRight"
+                                        style="margin-right: 8px;margin-left: 0" class="mb-sm">
                                     <i nz-icon nzType="ellipsis"></i>
                                 </button>
                                 <nz-dropdown-menu #moreButtons="nzDropdownMenu">
                                     <ul nz-menu>
-                                        <ng-container *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation">
+                                        <ng-container
+                                            *ngFor="let item of eruptBuildModel.eruptModel.eruptJson.rowOperation">
                                             <ng-container *ngIf="item.mode != operationMode.SINGLE">
                                                 <ng-container *ngIf="item.fold">
                                                     <li nz-menu-item [nz-tooltip]="item.tip"
                                                         (click)="createOperator(item)">
-                                                        <i *ngIf="item.icon" class="fa" [ngClass]="item.icon" style="margin-right: 8px"></i>
+                                                        <i *ngIf="item.icon" class="fa" [ngClass]="item.icon"
+                                                           style="margin-right: 8px"></i>
                                                         <span>{{ item.title }}</span>
                                                     </li>
                                                 </ng-container>
@@ -152,7 +155,7 @@
                         [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
                         [virtualScroll]="dataPage.data.length >= 100"
                         [virtualItemSize]="47"
-                        [scroll]="{x: (clientWidth > 768 ? showColumnLength * 160 : 0) + 'px', y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
+                        [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
                         (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
                         [page]="dataPage.page" [size]="'middle'"
                     >
