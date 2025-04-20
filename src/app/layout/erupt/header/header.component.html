@@ -1,7 +1,7 @@
 <div class="alain-default__header-logo" ripper color="#000">
     <a [routerLink]="settings.user['indexPath']" (click)="toIndex()" class="header-link" style="user-select:none">
         <img *ngIf="logoPath" [src]="logoPath" class="header-logo-img" alt=""/>
-        <span *ngIf="logoText" class="header-logo-text hidden-mobile">{{logoText}}</span>
+        <span *ngIf="logoText" class="header-logo-text hidden-mobile">{{ logoText }}</span>
     </a>
 </div>
 
@@ -76,6 +76,11 @@
                     </erupt-settings>
                 </ng-container>
             </nz-drawer>
+        </li>
+        <li *ngIf="isEruptAi">
+            <div class="alain-default__nav-item" (click)="openEruptAi()">
+                <i class="fa fa-magic" aria-hidden="true"></i>
+            </div>
         </li>
 
         <li>
