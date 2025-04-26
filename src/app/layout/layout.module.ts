@@ -19,6 +19,7 @@ import {NzGridModule} from 'ng-zorro-antd/grid';
 import {NzIconModule} from 'ng-zorro-antd/icon';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {NzSpinModule} from 'ng-zorro-antd/spin';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 // eslint-disable-next-line import/order
 import {LayoutBlankComponent} from './blank/blank.component';
@@ -92,7 +93,8 @@ const PASSPORT = [LayoutPassportComponent];
         NzBackTopModule,
         ReuseTabModule,
         NzBreadCrumbModule,
-        NzWaterMarkModule
+        NzWaterMarkModule,
+        DragDropModule
     ],
     declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT, MenuComponent],
     exports: [...COMPONENTS, ...PASSPORT]
