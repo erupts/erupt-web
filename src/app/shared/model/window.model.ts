@@ -18,6 +18,8 @@ export class WindowModel {
 
     public static logoPath: string;
 
+    public static logoFoldPath: string;
+
     public static loginLogoPath: string;
 
     public static logoText: string;
@@ -37,6 +39,7 @@ export class WindowModel {
         WindowModel.title = WindowModel.config["title"] || 'Erupt Framework';
         WindowModel.desc = WindowModel.config["desc"] || undefined;
         WindowModel.logoPath = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "erupt.svg");
+        WindowModel.logoFoldPath = WindowModel.config["logoFoldPath"] || WindowModel.logoPath;
         WindowModel.loginLogoPath = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
         WindowModel.logoText = WindowModel.config["logoText"] || "";
         WindowModel.registerPage = WindowModel.config["registerPage"] || undefined; //注册页面地址
@@ -72,6 +75,8 @@ export interface CustomerTool {
     text: string;
 
     mobileHidden: boolean;
+
+    render: string;
 
     load(): void;
 

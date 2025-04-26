@@ -32,6 +32,8 @@ export class HeaderComponent implements OnInit {
 
     logoPath: string = WindowModel.logoPath;
 
+    logoFoldPath: string = WindowModel.logoFoldPath;
+
     logoText: string = WindowModel.logoText;
 
     r_tools: CustomerTool[] = WindowModel.r_tools;
