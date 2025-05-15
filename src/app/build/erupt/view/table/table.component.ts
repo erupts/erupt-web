@@ -615,20 +615,18 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         if (tableOperators.length > 0) {
-            console.log(tableOperators.length * 35 + 18 + (isFoldButtons ? 60 : 0))
-            console.log(tableOperators)
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                width: tableOperators.length * 35 + 18 + (isFoldButtons ? 60 : 0),
+                width: eruptJson.layout.tableOperatorWidth ? eruptJson.layout.tableOperatorWidth : (tableOperators.length * 35 + 18 + (isFoldButtons ? 60 : 0)),
                 className: "text-center",
                 buttons: tableOperators,
                 resizable: false
             });
         }
         this.columns = _columns;
-        if (eruptJson.layout.tableWidth && eruptJson.layout.tableWidth > 0) {
-            this.tableWidth = eruptJson.layout.tableWidth + "px";
+        if (eruptJson.layout.tableWidth) {
+            this.tableWidth = eruptJson.layout.tableWidth;
         } else {
             this.tableWidth = (this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length * 160) + "px"
         }
