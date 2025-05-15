@@ -593,7 +593,7 @@ export class TableComponent implements OnInit, OnDestroy {
             eruptJson.rowOperation.forEach(ro => {
                 if (ro.mode !== OperationMode.BUTTON && ro.mode !== OperationMode.MULTI_ONLY) {
                     ro.fold && children.push({
-                        text: ro.title,
+                        text: (ro.icon && `<i class=\"${ro.icon}\"></i> &nbsp;`) + ro.title,
                         iifBehavior: 'disabled',
                         tooltip: ro.tip,
                         iif: (item) => exprEval(ro.ifExpr, item),
@@ -603,7 +603,7 @@ export class TableComponent implements OnInit, OnDestroy {
             });
             eruptJson.drills.forEach(drill => {
                 drill.fold && children.push({
-                    text: drill.title,
+                    text: (drill.icon && `<i class=\"${drill.icon}\"></i> &nbsp;`) + drill.title,
                     iifBehavior: 'disabled',
                     // tooltip: drill.title,
                     click: (record) => createDrillModel(drill, record[eruptJson.primaryKeyCol])
