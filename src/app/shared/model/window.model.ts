@@ -6,8 +6,6 @@ export class WindowModel {
 
     public static fileDomain: string = WindowModel.config["fileDomain"] || undefined;
 
-    public static r_tools: CustomerTool[];
-
     public static amapKey: string;
 
     public static amapSecurityJsCode: string;
@@ -30,10 +28,15 @@ export class WindowModel {
 
     public static copyrightTxt: any; //授权文本
 
+    public static r_tools: CustomerTool[];
+
+    public static userTools: UserTool[];
+
     public static upload: Function;
 
     public static init() {
         WindowModel.r_tools = WindowModel.config["r_tools"] || [];
+        WindowModel.userTools = WindowModel.config["userTools"] || [];
         WindowModel.amapKey = WindowModel.config["amapKey"];
         WindowModel.amapSecurityJsCode = WindowModel.config["amapSecurityJsCode"];
         WindowModel.title = WindowModel.config["title"] || 'Erupt Framework';
@@ -65,6 +68,14 @@ export class WindowModel {
 interface EventCycle {
     load: (e?: any) => void,
     unload: (e?: any) => void,
+}
+
+export interface UserTool {
+    icon:string;
+
+    text: string;
+
+    click(event: Event): void;
 }
 
 
