@@ -35,7 +35,7 @@
             <li (click)="customToolsFun($event,r)" [ngClass]="r.mobileHidden?'hidden-mobile':''">
                 <div class="alain-default__nav-item" [title]="r.text">
                     <i *ngIf="r.icon" class="fa {{r.icon}}"></i>
-                    <div *ngIf="r.render" [innerHTML]="r.render | safeHtml"></div>
+                    <div *ngIf="r.render" [innerHTML]="renderTool(r) | safeHtml"></div>
                 </div>
             </li>&nbsp;
         </ng-container>
