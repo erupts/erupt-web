@@ -87,7 +87,7 @@ export interface CustomerTool {
 
     mobileHidden: boolean;
 
-    render: string;
+    render: string | Function;
 
     load(): void;
 

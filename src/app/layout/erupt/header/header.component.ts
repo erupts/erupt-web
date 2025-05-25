@@ -82,6 +82,14 @@ export class HeaderComponent implements OnInit {
         }
     }
 
+    renderTool(tool: CustomerTool): string {
+        if (typeof tool.render == 'function') {
+            return tool.render();
+        } else {
+            return tool.render;
+        }
+    }
+
     openEruptAi() {
         let model = this.modal.create({
             nzWrapClassName: "modal-lg",
