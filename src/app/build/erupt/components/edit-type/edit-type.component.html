@@ -192,7 +192,7 @@
                                     [optionalHelp]="field.eruptFieldJson.edit.desc">
                                     <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
                                                   [eruptParentName]="parentEruptName" [editType]="this"
-                                                  [readonly]="isReadonly(field)" #choice>
+                                                  [readonly]="isReadonly(field)">
 
                                     </erupt-choice>
                                 </se>
@@ -220,6 +220,7 @@
                                     [required]="field.eruptFieldJson.edit.notNull"
                                     [optionalHelp]="field.eruptFieldJson.edit.desc">
                                     <erupt-multi-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
+                                                        [eruptParentName]="parentEruptName"
                                                         [readonly]="isReadonly(field)">
 
                                     </erupt-multi-choice>

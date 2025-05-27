@@ -163,15 +163,6 @@ export class DataHandlerService {
             if (edit.search.value) {
                 if (edit.search.vague) {
                     switch (edit.type) {
-                        case EditType.CHOICE:
-                            let arr = [];
-                            for (let vl of field.componentValue) {
-                                if (vl.$viewValue) {
-                                    arr.push(vl.value);
-                                }
-                            }
-                            obj[field.fieldName] = arr;
-                            break;
                         case EditType.NUMBER:
                             if ((edit.$l_val || edit.$l_val === 0) && (edit.$r_val || edit.$r_val === 0)) {
                                 obj[field.fieldName] = [edit.$l_val, edit.$r_val];
@@ -582,24 +573,6 @@ export class DataHandlerService {
             this.emptyEruptValue({
                 eruptModel: eruptBuildModel.combineErupts[key]
             });
-        }
-    }
-
-    /**
-     * eruptModel value值数据变换触发钩子
-     */
-    eruptFieldModelChangeHook(eruptModel: EruptModel, field: EruptFieldModel, callback: Function) {
-        let edit = field.eruptFieldJson.edit;
-        if (edit.type == EditType.CHOICE && edit.choiceType.dependField) {
-            let depField = eruptModel.eruptFieldModelMap.get(edit.choiceType.dependField);
-            if (depField) {
-                let depEdit = depField.eruptFieldJson.edit;
-                if (depEdit.$beforeValue != depEdit.$value) {
-                    callback(depEdit.$value)
-                    null != depEdit.$beforeValue && (edit.$value = null);
-                    depEdit.$beforeValue = depEdit.$value;
-                }
-            }
         }
     }
 
