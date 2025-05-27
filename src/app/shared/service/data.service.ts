@@ -210,6 +210,16 @@ export class DataService {
         });
     }
 
+    findChoiceItemFilter(eruptName: string, field: string, data: object, eruptParentName?: string): Observable<VL[]> {
+        return this._http.post(RestPath.component + "/choice-item-filter/" + eruptName + "/" + field, data, {}, {
+            observe: "body",
+            headers: {
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
+            }
+        });
+    }
+
     findTagsItem(eruptName: string, field: string, eruptParentName?: string): Observable<string[]> {
         return this._http.get<string[]>(RestPath.component + "/tags-item/" + eruptName + "/" + field, null, {
             observe: "body",

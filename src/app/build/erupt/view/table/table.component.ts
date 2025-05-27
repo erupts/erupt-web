@@ -92,8 +92,6 @@ export class TableComponent implements OnInit, OnDestroy {
 
     columns: STColumn[];
 
-    showColumnLength: number;
-
     linkTree: boolean = false;
 
     showTable: boolean = true;
@@ -138,6 +136,8 @@ export class TableComponent implements OnInit, OnDestroy {
     refreshTimeInterval: any;
 
     existMultiRowFoldButtons: boolean = false;
+
+    tableWidth: string;
 
     @Input() set drill(drill: DrillInput) {
         this._drill = drill;
@@ -593,7 +593,7 @@ export class TableComponent implements OnInit, OnDestroy {
             eruptJson.rowOperation.forEach(ro => {
                 if (ro.mode !== OperationMode.BUTTON && ro.mode !== OperationMode.MULTI_ONLY) {
                     ro.fold && children.push({
-                        text: ro.title,
+                        text: (ro.icon && `<i class=\"${ro.icon}\"></i> &nbsp;`) + ro.title,
                         iifBehavior: 'disabled',
                         tooltip: ro.tip,
                         iif: (item) => exprEval(ro.ifExpr, item),
@@ -603,7 +603,7 @@ export class TableComponent implements OnInit, OnDestroy {
             });
             eruptJson.drills.forEach(drill => {
                 drill.fold && children.push({
-                    text: drill.title,
+                    text: (drill.icon && `<i class=\"${drill.icon}\"></i> &nbsp;`) + drill.title,
                     iifBehavior: 'disabled',
                     // tooltip: drill.title,
                     click: (record) => createDrillModel(drill, record[eruptJson.primaryKeyCol])
@@ -618,14 +618,18 @@ export class TableComponent implements OnInit, OnDestroy {
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                width: tableOperators.length * 35 + 18 + (isFoldButtons ? 60 : 0),
+                width: eruptJson.layout.tableOperatorWidth ? eruptJson.layout.tableOperatorWidth : (tableOperators.length * 35 + 18 + (isFoldButtons ? 60 : 0)),
                 className: "text-center",
                 buttons: tableOperators,
                 resizable: false
             });
         }
         this.columns = _columns;
-        this.showColumnLength = this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length;
+        if (eruptJson.layout.tableWidth) {
+            this.tableWidth = eruptJson.layout.tableWidth;
+        } else {
+            this.tableWidth = (this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length * 160) + "px"
+        }
     }
 
 

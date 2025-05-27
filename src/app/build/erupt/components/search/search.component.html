@@ -75,9 +75,7 @@
                         <ng-container *ngIf="field.eruptFieldJson.edit.search.vague">
                             <div nz-col [nzXs]="24">
                                 <erupt-search-se [field]="field">
-                                    <erupt-choice [eruptModel]="searchEruptModel" [eruptField]="field" [size]="size"
-                                                  [vagueSearch]="true" [checkAll]="true" #choice
-                                                  [dependLinkage]="false">
+                                    <erupt-choice [eruptModel]="searchEruptModel" [eruptField]="field" [size]="size" [vagueSearch]="true" [checkAll]="true">
 
                                     </erupt-choice>
                                 </erupt-search-se>
@@ -88,8 +86,7 @@
                                 <ng-container *ngSwitchCase="choiceEnum.RADIO">
                                     <div nz-col [nzXs]="24">
                                         <erupt-search-se [field]="field">
-                                            <erupt-choice [eruptModel]="searchEruptModel" [eruptField]="field"
-                                                          [size]="size" #choice [dependLinkage]="false">
+                                            <erupt-choice [eruptModel]="searchEruptModel" [eruptField]="field" [size]="size" >
 
                                             </erupt-choice>
                                         </erupt-search-se>
@@ -101,8 +98,7 @@
                                          [nzXl]="col.xl"
                                          [nzXXl]="col.xxl">
                                         <erupt-search-se [field]="field">
-                                            <erupt-choice [eruptModel]="searchEruptModel" [eruptField]="field"
-                                                          [size]="size" [dependLinkage]="false" #choice>
+                                            <erupt-choice [eruptModel]="searchEruptModel" [eruptField]="field" [size]="size">
 
                                             </erupt-choice>
                                         </erupt-search-se>

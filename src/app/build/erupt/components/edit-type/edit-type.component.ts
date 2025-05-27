@@ -1,4 +1,4 @@
-import {Component, DoCheck, Inject, Input, OnDestroy, OnInit, QueryList, ViewChildren} from "@angular/core";
+import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {
     AttachmentEnum,
@@ -21,7 +21,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzUploadFile} from "ng-zorro-antd/upload/interface";
 import {DataHandlerService} from "../../service/data-handler.service";
-import {ChoiceComponent} from "../choice/choice.component";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
     selector: "erupt-edit-type",
@@ -51,8 +51,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     @Input() readonly: boolean = false;
 
-    @ViewChildren('choice') choices: QueryList<ChoiceComponent>;
-
     private showByFieldModels: EruptFieldModel[];
 
     eruptModel: EruptModel;
@@ -75,6 +73,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     constructor(public dataService: DataService,
                 private i18n: I18NService,
+                private differs: KeyValueDiffers,
                 private dataHandlerService: DataHandlerService,
                 @Inject(DA_SERVICE_TOKEN) public tokenService: ITokenService,
                 @Inject(NzModalService) private modal: NzModalService,
@@ -89,6 +88,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             this.col = colRules[1];
         }
         for (let model of this.eruptModel.eruptFieldModels) {
+            model.eruptFieldJson.edit.$valueDiff = this.differs.find(model.eruptFieldJson.edit).create();
+            model.eruptFieldJson.edit.$valueSubject = new BehaviorSubject<any>(null);
             let edit = model.eruptFieldJson.edit;
             if (edit.type == EditType.ATTACHMENT) {
                 if (!edit.$viewValue) {
@@ -119,6 +120,11 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     ngDoCheck() {
+        for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
+            if (eruptFieldModel.eruptFieldJson.edit.$valueDiff.diff(eruptFieldModel.eruptFieldJson.edit)) {
+                eruptFieldModel.eruptFieldJson.edit.$valueSubject.next(eruptFieldModel.eruptFieldJson.edit.$value);
+            }
+        }
         if (this.showByFieldModels) {
             for (let model of this.showByFieldModels) {
                 let showBy = model.eruptFieldJson.edit.showBy;
@@ -131,21 +137,16 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 }
             }
         }
-        if (this.choices && this.choices.length > 0) {
-            for (let choice of this.choices) {
-                this.dataHandlerService.eruptFieldModelChangeHook(this.eruptModel, choice.eruptField, (value) => {
-                    for (let choice of this.choices) {
-                        choice.dependChange(value);
-                    }
-                });
-            }
-        }
     }
 
     showByCheck(model: EruptFieldModel) {
         let showBy = model.eruptFieldJson.edit.showBy;
         let value = this.eruptModel.eruptFieldModelMap.get(showBy.dependField).eruptFieldJson.edit.$value;
-        model.eruptFieldJson.edit.show = !!eval(showBy.expr);
+        try {
+            model.eruptFieldJson.edit.show = !!eval(showBy.expr);
+        } catch (e) {
+            console.error(model.fieldName + " showBy expr err: " + e)
+        }
     }
 
     ngOnDestroy(): void {

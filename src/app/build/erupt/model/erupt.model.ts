@@ -51,6 +51,8 @@ interface Layout {
     pageSize: number;
     pageSizes: number[];
     refreshTime: number;
+    tableWidth: string;
+    tableOperatorWidth: string;
 }
 
 

@@ -4,7 +4,7 @@ import {SettingsService} from "@delon/theme";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {DataService} from "@shared/service/data.service";
 import {I18NService} from "@core";
-import {WindowModel} from "@shared/model/window.model";
+import {UserTool, WindowModel} from "@shared/model/window.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.component";
 import {EruptAppData} from "@shared/model/erupt-app.model";
@@ -25,6 +25,12 @@ import {SocketService} from "@shared/service/socket.service";
                 <div *ngIf="settings.user['tenantName']" style="padding: 8px 12px;border-bottom:1px solid #eee">
                     {{ settings.user['tenantName'] }}
                 </div>
+                <ng-container *ngIf="userTools">
+                    <div nz-menu-item *ngFor="let tool of userTools" (click)="tool.click($event)">
+                        <i *ngIf="tool.icon" [ngClass]="tool.icon" class="mr-sm"></i>
+                        <span [innerHTML]="tool.text | safeHtml"></span>
+                    </div>
+                </ng-container>
                 <div nz-menu-item (click)="changePwd()" *ngIf="resetPassword">
                     <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>{{ 'global.reset_pwd'|translate }}
                 </div>
@@ -38,6 +44,8 @@ import {SocketService} from "@shared/service/socket.service";
 export class HeaderUserComponent {
 
     resetPassword = EruptAppData.get().resetPwd;
+
+    userTools: UserTool[] = WindowModel.userTools;
 
     constructor(
         public settings: SettingsService,

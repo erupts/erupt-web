@@ -31,9 +31,6 @@ export class ChoiceComponent implements OnInit {
 
     @Input() size: 'large' | 'small' | "default" = "default";
 
-    //是否开启联动功能
-    @Input() dependLinkage = true;
-
     isLoading = false;
 
     choiceEnum = ChoiceEnum;
@@ -44,17 +41,33 @@ export class ChoiceComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (this.vagueSearch) {
-            this.choiceVL = this.eruptField.componentValue
-            return;
-        }
-        let choiceType = this.eruptField.eruptFieldJson.edit.choiceType;
-        if (choiceType.anewFetch) {
-            if (choiceType.type == ChoiceEnum.RADIO) {
-                this.load(true);
-            }
-        }
-        if (!this.dependLinkage || !choiceType.dependField) {
+        if (this.eruptField.eruptFieldJson.edit.choiceType.dependField) {
+            this.eruptModel.eruptFieldModelMap.get(this.eruptField.eruptFieldJson.edit.choiceType.dependField).eruptFieldJson.edit.$valueSubject?.asObservable().subscribe(val => {
+                let choiceType = this.eruptField.eruptFieldJson.edit.choiceType;
+                let clean = () => {
+                    if (this.choiceVL.filter(it => it.value == this.eruptField.eruptFieldJson.edit.$value).length == 0) {
+                        this.eruptField.eruptFieldJson.edit.$value = null;
+                    }
+                }
+                if (choiceType.dependExpr == '') {
+                    this.dataService.findChoiceItemFilter(this.eruptModel.eruptName, this.eruptField.fieldName, this.getFromData(), this.eruptParentName).subscribe(data => {
+                        this.choiceVL = data;
+                        clean();
+                    })
+                } else {
+                    this.choiceVL = this.eruptField.componentValue.filter(vl => {
+                        try {
+                            return eval(choiceType.dependExpr);
+                        } catch (e) {
+                            this.msg.error(e);
+                        } finally {
+                            clean();
+                        }
+                    })
+                }
+
+            })
+        } else {
             this.choiceVL = this.eruptField.componentValue
         }
     }
@@ -73,24 +86,12 @@ export class ChoiceComponent implements OnInit {
         }
     }
 
-    //依赖值发生变化
-    dependChange(value) {
-        let choiceType = this.eruptField.eruptFieldJson.edit.choiceType;
-        if (choiceType.dependField) {
-            let dependValue = value;
-            for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
-                if (eruptFieldModel.fieldName == choiceType.dependField) {
-                    this.choiceVL = this.eruptField.componentValue.filter(vl => {
-                        try {
-                            return eval(choiceType.dependExpr);
-                        } catch (e) {
-                            this.msg.error(e);
-                        }
-                    })
-                    break;
-                }
-            }
+    getFromData(): any {
+        let result = {};
+        for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
+            result[eruptFieldModel.fieldName] = eruptFieldModel.eruptFieldJson.edit.$value;
         }
+        return result;
     }
 
     load(open) {
@@ -98,28 +99,12 @@ export class ChoiceComponent implements OnInit {
         if (open) {
             if (choiceType.anewFetch) {
                 this.isLoading = true;
-                this.dataService.findChoiceItem(this.eruptModel.eruptName, this.eruptField.fieldName, this.eruptParentName).subscribe(data => {
+                this.dataService.findChoiceItemFilter(this.eruptModel.eruptName, this.eruptField.fieldName, this.getFromData(), this.eruptParentName).subscribe(data => {
                     this.eruptField.componentValue = data;
+                    this.choiceVL = data;
                     this.isLoading = false;
-                });
+                })
             }
-            if (this.dependLinkage && choiceType.dependField) {
-                for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
-                    if (eruptFieldModel.fieldName == choiceType.dependField) {
-                        let dependValue = eruptFieldModel.eruptFieldJson.edit.$value;
-                        if (null === dependValue || "" === dependValue || undefined === dependValue) {
-                            this.msg.warning(this.i18n.fanyi("global.pre_select") + eruptFieldModel.eruptFieldJson.edit.title)
-                            this.choiceVL = [];
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    changeTagAll($event) {
-        for (let vl of this.eruptField.componentValue) {
-            vl.$viewValue = $event;
         }
     }
 

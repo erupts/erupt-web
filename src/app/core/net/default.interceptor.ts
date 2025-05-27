@@ -202,8 +202,8 @@ export class DefaultInterceptor implements HttpInterceptor {
                     });
                 } else {
                     this.modal.error({
-                        nzTitle: 'Error',
-                        nzContent: event.error.message
+                        nzTitle: event.error.message,
+                        // nzContent: event.error.message
                     });
                     Object.assign(event, {
                         status: 200, ok: true, body: {
@@ -214,7 +214,7 @@ export class DefaultInterceptor implements HttpInterceptor {
                 return of(new HttpResponse(event));
             default:
                 if (event instanceof HttpErrorResponse) {
-                    console.warn("未可知错误，大部分是由于后端无响应或无效配置引起", event);
+                    console.warn("Unknown errors, mostly due to unresponsive backend or invalid configuration", event);
                     this.msg.error(event.message);
                 }
                 break;
