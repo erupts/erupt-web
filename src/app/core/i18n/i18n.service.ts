@@ -9,6 +9,11 @@ import ngRu from '@angular/common/locales/ru';
 import ngZhTw from '@angular/common/locales/zh-Hant';
 import ngKO from '@angular/common/locales/ko';
 import ngJA from '@angular/common/locales/ja';
+import ngDe from '@angular/common/locales/de';
+import ngPt from '@angular/common/locales/pt';
+import ngId from '@angular/common/locales/id';
+import ngAr from '@angular/common/locales/ar';
+
 import {Injectable, OnInit} from '@angular/core';
 import {
     DelonLocaleService,
@@ -29,7 +34,11 @@ import {
     ko as dfKo,
     ru as dfRu,
     zhCN as dfZhCn,
-    zhTW as dfZhTw
+    zhTW as dfZhTw,
+    de as dfDe,
+    pt as dfPt,
+    id as dfId,
+    ar as dfAr
 } from 'date-fns/locale';
 import {NzSafeAny} from 'ng-zorro-antd/core/types';
 import {
@@ -41,7 +50,10 @@ import {
     NzI18nService,
     ru_RU as zorroRu,
     zh_CN as zorroZhCN,
-    zh_TW as zorroZhTW
+    zh_TW as zorroZhTW,
+    de_DE as zorroDe,
+    pt_PT as zorroPt,
+    ar_EG as zorroAr,
 } from 'ng-zorro-antd/i18n';
 import {EruptAppData} from "@shared/model/erupt-app.model";
 
@@ -119,7 +131,39 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngEs,
         zorro: zorroEs,
         delon: delonEnUS,
-    }
+    },
+    'de-DE': {
+        abbr: '🇩🇪',
+        text: 'Deutsch',
+        date: dfDe,
+        ng: ngDe,
+        zorro: zorroDe,
+        delon: delonEnUS, // 若无 delon.de_DE 可保留英文
+    },
+    'pt-PT': {
+        abbr: '🇵🇹',
+        text: 'Português',
+        date: dfPt,
+        ng: ngPt,
+        zorro: zorroPt,
+        delon: delonEnUS, // 暂无 delon.pt_PT
+    },
+    'id-ID': {
+        abbr: '🇮🇩',
+        text: 'Bahasa Indonesia',
+        date: dfId,
+        ng: ngId,
+        zorro: zorroEnUS, // fallback，zorro 无 id-ID
+        delon: delonEnUS,
+    },
+    'ar-SA': {
+        abbr: '🇸🇦',
+        text: 'العربية',
+        date: dfAr,
+        ng: ngAr,
+        zorro: zorroAr, // 使用 ar_EG 替代
+        delon: delonEnUS,
+    },
 };
 
 for (let key in LANGS) {
