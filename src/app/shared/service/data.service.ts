@@ -487,19 +487,6 @@ export class DataService {
         }, () => {
             callback();
         });
-        // let param: any = {};
-        // if (condition) {
-        //     param.condition = encodeURIComponent(JSON.stringify(condition));
-        // }
-        // DataService.postExcelFile(RestPath.excel + "/export/" + eruptName + "?" + this.createAuthParam(eruptName), param);
-    }
-
-    downloadExcel2(eruptName: string, condition: any) {
-        let param: any = {};
-        if (condition) {
-            param.condition = encodeURIComponent(JSON.stringify(condition));
-        }
-        DataService.postExcelFile(RestPath.excel + "/export/" + eruptName + "?" + this.createAuthParam(eruptName), param);
     }
 
     createAuthParam(eruptName: string): string {
