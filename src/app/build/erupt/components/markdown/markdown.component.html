@@ -1,10 +1,15 @@
-<div id="editor-md">
-    <textarea style="display:none;" *ngIf="eruptField"
-              [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
-              [name]="eruptField.fieldName">
-
-    </textarea>
-    <textarea *ngIf="value">
-            {{value}}
-    </textarea>
-</div>
+<nz-spin [nzSpinning]="loading">
+    <div [ngClass]="{'markdown-editor-container': true}" [hidden]="editorError">
+        <div #vditorContainer [style.min-height.px]="editorHeight" class="vditor-container"></div>
+    </div>
+    <div [hidden]="!editorError" class="markdown-error-container">
+        <p class="error-message">Markdown编辑器无法加载。建议更换或升级浏览器</p>
+        <textarea nz-input class="erupt-input" [name]="eruptField.fieldName"
+                  [nzAutosize]="{ minRows: 3, maxRows: 20 }"
+                  [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
+                  placeholder="Markdown编辑器无法加载。建议更换或升级浏览器"
+                  [required]="eruptField.eruptFieldJson.edit.notNull"
+                  [disabled]="readonly"
+        ></textarea>
+    </div>
+</nz-spin>

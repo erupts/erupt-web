@@ -61,10 +61,16 @@
                                 "glob": "**/*",
                                 "input": "./node_modules/monaco-editor/min/vs/",
                                 "output": "/assets/vs/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "./node_modules/vditor/",
+                                "output": "/assets/vditor/cdn"
                             }
                         ],
                         "styles": [
-                            "src/styles.less"
+                            "src/styles.less",
+                            "node_modules/vditor/src/assets/less/index.less"
                         ],
                         "scripts": [],
                         "allowedCommonJsDependencies": [

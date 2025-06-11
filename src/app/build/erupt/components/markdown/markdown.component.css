@@ -1,0 +1,19 @@
+.markdown-editor-container {
+    background: #eee;
+}
+
+.vditor-container {
+    min-height: 300px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #c4c4c4;
+}
+
+.markdown-error-container {
+    margin-top: 10px;
+}
+
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+}
