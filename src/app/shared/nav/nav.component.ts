@@ -108,7 +108,7 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
     ) {
         this.isBrowser = platform.isBrowser;
         configSrv.attach(this, 'pageHeader', {
-            home: this.i18n.fanyi("global.home"),
+            // home: this.i18n.fanyi("global.home"),
             homeLink: '/',
             autoBreadcrumb: true,
             recursiveBreadcrumb: false,
