@@ -166,7 +166,7 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <erupt-markdown [eruptField]="field" [erupt]="eruptModel"></erupt-markdown>
+                                <erupt-markdown [eruptField]="field" [erupt]="eruptModel" [readonly]="isReadonly(field)"></erupt-markdown>
                             </se>
                         </div>
                     </ng-container>
