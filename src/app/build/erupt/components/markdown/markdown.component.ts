@@ -33,7 +33,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
     private editorHeight: number = 480;
 
     // CDN路径配置
-    private cdnPath: string = 'assets/vditor/cdn';
+    private cdnPath: string = 'assets/vditor';
 
     editorError: boolean = false;
 
