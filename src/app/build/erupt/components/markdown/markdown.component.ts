@@ -32,7 +32,6 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private editorHeight: number = 480;
 
-    // CDN路径配置
     private cdnPath: string = 'assets/vditor';
 
     editorError: boolean = false;
@@ -84,23 +83,14 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         // 延迟初始化，确保 DOM 已渲染
         setTimeout(() => {
-            // 确保Vditor脚本已加载
-            this.loadVditorScript();
+            this.lazy.loadScript(`${this.cdnPath}/dist/index.min.js`).then(() => {
+                this.initVditor();
+            }).catch(error => {
+                this.loading = false;
+                this.editorError = true;
+                console.error('加载Vditor脚本失败:', error);
+            });
         }, 100);
-    }
-
-    /**
-     * 加载Vditor脚本
-     * 将脚本加载逻辑抽离为单独方法，便于维护
-     */
-    private loadVditorScript() {
-        this.lazy.loadScript(`${this.cdnPath}/dist/index.min.js`).then(() => {
-            this.initVditor();
-        }).catch(error => {
-            this.loading = false;
-            this.editorError = true;
-            console.error('加载Vditor脚本失败:', error);
-        });
     }
 
     /**
@@ -118,14 +108,13 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 
             // 获取上传URL，与原CKEditor保持一致
-            const uploadUrl = this.get_upload_url();
-
-            // 创建默认配置
-            const defaultConfig = {
+            const uploadUrl = RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
+                this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token;
+            ;
+            this.vditor = new Vditor(this.vditorContainer.nativeElement, {
                 height: this.editorHeight,
                 minHeight: 60,
                 mode: this.editorMode,
-                value: this.eruptField.eruptFieldJson.edit.$value || '',
                 cache: {
                     enable: false // 禁用缓存，避免不同实例间的缓存冲突
                 },
@@ -143,41 +132,26 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
                 },
                 theme: 'classic',
                 lang: 'zh_CN',
-                cdn: this.cdnPath,
                 fullscreen: {
-                    index: 90,
+                    index: 9999,
                 },
+                cdn: this.cdnPath,
                 toolbar: this.defaultToolbar,
                 after: () => {
                     this.loading = false;
                     if (this.readonly) {
                         this.vditor.disabled();
                     }
+                    setTimeout(() => {
+                        this.vditor.setValue(this.eruptField.eruptFieldJson.edit.$value || '');
+                    }, 100)
                 }
-            };
-
-            // 合并用户配置和默认配置
-            const mergedConfig = {...defaultConfig, ...this.editorConfig};
-
-            // 直接使用ViewChild获取的DOM元素
-            this.vditor = new Vditor(this.vditorContainer.nativeElement, mergedConfig);
+            });
         } catch (error) {
             this.loading = false;
             this.editorError = true;
             console.error('初始化Vditor失败:', error);
         }
-    }
-
-    /**
-     * 获取上传URL
-     * 将上传URL逻辑抽离为单独方法
-     * @returns 上传URL字符串
-     */
-    private get_upload_url(): string {
-        return this.erupt && this.eruptField ?
-            RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
-            this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token
-            : '/api/upload/image';
     }
 
     /**
@@ -226,11 +200,8 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         if (this.vditor) {
-            try {
-                this.vditor.destroy();
-            } catch (error) {
-                console.error('销毁Vditor实例失败:', error);
-            }
+            this.vditor.destroy();
         }
     }
+
 }

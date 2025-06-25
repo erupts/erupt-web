@@ -64,18 +64,8 @@
                             },
                             {
                                 "glob": "**/*",
-                                "input": "./node_modules/vditor/",
-                                "output": "/assets/vditor",
-                                "ignore": [
-                                    "dist/js/abcjs/**",
-                                    "dist/js/echarts/**",
-                                    "dist/js/graphviz/**",
-                                    "dist/js/flowchart/**",
-                                    "dist/js/katex/**",
-                                    "dist/js/markmap/**",
-                                    "dist/js/mathjax/**",
-                                    "dist/js/mermaid/**"
-                                ]
+                                "input": "./libs/vditor/",
+                                "output": "/assets/vditor/"
                             }
                         ],
                         "styles": [
