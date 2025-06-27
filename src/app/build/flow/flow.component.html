@@ -1,4 +1,4 @@
-<div class="app">
+<div class="flow">
     <div class="w-process-designer">
         <div class="w-p-d-operation">
             <div class="w-p-d-operation-zoom">
@@ -11,9 +11,9 @@
                 </button>
             </div>
         </div>
-        {{modelValue | json}}
         <app-process-render
             #processRender
+            style="width: 100%; height: 100%;display: block;overflow: auto"
             [style.transform]="'scale(' + (zoom / 100) + ')'"
             [readonly]="false"
             [(modelValue)]="modelValue"

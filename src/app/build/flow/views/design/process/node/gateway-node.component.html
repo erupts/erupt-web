@@ -1,15 +1,15 @@
-<div class="w-p-gateway">
-  <div class="w-p-branch">
+<div class="p-gateway">
+  <div class="p-branch">
     <button nz-button nzType="default" nzShape="round"
             *ngIf="!readonly"
             (click)="addBranch()"
-            class="w-p-gateway-add">
+            class="p-gateway-add">
       添加分支
     </button>
 
     <!-- 分支遍历 -->
     <div *ngFor="let nodes of modelValue.branch; let i = index;"
-         [class]="'w-p-branch-item' + (i === 0 ? ' w-p-branch-item-l' : '') + (i === modelValue.branch.length - 1 ? ' w-p-branch-item-r' : '')">
+         [class]="'p-branch-item' + (i === 0 ? ' p-branch-item-l' : '') + (i === modelValue.branch.length - 1 ? ' p-branch-item-r' : '')">
       <div>
         <!-- 构造分支头节点 -->
         <ng-container [ngSwitch]="modelValue.props.type">
@@ -17,7 +17,7 @@
             *ngSwitchCase="'Exclusive'"
             #node
             [readonly]="readonly"
-            [(ngModel)]="modelValue.props.branch[i]"
+            [(modelValue)]="modelValue.props.branch[i]"
             [index]="i"
             [moveRn]="i < modelValue.branch.length - (modelValue.props.type !== 'Parallel' ? 2 : 1)"
             [moveLn]="i > 0"
@@ -34,7 +34,7 @@
             *ngSwitchCase="'Parallel'"
             #node
             [readonly]="readonly"
-            [(ngModel)]="modelValue.props.branch[i]"
+            [(modelValue)]="modelValue.props.branch[i]"
             [index]="i"
             [moveRn]="i < modelValue.branch.length - (modelValue.props.type !== 'Parallel' ? 2 : 1)"
             [moveLn]="i > 0"
@@ -55,7 +55,7 @@
               *ngSwitchCase="'Start'"
               #node
               [readonly]="readonly"
-              [(ngModel)]="modelValue.branch[i][bi]"
+              [(model)]="modelValue.branch[i][bi]"
               [branch]="nodes"
               [index]="bi"
               (insertNode)="insertNodeFun($event.branch, $event.index, $event.type)"
@@ -67,7 +67,7 @@
               *ngSwitchCase="'Approval'"
               #node
               [readonly]="readonly"
-              [(ngModel)]="modelValue.branch[i][bi]"
+              [(modelValue)]="modelValue.branch[i][bi]"
               [branch]="nodes"
               [index]="bi"
               (insertNode)="insertNodeFun($event.branch, $event.index, $event.type)"
@@ -79,7 +79,7 @@
               *ngSwitchCase="'Cc'"
               #node
               [readonly]="readonly"
-              [(ngModel)]="modelValue.branch[i][bi]"
+              [(modelValue)]="modelValue.branch[i][bi]"
               [branch]="nodes"
               [index]="bi"
               (insertNode)="insertNodeFun($event.branch, $event.index, $event.type)"
@@ -94,7 +94,7 @@
 
   <app-node
     [readonly]="readonly"
-    [class]="{'w-p-branch-end': branch.length === index + 1}"
+    [class]="{'p-branch-end': branch.length === index + 1}"
     [showBody]="false"
     (insertNode)="insertNode.emit({branch: branch, index: index, type: $event})">
   </app-node>

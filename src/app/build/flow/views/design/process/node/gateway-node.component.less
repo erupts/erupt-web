@@ -3,20 +3,20 @@
 @node-line-color: #d9d9d9;
 @main-bgc: #f5f5f5;
 
-.w-p-gateway {
+.p-gateway {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
 
-  .w-p-gateway-add {
+  .p-gateway-add {
     z-index: 2;
     top: -16px;
     position: absolute;
   }
 }
 
-.w-p-branch {
+.p-branch {
   display: flex;
   position: relative;
   justify-content: center;
@@ -40,7 +40,7 @@
     bottom: 0;
   }
 
-  .w-p-branch-item {
+  .p-branch-item {
     position: relative;
     padding: 0 60px;
     display: flex;
@@ -53,8 +53,8 @@
       flex-direction: column;
       align-items: center;
 
-      & > .w-p-node:last-child {
-        :deep(.w-p-node-add) {
+      & > .p-node:last-child {
+        :deep(.p-node-add) {
           // 分支最后一个节点要去除箭头，影响美观
           &:after {
             display: none !important;
@@ -72,7 +72,7 @@
     }
   }
 
-  .w-p-branch-item-l, .w-p-branch-item-r {
+  .p-branch-item-l, .p-branch-item-r {
     &:after {
       // 当分支不是偶数时，需要一个遮罩线
       content: '';
@@ -96,7 +96,7 @@
     }
   }
 
-  :deep(.w-p-branch-end .w-p-node-add) {
+  :deep(.p-branch-end .p-node-add) {
     // 分支最后一个节点要去除箭头，影响美观
     &:after {
       display: none !important;

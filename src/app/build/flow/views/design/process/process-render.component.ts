@@ -41,6 +41,7 @@ export class ProcessRenderComponent implements OnInit {
      */
     insertNode(branch: any[], i: number, type: string) {
         if (nodeType[type]) {
+            console.log(nodeType[type].create(type))
             branch.splice(i + 1, 0, nodeType[type].create(type));
         } else {
             // this.message.warning('请在ProcessNodes.ts内配置该节点');
