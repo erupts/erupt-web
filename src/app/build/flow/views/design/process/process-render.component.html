@@ -1,4 +1,4 @@
-<div class="w-process">
+<div class="process">
   <ng-container *ngFor="let node of modelValue; let i = index;">
     <ng-container [ngSwitch]="node.type">
       <app-start-node
@@ -74,5 +74,5 @@
       </app-gateway-node>
     </ng-container>
   </ng-container>
-  <div class="w-process-end">流程结束</div>
+  <div class="process-end">流程结束</div>
 </div>

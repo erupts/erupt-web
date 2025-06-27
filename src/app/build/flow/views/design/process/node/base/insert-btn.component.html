@@ -3,7 +3,7 @@
         [nzPopoverContent]="nzPopoverContent">
     <span nz-icon nzType="plus" style="font-size: 16px"></span>
     <ng-template #nzPopoverContent>
-        <div class="w-node-options" style="width: 450px">
+        <div class="node-options" style="width: 450px">
             <div *ngFor="let node of nodeList"
                  (click)="onInsertNode(node.type)"
                  [style.color]="node.color">
