@@ -177,7 +177,7 @@
                                        (nzPageSizeChange)="pageSizeChange($event)"
                                        (nzPageIndexChange)="pageIndexChange($event)"
                         ></nz-pagination>
-                        <ng-template #totalTemplate let-total>共 {{ dataPage.total }} 条</ng-template>
+                        <ng-template #totalTemplate let-total>{{'table.totalLeft'|translate}} {{ dataPage.total }} {{'table.totalRight'|translate}}</ng-template>
                     </ng-container>
                 </ng-container>
             </ng-container>
