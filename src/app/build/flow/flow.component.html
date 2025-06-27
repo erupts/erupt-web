@@ -1,0 +1,24 @@
+<div class="app">
+    <div class="w-process-designer">
+        <div class="w-p-d-operation">
+            <div class="w-p-d-operation-zoom">
+                <button nz-button nzType="primary" nzShape="circle" (click)="doZoom(-5)">
+                    <span nz-icon nzType="minus"></span>
+                </button>
+                <span>{{ zoom }}%</span>
+                <button nz-button nzType="primary" nzShape="circle" (click)="doZoom(5)">
+                    <span nz-icon nzType="plus"></span>
+                </button>
+            </div>
+        </div>
+        {{modelValue | json}}
+        <app-process-render
+            #processRender
+            [style.transform]="'scale(' + (zoom / 100) + ')'"
+            [readonly]="false"
+            [(modelValue)]="modelValue"
+            (select)="selectNode($event)">
+        </app-process-render>
+    </div>
+
+</div>

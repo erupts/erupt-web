@@ -1,0 +1,15 @@
+<app-branch-node
+  [(ngModel)]="modelValue"
+  [readonly]="readonly"
+  desc="并行执行"
+  color="#718dff"
+  headerIcon="apartment"
+  content="并行流程分支"
+  [moveRn]="moveRn"
+  [moveLn]="moveLn"
+  (insertNode)="onInsertNode($event)"
+  (moveL)="onMoveL()"
+  (moveR)="onMoveR()"
+  (delete)="onDelete()"
+  (select)="onSelect()">
+</app-branch-node>
