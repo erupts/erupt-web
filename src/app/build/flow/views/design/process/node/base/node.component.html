@@ -1,0 +1,39 @@
+<div class="w-p-node">
+  <nz-tooltip *ngIf="showError" [title]="errorInfo || '设置错误'" nzPlacement="top-start">
+    <span nz-icon nzType="warning" nzTheme="fill" class="w-node-err-tip"></span>
+  </nz-tooltip>
+  <div *ngIf="showBody"
+       class="w-p-node-body"
+       [class.w-node-err]="showError"
+       [style.--shadowColor]="headerColor">
+    <div class="w-p-node-header" [style.background-color]="headerColor">
+      <div>
+        <span *ngIf="!enableEdit" nz-icon [nzType]="headerIcon" nzSize="15"></span>
+        <input *ngIf="enableEdit"
+               #nodeNameInput
+               autofocus
+               (blur)="onBlur()"
+               [(ngModel)]="model.name"/>
+        <div *ngIf="!enableEdit"
+             class="w-row-text"
+             (click)="onEnableEdit()">{{ model.name }}</div>
+      </div>
+      <span *ngIf="showClose && !readonly"
+            nz-icon
+            nzType="close"
+            class="w-node-del"
+            (click)="onDelete()"></span>
+    </div>
+
+    <div class="w-p-node-content" (click)="onSelect()">
+      <nz-typography nzEllipsis nzEllipsisRows="4">
+        {{ content || placeholder }}
+      </nz-typography>
+      <span nz-icon nzType="arrow-right" class="w-p-node-click"></span>
+    </div>
+  </div>
+
+  <div class="w-p-node-add">
+    <app-insert-btn *ngIf="!readonly" (insertNode)="onInsertNode($event)"></app-insert-btn>
+  </div>
+</div>

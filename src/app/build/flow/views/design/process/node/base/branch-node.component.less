@@ -1,0 +1,146 @@
+@node-width: 200px;
+@node-line-len: 20px;
+@node-line-color: #d9d9d9;
+
+.w-p-node {
+  width: @node-width;
+  margin-bottom: 8px;
+  position: relative;
+
+  .w-node-err-tip {
+    position: absolute;
+    right: -30px;
+    color: var(--error-color);
+  }
+
+  .w-p-node-body {
+    cursor: pointer;
+    background: white;
+    overflow: hidden;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 0 5px 0 #d8d8d8;
+
+    .w-p-node-move {
+      width: 15px;
+
+      &:hover {
+        background: #F5F6F6;
+      }
+    }
+
+    &:hover {
+      box-shadow: 0 0 5px 0 var(--shadowColor);
+    }
+
+    & > div:first-child, & > div:last-child {
+      height: 100%;
+
+      &:hover {
+        background: @node-line-color;
+      }
+    }
+
+    .w-p-node-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 25px;
+      font-size: 13px;
+
+      .w-node-action {
+        color: #767676;
+        display: none;
+
+        & > * {
+          margin: 2px;
+        }
+      }
+
+      .w-node-desc {
+        position: absolute;
+        right: 8px;
+      }
+
+      .w-row-text {
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      & > div {
+        display: flex;
+        align-items: center;
+
+        & > div {
+          margin-left: 3px;
+          width: calc(@node-width - 85px);
+        }
+      }
+
+      input {
+        width: calc(@node-width - 85px);
+        border: 1px solid @node-line-color;
+        border-radius: 5px;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    .w-p-node-content {
+      padding: 5px;
+      min-height: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      color: #656363;
+
+      & > div {
+        word-wrap: break-word;
+      }
+    }
+
+    &:hover {
+      .w-node-action {
+        display: inline;
+      }
+
+      .w-node-desc {
+        display: none;
+      }
+    }
+  }
+
+  .w-p-node-add {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: @node-line-len;
+
+    &:before {
+      position: absolute;
+      content: '';
+      width: 2px;
+      height: @node-line-len;
+      background: @node-line-color;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: @node-line-len;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      border-style: solid;
+      border-width: 8px 6px 4px;
+      border-color: @node-line-color transparent transparent;
+    }
+  }
+}

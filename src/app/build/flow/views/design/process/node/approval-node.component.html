@@ -1,0 +1,11 @@
+<app-node
+  [(ngModel)]="modelValue"
+  [readonly]="readonly"
+  [showError]="showErr"
+  [errorInfo]="errInfo"
+  headerColor="#EC8151"
+  headerIcon="stamp"
+  (select)="onSelect()"
+  (insertNode)="onInsertNode($event)"
+  (delete)="onDelete()">
+</app-node>

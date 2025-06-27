@@ -1,0 +1,78 @@
+<div class="w-process">
+  <ng-container *ngFor="let node of modelValue; let i = index;">
+    <ng-container [ngSwitch]="node.type">
+      <app-start-node
+        *ngSwitchCase="'Start'"
+        #node
+        [readonly]="readonly"
+        [(model)]="modelValue[i]"
+        [branch]="modelValue"
+        [index]="i"
+        (select)="select.emit($event)"
+        (delete)="deleteNode($event.branch, $event.index)"
+        (insertNode)="insertNode($event.branch, $event.index, $event.type)">
+      </app-start-node>
+
+      <app-approval-node
+        *ngSwitchCase="'Approval'"
+        #node
+        [readonly]="readonly"
+        [(modelValue)]="modelValue[i]"
+        [branch]="modelValue"
+        [index]="i"
+        (select)="select.emit($event)"
+        (delete)="deleteNode($event.branch, $event.index)"
+        (insertNode)="insertNode($event.branch, $event.index, $event.type)">
+      </app-approval-node>
+
+      <app-cc-node
+        *ngSwitchCase="'Cc'"
+        #node
+        [readonly]="readonly"
+        [(modelValue)]="modelValue[i]"
+        [branch]="modelValue"
+        [index]="i"
+        (select)="select.emit($event)"
+        (delete)="deleteNode($event.branch, $event.index)"
+        (insertNode)="insertNode($event.branch, $event.index, $event.type)">
+      </app-cc-node>
+
+      <app-exclusive-node
+        *ngSwitchCase="'Exclusive'"
+        #node
+        [readonly]="readonly"
+        [(modelValue)]="modelValue[i]"
+        [branch]="modelValue"
+        [index]="i"
+        (select)="select.emit($event)"
+        (delete)="deleteNode($event.branch, $event.index)"
+        (insertNode)="insertNode($event.branch, $event.index, $event.type)">
+      </app-exclusive-node>
+
+      <app-parallel-node
+        *ngSwitchCase="'Parallel'"
+        #node
+        [readonly]="readonly"
+        [(modelValue)]="modelValue[i]"
+        [branch]="modelValue"
+        [index]="i"
+        (select)="select.emit($event)"
+        (delete)="deleteNode($event.branch, $event.index)"
+        (insertNode)="insertNode($event.branch, $event.index, $event.type)">
+      </app-parallel-node>
+
+      <app-gateway-node
+        *ngSwitchCase="'Gateway'"
+        #node
+        [readonly]="readonly"
+        [(modelValue)]="modelValue[i]"
+        [branch]="modelValue"
+        [index]="i"
+        (select)="select.emit($event)"
+        (delete)="deleteNode($event.branch, $event.index)"
+        (insertNode)="insertNode($event.branch, $event.index, $event.type)">
+      </app-gateway-node>
+    </ng-container>
+  </ng-container>
+  <div class="w-process-end">流程结束</div>
+</div>

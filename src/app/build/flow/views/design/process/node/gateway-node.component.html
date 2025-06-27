@@ -1,0 +1,101 @@
+<div class="w-p-gateway">
+  <div class="w-p-branch">
+    <button nz-button nzType="default" nzShape="round"
+            *ngIf="!readonly"
+            (click)="addBranch()"
+            class="w-p-gateway-add">
+      添加分支
+    </button>
+
+    <!-- 分支遍历 -->
+    <div *ngFor="let nodes of modelValue.branch; let i = index;"
+         [class]="'w-p-branch-item' + (i === 0 ? ' w-p-branch-item-l' : '') + (i === modelValue.branch.length - 1 ? ' w-p-branch-item-r' : '')">
+      <div>
+        <!-- 构造分支头节点 -->
+        <ng-container [ngSwitch]="modelValue.props.type">
+          <app-exclusive-node
+            *ngSwitchCase="'Exclusive'"
+            #node
+            [readonly]="readonly"
+            [(ngModel)]="modelValue.props.branch[i]"
+            [index]="i"
+            [moveRn]="i < modelValue.branch.length - (modelValue.props.type !== 'Parallel' ? 2 : 1)"
+            [moveLn]="i > 0"
+            [isDefault]="i === modelValue.branch.length - 1 && modelValue.props.type !== 'Parallel'"
+            (insertNode)="insertNodeFun(nodes, -1, $event)"
+            (delete)="deleteBranch(i)"
+            (copy)="copyBranch(i)"
+            (moveL)="moveL(i)"
+            (moveR)="moveR(i)"
+            (select)="selectFun($event, i)">
+          </app-exclusive-node>
+
+          <app-parallel-node
+            *ngSwitchCase="'Parallel'"
+            #node
+            [readonly]="readonly"
+            [(ngModel)]="modelValue.props.branch[i]"
+            [index]="i"
+            [moveRn]="i < modelValue.branch.length - (modelValue.props.type !== 'Parallel' ? 2 : 1)"
+            [moveLn]="i > 0"
+            [isDefault]="i === modelValue.branch.length - 1 && modelValue.props.type !== 'Parallel'"
+            (insertNode)="insertNodeFun(nodes, -1, $event)"
+            (delete)="deleteBranch(i)"
+            (copy)="copyBranch(i)"
+            (moveL)="moveL(i)"
+            (moveR)="moveR(i)"
+            (select)="selectFun($event, i)">
+          </app-parallel-node>
+        </ng-container>
+
+        <!-- 渲染分支 -->
+        <ng-container *ngFor="let node of nodes; let bi = index;">
+          <ng-container [ngSwitch]="node.type">
+            <app-start-node
+              *ngSwitchCase="'Start'"
+              #node
+              [readonly]="readonly"
+              [(ngModel)]="modelValue.branch[i][bi]"
+              [branch]="nodes"
+              [index]="bi"
+              (insertNode)="insertNodeFun($event.branch, $event.index, $event.type)"
+              (delete)="deleteNode($event.branch, $event.index)"
+              (select)="select.emit($event)">
+            </app-start-node>
+
+            <app-approval-node
+              *ngSwitchCase="'Approval'"
+              #node
+              [readonly]="readonly"
+              [(ngModel)]="modelValue.branch[i][bi]"
+              [branch]="nodes"
+              [index]="bi"
+              (insertNode)="insertNodeFun($event.branch, $event.index, $event.type)"
+              (delete)="deleteNode($event.branch, $event.index)"
+              (select)="select.emit($event)">
+            </app-approval-node>
+
+            <app-cc-node
+              *ngSwitchCase="'Cc'"
+              #node
+              [readonly]="readonly"
+              [(ngModel)]="modelValue.branch[i][bi]"
+              [branch]="nodes"
+              [index]="bi"
+              (insertNode)="insertNodeFun($event.branch, $event.index, $event.type)"
+              (delete)="deleteNode($event.branch, $event.index)"
+              (select)="select.emit($event)">
+            </app-cc-node>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <app-node
+    [readonly]="readonly"
+    [class]="{'w-p-branch-end': branch.length === index + 1}"
+    [showBody]="false"
+    (insertNode)="insertNode.emit({branch: branch, index: index, type: $event})">
+  </app-node>
+</div>
