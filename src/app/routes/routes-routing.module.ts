@@ -21,6 +21,11 @@ let coreRouter: Routes = [
     {path: "exception", loadChildren: () => import( "./exception/exception.module").then(m => m.ExceptionModule)},
     {path: "site/:url", component: SiteComponent},
     {
+        path: "flow",
+        loadChildren: () => import( "../build/flow/flow.module").then(m => m.FlowModule),
+        pathMatch: "full"
+    },
+    {
         path: "build",
         loadChildren: () => import('../build/erupt/erupt.module').then(m => m.EruptModule),
     },
