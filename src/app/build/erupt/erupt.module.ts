@@ -41,6 +41,7 @@ import {NzRateModule} from "ng-zorro-antd/rate";
 import {AttachmentSelectComponent} from './components/attachment-select/attachment-select.component';
 import {NzEmptyModule} from "ng-zorro-antd/empty";
 import {MultiChoiceComponent} from './components/multi-choice/multi-choice.component';
+import {GanttComponent} from "./components/gantt/gantt.component";
 
 @NgModule({
     imports: [
@@ -106,7 +107,8 @@ import {MultiChoiceComponent} from './components/multi-choice/multi-choice.compo
         MarkdownComponent,
         CardComponent,
         AttachmentSelectComponent,
-        MultiChoiceComponent
+        MultiChoiceComponent,
+        GanttComponent
     ]
 })
 export class EruptModule {

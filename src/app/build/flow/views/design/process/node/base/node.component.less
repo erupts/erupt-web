@@ -1,0 +1,115 @@
+@node-width: 200px;
+@node-line-len: 80px;
+@node-line-width: 3px;
+@node-line-color: #d9d9d9;
+
+.p-node {
+  width: @node-width;
+  margin-bottom: 8px;
+  position: relative;
+
+  .node-err-tip {
+    position: absolute;
+    right: -30px;
+    color: var(--error-color);
+  }
+
+  .p-node-body {
+    cursor: pointer;
+    background: white;
+    overflow: hidden;
+    border-radius: 5px;
+    box-shadow: 0 0 5px 0 #d8d8d8;
+
+    .p-node-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      color: white;
+      height: 25px;
+      font-size: 13px;
+
+      .row-text {
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .node-del {
+        display: none;
+      }
+
+      & > div {
+        display: flex;
+        align-items: center;
+
+        & > div {
+          margin-left: 3px;
+          width: calc(@node-width - 50px);
+        }
+      }
+
+      input {
+        width: calc(@node-width - 50px);
+        border: none;
+        border-radius: 5px;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    .p-node-content {
+      padding: 5px 5px 5px 15px;
+      min-height: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      color: #656363;
+
+      & > div {
+        width: 92%;
+        word-wrap: break-word;
+      }
+    }
+
+    &:hover {
+      box-shadow: 0 0 5px 0 var(--shadowColor);
+
+      .node-del {
+        display: inline;
+      }
+    }
+  }
+
+  .p-node-add {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: @node-line-len;
+
+    &:before {
+      position: absolute;
+      content: '';
+      width: @node-line-width;
+      height: @node-line-len;
+      background: @node-line-color;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: @node-line-len;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      border-style: solid;
+      border-width: 8px 6px 4px;
+      border-color: @node-line-color transparent transparent;
+    }
+  }
+}

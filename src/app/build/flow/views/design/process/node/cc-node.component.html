@@ -1,0 +1,11 @@
+<app-node
+  [(model)]="modelValue"
+  [readonly]="readonly"
+  [showError]="showErr"
+  [errorInfo]="errInfo"
+  headerColor="#5994F3"
+  headerIcon="notification"
+  (select)="onSelect()"
+  (insertNode)="onInsertNode($event)"
+  (delete)="onDelete()">
+</app-node>
