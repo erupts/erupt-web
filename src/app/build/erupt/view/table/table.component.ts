@@ -626,7 +626,7 @@ export class TableComponent implements OnInit, OnDestroy {
         if (eruptJson.layout.tableWidth) {
             this.tableWidth = eruptJson.layout.tableWidth;
         } else {
-            this.tableWidth = (this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length * 160) + "px"
+            this.tableWidth = (this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length * 160 * this.i18n.getCurrLangInfo().columnWidthZoom) + "px"
         }
     }
 
