@@ -64,6 +64,7 @@ interface LangConfigData {
     ng: NzSafeAny;
     zorro: NzSafeAny;
     delon: NzSafeAny;
+    columnWidthZoom: number;
 }
 
 const LANGS: { [key: string]: LangConfigData } = {
@@ -74,6 +75,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         date: dfZhCn,
         zorro: zorroZhCN,
         delon: delonZhCn,
+        columnWidthZoom: 1
     },
     'zh-TW': {
         abbr: '🇭🇰',
@@ -82,7 +84,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngZhTw,
         zorro: zorroZhTW,
         delon: delonZhTw,
-
+        columnWidthZoom: 1
     },
     'en-US': {
         abbr: '🇬🇧',
@@ -91,6 +93,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngEn,
         zorro: zorroEnUS,
         delon: delonEnUS,
+        columnWidthZoom: 1
     },
     'fr-FR': {
         abbr: '🇫🇷',
@@ -99,6 +102,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngFr,
         zorro: zorroFr,
         delon: delonFr,
+        columnWidthZoom: 1.5
     },
     'ja-JP': {
         abbr: '🇯🇵',
@@ -107,6 +111,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngJA,
         zorro: ja_JP,
         delon: delonJp,
+        columnWidthZoom: 1
     },
     'ko-KR': {
         abbr: '🇰🇷',
@@ -115,6 +120,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngKO,
         zorro: ko_KR,
         delon: delonKo,
+        columnWidthZoom: 1
     },
     'ru-RU': {
         abbr: '🇷🇺',
@@ -123,6 +129,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngRu,
         zorro: zorroRu,
         delon: delonEs,
+        columnWidthZoom: 1.5
     },
     'es-ES': {
         abbr: '🇪🇸',
@@ -131,6 +138,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngEs,
         zorro: zorroEs,
         delon: delonEnUS,
+        columnWidthZoom: 1.5
     },
     'de-DE': {
         abbr: '🇩🇪',
@@ -139,6 +147,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngDe,
         zorro: zorroDe,
         delon: delonEnUS, // 若无 delon.de_DE 可保留英文
+        columnWidthZoom: 1.5
     },
     'pt-PT': {
         abbr: '🇵🇹',
@@ -147,6 +156,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngPt,
         zorro: zorroPt,
         delon: delonEnUS, // 暂无 delon.pt_PT
+        columnWidthZoom: 1.5
     },
     'id-ID': {
         abbr: '🇮🇩',
@@ -155,6 +165,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngId,
         zorro: zorroEnUS, // fallback，zorro 无 id-ID
         delon: delonEnUS,
+        columnWidthZoom: 1.5
     },
     'ar-SA': {
         abbr: '🇸🇦',
@@ -163,6 +174,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngAr,
         zorro: zorroAr, // 使用 ar_EG 替代
         delon: delonEnUS,
+        columnWidthZoom: 1.2
     },
 };
 
@@ -265,6 +277,10 @@ export class I18NService implements OnInit {
         this.delonLocaleService.setLocale(item.delon);
         this.datePipe = new DatePipe(lang);
         this.currentLang = lang;
+    }
+
+    getCurrLangInfo(): LangConfigData {
+        return LANGS[this.currentLang] || LANGS['zh-CN'];
     }
 
     getLangs(): Array<{ code: string; text: string; abbr: string }> {
