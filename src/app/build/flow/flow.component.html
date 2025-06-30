@@ -1,7 +1,7 @@
 <div class="flow">
-    <div class="w-process-designer">
-        <div class="w-p-d-operation">
-            <div class="w-p-d-operation-zoom">
+    <div class="process-designer">
+        <div class="p-d-operation">
+            <div class="p-d-operation-zoom">
                 <button nz-button nzType="primary" nzShape="circle" (click)="doZoom(-5)">
                     <span nz-icon nzType="minus"></span>
                 </button>
@@ -11,14 +11,14 @@
                 </button>
             </div>
         </div>
-        <app-process-render
-            #processRender
-            style="width: 100%; height: 100%;display: block;overflow: auto"
-            [style.transform]="'scale(' + (zoom / 100) + ')'"
-            [readonly]="false"
-            [(modelValue)]="modelValue"
-            (select)="selectNode($event)">
-        </app-process-render>
+        <div class="zoom-container" [style.transform]="'scale(' + (zoom / 100) + ')'" [style.transform-origin]="'center center'">
+            <app-process-render
+                #processRender
+                [readonly]="false"
+                [(modelValue)]="modelValue"
+                (select)="selectNode($event)">
+            </app-process-render>
+        </div>
     </div>
 
 </div>
