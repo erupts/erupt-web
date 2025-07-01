@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {NzMessageService} from "ng-zorro-antd/message";
-import {ProcessRenderComponent} from "./views/design/process/process-render.component";
-import {NodeComponentConfigs, nodeType} from "./views/design/process/process-nodes";
+import {ProcessRenderComponent} from "./views/process/process-render.component";
+import {NodeComponentConfigs, nodeType} from "./views/process/process-nodes";
 import Panzoom from "@panzoom/panzoom";
 
 @Component({
