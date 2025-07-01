@@ -56,21 +56,21 @@ import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 
 // 自定义组件
 import {FlowComponent} from './flow.component';
-import {ProcessRenderComponent} from './views/design/process/process-render.component';
-import {StartNodeComponent} from './views/design/process/node/start-node.component';
-import {ApprovalNodeComponent} from './views/design/process/node/approval-node.component';
-import {CcNodeComponent} from './views/design/process/node/cc-node.component';
-import {ExclusiveNodeComponent} from './views/design/process/node/exclusive-node.component';
-import {GatewayNodeComponent} from './views/design/process/node/gateway-node.component';
-import {NodeComponent} from './views/design/process/node/base/node.component';
-import {BranchNodeComponent} from './views/design/process/node/base/branch-node.component';
-import {InsertBtnComponent} from './views/design/process/node/base/insert-btn.component';
+import {ProcessRenderComponent} from './views/process/process-render.component';
+import {StartNodeComponent} from './views/process/node/start/start-node.component';
+import {ApprovalNodeComponent} from './views/process/node/appoval/approval-node.component';
+import {CcNodeComponent} from './views/process/node/cc/cc-node.component';
+import {ExclusiveNodeComponent} from './views/process/node/exclusive/exclusive-node.component';
+import {GatewayNodeComponent} from './views/process/node/gateway/gateway-node.component';
+import {NodeComponent} from './views/process/node/base/node.component';
+import {BranchNodeComponent} from './views/process/node/base/branch-node.component';
+import {InsertBtnComponent} from './views/process/node/base/insert-btn.component';
 
 // 图标
 import {EditOutline, MinusOutline, PlusOutline} from '@ant-design/icons-angular/icons';
 import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
-import {ParallelNodeComponent} from "./views/design/process/node/parallel-node.component";
+import {ParallelNodeComponent} from "./views/process/node/parallel/parallel-node.component";
 
 const icons = [PlusOutline, MinusOutline, EditOutline];
 

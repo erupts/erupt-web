@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
-import {NodeComponents, nodeType} from '../process-nodes';
+import {NodeComponents, nodeType} from '../../process-nodes';
 import {reloadNodeId} from '../../../../utils/process-util';
 
 @Component({
