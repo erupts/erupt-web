@@ -1,13 +1,8 @@
-/**
- * 生成随机节点ID
- */
 export function getRandNodeId(): string {
   return 'node_' + Math.random().toString(36).substr(2, 9);
 }
 
-/**
- * 重载节点ID
- */
+
 export function reloadNodeId(node: any): void {
   if (node && typeof node === 'object') {
     if (node.id) {

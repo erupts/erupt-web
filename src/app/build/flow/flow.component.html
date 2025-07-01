@@ -1,24 +1,24 @@
 <div class="flow">
-    <div class="process-designer">
-        <div class="p-d-operation">
-            <div class="p-d-operation-zoom">
-                <button nz-button nzType="primary" nzShape="circle" (click)="doZoom(-5)">
-                    <span nz-icon nzType="minus"></span>
-                </button>
-                <span>{{ zoom }}%</span>
-                <button nz-button nzType="primary" nzShape="circle" (click)="doZoom(5)">
-                    <span nz-icon nzType="plus"></span>
-                </button>
-            </div>
-        </div>
-        <div class="zoom-container" [style.transform]="'scale(' + (zoom / 100) + ')'" [style.transform-origin]="'center center'">
-            <app-process-render
-                #processRender
-                [readonly]="false"
-                [(modelValue)]="modelValue"
-                (select)="selectNode($event)">
-            </app-process-render>
+    <div class="p-operation">
+        <div class="p-operation-zoom">
+            <button nz-button  (click)="doZoom(-1)">
+                <span nz-icon nzType="minus"></span>
+            </button>
+            <button nz-button  (click)="doHit()">
+                x
+            </button>
+            <button nz-button  (click)="doZoom(1)">
+                <span nz-icon nzType="plus"></span>
+            </button>
         </div>
     </div>
-
+    {{modelValue|json}}
+    <div #panzoomElement style="width: 100%;height: 100%">
+        <app-process-render
+            #processRender
+            [readonly]="false"
+            [(modelValue)]="modelValue"
+            (select)="selectNode($event)">
+        </app-process-render>
+    </div>
 </div>

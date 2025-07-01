@@ -1,14 +1,15 @@
-import {Component, EventEmitter, HostListener, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ProcessRenderComponent} from "./views/design/process/process-render.component";
 import {NodeComponentConfigs, nodeType} from "./views/design/process/process-nodes";
+import Panzoom from "@panzoom/panzoom";
 
 @Component({
     selector: 'erupt-flow',
     templateUrl: './flow.component.html',
     styleUrls: ['./flow.component.less']
 })
-export class FlowComponent implements OnInit {
+export class FlowComponent implements OnInit, AfterViewInit {
 
     active = true;
 
@@ -19,23 +20,29 @@ export class FlowComponent implements OnInit {
 
     @Output() modelValueChange = new EventEmitter<any[]>();
 
-    @ViewChild('processRender', { static: false }) processRender!: ProcessRenderComponent;
+    @ViewChild('processRender', {static: false}) processRender!: ProcessRenderComponent;
 
-    // 缩放比例
-    zoom = 100;
+    @ViewChild('panzoomElement') panzoomElement: ElementRef;
+
+    panzoom = null;
+
     // 选中的节点
     activeNode: any = {};
-    showInput = false;
-    nodeConfVisible = false;
-    // 是否按下ctrl
-    private ctrlPressed = false;
 
-    // 配置面板宽度
-    get configWidth(): number {
-        return this.activeNode.type === "Exclusive" ? 600 : 500;
+    nodeConfVisible = false;
+
+    constructor(private message: NzMessageService) {
     }
 
-    constructor(private message: NzMessageService) {}
+    ngAfterViewInit(): void {
+        this.panzoom = Panzoom(this.panzoomElement.nativeElement, {
+            maxScale: 3,
+            minScale: 0.5,
+            contain: 'self',
+            smoothScroll: true,
+            cursor:"grab"
+        });
+    }
 
     ngOnInit() {
         // 加载的时候判断，赋默认值
@@ -43,13 +50,6 @@ export class FlowComponent implements OnInit {
             this.modelValue = [nodeType.Start.create()];
             this.modelValueChange.emit(this.modelValue);
         }
-    }
-
-    ngOnDestroy() {
-        // 清理事件监听器
-        document.removeEventListener('keydown', this.keyDown.bind(this));
-        document.removeEventListener('keyup', this.keyUp.bind(this));
-        document.removeEventListener('wheel', this.mouseWheel.bind(this));
     }
 
     selectNode(node: any) {
@@ -63,39 +63,16 @@ export class FlowComponent implements OnInit {
     }
 
     doZoom(sc: number) {
-        if ((this.zoom > 30 && this.zoom < 150)
-            || (this.zoom <= 30 && sc > 0)
-            || (this.zoom >= 150 && sc < 0)) {
-            this.zoom += sc;
+        if (sc > 0) {
+            this.panzoom.zoomIn();
         } else {
-            this.message.warning("缩放已经到极限了😥");
+            this.panzoom.zoomOut();
         }
     }
 
-    @HostListener('document:keydown', ['$event'])
-    keyDown(event: KeyboardEvent) {
-        if (event.ctrlKey) {
-            this.ctrlPressed = true;
-            document.addEventListener('wheel', this.mouseWheel.bind(this), { passive: false });
-        }
-    }
-
-    @HostListener('document:keyup', ['$event'])
-    keyUp(event: KeyboardEvent) {
-        if (event.key === "Control") {
-            this.ctrlPressed = false;
-            document.removeEventListener('wheel', this.mouseWheel.bind(this));
-        }
-    }
-
-    mouseWheel(event: WheelEvent) {
-        if (this.ctrlPressed && this.active) {
-            // 阻止默认的缩放行为
-            event.preventDefault();
-            // 获取滚动方向，向上为正，向下为负
-            const delta = Math.sign(event.deltaY);
-            this.doZoom(delta * -5);
-        }
+    doHit(){
+        this.panzoom.pan(0, 0);
+        this.panzoom.zoom(1)
     }
 
     validate() {
