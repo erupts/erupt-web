@@ -40,9 +40,9 @@ export class ProcessRenderComponent implements OnInit {
      * @param type 要插入的节点类型
      */
     insertNode(branch: any[], i: number, type: string) {
-        if (nodeType[type]) {
-            console.log(nodeType[type].create(type))
-            branch.splice(i + 1, 0, nodeType[type].create(type));
+        if (nodeType[type] && nodeType[type].create) {
+            const newNode = nodeType[type].create(type);
+            branch.splice(i + 1, 0, newNode);
         } else {
             // this.message.warning('请在ProcessNodes.ts内配置该节点');
         }

@@ -67,12 +67,12 @@ import {BranchNodeComponent} from './views/process/node/base/branch-node.compone
 import {InsertBtnComponent} from './views/process/node/base/insert-btn.component';
 
 // 图标
-import {EditOutline, MinusOutline, PlusOutline} from '@ant-design/icons-angular/icons';
+import {CloseOutline, CopyOutline, EditOutline, MinusOutline, PlusOutline} from '@ant-design/icons-angular/icons';
 import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
 import {ParallelNodeComponent} from "./views/process/node/parallel/parallel-node.component";
 
-const icons = [PlusOutline, MinusOutline, EditOutline];
+const icons = [PlusOutline, MinusOutline, EditOutline, CloseOutline, CopyOutline];
 
 @NgModule({
     declarations: [

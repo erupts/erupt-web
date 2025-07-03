@@ -40,14 +40,14 @@ export class FlowComponent implements OnInit, AfterViewInit {
             minScale: 0.5,
             contain: 'self',
             smoothScroll: true,
-            cursor:"grab"
+            cursor: "grab"
         });
     }
 
     ngOnInit() {
         // 加载的时候判断，赋默认值
         if (this.modelValue.length === 0) {
-            this.modelValue = [nodeType.Start.create()];
+            this.modelValue = [nodeType['Start'].create()];
             this.modelValueChange.emit(this.modelValue);
         }
     }
@@ -70,7 +70,7 @@ export class FlowComponent implements OnInit, AfterViewInit {
         }
     }
 
-    doHit(){
+    doHit() {
         this.panzoom.pan(0, 0);
         this.panzoom.zoom(1)
     }

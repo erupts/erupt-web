@@ -1,77 +1,77 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 
 @Component({
-  selector: 'app-branch-node',
-  templateUrl: './branch-node.component.html',
-  styleUrls: ['./branch-node.component.less']
+    selector: 'app-branch-node',
+    templateUrl: './branch-node.component.html',
+    styleUrls: ['./branch-node.component.less']
 })
 export class BranchNodeComponent implements AfterViewInit {
-  @Input() moveLn = false;
-  @Input() moveRn = false;
-  @Input() type = '';
-  @Input() color = '';
-  @Input() headerIcon = '';
-  @Input() content = '';
-  @Input() readonly = false;
-  @Input() modelValue: any;
-  @Input() showError = false;
-  @Input() errorInfo = '';
-  @Input() isDefault = false;
-  @Input() placeholder = '请设置';
-  @Input() desc = '';
+    @Input() moveLn = false;
+    @Input() moveRn = false;
+    @Input() type = '';
+    @Input() color = '';
+    @Input() headerIcon = '';
+    @Input() content = '';
+    @Input() readonly = false;
+    @Input() modelValue: any;
+    @Input() showError = false;
+    @Input() errorInfo = '';
+    @Input() isDefault = false;
+    @Input() placeholder = '请设置';
+    @Input() desc = '';
 
-  @Output() modelValueChange = new EventEmitter<any>();
-  @Output() select = new EventEmitter<void>();
-  @Output() delete = new EventEmitter<void>();
-  @Output() insertNode = new EventEmitter<string>();
-  @Output() copy = new EventEmitter<void>();
-  @Output() moveL = new EventEmitter<void>();
-  @Output() moveR = new EventEmitter<void>();
+    @Output() modelValueChange = new EventEmitter<any>();
+    @Output() select = new EventEmitter<void>();
+    @Output() delete = new EventEmitter<void>();
+    @Output() insertNode = new EventEmitter<string>();
+    @Output() copy = new EventEmitter<void>();
+    @Output() moveL = new EventEmitter<void>();
+    @Output() moveR = new EventEmitter<void>();
 
-  @ViewChild('nodeNameInput', { static: false }) nodeNameInput!: ElementRef;
+    @ViewChild('nodeNameInput', {static: false}) nodeNameInput!: ElementRef;
 
-  enableEdit = false;
+    enableEdit = false;
 
-  ngAfterViewInit() {
-    // 组件初始化后的处理
-  }
-
-  onEnableEdit() {
-    if (!this.readonly) {
-      this.enableEdit = true;
-      setTimeout(() => {
-        if (this.nodeNameInput) {
-          this.nodeNameInput.nativeElement.focus();
-        }
-      });
+    ngAfterViewInit() {
+        // 组件初始化后的处理
     }
-  }
 
-  onBlur() {
-    this.enableEdit = false;
-  }
+    onEnableEdit() {
+        if (!this.readonly) {
+            this.enableEdit = true;
+            setTimeout(() => {
+                if (this.nodeNameInput) {
+                    this.nodeNameInput.nativeElement.focus();
+                }
+            });
+        }
+    }
 
-  onSelect() {
-    this.select.emit();
-  }
+    onBlur() {
+        this.enableEdit = false;
+    }
 
-  onDelete() {
-    this.delete.emit();
-  }
+    onSelect() {
+        this.select.emit();
+    }
 
-  onInsertNode(type: string) {
-    this.insertNode.emit(type);
-  }
+    onDelete() {
+        this.delete.emit();
+    }
 
-  onCopy() {
-    this.copy.emit();
-  }
+    onInsertNode(type: string) {
+        this.insertNode.emit(type);
+    }
 
-  onMoveL() {
-    this.moveL.emit();
-  }
+    onCopy() {
+        this.copy.emit();
+    }
 
-  onMoveR() {
-    this.moveR.emit();
-  }
+    onMoveL() {
+        this.moveL.emit();
+    }
+
+    onMoveR() {
+        this.moveR.emit();
+    }
 }
