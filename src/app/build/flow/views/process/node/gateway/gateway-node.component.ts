@@ -29,8 +29,9 @@ export class GatewayNodeComponent {
    * @param type 要插入的节点类型
    */
   insertNodeFun(branch: any[], i: number, type: string) {
-    if ((nodeType as any)[type]) {
-      branch.splice(i + 1, 0, (nodeType as any)[type].create(type));
+    if (nodeType[type] && nodeType[type].create) {
+      const newNode = nodeType[type].create(type);
+      branch.splice(i + 1, 0, newNode);
     } else {
       // this.message.warning('请在ProcessNodes.ts内配置该节点');
     }
