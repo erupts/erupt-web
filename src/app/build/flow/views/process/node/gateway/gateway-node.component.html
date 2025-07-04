@@ -22,7 +22,7 @@
             [moveRn]="i < modelValue.branch.length - (modelValue.props.type !== 'Parallel' ? 2 : 1)"
             [moveLn]="i > 0"
             [isDefault]="i === modelValue.branch.length - 1 && modelValue.props.type !== 'Parallel'"
-            (insertNode)="insertNodeFun($event.branch, $event.index, $event.type)"
+            (insertNode)="insertNodeFun(modelValue.branch[i], $event.index, $event.type)"
             (delete)="deleteBranch(i)"
             (copy)="copyBranch(i)"
             (moveL)="moveL(i)"
@@ -39,7 +39,7 @@
             [moveRn]="i < modelValue.branch.length - (modelValue.props.type !== 'Parallel' ? 2 : 1)"
             [moveLn]="i > 0"
             [isDefault]="i === modelValue.branch.length - 1 && modelValue.props.type !== 'Parallel'"
-            (insertNode)="insertNodeFun($event.branch, $event.index, $event.type)"
+            (insertNode)="insertNodeFun(modelValue.branch[i], $event.index, $event.type)"
             (delete)="deleteBranch(i)"
             (copy)="copyBranch(i)"
             (moveL)="moveL(i)"
@@ -58,7 +58,7 @@
               [(model)]="modelValue.branch[i][bi]"
               [branch]="nodes"
               [index]="bi"
-              (insertNode)="insertNodeFun($event.branch, $event.index, $event.type)"
+              (insertNode)="insertNodeFun(nodes, $event.index, $event.type)"
               (delete)="deleteNode($event.branch, $event.index)"
               (select)="select.emit($event)">
             </app-start-node>
@@ -70,7 +70,7 @@
               [(modelValue)]="modelValue.branch[i][bi]"
               [branch]="nodes"
               [index]="bi"
-              (insertNode)="insertNodeFun($event.branch, $event.index, $event.type)"
+              (insertNode)="insertNodeFun(nodes, $event.index, $event.type)"
               (delete)="deleteNode($event.branch, $event.index)"
               (select)="select.emit($event)">
             </app-approval-node>
@@ -82,7 +82,7 @@
               [(modelValue)]="modelValue.branch[i][bi]"
               [branch]="nodes"
               [index]="bi"
-              (insertNode)="insertNodeFun($event.branch, $event.index, $event.type)"
+              (insertNode)="insertNodeFun(nodes, $event.index, $event.type)"
               (delete)="deleteNode($event.branch, $event.index)"
               (select)="select.emit($event)">
             </app-cc-node>
