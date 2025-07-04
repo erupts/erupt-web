@@ -71,6 +71,7 @@ import {CloseOutline, CopyOutline, EditOutline, MinusOutline, PlusOutline} from 
 import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
 import {ParallelNodeComponent} from "./views/process/node/parallel/parallel-node.component";
+import {RecursiveNodeComponent} from "/views/process/node/recursive-node.component";
 
 const icons = [PlusOutline, MinusOutline, EditOutline, CloseOutline, CopyOutline];
 
@@ -86,7 +87,8 @@ const icons = [PlusOutline, MinusOutline, EditOutline, CloseOutline, CopyOutline
         GatewayNodeComponent,
         NodeComponent,
         BranchNodeComponent,
-        InsertBtnComponent
+        InsertBtnComponent,
+        RecursiveNodeComponent
     ],
     imports: [
         FlowRoutingModule,

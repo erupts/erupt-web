@@ -168,7 +168,7 @@ const Cc = {
     name: '抄送人',
     icon: 'Promotion',
     color: '#5994F3',
-    create() {
+    create(type?: string) {
         return {
             id: getRandNodeId(),
             type: 'Cc',
