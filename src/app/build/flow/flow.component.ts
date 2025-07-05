@@ -2,7 +2,6 @@ import {AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, View
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ProcessRenderComponent} from "./views/process/process-render.component";
 import {NodeComponentConfigs, nodeType} from "./views/process/process-nodes";
-import Panzoom from "@panzoom/panzoom";
 
 @Component({
     selector: 'erupt-flow',
@@ -35,13 +34,13 @@ export class FlowComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.panzoom = Panzoom(this.panzoomElement.nativeElement, {
-            maxScale: 3,
-            minScale: 0.5,
-            contain: 'self',
-            smoothScroll: true,
-            cursor: "grab"
-        });
+        // this.panzoom = Panzoom(this.panzoomElement.nativeElement, {
+        //     maxScale: 3,
+        //     minScale: 0.5,
+        //     contain: 'self',
+        //     smoothScroll: true,
+        //     cursor: "grab"
+        // });
     }
 
     ngOnInit() {

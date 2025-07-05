@@ -62,16 +62,17 @@ import {ApprovalNodeComponent} from './views/process/node/appoval/approval-node.
 import {CcNodeComponent} from './views/process/node/cc/cc-node.component';
 import {ExclusiveNodeComponent} from './views/process/node/exclusive/exclusive-node.component';
 import {GatewayNodeComponent} from './views/process/node/gateway/gateway-node.component';
-import {NodeComponent} from './views/process/node/base/node.component';
 import {BranchNodeComponent} from './views/process/node/base/branch-node.component';
 import {InsertBtnComponent} from './views/process/node/base/insert-btn.component';
+
+import {NodeComponent} from './views/process/node/base/node.component';
 
 // 图标
 import {CloseOutline, CopyOutline, EditOutline, MinusOutline, PlusOutline} from '@ant-design/icons-angular/icons';
 import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
+import {RecursiveNodeComponent} from "./views/process/node/recursive-node.component";
 import {ParallelNodeComponent} from "./views/process/node/parallel/parallel-node.component";
-import {RecursiveNodeComponent} from "/views/process/node/recursive-node.component";
 
 const icons = [PlusOutline, MinusOutline, EditOutline, CloseOutline, CopyOutline];
 
