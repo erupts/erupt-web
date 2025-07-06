@@ -55,10 +55,7 @@ export class FlowComponent implements OnInit, AfterViewInit {
         this.activeNode = node;
         if (NodeComponentConfigs[this.activeNode.type]) {
             this.nodeConfVisible = true;
-        } else {
-            this.message.warning('本节点无配置项');
         }
-        console.log('选中', node);
     }
 
     doZoom(sc: number) {
