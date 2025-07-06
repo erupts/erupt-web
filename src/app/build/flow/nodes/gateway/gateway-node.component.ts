@@ -1,24 +1,24 @@
 import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
-import {NodeComponents, nodeType} from '../process-nodes';
-import {reloadNodeId} from '../../../utils/process-util';
+import {NodeComponents, nodeType} from '@flow/process-nodes';
+import {reloadNodeId} from '@flow/utils/process-util';
 
 @Component({
-  selector: 'app-recursive-node',
-  templateUrl: './recursive-node.component.html',
-  styleUrls: ['./recursive-node.component.less']
+  selector: 'app-gateway-node',
+  templateUrl: './gateway-node.component.html',
+  styleUrls: ['./gateway-node.component.less']
 })
-export class RecursiveNodeComponent {
+export class GatewayNodeComponent {
   @Input() readonly = false;
-  @Input() node: any;
+  @Input() modelValue: any;
   @Input() branch: any[] = [];
   @Input() index = 0;
 
-  @Output() nodeChange = new EventEmitter<any>();
+  @Output() modelValueChange = new EventEmitter<any>();
   @Output() select = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
   @Output() insertNode = new EventEmitter<any>();
 
-  @ViewChildren('startNode, approvalNode, ccNode, exclusiveNode, parallelNode, branchNode, childNodeRef') nodeRefs!: QueryList<ElementRef>;
+  @ViewChildren('node') nodeRefs!: QueryList<ElementRef>;
 
   NodeComponents = NodeComponents;
 
@@ -48,11 +48,11 @@ export class RecursiveNodeComponent {
 
   // 添加网关分支
   addBranch() {
-    const index = this.node.branch.length - 1;
-    const type = this.node.props.type;
+    const index = this.modelValue.branch.length - 1;
+    const type = this.modelValue.props.type;
     if ((nodeType as any)[type]) {
-      this.node.props.branch.splice(index, 0, (nodeType as any)[type].createSelf(index + 1));
-      this.node.branch.splice(index, 0, []);
+      this.modelValue.props.branch.splice(index, 0, (nodeType as any)[type].createSelf(index + 1));
+      this.modelValue.branch.splice(index, 0, []);
     } else {
       // this.message.warning('请在ProcessNodes.ts内配置该节点');
     }
@@ -65,21 +65,21 @@ export class RecursiveNodeComponent {
   // 复制一个分支
   copyBranch(i: number) {
     // 复制条件
-    const cd = this.deepCopy(this.node.props.branch[i]);
+    const cd = this.deepCopy(this.modelValue.props.branch[i]);
     cd.name = cd.name + '-copy';
     // 复制整个分支
-    const bh = this.deepCopy(this.node.branch[i]);
+    const bh = this.deepCopy(this.modelValue.branch[i]);
     // 重载节点id
     reloadNodeId(cd);
     reloadNodeId(bh);
     // 插入到新位置
-    this.node.props.branch.splice(i + 1, 0, cd);
-    this.node.branch.splice(i + 1, 0, bh);
+    this.modelValue.props.branch.splice(i + 1, 0, cd);
+    this.modelValue.branch.splice(i + 1, 0, bh);
   }
 
   // 删除网关分支
   deleteBranch(i: number) {
-    if (this.node.branch.length <= 2) {
+    if (this.modelValue.branch.length <= 2) {
       // 只有两个分支，那么就直接删除整个网关
       this.delete.emit({
         branch: this.branch,
@@ -87,21 +87,21 @@ export class RecursiveNodeComponent {
       });
     } else {
       // 直接删除此分支
-      this.node.props.branch.splice(i, 1);
-      this.node.branch.splice(i, 1);
+      this.modelValue.props.branch.splice(i, 1);
+      this.modelValue.branch.splice(i, 1);
     }
   }
 
   // 左移分支
   moveL(i: number) {
-    this.exchange(this.node.props.branch, i, i - 1);
-    this.exchange(this.node.branch, i, i - 1);
+    this.exchange(this.modelValue.props.branch, i, i - 1);
+    this.exchange(this.modelValue.branch, i, i - 1);
   }
 
   // 右移分支
   moveR(i: number) {
-    this.exchange(this.node.props.branch, i, i + 1);
-    this.exchange(this.node.branch, i, i + 1);
+    this.exchange(this.modelValue.props.branch, i, i + 1);
+    this.exchange(this.modelValue.branch, i, i + 1);
   }
 
   // 交换数组俩元素位置
@@ -112,8 +112,8 @@ export class RecursiveNodeComponent {
   }
 
   selectFun(nd: any, i: number) {
-    if (!(i === this.node.branch.length - 1
-        && this.node.props.type !== 'Parallel')) {
+    if (!(i === this.modelValue.branch.length - 1
+        && this.modelValue.props.type !== 'Parallel')) {
       // this.select.emit(nd);
     }
   }
@@ -128,4 +128,4 @@ export class RecursiveNodeComponent {
       });
     }
   }
-} 
+}
