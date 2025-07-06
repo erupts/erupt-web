@@ -68,13 +68,21 @@ import {InsertBtnComponent} from '@flow/nodes/base/insert-btn.component';
 import {NodeComponent} from '@flow/nodes/base/node.component';
 
 // 图标
-import {CloseOutline, CopyOutline, EditOutline, MinusOutline, PlusOutline} from '@ant-design/icons-angular/icons';
+import {
+    ArrowLeftOutline,
+    ArrowRightOutline,
+    CloseOutline,
+    CopyOutline,
+    EditOutline,
+    MinusOutline,
+    PlusOutline
+} from '@ant-design/icons-angular/icons';
 import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
 import {RecursiveNodeComponent} from "@flow/nodes/recursive-node.component";
 import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.component";
 
-const icons = [PlusOutline, MinusOutline, EditOutline, CloseOutline, CopyOutline];
+const icons = [PlusOutline, MinusOutline, EditOutline, CloseOutline, CopyOutline, ArrowLeftOutline, ArrowRightOutline];
 
 @NgModule({
     declarations: [

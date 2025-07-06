@@ -6,6 +6,7 @@
 import {
     ApartmentOutline,
     ArrowDownOutline,
+    ArrowLeftOutline,
     ArrowRightOutline,
     BuildOutline,
     BulbOutline,
@@ -35,6 +36,7 @@ import {
     LockOutline,
     MenuFoldOutline,
     MenuUnfoldOutline,
+    MinusOutline,
     MinusSquareOutline,
     PieChartTwoTone,
     PlusOutline,
@@ -100,5 +102,7 @@ export const ICONS_AUTO = [
     UserOutline,
     ArrowRightOutline,
     FileImageOutline,
-    ApartmentOutline
+    ApartmentOutline,
+    ArrowLeftOutline,
+    MinusOutline
 ];
