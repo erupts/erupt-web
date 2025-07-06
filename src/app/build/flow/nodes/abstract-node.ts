@@ -1,10 +1,11 @@
 abstract class ANode {
 
-    abstract type: string;
+    abstract code: string;
 
-    abstract validate(): void;
+    abstract color: string;
 
-    // 普通方法
+    abstract click(): void;
+
     eat(): void {
         console.log('Animal is eating');
     }

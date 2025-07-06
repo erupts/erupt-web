@@ -7,7 +7,7 @@ import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {NzDrawerModule} from 'ng-zorro-antd/drawer';
 import {NzMessageModule} from 'ng-zorro-antd/message';
-import {NZ_ICONS, NzIconModule} from 'ng-zorro-antd/icon';
+import {NzIconModule} from 'ng-zorro-antd/icon';
 import {NzTypographyModule} from 'ng-zorro-antd/typography';
 import {NzFormModule} from 'ng-zorro-antd/form';
 import {NzSelectModule} from 'ng-zorro-antd/select';
@@ -61,28 +61,17 @@ import {StartNodeComponent} from '@flow/nodes/start/start-node.component';
 import {ApprovalNodeComponent} from '@flow/nodes/appoval/approval-node.component';
 import {CcNodeComponent} from '@flow/nodes/cc/cc-node.component';
 import {ExclusiveNodeComponent} from '@flow/nodes/exclusive/exclusive-node.component';
-import {GatewayNodeComponent} from '@flow/nodes/gateway/gateway-node.component';
 import {BranchNodeComponent} from '@flow/nodes/base/branch-node.component';
 import {InsertBtnComponent} from '@flow/nodes/base/insert-btn.component';
 
 import {NodeComponent} from '@flow/nodes/base/node.component';
 
 // 图标
-import {
-    ArrowLeftOutline,
-    ArrowRightOutline,
-    CloseOutline,
-    CopyOutline,
-    EditOutline,
-    MinusOutline,
-    PlusOutline
-} from '@ant-design/icons-angular/icons';
 import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
 import {RecursiveNodeComponent} from "@flow/nodes/recursive-node.component";
 import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.component";
 
-const icons = [PlusOutline, MinusOutline, EditOutline, CloseOutline, CopyOutline, ArrowLeftOutline, ArrowRightOutline];
 
 @NgModule({
     declarations: [
@@ -93,7 +82,7 @@ const icons = [PlusOutline, MinusOutline, EditOutline, CloseOutline, CopyOutline
         CcNodeComponent,
         ExclusiveNodeComponent,
         ParallelNodeComponent,
-        GatewayNodeComponent,
+        // GatewayNodeComponent,
         NodeComponent,
         BranchNodeComponent,
         InsertBtnComponent,
@@ -155,9 +144,6 @@ const icons = [PlusOutline, MinusOutline, EditOutline, CloseOutline, CopyOutline
         NzMentionModule,
         NzAutocompleteModule,
         NzInputNumberModule
-    ],
-    providers: [
-        {provide: NZ_ICONS, useValue: icons}
     ]
 })
 export class FlowModule {
