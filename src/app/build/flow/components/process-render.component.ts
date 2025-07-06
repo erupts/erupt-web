@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
-import {NodeComponents, nodeType} from './process-nodes';
+import {NodeComponents, nodeType} from '@flow/process-nodes';
 
 @Component({
     selector: 'app-process-render',
