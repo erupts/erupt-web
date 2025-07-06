@@ -10,7 +10,7 @@ export const NodeComponents: { [key: string]: any } = {
     Cc: 'app-cc-node',
     Exclusive: 'app-exclusive-node',
     Parallel: 'app-parallel-node',
-    Gateway: 'app-gateway-node'
+    // Gateway: 'app-gateway-node'
 };
 
 // 节点配置组件映射
@@ -20,7 +20,7 @@ export const NodeComponentConfigs: { [key: string]: any } = {
     Cc: 'app-cc-config',
     Exclusive: 'app-exclusive-config',
     Parallel: 'app-parallel-config',
-    Gateway: 'app-gateway-config'
+    // Gateway: 'app-gateway-config'
 };
 
 const createGateway = (type: string) => {
