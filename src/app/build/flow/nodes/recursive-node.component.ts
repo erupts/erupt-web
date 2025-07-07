@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
-import {NodeComponents, nodeType} from '@flow/process-nodes';
+import {NodeComponents, nodeType} from '@flow/nodes/process-nodes';
 import {reloadNodeId} from '@flow/utils/process-util';
 
 @Component({
