@@ -1,14 +1,11 @@
-abstract class ANode {
+export abstract class ANode {
 
-    abstract code: string;
+    abstract code(): string;
 
-    abstract name: string;
+    abstract name(): string;
 
-    abstract color: string;
+    abstract color(): string;
 
-    abstract click(): void;
+    abstract onSelect(): void;
 
-    eat(): void {
-        console.log('Animal is eating');
-    }
 }

@@ -2,26 +2,30 @@
  * 需要创建新的节点，统一在本ts内进行配置
  */
 import {getRandNodeId} from '../utils/process-util';
+import {ANode} from "@flow/nodes/abstract-node";
+import {ApprovalNodeComponent} from "@flow/nodes/appoval/approval-node.component";
+import {CcNodeComponent} from "@flow/nodes/cc/cc-node.component";
+import {ExclusiveNodeComponent} from "@flow/nodes/exclusive/exclusive-node.component";
+import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.component";
+import {StartNodeComponent} from "@flow/nodes/start/start-node.component";
 
-// 节点组件映射
-export const NodeComponents: { [key: string]: any } = {
-    Start: 'app-start-node',
-    Approval: 'app-approval-node',
-    Cc: 'app-cc-node',
-    Exclusive: 'app-exclusive-node',
-    Parallel: 'app-parallel-node',
-    // Gateway: 'app-gateway-node'
+export const nodes: ANode[] = [
+    new StartNodeComponent(),
+    new ApprovalNodeComponent(),
+    new CcNodeComponent(),
+    new ExclusiveNodeComponent(),
+    new ParallelNodeComponent()
+]
+
+export const nodeMapping = (): { [key: string]: ANode } => {
+    const result: { [key: string]: ANode } = {};
+    for (let node of nodes) {
+        result[node.code()] = node;
+    }
+    return result;
 };
 
-// 节点配置组件映射
-export const NodeComponentConfigs: { [key: string]: any } = {
-    Start: null,
-    Approval: 'app-approval-config',
-    Cc: 'app-cc-config',
-    Exclusive: 'app-exclusive-config',
-    Parallel: 'app-parallel-config',
-    // Gateway: 'app-gateway-config'
-};
+// export const nodes: { [key: string]: ANode } = {}
 
 const createGateway = (type: string) => {
     return {
@@ -55,16 +59,7 @@ const branchNode: { [key: string]: any } = {
                 type: 'Exclusive',
                 name: i ? '条件' + i : '默认条件',
                 parentId: null,
-                childId: null,
-                props: {
-                    logic: true, // 组关系
-                    groups: [ // 组条件
-                        {
-                            logic: true, // 组内条件关系
-                            conditions: []
-                        }
-                    ]
-                },
+                childId: null
             };
         },
         create() {
@@ -83,7 +78,6 @@ const branchNode: { [key: string]: any } = {
                 name: '并行路径' + (i ? i : 2),
                 parentId: null,
                 childId: null,
-                props: {},
             };
         },
         create() {
@@ -117,48 +111,7 @@ const Approval = {
             type: 'Approval',
             name: '审批人',
             parentId: null,
-            childId: null,
-            props: {
-                mode: 'USER', // 审批方式：人工处理、自动通过、自动拒绝
-                ruleType: 'ASSIGN_USER', // 规则类型，用哪种审批规则
-                taskMode: { // 审批模式
-                    type: 'AND',
-                    percentage: 100,
-                },
-                needSign: false,
-                assignUser: [], // 指定人员
-                rootSelect: {
-                    multiple: false, // 是否多选
-                },
-                leader: { // 部门负责人
-                    level: 1,
-                    emptySkip: false
-                },
-                leaderTop: {
-                    level: 0, // 级数
-                    toEnd: false, // 直到终点还是指定级别数
-                    emptySkip: false
-                },
-                assignDept: {
-                    dept: [], // 指定的部门
-                    type: 'LEADER' // 部门主管
-                },
-                assignRole: [],
-                noUserHandler: { // 无人时的处理规则
-                    type: 'TO_NEXT',
-                    assigned: []
-                },
-                sameRoot: {
-                    type: 'TO_SELF',
-                    assigned: []
-                },
-                timeout: { // 超时处理
-                    enable: false,
-                    time: 1,
-                    timeUnit: 'M',
-                    type: 'TO_PASS', // 自动通过
-                }
-            },
+            childId: null
         };
     }
 };
@@ -168,25 +121,13 @@ const Cc = {
     name: '抄送人',
     icon: 'Promotion',
     color: '#5994F3',
-    create(type?: string) {
+    create() {
         return {
             id: getRandNodeId(),
             type: 'Cc',
             name: '抄送人',
             parentId: null,
             childId: null,
-            props: {
-                ruleType: 'ASSIGN_USER', // 规则类型，用哪种抄送规则
-                assignUser: [], // 指定人员
-                rootSelect: {
-                    multiple: false, // 是否多选
-                },
-                assignDept: {
-                    dept: [], // 指定的部门
-                    type: 'LEADER' // 部门主管
-                },
-                assignRole: [],
-            },
         };
     }
 };

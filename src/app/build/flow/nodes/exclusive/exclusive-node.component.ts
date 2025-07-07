@@ -1,53 +1,67 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ANode} from "@flow/nodes/abstract-node";
 
 @Component({
-  selector: 'app-exclusive-node',
-  templateUrl: './exclusive-node.component.html',
-  styleUrls: ['./exclusive-node.component.less']
+    selector: 'app-exclusive-node',
+    templateUrl: './exclusive-node.component.html',
+    styleUrls: ['./exclusive-node.component.less']
 })
-export class ExclusiveNodeComponent {
-  @Input() readonly = false;
-  @Input() modelValue: any;
-  @Input() branch: any[] = [];
-  @Input() index = 0;
-  @Input() moveLn = false;
-  @Input() moveRn = false;
-  @Input() isDefault = false;
+export class ExclusiveNodeComponent implements ANode {
 
-  @Output() modelValueChange = new EventEmitter<any>();
-  @Output() select = new EventEmitter<any>();
-  @Output() delete = new EventEmitter<any>();
-  @Output() insertNode = new EventEmitter<any>();
-  @Output() moveL = new EventEmitter<void>();
-  @Output() moveR = new EventEmitter<void>();
+    @Input() readonly = false;
+    @Input() modelValue: any;
+    @Input() branch: any[] = [];
+    @Input() index = 0;
+    @Input() moveLn = false;
+    @Input() moveRn = false;
+    @Input() isDefault = false;
 
-  showErr = false;
-  errInfo: any = null;
+    @Output() modelValueChange = new EventEmitter<any>();
+    @Output() select = new EventEmitter<any>();
+    @Output() delete = new EventEmitter<any>();
+    @Output() insertNode = new EventEmitter<any>();
+    @Output() moveL = new EventEmitter<void>();
+    @Output() moveR = new EventEmitter<void>();
 
-  onSelect() {
-    this.select.emit(this.modelValue);
-  }
+    showErr = false;
+    errInfo: any = null;
 
-  onDelete() {
-    this.delete.emit({
-      branch: this.branch,
-      index: this.index
-    });
-  }
+    onSelect() {
+        this.select.emit(this.modelValue);
+    }
 
-  onInsertNode(type: string) {
-    this.insertNode.emit({
-      branch: this.branch,
-      index: this.index,
-      type: type
-    });
-  }
+    onDelete() {
+        this.delete.emit({
+            branch: this.branch,
+            index: this.index
+        });
+    }
 
-  onMoveL() {
-    this.moveL.emit();
-  }
+    onInsertNode(type: string) {
+        this.insertNode.emit({
+            branch: this.branch,
+            index: this.index,
+            type: type
+        });
+    }
 
-  onMoveR() {
-    this.moveR.emit();
-  }
+    onMoveL() {
+        this.moveL.emit();
+    }
+
+    onMoveR() {
+        this.moveR.emit();
+    }
+
+    code(): string {
+        return "exclusive";
+    }
+
+    color(): string {
+        return "#59B9A4";
+    }
+
+    name(): string {
+        return "互斥条件";
+    }
 }

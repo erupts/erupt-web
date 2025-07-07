@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
-import {NodeComponents, nodeType} from '@flow/nodes/process-nodes';
+import {nodeType} from '@flow/nodes/process-nodes';
 import {reloadNodeId} from '@flow/utils/process-util';
 
 @Component({
@@ -19,8 +19,6 @@ export class RecursiveNodeComponent {
   @Output() insertNode = new EventEmitter<any>();
 
   @ViewChildren('startNode, approvalNode, ccNode, exclusiveNode, parallelNode, branchNode, childNodeRef') nodeRefs!: QueryList<ElementRef>;
-
-  NodeComponents = NodeComponents;
 
   /**
    * 插入节点

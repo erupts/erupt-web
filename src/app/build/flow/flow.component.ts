@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ProcessRenderComponent} from "./components/process-render.component";
-import {NodeComponentConfigs, nodeType} from "./nodes/process-nodes";
+import {nodeType} from "./nodes/process-nodes";
 import Panzoom from "@panzoom/panzoom";
 
 @Component({
@@ -54,9 +54,9 @@ export class FlowComponent implements OnInit, AfterViewInit {
 
     selectNode(node: any) {
         this.activeNode = node;
-        if (NodeComponentConfigs[this.activeNode.type]) {
-            this.nodeConfVisible = true;
-        }
+        // if (NodeComponentConfigs[this.activeNode.type]) {
+        //     this.nodeConfVisible = true;
+        // }
     }
 
     doZoom(sc: number) {
