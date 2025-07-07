@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
-import {NodeComponents, nodeType} from '@flow/nodes/process-nodes';
+import {nodeType} from '@flow/nodes/process-nodes';
 
 @Component({
     selector: 'app-process-render',
@@ -18,7 +18,6 @@ export class ProcessRenderComponent implements OnInit {
 
     @ViewChildren('node') nodeRefs!: QueryList<ElementRef>;
 
-    NodeComponents = NodeComponents;
 
     ngOnInit(): void {
 

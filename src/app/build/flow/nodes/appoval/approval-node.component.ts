@@ -1,39 +1,59 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ANode} from "@flow/nodes/abstract-node";
 
 @Component({
-  selector: 'app-approval-node',
-  templateUrl: './approval-node.component.html',
-  styleUrls: ['./approval-node.component.less']
+    selector: 'app-approval-node',
+    templateUrl: './approval-node.component.html',
+    styleUrls: ['./approval-node.component.less']
 })
-export class ApprovalNodeComponent {
-  @Input() readonly = false;
-  @Input() modelValue: any;
-  @Input() branch: any[] = [];
-  @Input() index = 0;
-  @Output() modelValueChange = new EventEmitter<any>();
-  @Output() select = new EventEmitter<any>();
-  @Output() delete = new EventEmitter<any>();
-  @Output() insertNode = new EventEmitter<any>();
+export class ApprovalNodeComponent implements ANode {
 
-  showErr = false;
-  errInfo: any = null;
+    @Input() readonly = false;
+    @Input() modelValue: any;
+    @Input() branch: any[] = [];
+    @Input() index = 0;
+    @Output() modelValueChange = new EventEmitter<any>();
+    @Output() select = new EventEmitter<any>();
+    @Output() delete = new EventEmitter<any>();
+    @Output() insertNode = new EventEmitter<any>();
 
-  onSelect() {
-    this.select.emit(this.modelValue);
-  }
+    showErr = false;
+    errInfo: any = null;
 
-  onDelete() {
-    this.delete.emit({
-      branch: this.branch,
-      index: this.index
-    });
-  }
 
-  onInsertNode(type: string) {
-    this.insertNode.emit({
-      branch: this.branch,
-      index: this.index,
-      type: type
-    });
-  }
+    code(): string {
+        return "approval";
+    }
+
+    name(): string {
+        throw "审批人";
+    }
+
+    color(): string {
+        return "#EC8151";
+    }
+
+
+    onSelect() {
+        this.select.emit(this.modelValue);
+    }
+
+    onDelete() {
+        this.delete.emit({
+            branch: this.branch,
+            index: this.index
+        });
+    }
+
+    onInsertNode(type: string) {
+        this.insertNode.emit({
+            branch: this.branch,
+            index: this.index,
+            type: type
+        });
+    }
+
+    click(): void {
+    }
+
 }
