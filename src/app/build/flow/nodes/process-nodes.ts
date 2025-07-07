@@ -1,7 +1,7 @@
 /**
  * 需要创建新的节点，统一在本ts内进行配置
  */
-import {getRandNodeId} from './utils/process-util';
+import {getRandNodeId} from '../utils/process-util';
 
 // 节点组件映射
 export const NodeComponents: { [key: string]: any } = {

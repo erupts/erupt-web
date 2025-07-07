@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Output} from '@angular/core';
-import {nodeType} from '../../process-nodes';
+import {nodeType} from '../process-nodes';
 
 @Component({
     selector: 'app-insert-btn',
