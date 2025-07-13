@@ -19,8 +19,6 @@ import {StartNodeComponent} from "@flow/nodes/start/start-node.component";
 })
 export class FlowComponent implements OnInit, AfterViewInit {
 
-    active = true;
-
     modelValue: any[] = [];
 
     @Output() modelValueChange = new EventEmitter<any[]>();
@@ -28,11 +26,6 @@ export class FlowComponent implements OnInit, AfterViewInit {
     @ViewChild('processRender', {static: false}) processRender!: ProcessRenderComponent;
 
     @ViewChild('canvasContainer') canvasContainer: ElementRef;
-
-    // 选中的节点
-    activeNode: any = {};
-
-    nodeConfVisible = false;
 
     // 拖拽相关属性
     isDragging = false;
@@ -220,7 +213,6 @@ export class FlowComponent implements OnInit, AfterViewInit {
     }
 
     selectNode(node: any) {
-        this.activeNode = node;
         // if (NodeComponentConfigs[this.activeNode.type]) {
         //     this.nodeConfVisible = true;
         // }
