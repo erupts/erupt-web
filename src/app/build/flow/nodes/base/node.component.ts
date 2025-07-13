@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 
 @Component({
-  selector: 'app-node',
+  selector: 'erupt-node',
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.less']
 })

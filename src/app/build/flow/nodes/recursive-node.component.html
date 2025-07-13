@@ -111,39 +111,11 @@
       </div>
     </div>
 
-    <app-node
+    <erupt-node
       [readonly]="readonly"
       [class]="{'p-branch-end': branch.length === index + 1}"
       [showBody]="false"
       (insertNode)="insertNode.emit({branch: branch, index: index, type: $event})">
-    </app-node>
+    </erupt-node>
   </div>
-
-<!--  &lt;!&ndash; 互斥网关节点 &ndash;&gt;-->
-<!--  <app-exclusive-node-->
-<!--    *ngSwitchCase="'exclusive'"-->
-<!--    #exclusiveNode-->
-<!--    [readonly]="readonly"-->
-<!--    [(modelValue)]="node"-->
-<!--    [branch]="branch"-->
-<!--    [index]="index"-->
-<!--    (modelValueChange)="nodeChange.emit($event)"-->
-<!--    (insertNode)="insertNodeFun(branch, $event.index, $event.type)"-->
-<!--    (delete)="deleteNode(branch, $event.index)"-->
-<!--    (select)="select.emit($event)">-->
-<!--  </app-exclusive-node>-->
-
-<!--  &lt;!&ndash; 并行网关节点 &ndash;&gt;-->
-<!--  <app-parallel-node-->
-<!--    *ngSwitchCase="'parallel'"-->
-<!--    #parallelNode-->
-<!--    [readonly]="readonly"-->
-<!--    [(modelValue)]="node"-->
-<!--    [branch]="branch"-->
-<!--    [index]="index"-->
-<!--    (modelValueChange)="nodeChange.emit($event)"-->
-<!--    (insertNode)="insertNodeFun(branch, $event.index, $event.type)"-->
-<!--    (delete)="deleteNode(branch, $event.index)"-->
-<!--    (select)="select.emit($event)">-->
-<!--  </app-parallel-node>-->
 </ng-container>
