@@ -1,14 +1,22 @@
+:host-context(.alain-default__collapsed) {
+    .flow {
+        .p-operation {
+            left: 68px !important;
+        }
+    }
+}
+
 .flow {
     width: 100%;
     height: calc(100vh - 48px);
-    padding: 12px;
+    padding: 18px;
     overflow: auto;
     position: relative;
 
     .p-operation {
         position: fixed;
-        top: 60px;
-        right: 20px;
+        bottom: 20px;
+        left: 220px;
         z-index: 99;
 
         .p-operation-zoom {
@@ -57,8 +65,8 @@
         app-process-render {
             display: block;
             position: relative;
-            transform-origin: center center;
-            transition: transform 0.1s ease-out; // 添加平滑的缩放过渡效果
+            // 移除transform相关样式，因为使用zoom
+            // zoom属性会自动处理缩放，不需要额外的过渡效果
         }
 
         // 确保节点可以正常交互
