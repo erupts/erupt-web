@@ -25,9 +25,7 @@
         </div>
 
         <div class="p-node-content" (click)="onSelect()">
-            <nz-typography nzEllipsis nzEllipsisRows="4">
-                {{ content || placeholder }}
-            </nz-typography>
+            <ng-content></ng-content>
             <span nz-icon nzType="arrow-right" class="w-p-node-click"></span>
         </div>
     </div>
