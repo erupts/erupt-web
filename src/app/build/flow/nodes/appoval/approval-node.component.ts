@@ -1,12 +1,13 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/nodes/abstract-node";
+import {getRandNodeId} from "@flow/utils/process-util";
 
 @Component({
     selector: 'app-approval-node',
     templateUrl: './approval-node.component.html',
     styleUrls: ['./approval-node.component.less']
 })
-export class ApprovalNodeComponent implements ANode {
+export class ApprovalNodeComponent extends ANode {
 
     @Input() readonly = false;
     @Input() modelValue: any;
@@ -26,7 +27,7 @@ export class ApprovalNodeComponent implements ANode {
     }
 
     name(): string {
-        throw "审批人";
+        return "审批人";
     }
 
     color(): string {
@@ -54,6 +55,14 @@ export class ApprovalNodeComponent implements ANode {
     }
 
     click(): void {
+    }
+
+    create(): any {
+        return {
+            id: getRandNodeId(),
+            type: this.code(),
+            name: this.name()
+        };
     }
 
 }

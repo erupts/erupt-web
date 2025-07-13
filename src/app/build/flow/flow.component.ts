@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ProcessRenderComponent} from "./components/process-render.component";
-import {nodeType} from "./nodes/process-nodes";
+import {StartNodeComponent} from "@flow/nodes/start/start-node.component";
 
 @Component({
     selector: 'erupt-flow',
@@ -21,10 +21,7 @@ export class FlowComponent implements OnInit, AfterViewInit {
 
     active = true;
 
-    modelValue: any[] = [{
-        type: "Start",
-        name: "str"
-    }];
+    modelValue: any[] = [];
 
     @Output() modelValueChange = new EventEmitter<any[]>();
 
@@ -67,15 +64,12 @@ export class FlowComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.initCanvasDrag();
-
-        // 显示当前使用的缩放方式
-        console.log(`使用${this.zoomSupported ? 'zoom' : 'transform scale'}进行缩放`);
     }
 
     ngOnInit() {
         // 加载的时候判断，赋默认值
         if (this.modelValue.length === 0) {
-            this.modelValue = [nodeType['Start'].create()];
+            this.modelValue = [new StartNodeComponent().create()];
             this.modelValueChange.emit(this.modelValue);
         }
     }

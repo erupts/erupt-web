@@ -2,7 +2,7 @@
 <ng-container [ngSwitch]="node.type">
   <!-- 开始节点 -->
   <app-start-node
-    *ngSwitchCase="'Start'"
+    *ngSwitchCase="'start'"
     #startNode
     [readonly]="readonly"
     [(model)]="node"
@@ -16,7 +16,7 @@
 
   <!-- 审批节点 -->
   <app-approval-node
-    *ngSwitchCase="'Approval'"
+    *ngSwitchCase="'approval'"
     #approvalNode
     [readonly]="readonly"
     [(modelValue)]="node"
@@ -30,7 +30,7 @@
 
   <!-- 抄送节点 -->
   <app-cc-node
-    *ngSwitchCase="'Cc'"
+    *ngSwitchCase="'cc'"
     #ccNode
     [readonly]="readonly"
     [(modelValue)]="node"
@@ -43,7 +43,7 @@
   </app-cc-node>
 
   <!-- 网关节点 - 递归渲染 -->
-  <div *ngSwitchCase="'Gateway'" class="p-gateway">
+  <div *ngSwitchCase="'gateway'" class="p-gateway">
     <div class="p-branch">
       <button nz-button nzType="default" nzShape="round"
               *ngIf="!readonly"
@@ -59,14 +59,14 @@
           <!-- 构造分支头节点 -->
           <ng-container [ngSwitch]="node.props.type">
             <app-exclusive-node
-              *ngSwitchCase="'Exclusive'"
+              *ngSwitchCase="'exclusive'"
               #branchNode
               [readonly]="readonly"
               [(modelValue)]="node.props.branch[i]"
               [index]="i"
-              [moveRn]="i < node.branch.length - (node.props.type !== 'Parallel' ? 2 : 1)"
+              [moveRn]="i < node.branch.length - (node.props.type !== 'parallel' ? 2 : 1)"
               [moveLn]="i > 0"
-              [isDefault]="i === node.branch.length - 1 && node.props.type !== 'Parallel'"
+              [isDefault]="i === node.branch.length - 1 && node.props.type !== 'parallel'"
               (insertNode)="insertNodeFun(node.branch[i], $event.index, $event.type)"
               (delete)="deleteBranch(i)"
               (copy)="copyBranch(i)"
@@ -76,14 +76,14 @@
             </app-exclusive-node>
 
             <app-parallel-node
-              *ngSwitchCase="'Parallel'"
+              *ngSwitchCase="'parallel'"
               #branchNode
               [readonly]="readonly"
               [(modelValue)]="node.props.branch[i]"
               [index]="i"
-              [moveRn]="i < node.branch.length - (node.props.type !== 'Parallel' ? 2 : 1)"
+              [moveRn]="i < node.branch.length - (node.props.type !== 'parallel' ? 2 : 1)"
               [moveLn]="i > 0"
-              [isDefault]="i === node.branch.length - 1 && node.props.type !== 'Parallel'"
+              [isDefault]="i === node.branch.length - 1 && node.props.type !== 'parallel'"
               (insertNode)="insertNodeFun(node.branch[i], $event.index, $event.type)"
               (delete)="deleteBranch(i)"
               (copy)="copyBranch(i)"
@@ -119,31 +119,31 @@
     </app-node>
   </div>
 
-  <!-- 互斥网关节点 -->
-  <app-exclusive-node
-    *ngSwitchCase="'Exclusive'"
-    #exclusiveNode
-    [readonly]="readonly"
-    [(modelValue)]="node"
-    [branch]="branch"
-    [index]="index"
-    (modelValueChange)="nodeChange.emit($event)"
-    (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
-    (delete)="deleteNode(branch, $event.index)"
-    (select)="select.emit($event)">
-  </app-exclusive-node>
+<!--  &lt;!&ndash; 互斥网关节点 &ndash;&gt;-->
+<!--  <app-exclusive-node-->
+<!--    *ngSwitchCase="'exclusive'"-->
+<!--    #exclusiveNode-->
+<!--    [readonly]="readonly"-->
+<!--    [(modelValue)]="node"-->
+<!--    [branch]="branch"-->
+<!--    [index]="index"-->
+<!--    (modelValueChange)="nodeChange.emit($event)"-->
+<!--    (insertNode)="insertNodeFun(branch, $event.index, $event.type)"-->
+<!--    (delete)="deleteNode(branch, $event.index)"-->
+<!--    (select)="select.emit($event)">-->
+<!--  </app-exclusive-node>-->
 
-  <!-- 并行网关节点 -->
-  <app-parallel-node
-    *ngSwitchCase="'Parallel'"
-    #parallelNode
-    [readonly]="readonly"
-    [(modelValue)]="node"
-    [branch]="branch"
-    [index]="index"
-    (modelValueChange)="nodeChange.emit($event)"
-    (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
-    (delete)="deleteNode(branch, $event.index)"
-    (select)="select.emit($event)">
-  </app-parallel-node>
+<!--  &lt;!&ndash; 并行网关节点 &ndash;&gt;-->
+<!--  <app-parallel-node-->
+<!--    *ngSwitchCase="'parallel'"-->
+<!--    #parallelNode-->
+<!--    [readonly]="readonly"-->
+<!--    [(modelValue)]="node"-->
+<!--    [branch]="branch"-->
+<!--    [index]="index"-->
+<!--    (modelValueChange)="nodeChange.emit($event)"-->
+<!--    (insertNode)="insertNodeFun(branch, $event.index, $event.type)"-->
+<!--    (delete)="deleteNode(branch, $event.index)"-->
+<!--    (select)="select.emit($event)">-->
+<!--  </app-parallel-node>-->
 </ng-container>
