@@ -6,7 +6,7 @@ import {ANode} from "@flow/nodes/abstract-node";
     templateUrl: './start-node.component.html',
     styleUrls: ['./start-node.component.less']
 })
-export class StartNodeComponent implements ANode {
+export class StartNodeComponent extends ANode {
     @Input() readonly = false;
     @Input() model: any;
     @Input() branch: any[] = [];
@@ -46,4 +46,12 @@ export class StartNodeComponent implements ANode {
     name(): string {
         return "发起人";
     }
+
+    create(): any {
+        return {
+            type: this.code(),
+            name: this.name(),
+        }
+    }
+
 }

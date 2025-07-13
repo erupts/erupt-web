@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
-import {nodeType} from '@flow/nodes/process-nodes';
+import {NodeMap} from '@flow/nodes/process-nodes';
 
 @Component({
     selector: 'app-process-render',
@@ -39,8 +39,8 @@ export class ProcessRenderComponent implements OnInit {
      * @param type 要插入的节点类型
      */
     insertNode(branch: any[], i: number, type: string) {
-        if (nodeType[type] && nodeType[type].create) {
-            const newNode = nodeType[type].create();
+        if (NodeMap[type] && NodeMap[type].create) {
+            const newNode = NodeMap[type].create();
             branch.splice(i + 1, 0, newNode);
         } else {
             // this.message.warning('请在ProcessNodes.ts内配置该节点');

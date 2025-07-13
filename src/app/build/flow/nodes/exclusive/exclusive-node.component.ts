@@ -1,12 +1,14 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/nodes/abstract-node";
+import {getRandNodeId} from "@flow/utils/process-util";
 
 @Component({
     selector: 'app-exclusive-node',
     templateUrl: './exclusive-node.component.html',
     styleUrls: ['./exclusive-node.component.less']
 })
-export class ExclusiveNodeComponent implements ANode {
+export class ExclusiveNodeComponent extends ANode {
+
 
     @Input() readonly = false;
     @Input() modelValue: any;
@@ -63,5 +65,32 @@ export class ExclusiveNodeComponent implements ANode {
 
     name(): string {
         return "互斥条件";
+    }
+
+    create() {
+        return {
+            id: getRandNodeId() + '_fork',
+            type: 'gateway',
+            name: '网关节点',
+            props: {
+                type: this.code(),
+                branch: [
+                    // 默认创建俩分支
+                    this.createBranch(1),
+                    this.createBranch()
+                ]
+            },
+            branch: [[], []] // 默认要创建2个空分支
+        }
+    }
+
+    override createBranch(i?: number) {
+        return {
+            id: getRandNodeId(),
+            type: 'exclusive',
+            name: i ? '条件' + i : '默认条件',
+            parentId: null,
+            childId: null
+        };
     }
 }

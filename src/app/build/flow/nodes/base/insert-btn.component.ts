@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Output} from '@angular/core';
-import {nodeType} from '../process-nodes';
+import {Nodes} from '../process-nodes';
+import {ANode} from "@flow/nodes/abstract-node";
 
 @Component({
     selector: 'app-insert-btn',
@@ -11,18 +12,7 @@ export class InsertBtnComponent {
 
     popoverVisible: boolean = false;
 
-    nodeList = Object.keys(nodeType)
-        .filter(v => (nodeType as any)[v].name)
-        .map(v => {
-            console.log({
-                type: v,
-                ...(nodeType as any)[v]
-            });
-            return {
-                type: v,
-                ...(nodeType as any)[v]
-            };
-        });
+    nodeList: ANode[] = Nodes;
 
     onInsertNode(type: string) {
         this.insertNode.emit(type);
