@@ -50,11 +50,26 @@ export class FlowComponent implements OnInit, AfterViewInit {
     maxScale = 3;
     scaleStep = 0.1;
 
+    // 检测zoom支持
+    private zoomSupported = this.checkZoomSupport();
+
     constructor(private message: NzMessageService) {
+    }
+
+    /**
+     * 检测浏览器是否支持zoom属性
+     */
+    private checkZoomSupport(): boolean {
+        const testElement = document.createElement('div');
+        (testElement.style as any).zoom = '1.1';
+        return (testElement.style as any).zoom === '1.1';
     }
 
     ngAfterViewInit(): void {
         this.initCanvasDrag();
+
+        // 显示当前使用的缩放方式
+        console.log(`使用${this.zoomSupported ? 'zoom' : 'transform scale'}进行缩放`);
     }
 
     ngOnInit() {
@@ -115,8 +130,20 @@ export class FlowComponent implements OnInit, AfterViewInit {
     private applyScale() {
         const processRenderElement = this.getProcessRenderElement();
         if (processRenderElement) {
-            processRenderElement.style.transform = `scale(${this.scale})`;
-            processRenderElement.style.transformOrigin = 'center center';
+            if (this.zoomSupported) {
+                // 使用zoom属性
+                (processRenderElement.style as any).zoom = this.scale.toString();
+                // 移除transform相关样式
+                processRenderElement.style.transform = '';
+                processRenderElement.style.transformOrigin = '';
+            } else {
+                // 回退到transform scale
+                processRenderElement.style.transform = `scale(${this.scale})`;
+                processRenderElement.style.transformOrigin = 'center center';
+
+                // 移除zoom相关样式
+                (processRenderElement.style as any).zoom = '';
+            }
         }
     }
 
@@ -130,8 +157,11 @@ export class FlowComponent implements OnInit, AfterViewInit {
         const container = this.canvasContainer?.nativeElement;
 
         if (container && (target === container || container.contains(target))) {
-            // 检查是否点击在节点上，如果是则不启动拖拽
-            if (target.closest('.process-node') || target.closest('app-recursive-node')) {
+            // 检查是否点击在特定的交互元素上，如果是则不启动拖拽
+            const isInteractiveElement = target.closest('button, input, select, textarea, [contenteditable], .node-input, .node-edit, .node-delete, .insert-btn');
+
+            // 如果点击在交互元素上，不启动拖拽
+            if (isInteractiveElement) {
                 return;
             }
 
@@ -145,10 +175,7 @@ export class FlowComponent implements OnInit, AfterViewInit {
                 this.startScrollLeft = scrollContainer.scrollLeft;
                 this.startScrollTop = scrollContainer.scrollTop;
             }
-
             container.style.cursor = 'grabbing';
-
-            event.preventDefault();
         }
     }
 
@@ -198,24 +225,6 @@ export class FlowComponent implements OnInit, AfterViewInit {
         }
     }
 
-    /**
-     * 鼠标滚轮事件 - 缩放功能
-     */
-    // @HostListener('wheel', ['$event'])
-    // onWheel(event: WheelEvent) {
-    //     // 检查是否在画布容器上
-    //     const target = event.target as HTMLElement;
-    //     const container = this.canvasContainer?.nativeElement;
-    //
-    //     if (container && (target === container || container.contains(target))) {
-    //         event.preventDefault();
-    //
-    //         // 根据滚轮方向决定缩放方向
-    //         const delta = event.deltaY > 0 ? -1 : 1;
-    //         this.doZoom(delta);
-    //     }
-    // }
-
     selectNode(node: any) {
         this.activeNode = node;
         // if (NodeComponentConfigs[this.activeNode.type]) {
@@ -246,14 +255,16 @@ export class FlowComponent implements OnInit, AfterViewInit {
         this.scale = 1;
         this.applyScale();
 
-        // 重置滚动位置到顶部
+        // 重置滚动位置
         const scrollContainer = this.getScrollableContainer();
         if (scrollContainer) {
-            scrollContainer.scrollLeft = 0;
+            // 水平滚动条居中
+            const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+            scrollContainer.scrollLeft = maxScrollLeft > 0 ? maxScrollLeft / 2 : 0;
+
+            // 垂直滚动条回到顶部
             scrollContainer.scrollTop = 0;
         }
-
-        this.message.info('已重置到默认视图');
     }
 
     validate() {
