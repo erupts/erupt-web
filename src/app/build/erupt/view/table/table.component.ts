@@ -247,7 +247,11 @@ export class TableComponent implements OnInit, OnDestroy {
                     }
                     if (layout.refreshTime && layout.refreshTime > 0) {
                         this.refreshTimeInterval = setInterval(() => {
-                            this.query(1);
+                            try {
+                                this.query();
+                            } catch (e) {
+                                this.query(1)
+                            }
                         }, layout.refreshTime);
                     }
                 }
@@ -653,7 +657,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         if (ro.type === OperationType.TPL) {
             let url = this.dataService.getEruptOperationTpl(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids);
-            this.uiBuildService.openTpl(ro.title,url,ro.tpl)
+            this.uiBuildService.openTpl(ro.title, url, ro.tpl)
         } else if (ro.type === OperationType.ERUPT) {
             let operationErupt: EruptModel = null;
             if (this.eruptBuildModel.operationErupts) {
