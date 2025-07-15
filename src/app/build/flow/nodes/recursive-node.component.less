@@ -1,0 +1,111 @@
+@node-width: 200px;
+@node-line-width: 2px;
+@node-line-color: #d9d9d9;
+@main-bgc: none;
+
+// 递归节点样式
+.p-gateway {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%;
+
+    .p-gateway-add {
+        z-index: 2;
+        top: -16px;
+        position: absolute;
+    }
+
+    .p-branch {
+        display: flex;
+        position: relative;
+        justify-content: center;
+        background: @main-bgc;
+        width: 100%;
+
+        &:before,
+        &:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: @node-line-width;
+            background: @node-line-color;
+            z-index: 0;
+        }
+
+        &:before {
+            top: 0;
+        }
+
+        &:after {
+            bottom: 0;
+        }
+
+        .p-branch-item {
+            position: relative;
+            padding: 0 60px;
+            display: flex;
+            justify-content: center;
+
+            & > div {
+                z-index: 1; // 防止连线跑到它上面
+                margin-top: 40px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                & > .p-node:last-child {
+                    :deep(.p-node-add) {
+                        // 分支最后一个节点要去除箭头，影响美观
+                        &:after {
+                            display: none !important;
+                        }
+                    }
+                }
+            }
+
+            &:before {
+                content: '';
+                position: absolute;
+                background: @node-line-color;
+                height: 100%;
+                width: @node-line-width;
+            }
+        }
+
+        .p-branch-item-l, .p-branch-item-r {
+            &:after {
+                // 当分支不是偶数时，需要一个遮罩线
+                content: '';
+                position: absolute;
+                height: @node-line-width;
+                width: 50%;
+                top: 0;
+                background: @main-bgc;
+                border-bottom: @node-line-width solid @node-line-color;
+            }
+
+            & > div {
+                &:before {
+                    // 当分支不是偶数时，需要一个遮罩线
+                    content: '';
+                    position: absolute;
+                    height: @node-line-width;
+                    width: 50%;
+                    bottom: 0;
+                    background: @main-bgc;
+                    border-bottom: @node-line-width solid @node-line-color;
+                }
+            }
+        }
+
+        :deep(.p-branch-end .p-node-add) {
+            // 分支最后一个节点要去除箭头，影响美观
+            &:after {
+                display: none !important;
+            }
+        }
+    }
+}

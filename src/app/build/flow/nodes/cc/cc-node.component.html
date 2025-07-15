@@ -1,0 +1,12 @@
+<erupt-node
+  [(model)]="modelValue"
+  [readonly]="readonly"
+  [showError]="showErr"
+  [errorInfo]="errInfo"
+  [headerColor]="color()"
+  headerIcon="notification"
+  (select)="onSelect()"
+  (insertNode)="onInsertNode($event)"
+  (delete)="onDelete()">
+    抄送人
+</erupt-node>

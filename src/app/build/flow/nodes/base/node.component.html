@@ -1,0 +1,36 @@
+<div class="p-node">
+    <nz-tooltip *ngIf="showError" [title]="errorInfo || '设置错误'" nzPlacement="top-start">
+        <span nz-icon nzType="warning" nzTheme="fill" class="node-err-tip"></span>
+    </nz-tooltip>
+    <div *ngIf="showBody"
+         class="p-node-body"
+         [class.node-err]="showError"
+         [style.background]="headerColor"
+         [style.--shadowColor]="headerColor">
+        <div class="p-node-header" [style.background-color]="headerColor">
+            <div>
+                <span *ngIf="!enableEdit" nz-icon [nzType]="headerIcon" nzSize="15"></span>
+                <input *ngIf="enableEdit"
+                       style="color: #000;"
+                       #nodeNameInput
+                       autofocus
+                       (blur)="onBlur()"
+                       [(ngModel)]="model.name"/>
+                <div *ngIf="!enableEdit"
+                     class="row-text"
+                     (click)="onEnableEdit()">{{ model.name }}
+                </div>
+            </div>
+            <span *ngIf="showClose && !readonly" class="fa fa-close" (click)="onDelete()"></span>
+        </div>
+
+        <div class="p-node-content" (click)="onSelect()">
+            <ng-content></ng-content>
+            <span nz-icon nzType="arrow-right" class="w-p-node-click"></span>
+        </div>
+    </div>
+
+    <div class="p-node-add">
+        <app-insert-btn (insertNode)="onInsertNode($event)"></app-insert-btn>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+<button nz-button nzShape="circle" style="z-index: 1;filter: drop-shadow(0 4px 8px rgba(31,35,41,.1))"
+        nz-popover nzPopoverTitle="请选择流程节点" nzPopoverPlacement="right" nzPopoverTrigger="click"
+        [nzPopoverContent]="nzPopoverContent">
+    <span nz-icon nzType="plus" style="font-size: 16px"></span>
+    <ng-template #nzPopoverContent>
+        <div class="node-options" style="width: 360px">
+            <ng-container *ngFor="let node of nodeList">
+                <div *ngIf="node.code()!='start'" (click)="onInsertNode(node.code())" [style.color]="node.color()">
+                    <!-- <span nz-icon [nzType]="node.icon" style="font-size: 16px">
+                    </span> -->
+                    {{node.name()}}
+                </div>
+            </ng-container>
+        </div>
+    </ng-template>
+</button>
