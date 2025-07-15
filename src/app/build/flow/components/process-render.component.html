@@ -1,0 +1,16 @@
+<div class="process">
+  <ng-container *ngFor="let node of modelValue; let i = index;">
+    <app-recursive-node
+      #node
+      [readonly]="readonly"
+      [node]="node"
+      [branch]="modelValue"
+      [index]="i"
+      (nodeChange)="modelValue[i] = $event"
+      (select)="select.emit($event)"
+      (delete)="deleteNode($event.branch, $event.index)"
+      (insertNode)="insertNode($event.branch, $event.index, $event.type)">
+    </app-recursive-node>
+  </ng-container>
+  <div class="process-end">流程结束</div>
+</div>

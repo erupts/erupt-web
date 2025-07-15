@@ -7,7 +7,7 @@ import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {NzDrawerModule} from 'ng-zorro-antd/drawer';
 import {NzMessageModule} from 'ng-zorro-antd/message';
-import {NZ_ICONS, NzIconModule} from 'ng-zorro-antd/icon';
+import {NzIconModule} from 'ng-zorro-antd/icon';
 import {NzTypographyModule} from 'ng-zorro-antd/typography';
 import {NzFormModule} from 'ng-zorro-antd/form';
 import {NzSelectModule} from 'ng-zorro-antd/select';
@@ -56,23 +56,22 @@ import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 
 // 自定义组件
 import {FlowComponent} from './flow.component';
-import {ProcessRenderComponent} from './views/design/process/process-render.component';
-import {StartNodeComponent} from './views/design/process/node/start-node.component';
-import {ApprovalNodeComponent} from './views/design/process/node/approval-node.component';
-import {CcNodeComponent} from './views/design/process/node/cc-node.component';
-import {ExclusiveNodeComponent} from './views/design/process/node/exclusive-node.component';
-import {GatewayNodeComponent} from './views/design/process/node/gateway-node.component';
-import {NodeComponent} from './views/design/process/node/base/node.component';
-import {BranchNodeComponent} from './views/design/process/node/base/branch-node.component';
-import {InsertBtnComponent} from './views/design/process/node/base/insert-btn.component';
+import {ProcessRenderComponent} from './components/process-render.component';
+import {StartNodeComponent} from '@flow/nodes/start/start-node.component';
+import {ApprovalNodeComponent} from '@flow/nodes/appoval/approval-node.component';
+import {CcNodeComponent} from '@flow/nodes/cc/cc-node.component';
+import {ExclusiveNodeComponent} from '@flow/nodes/exclusive/exclusive-node.component';
+import {BranchNodeComponent} from '@flow/nodes/base/branch-node.component';
+import {InsertBtnComponent} from '@flow/nodes/base/insert-btn.component';
+
+import {NodeComponent} from '@flow/nodes/base/node.component';
 
 // 图标
-import {EditOutline, MinusOutline, PlusOutline} from '@ant-design/icons-angular/icons';
 import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
-import {ParallelNodeComponent} from "./views/design/process/node/parallel-node.component";
+import {RecursiveNodeComponent} from "@flow/nodes/recursive-node.component";
+import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.component";
 
-const icons = [PlusOutline, MinusOutline, EditOutline];
 
 @NgModule({
     declarations: [
@@ -83,10 +82,11 @@ const icons = [PlusOutline, MinusOutline, EditOutline];
         CcNodeComponent,
         ExclusiveNodeComponent,
         ParallelNodeComponent,
-        GatewayNodeComponent,
+        // GatewayNodeComponent,
         NodeComponent,
         BranchNodeComponent,
-        InsertBtnComponent
+        InsertBtnComponent,
+        RecursiveNodeComponent
     ],
     imports: [
         FlowRoutingModule,
@@ -144,9 +144,6 @@ const icons = [PlusOutline, MinusOutline, EditOutline];
         NzMentionModule,
         NzAutocompleteModule,
         NzInputNumberModule
-    ],
-    providers: [
-        {provide: NZ_ICONS, useValue: icons}
     ]
 })
 export class FlowModule {

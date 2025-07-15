@@ -1,24 +1,24 @@
 <div class="flow">
-    <div class="w-process-designer">
-        <div class="w-p-d-operation">
-            <div class="w-p-d-operation-zoom">
-                <button nz-button nzType="primary" nzShape="circle" (click)="doZoom(-5)">
-                    <span nz-icon nzType="minus"></span>
-                </button>
-                <span>{{ zoom }}%</span>
-                <button nz-button nzType="primary" nzShape="circle" (click)="doZoom(5)">
-                    <span nz-icon nzType="plus"></span>
-                </button>
-            </div>
+    <div class="p-operation">
+        <div class="p-operation-zoom">
+            <button nz-button nzSize="small" (click)="doZoom(-1)" title="缩小">
+                <span nz-icon nzType="minus"></span>
+            </button>
+            <span class="zoom-text">{{ (scale * 100) | number:'1.0-0' }}%</span>
+            <button nz-button nzSize="small" (click)="doHit()" title="重置视图">
+                <span nz-icon nzType="reload"></span>
+            </button>
+            <button nz-button nzSize="small" (click)="doZoom(1)" title="放大">
+                <span nz-icon nzType="plus"></span>
+            </button>
         </div>
+    </div>
+    <div #canvasContainer class="canvas-container" style="width: 100%;height: 100%;position: relative;">
         <app-process-render
             #processRender
-            style="width: 100%; height: 100%;display: block;overflow: auto"
-            [style.transform]="'scale(' + (zoom / 100) + ')'"
             [readonly]="false"
             [(modelValue)]="modelValue"
             (select)="selectNode($event)">
         </app-process-render>
     </div>
-
 </div>

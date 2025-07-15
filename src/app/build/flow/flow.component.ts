@@ -1,100 +1,255 @@
-import {Component, EventEmitter, HostListener, OnInit, Output, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
 import {NzMessageService} from "ng-zorro-antd/message";
-import {ProcessRenderComponent} from "./views/design/process/process-render.component";
-import {NodeComponentConfigs, nodeType} from "./views/design/process/process-nodes";
+import {ProcessRenderComponent} from "./components/process-render.component";
+import {StartNodeComponent} from "@flow/nodes/start/start-node.component";
 
 @Component({
     selector: 'erupt-flow',
     templateUrl: './flow.component.html',
     styleUrls: ['./flow.component.less']
 })
-export class FlowComponent implements OnInit {
+export class FlowComponent implements OnInit, AfterViewInit {
 
-    active = true;
-
-    modelValue: any[] = [{
-        type: "Start",
-        name: "str"
-    }];
+    modelValue: any[] = [];
 
     @Output() modelValueChange = new EventEmitter<any[]>();
 
-    @ViewChild('processRender', { static: false }) processRender!: ProcessRenderComponent;
+    @ViewChild('processRender', {static: false}) processRender!: ProcessRenderComponent;
 
-    // 缩放比例
-    zoom = 100;
-    // 选中的节点
-    activeNode: any = {};
-    showInput = false;
-    nodeConfVisible = false;
-    // 是否按下ctrl
-    private ctrlPressed = false;
+    @ViewChild('canvasContainer') canvasContainer: ElementRef;
 
-    // 配置面板宽度
-    get configWidth(): number {
-        return this.activeNode.type === "Exclusive" ? 600 : 500;
+    // 拖拽相关属性
+    isDragging = false;
+    startX = 0;
+    startY = 0;
+    startScrollLeft = 0;
+    startScrollTop = 0;
+
+    // 缩放相关属性
+    scale = 1;
+    minScale = 0.1;
+    maxScale = 3;
+    scaleStep = 0.1;
+
+    // 检测zoom支持
+    private zoomSupported = this.checkZoomSupport();
+
+    constructor(private message: NzMessageService) {
     }
 
-    constructor(private message: NzMessageService) {}
+    /**
+     * 检测浏览器是否支持zoom属性
+     */
+    private checkZoomSupport(): boolean {
+        const testElement = document.createElement('div');
+        (testElement.style as any).zoom = '1.1';
+        return (testElement.style as any).zoom === '1.1';
+    }
+
+    ngAfterViewInit(): void {
+        this.initCanvasDrag();
+    }
 
     ngOnInit() {
         // 加载的时候判断，赋默认值
         if (this.modelValue.length === 0) {
-            this.modelValue = [nodeType.Start.create()];
+            this.modelValue = [new StartNodeComponent().create()];
             this.modelValueChange.emit(this.modelValue);
         }
     }
 
-    ngOnDestroy() {
-        // 清理事件监听器
-        document.removeEventListener('keydown', this.keyDown.bind(this));
-        document.removeEventListener('keyup', this.keyUp.bind(this));
-        document.removeEventListener('wheel', this.mouseWheel.bind(this));
+    /**
+     * 初始化画布拖拽功能
+     */
+    private initCanvasDrag() {
+        if (this.canvasContainer) {
+            const container = this.canvasContainer.nativeElement;
+            container.style.cursor = 'grab';
+            container.style.userSelect = 'none';
+        }
+    }
+
+    /**
+     * 获取可滚动的父容器
+     */
+    private getScrollableContainer(): HTMLElement | null {
+        if (!this.canvasContainer) return null;
+
+        // 查找最近的具有滚动条的父容器
+        let element = this.canvasContainer.nativeElement.parentElement;
+        while (element) {
+            const style = window.getComputedStyle(element);
+            if (style.overflow === 'auto' || style.overflow === 'scroll' ||
+                style.overflowX === 'auto' || style.overflowX === 'scroll' ||
+                style.overflowY === 'auto' || style.overflowY === 'scroll') {
+                return element;
+            }
+            element = element.parentElement;
+        }
+
+        // 如果没有找到，返回flow容器本身
+        return this.canvasContainer.nativeElement.closest('.flow');
+    }
+
+    /**
+     * 获取ProcessRender组件的DOM元素
+     */
+    private getProcessRenderElement(): HTMLElement | null {
+        if (!this.processRender) return null;
+
+        return (this.processRender as any).elementRef?.nativeElement ||
+            (this.processRender as any).el?.nativeElement ||
+            this.canvasContainer.nativeElement.querySelector('app-process-render');
+    }
+
+    /**
+     * 应用缩放
+     */
+    private applyScale() {
+        const processRenderElement = this.getProcessRenderElement();
+        if (processRenderElement) {
+            if (this.zoomSupported) {
+                // 使用zoom属性
+                (processRenderElement.style as any).zoom = this.scale.toString();
+                // 移除transform相关样式
+                processRenderElement.style.transform = '';
+                processRenderElement.style.transformOrigin = '';
+            } else {
+                // 回退到transform scale
+                processRenderElement.style.transform = `scale(${this.scale})`;
+                processRenderElement.style.transformOrigin = 'center center';
+
+                // 移除zoom相关样式
+                (processRenderElement.style as any).zoom = '';
+            }
+        }
+    }
+
+    /**
+     * 鼠标按下事件
+     */
+    @HostListener('mousedown', ['$event'])
+    onMouseDown(event: MouseEvent) {
+        // 检查是否在画布容器上点击
+        const target = event.target as HTMLElement;
+        const container = this.canvasContainer?.nativeElement;
+
+        if (container && (target === container || container.contains(target))) {
+            // 检查是否点击在特定的交互元素上，如果是则不启动拖拽
+            const isInteractiveElement = target.closest('button, input, select, textarea, [contenteditable], .node-input, .node-edit, .node-delete, .insert-btn');
+
+            // 如果点击在交互元素上，不启动拖拽
+            if (isInteractiveElement) {
+                return;
+            }
+
+            this.isDragging = true;
+            this.startX = event.clientX;
+            this.startY = event.clientY;
+
+            // 获取当前滚动位置
+            const scrollContainer = this.getScrollableContainer();
+            if (scrollContainer) {
+                this.startScrollLeft = scrollContainer.scrollLeft;
+                this.startScrollTop = scrollContainer.scrollTop;
+            }
+            container.style.cursor = 'grabbing';
+        }
+    }
+
+    /**
+     * 鼠标移动事件
+     */
+    @HostListener('mousemove', ['$event'])
+    onMouseMove(event: MouseEvent) {
+        if (this.isDragging) {
+            const deltaX = this.startX - event.clientX;
+            const deltaY = this.startY - event.clientY;
+
+            // 更新滚动位置
+            const scrollContainer = this.getScrollableContainer();
+            if (scrollContainer) {
+                scrollContainer.scrollLeft = this.startScrollLeft + deltaX;
+                scrollContainer.scrollTop = this.startScrollTop + deltaY;
+            }
+
+            event.preventDefault();
+        }
+    }
+
+    /**
+     * 鼠标释放事件
+     */
+    @HostListener('mouseup', ['$event'])
+    onMouseUp(event: MouseEvent) {
+        if (this.isDragging) {
+            this.isDragging = false;
+
+            const container = this.canvasContainer.nativeElement;
+            container.style.cursor = 'grab';
+        }
+    }
+
+    /**
+     * 鼠标离开事件
+     */
+    @HostListener('mouseleave', ['$event'])
+    onMouseLeave(event: MouseEvent) {
+        if (this.isDragging) {
+            this.isDragging = false;
+
+            const container = this.canvasContainer.nativeElement;
+            container.style.cursor = 'grab';
+        }
     }
 
     selectNode(node: any) {
-        this.activeNode = node;
-        if (NodeComponentConfigs[this.activeNode.type]) {
-            this.nodeConfVisible = true;
-        } else {
-            this.message.warning('本节点无配置项');
-        }
-        console.log('选中', node);
+        // if (NodeComponentConfigs[this.activeNode.type]) {
+        //     this.nodeConfVisible = true;
+        // }
     }
 
+    /**
+     * 缩放功能
+     */
     doZoom(sc: number) {
-        if ((this.zoom > 30 && this.zoom < 150)
-            || (this.zoom <= 30 && sc > 0)
-            || (this.zoom >= 150 && sc < 0)) {
-            this.zoom += sc;
+        if (sc > 0) {
+            // 放大
+            this.scale = Math.min(this.maxScale, this.scale + this.scaleStep);
         } else {
-            this.message.warning("缩放已经到极限了😥");
+            // 缩小
+            this.scale = Math.max(this.minScale, this.scale - this.scaleStep);
         }
+
+        this.applyScale();
     }
 
-    @HostListener('document:keydown', ['$event'])
-    keyDown(event: KeyboardEvent) {
-        if (event.ctrlKey) {
-            this.ctrlPressed = true;
-            document.addEventListener('wheel', this.mouseWheel.bind(this), { passive: false });
-        }
-    }
+    /**
+     * 重置功能
+     */
+    doHit() {
+        // 重置缩放比例
+        this.scale = 1;
+        this.applyScale();
 
-    @HostListener('document:keyup', ['$event'])
-    keyUp(event: KeyboardEvent) {
-        if (event.key === "Control") {
-            this.ctrlPressed = false;
-            document.removeEventListener('wheel', this.mouseWheel.bind(this));
-        }
-    }
+        // 重置滚动位置
+        const scrollContainer = this.getScrollableContainer();
+        if (scrollContainer) {
+            // 水平滚动条居中
+            const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+            scrollContainer.scrollLeft = maxScrollLeft > 0 ? maxScrollLeft / 2 : 0;
 
-    mouseWheel(event: WheelEvent) {
-        if (this.ctrlPressed && this.active) {
-            // 阻止默认的缩放行为
-            event.preventDefault();
-            // 获取滚动方向，向上为正，向下为负
-            const delta = Math.sign(event.deltaY);
-            this.doZoom(delta * -5);
+            // 垂直滚动条回到顶部
+            scrollContainer.scrollTop = 0;
         }
     }
 
