@@ -36,7 +36,7 @@ export class ApprovalNodeComponent extends ANode {
 
 
     onSelect() {
-        this.select.emit(this.modelValue);
+        // this.select.emit(this.modelValue);
     }
 
     onDelete() {
