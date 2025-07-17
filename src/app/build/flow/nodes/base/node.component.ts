@@ -1,59 +1,66 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 
 @Component({
-  selector: 'erupt-node',
-  templateUrl: './node.component.html',
-  styleUrls: ['./node.component.less']
+    selector: 'erupt-node',
+    templateUrl: './node.component.html',
+    styleUrls: ['./node.component.less']
 })
 export class NodeComponent implements AfterViewInit {
-  @Input() headerColor = '';
-  @Input() headerIcon = '';
-  @Input() content = '';
-  @Input() readonly = false;
-  @Input() model: any;
-  @Input() showError = false;
-  @Input() errorInfo = '';
-  @Input() showClose = true;
-  @Input() showBody = true;
-  @Input() placeholder = '请设置';
+    @Input() headerColor = '';
+    @Input() headerIcon = '';
+    @Input() content = '';
+    @Input() readonly = false;
+    @Input() model: any;
+    @Input() showError = false;
+    @Input() errorInfo = '';
+    @Input() showClose = true;
+    @Input() showBody = true;
+    @Input() placeholder = '请设置';
 
-  @Output() modelChange = new EventEmitter<any>();
-  @Output() select = new EventEmitter<void>();
-  @Output() delete = new EventEmitter<void>();
-  @Output() insertNode = new EventEmitter<string>();
+    @Output() modelChange = new EventEmitter<any>();
+    @Output() select = new EventEmitter<void>();
+    @Output() delete = new EventEmitter<void>();
+    @Output() insertNode = new EventEmitter<string>();
 
-  @ViewChild('nodeNameInput', { static: false }) nodeNameInput!: ElementRef;
+    @ViewChild('nodeNameInput', {static: false}) nodeNameInput!: ElementRef;
 
-  enableEdit = false;
+    showDrawer: boolean = false;
 
-  ngAfterViewInit() {
-    // 组件初始化后的处理
-  }
+    enableEdit = false;
 
-  onEnableEdit() {
-    if (!this.readonly) {
-      this.enableEdit = true;
-      setTimeout(() => {
-        if (this.nodeNameInput) {
-          this.nodeNameInput.nativeElement.focus();
-        }
-      });
+    ngAfterViewInit() {
+        // 组件初始化后的处理
     }
-  }
 
-  onBlur() {
-    this.enableEdit = false;
-  }
+    onEnableEdit() {
+        if (!this.readonly) {
+            this.enableEdit = true;
+            setTimeout(() => {
+                if (this.nodeNameInput) {
+                    this.nodeNameInput.nativeElement.focus();
+                }
+            });
+        }
+    }
 
-  onSelect() {
-    this.select.emit();
-  }
+    onBlur() {
+        this.enableEdit = false;
+    }
 
-  onDelete() {
-    this.delete.emit();
-  }
+    onSelect() {
+        this.showDrawer = true;
+        this.select.emit();
+    }
 
-  onInsertNode(type: string) {
-    this.insertNode.emit(type);
-  }
+    onDelete() {
+        this.delete.emit();
+    }
+
+    onInsertNode(type: string) {
+        this.insertNode.emit(type);
+    }
+
+    close(): void {
+        this.showDrawer = false;
+    }
 }
