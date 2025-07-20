@@ -1,7 +1,7 @@
 @node-width: 200px;
 @node-line-width: 2px;
 @node-line-color: #d9d9d9;
-@main-bgc: none;
+@main-bgc: #f5f7fa;
 
 // 递归节点样式
 .p-gateway {
@@ -28,8 +28,8 @@
         &:after {
             content: '';
             position: absolute;
-            left: 0;
-            right: 0;
+            left: 160px;
+            right: 160px;
             height: @node-line-width;
             background: @node-line-color;
             z-index: 0;
@@ -76,29 +76,7 @@
         }
 
         .p-branch-item-l, .p-branch-item-r {
-            &:after {
-                // 当分支不是偶数时，需要一个遮罩线
-                content: '';
-                position: absolute;
-                height: @node-line-width;
-                width: 50%;
-                top: 0;
-                background: @main-bgc;
-                border-bottom: @node-line-width solid @node-line-color;
-            }
 
-            & > div {
-                &:before {
-                    // 当分支不是偶数时，需要一个遮罩线
-                    content: '';
-                    position: absolute;
-                    height: @node-line-width;
-                    width: 50%;
-                    bottom: 0;
-                    background: @main-bgc;
-                    border-bottom: @node-line-width solid @node-line-color;
-                }
-            }
         }
 
         :deep(.p-branch-end .p-node-add) {
