@@ -42,6 +42,7 @@ import {AttachmentSelectComponent} from './components/attachment-select/attachme
 import {NzEmptyModule} from "ng-zorro-antd/empty";
 import {MultiChoiceComponent} from './components/multi-choice/multi-choice.component';
 import {GanttComponent} from "./components/gantt/gantt.component";
+import {SignaturePadComponent} from './components/signature-pad/signature-pad.component';
 
 @NgModule({
     imports: [
@@ -108,7 +109,8 @@ import {GanttComponent} from "./components/gantt/gantt.component";
         CardComponent,
         AttachmentSelectComponent,
         MultiChoiceComponent,
-        GanttComponent
+        GanttComponent,
+        SignaturePadComponent
     ]
 })
 export class EruptModule {
