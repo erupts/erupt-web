@@ -127,7 +127,9 @@ export class StartupService {
                 description: WindowModel.desc
             });
             // 设置页面标题的后缀
-            this.titleService.suffix = WindowModel.title;
+            if (WindowModel.title){
+                this.titleService.suffix = WindowModel.title;
+            }
             this.titleService.default = "";
             {
                 let locales = EruptAppData.get().locales;
