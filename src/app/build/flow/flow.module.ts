@@ -55,7 +55,7 @@ import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 
 // 自定义组件
-import {FlowComponent} from './flow.component';
+import {FlowComponent} from './view/flow/flow.component';
 import {ProcessRenderComponent} from './components/process-render.component';
 import {StartNodeComponent} from '@flow/nodes/start/start-node.component';
 import {ApprovalNodeComponent} from '@flow/nodes/appoval/approval-node.component';
