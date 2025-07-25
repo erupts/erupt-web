@@ -43,6 +43,7 @@ import {NzEmptyModule} from "ng-zorro-antd/empty";
 import {MultiChoiceComponent} from './components/multi-choice/multi-choice.component';
 import {GanttComponent} from "./components/gantt/gantt.component";
 import {SignaturePadComponent} from './components/signature-pad/signature-pad.component';
+import {FlowModule} from "@flow/flow.module";
 
 @NgModule({
     imports: [
@@ -56,7 +57,8 @@ import {SignaturePadComponent} from './components/signature-pad/signature-pad.co
         NzImageModule,
         NzQRCodeModule,
         NzRateModule,
-        NzEmptyModule
+        NzEmptyModule,
+        FlowModule
     ],
     providers: [
         DataHandlerService,

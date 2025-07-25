@@ -9,7 +9,7 @@ import {
     ViewChild
 } from '@angular/core';
 import {NzMessageService} from "ng-zorro-antd/message";
-import {ProcessRenderComponent} from "./components/process-render.component";
+import {ProcessRenderComponent} from "../../components/process-render.component";
 import {StartNodeComponent} from "@flow/nodes/start/start-node.component";
 
 @Component({
