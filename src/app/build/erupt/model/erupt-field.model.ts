@@ -49,10 +49,10 @@ export enum OpenWay {
 }
 
 export enum DrawerPlacement {
-    LEFT = "left",
-    RIGHT = "right",
-    TOP = "top",
-    BOTTOM = "bottom"
+    LEFT = "LEFT",
+    RIGHT = "RIGHT",
+    TOP = "TOP",
+    BOTTOM = "BOTTOM"
 }
 
 export interface View {
