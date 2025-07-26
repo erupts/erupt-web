@@ -1,5 +1,4 @@
 import {Inject, Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
 import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
 import {LoginModel, Userinfo} from "../model/user.model";
@@ -25,7 +24,7 @@ export class DataService {
 
     public excelImport: string = RestPath.excel + "/import/";
 
-    constructor(private http: HttpClient, private _http: _HttpClient,
+    constructor(private _http: _HttpClient,
                 private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
