@@ -1,0 +1,163 @@
+<div class="flow-management-container">
+  <!-- 头部搜索和操作区域 -->
+  <div class="header-section">
+    <div class="search-area">
+      <nz-input-group [nzSuffix]="searchIcon">
+        <input
+          nz-input
+          placeholder="搜索"
+          [(ngModel)]="searchValue"
+          (ngModelChange)="onSearch()"
+        />
+      </nz-input-group>
+      <ng-template #searchIcon>
+        <span nz-icon nzType="search"></span>
+      </ng-template>
+    </div>
+
+    <div class="action-buttons">
+      <button nz-button nzType="primary" (click)="onCreateApproval()">
+        <span nz-icon nzType="plus"></span>
+        创建审批
+      </button>
+    </div>
+  </div>
+
+  <!-- 左右结构内容区域 -->
+  <div class="content-layout">
+    <!-- 左侧分类列表 -->
+    <div class="category-sidebar">
+      <div class="sidebar-header">
+        <div class="header-title">
+          <h3>应用分类</h3>
+        </div>
+        <div class="header-actions">
+          <button
+            nz-button
+            nzType="text"
+            nzSize="small"
+            (click)="onCreateGroup()"
+            nz-tooltip="新建分组"
+          >
+            <span nz-icon nzType="plus"></span>
+          </button>
+          <button
+            nz-button
+            nzType="text"
+            nzSize="small"
+            (click)="onGroupSort()"
+            nz-tooltip="分组排序"
+          >
+            <span nz-icon nzType="unordered-list"></span>
+          </button>
+        </div>
+      </div>
+      <div class="category-list">
+        <div
+          class="category-item"
+          [class.active]="selectedCategory === ''"
+          (click)="selectCategory('')"
+        >
+          <span class="category-name">全部</span>
+          <span class="category-count">({{ flowApps.length }})</span>
+        </div>
+        <div
+          class="category-item"
+          *ngFor="let category of categories"
+          [class.active]="selectedCategory === category"
+          (click)="selectCategory(category)"
+        >
+          <span class="category-name">{{ category }}</span>
+          <span class="category-count">({{ getAppsByCategory(category).length }})</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧应用列表 -->
+    <div class="app-content">
+      <div class="content-header">
+        <h3>{{ selectedCategory || '全部应用' }}</h3>
+        <span class="app-count">{{ getCurrentApps().length }} 个应用</span>
+      </div>
+
+      <div class="app-list">
+        <div
+          class="app-item"
+          *ngFor="let app of getCurrentApps()"
+        >
+          <!-- 应用信息 -->
+          <div class="app-info">
+            <div class="app-icon" [style.background-color]="app.iconColor">
+              <span nz-icon [nzType]="app.icon"></span>
+            </div>
+            <div class="app-details">
+              <div class="app-name">
+                {{ app.name }}
+                <nz-tag
+                  *ngIf="app.status"
+                  nzColor="red"
+                  class="status-tag"
+                >
+                  {{ app.status }}
+                </nz-tag>
+              </div>
+              <div class="app-description">{{ app.description }}</div>
+            </div>
+          </div>
+
+          <!-- 可见性状态 -->
+          <div class="visibility-status">
+            <span class="visibility-text">全员可见</span>
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="action-icons">
+            <button
+              nz-button
+              nzType="text"
+              nzSize="small"
+              (click)="onEdit(app)"
+              nz-tooltip="编辑"
+            >
+              <span nz-icon nzType="edit"></span>
+            </button>
+
+            <button
+              nz-button
+              nzType="text"
+              nzSize="small"
+              (click)="onDuplicate(app)"
+              nz-tooltip="复制"
+            >
+              <span nz-icon nzType="copy"></span>
+            </button>
+
+            <button
+              nz-button
+              nzType="text"
+              nzSize="small"
+              (click)="onToggleVisibility(app)"
+              [nz-tooltip]="app.visible ? '隐藏' : '显示'"
+            >
+              <span
+                nz-icon
+                [nzType]="app.visible ? 'eye-invisible' : 'check'"
+                [style.color]="app.visible ? '#999' : '#52c41a'"
+              ></span>
+            </button>
+
+            <button
+              nz-button
+              nzType="text"
+              nzSize="small"
+              (click)="onDelete(app)"
+              nz-tooltip="删除"
+            >
+              <span nz-icon nzType="delete"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
