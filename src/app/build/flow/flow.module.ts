@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 // ng-zorro模块
 import {NzButtonModule} from 'ng-zorro-antd/button';
@@ -73,6 +74,8 @@ import {RecursiveNodeComponent} from "@flow/nodes/recursive-node.component";
 import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.component";
 import {FlowManagementComponent} from './view/flow-management/flow-management.component';
 import {NzDropDownModule} from "ng-zorro-antd/dropdown";
+import {SharedModule} from "@shared/shared.module";
+import {FlowApiService} from "@flow/service/FlowApiService";
 
 
 @NgModule({
@@ -90,12 +93,17 @@ import {NzDropDownModule} from "ng-zorro-antd/dropdown";
         RecursiveNodeComponent,
         FlowManagementComponent
     ],
+    providers: [
+        FlowApiService
+    ],
     imports: [
+        SharedModule,
         FlowRoutingModule,
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
         HttpClientModule,
+        DragDropModule,
         NzButtonModule,
         NzInputModule,
         NzDrawerModule,
