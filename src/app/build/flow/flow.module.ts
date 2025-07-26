@@ -55,8 +55,8 @@ import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 
 // 自定义组件
-import {FlowComponent} from './view/flow/flow.component';
-import {ProcessRenderComponent} from './components/process-render.component';
+import {FlowComponent} from './components/erupt-flow/flow.component';
+import {ProcessRenderComponent} from './components/process-render/process-render.component';
 import {StartNodeComponent} from '@flow/nodes/start/start-node.component';
 import {ApprovalNodeComponent} from '@flow/nodes/appoval/approval-node.component';
 import {CcNodeComponent} from '@flow/nodes/cc/cc-node.component';
@@ -71,6 +71,8 @@ import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
 import {RecursiveNodeComponent} from "@flow/nodes/recursive-node.component";
 import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.component";
+import {FlowManagementComponent} from './view/flow-management/flow-management.component';
+import {NzDropDownModule} from "ng-zorro-antd/dropdown";
 
 
 @NgModule({
@@ -82,11 +84,11 @@ import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.componen
         CcNodeComponent,
         ExclusiveNodeComponent,
         ParallelNodeComponent,
-        // GatewayNodeComponent,
         NodeComponent,
         BranchNodeComponent,
         InsertBtnComponent,
-        RecursiveNodeComponent
+        RecursiveNodeComponent,
+        FlowManagementComponent
     ],
     imports: [
         FlowRoutingModule,
@@ -143,7 +145,8 @@ import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.componen
         NzCascaderModule,
         NzMentionModule,
         NzAutocompleteModule,
-        NzInputNumberModule
+        NzInputNumberModule,
+        NzDropDownModule
     ]
 })
 export class FlowModule {

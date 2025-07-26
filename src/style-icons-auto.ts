@@ -25,6 +25,7 @@ import {
     DownloadOutline,
     EditFill,
     EllipsisOutline,
+    EyeInvisibleOutline,
     EyeOutline,
     FileImageOutline,
     FullscreenExitOutline,
@@ -104,5 +105,6 @@ export const ICONS_AUTO = [
     FileImageOutline,
     ApartmentOutline,
     ArrowLeftOutline,
-    MinusOutline
+    MinusOutline,
+    EyeInvisibleOutline
 ];
