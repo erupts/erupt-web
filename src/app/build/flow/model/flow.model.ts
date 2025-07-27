@@ -7,10 +7,12 @@ export interface FlowGroup {
 export interface FlowConfig {
     id: number;
     name: string;
-    erupt: string;
-    flowGroup: FlowGroup;
-    enable: string;
     remark: string;
+    erupt: string;
+    icon: string;
+    color: string;
+    flowGroup: FlowGroup;
+    enable: boolean;
     rule: FlowRule;
     setting: Record<string, any>;
 }
