@@ -4,6 +4,7 @@ import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {VL} from "../../../erupt/model/erupt-field.model";
 import {FlowApiService} from "@flow/service/FlowApiService";
+import {FlowGroup} from "@flow/model/flow.model";
 
 interface ProcessAdmin {
     id: string;
@@ -39,12 +40,7 @@ export class FlowConfigComponent implements OnInit {
     selectedColor = '#1890ff';
 
     // 分组选项
-    groupOptions = [
-        {label: '防疫专题', value: 'epidemic'},
-        {label: '人事管理', value: 'hr'},
-        {label: '财务管理', value: 'finance'},
-        {label: '项目管理', value: 'project'}
-    ];
+    groupOptions: FlowGroup[] = [];
 
     // 提交权限选项
     submitPermissionOptions = [
@@ -84,6 +80,9 @@ export class FlowConfigComponent implements OnInit {
         this.flowApiService.eruptFlows().subscribe(res => {
             this.eruptFlows = res.data;
         })
+        this.flowApiService.groupList().subscribe(res => {
+            this.groupOptions = res.data;
+        });
     }
 
     // 监听点击事件，关闭图标选择器

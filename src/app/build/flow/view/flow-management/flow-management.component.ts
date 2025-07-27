@@ -294,6 +294,15 @@ export class FlowManagementComponent implements OnInit {
     }
 
     onEdit(config: FlowConfig): void {
+        this.drawerService.create({
+            nzTitle: null,
+            nzWidth: "90%",
+            nzClosable: false,
+            nzContent: FlowConfigComponent,
+            nzBodyStyle: {
+                padding: '0px'
+            }
+        });
     }
 
     onDuplicate(config: FlowConfig): void {
