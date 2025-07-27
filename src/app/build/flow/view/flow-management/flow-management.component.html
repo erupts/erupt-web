@@ -104,11 +104,6 @@
 
         <!-- 右侧应用列表 -->
         <div class="app-content">
-            <div class="content-header">
-                <h3>{{ selectedCategory || '全部流程' }}</h3>
-                <span class="app-count">{{ getCurrentConfigs().length }} 个流程</span>
-            </div>
-
             <div class="app-list">
                 <!-- 加载状态 -->
                 <nz-spin [nzSpinning]="configLoading" nzSize="large">
