@@ -76,6 +76,7 @@ import {FlowManagementComponent} from './view/flow-management/flow-management.co
 import {NzDropDownModule} from "ng-zorro-antd/dropdown";
 import {SharedModule} from "@shared/shared.module";
 import {FlowApiService} from "@flow/service/FlowApiService";
+import {FlowConfigComponent} from './view/flow-config/flow-config.component';
 
 
 @NgModule({
@@ -91,7 +92,8 @@ import {FlowApiService} from "@flow/service/FlowApiService";
         BranchNodeComponent,
         InsertBtnComponent,
         RecursiveNodeComponent,
-        FlowManagementComponent
+        FlowManagementComponent,
+        FlowConfigComponent
     ],
     providers: [
         FlowApiService

@@ -333,6 +333,14 @@
             flex: 1;
             overflow-y: auto;
 
+            .empty-state {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 200px;
+                color: #8c8c8c;
+            }
+
             .app-item {
                 display: flex;
                 align-items: center;
@@ -379,16 +387,6 @@
                             display: flex;
                             align-items: center;
                             gap: 8px;
-
-                            .status-tag {
-                                font-size: 12px;
-                                padding: 2px 8px;
-                                border-radius: 4px;
-                                font-weight: 400;
-                                background: #ff4d4f;
-                                color: #fff;
-                                border: none;
-                            }
                         }
 
                         .app-description {

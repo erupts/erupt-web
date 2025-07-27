@@ -50,6 +50,7 @@ import {
     SaveOutline,
     SearchOutline,
     SettingOutline,
+    StopOutline,
     SyncOutline,
     TableOutline,
     UnorderedListOutline,
@@ -106,5 +107,6 @@ export const ICONS_AUTO = [
     ApartmentOutline,
     ArrowLeftOutline,
     MinusOutline,
-    EyeInvisibleOutline
+    EyeInvisibleOutline,
+    StopOutline
 ];
