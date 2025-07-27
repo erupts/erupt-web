@@ -78,6 +78,8 @@ import {SharedModule} from "@shared/shared.module";
 import {FlowApiService} from "@flow/service/FlowApiService";
 import {FlowConfigComponent} from './view/flow-config/flow-config.component';
 import {IconColorPickerComponent} from '@flow/components/icon-color-picker/icon-color-picker.component';
+import {EruptModule} from "../erupt/erupt.module";
+import {EruptFlowFormComponent} from './components/erupt-flow-form/erupt-flow-form.component';
 
 
 @NgModule({
@@ -95,7 +97,8 @@ import {IconColorPickerComponent} from '@flow/components/icon-color-picker/icon-
         RecursiveNodeComponent,
         FlowManagementComponent,
         FlowConfigComponent,
-        IconColorPickerComponent
+        IconColorPickerComponent,
+        EruptFlowFormComponent
     ],
     providers: [
         FlowApiService
@@ -158,7 +161,8 @@ import {IconColorPickerComponent} from '@flow/components/icon-color-picker/icon-
         NzMentionModule,
         NzAutocompleteModule,
         NzInputNumberModule,
-        NzDropDownModule
+        NzDropDownModule,
+        EruptModule
     ]
 })
 export class FlowModule {

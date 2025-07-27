@@ -131,7 +131,20 @@
                         <span *ngIf="control.hasError('required')">分组为空,请选择</span>
                     </ng-template>
                 </div>
-
+                <div class="form-item">
+                    <label class="form-label required">数据模型</label>
+                    <nz-form-item>
+                        <nz-form-control>
+                            <nz-select formControlName="group"
+                                       [(ngModel)]="selectedErupt"
+                                       class="form-select">
+                                <nz-option *ngFor="let option of eruptFlows"
+                                           [nzValue]="option.value"
+                                           [nzLabel]="option.label"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
                 <!-- 提交权限 -->
                 <div class="form-item">
                     <label class="form-label required">谁可以提交该审批</label>
@@ -198,15 +211,29 @@
             </form>
         </div>
 
+        <div class="step-placeholder" *ngIf="currentStep == 2">
+            <div style="display: flex;justify-content: center;height: 100%;padding: 16px">
+                <nz-empty nzNotFoundImage="simple" *ngIf="!selectedErupt"
+                          [nzNotFoundContent]="'请选择数据模型'">
+                </nz-empty>
+                <ng-container *ngIf="selectedErupt">
+                    <div class="phone-wrapper">
+                        <div class="phone-wrapper-screen">
+                            <erupt-flow-form [erupt]="selectedErupt" [readonly]="false"/>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
         <div class="step-placeholder" *ngIf="currentStep == 3">
             <erupt-flow/>
         </div>
 
         <!-- 其他步骤的占位内容 -->
-        <div class="step-placeholder" *ngIf="currentStep !== 1">
-            <nz-empty nzNotFoundImage="simple"
-                      [nzNotFoundContent]="'步骤 ' + currentStep + ' 功能开发中...'">
-            </nz-empty>
-        </div>
+        <!--        <div class="step-placeholder" *ngIf="currentStep !== 1">-->
+        <!--            <nz-empty nzNotFoundImage="simple"-->
+        <!--                      [nzNotFoundContent]="'步骤 ' + currentStep + ' 功能开发中...'">-->
+        <!--            </nz-empty>-->
+        <!--        </div>-->
+        <!--    </div>-->
     </div>
-</div>
