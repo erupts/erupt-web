@@ -46,7 +46,7 @@ export class IconColorPickerComponent implements OnInit {
         'fa fa-calendar',
         'fa fa-car',
         'fa fa-yen',
-        'fa fa-list',
+        'fa fa-legal',
         'fa fa-clock-o',
         'fa fa-file-text',
         'fa fa-users',

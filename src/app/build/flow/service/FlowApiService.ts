@@ -5,6 +5,8 @@ import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
 import {FlowConfig, FlowGroup} from "@flow/model/flow.model";
 import {R} from "@shared/model/api.model";
+import {VL} from "../../erupt/model/erupt-field.model";
+import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 
 @Injectable()
 export class FlowApiService {
@@ -46,5 +48,12 @@ export class FlowApiService {
         return this._http.get<R<FlowConfig[]>>(RestPath.erupt + "/flow/config/list", null);
     }
 
+    eruptFlows(): Observable<R<VL[]>> {
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/flow/config/erupt-flows");
+    }
+
+    eruptFlowBuild(erupt: string): Observable<R<EruptBuildModel>> {
+        return this._http.get<R<EruptBuildModel>>(RestPath.erupt + "/flow/erupt-build/" + erupt);
+    }
 
 }
