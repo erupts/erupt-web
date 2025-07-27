@@ -77,6 +77,7 @@ import {NzDropDownModule} from "ng-zorro-antd/dropdown";
 import {SharedModule} from "@shared/shared.module";
 import {FlowApiService} from "@flow/service/FlowApiService";
 import {FlowConfigComponent} from './view/flow-config/flow-config.component';
+import {IconColorPickerComponent} from '@flow/components/icon-color-picker/icon-color-picker.component';
 
 
 @NgModule({
@@ -93,7 +94,8 @@ import {FlowConfigComponent} from './view/flow-config/flow-config.component';
         InsertBtnComponent,
         RecursiveNodeComponent,
         FlowManagementComponent,
-        FlowConfigComponent
+        FlowConfigComponent,
+        IconColorPickerComponent
     ],
     providers: [
         FlowApiService
