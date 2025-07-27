@@ -283,21 +283,17 @@ export class FlowManagementComponent implements OnInit {
 
     onCreateApproval(): void {
         this.drawerService.create({
-            nzTitle: "创建流程",
+            nzTitle: null,
             nzWidth: "90%",
+            nzClosable: false,
             nzContent: FlowConfigComponent,
-            nzMaskClosable: false,
+            nzBodyStyle: {
+                padding: '0px'
+            }
         });
     }
 
     onEdit(config: FlowConfig): void {
-        console.log('编辑:', config.name);
-        this.drawerService.create({
-            nzTitle: "编辑" + config.name,
-            nzWidth: "90%",
-            nzContent: FlowConfigComponent,
-            nzMaskClosable: false,
-        });
     }
 
     onDuplicate(config: FlowConfig): void {
