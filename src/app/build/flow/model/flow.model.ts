@@ -11,4 +11,10 @@ export interface FlowConfig {
     flowGroup: FlowGroup;
     enable: string;
     remark: string;
+    rule: FlowRule;
+    setting: Record<string, any>;
+}
+
+export interface FlowRule {
+
 }
