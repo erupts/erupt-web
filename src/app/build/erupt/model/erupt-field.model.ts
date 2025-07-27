@@ -237,6 +237,6 @@ export interface MapType {
 export interface VL {
     value: string;
     label: string;
-    desc: string;
-    disable: boolean;
+    desc?: string;
+    disable?: boolean;
 }
