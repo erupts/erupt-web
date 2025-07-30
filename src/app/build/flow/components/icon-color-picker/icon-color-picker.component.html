@@ -1,0 +1,53 @@
+<div class="icon-selector-content">
+  <!-- 预览区域 -->
+  <div class="preview-section">
+    <div class="preview-display">
+      <div class="preview-icon" [style]="getPreviewIconStyle()">
+        <i class="{{ previewIcon }}"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- 选择区域 -->
+  <div class="selection-section">
+    <!-- 颜色选择 -->
+    <div class="color-section">
+      <h4>选择颜色</h4>
+      <div class="color-grid">
+        <div class="color-item"
+             *ngFor="let color of bgColors"
+             [class.selected]="previewColor === color"
+             [style]="getIconOptionStyle(color)"
+             (click)="selectColor(color, $event)">
+        </div>
+      </div>
+    </div>
+
+    <!-- 图标选择 -->
+    <div class="icon-section">
+      <h4>选择图标</h4>
+      <div class="icon-grid">
+        <div class="icon-item"
+             *ngFor="let icon of icons"
+             [class.selected]="previewIcon === icon"
+             (click)="selectIcon(icon, $event)">
+          <div class="icon-square" style="color:#000">
+            <i class="{{ icon }}"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 操作按钮 -->
+  <div class="action-buttons">
+    <div class="buttons">
+      <button nz-button nzType="default" (click)="cancelSelection()">
+        取消
+      </button>
+      <button nz-button nzType="primary" (click)="confirmSelection()">
+        确认选择
+      </button>
+    </div>
+  </div>
+</div>

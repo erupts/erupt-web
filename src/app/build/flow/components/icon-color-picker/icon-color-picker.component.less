@@ -1,0 +1,232 @@
+// 图标选择器内容样式
+.icon-selector-content {
+    width: 550px;
+    max-width: 90vw;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    // 头部区域
+    .header-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        padding: 24px 24px 20px;
+        text-align: center;
+
+        .title {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .subtitle {
+            margin: 0;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
+    }
+
+    h4 {
+        margin: 0 0 16px 0;
+        font-size: 15px;
+        font-weight: 600;
+        color: #262626;
+    }
+
+    // 预览区域
+    .preview-section {
+        padding: 12px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-bottom: 1px solid #e8e8e8;
+
+        .preview-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+
+            .preview-icon {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+
+                i {
+                    font-size: 28px;
+                }
+            }
+
+            .preview-info {
+                text-align: center;
+
+                .preview-name {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #262626;
+                    margin-bottom: 6px;
+                }
+
+                .preview-color {
+                    font-size: 13px;
+                    color: #666;
+                    background: rgba(255, 255, 255, 0.8);
+                    padding: 4px 12px;
+                    border-radius: 12px;
+                    display: inline-block;
+                }
+            }
+        }
+    }
+
+    // 选择区域
+    .selection-section {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    // 颜色选择区域
+    .color-section {
+        .color-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+
+            .color-item {
+                width: 36px;
+                height: 36px;
+                border-radius: 8px;
+                cursor: pointer;
+                border: 3px solid transparent;
+                transition: all 0.3s ease;
+                position: relative;
+
+                &:hover {
+                    transform: scale(1.15);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+                }
+
+                &.selected {
+                    border-color: #1890ff;
+                    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.3);
+                }
+            }
+        }
+    }
+
+    // 图标选择区域
+    .icon-section {
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 6px;
+            padding: 2px;
+            max-height: 280px;
+            overflow-y: auto;
+
+            // 自定义滚动条
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 3px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 3px;
+
+                &:hover {
+                    background: #a8a8a8;
+                }
+            }
+
+            .icon-item {
+                cursor: pointer;
+                border-radius: 8px;
+                padding: 6px;
+                transition: all 0.3s ease;
+                text-align: center;
+                border: 2px solid transparent;
+                display: flex;
+                justify-content: center;
+
+                &:hover {
+                    background-color: #f0f8ff;
+                    transform: scale(1.08);
+                    border-color: #d6e4ff;
+                }
+
+                &.selected {
+                    background-color: #e6f7ff;
+                    border-color: #1890ff;
+                    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+                }
+
+                .icon-square {
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #fff;
+                    font-size: 16px;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+                    i {
+                        font-size: 16px;
+                    }
+                }
+
+                .icon-name {
+                    font-size: 11px;
+                    color: #666;
+                    line-height: 1.3;
+                    word-break: break-word;
+                    max-width: 100%;
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        padding: 12px;
+        background: #fafafa;
+        border-top: 1px solid #e8e8e8;
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+
+            button {
+                min-width: 80px;
+                height: 36px;
+                border-radius: 6px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                }
+            }
+        }
+    }
+}

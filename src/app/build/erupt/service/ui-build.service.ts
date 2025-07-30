@@ -11,7 +11,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzImageService} from "ng-zorro-antd/image";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
-import {DrawerPlacement, OpenWay, PageEmbedType, Tpl, View} from "../model/erupt-field.model";
+import {OpenWay, PageEmbedType, Tpl, View} from "../model/erupt-field.model";
 import {AttachmentSelectComponent} from "../components/attachment-select/attachment-select.component";
 import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
@@ -694,8 +694,8 @@ export class UiBuildService {
                 nzContent: EruptIframeComponent,
                 nzContentParams: {
                     url: url,
-                    height: (placement == DrawerPlacement.LEFT || placement == DrawerPlacement.RIGHT) ? "100vh" : tpl.height,
-                    width: (placement == DrawerPlacement.TOP || placement == DrawerPlacement.BOTTOM) ? "100vw" : tpl.width
+                    height: "100%",
+                    width: '100%'
                 }
             })
         }

@@ -1,0 +1,225 @@
+<div class="flow-management-container">
+    <!-- 头部搜索和操作区域 -->
+    <div class="header-section">
+        <div class="search-area">
+            <nz-input-group [nzSuffix]="searchIcon">
+                <input
+                    nz-input
+                    placeholder="搜索"
+                    [(ngModel)]="searchValue"
+                    (ngModelChange)="onSearch()"
+                />
+            </nz-input-group>
+            <ng-template #searchIcon>
+                <span nz-icon nzType="search"></span>
+            </ng-template>
+        </div>
+
+        <div class="action-buttons">
+            <button nz-button nzType="primary" (click)="onCreateApproval()">
+                <span nz-icon nzType="plus"></span>
+                创建流程
+            </button>
+        </div>
+    </div>
+
+    <!-- 左右结构内容区域 -->
+    <div class="content-layout">
+        <!-- 左侧分类列表 -->
+        <div class="category-sidebar">
+            <div class="sidebar-header">
+                <div class="header-title">
+                    <h3>流程分类</h3>
+                </div>
+                <div class="header-actions">
+                    <button
+                        nz-button
+                        nzType="text"
+                        nzSize="small"
+                        (click)="onCreateGroup()"
+                        nz-tooltip="新建分组"
+                    >
+                        <span nz-icon nzType="plus"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="category-list" cdkDropList (cdkDropListDropped)="onDrop($event)">
+                <nz-spin [nzSpinning]="false">
+                    <!-- 全部选项 -->
+                    <div
+                        class="category-item"
+                        [class.active]="selectedCategory === ''"
+                        (click)="selectCategory('')"
+                    >
+                        <span class="category-name">全部</span>
+                        <span class="category-count">({{ flowConfigs.length }})</span>
+                    </div>
+
+                    <!-- 可拖拽的分类列表 -->
+                    <div
+                        class="category-item draggable-item"
+                        cdkDrag
+                        *ngFor="let item of categoryItems; let i = index"
+                        (click)="selectCategory(item.name)"
+                        [class.active]="selectedCategory === item.name"
+                    >
+                        <div class="category-content">
+                            <span class="category-name">{{ item.name }}</span>
+                            <span class="category-count">({{ item.count }})</span>
+                        </div>
+                        <div class="category-actions">
+                            <button
+                                nz-button
+                                nzType="text"
+                                nzSize="small"
+                                (click)="onEditGroup(item); $event.stopPropagation()"
+                                nz-tooltip="编辑分组"
+                            >
+                                <span nz-icon nzType="edit"></span>
+                            </button>
+                            <button
+                                nz-button
+                                nzType="text"
+                                nzSize="small"
+                                (click)="onDeleteGroup(item); $event.stopPropagation()"
+                                nz-tooltip="删除分组"
+                            >
+                                <span nz-icon nzType="delete"></span>
+                            </button>
+                            <button
+                                nz-button
+                                nzType="text"
+                                nzSize="small"
+                                cdkDragHandle
+                                (click)="$event.stopPropagation()"
+                            >
+                                <span>⋮⋮</span>
+                            </button>
+                        </div>
+                    </div>
+                </nz-spin>
+            </div>
+        </div>
+
+        <!-- 右侧应用列表 -->
+        <div class="app-content">
+            <div class="app-list">
+                <!-- 加载状态 -->
+                <nz-spin [nzSpinning]="configLoading" nzSize="large">
+                    <div
+                        class="app-item"
+                        *ngFor="let config of getCurrentConfigs()"
+                    >
+                        <!-- 应用信息 -->
+                        <div class="app-info">
+                            <div class="app-icon" [style.background-color]="config.color || '#1890ff'">
+                                <span [class]="config.icon || 'fa fa-dot-circle-o'"></span>
+                            </div>
+                            <div class="app-details">
+                                <div class="app-name">
+                                    {{ config.name }}
+                                    <nz-tag *ngIf="!config.enable" nzColor="red">
+                                        已停用
+                                    </nz-tag>
+                                </div>
+                                <div class="app-description">{{ config.remark || '' }}</div>
+                            </div>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="action-icons">
+                            <button
+                                nz-button
+                                nzType="text"
+                                nzSize="small"
+                                (click)="onEdit(config)"
+                                nz-tooltip="编辑"
+                            >
+                                <span nz-icon nzType="edit"></span>
+                            </button>
+
+                            <button
+                                nz-button
+                                nzType="text"
+                                nzSize="small"
+                                (click)="onDuplicate(config)"
+                                nz-tooltip="复制"
+                            >
+                                <span nz-icon nzType="copy"></span>
+                            </button>
+
+                            <button
+                                nz-button
+                                nzType="text"
+                                nzSize="small"
+                                (click)="onToggleVisibility(config)"
+                                [nz-tooltip]="config.enable ? '停用' : '启用'"
+                            >
+                                <span
+                                    nz-icon
+                                    [nzType]="config.enable ? 'stop' : 'check'"
+                                    [style.color]="config.enable ? '' : '#52c41a'"
+                                ></span>
+                            </button>
+
+                            <button
+                                nz-button
+                                nzType="text"
+                                nzSize="small"
+                                (click)="onDelete(config)"
+                                nz-tooltip="删除"
+                            >
+                                <span nz-icon nzType="delete"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 空状态 -->
+                    <div *ngIf="!configLoading && getCurrentConfigs().length === 0" class="empty-state">
+                        <nz-empty style="margin-top: 20%"
+                            [nzNotFoundImage]="'simple'"
+                        ></nz-empty>
+                    </div>
+                </nz-spin>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-modal
+    [(nzVisible)]="isCreateModalVisible"
+    nzTitle="新建分组"
+    (nzOnCancel)="handleCreateCancel()"
+    (nzOnOk)="handleCreateGroup()"
+>
+    <ng-container *nzModalContent>
+        <div>
+            <input
+                nz-input
+                [(ngModel)]="createGroupName"
+                placeholder="请输入分组名称"
+                style="width: 100%;"
+                (keyup.enter)="handleCreateGroup()"
+            />
+        </div>
+    </ng-container>
+</nz-modal>
+
+<nz-modal
+    [(nzVisible)]="isEditModalVisible"
+    nzTitle="编辑分组"
+    (nzOnCancel)="handleEditCancel()"
+    (nzOnOk)="handleEditGroup()"
+>
+    <ng-container *nzModalContent>
+        <div>
+            <input
+                nz-input
+                [(ngModel)]="editGroupName"
+                placeholder="请输入分组名称"
+                style="width: 100%;"
+                (keyup.enter)="handleEditGroup()"
+            />
+        </div>
+    </ng-container>
+</nz-modal>

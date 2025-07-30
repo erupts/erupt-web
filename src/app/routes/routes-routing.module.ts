@@ -22,8 +22,7 @@ let coreRouter: Routes = [
     {path: "site/:url", component: SiteComponent},
     {
         path: "flow",
-        loadChildren: () => import( "../build/flow/flow.module").then(m => m.FlowModule),
-        pathMatch: "full"
+        loadChildren: () => import( "../build/flow/flow.module").then(m => m.FlowModule)
     },
     {
         path: "build",
