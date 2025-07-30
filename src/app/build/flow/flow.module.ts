@@ -80,6 +80,7 @@ import {FlowConfigComponent} from './view/flow-config/flow-config.component';
 import {IconColorPickerComponent} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {EruptModule} from "../erupt/erupt.module";
 import {EruptFlowFormComponent} from './components/erupt-flow-form/erupt-flow-form.component';
+import {FlowDashboardComponent} from './view/flow-dashboard/flow-dashboard.component';
 
 
 @NgModule({
@@ -98,7 +99,8 @@ import {EruptFlowFormComponent} from './components/erupt-flow-form/erupt-flow-fo
         FlowManagementComponent,
         FlowConfigComponent,
         IconColorPickerComponent,
-        EruptFlowFormComponent
+        EruptFlowFormComponent,
+        FlowDashboardComponent
     ],
     providers: [
         FlowApiService
