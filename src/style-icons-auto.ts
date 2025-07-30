@@ -25,6 +25,7 @@ import {
     DownloadOutline,
     EditFill,
     EllipsisOutline,
+    EyeInvisibleOutline,
     EyeOutline,
     FileImageOutline,
     FullscreenExitOutline,
@@ -49,6 +50,7 @@ import {
     SaveOutline,
     SearchOutline,
     SettingOutline,
+    StopOutline,
     SyncOutline,
     TableOutline,
     UnorderedListOutline,
@@ -104,5 +106,7 @@ export const ICONS_AUTO = [
     FileImageOutline,
     ApartmentOutline,
     ArrowLeftOutline,
-    MinusOutline
+    MinusOutline,
+    EyeInvisibleOutline,
+    StopOutline
 ];

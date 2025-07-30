@@ -49,10 +49,10 @@ export enum OpenWay {
 }
 
 export enum DrawerPlacement {
-    LEFT = "left",
-    RIGHT = "right",
-    TOP = "top",
-    BOTTOM = "bottom"
+    LEFT = "LEFT",
+    RIGHT = "RIGHT",
+    TOP = "TOP",
+    BOTTOM = "BOTTOM"
 }
 
 export interface View {
@@ -237,6 +237,6 @@ export interface MapType {
 export interface VL {
     value: string;
     label: string;
-    desc: string;
-    disable: boolean;
+    desc?: string;
+    disable?: boolean;
 }

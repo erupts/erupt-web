@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 // ng-zorro模块
 import {NzButtonModule} from 'ng-zorro-antd/button';
@@ -55,8 +56,8 @@ import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 
 // 自定义组件
-import {FlowComponent} from './flow.component';
-import {ProcessRenderComponent} from './components/process-render.component';
+import {FlowComponent} from './components/erupt-flow/flow.component';
+import {ProcessRenderComponent} from './components/process-render/process-render.component';
 import {StartNodeComponent} from '@flow/nodes/start/start-node.component';
 import {ApprovalNodeComponent} from '@flow/nodes/appoval/approval-node.component';
 import {CcNodeComponent} from '@flow/nodes/cc/cc-node.component';
@@ -71,6 +72,14 @@ import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
 import {RecursiveNodeComponent} from "@flow/nodes/recursive-node.component";
 import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.component";
+import {FlowManagementComponent} from './view/flow-management/flow-management.component';
+import {NzDropDownModule} from "ng-zorro-antd/dropdown";
+import {SharedModule} from "@shared/shared.module";
+import {FlowApiService} from "@flow/service/FlowApiService";
+import {FlowConfigComponent} from './view/flow-config/flow-config.component';
+import {IconColorPickerComponent} from '@flow/components/icon-color-picker/icon-color-picker.component';
+import {EruptModule} from "../erupt/erupt.module";
+import {EruptFlowFormComponent} from './components/erupt-flow-form/erupt-flow-form.component';
 
 
 @NgModule({
@@ -82,18 +91,26 @@ import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.componen
         CcNodeComponent,
         ExclusiveNodeComponent,
         ParallelNodeComponent,
-        // GatewayNodeComponent,
         NodeComponent,
         BranchNodeComponent,
         InsertBtnComponent,
-        RecursiveNodeComponent
+        RecursiveNodeComponent,
+        FlowManagementComponent,
+        FlowConfigComponent,
+        IconColorPickerComponent,
+        EruptFlowFormComponent
+    ],
+    providers: [
+        FlowApiService
     ],
     imports: [
+        SharedModule,
         FlowRoutingModule,
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
         HttpClientModule,
+        DragDropModule,
         NzButtonModule,
         NzInputModule,
         NzDrawerModule,
@@ -143,7 +160,9 @@ import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.componen
         NzCascaderModule,
         NzMentionModule,
         NzAutocompleteModule,
-        NzInputNumberModule
+        NzInputNumberModule,
+        NzDropDownModule,
+        EruptModule
     ]
 })
 export class FlowModule {

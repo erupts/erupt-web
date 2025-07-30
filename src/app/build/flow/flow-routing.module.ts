@@ -1,11 +1,16 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {FlowComponent} from "./flow.component";
+import {FlowManagementComponent} from "@flow/view/flow-management/flow-management.component";
 
 const routes: Routes = [
   {
     path: "",
-    component: FlowComponent,
+    redirectTo: "management",
+    pathMatch: "full"
+  },
+  {
+    path: "management",
+    component: FlowManagementComponent,
     data: {
       desc: "Flow",
       status: true

@@ -42,8 +42,6 @@ export class ProcessRenderComponent implements OnInit {
         if (NodeMap[type] && NodeMap[type].create) {
             const newNode = NodeMap[type].create();
             branch.splice(i + 1, 0, newNode);
-        } else {
-            // this.message.warning('请在ProcessNodes.ts内配置该节点');
         }
     }
 
