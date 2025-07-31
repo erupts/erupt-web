@@ -1,13 +1,14 @@
 <div class="flow-approval-container">
   <!-- 左侧导航栏 -->
   <div class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <!-- 移动端头部 -->
     <div class="sidebar-header">
       <div class="search-section">
         <span nz-icon nzType="search" nzTheme="outline"></span>
-        <span class="search-text">搜索</span>
+        <span class="search-text">搜索审批</span>
       </div>
-      <button nz-button nzType="text" nzSize="small" class="menu-toggle">
-        <span nz-icon nzType="menu" nzTheme="outline"></span>
+      <button nz-button nzType="text" nzSize="small" class="menu-toggle" (click)="toggleSidebar()">
+        <span nz-icon nzType="menu-fold" nzTheme="outline"></span>
       </button>
     </div>
 
@@ -20,9 +21,11 @@
 
         <!-- 待办 -->
         <li nz-menu-item nzKey="todo">
-          <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
-          <span class="menu-title">待办</span>
-          <nz-badge [nzCount]="5" nzShowZero class="menu-badge"></nz-badge>
+          <div style="display: flex;align-items: center">
+              <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+              <span class="menu-title">待办</span>
+              <nz-badge style="margin-left:auto" [nzCount]="5" nzShowZero class="menu-badge"></nz-badge>
+          </div>
         </li>
 
         <!-- 已办 -->
@@ -37,7 +40,6 @@
         <li nz-menu-item nzKey="cc">
           <span nz-icon nzType="copy" nzTheme="outline"></span>
           <span class="menu-title">抄送我</span>
-          <nz-badge [nzCount]="2" nzShowZero class="menu-badge"></nz-badge>
         </li>
 
         <!-- 已发起 -->
@@ -105,7 +107,7 @@
     </div>
 
     <!-- 右侧详情区域 -->
-    <div class="detail-section" *ngIf="selectedItem">
+    <div class="detail-section" *ngIf="selectedItem; else emptyDetail">
       <div class="detail-header">
         <div class="header-left">
           <span class="item-id">编号: {{ selectedItem.id }}</span>
@@ -119,9 +121,6 @@
           </button>
           <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="打印">
             <span nz-icon nzType="printer" nzTheme="outline"></span>
-          </button>
-          <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="帮助">
-            <span nz-icon nzType="question-circle" nzTheme="outline"></span>
           </button>
         </div>
       </div>
@@ -278,10 +277,6 @@
       <!-- 固定在右侧底部的功能按钮 -->
       <div class="fixed-bottom-actions">
         <div class="action-buttons">
-          <button nz-button nzType="primary" nzSize="default" (click)="startGroupChat()">
-            <span nz-icon nzType="message" nzTheme="outline"></span>
-            发起群聊
-          </button>
           <button nz-button nzSize="default" (click)="cc()">
             <span nz-icon nzType="send" nzTheme="outline"></span>
             抄送
@@ -301,5 +296,17 @@
         </div>
       </div>
     </div>
+
+    <!-- 空状态模板 -->
+    <ng-template #emptyDetail>
+      <div class="detail-section empty-detail">
+        <div class="empty-content">
+          <nz-empty
+            nzNotFoundImage="simple"
+            nzNotFoundContent="请选择一个审批项目查看详情"
+          ></nz-empty>
+        </div>
+      </div>
+    </ng-template>
   </div>
 </div>

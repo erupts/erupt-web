@@ -33,6 +33,7 @@ import {
     GlobalOutline,
     ImportOutline,
     InboxOutline,
+    LinkOutline,
     LoadingOutline,
     LockOutline,
     MenuFoldOutline,
@@ -43,6 +44,7 @@ import {
     PlusOutline,
     PlusSquareOutline,
     PoweroffOutline,
+    PrinterOutline,
     QuestionCircleOutline,
     ReloadOutline,
     RocketOutline,
@@ -108,5 +110,7 @@ export const ICONS_AUTO = [
     ArrowLeftOutline,
     MinusOutline,
     EyeInvisibleOutline,
-    StopOutline
+    StopOutline,
+    PrinterOutline,
+    LinkOutline
 ];
