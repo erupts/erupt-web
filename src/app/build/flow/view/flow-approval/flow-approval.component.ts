@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
 
@@ -59,6 +59,11 @@ export class FlowApprovalComponent implements OnInit {
   sidebarCollapsed = false;
   activeTabIndex = 0;
   selectedMenuKeys: string[] = ['todo'];
+
+  // 移动端相关属性
+  isMobile = false;
+  isTablet = false;
+  windowWidth = 0;
 
   constructor(
     private message: NzMessageService,
@@ -184,6 +189,25 @@ export class FlowApprovalComponent implements OnInit {
 
   ngOnInit() {
     this.selectedItem = this.approvalList[0];
+    this.checkScreenSize();
+  }
+
+  // 监听窗口大小变化
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.checkScreenSize();
+  }
+
+  // 检查屏幕尺寸
+  private checkScreenSize() {
+    this.windowWidth = window.innerWidth;
+    this.isMobile = this.windowWidth <= 768;
+    this.isTablet = this.windowWidth > 768 && this.windowWidth <= 1200;
+
+    // 移动端自动收起侧边栏
+    if (this.isMobile && !this.sidebarCollapsed) {
+      this.sidebarCollapsed = true;
+    }
   }
 
   selectItem(item: ApprovalItem) {
@@ -279,11 +303,6 @@ export class FlowApprovalComponent implements OnInit {
       }
     });
   }
-
-  startGroupChat() {
-    this.message.info('发起群聊功能');
-  }
-
   cc() {
     this.message.info('抄送功能');
   }
@@ -340,6 +359,30 @@ export class FlowApprovalComponent implements OnInit {
       case 'initiated-expense':
         // 加载已发起数据
         break;
+    }
+  }
+
+  // 移动端优化方法
+  onMobileItemSelect(item: ApprovalItem) {
+    this.selectItem(item);
+    // 移动端选择项目后可以添加额外的交互逻辑
+    if (this.isMobile) {
+      this.message.info('已选择审批项目');
+    }
+  }
+
+  // 移动端手势支持
+  onSwipeLeft() {
+    if (this.isMobile && this.selectedItem) {
+      // 左滑可以执行某些操作，比如拒绝
+      this.reject();
+    }
+  }
+
+  onSwipeRight() {
+    if (this.isMobile && this.selectedItem) {
+      // 右滑可以执行某些操作，比如同意
+      this.approve();
     }
   }
 }

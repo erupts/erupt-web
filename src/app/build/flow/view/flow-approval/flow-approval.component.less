@@ -10,7 +10,7 @@
     width: 220px;
     height: 100%; // 固定高度
     background: white;
-    border-right: 1px solid #f0f0f0;
+    border-right: 1px solid #e5e5e5;
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
@@ -35,8 +35,8 @@
     }
 
     .sidebar-header {
-      padding: 16px;
-      border-bottom: 1px solid #f0f0f0;
+      padding: 12px;
+      border-bottom: 1px solid #e5e5e5;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -129,7 +129,7 @@
               color: #666;
 
               &:hover {
-                background-color: #f0f0f0;
+                background-color: #e5e5e5;
               }
 
               &.ant-menu-item-selected {
@@ -145,7 +145,7 @@
 
     .sidebar-footer {
       padding: 16px;
-      border-top: 1px solid #f0f0f0;
+      border-top: 1px solid #e5e5e5;
       flex-shrink: 0; // 防止底部被压缩
 
       .collapse-text {
@@ -168,14 +168,14 @@
       width: 320px;
       height: 100%; // 固定高度
       background: white;
-      border-right: 1px solid #f0f0f0;
+      border-right: 1px solid #e5e5e5;
       display: flex;
       flex-direction: column;
       flex-shrink: 0; // 防止被压缩
 
       .list-header {
-        padding: 16px;
-        border-bottom: 1px solid #f0f0f0;
+        padding: 12px;
+        border-bottom: 1px solid #e5e5e5;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -310,8 +310,8 @@
       position: relative; // 为固定底部按钮定位
 
       .detail-header {
-        padding: 16px 24px;
-        border-bottom: 1px solid #f0f0f0;
+        padding: 12px 24px;
+        border-bottom: 1px solid #e5e5e5;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -414,7 +414,7 @@
                 color: #333;
                 margin-bottom: 16px;
                 padding-bottom: 8px;
-                border-bottom: 1px solid #f0f0f0;
+                border-bottom: 1px solid #e5e5e5;
               }
 
               .detail-descriptions {
@@ -497,59 +497,17 @@
         left: 0;
         right: 0;
         background: white;
-        border-top: 1px solid #f0f0f0;
+        border-top: 1px solid #e5e5e5;
         padding: 16px 24px;
         display: flex;
-        justify-content: center;
         box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
         z-index: 10; // 确保按钮在最上层
         flex-shrink: 0; // 防止按钮被压缩
 
         .action-buttons {
           display: flex;
-          gap: 12px;
+          gap: 8px;
           flex-wrap: wrap;
-          justify-content: center;
-
-          button {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-
-            &:hover {
-              transform: translateY(-1px);
-              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
-
-            // 主要按钮样式
-            &.ant-btn-primary {
-              background: linear-gradient(135deg, #722ed1 0%, #531dab 100%);
-              border: none;
-              color: white;
-
-              &:hover {
-                background: linear-gradient(135deg, #9254de 0%, #722ed1 100%);
-                border: none;
-                color: white;
-              }
-            }
-
-            // 次要按钮样式
-            &:not(.ant-btn-primary) {
-              background: white;
-              border: 1px solid #d9d9d9;
-              color: #333;
-
-              &:hover {
-                border-color: #1890ff;
-                color: #1890ff;
-              }
-            }
-          }
         }
       }
     }
@@ -566,11 +524,23 @@
 @media (max-width: 1200px) {
   .flow-approval-container {
     .sidebar {
-      width: 240px;
+      width: 200px;
     }
 
     .main-content .list-section {
-      width: 280px; // 调整响应式宽度
+      width: 280px;
+    }
+  }
+}
+
+@media (max-width: 992px) {
+  .flow-approval-container {
+    .sidebar {
+      width: 180px;
+    }
+
+    .main-content .list-section {
+      width: 260px;
     }
   }
 }
@@ -578,44 +548,376 @@
 @media (max-width: 768px) {
   .flow-approval-container {
     flex-direction: column;
-    height: auto; // 移动端取消固定高度
+    height: 100vh;
+    overflow: hidden;
 
     .sidebar {
       width: 100%;
       height: auto;
-      max-height: 200px;
+      max-height: 60px;
+      border-right: none;
+      border-bottom: 1px solid #e5e5e5;
+      flex-shrink: 0;
+
+      &.collapsed {
+        width: 100%;
+        max-height: 60px;
+      }
+
+      .sidebar-header {
+        padding: 12px 16px;
+
+        .search-section {
+          font-size: 13px;
+        }
+      }
+
+      .navigation-menu {
+        display: none; // 移动端隐藏导航菜单
+      }
+
+      .sidebar-footer {
+        display: none; // 移动端隐藏底部
+      }
     }
 
     .main-content {
       flex-direction: column;
-      height: auto; // 移动端取消固定高度
+      height: calc(100vh - 60px);
+      overflow: hidden;
 
       .list-section {
         width: 100%;
-        height: 300px;
-      }
+        height: 40%;
+        min-height: 200px;
+        border-right: none;
+        border-bottom: 1px solid #e5e5e5;
 
-      .detail-section {
-        height: auto; // 移动端取消固定高度
+        .list-header {
+          padding: 12px 16px;
 
-        .detail-content {
-          padding-bottom: 24px; // 移动端取消底部内边距
+          .time-filter {
+            font-size: 13px;
+          }
         }
 
-        .fixed-bottom-actions {
-          position: static;
-          border-top: 1px solid #f0f0f0;
+        .approval-list {
+          padding: 8px 12px;
 
-          .action-buttons {
-            flex-direction: column;
-            align-items: center;
+          .approval-item {
+            padding: 12px;
+            margin-bottom: 6px;
 
-            button {
-              width: 100%;
-              max-width: 200px;
+            .item-header {
+              margin-bottom: 8px;
+
+              .item-title {
+                font-size: 14px;
+              }
+            }
+
+            .item-content {
+              margin-bottom: 8px;
+
+              .item-field {
+                font-size: 12px;
+                margin-bottom: 4px;
+
+                .field-label {
+                  min-width: 60px;
+                }
+              }
+            }
+
+            .item-footer {
+              .submitter-info {
+                .avatar {
+                  width: 20px;
+                  height: 20px;
+                  font-size: 10px;
+                }
+
+                .submitter-name {
+                  font-size: 12px;
+                }
+              }
+
+              .time-info .process-time {
+                font-size: 11px;
+              }
             }
           }
         }
+      }
+
+      .detail-section {
+        height: 60%;
+        min-height: 300px;
+
+        .detail-header {
+          padding: 12px 16px;
+
+          .header-left .item-id {
+            font-size: 13px;
+          }
+        }
+
+        .detail-content {
+          padding: 16px;
+          padding-bottom: 80px;
+
+          .content-header {
+            gap: 12px;
+            margin-bottom: 16px;
+
+            .content-title {
+              font-size: 18px;
+            }
+
+            .status-tag-large {
+              font-size: 12px;
+              padding: 2px 8px;
+            }
+          }
+
+          .submitter-info-large {
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 12px;
+
+            .avatar-large {
+              width: 40px;
+              height: 40px;
+              font-size: 16px;
+            }
+
+            .submitter-details {
+              .submitter-name-large {
+                font-size: 14px;
+              }
+
+              .submitter-dept {
+                font-size: 12px;
+              }
+
+              .submit-time {
+                font-size: 11px;
+              }
+            }
+          }
+
+          .detail-tabs {
+            ::ng-deep .ant-tabs-nav {
+              margin-bottom: 16px;
+            }
+
+            .tab-content .section {
+              margin-bottom: 20px;
+
+              .section-title {
+                font-size: 14px;
+                margin-bottom: 12px;
+              }
+            }
+          }
+        }
+
+        .fixed-bottom-actions {
+          position: absolute;
+          padding: 12px 16px;
+
+          .action-buttons {
+            gap: 8px;
+
+            button {
+              padding: 10px 16px;
+              font-size: 14px;
+              min-height: 44px; // 触摸友好的最小高度
+              border-radius: 8px;
+
+              &:hover {
+                transform: none; // 移动端禁用悬停效果
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .flow-approval-container {
+    .main-content {
+      .list-section {
+        height: 35%;
+        min-height: 180px;
+
+        .approval-list {
+          padding: 6px 8px;
+
+          .approval-item {
+            padding: 10px;
+            margin-bottom: 4px;
+
+            .item-header .item-title {
+              font-size: 13px;
+            }
+
+            .item-content .item-field {
+              font-size: 11px;
+
+              .field-label {
+                min-width: 50px;
+              }
+            }
+          }
+        }
+      }
+
+      .detail-section {
+        height: 65%;
+
+        .detail-content {
+          padding: 12px;
+          padding-bottom: 80px;
+
+          .content-header .content-title {
+            font-size: 16px;
+          }
+
+          .submitter-info-large {
+            padding: 10px;
+
+            .avatar-large {
+              width: 36px;
+              height: 36px;
+              font-size: 14px;
+            }
+          }
+        }
+
+        .fixed-bottom-actions {
+          padding: 10px 12px;
+
+          .action-buttons {
+            flex-direction: column;
+            gap: 6px;
+
+            button {
+              width: 100%;
+              padding: 12px 16px;
+              font-size: 15px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 横屏模式优化
+@media (max-width: 768px) and (orientation: landscape) {
+  .flow-approval-container {
+    .sidebar {
+      max-height: 50px;
+    }
+
+    .main-content {
+      height: calc(100vh - 50px);
+
+      .list-section {
+        height: 45%;
+      }
+
+      .detail-section {
+        height: 55%;
+      }
+    }
+  }
+}
+
+// 触摸设备优化
+@media (hover: none) and (pointer: coarse) {
+  .flow-approval-container {
+    .sidebar .navigation-menu .approval-menu {
+      .ant-menu-item,
+      .ant-menu-submenu-title {
+        min-height: 44px; // 触摸友好的最小高度
+      }
+    }
+
+    .main-content .list-section .approval-list .approval-item {
+      min-height: 44px; // 触摸友好的最小高度
+
+      &:active {
+        background-color: #e6f7ff;
+        transform: scale(0.98);
+      }
+    }
+
+    .main-content .detail-section .fixed-bottom-actions .action-buttons button {
+      min-height: 48px; // 更大的触摸目标
+      font-size: 16px; // 更大的字体
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+}
+
+// 空状态样式
+.empty-detail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .empty-content {
+    text-align: center;
+    padding: 40px 20px;
+
+    ::ng-deep .ant-empty-description {
+      color: #999;
+      font-size: 14px;
+    }
+  }
+}
+
+// 移动端综合优化
+@media (max-width: 768px) {
+  .flow-approval-container {
+    // 移动端基础适配
+    padding-left: 0;
+    padding-right: 0;
+
+    * {
+      -webkit-tap-highlight-color: transparent; // 移除点击高亮
+    }
+
+    .main-content {
+      .list-section .approval-list,
+      .detail-section .detail-content {
+        -webkit-overflow-scrolling: touch; // iOS 滚动优化
+        scroll-behavior: smooth;
+      }
+
+      .list-section .approval-list .approval-item {
+        will-change: transform; // 优化动画性能
+      }
+
+      .detail-section .fixed-bottom-actions {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-bottom: 16px;
+      }
+    }
+
+    .empty-detail .empty-content {
+      padding: 20px;
+
+      ::ng-deep .ant-empty-description {
+        font-size: 13px;
       }
     }
   }
