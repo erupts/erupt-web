@@ -4,7 +4,7 @@
     <div class="sidebar-header">
       <div class="search-section">
         <span nz-icon nzType="search" nzTheme="outline"></span>
-        <span class="search-text">Q 搜索</span>
+        <span class="search-text">搜索</span>
       </div>
       <button nz-button nzType="text" nzSize="small" class="menu-toggle">
         <span nz-icon nzType="menu" nzTheme="outline"></span>
@@ -12,24 +12,42 @@
     </div>
 
     <div class="navigation-menu">
-      <div class="nav-item" *ngFor="let item of navigationItems">
-        <div class="nav-header" [class.expanded]="item.children?.length">
-          <span nz-icon [nzType]="item.icon" nzTheme="outline"></span>
-          <span class="nav-title">{{ item.title }}</span>
-          <nz-badge *ngIf="item.count" [nzCount]="item.count" nzShowZero></nz-badge>
-          <span *ngIf="item.children?.length" nz-icon nzType="down" nzTheme="outline" class="expand-icon"></span>
-        </div>
+      <ul nz-menu
+          nzMode="inline"
+          [nzInlineCollapsed]="sidebarCollapsed"
+          (nzClick)="onMenuClick($event)"
+          class="approval-menu">
 
-        <div class="nav-children" *ngIf="item.children?.length">
-          <div
-            class="nav-child"
-            *ngFor="let child of item.children"
-            [class.active]="child.active"
-          >
-            {{ child.title }}
-          </div>
-        </div>
-      </div>
+        <!-- 待办 -->
+        <li nz-menu-item nzKey="todo">
+          <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+          <span class="menu-title">待办</span>
+          <nz-badge [nzCount]="5" nzShowZero class="menu-badge"></nz-badge>
+        </li>
+
+        <!-- 已办 -->
+        <li nz-submenu nzKey="done" nzTitle="已办" nzIcon="check-circle">
+          <ul>
+            <li nz-menu-item nzKey="done-purchase">采购申请</li>
+            <li nz-menu-item nzKey="done-expense">费用报销</li>
+          </ul>
+        </li>
+
+        <!-- 抄送我 -->
+        <li nz-menu-item nzKey="cc">
+          <span nz-icon nzType="copy" nzTheme="outline"></span>
+          <span class="menu-title">抄送我</span>
+          <nz-badge [nzCount]="2" nzShowZero class="menu-badge"></nz-badge>
+        </li>
+
+        <!-- 已发起 -->
+        <li nz-submenu nzKey="initiated" nzTitle="已发起" nzIcon="rocket">
+          <ul>
+            <li nz-menu-item nzKey="initiated-purchase">采购申请</li>
+            <li nz-menu-item nzKey="initiated-expense">费用报销</li>
+          </ul>
+        </li>
+      </ul>
     </div>
 
     <div class="sidebar-footer">
