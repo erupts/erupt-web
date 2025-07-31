@@ -19,10 +19,10 @@
           <nz-badge *ngIf="item.count" [nzCount]="item.count" nzShowZero></nz-badge>
           <span *ngIf="item.children?.length" nz-icon nzType="down" nzTheme="outline" class="expand-icon"></span>
         </div>
-        
+
         <div class="nav-children" *ngIf="item.children?.length">
-          <div 
-            class="nav-child" 
+          <div
+            class="nav-child"
             *ngFor="let child of item.children"
             [class.active]="child.active"
           >
@@ -56,39 +56,21 @@
       </div>
 
       <div class="approval-list">
-        <div 
-          class="approval-item" 
+        <div
+          class="approval-item"
           *ngFor="let item of approvalList"
           [class.active]="selectedItem?.id === item.id"
           (click)="selectItem(item)"
         >
           <div class="item-header">
             <h3 class="item-title">{{ item.type }}</h3>
-            <nz-tag 
+            <nz-tag
               [nzColor]="getStatusColor(item.status)"
               class="status-tag"
             >
               {{ getStatusText(item.status) }}
             </nz-tag>
           </div>
-          
-          <div class="item-content">
-            <div class="item-field">
-              <span class="field-label">{{ item.type === '采购申请' ? '采购事由' : '报销事由' }}:</span>
-              <span class="field-value">{{ item.reason }}</span>
-            </div>
-            
-            <div class="item-field" *ngIf="item.category">
-              <span class="field-label">{{ item.type === '采购申请' ? '采购类别' : '报销类别' }}:</span>
-              <span class="field-value">{{ item.category }}</span>
-            </div>
-            
-            <div class="item-field" *ngIf="item.expectedDelivery">
-              <span class="field-label">期望交付时间:</span>
-              <span class="field-value">{{ item.expectedDelivery }}</span>
-            </div>
-          </div>
-          
           <div class="item-footer">
             <div class="submitter-info">
               <div class="avatar" [style.background-color]="getAvatarColor(item.submitter.avatar)">
@@ -129,7 +111,7 @@
       <div class="detail-content">
         <div class="content-header">
           <h1 class="content-title">{{ selectedItem.type }}</h1>
-          <nz-tag 
+          <nz-tag
             [nzColor]="getStatusColor(selectedItem.status)"
             class="status-tag-large"
           >
@@ -149,7 +131,7 @@
         </div>
 
         <!-- 标签页导航 -->
-        <nz-tabset 
+        <nz-tabset
           class="detail-tabs"
           (nzSelectedIndexChange)="onTabChange($event)"
           [nzSelectedIndex]="activeTabIndex"
@@ -173,8 +155,8 @@
 
               <div class="section">
                 <h3 class="section-title">费用明细</h3>
-                <nz-table 
-                  #expenseTable 
+                <nz-table
+                  #expenseTable
                   [nzData]="expenseDetails"
                   [nzShowPagination]="false"
                   [nzSize]="'small'"
@@ -218,8 +200,8 @@
             <div class="tab-content">
               <div class="section">
                 <h3 class="section-title">| 审批记录</h3>
-                <nz-table 
-                  #recordsTable 
+                <nz-table
+                  #recordsTable
                   [nzData]="approvalRecords"
                   [nzShowPagination]="false"
                   [nzSize]="'small'"
@@ -274,32 +256,32 @@
           </nz-tab>
         </nz-tabset>
       </div>
-    </div>
-  </div>
 
-  <!-- 底部操作栏 -->
-  <div class="action-bar" *ngIf="selectedItem">
-    <div class="action-buttons">
-      <button nz-button nzSize="default" (click)="startGroupChat()">
-        <span nz-icon nzType="message" nzTheme="outline"></span>
-        发起群聊
-      </button>
-      <button nz-button nzSize="default" (click)="cc()">
-        <span nz-icon nzType="send" nzTheme="outline"></span>
-        抄送
-      </button>
-      <button nz-button nzSize="default" (click)="modify()">
-        <span nz-icon nzType="edit" nzTheme="outline"></span>
-        修改
-      </button>
-      <button nz-button nzSize="default" (click)="recall()">
-        <span nz-icon nzType="undo" nzTheme="outline"></span>
-        撤销
-      </button>
-      <button nz-button nzSize="default" (click)="resubmit()">
-        <span nz-icon nzType="redo" nzTheme="outline"></span>
-        再次提交
-      </button>
+      <!-- 固定在右侧底部的功能按钮 -->
+      <div class="fixed-bottom-actions">
+        <div class="action-buttons">
+          <button nz-button nzType="primary" nzSize="default" (click)="startGroupChat()">
+            <span nz-icon nzType="message" nzTheme="outline"></span>
+            发起群聊
+          </button>
+          <button nz-button nzSize="default" (click)="cc()">
+            <span nz-icon nzType="send" nzTheme="outline"></span>
+            抄送
+          </button>
+          <button nz-button nzSize="default" (click)="modify()">
+            <span nz-icon nzType="edit" nzTheme="outline"></span>
+            修改
+          </button>
+          <button nz-button nzSize="default" (click)="recall()">
+            <span nz-icon nzType="undo" nzTheme="outline"></span>
+            撤销
+          </button>
+          <button nz-button nzSize="default" (click)="resubmit()">
+            <span nz-icon nzType="redo" nzTheme="outline"></span>
+            再次提交
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
