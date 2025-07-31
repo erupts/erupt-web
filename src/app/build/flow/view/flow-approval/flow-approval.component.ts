@@ -38,12 +38,13 @@ interface ExpenseDetail {
   amount: number;
 }
 
-interface NavigationItem {
+interface MenuItem {
+  key: string;
   title: string;
   icon?: string;
-  children?: NavigationItem[];
+  children?: MenuItem[];
   count?: number;
-  active?: boolean;
+  disabled?: boolean;
 }
 
 @Component({
@@ -57,38 +58,43 @@ export class FlowApprovalComponent implements OnInit {
   timeFilter = 'all';
   sidebarCollapsed = false;
   activeTabIndex = 0;
+  selectedMenuKeys: string[] = ['todo'];
 
   constructor(
     private message: NzMessageService,
     private modal: NzModalService
   ) {}
 
-  // 导航菜单数据
-  navigationItems: NavigationItem[] = [
+  // 菜单数据
+  menuItems: MenuItem[] = [
     {
+      key: 'todo',
       title: '待办',
       icon: 'clock-circle',
       count: 5
     },
     {
+      key: 'done',
       title: '已办',
       icon: 'check-circle',
       children: [
-        { title: '采购申请', active: true },
-        { title: '费用报销' }
+        { key: 'done-purchase', title: '采购申请' },
+        { key: 'done-expense', title: '费用报销' }
       ]
     },
     {
+      key: 'cc',
       title: '抄送我',
       icon: 'copy',
       count: 2
     },
     {
+      key: 'initiated',
       title: '已发起',
       icon: 'rocket',
       children: [
-        { title: '采购申请' },
-        { title: '费用报销' }
+        { key: 'initiated-purchase', title: '采购申请' },
+        { key: 'initiated-expense', title: '费用报销' }
       ]
     }
   ];
@@ -308,5 +314,32 @@ export class FlowApprovalComponent implements OnInit {
 
   onTabChange(index: number) {
     this.activeTabIndex = index;
+  }
+
+  onMenuClick(event: any) {
+    this.selectedMenuKeys = [event.key];
+    console.log('菜单点击:', event.key);
+    // 这里可以根据菜单项加载对应的数据
+    this.loadDataByMenuKey(event.key);
+  }
+
+  loadDataByMenuKey(menuKey: string) {
+    // 根据菜单项加载对应的审批列表数据
+    switch (menuKey) {
+      case 'todo':
+        // 加载待办数据
+        break;
+      case 'done-purchase':
+      case 'done-expense':
+        // 加载已办数据
+        break;
+      case 'cc':
+        // 加载抄送数据
+        break;
+      case 'initiated-purchase':
+      case 'initiated-expense':
+        // 加载已发起数据
+        break;
+    }
   }
 }
