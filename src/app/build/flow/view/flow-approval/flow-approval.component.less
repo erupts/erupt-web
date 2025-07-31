@@ -1,17 +1,20 @@
 .flow-approval-container {
   display: flex;
-  height: 100%;
+  height: calc(100vh - 44px); // 使用视口高度确保固定高度
   background-color: #f5f5f5;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  overflow: hidden; // 防止整体滚动
 
   // 左侧导航栏
   .sidebar {
     width: 280px;
+    height: 100%; // 固定高度
     background: white;
     border-right: 1px solid #f0f0f0;
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
+    flex-shrink: 0; // 防止被压缩
 
     &.collapsed {
       width: 80px;
@@ -33,6 +36,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-shrink: 0; // 防止头部被压缩
 
       .search-section {
         display: flex;
@@ -50,7 +54,7 @@
     .navigation-menu {
       flex: 1;
       padding: 16px 0;
-      overflow-y: auto;
+      overflow-y: auto; // 只有导航菜单可以滚动
 
       .nav-item {
         margin-bottom: 4px;
@@ -111,6 +115,7 @@
     .sidebar-footer {
       padding: 16px;
       border-top: 1px solid #f0f0f0;
+      flex-shrink: 0; // 防止底部被压缩
 
       .collapse-text {
         margin-left: 8px;
@@ -123,16 +128,19 @@
   // 主内容区域
   .main-content {
     flex: 1;
+    height: 100%; // 固定高度
     display: flex;
     overflow: hidden;
 
-    // 中间列表区域
+    // 中间列表区域 - 调窄宽度
     .list-section {
-      width: 400px;
+      width: 320px;
+      height: 100%; // 固定高度
       background: white;
       border-right: 1px solid #f0f0f0;
       display: flex;
       flex-direction: column;
+      flex-shrink: 0; // 防止被压缩
 
       .list-header {
         padding: 16px;
@@ -140,6 +148,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
+        flex-shrink: 0; // 防止头部被压缩
 
         .time-filter {
           display: flex;
@@ -159,7 +168,7 @@
 
       .approval-list {
         flex: 1;
-        overflow-y: auto;
+        overflow-y: auto; // 只有列表可以滚动
         padding: 8px;
 
         .approval-item {
@@ -262,10 +271,12 @@
     // 右侧详情区域
     .detail-section {
       flex: 1;
+      height: 100%; // 固定高度
       background: white;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      position: relative; // 为固定底部按钮定位
 
       .detail-header {
         padding: 16px 24px;
@@ -273,6 +284,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-shrink: 0; // 防止头部被压缩
 
         .header-left {
           .item-id {
@@ -289,8 +301,9 @@
 
       .detail-content {
         flex: 1;
-        overflow-y: auto;
+        overflow-y: auto; // 只有内容区域可以滚动
         padding: 24px;
+        padding-bottom: 80px; // 为底部固定按钮留出空间
 
         .content-header {
           display: flex;
@@ -445,27 +458,69 @@
           }
         }
       }
-    }
-  }
 
-  // 底部操作栏
-  .action-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    border-top: 1px solid #f0f0f0;
-    padding: 16px 24px;
-    display: flex;
-    justify-content: center;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+      // 固定在右侧底部的功能按钮
+      .fixed-bottom-actions {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid #f0f0f0;
+        padding: 16px 24px;
+        display: flex;
+        justify-content: center;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+        z-index: 10; // 确保按钮在最上层
+        flex-shrink: 0; // 防止按钮被压缩
 
-    .action-buttons {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
+        .action-buttons {
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+          justify-content: center;
+
+          button {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+
+            &:hover {
+              transform: translateY(-1px);
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            // 主要按钮样式
+            &.ant-btn-primary {
+              background: linear-gradient(135deg, #722ed1 0%, #531dab 100%);
+              border: none;
+              color: white;
+
+              &:hover {
+                background: linear-gradient(135deg, #9254de 0%, #722ed1 100%);
+                border: none;
+                color: white;
+              }
+            }
+
+            // 次要按钮样式
+            &:not(.ant-btn-primary) {
+              background: white;
+              border: 1px solid #d9d9d9;
+              color: #333;
+
+              &:hover {
+                border-color: #1890ff;
+                color: #1890ff;
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -484,7 +539,7 @@
     }
 
     .main-content .list-section {
-      width: 350px;
+      width: 280px; // 调整响应式宽度
     }
   }
 }
@@ -492,6 +547,7 @@
 @media (max-width: 768px) {
   .flow-approval-container {
     flex-direction: column;
+    height: auto; // 移动端取消固定高度
 
     .sidebar {
       width: 100%;
@@ -501,6 +557,7 @@
 
     .main-content {
       flex-direction: column;
+      height: auto; // 移动端取消固定高度
 
       .list-section {
         width: 100%;
@@ -508,7 +565,26 @@
       }
 
       .detail-section {
-        height: calc(100vh - 500px);
+        height: auto; // 移动端取消固定高度
+
+        .detail-content {
+          padding-bottom: 24px; // 移动端取消底部内边距
+        }
+
+        .fixed-bottom-actions {
+          position: static;
+          border-top: 1px solid #f0f0f0;
+
+          .action-buttons {
+            flex-direction: column;
+            align-items: center;
+
+            button {
+              width: 100%;
+              max-width: 200px;
+            }
+          }
+        }
       }
     }
   }
