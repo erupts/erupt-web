@@ -1,924 +1,514 @@
 .flow-approval-container {
-  display: flex;
-  height: calc(100vh - 44px); // 使用视口高度确保固定高度
-  background-color: #f5f5f5;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  overflow: hidden; // 防止整体滚动
-
-  // 左侧导航栏
-  .sidebar {
-    width: 220px;
-    height: 100%; // 固定高度
-    background: white;
-    border-right: 1px solid #e5e5e5;
     display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    flex-shrink: 0; // 防止被压缩
+    height: calc(100vh - 44px); // 使用视口高度确保固定高度
+    background-color: #f5f5f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden; // 防止整体滚动
 
-    &.collapsed {
-      width: 80px;
-
-      .search-text,
-      .menu-title,
-      .collapse-text {
-        display: none;
-      }
-
-      .approval-menu {
-        .ant-menu-item,
-        .ant-menu-submenu-title {
-          justify-content: center;
-          padding: 0;
-        }
-      }
-    }
-
-    .sidebar-header {
-      padding: 12px;
-      border-bottom: 1px solid #e5e5e5;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0; // 防止头部被压缩
-
-      .search-section {
+    // 左侧导航栏
+    .sidebar {
+        width: 220px;
+        height: 100%; // 固定高度
+        background: white;
+        border-right: 1px solid #e5e5e5;
         display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #666;
-        font-size: 14px;
-      }
+        flex-direction: column;
+        transition: all 0.3s ease;
+        flex-shrink: 0; // 防止被压缩
 
-      .menu-toggle {
-        color: #666;
-      }
-    }
+        &.collapsed {
+            width: 80px;
 
-    .navigation-menu {
-      flex: 1;
-      padding: 16px 0;
-      overflow-y: auto; // 只有导航菜单可以滚动
+            .search-text,
+            .menu-title,
+            .collapse-text {
+                display: none;
+            }
 
-      .approval-menu {
-        border: none;
-        background: transparent;
-
-        // 菜单项样式
-        .ant-menu-item {
-          height: 48px;
-          line-height: 48px;
-          margin: 0;
-          padding: 0 16px;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          transition: all 0.3s ease;
-
-          &:hover {
-            background-color: #f5f5f5;
-          }
-
-          &.ant-menu-item-selected {
-            background-color: #e6f7ff;
-            color: #1890ff;
-            font-weight: 500;
-          }
-
-          .menu-title {
-            flex: 1;
-            font-size: 14px;
-            color: inherit;
-          }
-
-          .menu-badge {
-            margin-left: auto;
-          }
+            .approval-menu {
+                .ant-menu-item,
+                .ant-menu-submenu-title {
+                    justify-content: center;
+                    padding: 0;
+                }
+            }
         }
 
-        // 子菜单样式
-        .ant-menu-submenu {
-          .ant-menu-submenu-title {
-            height: 48px;
-            line-height: 48px;
-            margin: 0;
-            padding: 0 16px;
+        .sidebar-header {
+            padding: 13px;
+            border-bottom: 1px solid #e5e5e5;
             display: flex;
             align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-
-            &:hover {
-              background-color: #f5f5f5;
-            }
-
-            .ant-menu-title-content {
-              flex: 1;
-              font-size: 14px;
-              color: #333;
-            }
-          }
-
-          .ant-menu-sub {
-            background-color: #fafafa;
-            border-left: 2px solid #e6f7ff;
-
-            .ant-menu-item {
-              padding-left: 48px;
-              font-size: 13px;
-              color: #666;
-
-              &:hover {
-                background-color: #e5e5e5;
-              }
-
-              &.ant-menu-item-selected {
-                background-color: #e6f7ff;
-                color: #1890ff;
-                font-weight: 500;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .sidebar-footer {
-      padding: 16px;
-      border-top: 1px solid #e5e5e5;
-      flex-shrink: 0; // 防止底部被压缩
-
-      .collapse-text {
-        margin-left: 8px;
-        font-size: 14px;
-        color: #666;
-      }
-    }
-  }
-
-  // 主内容区域
-  .main-content {
-    flex: 1;
-    height: 100%; // 固定高度
-    display: flex;
-    overflow: hidden;
-
-    // 中间列表区域 - 调窄宽度
-    .list-section {
-      width: 320px;
-      height: 100%; // 固定高度
-      background: white;
-      border-right: 1px solid #e5e5e5;
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0; // 防止被压缩
-
-      .list-header {
-        padding: 12px;
-        border-bottom: 1px solid #e5e5e5;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-shrink: 0; // 防止头部被压缩
-
-        .time-filter {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 14px;
-          color: #333;
-          cursor: pointer;
-        }
-
-        .separator {
-          width: 1px;
-          height: 16px;
-          background-color: #d9d9d9;
-        }
-      }
-
-      .approval-list {
-        flex: 1;
-        overflow-y: auto; // 只有列表可以滚动
-        padding: 8px;
-
-        .approval-item {
-          padding: 16px;
-          border-radius: 8px;
-          margin-bottom: 8px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          border: 1px solid transparent;
-
-          &:hover {
-            background-color: #fafafa;
-            border-color: #e6f7ff;
-          }
-
-          &.active {
-            background-color: #e6f7ff;
-            border-color: #1890ff;
-            box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
-          }
-
-          .item-header {
-            display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
+            flex-shrink: 0; // 防止头部被压缩
 
-            .item-title {
-              margin: 0;
-              font-size: 16px;
-              font-weight: 600;
-              color: #333;
-            }
-
-            .status-tag {
-              font-size: 12px;
-            }
-          }
-
-          .item-content {
-            margin-bottom: 12px;
-
-            .item-field {
-              display: flex;
-              margin-bottom: 6px;
-              font-size: 13px;
-
-              .field-label {
-                color: #666;
-                min-width: 80px;
-                flex-shrink: 0;
-              }
-
-              .field-value {
-                color: #333;
-                flex: 1;
-              }
-            }
-          }
-
-          .item-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-
-            .submitter-info {
-              display: flex;
-              align-items: center;
-              gap: 8px;
-
-              .avatar {
-                width: 24px;
-                height: 24px;
-                border-radius: 50%;
+            .search-section {
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 12px;
-                font-weight: 500;
-              }
-
-              .submitter-name {
-                font-size: 13px;
-                color: #333;
-              }
+                gap: 8px;
+                color: #666;
+                font-size: 14px;
             }
 
-            .time-info {
-              .process-time {
-                font-size: 12px;
-                color: #999;
-              }
+            .menu-toggle {
+                color: #666;
             }
-          }
-        }
-      }
-    }
-
-    // 右侧详情区域
-    .detail-section {
-      flex: 1;
-      height: 100%; // 固定高度
-      background: white;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative; // 为固定底部按钮定位
-
-      .detail-header {
-        padding: 12px 24px;
-        border-bottom: 1px solid #e5e5e5;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-shrink: 0; // 防止头部被压缩
-
-        .header-left {
-          .item-id {
-            font-size: 14px;
-            color: #666;
-          }
         }
 
-        .header-right {
-          display: flex;
-          gap: 8px;
-        }
-      }
+        .navigation-menu {
+            flex: 1;
+            overflow-y: auto; // 只有导航菜单可以滚动
 
-      .detail-content {
-        flex: 1;
-        overflow-y: auto; // 只有内容区域可以滚动
-        padding: 24px;
-        padding-bottom: 80px; // 为底部固定按钮留出空间
+            .approval-menu {
+                border: none;
+                background: transparent;
 
-        .content-header {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          margin-bottom: 24px;
-
-          .content-title {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 600;
-            color: #333;
-          }
-
-          .status-tag-large {
-            font-size: 14px;
-            padding: 4px 12px;
-          }
-        }
-
-        .submitter-info-large {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 32px;
-          padding: 16px;
-          background-color: #fafafa;
-          border-radius: 8px;
-
-          .avatar-large {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-            font-weight: 600;
-          }
-
-          .submitter-details {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-
-            .submitter-name-large {
-              font-size: 16px;
-              font-weight: 600;
-              color: #333;
-            }
-
-            .submitter-dept {
-              font-size: 14px;
-              color: #666;
-            }
-
-            .submit-time {
-              font-size: 13px;
-              color: #999;
-            }
-          }
-        }
-
-        .detail-tabs {
-          ::ng-deep .ant-tabs-nav {
-            margin-bottom: 24px;
-          }
-
-          .tab-content {
-            .section {
-              margin-bottom: 32px;
-
-              .section-title {
-                font-size: 16px;
-                font-weight: 600;
-                color: #333;
-                margin-bottom: 16px;
-                padding-bottom: 8px;
-                border-bottom: 1px solid #e5e5e5;
-              }
-
-              .detail-descriptions {
-                ::ng-deep .ant-descriptions-item-label {
-                  font-weight: 500;
-                  color: #666;
-                }
-              }
-
-              .expense-table {
-                margin-bottom: 16px;
-
-                ::ng-deep .ant-table-thead > tr > th {
-                  background-color: #fafafa;
-                  font-weight: 600;
-                  color: #333;
-                }
-              }
-
-              .expense-summary {
-                background-color: #fafafa;
-                padding: 16px;
-                border-radius: 6px;
-
-                .summary-descriptions {
-                  ::ng-deep .ant-descriptions-item-label {
-                    font-weight: 500;
-                    color: #666;
-                  }
-                }
-              }
-
-              .records-table {
-                ::ng-deep .ant-table-thead > tr > th {
-                  background-color: #fafafa;
-                  font-weight: 600;
-                  color: #333;
-                }
-
-                .approver-info {
-                  display: flex;
-                  align-items: center;
-                  gap: 8px;
-
-                  .avatar-small {
-                    width: 20px;
-                    height: 20px;
-                    border-radius: 50%;
+                // 菜单项样式
+                .ant-menu-item {
+                    height: 48px;
+                    line-height: 48px;
+                    margin: 0;
+                    padding: 0 16px;
                     display: flex;
                     align-items: center;
-                    justify-content: center;
-                    color: white;
-                    font-size: 10px;
-                    font-weight: 500;
-                  }
+                    gap: 12px;
+                    transition: all 0.3s ease;
 
-                  .approver-name {
-                    font-size: 13px;
-                    color: #333;
-                  }
+                    &:hover {
+                        background-color: #f5f5f5;
+                    }
+
+                    &.ant-menu-item-selected {
+                        background-color: #e6f7ff;
+                        color: #1890ff;
+                        font-weight: 500;
+                    }
+
+                    .menu-title {
+                        flex: 1;
+                        font-size: 14px;
+                        color: inherit;
+                    }
+
+                    .menu-badge {
+                        margin-left: auto;
+                    }
                 }
 
-                .time-info {
-                  .time-detail {
-                    font-size: 12px;
-                    color: #999;
-                    margin-top: 2px;
-                  }
+                // 子菜单样式
+                .ant-menu-submenu {
+                    .ant-menu-submenu-title {
+                        height: 48px;
+                        line-height: 48px;
+                        margin: 0;
+                        padding: 0 16px;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        transition: all 0.3s ease;
+
+                        &:hover {
+                            background-color: #f5f5f5;
+                        }
+
+                        .ant-menu-title-content {
+                            flex: 1;
+                            font-size: 14px;
+                            color: #333;
+                        }
+                    }
+
+                    .ant-menu-sub {
+                        background-color: #fafafa;
+                        border-left: 2px solid #e6f7ff;
+
+                        .ant-menu-item {
+                            padding-left: 48px;
+                            font-size: 13px;
+                            color: #666;
+
+                            &:hover {
+                                background-color: #e5e5e5;
+                            }
+
+                            &.ant-menu-item-selected {
+                                background-color: #e6f7ff;
+                                color: #1890ff;
+                                font-weight: 500;
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
         }
-      }
 
-      // 固定在右侧底部的功能按钮
-      .fixed-bottom-actions {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: white;
-        border-top: 1px solid #e5e5e5;
-        padding: 16px 24px;
-        display: flex;
-        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
-        z-index: 10; // 确保按钮在最上层
-        flex-shrink: 0; // 防止按钮被压缩
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid #e5e5e5;
+            flex-shrink: 0; // 防止底部被压缩
 
-        .action-buttons {
-          display: flex;
-          gap: 8px;
-          flex-wrap: wrap;
+            .collapse-text {
+                margin-left: 8px;
+                font-size: 14px;
+                color: #666;
+            }
         }
-      }
     }
-  }
+
+    // 主内容区域
+    .main-content {
+        flex: 1;
+        height: 100%; // 固定高度
+        display: flex;
+        overflow: hidden;
+
+        // 中间列表区域 - 调窄宽度
+        .list-section {
+            width: 320px;
+            height: 100%; // 固定高度
+            background: white;
+            border-right: 1px solid #e5e5e5;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0; // 防止被压缩
+
+            .list-header {
+                padding: 12px;
+                border-bottom: 1px solid #e5e5e5;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-shrink: 0; // 防止头部被压缩
+
+                .time-filter {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: 14px;
+                    color: #333;
+                    cursor: pointer;
+                }
+
+                .separator {
+                    width: 1px;
+                    height: 16px;
+                    background-color: #d9d9d9;
+                }
+            }
+
+            .approval-list {
+                flex: 1;
+                overflow-y: auto;
+
+                .approval-item {
+                    padding: 12px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    border-bottom: 1px solid #e5e5e5;
+
+                    &:hover {
+                        background-color: #fafafa;
+                        border-color: #e6f7ff;
+                    }
+
+                    &.active {
+                        background-color: #e6f7ff;
+                        box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
+                    }
+
+                    .item-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 12px;
+
+                        .item-title {
+                            margin: 0;
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #333;
+                        }
+
+                        .status-tag {
+                            font-size: 12px;
+                        }
+                    }
+
+                    .item-content {
+                        margin-bottom: 12px;
+
+                        .item-field {
+                            display: flex;
+                            margin-bottom: 6px;
+                            font-size: 13px;
+
+                            .field-label {
+                                color: #666;
+                                min-width: 80px;
+                                flex-shrink: 0;
+                            }
+
+                            .field-value {
+                                color: #333;
+                                flex: 1;
+                            }
+                        }
+                    }
+
+                    .item-footer {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+
+                        .submitter-info {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+
+                            .avatar {
+                                width: 24px;
+                                height: 24px;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: white;
+                                font-size: 12px;
+                                font-weight: 500;
+                            }
+
+                            .submitter-name {
+                                font-size: 13px;
+                                color: #333;
+                            }
+                        }
+
+                        .time-info {
+                            .process-time {
+                                font-size: 12px;
+                                color: #999;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 右侧详情区域
+        .detail-section {
+            flex: 1;
+            height: 100%; // 固定高度
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative; // 为固定底部按钮定位
+
+            .detail-header {
+                padding: 12px 16px;
+                border-bottom: 1px solid #e5e5e5;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-shrink: 0; // 防止头部被压缩
+
+                .header-left {
+                    .item-id {
+                        font-size: 14px;
+                        color: #666;
+                    }
+                }
+
+                .header-right {
+                    display: flex;
+                    gap: 8px;
+                }
+            }
+
+            .detail-content {
+                flex: 1;
+                overflow-y: auto; // 只有内容区域可以滚动
+                // 为底部固定按钮留出空间
+                padding: 16px 16px 80px;
+
+                .content-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                    margin-bottom: 16px;
+
+                    .content-title {
+                        margin: 0;
+                        font-size: 20px;
+                        font-weight: 600;
+                        color: #333;
+                    }
+
+                    .status-tag-large {
+
+                    }
+                }
+
+                .submitter-info-large {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    margin-bottom: 16px;
+                    padding: 12px;
+                    background-color: #fafafa;
+                    border-radius: 8px;
+
+                    .avatar-large {
+                        width: 48px;
+                        height: 48px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-size: 18px;
+                        font-weight: 600;
+                    }
+
+                    .submitter-details {
+                        display: flex;
+                        justify-content: center;
+                        gap: 4px;
+
+                        .submitter-name-large {
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #333;
+                        }
+
+                        .submitter-dept {
+                            font-size: 14px;
+                            color: #666;
+                        }
+
+                        .submit-time {
+                            font-size: 13px;
+                            color: #999;
+                        }
+                    }
+                }
+
+                .detail-tabs {
+                    ::ng-deep .ant-tabs-nav {
+                        margin-bottom: 24px;
+                    }
+
+                    .tab-content {
+                        .section {
+
+                            .section-title {
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #333;
+                                margin-bottom: 16px;
+                                padding-bottom: 8px;
+                                border-bottom: 1px solid #e5e5e5;
+                            }
+
+                            .detail-descriptions {
+                                ::ng-deep .ant-descriptions-item-label {
+                                    font-weight: 500;
+                                    color: #666;
+                                }
+                            }
+
+                            .expense-table {
+                                margin-bottom: 16px;
+
+                                ::ng-deep .ant-table-thead > tr > th {
+                                    background-color: #fafafa;
+                                    font-weight: 600;
+                                    color: #333;
+                                }
+                            }
+
+                            .expense-summary {
+                                background-color: #fafafa;
+                                padding: 16px;
+                                border-radius: 6px;
+
+                                .summary-descriptions {
+                                    ::ng-deep .ant-descriptions-item-label {
+                                        font-weight: 500;
+                                        color: #666;
+                                    }
+                                }
+                            }
+
+                            .records-table {
+                                ::ng-deep .ant-table-thead > tr > th {
+                                    background-color: #fafafa;
+                                    font-weight: 600;
+                                    color: #333;
+                                }
+
+                                .approver-info {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+
+                                    .avatar-small {
+                                        width: 20px;
+                                        height: 20px;
+                                        border-radius: 50%;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        color: white;
+                                        font-size: 10px;
+                                        font-weight: 500;
+                                    }
+
+                                    .approver-name {
+                                        font-size: 13px;
+                                        color: #333;
+                                    }
+                                }
+
+                                .time-info {
+                                    .time-detail {
+                                        font-size: 12px;
+                                        color: #999;
+                                        margin-top: 2px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 固定在右侧底部的功能按钮
+            .fixed-bottom-actions {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: white;
+                border-top: 1px solid #e5e5e5;
+                padding: 16px;
+                display: flex;
+                box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+                z-index: 10; // 确保按钮在最上层
+                flex-shrink: 0; // 防止按钮被压缩
+
+                .action-buttons {
+                    display: flex;
+                    gap: 8px;
+                    flex-wrap: wrap;
+                }
+            }
+        }
+    }
 }
 
 // 金额高亮样式
 .amount-highlight {
-  color: #ff6b35;
-  font-weight: 600;
-}
-
-// 响应式设计
-@media (max-width: 1200px) {
-  .flow-approval-container {
-    .sidebar {
-      width: 200px;
-    }
-
-    .main-content .list-section {
-      width: 280px;
-    }
-  }
-}
-
-@media (max-width: 992px) {
-  .flow-approval-container {
-    .sidebar {
-      width: 180px;
-    }
-
-    .main-content .list-section {
-      width: 260px;
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .flow-approval-container {
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-
-    .sidebar {
-      width: 100%;
-      height: auto;
-      max-height: 60px;
-      border-right: none;
-      border-bottom: 1px solid #e5e5e5;
-      flex-shrink: 0;
-
-      &.collapsed {
-        width: 100%;
-        max-height: 60px;
-      }
-
-      .sidebar-header {
-        padding: 12px 16px;
-
-        .search-section {
-          font-size: 13px;
-        }
-      }
-
-      .navigation-menu {
-        display: none; // 移动端隐藏导航菜单
-      }
-
-      .sidebar-footer {
-        display: none; // 移动端隐藏底部
-      }
-    }
-
-    .main-content {
-      flex-direction: column;
-      height: calc(100vh - 60px);
-      overflow: hidden;
-
-      .list-section {
-        width: 100%;
-        height: 40%;
-        min-height: 200px;
-        border-right: none;
-        border-bottom: 1px solid #e5e5e5;
-
-        .list-header {
-          padding: 12px 16px;
-
-          .time-filter {
-            font-size: 13px;
-          }
-        }
-
-        .approval-list {
-          padding: 8px 12px;
-
-          .approval-item {
-            padding: 12px;
-            margin-bottom: 6px;
-
-            .item-header {
-              margin-bottom: 8px;
-
-              .item-title {
-                font-size: 14px;
-              }
-            }
-
-            .item-content {
-              margin-bottom: 8px;
-
-              .item-field {
-                font-size: 12px;
-                margin-bottom: 4px;
-
-                .field-label {
-                  min-width: 60px;
-                }
-              }
-            }
-
-            .item-footer {
-              .submitter-info {
-                .avatar {
-                  width: 20px;
-                  height: 20px;
-                  font-size: 10px;
-                }
-
-                .submitter-name {
-                  font-size: 12px;
-                }
-              }
-
-              .time-info .process-time {
-                font-size: 11px;
-              }
-            }
-          }
-        }
-      }
-
-      .detail-section {
-        height: 60%;
-        min-height: 300px;
-
-        .detail-header {
-          padding: 12px 16px;
-
-          .header-left .item-id {
-            font-size: 13px;
-          }
-        }
-
-        .detail-content {
-          padding: 16px;
-          padding-bottom: 80px;
-
-          .content-header {
-            gap: 12px;
-            margin-bottom: 16px;
-
-            .content-title {
-              font-size: 18px;
-            }
-
-            .status-tag-large {
-              font-size: 12px;
-              padding: 2px 8px;
-            }
-          }
-
-          .submitter-info-large {
-            gap: 10px;
-            margin-bottom: 20px;
-            padding: 12px;
-
-            .avatar-large {
-              width: 40px;
-              height: 40px;
-              font-size: 16px;
-            }
-
-            .submitter-details {
-              .submitter-name-large {
-                font-size: 14px;
-              }
-
-              .submitter-dept {
-                font-size: 12px;
-              }
-
-              .submit-time {
-                font-size: 11px;
-              }
-            }
-          }
-
-          .detail-tabs {
-            ::ng-deep .ant-tabs-nav {
-              margin-bottom: 16px;
-            }
-
-            .tab-content .section {
-              margin-bottom: 20px;
-
-              .section-title {
-                font-size: 14px;
-                margin-bottom: 12px;
-              }
-            }
-          }
-        }
-
-        .fixed-bottom-actions {
-          position: absolute;
-          padding: 12px 16px;
-
-          .action-buttons {
-            gap: 8px;
-
-            button {
-              padding: 10px 16px;
-              font-size: 14px;
-              min-height: 44px; // 触摸友好的最小高度
-              border-radius: 8px;
-
-              &:hover {
-                transform: none; // 移动端禁用悬停效果
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .flow-approval-container {
-    .main-content {
-      .list-section {
-        height: 35%;
-        min-height: 180px;
-
-        .approval-list {
-          padding: 6px 8px;
-
-          .approval-item {
-            padding: 10px;
-            margin-bottom: 4px;
-
-            .item-header .item-title {
-              font-size: 13px;
-            }
-
-            .item-content .item-field {
-              font-size: 11px;
-
-              .field-label {
-                min-width: 50px;
-              }
-            }
-          }
-        }
-      }
-
-      .detail-section {
-        height: 65%;
-
-        .detail-content {
-          padding: 12px;
-          padding-bottom: 80px;
-
-          .content-header .content-title {
-            font-size: 16px;
-          }
-
-          .submitter-info-large {
-            padding: 10px;
-
-            .avatar-large {
-              width: 36px;
-              height: 36px;
-              font-size: 14px;
-            }
-          }
-        }
-
-        .fixed-bottom-actions {
-          padding: 10px 12px;
-
-          .action-buttons {
-            flex-direction: column;
-            gap: 6px;
-
-            button {
-              width: 100%;
-              padding: 12px 16px;
-              font-size: 15px;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-// 横屏模式优化
-@media (max-width: 768px) and (orientation: landscape) {
-  .flow-approval-container {
-    .sidebar {
-      max-height: 50px;
-    }
-
-    .main-content {
-      height: calc(100vh - 50px);
-
-      .list-section {
-        height: 45%;
-      }
-
-      .detail-section {
-        height: 55%;
-      }
-    }
-  }
-}
-
-// 触摸设备优化
-@media (hover: none) and (pointer: coarse) {
-  .flow-approval-container {
-    .sidebar .navigation-menu .approval-menu {
-      .ant-menu-item,
-      .ant-menu-submenu-title {
-        min-height: 44px; // 触摸友好的最小高度
-      }
-    }
-
-    .main-content .list-section .approval-list .approval-item {
-      min-height: 44px; // 触摸友好的最小高度
-
-      &:active {
-        background-color: #e6f7ff;
-        transform: scale(0.98);
-      }
-    }
-
-    .main-content .detail-section .fixed-bottom-actions .action-buttons button {
-      min-height: 48px; // 更大的触摸目标
-      font-size: 16px; // 更大的字体
-
-      &:active {
-        transform: scale(0.95);
-      }
-    }
-  }
-}
-
-// 空状态样式
-.empty-detail {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .empty-content {
-    text-align: center;
-    padding: 40px 20px;
-
-    ::ng-deep .ant-empty-description {
-      color: #999;
-      font-size: 14px;
-    }
-  }
-}
-
-// 移动端综合优化
-@media (max-width: 768px) {
-  .flow-approval-container {
-    // 移动端基础适配
-    padding-left: 0;
-    padding-right: 0;
-
-    * {
-      -webkit-tap-highlight-color: transparent; // 移除点击高亮
-    }
-
-    .main-content {
-      .list-section .approval-list,
-      .detail-section .detail-content {
-        -webkit-overflow-scrolling: touch; // iOS 滚动优化
-        scroll-behavior: smooth;
-      }
-
-      .list-section .approval-list .approval-item {
-        will-change: transform; // 优化动画性能
-      }
-
-      .detail-section .fixed-bottom-actions {
-        padding-left: 16px;
-        padding-right: 16px;
-        padding-bottom: 16px;
-      }
-    }
-
-    .empty-detail .empty-content {
-      padding: 20px;
-
-      ::ng-deep .ant-empty-description {
-        font-size: 13px;
-      }
-    }
-  }
+    color: #ff6b35;
+    font-weight: 600;
 }
