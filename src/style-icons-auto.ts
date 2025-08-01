@@ -46,15 +46,18 @@ import {
     PoweroffOutline,
     PrinterOutline,
     QuestionCircleOutline,
+    RedoOutline,
     ReloadOutline,
     RocketOutline,
     RocketTwoTone,
     SaveOutline,
     SearchOutline,
+    SendOutline,
     SettingOutline,
     StopOutline,
     SyncOutline,
     TableOutline,
+    UndoOutline,
     UnorderedListOutline,
     UserOutline
 } from '@ant-design/icons-angular/icons';
@@ -112,5 +115,8 @@ export const ICONS_AUTO = [
     EyeInvisibleOutline,
     StopOutline,
     PrinterOutline,
-    LinkOutline
+    LinkOutline,
+    SendOutline,
+    UndoOutline,
+    RedoOutline
 ];
