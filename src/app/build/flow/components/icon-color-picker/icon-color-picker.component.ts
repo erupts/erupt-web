@@ -16,7 +16,7 @@ export class IconColorPickerComponent implements OnInit {
 
     @Input() selectedColor: string;
 
-    @Output() configChange = new EventEmitter<IconColorConfig>();
+    @Output() configChange: EventEmitter<IconColorConfig> = new EventEmitter<IconColorConfig>();
 
     // 预览选择的图标（在确认前不会应用到实际选择）
     previewIcon: string = 'fa fa-user';

@@ -54,19 +54,21 @@
     <div class="main-content">
         <!-- 基础信息表单 -->
         <div class="form-section" *ngIf="currentStep === 1">
-            <form nz-form [formGroup]="flowForm" class="flow-form">
-
+            <div class="flow-form">
                 <!-- 图标 -->
                 <div class="form-item">
                     <label class="form-label required">图标</label>
                     <div class="icon-section">
                         <div class="icon-display">
-                            <div class="icon-circle" [style]="getCurrentIconStyle()">
-                                <i class="{{ selectedIcon }}"></i>
+                            <div class="icon-circle" [style]="{background: flowConfig.color}">
+                                <i class="{{ flowConfig.icon }}"></i>
                             </div>
                         </div>
                         <button nz-button nzType="link" class="modify-link"
                                 nz-popover #iconPopover [nzPopoverContent]="iconSelectorContent"
+                                [nzPopoverOverlayStyle]="{padding:0}"
+                                [nzPopoverVisible]="iconPickVisible"
+                                (nzPopoverVisibleChange)="iconPickVisibleChange($event)"
                                 nzPopoverTrigger="click"
                                 nzPopoverPlacement="topRight">
                             修改
@@ -76,8 +78,8 @@
                     <!-- 图标选择器内容 -->
                     <ng-template #iconSelectorContent>
                         <app-icon-color-picker
-                            [selectedIcon]="selectedIcon"
-                            [selectedColor]="selectedColor"
+                            [selectedIcon]="flowConfig.icon"
+                            [selectedColor]="flowConfig.color"
                             (configChange)="onIconColorConfigChange($event)">
                         </app-icon-color-picker>
                     </ng-template>
@@ -86,138 +88,72 @@
                 <!-- 名称 -->
                 <div class="form-item">
                     <label class="form-label required">名称</label>
-                    <nz-form-item>
-                        <nz-form-control [nzErrorTip]="nameErrorTpl">
-                            <input nz-input
-                                   formControlName="name"
-                                   placeholder="请输入名称"
-                                   class="form-input"/>
-                        </nz-form-control>
-                    </nz-form-item>
-                    <ng-template #nameErrorTpl let-control>
-                        <span *ngIf="control.hasError('required')">名称为空,请填写</span>
-                    </ng-template>
+                    <input nz-input placeholder="请输入名称" class="form-input" [(ngModel)]="flowConfig.name" name="name"/>
                 </div>
 
                 <!-- 分组 -->
                 <div class="form-item">
                     <label class="form-label required">分组</label>
-                    <nz-form-item>
-                        <nz-form-control [nzErrorTip]="groupErrorTpl">
-                            <nz-select formControlName="group"
-                                       placeholder="请选择分组"
-                                       class="form-select">
-                                <nz-option *ngFor="let option of groupOptions"
-                                           [nzValue]="option.id"
-                                           [nzLabel]="option.name"></nz-option>
-                            </nz-select>
-                        </nz-form-control>
-                    </nz-form-item>
+                    <nz-select [(ngModel)]="flowConfig.flowGroup"
+                               placeholder="请选择分组"
+                               class="form-select">
+                        <nz-option *ngFor="let option of groupOptions"
+                                   [nzValue]="option"
+                                   [nzLabel]="option.name"></nz-option>
+                    </nz-select>
                     <ng-template #groupErrorTpl let-control>
                         <span *ngIf="control.hasError('required')">分组为空,请选择</span>
                     </ng-template>
                 </div>
                 <div class="form-item">
                     <label class="form-label required">数据模型</label>
-                    <nz-form-item>
-                        <nz-form-control>
-                            <nz-select formControlName="group"
-                                       [(ngModel)]="selectedErupt"
-                                       class="form-select">
-                                <nz-option *ngFor="let option of eruptFlows"
-                                           [nzValue]="option.value"
-                                           [nzLabel]="option.label"></nz-option>
-                            </nz-select>
-                        </nz-form-control>
-                    </nz-form-item>
+                    <nz-select [(ngModel)]="flowConfig.erupt"
+                               class="form-select">
+                        <nz-option *ngFor="let option of eruptFlows"
+                                   [nzValue]="option.value"
+                                   [nzLabel]="option.label"></nz-option>
+                    </nz-select>
                 </div>
                 <div class="form-item">
                     <label class="form-label">说明</label>
-                    <nz-form-item>
-                        <nz-form-control>
-                            <textarea nz-input
-                                      formControlName="description"
-                                      placeholder="说明"
-                                      [nzAutosize]="{ minRows: 3, maxRows: 5 }"
-                                      class="form-textarea"></textarea>
-                        </nz-form-control>
-                    </nz-form-item>
+                    <textarea nz-input
+                              [(ngModel)]="flowConfig.remark"
+                              placeholder="说明"
+                              [nzAutosize]="{ minRows: 3, maxRows: 5 }"
+                              class="form-textarea"></textarea>
                 </div>
                 <!-- 提交权限 -->
                 <div class="form-item">
                     <label class="form-label required">谁可以提交该审批</label>
-                    <nz-form-item>
-                        <nz-form-control [nzErrorTip]="permissionErrorTpl">
-                            <nz-select formControlName="submitPermission"
-                                       placeholder="请选择提交权限"
-                                       class="form-select">
-                                <nz-option *ngFor="let option of submitPermissionOptions"
-                                           [nzValue]="option.value"
-                                           [nzLabel]="option.label"></nz-option>
-                            </nz-select>
-                        </nz-form-control>
-                    </nz-form-item>
-                    <ng-template #permissionErrorTpl let-control>
-                        <span *ngIf="control.hasError('required')">提交权限为空,请选择</span>
-                    </ng-template>
+                    <nz-select placeholder="请选择提交权限"
+                               class="form-select">
+                        <nz-option *ngFor="let option of submitPermissionOptions"
+                                   [nzValue]="option.value"
+                                   [nzLabel]="option.label"></nz-option>
+                    </nz-select>
                 </div>
-
-                <!-- 流程管理员 -->
-                <!--                <div class="form-item">-->
-                <!--                    <label class="form-label required">流程管理员</label>-->
-                <!--                    <div class="admin-section">-->
-                <!--                        <div class="admin-list">-->
-                <!--                            <div class="admin-item" *ngFor="let admin of processAdmins">-->
-                <!--                                <div class="admin-avatar">{{ admin.avatar }}</div>-->
-                <!--                                <div class="admin-info">-->
-                <!--                                    <div class="admin-name">{{ admin.name }}</div>-->
-                <!--                                    <div class="admin-actions">-->
-                <!--                                        <button nz-button nzType="link"-->
-                <!--                                                class="action-link"-->
-                <!--                                                (click)="setAdminPermission(admin.id)">-->
-                <!--                                            权限-->
-                <!--                                        </button>-->
-                <!--                                        <button nz-button nzType="link"-->
-                <!--                                                class="action-link delete-link"-->
-                <!--                                                (click)="deleteProcessAdmin(admin.id)">-->
-                <!--                                            删除-->
-                <!--                                        </button>-->
-                <!--                                    </div>-->
-                <!--                                </div>-->
-                <!--                            </div>-->
-
-                <!--                            <button nz-button-->
-                <!--                                    nzType="dashed"-->
-                <!--                                    class="add-admin-btn"-->
-                <!--                                    (click)="addProcessAdmin()">-->
-                <!--                                <i nz-icon nzType="plus"></i>-->
-                <!--                            </button>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
-                <!--                </div>-->
-
-            </form>
+            </div>
         </div>
 
         <div class="step-placeholder" *ngIf="currentStep == 2">
             <div style="display: flex;justify-content: center;height: 100%;padding: 16px">
-                <nz-empty nzNotFoundImage="simple" *ngIf="!selectedErupt"
+                <nz-empty nzNotFoundImage="simple" *ngIf="!flowConfig.erupt"
                           [nzNotFoundContent]="'请选择数据模型'">
                 </nz-empty>
-                <ng-container *ngIf="selectedErupt">
+                <ng-container *ngIf="flowConfig.erupt">
                     <div class="phone-wrapper">
                         <div class="phone-wrapper-screen">
-                            <erupt-flow-form [erupt]="selectedErupt" [readonly]="false"/>
+                            <erupt-flow-form [erupt]="flowConfig.erupt" [readonly]="false"/>
                         </div>
                     </div>
                 </ng-container>
             </div>
         </div>
         <div class="step-placeholder" *ngIf="currentStep == 3">
-            <erupt-flow/>
+            <erupt-flow [(modelValue)]="flowConfig.rule"/>
         </div>
 
-        <div class="step-placeholder" *ngIf="currentStep ==4">
+        <div class="step-placeholder" *ngIf="currentStep == 4">
             <div class="form-section">
                 xxx
             </div>
