@@ -100,19 +100,8 @@ export class FlowConfigComponent implements OnInit {
 
     }
 
-    // 返回
-    goBack(): void {
+    close(): void {
         console.log('返回上一页');
-    }
-
-    // 获取字段标签
-    getFieldLabel(controlName: string): string {
-        const labels: { [key: string]: string } = {
-            name: '名称',
-            group: '分组',
-            submitPermission: '提交权限'
-        };
-        return labels[controlName] || '';
     }
 
 
