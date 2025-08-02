@@ -2,7 +2,7 @@
     <!-- 顶部导航栏 -->
     <div class="header">
         <div class="header-left">
-            <button nz-button nzType="text" class="back-btn" (click)="goBack()">
+            <button nz-button nzType="text" class="back-btn" (click)="close()">
                 <i nz-icon nzType="close"></i>
             </button>
             <div class="title-section">
@@ -30,12 +30,12 @@
                     <span class="step-number">3</span>
                     <span class="step-text">流程设计</span>
                 </div>
-                <div class="step-item"
-                     [class.active]="currentStep === 4"
-                     (click)="switchStep(4)">
-                    <span class="step-number">4</span>
-                    <span class="step-text">更多设置</span>
-                </div>
+<!--                <div class="step-item"-->
+<!--                     [class.active]="currentStep === 4"-->
+<!--                     (click)="switchStep(4)">-->
+<!--                    <span class="step-number">4</span>-->
+<!--                    <span class="step-text">更多设置</span>-->
+<!--                </div>-->
             </div>
         </div>
 
@@ -66,7 +66,6 @@
                         </div>
                         <button nz-button nzType="link" class="modify-link"
                                 nz-popover #iconPopover [nzPopoverContent]="iconSelectorContent"
-                                [nzPopoverOverlayStyle]="{padding:0}"
                                 [nzPopoverVisible]="iconPickVisible"
                                 (nzPopoverVisibleChange)="iconPickVisibleChange($event)"
                                 nzPopoverTrigger="click"
