@@ -4,6 +4,7 @@ import {
     ElementRef,
     EventEmitter,
     HostListener,
+    Input,
     OnInit,
     Output,
     ViewChild
@@ -19,7 +20,7 @@ import {StartNodeComponent} from "@flow/nodes/start/start-node.component";
 })
 export class FlowComponent implements OnInit, AfterViewInit {
 
-    modelValue: any[] = [];
+    @Input() modelValue: any[] = [];
 
     @Output() modelValueChange = new EventEmitter<any[]>();
 
@@ -61,7 +62,7 @@ export class FlowComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         // 加载的时候判断，赋默认值
-        if (this.modelValue.length === 0) {
+        if (!this.modelValue) {
             this.modelValue = [new StartNodeComponent().create()];
             this.modelValueChange.emit(this.modelValue);
         }

@@ -5,16 +5,16 @@ export interface FlowGroup {
 }
 
 export interface FlowConfig {
-    id: number;
-    name: string;
-    remark: string;
-    erupt: string;
-    icon: string;
-    color: string;
-    flowGroup: FlowGroup;
-    enable: boolean;
-    rule: FlowRule;
-    setting: Record<string, any>;
+    id?: number;
+    name?: string;
+    remark?: string;
+    erupt?: string;
+    icon?: string;
+    color?: string;
+    flowGroup?: FlowGroup;
+    enable?: boolean;
+    rule?: any;
+    setting?: Record<string, any>;
 }
 
 export interface FlowRule {
