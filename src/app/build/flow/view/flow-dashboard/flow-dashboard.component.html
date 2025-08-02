@@ -1,71 +1,19 @@
 <div class="flow-dashboard">
-<!--  <h1>工作流工作台</h1>-->
-<!--  -->
-<!--  &lt;!&ndash; 顶部总览卡片 &ndash;&gt;-->
-<!--  <div class="overview-section">-->
-<!--    <div class="overview-cards">-->
-<!--      <div class="overview-card">-->
-<!--        <div class="card-icon">-->
-<!--          <i nz-icon nzType="play-circle" nzTheme="outline"></i>-->
-<!--        </div>-->
-<!--        <div class="card-content">-->
-<!--          <div class="card-number">156</div>-->
-<!--          <div class="card-label">运行中流程</div>-->
-<!--        </div>-->
-<!--        <div class="card-trend up">-->
-<!--          <i nz-icon nzType="arrow-up"></i>-->
-<!--          <span>12%</span>-->
-<!--        </div>-->
-<!--      </div>-->
-
-<!--      <div class="overview-card">-->
-<!--        <div class="card-icon">-->
-<!--          <i nz-icon nzType="check-circle" nzTheme="outline"></i>-->
-<!--        </div>-->
-<!--        <div class="card-content">-->
-<!--          <div class="card-number">1,234</div>-->
-<!--          <div class="card-label">已完成流程</div>-->
-<!--        </div>-->
-<!--        <div class="card-trend up">-->
-<!--          <i nz-icon nzType="arrow-up"></i>-->
-<!--          <span>8%</span>-->
-<!--        </div>-->
-<!--      </div>-->
-
-<!--      <div class="overview-card">-->
-<!--        <div class="card-icon">-->
-<!--          <i nz-icon nzType="clock-circle" nzTheme="outline"></i>-->
-<!--        </div>-->
-<!--        <div class="card-content">-->
-<!--          <div class="card-number">89</div>-->
-<!--          <div class="card-label">待处理任务</div>-->
-<!--        </div>-->
-<!--        <div class="card-trend down">-->
-<!--          <i nz-icon nzType="arrow-down"></i>-->
-<!--          <span>5%</span>-->
-<!--        </div>-->
-<!--      </div>-->
-
-<!--      <div class="overview-card">-->
-<!--        <div class="card-icon">-->
-<!--          <i nz-icon nzType="exclamation-circle" nzTheme="outline"></i>-->
-<!--        </div>-->
-<!--        <div class="card-content">-->
-<!--          <div class="card-number">23</div>-->
-<!--          <div class="card-label">异常流程</div>-->
-<!--        </div>-->
-<!--        <div class="card-trend down">-->
-<!--          <i nz-icon nzType="arrow-down"></i>-->
-<!--          <span>15%</span>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-
   <!-- 主要内容区域 -->
   <div class="main-content">
     <!-- 左侧分类导航 -->
     <div class="category-sidebar">
+      <div class="category-header">
+        <h3>流程分类</h3>
+        <button
+          nz-button
+          nzType="text"
+          nzSize="small"
+          (click)="refreshData()"
+          [nzLoading]="loading">
+          <i nz-icon nzType="reload"></i>
+        </button>
+      </div>
       <div class="category-list">
         <div
           class="category-item"
@@ -73,24 +21,58 @@
           [class.active]="selectedCategory === category.key"
           (click)="onCategorySelect(category.key)">
           <span class="category-name">{{category.name}}</span>
+          <span class="category-count" *ngIf="category.key">
+            ({{getCategoryFlowCount(category.key)}})
+          </span>
         </div>
       </div>
     </div>
 
     <!-- 右侧流程内容 -->
     <div class="content-area">
-      <div class="flow-groups">
-        <div class="group-section" *ngFor="let group of getAllFlowGroups()">
-          <h3 class="group-title">{{group.title}}</h3>
+      <!-- 加载状态 -->
+      <div class="loading-container" *ngIf="loading">
+        <nz-spin nzSize="large">
+          <div class="loading-text">加载中...</div>
+        </nz-spin>
+      </div>
+
+      <!-- 流程内容 -->
+      <div class="flow-groups" *ngIf="!loading">
+        <!-- 空状态 -->
+        <div class="empty-state" *ngIf="getAllFlowGroups().length === 0">
+          <i nz-icon nzType="inbox" nzTheme="outline"></i>
+          <p>暂无流程数据</p>
+          <button nz-button nzType="primary" (click)="refreshData()">
+            刷新数据
+          </button>
+        </div>
+
+        <!-- 流程分组 -->
+        <div class="group-section" *ngFor="let group of getFlowGroups()">
+          <h3 class="group-title">
+            {{group.title}}
+            <span class="group-count">({{group.flows.length}})</span>
+          </h3>
           <div class="flow-grid">
             <div
               class="flow-item"
               *ngFor="let flow of group.flows"
-              (click)="onFlowClick(flow)">
+              (click)="onFlowClick(flow)"
+              [ngClass]="{'flow-disabled': flow.status === 'stopped'}">
               <div class="flow-icon" [ngClass]="flow.type">
                 <i nz-icon [nzType]="getFlowIcon(flow.type)"></i>
               </div>
-              <div class="flow-name">{{flow.name}}</div>
+              <div class="flow-info">
+                <div class="flow-name">{{flow.name}}</div>
+                <div class="flow-desc" *ngIf="flow.description">{{flow.description}}</div>
+                <div class="flow-status">
+                  <nz-tag
+                    [nzColor]="getStatusColor(flow.status)">
+                    {{getStatusText(flow.status)}}
+                  </nz-tag>
+                </div>
+              </div>
             </div>
           </div>
         </div>
