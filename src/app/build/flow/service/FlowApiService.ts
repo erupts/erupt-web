@@ -49,7 +49,7 @@ export class FlowApiService {
     }
 
     eruptFlows(): Observable<R<VL[]>> {
-        return this._http.get<R<VL[]>>(RestPath.erupt + "/flow/config/erupt-flows");
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/flow/erupts");
     }
 
     eruptFlowBuild(erupt: string): Observable<R<EruptBuildModel>> {

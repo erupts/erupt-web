@@ -287,6 +287,9 @@ export class FlowManagementComponent implements OnInit {
             nzWidth: "90%",
             nzClosable: false,
             nzContent: FlowConfigComponent,
+            nzContentParams: {
+
+            },
             nzBodyStyle: {
                 padding: '0px'
             }
