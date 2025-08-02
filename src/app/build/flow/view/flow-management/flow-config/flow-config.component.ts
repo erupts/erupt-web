@@ -2,9 +2,9 @@ import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
-import {VL} from "../../../erupt/model/erupt-field.model";
+import {VL} from "../../../../erupt/model/erupt-field.model";
 import {FlowApiService} from "@flow/service/FlowApiService";
-import {FlowGroup} from "@flow/model/flow.model";
+import {FlowConfig, FlowGroup} from "@flow/model/flow.model";
 
 interface ProcessAdmin {
     id: string;
@@ -18,6 +18,8 @@ interface ProcessAdmin {
     styleUrls: ['./flow-config.component.less']
 })
 export class FlowConfigComponent implements OnInit {
+
+    flowConfig: FlowConfig;
 
     // 表单数据
     flowForm: FormGroup;
