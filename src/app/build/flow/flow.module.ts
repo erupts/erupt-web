@@ -76,7 +76,7 @@ import {FlowManagementComponent} from './view/flow-management/flow-management.co
 import {NzDropDownModule} from "ng-zorro-antd/dropdown";
 import {SharedModule} from "@shared/shared.module";
 import {FlowApiService} from "@flow/service/FlowApiService";
-import {FlowConfigComponent} from './view/flow-config/flow-config.component';
+import {FlowConfigComponent} from '@flow/view/flow-management/flow-config/flow-config.component';
 import {IconColorPickerComponent} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {EruptModule} from "../erupt/erupt.module";
 import {EruptFlowFormComponent} from './components/erupt-flow-form/erupt-flow-form.component';

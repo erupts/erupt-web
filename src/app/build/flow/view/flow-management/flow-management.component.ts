@@ -6,7 +6,7 @@ import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {R} from '@shared/model/api.model';
 import {NzDrawerService} from "ng-zorro-antd/drawer";
-import {FlowConfigComponent} from "@flow/view/flow-config/flow-config.component";
+import {FlowConfigComponent} from "@flow/view/flow-management/flow-config/flow-config.component";
 
 // 扩展 FlowGroup 接口，添加 count 属性
 interface FlowGroupWithCount extends FlowGroup {

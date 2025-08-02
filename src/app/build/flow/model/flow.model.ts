@@ -18,5 +18,12 @@ export interface FlowConfig {
 }
 
 export interface FlowRule {
+    ruleNodes: FlowRuleNode[];
+}
 
+export interface FlowRuleNode {
+    code: string;
+    name: string;
+    type: string;
+    branches: FlowRuleNode[]
 }
