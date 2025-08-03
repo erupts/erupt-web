@@ -5,6 +5,7 @@ import {VL} from "../../../../erupt/model/erupt-field.model";
 import {FlowApiService} from "@flow/service/FlowApiService";
 import {FlowConfig, FlowGroup} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
     selector: 'app-flow-config',
@@ -36,7 +37,7 @@ export class FlowConfigComponent implements OnInit {
 
     @Output() closeConfig = new EventEmitter();
 
-    constructor(private flowApiService: FlowApiService, private modal: NzModalService,) {
+    constructor(private flowApiService: FlowApiService, private modal: NzModalService, private msg: NzMessageService) {
 
     }
 
@@ -84,7 +85,12 @@ export class FlowConfigComponent implements OnInit {
 
     // 发布
     publish(): void {
-
+        this.flowApiService.configAdd(this.flowConfig).subscribe(res => {
+            if (res.success) {
+                this.msg.success('发布成功');
+                this.closeConfig.emit();
+            }
+        })
     }
 
     close(): void {
