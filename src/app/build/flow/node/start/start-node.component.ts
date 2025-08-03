@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
+import {NodeType} from "@flow/model/mode.model";
 
 @Component({
     selector: 'app-start-node',
@@ -35,8 +36,8 @@ export class StartNodeComponent extends ANode {
         });
     }
 
-    code(): string {
-        return "start";
+    type(): string {
+        return NodeType.START;
     }
 
     color(): string {
@@ -49,7 +50,7 @@ export class StartNodeComponent extends ANode {
 
     create(): any {
         return {
-            type: this.code(),
+            type: this.type(),
             name: this.name(),
         }
     }

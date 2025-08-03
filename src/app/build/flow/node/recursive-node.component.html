@@ -2,7 +2,7 @@
 <ng-container [ngSwitch]="node.type">
   <!-- 开始节点 -->
   <app-start-node
-    *ngSwitchCase="'start'"
+    *ngSwitchCase="nodeType.START"
     #startNode
     [readonly]="readonly"
     [(model)]="node"
@@ -16,7 +16,7 @@
 
   <!-- 审批节点 -->
   <app-approval-node
-    *ngSwitchCase="'approval'"
+    *ngSwitchCase="nodeType.APPROVAL"
     #approvalNode
     [readonly]="readonly"
     [(modelValue)]="node"
@@ -30,7 +30,7 @@
 
   <!-- 抄送节点 -->
   <app-cc-node
-    *ngSwitchCase="'cc'"
+    *ngSwitchCase="nodeType.CC"
     #ccNode
     [readonly]="readonly"
     [(modelValue)]="node"

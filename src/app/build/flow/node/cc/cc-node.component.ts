@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {getRandNodeId} from "@flow/utils/process-util";
+import {NodeType} from "@flow/model/mode.model";
 
 @Component({
     selector: 'app-cc-node',
@@ -39,8 +40,8 @@ export class CcNodeComponent extends ANode {
         });
     }
 
-    code(): string {
-        return "cc";
+    type(): string {
+        return NodeType.CC;
     }
 
     color(): string {
@@ -54,7 +55,7 @@ export class CcNodeComponent extends ANode {
     create(): any {
         return {
             id: getRandNodeId(),
-            type: this.code(),
+            type: this.type(),
             name: this.name(),
         }
     }

@@ -1,6 +1,6 @@
 export abstract class ANode {
 
-    abstract code(): string;
+    abstract type(): string;
 
     abstract name(): string;
 

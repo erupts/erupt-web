@@ -19,5 +19,5 @@ export const Nodes: ANode[] = [
 export const NodeMap:{ [key: string]: ANode } = {}
 
 for (let node of Nodes) {
-    NodeMap[node.code()] = node;
+    NodeMap[node.type()] = node;
 }

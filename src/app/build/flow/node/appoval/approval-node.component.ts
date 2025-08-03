@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {getRandNodeId} from "@flow/utils/process-util";
+import {NodeType} from "@flow/model/mode.model";
 
 @Component({
     selector: 'app-approval-node',
@@ -22,8 +23,8 @@ export class ApprovalNodeComponent extends ANode {
     errInfo: any = null;
 
 
-    code(): string {
-        return "approval";
+    type(): string {
+        return NodeType.APPROVAL;
     }
 
     name(): string {
@@ -60,7 +61,7 @@ export class ApprovalNodeComponent extends ANode {
     create(): any {
         return {
             id: getRandNodeId(),
-            type: this.code(),
+            type: this.type(),
             name: this.name()
         };
     }

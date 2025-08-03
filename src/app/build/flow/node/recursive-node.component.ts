@@ -1,6 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
 import {NodeMap} from '@flow/node/process-nodes';
 import {reloadNodeId} from '@flow/utils/process-util';
+import {NodeType} from "@flow/model/mode.model";
 
 @Component({
     selector: 'app-recursive-node',
@@ -17,6 +18,8 @@ export class RecursiveNodeComponent {
     @Output() select = new EventEmitter<any>();
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
+
+    nodeType = NodeType;
 
     @ViewChildren('startNode, approvalNode, ccNode, exclusiveNode, parallelNode, branchNode, childNodeRef') nodeRefs!: QueryList<ElementRef>;
 

@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {getRandNodeId} from "@flow/utils/process-util";
+import {NodeType} from "@flow/model/mode.model";
 
 @Component({
     selector: 'app-exclusive-node',
@@ -55,8 +56,8 @@ export class ExclusiveNodeComponent extends ANode {
         this.moveR.emit();
     }
 
-    code(): string {
-        return "exclusive";
+    type(): string {
+        return NodeType.IF;
     }
 
     color(): string {
@@ -73,7 +74,7 @@ export class ExclusiveNodeComponent extends ANode {
             type: 'gateway',
             name: '网关节点',
             props: {
-                type: this.code(),
+                type: this.type(),
                 branch: [
                     // 默认创建俩分支
                     this.createBranch(1),
