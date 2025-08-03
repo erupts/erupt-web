@@ -58,20 +58,20 @@ import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 // 自定义组件
 import {FlowComponent} from './components/erupt-flow/flow.component';
 import {ProcessRenderComponent} from './components/process-render/process-render.component';
-import {StartNodeComponent} from '@flow/nodes/start/start-node.component';
-import {ApprovalNodeComponent} from '@flow/nodes/appoval/approval-node.component';
-import {CcNodeComponent} from '@flow/nodes/cc/cc-node.component';
-import {ExclusiveNodeComponent} from '@flow/nodes/exclusive/exclusive-node.component';
-import {BranchNodeComponent} from '@flow/nodes/base/branch-node.component';
-import {InsertBtnComponent} from '@flow/nodes/base/insert-btn.component';
+import {StartNodeComponent} from '@flow/node/start/start-node.component';
+import {ApprovalNodeComponent} from '@flow/node/appoval/approval-node.component';
+import {CcNodeComponent} from '@flow/node/cc/cc-node.component';
+import {ExclusiveNodeComponent} from '@flow/node/exclusive/exclusive-node.component';
+import {BranchNodeComponent} from '@flow/node/base/branch-node.component';
+import {InsertBtnComponent} from '@flow/node/base/insert-btn.component';
 
-import {NodeComponent} from '@flow/nodes/base/node.component';
+import {NodeComponent} from '@flow/node/base/node.component';
 
 // 图标
 import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
-import {RecursiveNodeComponent} from "@flow/nodes/recursive-node.component";
-import {ParallelNodeComponent} from "@flow/nodes/parallel/parallel-node.component";
+import {RecursiveNodeComponent} from "@flow/node/recursive-node.component";
+import {ParallelNodeComponent} from "@flow/node/parallel/parallel-node.component";
 import {FlowManagementComponent} from './view/flow-management/flow-management.component';
 import {NzDropDownModule} from "ng-zorro-antd/dropdown";
 import {SharedModule} from "@shared/shared.module";
@@ -82,7 +82,7 @@ import {EruptModule} from "../erupt/erupt.module";
 import {EruptFlowFormComponent} from './components/erupt-flow-form/erupt-flow-form.component';
 import {FlowDashboardComponent} from './view/flow-dashboard/flow-dashboard.component';
 import {FlowApprovalComponent} from './view/flow-approval/flow-approval.component';
-import {SystemNodeComponent} from '@flow/nodes/system/system-node.component';
+import {SystemNodeComponent} from '@flow/node/system/system-node.component';
 
 
 @NgModule({

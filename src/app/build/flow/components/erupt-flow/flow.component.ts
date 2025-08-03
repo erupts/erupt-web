@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ProcessRenderComponent} from "../process-render/process-render.component";
-import {StartNodeComponent} from "@flow/nodes/start/start-node.component";
+import {StartNodeComponent} from "@flow/node/start/start-node.component";
 
 @Component({
     selector: 'erupt-flow',

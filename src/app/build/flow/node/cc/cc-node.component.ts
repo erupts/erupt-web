@@ -1,14 +1,13 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {ANode} from "@flow/nodes/abstract-node";
+import {ANode} from "@flow/node/abstract-node";
 import {getRandNodeId} from "@flow/utils/process-util";
 
 @Component({
-    selector: 'app-approval-node',
-    templateUrl: './approval-node.component.html',
-    styleUrls: ['./approval-node.component.less']
+    selector: 'app-cc-node',
+    templateUrl: './cc-node.component.html',
+    styleUrls: ['./cc-node.component.less']
 })
-export class ApprovalNodeComponent extends ANode {
-
+export class CcNodeComponent extends ANode {
     @Input() readonly = false;
     @Input() modelValue: any;
     @Input() branch: any[] = [];
@@ -21,22 +20,8 @@ export class ApprovalNodeComponent extends ANode {
     showErr = false;
     errInfo: any = null;
 
-
-    code(): string {
-        return "approval";
-    }
-
-    name(): string {
-        return "审批人";
-    }
-
-    color(): string {
-        return "#EC8151";
-    }
-
-
     onSelect() {
-        // this.select.emit(this.modelValue);
+        this.select.emit(this.modelValue);
     }
 
     onDelete() {
@@ -54,15 +39,23 @@ export class ApprovalNodeComponent extends ANode {
         });
     }
 
-    click(): void {
+    code(): string {
+        return "cc";
+    }
+
+    color(): string {
+        return "#5994F3";
+    }
+
+    name(): string {
+        return "抄送人";
     }
 
     create(): any {
         return {
             id: getRandNodeId(),
             type: this.code(),
-            name: this.name()
-        };
+            name: this.name(),
+        }
     }
-
 }

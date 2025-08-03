@@ -1,18 +1,17 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {ANode} from "@flow/nodes/abstract-node";
-import {getRandNodeId} from "@flow/utils/process-util";
+import {ANode} from "@flow/node/abstract-node";
 
 @Component({
-    selector: 'app-cc-node',
-    templateUrl: './cc-node.component.html',
-    styleUrls: ['./cc-node.component.less']
+    selector: 'app-start-node',
+    templateUrl: './start-node.component.html',
+    styleUrls: ['./start-node.component.less']
 })
-export class CcNodeComponent extends ANode {
+export class StartNodeComponent extends ANode {
     @Input() readonly = false;
-    @Input() modelValue: any;
+    @Input() model: any;
     @Input() branch: any[] = [];
     @Input() index = 0;
-    @Output() modelValueChange = new EventEmitter<any>();
+    @Output() modelChange = new EventEmitter<any>();
     @Output() select = new EventEmitter<any>();
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
@@ -20,15 +19,12 @@ export class CcNodeComponent extends ANode {
     showErr = false;
     errInfo: any = null;
 
-    onSelect() {
-        this.select.emit(this.modelValue);
+    validate(err: any[]) {
+        // 开始节点无需验证
     }
 
-    onDelete() {
-        this.delete.emit({
-            branch: this.branch,
-            index: this.index
-        });
+    onSelect() {
+        this.select.emit(this.model);
     }
 
     onInsertNode(type: string) {
@@ -40,22 +36,22 @@ export class CcNodeComponent extends ANode {
     }
 
     code(): string {
-        return "cc";
+        return "start";
     }
 
     color(): string {
-        return "#5994F3";
+        return "#80929C";
     }
 
     name(): string {
-        return "抄送人";
+        return "发起人";
     }
 
     create(): any {
         return {
-            id: getRandNodeId(),
             type: this.code(),
             name: this.name(),
         }
     }
+
 }
