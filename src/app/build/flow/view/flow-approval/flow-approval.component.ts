@@ -70,40 +70,6 @@ export class FlowApprovalComponent implements OnInit {
     private modal: NzModalService
   ) {}
 
-  // 菜单数据
-  menuItems: MenuItem[] = [
-    {
-      key: 'todo',
-      title: '待办',
-      icon: 'clock-circle',
-      count: 5
-    },
-    {
-      key: 'done',
-      title: '已办',
-      icon: 'check-circle',
-      children: [
-        { key: 'done-purchase', title: '采购申请' },
-        { key: 'done-expense', title: '费用报销' }
-      ]
-    },
-    {
-      key: 'cc',
-      title: '抄送我',
-      icon: 'copy',
-      count: 2
-    },
-    {
-      key: 'initiated',
-      title: '已发起',
-      icon: 'rocket',
-      children: [
-        { key: 'initiated-purchase', title: '采购申请' },
-        { key: 'initiated-expense', title: '费用报销' }
-      ]
-    }
-  ];
-
   approvalList: ApprovalItem[] = [
     {
       id: '202507280001',
