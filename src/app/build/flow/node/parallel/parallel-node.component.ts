@@ -1,22 +1,20 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {ANode} from "@flow/nodes/abstract-node";
+import {ANode} from "@flow/node/abstract-node";
 import {getRandNodeId} from "@flow/utils/process-util";
 
 @Component({
-    selector: 'app-exclusive-node',
-    templateUrl: './exclusive-node.component.html',
-    styleUrls: ['./exclusive-node.component.less']
+    selector: 'app-parallel-node',
+    templateUrl: './parallel-node.component.html',
+    styleUrls: ['./parallel-node.component.less']
 })
-export class ExclusiveNodeComponent extends ANode {
-
-
+export class ParallelNodeComponent extends ANode {
     @Input() readonly = false;
     @Input() modelValue: any;
     @Input() branch: any[] = [];
     @Input() index = 0;
     @Input() moveLn = false;
-    @Input() moveRn = false;
     @Input() isDefault = false;
+    @Input() moveRn = false;
 
     @Output() modelValueChange = new EventEmitter<any>();
     @Output() select = new EventEmitter<any>();
@@ -25,8 +23,9 @@ export class ExclusiveNodeComponent extends ANode {
     @Output() moveL = new EventEmitter<void>();
     @Output() moveR = new EventEmitter<void>();
 
-    showErr = false;
-    errInfo: any = null;
+    validate(err: any[]) {
+        return true;
+    }
 
     onSelect() {
         this.select.emit(this.modelValue);
@@ -56,15 +55,15 @@ export class ExclusiveNodeComponent extends ANode {
     }
 
     code(): string {
-        return "exclusive";
+        return "parallel";
     }
 
     color(): string {
-        return "#59B9A4";
+        return "#718dff";
     }
 
     name(): string {
-        return "互斥条件";
+        return "并行分支";
     }
 
     create() {
@@ -87,10 +86,10 @@ export class ExclusiveNodeComponent extends ANode {
     override createBranch(i?: number) {
         return {
             id: getRandNodeId(),
-            type: 'exclusive',
-            name: i ? '条件' + i : '默认条件',
+            type: 'parallel',
+            name: '并行路径' + (i ? i : 2),
             parentId: null,
-            childId: null
+            childId: null,
         };
     }
 }

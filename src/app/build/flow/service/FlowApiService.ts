@@ -1,5 +1,4 @@
 import {Injectable} from "@angular/core";
-import {I18NService} from "@core";
 import {Observable} from "rxjs";
 import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
@@ -11,8 +10,7 @@ import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 @Injectable()
 export class FlowApiService {
 
-    constructor(private _http: _HttpClient,
-                private i18n: I18NService) {
+    constructor(private _http: _HttpClient) {
 
     }
 
