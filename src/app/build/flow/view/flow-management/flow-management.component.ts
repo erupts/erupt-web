@@ -281,13 +281,16 @@ export class FlowManagementComponent implements OnInit {
         });
     }
 
-    onCreateApproval(): void {
+    onCreateApproval(id?: number): void {
         const drawerRef = this.drawerService.create({
             nzTitle: null,
             nzWidth: "90%",
             nzClosable: false,
             nzMaskClosable: false,
             nzContent: FlowConfigComponent,
+            nzContentParams: {
+                flowId: id
+            },
             nzBodyStyle: {
                 padding: '0px'
             }
@@ -310,7 +313,7 @@ export class FlowManagementComponent implements OnInit {
     }
 
     onEdit(config: FlowConfig): void {
-
+        this.onCreateApproval(config.id)
     }
 
     onDuplicate(config: FlowConfig): void {

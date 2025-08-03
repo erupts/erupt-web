@@ -60,6 +60,10 @@ export class FlowApiService {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/config/add", config);
     }
 
+    configUpdate(config: FlowConfig): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/update", config);
+    }
+
     configCopy(id: number): Observable<R<void>> {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/config/copy", null, {
             id
@@ -78,5 +82,8 @@ export class FlowApiService {
         });
     }
 
+    configGet(id: number): Observable<R<FlowConfig>> {
+        return this._http.get<R<FlowConfig>>(RestPath.erupt + "/flow/config/get/" + id);
+    }
 
 }

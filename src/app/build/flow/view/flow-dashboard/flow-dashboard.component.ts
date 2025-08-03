@@ -5,25 +5,6 @@ import {R} from '@shared/model/api.model';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 
-interface Flow {
-  id: string;
-  name: string;
-  description: string;
-  type: string;
-  status: 'running' | 'completed' | 'stopped' | 'error';
-  creator: string;
-  createTime: Date;
-  runCount: number;
-  duration: number;
-  category: string;
-  group: string;
-}
-
-interface CategoryStats {
-  total: number;
-  active: number;
-}
-
 interface Category {
   key: string;
   name: string;
@@ -31,7 +12,7 @@ interface Category {
 
 interface FlowGroupWithFlows {
   title: string;
-  flows: Flow[];
+  flows: FlowConfig[];
 }
 
 @Component({
@@ -49,7 +30,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
 
   // 流程分组数据
   flowGroups: FlowGroup[] = [];
-  
+
   // 流程配置数据
   flowConfigs: FlowConfig[] = [];
 
@@ -81,7 +62,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
    */
   loadData(): void {
     this.loading = true;
-    
+
     // 并行加载流程分组和配置数据
     Promise.all([
       this.loadFlowGroups(),
@@ -144,7 +125,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
   private generateCategories(): void {
     // 保留"全部"分类
     this.categories = [{ key: '', name: '全部' }];
-    
+
     // 根据流程分组生成分类
     this.flowGroups.forEach(group => {
       this.categories.push({
@@ -158,51 +139,16 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
    * 更新流程分组缓存
    */
   private updateFlowGroupsCache(): void {
-    // 将FlowConfig转换为Flow格式
-    const flows: Flow[] = this.flowConfigs.map(config => ({
-      id: config.id.toString(),
-      name: config.name,
-      description: config.remark || '',
-      type: this.getFlowTypeByGroup(config.flowGroup?.name || ''),
-      status: config.enable ? 'running' : 'stopped',
-      creator: '系统',
-      createTime: new Date(),
-      runCount: Math.floor(Math.random() * 100) + 1, // 模拟数据
-      duration: Math.floor(Math.random() * 120) + 15, // 模拟数据
-      category: config.flowGroup?.name || '其他',
-      group: config.flowGroup?.name || '其他'
-    }));
-
     // 缓存所有流程分组
-    this.flowGroupsCache = this.groupFlows(flows);
+    this.flowGroupsCache = this.groupFlows(this.flowConfigs);
 
     // 缓存每个分类的流程分组
     this.categories.forEach(category => {
       if (category.key) {
-        const categoryFlows = flows.filter(f => f.category === category.key);
+        const categoryFlows = this.flowConfigs.filter(config => config.flowGroup?.name === category.key);
         this.categoryFlowGroupsCache.set(category.key, this.groupFlows(categoryFlows));
       }
     });
-  }
-
-  /**
-   * 根据分组名称获取流程类型
-   */
-  private getFlowTypeByGroup(groupName: string): string {
-    const typeMap: { [key: string]: string } = {
-      '财务': 'finance',
-      '出勤': 'attendance',
-      '防疫': 'epidemic',
-      '人事': 'hr',
-      '行政': 'admin'
-    };
-    
-    for (const [key, value] of Object.entries(typeMap)) {
-      if (groupName.includes(key)) {
-        return value;
-      }
-    }
-    return 'other';
   }
 
   /**
@@ -233,14 +179,15 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
   /**
    * 将流程按分组进行分组
    */
-  private groupFlows(flows: Flow[]): FlowGroupWithFlows[] {
-    const groupMap = new Map<string, Flow[]>();
+  private groupFlows(flows: FlowConfig[]): FlowGroupWithFlows[] {
+    const groupMap = new Map<string, FlowConfig[]>();
 
     flows.forEach(flow => {
-      if (!groupMap.has(flow.group)) {
-        groupMap.set(flow.group, []);
+      const groupName = flow.flowGroup?.name || '其他';
+      if (!groupMap.has(groupName)) {
+        groupMap.set(groupName, []);
       }
-      groupMap.get(flow.group)!.push(flow);
+      groupMap.get(groupName)!.push(flow);
     });
 
     return Array.from(groupMap.entries()).map(([title, flows]) => ({
@@ -252,7 +199,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
   /**
    * 流程点击事件
    */
-  onFlowClick(flow: Flow): void {
+  onFlowClick(flow: FlowConfig): void {
     console.log('点击流程:', flow);
     // 这里可以添加跳转到流程详情页的逻辑
   }
@@ -260,16 +207,28 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
   /**
    * 获取流程图标
    */
-  getFlowIcon(type: string): string {
-    const iconMap: { [key: string]: string } = {
-      'finance': 'dollar',
-      'attendance': 'clock-circle',
-      'epidemic': 'safety-certificate',
-      'hr': 'user',
-      'admin': 'setting',
-      'other': 'appstore'
+  getFlowIcon(flow: FlowConfig): string {
+    // 优先使用配置的图标
+    if (flow.icon) {
+      return flow.icon;
+    }
+
+    // 根据分组名称获取默认图标
+    const groupName = flow.flowGroup?.name || '';
+    const typeMap: { [key: string]: string } = {
+      '财务': 'dollar',
+      '出勤': 'clock-circle',
+      '防疫': 'safety-certificate',
+      '人事': 'user',
+      '行政': 'setting'
     };
-    return iconMap[type] || 'setting';
+
+    for (const [key, value] of Object.entries(typeMap)) {
+      if (groupName.includes(key)) {
+        return value;
+      }
+    }
+    return 'setting';
   }
 
   /**
@@ -285,27 +244,11 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
   /**
    * 获取状态颜色
    */
-  getStatusColor(status: string): string {
-    const colorMap: { [key: string]: string } = {
-      'running': 'green',
-      'completed': 'blue',
-      'stopped': 'orange',
-      'error': 'red'
-    };
-    return colorMap[status] || 'default';
-  }
-
-  /**
-   * 获取状态文本
-   */
-  getStatusText(status: string): string {
-    const textMap: { [key: string]: string } = {
-      'running': '运行中',
-      'completed': '已完成',
-      'stopped': '已停止',
-      'error': '异常'
-    };
-    return textMap[status] || '未知';
+  getStatusColor(flow: FlowConfig): string {
+    if (!flow.enable) {
+      return 'orange';
+    }
+    return 'green';
   }
 
   /**
