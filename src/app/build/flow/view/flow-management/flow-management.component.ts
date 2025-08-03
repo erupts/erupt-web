@@ -282,30 +282,34 @@ export class FlowManagementComponent implements OnInit {
     }
 
     onCreateApproval(): void {
-        this.drawerService.create({
+        const drawerRef = this.drawerService.create({
             nzTitle: null,
             nzWidth: "90%",
             nzClosable: false,
+            nzMaskClosable: false,
             nzContent: FlowConfigComponent,
-            nzContentParams: {
-
-            },
             nzBodyStyle: {
                 padding: '0px'
             }
         });
+
+        // 使用轮询方式等待组件实例可用
+        const checkComponent = () => {
+            const componentInstance = drawerRef.getContentComponent();
+            if (componentInstance) {
+                componentInstance.closeConfig.subscribe(() => {
+                    drawerRef.close();
+                });
+            } else {
+                // 如果组件实例还未可用，继续等待
+                setTimeout(checkComponent, 50);
+            }
+        };
+        checkComponent();
     }
 
     onEdit(config: FlowConfig): void {
-        this.drawerService.create({
-            nzTitle: null,
-            nzWidth: "90%",
-            nzClosable: false,
-            nzContent: FlowConfigComponent,
-            nzBodyStyle: {
-                padding: '0px'
-            }
-        });
+
     }
 
     onDuplicate(config: FlowConfig): void {
@@ -320,7 +324,4 @@ export class FlowManagementComponent implements OnInit {
         console.log('删除:', config.name);
     }
 
-    onMoreActions(config: FlowConfig): void {
-        console.log('更多操作:', config.name);
-    }
 }

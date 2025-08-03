@@ -1,15 +1,10 @@
-import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, HostListener, OnInit, Output, ViewChild} from '@angular/core';
 import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {VL} from "../../../../erupt/model/erupt-field.model";
 import {FlowApiService} from "@flow/service/FlowApiService";
 import {FlowConfig, FlowGroup} from "@flow/model/flow.model";
-
-interface ProcessAdmin {
-    id: string;
-    name: string;
-    avatar: string;
-}
+import {NzModalService} from "ng-zorro-antd/modal";
 
 @Component({
     selector: 'app-flow-config',
@@ -25,9 +20,6 @@ export class FlowConfigComponent implements OnInit {
     // 当前步骤
     currentStep = 1;
 
-    // 保存状态
-    saveStatus = '草稿 (保存于1分钟前)';
-
     eruptFlows: VL[] = [];
 
     // 分组选项
@@ -40,10 +32,11 @@ export class FlowConfigComponent implements OnInit {
         {label: '指定人员', value: 'specific'}
     ];
 
-
     @ViewChild('iconPopover') iconPopover!: NzPopoverComponent;
 
-    constructor(private flowApiService: FlowApiService) {
+    @Output() closeConfig = new EventEmitter();
+
+    constructor(private flowApiService: FlowApiService, private modal: NzModalService,) {
 
     }
 
@@ -84,12 +77,6 @@ export class FlowConfigComponent implements OnInit {
         this.iconPickVisible = value;
     }
 
-    // 设置管理员权限
-    setAdminPermission(adminId: string): void {
-        // 这里可以实现权限设置功能
-        console.log('设置管理员权限', adminId);
-    }
-
     // 预览
     preview(): void {
         console.log('预览审批流程');
@@ -101,7 +88,16 @@ export class FlowConfigComponent implements OnInit {
     }
 
     close(): void {
-        console.log('返回上一页');
+        this.modal.confirm({
+            nzTitle: '提示',
+            nzContent: '是否放弃当前编辑？',
+            nzOkText: '确定',
+            nzCancelText: '取消',
+            nzOnOk: () => {
+                this.modal.closeAll();
+                this.closeConfig.emit();
+            }
+        });
     }
 
 
