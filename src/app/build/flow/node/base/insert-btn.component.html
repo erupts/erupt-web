@@ -5,7 +5,7 @@
     <ng-template #nzPopoverContent>
         <div class="node-options" style="width: 360px">
             <ng-container *ngFor="let node of nodeList">
-                <div *ngIf="node.code()!='start'" (click)="onInsertNode(node.code())" [style.color]="node.color()">
+                <div *ngIf="node.type()!=nodeType.START" (click)="onInsertNode(node.type())" [style.color]="node.color()">
                     <!-- <span nz-icon [nzType]="node.icon" style="font-size: 16px">
                     </span> -->
                     {{node.name()}}
