@@ -1,5 +1,6 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {NodeMap} from '@flow/node/process-nodes';
+import {NodeRule} from "@flow/model/node.model";
 
 @Component({
     selector: 'app-process-render',
@@ -10,7 +11,7 @@ export class ProcessRenderComponent implements OnInit {
 
     @Input() readonly = false;
 
-    @Input() modelValue: any[];
+    @Input() modelValue: NodeRule[];
 
     @Output() modelValueChange = new EventEmitter<any[]>();
 

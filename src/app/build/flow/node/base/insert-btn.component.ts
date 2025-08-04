@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Output} from '@angular/core';
 import {Nodes} from '../process-nodes';
 import {ANode} from "@flow/node/abstract-node";
-import {NodeType} from "@flow/model/mode.model";
+import {NodeType} from "@flow/model/node.model";
 
 @Component({
     selector: 'app-insert-btn',

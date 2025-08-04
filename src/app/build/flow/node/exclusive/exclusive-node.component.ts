@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {getRandNodeId} from "@flow/utils/process-util";
-import {NodeType} from "@flow/model/mode.model";
+import {NodeRule, NodeType} from "@flow/model/node.model";
 
 @Component({
     selector: 'app-exclusive-node',
@@ -12,7 +12,7 @@ export class ExclusiveNodeComponent extends ANode {
 
 
     @Input() readonly = false;
-    @Input() modelValue: any;
+    @Input() modelValue: NodeRule;
     @Input() branch: any[] = [];
     @Input() index = 0;
     @Input() moveLn = false;
@@ -71,8 +71,8 @@ export class ExclusiveNodeComponent extends ANode {
     create() {
         return {
             id: getRandNodeId() + '_fork',
-            type: 'gateway',
-            name: '网关节点',
+            type: 'EXCLUSION',
+            name: '互斥节点',
             props: {
                 type: this.type(),
                 branch: [
@@ -85,13 +85,11 @@ export class ExclusiveNodeComponent extends ANode {
         }
     }
 
-    override createBranch(i?: number) {
+    override createBranch(i?: number): NodeRule {
         return {
             id: getRandNodeId(),
-            type: 'exclusive',
-            name: i ? '条件' + i : '默认条件',
-            parentId: null,
-            childId: null
+            type: NodeType.EXCLUSION,
+            name: i ? '条件' + i : '默认条件'
         };
     }
 }

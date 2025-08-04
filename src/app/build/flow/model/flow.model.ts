@@ -1,3 +1,5 @@
+import {NodeRule} from "@flow/model/node.model";
+
 export interface FlowGroup {
     id: number;
     name: string;
@@ -13,7 +15,7 @@ export interface FlowConfig {
     color?: string;
     flowGroup?: FlowGroup;
     enable?: boolean;
-    rule?: any;
+    rule?: NodeRule[];
     setting?: Record<string, any>;
 }
 
