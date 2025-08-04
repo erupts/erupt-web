@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
-import {NodeType} from "@flow/model/mode.model";
+import {NodeRule, NodeType} from "@flow/model/node.model";
 
 @Component({
     selector: 'app-start-node',
@@ -9,7 +9,7 @@ import {NodeType} from "@flow/model/mode.model";
 })
 export class StartNodeComponent extends ANode {
     @Input() readonly = false;
-    @Input() model: any;
+    @Input() model: NodeRule;
     @Input() branch: any[] = [];
     @Input() index = 0;
     @Output() modelChange = new EventEmitter<any>();

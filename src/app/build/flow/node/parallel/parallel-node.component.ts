@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {getRandNodeId} from "@flow/utils/process-util";
-import {NodeType} from "@flow/model/mode.model";
+import {NodeRule, NodeType} from "@flow/model/node.model";
 
 @Component({
     selector: 'app-parallel-node',
@@ -10,7 +10,7 @@ import {NodeType} from "@flow/model/mode.model";
 })
 export class ParallelNodeComponent extends ANode {
     @Input() readonly = false;
-    @Input() modelValue: any;
+    @Input() modelValue: NodeRule;
     @Input() branch: any[] = [];
     @Input() index = 0;
     @Input() moveLn = false;
@@ -70,27 +70,19 @@ export class ParallelNodeComponent extends ANode {
     create() {
         return {
             id: getRandNodeId() + '_fork',
-            type: 'gateway',
-            name: '网关节点',
-            props: {
-                type: this.type(),
-                branch: [
-                    // 默认创建俩分支
-                    this.createBranch(1),
-                    this.createBranch()
-                ]
-            },
-            branch: [[], []] // 默认要创建2个空分支
+            type: 'PARALLEL',
+            name: '并行节点',
+            branch: [
+                this.createBranch(1),
+                this.createBranch(2)]
         }
     }
 
-    override createBranch(i?: number) {
+    override createBranch(i?: number): NodeRule {
         return {
             id: getRandNodeId(),
-            type: 'parallel',
-            name: '并行路径' + (i ? i : 2),
-            parentId: null,
-            childId: null,
+            type: NodeType.BRANCH,
+            name: '并行路径' + i
         };
     }
 }

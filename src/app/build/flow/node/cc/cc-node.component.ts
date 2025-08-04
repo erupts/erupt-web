@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {getRandNodeId} from "@flow/utils/process-util";
-import {NodeType} from "@flow/model/mode.model";
+import {NodeRule, NodeType} from "@flow/model/node.model";
 
 @Component({
     selector: 'app-cc-node',
@@ -10,7 +10,7 @@ import {NodeType} from "@flow/model/mode.model";
 })
 export class CcNodeComponent extends ANode {
     @Input() readonly = false;
-    @Input() modelValue: any;
+    @Input() modelValue: NodeRule;
     @Input() branch: any[] = [];
     @Input() index = 0;
     @Output() modelValueChange = new EventEmitter<any>();

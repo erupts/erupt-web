@@ -1,3 +1,5 @@
+import {NodeRule} from "@flow/model/node.model";
+
 export abstract class ANode {
 
     abstract type(): string;
@@ -9,8 +11,7 @@ export abstract class ANode {
     abstract onSelect(): void;
 
     abstract create(): any;
-
-    createBranch(i?: number) {
+    createBranch(i?: number): NodeRule {
         throw new Error('Method not implemented.');
     }
 

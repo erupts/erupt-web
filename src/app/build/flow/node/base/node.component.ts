@@ -1,4 +1,5 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {NodeRule} from "@flow/model/node.model";
 
 @Component({
     selector: 'erupt-node',
@@ -10,7 +11,7 @@ export class NodeComponent implements AfterViewInit {
     @Input() headerIcon = '';
     @Input() content = '';
     @Input() readonly = false;
-    @Input() model: any;
+    @Input() model: NodeRule;
     @Input() showError = false;
     @Input() errorInfo = '';
     @Input() showClose = true;

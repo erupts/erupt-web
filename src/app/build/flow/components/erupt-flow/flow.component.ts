@@ -12,6 +12,7 @@ import {
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ProcessRenderComponent} from "../process-render/process-render.component";
 import {StartNodeComponent} from "@flow/node/start/start-node.component";
+import {NodeRule} from "@flow/model/node.model";
 
 @Component({
     selector: 'erupt-flow',
@@ -20,9 +21,9 @@ import {StartNodeComponent} from "@flow/node/start/start-node.component";
 })
 export class FlowComponent implements OnInit, AfterViewInit {
 
-    @Input() modelValue: any[] = [];
+    @Input() modelValue: NodeRule[] = [];
 
-    @Output() modelValueChange = new EventEmitter<any[]>();
+    @Output() modelValueChange = new EventEmitter<NodeRule[]>();
 
     @ViewChild('processRender', {static: false}) processRender!: ProcessRenderComponent;
 

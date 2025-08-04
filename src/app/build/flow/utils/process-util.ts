@@ -1,5 +1,5 @@
 export function getRandNodeId(): string {
-  return 'node_' + Math.random().toString(36).substr(2, 9);
+  return 'er' + Math.random().toString(36).substr(2, 9);
 }
 
 
