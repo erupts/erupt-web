@@ -34,11 +34,6 @@ export class RecursiveNodeComponent {
         branch.splice(i + 1, 0, newNode);
     }
 
-    insertBranchNodeFun(branch: any[], i: number, type: string) {
-        const newNode = NodeMap[type].create();
-        branch[i].branches.push(newNode);
-    }
-
     /**
      * 删除某个元素
      * @param branch 要删除的元素所在支路
