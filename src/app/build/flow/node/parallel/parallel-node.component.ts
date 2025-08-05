@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
-import {getRandNodeId} from "@flow/utils/process-util";
+import {geneNodeId} from "@flow/util/flow-util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 
 @Component({
@@ -69,18 +69,19 @@ export class ParallelNodeComponent extends ANode {
 
     create() {
         return {
-            id: getRandNodeId() + '_fork',
+            id: geneNodeId() + '_fork',
             type: 'PARALLEL',
             name: '并行节点',
             branch: [
                 this.createBranch(1),
-                this.createBranch(2)]
+                this.createBranch(2)
+            ]
         }
     }
 
     override createBranch(i?: number): NodeRule {
         return {
-            id: getRandNodeId(),
+            id: geneNodeId(),
             type: NodeType.BRANCH,
             name: '并行路径' + i
         };
