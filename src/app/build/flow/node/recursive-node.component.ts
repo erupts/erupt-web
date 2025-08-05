@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
 import {NodeMap} from '@flow/node/process-nodes';
-import {reloadNodeId} from '@flow/utils/process-util';
-import {NodeType} from "@flow/model/mode.model";
+import {reloadNodeId} from '@flow/util/flow-util';
+import {NodeRule, NodeType} from "@flow/model/node.model";
 
 @Component({
     selector: 'app-recursive-node',
@@ -10,8 +10,8 @@ import {NodeType} from "@flow/model/mode.model";
 })
 export class RecursiveNodeComponent {
     @Input() readonly = false;
-    @Input() node: any;
-    @Input() branch: any[] = [];
+    @Input() node: NodeRule;
+    @Input() branch: NodeRule[] = [];
     @Input() index = 0;
 
     @Output() nodeChange = new EventEmitter<any>();
@@ -19,9 +19,9 @@ export class RecursiveNodeComponent {
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
 
-    nodeType = NodeType;
-
     @ViewChildren('startNode, approvalNode, ccNode, exclusiveNode, parallelNode, branchNode, childNodeRef') nodeRefs!: QueryList<ElementRef>;
+
+    nodeType = NodeType;
 
     /**
      * 插入节点
@@ -30,12 +30,16 @@ export class RecursiveNodeComponent {
      * @param type 要插入的节点类型
      */
     insertNodeFun(branch: any[], i: number, type: string) {
-        if (NodeMap[type]) {
-            const newNode = NodeMap[type].create();
-            branch.splice(i + 1, 0, newNode);
-        } else {
-            // this.message.warning('请在ProcessNodes.ts内配置该节点');
-        }
+        const newNode = NodeMap[type].create();
+        branch.splice(i + 1, 0, newNode);
+    }
+
+    insertBranchNodeFun(branch: any[], i: number, type: string) {
+        console.log('branch', branch);
+        console.log('i', i);
+        console.log('type', type);
+        const newNode = NodeMap[type].create();
+        branch[i].branch.push(newNode);
     }
 
     /**
@@ -50,9 +54,9 @@ export class RecursiveNodeComponent {
     // 添加网关分支
     addBranch() {
         const index = this.node.branch.length - 1;
-        const type = this.node.props.type;
-        this.node.props.branch.splice(index, 0, NodeMap[type].createBranch(index + 1));
-        this.node.branch.splice(index, 0, []);
+        const type = this.node.type;
+        this.node.branch.splice(index, 0, NodeMap[type].createBranch(index + 1));
+        // this.node.branch.splice(index, 0, []);
     }
 
     deepCopy(obj: any) {
@@ -62,7 +66,7 @@ export class RecursiveNodeComponent {
     // 复制一个分支
     copyBranch(i: number) {
         // 复制条件
-        const cd = this.deepCopy(this.node.props.branch[i]);
+        const cd = this.deepCopy(this.node.branch[i]);
         cd.name = cd.name + '-copy';
         // 复制整个分支
         const bh = this.deepCopy(this.node.branch[i]);
@@ -70,7 +74,7 @@ export class RecursiveNodeComponent {
         reloadNodeId(cd);
         reloadNodeId(bh);
         // 插入到新位置
-        this.node.props.branch.splice(i + 1, 0, cd);
+        // this.node.props.branch.splice(i + 1, 0, cd);
         this.node.branch.splice(i + 1, 0, bh);
     }
 
@@ -83,21 +87,19 @@ export class RecursiveNodeComponent {
                 index: this.index
             });
         } else {
-            // 直接删除此分支
-            this.node.props.branch.splice(i, 1);
             this.node.branch.splice(i, 1);
         }
     }
 
     // 左移分支
     moveL(i: number) {
-        this.exchange(this.node.props.branch, i, i - 1);
+        this.exchange(this.node.branch, i, i - 1);
         this.exchange(this.node.branch, i, i - 1);
     }
 
     // 右移分支
     moveR(i: number) {
-        this.exchange(this.node.props.branch, i, i + 1);
+        this.exchange(this.node.branch, i, i + 1);
         this.exchange(this.node.branch, i, i + 1);
     }
 
@@ -109,10 +111,10 @@ export class RecursiveNodeComponent {
     }
 
     selectFun(nd: any, i: number) {
-        if (!(i === this.node.branch.length - 1
-            && this.node.props.type !== 'Parallel')) {
-            // this.select.emit(nd);
-        }
+        // if (!(i === this.node.branch.length - 1
+        //     && this.node.props.type !== 'Parallel')) {
+        //     // this.select.emit(nd);
+        // }
     }
 
     validate(errs: any[]) {
@@ -125,4 +127,6 @@ export class RecursiveNodeComponent {
             });
         }
     }
+
+    protected readonly NodeType = NodeType;
 }

@@ -57,7 +57,7 @@ export class ExclusiveNodeComponent extends ANode {
     }
 
     type(): string {
-        return NodeType.IF;
+        return NodeType.EXCLUSION;
     }
 
     color(): string {
@@ -71,25 +71,26 @@ export class ExclusiveNodeComponent extends ANode {
     create() {
         return {
             id: geneNodeId() + '_fork',
-            type: 'EXCLUSION',
-            name: '互斥节点',
-            props: {
-                type: this.type(),
-                branch: [
-                    // 默认创建俩分支
-                    this.createBranch(1),
-                    this.createBranch()
-                ]
-            },
-            branch: [[], []] // 默认要创建2个空分支
+            type: this.type(),
+            name: this.name(),
+            branch: [
+                this.createBranch(1),
+                {
+                    id: geneNodeId(),
+                    type: NodeType.ELSE,
+                    name: '默认条件',
+                    branch: []
+                }
+            ]
         }
     }
 
     override createBranch(i?: number): NodeRule {
         return {
             id: geneNodeId(),
-            type: NodeType.EXCLUSION,
-            name: i ? '条件' + i : '默认条件'
+            type: NodeType.IF,
+            name: '条件' + i,
+            branch: []
         };
     }
 }

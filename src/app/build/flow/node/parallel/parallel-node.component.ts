@@ -70,8 +70,8 @@ export class ParallelNodeComponent extends ANode {
     create() {
         return {
             id: geneNodeId() + '_fork',
-            type: 'PARALLEL',
-            name: '并行节点',
+            type: this.type(),
+            name: this.name(),
             branch: [
                 this.createBranch(1),
                 this.createBranch(2)
@@ -83,7 +83,8 @@ export class ParallelNodeComponent extends ANode {
         return {
             id: geneNodeId(),
             type: NodeType.BRANCH,
-            name: '并行路径' + i
+            name: '并行路径' + i,
+            branch: []
         };
     }
 }
