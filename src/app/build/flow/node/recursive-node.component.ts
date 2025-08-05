@@ -53,7 +53,6 @@ export class RecursiveNodeComponent {
         const index = this.node.branches.length - 1;
         const type = this.node.type;
         this.node.branches.splice(index, 0, NodeMap[type].createBranch(index + 1));
-        // this.node.branch.splice(index, 0, []);
     }
 
     deepCopy(obj: any) {
@@ -91,12 +90,10 @@ export class RecursiveNodeComponent {
     // 左移分支
     moveL(i: number) {
         this.exchange(this.node.branches, i, i - 1);
-        this.exchange(this.node.branches, i, i - 1);
     }
 
     // 右移分支
     moveR(i: number) {
-        this.exchange(this.node.branches, i, i + 1);
         this.exchange(this.node.branches, i, i + 1);
     }
 
@@ -125,5 +122,4 @@ export class RecursiveNodeComponent {
         }
     }
 
-    protected readonly NodeType = NodeType;
 }
