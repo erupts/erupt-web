@@ -1,0 +1,198 @@
+.smart-search-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+// 标题区域
+.header-section {
+  margin-bottom: 24px;
+
+  .title-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .main-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      i {
+        color: rgba(0, 0, 0, 0.45);
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// 条件构建器
+.condition-builder {
+  .condition-panel {
+
+  }
+}
+
+// 条件组包装器
+.condition-group-wrapper {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// 或标识
+.or-divider {
+  text-align: center;
+  margin: 16px 0;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #f0f0f0;
+    z-index: 1;
+  }
+
+  .or-text {
+    background: #fff;
+    padding: 0 16px;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 12px;
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+  }
+}
+
+// 条件组卡片
+.condition-group-card {
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+
+  ::ng-deep .ant-card-head {
+    min-height: 48px;
+    padding: 0 16px;
+
+    .ant-card-head-title {
+      padding: 12px 0;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .ant-card-extra {
+      padding: 12px 0;
+    }
+  }
+
+  ::ng-deep .ant-card-body {
+    padding: 16px;
+  }
+
+  .card-title-text {
+    color: rgba(0, 0, 0, 0.85);
+  }
+}
+
+// 条件列表
+.conditions-list {
+  .condition-item {
+    margin-bottom: 12px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// 逻辑操作符标签
+.logic-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  .logic-text {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.45);
+    font-weight: 500;
+  }
+}
+
+// 条件内容
+.condition-content {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+
+  nz-form-item {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 150px;
+
+    .field-select,
+    .operator-select,
+    .value-select {
+      width: 100%;
+    }
+
+    .value-input {
+      width: 100%;
+    }
+  }
+}
+
+// 添加条件按钮
+.add-condition-btn {
+  margin-top: 8px;
+}
+
+// 操作按钮
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .smart-search-container {
+    padding: 16px;
+  }
+
+  .condition-content {
+    flex-direction: column;
+    align-items: stretch;
+
+    nz-form-item {
+      min-width: auto;
+    }
+  }
+
+  .header-section .title-area {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .or-divider {
+    margin: 12px 0;
+
+    .or-text {
+      padding: 0 12px;
+      font-size: 11px;
+    }
+  }
+}
