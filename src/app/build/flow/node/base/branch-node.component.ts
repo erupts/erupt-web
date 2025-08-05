@@ -30,6 +30,8 @@ export class BranchNodeComponent implements AfterViewInit {
 
     @ViewChild('nodeNameInput', {static: false}) nodeNameInput!: ElementRef;
 
+    showDrawer: boolean = false;
+
     enableEdit = false;
 
     ngAfterViewInit() {
@@ -52,6 +54,7 @@ export class BranchNodeComponent implements AfterViewInit {
     }
 
     onSelect() {
+        this.showDrawer = true;
         this.select.emit();
     }
 
@@ -73,5 +76,9 @@ export class BranchNodeComponent implements AfterViewInit {
 
     onMoveR() {
         this.moveR.emit();
+    }
+
+    close(): void {
+        this.showDrawer = false;
     }
 }
