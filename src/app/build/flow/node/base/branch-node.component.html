@@ -14,7 +14,7 @@
         <div style="flex: 1">
             <div class="p-node-header">
                 <div [style.color]="isDefault ? '#898989' : color">
-<!--                    <span *ngIf="!enableEdit" nz-icon [nzType]="headerIcon" nzSize="15"></span>-->
+                    <!--                    <span *ngIf="!enableEdit" nz-icon [nzType]="headerIcon" nzSize="15"></span>-->
                     <input *ngIf="enableEdit"
                            #nodeNameInput
                            autofocus
@@ -27,7 +27,7 @@
                 </div>
 
                 <div *ngIf="!readonly && !isDefault" class="node-action">
-<!--                    <span class="fa fa-copy" (click)="onCopy()"></span>-->
+                    <!--                    <span class="fa fa-copy" (click)="onCopy()"></span>-->
                     <span class="fa fa-close" (click)="onDelete()"></span>
                 </div>
 
@@ -50,3 +50,21 @@
         <app-insert-btn *ngIf="!readonly" (insertNode)="onInsertNode($event)"></app-insert-btn>
     </div>
 </div>
+<nz-drawer
+    [nzVisible]="showDrawer"
+    (nzOnClose)="close()"
+    nzPlacement="right"
+    nzTitle="Basic Drawer"
+    [nzFooter]="footerTpl"
+    [nzWidth]="600"
+>
+    <ng-container *nzDrawerContent>
+        <app-smart-search/>
+    </ng-container>
+</nz-drawer>
+<ng-template #footerTpl>
+    <div style="float: right">
+        <button nz-button style="margin-right: 8px;" (click)="close()">Cancel</button>
+        <button nz-button nzType="primary" (click)="close()">Save</button>
+    </div>
+</ng-template>

@@ -362,7 +362,7 @@ export class FlowManagementComponent implements OnInit {
                     // 更新本地状态
                     config.enable = targetEnable;
                     const action = targetEnable ? '启用' : '停用';
-                    this.message.success(`流程配置${action}成功`);
+                    this.message.success(`${config.name}${action}成功`);
                 } else {
                     // 恢复原始状态
                     config.enable = originalEnable;
