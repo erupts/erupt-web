@@ -1,12 +1,12 @@
-export function getRandNodeId(): string {
-  return 'er' + Math.random().toString(36).substr(2, 9);
+export function geneNodeId(): string {
+    return 'e' + crypto.randomUUID().replace(/-/g, '').slice(0, 8);
 }
 
 
 export function reloadNodeId(node: any): void {
   if (node && typeof node === 'object') {
     if (node.id) {
-      node.id = getRandNodeId();
+      node.id = geneNodeId();
     }
     // 递归处理子节点
     if (node.branch && Array.isArray(node.branch)) {

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
-import {getRandNodeId} from "@flow/utils/process-util";
+import {geneNodeId} from "@flow/util/flow-util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 
 @Component({
@@ -60,7 +60,7 @@ export class ApprovalNodeComponent extends ANode {
 
     create(): any {
         return {
-            id: getRandNodeId(),
+            id: geneNodeId(),
             type: this.type(),
             name: this.name()
         };
