@@ -3,7 +3,7 @@ export interface NodeRule {
     name: string;
     type: NodeType;
     prop?: any;
-    branch?: NodeRule[];
+    branches?: NodeRule[];
 }
 
 export enum NodeType {

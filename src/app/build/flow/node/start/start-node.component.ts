@@ -37,7 +37,7 @@ export class StartNodeComponent extends ANode {
         });
     }
 
-    type(): string {
+    type(): NodeType {
         return NodeType.START;
     }
 

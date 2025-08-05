@@ -35,11 +35,8 @@ export class RecursiveNodeComponent {
     }
 
     insertBranchNodeFun(branch: any[], i: number, type: string) {
-        console.log('branch', branch);
-        console.log('i', i);
-        console.log('type', type);
         const newNode = NodeMap[type].create();
-        branch[i].branch.push(newNode);
+        branch[i].branches.push(newNode);
     }
 
     /**
@@ -53,9 +50,9 @@ export class RecursiveNodeComponent {
 
     // 添加网关分支
     addBranch() {
-        const index = this.node.branch.length - 1;
+        const index = this.node.branches.length - 1;
         const type = this.node.type;
-        this.node.branch.splice(index, 0, NodeMap[type].createBranch(index + 1));
+        this.node.branches.splice(index, 0, NodeMap[type].createBranch(index + 1));
         // this.node.branch.splice(index, 0, []);
     }
 
@@ -66,41 +63,41 @@ export class RecursiveNodeComponent {
     // 复制一个分支
     copyBranch(i: number) {
         // 复制条件
-        const cd = this.deepCopy(this.node.branch[i]);
+        const cd = this.deepCopy(this.node.branches[i]);
         cd.name = cd.name + '-copy';
         // 复制整个分支
-        const bh = this.deepCopy(this.node.branch[i]);
+        const bh = this.deepCopy(this.node.branches[i]);
         // 重载节点id
         reloadNodeId(cd);
         reloadNodeId(bh);
         // 插入到新位置
         // this.node.props.branch.splice(i + 1, 0, cd);
-        this.node.branch.splice(i + 1, 0, bh);
+        this.node.branches.splice(i + 1, 0, bh);
     }
 
     // 删除网关分支
     deleteBranch(i: number) {
-        if (this.node.branch.length <= 2) {
+        if (this.node.branches.length <= 2) {
             // 只有两个分支，那么就直接删除整个网关
             this.delete.emit({
                 branch: this.branch,
                 index: this.index
             });
         } else {
-            this.node.branch.splice(i, 1);
+            this.node.branches.splice(i, 1);
         }
     }
 
     // 左移分支
     moveL(i: number) {
-        this.exchange(this.node.branch, i, i - 1);
-        this.exchange(this.node.branch, i, i - 1);
+        this.exchange(this.node.branches, i, i - 1);
+        this.exchange(this.node.branches, i, i - 1);
     }
 
     // 右移分支
     moveR(i: number) {
-        this.exchange(this.node.branch, i, i + 1);
-        this.exchange(this.node.branch, i, i + 1);
+        this.exchange(this.node.branches, i, i + 1);
+        this.exchange(this.node.branches, i, i + 1);
     }
 
     // 交换数组俩元素位置
