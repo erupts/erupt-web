@@ -52,17 +52,17 @@
                 添加分支
             </button>
             <!-- 分支遍历 -->
-            <div *ngFor="let branch of node.branch; let i = index;"
-                 [class]="'p-branch-item' + (i === 0 ? ' p-branch-item-l' : '') + (i === node.branch.length - 1 ? ' p-branch-item-r' : '')">
+            <div *ngFor="let branch of node.branches; let i = index;"
+                 [class]="'p-branch-item' + (i === 0 ? ' p-branch-item-l' : '') + (i === node.branches.length - 1 ? ' p-branch-item-r' : '')">
                 <div>
                     <app-parallel-node #branchNode
                                        [readonly]="readonly"
-                                       [(modelValue)]="node.branch[i]"
+                                       [(modelValue)]="node.branches[i]"
                                        [index]="i"
-                                       [moveRn]="i < node.branch.length - 1"
+                                       [moveRn]="i < node.branches.length - 1"
                                        [moveLn]="i > 0"
-                                       [isDefault]="i === node.branch.length - 1 && false"
-                                       (insertNode)="insertBranchNodeFun(node.branch, $event.index, $event.type)"
+                                       [isDefault]="i === node.branches.length - 1 && false"
+                                       (insertNode)="insertBranchNodeFun(node.branches, $event.index, $event.type)"
                                        (delete)="deleteBranch(i)"
                                        (copy)="copyBranch(i)"
                                        (moveL)="moveL(i)"
@@ -71,16 +71,16 @@
                     </app-parallel-node>
 
                     <!-- 递归渲染分支内的节点 -->
-                    <ng-container *ngFor="let childNode of branch.branch; let bi = index;">
+                    <ng-container *ngFor="let childNode of branch.branches; let bi = index;">
                         <app-recursive-node
                             #childNodeRef
                             [readonly]="readonly"
                             [node]="childNode"
-                            [branch]="branch.branch"
+                            [branch]="branch.branches"
                             [index]="bi"
                             (nodeChange)="branch[bi] = $event"
-                            (insertNode)="insertNodeFun(branch.branch, $event.index, $event.type)"
-                            (delete)="deleteNode(branch.branch, $event.index)"
+                            (insertNode)="insertNodeFun(branch.branches, $event.index, $event.type)"
+                            (delete)="deleteNode(branch.branches, $event.index)"
                             (select)="select.emit($event)">
                         </app-recursive-node>
                     </ng-container>
@@ -107,18 +107,18 @@
             </button>
 
             <!-- 分支遍历 -->
-            <div *ngFor="let branch of node.branch; let i = index;"
-                 [class]="'p-branch-item' + (i === 0 ? ' p-branch-item-l' : '') + (i === node.branch.length - 1 ? ' p-branch-item-r' : '')">
+            <div *ngFor="let branch of node.branches; let i = index;"
+                 [class]="'p-branch-item' + (i === 0 ? ' p-branch-item-l' : '') + (i === node.branches.length - 1 ? ' p-branch-item-r' : '')">
                 <div>
                     <app-exclusive-node
                         #branchNode
                         [readonly]="readonly"
-                        [(modelValue)]="node.branch[i]"
+                        [(modelValue)]="node.branches[i]"
                         [index]="i"
-                        [moveRn]="i < node.branch.length - 2"
+                        [moveRn]="i < node.branches.length - 2"
                         [moveLn]="i > 0"
-                        [isDefault]="i === node.branch.length - 1 && true"
-                        (insertNode)="insertBranchNodeFun(node.branch, $event.index, $event.type)"
+                        [isDefault]="i === node.branches.length - 1 && true"
+                        (insertNode)="insertBranchNodeFun(node.branches, $event.index, $event.type)"
                         (delete)="deleteBranch(i)"
                         (copy)="copyBranch(i)"
                         (moveL)="moveL(i)"
@@ -127,16 +127,16 @@
                     </app-exclusive-node>
 
                     <!-- 递归渲染分支内的节点 -->
-                    <ng-container *ngFor="let childNode of branch.branch; let bi = index;">
+                    <ng-container *ngFor="let childNode of branch.branches; let bi = index;">
                         <app-recursive-node
                             #childNodeRef
                             [readonly]="readonly"
                             [node]="childNode"
-                            [branch]="branch.branch"
+                            [branch]="branch.branches"
                             [index]="bi"
                             (nodeChange)="branch[bi] = $event"
-                            (insertNode)="insertNodeFun(branch.branch, $event.index, $event.type)"
-                            (delete)="deleteNode(branch.branch, $event.index)"
+                            (insertNode)="insertNodeFun(branch.branches, $event.index, $event.type)"
+                            (delete)="deleteNode(branch.branches, $event.index)"
                             (select)="select.emit($event)">
                         </app-recursive-node>
                     </ng-container>

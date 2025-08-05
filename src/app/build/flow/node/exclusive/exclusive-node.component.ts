@@ -56,7 +56,7 @@ export class ExclusiveNodeComponent extends ANode {
         this.moveR.emit();
     }
 
-    type(): string {
+    type(): NodeType {
         return NodeType.EXCLUSION;
     }
 
@@ -68,18 +68,18 @@ export class ExclusiveNodeComponent extends ANode {
         return "互斥条件";
     }
 
-    create() {
+    create():NodeRule {
         return {
             id: geneNodeId() + '_fork',
-            type: this.type(),
+            type: NodeType.EXCLUSION,
             name: this.name(),
-            branch: [
+            branches: [
                 this.createBranch(1),
                 {
                     id: geneNodeId(),
                     type: NodeType.ELSE,
                     name: '默认条件',
-                    branch: []
+                    branches: []
                 }
             ]
         }
@@ -90,7 +90,7 @@ export class ExclusiveNodeComponent extends ANode {
             id: geneNodeId(),
             type: NodeType.IF,
             name: '条件' + i,
-            branch: []
+            branches: []
         };
     }
 }

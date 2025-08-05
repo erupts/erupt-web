@@ -55,7 +55,7 @@ export class ParallelNodeComponent extends ANode {
         this.moveR.emit();
     }
 
-    type(): string {
+    type(): NodeType {
         return NodeType.PARALLEL;
     }
 
@@ -67,12 +67,12 @@ export class ParallelNodeComponent extends ANode {
         return "并行分支";
     }
 
-    create() {
+    create(): NodeRule {
         return {
             id: geneNodeId() + '_fork',
             type: this.type(),
             name: this.name(),
-            branch: [
+            branches: [
                 this.createBranch(1),
                 this.createBranch(2)
             ]
@@ -84,7 +84,7 @@ export class ParallelNodeComponent extends ANode {
             id: geneNodeId(),
             type: NodeType.BRANCH,
             name: '并行路径' + i,
-            branch: []
+            branches: []
         };
     }
 }

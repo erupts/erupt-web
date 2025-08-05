@@ -40,7 +40,7 @@ export class CcNodeComponent extends ANode {
         });
     }
 
-    type(): string {
+    type(): NodeType {
         return NodeType.CC;
     }
 
@@ -52,7 +52,7 @@ export class CcNodeComponent extends ANode {
         return "抄送人";
     }
 
-    create(): any {
+    create(): NodeRule {
         return {
             id: geneNodeId(),
             type: this.type(),

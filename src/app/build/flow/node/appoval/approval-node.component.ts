@@ -23,7 +23,7 @@ export class ApprovalNodeComponent extends ANode {
     errInfo: any = null;
 
 
-    type(): string {
+    type(): NodeType {
         return NodeType.APPROVAL;
     }
 
