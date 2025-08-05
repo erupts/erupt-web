@@ -1,14 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 
-// 注意：需要在模块中导入以下ng-zorro模块：
-// import { NzCardModule } from 'ng-zorro-antd/card';
-// import { NzFormModule } from 'ng-zorro-antd/form';
-// import { NzSelectModule } from 'ng-zorro-antd/select';
-// import { NzInputModule } from 'ng-zorro-antd/input';
-// import { NzButtonModule } from 'ng-zorro-antd/button';
-// import { NzIconModule } from 'ng-zorro-antd/icon';
-
 export interface ConditionField {
   id: string;
   name: string;
