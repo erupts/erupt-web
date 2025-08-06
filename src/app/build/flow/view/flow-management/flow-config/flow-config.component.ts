@@ -1,14 +1,4 @@
-import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    EventEmitter,
-    HostListener,
-    Input,
-    OnInit,
-    Output,
-    ViewChild
-} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {VL} from "../../../../erupt/model/erupt-field.model";
@@ -31,9 +21,9 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     flowConfig: FlowConfig;
 
-    iconPickVisible: boolean = false;
-
     eruptBuild: EruptBuildModel;
+
+    iconPickVisible: boolean = false;
 
     // 当前步骤
     currentStep = 1;

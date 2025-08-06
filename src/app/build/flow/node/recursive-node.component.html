@@ -6,6 +6,7 @@
         #startNode
         [readonly]="readonly"
         [(model)]="node"
+        [eruptBuild]="eruptBuild"
         [branch]="branch"
         [index]="index"
         (modelChange)="nodeChange.emit($event)"
@@ -20,6 +21,7 @@
         #approvalNode
         [readonly]="readonly"
         [(modelValue)]="node"
+        [eruptBuild]="eruptBuild"
         [branch]="branch"
         [index]="index"
         (modelValueChange)="nodeChange.emit($event)"
@@ -34,6 +36,7 @@
         #ccNode
         [readonly]="readonly"
         [(modelValue)]="node"
+        [eruptBuild]="eruptBuild"
         [branch]="branch"
         [index]="index"
         (modelValueChange)="nodeChange.emit($event)"
@@ -59,6 +62,7 @@
                                        [readonly]="readonly"
                                        [(modelValue)]="node.branches[i]"
                                        [index]="i"
+                                       [eruptBuild]="eruptBuild"
                                        [moveRn]="i < node.branches.length - 1"
                                        [moveLn]="i > 0"
                                        [isDefault]="i === node.branches.length - 1 && false"
@@ -74,6 +78,7 @@
                     <ng-container *ngFor="let childNode of branch.branches; let bi = index;">
                         <app-recursive-node
                             #childNodeRef
+                            [eruptBuild]="eruptBuild"
                             [readonly]="readonly"
                             [node]="childNode"
                             [branch]="branch.branches"
@@ -114,6 +119,7 @@
                         #branchNode
                         [readonly]="readonly"
                         [(modelValue)]="node.branches[i]"
+                        [eruptBuild]="eruptBuild"
                         [index]="i"
                         [moveRn]="i < node.branches.length - 2"
                         [moveLn]="i > 0"
@@ -132,6 +138,7 @@
                             #childNodeRef
                             [readonly]="readonly"
                             [node]="childNode"
+                            [eruptBuild]="eruptBuild"
                             [branch]="branch.branches"
                             [index]="bi"
                             (nodeChange)="branch[bi] = $event"

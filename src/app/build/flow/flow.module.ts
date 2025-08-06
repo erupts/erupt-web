@@ -56,8 +56,7 @@ import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 
 // 自定义组件
-import {FlowComponent} from './components/erupt-flow/flow.component';
-import {ProcessRenderComponent} from './components/process-render/process-render.component';
+import {EruptFlowComponent} from './components/erupt-flow/erupt-flow.component';
 import {StartNodeComponent} from '@flow/node/start/start-node.component';
 import {ApprovalNodeComponent} from '@flow/node/appoval/approval-node.component';
 import {CcNodeComponent} from '@flow/node/cc/cc-node.component';
@@ -87,8 +86,7 @@ import {SystemNodeComponent} from '@flow/node/system/system-node.component';
 
 @NgModule({
     declarations: [
-        FlowComponent,
-        ProcessRenderComponent,
+        EruptFlowComponent,
         StartNodeComponent,
         ApprovalNodeComponent,
         CcNodeComponent,
