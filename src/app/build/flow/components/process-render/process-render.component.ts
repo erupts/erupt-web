@@ -46,22 +46,4 @@ export class ProcessRenderComponent implements OnInit {
         }
     }
 
-    validate() {
-        return new Promise((resolve, reject) => {
-            const errs: any[] = [];
-            if (this.nodeRefs) {
-                this.nodeRefs.forEach(ref => {
-                    const component = ref.nativeElement.__ngContext__;
-                    if (component && component.validate) {
-                        component.validate(errs);
-                    }
-                });
-            }
-            if (errs.length === 0) {
-                resolve(true);
-            } else {
-                reject(errs);
-            }
-        });
-    }
 }

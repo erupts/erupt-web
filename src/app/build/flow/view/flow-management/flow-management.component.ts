@@ -284,7 +284,7 @@ export class FlowManagementComponent implements OnInit {
     onCreateApproval(id?: number): void {
         const drawerRef = this.drawerService.create({
             nzTitle: null,
-            nzWidth: "90%",
+            nzWidth: "100%",
             nzClosable: false,
             nzMaskClosable: false,
             nzContent: FlowConfigComponent,

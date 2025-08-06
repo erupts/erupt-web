@@ -30,12 +30,12 @@
                     <span class="step-number">3</span>
                     <span class="step-text">流程设计</span>
                 </div>
-<!--                <div class="step-item"-->
-<!--                     [class.active]="currentStep === 4"-->
-<!--                     (click)="switchStep(4)">-->
-<!--                    <span class="step-number">4</span>-->
-<!--                    <span class="step-text">更多设置</span>-->
-<!--                </div>-->
+                <!--                <div class="step-item"-->
+                <!--                     [class.active]="currentStep === 4"-->
+                <!--                     (click)="switchStep(4)">-->
+                <!--                    <span class="step-number">4</span>-->
+                <!--                    <span class="step-text">更多设置</span>-->
+                <!--                </div>-->
             </div>
         </div>
 
@@ -87,7 +87,8 @@
                 <!-- 名称 -->
                 <div class="form-item">
                     <label class="form-label required">名称</label>
-                    <input nz-input placeholder="请输入名称" class="form-input" [(ngModel)]="flowConfig.name" name="name"/>
+                    <input nz-input placeholder="请输入名称" class="form-input" [(ngModel)]="flowConfig.name"
+                           name="name"/>
                 </div>
 
                 <!-- 分组 -->
@@ -107,6 +108,8 @@
                 <div class="form-item">
                     <label class="form-label required">数据模型</label>
                     <nz-select [(ngModel)]="flowConfig.erupt"
+                               [disabled]="flowConfig.rule?.length > 1"
+                               (ngModelChange)="changeErupt($event)"
                                class="form-select">
                         <nz-option *ngFor="let option of eruptFlows"
                                    [nzValue]="option.value"
@@ -135,27 +138,24 @@
         </div>
 
         <div class="step-placeholder" *ngIf="currentStep == 2">
-            <div style="display: flex;justify-content: center;height: 100%;padding: 16px">
-                <nz-empty nzNotFoundImage="simple" *ngIf="!flowConfig.erupt"
-                          [nzNotFoundContent]="'请选择数据模型'">
-                </nz-empty>
-                <ng-container *ngIf="flowConfig.erupt">
+            <nz-empty nzNotFoundImage="simple" *ngIf="!flowConfig.erupt" [nzNotFoundContent]="'请选择数据模型'">
+            </nz-empty>
+            <ng-container *ngIf="eruptBuild">
+                <div style="display: flex;justify-content: center;height: 100%;padding: 16px">
                     <div class="phone-wrapper">
                         <div class="phone-wrapper-screen">
-                            <erupt-flow-form [erupt]="flowConfig.erupt" [readonly]="false"/>
+                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="false"/>
                         </div>
                     </div>
-                </ng-container>
-            </div>
+                </div>
+            </ng-container>
         </div>
         <div class="step-placeholder" *ngIf="currentStep == 3">
-            <erupt-flow [(modelValue)]="flowConfig.rule"/>
-        </div>
-
-        <div class="step-placeholder" *ngIf="currentStep == 4">
-            <div class="form-section">
-                xxx
-            </div>
+            <nz-empty nzNotFoundImage="simple" *ngIf="!flowConfig.erupt" [nzNotFoundContent]="'请选择数据模型'">
+            </nz-empty>
+            <ng-container *ngIf="eruptBuild">
+                <erupt-flow [(modelValue)]="flowConfig.rule" [eruptBuild]="eruptBuild"/>
+            </ng-container>
         </div>
     </div>
 </div>

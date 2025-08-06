@@ -106,15 +106,4 @@ export class RecursiveNodeComponent {
         // }
     }
 
-    validate(errs: any[]) {
-        if (this.nodeRefs) {
-            this.nodeRefs.forEach(ref => {
-                const component = ref.nativeElement.__ngContext__;
-                if (component && component.validate) {
-                    component.validate(errs);
-                }
-            });
-        }
-    }
-
 }
