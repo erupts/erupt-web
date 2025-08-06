@@ -24,10 +24,6 @@ export class ParallelNodeComponent extends ANode {
     @Output() moveL = new EventEmitter<void>();
     @Output() moveR = new EventEmitter<void>();
 
-    validate(err: any[]) {
-        return true;
-    }
-
     onSelect() {
         this.select.emit(this.modelValue);
     }

@@ -13,6 +13,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {ProcessRenderComponent} from "../process-render/process-render.component";
 import {StartNodeComponent} from "@flow/node/start/start-node.component";
 import {NodeRule} from "@flow/model/node.model";
+import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 
 @Component({
     selector: 'erupt-flow',
@@ -22,6 +23,8 @@ import {NodeRule} from "@flow/model/node.model";
 export class FlowComponent implements OnInit, AfterViewInit {
 
     @Input() modelValue: NodeRule[] = [];
+
+    @Input() eruptBuild: EruptBuildModel;
 
     @Output() modelValueChange = new EventEmitter<NodeRule[]>();
 
@@ -253,10 +256,6 @@ export class FlowComponent implements OnInit, AfterViewInit {
             // 垂直滚动条回到顶部
             scrollContainer.scrollTop = 0;
         }
-    }
-
-    validate() {
-        return this.processRender.validate();
     }
 
 }

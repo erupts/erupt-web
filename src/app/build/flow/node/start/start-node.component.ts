@@ -21,10 +21,6 @@ export class StartNodeComponent extends ANode {
     showErr = false;
     errInfo: any = null;
 
-    validate(err: any[]) {
-        // 开始节点无需验证
-    }
-
     onSelect() {
         this.select.emit(this.model);
     }

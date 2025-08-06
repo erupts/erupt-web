@@ -145,6 +145,11 @@
 
     .step-placeholder {
         height: 100%;
+        
+        // 确保隐藏时完全不可见且不占用空间
+        &[hidden] {
+            display: none !important;
+        }
     }
 
     .phone-wrapper {

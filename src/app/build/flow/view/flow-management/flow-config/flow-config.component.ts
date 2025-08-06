@@ -1,4 +1,14 @@
-import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
 import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {VL} from "../../../../erupt/model/erupt-field.model";
@@ -6,19 +16,24 @@ import {FlowApiService} from "@flow/service/FlowApiService";
 import {FlowConfig, FlowGroup} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {FormSize} from "../../../../erupt/model/erupt.enum";
+import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
 
 @Component({
     selector: 'app-flow-config',
     templateUrl: './flow-config.component.html',
-    styleUrls: ['./flow-config.component.less']
+    styleUrls: ['./flow-config.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FlowConfigComponent implements OnInit {
+export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     @Input() flowId: number;
 
     flowConfig: FlowConfig;
 
     iconPickVisible: boolean = false;
+
+    eruptBuild: EruptBuildModel;
 
     // 当前步骤
     currentStep = 1;
@@ -62,6 +77,9 @@ export class FlowConfigComponent implements OnInit {
                         this.flowConfig = configRes.data;
                         // 确保flowGroup对象引用匹配
                         this.matchFlowGroupReference();
+                        if (this.flowConfig.erupt) {
+                            this.changeErupt(this.flowConfig.erupt)
+                        }
                     }
                 });
             }
@@ -71,6 +89,18 @@ export class FlowConfigComponent implements OnInit {
         this.flowApiService.eruptFlows().subscribe(res => {
             this.eruptFlows = res.data;
         });
+    }
+
+    ngAfterViewInit(): void {
+        // 视图初始化完成后的逻辑
+        // 可以在这里进行一些需要访问视图子组件的操作
+    }
+
+    changeErupt(erupt: string) {
+        this.flowApiService.eruptFlowBuild(erupt).subscribe(res => {
+            this.eruptBuild = res.data;
+            this.eruptBuild.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
+        })
     }
 
     /**
