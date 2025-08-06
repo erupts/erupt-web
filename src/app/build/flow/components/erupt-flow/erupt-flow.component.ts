@@ -7,30 +7,36 @@ import {
     Input,
     OnInit,
     Output,
-    ViewChild
+    QueryList,
+    ViewChild,
+    ViewChildren
 } from '@angular/core';
 import {NzMessageService} from "ng-zorro-antd/message";
-import {ProcessRenderComponent} from "../process-render/process-render.component";
 import {StartNodeComponent} from "@flow/node/start/start-node.component";
 import {NodeRule} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
+import {NodeMap} from '@flow/node/process-nodes';
 
 @Component({
     selector: 'erupt-flow',
-    templateUrl: './flow.component.html',
-    styleUrls: ['./flow.component.less']
+    templateUrl: './erupt-flow.component.html',
+    styleUrls: ['./erupt-flow.component.less']
 })
-export class FlowComponent implements OnInit, AfterViewInit {
+export class EruptFlowComponent implements OnInit, AfterViewInit {
 
     @Input() modelValue: NodeRule[] = [];
 
     @Input() eruptBuild: EruptBuildModel;
 
+    @Input() readonly = false;
+
     @Output() modelValueChange = new EventEmitter<NodeRule[]>();
 
-    @ViewChild('processRender', {static: false}) processRender!: ProcessRenderComponent;
+    @Output() select = new EventEmitter<any>();
 
     @ViewChild('canvasContainer') canvasContainer: ElementRef;
+
+    @ViewChildren('node') nodeRefs!: QueryList<ElementRef>;
 
     // 拖拽相关属性
     isDragging = false;
@@ -109,11 +115,9 @@ export class FlowComponent implements OnInit, AfterViewInit {
      * 获取ProcessRender组件的DOM元素
      */
     private getProcessRenderElement(): HTMLElement | null {
-        if (!this.processRender) return null;
+        if (!this.canvasContainer) return null;
 
-        return (this.processRender as any).elementRef?.nativeElement ||
-            (this.processRender as any).el?.nativeElement ||
-            this.canvasContainer.nativeElement.querySelector('app-process-render');
+        return this.canvasContainer.nativeElement.querySelector('.process');
     }
 
     /**
@@ -218,6 +222,7 @@ export class FlowComponent implements OnInit, AfterViewInit {
     }
 
     selectNode(node: any) {
+        this.select.emit(node);
         // if (NodeComponentConfigs[this.activeNode.type]) {
         //     this.nodeConfVisible = true;
         // }
@@ -255,6 +260,30 @@ export class FlowComponent implements OnInit, AfterViewInit {
 
             // 垂直滚动条回到顶部
             scrollContainer.scrollTop = 0;
+        }
+    }
+
+    /**
+     * 删除某个元素
+     * @param branch 要删除的元素所在支路
+     * @param i 删除的元素在该支路内索引位置
+     */
+    deleteNode(branch: any[], i: number) {
+        branch.splice(i, 1);
+        this.modelValueChange.emit(this.modelValue);
+    }
+
+    /**
+     * 插入节点
+     * @param branch 该节点要插入的支路（节点数组）
+     * @param i 插入哪个元素后面的索引，实际插入位置为i+1
+     * @param type 要插入的节点类型
+     */
+    insertNode(branch: any[], i: number, type: string) {
+        if (NodeMap[type] && NodeMap[type].create) {
+            const newNode = NodeMap[type].create();
+            branch.splice(i + 1, 0, newNode);
+            this.modelValueChange.emit(this.modelValue);
         }
     }
 

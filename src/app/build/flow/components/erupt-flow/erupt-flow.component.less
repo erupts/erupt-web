@@ -54,11 +54,33 @@
             cursor: grabbing;
         }
 
-        app-process-render {
-            display: block;
-            position: relative;
-            // 移除transform相关样式，因为使用zoom
-            // zoom属性会自动处理缩放，不需要额外的过渡效果
+        .process {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100%;
+            min-height: 100%;
+            padding: 20px;
+            width: max-content;
+            height: max-content;
+            transform-origin: center center;
+
+            .process-node {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                margin-bottom: 20px;
+                min-width: 200px;
+            }
+
+            .process-end {
+                text-align: center;
+                padding: 10px;
+                border-radius: 5px;
+                background: #e5e5e5;
+                margin-top: 16px;
+                min-width: 100px;
+            }
         }
 
         // 确保节点可以正常交互

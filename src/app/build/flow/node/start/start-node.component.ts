@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {geneNodeId} from "@flow/util/flow-util";
+import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 
 @Component({
     selector: 'app-start-node',
@@ -11,6 +12,7 @@ import {geneNodeId} from "@flow/util/flow-util";
 export class StartNodeComponent extends ANode {
     @Input() readonly = false;
     @Input() model: NodeRule;
+    @Input() eruptBuild: EruptBuildModel;
     @Input() branch: any[] = [];
     @Input() index = 0;
     @Output() modelChange = new EventEmitter<any>();

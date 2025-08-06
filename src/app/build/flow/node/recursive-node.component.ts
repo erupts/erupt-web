@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChild
 import {NodeMap} from '@flow/node/process-nodes';
 import {reloadNodeId} from '@flow/util/flow-util';
 import {NodeRule, NodeType} from "@flow/model/node.model";
+import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 
 @Component({
     selector: 'app-recursive-node',
@@ -13,6 +14,8 @@ export class RecursiveNodeComponent {
     @Input() node: NodeRule;
     @Input() branch: NodeRule[] = [];
     @Input() index = 0;
+
+    @Input() eruptBuild: EruptBuildModel;
 
     @Output() nodeChange = new EventEmitter<any>();
     @Output() select = new EventEmitter<any>();

@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {geneNodeId} from "@flow/util/flow-util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
+import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 
 @Component({
     selector: 'app-parallel-node',
@@ -10,6 +11,7 @@ import {NodeRule, NodeType} from "@flow/model/node.model";
 })
 export class ParallelNodeComponent extends ANode {
     @Input() readonly = false;
+    @Input() eruptBuild: EruptBuildModel;
     @Input() modelValue: NodeRule;
     @Input() branch: any[] = [];
     @Input() index = 0;
