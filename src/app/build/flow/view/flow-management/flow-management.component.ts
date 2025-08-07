@@ -6,7 +6,7 @@ import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {R} from '@shared/model/api.model';
 import {NzDrawerService} from "ng-zorro-antd/drawer";
-import {FlowConfigComponent} from "@flow/view/flow-config/flow-config.component";
+import {FlowConfigComponent} from "@flow/view/flow-management/flow-config/flow-config.component";
 
 // 扩展 FlowGroup 接口，添加 count 属性
 interface FlowGroupWithCount extends FlowGroup {
@@ -281,43 +281,132 @@ export class FlowManagementComponent implements OnInit {
         });
     }
 
-    onCreateApproval(): void {
-        this.drawerService.create({
+    onCreateApproval(id?: number): void {
+        const drawerRef = this.drawerService.create({
             nzTitle: null,
-            nzWidth: "90%",
+            nzWidth: "100%",
             nzClosable: false,
+            nzMaskClosable: false,
             nzContent: FlowConfigComponent,
+            nzContentParams: {
+                flowId: id
+            },
             nzBodyStyle: {
                 padding: '0px'
             }
         });
+
+        // 使用轮询方式等待组件实例可用
+        const checkComponent = () => {
+            const componentInstance = drawerRef.getContentComponent();
+            if (componentInstance) {
+                componentInstance.closeConfig.subscribe(() => {
+                    drawerRef.close();
+                    this.loadFlowConfigs();
+                });
+            } else {
+                // 如果组件实例还未可用，继续等待
+                setTimeout(checkComponent, 50);
+            }
+        };
+        checkComponent();
     }
 
     onEdit(config: FlowConfig): void {
-        this.drawerService.create({
-            nzTitle: null,
-            nzWidth: "90%",
-            nzClosable: false,
-            nzContent: FlowConfigComponent,
-            nzBodyStyle: {
-                padding: '0px'
+        this.onCreateApproval(config.id)
+    }
+
+    onDuplicate(config: FlowConfig): void {
+        if (!config.id) {
+            this.message.warning('配置ID不存在');
+            return;
+        }
+
+        this.modal.confirm({
+            nzTitle: '确认复制',
+            nzContent: `确定要复制流程配置"${config.name}"吗？`,
+            nzOkText: '确定',
+            nzCancelText: '取消',
+            nzOnOk: () => {
+                this.flowApiService.configCopy(config.id).subscribe({
+                    next: (response: R<void>) => {
+                        if (response.success) {
+                            this.message.success('流程配置复制成功');
+                            this.loadFlowConfigs(); // 重新加载流程配置列表
+                        } else {
+                            this.message.error(response.message || '复制流程配置失败');
+                        }
+                    },
+                    error: (error) => {
+                        console.error('复制流程配置失败:', error);
+                        this.message.error('复制流程配置失败');
+                    }
+                });
             }
         });
     }
 
-    onDuplicate(config: FlowConfig): void {
-        console.log('复制:', config.name);
-    }
-
     onToggleVisibility(config: FlowConfig): void {
-        config.enable = !config.enable;
+        if (!config.id) {
+            this.message.warning('配置ID不存在');
+            return;
+        }
+
+        // 保存原始状态，用于失败时恢复
+        const originalEnable = config.enable;
+        const targetEnable = !config.enable;
+
+        this.flowApiService.configSwitchEnable(config.id).subscribe({
+            next: (response: R<void>) => {
+                if (response.success) {
+                    // 更新本地状态
+                    config.enable = targetEnable;
+                    const action = targetEnable ? '启用' : '停用';
+                    this.message.success(`${config.name}${action}成功`);
+                } else {
+                    // 恢复原始状态
+                    config.enable = originalEnable;
+                    this.message.error(response.message || `${targetEnable ? '启用' : '停用'}流程配置失败`);
+                }
+            },
+            error: (error) => {
+                // 恢复原始状态
+                config.enable = originalEnable;
+                console.error('切换流程配置状态失败:', error);
+                this.message.error('切换流程配置状态失败');
+            }
+        });
     }
 
     onDelete(config: FlowConfig): void {
-        console.log('删除:', config.name);
+        if (!config.id) {
+            this.message.warning('配置ID不存在');
+            return;
+        }
+
+        this.modal.confirm({
+            nzTitle: '确认删除',
+            nzContent: `确定要删除流程配置"${config.name}"吗？此操作不可恢复。`,
+            nzOkText: '确定',
+            nzCancelText: '取消',
+            nzOkDanger: true,
+            nzOnOk: () => {
+                this.flowApiService.configDelete(config.id).subscribe({
+                    next: (response: R<void>) => {
+                        if (response.success) {
+                            this.message.success('流程配置删除成功');
+                            this.loadFlowConfigs(); // 重新加载流程配置列表
+                        } else {
+                            this.message.error(response.message || '删除流程配置失败');
+                        }
+                    },
+                    error: (error) => {
+                        console.error('删除流程配置失败:', error);
+                        this.message.error('删除流程配置失败');
+                    }
+                });
+            }
+        });
     }
 
-    onMoreActions(config: FlowConfig): void {
-        console.log('更多操作:', config.name);
-    }
 }

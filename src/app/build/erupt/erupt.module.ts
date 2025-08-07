@@ -43,6 +43,7 @@ import {NzEmptyModule} from "ng-zorro-antd/empty";
 import {MultiChoiceComponent} from './components/multi-choice/multi-choice.component';
 import {GanttComponent} from "./components/gantt/gantt.component";
 import {SignaturePadComponent} from './components/signature-pad/signature-pad.component';
+import {SmartSearchComponent} from './components/smart-search/smart-search.component';
 
 @NgModule({
     imports: [
@@ -65,7 +66,8 @@ import {SignaturePadComponent} from './components/signature-pad/signature-pad.co
     exports: [
         EditTypeComponent,
         ViewTypeComponent,
-        TabTableComponent
+        TabTableComponent,
+        SmartSearchComponent
     ],
     declarations: [
         EditTypeComponent,
@@ -110,7 +112,8 @@ import {SignaturePadComponent} from './components/signature-pad/signature-pad.co
         AttachmentSelectComponent,
         MultiChoiceComponent,
         GanttComponent,
-        SignaturePadComponent
+        SignaturePadComponent,
+        SmartSearchComponent
     ]
 })
 export class EruptModule {

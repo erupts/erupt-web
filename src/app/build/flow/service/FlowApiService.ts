@@ -1,5 +1,4 @@
 import {Injectable} from "@angular/core";
-import {I18NService} from "@core";
 import {Observable} from "rxjs";
 import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
@@ -11,8 +10,7 @@ import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 @Injectable()
 export class FlowApiService {
 
-    constructor(private _http: _HttpClient,
-                private i18n: I18NService) {
+    constructor(private _http: _HttpClient) {
 
     }
 
@@ -44,16 +42,46 @@ export class FlowApiService {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/group/sort", ids);
     }
 
-    configList(): Observable<R<FlowConfig[]>> {
-        return this._http.get<R<FlowConfig[]>>(RestPath.erupt + "/flow/config/list", null);
-    }
-
     eruptFlows(): Observable<R<VL[]>> {
-        return this._http.get<R<VL[]>>(RestPath.erupt + "/flow/config/erupt-flows");
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/flow/erupts");
     }
 
     eruptFlowBuild(erupt: string): Observable<R<EruptBuildModel>> {
         return this._http.get<R<EruptBuildModel>>(RestPath.erupt + "/flow/erupt-build/" + erupt);
+    }
+
+    configList(): Observable<R<FlowConfig[]>> {
+        return this._http.get<R<FlowConfig[]>>(RestPath.erupt + "/flow/config/list", null);
+    }
+
+    configAdd(config: FlowConfig): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/add", config);
+    }
+
+    configUpdate(config: FlowConfig): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/update", config);
+    }
+
+    configCopy(id: number): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/copy", null, {
+            id
+        });
+    }
+
+    configDelete(id: number): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/delete", null, {
+            id
+        });
+    }
+
+    configSwitchEnable(id: number): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/switch-enable", null, {
+            id
+        });
+    }
+
+    configGet(id: number): Observable<R<FlowConfig>> {
+        return this._http.get<R<FlowConfig>>(RestPath.erupt + "/flow/config/get/" + id);
     }
 
 }
