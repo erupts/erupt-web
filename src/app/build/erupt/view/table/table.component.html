@@ -146,32 +146,33 @@
 
                         </erupt-search>
                     </nz-card>
-
-<!--                    <div style="overflow: auto;width: 100%;margin: 16px 0;background: #fff">-->
-<!--                        <gantt-view></gantt-view>-->
-<!--                    </div>-->
+                    <!--                    <div style="overflow: auto;width: 100%;margin: 16px 0;background: #fff">-->
+                    <!--                        <gantt-view></gantt-view>-->
+                    <!--                    </div>-->
                     <!--                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">-->
                     <!--                        <div style="margin: 16px 0">-->
                     <!--                            <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>-->
                     <!--                        </div>-->
                     <!--                    </ng-container>-->
-                    <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
-                        [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
-                        [virtualScroll]="dataPage.data.length >= 200"
-                        [virtualItemSize]="47"
-                        [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
-                        (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
-                        [page]="dataPage.page" [size]="'middle'"
-                    >
-                        <ng-template #bodyTpl>
-                            <tr *ngFor="let row of extraRows" [ngClass]="row.className">
-                                <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
-                                    [ngClass]="column.className">
-                                    {{ column.value }}
-                                </td>
-                            </tr>
-                        </ng-template>
-                    </st>
+                    <div [syncVirtualScroll]="dataPage.data.length >= 100">
+                        <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
+                            [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
+                            [virtualScroll]="dataPage.data.length >= 100"
+                            [virtualItemSize]="47"
+                            [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
+                            (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
+                            [page]="dataPage.page" [size]="'middle'"
+                        >
+                            <ng-template #bodyTpl>
+                                <tr *ngFor="let row of extraRows" [ngClass]="row.className">
+                                    <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
+                                        [ngClass]="column.className">
+                                        {{ column.value }}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </st>
+                    </div>
                     <ng-container *ngIf="dataPage.showPagination">
                         <nz-pagination style="text-align: center;margin-top: 12px" nzShowSizeChanger nzShowQuickJumper
                                        [nzPageIndex]="dataPage.pi" [nzShowTotal]="totalTemplate"
@@ -181,7 +182,9 @@
                                        (nzPageSizeChange)="pageSizeChange($event)"
                                        (nzPageIndexChange)="pageIndexChange($event)"
                         ></nz-pagination>
-                        <ng-template #totalTemplate let-total>{{'table.totalLeft'|translate}} {{ dataPage.total }} {{'table.totalRight'|translate}}</ng-template>
+                        <ng-template #totalTemplate
+                                     let-total>{{ 'table.totalLeft'|translate }} {{ dataPage.total }} {{ 'table.totalRight'|translate }}
+                        </ng-template>
                     </ng-container>
                 </ng-container>
             </ng-container>
