@@ -10,7 +10,8 @@ export class SyncVirtualScrollDirective implements AfterViewInit, OnChanges {
 
     private inited = false;
 
-    constructor(private el: ElementRef<HTMLElement>) {}
+    constructor(private el: ElementRef<HTMLElement>) {
+    }
 
     ngAfterViewInit(): void {
         this.inited = true;
@@ -22,33 +23,21 @@ export class SyncVirtualScrollDirective implements AfterViewInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (!this.inited) return;
         if (changes['enabled']) {
-            if (this.enabled) {
-                this.initScrollSync();
-            } else {
-                this.removeScrollSync();
-            }
+            this.initScrollSync();
         }
     }
-
-    private removeScrollSync() {
-        const body = this.el.nativeElement.querySelector('.ant-table-body');
-        if (body && this.scrollHandler) {
-            body.removeEventListener('scroll', this.scrollHandler);
-        }
-    }
-
-    private scrollHandler = () => {};
 
     private initScrollSync(): void {
-        const host = this.el.nativeElement;
-        const body = host.querySelector('.cdk-virtual-scroll-viewport') as HTMLElement;
-        const header = host.querySelector('.ant-table-header') as HTMLElement;
-
-        if (body && header) {
-            this.scrollHandler = () => {
-                header.scrollLeft = body.scrollLeft;
-            };
-            body.addEventListener('scroll', this.scrollHandler);
-        }
+        setTimeout(() => {
+            const host = this.el.nativeElement;
+            const body = host.querySelector('.cdk-virtual-scroll-viewport, .ant-table-body') as HTMLElement;
+            const header = host.querySelector('.ant-table-header') as HTMLElement;
+            if (body && header) {
+                header.scrollLeft = body.scrollLeft
+                body.addEventListener('scroll', () => {
+                    header.scrollLeft = body.scrollLeft
+                });
+            }
+        }, 200)
     }
 }
