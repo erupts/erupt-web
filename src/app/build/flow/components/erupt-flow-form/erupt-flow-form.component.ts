@@ -16,7 +16,7 @@ export class EruptFlowFormComponent implements OnInit {
 
     @Input() readonly: boolean;
 
-    eruptBuild: EruptBuildModel;
+    @Input() eruptBuild: EruptBuildModel;
 
     constructor(private flowApiService: FlowApiService) {
 
@@ -24,9 +24,11 @@ export class EruptFlowFormComponent implements OnInit {
 
     ngOnInit(): void {
         this.loading = true;
-        this.flowApiService.eruptFlowBuild(this.erupt).subscribe(res => {
-            this.eruptBuild = res.data;
-            this.eruptBuild.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
-        })
+        if (this.erupt){
+            this.flowApiService.eruptFlowBuild(this.erupt).subscribe(res => {
+                this.eruptBuild = res.data;
+                this.eruptBuild.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
+            })
+        }
     }
 }

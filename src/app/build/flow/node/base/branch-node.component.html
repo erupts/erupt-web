@@ -1,0 +1,70 @@
+<div class="p-node">
+    <nz-tooltip *ngIf="showError" [title]=" errorInfo || '设置错误'">
+        <span nz-icon nzType="warning" nzTheme="fill" class="node-err-tip"></span>
+    </nz-tooltip>
+
+    <div class="p-node-body"
+         [class.node-err]="showError"
+         [style.--shadowColor]="color">
+
+        <div class="p-node-move" (click)="onMoveL()">
+            <span *ngIf="!readonly && moveLn && !isDefault" nz-icon nzType="left"></span>
+        </div>
+
+        <div style="flex: 1">
+            <div class="p-node-header">
+                <div [style.color]="isDefault ? '#898989' : color">
+                    <!--                    <span *ngIf="!enableEdit" nz-icon [nzType]="headerIcon" nzSize="15"></span>-->
+                    <input *ngIf="enableEdit"
+                           #nodeNameInput
+                           autofocus
+                           (blur)="onBlur()"
+                           [(ngModel)]="modelValue.name"/>
+                    <div *ngIf="!enableEdit"
+                         class="row-text"
+                         (click)="onEnableEdit()">{{ modelValue.name }}
+                    </div>
+                </div>
+
+                <div *ngIf="!readonly && !isDefault" class="node-action">
+                    <!--                    <span class="fa fa-copy" (click)="onCopy()"></span>-->
+                    <span class="fa fa-close" (click)="onDelete()"></span>
+                </div>
+
+                <nz-typography nzType="secondary" nzSize="small" class="node-desc">{{ desc }}</nz-typography>
+            </div>
+
+            <div class="p-node-content" (click)="onSelect()">
+                <nz-typography nzEllipsis nzEllipsisRows="4">
+                    {{ content || placeholder }}
+                </nz-typography>
+            </div>
+        </div>
+
+        <div class="p-node-move" (click)="onMoveR()">
+            <span *ngIf="!readonly && moveRn && !isDefault" nz-icon nzType="right"></span>
+        </div>
+    </div>
+
+    <div class="p-node-add">
+        <app-insert-btn *ngIf="!readonly" (insertNode)="onInsertNode($event)"></app-insert-btn>
+    </div>
+</div>
+<nz-drawer
+    [nzVisible]="showDrawer"
+    (nzOnClose)="close()"
+    nzPlacement="right"
+    nzTitle="Basic Drawer"
+    [nzFooter]="footerTpl"
+    [nzWidth]="600"
+>
+    <ng-container *nzDrawerContent>
+        <app-smart-search/>
+    </ng-container>
+</nz-drawer>
+<ng-template #footerTpl>
+    <div style="float: right">
+        <button nz-button style="margin-right: 8px;" (click)="close()">Cancel</button>
+        <button nz-button nzType="primary" (click)="close()">Save</button>
+    </div>
+</ng-template>

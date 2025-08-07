@@ -106,7 +106,7 @@
         <div class="app-content">
             <div class="app-list">
                 <!-- 加载状态 -->
-                <nz-spin [nzSpinning]="configLoading" nzSize="large">
+                <nz-spin [nzSpinning]="configLoading" nzSize="large" style="height: 100%">
                     <div
                         class="app-item"
                         *ngFor="let config of getCurrentConfigs()"
