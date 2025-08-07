@@ -7,6 +7,7 @@ import {VERSION as VERSION_ZORRO} from 'ng-zorro-antd/version';
 import {WindowModel} from "@shared/model/window.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzNotificationService} from "ng-zorro-antd/notification";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
     selector: 'app-root',
@@ -21,6 +22,7 @@ export class AppComponent implements OnInit {
         private router: Router,
         private titleSrv: TitleService,
         private modalSrv: NzModalService,
+        private sanitizer: DomSanitizer,
         @Inject(NzModalService) private modal: NzModalService,
         @Inject(NzMessageService) private msg: NzMessageService,
         @Inject(NzNotificationService) private notification: NzNotificationService
@@ -36,6 +38,9 @@ export class AppComponent implements OnInit {
         window["msg"] = this.msg;
         window["modal"] = this.modal;
         window["notify"] = this.notification;
+        window["safeHtml"] = (html: string) => {
+            return this.sanitizer.bypassSecurityTrustHtml(html);
+        };
         let configLoad = false;
         this.router.events.subscribe(ev => {
             if (ev instanceof RouteConfigLoadStart) {

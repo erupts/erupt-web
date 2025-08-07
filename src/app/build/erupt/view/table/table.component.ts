@@ -20,9 +20,8 @@ import {
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
-import {DrawerPlacement, EruptFieldModel, OpenWay, PageEmbedType} from "../../model/erupt-field.model";
+import {EruptFieldModel} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
-import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
@@ -35,7 +34,6 @@ import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {TableStyle} from "../../model/erupt.vo";
-import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 
 
 @Component({
@@ -249,7 +247,11 @@ export class TableComponent implements OnInit, OnDestroy {
                     }
                     if (layout.refreshTime && layout.refreshTime > 0) {
                         this.refreshTimeInterval = setInterval(() => {
-                            this.query(1);
+                            try {
+                                this.query();
+                            } catch (e) {
+                                this.query(1)
+                            }
                         }, layout.refreshTime);
                     }
                 }
@@ -628,7 +630,7 @@ export class TableComponent implements OnInit, OnDestroy {
         if (eruptJson.layout.tableWidth) {
             this.tableWidth = eruptJson.layout.tableWidth;
         } else {
-            this.tableWidth = (this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length * 160) + "px"
+            this.tableWidth = (this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length * 160 * this.i18n.getCurrLangInfo().columnWidthZoom) + "px"
         }
     }
 
@@ -655,49 +657,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         if (ro.type === OperationType.TPL) {
             let url = this.dataService.getEruptOperationTpl(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids);
-            if (!ro.tpl.openWay || ro.tpl.openWay == OpenWay.MODAL) {
-                let isIframe = !ro.tpl.embedType || ro.tpl.embedType == PageEmbedType.IFRAME;
-                let ref = this.modal.create({
-                    nzKeyboard: true,
-                    nzTitle: ro.title,
-                    nzMaskClosable: false,
-                    nzWidth: ro.tpl.width,
-                    nzStyle: {top: "20px"},
-                    nzWrapClassName: ro.tpl.width || "modal-lg",
-                    nzBodyStyle: {
-                        padding: "0"
-                    },
-                    nzFooter: null,
-                    // @ts-ignore
-                    nzContent: isIframe ? EruptIframeComponent : EruptMicroAppComponent,
-                    nzOnCancel: () => {
-                        // this.query();
-                    }
-                });
-                ref.getContentComponent().url = url;
-                ref.getContentComponent().height = ro.tpl.height;
-            } else {
-                let placement = ro.tpl.drawerPlacement;
-                this.drawerService.create({
-                    nzClosable: false,
-                    nzKeyboard: true,
-                    nzMaskClosable: true,
-                    // @ts-ignore
-                    nzPlacement: placement.toLowerCase(),
-                    nzWidth: ro.tpl.width || "40%",
-                    nzHeight: ro.tpl.height || "40%",
-                    nzBodyStyle: {
-                        padding: 0
-                    },
-                    nzFooter: null,
-                    nzContent: EruptIframeComponent,
-                    nzContentParams: {
-                        url: url,
-                        height: (placement == DrawerPlacement.LEFT || placement == DrawerPlacement.RIGHT) ? "100vh" : ro.tpl.height,
-                        width: (placement == DrawerPlacement.TOP || placement == DrawerPlacement.BOTTOM) ? "100vw" : ro.tpl.width
-                    }
-                })
-            }
+            this.uiBuildService.openTpl(ro.title, url, ro.tpl)
         } else if (ro.type === OperationType.ERUPT) {
             let operationErupt: EruptModel = null;
             if (this.eruptBuildModel.operationErupts) {

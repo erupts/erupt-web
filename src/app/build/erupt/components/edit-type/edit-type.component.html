@@ -166,7 +166,7 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <erupt-markdown [eruptField]="field"></erupt-markdown>
+                                <erupt-markdown [eruptField]="field" [erupt]="eruptModel" [readonly]="isReadonly(field)"></erupt-markdown>
                             </se>
                         </div>
                     </ng-container>
@@ -490,6 +490,15 @@
                                                    [height]="field.eruptFieldJson.edit.codeEditType.height"
                                                    [language]="field.eruptFieldJson.edit.codeEditType.language">
                                 </erupt-code-editor>
+                            </se>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="editType.SIGNATURE">
+                        <div nz-col [nzSpan]="24" *ngIf="!loading">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <erupt-signature-pad [eruptField]="field"></erupt-signature-pad>
                             </se>
                         </div>
                     </ng-container>

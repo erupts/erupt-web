@@ -11,9 +11,10 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzImageService} from "ng-zorro-antd/image";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
-import {PageEmbedType, View} from "../model/erupt-field.model";
+import {OpenWay, PageEmbedType, Tpl, View} from "../model/erupt-field.model";
 import {AttachmentSelectComponent} from "../components/attachment-select/attachment-select.component";
 import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
+import {NzDrawerService} from "ng-zorro-antd/drawer";
 
 
 @Injectable()
@@ -23,6 +24,7 @@ export class UiBuildService {
         private imageService: NzImageService,
         private i18n: I18NService,
         private dataService: DataService,
+        @Inject(NzDrawerService) private drawerService: NzDrawerService,
         @Inject(NzModalService) private modal: NzModalService,
         @Inject(NzMessageService) private msg: NzMessageService) {
     }
@@ -577,22 +579,7 @@ export class UiBuildService {
                     let url = this.dataService.getEruptViewTpl(eruptBuildModel.eruptModel.eruptName,
                         view.eruptFieldModel.fieldName,
                         item[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
-                    let isIframe = !view.tpl.embedType || view.tpl.embedType == PageEmbedType.IFRAME;
-                    let ref = this.modal.create({
-                        nzKeyboard: true,
-                        nzMaskClosable: false,
-                        nzTitle: view.title,
-                        nzWidth: view.tpl.width,
-                        nzStyle: {top: "20px"},
-                        nzWrapClassName: view.tpl.width || "modal-lg",
-                        nzBodyStyle: {
-                            padding: "0"
-                        },
-                        nzFooter: null,
-                        // @ts-ignore
-                        nzContent: isIframe ? EruptIframeComponent : EruptMicroAppComponent
-                    });
-                    ref.getContentComponent().url = url;
+                    this.openTpl(view.title, url, view.tpl);
                 };
             }
             if (layout.pagingType == PagingType.BACKEND) {
@@ -635,7 +622,10 @@ export class UiBuildService {
         }
         if ($paths.length == 1) {
             if (viewType == ViewType.DOWNLOAD || viewType == ViewType.ATTACHMENT) {
-                window.open(DataService.downloadAttachment(path));
+                const a = document.createElement('a');
+                a.href = DataService.downloadAttachment(path);
+                a.click();
+                a.remove();
             } else if (viewType == ViewType.ATTACHMENT_DIALOG) {
                 let ref = this.modal.create({
                     nzWrapClassName: "modal-lg modal-body-nopadding",
@@ -662,6 +652,52 @@ export class UiBuildService {
                 paths: $paths,
                 view: view
             });
+        }
+    }
+
+    openTpl(title: string, url: string, tpl: Tpl) {
+        if (!tpl.openWay || tpl.openWay == OpenWay.MODAL) {
+            let isIframe = !tpl.embedType || tpl.embedType == PageEmbedType.IFRAME;
+            let ref = this.modal.create({
+                nzKeyboard: true,
+                nzTitle: title,
+                nzMaskClosable: false,
+                nzWidth: tpl.width,
+                nzStyle: {top: "20px"},
+                nzWrapClassName: tpl.width || "modal-lg",
+                nzBodyStyle: {
+                    padding: "0"
+                },
+                nzFooter: null,
+                // @ts-ignore
+                nzContent: isIframe ? EruptIframeComponent : EruptMicroAppComponent,
+                nzOnCancel: () => {
+                    // this.query();
+                }
+            });
+            ref.getContentComponent().url = url;
+            ref.getContentComponent().height = tpl.height;
+        } else {
+            let placement = tpl.drawerPlacement;
+            this.drawerService.create({
+                nzClosable: false,
+                nzKeyboard: true,
+                nzMaskClosable: true,
+                // @ts-ignore
+                nzPlacement: placement.toLowerCase(),
+                nzWidth: tpl.width || "40%",
+                nzHeight: tpl.height || "40%",
+                nzBodyStyle: {
+                    padding: 0
+                },
+                nzFooter: null,
+                nzContent: EruptIframeComponent,
+                nzContentParams: {
+                    url: url,
+                    height: "100%",
+                    width: '100%'
+                }
+            })
         }
     }
 }

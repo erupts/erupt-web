@@ -1,0 +1,161 @@
+<div class="flow-config-container">
+    <!-- 顶部导航栏 -->
+    <div class="header">
+        <div class="header-left">
+            <button nz-button nzType="text" class="back-btn" (click)="close()">
+                <i nz-icon nzType="close"></i>
+            </button>
+            <div class="title-section">
+                <h2 class="title"></h2>
+            </div>
+        </div>
+
+        <div class="header-center">
+            <div class="step-nav">
+                <div class="step-item"
+                     [class.active]="currentStep === 1"
+                     (click)="switchStep(1)">
+                    <span class="step-number">1</span>
+                    <span class="step-text">基础信息</span>
+                </div>
+                <div class="step-item"
+                     [class.active]="currentStep === 2"
+                     (click)="switchStep(2)">
+                    <span class="step-number">2</span>
+                    <span class="step-text">表单预览</span>
+                </div>
+                <div class="step-item"
+                     [class.active]="currentStep === 3"
+                     (click)="switchStep(3)">
+                    <span class="step-number">3</span>
+                    <span class="step-text">流程设计</span>
+                </div>
+                <!--                <div class="step-item"-->
+                <!--                     [class.active]="currentStep === 4"-->
+                <!--                     (click)="switchStep(4)">-->
+                <!--                    <span class="step-number">4</span>-->
+                <!--                    <span class="step-text">更多设置</span>-->
+                <!--                </div>-->
+            </div>
+        </div>
+
+        <div class="header-right">
+            <!--      <div class="incomplete-items">-->
+            <!--        <span>{{ incompleteItems }}项不完善</span>-->
+            <!--        <i nz-icon nzType="down"></i>-->
+            <!--      </div>-->
+            <button nz-button nzType="primary" class="publish-btn" (click)="publish()">
+                发布
+            </button>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+        <!-- 基础信息表单 -->
+        <div class="form-section" *ngIf="currentStep === 1">
+            <div class="flow-form">
+                <!-- 图标 -->
+                <div class="form-item">
+                    <label class="form-label required">图标</label>
+                    <div class="icon-section">
+                        <div class="icon-display">
+                            <div class="icon-circle" [style]="{background: flowConfig.color}">
+                                <i class="{{ flowConfig.icon }}"></i>
+                            </div>
+                        </div>
+                        <button nz-button nzType="link" class="modify-link"
+                                nz-popover #iconPopover [nzPopoverContent]="iconSelectorContent"
+                                [nzPopoverVisible]="iconPickVisible"
+                                (nzPopoverVisibleChange)="iconPickVisibleChange($event)"
+                                nzPopoverTrigger="click"
+                                nzPopoverPlacement="topRight">
+                            修改
+                        </button>
+                    </div>
+
+                    <!-- 图标选择器内容 -->
+                    <ng-template #iconSelectorContent>
+                        <app-icon-color-picker
+                            [selectedIcon]="flowConfig.icon"
+                            [selectedColor]="flowConfig.color"
+                            (configChange)="onIconColorConfigChange($event)">
+                        </app-icon-color-picker>
+                    </ng-template>
+                </div>
+
+                <!-- 名称 -->
+                <div class="form-item">
+                    <label class="form-label required">名称</label>
+                    <input nz-input placeholder="请输入名称" class="form-input" [(ngModel)]="flowConfig.name"
+                           name="name"/>
+                </div>
+
+                <!-- 分组 -->
+                <div class="form-item">
+                    <label class="form-label required">分组</label>
+                    <nz-select [(ngModel)]="flowConfig.flowGroup"
+                               placeholder="请选择分组"
+                               class="form-select">
+                        <nz-option *ngFor="let option of groupOptions"
+                                   [nzValue]="option"
+                                   [nzLabel]="option.name"></nz-option>
+                    </nz-select>
+                    <ng-template #groupErrorTpl let-control>
+                        <span *ngIf="control.hasError('required')">分组为空,请选择</span>
+                    </ng-template>
+                </div>
+                <div class="form-item">
+                    <label class="form-label required">数据模型</label>
+                    <nz-select [(ngModel)]="flowConfig.erupt"
+                               [disabled]="flowConfig.rule?.length > 1"
+                               (ngModelChange)="changeErupt($event)"
+                               class="form-select">
+                        <nz-option *ngFor="let option of eruptFlows"
+                                   [nzValue]="option.value"
+                                   [nzLabel]="option.label"></nz-option>
+                    </nz-select>
+                </div>
+                <div class="form-item">
+                    <label class="form-label">说明</label>
+                    <textarea nz-input
+                              [(ngModel)]="flowConfig.remark"
+                              placeholder="说明"
+                              [nzAutosize]="{ minRows: 3, maxRows: 5 }"
+                              class="form-textarea"></textarea>
+                </div>
+                <!-- 提交权限 -->
+                <div class="form-item">
+                    <label class="form-label required">谁可以提交该审批</label>
+                    <nz-select placeholder="请选择提交权限"
+                               class="form-select">
+                        <nz-option *ngFor="let option of submitPermissionOptions"
+                                   [nzValue]="option.value"
+                                   [nzLabel]="option.label"></nz-option>
+                    </nz-select>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-placeholder" *ngIf="currentStep == 2">
+            <nz-empty nzNotFoundImage="simple" *ngIf="!flowConfig.erupt" [nzNotFoundContent]="'请选择数据模型'">
+            </nz-empty>
+            <ng-container *ngIf="eruptBuild">
+                <div style="display: flex;justify-content: center;height: 100%;padding: 16px">
+                    <div class="phone-wrapper">
+                        <div class="phone-wrapper-screen">
+                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="false"/>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+        <div class="step-placeholder" *ngIf="currentStep == 3">
+            <nz-empty nzNotFoundImage="simple" *ngIf="!flowConfig.erupt" [nzNotFoundContent]="'请选择数据模型'">
+            </nz-empty>
+            <ng-container *ngIf="eruptBuild">
+                <erupt-flow [(modelValue)]="flowConfig.rule" [eruptBuild]="eruptBuild"/>
+            </ng-container>
+        </div>
+    </div>
+</div>

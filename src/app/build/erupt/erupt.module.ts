@@ -41,6 +41,9 @@ import {NzRateModule} from "ng-zorro-antd/rate";
 import {AttachmentSelectComponent} from './components/attachment-select/attachment-select.component';
 import {NzEmptyModule} from "ng-zorro-antd/empty";
 import {MultiChoiceComponent} from './components/multi-choice/multi-choice.component';
+import {GanttComponent} from "./components/gantt/gantt.component";
+import {SignaturePadComponent} from './components/signature-pad/signature-pad.component';
+import {SmartSearchComponent} from './components/smart-search/smart-search.component';
 
 @NgModule({
     imports: [
@@ -63,7 +66,8 @@ import {MultiChoiceComponent} from './components/multi-choice/multi-choice.compo
     exports: [
         EditTypeComponent,
         ViewTypeComponent,
-        TabTableComponent
+        TabTableComponent,
+        SmartSearchComponent
     ],
     declarations: [
         EditTypeComponent,
@@ -106,7 +110,10 @@ import {MultiChoiceComponent} from './components/multi-choice/multi-choice.compo
         MarkdownComponent,
         CardComponent,
         AttachmentSelectComponent,
-        MultiChoiceComponent
+        MultiChoiceComponent,
+        GanttComponent,
+        SignaturePadComponent,
+        SmartSearchComponent
     ]
 })
 export class EruptModule {

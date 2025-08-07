@@ -77,5 +77,5 @@ export const SHARED_ZORRO_MODULES = [
     NzTreeModule,
     NzSkeletonModule,
     NzCarouselModule,
-    NzBreadCrumbModule
+    NzBreadCrumbModule,
 ];

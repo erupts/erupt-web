@@ -103,7 +103,7 @@
                         <div>
                             <button nz-button nzType="default" nz-popover style="padding: 4px 8px"
                                     [(nzPopoverVisible)]="showColCtrl" [nzPopoverContent]="tableColumnCtrl"
-                                    nzPopoverTrigger="click" class="mb-sm hidden-mobile">
+                                    nzPopoverTrigger="click" class="mb-sm hidden-mobile" id="table-column-ctrl">
                                 <i nz-icon nzType="table" nzTheme="outline"></i>
                             </button>
                             <ng-template #tableColumnCtrl>
@@ -146,6 +146,10 @@
 
                         </erupt-search>
                     </nz-card>
+
+<!--                    <div style="overflow: auto;width: 100%;margin: 16px 0;background: #fff">-->
+<!--                        <gantt-view></gantt-view>-->
+<!--                    </div>-->
                     <!--                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">-->
                     <!--                        <div style="margin: 16px 0">-->
                     <!--                            <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>-->
@@ -153,7 +157,7 @@
                     <!--                    </ng-container>-->
                     <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
                         [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
-                        [virtualScroll]="dataPage.data.length >= 100"
+                        [virtualScroll]="dataPage.data.length >= 200"
                         [virtualItemSize]="47"
                         [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
                         (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
@@ -177,7 +181,7 @@
                                        (nzPageSizeChange)="pageSizeChange($event)"
                                        (nzPageIndexChange)="pageIndexChange($event)"
                         ></nz-pagination>
-                        <ng-template #totalTemplate let-total>共 {{ dataPage.total }} 条</ng-template>
+                        <ng-template #totalTemplate let-total>{{'table.totalLeft'|translate}} {{ dataPage.total }} {{'table.totalRight'|translate}}</ng-template>
                     </ng-container>
                 </ng-container>
             </ng-container>

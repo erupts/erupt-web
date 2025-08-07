@@ -94,8 +94,6 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
     // #endregion
 
     constructor(
-        settings: SettingsService,
-        private renderer: Renderer2,
         private router: Router,
         private menuSrv: MenuService,
         @Optional() @Inject(TitleService) private titleSrv: TitleService,
@@ -148,13 +146,13 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
             });
         });
         // add home
-        if (this.home) {
-            paths.splice(0, 0, {
-                title: this.home,
-                icon: 'fa fa-home',
-                link: [this.homeLink!]
-            });
-        }
+        // if (this.home) {
+        //     paths.splice(0, 0, {
+        //         title: this.home,
+        //         icon: 'fa fa-home',
+        //         link: [this.homeLink!]
+        //     });
+        // }
         this.paths = paths;
     }
 

@@ -1,10 +1,5 @@
-<div id="editor-md">
-    <textarea style="display:none;" *ngIf="eruptField"
-              [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
-              [name]="eruptField.fieldName">
-
-    </textarea>
-    <textarea *ngIf="value">
-            {{value}}
-    </textarea>
-</div>
+<nz-spin [nzSpinning]="loading">
+    <div class="markdown-editor-container" [hidden]="editorError">
+        <div #vditorContainer class="vditor-container"></div>
+    </div>
+</nz-spin>

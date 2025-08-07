@@ -1,0 +1,36 @@
+<div class="flow">
+    <div class="p-operation">
+        <div class="p-operation-zoom">
+            <button nz-button nzSize="small" (click)="doZoom(-1)">
+                <span nz-icon nzType="minus"></span>
+            </button>
+            <span class="zoom-text">{{ (scale * 100) | number:'1.0-0' }}%</span>
+            <button nz-button nzSize="small" (click)="doHit()" title="重置视图">
+                <span nz-icon nzType="reload"></span>
+            </button>
+            <button nz-button nzSize="small" (click)="doZoom(1)">
+                <span nz-icon nzType="plus"></span>
+            </button>
+        </div>
+    </div>
+    {{modelValue|json}}
+    <div #canvasContainer class="canvas-container" style="width: 100%;height: 100%;position: relative;">
+        <div class="process">
+            <ng-container *ngFor="let node of modelValue; let i = index;">
+                <app-recursive-node
+                    #node
+                    [readonly]="readonly"
+                    [eruptBuild]="eruptBuild"
+                    [node]="node"
+                    [branch]="modelValue"
+                    [index]="i"
+                    (nodeChange)="modelValue[i] = $event; modelValueChange.emit(modelValue)"
+                    (select)="selectNode($event)"
+                    (delete)="deleteNode($event.branch, $event.index)"
+                    (insertNode)="insertNode($event.branch, $event.index, $event.type)">
+                </app-recursive-node>
+            </ng-container>
+            <div class="process-end">流程结束</div>
+        </div>
+    </div>
+</div>

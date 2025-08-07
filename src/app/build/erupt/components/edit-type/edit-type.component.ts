@@ -107,7 +107,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         }
     }
 
-    isReadonly(eruptFieldModel: EruptFieldModel) {
+    isReadonly(eruptFieldModel: EruptFieldModel):boolean {
         if (this.readonly) {
             return true;
         }
