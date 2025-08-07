@@ -92,17 +92,20 @@
                         </nz-card>
                     </ng-container>
                     <ng-container *ngIf="columns && columns.length > 0">
-                        <st #st [columns]="columns"
-                            [virtualScroll]="biTable.data.length >= 100"
-                            [data]="biTable.data"
-                            (change)="biTableChange($event)"
-                            [loading]="querying"
-                            [ps]="biTable.size"
-                            [page]="biTable.page"
-                            [scroll]="{x: (clientWidth > 768 ? columns.length * 200 : 0) + 'px',y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
-                            [bordered]="settingSrv.layout['bordered']" [resizable]="true"
-                            [size]="'small'" style="margin-bottom: 12px">
-                        </st>
+                        <div [syncVirtualScroll]="biTable.data.length >= 100">
+                            <st #st [columns]="columns"
+                                [virtualScroll]="biTable.data.length >= 100"
+                                [virtualItemSize]="39"
+                                [data]="biTable.data"
+                                (change)="biTableChange($event)"
+                                [loading]="querying"
+                                [ps]="biTable.size"
+                                [page]="biTable.page"
+                                [scroll]="{x: (clientWidth > 768 ? columns.length * 200 : 0) + 'px',y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
+                                [bordered]="settingSrv.layout['bordered']" [resizable]="true"
+                                [size]="'small'" style="margin-bottom: 12px">
+                            </st>
+                        </div>
                         <ng-container *ngIf="biTable.pageType == pageType.backend">
                             <nz-pagination style="text-align: center" nzShowSizeChanger nzShowQuickJumper
                                            [nzPageIndex]="biTable.index"
