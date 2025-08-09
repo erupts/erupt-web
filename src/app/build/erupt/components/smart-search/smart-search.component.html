@@ -11,13 +11,12 @@
     </div>
 
     <!-- 条件构建器 -->
-    <form nz-form [formGroup]="conditionForm" class="condition-builder">
+    <form nz-form class="condition-builder">
         <div class="condition-panel">
             <!-- 条件组列表 -->
-            <div formArrayName="conditionGroups" class="condition-groups">
+            <div class="condition-groups">
                 <div
-                    *ngFor="let group of conditionGroups.controls; let groupIndex = index"
-                    [formGroupName]="groupIndex"
+                    *ngFor="let group of search; let groupIndex = index"
                     class="condition-group-wrapper"
                 >
                     <!-- 或标识 -->
@@ -43,17 +42,16 @@
                                 nzSize="small"
                                 nzDanger
                                 (click)="removeConditionGroup(groupIndex)"
-                                *ngIf="conditionGroups.length > 1"
+                                *ngIf="search.length > 1"
                             >
                                 <i nz-icon nzType="delete" nzTheme="outline"></i>
                             </button>
                         </ng-template>
 
                         <!-- 条件项列表 -->
-                        <div formArrayName="conditions" class="conditions-list">
+                        <div class="conditions-list">
                             <div
-                                *ngFor="let condition of getConditions(groupIndex).controls; let conditionIndex = index"
-                                [formGroupName]="conditionIndex"
+                                *ngFor="let condition of group; let conditionIndex = index"
                                 class="condition-item"
                             >
                                 <!-- 逻辑操作符标签 -->
@@ -74,28 +72,27 @@
                                 <div class="condition-content">
                                     <!-- 字段选择 -->
                                     <nz-form-item>
-                                        <nz-select
-                                            formControlName="field"
-                                            nzPlaceHolder="请选择字段"
-                                            nzShowSearch
-                                            class="field-select"
-                                        >
-                                            <nz-option
-                                                *ngFor="let field of availableFields"
-                                                [nzValue]="field.id"
-                                                [nzLabel]="field.name"
-                                            ></nz-option>
+                                        <nz-select [(ngModel)]="search[groupIndex][conditionIndex].field"
+                                                   [ngModelOptions]="{standalone: true}"
+                                                   nzPlaceHolder="请选择字段" nzShowSearch
+                                                   class="field-select">
+                                            <ng-container *ngFor="let field of eruptModel.eruptFieldModels">
+                                                <nz-option
+                                                    *ngIf="field.eruptFieldJson.edit?.title"
+                                                    [nzValue]="field.fieldName"
+                                                    [nzLabel]="field.eruptFieldJson.edit.title"
+                                                ></nz-option>
+                                            </ng-container>
                                         </nz-select>
                                     </nz-form-item>
 
                                     <!-- 操作符选择 -->
                                     <nz-form-item>
-                                        <nz-select
-                                            formControlName="operator"
-                                            class="operator-select"
-                                        >
+                                        <nz-select [(ngModel)]="search[groupIndex][conditionIndex].operator"
+                                                   [ngModelOptions]="{standalone: true}"
+                                                   class="operator-select">
                                             <nz-option
-                                                *ngFor="let op of operators"
+                                                *ngFor="let op of getOperator(search[groupIndex][conditionIndex].field)"
                                                 [nzValue]="op.value"
                                                 [nzLabel]="op.label"
                                             ></nz-option>
@@ -104,27 +101,11 @@
 
                                     <!-- 值输入 -->
                                     <nz-form-item class="value-input-container">
-                                        <nz-select
-                                            *ngIf="getFieldOptions(condition.get('field')?.value)?.length > 0"
-                                            formControlName="value"
-                                            nzPlaceHolder="请选择"
-                                            nzShowSearch
-                                            class="value-select"
-                                        >
-                                            <nz-option
-                                                *ngFor="let option of getFieldOptions(condition.get('field')?.value)"
-                                                [nzValue]="option.value"
-                                                [nzLabel]="option.label"
-                                            ></nz-option>
-                                        </nz-select>
-
-                                        <nz-input-group
-                                            *ngIf="!getFieldOptions(condition.get('field')?.value)?.length"
-                                            class="value-input"
-                                        >
+                                        <nz-input-group class="value-input">
                                             <input
                                                 nz-input
-                                                formControlName="value"
+                                                [(ngModel)]="search[groupIndex][conditionIndex].value"
+                                                [ngModelOptions]="{standalone: true}"
                                                 placeholder="请输入值"
                                             />
                                         </nz-input-group>

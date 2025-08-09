@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FlowApiService} from '@flow/service/FlowApiService';
+import {FlowApiService} from '@flow/service/flow-api.service';
 import {FlowConfig, FlowGroup} from '@flow/model/flow.model';
 import {R} from '@shared/model/api.model';
 import {takeUntil} from 'rxjs/operators';

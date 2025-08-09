@@ -1,7 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {EditType} from "../../model/erupt.enum";
+import {EruptSearchModel, OperatorDateType, OperatorNumberType, OperatorReferenceType, OperatorStringType} from "../../model/erupt-search.model";
+import {LV} from "../../model/common.model";
 
 export interface ConditionField {
     id: string;
@@ -23,38 +24,17 @@ export interface ConditionGroup {
 }
 
 @Component({
-    selector: 'app-smart-search',
+    selector: 'erupt-smart-search',
     templateUrl: './smart-search.component.html',
     styleUrls: ['./smart-search.component.less']
 })
-export class SmartSearchComponent implements OnInit {
+export class SmartSearchComponent implements OnInit, OnChanges {
 
     @Input() eruptModel: EruptModel;
 
-    conditionForm: FormGroup;
+    @Input() search: EruptSearchModel[][] = [];
 
-    // 可用的字段
-    availableFields: ConditionField[] = [
-        {
-            id: 'paymentMethod', name: '付款方式', type: 'select', options: [
-                {value: 'bankCard', label: '银行卡'},
-                {value: 'alipay', label: '支付宝'},
-                {value: 'wechat', label: '微信支付'},
-                {value: 'cash', label: '现金'}
-            ]
-        },
-        {id: 'amount', name: '金额', type: 'number'},
-        {id: 'date', name: '日期', type: 'date'},
-        {
-            id: 'status', name: '状态', type: 'select', options: [
-                {value: 'pending', label: '待处理'},
-                {value: 'completed', label: '已完成'},
-                {value: 'failed', label: '失败'}
-            ]
-        }
-    ];
-
-    // 操作符
+    // 操作符（占位，后续可与 operatorMap 对齐）
     operators = [
         {value: 'equals', label: '等于'},
         {value: 'notEquals', label: '不等于'},
@@ -64,86 +44,125 @@ export class SmartSearchComponent implements OnInit {
         {value: 'between', label: '介于'}
     ];
 
-    constructor(private fb: FormBuilder) {
-        this.conditionForm = this.fb.group({
-            conditionGroups: this.fb.array([])
-        });
-    }
-
     ngOnInit(): void {
-        // 初始化一个条件组
-        this.addConditionGroup();
+        if (!this.search || this.search.length === 0) {
+            this.search = [[this.createEmptyCondition()]];
+        }
+        console.log(this.eruptModel)
     }
 
-    get conditionGroups(): FormArray {
-        return this.conditionForm.get('conditionGroups') as FormArray;
-    }
-
-    // 添加条件组
-    addConditionGroup(): void {
-        const conditionGroup = this.fb.group({
-            id: [this.generateId()],
-            logicOperator: ['and'],
-            conditions: this.fb.array([])
-        });
-
-        this.conditionGroups.push(conditionGroup);
-
-        // 为新条件组添加一个初始条件
-        this.addCondition(this.conditionGroups.length - 1);
-    }
-
-    // 删除条件组
-    removeConditionGroup(groupIndex: number): void {
-        this.conditionGroups.removeAt(groupIndex);
-    }
-
-    // 获取条件组中的条件数组
-    getConditions(groupIndex: number): FormArray {
-        return this.conditionGroups.at(groupIndex).get('conditions') as FormArray;
-    }
-
-    // 添加条件
-    addCondition(groupIndex: number): void {
-        const condition = this.fb.group({
-            field: ['', Validators.required],
-            operator: ['equals', Validators.required],
-            value: ['', Validators.required]
-        });
-
-        this.getConditions(groupIndex).push(condition);
-    }
-
-    // 删除条件
-    removeCondition(groupIndex: number, conditionIndex: number): void {
-        this.getConditions(groupIndex).removeAt(conditionIndex);
-    }
-
-    // 获取字段的选项
-    getFieldOptions(fieldId: string): { value: string; label: string }[] {
-        const field = this.availableFields.find(f => f.id === fieldId);
-        return field?.options || [];
-    }
-
-    // 生成唯一ID
-    private generateId(): string {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
-    }
-
-    // 提交表单
-    onSubmit(): void {
-        if (this.conditionForm.valid) {
-            console.log('条件设置:', this.conditionForm.value);
-            // 这里可以处理提交逻辑
+    getOperator(field: string): LV<string, string>[] {
+        let res: LV<string, string>[] = [];
+        if (!this.eruptModel || !this.eruptModel.eruptFieldModelMap.get(field)) {
+            return res;
+        }
+        let type: EditType = this.eruptModel.eruptFieldModelMap.get(field).eruptFieldJson.edit.type;
+        let operatorNameMap = {
+            TODAY: '今天',
+            FEW_DAYS: '过去 N 天',
+            FUTURE_DAYS: '未来 N 天',
+            RANGE: '区间',
+            GT: '大于',
+            LT: '小于',
+            EGT: '大于等于',
+            ELT: '小于等于',
+            NULL: '为空',
+            NOT_NULL: '非空',
+            EQ: '等于',
+            NEQ: '不等于',
+            LIKE: '相似',
+            NOT_LIKE: '不相似',
+            START_WITH: '以**开始',
+            END_WITH: '以**结尾',
+            IN: '包含于',
+            NOT_IN: '不包含于',
+        };
+        switch (type) {
+            case EditType.INPUT:
+            case EditType.TEXTAREA:
+            case EditType.TAGS:
+            case EditType.AUTO_COMPLETE:
+                for (let key in OperatorStringType) {
+                    res.push({label: operatorNameMap[key] || key, value: key});
+                }
+                return res;
+            case EditType.NUMBER:
+            case EditType.SLIDER:
+            case EditType.RATE:
+                for (let key in OperatorNumberType) {
+                    res.push({label: operatorNameMap[key] || key, value: key});
+                }
+                return res;
+            case EditType.DATE:
+                for (let key in OperatorDateType) {
+                    res.push({label: operatorNameMap[key] || key, value: key});
+                }
+                return res;
+            case EditType.CHOICE:
+            case EditType.MULTI_CHOICE:
+            case EditType.REFERENCE_TABLE:
+            case EditType.REFERENCE_TREE:
+                for (let key in OperatorReferenceType) {
+                    res.push({label: operatorNameMap[key] || key, value: key});
+                }
+                return res;
+            default:
+                return res;
         }
     }
 
-    // 重置表单
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['search'] && !changes['search'].firstChange) {
+            // 保证每个分组至少有一个条件项
+            if (this.search.length === 0) {
+                this.search = [[this.createEmptyCondition()]];
+            } else {
+                this.search = this.search.map(group => (group && group.length ? group : [this.createEmptyCondition()]));
+            }
+        }
+    }
+
+    private createEmptyCondition(): EruptSearchModel {
+        return {field: '', operator: OperatorStringType.EQ, value: ''};
+    }
+
+    getFieldModel(fieldName: string) {
+        return this.eruptModel?.eruptFieldModels?.find(f => f.fieldName === fieldName);
+    }
+
+    // 添加条件组（基于 search）
+    addConditionGroup(): void {
+        this.search.push([this.createEmptyCondition()]);
+    }
+
+    // 删除条件组（基于 search）
+    removeConditionGroup(groupIndex: number): void {
+        if (groupIndex >= 0 && groupIndex < this.search.length) {
+            this.search.splice(groupIndex, 1);
+        }
+    }
+
+    // 添加条件（基于 search）
+    addCondition(groupIndex: number): void {
+        if (!this.search[groupIndex]) {
+            this.search[groupIndex] = [];
+        }
+        this.search[groupIndex].push(this.createEmptyCondition());
+    }
+
+    // 删除条件（基于 search）
+    removeCondition(groupIndex: number, conditionIndex: number): void {
+        if (this.search[groupIndex]) {
+            this.search[groupIndex].splice(conditionIndex, 1);
+        }
+    }
+
+    // 重置
     resetForm(): void {
-        this.conditionForm.reset();
-        this.conditionGroups.clear();
-        this.addConditionGroup();
+        this.search = [[this.createEmptyCondition()]];
     }
 
     protected readonly editType = EditType;
 }
+
+

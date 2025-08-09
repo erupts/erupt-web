@@ -6,6 +6,7 @@ import {FlowConfig, FlowGroup} from "@flow/model/flow.model";
 import {R} from "@shared/model/api.model";
 import {VL} from "../../erupt/model/erupt-field.model";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
+import {FlexNode} from "@flow/model/flexNode";
 
 @Injectable()
 export class FlowApiService {
@@ -43,11 +44,19 @@ export class FlowApiService {
     }
 
     eruptFlows(): Observable<R<VL[]>> {
-        return this._http.get<R<VL[]>>(RestPath.erupt + "/flow/erupts");
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/flow/flex/erupts");
     }
 
     eruptFlowBuild(erupt: string): Observable<R<EruptBuildModel>> {
-        return this._http.get<R<EruptBuildModel>>(RestPath.erupt + "/flow/erupt-build/" + erupt);
+        return this._http.get<R<EruptBuildModel>>(RestPath.erupt + "/flow/flex/erupt-build/" + erupt);
+    }
+
+    flexEruptFlowBuild(erupt: string): Observable<R<EruptBuildModel>> {
+        return this._http.get<R<EruptBuildModel>>(RestPath.erupt + "/flow/flex/flex-erupt-build/" + erupt);
+    }
+
+    flexNodes(): Observable<R<FlexNode[]>> {
+        return this._http.get<R<FlexNode[]>>(RestPath.erupt + "/flow/flex/flex-nodes");
     }
 
     configList(): Observable<R<FlowConfig[]>> {
