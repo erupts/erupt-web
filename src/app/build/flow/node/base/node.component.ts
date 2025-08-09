@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {NodeRule} from "@flow/model/node.model";
+import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 
 @Component({
     selector: 'erupt-node',
@@ -7,6 +8,8 @@ import {NodeRule} from "@flow/model/node.model";
     styleUrls: ['./node.component.less']
 })
 export class NodeComponent implements AfterViewInit {
+
+    @Input() eruptBuild: EruptBuildModel;
     @Input() headerColor = '';
     @Input() headerIcon = '';
     @Input() content = '';

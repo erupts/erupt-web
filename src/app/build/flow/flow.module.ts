@@ -74,14 +74,15 @@ import {ParallelNodeComponent} from "@flow/node/parallel/parallel-node.component
 import {FlowManagementComponent} from './view/flow-management/flow-management.component';
 import {NzDropDownModule} from "ng-zorro-antd/dropdown";
 import {SharedModule} from "@shared/shared.module";
-import {FlowApiService} from "@flow/service/FlowApiService";
+import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlowConfigComponent} from '@flow/view/flow-management/flow-config/flow-config.component';
 import {IconColorPickerComponent} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {EruptModule} from "../erupt/erupt.module";
 import {EruptFlowFormComponent} from './components/erupt-flow-form/erupt-flow-form.component';
 import {FlowDashboardComponent} from './view/flow-dashboard/flow-dashboard.component';
 import {FlowApprovalComponent} from './view/flow-approval/flow-approval.component';
-import {SystemNodeComponent} from '@flow/node/system/system-node.component';
+import {FlexNodeComponent} from '@flow/node/flex/flex-node.component';
+import {FlowDataService} from "@flow/service/flow-data.service";
 
 
 @NgModule({
@@ -102,10 +103,11 @@ import {SystemNodeComponent} from '@flow/node/system/system-node.component';
         EruptFlowFormComponent,
         FlowDashboardComponent,
         FlowApprovalComponent,
-        SystemNodeComponent
+        FlexNodeComponent
     ],
     providers: [
-        FlowApiService
+        FlowApiService,
+        FlowDataService
     ],
     imports: [
         SharedModule,

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FlowApiService} from "@flow/service/FlowApiService";
+import {FlowApiService} from "@flow/service/flow-api.service";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FormSize} from "../../../erupt/model/erupt.enum";
 

@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {FlowApiService} from '@flow/service/FlowApiService';
+import {FlowApiService} from '@flow/service/flow-api.service';
 import {FlowConfig, FlowGroup} from '@flow/model/flow.model';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';

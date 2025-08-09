@@ -1,4 +1,5 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 
 @Component({
     selector: 'app-branch-node',
@@ -6,6 +7,8 @@ import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewC
     styleUrls: ['./branch-node.component.less']
 })
 export class BranchNodeComponent implements AfterViewInit {
+
+    @Input() eruptBuild: EruptBuildModel;
     @Input() moveLn = false;
     @Input() moveRn = false;
     @Input() type = '';

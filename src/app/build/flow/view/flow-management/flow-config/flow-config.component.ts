@@ -1,13 +1,15 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
-import {VL} from "../../../../erupt/model/erupt-field.model";
-import {FlowApiService} from "@flow/service/FlowApiService";
+import {EruptFieldModel, VL} from "../../../../erupt/model/erupt-field.model";
+import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlowConfig, FlowGroup} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {FormSize} from "../../../../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
+import {FlexNode} from "@flow/model/flexNode";
+import {FlowDataService} from "@flow/service/flow-data.service";
 
 @Component({
     selector: 'app-flow-config',
@@ -22,6 +24,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     flowConfig: FlowConfig;
 
     eruptBuild: EruptBuildModel;
+
+    flexNodes: FlexNode[] = [];
 
     iconPickVisible: boolean = false;
 
@@ -44,7 +48,9 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     @Output() closeConfig = new EventEmitter();
 
-    constructor(private flowApiService: FlowApiService, private modal: NzModalService, private msg: NzMessageService) {
+    constructor(private flowApiService: FlowApiService, private modal: NzModalService,
+                private msg: NzMessageService,
+                private flowDataService: FlowDataService) {
 
     }
 
@@ -75,10 +81,12 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             }
         });
 
-        // 加载数据模型选项
         this.flowApiService.eruptFlows().subscribe(res => {
             this.eruptFlows = res.data;
         });
+        this.flowApiService.flexNodes().subscribe(res => {
+            this.flexNodes = res.data;
+        })
     }
 
     ngAfterViewInit(): void {
@@ -90,6 +98,10 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         this.flowApiService.eruptFlowBuild(erupt).subscribe(res => {
             this.eruptBuild = res.data;
             this.eruptBuild.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
+            this.eruptBuild.eruptModel.eruptFieldModelMap = new Map<string, EruptFieldModel>();
+            this.eruptBuild.eruptModel.eruptFieldModels.forEach(field => {
+                this.eruptBuild.eruptModel.eruptFieldModelMap.set(field.fieldName, field);
+            })
         })
     }
 
