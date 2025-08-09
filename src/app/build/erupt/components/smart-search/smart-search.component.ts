@@ -4,25 +4,6 @@ import {EditType} from "../../model/erupt.enum";
 import {EruptSearchModel, OperatorDateType, OperatorNumberType, OperatorReferenceType, OperatorStringType} from "../../model/erupt-search.model";
 import {LV} from "../../model/common.model";
 
-export interface ConditionField {
-    id: string;
-    name: string;
-    type: 'string' | 'number' | 'date' | 'select';
-    options?: { value: string; label: string }[];
-}
-
-export interface ConditionItem {
-    field: string;
-    operator: string;
-    value: string;
-}
-
-export interface ConditionGroup {
-    id: string;
-    conditions: ConditionItem[];
-    logicOperator: 'and' | 'or';
-}
-
 @Component({
     selector: 'erupt-smart-search',
     templateUrl: './smart-search.component.html',
@@ -33,16 +14,6 @@ export class SmartSearchComponent implements OnInit, OnChanges {
     @Input() eruptModel: EruptModel;
 
     @Input() search: EruptSearchModel[][] = [];
-
-    // 操作符（占位，后续可与 operatorMap 对齐）
-    operators = [
-        {value: 'equals', label: '等于'},
-        {value: 'notEquals', label: '不等于'},
-        {value: 'contains', label: '包含'},
-        {value: 'greaterThan', label: '大于'},
-        {value: 'lessThan', label: '小于'},
-        {value: 'between', label: '介于'}
-    ];
 
     ngOnInit(): void {
         if (!this.search || this.search.length === 0) {
@@ -78,14 +49,6 @@ export class SmartSearchComponent implements OnInit, OnChanges {
             NOT_IN: '不包含于',
         };
         switch (type) {
-            case EditType.INPUT:
-            case EditType.TEXTAREA:
-            case EditType.TAGS:
-            case EditType.AUTO_COMPLETE:
-                for (let key in OperatorStringType) {
-                    res.push({label: operatorNameMap[key] || key, value: key});
-                }
-                return res;
             case EditType.NUMBER:
             case EditType.SLIDER:
             case EditType.RATE:
@@ -102,11 +65,15 @@ export class SmartSearchComponent implements OnInit, OnChanges {
             case EditType.MULTI_CHOICE:
             case EditType.REFERENCE_TABLE:
             case EditType.REFERENCE_TREE:
+            case EditType.BOOLEAN:
                 for (let key in OperatorReferenceType) {
                     res.push({label: operatorNameMap[key] || key, value: key});
                 }
                 return res;
             default:
+                for (let key in OperatorStringType) {
+                    res.push({label: operatorNameMap[key] || key, value: key});
+                }
                 return res;
         }
     }
@@ -128,6 +95,16 @@ export class SmartSearchComponent implements OnInit, OnChanges {
 
     getFieldModel(fieldName: string) {
         return this.eruptModel?.eruptFieldModels?.find(f => f.fieldName === fieldName);
+    }
+
+    onFieldChange(groupIndex: number, conditionIndex: number): void {
+        const condition = this.search[groupIndex]?.[conditionIndex];
+        if (!condition) return;
+        const ops = this.getOperator(condition.field) || [];
+        if (ops.length) {
+            condition.operator = ops[0].value as EruptSearchModel['operator'];
+        }
+        condition.value = undefined;
     }
 
     // 添加条件组（基于 search）

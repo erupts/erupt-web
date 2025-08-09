@@ -73,6 +73,7 @@
                                     <!-- 字段选择 -->
                                     <nz-form-item>
                                         <nz-select [(ngModel)]="search[groupIndex][conditionIndex].field"
+                                                   (ngModelChange)="onFieldChange(groupIndex, conditionIndex)"
                                                    [ngModelOptions]="{standalone: true}"
                                                    nzPlaceHolder="请选择字段" nzShowSearch
                                                    class="field-select">
@@ -91,6 +92,7 @@
                                         <nz-select [(ngModel)]="search[groupIndex][conditionIndex].operator"
                                                    [ngModelOptions]="{standalone: true}"
                                                    class="operator-select">
+
                                             <nz-option
                                                 *ngFor="let op of getOperator(search[groupIndex][conditionIndex].field)"
                                                 [nzValue]="op.value"
@@ -99,17 +101,24 @@
                                         </nz-select>
                                     </nz-form-item>
 
-                                    <!-- 值输入 -->
-                                    <nz-form-item class="value-input-container">
-                                        <nz-input-group class="value-input">
-                                            <input
-                                                nz-input
-                                                [(ngModel)]="search[groupIndex][conditionIndex].value"
-                                                [ngModelOptions]="{standalone: true}"
-                                                placeholder="请输入值"
-                                            />
-                                        </nz-input-group>
-                                    </nz-form-item>
+                                    <!-- 值输入-->
+                                    <div class="value-row" *ngIf="search[groupIndex][conditionIndex].operator">
+                                        <nz-form-item class="value-input-container">
+                                            <ng-container *ngIf="1!=1 else normal">
+
+                                            </ng-container>
+                                            <ng-template #normal>
+                                                <nz-input-group class="value-input">
+                                                    <input
+                                                        nz-input
+                                                        [(ngModel)]="search[groupIndex][conditionIndex].value"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        placeholder="请输入值"
+                                                    />
+                                                </nz-input-group>
+                                            </ng-template>
+                                        </nz-form-item>
+                                    </div>
                                 </div>
                             </div>
 
