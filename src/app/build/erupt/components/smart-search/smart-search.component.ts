@@ -78,6 +78,10 @@ export class SmartSearchComponent implements OnInit, OnChanges {
         }
     }
 
+    isInputOperator(operator: string): boolean {
+        return [OperatorStringType.LIKE, OperatorStringType.NOT_LIKE, OperatorStringType.START_WITH, OperatorStringType.END_WITH].includes(operator as OperatorStringType);
+    }
+
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['search'] && !changes['search'].firstChange) {
             // 保证每个分组至少有一个条件项
@@ -91,10 +95,6 @@ export class SmartSearchComponent implements OnInit, OnChanges {
 
     private createEmptyCondition(): EruptSearchModel {
         return {field: '', operator: OperatorStringType.EQ, value: ''};
-    }
-
-    getFieldModel(fieldName: string) {
-        return this.eruptModel?.eruptFieldModels?.find(f => f.fieldName === fieldName);
     }
 
     onFieldChange(groupIndex: number, conditionIndex: number): void {
