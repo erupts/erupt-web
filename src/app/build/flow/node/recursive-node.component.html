@@ -77,6 +77,7 @@
                                        [(modelValue)]="node.branches[i]"
                                        [index]="i"
                                        [eruptBuild]="eruptBuild"
+                                       [branch]="node.branches[i].branches"
                                        [moveRn]="i < node.branches.length - 1"
                                        [moveLn]="i > 0"
                                        [isDefault]="i === node.branches.length - 1 && false"
@@ -110,6 +111,7 @@
         <erupt-node
             [readonly]="readonly"
             [class]="{'p-branch-end': branch.length === index + 1}"
+            (insertFlexNode)="onInsertFlexNode($event)"
             [showBody]="false"
             (insertNode)="insertNode.emit({branch: branch, index: index, type: $event})">
         </erupt-node>
@@ -138,6 +140,7 @@
                         [moveRn]="i < node.branches.length - 2"
                         [moveLn]="i > 0"
                         [isDefault]="i === node.branches.length - 1 && true"
+                        [branch]="node.branches[i].branches"
                         (insertNode)="insertNodeFun(node.branches[i].branches, -1, $event.type)"
                         (delete)="deleteBranch(i)"
                         (copy)="copyBranch(i)"
@@ -168,6 +171,7 @@
             [readonly]="readonly"
             [class]="{'p-branch-end': branch.length === index + 1}"
             [showBody]="false"
+            (insertFlexNode)="onInsertFlexNode($event)"
             (insertNode)="insertNode.emit({branch: branch, index: index, type: $event})">
         </erupt-node>
     </div>

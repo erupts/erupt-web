@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
-import {geneNodeId} from "@flow/util/flow.util";
+import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
@@ -64,12 +64,6 @@ export class CcNodeComponent extends ANode {
     }
 
     onInsertFlexNode(flex: FlexNodeModel) {
-        this.branch.splice(this.index + 1, 0, {
-            id: geneNodeId(),
-            type: NodeType.FlEX,
-            flex: flex.code,
-            name: flex.name,
-            color: flex.color
-        });
+        insertFlexNodeFun(this.branch, this.index, flex);
     }
 }
