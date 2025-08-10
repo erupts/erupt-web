@@ -1,39 +1,99 @@
-import {Component, Input} from '@angular/core';
-import {ANode} from "@flow/node/abstract-node";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {geneNodeId} from "@flow/util/flow-util";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
+import {ANode} from "@flow/node/abstract-node";
+import {FlowApiService} from "@flow/service/flow-api.service";
+import {FlowDataService} from "@flow/service/flow-data.service";
 
 @Component({
-    selector: 'app-system-node',
+    selector: 'erupt-flex-node',
     templateUrl: './flex-node.component.html',
     styleUrls: ['./flex-node.component.less']
 })
-export class FlexNodeComponent extends ANode {
+export class FlexNodeComponent extends ANode implements OnInit {
 
+    @Input() readonly = false;
     @Input() eruptBuild: EruptBuildModel;
+    @Input() modelValue: NodeRule;
+    @Input() branch: any[] = [];
+    @Input() index = 0;
+    @Output() modelValueChange = new EventEmitter<any>();
+    @Output() select = new EventEmitter<any>();
+    @Output() delete = new EventEmitter<any>();
+    @Output() insertNode = new EventEmitter<any>();
 
-    color(): string {
-        return "#09f";
+    flexErupt: EruptBuildModel;
+
+    constructor(private flowApiService?: FlowApiService,
+                private flowDataService?: FlowDataService) {
+        super();
     }
 
-    create(): NodeRule {
+    ngOnInit(): void {
+        if (this.modelValue?.flex) {
+            this.flowApiService.flexEruptFlowBuild(this.modelValue.flex).subscribe(res => {
+                this.flexErupt = res.data;
+            })
+        }
+    }
+
+    onInsertNode(type: string) {
+        this.insertNode.emit({
+            branch: this.branch,
+            index: this.index,
+            type: type
+        });
+    }
+
+    onInsertFlexNode(flex: FlexNodeModel) {
+        this.branch.splice(this.index + 1, 0, {
+            id: geneNodeId(),
+            type: NodeType.FlEX,
+            flex: flex.code,
+            name: flex.name,
+            color: flex.color
+        });
+    }
+
+    color(): string {
+        if (this.modelValue?.flex) {
+            for (let flexNode of this.flowDataService.flexNodes) {
+                if (flexNode.code === this.modelValue.flex) {
+                    return flexNode.color;
+                }
+            }
+        }
+        return "#000";
+    }
+
+    create(flex?: FlexNodeModel): NodeRule {
         return {
             id: geneNodeId(),
             type: this.type(),
-            name: this.name()
+            flex: flex.code,
+            name: flex.name,
         };
     }
 
-    name(): string {
-        return "Flex";
+    onSelect() {
+        this.select.emit(this.modelValue);
     }
 
-    onSelect(): void {
+    onDelete() {
+        this.delete.emit({
+            branch: this.branch,
+            index: this.index
+        });
     }
 
     type(): NodeType {
         return NodeType.FlEX;
+    }
+
+    name(): string {
+        return "Flex";
     }
 
 }

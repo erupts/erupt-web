@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {NodeRule} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
 
 @Component({
     selector: 'erupt-node',
@@ -20,11 +21,14 @@ export class NodeComponent implements AfterViewInit {
     @Input() showClose = true;
     @Input() showBody = true;
     @Input() placeholder = '请设置';
+    @Input() hasConfig: boolean = true;
 
     @Output() modelChange = new EventEmitter<any>();
     @Output() select = new EventEmitter<void>();
     @Output() delete = new EventEmitter<void>();
     @Output() insertNode = new EventEmitter<string>();
+
+    @Output() insertFlexNode = new EventEmitter<FlexNodeModel>();
 
     @ViewChild('nodeNameInput', {static: false}) nodeNameInput!: ElementRef;
 
@@ -32,8 +36,13 @@ export class NodeComponent implements AfterViewInit {
 
     enableEdit = false;
 
+    constructor() {
+
+    }
+
+
     ngAfterViewInit() {
-        // 组件初始化后的处理
+
     }
 
     onEnableEdit() {
@@ -52,6 +61,9 @@ export class NodeComponent implements AfterViewInit {
     }
 
     onSelect() {
+        if (!this.hasConfig || this.readonly) {
+            return;
+        }
         this.showDrawer = true;
         this.select.emit();
     }
@@ -62,6 +74,10 @@ export class NodeComponent implements AfterViewInit {
 
     onInsertNode(type: string) {
         this.insertNode.emit(type);
+    }
+
+    onInsertFlexNode(flex: FlexNodeModel) {
+        this.insertFlexNode.emit(flex);
     }
 
     close(): void {

@@ -9,7 +9,6 @@
          [style.--shadowColor]="headerColor">
         <div class="p-node-header" [style.background-color]="headerColor">
             <div>
-<!--                <span *ngIf="!enableEdit" nz-icon [nzType]="headerIcon" nzSize="15"></span>-->
                 <input *ngIf="enableEdit"
                        style="color: #000;"
                        #nodeNameInput
@@ -26,24 +25,24 @@
 
         <div class="p-node-content" (click)="onSelect()">
             <ng-content></ng-content>
-            <span nz-icon nzType="arrow-right" class="w-p-node-click"></span>
+            <span *ngIf="hasConfig" nz-icon nzType="arrow-right" class="w-p-node-click"></span>
         </div>
     </div>
 
     <div class="p-node-add">
-        <app-insert-btn (insertNode)="onInsertNode($event)"></app-insert-btn>
+        <app-insert-btn (insertNode)="onInsertNode($event)" (insertFlexNode)="onInsertFlexNode($event)"></app-insert-btn>
     </div>
 </div>
 <nz-drawer
     [nzVisible]="showDrawer"
     (nzOnClose)="close()"
     nzPlacement="right"
-    nzTitle="Basic Drawer"
+    [nzTitle]="model?.name"
     [nzFooter]="footerTpl"
     [nzWidth]="600"
 >
     <ng-container *nzDrawerContent>
-        <p>Some contents...</p>
+        <ng-content select="[config]"></ng-content>
     </ng-container>
 </nz-drawer>
 <ng-template #footerTpl>

@@ -8,7 +8,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {FormSize} from "../../../../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
-import {FlexNode} from "@flow/model/flexNode";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {FlowDataService} from "@flow/service/flow-data.service";
 
 @Component({
@@ -25,7 +25,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     eruptBuild: EruptBuildModel;
 
-    flexNodes: FlexNode[] = [];
+    flexNodes: FlexNodeModel[] = [];
 
     iconPickVisible: boolean = false;
 

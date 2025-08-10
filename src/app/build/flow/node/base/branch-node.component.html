@@ -47,7 +47,10 @@
     </div>
 
     <div class="p-node-add">
-        <app-insert-btn *ngIf="!readonly" (insertNode)="onInsertNode($event)"></app-insert-btn>
+        <app-insert-btn *ngIf="!readonly" (insertNode)="onInsertNode($event)"
+                        (insertFlexNode)="onInsertFlexNode($event)">
+
+        </app-insert-btn>
     </div>
 </div>
 <nz-drawer

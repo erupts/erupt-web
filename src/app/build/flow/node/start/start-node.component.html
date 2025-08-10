@@ -7,7 +7,9 @@
     [errorInfo]="errInfo"
     (select)="onSelect()"
     (insertNode)="onInsertNode($event)"
-    headerColor="#80929C"
+    (insertFlexNode)="onInsertFlexNode($event)"
+    [headerColor]="color()"
+    [hasConfig]="false"
     headerIcon="user">
     流程从本节点开始
 </erupt-node>

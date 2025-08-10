@@ -113,7 +113,7 @@
                                               search[groupIndex][conditionIndex].operator === 'EGT'        ||
                                               search[groupIndex][conditionIndex].operator === 'ELT'
                                             ">
-                                                <nz-input-number style="width: 100%"
+                                                <nz-input-number style="width: 100%" [ngModelOptions]="{standalone: true}"
                                                                  [(ngModel)]="search[groupIndex][conditionIndex].value"
                                                                  [nzMin]="0">
                                                 </nz-input-number>
@@ -128,7 +128,7 @@
                                               search[groupIndex][conditionIndex].operator === 'START_WITH'||
                                               search[groupIndex][conditionIndex].operator === 'END_WITH'
                                             ">
-                                                <input nz-input type="text" placeholder="请输入"
+                                                <input nz-input type="text" placeholder="请输入" [ngModelOptions]="{standalone: true}"
                                                        [(ngModel)]="search[groupIndex][conditionIndex].value">
                                             </ng-container>
                                             <!-- 区间选择器（RANGE） -->
@@ -140,7 +140,7 @@
                                               search[groupIndex][conditionIndex].operator === 'IN' ||
                                               search[groupIndex][conditionIndex].operator === 'NOT_IN'
                                             ">
-                                                <nz-select
+                                                <nz-select [ngModelOptions]="{standalone: true}"
                                                     style="width: 100%"
                                                     nzMode="tags"
                                                     [nzPlaceHolder]="'请选择'"
