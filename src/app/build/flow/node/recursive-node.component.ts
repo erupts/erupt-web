@@ -22,7 +22,7 @@ export class RecursiveNodeComponent {
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
 
-    @ViewChildren('startNode, approvalNode, ccNode, exclusiveNode, parallelNode, branchNode, childNodeRef') nodeRefs!: QueryList<ElementRef>;
+    @ViewChildren('startNode, approvalNode, flexNode, ccNode, exclusiveNode, parallelNode, branchNode, childNodeRef') nodeRefs!: QueryList<ElementRef>;
 
     nodeType = NodeType;
 

@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
 
 @Component({
     selector: 'app-branch-node',
@@ -9,6 +10,8 @@ import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 export class BranchNodeComponent implements AfterViewInit {
 
     @Input() eruptBuild: EruptBuildModel;
+    @Output() insertFlexNode = new EventEmitter<FlexNodeModel>();
+
     @Input() moveLn = false;
     @Input() moveRn = false;
     @Input() type = '';
@@ -67,6 +70,10 @@ export class BranchNodeComponent implements AfterViewInit {
 
     onInsertNode(type: string) {
         this.insertNode.emit(type);
+    }
+
+    onInsertFlexNode(flex: FlexNodeModel) {
+        this.insertFlexNode.emit(flex);
     }
 
     onCopy() {

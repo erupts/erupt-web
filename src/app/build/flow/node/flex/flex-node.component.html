@@ -1,1 +1,17 @@
-<p>system-node works!</p>
+<erupt-node
+    [(model)]="modelValue"
+    [readonly]="readonly"
+    [headerColor]="color()"
+    [eruptBuild]="eruptBuild"
+    headerIcon="notification"
+    (select)="onSelect()"
+    (insertNode)="onInsertNode($event)"
+    (insertFlexNode)="onInsertFlexNode($event)"
+    (delete)="onDelete()">
+    <div config>
+        <erupt-flow-form [eruptBuild]="flexErupt" [readonly]="false" [oneLine]="true"/>
+    </div>
+    <div>
+        {{ modelValue?.name }}
+    </div>
+</erupt-node>

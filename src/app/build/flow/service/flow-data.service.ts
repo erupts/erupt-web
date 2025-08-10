@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {FlowApiService} from "@flow/service/flow-api.service";
-import {FlexNode} from "@flow/model/flexNode";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
 
 @Injectable({
     providedIn: 'root'
 })
 export class FlowDataService {
 
-    flexNodes: FlexNode[] = [];
+    flexNodes: FlexNodeModel[] = [];
 
     constructor(flowApiService: FlowApiService) {
         flowApiService.flexNodes().subscribe(res => {

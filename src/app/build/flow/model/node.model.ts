@@ -2,6 +2,7 @@ export interface NodeRule {
     id: string;
     name: string;
     type: NodeType;
+    flex?: string;
     prop?: any;
     branches?: NodeRule[];
 }

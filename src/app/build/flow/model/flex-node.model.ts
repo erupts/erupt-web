@@ -1,4 +1,4 @@
-export interface FlexNode {
+export interface FlexNodeModel {
     code: string,
     name: string,
     color: string,

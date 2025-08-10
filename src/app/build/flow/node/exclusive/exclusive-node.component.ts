@@ -3,6 +3,7 @@ import {ANode} from "@flow/node/abstract-node";
 import {geneNodeId} from "@flow/util/flow-util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
 
 @Component({
     selector: 'app-exclusive-node',
@@ -38,6 +39,17 @@ export class ExclusiveNodeComponent extends ANode {
         this.delete.emit({
             branch: this.branch,
             index: this.index
+        });
+    }
+
+    onInsertFlexNode(flex: FlexNodeModel) {
+        console.log(flex);
+        this.branch.splice(this.index + 1, 0, {
+            id: geneNodeId(),
+            type: NodeType.FlEX,
+            flex: flex.code,
+            name: flex.name,
+            color: flex.color
         });
     }
 
