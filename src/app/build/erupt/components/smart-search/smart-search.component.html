@@ -104,19 +104,49 @@
                                     <!-- 值输入-->
                                     <div class="value-row" *ngIf="search[groupIndex][conditionIndex].operator">
                                         <nz-form-item class="value-input-container">
-                                            <ng-container *ngIf="1!=1 else normal">
-
+                                            <!-- 数字输入（天数/数值） -->
+                                            <ng-container *ngIf="
+                                              search[groupIndex][conditionIndex].operator === 'FUTURE_DAYS' ||
+                                              search[groupIndex][conditionIndex].operator === 'FEW_DAYS'   ||
+                                              search[groupIndex][conditionIndex].operator === 'GT'         ||
+                                              search[groupIndex][conditionIndex].operator === 'LT'         ||
+                                              search[groupIndex][conditionIndex].operator === 'EGT'        ||
+                                              search[groupIndex][conditionIndex].operator === 'ELT'
+                                            ">
+                                                <nz-input-number style="width: 100%"
+                                                                 [(ngModel)]="search[groupIndex][conditionIndex].value"
+                                                                 [nzMin]="0">
+                                                </nz-input-number>
                                             </ng-container>
-                                            <ng-template #normal>
-                                                <nz-input-group class="value-input">
-                                                    <input
-                                                        nz-input
-                                                        [(ngModel)]="search[groupIndex][conditionIndex].value"
-                                                        [ngModelOptions]="{standalone: true}"
-                                                        placeholder="请输入值"
-                                                    />
-                                                </nz-input-group>
-                                            </ng-template>
+
+                                            <!-- 普通文本输入 -->
+                                            <ng-container *ngIf="
+                                              search[groupIndex][conditionIndex].operator === 'EQ'        ||
+                                              search[groupIndex][conditionIndex].operator === 'NEQ'       ||
+                                              search[groupIndex][conditionIndex].operator === 'LIKE'      ||
+                                              search[groupIndex][conditionIndex].operator === 'NOT_LIKE'  ||
+                                              search[groupIndex][conditionIndex].operator === 'START_WITH'||
+                                              search[groupIndex][conditionIndex].operator === 'END_WITH'
+                                            ">
+                                                <input nz-input type="text" placeholder="请输入"
+                                                       [(ngModel)]="search[groupIndex][conditionIndex].value">
+                                            </ng-container>
+                                            <!-- 区间选择器（RANGE） -->
+                                            <ng-container *ngIf="search[groupIndex][conditionIndex].operator === 'RANGE'">
+                                                <nz-range-picker style="width: 100%" [nzShowTime]="true" [(ngModel)]="search[groupIndex][conditionIndex].value"></nz-range-picker>
+                                            </ng-container>
+                                            <!-- 多选下拉（IN / NOT_IN） -->
+                                            <ng-container *ngIf="
+                                              search[groupIndex][conditionIndex].operator === 'IN' ||
+                                              search[groupIndex][conditionIndex].operator === 'NOT_IN'
+                                            ">
+                                                <nz-select
+                                                    style="width: 100%"
+                                                    nzMode="tags"
+                                                    [nzPlaceHolder]="'请选择'"
+                                                    [(ngModel)]="search[groupIndex][conditionIndex].value">
+                                                </nz-select>
+                                            </ng-container>
                                         </nz-form-item>
                                     </div>
                                 </div>
