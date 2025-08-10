@@ -1,6 +1,6 @@
 import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
 import {NodeMap} from '@flow/node/process-nodes';
-import {reloadNodeId} from '@flow/util/flow-util';
+import {reloadNodeId} from '@flow/util/flow.util';
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 
