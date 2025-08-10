@@ -1,8 +1,9 @@
 import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
 import {NodeMap} from '@flow/node/process-nodes';
-import {reloadNodeId} from '@flow/util/flow.util';
+import {insertFlexNodeFun, reloadNodeId} from '@flow/util/flow.util';
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
 
 @Component({
     selector: 'app-recursive-node',
@@ -35,6 +36,10 @@ export class RecursiveNodeComponent {
     insertNodeFun(branch: any[], i: number, type: string) {
         const newNode = NodeMap[type].create();
         branch.splice(i + 1, 0, newNode);
+    }
+
+    onInsertFlexNode(flex: FlexNodeModel) {
+        insertFlexNodeFun(this.branch, this.index, flex);
     }
 
     /**
