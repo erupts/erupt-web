@@ -18,8 +18,6 @@ export class EruptFlowFormComponent implements OnInit {
 
     @Input() eruptBuild: EruptBuildModel;
 
-    @Input() oneLine: boolean = true;
-
     constructor(private flowApiService: FlowApiService) {
 
     }
@@ -29,15 +27,8 @@ export class EruptFlowFormComponent implements OnInit {
         if (this.erupt) {
             this.flowApiService.eruptFlowBuild(this.erupt).subscribe(res => {
                 this.eruptBuild = res.data;
-                if (this.oneLine) {
-                    this.eruptBuild.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
-                }
-            })
-        }
-        if (this.eruptBuild) {
-            if (this.oneLine) {
                 this.eruptBuild.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
-            }
+            })
         }
     }
 }

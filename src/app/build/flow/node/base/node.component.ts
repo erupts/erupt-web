@@ -20,13 +20,14 @@ export class NodeComponent implements AfterViewInit {
     @Input() errorInfo = '';
     @Input() showClose = true;
     @Input() showBody = true;
-    @Input() placeholder = '请设置';
     @Input() hasConfig: boolean = true;
 
     @Output() modelChange = new EventEmitter<any>();
     @Output() select = new EventEmitter<void>();
     @Output() delete = new EventEmitter<void>();
     @Output() insertNode = new EventEmitter<string>();
+
+    @Output() saveProp = new EventEmitter<void>();
 
     @Output() insertFlexNode = new EventEmitter<FlexNodeModel>();
 
@@ -81,6 +82,11 @@ export class NodeComponent implements AfterViewInit {
     }
 
     close(): void {
+        this.showDrawer = false;
+    }
+
+    save(): void {
+        this.saveProp.emit();
         this.showDrawer = false;
     }
 }
