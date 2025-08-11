@@ -14,7 +14,6 @@
         </div>
     </div>
     <div #canvasContainer class="canvas-container" style="width: 100%;height: 100%;position: relative;">
-        {{modelValue|json}}
         <div class="process">
             <ng-container *ngFor="let node of modelValue; let i = index;">
                 <app-recursive-node

@@ -24,11 +24,11 @@ export class StartNodeComponent extends ANode {
     showErr = false;
     errInfo: any = null;
 
-    onSelect() {
+    override onSelect() {
         this.select.emit(this.model);
     }
 
-    onInsertNode(type: string) {
+    override onInsertNode(type: string) {
         this.insertNode.emit({
             branch: this.branch,
             index: this.index,
@@ -36,28 +36,32 @@ export class StartNodeComponent extends ANode {
         });
     }
 
-    onInsertFlexNode(flex: FlexNodeModel) {
+    override onInsertFlexNode(flex: FlexNodeModel) {
         insertFlexNodeFun(this.branch, this.index, flex);
     }
 
-    type(): NodeType {
+
+    override type(): NodeType {
         return NodeType.START;
     }
 
-    color(): string {
+    override color(): string {
         return "#80929C";
     }
 
-    name(): string {
+    override name(): string {
         return "发起人";
     }
 
-    create(): any {
+    override create(): any {
         return {
             id: geneNodeId(),
             type: this.type(),
             name: this.name(),
         }
+    }
+
+    override onDelete(): void {
     }
 
 }

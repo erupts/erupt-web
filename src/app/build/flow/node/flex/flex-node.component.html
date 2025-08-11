@@ -3,13 +3,13 @@
     [readonly]="readonly"
     [headerColor]="color()"
     [eruptBuild]="eruptBuild"
-    headerIcon="notification"
     (select)="onSelect()"
     (insertNode)="onInsertNode($event)"
     (insertFlexNode)="onInsertFlexNode($event)"
+    (saveProp)="onSaveProp()"
     (delete)="onDelete()">
     <div config>
-        <erupt-flow-form [eruptBuild]="flexErupt" [readonly]="false" [oneLine]="true"/>
+        <erupt-flow-form [eruptBuild]="flexErupt" [readonly]="false"/>
     </div>
     <div>
         {{ modelValue?.name }}
