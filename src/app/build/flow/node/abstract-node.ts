@@ -17,6 +17,8 @@ export abstract class ANode {
 
     abstract onInsertNode(type: string): void;
 
+    abstract onSaveProp(): void;
+
     abstract onDelete(): void;
 
     createBranch(i?: number): NodeRule {

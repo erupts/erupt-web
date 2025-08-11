@@ -31,18 +31,18 @@ export class ExclusiveNodeComponent extends ANode {
     showErr = false;
     errInfo: any = null;
 
-    onSelect() {
+    override onSelect() {
         this.select.emit(this.modelValue);
     }
 
-    onDelete() {
+    override onDelete() {
         this.delete.emit({
             branch: this.branch,
             index: this.index
         });
     }
 
-    onInsertNode(type: string) {
+    override onInsertNode(type: string) {
         this.insertNode.emit({
             branch: this.branch,
             index: this.index,
@@ -50,7 +50,7 @@ export class ExclusiveNodeComponent extends ANode {
         });
     }
 
-    onInsertFlexNode(flex: FlexNodeModel) {
+    override onInsertFlexNode(flex: FlexNodeModel) {
         insertFlexNodeFun(this.branch, -1, flex);
         console.log(this.branch, flex)
     }
@@ -63,19 +63,19 @@ export class ExclusiveNodeComponent extends ANode {
         this.moveR.emit();
     }
 
-    type(): NodeType {
+    override type(): NodeType {
         return NodeType.EXCLUSION;
     }
 
-    color(): string {
+    override color(): string {
         return "#59B9A4";
     }
 
-    name(): string {
+    override name(): string {
         return "互斥条件";
     }
 
-    create(): NodeRule {
+    override create(): NodeRule {
         return {
             id: geneNodeId() + '_fork',
             type: NodeType.EXCLUSION,
@@ -90,6 +90,9 @@ export class ExclusiveNodeComponent extends ANode {
                 }
             ]
         }
+    }
+
+    override onSaveProp(): void {
     }
 
     override createBranch(i?: number): NodeRule {
