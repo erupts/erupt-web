@@ -26,31 +26,31 @@ export class ApprovalNodeComponent extends ANode {
     errInfo: any = null;
 
 
-    type(): NodeType {
+    override type(): NodeType {
         return NodeType.APPROVAL;
     }
 
-    name(): string {
+    override name(): string {
         return "审批人";
     }
 
-    color(): string {
+    override color(): string {
         return "#EC8151";
     }
 
 
-    onSelect() {
+    override onSelect() {
         // this.select.emit(this.modelValue);
     }
 
-    onDelete() {
+    override onDelete() {
         this.delete.emit({
             branch: this.branch,
             index: this.index
         });
     }
 
-    onInsertNode(type: string) {
+    override onInsertNode(type: string) {
         this.insertNode.emit({
             branch: this.branch,
             index: this.index,
@@ -58,19 +58,19 @@ export class ApprovalNodeComponent extends ANode {
         });
     }
 
-    onInsertFlexNode(flex: FlexNodeModel) {
+    override onInsertFlexNode(flex: FlexNodeModel) {
         insertFlexNodeFun(this.branch, this.index, flex);
     }
 
-    click(): void {
-    }
-
-    create(): any {
+    override create(): any {
         return {
             id: geneNodeId(),
             type: this.type(),
             name: this.name()
         };
+    }
+
+    override onSaveProp(): void {
     }
 
 }

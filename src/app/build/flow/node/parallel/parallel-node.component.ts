@@ -27,18 +27,18 @@ export class ParallelNodeComponent extends ANode {
     @Output() moveL = new EventEmitter<void>();
     @Output() moveR = new EventEmitter<void>();
 
-    onSelect() {
+    override onSelect() {
         this.select.emit(this.modelValue);
     }
 
-    onDelete() {
+    override onDelete() {
         this.delete.emit({
             branch: this.branch,
             index: this.index
         });
     }
 
-    onInsertNode(type: string) {
+    override onInsertNode(type: string) {
         this.insertNode.emit({
             branch: this.branch,
             index: this.index,
@@ -46,7 +46,7 @@ export class ParallelNodeComponent extends ANode {
         });
     }
 
-    onInsertFlexNode(flex: FlexNodeModel) {
+    override onInsertFlexNode(flex: FlexNodeModel) {
         insertFlexNodeFun(this.branch, -1, flex);
     }
 
@@ -58,19 +58,19 @@ export class ParallelNodeComponent extends ANode {
         this.moveR.emit();
     }
 
-    type(): NodeType {
+    override type(): NodeType {
         return NodeType.PARALLEL;
     }
 
-    color(): string {
+    override color(): string {
         return "#718dff";
     }
 
-    name(): string {
+    override name(): string {
         return "并行分支";
     }
 
-    create(): NodeRule {
+    override create(): NodeRule {
         return {
             id: geneNodeId() + '_fork',
             type: this.type(),
@@ -89,5 +89,8 @@ export class ParallelNodeComponent extends ANode {
             name: '并行路径' + i,
             branches: []
         };
+    }
+
+    override onSaveProp(): void {
     }
 }

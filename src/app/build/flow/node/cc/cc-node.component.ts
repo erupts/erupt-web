@@ -24,18 +24,18 @@ export class CcNodeComponent extends ANode {
     showErr = false;
     errInfo: any = null;
 
-    onSelect() {
+    override onSelect() {
         this.select.emit(this.modelValue);
     }
 
-    onDelete() {
+    override onDelete() {
         this.delete.emit({
             branch: this.branch,
             index: this.index
         });
     }
 
-    onInsertNode(type: string) {
+    override onInsertNode(type: string) {
         this.insertNode.emit({
             branch: this.branch,
             index: this.index,
@@ -43,19 +43,19 @@ export class CcNodeComponent extends ANode {
         });
     }
 
-    type(): NodeType {
+    override type(): NodeType {
         return NodeType.CC;
     }
 
-    color(): string {
+    override color(): string {
         return "#5994F3";
     }
 
-    name(): string {
+    override name(): string {
         return "抄送人";
     }
 
-    create(): NodeRule {
+    override create(): NodeRule {
         return {
             id: geneNodeId(),
             type: this.type(),
@@ -63,7 +63,10 @@ export class CcNodeComponent extends ANode {
         }
     }
 
-    onInsertFlexNode(flex: FlexNodeModel) {
+    override onInsertFlexNode(flex: FlexNodeModel) {
         insertFlexNodeFun(this.branch, this.index, flex);
+    }
+
+    override onSaveProp(): void {
     }
 }

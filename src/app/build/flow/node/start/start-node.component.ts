@@ -64,4 +64,7 @@ export class StartNodeComponent extends ANode {
     override onDelete(): void {
     }
 
+    override onSaveProp(): void {
+    }
+
 }
