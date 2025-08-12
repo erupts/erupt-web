@@ -44,6 +44,7 @@ import {MultiChoiceComponent} from './components/multi-choice/multi-choice.compo
 import {GanttComponent} from "./components/gantt/gantt.component";
 import {SignaturePadComponent} from './components/signature-pad/signature-pad.component';
 import {SmartSearchComponent} from './components/smart-search/smart-search.component';
+import {UpmsSelectComponent} from './components/upms-select/upms-select.component';
 
 @NgModule({
     imports: [
@@ -113,7 +114,8 @@ import {SmartSearchComponent} from './components/smart-search/smart-search.compo
         MultiChoiceComponent,
         GanttComponent,
         SignaturePadComponent,
-        SmartSearchComponent
+        SmartSearchComponent,
+        UpmsSelectComponent
     ]
 })
 export class EruptModule {
