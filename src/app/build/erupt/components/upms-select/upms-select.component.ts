@@ -88,4 +88,19 @@ export class UpmsSelectComponent implements OnInit {
   get currentTabKey() {
     return this.tabs[this.activeTab]?.key || 'roles';
   }
+
+  // 性能优化：trackBy函数
+  trackByRole(index: number, role: Role): string {
+    return role.id;
+  }
+
+  // 清空搜索
+  clearSearch() {
+    this.searchText = '';
+  }
+
+  // 获取当前标签页信息
+  getCurrentTabInfo() {
+    return this.tabs[this.activeTab];
+  }
 }

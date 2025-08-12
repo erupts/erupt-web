@@ -1,87 +1,115 @@
 <div class="upms-select-container">
-  <!-- 左侧面板：角色选择 -->
-  <div class="left-panel">
-    <!-- 标签页 -->
-    <div class="tabs">
-      <div 
-        *ngFor="let tab of tabs; let i = index" 
-        class="tab-item"
-        [class.active]="activeTab === i"
-        (click)="onTabChange(i)"
-      >
-        {{ tab.label }}
-      </div>
-    </div>
-
-    <!-- 搜索框 -->
-    <div class="search-container">
-      <nz-input-group nzSize="large">
-        <input 
-          nz-input 
-          placeholder="搜索角色名称"
-          [(ngModel)]="searchText"
-        />
-        <span nz-input-group-suffix>
-          <span nz-icon nzType="search" nzTheme="outline"></span>
+    <!-- 左侧面板：角色选择 -->
+    <div class="left-panel">
+        <!-- 标签页 -->
+        <div class="tabs">
+            <div
+                *ngFor="let tab of tabs; let i = index"
+                class="tab-item"
+                [class.active]="activeTab === i"
+                (click)="onTabChange(i)"
+            >
+        <span nz-icon
+              [nzType]="i === 0 ? 'team' : i === 1 ? 'safety-certificate' : 'usergroup-add'"
+              nzTheme="outline">
         </span>
-      </nz-input-group>
+                <span class="tab-label">{{ tab.label }}</span>
+            </div>
+        </div>
+
+        <!-- 搜索框 -->
+        <div class="search-container">
+            <nz-input-group nzSize="default">
+                <input
+                    nz-input
+                    placeholder="搜索角色名称..."
+                    [(ngModel)]="searchText"
+                />
+            </nz-input-group>
+        </div>
+        <!-- 角色列表 -->
+        <div class="role-list">
+            <div class="role-list-header">
+                <span class="role-count">共 {{ filteredRoles.length }} 个角色</span>
+                <span class="role-tip">点击选择或取消选择</span>
+            </div>
+
+            <div
+                *ngFor="let role of filteredRoles; trackBy: trackByRole"
+                class="role-item"
+                [class.selected]="role.checked"
+                (click)="onRoleToggle(role)"
+            >
+                <label
+                    nz-checkbox
+                    [ngModel]="role.checked"
+                    (ngModelChange)="onRoleToggle(role)"
+                    (click)="$event.stopPropagation()"
+                ></label>
+                <span class="role-name">{{ role.name }}</span>
+                <!--        <span class="role-status" *ngIf="role.checked">-->
+                <!--          <span nz-icon nzType="check-circle" nzTheme="filled" nzColor="#52c41a"></span>-->
+                <!--        </span>-->
+            </div>
+
+            <div *ngIf="filteredRoles.length === 0" class="empty-state">
+                <span nz-icon nzType="search" nzTheme="outline"></span>
+                <p>未找到匹配的角色</p>
+            </div>
+        </div>
     </div>
 
-    <!-- 外部链接信息 -->
-    <div class="external-link">
-      <span nz-icon nzType="info-circle" nzTheme="outline"></span>
-      <span>跳转飞书管理后台 配置角色</span>
-    </div>
+    <!-- 右侧面板：已选角色 -->
+    <div class="right-panel">
+        <div class="selected-header">
+            <div class="selected-info">
+                <h3 class="selected-count">
+                    <span nz-icon nzType="check-circle" nzColor="#52c41a"></span>
+                    已选: {{ selectedCount }}个角色
+                </h3>
+            </div>
+            <button
+                nz-button
+                nzType="link"
+                nzSize="small"
+                nzDanger
+                (click)="onClearAll()"
+                class="clear-btn"
+                [disabled]="selectedCount === 0"
+            >
+                <span nz-icon nzType="delete" nzTheme="outline"></span>
+                清空
+            </button>
+        </div>
 
-    <!-- 角色列表 -->
-    <div class="role-list">
-      <div 
-        *ngFor="let role of filteredRoles" 
-        class="role-item"
-        (click)="onRoleToggle(role)"
-      >
-        <nz-checkbox
-          [ngModel]="role.checked"
-          (ngModelChange)="onRoleToggle(role)"
-          (click)="$event.stopPropagation()"
-        ></nz-checkbox>
-        <span class="role-name">{{ role.name }}</span>
-      </div>
-    </div>
-  </div>
+        <div class="selected-roles">
+            <div
+                *ngFor="let role of selectedRoles; trackBy: trackByRole"
+                class="selected-role-item"
+            >
+                <div class="role-info">
+                    <span nz-icon nzType="user" nzTheme="outline" class="role-icon"></span>
+                    <span class="role-name">{{ role.name }}</span>
+                </div>
+                <button
+                    nz-button
+                    nzType="text"
+                    nzSize="small"
+                    nzDanger
+                    (click)="onRoleRemove(role)"
+                    class="remove-btn"
+                    nz-tooltip
+                    nzTooltipTitle="移除角色"
+                >
+                    <span nz-icon nzType="close" nzTheme="outline"></span>
+                </button>
+            </div>
 
-  <!-- 右侧面板：已选角色 -->
-  <div class="right-panel">
-    <div class="selected-header">
-      <h3 class="selected-count">已选: {{ selectedCount }}个角色</h3>
-      <button 
-        nz-button 
-        nzType="link" 
-        nzSize="small"
-        (click)="onClearAll()"
-        class="clear-btn"
-      >
-        清空
-      </button>
+            <div *ngIf="selectedCount === 0" class="empty-selected">
+                <span nz-icon nzType="user-add" nzTheme="outline"></span>
+                <p>暂无已选角色</p>
+                <span class="empty-tip">请在左侧选择需要分配的角色</span>
+            </div>
+        </div>
     </div>
-    
-    <div class="selected-roles">
-      <div 
-        *ngFor="let role of selectedRoles" 
-        class="selected-role-item"
-      >
-        <span class="role-name">{{ role.name }}</span>
-        <button 
-          nz-button 
-          nzType="text" 
-          nzSize="small"
-          nzDanger
-          (click)="onRoleRemove(role)"
-          class="remove-btn"
-        >
-          <span nz-icon nzType="close" nzTheme="outline"></span>
-        </button>
-      </div>
-    </div>
-  </div>
 </div>
