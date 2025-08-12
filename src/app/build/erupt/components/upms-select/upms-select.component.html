@@ -1,5 +1,5 @@
 <div class="upms-select-container">
-    <!-- 左侧面板：角色选择 -->
+    <!-- 左侧面板：选择 -->
     <div class="left-panel">
         <!-- 标签页 -->
         <div class="tabs">
@@ -9,10 +9,10 @@
                 [class.active]="activeTab === i"
                 (click)="onTabChange(i)"
             >
-        <span nz-icon
-              [nzType]="i === 0 ? 'team' : i === 1 ? 'safety-certificate' : 'usergroup-add'"
-              nzTheme="outline">
-        </span>
+                <span nz-icon
+                      [nzType]="tab.icon"
+                      nzTheme="outline">
+                </span>
                 <span class="tab-label">{{ tab.label }}</span>
             </div>
         </div>
@@ -22,50 +22,60 @@
             <nz-input-group nzSize="default">
                 <input
                     nz-input
-                    placeholder="搜索角色名称..."
+                    [placeholder]="getSearchPlaceholder()"
                     [(ngModel)]="searchText"
                 />
             </nz-input-group>
         </div>
-        <!-- 角色列表 -->
-        <div class="role-list">
-            <div class="role-list-header">
-                <span class="role-count">共 {{ filteredRoles.length }} 个角色</span>
-                <span class="role-tip">点击选择或取消选择</span>
+
+        <!-- 项目列表 -->
+        <div class="item-list">
+            <div class="item-list-header">
+                <span class="item-count">{{ getListTitle() }}</span>
+                <span class="item-tip">点击选择或取消选择</span>
             </div>
 
             <div
-                *ngFor="let role of filteredRoles; trackBy: trackByRole"
-                class="role-item"
-                [class.selected]="role.checked"
-                (click)="onRoleToggle(role)"
+                *ngFor="let item of filteredItems; trackBy: trackByItem"
+                class="item-item"
+                [class.selected]="item.checked"
+                (click)="onItemToggle(item)"
             >
                 <label
                     nz-checkbox
-                    [ngModel]="role.checked"
-                    (ngModelChange)="onRoleToggle(role)"
+                    [ngModel]="item.checked"
+                    (ngModelChange)="onItemToggle(item)"
                     (click)="$event.stopPropagation()"
                 ></label>
-                <span class="role-name">{{ role.name }}</span>
-                <!--        <span class="role-status" *ngIf="role.checked">-->
-                <!--          <span nz-icon nzType="check-circle" nzTheme="filled" nzColor="#52c41a"></span>-->
-                <!--        </span>-->
+                <span class="item-name">{{ item.name }}</span>
+
+                <!-- 显示额外信息 -->
+<!--                <div class="item-extra" *ngIf="item.type === 'user' && (item as User).department">-->
+<!--                    <span class="department">{{ (item as User).department }}</span>-->
+<!--                </div>-->
+<!--                <div class="item-extra" *ngIf="item.type === 'position' && (item as Position).department">-->
+<!--                    <span class="department">{{ (item as Position).department }}</span>-->
+<!--                    <span class="level" *ngIf="(item as Position).level">{{ (item as Position).level }}</span>-->
+<!--                </div>-->
+<!--                <div class="item-extra" *ngIf="item.type === 'org' && (item as Organization).level">-->
+<!--                    <span class="level">L{{ (item as Organization).level }}</span>-->
+<!--                </div>-->
             </div>
 
-            <div *ngIf="filteredRoles.length === 0" class="empty-state">
+            <div *ngIf="filteredItems.length === 0" class="empty-state">
                 <span nz-icon nzType="search" nzTheme="outline"></span>
-                <p>未找到匹配的角色</p>
+                <p>{{ getEmptyStateText() }}</p>
             </div>
         </div>
     </div>
 
-    <!-- 右侧面板：已选角色 -->
+    <!-- 右侧面板：已选项目 -->
     <div class="right-panel">
         <div class="selected-header">
             <div class="selected-info">
                 <h3 class="selected-count">
                     <span nz-icon nzType="check-circle" nzColor="#52c41a"></span>
-                    已选: {{ selectedCount }}个角色
+                    {{ getSelectedTitle() }}
                 </h3>
             </div>
             <button
@@ -82,33 +92,56 @@
             </button>
         </div>
 
-        <div class="selected-roles">
+        <div class="selected-items">
             <div
-                *ngFor="let role of selectedRoles; trackBy: trackByRole"
-                class="selected-role-item"
+                *ngFor="let item of selectedItems; trackBy: trackByItem"
+                class="selected-item-item"
             >
-                <div class="role-info">
-                    <span nz-icon nzType="user" nzTheme="outline" class="role-icon"></span>
-                    <span class="role-name">{{ role.name }}</span>
+                <div class="item-info">
+                    <span nz-icon
+                          [nzType]="item.type === 'org' ? 'apartment' :
+                                   item.type === 'role' ? 'safety-certificate' :
+                                   item.type === 'user' ? 'user' : 'idcard'"
+                          nzTheme="outline"
+                          class="item-icon">
+                    </span>
+                    <span class="item-name">{{ item.name }}</span>
+
+                    <!-- 显示额外信息 -->
+<!--                    <div class="item-extra" *ngIf="item.type === 'user' && (item as User).department">-->
+<!--                        <span class="department">{{ (item as User).department }}</span>-->
+<!--                    </div>-->
+<!--                    <div class="item-extra" *ngIf="item.type === 'position' && (item as Position).department">-->
+<!--                        <span class="department">{{ (item as Position).department }}</span>-->
+<!--                        <span class="level" *ngIf="(item as Position).level">{{ (item as Position).level }}</span>-->
+<!--                    </div>-->
+<!--                    <div class="item-extra" *ngIf="item.type === 'org' && (item as Organization).level">-->
+<!--                        <span class="level">L{{ (item as Organization).level }}</span>-->
+<!--                    </div>-->
                 </div>
                 <button
                     nz-button
                     nzType="text"
                     nzSize="small"
                     nzDanger
-                    (click)="onRoleRemove(role)"
+                    (click)="onItemRemove(item)"
                     class="remove-btn"
                     nz-tooltip
-                    nzTooltipTitle="移除角色"
+                    [nzTooltipTitle]="'移除' + currentTabLabel"
                 >
                     <span nz-icon nzType="close" nzTheme="outline"></span>
                 </button>
             </div>
 
             <div *ngIf="selectedCount === 0" class="empty-selected">
-                <span nz-icon nzType="user-add" nzTheme="outline"></span>
-                <p>暂无已选角色</p>
-                <span class="empty-tip">请在左侧选择需要分配的角色</span>
+                <span nz-icon
+                      [nzType]="currentTabKey === 'org' ? 'apartment' :
+                               currentTabKey === 'role' ? 'safety-certificate' :
+                               currentTabKey === 'user' ? 'user-add' : 'idcard'"
+                      nzTheme="outline">
+                </span>
+                <p>{{ getEmptySelectedText() }}</p>
+                <span class="empty-tip">{{ getEmptySelectedTip() }}</span>
             </div>
         </div>
     </div>

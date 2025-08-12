@@ -114,15 +114,15 @@
             }
         }
 
-        /* 角色列表样式 */
-        .role-list {
+        /* 项目列表样式 */
+        .item-list {
             max-height: 320px;
             overflow-y: auto;
             border: 1px solid #f0f0f0;
             background: #fff;
         }
 
-        .role-list-header {
+        .item-list-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -130,19 +130,19 @@
             background: #f8f9fa;
             border-bottom: 1px solid #f0f0f0;
 
-            .role-count {
+            .item-count {
                 font-size: 12px;
                 color: #6c757d;
                 font-weight: 500;
             }
 
-            .role-tip {
+            .item-tip {
                 font-size: 11px;
                 color: #adb5bd;
             }
         }
 
-        .role-item {
+        .item-item {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -171,16 +171,31 @@
                 padding-left: 9px;
             }
 
-            .role-status {
+            .item-extra {
                 margin-left: auto;
+                display: flex;
+                gap: 8px;
+                align-items: center;
 
-                span[nz-icon] {
-                    font-size: 16px;
+                .department {
+                    font-size: 11px;
+                    color: #6c757d;
+                    background: #e9ecef;
+                    padding: 2px 6px;
+                    border-radius: 3px;
+                }
+
+                .level {
+                    font-size: 11px;
+                    color: #1890ff;
+                    background: rgba(24, 144, 255, 0.1);
+                    padding: 2px 6px;
+                    border-radius: 3px;
                 }
             }
         }
 
-        .role-name {
+        .item-name {
             font-size: 13px;
             color: #495057;
             font-weight: 400;
@@ -271,12 +286,12 @@
             }
         }
 
-        .selected-roles {
+        .selected-items {
             max-height: 320px;
             overflow-y: auto;
         }
 
-        .selected-role-item {
+        .selected-item-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -293,21 +308,43 @@
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
 
-            .role-info {
+            .item-info {
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 flex: 1;
 
-                .role-icon {
+                .item-icon {
                     color: #6c757d;
                     font-size: 14px;
                 }
 
-                .role-name {
+                .item-name {
                     font-size: 13px;
                     color: #495057;
                     font-weight: 500;
+                }
+
+                .item-extra {
+                    display: flex;
+                    gap: 6px;
+                    align-items: center;
+
+                    .department {
+                        font-size: 10px;
+                        color: #6c757d;
+                        background: #e9ecef;
+                        padding: 1px 4px;
+                        border-radius: 2px;
+                    }
+
+                    .level {
+                        font-size: 10px;
+                        color: #1890ff;
+                        background: rgba(24, 144, 255, 0.1);
+                        padding: 1px 4px;
+                        border-radius: 2px;
+                    }
                 }
             }
         }
@@ -331,19 +368,19 @@
         }
 
         /* 滚动条样式 */
-        .role-list::-webkit-scrollbar,
-        .selected-roles::-webkit-scrollbar {
+        .item-list::-webkit-scrollbar,
+        .selected-items::-webkit-scrollbar {
             width: 4px;
         }
 
-        .role-list::-webkit-scrollbar-track,
-        .selected-roles::-webkit-scrollbar-track {
+        .item-list::-webkit-scrollbar-track,
+        .selected-items::-webkit-scrollbar-track {
             background: #f8f9fa;
             border-radius: 2px;
         }
 
-        .role-list::-webkit-scrollbar-thumb,
-        .selected-roles::-webkit-scrollbar-thumb {
+        .item-list::-webkit-scrollbar-thumb,
+        .selected-items::-webkit-scrollbar-thumb {
             background: #ced4da;
             border-radius: 2px;
 
@@ -386,12 +423,12 @@
                 font-size: 13px;
             }
 
-            .role-list,
-            .selected-roles {
+            .item-list,
+            .selected-items {
                 max-height: 200px;
             }
 
-            .role-list-header {
+            .item-list-header {
                 flex-direction: column;
                 gap: 4px;
                 align-items: flex-start;
@@ -410,13 +447,13 @@
             }
         }
 
-        .role-item,
-        .selected-role-item {
+        .item-item,
+        .selected-item-item {
             animation: fadeIn 0.3s ease-out;
         }
 
         /* 选中状态优化 */
-        .role-item {
+        .item-item {
             nz-checkbox {
                 ::ng-deep .ant-checkbox-wrapper {
                     .ant-checkbox {
