@@ -10,6 +10,7 @@ import {FormSize} from "../../../../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {FlowDataService} from "@flow/service/flow-data.service";
+import {UpmsSelectComponent} from "../../../../erupt/components/upms-select/upms-select.component";
 
 @Component({
     selector: 'app-flow-config',
@@ -102,6 +103,15 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             this.eruptBuild.eruptModel.eruptFieldModels.forEach(field => {
                 this.eruptBuild.eruptModel.eruptFieldModelMap.set(field.fieldName, field);
             })
+        })
+    }
+
+    changeSubmitPermission(){
+        this.modal.create({
+            nzTitle: '请选择可见范围',
+            nzWidth: '880px',
+            nzContent: UpmsSelectComponent,
+            nzFooter: null
         })
     }
 

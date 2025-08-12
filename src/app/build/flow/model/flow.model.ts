@@ -16,6 +16,7 @@ export interface FlowConfig {
     flowGroup?: FlowGroup;
     enable?: boolean;
     rule?: NodeRule[];
+    permission?:string;
     setting?: Record<string, any>;
 }
 
