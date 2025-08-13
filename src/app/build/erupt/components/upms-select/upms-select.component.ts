@@ -52,7 +52,7 @@ export class UpmsSelectComponent implements OnInit {
   tabs = [
     { key: 'org', label: '组织架构', icon: 'apartment' },
     { key: 'roles', label: '角色', icon: 'safety-certificate' },
-    { key: 'users', label: '用户', icon: 'usergroup-add' },
+    { key: 'users', label: '用户', icon: 'user' },
     { key: 'positions', label: '岗位', icon: 'idcard' }
   ];
 

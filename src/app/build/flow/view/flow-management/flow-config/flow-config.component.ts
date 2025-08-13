@@ -42,7 +42,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     submitPermissionOptions = [
         {label: '全员', value: 'all'},
         {label: '部门主管', value: 'manager'},
-        {label: '指定人员', value: 'specific'}
+        {label: '指定人员', value: 'specific'},
+        {label: '均不可提交', value: 'no'}
     ];
 
     @ViewChild('iconPopover') iconPopover!: NzPopoverComponent;
@@ -106,13 +107,16 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         })
     }
 
-    changeSubmitPermission(){
-        this.modal.create({
-            nzTitle: '请选择可见范围',
-            nzWidth: '880px',
-            nzContent: UpmsSelectComponent,
-            nzFooter: null
-        })
+    changeSubmitPermission(permission: string) {
+        if (permission == 'specific') {
+            this.modal.create({
+                nzTitle: '请选择可见范围',
+                nzWidth: '880px',
+                nzStyle: {top: '30px'},
+                nzBodyStyle: {padding: '0'},
+                nzContent: UpmsSelectComponent
+            })
+        }
     }
 
     /**

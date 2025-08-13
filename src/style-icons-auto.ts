@@ -31,6 +31,7 @@ import {
     FullscreenExitOutline,
     FullscreenOutline,
     GlobalOutline,
+    IdcardOutline,
     ImportOutline,
     InboxOutline,
     LinkOutline,
@@ -50,6 +51,7 @@ import {
     ReloadOutline,
     RocketOutline,
     RocketTwoTone,
+    SafetyCertificateOutline,
     SaveOutline,
     SearchOutline,
     SendOutline,
@@ -118,5 +120,7 @@ export const ICONS_AUTO = [
     LinkOutline,
     SendOutline,
     UndoOutline,
-    RedoOutline
+    RedoOutline,
+    IdcardOutline,
+    SafetyCertificateOutline
 ];
