@@ -129,7 +129,7 @@
                     <label class="form-label required">谁可以提交该审批</label>
                     <nz-select placeholder="请选择提交权限"
                                [(ngModel)]="flowConfig.permission"
-                               (ngModelChange)="changeSubmitPermission()"
+                               (ngModelChange)="changeSubmitPermission($event)"
                                class="form-select">
                         <nz-option *ngFor="let option of submitPermissionOptions"
                                    [nzValue]="option.value"
