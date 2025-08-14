@@ -1,16 +1,69 @@
 <erupt-node
-  [(model)]="modelValue"
-  [readonly]="readonly"
-  [showError]="showErr"
-  [errorInfo]="errInfo"
-  [headerColor]="color()"
-  (select)="onSelect()"
-  (insertNode)="onInsertNode($event)"
-  (insertFlexNode)="onInsertFlexNode($event)"
-  [eruptBuild]="eruptBuild"
-  (delete)="onDelete()">
+    [(model)]="modelValue"
+    [readonly]="readonly"
+    [showError]="showErr"
+    [errorInfo]="errInfo"
+    [headerColor]="color()"
+    (select)="onSelect()"
+    (insertNode)="onInsertNode($event)"
+    (insertFlexNode)="onInsertFlexNode($event)"
+    [eruptBuild]="eruptBuild"
+    (delete)="onDelete()">
     {{ name() }}
     <div config>
-        xxxxx
+        <nz-radio-group [(ngModel)]="selectTab" nzButtonStyle="solid" style="margin-bottom: 12px">
+            <label nz-radio-button [nzValue]="1">设置审核人</label>
+            <label nz-radio-button [nzValue]="2">表单权限</label>
+            <label nz-radio-button [nzValue]="3">操作权限</label>
+        </nz-radio-group>
+        <ng-container *ngIf="selectTab==1">
+            <nz-radio-group>
+                <label nz-radio [nzValue]="'1'">上级</label>
+                <label nz-radio [nzValue]="'1'">部门负责人</label>
+                <label nz-radio [nzValue]="'1'">部门内指定岗位</label>
+                <label nz-radio [nzValue]="'1'">角色</label>
+                <label nz-radio [nzValue]="'1'">指定人员</label>
+                <label nz-radio [nzValue]="'1'">提交人本人</label>
+            </nz-radio-group>
+
+
+            <div>
+                多人审批时使用的审批方式
+                <nz-radio-group>
+                    <label nz-radio [nzValue]="'1'">会签（需所有审批人同意）</label>
+                    <label nz-radio [nzValue]="'1'">或签（一名审批人同意即可）</label>
+                </nz-radio-group>
+            </div>
+
+            <div>
+                审批人与提交人为同一人时
+                <nz-radio-group>
+                    <label nz-radio [nzValue]="'1'">由提交人对自己审批</label>
+                    <label nz-radio [nzValue]="'1'">自动跳过</label>
+                    <label nz-radio [nzValue]="'1'">转交给部门负责人审批</label>
+                </nz-radio-group>
+            </div>
+
+        </ng-container>
+        <ng-container *ngIf="selectTab==2">
+            <app-form-access [eruptBuild]="eruptBuild"/>
+        </ng-container>
+        <ng-container *ngIf="selectTab==3">
+            <div>
+                <label nz-checkbox>允许转交</label>
+            </div>
+            <div>
+                <label nz-checkbox>允许加 / 减签</label>
+            </div>
+            <div>
+                <label nz-checkbox>允许转交</label>
+            </div>
+            <div>
+                <label nz-checkbox>审批同意时需手写签名</label>
+            </div>
+            <div>
+                <label nz-checkbox>提交审批需填写审批意见</label>
+            </div>
+        </ng-container>
     </div>
 </erupt-node>

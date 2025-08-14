@@ -1,0 +1,24 @@
+<nz-table [nzScroll]="{y: '400px'}" [nzData]="" [nzSize]="'small'">
+    <thead>
+    <tr>
+        <th>表单字段</th>
+        <th>可读</th>
+        <th>编辑</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-container *ngFor="let field of eruptBuild.eruptModel.eruptFieldModels">
+        <ng-container *ngIf="field.eruptFieldJson.edit.title">
+            <tr>
+                <td>{{ field.eruptFieldJson.edit.title }}</td>
+                <td>
+                    <label nz-checkbox></label>
+                </td>
+                <td>
+                    <label nz-checkbox [nzDisabled]="!field.eruptFieldJson.edit.readOnly.add"></label>
+                </td>
+            </tr>
+        </ng-container>
+    </ng-container>
+    </tbody>
+</nz-table>
