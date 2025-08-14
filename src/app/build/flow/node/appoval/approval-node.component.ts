@@ -25,6 +25,7 @@ export class ApprovalNodeComponent extends ANode {
     showErr = false;
     errInfo: any = null;
 
+    selectTab: number = 1;
 
     override type(): NodeType {
         return NodeType.APPROVAL;

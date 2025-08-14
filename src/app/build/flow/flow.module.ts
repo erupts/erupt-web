@@ -83,6 +83,7 @@ import {FlowDashboardComponent} from './view/flow-dashboard/flow-dashboard.compo
 import {FlowApprovalComponent} from './view/flow-approval/flow-approval.component';
 import {FlexNodeComponent} from '@flow/node/flex/flex-node.component';
 import {FlowDataService} from "@flow/service/flow-data.service";
+import {FormAccessComponent} from './components/form-access/form-access.component';
 
 
 @NgModule({
@@ -103,7 +104,8 @@ import {FlowDataService} from "@flow/service/flow-data.service";
         EruptFlowFormComponent,
         FlowDashboardComponent,
         FlowApprovalComponent,
-        FlexNodeComponent
+        FlexNodeComponent,
+        FormAccessComponent
     ],
     providers: [
         FlowApiService,
