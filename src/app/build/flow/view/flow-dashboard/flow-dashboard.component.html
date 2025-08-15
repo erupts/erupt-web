@@ -74,3 +74,27 @@
         </div>
     </div>
 </div>
+
+<!-- 页脚按钮模板 -->
+<ng-template #footerTemplate>
+    <div style="text-align: right">
+        <button nz-button nzType="default" (click)="onCancel()">取消</button>
+        <button nz-button nzType="primary" (click)="onSubmit()" style="margin-left: 8px;">发起</button>
+    </div>
+</ng-template>
+
+<!-- 页脚按钮样式 -->
+<style>
+    .drawer-footer {
+        text-align: right;
+        padding: 8px 0;
+    }
+
+    .drawer-footer button {
+        margin-left: 8px;
+    }
+
+    .drawer-footer button:first-child {
+        margin-left: 0;
+    }
+</style>
