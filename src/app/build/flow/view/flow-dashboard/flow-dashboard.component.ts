@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FlowApiService} from '@flow/service/flow-api.service';
 import {FlowConfig, FlowGroup} from '@flow/model/flow.model';
 import {R} from '@shared/model/api.model';
@@ -23,6 +23,9 @@ interface FlowGroupWithFlows {
     styleUrls: ['./flow-dashboard.component.less']
 })
 export class FlowDashboardComponent implements OnInit, OnDestroy {
+
+    @ViewChild('footerTemplate', {static: true}) footerTemplate!: TemplateRef<any>;
+
     private destroy$ = new Subject<void>();
 
     // 分类数据 - 从API动态获取
@@ -45,6 +48,9 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     // 缓存的流程分组数据
     private flowGroupsCache: FlowGroupWithFlows[] = [];
     private categoryFlowGroupsCache: Map<string, FlowGroupWithFlows[]> = new Map();
+
+    // 当前打开的抽屉引用
+    private currentDrawerRef: any = null;
 
     constructor(private flowApiService: FlowApiService, private drawerService: NzDrawerService,) {
     }
@@ -204,20 +210,44 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
      */
     onFlowClick(flow: FlowConfig): void {
         if (flow.enable) {
-            this.drawerService.create({
+            this.currentDrawerRef = this.drawerService.create({
                 nzTitle: flow.name,
                 nzContent: EruptFlowFormComponent,
                 nzContentParams: {
                     erupt: flow.erupt,
                     readonly: false
                 },
-                nzWidth: '420px',
+                nzWidth: '520px',
                 nzBodyStyle: {
                     padding: '16px'
                 },
                 nzMaskClosable: false,
-                nzFooter: "提交"
+                nzFooter: this.footerTemplate
             });
+        }
+    }
+
+    /**
+     * 发起流程
+     */
+    onSubmit(): void {
+        // TODO: 实现流程发起逻辑
+        console.log('发起流程');
+        // 这里可以添加流程发起的业务逻辑
+        // 例如：调用API提交表单数据，显示成功提示等
+
+        // 关闭抽屉
+        if (this.currentDrawerRef) {
+            this.currentDrawerRef.close();
+        }
+    }
+
+    /**
+     * 取消操作
+     */
+    onCancel(): void {
+        if (this.currentDrawerRef) {
+            this.currentDrawerRef.close();
         }
     }
 
