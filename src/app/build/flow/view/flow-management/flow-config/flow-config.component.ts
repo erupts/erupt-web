@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {EruptFieldModel, VL} from "../../../../erupt/model/erupt-field.model";
@@ -15,8 +15,7 @@ import {UpmsSelectComponent} from "../../../../erupt/components/upms-select/upms
 @Component({
     selector: 'app-flow-config',
     templateUrl: './flow-config.component.html',
-    styleUrls: ['./flow-config.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./flow-config.component.less']
 })
 export class FlowConfigComponent implements OnInit, AfterViewInit {
 
