@@ -13,11 +13,10 @@
             <ul nz-menu
                 nzMode="inline"
                 [nzInlineCollapsed]="sidebarCollapsed"
-                (nzClick)="onMenuClick($event)"
                 class="approval-menu">
 
                 <!-- 待办 -->
-                <li nz-menu-item nzKey="todo">
+                <li nz-menu-item (click)="onSwitchView(ApprovalView.TODO)" [nzSelected]="ApprovalView.TODO === selectedView">
                     <div style="display: flex;align-items: center">
                         <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
                         <span class="menu-title">待办</span>
@@ -25,19 +24,19 @@
                     </div>
                 </li>
                 <!-- 已办 -->
-                <li nz-menu-item nzKey="done" nzTitle="已办">
+                <li nz-menu-item (click)="onSwitchView(ApprovalView.DONE)" [nzSelected]="ApprovalView.DONE === selectedView">
                     <span nz-icon nzType="check-circle" nzTheme="outline"></span>
                     <span class="menu-title">已办</span>
                 </li>
 
                 <!-- 抄送我 -->
-                <li nz-menu-item nzKey="cc">
+                <li nz-menu-item (click)="onSwitchView(ApprovalView.CC)" [nzSelected]="ApprovalView.CC === selectedView">
                     <span nz-icon nzType="copy" nzTheme="outline"></span>
                     <span class="menu-title">抄送我</span>
                 </li>
 
                 <!-- 已发起 -->
-                <li nz-menu-item nzKey="initiated">
+                <li nz-menu-item (click)="onSwitchView(ApprovalView.CREATED)" [nzSelected]="ApprovalView.CREATED === selectedView">
                     <span nz-icon nzType="rocket" nzTheme="outline"></span>
                     <span class="menu-title">已发起</span>
                 </li>
@@ -63,28 +62,28 @@
             <div class="approval-list">
                 <div
                     class="approval-item"
-                    *ngFor="let item of approvalList"
-                    [class.active]="selectedItem?.id === item.id"
+                    *ngFor="let item of flowInstance"
+                    [class.active]="item?.id === selectedInstance?.id"
                     (click)="selectItem(item)"
                 >
                     <div class="item-header">
-                        <h3 class="item-title">{{ item.type }}</h3>
+                        <h3 class="item-title">{{ item.eruptFlowConfig.name }}</h3>
                         <nz-tag
                             [nzColor]="getStatusColor(item.status)"
                             class="status-tag"
                         >
-                            {{ getStatusText(item.status) }}
+                            {{ item.status }}
                         </nz-tag>
                     </div>
                     <div class="item-footer">
                         <div class="submitter-info">
-                            <div class="avatar" [style.background-color]="getAvatarColor(item.submitter.avatar)">
-                                {{ item.submitter.avatar }}
+                            <div class="avatar" [style.background-color]="item.eruptFlowConfig.color">
+                                {{ item.initiatorUser.name[0] }}
                             </div>
-                            <span class="submitter-name">{{ item.submitter.name }}</span>
+                            <span class="submitter-name">{{ item.initiatorUser.name }}</span>
                         </div>
                         <div class="time-info">
-                            <span class="process-time" *ngIf="item.processTime">处理时间 {{ item.processTime }}</span>
+                            <span class="process-time" *ngIf="item.finishTime">处理时间 {{ item.finishTime }}</span>
                         </div>
                     </div>
                 </div>
@@ -92,10 +91,10 @@
         </div>
 
         <!-- 右侧详情区域 -->
-        <div class="detail-section" *ngIf="selectedItem; else emptyDetail">
+        <div class="detail-section" *ngIf="selectedInstance; else emptyDetail">
             <div class="detail-header">
                 <div class="header-left">
-                    <span class="item-id">编号: {{ selectedItem.id }}</span>
+                    <span class="item-id">编号: {{ selectedInstance?.no }}</span>
                 </div>
                 <div class="header-right">
                     <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="链接">
@@ -110,22 +109,22 @@
                 </div>
             </div>
 
-            <div class="detail-content">
+            <div class="detail-content" *ngIf="selectedInstance">
                 <div class="content-header">
-                    <h1 class="content-title">{{ selectedItem.type }}</h1>
+                    <h1 class="content-title">{{ selectedInstance.eruptFlowConfig.name }}</h1>
                     <nz-tag
-                        [nzColor]="getStatusColor(selectedItem.status)"
+                        [nzColor]="'#09f'"
                         class="status-tag-large"
                     >
-                        {{ getStatusText(selectedItem.status) }}
+                        {{ selectedInstance.status }}
                     </nz-tag>
                 </div>
 
                 <div class="submitter-info-large">
                     <div class="submitter-details">
-                        <span class="submitter-name-large">{{ selectedItem.submitter.name }}</span>&nbsp;&nbsp;
-                        <span class="submitter-dept">{{ selectedItem.submitter.department }}</span>&nbsp;&nbsp;
-                        <span class="submit-time">提交于 {{ selectedItem.submitTime }}</span>
+                        <span class="submitter-name-large">{{ selectedInstance.initiatorUser.name }}</span>&nbsp;&nbsp;
+                        <span class="submitter-dept">部门</span>&nbsp;&nbsp;
+                        <span class="submit-time">提交于 {{ selectedInstance.createTime }}</span>
                     </div>
                 </div>
 

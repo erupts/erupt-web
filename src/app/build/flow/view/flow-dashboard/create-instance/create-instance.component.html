@@ -1,11 +1,11 @@
 <nz-spin [nzSpinning]="loading" style="width: 100%;min-height: 300px">
     <ng-container *ngIf="eruptBuild">
-        <div style="padding: 16px">
+        <div style="padding: 16px;height:calc(100vh - 108px);overflow: auto">
             <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="false">
 
             </erupt-flow-form>
         </div>
-        <div style="text-align: right;position: sticky;bottom: 0;padding: 10px 16px;border-top:1px solid rgba(0,0,0,.06);background: #fff;z-index:999">
+        <div style="text-align: right;position: sticky;bottom: 0;padding: 10px 16px;border-top:1px solid rgba(0,0,0,.06);z-index:999">
             <button nz-button nzType="default" (click)="onCancel()">取消</button>
             <button nz-button nzType="primary" (click)="onSubmit()" style="margin-left: 8px;">发起审批</button>
         </div>
