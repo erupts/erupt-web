@@ -84,6 +84,7 @@ import {FlowApprovalComponent} from './view/flow-approval/flow-approval.componen
 import {FlexNodeComponent} from '@flow/node/flex/flex-node.component';
 import {FlowDataService} from "@flow/service/flow-data.service";
 import {FormAccessComponent} from './components/form-access/form-access.component';
+import {CreateInstanceComponent} from './view/flow-dashboard/create-instance/create-instance.component';
 
 
 @NgModule({
@@ -105,7 +106,8 @@ import {FormAccessComponent} from './components/form-access/form-access.componen
         FlowDashboardComponent,
         FlowApprovalComponent,
         FlexNodeComponent,
-        FormAccessComponent
+        FormAccessComponent,
+        CreateInstanceComponent
     ],
     providers: [
         FlowApiService,
