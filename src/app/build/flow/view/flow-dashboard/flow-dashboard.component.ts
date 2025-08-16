@@ -202,7 +202,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 流程点击事件
+     * 发起流程
      */
     launchFlow(flow: FlowConfig): void {
         if (flow.enable) {

@@ -3,6 +3,7 @@ import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
 import {R} from "@shared/model/api.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
+import {FlowInstance} from "@flow/model/approval.model";
 
 @Injectable({
     providedIn: 'root'
@@ -18,4 +19,21 @@ export class FlowInstanceApiService {
             flowId
         });
     }
+
+    todoList():Observable<R<FlowInstance[]>> {
+        return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/todo")
+    }
+
+    doneList():Observable<R<FlowInstance[]>> {
+        return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/done")
+    }
+
+    ccList():Observable<R<FlowInstance[]>> {
+        return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/cc")
+    }
+
+    createdList():Observable<R<FlowInstance[]>> {
+        return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/created")
+    }
+
 }

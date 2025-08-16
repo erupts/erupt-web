@@ -13,6 +13,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
+import {NzDrawerService} from "ng-zorro-antd/drawer";
 
 @Component({
     selector: "passport-login",
@@ -53,6 +54,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         public msg: NzMessageService,
         @Inject(NzModalService)
         private modal: NzModalService,
+        private drawer: NzDrawerService,
         private i18n: I18NService,
         @Optional()
         @Inject(ReuseTabService)
@@ -80,6 +82,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
+        this.modal.closeAll()
         if (EruptAppData.get().verifyCodeCount <= 0) {
             this.changeVerifyCode();
             Promise.resolve(null).then(() => this.useVerifyCode = true);
