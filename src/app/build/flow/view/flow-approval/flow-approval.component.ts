@@ -1,21 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
-import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/approval.model";
+import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/flow-instance.model";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {NodeRule} from "@flow/model/node.model";
+import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
+import {FlowApiService} from "@flow/service/flow-api.service";
+import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 
-
-interface ApprovalRecord {
-    nodeName: string;
-    approver: {
-        name: string;
-        avatar: string;
-    };
-    result: string;
-    opinion: string;
-    time: string;
-}
 
 @Component({
     selector: 'app-flow-approval',
@@ -30,12 +22,14 @@ export class FlowApprovalComponent implements OnInit {
 
     selectedView: ApprovalView = ApprovalView.TODO;
 
+    todoCount: number = 0
+
     flowInstance: FlowInstance[] = [];
 
     selectedInstance: FlowInstance | null = null;
 
     // 新增属性存储接口返回的数据
-    instanceDetail: any = null;
+    instanceDetail: FlowInstance = null;
     instanceTasks: FlowInstanceTask[] = [];
     nodeInfo: NodeRule | null = null;
     comments: FlowInstanceComment[] = [];
@@ -44,35 +38,16 @@ export class FlowApprovalComponent implements OnInit {
     newComment: string = '';
     isSubmittingComment = false;
 
+    eruptBuild: EruptBuildModel
+
     constructor(
         private message: NzMessageService,
         private flowInstanceApiService: FlowInstanceApiService,
-        private modal: NzModalService
+        private modal: NzModalService,
+        private flowApiService: FlowApiService,
+        private dataHandlerService: DataHandlerService
     ) {
     }
-
-    approvalRecords: ApprovalRecord[] = [
-        {
-            nodeName: '提交',
-            approver: {
-                name: '李月鹏',
-                avatar: '月'
-            },
-            result: '已提交',
-            opinion: '',
-            time: '2天前'
-        },
-        {
-            nodeName: '部门审批',
-            approver: {
-                name: '张经理',
-                avatar: '张'
-            },
-            result: '已通过',
-            opinion: '同意采购',
-            time: '1天前'
-        }
-    ];
 
     ngOnInit() {
         this.onSwitchView(ApprovalView.TODO);
@@ -128,22 +103,6 @@ export class FlowApprovalComponent implements OnInit {
                 return '已取消';
             default:
                 return status || '未知';
-        }
-    }
-
-    // 新增方法：获取任务状态颜色
-    getTaskStatusColor(status: string): string {
-        switch (status) {
-            case 'pending':
-                return 'warning';
-            case 'processing':
-                return 'processing';
-            case 'completed':
-                return 'success';
-            case 'cancelled':
-                return 'default';
-            default:
-                return 'default';
         }
     }
 
@@ -218,10 +177,8 @@ export class FlowApprovalComponent implements OnInit {
                 this.flowInstanceApiService.todoList().subscribe({
                     next: (data) => {
                         this.flowInstance = data.data;
-                    },
-                    error: (error) => {
-                        console.error('加载待办列表失败:', error);
-                        this.message.error('加载待办列表失败');
+                        this.selectedInstance = this.flowInstance[0] || null;
+                        this.todoCount = this.flowInstance.length;
                     }
                 });
                 break;
@@ -229,10 +186,7 @@ export class FlowApprovalComponent implements OnInit {
                 this.flowInstanceApiService.doneList().subscribe({
                     next: (data) => {
                         this.flowInstance = data.data;
-                    },
-                    error: (error) => {
-                        console.error('加载已办列表失败:', error);
-                        this.message.error('加载已办列表失败');
+                        this.selectedInstance = this.flowInstance[0] || null;
                     }
                 });
                 break;
@@ -240,10 +194,7 @@ export class FlowApprovalComponent implements OnInit {
                 this.flowInstanceApiService.ccList().subscribe({
                     next: (data) => {
                         this.flowInstance = data.data;
-                    },
-                    error: (error) => {
-                        console.error('加载抄送列表失败:', error);
-                        this.message.error('加载抄送列表失败');
+                        this.selectedInstance = this.flowInstance[0] || null;
                     }
                 });
                 break;
@@ -251,10 +202,7 @@ export class FlowApprovalComponent implements OnInit {
                 this.flowInstanceApiService.createdList().subscribe({
                     next: (data) => {
                         this.flowInstance = data.data;
-                    },
-                    error: (error) => {
-                        console.error('加载已发起列表失败:', error);
-                        this.message.error('加载已发起列表失败');
+                        this.selectedInstance = this.flowInstance[0] || null;
                     }
                 });
                 break;
@@ -267,10 +215,18 @@ export class FlowApprovalComponent implements OnInit {
         this.flowInstanceApiService.detail(instanceId).subscribe({
             next: (data) => {
                 this.instanceDetail = data.data;
-            },
-            error: (error) => {
-                console.error('加载实例详情失败:', error);
-                this.message.error('加载实例详情失败');
+                this.flowApiService.eruptFlowBuild(this.instanceDetail.erupt).subscribe({
+                    next: res => {
+                        this.eruptBuild = res.data;
+                        this.flowInstanceApiService.eruptData(instanceId).subscribe({
+                            next: res => {
+                                this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
+                            }
+                        })
+                    },
+                    complete: () => {
+                    }
+                })
             }
         });
 
@@ -278,10 +234,6 @@ export class FlowApprovalComponent implements OnInit {
         this.flowInstanceApiService.tasks(instanceId).subscribe({
             next: (data) => {
                 this.instanceTasks = data.data || [];
-            },
-            error: (error) => {
-                console.error('加载任务列表失败:', error);
-                this.message.error('加载任务列表失败');
             }
         });
 
@@ -289,10 +241,6 @@ export class FlowApprovalComponent implements OnInit {
         this.flowInstanceApiService.nodeInfo(instanceId).subscribe({
             next: (data) => {
                 this.nodeInfo = data.data;
-            },
-            error: (error) => {
-                console.error('加载节点信息失败:', error);
-                this.message.error('加载节点信息失败');
             }
         });
 
@@ -300,10 +248,6 @@ export class FlowApprovalComponent implements OnInit {
         this.flowInstanceApiService.commentList(Number(instanceId)).subscribe({
             next: (data) => {
                 this.comments = data.data || [];
-            },
-            error: (error) => {
-                console.error('加载评论列表失败:', error);
-                this.message.error('加载评论列表失败');
             }
         });
     }
@@ -325,10 +269,6 @@ export class FlowApprovalComponent implements OnInit {
                         this.comments = data.data || [];
                     });
                 }
-            },
-            error: (error) => {
-                this.message.error('评论提交失败');
-                console.error('提交评论失败:', error);
             },
             complete: () => {
                 this.isSubmittingComment = false;

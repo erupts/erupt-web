@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../../erupt/service/data-handler.service";
+import {FlowApiService} from "@flow/service/flow-api.service";
 
 @Component({
     selector: 'erupt-flow-form',
@@ -16,12 +17,32 @@ export class EruptFlowFormComponent implements OnInit {
 
     @Input() eruptBuild: EruptBuildModel;
 
+    @Input() erupt: string;
+
     constructor(private dataService: DataService,
+                private flowApiService: FlowApiService,
                 private dataHandlerService: DataHandlerService) {
 
     }
 
     ngOnInit(): void {
+        this.loading = true;
+        if (this.erupt) {
+            this.flowApiService.eruptFlowBuild(this.erupt).subscribe({
+                next: res => {
+                    this.eruptBuild = res.data;
+                    this.initEruptValue();
+                },
+                complete: () => {
+                    this.loading = false;
+                }
+            })
+        } else {
+            this.initEruptValue();
+        }
+    }
+
+    initEruptValue() {
         this.dataService.getInitValue(this.eruptBuild.eruptModel.eruptName).subscribe(data => {
             this.dataHandlerService.objectToEruptValue(data, this.eruptBuild);
         })

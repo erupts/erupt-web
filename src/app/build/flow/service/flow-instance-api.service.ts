@@ -3,7 +3,7 @@ import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
 import {R} from "@shared/model/api.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
-import {FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/approval.model";
+import {FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/flow-instance.model";
 import {NodeRule} from "@flow/model/node.model";
 
 @Injectable({
@@ -42,6 +42,14 @@ export class FlowInstanceApiService {
             instanceId
         })
     }
+
+    eruptData(instanceId: number): Observable<R<object>> {
+        return this._http.get<R<FlowInstance>>(RestPath.erupt + "/flow/instance/erupt-data", {
+            instanceId
+        })
+    }
+
+
 
     tasks(instanceId: number): Observable<R<FlowInstanceTask[]>> {
         return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/tasks", {
