@@ -55,15 +55,16 @@ export class FlowInstanceApiService {
         })
     }
 
-    commentList(instanceId: number): Observable<R<FlowInstanceComment>> {
-        return this._http.get<R<FlowInstanceComment>>(RestPath.erupt + "/flow/comment/list", {
+    commentList(instanceId: number): Observable<R<FlowInstanceComment[]>> {
+        return this._http.get<R<FlowInstanceComment[]>>(RestPath.erupt + "/flow/instance/comment/list", {
             instanceId
         })
     }
 
     commentCreate(instanceId: number, comment: string): Observable<R<void>> {
-        return this._http.get<R<void>>(RestPath.erupt + "/flow/comment/create", {
-            instanceId
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/comment/create", null, {
+            instanceId,
+            comment
         })
     }
 

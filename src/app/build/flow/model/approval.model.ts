@@ -8,7 +8,7 @@ export enum ApprovalView {
 }
 
 export interface FlowInstance {
-    id: string;
+    id: number;
     no: string;
     eruptFlowConfig: FlowConfig;
     erupt: string;
