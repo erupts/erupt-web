@@ -21,6 +21,7 @@ export interface FlowInstance {
 
 export interface FlowInstanceComment {
     createUser: User;
+    createTime: string;
     comment: string;
 
 }

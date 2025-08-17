@@ -3,7 +3,8 @@ import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
 import {R} from "@shared/model/api.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
-import {FlowInstance} from "@flow/model/approval.model";
+import {FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/approval.model";
+import {NodeRule} from "@flow/model/node.model";
 
 @Injectable({
     providedIn: 'root'
@@ -20,20 +21,51 @@ export class FlowInstanceApiService {
         });
     }
 
-    todoList():Observable<R<FlowInstance[]>> {
+    todoList(): Observable<R<FlowInstance[]>> {
         return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/todo")
     }
 
-    doneList():Observable<R<FlowInstance[]>> {
+    doneList(): Observable<R<FlowInstance[]>> {
         return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/done")
     }
 
-    ccList():Observable<R<FlowInstance[]>> {
+    ccList(): Observable<R<FlowInstance[]>> {
         return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/cc")
     }
 
-    createdList():Observable<R<FlowInstance[]>> {
+    createdList(): Observable<R<FlowInstance[]>> {
         return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/created")
     }
+
+    detail(instanceId: number): Observable<R<FlowInstance>> {
+        return this._http.get<R<FlowInstance>>(RestPath.erupt + "/flow/instance/detail", {
+            instanceId
+        })
+    }
+
+    tasks(instanceId: number): Observable<R<FlowInstanceTask[]>> {
+        return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/tasks", {
+            instanceId
+        })
+    }
+
+    nodeInfo(instanceId: number): Observable<R<NodeRule>> {
+        return this._http.get<R<NodeRule>>(RestPath.erupt + "/flow/instance/node-info", {
+            instanceId
+        })
+    }
+
+    commentList(instanceId: number): Observable<R<FlowInstanceComment>> {
+        return this._http.get<R<FlowInstanceComment>>(RestPath.erupt + "/flow/comment/list", {
+            instanceId
+        })
+    }
+
+    commentCreate(instanceId: number, comment: string): Observable<R<void>> {
+        return this._http.get<R<void>>(RestPath.erupt + "/flow/comment/create", {
+            instanceId
+        })
+    }
+
 
 }
