@@ -20,7 +20,7 @@
                     <div style="display: flex;align-items: center">
                         <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
                         <span class="menu-title">待办</span>
-                        <nz-badge style="margin-left:auto" [nzCount]="5" nzShowZero class="menu-badge"></nz-badge>
+                        <nz-badge style="margin-left:auto" [nzCount]="todoCount" class="menu-badge"></nz-badge>
                     </div>
                 </li>
                 <!-- 已办 -->
@@ -67,10 +67,13 @@
                     (click)="selectItem(item)"
                 >
                     <div class="item-header">
-                        <h3 class="item-title">{{ item.eruptFlowConfig.name }}</h3>
+                        <h3 class="item-title">
+                            {{ item.eruptFlowConfig.name }}
+                        </h3>
                         <nz-tag
                             [nzColor]="getStatusColor(item.status)"
                             class="status-tag"
+                            style="margin-right: 0"
                         >
                             {{ item.status }}
                         </nz-tag>
@@ -122,7 +125,7 @@
 
                 <div class="submitter-info-large">
                     <div class="submitter-details">
-                        <span class="submitter-name-large">{{ selectedInstance.initiatorUser.name }}</span>&nbsp;&nbsp;
+                        <span class="submitter-name-large">{{ selectedInstance.initiatorUser?.name }}</span>&nbsp;&nbsp;
                         <span class="submitter-dept">部门</span>&nbsp;&nbsp;
                         <span class="submit-time">提交于 {{ selectedInstance.createTime }}</span>
                     </div>
@@ -134,64 +137,32 @@
                     (nzSelectedIndexChange)="onTabChange($event)"
                     [nzSelectedIndex]="activeTabIndex"
                 >
-                    <nz-tab nzTitle="审批详情">
+                    <nz-tab nzTitle="审批信息">
                         <div class="tab-content">
-                            <div class="section" *ngIf="instanceDetail">
-                                <h3 class="section-title">| 基本信息</h3>
-                                <div class="info-grid">
-                                    <div class="info-item">
-                                        <span class="info-label">流程编号：</span>
-                                        <span class="info-value">{{ instanceDetail.no || selectedInstance?.no }}</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">流程名称：</span>
-                                        <span class="info-value">{{ instanceDetail.eruptFlowConfig?.name || selectedInstance?.eruptFlowConfig?.name }}</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">发起人：</span>
-                                        <span class="info-value">{{ instanceDetail.initiatorUser?.name || selectedInstance?.initiatorUser?.name }}</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">创建时间：</span>
-                                        <span class="info-value">{{ instanceDetail.createTime || selectedInstance?.createTime }}</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">完成时间：</span>
-                                        <span class="info-value">{{ instanceDetail.finishTime || selectedInstance?.finishTime || '-' }}</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">状态：</span>
-                                        <span class="info-value">
-                                            <nz-tag [nzColor]="getStatusColor(instanceDetail.status || selectedInstance?.status)">
-                                                {{ getStatusText(instanceDetail.status || selectedInstance?.status) }}
-                                            </nz-tag>
-                                        </span>
-                                    </div>
-                                </div>
+                            <div class="section" *ngIf="eruptBuild">
+                                <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="true"></erupt-flow-form>
                             </div>
-                            
-                            <div class="section" *ngIf="nodeInfo">
-                                <h3 class="section-title">| 流程节点</h3>
-                                <div class="node-info">
-                                    <div class="node-item">
-                                        <span class="node-name">{{ nodeInfo.name }}</span>
-                                        <span class="node-type">{{ nodeInfo.type }}</span>
-                                    </div>
-                                    <div class="node-branches" *ngIf="nodeInfo.branches && nodeInfo.branches.length > 0">
-                                        <div class="branch-item" *ngFor="let branch of nodeInfo.branches">
-                                            <span class="branch-name">{{ branch.name }}</span>
-                                            <span class="branch-type">{{ branch.type }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <!--                            <div class="section" *ngIf="nodeInfo">-->
+                            <!--                                <h3 class="section-title">流程节点</h3>-->
+                            <!--                                <div class="node-info">-->
+                            <!--                                    <div class="node-item">-->
+                            <!--                                        <span class="node-name">{{ nodeInfo.name }}</span>-->
+                            <!--                                        <span class="node-type">{{ nodeInfo.type }}</span>-->
+                            <!--                                    </div>-->
+                            <!--                                    <div class="node-branches" *ngIf="nodeInfo.branches && nodeInfo.branches.length > 0">-->
+                            <!--                                        <div class="branch-item" *ngFor="let branch of nodeInfo.branches">-->
+                            <!--                                            <span class="branch-name">{{ branch.name }}</span>-->
+                            <!--                                            <span class="branch-type">{{ branch.type }}</span>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
                         </div>
                     </nz-tab>
 
                     <nz-tab nzTitle="审批记录">
                         <div class="tab-content">
                             <div class="section">
-                                <h3 class="section-title">| 审批记录</h3>
                                 <div *ngIf="instanceTasks.length > 0; else noTasks">
                                     <nz-table
                                         #recordsTable
@@ -222,7 +193,7 @@
                                             </td>
                                             <td>{{ task.taskType || '-' }}</td>
                                             <td>
-                                                <nz-tag [nzColor]="getTaskStatusColor(task.taskStatus)">
+                                                <nz-tag>
                                                     {{ getTaskStatusText(task.taskStatus) }}
                                                 </nz-tag>
                                             </td>
@@ -246,25 +217,23 @@
                         </div>
                     </nz-tab>
 
-                    <nz-tab [nzTitle]="'全文评论 (' + comments.length + ')'">
+                    <nz-tab [nzTitle]="'评论列表 (' + comments.length + ')'">
                         <div class="tab-content">
                             <div class="section">
-                                <h3 class="section-title">| 评论列表</h3>
-                                
                                 <!-- 添加评论 -->
                                 <div class="comment-form">
                                     <nz-input-group [nzSuffix]="commentSuffix">
-                                        <input 
-                                            nz-input 
-                                            [(ngModel)]="newComment" 
+                                        <input
+                                            nz-input
+                                            [(ngModel)]="newComment"
                                             placeholder="请输入评论内容..."
                                             (keyup.enter)="submitComment()"
                                         />
                                     </nz-input-group>
                                     <ng-template #commentSuffix>
-                                        <button 
-                                            nz-button 
-                                            nzType="primary" 
+                                        <button
+                                            nz-button
+                                            nzType="primary"
                                             nzSize="small"
                                             [disabled]="!newComment.trim() || isSubmittingComment"
                                             (click)="submitComment()"
@@ -293,7 +262,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <ng-template #noComments>
                                     <nz-empty
                                         nzNotFoundImage="simple"
