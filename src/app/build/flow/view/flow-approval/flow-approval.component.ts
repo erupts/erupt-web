@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
-import {ApprovalView, FlowInstance} from "@flow/model/approval.model";
+import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/approval.model";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
+import {NodeRule} from "@flow/model/node.model";
 
 
 interface ApprovalRecord {
@@ -32,6 +33,16 @@ export class FlowApprovalComponent implements OnInit {
     flowInstance: FlowInstance[] = [];
 
     selectedInstance: FlowInstance | null = null;
+
+    // 新增属性存储接口返回的数据
+    instanceDetail: any = null;
+    instanceTasks: FlowInstanceTask[] = [];
+    nodeInfo: NodeRule | null = null;
+    comments: FlowInstanceComment[] = [];
+
+    // 评论相关
+    newComment: string = '';
+    isSubmittingComment = false;
 
     constructor(
         private message: NzMessageService,
@@ -69,6 +80,9 @@ export class FlowApprovalComponent implements OnInit {
 
     selectItem(instance: FlowInstance) {
         this.selectedInstance = instance;
+        if (instance && instance.id) {
+            this.loadInstanceDetail(instance.id);
+        }
     }
 
     getStatusText(status: string): string {
@@ -96,6 +110,38 @@ export class FlowApprovalComponent implements OnInit {
                 return 'error';
             case 'pending':
                 return 'warning';
+            default:
+                return 'default';
+        }
+    }
+
+    // 新增方法：获取任务状态文本
+    getTaskStatusText(status: string): string {
+        switch (status) {
+            case 'pending':
+                return '待处理';
+            case 'processing':
+                return '处理中';
+            case 'completed':
+                return '已完成';
+            case 'cancelled':
+                return '已取消';
+            default:
+                return status || '未知';
+        }
+    }
+
+    // 新增方法：获取任务状态颜色
+    getTaskStatusColor(status: string): string {
+        switch (status) {
+            case 'pending':
+                return 'warning';
+            case 'processing':
+                return 'processing';
+            case 'completed':
+                return 'success';
+            case 'cancelled':
+                return 'default';
             default:
                 return 'default';
         }
@@ -161,27 +207,133 @@ export class FlowApprovalComponent implements OnInit {
     onSwitchView(view: ApprovalView) {
         this.selectedView = view;
         this.selectedInstance = null;
+        // 清空详情数据
+        this.instanceDetail = null;
+        this.instanceTasks = [];
+        this.nodeInfo = null;
+        this.comments = [];
+
         switch (view) {
             case ApprovalView.TODO:
-                this.flowInstanceApiService.todoList().subscribe(data => {
-                    this.flowInstance = data.data;
+                this.flowInstanceApiService.todoList().subscribe({
+                    next: (data) => {
+                        this.flowInstance = data.data;
+                    },
+                    error: (error) => {
+                        console.error('加载待办列表失败:', error);
+                        this.message.error('加载待办列表失败');
+                    }
                 });
                 break;
             case ApprovalView.DONE:
-                this.flowInstanceApiService.doneList().subscribe(data => {
-                    this.flowInstance = data.data;
+                this.flowInstanceApiService.doneList().subscribe({
+                    next: (data) => {
+                        this.flowInstance = data.data;
+                    },
+                    error: (error) => {
+                        console.error('加载已办列表失败:', error);
+                        this.message.error('加载已办列表失败');
+                    }
                 });
                 break;
             case ApprovalView.CC:
-                this.flowInstanceApiService.ccList().subscribe(data => {
-                    this.flowInstance = data.data;
-                })
+                this.flowInstanceApiService.ccList().subscribe({
+                    next: (data) => {
+                        this.flowInstance = data.data;
+                    },
+                    error: (error) => {
+                        console.error('加载抄送列表失败:', error);
+                        this.message.error('加载抄送列表失败');
+                    }
+                });
                 break;
             case ApprovalView.CREATED:
-                this.flowInstanceApiService.createdList().subscribe(data => {
-                    this.flowInstance = data.data;
-                })
+                this.flowInstanceApiService.createdList().subscribe({
+                    next: (data) => {
+                        this.flowInstance = data.data;
+                    },
+                    error: (error) => {
+                        console.error('加载已发起列表失败:', error);
+                        this.message.error('加载已发起列表失败');
+                    }
+                });
+                break;
         }
+    }
+
+    // 新增方法：加载实例详情
+    loadInstanceDetail(instanceId: number) {
+        // 加载实例详情
+        this.flowInstanceApiService.detail(instanceId).subscribe({
+            next: (data) => {
+                this.instanceDetail = data.data;
+            },
+            error: (error) => {
+                console.error('加载实例详情失败:', error);
+                this.message.error('加载实例详情失败');
+            }
+        });
+
+        // 加载任务列表
+        this.flowInstanceApiService.tasks(instanceId).subscribe({
+            next: (data) => {
+                this.instanceTasks = data.data || [];
+            },
+            error: (error) => {
+                console.error('加载任务列表失败:', error);
+                this.message.error('加载任务列表失败');
+            }
+        });
+
+        // 加载节点信息
+        this.flowInstanceApiService.nodeInfo(instanceId).subscribe({
+            next: (data) => {
+                this.nodeInfo = data.data;
+            },
+            error: (error) => {
+                console.error('加载节点信息失败:', error);
+                this.message.error('加载节点信息失败');
+            }
+        });
+
+        // 加载评论列表
+        this.flowInstanceApiService.commentList(Number(instanceId)).subscribe({
+            next: (data) => {
+                this.comments = data.data || [];
+            },
+            error: (error) => {
+                console.error('加载评论列表失败:', error);
+                this.message.error('加载评论列表失败');
+            }
+        });
+    }
+
+    // 新增方法：提交评论
+    submitComment() {
+        if (!this.newComment.trim() || !this.selectedInstance) {
+            return;
+        }
+
+        this.isSubmittingComment = true;
+        this.flowInstanceApiService.commentCreate(Number(this.selectedInstance.id), this.newComment).subscribe({
+            next: () => {
+                this.message.success('评论提交成功');
+                this.newComment = '';
+                // 重新加载评论列表
+                if (this.selectedInstance) {
+                    this.flowInstanceApiService.commentList(Number(this.selectedInstance.id)).subscribe(data => {
+                        this.comments = data.data || [];
+                    });
+                }
+            },
+            error: (error) => {
+                this.message.error('评论提交失败');
+                console.error('提交评论失败:', error);
+            },
+            complete: () => {
+                this.isSubmittingComment = false;
+            }
+        });
     }
 
     protected readonly ApprovalView = ApprovalView;

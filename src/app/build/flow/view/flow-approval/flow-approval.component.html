@@ -136,7 +136,55 @@
                 >
                     <nz-tab nzTitle="审批详情">
                         <div class="tab-content">
-                            <div>xxx</div>
+                            <div class="section" *ngIf="instanceDetail">
+                                <h3 class="section-title">| 基本信息</h3>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <span class="info-label">流程编号：</span>
+                                        <span class="info-value">{{ instanceDetail.no || selectedInstance?.no }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">流程名称：</span>
+                                        <span class="info-value">{{ instanceDetail.eruptFlowConfig?.name || selectedInstance?.eruptFlowConfig?.name }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">发起人：</span>
+                                        <span class="info-value">{{ instanceDetail.initiatorUser?.name || selectedInstance?.initiatorUser?.name }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">创建时间：</span>
+                                        <span class="info-value">{{ instanceDetail.createTime || selectedInstance?.createTime }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">完成时间：</span>
+                                        <span class="info-value">{{ instanceDetail.finishTime || selectedInstance?.finishTime || '-' }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">状态：</span>
+                                        <span class="info-value">
+                                            <nz-tag [nzColor]="getStatusColor(instanceDetail.status || selectedInstance?.status)">
+                                                {{ getStatusText(instanceDetail.status || selectedInstance?.status) }}
+                                            </nz-tag>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="section" *ngIf="nodeInfo">
+                                <h3 class="section-title">| 流程节点</h3>
+                                <div class="node-info">
+                                    <div class="node-item">
+                                        <span class="node-name">{{ nodeInfo.name }}</span>
+                                        <span class="node-type">{{ nodeInfo.type }}</span>
+                                    </div>
+                                    <div class="node-branches" *ngIf="nodeInfo.branches && nodeInfo.branches.length > 0">
+                                        <div class="branch-item" *ngFor="let branch of nodeInfo.branches">
+                                            <span class="branch-name">{{ branch.name }}</span>
+                                            <span class="branch-type">{{ branch.type }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </nz-tab>
 
@@ -144,58 +192,114 @@
                         <div class="tab-content">
                             <div class="section">
                                 <h3 class="section-title">| 审批记录</h3>
-                                <nz-table
-                                    #recordsTable
-                                    [nzData]="approvalRecords"
-                                    [nzShowPagination]="false"
-                                    [nzSize]="'small'"
-                                    class="records-table"
-                                >
-                                    <thead>
-                                    <tr>
-                                        <th>节点名称</th>
-                                        <th>审批人</th>
-                                        <th>审批结果</th>
-                                        <th>审批意见</th>
-                                        <th>审批时间</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr *ngFor="let record of approvalRecords">
-                                        <td>{{ record.nodeName }}</td>
-                                        <td>
-                                            <div class="approver-info">
-                                                <div class="avatar-small"
-                                                     [style.background-color]="getAvatarColor(record.approver.avatar)">
-                                                    {{ record.approver.avatar }}
+                                <div *ngIf="instanceTasks.length > 0; else noTasks">
+                                    <nz-table
+                                        #recordsTable
+                                        [nzData]="instanceTasks"
+                                        [nzShowPagination]="false"
+                                        [nzSize]="'small'"
+                                        class="records-table"
+                                    >
+                                        <thead>
+                                        <tr>
+                                            <th>审批人</th>
+                                            <th>任务类型</th>
+                                            <th>任务状态</th>
+                                            <th>审批意见</th>
+                                            <th>创建时间</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let task of instanceTasks">
+                                            <td>
+                                                <div class="approver-info">
+                                                    <div class="avatar-small"
+                                                         [style.background-color]="getAvatarColor(task.assigneeUser?.name || '')">
+                                                        {{ task.assigneeUser?.name?.[0] || '-' }}
+                                                    </div>
+                                                    <span class="approver-name">{{ task.assigneeUser?.name || '-' }}</span>
                                                 </div>
-                                                <span class="approver-name">{{ record.approver.name }}</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <nz-tag nzColor="success">{{ record.result }}</nz-tag>
-                                        </td>
-                                        <td>{{ record.opinion || '-' }}</td>
-                                        <td>
-                                            <div class="time-info">
-                                                <div>{{ record.time }}</div>
-                                                <div class="time-detail">7月30日 23:34</div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </nz-table>
+                                            </td>
+                                            <td>{{ task.taskType || '-' }}</td>
+                                            <td>
+                                                <nz-tag [nzColor]="getTaskStatusColor(task.taskStatus)">
+                                                    {{ getTaskStatusText(task.taskStatus) }}
+                                                </nz-tag>
+                                            </td>
+                                            <td>{{ task.comment || '-' }}</td>
+                                            <td>
+                                                <div class="time-info">
+                                                    <div>{{ task.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </nz-table>
+                                </div>
+                                <ng-template #noTasks>
+                                    <nz-empty
+                                        nzNotFoundImage="simple"
+                                        nzNotFoundContent="暂无审批记录"
+                                    ></nz-empty>
+                                </ng-template>
                             </div>
                         </div>
                     </nz-tab>
 
-                    <nz-tab nzTitle="全文评论 (1)">
+                    <nz-tab [nzTitle]="'全文评论 (' + comments.length + ')'">
                         <div class="tab-content">
                             <div class="section">
-                                <nz-empty
-                                    nzNotFoundImage="simple"
-                                    nzNotFoundContent="暂无评论内容"
-                                ></nz-empty>
+                                <h3 class="section-title">| 评论列表</h3>
+                                
+                                <!-- 添加评论 -->
+                                <div class="comment-form">
+                                    <nz-input-group [nzSuffix]="commentSuffix">
+                                        <input 
+                                            nz-input 
+                                            [(ngModel)]="newComment" 
+                                            placeholder="请输入评论内容..."
+                                            (keyup.enter)="submitComment()"
+                                        />
+                                    </nz-input-group>
+                                    <ng-template #commentSuffix>
+                                        <button 
+                                            nz-button 
+                                            nzType="primary" 
+                                            nzSize="small"
+                                            [disabled]="!newComment.trim() || isSubmittingComment"
+                                            (click)="submitComment()"
+                                        >
+                                            <span nz-icon nzType="send" nzTheme="outline"></span>
+                                            {{ isSubmittingComment ? '提交中...' : '发送' }}
+                                        </button>
+                                    </ng-template>
+                                </div>
+
+                                <!-- 评论列表 -->
+                                <div class="comments-list" *ngIf="comments.length > 0; else noComments">
+                                    <div class="comment-item" *ngFor="let comment of comments">
+                                        <div class="comment-header">
+                                            <div class="comment-user">
+                                                <div class="avatar-small"
+                                                     [style.background-color]="getAvatarColor(comment.createUser?.name || '')">
+                                                    {{ comment.createUser?.name?.[0] || '-' }}
+                                                </div>
+                                                <span class="comment-username">{{ comment.createUser?.name || '-' }}</span>
+                                            </div>
+                                            <span class="comment-time">{{ comment.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</span>
+                                        </div>
+                                        <div class="comment-content">
+                                            {{ comment.comment }}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <ng-template #noComments>
+                                    <nz-empty
+                                        nzNotFoundImage="simple"
+                                        nzNotFoundContent="暂无评论内容"
+                                    ></nz-empty>
+                                </ng-template>
                             </div>
                         </div>
                     </nz-tab>
