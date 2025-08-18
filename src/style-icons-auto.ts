@@ -57,10 +57,12 @@ import {
     SendOutline,
     SettingOutline,
     StopOutline,
+    SwapOutline,
     SyncOutline,
     TableOutline,
     UndoOutline,
     UnorderedListOutline,
+    UserAddOutline,
     UserOutline
 } from '@ant-design/icons-angular/icons';
 
@@ -122,5 +124,7 @@ export const ICONS_AUTO = [
     UndoOutline,
     RedoOutline,
     IdcardOutline,
-    SafetyCertificateOutline
+    SafetyCertificateOutline,
+    SwapOutline,
+    UserAddOutline
 ];

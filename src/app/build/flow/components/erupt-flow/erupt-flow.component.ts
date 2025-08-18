@@ -16,6 +16,7 @@ import {StartNodeComponent} from "@flow/node/start/start-node.component";
 import {NodeRule} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {NodeMap} from '@flow/node/process-nodes';
+import {EndNodeComponent} from "@flow/node/end/end-node.component";
 
 @Component({
     selector: 'erupt-flow',
@@ -73,7 +74,7 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         // 加载的时候判断，赋默认值
         if (!this.modelValue) {
-            this.modelValue = [new StartNodeComponent().create()];
+            this.modelValue = [new StartNodeComponent().create(), new EndNodeComponent().create()];
             this.modelValueChange.emit(this.modelValue);
         }
     }

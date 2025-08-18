@@ -60,21 +60,6 @@ export class FlowApprovalComponent implements OnInit {
         }
     }
 
-    getStatusText(status: string): string {
-        switch (status) {
-            case 'processing':
-                return '审批中';
-            case 'approved':
-                return '已通过';
-            case 'rejected':
-                return '已拒绝';
-            case 'pending':
-                return '待审批';
-            default:
-                return '';
-        }
-    }
-
     getStatusColor(status: string): string {
         switch (status) {
             case 'processing':
@@ -178,6 +163,7 @@ export class FlowApprovalComponent implements OnInit {
                     next: (data) => {
                         this.flowInstance = data.data;
                         this.selectedInstance = this.flowInstance[0] || null;
+                        this.selectedInstance && this.selectItem(this.selectedInstance);
                         this.todoCount = this.flowInstance.length;
                     }
                 });
@@ -187,6 +173,7 @@ export class FlowApprovalComponent implements OnInit {
                     next: (data) => {
                         this.flowInstance = data.data;
                         this.selectedInstance = this.flowInstance[0] || null;
+                        this.selectedInstance && this.selectItem(this.selectedInstance);
                     }
                 });
                 break;
@@ -195,6 +182,7 @@ export class FlowApprovalComponent implements OnInit {
                     next: (data) => {
                         this.flowInstance = data.data;
                         this.selectedInstance = this.flowInstance[0] || null;
+                        this.selectedInstance && this.selectItem(this.selectedInstance);
                     }
                 });
                 break;
@@ -203,6 +191,7 @@ export class FlowApprovalComponent implements OnInit {
                     next: (data) => {
                         this.flowInstance = data.data;
                         this.selectedInstance = this.flowInstance[0] || null;
+                        this.selectedInstance && this.selectItem(this.selectedInstance);
                     }
                 });
                 break;

@@ -14,6 +14,9 @@
         (delete)="deleteNode(branch, $event.index)"
         (select)="select.emit($event)">
     </app-start-node>
+    <app-end-node *ngSwitchCase="nodeType.END">
+
+    </app-end-node>
 
     <erupt-flex-node
         *ngSwitchCase="nodeType.FlEX"
