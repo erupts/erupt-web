@@ -92,7 +92,7 @@ export class GatewayNodeComponent extends ANode {
 
     override name(): string {
         if (this.gatewayType === GatewayType.EXCLUSIVE) {
-            return "互斥条件";
+            return "互斥分支";
         } else if (this.gatewayType === GatewayType.PARALLEL) {
             return "并行分支";
         } else {
@@ -159,7 +159,7 @@ export class GatewayNodeComponent extends ANode {
             return {
                 id: geneNodeId(),
                 type: NodeType.BRANCH,
-                name: '条件' + i,
+                name: '互斥条件' + i,
                 prop: {
                     type: BranchType.CONDITION
                 },
