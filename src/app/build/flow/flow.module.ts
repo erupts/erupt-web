@@ -60,7 +60,7 @@ import {EruptFlowComponent} from './components/erupt-flow/erupt-flow.component';
 import {StartNodeComponent} from '@flow/node/start/start-node.component';
 import {ApprovalNodeComponent} from '@flow/node/appoval/approval-node.component';
 import {CcNodeComponent} from '@flow/node/cc/cc-node.component';
-import {ExclusiveNodeComponent} from '@flow/node/exclusive/exclusive-node.component';
+import {GatewayNodeComponent} from '@flow/node/gateway/gateway-node.component';
 import {BranchNodeComponent} from '@flow/node/base/branch-node.component';
 import {InsertBtnComponent} from '@flow/node/base/insert-btn.component';
 
@@ -70,7 +70,6 @@ import {NodeComponent} from '@flow/node/base/node.component';
 import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
 import {RecursiveNodeComponent} from "@flow/node/recursive-node.component";
-import {ParallelNodeComponent} from "@flow/node/parallel/parallel-node.component";
 import {FlowManagementComponent} from './view/flow-management/flow-management.component';
 import {NzDropDownModule} from "ng-zorro-antd/dropdown";
 import {SharedModule} from "@shared/shared.module";
@@ -94,8 +93,7 @@ import {EndNodeComponent} from './node/end/end-node.component';
         StartNodeComponent,
         ApprovalNodeComponent,
         CcNodeComponent,
-        ExclusiveNodeComponent,
-        ParallelNodeComponent,
+        GatewayNodeComponent,
         NodeComponent,
         BranchNodeComponent,
         InsertBtnComponent,
