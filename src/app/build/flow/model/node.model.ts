@@ -13,11 +13,10 @@ export enum NodeType {
 
     CC = 'CC',
     APPROVAL = 'APPROVAL',
-
     PARALLEL = "PARALLEL",
-    BRANCH = "BRANCH",
-
+    INCLUSIVE = "INCLUSIVE",
     EXCLUSION = 'EXCLUSION',
+    BRANCH = "BRANCH",
 
     FlEX = 'FLEX',
 }

@@ -4,6 +4,7 @@ import {insertFlexNodeFun, reloadNodeId} from '@flow/util/flow.util';
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
+import {GatewayType} from "@flow/node/gateway/gateway-node.component";
 
 @Component({
     selector: 'app-recursive-node',
@@ -26,6 +27,7 @@ export class RecursiveNodeComponent {
     @ViewChildren('startNode, approvalNode, flexNode, ccNode, exclusiveNode, parallelNode, branchNode, childNodeRef') nodeRefs!: QueryList<ElementRef>;
 
     nodeType = NodeType;
+    gatewayType = GatewayType;
 
     /**
      * 插入节点
