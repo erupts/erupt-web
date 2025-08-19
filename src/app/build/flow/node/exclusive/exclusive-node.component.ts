@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
-import {NodeRule, NodeType} from "@flow/model/node.model";
+import {BranchType, NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 
@@ -84,8 +84,11 @@ export class ExclusiveNodeComponent extends ANode {
                 this.createBranch(1),
                 {
                     id: geneNodeId(),
-                    type: NodeType.ELSE,
+                    type: NodeType.BRANCH,
                     name: '默认条件',
+                    prop: {
+                        type: BranchType.ELSE
+                    },
                     branches: []
                 }
             ]
@@ -98,8 +101,11 @@ export class ExclusiveNodeComponent extends ANode {
     override createBranch(i?: number): NodeRule {
         return {
             id: geneNodeId(),
-            type: NodeType.IF,
+            type: NodeType.BRANCH,
             name: '条件' + i,
+            prop: {
+                type: BranchType.CONDITION
+            },
             branches: []
         };
     }

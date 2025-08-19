@@ -18,8 +18,12 @@ export enum NodeType {
     BRANCH = "BRANCH",
 
     EXCLUSION = 'EXCLUSION',
-    IF = 'IF',
-    ELSE = 'ELSE',
 
     FlEX = 'FLEX',
+}
+
+
+export enum BranchType {
+    CONDITION = "CONDITION", //条件分支
+    ELSE = "ELSE"    //兜底分支
 }

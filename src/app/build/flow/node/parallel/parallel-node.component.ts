@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
-import {NodeRule, NodeType} from "@flow/model/node.model";
+import {BranchType, NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 
@@ -87,6 +87,9 @@ export class ParallelNodeComponent extends ANode {
             id: geneNodeId(),
             type: NodeType.BRANCH,
             name: '并行路径' + i,
+            prop: {
+                type: BranchType.CONDITION
+            },
             branches: []
         };
     }
