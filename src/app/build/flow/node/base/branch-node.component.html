@@ -14,7 +14,6 @@
         <div style="flex: 1">
             <div class="p-node-header">
                 <div [style.color]="isDefault ? '#898989' : color">
-                    <!--                    <span *ngIf="!enableEdit" nz-icon [nzType]="headerIcon" nzSize="15"></span>-->
                     <input *ngIf="enableEdit"
                            #nodeNameInput
                            autofocus
@@ -45,7 +44,6 @@
             <span *ngIf="!readonly && moveRn && !isDefault" nz-icon nzType="right"></span>
         </div>
     </div>
-
     <div class="p-node-add">
         <app-insert-btn *ngIf="!readonly" (insertNode)="onInsertNode($event)"
                         (insertFlexNode)="onInsertFlexNode($event)">

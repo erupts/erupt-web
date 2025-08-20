@@ -39,7 +39,7 @@ export class FlexNodeComponent extends ANode implements OnInit {
 
     }
 
-    override onInsertNode(type: string) {
+    override onInsertNode(type: NodeType) {
         this.insertNode.emit({
             branch: this.branch,
             index: this.index,

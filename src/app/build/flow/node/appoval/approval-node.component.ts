@@ -51,7 +51,7 @@ export class ApprovalNodeComponent extends ANode {
         });
     }
 
-    override onInsertNode(type: string) {
+    override onInsertNode(type: NodeType) {
         this.insertNode.emit({
             branch: this.branch,
             index: this.index,

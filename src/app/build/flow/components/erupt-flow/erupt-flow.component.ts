@@ -15,7 +15,6 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {StartNodeComponent} from "@flow/node/start/start-node.component";
 import {NodeRule} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
-import {NodeMap} from '@flow/node/process-nodes';
 import {EndNodeComponent} from "@flow/node/end/end-node.component";
 
 @Component({
@@ -261,30 +260,6 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
 
             // 垂直滚动条回到顶部
             scrollContainer.scrollTop = 0;
-        }
-    }
-
-    /**
-     * 删除某个元素
-     * @param branch 要删除的元素所在支路
-     * @param i 删除的元素在该支路内索引位置
-     */
-    deleteNode(branch: any[], i: number) {
-        branch.splice(i, 1);
-        this.modelValueChange.emit(this.modelValue);
-    }
-
-    /**
-     * 插入节点
-     * @param branch 该节点要插入的支路（节点数组）
-     * @param i 插入哪个元素后面的索引，实际插入位置为i+1
-     * @param type 要插入的节点类型
-     */
-    insertNode(branch: any[], i: number, type: string) {
-        if (NodeMap[type] && NodeMap[type].create) {
-            const newNode = NodeMap[type].create();
-            branch.splice(i + 1, 0, newNode);
-            this.modelValueChange.emit(this.modelValue);
         }
     }
 

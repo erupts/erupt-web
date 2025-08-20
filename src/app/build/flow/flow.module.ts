@@ -85,6 +85,7 @@ import {FlowDataService} from "@flow/service/flow-data.service";
 import {FormAccessComponent} from './components/form-access/form-access.component';
 import {CreateInstanceComponent} from './view/flow-dashboard/create-instance/create-instance.component';
 import {EndNodeComponent} from './node/end/end-node.component';
+import {GatewayJoinComponent} from './node/gateway-join/gateway-join.component';
 
 
 @NgModule({
@@ -107,7 +108,8 @@ import {EndNodeComponent} from './node/end/end-node.component';
         FlexNodeComponent,
         FormAccessComponent,
         CreateInstanceComponent,
-        EndNodeComponent
+        EndNodeComponent,
+        GatewayJoinComponent
     ],
     providers: [
         FlowApiService,

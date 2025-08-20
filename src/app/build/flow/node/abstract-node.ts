@@ -15,7 +15,7 @@ export abstract class ANode {
 
     abstract onInsertFlexNode(flex: FlexNodeModel): void;
 
-    abstract onInsertNode(type: string): void;
+    abstract onInsertNode(type: NodeType): void;
 
     abstract onSaveProp(): void;
 
