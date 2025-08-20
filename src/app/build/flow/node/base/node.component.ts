@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import {NodeRule} from "@flow/model/node.model";
+import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 
@@ -25,7 +25,7 @@ export class NodeComponent implements AfterViewInit {
     @Output() modelChange = new EventEmitter<any>();
     @Output() select = new EventEmitter<void>();
     @Output() delete = new EventEmitter<void>();
-    @Output() insertNode = new EventEmitter<string>();
+    @Output() insertNode = new EventEmitter<NodeType>();
 
     @Output() saveProp = new EventEmitter<void>();
 
@@ -73,7 +73,7 @@ export class NodeComponent implements AfterViewInit {
         this.delete.emit();
     }
 
-    onInsertNode(type: string) {
+    onInsertNode(type: NodeType) {
         this.insertNode.emit(type);
     }
 

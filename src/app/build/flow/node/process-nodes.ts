@@ -7,6 +7,7 @@ import {CcNodeComponent} from "@flow/node/cc/cc-node.component";
 import {GatewayNodeComponent, GatewayType} from "@flow/node/gateway/gateway-node.component";
 import {StartNodeComponent} from "@flow/node/start/start-node.component";
 import {FlexNodeComponent} from "@flow/node/flex/flex-node.component";
+import {NodeType} from "@flow/model/node.model";
 
 export const Nodes: ANode[] = [
     (() => {
@@ -30,7 +31,7 @@ export const Nodes: ANode[] = [
     new FlexNodeComponent()
 ]
 
-export const NodeMap: { [key: string]: ANode } = {}
+export const NodeMap: Map<NodeType,ANode> = new Map<NodeType, ANode>();
 
 for (let node of Nodes) {
     NodeMap[node.type()] = node;

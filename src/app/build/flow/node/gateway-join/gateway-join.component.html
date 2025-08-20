@@ -1,0 +1,11 @@
+<div style="text-align: center;">
+    <svg style="width: 40px;height:40px" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8629" width="200" height="200"><path d="M533.333333 682.66666634a64 64 0 1 1-64 64 64 64 0 0 1 64-64m0-85.333333a149.333333 149.333333 0 1 0 149.333334 149.333333 149.333333 149.333333 0 0 0-149.333334-149.333333z" fill="#515151" p-id="8630"></path><path d="M533.333333 234.66666634m-106.666666 0a106.666667 106.666667 0 1 0 213.333333 0 106.666667 106.666667 0 1 0-213.333333 0Z" fill="#515151" p-id="8631"></path><path d="M277.333333 277.33333334m-106.666666 0a106.666667 106.666667 0 1 0 213.333333 0 106.666667 106.666667 0 1 0-213.333333 0Z" fill="#515151" p-id="8632"></path><path d="M789.333333 277.33333334m-106.666666 0a106.666667 106.666667 0 1 0 213.333333 0 106.666667 106.666667 0 1 0-213.333333 0Z" fill="#515151" p-id="8633"></path><path d="M512 298.66666634h42.666667v384h-42.666667z" fill="#515151" p-id="8634"></path><path d="M741.290667 314.83733334l30.165333 30.165333-225.066667 225.066667-30.165333-30.165333z" fill="#515151" p-id="8635"></path><path d="M558.08 539.34933334l-30.165333 30.165333-228.693334-228.693333 30.165334-30.165333z" fill="#515151" p-id="8636"></path></svg>
+</div>
+<erupt-node
+    [eruptBuild]="eruptBuild"
+    [readonly]="readonly"
+    [class]="{'p-branch-end': branch.length === index + 1}"
+    (insertFlexNode)="onInsertFlexNode($event)"
+    [showBody]="false"
+    (insertNode)="insertNode.emit({branch: branch, index: index, type: $event})">
+</erupt-node>

@@ -16,7 +16,7 @@ export class EndNodeComponent extends ANode {
 
     }
 
-    override onInsertNode(type: string) {
+    override onInsertNode(type: NodeType) {
 
     }
 

@@ -28,7 +28,7 @@ export class StartNodeComponent extends ANode {
         this.select.emit(this.model);
     }
 
-    override onInsertNode(type: string) {
+    override onInsertNode(type: NodeType) {
         this.insertNode.emit({
             branch: this.branch,
             index: this.index,

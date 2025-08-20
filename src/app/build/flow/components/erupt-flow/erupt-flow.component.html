@@ -24,9 +24,7 @@
                     [branch]="modelValue"
                     [index]="i"
                     (nodeChange)="modelValue[i] = $event; modelValueChange.emit(modelValue)"
-                    (select)="selectNode($event)"
-                    (delete)="deleteNode($event.branch, $event.index)"
-                    (insertNode)="insertNode($event.branch, $event.index, $event.type)">
+                    (select)="selectNode($event)">
                 </app-recursive-node>
             </ng-container>
         </div>

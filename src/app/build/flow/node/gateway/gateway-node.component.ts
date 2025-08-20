@@ -49,7 +49,7 @@ export class GatewayNodeComponent extends ANode {
         });
     }
 
-    override onInsertNode(type: string) {
+    override onInsertNode(type: NodeType) {
         this.insertNode.emit({
             branch: this.branch,
             index: this.index,
@@ -72,11 +72,11 @@ export class GatewayNodeComponent extends ANode {
 
     override type(): NodeType {
         if (this.gatewayType === GatewayType.EXCLUSIVE) {
-            return NodeType.EXCLUSION;
+            return NodeType.GATEWAY_EXCLUSION;
         } else if (this.gatewayType === GatewayType.PARALLEL) {
-            return NodeType.PARALLEL;
+            return NodeType.GATEWAY_PARALLEL;
         } else {
-            return NodeType.INCLUSIVE;
+            return NodeType.GATEWAY_INCLUSIVE;
         }
     }
 
@@ -104,13 +104,13 @@ export class GatewayNodeComponent extends ANode {
         if (this.gatewayType === GatewayType.EXCLUSIVE) {
             return {
                 id: geneNodeId() + '_fork',
-                type: NodeType.EXCLUSION,
+                type: NodeType.GATEWAY_EXCLUSION,
                 name: this.name(),
                 branches: [
                     this.createBranch(1),
                     {
                         id: geneNodeId(),
-                        type: NodeType.BRANCH,
+                        type: NodeType.GATEWAY_BRANCH,
                         name: '默认条件',
                         prop: {
                             type: BranchType.ELSE
@@ -122,7 +122,7 @@ export class GatewayNodeComponent extends ANode {
         } else if (this.gatewayType === GatewayType.PARALLEL) {
             return {
                 id: geneNodeId() + '_fork',
-                type: NodeType.PARALLEL,
+                type: NodeType.GATEWAY_PARALLEL,
                 name: this.name(),
                 branches: [
                     this.createBranch(1),
@@ -132,14 +132,14 @@ export class GatewayNodeComponent extends ANode {
         } else {
             return {
                 id: geneNodeId() + '_fork',
-                type: NodeType.INCLUSIVE,
+                type: NodeType.GATEWAY_INCLUSIVE,
                 name: this.name(),
                 branches: [
                     this.createBranch(1),
                     this.createBranch(2),
                     {
                         id: geneNodeId(),
-                        type: NodeType.BRANCH,
+                        type: NodeType.GATEWAY_BRANCH,
                         name: '默认条件',
                         prop: {
                             type: BranchType.ELSE
@@ -158,7 +158,7 @@ export class GatewayNodeComponent extends ANode {
         if (this.gatewayType === GatewayType.EXCLUSIVE) {
             return {
                 id: geneNodeId(),
-                type: NodeType.BRANCH,
+                type: NodeType.GATEWAY_BRANCH,
                 name: '互斥条件' + i,
                 prop: {
                     type: BranchType.CONDITION
@@ -168,7 +168,7 @@ export class GatewayNodeComponent extends ANode {
         } else if (this.gatewayType === GatewayType.PARALLEL) {
             return {
                 id: geneNodeId(),
-                type: NodeType.BRANCH,
+                type: NodeType.GATEWAY_BRANCH,
                 name: '并行路径' + i,
                 prop: {
                     type: BranchType.CONDITION
@@ -178,7 +178,7 @@ export class GatewayNodeComponent extends ANode {
         } else {
             return {
                 id: geneNodeId(),
-                type: NodeType.BRANCH,
+                type: NodeType.GATEWAY_BRANCH,
                 name: '包容条件' + i,
                 prop: {
                     type: BranchType.CONDITION

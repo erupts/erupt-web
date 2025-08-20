@@ -12,7 +12,7 @@ import {FlexNodeModel} from "@flow/model/flex-node.model";
 })
 export class InsertBtnComponent {
 
-    @Output() insertNode = new EventEmitter<string>();
+    @Output() insertNode = new EventEmitter<NodeType>();
 
     @Output() insertFlexNode = new EventEmitter<FlexNodeModel>();
 

@@ -61,7 +61,18 @@
         (delete)="deleteNode(branch, $event.index)"
         (select)="select.emit($event)">
     </app-cc-node>
-
+    <app-gateway-join *ngSwitchCase="nodeType.GATEWAY_JOIN"
+                      [readonly]="readonly"
+                      [(modelValue)]="node"
+                      [eruptBuild]="eruptBuild"
+                      [branch]="branch"
+                      [index]="index"
+                      (modelValueChange)="nodeChange.emit($event)"
+                      (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
+                      (delete)="deleteNode(branch, $event.index)"
+                      (select)="select.emit($event)"
+    >
+    </app-gateway-join>
     <!-- 并行节点、排他节点和包容节点 - 递归渲染 -->
     <div *ngSwitchDefault class="p-gateway">
         <div class="p-branch">
@@ -76,21 +87,21 @@
                  [class]="'p-branch-item' + (i === 0 ? ' p-branch-item-l' : '') + (i === node.branches.length - 1 ? ' p-branch-item-r' : '')">
                 <div>
                     <app-gateway-node #branchNode
-                                       [readonly]="readonly"
-                                       [(modelValue)]="node.branches[i]"
-                                       [index]="i"
-                                       [eruptBuild]="eruptBuild"
-                                       [branch]="node.branches[i].branches"
-                                       [moveRn]="node.type === nodeType.PARALLEL ? i < node.branches.length - 1 : i < node.branches.length - 2"
-                                       [moveLn]="i > 0"
-                                       [isDefault]="node.type === nodeType.PARALLEL ? i === node.branches.length - 1 && false : i === node.branches.length - 1 && true"
-                                       [gatewayType]="node.type === nodeType.PARALLEL ? gatewayType.PARALLEL : (node.type === nodeType.EXCLUSION ? gatewayType.EXCLUSIVE : gatewayType.INCLUSIVE)"
-                                       (insertNode)="insertNodeFun(node.branches[i].branches, -1, $event.type)"
-                                       (delete)="deleteBranch(i)"
-                                       (copy)="copyBranch(i)"
-                                       (moveL)="moveL(i)"
-                                       (moveR)="moveR(i)"
-                                       (select)="selectFun($event, i)">
+                                      [readonly]="readonly"
+                                      [(modelValue)]="node.branches[i]"
+                                      [index]="i"
+                                      [eruptBuild]="eruptBuild"
+                                      [branch]="node.branches[i].branches"
+                                      [moveRn]="node.type === nodeType.GATEWAY_PARALLEL ? i < node.branches.length - 1 : i < node.branches.length - 2"
+                                      [moveLn]="i > 0"
+                                      [isDefault]="node.type === nodeType.GATEWAY_PARALLEL ? i === node.branches.length - 1 && false : i === node.branches.length - 1 && true"
+                                      [gatewayType]="node.type === nodeType.GATEWAY_PARALLEL ? gatewayType.PARALLEL : (node.type === nodeType.GATEWAY_EXCLUSION ? gatewayType.EXCLUSIVE : gatewayType.INCLUSIVE)"
+                                      (insertNode)="insertNodeFun(node.branches[i].branches, -1, $event.type)"
+                                      (delete)="deleteBranch(i)"
+                                      (copy)="copyBranch(i)"
+                                      (moveL)="moveL(i)"
+                                      (moveR)="moveR(i)"
+                                      (select)="selectFun($event, i)">
                     </app-gateway-node>
 
                     <!-- 递归渲染分支内的节点 -->
@@ -111,13 +122,14 @@
                 </div>
             </div>
         </div>
-
         <erupt-node
+            *ngIf="node.type === nodeType.GATEWAY_EXCLUSION"
+            [eruptBuild]="eruptBuild"
             [readonly]="readonly"
             [class]="{'p-branch-end': branch.length === index + 1}"
             (insertFlexNode)="onInsertFlexNode($event)"
             [showBody]="false"
-            (insertNode)="insertNode.emit({branch: branch, index: index, type: $event})">
+            (insertNode)="insertNodeFun(branch, index, $event)">
         </erupt-node>
     </div>
 </ng-container>
