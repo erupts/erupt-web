@@ -144,6 +144,17 @@ export class FlowApprovalComponent implements OnInit {
         this.message.info('再次提交功能');
     }
 
+
+    copyToClipboard(no: string) {
+        if (!no) return;
+        navigator.clipboard.writeText(no).then(() => {
+            this.message.success('编号已复制到剪贴板');
+        }).catch(err => {
+            this.message.error('复制失败，请手动复制');
+            console.error('复制失败:', err);
+        });
+    }
+
     onTabChange(index: number) {
         this.activeTabIndex = index;
     }

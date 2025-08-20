@@ -182,493 +182,507 @@
                         align-items: center;
                         gap: 12px;
                         flex-shrink: 0; // 防止头部被压缩
-
-                        .time-filter {
-                            display: flex;
-                            align-items: center;
-                            gap: 8px;
-                            font-size: 14px;
-                            color: #333;
-                            cursor: pointer;
-                        }
-
-                        .separator {
-                            width: 1px;
-                            height: 16px;
-                            background-color: #d9d9d9;
-                        }
                     }
 
-                    .approval-list {
-                        flex: 1;
-                        overflow-y: auto;
+                    // 复制图标样式
+                    .copy-icon {
+                        margin-left: 6px;
+                        font-size: 14px;
+                        color: #8c8c8c;
+                        vertical-align: middle;
+                        transition: color 0.2s;
+                    }
 
-                        .approval-item {
-                            padding: 12px;
-                            cursor: pointer;
-                            transition: all 0.3s ease;
-                            border-bottom: 1px solid #e5e5e5;
+                    .item-id:hover .copy-icon {
+                        color: #1890ff;
+                    }
 
-                            &:hover {
-                                background-color: #fafafa;
-                            }
+                    .time-filter {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        font-size: 14px;
+                        color: #333;
+                        cursor: pointer;
+                    }
 
-                            &.active {
-                                background-color: #e6f7ff;
-                                box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
-                            }
-
-                            .item-header {
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                                margin-bottom: 12px;
-
-                                .item-title {
-                                    margin: 0;
-                                    font-size: 16px;
-                                    font-weight: 600;
-                                    color: #333;
-                                }
-
-                                .status-tag {
-                                    font-size: 12px;
-                                }
-                            }
-
-                            .item-content {
-                                margin-bottom: 12px;
-
-                                .item-field {
-                                    display: flex;
-                                    margin-bottom: 6px;
-                                    font-size: 13px;
-
-                                    .field-label {
-                                        color: #666;
-                                        min-width: 80px;
-                                        flex-shrink: 0;
-                                    }
-
-                                    .field-value {
-                                        color: #333;
-                                        flex: 1;
-                                    }
-                                }
-                            }
-
-                            .item-footer {
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-
-                                .submitter-info {
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 8px;
-
-                                    .avatar {
-                                        width: 24px;
-                                        height: 24px;
-                                        border-radius: 50%;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        color: white;
-                                        font-size: 12px;
-                                        font-weight: 500;
-                                    }
-
-                                    .submitter-name {
-                                        font-size: 13px;
-                                        color: #333;
-                                    }
-                                }
-
-                                .time-info {
-                                    .process-time {
-                                        font-size: 12px;
-                                        color: #999;
-                                    }
-                                }
-                            }
-                        }
+                    .separator {
+                        width: 1px;
+                        height: 16px;
+                        background-color: #d9d9d9;
                     }
                 }
 
-                // 右侧详情区域
-                .detail-section {
+                .approval-list {
                     flex: 1;
-                    height: 100%; // 固定高度
-                    background: white;
-                    display: flex;
-                    flex-direction: column;
-                    overflow: hidden;
-                    position: relative; // 为固定底部按钮定位
+                    overflow-y: auto;
 
-                    .detail-header {
-                        padding: 12px 16px;
+                    .approval-item {
+                        padding: 12px;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
                         border-bottom: 1px solid #e5e5e5;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        flex-shrink: 0; // 防止头部被压缩
 
-                        .header-left {
-                            .item-id {
-                                font-size: 14px;
-                                color: #666;
-                            }
+                        &:hover {
+                            background-color: #fafafa;
                         }
 
-                        .header-right {
-                            display: flex;
-                            gap: 8px;
+                        &.active {
+                            background-color: #e6f7ff;
+                            box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
                         }
-                    }
 
-                    .detail-content {
-                        flex: 1;
-                        overflow-y: auto; // 只有内容区域可以滚动
-                        // 为底部固定按钮留出空间
-                        padding: 16px 16px 70px;
-
-                        .content-header {
+                        .item-header {
                             display: flex;
+                            justify-content: space-between;
                             align-items: center;
-                            gap: 12px;
                             margin-bottom: 12px;
 
-                            .content-title {
+                            .item-title {
                                 margin: 0;
-                                font-size: 25px;
+                                font-size: 16px;
                                 font-weight: 600;
                                 color: #333;
                             }
 
-                            .status-tag-large {
-
+                            .status-tag {
+                                font-size: 12px;
                             }
                         }
 
-                        .submitter-info-large {
-                            display: flex;
-                            align-items: center;
-                            gap: 12px;
+                        .item-content {
                             margin-bottom: 12px;
-                            padding: 12px;
-                            background-color: #fafafa;
-                            border-radius: 4px;
 
-                            .avatar-large {
-                                width: 48px;
-                                height: 48px;
-                                border-radius: 50%;
+                            .item-field {
+                                display: flex;
+                                margin-bottom: 6px;
+                                font-size: 13px;
+
+                                .field-label {
+                                    color: #666;
+                                    min-width: 80px;
+                                    flex-shrink: 0;
+                                }
+
+                                .field-value {
+                                    color: #333;
+                                    flex: 1;
+                                }
+                            }
+                        }
+
+                        .item-footer {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+
+                            .submitter-info {
                                 display: flex;
                                 align-items: center;
-                                justify-content: center;
-                                color: white;
-                                font-size: 18px;
-                                font-weight: 600;
-                            }
+                                gap: 8px;
 
-                            .submitter-details {
-                                display: flex;
-                                justify-content: center;
-                                gap: 4px;
+                                .avatar {
+                                    width: 24px;
+                                    height: 24px;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    color: white;
+                                    font-size: 12px;
+                                    font-weight: 500;
+                                }
 
-                                .submitter-name-large {
-                                    font-size: 16px;
-                                    font-weight: 600;
+                                .submitter-name {
+                                    font-size: 13px;
                                     color: #333;
                                 }
+                            }
 
-                                .submitter-dept {
-                                    font-size: 14px;
-                                    color: #666;
-                                }
-
-                                .submit-time {
-                                    font-size: 13px;
+                            .time-info {
+                                .process-time {
+                                    font-size: 12px;
                                     color: #999;
                                 }
                             }
                         }
-
-                        .detail-tabs {
-                            ::ng-deep .ant-tabs-nav {
-                                margin-bottom: 24px;
-                            }
-
-                            .tab-content {
-                                .section {
-
-                                    .section-title {
-                                        font-size: 16px;
-                                        font-weight: 600;
-                                        color: #333;
-                                        margin-bottom: 16px;
-                                        padding-bottom: 8px;
-                                        border-bottom: 1px solid #e5e5e5;
-                                    }
-
-                                    .detail-descriptions {
-                                        ::ng-deep .ant-descriptions-item-label {
-                                            font-weight: 500;
-                                            color: #666;
-                                        }
-                                    }
-
-                                    .expense-table {
-                                        margin-bottom: 16px;
-
-                                        ::ng-deep .ant-table-thead > tr > th {
-                                            background-color: #fafafa;
-                                            font-weight: 600;
-                                            color: #333;
-                                        }
-                                    }
-
-                                    .expense-summary {
-                                        background-color: #fafafa;
-                                        padding: 16px;
-                                        border-radius: 6px;
-
-                                        .summary-descriptions {
-                                            ::ng-deep .ant-descriptions-item-label {
-                                                font-weight: 500;
-                                                color: #666;
-                                            }
-                                        }
-                                    }
-
-                                    .records-table {
-                                        ::ng-deep .ant-table-thead > tr > th {
-                                            background-color: #fafafa;
-                                            font-weight: 600;
-                                            color: #333;
-                                        }
-
-                                        .approver-info {
-                                            display: flex;
-                                            align-items: center;
-                                            gap: 8px;
-
-                                            .avatar-small {
-                                                width: 20px;
-                                                height: 20px;
-                                                border-radius: 50%;
-                                                display: flex;
-                                                align-items: center;
-                                                justify-content: center;
-                                                color: white;
-                                                font-size: 10px;
-                                                font-weight: 500;
-                                            }
-
-                                            .approver-name {
-                                                font-size: 13px;
-                                                color: #333;
-                                            }
-                                        }
-
-                                        .time-info {
-                                            .time-detail {
-                                                font-size: 12px;
-                                                color: #999;
-                                                margin-top: 2px;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // 固定在右侧底部的功能按钮
-                    .fixed-bottom-actions {
-                        position: absolute;
-                        bottom: 0;
-                        left: 0;
-                        right: 0;
-                        background: white;
-                        border-top: 1px solid #e5e5e5;
-                        padding: 12px 16px;
-                        display: flex;
-                        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
-                        z-index: 10; // 确保按钮在最上层
-                        flex-shrink: 0; // 防止按钮被压缩
-
-                        .action-buttons {
-                            display: flex;
-                            gap: 8px;
-                            flex-wrap: wrap;
-                        }
                     }
                 }
             }
-        }
 
-        // 金额高亮样式
-        .amount-highlight {
-            color: #ff6b35;
-            font-weight: 600;
-        }
-
-        // 新增样式：基本信息网格
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
-
-            .info-item {
+            // 右侧详情区域
+            .detail-section {
+                flex: 1;
+                height: 100%; // 固定高度
+                background: white;
                 display: flex;
-                align-items: center;
-                gap: 8px;
+                flex-direction: column;
+                overflow: hidden;
+                position: relative; // 为固定底部按钮定位
 
-                .info-label {
-                    font-weight: 500;
-                    color: #666;
-                    min-width: 80px;
-                }
-
-                .info-value {
-                    color: #333;
-                    flex: 1;
-                }
-            }
-        }
-
-        // 节点信息样式
-        .node-info {
-            .node-item {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                padding: 12px;
-                background-color: #f8f9fa;
-                border-radius: 6px;
-                margin-bottom: 12px;
-
-                .node-name {
-                    font-weight: 500;
-                    color: #333;
-                }
-
-                .node-type {
-                    padding: 4px 8px;
-                    background-color: #e6f7ff;
-                    color: #1890ff;
-                    border-radius: 4px;
-                    font-size: 12px;
-                }
-            }
-
-            .node-branches {
-                margin-left: 24px;
-
-                .branch-item {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 8px 12px;
-                    margin-bottom: 8px;
-                    background-color: #fafafa;
-                    border-radius: 4px;
-                    border-left: 3px solid #d9d9d9;
-
-                    .branch-name {
-                        font-weight: 500;
-                        color: #333;
-                    }
-
-                    .branch-type {
-                        padding: 2px 6px;
-                        background-color: #f0f0f0;
-                        color: #666;
-                        border-radius: 3px;
-                        font-size: 11px;
-                    }
-                }
-            }
-        }
-
-        // 评论表单样式
-        .comment-form {
-            margin-bottom: 0;
-            padding: 16px;
-            background-color: #fafafa;
-
-            ::ng-deep .ant-input-group-wrapper {
-                width: 100%;
-            }
-
-            ::ng-deep .ant-input {
-                border-radius: 6px 0 0 6px;
-            }
-
-            ::ng-deep .ant-btn {
-                border-radius: 0 6px 6px 0;
-                height: 32px;
-            }
-        }
-
-        // 评论列表样式
-        .comments-list {
-            .comment-item {
-                &:hover {
-                    background-color: #f0f0f0;
-                }
-                transition: background-color 0.3s ease;
-                padding: 16px;
-                border-bottom: 1px solid #f0f0f0;
-
-                &:last-child {
-                    border-bottom: none;
-                    margin-bottom: 0;
-                }
-
-                .comment-header {
+                .detail-header {
+                    padding: 12px 16px;
+                    border-bottom: 1px solid #e5e5e5;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    margin-bottom: 8px;
+                    flex-shrink: 0; // 防止头部被压缩
 
-                    .comment-user {
+                    .header-left {
+                        .item-id {
+                            font-size: 14px;
+                            color: #666;
+                        }
+                    }
+
+                    .header-right {
+                        display: flex;
+                        gap: 8px;
+                    }
+                }
+
+                .detail-content {
+                    flex: 1;
+                    overflow-y: auto; // 只有内容区域可以滚动
+                    // 为底部固定按钮留出空间
+                    padding: 16px 16px 70px;
+
+                    .content-header {
                         display: flex;
                         align-items: center;
-                        gap: 8px;
+                        gap: 12px;
+                        margin-bottom: 12px;
 
-                        .avatar-small {
-                            width: 24px;
-                            height: 24px;
+                        .content-title {
+                            margin: 0;
+                            font-size: 25px;
+                            font-weight: 600;
+                            color: #333;
+                        }
+
+                        .status-tag-large {
+
+                        }
+                    }
+
+                    .submitter-info-large {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        margin-bottom: 12px;
+                        padding: 12px;
+                        background-color: #fafafa;
+                        border-radius: 4px;
+
+                        .avatar-large {
+                            width: 48px;
+                            height: 48px;
                             border-radius: 50%;
                             display: flex;
                             align-items: center;
                             justify-content: center;
                             color: white;
-                            font-size: 12px;
-                            font-weight: 500;
+                            font-size: 18px;
+                            font-weight: 600;
                         }
 
-                        .comment-username {
-                            font-weight: 500;
-                            color: #333;
+                        .submitter-details {
+                            display: flex;
+                            justify-content: center;
+                            gap: 4px;
+
+                            .submitter-name-large {
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #333;
+                            }
+
+                            .submitter-dept {
+                                font-size: 14px;
+                                color: #666;
+                            }
+
+                            .submit-time {
+                                font-size: 13px;
+                                color: #999;
+                            }
                         }
                     }
 
-                    .comment-time {
-                        font-size: 12px;
-                        color: #999;
+                    .detail-tabs {
+                        ::ng-deep .ant-tabs-nav {
+                            margin-bottom: 24px;
+                        }
+
+                        .tab-content {
+                            .section {
+
+                                .section-title {
+                                    font-size: 16px;
+                                    font-weight: 600;
+                                    color: #333;
+                                    margin-bottom: 16px;
+                                    padding-bottom: 8px;
+                                    border-bottom: 1px solid #e5e5e5;
+                                }
+
+                                .detail-descriptions {
+                                    ::ng-deep .ant-descriptions-item-label {
+                                        font-weight: 500;
+                                        color: #666;
+                                    }
+                                }
+
+                                .expense-table {
+                                    margin-bottom: 16px;
+
+                                    ::ng-deep .ant-table-thead > tr > th {
+                                        background-color: #fafafa;
+                                        font-weight: 600;
+                                        color: #333;
+                                    }
+                                }
+
+                                .expense-summary {
+                                    background-color: #fafafa;
+                                    padding: 16px;
+                                    border-radius: 6px;
+
+                                    .summary-descriptions {
+                                        ::ng-deep .ant-descriptions-item-label {
+                                            font-weight: 500;
+                                            color: #666;
+                                        }
+                                    }
+                                }
+
+                                .records-table {
+                                    ::ng-deep .ant-table-thead > tr > th {
+                                        background-color: #fafafa;
+                                        font-weight: 600;
+                                        color: #333;
+                                    }
+
+                                    .approver-info {
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 8px;
+
+                                        .avatar-small {
+                                            width: 20px;
+                                            height: 20px;
+                                            border-radius: 50%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            color: white;
+                                            font-size: 10px;
+                                            font-weight: 500;
+                                        }
+
+                                        .approver-name {
+                                            font-size: 13px;
+                                            color: #333;
+                                        }
+                                    }
+
+                                    .time-info {
+                                        .time-detail {
+                                            font-size: 12px;
+                                            color: #999;
+                                            margin-top: 2px;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
-                .comment-content {
+                // 固定在右侧底部的功能按钮
+                .fixed-bottom-actions {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    background: white;
+                    border-top: 1px solid #e5e5e5;
+                    padding: 12px 16px;
+                    display: flex;
+                    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+                    z-index: 10; // 确保按钮在最上层
+                    flex-shrink: 0; // 防止按钮被压缩
+
+                    .action-buttons {
+                        display: flex;
+                        gap: 8px;
+                        flex-wrap: wrap;
+                    }
+                }
+            }
+        }
+    }
+
+    // 金额高亮样式
+    .amount-highlight {
+        color: #ff6b35;
+        font-weight: 600;
+    }
+
+    // 新增样式：基本信息网格
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 24px;
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .info-label {
+                font-weight: 500;
+                color: #666;
+                min-width: 80px;
+            }
+
+            .info-value {
+                color: #333;
+                flex: 1;
+            }
+        }
+    }
+
+    // 节点信息样式
+    .node-info {
+        .node-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 12px;
+
+            .node-name {
+                font-weight: 500;
+                color: #333;
+            }
+
+            .node-type {
+                padding: 4px 8px;
+                background-color: #e6f7ff;
+                color: #1890ff;
+                border-radius: 4px;
+                font-size: 12px;
+            }
+        }
+
+        .node-branches {
+            margin-left: 24px;
+
+            .branch-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                margin-bottom: 8px;
+                background-color: #fafafa;
+                border-radius: 4px;
+                border-left: 3px solid #d9d9d9;
+
+                .branch-name {
+                    font-weight: 500;
                     color: #333;
-                    line-height: 1.5;
-                    padding-left: 32px;
                 }
+
+                .branch-type {
+                    padding: 2px 6px;
+                    background-color: #f0f0f0;
+                    color: #666;
+                    border-radius: 3px;
+                    font-size: 11px;
+                }
+            }
+        }
+    }
+
+    // 评论表单样式
+    .comment-form {
+        margin-bottom: 0;
+        padding: 16px;
+        background-color: #fafafa;
+
+        ::ng-deep .ant-input-group-wrapper {
+            width: 100%;
+        }
+
+        ::ng-deep .ant-input {
+            border-radius: 6px 0 0 6px;
+        }
+
+        ::ng-deep .ant-btn {
+            border-radius: 0 6px 6px 0;
+            height: 32px;
+        }
+    }
+
+    // 评论列表样式
+    .comments-list {
+        .comment-item {
+            &:hover {
+                background-color: #f0f0f0;
+            }
+
+            transition: background-color 0.3s ease;
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+
+            &:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+
+            .comment-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+
+                .comment-user {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    .avatar-small {
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-size: 12px;
+                        font-weight: 500;
+                    }
+
+                    .comment-username {
+                        font-weight: 500;
+                        color: #333;
+                    }
+                }
+
+                .comment-time {
+                    font-size: 12px;
+                    color: #999;
+                }
+            }
+
+            .comment-content {
+                color: #333;
+                line-height: 1.5;
+                padding-left: 32px;
             }
         }
     }
