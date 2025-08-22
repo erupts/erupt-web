@@ -59,7 +59,6 @@ export class GatewayNodeComponent extends ANode {
 
     override onInsertFlexNode(flex: FlexNodeModel) {
         insertFlexNodeFun(this.branch, -1, flex);
-        console.log(this.branch, flex)
     }
 
     onMoveL() {
@@ -136,7 +135,6 @@ export class GatewayNodeComponent extends ANode {
                 name: this.name(),
                 branches: [
                     this.createBranch(1),
-                    this.createBranch(2),
                     {
                         id: geneNodeId(),
                         type: NodeType.GATEWAY_BRANCH,
