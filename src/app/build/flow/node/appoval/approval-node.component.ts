@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
@@ -11,7 +11,7 @@ import {ApprovalMode, ApprovalStrategy, ApproveNode} from "@flow/model/fllw-appr
     templateUrl: './approval-node.component.html',
     styleUrls: ['./approval-node.component.less']
 })
-export class ApprovalNodeComponent extends ANode {
+export class ApprovalNodeComponent extends ANode implements OnInit {
 
     @Input() readonly = false;
     @Input() eruptBuild: EruptBuildModel;
@@ -29,6 +29,13 @@ export class ApprovalNodeComponent extends ANode {
     errInfo: any = null;
 
     selectTab: number = 1;
+
+
+    ngOnInit(): void {
+        if (this.modelValue.prop) {
+            this.approveNode = this.modelValue.prop;
+        }
+    }
 
     override type(): NodeType {
         return NodeType.APPROVAL;
@@ -75,10 +82,13 @@ export class ApprovalNodeComponent extends ANode {
     }
 
     override onSaveProp(): void {
+        alert(123)
+        this.modelValue.prop = this.approveNode;
     }
 
     protected readonly ApprovalMode = ApprovalMode;
 
     protected readonly ApprovalStrategy = ApprovalStrategy;
+
 
 }
