@@ -4,6 +4,7 @@ import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
+import {ApprovalMode, ApprovalStrategy, ApproveNode} from "@flow/model/fllw-approval.model";
 
 @Component({
     selector: 'app-approval-node',
@@ -21,6 +22,8 @@ export class ApprovalNodeComponent extends ANode {
     @Output() select = new EventEmitter<any>();
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
+
+    approveNode: ApproveNode = new ApproveNode();
 
     showErr = false;
     errInfo: any = null;
@@ -73,5 +76,9 @@ export class ApprovalNodeComponent extends ANode {
 
     override onSaveProp(): void {
     }
+
+    protected readonly ApprovalMode = ApprovalMode;
+
+    protected readonly ApprovalStrategy = ApprovalStrategy;
 
 }

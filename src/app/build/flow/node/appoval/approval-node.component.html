@@ -17,52 +17,48 @@
             <label nz-radio-button [nzValue]="3">操作权限</label>
         </nz-radio-group>
         <ng-container *ngIf="selectTab==1">
-            <nz-radio-group>
-                <label nz-radio [nzValue]="'1'">上级</label>
-                <label nz-radio [nzValue]="'1'">部门负责人</label>
-                <label nz-radio [nzValue]="'1'">部门内指定岗位</label>
-                <label nz-radio [nzValue]="'1'">角色</label>
-                <label nz-radio [nzValue]="'1'">指定人员</label>
-                <label nz-radio [nzValue]="'1'">提交人本人</label>
-            </nz-radio-group>
-
-
-            <div>
-                多人审批时使用的审批方式
-                <nz-radio-group>
-                    <label nz-radio [nzValue]="'1'">会签（需所有审批人同意）</label>
-                    <label nz-radio [nzValue]="'1'">或签（一名审批人同意即可）</label>
+            <nz-card nzTitle="审批人" nzSize="small">
+                <div class="approval-mode">
+                    <nz-radio-group [(ngModel)]="approveNode.approvalMode">
+                        <label nz-radio [nzValue]="ApprovalMode.DIRECT_MANAGER">上级</label>
+                        <label nz-radio [nzValue]="ApprovalMode.DEPARTMENT_HEAD">部门负责人</label>
+                        <label nz-radio [nzValue]="ApprovalMode.POST">部门内指定岗位</label>
+                        <label nz-radio [nzValue]="ApprovalMode.ROLE">角色</label>
+                        <label nz-radio [nzValue]="ApprovalMode.SPECIFIED_USER">指定人员</label>
+                        <label nz-radio [nzValue]="ApprovalMode.SUBMITTER_HIMSELF">提交人本人</label>
+                        <label nz-radio [nzValue]="ApprovalMode.MULTI_LEVEL_SUPERVISOR">多级上级</label>
+                    </nz-radio-group>
+                </div>
+            </nz-card>
+            <div style="margin-top: 12px">
+                <h4>多人审批时使用的审批方式</h4>
+                <nz-radio-group [(ngModel)]="approveNode.approvalStrategy">
+                    <label style="width: 100%" nz-radio [nzValue]="ApprovalStrategy.ALL_APPROVE">会签（需所有审批人同意）</label>
+                    <label style="width: 100%" nz-radio [nzValue]="ApprovalStrategy.ANY_APPROVE">或签（一名审批人同意即可）</label>
                 </nz-radio-group>
             </div>
-
-            <div>
-                审批人与提交人为同一人时
-                <nz-radio-group>
-                    <label nz-radio [nzValue]="'1'">由提交人对自己审批</label>
-                    <label nz-radio [nzValue]="'1'">自动跳过</label>
-                    <label nz-radio [nzValue]="'1'">转交给部门负责人审批</label>
-                </nz-radio-group>
-            </div>
-
         </ng-container>
         <ng-container *ngIf="selectTab==2">
             <app-form-access [eruptBuild]="eruptBuild"/>
         </ng-container>
         <ng-container *ngIf="selectTab==3">
             <div>
-                <label nz-checkbox>允许转交</label>
+                <label nz-checkbox [(ngModel)]="approveNode.allowTransfer">允许转交</label>
             </div>
             <div>
-                <label nz-checkbox>允许加 / 减签</label>
+                <label nz-checkbox [(ngModel)]="approveNode.allowAddSign">允许加签</label>
             </div>
             <div>
-                <label nz-checkbox>允许转交</label>
+                <label nz-checkbox [(ngModel)]="approveNode.allowCc">允许抄送</label>
             </div>
             <div>
-                <label nz-checkbox>审批同意时需手写签名</label>
+                <label nz-checkbox [(ngModel)]="approveNode.allowReturn">允许退回</label>
             </div>
             <div>
-                <label nz-checkbox>提交审批需填写审批意见</label>
+                <label nz-checkbox [(ngModel)]="approveNode.requireSignature">审批同意时需手写签名</label>
+            </div>
+            <div>
+                <label nz-checkbox [(ngModel)]="approveNode.requireApprovalNote">提交审批需填写审批意见</label>
             </div>
         </ng-container>
     </div>
