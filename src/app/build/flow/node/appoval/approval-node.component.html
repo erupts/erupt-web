@@ -12,7 +12,7 @@
     (delete)="onDelete()">
     {{ name() }}
     <div config>
-        <nz-radio-group [(ngModel)]="selectTab" nzButtonStyle="solid" style="margin-bottom: 12px">
+        <nz-radio-group [(ngModel)]="selectTab" nzButtonStyle="solid" style="margin-bottom: 12px;width: 100%">
             <label nz-radio-button [nzValue]="1">设置审核人</label>
             <label nz-radio-button [nzValue]="2">表单权限</label>
             <label nz-radio-button [nzValue]="3">操作权限</label>

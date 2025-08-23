@@ -22,6 +22,8 @@ export class ReviewUserComponent implements OnInit {
 
     roles: KV<number, string>[] = [];
 
+    deptHeads: KV<number, string>[] = [];
+
     constructor(private flowUpmsApiService: FlowUpmsApiService) {
 
     }
@@ -39,6 +41,18 @@ export class ReviewUserComponent implements OnInit {
         this.flowUpmsApiService.roles().subscribe(res => {
             this.roles = res.data;
         });
+        for (let i = 0; i <= 15; i++) {
+            this.deptHeads.push(
+                {
+                    key: i,
+                    value: "直属部门负责人" + (i == 0 ? "" : `加 ${i} 级负责人`)
+                }
+            )
+        }
+    }
+
+    changeReview() {
+        this.reviewUserMode.modeValue = null;
     }
 
 }
