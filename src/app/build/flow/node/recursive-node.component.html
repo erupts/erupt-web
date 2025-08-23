@@ -3,7 +3,6 @@
     <!-- 开始节点 -->
     <app-start-node
         *ngSwitchCase="nodeType.START"
-        #startNode
         [readonly]="readonly"
         [(model)]="node"
         [eruptBuild]="eruptBuild"
@@ -20,7 +19,6 @@
 
     <erupt-flex-node
         *ngSwitchCase="nodeType.FlEX"
-        #flexNode
         [readonly]="readonly"
         [(modelValue)]="node"
         [eruptBuild]="eruptBuild"
@@ -35,7 +33,6 @@
     <!-- 审批节点 -->
     <app-approval-node
         *ngSwitchCase="nodeType.APPROVAL"
-        #approvalNode
         [readonly]="readonly"
         [(modelValue)]="node"
         [eruptBuild]="eruptBuild"
@@ -50,7 +47,6 @@
     <!-- 抄送节点 -->
     <app-cc-node
         *ngSwitchCase="nodeType.CC"
-        #ccNode
         [readonly]="readonly"
         [(modelValue)]="node"
         [eruptBuild]="eruptBuild"
@@ -86,15 +82,14 @@
             <div *ngFor="let branch of node.branches; let i = index;"
                  [class]="'p-branch-item' + (i === 0 ? ' p-branch-item-l' : '') + (i === node.branches.length - 1 ? ' p-branch-item-r' : '')">
                 <div>
-                    <app-gateway-node #branchNode
-                                      [readonly]="readonly"
+                    <app-gateway-node [readonly]="readonly"
                                       [(modelValue)]="node.branches[i]"
                                       [index]="i"
                                       [eruptBuild]="eruptBuild"
                                       [branch]="node.branches[i].branches"
                                       [moveRn]="node.type === nodeType.GATEWAY_PARALLEL ? i < node.branches.length - 1 : i < node.branches.length - 2"
                                       [moveLn]="i > 0"
-                                      [isDefault]="node.type === nodeType.GATEWAY_PARALLEL ? i === node.branches.length - 1 && false : i === node.branches.length - 1 && true"
+                                      [isDefault]="branch.prop?.type === BranchType.ELSE"
                                       [gatewayType]="node.type === nodeType.GATEWAY_PARALLEL ? gatewayType.PARALLEL : (node.type === nodeType.GATEWAY_EXCLUSION ? gatewayType.EXCLUSIVE : gatewayType.INCLUSIVE)"
                                       (insertNode)="insertNodeFun(node.branches[i].branches, -1, $event.type)"
                                       (delete)="deleteBranch(i)"
@@ -107,7 +102,6 @@
                     <!-- 递归渲染分支内的节点 -->
                     <ng-container *ngFor="let childNode of branch.branches; let bi = index;">
                         <app-recursive-node
-                            #childNodeRef
                             [eruptBuild]="eruptBuild"
                             [readonly]="readonly"
                             [node]="childNode"

@@ -1,7 +1,7 @@
-import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {NodeMap} from '@flow/node/process-nodes';
 import {geneNodeId, insertFlexNodeFun, reloadNodeId} from '@flow/util/flow.util';
-import {NodeRule, NodeType} from "@flow/model/node.model";
+import {BranchType, NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {GatewayType} from "@flow/node/gateway/gateway-node.component";
@@ -23,8 +23,6 @@ export class RecursiveNodeComponent {
     @Output() select = new EventEmitter<any>();
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
-
-    @ViewChildren('startNode, approvalNode, flexNode, ccNode, exclusiveNode, parallelNode, branchNode, childNodeRef') nodeRefs!: QueryList<ElementRef>;
 
     nodeType = NodeType;
     gatewayType = GatewayType;
@@ -124,4 +122,5 @@ export class RecursiveNodeComponent {
         // }
     }
 
+    protected readonly BranchType = BranchType;
 }

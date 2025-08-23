@@ -30,12 +30,14 @@
                         <label nz-radio [nzValue]="ApprovalMode.MULTI_LEVEL_SUPERVISOR">多级上级</label>
                     </nz-radio-group>
                 </div>
+                <hr style="border: 1px solid #f0f0f0;margin: 8px 0;"/>
+                xxx
             </nz-card>
-            <div style="margin-top: 12px">
+            <div>
                 <h4>多人审批时使用的审批方式</h4>
                 <nz-radio-group [(ngModel)]="approveNode.approvalStrategy">
                     <label style="width: 100%" nz-radio [nzValue]="ApprovalStrategy.ALL_APPROVE">会签（需所有审批人同意）</label>
-                    <label style="width: 100%" nz-radio [nzValue]="ApprovalStrategy.ANY_APPROVE">或签（一名审批人同意即可）</label>
+                    <label style="width: 100%;margin-top: 8px" nz-radio [nzValue]="ApprovalStrategy.ANY_APPROVE">或签（一名审批人同意即可）</label>
                 </nz-radio-group>
             </div>
         </ng-container>
@@ -43,22 +45,22 @@
             <app-form-access [eruptBuild]="eruptBuild"/>
         </ng-container>
         <ng-container *ngIf="selectTab==3">
-            <div>
+            <div class="allow-item">
                 <label nz-checkbox [(ngModel)]="approveNode.allowTransfer">允许转交</label>
             </div>
-            <div>
+            <div class="allow-item">
                 <label nz-checkbox [(ngModel)]="approveNode.allowAddSign">允许加签</label>
             </div>
-            <div>
+            <div class="allow-item">
                 <label nz-checkbox [(ngModel)]="approveNode.allowCc">允许抄送</label>
             </div>
-            <div>
+            <div class="allow-item">
                 <label nz-checkbox [(ngModel)]="approveNode.allowReturn">允许退回</label>
             </div>
-            <div>
+            <div class="allow-item">
                 <label nz-checkbox [(ngModel)]="approveNode.requireSignature">审批同意时需手写签名</label>
             </div>
-            <div>
+            <div class="allow-item">
                 <label nz-checkbox [(ngModel)]="approveNode.requireApprovalNote">提交审批需填写审批意见</label>
             </div>
         </ng-container>
