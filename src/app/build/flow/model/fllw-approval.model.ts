@@ -1,4 +1,4 @@
-export enum ApprovalMode {
+export enum ReviewMode {
     /** 提交人本人 */
     SUBMITTER_HIMSELF = 'SUBMITTER_HIMSELF',
 
@@ -22,6 +22,11 @@ export enum ApprovalMode {
 
 }
 
+export interface ReviewModeValue {
+    mode: ReviewMode;
+    modeValue: any;
+}
+
 export enum ApprovalStrategy {
     /** 会签：需所有审批人同意 */
     ALL_APPROVE = 'ALL_APPROVE',
@@ -32,9 +37,14 @@ export enum ApprovalStrategy {
 
 export class ApproveNode {
 
-    approvalMode: ApprovalMode = ApprovalMode.DIRECT_MANAGER;
+    reviewUserModes: ReviewModeValue[] = [
+        {
+            mode: ReviewMode.SUBMITTER_HIMSELF,
+            modeValue: null
+        },
+    ];
 
-    approvalStrategy: ApprovalStrategy = null;
+    approvalStrategy: ApprovalStrategy = ApprovalStrategy.ANY_APPROVE;
 
     /** 允许转交 */
     allowTransfer: boolean = true;

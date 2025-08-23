@@ -4,7 +4,7 @@ import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
-import {ApprovalMode, ApprovalStrategy, ApproveNode} from "@flow/model/fllw-approval.model";
+import {ApprovalStrategy, ApproveNode, ReviewMode} from "@flow/model/fllw-approval.model";
 
 @Component({
     selector: 'app-approval-node',
@@ -34,6 +34,20 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
     ngOnInit(): void {
         if (this.modelValue.prop) {
             this.approveNode = this.modelValue.prop;
+        }
+    }
+
+    addReviewUsers() {
+        this.approveNode.reviewUserModes.push({
+            mode: ReviewMode.SPECIFIED_USER,
+            modeValue: null
+        })
+    }
+
+    deleteReviewUser(index: number) {
+        // 确保最少保留一个审批人
+        if (this.approveNode.reviewUserModes.length > 1) {
+            this.approveNode.reviewUserModes.splice(index, 1);
         }
     }
 
@@ -82,11 +96,10 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
     }
 
     override onSaveProp(): void {
-        alert(123)
         this.modelValue.prop = this.approveNode;
     }
 
-    protected readonly ApprovalMode = ApprovalMode;
+    protected readonly ApprovalMode = ReviewMode;
 
     protected readonly ApprovalStrategy = ApprovalStrategy;
 

@@ -3,7 +3,7 @@ import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/flow-instance.model";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
-import {NodeRule} from "@flow/model/node.model";
+import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {DataHandlerService} from "../../../erupt/service/data-handler.service";
@@ -277,4 +277,5 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     protected readonly ApprovalView = ApprovalView;
+    protected readonly NodeType = NodeType;
 }

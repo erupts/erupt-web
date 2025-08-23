@@ -2,9 +2,7 @@ import {Injectable} from '@angular/core';
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class FlowDataService {
 
     flexNodes: FlexNodeModel[] = [];

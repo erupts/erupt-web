@@ -86,6 +86,8 @@ import {FormAccessComponent} from './components/form-access/form-access.componen
 import {CreateInstanceComponent} from './view/flow-dashboard/create-instance/create-instance.component';
 import {EndNodeComponent} from './node/end/end-node.component';
 import {GatewayJoinComponent} from './node/gateway-join/gateway-join.component';
+import {ReviewUserComponent} from './components/review-user/review-user.component';
+import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 
 
 @NgModule({
@@ -109,11 +111,13 @@ import {GatewayJoinComponent} from './node/gateway-join/gateway-join.component';
         FormAccessComponent,
         CreateInstanceComponent,
         EndNodeComponent,
-        GatewayJoinComponent
+        GatewayJoinComponent,
+        ReviewUserComponent
     ],
     providers: [
         FlowApiService,
-        FlowDataService
+        FlowDataService,
+        FlowUpmsApiService
     ],
     imports: [
         SharedModule,
