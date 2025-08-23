@@ -18,26 +18,39 @@
             <label nz-radio-button [nzValue]="3">操作权限</label>
         </nz-radio-group>
         <ng-container *ngIf="selectTab==1">
-            <nz-card nzTitle="审批人" nzSize="small">
-                <div class="approval-mode">
-                    <nz-radio-group [(ngModel)]="approveNode.approvalMode">
-                        <label nz-radio [nzValue]="ApprovalMode.DIRECT_MANAGER">上级</label>
-                        <label nz-radio [nzValue]="ApprovalMode.DEPARTMENT_HEAD">部门负责人</label>
-                        <label nz-radio [nzValue]="ApprovalMode.POST">部门内指定岗位</label>
-                        <label nz-radio [nzValue]="ApprovalMode.ROLE">角色</label>
-                        <label nz-radio [nzValue]="ApprovalMode.SPECIFIED_USER">指定人员</label>
-                        <label nz-radio [nzValue]="ApprovalMode.SUBMITTER_HIMSELF">提交人本人</label>
-                        <label nz-radio [nzValue]="ApprovalMode.MULTI_LEVEL_SUPERVISOR">多级上级</label>
-                    </nz-radio-group>
-                </div>
-                <hr style="border: 1px solid #f0f0f0;margin: 8px 0;"/>
-                xxx
-            </nz-card>
+            <ng-container *ngFor="let reviewUserMode of approveNode.reviewUserModes; let i = index">
+                <nz-card nzTitle="审批人" nzSize="small" style="margin-bottom: 12px">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <app-review-user 
+                                [reviewUserMode]="reviewUserMode"
+                                [canDelete]="approveNode.reviewUserModes.length > 1"
+                                (delete)="deleteReviewUser(i)">
+                            </app-review-user>
+                        </div>
+                        <button 
+                            *ngIf="approveNode.reviewUserModes.length > 1"
+                            nz-button 
+                            nzType="text" 
+                            nzDanger 
+                            nzSize="small" 
+                            (click)="deleteReviewUser(i)"
+                            [nz-tooltip]="'删除审批人'"
+                            style="margin-left: 8px;">
+                            <span nz-icon nzType="delete" nzTheme="outline"></span>
+                        </button>
+                    </div>
+                </nz-card>
+            </ng-container>
+            <button nz-button nzType="primary" style="margin-bottom: 12px" (click)="addReviewUsers()">
+                <span nz-icon nzType="plus" nzTheme="outline"></span>
+                添加审批人
+            </button>
             <div>
                 <h4>多人审批时使用的审批方式</h4>
                 <nz-radio-group [(ngModel)]="approveNode.approvalStrategy">
-                    <label style="width: 100%" nz-radio [nzValue]="ApprovalStrategy.ALL_APPROVE">会签（需所有审批人同意）</label>
-                    <label style="width: 100%;margin-top: 8px" nz-radio [nzValue]="ApprovalStrategy.ANY_APPROVE">或签（一名审批人同意即可）</label>
+                    <label style="width: 100%" nz-radio [nzValue]="ApprovalStrategy.ANY_APPROVE">或签（一名审批人同意即可）</label>
+                    <label style="width: 100%;margin-top: 8px" nz-radio [nzValue]="ApprovalStrategy.ALL_APPROVE">会签（需所有审批人同意）</label>
                 </nz-radio-group>
             </div>
         </ng-container>

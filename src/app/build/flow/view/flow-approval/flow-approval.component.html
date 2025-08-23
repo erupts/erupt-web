@@ -281,39 +281,47 @@
             <!-- 固定在右侧底部的功能按钮 -->
             <div class="fixed-bottom-actions">
                 <div class="action-buttons">
-                    <button nz-button nzSize="default" nzType="primary" nzGhost (click)="cc()">
-                        <span nz-icon nzType="check" nzTheme="outline"></span>
-                        同意
-                    </button>
-                    <button nz-button nzSize="default" nzDanger (click)="cc()">
-                        <span nz-icon nzType="close" nzTheme="outline"></span>
-                        拒绝
-                    </button>
+                    <ng-container *ngIf="ApprovalView.TODO === selectedView">
+                        <button nz-button nzSize="default" nzType="primary" nzGhost (click)="cc()">
+                            <span nz-icon nzType="check" nzTheme="outline"></span>
+                            同意
+                        </button>
+                        <button nz-button nzSize="default" nzDanger (click)="cc()">
+                            <span nz-icon nzType="close" nzTheme="outline"></span>
+                            拒绝
+                        </button>
 
-                    <button nz-button nzSize="default" (click)="cc()">
-                        <span nz-icon nzType="send" nzTheme="outline"></span>
-                        抄送
-                    </button>
-                    <button nz-button nzSize="default" (click)="cc()">
-                        <span nz-icon nzType="swap" nzTheme="outline"></span>
-                        转交
-                    </button>
-                    <button nz-button nzSize="default" (click)="cc()">
-                        <span nz-icon nzType="user-add" nzTheme="outline"></span>
-                        加签
-                    </button>
-                    <button nz-button nzSize="default" (click)="modify()">
-                        <span nz-icon nzType="edit" nzTheme="outline"></span>
-                        修改
-                    </button>
-                    <button nz-button nzSize="default" (click)="recall()">
-                        <span nz-icon nzType="undo" nzTheme="outline"></span>
-                        撤销
-                    </button>
-                    <button nz-button nzSize="default" (click)="resubmit()">
-                        <span nz-icon nzType="redo" nzTheme="outline"></span>
-                        再次提交
-                    </button>
+                        <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo.prop.allowCc">
+                            <span nz-icon nzType="send" nzTheme="outline"></span>
+                            抄送
+                        </button>
+                        <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo.prop.allowTransfer">
+                            <span nz-icon nzType="swap" nzTheme="outline"></span>
+                            转交
+                        </button>
+                        <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo.prop.allowAddSign">
+                            <span nz-icon nzType="user-add" nzTheme="outline"></span>
+                            加签
+                        </button>
+                        <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo.prop.allowReturn">
+                            <span nz-icon nzType="user-add" nzTheme="outline"></span>
+                            退回
+                        </button>
+                        <button nz-button nzSize="default" (click)="modify()">
+                            <span nz-icon nzType="edit" nzTheme="outline"></span>
+                            修改
+                        </button>
+                    </ng-container>
+                    <ng-container *ngIf="ApprovalView.CREATED === selectedView">
+                        <button nz-button nzSize="default" (click)="recall()">
+                            <span nz-icon nzType="undo" nzTheme="outline"></span>
+                            撤销
+                        </button>
+                        <button nz-button nzSize="default" (click)="resubmit()">
+                            <span nz-icon nzType="redo" nzTheme="outline"></span>
+                            再次提交
+                        </button>
+                    </ng-container>
                 </div>
             </div>
         </div>
