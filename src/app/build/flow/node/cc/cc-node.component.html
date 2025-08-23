@@ -7,9 +7,36 @@
   [eruptBuild]="eruptBuild"
   (select)="onSelect()"
   (insertNode)="onInsertNode($event)"
-  [hasConfig]="false"
   (insertFlexNode)="onInsertFlexNode($event)"
   (saveProp)="onSaveProp()"
   (delete)="onDelete()">
     抄送人
+    <div config>
+        <ng-container *ngFor="let reviewUserMode of ccNode.reviewUserModes; let i = index">
+            <nz-card nzTitle="抄送人" nzSize="small" style="margin-bottom: 12px">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <app-review-user
+                            [reviewUserMode]="reviewUserMode">
+                        </app-review-user>
+                    </div>
+                    <button
+                        *ngIf="ccNode.reviewUserModes.length > 1"
+                        nz-button
+                        nzType="text"
+                        nzDanger
+                        nzSize="small"
+                        (click)="deleteReviewUser(i)"
+                        [nz-tooltip]="'删除审批人'"
+                        style="margin-left: 8px;">
+                        <span nz-icon nzType="delete" nzTheme="outline"></span>
+                    </button>
+                </div>
+            </nz-card>
+        </ng-container>
+        <button nz-button style="margin-bottom: 12px" (click)="addReviewUsers()">
+            <span nz-icon nzType="plus" nzTheme="outline"></span>
+            添加抄送
+        </button>
+    </div>
 </erupt-node>

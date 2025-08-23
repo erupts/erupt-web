@@ -22,18 +22,16 @@
                 <nz-card nzTitle="审批人" nzSize="small" style="margin-bottom: 12px">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div style="flex: 1;">
-                            <app-review-user 
-                                [reviewUserMode]="reviewUserMode"
-                                [canDelete]="approveNode.reviewUserModes.length > 1"
-                                (delete)="deleteReviewUser(i)">
+                            <app-review-user
+                                [reviewUserMode]="reviewUserMode">
                             </app-review-user>
                         </div>
-                        <button 
+                        <button
                             *ngIf="approveNode.reviewUserModes.length > 1"
-                            nz-button 
-                            nzType="text" 
-                            nzDanger 
-                            nzSize="small" 
+                            nz-button
+                            nzType="text"
+                            nzDanger
+                            nzSize="small"
                             (click)="deleteReviewUser(i)"
                             [nz-tooltip]="'删除审批人'"
                             style="margin-left: 8px;">
@@ -42,7 +40,7 @@
                     </div>
                 </nz-card>
             </ng-container>
-            <button nz-button nzType="primary" style="margin-bottom: 12px" (click)="addReviewUsers()">
+            <button nz-button style="margin-bottom: 12px" (click)="addReviewUsers()">
                 <span nz-icon nzType="plus" nzTheme="outline"></span>
                 添加审批人
             </button>

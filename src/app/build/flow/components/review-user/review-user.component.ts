@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ReviewMode, ReviewModeValue} from "@flow/model/fllw-approval.model";
 import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 import {KV} from "../../../erupt/model/util.model";
@@ -13,8 +13,6 @@ export class ReviewUserComponent implements OnInit {
     protected readonly ApprovalMode = ReviewMode;
 
     @Input() reviewUserMode: ReviewModeValue;
-    @Input() canDelete: boolean = true;
-    @Output() delete = new EventEmitter<void>();
 
     users: KV<number, string>[] = [];
 
@@ -41,10 +39,6 @@ export class ReviewUserComponent implements OnInit {
         this.flowUpmsApiService.roles().subscribe(res => {
             this.roles = res.data;
         });
-    }
-
-    onDelete() {
-        this.delete.emit();
     }
 
 }

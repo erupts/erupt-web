@@ -50,7 +50,6 @@ export class FlowInstanceApiService {
     }
 
 
-
     tasks(instanceId: number): Observable<R<FlowInstanceTask[]>> {
         return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/tasks", {
             instanceId
@@ -72,6 +71,48 @@ export class FlowInstanceApiService {
     commentCreate(instanceId: number, comment: string): Observable<R<void>> {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/comment/create", null, {
             instanceId,
+            comment
+        })
+    }
+
+    agree(instanceTaskId: number, comment: string): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/agree", null, {
+            instanceTaskId,
+            comment
+        })
+    }
+
+    refuse(instanceTaskId: number, comment: string): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/refuse", null, {
+            instanceTaskId,
+            comment
+        })
+    }
+
+    cc(instanceTaskId: number, comment: string): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/cc", null, {
+            instanceTaskId,
+            comment
+        })
+    }
+
+    transfer(instanceTaskId: number, userId: number, comment: string): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/transfer", null, {
+            instanceTaskId,
+            comment
+        })
+    }
+
+    addSign(instanceTaskId: number, addSignType: 'PRE_SIGN' | 'POST_SIGN', userId: number, comment: string): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/add-sign", null, {
+            instanceTaskId,
+            comment
+        })
+    }
+
+    rollback(instanceTaskId: number, rtnNode: string, comment: string): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/rollback", null, {
+            instanceTaskId,
             comment
         })
     }
