@@ -64,3 +64,14 @@ export class ApproveNode {
     /** 审批同意时需手写签名 */
     requireSignature: boolean = false;
 }
+
+export class CcNode {
+
+    reviewUserModes: ReviewModeValue[] = [
+        {
+            mode: ReviewMode.SUBMITTER_HIMSELF,
+            modeValue: null
+        },
+    ];
+
+}
