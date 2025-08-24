@@ -16,7 +16,7 @@ export interface FlowConfig {
     flowGroup?: FlowGroup;
     enable?: boolean;
     rule?: NodeRule[];
-    permission?:string;
+    permission?: string;
     setting?: Record<string, any>;
 }
 
@@ -29,4 +29,18 @@ export interface FlowRuleNode {
     name: string;
     type: string;
     branches: FlowRuleNode[]
+}
+
+export interface FlowUpmsScope {
+    scope: UpmsScope;
+    scopeValue: number;
+}
+
+export enum UpmsScope {
+
+    ORG = "ORG",
+    USER = "USER",
+    ROLE = "ROLE",
+    POST = "POST"
+
 }

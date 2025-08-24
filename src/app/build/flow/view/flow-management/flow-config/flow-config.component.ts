@@ -10,7 +10,7 @@ import {FormSize} from "../../../../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {FlowDataService} from "@flow/service/flow-data.service";
-import {UpmsSelectComponent} from "../../../../erupt/components/upms-select/upms-select.component";
+import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
 
 @Component({
     selector: 'app-flow-config',

@@ -88,7 +88,8 @@ import {EndNodeComponent} from './node/end/end-node.component';
 import {GatewayJoinComponent} from './node/gateway-join/gateway-join.component';
 import {ReviewUserComponent} from './components/review-user/review-user.component';
 import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
-
+import {NzSegmentedModule} from 'ng-zorro-antd/segmented';
+import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
 
 @NgModule({
     declarations: [
@@ -112,7 +113,8 @@ import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
         CreateInstanceComponent,
         EndNodeComponent,
         GatewayJoinComponent,
-        ReviewUserComponent
+        ReviewUserComponent,
+        UpmsSelectComponent
     ],
     providers: [
         FlowApiService,
@@ -120,6 +122,7 @@ import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
         FlowUpmsApiService
     ],
     imports: [
+        NzSegmentedModule,
         SharedModule,
         FlowRoutingModule,
         CommonModule,
