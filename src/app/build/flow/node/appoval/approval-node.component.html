@@ -12,12 +12,10 @@
     (delete)="onDelete()">
     {{ name() }}
     <div config>
-        <nz-radio-group [(ngModel)]="selectTab" nzButtonStyle="solid" style="margin-bottom: 12px;width: 100%">
-            <label nz-radio-button [nzValue]="1">设置审核人</label>
-            <label nz-radio-button [nzValue]="2">表单权限</label>
-            <label nz-radio-button [nzValue]="3">操作权限</label>
-        </nz-radio-group>
-        <ng-container *ngIf="selectTab==1">
+        <nz-segmented [nzOptions]="['设置审核人','表单权限','操作权限']" [(ngModel)]="selectTab" style="margin-bottom: 12px">
+
+        </nz-segmented>
+        <ng-container *ngIf="selectTab==0">
             <ng-container *ngFor="let reviewUserMode of approveNode.reviewUserModes; let i = index">
                 <nz-card nzTitle="审批人" nzSize="small" style="margin-bottom: 12px">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -52,10 +50,10 @@
                 </nz-radio-group>
             </div>
         </ng-container>
-        <ng-container *ngIf="selectTab==2">
+        <ng-container *ngIf="selectTab==1">
             <app-form-access [eruptBuild]="eruptBuild"/>
         </ng-container>
-        <ng-container *ngIf="selectTab==3">
+        <ng-container *ngIf="selectTab==2">
             <div class="allow-item">
                 <label nz-checkbox [(ngModel)]="approveNode.allowTransfer">允许转交</label>
             </div>

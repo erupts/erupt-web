@@ -22,6 +22,8 @@ export class CcNodeComponent extends ANode implements OnInit {
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
 
+    selectTab: number = 0;
+
     ccNode: CcNode = new CcNode();
 
 

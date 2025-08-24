@@ -1,0 +1,124 @@
+<div class="upms-select-container">
+    <!-- 左侧面板：选择 -->
+    <div class="left-panel">
+        <!-- 使用 ng-zorro 的标签页 -->
+        <nz-tabset
+            [(nzSelectedIndex)]="activeTab"
+            (nzSelectedIndexChange)="onTabChange($event)"
+            [nzTabPosition]="'top'"
+            [nzType]="'line'"
+            [nzSize]="'default'"
+            class="custom-tabs">
+
+            <nz-tab
+                *ngFor="let tab of tabs; let i = index"
+                [nzTitle]="tabTitleTemplate">
+
+                <ng-template #tabTitleTemplate>
+                    <span nz-icon [nzType]="tab.icon" nzTheme="outline"></span>
+                    <span class="tab-label">{{ tab.label }}</span>
+                </ng-template>
+
+                <!-- 搜索框 -->
+                <div class="search-container">
+                    <nz-input-group nzSize="default">
+                        <input
+                            nz-input
+                            [placeholder]="'搜索' + tab.label + '名称...'"
+                            [(ngModel)]="tab.searchText"
+                            (ngModelChange)="onSearchChange(tab.key, $event)"
+                        />
+                    </nz-input-group>
+                </div>
+
+                <!-- 项目列表 -->
+                <div class="item-list">
+                    <div class="item-list-header">
+                        <span class="item-count">{{ getListTitle(tab.key) }}</span>
+                        <span class="item-tip">点击选择或取消选择</span>
+                    </div>
+                    <div
+                        *ngFor="let item of getFilteredItems(tab.key); trackBy: trackByKey"
+                        class="item-item"
+                        [class.selected]="item.checked"
+                        (click)="onItemToggle(tab.key, item)"
+                    >
+                        <label
+                            nz-checkbox
+                            [ngModel]="item.checked"
+                            (ngModelChange)="onItemToggle(tab.key, item)"
+                            (click)="$event.stopPropagation()"
+                        ></label>
+                        <span class="item-name">{{ item.value }}</span>
+                    </div>
+
+                    <div *ngIf="getFilteredItems(tab.key).length === 0" class="empty-state">
+                        <span nz-icon nzType="search" nzTheme="outline"></span>
+                        <p>{{ getEmptyStateText(tab.key) }}</p>
+                    </div>
+                </div>
+            </nz-tab>
+        </nz-tabset>
+    </div>
+
+    <!-- 右侧面板：已选项目 -->
+    <div class="right-panel">
+        <div class="selected-header">
+            <div class="selected-info">
+                <h3 class="selected-count">
+                    <span nz-icon nzType="check-circle" nzColor="#52c41a"></span>
+                    {{ getSelectedTitle(currentTabKey) }}
+                </h3>
+            </div>
+            <button
+                nz-button
+                nzType="link"
+                nzSize="small"
+                nzDanger
+                (click)="onClearAll(currentTabKey)"
+                class="clear-btn"
+                [disabled]="currentTab.selectedItems.length === 0"
+            >
+                <span nz-icon nzType="delete" nzTheme="outline"></span>
+                清空
+            </button>
+        </div>
+
+        <div class="selected-items">
+            <div
+                *ngFor="let item of currentTab.selectedItems; trackBy: trackByKey"
+                class="selected-item-item"
+            >
+                <div class="item-info">
+                    <span nz-icon
+                          [nzType]="getItemIcon(currentTabKey)"
+                          nzTheme="outline"
+                          class="item-icon">
+                    </span>
+                    <span class="item-name">{{ item.value }}</span>
+                </div>
+                <button
+                    nz-button
+                    nzType="text"
+                    nzSize="small"
+                    nzDanger
+                    (click)="onItemRemove(currentTabKey, item)"
+                    class="remove-btn"
+                    nz-tooltip
+                    [nzTooltipTitle]="'移除' + currentTabLabel"
+                >
+                    <span nz-icon nzType="close" nzTheme="outline"></span>
+                </button>
+            </div>
+
+            <div *ngIf="currentTab.selectedItems.length === 0" class="empty-selected">
+                <span nz-icon
+                      [nzType]="getItemIcon(currentTabKey)"
+                      nzTheme="outline">
+                </span>
+                <p>{{ getEmptySelectedText(currentTabKey) }}</p>
+                <span class="empty-tip">{{ getEmptySelectedTip(currentTabKey) }}</span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -42,8 +42,7 @@ export class ReviewUserComponent implements OnInit {
             this.roles = res.data;
         });
         for (let i = 0; i <= 15; i++) {
-            this.deptHeads.push(
-                {
+            this.deptHeads.push({
                     key: i,
                     value: "直属部门负责人" + (i == 0 ? "" : `加 ${i} 级负责人`)
                 }

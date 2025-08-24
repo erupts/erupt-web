@@ -28,7 +28,7 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
     showErr = false;
     errInfo: any = null;
 
-    selectTab: number = 1;
+    selectTab: number = 0;
 
 
     ngOnInit(): void {
