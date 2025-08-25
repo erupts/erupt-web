@@ -131,9 +131,10 @@
                                [(ngModel)]="flowConfig.permission"
                                (ngModelChange)="changeSubmitPermission($event)"
                                class="form-select">
-                        <nz-option *ngFor="let option of submitPermissionOptions"
-                                   [nzValue]="option.value"
-                                   [nzLabel]="option.label"></nz-option>
+                        <nz-option [nzValue]="FlowPermission.ALL" [nzLabel]="'全员'"></nz-option>
+                        <nz-option [nzValue]="FlowPermission.MANAGER" [nzLabel]="'部门主管'"></nz-option>
+                        <nz-option [nzValue]="FlowPermission.SPECIFIC" [nzLabel]="'指定人员'"></nz-option>
+                        <nz-option [nzValue]="FlowPermission.NO" [nzLabel]="'均不可提交'"></nz-option>
                     </nz-select>
                 </div>
             </div>

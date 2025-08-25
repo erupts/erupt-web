@@ -6,6 +6,13 @@ export interface FlowGroup {
     sort: number;
 }
 
+export enum FlowPermission {
+    ALL = 'ALL',
+    MANAGER = 'MANAGER',
+    SPECIFIC = 'SPECIFIC',
+    NO = 'NO'
+}
+
 export interface FlowConfig {
     id?: number;
     name?: string;
@@ -16,7 +23,7 @@ export interface FlowConfig {
     flowGroup?: FlowGroup;
     enable?: boolean;
     rule?: NodeRule[];
-    permission?: string;
+    permission?: FlowPermission;
     setting?: Record<string, any>;
 }
 

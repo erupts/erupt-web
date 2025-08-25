@@ -234,8 +234,17 @@
         .selected-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .panel-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
         }
 
         .selected-info {
@@ -318,10 +327,25 @@
                     font-size: 14px;
                 }
 
+                .item-details {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2px;
+                }
+
                 .item-name {
                     font-size: 13px;
                     color: #495057;
                     font-weight: 500;
+                }
+
+                .item-type {
+                    font-size: 10px;
+                    color: #6c757d;
+                    background: #f8f9fa;
+                    padding: 1px 6px;
+                    border-radius: 3px;
+                    border: 1px solid #e9ecef;
                 }
 
                 .item-extra {

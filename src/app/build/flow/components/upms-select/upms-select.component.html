@@ -64,12 +64,7 @@
     <!-- 右侧面板：已选项目 -->
     <div class="right-panel">
         <div class="selected-header">
-            <div class="selected-info">
-                <h3 class="selected-count">
-                    <span nz-icon nzType="check-circle" nzColor="#52c41a"></span>
-                    {{ getSelectedTitle(currentTabKey) }}
-                </h3>
-            </div>
+            <h3 class="panel-title">已选项目</h3>
             <button
                 nz-button
                 nzType="link"
@@ -77,47 +72,47 @@
                 nzDanger
                 (click)="onClearAll(currentTabKey)"
                 class="clear-btn"
-                [disabled]="currentTab.selectedItems.length === 0"
+                [disabled]="getCurrentTabSelectedCount() === 0"
             >
                 <span nz-icon nzType="delete" nzTheme="outline"></span>
-                清空
+                清空当前标签
             </button>
         </div>
 
         <div class="selected-items">
             <div
-                *ngFor="let item of currentTab.selectedItems; trackBy: trackByKey"
+                *ngFor="let item of getSortedDisplayData(); trackBy: trackByScope"
                 class="selected-item-item"
             >
                 <div class="item-info">
                     <span nz-icon
-                          [nzType]="getItemIcon(currentTabKey)"
+                          [nzType]="item.icon"
                           nzTheme="outline"
                           class="item-icon">
                     </span>
-                    <span class="item-name">{{ item.value }}</span>
+                    <div class="item-details">
+                        <span class="item-name">{{ item.displayName }}</span>
+                        <span class="item-type">{{ item.label }}</span>
+                    </div>
                 </div>
                 <button
                     nz-button
                     nzType="text"
                     nzSize="small"
                     nzDanger
-                    (click)="onItemRemove(currentTabKey, item)"
+                    (click)="onItemRemove(item)"
                     class="remove-btn"
                     nz-tooltip
-                    [nzTooltipTitle]="'移除' + currentTabLabel"
+                    [nzTooltipTitle]="'移除' + item.label"
                 >
                     <span nz-icon nzType="close" nzTheme="outline"></span>
                 </button>
             </div>
 
-            <div *ngIf="currentTab.selectedItems.length === 0" class="empty-selected">
-                <span nz-icon
-                      [nzType]="getItemIcon(currentTabKey)"
-                      nzTheme="outline">
-                </span>
-                <p>{{ getEmptySelectedText(currentTabKey) }}</p>
-                <span class="empty-tip">{{ getEmptySelectedTip(currentTabKey) }}</span>
+            <div *ngIf="flowUpmsScopes.length === 0" class="empty-selected">
+                <span nz-icon nzType="inbox" nzTheme="outline"></span>
+                <p>{{ getEmptySelectedText() }}</p>
+                <span class="empty-tip">{{ getEmptySelectedTip() }}</span>
             </div>
         </div>
     </div>

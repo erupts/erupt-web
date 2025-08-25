@@ -55,7 +55,7 @@ export class FlowApprovalComponent implements OnInit {
 
     selectItem(instance: FlowInstance) {
         this.selectedInstance = instance;
-        if (instance && instance.id) {
+        if (instance?.id) {
             this.loadInstanceDetail(instance.id);
         }
     }
@@ -223,8 +223,6 @@ export class FlowApprovalComponent implements OnInit {
                                 this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
                             }
                         })
-                    },
-                    complete: () => {
                     }
                 })
             }
