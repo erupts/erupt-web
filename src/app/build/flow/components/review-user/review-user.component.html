@@ -13,25 +13,25 @@
 <hr style="border: 1px solid #f0f0f0;margin: 8px 0;" *ngIf="reviewUserMode.mode != ApprovalMode.SUBMITTER_HIMSELF"/>
 <div style="display: flex;align-items:center" *ngIf="reviewUserMode.mode == ApprovalMode.DEPARTMENT_HEAD">
     <div style="margin-right: 12px">提交人的</div>
-    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue">
+    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
         <nz-option *ngFor="let org of deptHeads" [nzValue]="org.key" [nzLabel]="org.value"/>
     </nz-select>
 </div>
 <div style="display: flex;align-items:center" *ngIf="reviewUserMode.mode == ApprovalMode.ROLE">
     <div style="margin-right: 12px">角色</div>
-    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue">
+    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
         <nz-option *ngFor="let org of roles" [nzValue]="org.key" [nzLabel]="org.value"/>
     </nz-select>
 </div>
 <div style="display: flex;align-items:center" *ngIf="reviewUserMode.mode == ApprovalMode.POST">
     <div style="margin-right: 12px">岗位</div>
-    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue">
+    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
         <nz-option *ngFor="let org of posts" [nzValue]="org.key" [nzLabel]="org.value"/>
     </nz-select>
 </div>
 <div style="display: flex;align-items:center" *ngIf="reviewUserMode.mode == ApprovalMode.SPECIFIED_USER">
     <div style="margin-right: 12px">指定人员</div>
-    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue">
+    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
         <nz-option *ngFor="let org of users" [nzValue]="org.key" [nzLabel]="org.value"/>
     </nz-select>
 </div>

@@ -3,7 +3,7 @@ import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {EruptFieldModel, VL} from "../../../../erupt/model/erupt-field.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
-import {FlowConfig, FlowGroup} from "@flow/model/flow.model";
+import {FlowConfig, FlowGroup, FlowPermission} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {FormSize} from "../../../../erupt/model/erupt.enum";
@@ -37,14 +37,6 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     // 分组选项
     groupOptions: FlowGroup[] = [];
 
-    // 提交权限选项
-    submitPermissionOptions = [
-        {label: '全员', value: 'all'},
-        {label: '部门主管', value: 'manager'},
-        {label: '指定人员', value: 'specific'},
-        {label: '均不可提交', value: 'no'}
-    ];
-
     @ViewChild('iconPopover') iconPopover!: NzPopoverComponent;
 
     @Output() closeConfig = new EventEmitter();
@@ -60,7 +52,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         this.flowConfig = {
             icon: 'fa fa-user',
             color: '#1890ff',
-            setting: {}
+            setting: {},
+            permission: FlowPermission.ALL
         };
 
         // 加载分组选项
@@ -106,8 +99,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         })
     }
 
-    changeSubmitPermission(permission: string) {
-        if (permission == 'specific') {
+    changeSubmitPermission(permission: FlowPermission) {
+        if (permission == FlowPermission.SPECIFIC) {
             this.modal.create({
                 nzTitle: '请选择可见范围',
                 nzWidth: '880px',
@@ -160,6 +153,22 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     // 发布
     publish(): void {
+        if (!this.flowConfig.name) {
+            this.msg.warning('请输入流程名称');
+            return;
+        }
+        if (!this.flowConfig.erupt) {
+            this.msg.warning('请选择关联表');
+            return;
+        }
+        if (!this.flowConfig.flowGroup) {
+            this.msg.warning('请选择分组');
+            return;
+        }
+        if (!this.flowConfig.permission) {
+            this.msg.warning('请选择提交权限');
+            return;
+        }
         if (this.flowId) {
             this.flowApiService.configUpdate(this.flowConfig).subscribe(res => {
                 if (res.success) {
@@ -191,4 +200,5 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     }
 
 
+    protected readonly FlowPermission = FlowPermission;
 }

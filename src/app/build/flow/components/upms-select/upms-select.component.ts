@@ -9,7 +9,13 @@ interface TabData {
     icon: string;
     items: KV<number, string>[];
     searchText: string;
-    selectedItems: KV<number, string>[];
+}
+
+// 扩展的FlowUpmsScope，包含显示信息
+interface FlowUpmsScopeDisplay extends FlowUpmsScope {
+    displayName: string;
+    icon: string;
+    label: string;
 }
 
 @Component({
@@ -30,32 +36,28 @@ export class UpmsSelectComponent implements OnInit {
             label: '组织架构',
             icon: 'apartment',
             items: [],
-            searchText: '',
-            selectedItems: []
+            searchText: ''
         },
         {
             key: UpmsScope.ROLE,
             label: '角色',
             icon: 'safety-certificate',
             items: [],
-            searchText: '',
-            selectedItems: []
+            searchText: ''
         },
         {
             key: UpmsScope.USER,
             label: '用户',
             icon: 'user',
             items: [],
-            searchText: '',
-            selectedItems: []
+            searchText: ''
         },
         {
             key: UpmsScope.POST,
             label: '岗位',
             icon: 'idcard',
             items: [],
-            searchText: '',
-            selectedItems: []
+            searchText: ''
         }
     ];
 
@@ -64,49 +66,31 @@ export class UpmsSelectComponent implements OnInit {
 
     ngOnInit() {
         this.loadData();
-        this.initializeSelectedItems();
     }
 
     private loadData() {
         // 加载用户数据
         this.flowUpmsApiService.users().subscribe(res => {
             this.tabs.find(tab => tab.key === UpmsScope.USER)!.items = res.data;
-            this.updateSelectedItems(UpmsScope.USER);
         });
 
         // 加载岗位数据
         this.flowUpmsApiService.posts().subscribe(res => {
             this.tabs.find(tab => tab.key === UpmsScope.POST)!.items = res.data;
-            this.updateSelectedItems(UpmsScope.POST);
         });
 
         // 加载角色数据
         this.flowUpmsApiService.roles().subscribe(res => {
             this.tabs.find(tab => tab.key === UpmsScope.ROLE)!.items = res.data;
-            this.updateSelectedItems(UpmsScope.ROLE);
         });
 
         // TODO: 加载组织数据
         // this.flowUpmsApiService.orgs().subscribe(res => {
         //     this.tabs.find(tab => tab.key === UpmsScope.ORG)!.items = res.data;
-        //     this.updateSelectedItems(UpmsScope.ORG);
         // });
     }
 
-    private initializeSelectedItems() {
-        if (this.flowUpmsScopes && this.flowUpmsScopes.length > 0) {
-            this.flowUpmsScopes.forEach(scope => {
-                const tab = this.tabs.find(t => t.key === scope.scope);
-                if (tab) {
-                    const item = tab.items.find(i => i.key === scope.scopeValue);
-                    if (item) {
-                        item.checked = true;
-                        tab.selectedItems.push(item);
-                    }
-                }
-            });
-        }
-    }
+
 
     onTabChange(tabIndex: number) {
         this.activeTab = tabIndex;
@@ -120,15 +104,12 @@ export class UpmsSelectComponent implements OnInit {
     }
 
     onItemToggle(tabKey: UpmsScope, item: KV<number, string>) {
-        item.checked = !item.checked;
-        const tab = this.tabs.find(t => t.key === tabKey);
-        
-        if (!tab) return;
+        // 检查项目是否已经在 flowUpmsScopes 中
+        const isSelected = this.flowUpmsScopes.some(s =>
+            s.scope === tabKey && s.scopeValue === item.key
+        );
 
-        if (item.checked) {
-            // 添加到已选列表
-            tab.selectedItems.push(item);
-            
+        if (!isSelected) {
             // 添加到 flowUpmsScopes
             const scopeItem: FlowUpmsScope = {
                 scope: tabKey,
@@ -136,82 +117,55 @@ export class UpmsSelectComponent implements OnInit {
             };
             this.flowUpmsScopes.push(scopeItem);
         } else {
-            // 从已选列表移除
-            const index = tab.selectedItems.findIndex(i => i.key === item.key);
-            if (index > -1) {
-                tab.selectedItems.splice(index, 1);
-            }
-            
             // 从 flowUpmsScopes 移除
-            const scopeIndex = this.flowUpmsScopes.findIndex(s => 
+            const scopeIndex = this.flowUpmsScopes.findIndex(s =>
                 s.scope === tabKey && s.scopeValue === item.key
             );
             if (scopeIndex > -1) {
                 this.flowUpmsScopes.splice(scopeIndex, 1);
             }
         }
-        
+
         this.emitChanges();
     }
 
-    onItemRemove(tabKey: UpmsScope, item: KV<number, string>) {
-        const tab = this.tabs.find(t => t.key === tabKey);
-        if (!tab) return;
-
-        // 从已选列表移除
-        const index = tab.selectedItems.findIndex(i => i.key === item.key);
-        if (index > -1) {
-            tab.selectedItems.splice(index, 1);
-        }
-
-        // 取消选中状态
-        item.checked = false;
-
+    onItemRemove(scope: FlowUpmsScope) {
         // 从 flowUpmsScopes 移除
-        const scopeIndex = this.flowUpmsScopes.findIndex(s => 
-            s.scope === tabKey && s.scopeValue === item.key
+        const scopeIndex = this.flowUpmsScopes.findIndex(s =>
+            s.scope === scope.scope && s.scopeValue === scope.scopeValue
         );
         if (scopeIndex > -1) {
             this.flowUpmsScopes.splice(scopeIndex, 1);
+        }
+
+        // 更新对应项目的选中状态
+        const tab = this.tabs.find(t => t.key === scope.scope);
+        if (tab) {
+            const item = tab.items.find(i => i.key === scope.scopeValue);
+            if (item) {
+                item.checked = false;
+            }
         }
 
         this.emitChanges();
     }
 
     onClearAll(tabKey: UpmsScope) {
-        const tab = this.tabs.find(t => t.key === tabKey);
-        if (!tab) return;
-
-        // 清空已选项目
-        tab.selectedItems = [];
-
-        // 取消所有项目的选中状态
-        tab.items.forEach(item => {
-            item.checked = false;
-        });
-
         // 从 flowUpmsScopes 移除该类型的所有项目
         this.flowUpmsScopes = this.flowUpmsScopes.filter(s => s.scope !== tabKey);
+
+        // 取消所有项目的选中状态
+        const tab = this.tabs.find(t => t.key === tabKey);
+        if (tab) {
+            tab.items.forEach(item => {
+                item.checked = false;
+            });
+        }
 
         this.emitChanges();
     }
 
-    private updateSelectedItems(tabKey: UpmsScope) {
-        const tab = this.tabs.find(t => t.key === tabKey);
-        if (!tab) return;
 
-        // 根据 flowUpmsScopes 更新选中状态
-        tab.selectedItems = [];
-        tab.items.forEach(item => {
-            const isSelected = this.flowUpmsScopes.some(s => 
-                s.scope === tabKey && s.scopeValue === item.key
-            );
-            item.checked = isSelected;
-            if (isSelected) {
-                tab.selectedItems.push(item);
-            }
-        });
-    }
 
     private emitChanges() {
         this.flowUpmsScopesChange.emit(this.flowUpmsScopes);
@@ -262,29 +216,14 @@ export class UpmsSelectComponent implements OnInit {
         return `未找到匹配的${tab.label}`;
     }
 
-    // 获取已选标题
-    getSelectedTitle(tabKey: UpmsScope): string {
-        const tab = this.tabs.find(t => t.key === tabKey);
-        if (!tab) return '';
-
-        const count = tab.selectedItems.length;
-        return `已选: ${count}个${tab.label}`;
-    }
-
     // 获取空选择状态提示
-    getEmptySelectedText(tabKey: UpmsScope): string {
-        const tab = this.tabs.find(t => t.key === tabKey);
-        if (!tab) return '';
-
-        return `暂无已选${tab.label}`;
+    getEmptySelectedText(): string {
+        return '暂无已选项目';
     }
 
     // 获取空选择状态提示详情
-    getEmptySelectedTip(tabKey: UpmsScope): string {
-        const tab = this.tabs.find(t => t.key === tabKey);
-        if (!tab) return '';
-
-        return `请在左侧选择需要分配的${tab.label}`;
+    getEmptySelectedTip(): string {
+        return '请在左侧选择需要分配的项目';
     }
 
     // 获取项目图标
@@ -303,8 +242,70 @@ export class UpmsSelectComponent implements OnInit {
         }
     }
 
+    // 获取项目标签
+    getItemLabel(type: UpmsScope): string {
+        switch (type) {
+            case UpmsScope.ORG:
+                return '组织架构';
+            case UpmsScope.ROLE:
+                return '角色';
+            case UpmsScope.USER:
+                return '用户';
+            case UpmsScope.POST:
+                return '岗位';
+            default:
+                return '未知';
+        }
+    }
+
+    // 获取项目显示名称
+    getItemDisplayName(scope: FlowUpmsScope): string {
+        const tab = this.tabs.find(t => t.key === scope.scope);
+        if (!tab) return '';
+
+        const item = tab.items.find(i => i.key === scope.scopeValue);
+        return item ? item.value : '';
+    }
+
+    // 获取排序后的显示数据
+    getSortedDisplayData(): FlowUpmsScopeDisplay[] {
+        // 定义排序优先级
+        const sortOrder = {
+            [UpmsScope.ORG]: 1,
+            [UpmsScope.ROLE]: 2,
+            [UpmsScope.USER]: 3,
+            [UpmsScope.POST]: 4
+        };
+
+        return this.flowUpmsScopes
+            .map(scope => ({
+                ...scope,
+                displayName: this.getItemDisplayName(scope),
+                icon: this.getItemIcon(scope.scope),
+                label: this.getItemLabel(scope.scope)
+            }))
+            .sort((a, b) => {
+                // 首先按类型排序
+                const typeOrder = sortOrder[a.scope] - sortOrder[b.scope];
+                if (typeOrder !== 0) return typeOrder;
+                
+                // 然后按名称排序
+                return a.displayName.localeCompare(b.displayName);
+            });
+    }
+
+    // 获取当前标签页的已选项目数量
+    getCurrentTabSelectedCount(): number {
+        return this.flowUpmsScopes.filter(s => s.scope === this.currentTabKey).length;
+    }
+
     // 跟踪函数，用于优化 ngFor 性能
     trackByKey(index: number, item: KV<number, string>): number {
         return item.key;
+    }
+
+    // 跟踪函数，用于优化 flowUpmsScopes 的 ngFor 性能
+    trackByScope(index: number, item: FlowUpmsScope): string {
+        return `${item.scope}-${item.scopeValue}`;
     }
 }
