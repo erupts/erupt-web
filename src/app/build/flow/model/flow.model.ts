@@ -24,6 +24,7 @@ export interface FlowConfig {
     enable?: boolean;
     rule?: NodeRule[];
     permission?: FlowPermission;
+    permissionScope?: FlowUpmsScope[]
     setting?: Record<string, any>;
 }
 

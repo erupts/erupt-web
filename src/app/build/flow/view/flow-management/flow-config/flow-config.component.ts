@@ -101,13 +101,19 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     changeSubmitPermission(permission: FlowPermission) {
         if (permission == FlowPermission.SPECIFIC) {
-            this.modal.create({
+            let ref = this.modal.create({
                 nzTitle: '请选择可见范围',
                 nzWidth: '880px',
                 nzStyle: {top: '30px'},
                 nzBodyStyle: {padding: '0'},
-                nzContent: UpmsSelectComponent
+                nzContent: UpmsSelectComponent,
             })
+            ref.getContentComponent().flowUpmsScopes = this.flowConfig.permissionScope || [];
+            ref.getContentComponent().flowUpmsScopesChange.subscribe(scopes => {
+                this.flowConfig.permissionScope = scopes;
+            });
+        } else {
+            this.flowConfig.permissionScope = null;
         }
     }
 
@@ -201,4 +207,48 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
 
     protected readonly FlowPermission = FlowPermission;
+
+    /**
+     * 获取权限范围的标签颜色
+     */
+    getScopeTagColor(scope: string): string {
+        const colorMap: { [key: string]: string } = {
+            'ORG': 'blue',
+            'ROLE': 'green',
+            'USER': 'orange',
+            'POST': 'purple'
+        };
+        return colorMap[scope] || 'default';
+    }
+
+    /**
+     * 获取权限范围的图标
+     */
+    getScopeIcon(scope: string): string {
+        const iconMap: { [key: string]: string } = {
+            'ORG': 'apartment',
+            'ROLE': 'safety-certificate',
+            'USER': 'user',
+            'POST': 'idcard'
+        };
+        return iconMap[scope] || 'question';
+    }
+
+    /**
+     * 获取权限范围的显示名称
+     */
+    // getScopeDisplayName(scope: FlowUpmsScope): string {
+    //     // 根据scope类型返回相应的显示名称
+    //     if (scope.scope === 'ORG') {
+    //         return scope.orgName || scope.orgId?.toString() || '未知组织';
+    //     } else if (scope.scope === 'ROLE') {
+    //         return scope.roleName || scope.roleId?.toString() || '未知角色';
+    //     } else if (scope.scope === 'USER') {
+    //         return scope.userName || scope.userId?.toString() || '未知用户';
+    //     } else if (scope.scope === 'POST') {
+    //         return scope.postName || scope.postId?.toString() || '未知岗位';
+    //     }
+    //     return '未知类型';
+    // }
+
 }

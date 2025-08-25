@@ -18,6 +18,14 @@ interface FlowUpmsScopeDisplay extends FlowUpmsScope {
     label: string;
 }
 
+// 分组显示数据
+interface GroupedDisplayData {
+    scope: UpmsScope;
+    label: string;
+    icon: string;
+    items: FlowUpmsScopeDisplay[];
+}
+
 @Component({
     selector: 'app-upms-select',
     templateUrl: './upms-select.component.html',
@@ -138,28 +146,18 @@ export class UpmsSelectComponent implements OnInit {
             this.flowUpmsScopes.splice(scopeIndex, 1);
         }
 
-        // 更新对应项目的选中状态
-        const tab = this.tabs.find(t => t.key === scope.scope);
-        if (tab) {
-            const item = tab.items.find(i => i.key === scope.scopeValue);
-            if (item) {
-                item.checked = false;
-            }
-        }
+
 
         this.emitChanges();
     }
 
-    onClearAll(tabKey: UpmsScope) {
-        // 从 flowUpmsScopes 移除该类型的所有项目
-        this.flowUpmsScopes = this.flowUpmsScopes.filter(s => s.scope !== tabKey);
-
-        // 取消所有项目的选中状态
-        const tab = this.tabs.find(t => t.key === tabKey);
-        if (tab) {
-            tab.items.forEach(item => {
-                item.checked = false;
-            });
+    onClearAll(tabKey?: UpmsScope) {
+        if (tabKey) {
+            // 清空指定类型的项目
+            this.flowUpmsScopes = this.flowUpmsScopes.filter(s => s.scope !== tabKey);
+        } else {
+            // 清空所有项目
+            this.flowUpmsScopes = [];
         }
 
         this.emitChanges();
@@ -258,6 +256,22 @@ export class UpmsSelectComponent implements OnInit {
         }
     }
 
+    // 获取标签颜色
+    getTagColor(type: UpmsScope): string {
+        switch (type) {
+            case UpmsScope.ORG:
+                return 'blue';
+            case UpmsScope.ROLE:
+                return 'green';
+            case UpmsScope.USER:
+                return 'orange';
+            case UpmsScope.POST:
+                return 'purple';
+            default:
+                return 'default';
+        }
+    }
+
     // 获取项目显示名称
     getItemDisplayName(scope: FlowUpmsScope): string {
         const tab = this.tabs.find(t => t.key === scope.scope);
@@ -265,6 +279,13 @@ export class UpmsSelectComponent implements OnInit {
 
         const item = tab.items.find(i => i.key === scope.scopeValue);
         return item ? item.value : '';
+    }
+
+    // 检查项目是否被选中
+    isItemSelected(tabKey: UpmsScope, itemKey: number): boolean {
+        return this.flowUpmsScopes.some(s =>
+            s.scope === tabKey && s.scopeValue === itemKey
+        );
     }
 
     // 获取排序后的显示数据
@@ -294,6 +315,35 @@ export class UpmsSelectComponent implements OnInit {
             });
     }
 
+    // 获取分组后的显示数据
+    getGroupedDisplayData(): GroupedDisplayData[] {
+        const groupedData: GroupedDisplayData[] = [];
+        
+        // 为每个类型创建分组
+        this.tabs.forEach(tab => {
+            const items = this.flowUpmsScopes
+                .filter(scope => scope.scope === tab.key)
+                .map(scope => ({
+                    ...scope,
+                    displayName: this.getItemDisplayName(scope),
+                    icon: this.getItemIcon(scope.scope),
+                    label: this.getItemLabel(scope.scope)
+                }))
+                .sort((a, b) => a.displayName.localeCompare(b.displayName));
+
+            if (items.length > 0) {
+                groupedData.push({
+                    scope: tab.key,
+                    label: tab.label,
+                    icon: tab.icon,
+                    items: items
+                });
+            }
+        });
+
+        return groupedData;
+    }
+
     // 获取当前标签页的已选项目数量
     getCurrentTabSelectedCount(): number {
         return this.flowUpmsScopes.filter(s => s.scope === this.currentTabKey).length;
@@ -307,5 +357,10 @@ export class UpmsSelectComponent implements OnInit {
     // 跟踪函数，用于优化 flowUpmsScopes 的 ngFor 性能
     trackByScope(index: number, item: FlowUpmsScope): string {
         return `${item.scope}-${item.scopeValue}`;
+    }
+
+    // 跟踪函数，用于优化分组的 ngFor 性能
+    trackByGroup(index: number, item: GroupedDisplayData): UpmsScope {
+        return item.scope;
     }
 }
