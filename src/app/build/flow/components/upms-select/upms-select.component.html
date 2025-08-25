@@ -40,12 +40,12 @@
                     <div
                         *ngFor="let item of getFilteredItems(tab.key); trackBy: trackByKey"
                         class="item-item"
-                        [class.selected]="item.checked"
+                        [class.selected]="isItemSelected(tab.key, item.key)"
                         (click)="onItemToggle(tab.key, item)"
                     >
                         <label
                             nz-checkbox
-                            [ngModel]="item.checked"
+                            [ngModel]="isItemSelected(tab.key, item.key)"
                             (ngModelChange)="onItemToggle(tab.key, item)"
                             (click)="$event.stopPropagation()"
                         ></label>
@@ -64,49 +64,68 @@
     <!-- 右侧面板：已选项目 -->
     <div class="right-panel">
         <div class="selected-header">
-            <h3 class="panel-title">已选项目</h3>
-            <button
-                nz-button
-                nzType="link"
-                nzSize="small"
-                nzDanger
-                (click)="onClearAll(currentTabKey)"
-                class="clear-btn"
-                [disabled]="getCurrentTabSelectedCount() === 0"
-            >
-                <span nz-icon nzType="delete" nzTheme="outline"></span>
-                清空当前标签
-            </button>
+            <div class="header-info">
+                <h3 class="panel-title">已选{{ flowUpmsScopes.length }} 项</h3>
+            </div>
+            <div class="header-actions">
+                <button
+                    *ngIf="flowUpmsScopes.length > 0"
+                    nz-button
+                    nzType="link"
+                    nzSize="small"
+                    nzDanger
+                    (click)="onClearAll()"
+                    class="clear-all-btn"
+                >
+                    <span nz-icon nzType="delete" nzTheme="outline"></span>
+                    清空全部
+                </button>
+            </div>
         </div>
 
         <div class="selected-items">
-            <div
-                *ngFor="let item of getSortedDisplayData(); trackBy: trackByScope"
-                class="selected-item-item"
-            >
-                <div class="item-info">
-                    <span nz-icon
-                          [nzType]="item.icon"
-                          nzTheme="outline"
-                          class="item-icon">
-                    </span>
-                    <div class="item-details">
-                        <span class="item-name">{{ item.displayName }}</span>
-                        <span class="item-type">{{ item.label }}</span>
+            <div class="tags-container">
+                <ng-container *ngFor="let group of getGroupedDisplayData(); trackBy: trackByGroup">
+                    <div class="group-container">
+                        <div class="group-header">
+                            <span nz-icon [nzType]="group.icon" nzTheme="outline"></span>
+                            <span class="group-label">{{ group.label }}</span>
+                            <span class="group-count">({{ group.items.length }})</span>
+                        </div>
+                        <div class="group-tags" *ngIf="group.items.length > 0">
+                            <nz-tag
+                                *ngFor="let item of group.items; trackBy: trackByScope"
+                                [nzColor]="getTagColor(item.scope)"
+                                class="custom-tag"
+                                (click)="onItemRemove(item)"
+                                nz-tooltip
+                                [nzTooltipTitle]="'点击移除' + item.label"
+                            >
+                                <span nz-icon [nzType]="item.icon" nzTheme="outline"></span>
+                                <span class="tag-text">{{ item.displayName }}</span>
+                            </nz-tag>
+                        </div>
+                        <div class="group-empty" *ngIf="group.items.length === 0">
+                            <span nz-icon nzType="inbox" nzTheme="outline"></span>
+                            <span class="empty-text">暂无已选{{ group.label }}</span>
+                        </div>
+                        <div class="group-actions" *ngIf="group.items.length > 0">
+                            <button
+                                nz-button
+                                nzType="link"
+                                nzSize="small"
+                                nzDanger
+                                (click)="onClearAll(group.scope)"
+                                class="clear-group-btn"
+                                nz-tooltip
+                                [nzTooltipTitle]="'清空' + group.label"
+                            >
+                                <span nz-icon nzType="delete" nzTheme="outline"></span>
+                                清空{{ group.label }}
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <button
-                    nz-button
-                    nzType="text"
-                    nzSize="small"
-                    nzDanger
-                    (click)="onItemRemove(item)"
-                    class="remove-btn"
-                    nz-tooltip
-                    [nzTooltipTitle]="'移除' + item.label"
-                >
-                    <span nz-icon nzType="close" nzTheme="outline"></span>
-                </button>
+                </ng-container>
             </div>
 
             <div *ngIf="flowUpmsScopes.length === 0" class="empty-selected">
