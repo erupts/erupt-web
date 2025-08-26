@@ -687,3 +687,78 @@
         }
     }
 }
+
+// 弹窗样式
+::ng-deep .ant-modal {
+    .modal-content {
+        .modal-description {
+            margin-bottom: 16px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-item {
+            margin-bottom: 16px;
+
+            .form-label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: #333;
+            }
+
+            .cc-user-select {
+                width: 100%;
+            }
+        }
+
+        .reason-textarea {
+            width: 100%;
+            resize: vertical;
+        }
+    }
+}
+
+// 弹窗按钮样式优化
+::ng-deep .ant-modal-footer {
+    .ant-btn {
+        min-width: 80px;
+    }
+}
+
+// 移动端弹窗优化
+@media (max-width: 768px) {
+    ::ng-deep .ant-modal {
+        width: 90% !important;
+        max-width: 400px;
+        
+        .ant-modal-body {
+            padding: 16px;
+        }
+        
+        .ant-modal-footer {
+            padding: 12px 16px;
+            
+            .ant-btn {
+                min-width: 70px;
+                height: 32px;
+                font-size: 14px;
+            }
+        }
+    }
+    
+    .modal-content {
+        .form-item {
+            margin-bottom: 12px;
+            
+            .form-label {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+        }
+        
+        .reason-textarea {
+            font-size: 14px;
+        }
+    }
+}

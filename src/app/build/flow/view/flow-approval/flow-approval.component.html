@@ -282,16 +282,16 @@
             <div class="fixed-bottom-actions">
                 <div class="action-buttons">
                     <ng-container *ngIf="ApprovalView.TODO === selectedView">
-                        <button nz-button nzSize="default" nzType="primary" nzGhost (click)="cc()">
+                        <button nz-button nzSize="default" nzType="primary" nzGhost (click)="approve()">
                             <span nz-icon nzType="check" nzTheme="outline"></span>
                             同意
                         </button>
-                        <button nz-button nzSize="default" nzDanger (click)="cc()">
+                        <button nz-button nzSize="default" nzDanger (click)="reject()">
                             <span nz-icon nzType="close" nzTheme="outline"></span>
                             拒绝
                         </button>
 
-                        <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo.prop.allowCc">
+                        <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo?.prop?.allowCc">
                             <span nz-icon nzType="send" nzTheme="outline"></span>
                             抄送
                         </button>
@@ -339,3 +339,98 @@
         </ng-template>
     </div>
 </div>
+
+<!-- 同意弹窗 -->
+<nz-modal
+    [(nzVisible)]="approveModalVisible"
+    nzTitle="同意审批"
+    nzOkText="确定"
+    nzCancelText="取消"
+    (nzOnOk)="submitApprove()"
+    (nzOnCancel)="approveModalVisible = false"
+>
+    <div *nzModalContent>
+        <div class="modal-content">
+            <p class="modal-description">请填写同意原因：</p>
+            <nz-input-group>
+                <textarea
+                    nz-input
+                    [(ngModel)]="approveReason"
+                    placeholder="请输入同意原因..."
+                    [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+                    class="reason-textarea"
+                ></textarea>
+            </nz-input-group>
+        </div>
+    </div>
+</nz-modal>
+
+<!-- 拒绝弹窗 -->
+<nz-modal
+    [(nzVisible)]="rejectModalVisible"
+    nzTitle="拒绝审批"
+    nzOkText="确定"
+    nzCancelText="取消"
+    nzOkDanger="true"
+    (nzOnOk)="submitReject()"
+    (nzOnCancel)="rejectModalVisible = false"
+>
+    <div *nzModalContent>
+        <div class="modal-content">
+            <p class="modal-description">请填写拒绝原因：</p>
+            <nz-input-group>
+                <textarea
+                    nz-input
+                    [(ngModel)]="rejectReason"
+                    placeholder="请输入拒绝原因..."
+                    [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+                    class="reason-textarea"
+                ></textarea>
+            </nz-input-group>
+        </div>
+    </div>
+</nz-modal>
+
+<!-- 抄送弹窗 -->
+<nz-modal
+    [(nzVisible)]="ccModalVisible"
+    nzTitle="抄送审批"
+    nzOkText="确定"
+    nzCancelText="取消"
+    (nzOnOk)="submitCc()"
+    (nzOnCancel)="ccModalVisible = false"
+>
+    <div *nzModalContent>
+        <div class="modal-content">
+            <div class="form-item">
+                <label class="form-label">抄送人员：</label>
+                <nz-select
+                    [(ngModel)]="ccUsers"
+                    [nzMode]="'multiple'"
+                    [nzPlaceHolder]="'请选择抄送人员'"
+                    [nzShowSearch]="true"
+                    [nzAllowClear]="true"
+                    class="cc-user-select"
+                >
+                    <nz-option
+                        *ngFor="let user of availableUsers"
+                        [nzValue]="user.id"
+                        [nzLabel]="user.name"
+                    ></nz-option>
+                </nz-select>
+            </div>
+            <div class="form-item">
+                <label class="form-label">抄送说明：</label>
+                <nz-input-group>
+                    <textarea
+                        nz-input
+                        [(ngModel)]="ccReason"
+                        placeholder="请输入抄送说明..."
+                        [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+                        class="reason-textarea"
+                    ></textarea>
+                </nz-input-group>
+            </div>
+        </div>
+    </div>
+</nz-modal>
