@@ -40,6 +40,20 @@ export class FlowApprovalComponent implements OnInit {
 
     eruptBuild: EruptBuildModel
 
+    // 弹窗相关属性
+    approveModalVisible = false;
+    rejectModalVisible = false;
+    ccModalVisible = false;
+    
+    // 表单数据
+    approveReason = '';
+    rejectReason = '';
+    ccReason = '';
+    ccUsers: number[] = [];
+    
+    // 可用用户列表（用于抄送选择）
+    availableUsers: any[] = [];
+
     constructor(
         private message: NzMessageService,
         private flowInstanceApiService: FlowInstanceApiService,
@@ -102,22 +116,127 @@ export class FlowApprovalComponent implements OnInit {
         return colors[index];
     }
 
-    reject() {
-        this.modal.confirm({
-            nzTitle: '拒绝审批',
-            nzContent: '确定拒绝此审批申请吗？',
-            nzOkText: '确定',
-            nzCancelText: '取消',
-            nzOkType: 'primary',
-            nzOkDanger: true,
-            nzOnOk: () => {
-                this.message.error('审批已拒绝');
-            }
-        });
+    // 同意审批
+    approve() {
+        if (!this.selectedInstance) {
+            this.message.warning('请先选择一个审批项目');
+            return;
+        }
+        this.approveReason = '';
+        this.approveModalVisible = true;
     }
 
+    // 拒绝审批
+    reject() {
+        if (!this.selectedInstance) {
+            this.message.warning('请先选择一个审批项目');
+            return;
+        }
+        this.rejectReason = '';
+        this.rejectModalVisible = true;
+    }
+
+    // 抄送审批
     cc() {
-        this.message.info('抄送功能');
+        if (!this.selectedInstance) {
+            this.message.warning('请先选择一个审批项目');
+            return;
+        }
+        this.ccReason = '';
+        this.ccUsers = [];
+        this.loadAvailableUsers();
+        this.ccModalVisible = true;
+    }
+
+    // 提交同意
+    submitApprove() {
+        if (!this.approveReason.trim()) {
+            this.message.warning('请填写同意原因');
+            return;
+        }
+        
+        // TODO: 调用同意审批接口
+        console.log('同意审批:', {
+            instanceId: this.selectedInstance?.id,
+            reason: this.approveReason
+        });
+        
+        // 模拟接口调用
+        this.message.success('审批已同意');
+        this.approveModalVisible = false;
+        this.approveReason = '';
+        
+        // 刷新数据
+        if (this.selectedInstance) {
+            this.loadInstanceDetail(this.selectedInstance.id);
+        }
+    }
+
+    // 提交拒绝
+    submitReject() {
+        if (!this.rejectReason.trim()) {
+            this.message.warning('请填写拒绝原因');
+            return;
+        }
+        
+        // TODO: 调用拒绝审批接口
+        console.log('拒绝审批:', {
+            instanceId: this.selectedInstance?.id,
+            reason: this.rejectReason
+        });
+        
+        // 模拟接口调用
+        this.message.success('审批已拒绝');
+        this.rejectModalVisible = false;
+        this.rejectReason = '';
+        
+        // 刷新数据
+        if (this.selectedInstance) {
+            this.loadInstanceDetail(this.selectedInstance.id);
+        }
+    }
+
+    // 提交抄送
+    submitCc() {
+        if (this.ccUsers.length === 0) {
+            this.message.warning('请选择抄送人员');
+            return;
+        }
+        
+        if (!this.ccReason.trim()) {
+            this.message.warning('请填写抄送说明');
+            return;
+        }
+        
+        // TODO: 调用抄送接口
+        console.log('抄送审批:', {
+            instanceId: this.selectedInstance?.id,
+            users: this.ccUsers,
+            reason: this.ccReason
+        });
+        
+        // 模拟接口调用
+        this.message.success('抄送成功');
+        this.ccModalVisible = false;
+        this.ccReason = '';
+        this.ccUsers = [];
+        
+        // 刷新数据
+        if (this.selectedInstance) {
+            this.loadInstanceDetail(this.selectedInstance.id);
+        }
+    }
+
+    // 加载可用用户列表
+    loadAvailableUsers() {
+        // TODO: 调用获取用户列表接口
+        // 这里先模拟一些用户数据
+        this.availableUsers = [
+            { id: 1, name: '张三' },
+            { id: 2, name: '李四' },
+            { id: 3, name: '王五' },
+            { id: 4, name: '赵六' }
+        ];
     }
 
     transfer() {
