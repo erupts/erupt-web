@@ -51,6 +51,7 @@ import {
     ReloadOutline,
     RocketOutline,
     RocketTwoTone,
+    RollbackOutline,
     SafetyCertificateOutline,
     SaveOutline,
     SearchOutline,
@@ -126,5 +127,6 @@ export const ICONS_AUTO = [
     IdcardOutline,
     SafetyCertificateOutline,
     SwapOutline,
-    UserAddOutline
+    UserAddOutline,
+    RollbackOutline
 ];
