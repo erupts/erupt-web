@@ -295,16 +295,16 @@
                             <span nz-icon nzType="send" nzTheme="outline"></span>
                             抄送
                         </button>
-                        <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo.prop.allowTransfer">
+                        <button nz-button nzSize="default" (click)="transfer()" *ngIf="nodeInfo?.prop?.allowTransfer">
                             <span nz-icon nzType="swap" nzTheme="outline"></span>
                             转交
                         </button>
-                        <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo.prop.allowAddSign">
+                        <button nz-button nzSize="default" (click)="addSigner()" *ngIf="nodeInfo?.prop?.allowAddSign">
                             <span nz-icon nzType="user-add" nzTheme="outline"></span>
                             加签
                         </button>
-                        <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo.prop.allowReturn">
-                            <span nz-icon nzType="user-add" nzTheme="outline"></span>
+                        <button nz-button nzSize="default" (click)="return()" *ngIf="nodeInfo?.prop?.allowReturn">
+                            <span nz-icon nzType="rollback" nzTheme="outline"></span>
                             退回
                         </button>
                         <button nz-button nzSize="default" (click)="modify()">
@@ -426,6 +426,144 @@
                         nz-input
                         [(ngModel)]="ccReason"
                         placeholder="请输入抄送说明..."
+                        [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+                        class="reason-textarea"
+                    ></textarea>
+                </nz-input-group>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+
+<!-- 转交弹窗 -->
+<nz-modal
+    [(nzVisible)]="transferModalVisible"
+    nzTitle="转交审批"
+    nzOkText="确定"
+    nzCancelText="取消"
+    (nzOnOk)="submitTransfer()"
+    (nzOnCancel)="transferModalVisible = false"
+>
+    <div *nzModalContent>
+        <div class="modal-content">
+            <div class="form-item">
+                <label class="form-label">转交人员：</label>
+                <nz-select
+                    [(ngModel)]="transferUser"
+                    [nzPlaceHolder]="'请选择转交人员'"
+                    [nzShowSearch]="true"
+                    [nzAllowClear]="true"
+                    class="transfer-user-select"
+                >
+                    <nz-option
+                        *ngFor="let user of availableUsers"
+                        [nzValue]="user.id"
+                        [nzLabel]="user.name"
+                    ></nz-option>
+                </nz-select>
+            </div>
+            <div class="form-item">
+                <label class="form-label">转交说明：</label>
+                <nz-input-group>
+                    <textarea
+                        nz-input
+                        [(ngModel)]="transferReason"
+                        placeholder="请输入转交说明..."
+                        [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+                        class="reason-textarea"
+                    ></textarea>
+                </nz-input-group>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+
+<!-- 加签弹窗 -->
+<nz-modal
+    [(nzVisible)]="addSignModalVisible"
+    nzTitle="加签审批"
+    nzOkText="确定"
+    nzCancelText="取消"
+    (nzOnOk)="submitAddSign()"
+    (nzOnCancel)="addSignModalVisible = false"
+>
+    <div *nzModalContent>
+        <div class="modal-content">
+            <div class="form-item">
+                <label class="form-label">加签类型：</label>
+                <nz-radio-group [(ngModel)]="addSignType" class="add-sign-type-group">
+                    <label nz-radio [nzValue]="'before'">前加签</label>
+                    <label nz-radio [nzValue]="'after'">后加签</label>
+                </nz-radio-group>
+            </div>
+            <div class="form-item">
+                <label class="form-label">加签人员：</label>
+                <nz-select
+                    [(ngModel)]="addSignUsers"
+                    [nzMode]="'multiple'"
+                    [nzPlaceHolder]="'请选择加签人员'"
+                    [nzShowSearch]="true"
+                    [nzAllowClear]="true"
+                    class="add-sign-user-select"
+                >
+                    <nz-option
+                        *ngFor="let user of availableUsers"
+                        [nzValue]="user.id"
+                        [nzLabel]="user.name"
+                    ></nz-option>
+                </nz-select>
+            </div>
+            <div class="form-item">
+                <label class="form-label">加签说明：</label>
+                <nz-input-group>
+                    <textarea
+                        nz-input
+                        [(ngModel)]="addSignReason"
+                        placeholder="请输入加签说明..."
+                        [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+                        class="reason-textarea"
+                    ></textarea>
+                </nz-input-group>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+
+<!-- 退回弹窗 -->
+<nz-modal
+    [(nzVisible)]="returnModalVisible"
+    nzTitle="退回审批"
+    nzOkText="确定"
+    nzCancelText="取消"
+    nzOkDanger="true"
+    (nzOnOk)="submitReturn()"
+    (nzOnCancel)="returnModalVisible = false"
+>
+    <div *nzModalContent>
+        <div class="modal-content">
+            <div class="form-item">
+                <label class="form-label">退回节点：</label>
+                <nz-select
+                    [(ngModel)]="returnNode"
+                    [nzPlaceHolder]="'请选择退回节点'"
+                    [nzShowSearch]="true"
+                    [nzAllowClear]="true"
+                    class="return-node-select"
+                >
+                    <nz-option
+                        *ngFor="let node of availableReturnNodes"
+                        [nzValue]="node.id"
+                        [nzLabel]="node.name"
+                    ></nz-option>
+                </nz-select>
+            </div>
+            <div class="form-item">
+                <label class="form-label">退回说明：</label>
+                <nz-input-group>
+                    <textarea
+                        nz-input
+                        [(ngModel)]="returnReason"
+                        placeholder="请输入退回说明..."
                         [nzAutosize]="{ minRows: 3, maxRows: 6 }"
                         class="reason-textarea"
                     ></textarea>
