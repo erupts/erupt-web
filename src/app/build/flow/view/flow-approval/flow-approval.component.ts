@@ -7,6 +7,7 @@ import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {DataHandlerService} from "../../../erupt/service/data-handler.service";
+import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 
 
 @Component({
@@ -44,20 +45,33 @@ export class FlowApprovalComponent implements OnInit {
     approveModalVisible = false;
     rejectModalVisible = false;
     ccModalVisible = false;
-    
+    transferModalVisible = false;
+    addSignModalVisible = false;
+    returnModalVisible = false;
+
     // 表单数据
     approveReason = '';
     rejectReason = '';
     ccReason = '';
     ccUsers: number[] = [];
-    
+    transferUser: number | null = null;
+    transferReason = '';
+    addSignUsers: number[] = [];
+    addSignReason = '';
+    addSignType: 'before' | 'after' = 'before';
+    returnNode: number | null = null;
+    returnReason = '';
+
     // 可用用户列表（用于抄送选择）
     availableUsers: any[] = [];
+    // 可用退回节点列表
+    availableReturnNodes: any[] = [];
 
     constructor(
         private message: NzMessageService,
         private flowInstanceApiService: FlowInstanceApiService,
         private modal: NzModalService,
+        private upmsApiService:FlowUpmsApiService,
         private flowApiService: FlowApiService,
         private dataHandlerService: DataHandlerService
     ) {
@@ -154,18 +168,18 @@ export class FlowApprovalComponent implements OnInit {
             this.message.warning('请填写同意原因');
             return;
         }
-        
+
         // TODO: 调用同意审批接口
         console.log('同意审批:', {
             instanceId: this.selectedInstance?.id,
             reason: this.approveReason
         });
-        
+
         // 模拟接口调用
         this.message.success('审批已同意');
         this.approveModalVisible = false;
         this.approveReason = '';
-        
+
         // 刷新数据
         if (this.selectedInstance) {
             this.loadInstanceDetail(this.selectedInstance.id);
@@ -178,18 +192,18 @@ export class FlowApprovalComponent implements OnInit {
             this.message.warning('请填写拒绝原因');
             return;
         }
-        
+
         // TODO: 调用拒绝审批接口
         console.log('拒绝审批:', {
             instanceId: this.selectedInstance?.id,
             reason: this.rejectReason
         });
-        
+
         // 模拟接口调用
         this.message.success('审批已拒绝');
         this.rejectModalVisible = false;
         this.rejectReason = '';
-        
+
         // 刷新数据
         if (this.selectedInstance) {
             this.loadInstanceDetail(this.selectedInstance.id);
@@ -202,25 +216,25 @@ export class FlowApprovalComponent implements OnInit {
             this.message.warning('请选择抄送人员');
             return;
         }
-        
+
         if (!this.ccReason.trim()) {
             this.message.warning('请填写抄送说明');
             return;
         }
-        
+
         // TODO: 调用抄送接口
         console.log('抄送审批:', {
             instanceId: this.selectedInstance?.id,
             users: this.ccUsers,
             reason: this.ccReason
         });
-        
+
         // 模拟接口调用
         this.message.success('抄送成功');
         this.ccModalVisible = false;
         this.ccReason = '';
         this.ccUsers = [];
-        
+
         // 刷新数据
         if (this.selectedInstance) {
             this.loadInstanceDetail(this.selectedInstance.id);
@@ -229,26 +243,175 @@ export class FlowApprovalComponent implements OnInit {
 
     // 加载可用用户列表
     loadAvailableUsers() {
-        // TODO: 调用获取用户列表接口
-        // 这里先模拟一些用户数据
-        this.availableUsers = [
-            { id: 1, name: '张三' },
-            { id: 2, name: '李四' },
-            { id: 3, name: '王五' },
-            { id: 4, name: '赵六' }
+        // 调用获取用户列表接口
+        this.upmsApiService.users().subscribe({
+            next: (data) => {
+                // 将KV<number, string>[]格式转换为{id: number, name: string}[]格式
+                this.availableUsers = (data.data || []).map(user => ({
+                    id: user.key,
+                    name: user.value
+                }));
+            },
+            error: (error) => {
+                console.error('获取用户列表失败:', error);
+                this.message.error('获取用户列表失败');
+                // 如果接口失败，使用默认数据
+                this.availableUsers = [
+                    { id: 1, name: '张三' },
+                    { id: 2, name: '李四' },
+                    { id: 3, name: '王五' },
+                    { id: 4, name: '赵六' }
+                ];
+            }
+        });
+    }
+
+    // 加载可用退回节点列表
+    loadAvailableReturnNodes() {
+        // TODO: 调用获取可退回节点接口
+        // 这里先模拟一些节点数据
+        this.availableReturnNodes = [
+            { id: 1, name: '部门经理审批' },
+            { id: 2, name: '财务审核' },
+            { id: 3, name: '总经理审批' }
         ];
     }
 
+    // 提交转交
+    submitTransfer() {
+        if (!this.transferUser) {
+            this.message.warning('请选择转交人员');
+            return;
+        }
+
+        if (!this.transferReason.trim()) {
+            this.message.warning('请填写转交说明');
+            return;
+        }
+
+        // TODO: 调用转交接口
+        console.log('转交审批:', {
+            instanceId: this.selectedInstance?.id,
+            userId: this.transferUser,
+            reason: this.transferReason
+        });
+
+        // 模拟接口调用
+        this.message.success('转交成功');
+        this.transferModalVisible = false;
+        this.transferReason = '';
+        this.transferUser = null;
+
+        // 刷新数据
+        if (this.selectedInstance) {
+            this.loadInstanceDetail(this.selectedInstance.id);
+        }
+    }
+
+    // 提交加签
+    submitAddSign() {
+        if (!this.addSignType) {
+            this.message.warning('请选择加签类型');
+            return;
+        }
+
+        if (this.addSignUsers.length === 0) {
+            this.message.warning('请选择加签人员');
+            return;
+        }
+
+        if (!this.addSignReason.trim()) {
+            this.message.warning('请填写加签说明');
+            return;
+        }
+
+        // TODO: 调用加签接口
+        console.log('加签审批:', {
+            instanceId: this.selectedInstance?.id,
+            type: this.addSignType,
+            users: this.addSignUsers,
+            reason: this.addSignReason
+        });
+
+        // 模拟接口调用
+        this.message.success('加签成功');
+        this.addSignModalVisible = false;
+        this.addSignReason = '';
+        this.addSignUsers = [];
+        this.addSignType = 'before';
+
+        // 刷新数据
+        if (this.selectedInstance) {
+            this.loadInstanceDetail(this.selectedInstance.id);
+        }
+    }
+
+    // 提交退回
+    submitReturn() {
+        if (!this.returnNode) {
+            this.message.warning('请选择退回节点');
+            return;
+        }
+
+        if (!this.returnReason.trim()) {
+            this.message.warning('请填写退回说明');
+            return;
+        }
+
+        // TODO: 调用退回接口
+        console.log('退回审批:', {
+            instanceId: this.selectedInstance?.id,
+            nodeId: this.returnNode,
+            reason: this.returnReason
+        });
+
+        // 模拟接口调用
+        this.message.success('退回成功');
+        this.returnModalVisible = false;
+        this.returnReason = '';
+        this.returnNode = null;
+
+        // 刷新数据
+        if (this.selectedInstance) {
+            this.loadInstanceDetail(this.selectedInstance.id);
+        }
+    }
+
+    // 转交审批
     transfer() {
-        this.message.info('转交功能');
+        if (!this.selectedInstance) {
+            this.message.warning('请先选择一个审批项目');
+            return;
+        }
+        this.transferUser = null;
+        this.transferReason = '';
+        this.loadAvailableUsers();
+        this.transferModalVisible = true;
     }
 
+    // 加签审批
     addSigner() {
-        this.message.info('加签功能');
+        if (!this.selectedInstance) {
+            this.message.warning('请先选择一个审批项目');
+            return;
+        }
+        this.addSignUsers = [];
+        this.addSignReason = '';
+        this.addSignType = 'before';
+        this.loadAvailableUsers();
+        this.addSignModalVisible = true;
     }
 
+    // 退回审批
     return() {
-        this.message.info('退回功能');
+        if (!this.selectedInstance) {
+            this.message.warning('请先选择一个审批项目');
+            return;
+        }
+        this.returnNode = null;
+        this.returnReason = '';
+        this.loadAvailableReturnNodes();
+        this.returnModalVisible = true;
     }
 
     modify() {
