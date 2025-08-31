@@ -7,6 +7,12 @@ export enum ApprovalView {
     CREATED = 'CREATED'
 }
 
+export interface FlowInstanceTask {
+    id: number;
+    flowInstance: FlowInstance;
+    comment: string;
+}
+
 export interface FlowInstance {
     id: number;
     no: string;
