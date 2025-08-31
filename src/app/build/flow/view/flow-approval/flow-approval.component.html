@@ -62,31 +62,31 @@
             <div class="approval-list">
                 <div
                     class="approval-item"
-                    *ngFor="let item of flowInstance"
-                    [class.active]="item?.id === selectedInstance?.id"
+                    *ngFor="let item of flowInstanceTask"
+                    [class.active]="item?.flowInstance?.id === selectedInstanceTask?.flowInstance?.id"
                     (click)="selectItem(item)"
                 >
                     <div class="item-header">
                         <h3 class="item-title">
-                            {{ item.eruptFlowConfig.name }}
+                            {{ item.flowInstance?.eruptFlowConfig?.name }}
                         </h3>
                         <nz-tag
-                            [nzColor]="getStatusColor(item.status)"
+                            [nzColor]="getStatusColor(item.flowInstance?.status)"
                             class="status-tag"
                             style="margin-right: 0"
                         >
-                            {{ item.status }}
+                            {{ item.flowInstance?.status }}
                         </nz-tag>
                     </div>
                     <div class="item-footer">
                         <div class="submitter-info">
-                            <div class="avatar" [style.background-color]="item.eruptFlowConfig.color">
-                                {{ item.initiatorUser.name[0] }}
+                            <div class="avatar" [style.background-color]="item.flowInstance?.eruptFlowConfig?.color">
+                                {{ item.flowInstance?.initiatorUser?.name?.[0] }}
                             </div>
-                            <span class="submitter-name">{{ item.initiatorUser.name }}</span>
+                            <span class="submitter-name">{{ item.flowInstance?.initiatorUser?.name }}</span>
                         </div>
                         <div class="time-info">
-                            <span class="process-time" *ngIf="item.finishTime">处理时间 {{ item.finishTime }}</span>
+                            <span class="process-time" *ngIf="item.flowInstance?.finishTime">处理时间 {{ item.flowInstance?.finishTime }}</span>
                         </div>
                     </div>
                 </div>
@@ -94,11 +94,11 @@
         </div>
 
         <!-- 右侧详情区域 -->
-        <div class="detail-section" *ngIf="selectedInstance; else emptyDetail">
+        <div class="detail-section" *ngIf="selectedInstanceTask; else emptyDetail">
             <div class="detail-header">
                 <div class="header-left">
-                    <span class="item-id" (click)="copyToClipboard(selectedInstance?.no)" style="cursor: pointer;">
-                        编号: {{ selectedInstance?.no }}
+                                        <span class="item-id" (click)="copyToClipboard(selectedInstanceTask?.flowInstance?.no)" style="cursor: pointer;">
+                       编号: {{ selectedInstanceTask?.flowInstance?.no }}
                         <span nz-icon nzType="copy" nzTheme="outline" class="copy-icon"></span>
                     </span>
                 </div>
@@ -106,7 +106,7 @@
                     <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="链接">
                         <span nz-icon nzType="link" nzTheme="outline"></span>
                     </button>
-                    <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="刷新" (click)="selectItem(selectedInstance)">
+                    <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="刷新" (click)="selectItem(selectedInstanceTask)">
                         <span nz-icon nzType="reload" nzTheme="outline"></span>
                     </button>
                     <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="打印">
@@ -115,22 +115,22 @@
                 </div>
             </div>
 
-            <div class="detail-content" *ngIf="selectedInstance">
+            <div class="detail-content" *ngIf="selectedInstanceTask">
                 <div class="content-header">
-                    <h1 class="content-title">{{ selectedInstance.eruptFlowConfig.name }}</h1>
+                    <h1 class="content-title">{{ selectedInstanceTask.flowInstance?.eruptFlowConfig?.name }}</h1>
                     <nz-tag
                         [nzColor]="'#09f'"
                         class="status-tag-large"
                     >
-                        {{ selectedInstance.status }}
+                        {{ selectedInstanceTask.flowInstance?.status }}
                     </nz-tag>
                 </div>
 
                 <div class="submitter-info-large">
                     <div class="submitter-details">
-                        <span class="submitter-name-large">{{ selectedInstance.initiatorUser?.name }}</span>&nbsp;&nbsp;
+                        <span class="submitter-name-large">{{ selectedInstanceTask.flowInstance?.initiatorUser?.name }}</span>&nbsp;&nbsp;
                         <span class="submitter-dept">部门</span>&nbsp;&nbsp;
-                        <span class="submit-time">提交于 {{ selectedInstance.createTime }}</span>
+                        <span class="submit-time">提交于 {{ selectedInstanceTask.flowInstance?.createTime }}</span>
                     </div>
                 </div>
 

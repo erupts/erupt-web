@@ -21,20 +21,20 @@ export class FlowInstanceApiService {
         });
     }
 
-    todoList(): Observable<R<FlowInstance[]>> {
-        return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/todo")
+    todoList(): Observable<R<FlowInstanceTask[]>> {
+        return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/approval/list/todo")
     }
 
-    doneList(): Observable<R<FlowInstance[]>> {
-        return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/done")
+    doneList(): Observable<R<FlowInstanceTask[]>> {
+        return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/approval/list/done")
     }
 
-    ccList(): Observable<R<FlowInstance[]>> {
-        return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/cc")
+    ccList(): Observable<R<FlowInstanceTask[]>> {
+        return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/approval/list/cc")
     }
 
-    createdList(): Observable<R<FlowInstance[]>> {
-        return this._http.get<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/approval/list/created")
+    createdList(): Observable<R<FlowInstanceTask[]>> {
+        return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/approval/list/created")
     }
 
     detail(instanceId: number): Observable<R<FlowInstance>> {
@@ -76,42 +76,43 @@ export class FlowInstanceApiService {
     }
 
     agree(instanceTaskId: number, comment: string): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/agree", null, {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/agree", null, {
             instanceTaskId,
             comment
         })
     }
 
     refuse(instanceTaskId: number, comment: string): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/refuse", null, {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/refuse", null, {
             instanceTaskId,
             comment
         })
     }
 
-    cc(instanceTaskId: number, comment: string): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/cc", null, {
+    cc(instanceTaskId: number, userIds: number[], comment: string): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/cc", null, {
             instanceTaskId,
-            comment
+            comment,
+            userIds
         })
     }
 
     transfer(instanceTaskId: number, userId: number, comment: string): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/transfer", null, {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/transfer", null, {
             instanceTaskId,
             comment
         })
     }
 
     addSign(instanceTaskId: number, addSignType: 'PRE_SIGN' | 'POST_SIGN', userId: number, comment: string): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/add-sign", null, {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/add-sign", null, {
             instanceTaskId,
             comment
         })
     }
 
     rollback(instanceTaskId: number, rtnNode: string, comment: string): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/rollback", null, {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/rollback", null, {
             instanceTaskId,
             comment
         })
