@@ -5,6 +5,7 @@ import {R} from "@shared/model/api.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
 import {FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/flow-instance.model";
 import {NodeRule} from "@flow/model/node.model";
+import {FlowConfig} from "@flow/model/flow.model";
 
 @Injectable({
     providedIn: 'root'
@@ -13,6 +14,10 @@ export class FlowInstanceApiService {
 
     constructor(private _http: _HttpClient) {
 
+    }
+
+    userFlows(): Observable<R<FlowConfig[]>> {
+        return this._http.get<R<FlowConfig[]>>(RestPath.erupt + "/flow/instance/user-flows", null);
     }
 
     create(flowId: number, data: object): Observable<R<void>> {
@@ -117,6 +122,5 @@ export class FlowInstanceApiService {
             comment
         })
     }
-
 
 }

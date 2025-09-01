@@ -6,6 +6,7 @@ import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {CreateInstanceComponent} from "@flow/view/flow-dashboard/create-instance/create-instance.component";
+import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 
 interface Category {
     key: string;
@@ -48,6 +49,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     private categoryFlowGroupsCache: Map<string, FlowGroupWithFlows[]> = new Map();
 
     constructor(private flowApiService: FlowApiService,
+                private instanceApiService: FlowInstanceApiService,
                 private drawerService: NzDrawerService) {
     }
 
@@ -107,7 +109,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
      */
     private loadFlowConfigs(): Promise<void> {
         return new Promise((resolve) => {
-            this.flowApiService.configList()
+            this.instanceApiService.userFlows()
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                     next: (response: R<FlowConfig[]>) => {

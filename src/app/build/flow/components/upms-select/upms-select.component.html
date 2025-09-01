@@ -95,14 +95,11 @@
                         <div class="group-tags" *ngIf="group.items.length > 0">
                             <nz-tag
                                 *ngFor="let item of group.items; trackBy: trackByScope"
-                                [nzColor]="getTagColor(item.scope)"
-                                class="custom-tag"
-                                (click)="onItemRemove(item)"
-                                nz-tooltip
-                                [nzTooltipTitle]="'点击移除' + item.label"
+                                [nzColor]="getTagColor(item.scope)" style="margin-bottom: 6px"
                             >
                                 <span nz-icon [nzType]="item.icon" nzTheme="outline"></span>
                                 <span class="tag-text">{{ item.displayName }}</span>
+                                <i nz-icon nzType="close" nzTheme="outline" (click)="onItemRemove(item)"></i>
                             </nz-tag>
                         </div>
                         <div class="group-empty" *ngIf="group.items.length === 0">
