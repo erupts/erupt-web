@@ -234,21 +234,4 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         return iconMap[scope] || 'question';
     }
 
-    /**
-     * 获取权限范围的显示名称
-     */
-    // getScopeDisplayName(scope: FlowUpmsScope): string {
-    //     // 根据scope类型返回相应的显示名称
-    //     if (scope.scope === 'ORG') {
-    //         return scope.orgName || scope.orgId?.toString() || '未知组织';
-    //     } else if (scope.scope === 'ROLE') {
-    //         return scope.roleName || scope.roleId?.toString() || '未知角色';
-    //     } else if (scope.scope === 'USER') {
-    //         return scope.userName || scope.userId?.toString() || '未知用户';
-    //     } else if (scope.scope === 'POST') {
-    //         return scope.postName || scope.postId?.toString() || '未知岗位';
-    //     }
-    //     return '未知类型';
-    // }
-
 }

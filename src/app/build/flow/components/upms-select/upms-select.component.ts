@@ -40,9 +40,9 @@ export class UpmsSelectComponent implements OnInit {
 
     tabs: TabData[] = [
         {
-            key: UpmsScope.ORG,
-            label: '组织架构',
-            icon: 'apartment',
+            key: UpmsScope.USER,
+            label: '用户',
+            icon: 'user',
             items: [],
             searchText: ''
         },
@@ -53,13 +53,7 @@ export class UpmsSelectComponent implements OnInit {
             items: [],
             searchText: ''
         },
-        {
-            key: UpmsScope.USER,
-            label: '用户',
-            icon: 'user',
-            items: [],
-            searchText: ''
-        },
+
         {
             key: UpmsScope.POST,
             label: '岗位',
@@ -97,7 +91,6 @@ export class UpmsSelectComponent implements OnInit {
         //     this.tabs.find(tab => tab.key === UpmsScope.ORG)!.items = res.data;
         // });
     }
-
 
 
     onTabChange(tabIndex: number) {
@@ -147,7 +140,6 @@ export class UpmsSelectComponent implements OnInit {
         }
 
 
-
         this.emitChanges();
     }
 
@@ -162,7 +154,6 @@ export class UpmsSelectComponent implements OnInit {
 
         this.emitChanges();
     }
-
 
 
     private emitChanges() {
@@ -309,7 +300,7 @@ export class UpmsSelectComponent implements OnInit {
                 // 首先按类型排序
                 const typeOrder = sortOrder[a.scope] - sortOrder[b.scope];
                 if (typeOrder !== 0) return typeOrder;
-                
+
                 // 然后按名称排序
                 return a.displayName.localeCompare(b.displayName);
             });
@@ -318,7 +309,7 @@ export class UpmsSelectComponent implements OnInit {
     // 获取分组后的显示数据
     getGroupedDisplayData(): GroupedDisplayData[] {
         const groupedData: GroupedDisplayData[] = [];
-        
+
         // 为每个类型创建分组
         this.tabs.forEach(tab => {
             const items = this.flowUpmsScopes
@@ -342,11 +333,6 @@ export class UpmsSelectComponent implements OnInit {
         });
 
         return groupedData;
-    }
-
-    // 获取当前标签页的已选项目数量
-    getCurrentTabSelectedCount(): number {
-        return this.flowUpmsScopes.filter(s => s.scope === this.currentTabKey).length;
     }
 
     // 跟踪函数，用于优化 ngFor 性能

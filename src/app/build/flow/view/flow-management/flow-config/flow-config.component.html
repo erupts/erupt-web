@@ -139,20 +139,19 @@
 
                     <!-- 已选择的权限范围标签 -->
                     <div class="permission-scopes" *ngIf="flowConfig.permissionScope?.length > 0">
-                        <div class="scopes-tags">
+                        <div>
                             <ng-container *ngFor="let scope of flowConfig.permissionScope;">
                                 <nz-tag
                                     [nzColor]="getScopeTagColor(scope.scope)"
-                                    class="scope-tag"
                                     nz-tooltip
                                 >
                                     <span nz-icon [nzType]="getScopeIcon(scope.scope)" nzTheme="outline"></span>
                                     <span class="tag-text">{{ scope.scopeValue }}</span>
                                 </nz-tag>
                             </ng-container>
-                            <nz-tag (click)="changeSubmitPermission(FlowPermission.SPECIFIC)">
-                                +
-                            </nz-tag>
+                            <button nz-button nzType="default" nzSize="small" (click)="changeSubmitPermission(FlowPermission.SPECIFIC)">
+                                <i nz-icon nzType="plus" nzTheme="outline" ></i>
+                            </button>
                         </div>
                     </div>
 
@@ -161,6 +160,9 @@
                         <span class="empty-text">
                             <span nz-icon nzType="info-circle" nzTheme="outline"></span>
                             请选择具体的权限范围
+                            <button nz-button nzType="default" nzSize="small" (click)="changeSubmitPermission(FlowPermission.SPECIFIC)">
+                                <i nz-icon nzType="plus" nzTheme="outline" ></i>
+                            </button>
                         </span>
                     </div>
                 </div>

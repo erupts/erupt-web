@@ -327,14 +327,14 @@
                             &.empty {
                                 background-color: #fff7e6;
                                 border-color: #ffd591;
-                                
+
                                 .empty-text {
                                     display: flex;
                                     align-items: center;
                                     gap: 8px;
                                     color: #d46b08;
                                     font-size: 13px;
-                                    
+
                                     span[nz-icon] {
                                         font-size: 14px;
                                     }
@@ -343,7 +343,7 @@
 
                             .scopes-header {
                                 margin-bottom: 12px;
-                                
+
                                 .scopes-title {
                                     font-size: 13px;
                                     color: #595959;
@@ -351,61 +351,6 @@
                                 }
                             }
 
-                            .scopes-tags {
-                                display: flex;
-                                flex-wrap: wrap;
-                                gap: 8px;
-
-                                .scope-tag {
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 6px;
-                                    padding: 6px 10px;
-                                    border-radius: 16px;
-                                    font-size: 12px;
-                                    border: none;
-                                    cursor: default;
-                                    transition: all 0.2s ease;
-                                    max-width: 200px;
-
-                                    &:hover {
-                                        transform: translateY(-1px);
-                                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-                                    }
-
-                                    .tag-text {
-                                        font-weight: 500;
-                                        color: #fff;
-                                        white-space: nowrap;
-                                        overflow: hidden;
-                                        text-overflow: ellipsis;
-                                        max-width: 120px;
-                                    }
-
-                                    span[nz-icon] {
-                                        font-size: 12px;
-                                        color: #fff;
-                                        flex-shrink: 0;
-                                    }
-                                }
-
-                                // 为不同类型的标签添加特殊样式
-                                .scope-tag.ant-tag-blue {
-                                    background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
-                                }
-
-                                .scope-tag.ant-tag-green {
-                                    background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
-                                }
-
-                                .scope-tag.ant-tag-orange {
-                                    background: linear-gradient(135deg, #fa8c16 0%, #ffa940 100%);
-                                }
-
-                                .scope-tag.ant-tag-purple {
-                                    background: linear-gradient(135deg, #722ed1 0%, #9254de 100%);
-                                }
-                            }
                         }
 
                         .checkbox-group {
