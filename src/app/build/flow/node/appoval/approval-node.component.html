@@ -51,7 +51,7 @@
             </div>
         </ng-container>
         <ng-container *ngIf="selectTab==1">
-            <app-form-access [eruptBuild]="eruptBuild"/>
+            <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="approveNode.formAccesses"/>
         </ng-container>
         <ng-container *ngIf="selectTab==2">
             <div class="allow-item">

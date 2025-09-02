@@ -1,9 +1,12 @@
 <nz-table [nzScroll]="{y: '400px'}" [nzData]="" [nzSize]="'small'">
     <thead>
     <tr>
-        <th>表单字段</th>
-        <th>可读</th>
-        <th>编辑</th>
+        <th [nzWidth]="'260px'">表单字段</th>
+        <th style="display: flex;gap: 50px;justify-content:space-evenly">
+            <span>只读</span>
+            <span>编辑</span>
+            <span>隐藏</span>
+        </th>
     </tr>
     </thead>
     <tbody>
@@ -12,10 +15,13 @@
             <tr>
                 <td>{{ field.eruptFieldJson.edit.title }}</td>
                 <td>
-                    <label nz-checkbox></label>
-                </td>
-                <td>
-                    <label nz-checkbox [nzDisabled]="field.eruptFieldJson.edit.readOnly.add"></label>
+                    <nz-radio-group [(ngModel)]="formAccesses[field.fieldName]" style="width: 100%">
+                        <div style="display: flex;gap: 50px;justify-content:space-evenly">
+                            <label nz-radio [nzValue]="FormAccessEnum.READONLY"></label>
+                            <label nz-radio [nzValue]="FormAccessEnum.READ_WRITE" [nzDisabled]="field.eruptFieldJson.edit.readOnly.add"></label>
+                            <label nz-radio [nzValue]="FormAccessEnum.HIDE"></label>
+                        </div>
+                    </nz-radio-group>
                 </td>
             </tr>
         </ng-container>

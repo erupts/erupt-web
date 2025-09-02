@@ -1,3 +1,5 @@
+import {FormAccessEnum} from "@flow/model/flow.model";
+
 export enum ReviewMode {
     /** 提交人本人 */
     SUBMITTER_HIMSELF = 'SUBMITTER_HIMSELF',
@@ -44,6 +46,8 @@ export class ApproveNode {
         },
     ];
 
+    formAccesses: Record<string, FormAccessEnum> = {};
+
     approvalStrategy: ApprovalStrategy = ApprovalStrategy.ANY_APPROVE;
 
     /** 允许转交 */
@@ -73,5 +77,7 @@ export class CcNode {
             modeValue: null
         },
     ];
+
+    formAccesses: Record<string, FormAccessEnum> = {};
 
 }

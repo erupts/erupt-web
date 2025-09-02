@@ -43,7 +43,7 @@
             </button>
         </ng-container>
         <ng-container *ngIf="selectTab==1">
-            <app-form-access [eruptBuild]="eruptBuild"/>
+            <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="ccNode.formAccesses"/>
         </ng-container>
     </div>
 </erupt-node>

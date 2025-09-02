@@ -26,13 +26,15 @@ export class CcNodeComponent extends ANode implements OnInit {
 
     ccNode: CcNode = new CcNode();
 
-
     showErr = false;
     errInfo: any = null;
 
     ngOnInit(): void {
         if (this.modelValue.prop) {
             this.ccNode = this.modelValue.prop;
+            if (!this.ccNode.formAccesses){
+                this.ccNode.formAccesses = {};
+            }
         }
     }
 
