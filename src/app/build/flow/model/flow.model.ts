@@ -52,3 +52,10 @@ export enum UpmsScope {
     POST = "POST"
 
 }
+
+export enum FormAccessEnum {
+    READONLY = "READONLY", // 只读
+    READ_WRITE = "READ_WRITE", // 读写
+    HIDE = "HIDE" // 隐藏
+
+}

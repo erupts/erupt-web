@@ -275,6 +275,30 @@
                             </div>
                         </div>
                     </nz-tab>
+                    <nz-tab nzTitle="数据变更记录">
+                        <div class="tab-content">
+                            <div class="section">
+                                <div *ngIf="instanceTasks.length > 0; else noTasks">
+                                    <nz-table
+                                        [nzShowPagination]="false"
+                                        [nzSize]="'small'"
+                                        class="records-table"
+                                    >
+                                        <thead>
+                                        <tr>
+                                            <th>操作人</th>
+                                            <th>操作时间</th>
+                                            <th>动作</th>
+                                            <th>变化记录</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </nz-table>
+                                </div>
+                            </div>
+                        </div>
+                    </nz-tab>
                 </nz-tabset>
             </div>
 
