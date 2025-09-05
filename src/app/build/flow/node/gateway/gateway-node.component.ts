@@ -1,9 +1,10 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {BranchType, NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
+import {EruptSearchModel} from "../../../erupt/model/erupt-search.model";
 
 export enum GatewayType {
     EXCLUSIVE = 'EXCLUSIVE',
@@ -11,12 +12,17 @@ export enum GatewayType {
     INCLUSIVE = 'INCLUSIVE'
 }
 
+export interface GatewayNode {
+    type: BranchType
+    conditions: EruptSearchModel[][]
+}
+
 @Component({
     selector: 'app-gateway-node',
     templateUrl: './gateway-node.component.html',
     styleUrls: ['./gateway-node.component.less']
 })
-export class GatewayNodeComponent extends ANode {
+export class GatewayNodeComponent extends ANode implements OnInit {
 
     @Input() readonly = false;
     @Input() eruptBuild: EruptBuildModel;
@@ -35,11 +41,23 @@ export class GatewayNodeComponent extends ANode {
     @Output() moveL = new EventEmitter<void>();
     @Output() moveR = new EventEmitter<void>();
 
+    @Input() gatewayNode: GatewayNode = {} as GatewayNode;
+
     showErr = false;
+
     errInfo: any = null;
 
+
+    showDrawer: boolean = false;
+
+    ngOnInit(): void {
+        this.gatewayNode = this.modelValue.prop;
+    }
+
     override onSelect() {
-        this.select.emit(this.modelValue);
+        if (!this.isDefault) {
+            this.showDrawer = true;
+        }
     }
 
     override onDelete() {
@@ -47,6 +65,10 @@ export class GatewayNodeComponent extends ANode {
             branch: this.branch,
             index: this.index
         });
+    }
+
+    closeDrawer(): void {
+        this.showDrawer = false;
     }
 
     override onInsertNode(type: NodeType) {
@@ -112,7 +134,8 @@ export class GatewayNodeComponent extends ANode {
                         type: NodeType.GATEWAY_BRANCH,
                         name: '默认条件',
                         prop: {
-                            type: BranchType.ELSE
+                            type: BranchType.ELSE,
+                            conditions: []
                         },
                         branches: []
                     }
@@ -140,7 +163,8 @@ export class GatewayNodeComponent extends ANode {
                         type: NodeType.GATEWAY_BRANCH,
                         name: '默认条件',
                         prop: {
-                            type: BranchType.ELSE
+                            type: BranchType.ELSE,
+                            conditions: []
                         },
                         branches: []
                     }
@@ -150,6 +174,7 @@ export class GatewayNodeComponent extends ANode {
     }
 
     override onSaveProp(): void {
+        this.modelValue.prop = this.gatewayNode;
     }
 
     override createBranch(i?: number): NodeRule {
@@ -159,8 +184,9 @@ export class GatewayNodeComponent extends ANode {
                 type: NodeType.GATEWAY_BRANCH,
                 name: '互斥条件' + i,
                 prop: {
-                    type: BranchType.CONDITION
-                },
+                    type: BranchType.CONDITION,
+                    conditions: []
+                } as GatewayNode,
                 branches: []
             };
         } else if (this.gatewayType === GatewayType.PARALLEL) {
@@ -169,8 +195,9 @@ export class GatewayNodeComponent extends ANode {
                 type: NodeType.GATEWAY_BRANCH,
                 name: '并行路径' + i,
                 prop: {
-                    type: BranchType.CONDITION
-                },
+                    type: BranchType.CONDITION,
+                    conditions: []
+                } as GatewayNode,
                 branches: []
             };
         } else {
@@ -179,8 +206,9 @@ export class GatewayNodeComponent extends ANode {
                 type: NodeType.GATEWAY_BRANCH,
                 name: '包容条件' + i,
                 prop: {
-                    type: BranchType.CONDITION
-                },
+                    type: BranchType.CONDITION,
+                    conditions: []
+                } as GatewayNode,
                 branches: []
             };
         }
@@ -215,4 +243,6 @@ export class GatewayNodeComponent extends ANode {
             return '包容流程分支';
         }
     }
+
+    protected readonly GatewayType = GatewayType;
 }

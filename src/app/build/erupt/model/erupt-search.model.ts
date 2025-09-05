@@ -1,7 +1,15 @@
 export interface EruptSearchModel {
     field: string;
+    operatorType: OperatorType;
     operator: OperatorDateType | OperatorNumberType | OperatorReferenceType | OperatorStringType;
     value: any;
+}
+
+export enum OperatorType {
+    DATE = 'DATE',
+    NUMBER = 'NUMBER',
+    REFERENCE = 'REFERENCE',
+    STRING = 'STRING',
 }
 
 export enum OperatorDateType {

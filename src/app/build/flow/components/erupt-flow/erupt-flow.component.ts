@@ -223,9 +223,6 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
 
     selectNode(node: any) {
         this.select.emit(node);
-        // if (NodeComponentConfigs[this.activeNode.type]) {
-        //     this.nodeConfVisible = true;
-        // }
     }
 
     /**

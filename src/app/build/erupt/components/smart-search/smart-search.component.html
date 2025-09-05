@@ -9,7 +9,6 @@
             </button>
         </div>
     </div>
-
     <!-- 条件构建器 -->
     <form nz-form class="condition-builder">
         <div class="condition-panel">
@@ -36,13 +35,9 @@
                         </ng-template>
 
                         <ng-template #cardExtra>
-                            <button
-                                nz-button
-                                nzType="text"
-                                nzSize="small"
-                                nzDanger
+                            <button nz-button nzType="text" nzSize="small" nzDanger
                                 (click)="removeConditionGroup(groupIndex)"
-                                *ngIf="search.length > 1"
+                                *ngIf="!requiredHasCondition || search.length > 1"
                             >
                                 <i nz-icon nzType="delete" nzTheme="outline"></i>
                             </button>
