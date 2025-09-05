@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {EditType} from "../../model/erupt.enum";
 import {
@@ -10,6 +10,7 @@ import {
     OperatorType
 } from "../../model/erupt-search.model";
 import {LV} from "../../model/common.model";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
     selector: 'erupt-smart-search',
@@ -20,11 +21,40 @@ export class SmartSearchComponent implements OnInit, OnChanges {
 
     @Input() eruptModel: EruptModel;
 
-    @Output() searchChange = new EventEmitter<EruptSearchModel[][]>();
-
     @Input() search: EruptSearchModel[][] = [];
 
+    @Output() searchChange = new EventEmitter<EruptSearchModel[][]>();
+
     @Input() requiredHasCondition: boolean = false;
+
+    constructor(@Inject(NzMessageService) private msg: NzMessageService,) {
+
+
+    }
+
+
+    public saveCondition = (): boolean => {
+        for (let group of this.search) {
+            for (let sh of group) {
+                if (!sh.field) {
+                    this.msg.error('请选择字段');
+                    return false;
+                }
+                if (!sh.operator) {
+                    this.msg.error('请选择运算符');
+                    return false;
+                }
+                if (sh.operator != OperatorDateType.NOT_NULL && sh.operator != OperatorDateType.NULL) {
+                    if (sh.value == null) {
+                        this.msg.error('请输入值');
+                        return false;
+                    }
+                }
+            }
+        }
+        this.searchChange.emit(this.search);
+        return true;
+    }
 
     ngOnInit(): void {
         if (this.requiredHasCondition) {
@@ -137,6 +167,7 @@ export class SmartSearchComponent implements OnInit, OnChanges {
             this.search[groupIndex] = [];
         }
         this.search[groupIndex].push(this.createEmptyCondition());
+        this.searchChange.emit(this.search);
     }
 
     // 删除条件（基于 search）

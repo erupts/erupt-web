@@ -1,39 +1,42 @@
 <app-branch-node
-  [(modelValue)]="modelValue"
-  [readonly]="readonly"
-  [showError]="showErr"
-  [errorInfo]="errInfo"
-  [color]="color()"
-  [headerIcon]="getHeaderIcon()"
-  [eruptBuild]="eruptBuild"
-  [isDefault]="isDefault"
-  [moveRn]="moveRn"
-  [moveLn]="moveLn"
-  [desc]="getDescription()"
-  [content]="getContent()"
-  (insertNode)="onInsertNode($event)"
-  (insertFlexNode)="onInsertFlexNode($event)"
-  (moveL)="onMoveL()"
-  (moveR)="onMoveR()"
-  (delete)="onDelete()"
-  (select)="onSelect()">
+    [(modelValue)]="modelValue"
+    [readonly]="readonly"
+    [showError]="showErr"
+    [errorInfo]="errInfo"
+    [color]="color()"
+    [headerIcon]="getHeaderIcon()"
+    [eruptBuild]="eruptBuild"
+    [isDefault]="isDefault"
+    [moveRn]="moveRn"
+    [moveLn]="moveLn"
+    [desc]="getDescription()"
+    [content]="getContent()"
+    (insertNode)="onInsertNode($event)"
+    (insertFlexNode)="onInsertFlexNode($event)"
+    (moveL)="onMoveL()"
+    (moveR)="onMoveR()"
+    (delete)="onDelete()"
+    (select)="onSelect()">
 </app-branch-node>
 <nz-drawer
     [nzVisible]="showDrawer"
     (nzOnClose)="closeDrawer()"
+    [nzMaskClosable]="false"
     nzPlacement="right"
     nzTitle="分支条件"
     [nzFooter]="footerTpl"
     [nzWidth]="600"
 >
     <ng-container *nzDrawerContent>
-        {{gatewayNode|json}}
-        <erupt-smart-search [requiredHasCondition]="gatewayType != GatewayType.PARALLEL" [eruptModel]="eruptBuild.eruptModel" [(search)]="gatewayNode.conditions"/>
+        <ng-container *ngIf="showDrawer">
+            <erupt-smart-search [requiredHasCondition]="gatewayType != GatewayType.PARALLEL"
+                                [eruptModel]="eruptBuild.eruptModel" [(search)]="gatewayNode.conditions"/>
+        </ng-container>
     </ng-container>
 </nz-drawer>
 <ng-template #footerTpl>
     <div style="float: right">
         <button nz-button style="margin-right: 8px;" (click)="closeDrawer()">Cancel</button>
-        <button nz-button nzType="primary" (click)="closeDrawer()">Save</button>
+        <button nz-button nzType="primary" (click)="onSaveProp()">Save</button>
     </div>
 </ng-template>
