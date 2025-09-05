@@ -1,7 +1,14 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {EditType} from "../../model/erupt.enum";
-import {EruptSearchModel, OperatorDateType, OperatorNumberType, OperatorReferenceType, OperatorStringType} from "../../model/erupt-search.model";
+import {
+    EruptSearchModel,
+    OperatorDateType,
+    OperatorNumberType,
+    OperatorReferenceType,
+    OperatorStringType,
+    OperatorType
+} from "../../model/erupt-search.model";
 import {LV} from "../../model/common.model";
 
 @Component({
@@ -13,13 +20,18 @@ export class SmartSearchComponent implements OnInit, OnChanges {
 
     @Input() eruptModel: EruptModel;
 
+    @Output() searchChange = new EventEmitter<EruptSearchModel[][]>();
+
     @Input() search: EruptSearchModel[][] = [];
 
+    @Input() requiredHasCondition: boolean = false;
+
     ngOnInit(): void {
-        if (!this.search || this.search.length === 0) {
-            this.search = [[this.createEmptyCondition()]];
+        if (this.requiredHasCondition) {
+            if (!this.search || this.search.length === 0) {
+                this.search = [[this.createEmptyCondition()]];
+            }
         }
-        console.log(this.eruptModel)
     }
 
     getOperator(field: string): LV<string, string>[] {
@@ -94,7 +106,7 @@ export class SmartSearchComponent implements OnInit, OnChanges {
     }
 
     private createEmptyCondition(): EruptSearchModel {
-        return {field: '', operator: OperatorStringType.EQ, value: ''};
+        return {field: '', operatorType: OperatorType.STRING, operator: OperatorStringType.EQ, value: ''};
     }
 
     onFieldChange(groupIndex: number, conditionIndex: number): void {

@@ -51,21 +51,3 @@
         </app-insert-btn>
     </div>
 </div>
-<nz-drawer
-    [nzVisible]="showDrawer"
-    (nzOnClose)="close()"
-    nzPlacement="right"
-    nzTitle="Basic Drawer"
-    [nzFooter]="footerTpl"
-    [nzWidth]="600"
->
-    <ng-container *nzDrawerContent>
-        <erupt-smart-search [eruptModel]="eruptBuild.eruptModel"/>
-    </ng-container>
-</nz-drawer>
-<ng-template #footerTpl>
-    <div style="float: right">
-        <button nz-button style="margin-right: 8px;" (click)="close()">Cancel</button>
-        <button nz-button nzType="primary" (click)="close()">Save</button>
-    </div>
-</ng-template>

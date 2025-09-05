@@ -1,4 +1,4 @@
-<nz-table [nzScroll]="{y: '400px'}" [nzData]="" [nzSize]="'small'">
+<nz-table [nzData]="eruptBuild.eruptModel.eruptFieldModels.length?[{}]:[]" [nzSize]="'small'" nzHideOnSinglePage>
     <thead>
     <tr>
         <th [nzWidth]="'260px'">表单字段</th>
@@ -11,7 +11,7 @@
     </thead>
     <tbody>
     <ng-container *ngFor="let field of eruptBuild.eruptModel.eruptFieldModels">
-        <ng-container *ngIf="field.eruptFieldJson.edit.title">
+        <ng-container *ngIf="field.eruptFieldJson.edit.title && field.eruptFieldJson.edit.show">
             <tr>
                 <td>{{ field.eruptFieldJson.edit.title }}</td>
                 <td>

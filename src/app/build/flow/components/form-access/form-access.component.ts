@@ -18,6 +18,10 @@ export class FormAccessComponent implements OnInit {
     protected readonly FormAccessEnum = FormAccessEnum;
 
     ngOnInit(): void {
-
+        for (let eruptFieldModel of this.eruptBuild.eruptModel.eruptFieldModels) {
+            if (!this.formAccesses[eruptFieldModel.fieldName]){
+                this.formAccesses[eruptFieldModel.fieldName] = FormAccessEnum.READONLY;
+            }
+        }
     }
 }
