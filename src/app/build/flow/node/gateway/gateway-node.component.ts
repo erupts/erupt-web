@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
 import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {BranchType, NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {EruptSearchModel} from "../../../erupt/model/erupt-search.model";
+import {SmartSearchComponent} from "../../../erupt/components/smart-search/smart-search.component";
 
 export enum GatewayType {
     EXCLUSIVE = 'EXCLUSIVE',
@@ -43,10 +44,12 @@ export class GatewayNodeComponent extends ANode implements OnInit {
 
     @Input() gatewayNode: GatewayNode = {} as GatewayNode;
 
+    @ViewChild(SmartSearchComponent, {static: false})
+    smartSearchComponent!: SmartSearchComponent;
+
     showErr = false;
 
     errInfo: any = null;
-
 
     showDrawer: boolean = false;
 
@@ -174,7 +177,10 @@ export class GatewayNodeComponent extends ANode implements OnInit {
     }
 
     override onSaveProp(): void {
-        this.modelValue.prop = this.gatewayNode;
+        if (this.smartSearchComponent.saveCondition()) {
+            this.modelValue.prop = this.gatewayNode;
+            this.showDrawer = false;
+        }
     }
 
     override createBranch(i?: number): NodeRule {
