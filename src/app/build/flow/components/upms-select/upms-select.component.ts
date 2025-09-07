@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 import {KV} from "../../../erupt/model/util.model";
 import {FlowUpmsScope, UpmsScope} from "@flow/model/flow.model";
+import {UpmsDataService} from "@flow/service/upms-data.service";
 
 interface TabData {
     key: UpmsScope;
@@ -63,7 +63,8 @@ export class UpmsSelectComponent implements OnInit {
         }
     ];
 
-    constructor(private flowUpmsApiService: FlowUpmsApiService) {
+    constructor(private upmsDataService: UpmsDataService) {
+
     }
 
     ngOnInit() {
@@ -72,24 +73,9 @@ export class UpmsSelectComponent implements OnInit {
 
     private loadData() {
         // 加载用户数据
-        this.flowUpmsApiService.users().subscribe(res => {
-            this.tabs.find(tab => tab.key === UpmsScope.USER)!.items = res.data;
-        });
-
-        // 加载岗位数据
-        this.flowUpmsApiService.posts().subscribe(res => {
-            this.tabs.find(tab => tab.key === UpmsScope.POST)!.items = res.data;
-        });
-
-        // 加载角色数据
-        this.flowUpmsApiService.roles().subscribe(res => {
-            this.tabs.find(tab => tab.key === UpmsScope.ROLE)!.items = res.data;
-        });
-
-        // TODO: 加载组织数据
-        // this.flowUpmsApiService.orgs().subscribe(res => {
-        //     this.tabs.find(tab => tab.key === UpmsScope.ORG)!.items = res.data;
-        // });
+        this.tabs.find(tab => tab.key === UpmsScope.USER)!.items = this.upmsDataService.users;
+        this.tabs.find(tab => tab.key === UpmsScope.POST)!.items = this.upmsDataService.posts;
+        this.tabs.find(tab => tab.key === UpmsScope.ROLE)!.items = this.upmsDataService.roles;
     }
 
 

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {EditType} from "../../model/erupt.enum";
 import {
@@ -9,7 +9,6 @@ import {
     OperatorStringType,
     OperatorType
 } from "../../model/erupt-search.model";
-import {LV} from "../../model/common.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
@@ -17,7 +16,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
     templateUrl: './smart-search.component.html',
     styleUrls: ['./smart-search.component.less']
 })
-export class SmartSearchComponent implements OnInit, OnChanges {
+export class SmartSearchComponent implements OnInit {
 
     @Input() eruptModel: EruptModel;
 
@@ -26,6 +25,28 @@ export class SmartSearchComponent implements OnInit, OnChanges {
     @Output() searchChange = new EventEmitter<EruptSearchModel[][]>();
 
     @Input() requiredHasCondition: boolean = false;
+
+    searchTypeMapping: Partial<Record<EditType, OperatorType>> = {
+        [EditType.INPUT]: OperatorType.STRING,
+        [EditType.COLOR]: OperatorType.STRING,
+        [EditType.TEXTAREA]: OperatorType.STRING,
+        [EditType.MARKDOWN]: OperatorType.STRING,
+        [EditType.HTML_EDITOR]: OperatorType.STRING,
+        [EditType.CODE_EDITOR]: OperatorType.STRING,
+        [EditType.AUTO_COMPLETE]: OperatorType.STRING,
+
+        [EditType.NUMBER]: OperatorType.NUMBER,
+        [EditType.SLIDER]: OperatorType.NUMBER,
+        [EditType.RATE]: OperatorType.NUMBER,
+
+        [EditType.DATE]: OperatorType.DATE,
+
+        [EditType.BOOLEAN]: OperatorType.BOOLEAN,
+        [EditType.CHOICE]: OperatorType.CHOICE,
+        [EditType.MULTI_CHOICE]: OperatorType.CHOICE,
+        [EditType.REFERENCE_TABLE]: OperatorType.REFERENCE,
+        [EditType.REFERENCE_TREE]: OperatorType.REFERENCE,
+    };
 
     constructor(@Inject(NzMessageService) private msg: NzMessageService,) {
 
@@ -64,89 +85,44 @@ export class SmartSearchComponent implements OnInit, OnChanges {
         }
     }
 
-    getOperator(field: string): LV<string, string>[] {
-        let res: LV<string, string>[] = [];
-        if (!this.eruptModel || !this.eruptModel.eruptFieldModelMap.get(field)) {
-            return res;
-        }
-        let type: EditType = this.eruptModel.eruptFieldModelMap.get(field).eruptFieldJson.edit.type;
-        let operatorNameMap = {
-            TODAY: '今天',
-            FEW_DAYS: '过去 N 天',
-            FUTURE_DAYS: '未来 N 天',
-            RANGE: '区间',
-            GT: '大于',
-            LT: '小于',
-            EGT: '大于等于',
-            ELT: '小于等于',
-            NULL: '为空',
-            NOT_NULL: '非空',
-            EQ: '等于',
-            NEQ: '不等于',
-            LIKE: '相似',
-            NOT_LIKE: '不相似',
-            START_WITH: '以**开始',
-            END_WITH: '以**结尾',
-            IN: '包含于',
-            NOT_IN: '不包含于',
-        };
-        switch (type) {
-            case EditType.NUMBER:
-            case EditType.SLIDER:
-            case EditType.RATE:
-                for (let key in OperatorNumberType) {
-                    res.push({label: operatorNameMap[key] || key, value: key});
-                }
-                return res;
-            case EditType.DATE:
-                for (let key in OperatorDateType) {
-                    res.push({label: operatorNameMap[key] || key, value: key});
-                }
-                return res;
-            case EditType.CHOICE:
-            case EditType.MULTI_CHOICE:
-            case EditType.REFERENCE_TABLE:
-            case EditType.REFERENCE_TREE:
-            case EditType.BOOLEAN:
-                for (let key in OperatorReferenceType) {
-                    res.push({label: operatorNameMap[key] || key, value: key});
-                }
-                return res;
-            default:
-                for (let key in OperatorStringType) {
-                    res.push({label: operatorNameMap[key] || key, value: key});
-                }
-                return res;
-        }
-    }
-
     isInputOperator(operator: string): boolean {
         return [OperatorStringType.LIKE, OperatorStringType.NOT_LIKE, OperatorStringType.START_WITH, OperatorStringType.END_WITH].includes(operator as OperatorStringType);
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['search'] && !changes['search'].firstChange) {
-            // 保证每个分组至少有一个条件项
-            if (this.search.length === 0) {
-                this.search = [[this.createEmptyCondition()]];
-            } else {
-                this.search = this.search.map(group => (group && group.length ? group : [this.createEmptyCondition()]));
-            }
-        }
-    }
+    // ngOnChanges(changes: SimpleChanges): void {
+    //     if (changes['search'] && !changes['search'].firstChange) {
+    //         // 保证每个分组至少有一个条件项
+    //         if (this.search.length === 0) {
+    //             this.search = [[this.createEmptyCondition()]];
+    //         } else {
+    //             this.search = this.search.map(group => (group && group.length ? group : [this.createEmptyCondition()]));
+    //         }
+    //     }
+    // }
 
     private createEmptyCondition(): EruptSearchModel {
-        return {field: '', operatorType: OperatorType.STRING, operator: OperatorStringType.EQ, value: ''};
+        return {field: '', operatorType: null, operator: null, value: null};
     }
 
-    onFieldChange(groupIndex: number, conditionIndex: number): void {
-        const condition = this.search[groupIndex]?.[conditionIndex];
-        if (!condition) return;
-        const ops = this.getOperator(condition.field) || [];
-        if (ops.length) {
-            condition.operator = ops[0].value as EruptSearchModel['operator'];
+    onFieldChange(condition: EruptSearchModel): void {
+        condition.operatorType = this.searchTypeMapping[this.eruptModel.eruptFieldModelMap.get(condition.field)?.eruptFieldJson.edit.type] || OperatorType.STRING;
+        switch (condition.operatorType) {
+            case OperatorType.STRING:
+                condition.operator = OperatorStringType.EQ;
+                break;
+            case OperatorType.NUMBER:
+                condition.operator = OperatorNumberType.EQ;
+                break;
+            case OperatorType.DATE:
+                condition.operator = OperatorDateType.TODAY;
+                break;
+            case OperatorType.REFERENCE:
+            case OperatorType.BOOLEAN:
+            case OperatorType.CHOICE:
+                condition.operator = OperatorReferenceType.EQ;
+                break;
         }
-        condition.value = undefined;
+        condition.value = null;
     }
 
     // 添加条件组（基于 search）
@@ -167,7 +143,6 @@ export class SmartSearchComponent implements OnInit, OnChanges {
             this.search[groupIndex] = [];
         }
         this.search[groupIndex].push(this.createEmptyCondition());
-        this.searchChange.emit(this.search);
     }
 
     // 删除条件（基于 search）
@@ -183,6 +158,11 @@ export class SmartSearchComponent implements OnInit, OnChanges {
     }
 
     protected readonly editType = EditType;
+    protected readonly OperatorType = OperatorType;
+    protected readonly OperatorStringType = OperatorStringType;
+    protected readonly OperatorNumberType = OperatorNumberType;
+    protected readonly OperatorDateType = OperatorDateType;
+    protected readonly OperatorReferenceType = OperatorReferenceType;
 }
 
 

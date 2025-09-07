@@ -146,11 +146,11 @@
                                     nz-tooltip
                                 >
                                     <span nz-icon [nzType]="getScopeIcon(scope.scope)" nzTheme="outline"></span>
-                                    <span class="tag-text">{{ scope.scopeValue }}</span>
+                                    <span class="tag-text">{{ getScopeValue(scope) }}</span>
                                 </nz-tag>
                             </ng-container>
                             <button nz-button nzType="default" nzSize="small" (click)="changeSubmitPermission(FlowPermission.SPECIFIC)">
-                                <i nz-icon nzType="plus" nzTheme="outline" ></i>
+                                <i nz-icon nzType="plus" nzTheme="outline"></i>
                             </button>
                         </div>
                     </div>
@@ -161,7 +161,7 @@
                             <span nz-icon nzType="info-circle" nzTheme="outline"></span>
                             请选择具体的权限范围
                             <button nz-button nzType="default" nzSize="small" (click)="changeSubmitPermission(FlowPermission.SPECIFIC)">
-                                <i nz-icon nzType="plus" nzTheme="outline" ></i>
+                                <i nz-icon nzType="plus" nzTheme="outline"></i>
                             </button>
                         </span>
                     </div>

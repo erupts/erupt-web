@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ReviewMode, ReviewModeValue} from "@flow/model/fllw-approval.model";
-import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 import {KV} from "../../../erupt/model/util.model";
+import {UpmsDataService} from "@flow/service/upms-data.service";
 
 @Component({
     selector: 'app-review-user',
@@ -16,37 +16,22 @@ export class ReviewUserComponent implements OnInit {
 
     users: KV<number, string>[] = [];
 
-    orgs: KV<number, string>[] = [];
-
     posts: KV<number, string>[] = [];
 
     roles: KV<number, string>[] = [];
 
     deptHeads: KV<number, string>[] = [];
 
-    constructor(private flowUpmsApiService: FlowUpmsApiService) {
+    constructor(private upmsDataService: UpmsDataService) {
 
     }
 
     ngOnInit(): void {
-        this.flowUpmsApiService.users().subscribe(res => {
-            this.users = res.data;
-        });
-        // flowUpmsApiService.orgs().subscribe(res => {
-        //     this.orgs = res.data;
-        // });
-        this.flowUpmsApiService.posts().subscribe(res => {
-            this.posts = res.data;
-        });
-        this.flowUpmsApiService.roles().subscribe(res => {
-            this.roles = res.data;
-        });
+        this.users = this.upmsDataService.users;
+        this.posts = this.upmsDataService.posts;
+        this.roles = this.upmsDataService.roles;
         for (let i = 0; i <= 15; i++) {
-            this.deptHeads.push({
-                    key: i,
-                    value: "直属部门负责人" + (i == 0 ? "" : `加 ${i} 级负责人`)
-                }
-            )
+            this.deptHeads.push({key: i, value: "直属部门负责人" + (i == 0 ? "" : `加 ${i} 级负责人`)})
         }
     }
 
