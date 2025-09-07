@@ -36,8 +36,8 @@
 
                         <ng-template #cardExtra>
                             <button nz-button nzType="text" nzSize="small" nzDanger
-                                (click)="removeConditionGroup(groupIndex)"
-                                *ngIf="!requiredHasCondition || search.length > 1"
+                                    (click)="removeConditionGroup(groupIndex)"
+                                    *ngIf="!requiredHasCondition || search.length > 1"
                             >
                                 <i nz-icon nzType="delete" nzTheme="outline"></i>
                             </button>
@@ -67,80 +67,167 @@
                                 <div class="condition-content">
                                     <!-- 字段选择 -->
                                     <nz-form-item>
-                                        <nz-select [(ngModel)]="search[groupIndex][conditionIndex].field"
-                                                   (ngModelChange)="onFieldChange(groupIndex, conditionIndex)"
+                                        <nz-select [(ngModel)]="condition.field"
+                                                   (ngModelChange)="onFieldChange(condition)"
                                                    [ngModelOptions]="{standalone: true}"
                                                    nzPlaceHolder="请选择字段" nzShowSearch
                                                    class="field-select">
                                             <ng-container *ngFor="let field of eruptModel.eruptFieldModels">
-                                                <nz-option
-                                                    *ngIf="field.eruptFieldJson.edit?.title"
-                                                    [nzValue]="field.fieldName"
-                                                    [nzLabel]="field.eruptFieldJson.edit.title"
-                                                ></nz-option>
+                                                <ng-container *ngIf="searchTypeMapping[field.eruptFieldJson.edit.type] && field.eruptFieldJson.edit?.title">
+                                                    <nz-option [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title"></nz-option>
+                                                </ng-container>
                                             </ng-container>
                                         </nz-select>
                                     </nz-form-item>
 
                                     <!-- 操作符选择 -->
                                     <nz-form-item>
-                                        <nz-select [(ngModel)]="search[groupIndex][conditionIndex].operator"
+                                        <nz-select [(ngModel)]="condition.operator"
                                                    [ngModelOptions]="{standalone: true}"
                                                    class="operator-select">
-
-                                            <nz-option
-                                                *ngFor="let op of getOperator(search[groupIndex][conditionIndex].field)"
-                                                [nzValue]="op.value"
-                                                [nzLabel]="op.label"
-                                            ></nz-option>
+                                            <ng-container [ngSwitch]="condition.operatorType">
+                                                <ng-container *ngSwitchCase="OperatorType.STRING">
+                                                    <nz-option
+                                                        *ngFor="let op of OperatorStringType | enumToArray"
+                                                        [nzValue]="op"
+                                                        [nzLabel]="op | translate"
+                                                    ></nz-option>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="OperatorType.NUMBER">
+                                                    <nz-option
+                                                        *ngFor="let op of OperatorNumberType | enumToArray"
+                                                        [nzValue]="op"
+                                                        [nzLabel]="op | translate"
+                                                    ></nz-option>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="OperatorType.DATE">
+                                                    <nz-option
+                                                        *ngFor="let op of OperatorDateType | enumToArray"
+                                                        [nzValue]="op"
+                                                        [nzLabel]="op | translate"
+                                                    ></nz-option>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="OperatorType.BOOLEAN">
+                                                    <nz-option
+                                                        *ngFor="let op of OperatorReferenceType | enumToArray"
+                                                        [nzValue]="op"
+                                                        [nzLabel]="op | translate"
+                                                    ></nz-option>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="OperatorType.CHOICE">
+                                                    <nz-option
+                                                        *ngFor="let op of OperatorReferenceType | enumToArray"
+                                                        [nzValue]="op"
+                                                        [nzLabel]="op | translate"
+                                                    ></nz-option>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="OperatorType.REFERENCE">
+                                                    <nz-option
+                                                        *ngFor="let op of OperatorReferenceType | enumToArray"
+                                                        [nzValue]="op"
+                                                        [nzLabel]="op | translate"
+                                                    ></nz-option>
+                                                </ng-container>
+                                            </ng-container>
                                         </nz-select>
                                     </nz-form-item>
 
                                     <!-- 值输入-->
-                                    <div class="value-row" *ngIf="search[groupIndex][conditionIndex].operator">
+                                    <div class="value-row" *ngIf="condition.operator">
                                         <nz-form-item class="value-input-container">
-                                            <!-- 数字输入（天数/数值） -->
-                                            <ng-container *ngIf="
-                                              search[groupIndex][conditionIndex].operator === 'FUTURE_DAYS' ||
-                                              search[groupIndex][conditionIndex].operator === 'FEW_DAYS'   ||
-                                              search[groupIndex][conditionIndex].operator === 'GT'         ||
-                                              search[groupIndex][conditionIndex].operator === 'LT'         ||
-                                              search[groupIndex][conditionIndex].operator === 'EGT'        ||
-                                              search[groupIndex][conditionIndex].operator === 'ELT'
+                                            <!-- 数字 -->
+                                            <ng-container *ngIf="condition.operatorType === OperatorType.NUMBER">
+                                                <ng-container *ngIf="
+                                                  condition.operator === OperatorNumberType.EQ ||
+                                                  condition.operator === OperatorNumberType.NEQ ||
+                                                  condition.operator === OperatorNumberType.GT ||
+                                                  condition.operator === OperatorNumberType.LT ||
+                                                  condition.operator === OperatorNumberType.EGT ||
+                                                  condition.operator === OperatorNumberType.ELT
                                             ">
-                                                <nz-input-number style="width: 100%" [ngModelOptions]="{standalone: true}"
-                                                                 [(ngModel)]="search[groupIndex][conditionIndex].value"
-                                                                 [nzMin]="0">
-                                                </nz-input-number>
+                                                    <nz-input-number style="width: 100%" [ngModelOptions]="{standalone: true}"
+                                                                     [(ngModel)]="condition.value">
+                                                    </nz-input-number>
+                                                </ng-container>
+
+                                                <ng-container *ngIf="condition.operator === OperatorNumberType.RANGE">
+                                                    xxxx
+                                                </ng-container>
                                             </ng-container>
 
-                                            <!-- 普通文本输入 -->
-                                            <ng-container *ngIf="
-                                              search[groupIndex][conditionIndex].operator === 'EQ'        ||
-                                              search[groupIndex][conditionIndex].operator === 'NEQ'       ||
-                                              search[groupIndex][conditionIndex].operator === 'LIKE'      ||
-                                              search[groupIndex][conditionIndex].operator === 'NOT_LIKE'  ||
-                                              search[groupIndex][conditionIndex].operator === 'START_WITH'||
-                                              search[groupIndex][conditionIndex].operator === 'END_WITH'
-                                            ">
-                                                <input nz-input type="text" placeholder="请输入" [ngModelOptions]="{standalone: true}"
-                                                       [(ngModel)]="search[groupIndex][conditionIndex].value">
+                                            <!-- 文本 -->
+                                            <ng-container *ngIf="condition.operatorType === OperatorType.STRING">
+                                                <ng-container *ngIf=" condition.operator === OperatorStringType.EQ ||
+                                                  condition.operator === OperatorStringType.NEQ        ||
+                                                  condition.operator === OperatorStringType.NOT_LIKE   ||
+                                                  condition.operator === OperatorStringType.LIKE       ||
+                                                  condition.operator === OperatorStringType.START_WITH ||
+                                                  condition.operator === OperatorStringType.END_WITH">
+                                                    <input nz-input type="text" placeholder="请输入" [ngModelOptions]="{standalone: true}"
+                                                           [(ngModel)]="condition.value">
+                                                </ng-container>
+                                                <ng-container *ngIf="
+                                                  condition.operator === OperatorStringType.IN ||
+                                                  condition.operator === OperatorStringType.NOT_IN
+                                                ">
+                                                    <nz-select [ngModelOptions]="{standalone: true}"
+                                                               style="width: 100%"
+                                                               nzMode="tags"
+                                                               [nzPlaceHolder]="'请选择'"
+                                                               [(ngModel)]="condition.value" [nzOptions]="[]">
+                                                    </nz-select>
+                                                </ng-container>
                                             </ng-container>
-                                            <!-- 区间选择器（RANGE） -->
-                                            <ng-container *ngIf="search[groupIndex][conditionIndex].operator === 'RANGE'">
-                                                <nz-range-picker style="width: 100%" [nzShowTime]="true" [(ngModel)]="search[groupIndex][conditionIndex].value"></nz-range-picker>
+
+                                            <!-- 时间 -->
+                                            <ng-container *ngIf="condition.operatorType === OperatorType.DATE">
+                                                <ng-container *ngIf="(
+                                                    condition.operator === OperatorDateType.GT ||
+                                                    condition.operator === OperatorDateType.LT ||
+                                                    condition.operator === OperatorDateType.EGT ||
+                                                    condition.operator === OperatorDateType.ELT
+                                                )">
+                                                    <nz-date-picker style="width: 100%" [ngModelOptions]="{standalone: true}"
+                                                                    [(ngModel)]="condition.value"></nz-date-picker>
+                                                </ng-container>
+                                                <ng-container *ngIf="condition.operator === OperatorDateType.RANGE">
+                                                    <nz-range-picker style="width: 100%" [nzShowTime]="true" [(ngModel)]="condition.value"></nz-range-picker>
+                                                </ng-container>
+                                                <ng-container *ngIf="condition.operator === OperatorDateType.FEW_DAYS || condition.operator === OperatorDateType.FUTURE_DAYS">
+                                                    <nz-input-number style="width: 100%" [ngModelOptions]="{standalone: true}"
+                                                                     [(ngModel)]="condition.value" [nzMin]="0">
+                                                    </nz-input-number>
+                                                </ng-container>
                                             </ng-container>
-                                            <!-- 多选下拉（IN / NOT_IN） -->
-                                            <ng-container *ngIf="
-                                              search[groupIndex][conditionIndex].operator === 'IN' ||
-                                              search[groupIndex][conditionIndex].operator === 'NOT_IN'
-                                            ">
+                                            <!-- 布尔值 -->
+                                            <ng-container *ngIf="condition.operatorType === OperatorType.BOOLEAN">
                                                 <nz-select [ngModelOptions]="{standalone: true}"
-                                                    style="width: 100%"
-                                                    nzMode="tags"
-                                                    [nzPlaceHolder]="'请选择'"
-                                                    [(ngModel)]="search[groupIndex][conditionIndex].value">
+                                                           style="width: 100%"
+                                                           [nzPlaceHolder]="'请选择'"
+                                                           [(ngModel)]="condition.value">
+                                                    <nz-option [nzValue]="true" [nzLabel]="eruptModel.eruptFieldModelMap.get(condition.field).eruptFieldJson.edit.boolType.trueText"></nz-option>
+                                                    <nz-option [nzValue]="false" [nzLabel]="eruptModel.eruptFieldModelMap.get(condition.field).eruptFieldJson.edit.boolType.falseText"></nz-option>
                                                 </nz-select>
+                                            </ng-container>
+                                            <!-- 选择 -->
+                                            <ng-container *ngIf="condition.operatorType === OperatorType.CHOICE">
+                                                <ng-container *ngIf="condition.operator === OperatorReferenceType.EQ || condition.operator === OperatorReferenceType.NEQ">
+                                                    <nz-select [ngModelOptions]="{standalone: true}"
+                                                               style="width: 100%"
+                                                               [nzPlaceHolder]="'请选择'"
+                                                               [(ngModel)]="condition.value">
+                                                        <nz-option *ngFor="let item of eruptModel.eruptFieldModelMap.get(condition.field).eruptFieldJson.edit.choiceType.items"
+                                                                   [nzValue]="item.value" [nzLabel]="item.label">
+
+                                                        </nz-option>
+                                                    </nz-select>
+                                                </ng-container>
+                                            </ng-container>
+                                            <ng-container *ngIf="condition.operatorType === OperatorType.REFERENCE">
+                                                <ng-container *ngIf="condition.operator === OperatorReferenceType.EQ || condition.operator === OperatorReferenceType.NEQ">
+                                                    <erupt-reference style="width: 100%" [eruptModel]="eruptModel" [field]="eruptModel.eruptFieldModelMap.get(condition.field)" [size]="'default'"
+                                                                     [readonly]="false"></erupt-reference>
+                                                </ng-container>
                                             </ng-container>
                                         </nz-form-item>
                                     </div>

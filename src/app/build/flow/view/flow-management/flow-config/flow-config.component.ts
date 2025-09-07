@@ -3,14 +3,14 @@ import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {EruptFieldModel, VL} from "../../../../erupt/model/erupt-field.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
-import {FlowConfig, FlowGroup, FlowPermission} from "@flow/model/flow.model";
+import {FlowConfig, FlowGroup, FlowPermission, FlowUpmsScope, UpmsScope} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {FormSize} from "../../../../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
-import {FlowDataService} from "@flow/service/flow-data.service";
 import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
+import {UpmsDataService} from "@flow/service/upms-data.service";
 
 @Component({
     selector: 'app-flow-config',
@@ -43,7 +43,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     constructor(private flowApiService: FlowApiService, private modal: NzModalService,
                 private msg: NzMessageService,
-                private flowDataService: FlowDataService) {
+                private upmsDataService: UpmsDataService) {
 
     }
 
@@ -232,6 +232,29 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             'POST': 'idcard'
         };
         return iconMap[scope] || 'question';
+    }
+
+    getScopeValue(upmsScope: FlowUpmsScope): string {
+        if (upmsScope.scope == UpmsScope.USER) {
+            for (let user of this.upmsDataService.users) {
+                if (user.key == upmsScope.scopeValue) {
+                    return user.value;
+                }
+            }
+        } else if (upmsScope.scope == UpmsScope.ROLE) {
+            for (let role of this.upmsDataService.roles) {
+                if (role.key == upmsScope.scopeValue) {
+                    return role.value;
+                }
+            }
+        } else if (upmsScope.scope == UpmsScope.POST) {
+            for (let post of this.upmsDataService.posts) {
+                if (post.key == upmsScope.scopeValue) {
+                    return post.value;
+                }
+            }
+        }
+        return upmsScope.scopeValue.toString();
     }
 
 }

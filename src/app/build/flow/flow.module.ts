@@ -90,6 +90,7 @@ import {ReviewUserComponent} from './components/review-user/review-user.componen
 import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 import {NzSegmentedModule} from 'ng-zorro-antd/segmented';
 import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
+import {UpmsDataService} from "@flow/service/upms-data.service";
 
 @NgModule({
     declarations: [
@@ -119,6 +120,7 @@ import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.comp
     providers: [
         FlowApiService,
         FlowDataService,
+        UpmsDataService,
         FlowUpmsApiService
     ],
     imports: [
