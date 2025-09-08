@@ -125,6 +125,16 @@ export class SmartSearchComponent implements OnInit {
         condition.value = null;
     }
 
+    onOperatorChange(condition: EruptSearchModel): void {
+        if (condition.operatorType === OperatorType.NUMBER && condition.operator === OperatorNumberType.RANGE as OperatorNumberType) {
+            condition.value = [];
+        } else if(condition.operatorType === OperatorType.CHOICE){
+            condition.value = [];
+        } else {
+            condition.value = null;
+        }
+    }
+
     // 添加条件组（基于 search）
     addConditionGroup(): void {
         this.search.push([this.createEmptyCondition()]);
