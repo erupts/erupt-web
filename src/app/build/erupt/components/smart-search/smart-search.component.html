@@ -83,6 +83,7 @@
                                     <!-- 操作符选择 -->
                                     <nz-form-item>
                                         <nz-select [(ngModel)]="condition.operator"
+                                                   (ngModelChange)="onOperatorChange(condition)"
                                                    [ngModelOptions]="{standalone: true}"
                                                    class="operator-select">
                                             <ng-container [ngSwitch]="condition.operatorType">
@@ -151,7 +152,17 @@
                                                 </ng-container>
 
                                                 <ng-container *ngIf="condition.operator === OperatorNumberType.RANGE">
-                                                    xxxx
+                                                    <div style="display: flex; align-items: center; gap: 12px;width: 100%">
+                                                        <nz-input-number style="flex: 1;" [ngModelOptions]="{standalone: true}"
+                                                                        [(ngModel)]="condition.value[0]"
+                                                                        placeholder="最小值">
+                                                        </nz-input-number>
+                                                        <span class="range-separator">至</span>
+                                                        <nz-input-number style="flex: 1" [ngModelOptions]="{standalone: true}"
+                                                                        [(ngModel)]="condition.value[1]"
+                                                                        placeholder="最大值">
+                                                        </nz-input-number>
+                                                    </div>
                                                 </ng-container>
                                             </ng-container>
 
@@ -214,9 +225,10 @@
                                                 <ng-container *ngIf="condition.operator === OperatorReferenceType.EQ || condition.operator === OperatorReferenceType.NEQ">
                                                     <nz-select [ngModelOptions]="{standalone: true}"
                                                                style="width: 100%"
+                                                               nzMode="multiple"
                                                                [nzPlaceHolder]="'请选择'"
                                                                [(ngModel)]="condition.value">
-                                                        <nz-option *ngFor="let item of eruptModel.eruptFieldModelMap.get(condition.field).eruptFieldJson.edit.choiceType.items"
+                                                        <nz-option *ngFor="let item of eruptModel.eruptFieldModelMap.get(condition.field).componentValue"
                                                                    [nzValue]="item.value" [nzLabel]="item.label">
 
                                                         </nz-option>
