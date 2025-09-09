@@ -64,7 +64,8 @@ import {
     UndoOutline,
     UnorderedListOutline,
     UserAddOutline,
-    UserOutline
+    UserOutline,
+    WarningTwoTone
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -128,5 +129,6 @@ export const ICONS_AUTO = [
     SafetyCertificateOutline,
     SwapOutline,
     UserAddOutline,
-    RollbackOutline
+    RollbackOutline,
+    WarningTwoTone
 ];

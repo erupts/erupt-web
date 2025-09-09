@@ -39,7 +39,7 @@ export class WindowModel {
         WindowModel.userTools = WindowModel.config["userTools"] || [];
         WindowModel.amapKey = WindowModel.config["amapKey"];
         WindowModel.amapSecurityJsCode = WindowModel.config["amapSecurityJsCode"];
-        WindowModel.title = WindowModel.config["title"] === null ? 'Erupt Framework' : WindowModel.config["title"];
+        WindowModel.title = WindowModel.config["title"] === null ? 'Erupt Engine' : WindowModel.config["title"];
         WindowModel.desc = WindowModel.config["desc"] || undefined;
         WindowModel.logoPath = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "erupt.svg");
         WindowModel.logoFoldPath = WindowModel.config["logoFoldPath"] || WindowModel.logoPath;

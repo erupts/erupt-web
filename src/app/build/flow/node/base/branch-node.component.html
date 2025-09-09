@@ -1,7 +1,7 @@
 <div class="p-node">
-    <nz-tooltip *ngIf="showError" [title]=" errorInfo || '设置错误'">
-        <span nz-icon nzType="warning" nzTheme="fill" class="node-err-tip"></span>
-    </nz-tooltip>
+    <ng-container *ngIf="modelValue?.error">
+        <span nz-tooltip [nzTooltipTitle]="modelValue.error" nz-icon nzType="warning" nzTheme="twotone" [nzTwotoneColor]="'#FF4D4F'" class="node-err-tip"></span>
+    </ng-container>
 
     <div class="p-node-body"
          [class.node-err]="showError"

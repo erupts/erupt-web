@@ -91,6 +91,7 @@ import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 import {NzSegmentedModule} from 'ng-zorro-antd/segmented';
 import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
 import {UpmsDataService} from "@flow/service/upms-data.service";
+import {SubNodeComponent} from '@flow/node/sub/sub-node.component';
 
 @NgModule({
     declarations: [
@@ -115,7 +116,8 @@ import {UpmsDataService} from "@flow/service/upms-data.service";
         EndNodeComponent,
         GatewayJoinComponent,
         ReviewUserComponent,
-        UpmsSelectComponent
+        UpmsSelectComponent,
+        SubNodeComponent
     ],
     providers: [
         FlowApiService,

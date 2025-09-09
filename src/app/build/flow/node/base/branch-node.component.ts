@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
-import {NodeType} from "@flow/model/node.model";
+import {NodeRule, NodeType} from "@flow/model/node.model";
 
 @Component({
     selector: 'app-branch-node',
@@ -20,14 +20,14 @@ export class BranchNodeComponent implements AfterViewInit {
     @Input() headerIcon = '';
     @Input() content = '';
     @Input() readonly = false;
-    @Input() modelValue: any;
+    @Input() modelValue: NodeRule;
     @Input() showError = false;
     @Input() errorInfo = '';
     @Input() isDefault = false;
     @Input() placeholder = '请设置';
     @Input() desc = '';
 
-    @Output() modelValueChange = new EventEmitter<any>();
+    @Output() modelValueChange = new EventEmitter<NodeRule>();
     @Output() select = new EventEmitter<void>();
     @Output() delete = new EventEmitter<void>();
     @Output() insertNode = new EventEmitter<NodeType>();

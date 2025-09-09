@@ -7,6 +7,7 @@ import {R} from "@shared/model/api.model";
 import {VL} from "../../erupt/model/erupt-field.model";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
+import {NodeRule} from "@flow/model/node.model";
 
 @Injectable()
 export class FlowApiService {
@@ -60,7 +61,6 @@ export class FlowApiService {
     }
 
 
-
     configList(): Observable<R<FlowConfig[]>> {
         return this._http.get<R<FlowConfig[]>>(RestPath.erupt + "/flow/config/list", null);
     }
@@ -93,6 +93,10 @@ export class FlowApiService {
 
     configGet(id: number): Observable<R<FlowConfig>> {
         return this._http.get<R<FlowConfig>>(RestPath.erupt + "/flow/config/get/" + id);
+    }
+
+    ruleCheck(rule: NodeRule[]): Observable<R<NodeRule[]>> {
+        return this._http.post<R<NodeRule[]>>(RestPath.erupt + "/flow/config/rule-check", rule);
     }
 
 }

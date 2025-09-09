@@ -175,21 +175,30 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             this.msg.warning('请选择提交权限');
             return;
         }
-        if (this.flowId) {
-            this.flowApiService.configUpdate(this.flowConfig).subscribe(res => {
-                if (res.success) {
-                    this.msg.success('发布成功');
-                    this.closeConfig.emit();
+        this.flowApiService.ruleCheck(this.flowConfig.rule).subscribe(res => {
+            if (res.success) {
+                if (this.flowId) {
+                    this.flowApiService.configUpdate(this.flowConfig).subscribe(res => {
+                        if (res.success) {
+                            this.msg.success('发布成功');
+                            this.closeConfig.emit();
+                        }
+                    })
+                } else {
+                    this.flowApiService.configAdd(this.flowConfig).subscribe(res => {
+                        if (res.success) {
+                            this.msg.success('发布成功');
+                            this.closeConfig.emit();
+                        }
+                    })
                 }
-            })
-        } else {
-            this.flowApiService.configAdd(this.flowConfig).subscribe(res => {
-                if (res.success) {
-                    this.msg.success('发布成功');
-                    this.closeConfig.emit();
+            } else {
+                this.msg.error('规则校验失败请检查');
+                if (res.data) {
+                    this.flowConfig.rule = res.data;
                 }
-            })
-        }
+            }
+        })
     }
 
     close(): void {

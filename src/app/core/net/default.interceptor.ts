@@ -142,7 +142,7 @@ export class DefaultInterceptor implements HttpInterceptor {
                                     break;
                             }
                         }
-                        if (eruptApiBody.errorIntercept && eruptApiBody.status === Status.ERROR) {
+                        if ((eruptApiBody.errorIntercept || eruptApiBody.promptWay !== PromptWay.NONE) && eruptApiBody.status === Status.ERROR) {
                             // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：this.http.get('/').subscribe() 并不会触发
                             return throwError({});
                         }

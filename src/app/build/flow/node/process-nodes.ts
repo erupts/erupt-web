@@ -8,6 +8,7 @@ import {GatewayNodeComponent, GatewayType} from "@flow/node/gateway/gateway-node
 import {StartNodeComponent} from "@flow/node/start/start-node.component";
 import {FlexNodeComponent} from "@flow/node/flex/flex-node.component";
 import {NodeType} from "@flow/model/node.model";
+import {SubNodeComponent} from "@flow/node/sub/sub-node.component";
 
 export const Nodes: ANode[] = [
     (() => {
@@ -28,10 +29,11 @@ export const Nodes: ANode[] = [
     new StartNodeComponent(),
     new ApprovalNodeComponent(),
     new CcNodeComponent(),
+    new SubNodeComponent(),
     new FlexNodeComponent()
 ]
 
-export const NodeMap: Map<NodeType,ANode> = new Map<NodeType, ANode>();
+export const NodeMap: Map<NodeType, ANode> = new Map<NodeType, ANode>();
 
 for (let node of Nodes) {
     NodeMap[node.type()] = node;

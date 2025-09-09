@@ -1,0 +1,12 @@
+<erupt-node
+    [(model)]="modelValue"
+    [readonly]="readonly"
+    [headerColor]="color()"
+    [eruptBuild]="eruptBuild"
+    (select)="onSelect()"
+    (insertNode)="onInsertNode($event)"
+    (insertFlexNode)="onInsertFlexNode($event)"
+    (saveProp)="onSaveProp()"
+    (delete)="onDelete()">
+    子节点
+</erupt-node>
