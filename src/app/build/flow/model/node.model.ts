@@ -4,12 +4,15 @@ export interface NodeRule {
     type: NodeType;
     flex?: string;
     prop?: any;
+    error?: string;
     branches?: NodeRule[];
 }
 
 export enum NodeType {
     START = 'START',
     END = 'END',
+
+    SUB = 'SUB',
     CC = 'CC',
     APPROVAL = 'APPROVAL',
     FlEX = 'FLEX',
@@ -23,6 +26,7 @@ export enum NodeType {
 
 
 export enum BranchType {
+    PARALLEL_CONDITION = "PARALLEL_CONDITION",
     CONDITION = "CONDITION", //条件分支
     ELSE = "ELSE"    //兜底分支
 }

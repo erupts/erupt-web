@@ -28,10 +28,6 @@ export interface FlowConfig {
     setting?: Record<string, any>;
 }
 
-export interface FlowRule {
-    ruleNodes: FlowRuleNode[];
-}
-
 export interface FlowRuleNode {
     code: string;
     name: string;

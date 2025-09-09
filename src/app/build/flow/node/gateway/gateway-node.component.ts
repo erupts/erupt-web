@@ -201,7 +201,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
                 type: NodeType.GATEWAY_BRANCH,
                 name: '并行路径' + i,
                 prop: {
-                    type: BranchType.CONDITION,
+                    type: BranchType.PARALLEL_CONDITION,
                     conditions: []
                 } as GatewayNode,
                 branches: []

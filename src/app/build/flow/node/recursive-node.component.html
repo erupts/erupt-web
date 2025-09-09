@@ -30,6 +30,20 @@
         (select)="select.emit($event)">
     </erupt-flex-node>
 
+    <!-- 子节点 -->
+    <app-sub-node
+        *ngSwitchCase="nodeType.SUB"
+        [readonly]="readonly"
+        [(modelValue)]="node"
+        [eruptBuild]="eruptBuild"
+        [branch]="branch"
+        [index]="index"
+        (modelValueChange)="nodeChange.emit($event)"
+        (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
+        (delete)="deleteNode(branch, $event.index)"
+        (select)="select.emit($event)">
+    </app-sub-node>
+
     <!-- 审批节点 -->
     <app-approval-node
         *ngSwitchCase="nodeType.APPROVAL"
