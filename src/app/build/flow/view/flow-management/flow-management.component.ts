@@ -1,11 +1,11 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {FlowApiService} from '@flow/service/flow-api.service';
 import {FlowConfig, FlowGroup} from '@flow/model/flow.model';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {R} from '@shared/model/api.model';
-import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {FlowConfigComponent} from "@flow/view/flow-management/flow-config/flow-config.component";
 import {FlowDataService} from "@flow/service/flow-data.service";
 
@@ -19,7 +19,7 @@ interface FlowGroupWithCount extends FlowGroup {
     templateUrl: './flow-management.component.html',
     styleUrls: ['./flow-management.component.less']
 })
-export class FlowManagementComponent implements OnInit {
+export class FlowManagementComponent implements OnInit, OnDestroy {
 
     searchValue = '';
     flowConfigs: FlowConfig[] = []; // 流程配置列表
@@ -40,6 +40,8 @@ export class FlowManagementComponent implements OnInit {
     editGroupName = '';
     editingGroup: FlowGroupWithCount | null = null;
 
+    configDrawerRef: NzDrawerRef;
+
     constructor(
         private flowApiService: FlowApiService,
         private message: NzMessageService,
@@ -47,6 +49,12 @@ export class FlowManagementComponent implements OnInit {
         private flowDataService: FlowDataService,
         @Inject(NzDrawerService) private drawerService: NzDrawerService,
     ) {
+    }
+
+    ngOnDestroy(): void {
+        if (this.configDrawerRef) {
+            this.configDrawerRef.close();
+        }
     }
 
     ngOnInit(): void {
@@ -284,7 +292,7 @@ export class FlowManagementComponent implements OnInit {
     }
 
     onCreateApproval(id?: number): void {
-        const drawerRef = this.drawerService.create({
+        this.configDrawerRef = this.drawerService.create({
             nzTitle: null,
             nzWidth: "100%",
             nzClosable: false,
@@ -297,13 +305,12 @@ export class FlowManagementComponent implements OnInit {
                 padding: '0px'
             }
         });
-
         // 使用轮询方式等待组件实例可用
         const checkComponent = () => {
-            const componentInstance = drawerRef.getContentComponent();
+            const componentInstance = this.configDrawerRef.getContentComponent();
             if (componentInstance) {
                 componentInstance.closeConfig.subscribe(() => {
-                    drawerRef.close();
+                    this.configDrawerRef.close();
                     this.loadFlowConfigs();
                 });
             } else {

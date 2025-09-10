@@ -96,6 +96,7 @@ export class CcNodeComponent extends ANode implements OnInit {
     }
 
     override onSaveProp(): void {
+        alert(123)
         this.modelValue.prop = this.ccNode;
     }
 }

@@ -65,8 +65,8 @@ export class FlowApiService {
         return this._http.get<R<FlowConfig[]>>(RestPath.erupt + "/flow/config/list", null);
     }
 
-    configAdd(config: FlowConfig): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/add", config);
+    configCreate(config: FlowConfig): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/create", config);
     }
 
     configUpdate(config: FlowConfig): Observable<R<void>> {
