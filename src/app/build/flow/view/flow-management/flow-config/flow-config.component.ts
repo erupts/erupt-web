@@ -185,7 +185,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                         }
                     })
                 } else {
-                    this.flowApiService.configAdd(this.flowConfig).subscribe(res => {
+                    this.flowApiService.configCreate(this.flowConfig).subscribe(res => {
                         if (res.success) {
                             this.msg.success('发布成功');
                             this.closeConfig.emit();
