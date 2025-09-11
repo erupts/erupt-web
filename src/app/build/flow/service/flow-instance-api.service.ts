@@ -61,9 +61,9 @@ export class FlowInstanceApiService {
         })
     }
 
-    nodeInfo(instanceId: number): Observable<R<NodeRule>> {
-        return this._http.get<R<NodeRule>>(RestPath.erupt + "/flow/instance/node-info", {
-            instanceId
+    taskNodeInfo(instanceTaskId: number): Observable<R<NodeRule>> {
+        return this._http.get<R<NodeRule>>(RestPath.erupt + "/flow/instance/approval/task-node-info", {
+            instanceTaskId
         })
     }
 

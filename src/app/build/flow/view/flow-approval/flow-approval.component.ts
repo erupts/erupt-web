@@ -83,10 +83,10 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     // 调整参数类型为 FlowInstanceTask
-    selectItem(instance: FlowInstanceTask) {
-        this.selectedInstanceTask = instance;
-        if (instance?.flowInstance?.id) {
-            this.loadInstanceDetail(instance.flowInstance.id);
+    selectItem(task: FlowInstanceTask) {
+        this.selectedInstanceTask = task;
+        if (task?.flowInstance?.id) {
+            this.loadInstanceDetail(task);
         }
     }
 
@@ -178,7 +178,7 @@ export class FlowApprovalComponent implements OnInit {
             this.message.success('审批已同意');
             // 刷新数据
             if (this.selectedInstanceTask?.flowInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstanceTask.flowInstance.id);
+                this.loadInstanceDetail(this.selectedInstanceTask);
             }
         })
 
@@ -197,7 +197,7 @@ export class FlowApprovalComponent implements OnInit {
             this.message.success('审批已拒绝');
             // 刷新数据
             if (this.selectedInstanceTask?.flowInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstanceTask.flowInstance.id);
+                this.loadInstanceDetail(this.selectedInstanceTask);
             }
         })
     }
@@ -221,7 +221,7 @@ export class FlowApprovalComponent implements OnInit {
             this.message.success('抄送成功');
             // 刷新数据
             if (this.selectedInstanceTask?.flowInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstanceTask.flowInstance.id);
+                this.loadInstanceDetail(this.selectedInstanceTask);
             }
         })
     }
@@ -289,7 +289,7 @@ export class FlowApprovalComponent implements OnInit {
 
         // 刷新数据
         if (this.selectedInstanceTask?.flowInstance?.id) {
-            this.loadInstanceDetail(this.selectedInstanceTask.flowInstance.id);
+            this.loadInstanceDetail(this.selectedInstanceTask);
         }
     }
 
@@ -327,7 +327,7 @@ export class FlowApprovalComponent implements OnInit {
 
         // 刷新数据
         if (this.selectedInstanceTask?.flowInstance?.id) {
-            this.loadInstanceDetail(this.selectedInstanceTask.flowInstance.id);
+            this.loadInstanceDetail(this.selectedInstanceTask);
         }
     }
 
@@ -358,7 +358,7 @@ export class FlowApprovalComponent implements OnInit {
 
         // 刷新数据
         if (this.selectedInstanceTask?.flowInstance?.id) {
-            this.loadInstanceDetail(this.selectedInstanceTask.flowInstance.id);
+            this.loadInstanceDetail(this.selectedInstanceTask);
         }
     }
 
@@ -477,44 +477,49 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     // 新增方法：加载实例详情
-    loadInstanceDetail(instanceId: number) {
+    loadInstanceDetail(task: FlowInstanceTask) {
         // 加载实例详情
-        this.flowInstanceApiService.detail(instanceId).subscribe({
+        this.flowInstanceApiService.detail(task.flowInstance.id).subscribe({
             next: (data) => {
                 this.instanceDetail = data.data;
                 this.flowApiService.eruptFlowBuild(this.instanceDetail.erupt).subscribe({
                     next: res => {
-                        this.eruptBuild = res.data;
-                        this.flowInstanceApiService.eruptData(instanceId).subscribe({
-                            next: res => {
-                                this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
-                            }
-                        })
+                        this.eruptBuild = null;
+                        setTimeout(() => {
+                            this.eruptBuild = res.data;
+                            this.flowInstanceApiService.eruptData(task.flowInstance.id).subscribe({
+                                next: res => {
+                                    this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
+                                }
+                            })
+                        }, 50)
                     }
                 })
             }
         });
 
         // 加载任务列表
-        this.flowInstanceApiService.tasks(instanceId).subscribe({
+        this.flowInstanceApiService.tasks(task.flowInstance.id).subscribe({
             next: (data) => {
                 this.instanceTasks = data.data || [];
             }
         });
 
-        // 加载节点信息
-        this.flowInstanceApiService.nodeInfo(instanceId).subscribe({
-            next: (data) => {
-                this.nodeInfo = data.data;
-            }
-        });
-
         // 加载评论列表
-        this.flowInstanceApiService.commentList(Number(instanceId)).subscribe({
+        this.flowInstanceApiService.commentList(task.flowInstance.id).subscribe({
             next: (data) => {
                 this.comments = data.data || [];
             }
         });
+
+        // 加载节点信息
+        if (task.id){
+            this.flowInstanceApiService.taskNodeInfo(task.id).subscribe({
+                next: (data) => {
+                    this.nodeInfo = data.data;
+                }
+            });
+        }
     }
 
     // 新增方法：提交评论
