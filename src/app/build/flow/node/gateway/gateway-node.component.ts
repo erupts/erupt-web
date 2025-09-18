@@ -127,7 +127,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
     override create(): NodeRule {
         if (this.gatewayType === GatewayType.EXCLUSIVE) {
             return {
-                id: geneNodeId() + '_fork',
+                id: geneNodeId(),
                 type: NodeType.GATEWAY_EXCLUSION,
                 name: this.name(),
                 branches: [
@@ -146,7 +146,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
             }
         } else if (this.gatewayType === GatewayType.PARALLEL) {
             return {
-                id: geneNodeId() + '_fork',
+                id: geneNodeId(),
                 type: NodeType.GATEWAY_PARALLEL,
                 name: this.name(),
                 branches: [
@@ -156,7 +156,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
             }
         } else {
             return {
-                id: geneNodeId() + '_fork',
+                id: geneNodeId(),
                 type: NodeType.GATEWAY_INCLUSIVE,
                 name: this.name(),
                 branches: [
@@ -164,7 +164,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
                     {
                         id: geneNodeId(),
                         type: NodeType.GATEWAY_BRANCH,
-                        name: '默认条件',
+                        name: '默认条件（包容）',
                         prop: {
                             type: BranchType.ELSE,
                             conditions: []

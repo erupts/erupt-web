@@ -40,7 +40,7 @@ export class RecursiveNodeComponent {
             branch.splice(i + 2, 0, {
                 id: geneNodeId(),
                 type: NodeType.GATEWAY_JOIN,
-                name: NodeType.GATEWAY_JOIN,
+                name: newNode.type + "_JOIN",
             });
         }
     }
