@@ -486,6 +486,7 @@ export class FlowApprovalComponent implements OnInit {
                     next: res => {
                         this.eruptBuild = null;
                         setTimeout(() => {
+                            this.dataHandlerService.initErupt(res.data)
                             this.eruptBuild = res.data;
                             this.flowInstanceApiService.eruptData(task.flowInstance.id).subscribe({
                                 next: res => {

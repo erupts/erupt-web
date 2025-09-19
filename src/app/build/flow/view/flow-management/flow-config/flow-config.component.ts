@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
-import {EruptFieldModel, VL} from "../../../../erupt/model/erupt-field.model";
+import {VL} from "../../../../erupt/model/erupt-field.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlowConfig, FlowGroup, FlowPermission, FlowUpmsScope, UpmsScope} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
@@ -11,6 +11,7 @@ import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
 import {UpmsDataService} from "@flow/service/upms-data.service";
+import {DataHandlerService} from "../../../../erupt/service/data-handler.service";
 
 @Component({
     selector: 'app-flow-config',
@@ -42,6 +43,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     @Output() closeConfig = new EventEmitter();
 
     constructor(private flowApiService: FlowApiService, private modal: NzModalService,
+                private dataHandlerService: DataHandlerService,
                 private msg: NzMessageService,
                 private upmsDataService: UpmsDataService) {
 
@@ -49,12 +51,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         // 初始化默认配置
-        this.flowConfig = {
-            icon: 'fa fa-user',
-            color: '#1890ff',
-            setting: {},
-            permission: FlowPermission.ALL
-        };
+        this.flowConfig = new FlowConfig();
 
         // 加载分组选项
         this.flowApiService.groupList().subscribe(res => {
@@ -90,12 +87,9 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     changeErupt(erupt: string) {
         this.flowApiService.eruptFlowBuild(erupt).subscribe(res => {
+            this.dataHandlerService.initErupt(res.data)
             this.eruptBuild = res.data;
             this.eruptBuild.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
-            this.eruptBuild.eruptModel.eruptFieldModelMap = new Map<string, EruptFieldModel>();
-            this.eruptBuild.eruptModel.eruptFieldModels.forEach(field => {
-                this.eruptBuild.eruptModel.eruptFieldModelMap.set(field.fieldName, field);
-            })
         })
     }
 
