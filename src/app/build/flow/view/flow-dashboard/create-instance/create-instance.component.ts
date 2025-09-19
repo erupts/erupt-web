@@ -37,8 +37,9 @@ export class CreateInstanceComponent implements OnInit {
         this.loading = true;
         if (this.erupt) {
             this.flowApiService.eruptFlowBuild(this.erupt).subscribe(res => {
+                res.data.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
+                this.dataHandlerService.initErupt(res.data)
                 this.eruptBuild = res.data;
-                this.eruptBuild.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
                 this.loading = false;
             })
         }

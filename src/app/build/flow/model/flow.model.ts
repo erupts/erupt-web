@@ -13,19 +13,19 @@ export enum FlowPermission {
     NO = 'NO'
 }
 
-export interface FlowConfig {
-    id?: number;
-    name?: string;
-    remark?: string;
-    erupt?: string;
-    icon?: string;
-    color?: string;
-    flowGroup?: FlowGroup;
-    enable?: boolean;
-    rule?: NodeRule[];
-    permission?: FlowPermission;
-    permissionScope?: FlowUpmsScope[]
-    setting?: Record<string, any>;
+export class FlowConfig {
+    id: number;
+    name: string;
+    remark: string;
+    erupt: string;
+    icon: string = 'fa fa-user';
+    color: string = '#1890ff';
+    flowGroup: FlowGroup;
+    enable: boolean;
+    rule: NodeRule[];
+    permission: FlowPermission = FlowPermission.ALL;
+    permissionScope: FlowUpmsScope[]
+    setting: Record<string, any> = {};
 }
 
 export interface FlowRuleNode {
