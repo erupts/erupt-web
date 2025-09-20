@@ -27,33 +27,33 @@ import {
     zh_TW as delonZhTw
 } from '@delon/theme';
 import {
+    ar as dfAr,
+    de as dfDe,
     enUS as dfEn,
     es as dfEs,
     fr as dfFr,
+    id as dfId,
     ja as dfJp,
     ko as dfKo,
+    pt as dfPt,
     ru as dfRu,
     zhCN as dfZhCn,
-    zhTW as dfZhTw,
-    de as dfDe,
-    pt as dfPt,
-    id as dfId,
-    ar as dfAr
+    zhTW as dfZhTw
 } from 'date-fns/locale';
 import {NzSafeAny} from 'ng-zorro-antd/core/types';
 import {
+    ar_EG as zorroAr,
+    de_DE as zorroDe,
     en_US as zorroEnUS,
     es_ES as zorroEs,
     fr_FR as zorroFr,
     ja_JP,
     ko_KR,
     NzI18nService,
+    pt_PT as zorroPt,
     ru_RU as zorroRu,
     zh_CN as zorroZhCN,
     zh_TW as zorroZhTW,
-    de_DE as zorroDe,
-    pt_PT as zorroPt,
-    ar_EG as zorroAr,
 } from 'ng-zorro-antd/i18n';
 import {EruptAppData} from "@shared/model/erupt-app.model";
 
@@ -69,6 +69,16 @@ interface LangConfigData {
 }
 
 const LANGS: { [key: string]: LangConfigData } = {
+    'en-US': {
+        abbr: '🇺🇸',
+        text: 'English',
+        date: dfEn,
+        ng: ngEn,
+        zorro: zorroEnUS,
+        delon: delonEnUS,
+        columnWidthZoom: 1.3,
+        color: '#1E88E5'
+    },
     'zh-CN': {
         abbr: '🇨🇳',
         text: '简体中文',
@@ -88,26 +98,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         delon: delonZhTw,
         columnWidthZoom: 1,
         color: '#8E24AA'
-    },
-    'en-US': {
-        abbr: '🇬🇧',
-        text: 'English',
-        date: dfEn,
-        ng: ngEn,
-        zorro: zorroEnUS,
-        delon: delonEnUS,
-        columnWidthZoom: 1,
-        color: '#1E88E5'
-    },
-    'fr-FR': {
-        abbr: '🇫🇷',
-        text: 'En français',
-        date: dfFr,
-        ng: ngFr,
-        zorro: zorroFr,
-        delon: delonFr,
-        columnWidthZoom: 1.5,
-        color: '#3949AB'
     },
     'ja-JP': {
         abbr: '🇯🇵',
@@ -129,6 +119,16 @@ const LANGS: { [key: string]: LangConfigData } = {
         columnWidthZoom: 1,
         color: '#00ACC1'
     },
+    'fr-FR': {
+        abbr: '🇫🇷',
+        text: 'En français',
+        date: dfFr,
+        ng: ngFr,
+        zorro: zorroFr,
+        delon: delonFr,
+        columnWidthZoom: 1.5,
+        color: '#3949AB'
+    },
     'ru-RU': {
         abbr: '🇷🇺',
         text: 'русск',
@@ -139,16 +139,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         columnWidthZoom: 1.5,
         color: '#546E7A'
     },
-    'es-ES': {
-        abbr: '🇪🇸',
-        text: 'español',
-        date: dfEs,
-        ng: ngEs,
-        zorro: zorroEs,
-        delon: delonEnUS,
-        columnWidthZoom: 1.5,
-        color: '#FB8C00'
-    },
     'de-DE': {
         abbr: '🇩🇪',
         text: 'Deutsch',
@@ -158,6 +148,16 @@ const LANGS: { [key: string]: LangConfigData } = {
         delon: delonEnUS, // 若无 delon.de_DE 可保留英文
         columnWidthZoom: 1.5,
         color: '#6D4C41'
+    },
+    'es-ES': {
+        abbr: '🇪🇸',
+        text: 'español',
+        date: dfEs,
+        ng: ngEs,
+        zorro: zorroEs,
+        delon: delonEnUS,
+        columnWidthZoom: 1.5,
+        color: '#FB8C00'
     },
     'pt-PT': {
         abbr: '🇵🇹',

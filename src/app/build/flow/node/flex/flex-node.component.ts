@@ -74,10 +74,11 @@ export class FlexNodeComponent extends ANode implements OnInit {
     override onSelect() {
         if (this.modelValue?.flex) {
             this.flowApiService.flexEruptFlowBuild(this.modelValue.flex).subscribe(res => {
+                res.data.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
+                this.dataHandlerService.initErupt(res.data)
                 if (this.modelValue.prop) {
                     this.dataHandlerService.objectToEruptValue(this.modelValue.prop, res.data)
                 }
-                res.data.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
                 this.flexErupt = res.data;
             })
         }
