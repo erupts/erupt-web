@@ -20,6 +20,8 @@ export class EruptFlowFormComponent implements OnInit {
 
     @Input() erupt: string;
 
+    @Input() initValue: boolean = true;
+
     constructor(private dataService: DataService,
                 private flowApiService: FlowApiService,
                 private dataHandlerService: DataHandlerService) {
@@ -41,7 +43,9 @@ export class EruptFlowFormComponent implements OnInit {
                 }
             })
         } else {
-            this.initEruptValue();
+            if (this.initValue) {
+                this.initEruptValue();
+            }
         }
     }
 

@@ -9,7 +9,7 @@
     (saveProp)="onSaveProp()"
     (delete)="onDelete()">
     <div config>
-        <erupt-flow-form *ngIf="flexErupt" [eruptBuild]="flexErupt" [readonly]="false"/>
+        <erupt-flow-form *ngIf="flexErupt" [eruptBuild]="flexErupt" [initValue]="false" [readonly]="false"/>
     </div>
     <div>
         {{ modelValue?.name }}
