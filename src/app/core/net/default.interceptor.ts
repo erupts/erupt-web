@@ -62,7 +62,7 @@ export class DefaultInterceptor implements HttpInterceptor {
                 if (event instanceof HttpResponse) {
                     const body: any = event.body;
                     //如果返回对象为EruptApi
-                    if ("status" in body && "message" in body && "errorIntercept" in body) {
+                    if ("status" in body && "message" in body && "promptWay" in body) {
                         let eruptApiBody = <EruptApiModel>body;
                         if (eruptApiBody.message) {
                             switch (eruptApiBody.promptWay) {

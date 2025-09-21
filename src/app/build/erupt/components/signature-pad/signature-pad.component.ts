@@ -31,11 +31,19 @@ export class SignaturePadComponent implements AfterViewInit {
         });
     }
 
+
+    save(): string {
+        if (this.signaturePad.isEmpty()) {
+            return null;
+        }
+        return this.signaturePad.toDataURL('image/png');
+    }
+
     clear(): void {
         this.signaturePad.clear();
     }
 
-    save(): string {
+    getSign(): string {
         if (this.signaturePad.isEmpty()) {
             return null;
         }

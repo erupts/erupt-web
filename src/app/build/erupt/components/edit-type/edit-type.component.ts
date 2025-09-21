@@ -1,14 +1,6 @@
 import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
-import {EruptFieldModel} from "../../model/erupt-field.model";
-import {
-    AttachmentEnum,
-    ChoiceEnum,
-    EditType,
-    FormSize,
-    HtmlEditTypeEnum,
-    MultiChoiceEnum,
-    Scene
-} from "../../model/erupt.enum";
+import {Edit, EruptFieldModel} from "../../model/erupt-field.model";
+import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, MultiChoiceEnum, Scene} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
@@ -22,6 +14,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzUploadFile} from "ng-zorro-antd/upload/interface";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {BehaviorSubject} from "rxjs";
+import {SignaturePadComponent} from "../signature-pad/signature-pad.component";
 
 @Component({
     selector: "erupt-edit-type",
@@ -107,7 +100,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         }
     }
 
-    isReadonly(eruptFieldModel: EruptFieldModel):boolean {
+    isReadonly(eruptFieldModel: EruptFieldModel): boolean {
         if (this.readonly) {
             return true;
         }
@@ -229,6 +222,27 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 this.eruptModel.eruptFieldModelMap.get(key).eruptFieldJson.edit.$value = data[key];
             }
         }
+    }
+
+    clearSign(edit: Edit): void {
+        edit.$value = null;
+    }
+
+    openSign(edit: Edit) {
+        this.modal.create({
+            nzTitle: '签名',
+            nzContent: SignaturePadComponent,
+            nzMaskClosable: false,
+            nzWidth: '50%',
+            nzOkText: '保存',
+            nzCancelText: '取消',
+            nzOnOk: (sign: SignaturePadComponent) => {
+                edit.$value = sign.getSign();
+            },
+            nzOnCancel: () => {
+
+            }
+        });
     }
 
 }
