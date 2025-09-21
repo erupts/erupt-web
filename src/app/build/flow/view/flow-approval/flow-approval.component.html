@@ -374,7 +374,15 @@
 >
     <div *nzModalContent>
         <div class="modal-content">
-            <p class="modal-description">请填写同意原因：</p>
+            <p class="modal-description">同意签名：</p>
+            <div style="width: 100%;height: 200px;position: relative;border: 1px solid #d9d9d9;border-radius: 2px">
+                <button nz-button nzType="default"
+                        (click)="openSign()" nzShape="circle"
+                        style="position: absolute;;top: 46%;left: 50%;transform: translate(-50%);">
+                    <span nz-icon nzType="edit" nzTheme="outline"></span>
+                </button>
+            </div>
+            <p class="modal-description" style="margin-top: 16px">请填写同意原因：</p>
             <nz-input-group>
                 <textarea
                     nz-input

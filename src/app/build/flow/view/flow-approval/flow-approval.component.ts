@@ -8,6 +8,7 @@ import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
+import {SignaturePadComponent} from "../../../erupt/components/signature-pad/signature-pad.component";
 
 
 @Component({
@@ -543,6 +544,23 @@ export class FlowApprovalComponent implements OnInit {
             },
             complete: () => {
                 this.isSubmittingComment = false;
+            }
+        });
+    }
+
+    openSign() {
+        this.modal.create({
+            nzTitle: '签名',
+            nzContent: SignaturePadComponent,
+            nzMaskClosable: false,
+            nzWidth: '50%',
+            nzOkText: '保存',
+            nzCancelText: '取消',
+            nzOnOk: (sign: SignaturePadComponent) => {
+
+            },
+            nzOnCancel: () => {
+
             }
         });
     }

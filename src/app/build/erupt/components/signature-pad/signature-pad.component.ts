@@ -14,6 +14,8 @@ export class SignaturePadComponent implements AfterViewInit {
     @ViewChild('canvas', {static: false}) canvas!: ElementRef<HTMLCanvasElement>;
     signaturePad!: SignaturePad;
 
+    @Input() height: string = '200px';
+
     ngAfterViewInit(): void {
         const canvas = this.canvas.nativeElement;
         // 高清屏比例
