@@ -16,8 +16,9 @@ import {SocketService} from "@shared/service/socket.service";
     template: `
         <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown nzPlacement="bottomRight"
              [nzDropdownMenu]="avatarMenu">
-            <nz-avatar [nzText]="settings.user.name&&settings.user.name.substr(0,1)" nzSize="default"
-                       class="mr-sm"></nz-avatar>
+            <nz-avatar [nzText]="settings.user.name&&settings.user.name.substring(0,1)"
+                       [nzSrc]="settings.user.avatar"
+                       nzSize="default" class="mr-sm"></nz-avatar>
             <span class="hidden-mobile">{{ settings.user.name }}</span>
         </div>
         <nz-dropdown-menu #avatarMenu>

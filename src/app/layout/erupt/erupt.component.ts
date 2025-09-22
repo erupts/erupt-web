@@ -1,15 +1,4 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    Inject,
-    OnDestroy,
-    OnInit,
-    Optional,
-    Renderer2,
-    ViewChild,
-    ViewContainerRef
-} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, Optional, Renderer2, ViewChild, ViewContainerRef} from "@angular/core";
 import {DOCUMENT} from "@angular/common";
 import {NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router} from "@angular/router";
 
@@ -269,6 +258,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.nickName = userinfo.nickname;
             }
             this.settingsService.setUser({
+                avatar: userinfo.avatar,
                 name: userinfo.nickname,
                 tenantName: userinfo.tenantName || null,
                 indexPath: path

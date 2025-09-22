@@ -7,6 +7,7 @@ export interface LoginModel {
 }
 
 export interface Userinfo {
+    avatar: string;
     nickname: string;
     indexMenuType: string;
     indexMenuValue: string;
