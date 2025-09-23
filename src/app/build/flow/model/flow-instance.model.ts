@@ -7,22 +7,25 @@ export enum ApprovalView {
     CREATED = 'CREATED'
 }
 
-export interface FlowInstanceTask {
-    id: number;
-    flowInstance: FlowInstance;
-    comment: string;
-}
-
 export interface FlowInstance {
     id: number;
     no: string;
     eruptFlowConfig: FlowConfig;
     erupt: string;
     eruptModelId: string;
-    status: string;
+    status: InstanceStatus;
     initiatorUser: User;
     finishTime: string;
     createTime: string;
+}
+
+export enum InstanceStatus {
+    PENDING = "PENDING",
+    FINISH = "FINISH",
+    REJECTED = "REJECTED",
+    WITHDRAWN = "WITHDRAWN",
+    DELETED = "DELETED",
+    TERMINATED = "TERMINATED"
 }
 
 export interface FlowInstanceComment {
@@ -33,16 +36,20 @@ export interface FlowInstanceComment {
 }
 
 export interface FlowInstanceTask {
+    id: number;
     assigneeUser: User;
     createTime: string;
 
     taskType: string;
     taskStatus: string;
     comment: string;
+    flowInstance: FlowInstance;
+    signature: string;
 }
 
 export interface User {
     id: number;
+    avatar: string;
     name: string;
 }
 

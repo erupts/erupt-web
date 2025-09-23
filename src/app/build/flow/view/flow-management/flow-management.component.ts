@@ -24,7 +24,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
     searchValue = '';
     flowConfigs: FlowConfig[] = []; // 流程配置列表
     categories: string[] = [];
-    selectedCategory: string = '';
+    selectedCategory: number = null;
 
     // 排序相关
     categoryItems: FlowGroupWithCount[] = [];
@@ -70,7 +70,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                 id: group.id,
                 name: group.name,
                 sort: group.sort || index,
-                count: this.getConfigsByCategory(group.name).length
+                count: this.getConfigsByCategory(group.id).length
             }));
 
             // 按sort排序
@@ -103,16 +103,16 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
     // 更新分组计数 - 基于流程配置数据
     updateCategoryCounts(): void {
         this.categoryItems.forEach(item => {
-            item.count = this.getConfigsByCategory(item.name).length;
+            item.count = this.getConfigsByCategory(item.id).length;
         });
     }
 
     // 根据分组获取流程配置
-    getConfigsByCategory(category: string): FlowConfig[] {
-        return this.flowConfigs.filter(config => config.flowGroup?.name === category);
+    getConfigsByCategory(category: number): FlowConfig[] {
+        return this.flowConfigs.filter(config => config.flowGroup?.id === category);
     }
 
-    selectCategory(category: string): void {
+    selectCategory(category: number): void {
         this.selectedCategory = category;
     }
 

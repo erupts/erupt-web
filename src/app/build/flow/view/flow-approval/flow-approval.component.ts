@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
-import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/flow-instance.model";
+import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceTask, InstanceStatus} from "@flow/model/flow-instance.model";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
@@ -53,6 +53,8 @@ export class FlowApprovalComponent implements OnInit {
 
     // 表单数据
     approveReason = '';
+    approveSignature: string = null;
+
     rejectReason = '';
     ccReason = '';
     ccUsers: number[] = [];
@@ -173,7 +175,7 @@ export class FlowApprovalComponent implements OnInit {
         }
 
         this.approveModalVisible = true;
-        this.flowInstanceApiService.agree(this.selectedInstanceTask.id, this.approveReason).subscribe(res => {
+        this.flowInstanceApiService.agree(this.selectedInstanceTask.id, this.approveReason, this.approveSignature).subscribe(res => {
             this.approveModalVisible = false;
             this.approveReason = '';
             this.message.success('审批已同意');
@@ -404,8 +406,13 @@ export class FlowApprovalComponent implements OnInit {
         this.message.info('修改功能');
     }
 
-    recall() {
-        this.message.info('撤回功能');
+    withdraw() {
+        this.flowInstanceApiService.withdraw(this.selectedInstanceTask?.flowInstance?.id, '撤回').subscribe({
+            next: (data) => {
+                this.message.success('撤回成功');
+                this.loadInstanceDetail(this.selectedInstanceTask);
+            }
+        })
     }
 
     resubmit() {
@@ -515,7 +522,7 @@ export class FlowApprovalComponent implements OnInit {
         });
 
         // 加载节点信息
-        if (task.id){
+        if (task.id) {
             this.flowInstanceApiService.taskNodeInfo(task.id).subscribe({
                 next: (data) => {
                     this.nodeInfo = data.data;
@@ -557,7 +564,7 @@ export class FlowApprovalComponent implements OnInit {
             nzOkText: '保存',
             nzCancelText: '取消',
             nzOnOk: (sign: SignaturePadComponent) => {
-
+                this.approveSignature = sign.getSign();
             },
             nzOnCancel: () => {
 
@@ -567,4 +574,5 @@ export class FlowApprovalComponent implements OnInit {
 
     protected readonly ApprovalView = ApprovalView;
     protected readonly NodeType = NodeType;
+    protected readonly InstanceStatus = InstanceStatus;
 }

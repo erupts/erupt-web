@@ -80,13 +80,14 @@
                     </div>
                     <div class="item-footer">
                         <div class="submitter-info">
-                            <div class="avatar" [style.background-color]="item.flowInstance?.eruptFlowConfig?.color">
-                                {{ item.flowInstance?.initiatorUser?.name?.[0] }}
-                            </div>
+                            <nz-avatar [nzText]="item.flowInstance?.initiatorUser?.name.substring(0,1)"
+                                       [ngStyle]="{backgroundColor: getAvatarColor(item.flowInstance?.initiatorUser.name?.substring(0,1))}"
+                                       [nzSrc]="item.flowInstance?.initiatorUser?.avatar"
+                                       nzSize="default"></nz-avatar>
                             <span class="submitter-name">{{ item.flowInstance?.initiatorUser?.name }}</span>
                         </div>
                         <div class="time-info">
-                            <span class="process-time" *ngIf="item.flowInstance?.finishTime">处理时间 {{ item.flowInstance?.finishTime }}</span>
+                            <span class="process-time" *ngIf="item.flowInstance?.finishTime">{{ item.flowInstance?.finishTime }}</span>
                         </div>
                     </div>
                 </div>
@@ -99,13 +100,13 @@
                 <div class="header-left">
                                         <span class="item-id" (click)="copyToClipboard(selectedInstanceTask?.flowInstance?.no)" style="cursor: pointer;">
                        编号: {{ selectedInstanceTask?.flowInstance?.no }}
-                        <span nz-icon nzType="copy" nzTheme="outline" class="copy-icon"></span>
+                                            <span nz-icon nzType="copy" nzTheme="outline" class="copy-icon"></span>
                     </span>
                 </div>
                 <div class="header-right">
-                    <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="链接">
-                        <span nz-icon nzType="link" nzTheme="outline"></span>
-                    </button>
+<!--                    <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="链接">-->
+<!--                        <span nz-icon nzType="link" nzTheme="outline"></span>-->
+<!--                    </button>-->
                     <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="刷新" (click)="selectItem(selectedInstanceTask)">
                         <span nz-icon nzType="reload" nzTheme="outline"></span>
                     </button>
@@ -180,16 +181,19 @@
                                             <th>任务状态</th>
                                             <th>审批意见</th>
                                             <th>创建时间</th>
+                                            <th>审批签名</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr *ngFor="let task of instanceTasks">
                                             <td>
                                                 <div class="approver-info">
-                                                    <div class="avatar-small"
-                                                         [style.background-color]="getAvatarColor(task.assigneeUser?.name || '')">
-                                                        {{ task.assigneeUser?.name?.[0] || '-' }}
-                                                    </div>
+                                                    <ng-container *ngIf="task.assigneeUser?.id">
+                                                        <nz-avatar [nzText]="task.assigneeUser?.name?.substring(0,1)"
+                                                                   [ngStyle]="{backgroundColor: getAvatarColor(task.assigneeUser?.name?.substring(0,1))}"
+                                                                   [nzSrc]="task.assigneeUser.avatar"
+                                                                   nzSize="default" class="mr-sm"></nz-avatar>
+                                                    </ng-container>
                                                     <span class="approver-name">{{ task.assigneeUser?.name || '-' }}</span>
                                                 </div>
                                             </td>
@@ -204,6 +208,9 @@
                                                 <div class="time-info">
                                                     <div>{{ task.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</div>
                                                 </div>
+                                            </td>
+                                            <td>
+                                                <img nz-image *ngIf="task.signature" [nzSrc]="task.signature" style="cursor: pointer" alt="signature">
                                             </td>
                                         </tr>
                                         </tbody>
@@ -251,10 +258,10 @@
                                     <div class="comment-item" *ngFor="let comment of comments">
                                         <div class="comment-header">
                                             <div class="comment-user">
-                                                <div class="avatar-small"
-                                                     [style.background-color]="getAvatarColor(comment.createUser?.name || '')">
-                                                    {{ comment.createUser?.name?.[0] || '-' }}
-                                                </div>
+                                                <nz-avatar [nzText]="comment.createUser?.name?.substring(0,1)"
+                                                           [ngStyle]="{backgroundColor: getAvatarColor(comment.createUser?.name?.substring(0,1))}"
+                                                           [nzSrc]="comment.createUser.avatar"
+                                                           nzSize="small"></nz-avatar>
                                                 <span class="comment-username">{{ comment.createUser?.name || '-' }}</span>
                                             </div>
                                             <span class="comment-time">{{ comment.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</span>
@@ -277,7 +284,7 @@
                     <nz-tab nzTitle="数据变更记录">
                         <div class="tab-content">
                             <div class="section">
-                                <div *ngIf="instanceTasks.length > 0; else noTasks">
+                                <div>
                                     <nz-table
                                         [nzShowPagination]="false"
                                         [nzSize]="'small'"
@@ -305,45 +312,44 @@
             <div class="fixed-bottom-actions">
                 <div class="action-buttons">
                     <ng-container *ngIf="ApprovalView.TODO === selectedView">
-                        <button nz-button nzSize="default" nzType="primary" nzGhost (click)="approve()">
+                        <button nz-button nzSize="default" nzType="primary" nzGhost (click)="approve()" class="action-button">
                             <span nz-icon nzType="check" nzTheme="outline"></span>
                             同意
                         </button>
-                        <button nz-button nzSize="default" nzDanger (click)="reject()">
+                        <button nz-button nzSize="default" nzDanger (click)="reject()" class="action-button">
                             <span nz-icon nzType="close" nzTheme="outline"></span>
                             拒绝
                         </button>
-
-                        <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo?.prop?.allowCc">
+                        <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo?.prop?.allowCc" class="action-button">
                             <span nz-icon nzType="send" nzTheme="outline"></span>
                             抄送
                         </button>
-                        <button nz-button nzSize="default" (click)="transfer()" *ngIf="nodeInfo?.prop?.allowTransfer">
+                        <button nz-button nzSize="default" (click)="transfer()" *ngIf="nodeInfo?.prop?.allowTransfer" class="action-button">
                             <span nz-icon nzType="swap" nzTheme="outline"></span>
                             转交
                         </button>
-                        <button nz-button nzSize="default" (click)="addSigner()" *ngIf="nodeInfo?.prop?.allowAddSign">
+                        <button nz-button nzSize="default" (click)="addSigner()" *ngIf="nodeInfo?.prop?.allowAddSign" class="action-button">
                             <span nz-icon nzType="user-add" nzTheme="outline"></span>
                             加签
                         </button>
-                        <button nz-button nzSize="default" (click)="return()" *ngIf="nodeInfo?.prop?.allowReturn">
+                        <button nz-button nzSize="default" (click)="return()" *ngIf="nodeInfo?.prop?.allowReturn" class="action-button">
                             <span nz-icon nzType="rollback" nzTheme="outline"></span>
                             退回
                         </button>
-                        <button nz-button nzSize="default" (click)="modify()">
+                        <button nz-button nzSize="default" (click)="modify()" class="action-button">
                             <span nz-icon nzType="edit" nzTheme="outline"></span>
                             修改
                         </button>
                     </ng-container>
                     <ng-container *ngIf="ApprovalView.CREATED === selectedView">
-                        <button nz-button nzSize="default" (click)="recall()">
+                        <button nz-button nzSize="default" (click)="withdraw()" *ngIf="!selectedInstanceTask.flowInstance.finishTime" class="action-button">
                             <span nz-icon nzType="undo" nzTheme="outline"></span>
                             撤销
                         </button>
-                        <button nz-button nzSize="default" (click)="resubmit()">
-                            <span nz-icon nzType="redo" nzTheme="outline"></span>
-                            再次提交
-                        </button>
+<!--                        <button nz-button nzSize="default" (click)="resubmit()">-->
+<!--                            <span nz-icon nzType="redo" nzTheme="outline"></span>-->
+<!--                            再次提交-->
+<!--                        </button>-->
                     </ng-container>
                 </div>
             </div>
@@ -374,14 +380,16 @@
 >
     <div *nzModalContent>
         <div class="modal-content">
-            <p class="modal-description">同意签名：</p>
-            <div style="width: 100%;height: 200px;position: relative;border: 1px solid #d9d9d9;border-radius: 2px">
-                <button nz-button nzType="default"
-                        (click)="openSign()" nzShape="circle"
-                        style="position: absolute;;top: 46%;left: 50%;transform: translate(-50%);">
-                    <span nz-icon nzType="edit" nzTheme="outline"></span>
-                </button>
-            </div>
+            <ng-container *ngIf="nodeInfo?.prop?.requireSignature">
+                <p class="modal-description">同意签名：</p>
+                <div style="width: 100%;height: 200px;position: relative;border: 1px solid #d9d9d9;border-radius: 2px">
+                    <img *ngIf="approveSignature" [src]="approveSignature" alt="" style="height: 200px;width: 100%">
+                    <button nz-button nzType="default" (click)="openSign()" nzShape="circle"
+                            style="position: absolute;;top: 42%;left: 50%;transform: translate(-50%);">
+                        <span nz-icon nzType="edit" nzTheme="outline"></span>
+                    </button>
+                </div>
+            </ng-container>
             <p class="modal-description" style="margin-top: 16px">请填写同意原因：</p>
             <nz-input-group>
                 <textarea
