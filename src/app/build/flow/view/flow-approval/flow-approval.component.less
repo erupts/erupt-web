@@ -508,16 +508,20 @@
                     right: 0;
                     background: white;
                     border-top: 1px solid #e5e5e5;
-                    padding: 12px 16px;
                     display: flex;
                     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
-                    z-index: 10; // 确保按钮在最上层
-                    flex-shrink: 0; // 防止按钮被压缩
+                    z-index: 10;
+                    flex-shrink: 0;
+                    padding: 0 16px;
 
                     .action-buttons {
                         display: flex;
                         gap: 8px;
                         flex-wrap: wrap;
+
+                        .action-button {
+                            margin: 12px 4px;
+                        }
                     }
                 }
             }

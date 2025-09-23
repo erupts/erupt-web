@@ -92,6 +92,7 @@ import {NzSegmentedModule} from 'ng-zorro-antd/segmented';
 import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
 import {UpmsDataService} from "@flow/service/upms-data.service";
 import {SubNodeComponent} from '@flow/node/sub/sub-node.component';
+import {NzImageModule} from "ng-zorro-antd/image";
 
 @NgModule({
     declarations: [
@@ -185,7 +186,8 @@ import {SubNodeComponent} from '@flow/node/sub/sub-node.component';
         NzAutocompleteModule,
         NzInputNumberModule,
         NzDropDownModule,
-        EruptModule
+        EruptModule,
+        NzImageModule
     ]
 })
 export class FlowModule {
