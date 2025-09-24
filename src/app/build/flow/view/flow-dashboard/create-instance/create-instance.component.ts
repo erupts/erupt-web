@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {FormSize} from "../../../../erupt/model/erupt.enum";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
@@ -6,6 +6,8 @@ import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {FlowConfig} from "@flow/model/flow.model";
 import {DataHandlerService} from "../../../../erupt/service/data-handler.service";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
 
 @Component({
     selector: 'app-create-instance',
@@ -20,7 +22,7 @@ export class CreateInstanceComponent implements OnInit {
 
     @Input() onClose: () => void;
 
-    @Output() close  = new EventEmitter();
+    @Output() close = new EventEmitter();
 
     loading: boolean = false;
 
@@ -28,6 +30,8 @@ export class CreateInstanceComponent implements OnInit {
 
     constructor(private flowApiService: FlowApiService,
                 private msg: NzMessageService,
+                @Inject(NzModalService)
+                private modal: NzModalService,
                 private dataHandlerService: DataHandlerService,
                 private flowInstanceApiService: FlowInstanceApiService) {
 
@@ -43,6 +47,25 @@ export class CreateInstanceComponent implements OnInit {
                 this.loading = false;
             })
         }
+    }
+
+    onViewFlow() {
+        let ref = this.modal.create({
+            nzTitle: '查看流程',
+            nzContent: EruptFlowComponent,
+            nzStyle:{
+                top: '12px'
+            },
+            nzBodyStyle: {
+                padding: '0',
+                background: 'rgb(245 245 245)'
+            },
+            nzWidth: '80%',
+            nzFooter:null
+        })
+        ref.getContentComponent().eruptBuild = this.eruptBuild;
+        ref.getContentComponent().modelValue = this.flow.rule;
+        ref.getContentComponent().readonly = true;
     }
 
     /**

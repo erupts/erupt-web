@@ -33,7 +33,7 @@
                 <nz-typography nzType="secondary" nzSize="small" class="node-desc">{{ desc }}</nz-typography>
             </div>
 
-            <div class="p-node-content" (click)="onSelect()">
+            <div class="p-node-content" (click)="!readonly&&onSelect()">
                 <nz-typography nzEllipsis nzEllipsisRows="4">
                     {{ content || placeholder }}
                 </nz-typography>

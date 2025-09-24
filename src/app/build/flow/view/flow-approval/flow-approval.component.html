@@ -75,7 +75,7 @@
                             class="status-tag"
                             style="margin-right: 0"
                         >
-                            {{ item.flowInstance?.status }}
+                            {{ item.flowInstance?.status | translate }}
                         </nz-tag>
                     </div>
                     <div class="item-footer">
@@ -123,7 +123,7 @@
                         [nzColor]="'#09f'"
                         class="status-tag-large"
                     >
-                        {{ selectedInstanceTask.flowInstance?.status }}
+                        {{ selectedInstanceTask.flowInstance?.status | translate }}
                     </nz-tag>
                 </div>
 
@@ -197,10 +197,10 @@
                                                     <span class="approver-name">{{ task.assigneeUser?.name || '-' }}</span>
                                                 </div>
                                             </td>
-                                            <td>{{ task.taskType || '-' }}</td>
+                                            <td>{{ (task.taskType || '-')  | translate }}</td>
                                             <td>
                                                 <nz-tag>
-                                                    {{ getTaskStatusText(task.taskStatus) }}
+                                                    {{ task.taskStatus | translate}}
                                                 </nz-tag>
                                             </td>
                                             <td>{{ task.comment || '-' }}</td>
