@@ -28,9 +28,8 @@
             <span *ngIf="hasConfig" nz-icon nzType="arrow-right" class="w-p-node-click"></span>
         </div>
     </div>
-
     <div class="p-node-add">
-        <app-insert-btn (insertNode)="onInsertNode($event)" (insertFlexNode)="onInsertFlexNode($event)"></app-insert-btn>
+        <app-insert-btn *ngIf="!readonly" (insertNode)="onInsertNode($event)" (insertFlexNode)="onInsertFlexNode($event)"></app-insert-btn>
     </div>
 </div>
 <nz-drawer

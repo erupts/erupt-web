@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
-import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceTask, InstanceStatus} from "@flow/model/flow-instance.model";
+import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/flow-instance.model";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
@@ -109,20 +109,6 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     // 新增方法：获取任务状态文本
-    getTaskStatusText(status: string): string {
-        switch (status) {
-            case 'pending':
-                return '待处理';
-            case 'processing':
-                return '处理中';
-            case 'completed':
-                return '已完成';
-            case 'cancelled':
-                return '已取消';
-            default:
-                return status || '未知';
-        }
-    }
 
     getAvatarColor(avatar: string): string {
         const colors = [
@@ -574,5 +560,5 @@ export class FlowApprovalComponent implements OnInit {
 
     protected readonly ApprovalView = ApprovalView;
     protected readonly NodeType = NodeType;
-    protected readonly InstanceStatus = InstanceStatus;
+
 }
