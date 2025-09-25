@@ -41,7 +41,7 @@ export interface FlowInstanceTask {
     id: number;
     assigneeUser: User;
     createTime: string;
-
+    completedAt: string;
     taskType: string;
     taskStatus: string;
     comment: string;
