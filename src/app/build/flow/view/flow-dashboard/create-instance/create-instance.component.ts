@@ -8,6 +8,7 @@ import {DataHandlerService} from "../../../../erupt/service/data-handler.service
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
+import {NzDrawerService} from "ng-zorro-antd/drawer";
 
 @Component({
     selector: 'app-create-instance',
@@ -33,6 +34,8 @@ export class CreateInstanceComponent implements OnInit {
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 private dataHandlerService: DataHandlerService,
+                @Inject(NzDrawerService)
+                private drawerService: NzDrawerService,
                 private flowInstanceApiService: FlowInstanceApiService) {
 
     }
@@ -50,22 +53,22 @@ export class CreateInstanceComponent implements OnInit {
     }
 
     onViewFlow() {
-        let ref = this.modal.create({
+        this.drawerService.create({
             nzTitle: '查看流程',
             nzContent: EruptFlowComponent,
-            nzStyle:{
-                top: '12px'
+            nzContentParams: {
+                eruptBuild: this.eruptBuild,
+                modelValue: this.flow.rule,
+                readonly: true
             },
             nzBodyStyle: {
                 padding: '0',
                 background: 'rgb(245 245 245)'
             },
-            nzWidth: '80%',
-            nzFooter:null
+            nzPlacement: 'bottom',
+            nzHeight: '85%',
+            nzFooter: null
         })
-        ref.getContentComponent().eruptBuild = this.eruptBuild;
-        ref.getContentComponent().modelValue = this.flow.rule;
-        ref.getContentComponent().readonly = true;
     }
 
     /**
