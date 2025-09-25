@@ -114,7 +114,8 @@ export class FlowInstanceApiService {
     transfer(instanceTaskId: number, userId: number, comment: string): Observable<R<void>> {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/transfer", null, {
             instanceTaskId,
-            comment
+            comment,
+            userId
         })
     }
 

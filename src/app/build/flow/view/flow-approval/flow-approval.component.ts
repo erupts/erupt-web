@@ -266,23 +266,19 @@ export class FlowApprovalComponent implements OnInit {
             return;
         }
 
-        // TODO: 调用转交接口
-        console.log('转交审批:', {
-            instanceTaskId: this.selectedInstanceTask?.flowInstance?.id,
-            userId: this.transferUser,
-            reason: this.transferReason
-        });
+        this.flowInstanceApiService.transfer(this.selectedInstanceTask.id, this.transferUser, this.transferReason).subscribe(res => {
+            this.transferModalVisible = false;
+            // 模拟接口调用
+            this.message.success('转交成功');
+            this.transferModalVisible = false;
+            this.transferReason = '';
+            this.transferUser = null;
 
-        // 模拟接口调用
-        this.message.success('转交成功');
-        this.transferModalVisible = false;
-        this.transferReason = '';
-        this.transferUser = null;
-
-        // 刷新数据
-        if (this.selectedInstanceTask?.flowInstance?.id) {
-            this.loadInstanceDetail(this.selectedInstanceTask);
-        }
+            // 刷新数据
+            if (this.selectedInstanceTask?.flowInstance?.id) {
+                this.loadInstanceDetail(this.selectedInstanceTask);
+            }
+        })
     }
 
     // 提交加签

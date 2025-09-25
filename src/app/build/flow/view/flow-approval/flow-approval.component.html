@@ -177,6 +177,7 @@
                                             <th>审批意见</th>
                                             <th>审批签名</th>
                                             <th>创建时间</th>
+                                            <th>审批时间</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -205,6 +206,11 @@
                                             <td>
                                                 <div class="time-info">
                                                     <div>{{ task.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="time-info">
+                                                    <div>{{ task.completedAt | date:'yyyy-MM-dd HH:mm:ss' }}</div>
                                                 </div>
                                             </td>
                                         </tr>
