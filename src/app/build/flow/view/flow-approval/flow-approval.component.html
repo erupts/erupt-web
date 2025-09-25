@@ -337,7 +337,8 @@
                         </button>
                     </ng-container>
                     <ng-container *ngIf="ApprovalView.CREATED === selectedView">
-                        <button nz-button nzSize="default" (click)="withdraw()" *ngIf="!selectedInstanceTask.flowInstance.finishTime" class="action-button">
+                        <button nz-button nzSize="default" (click)="withdraw()" class="action-button"
+                                *ngIf="!selectedInstanceTask.flowInstance.finishTime" >
                             <span nz-icon nzType="undo" nzTheme="outline"></span>
                             撤销
                         </button>

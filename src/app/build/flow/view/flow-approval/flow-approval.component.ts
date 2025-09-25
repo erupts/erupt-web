@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/flow-instance.model";
@@ -10,6 +10,7 @@ import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 import {SignaturePadComponent} from "../../../erupt/components/signature-pad/signature-pad.component";
 import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
+import {NzDrawerService} from "ng-zorro-antd/drawer";
 
 
 @Component({
@@ -78,7 +79,8 @@ export class FlowApprovalComponent implements OnInit {
         private modal: NzModalService,
         private upmsApiService: FlowUpmsApiService,
         private flowApiService: FlowApiService,
-        private dataHandlerService: DataHandlerService
+        private dataHandlerService: DataHandlerService,
+        @Inject(NzDrawerService) private drawerService: NzDrawerService,
     ) {
     }
 
@@ -562,22 +564,22 @@ export class FlowApprovalComponent implements OnInit {
     // 新增方法：查看流程图
     viewFlow() {
         if (this.selectedInstanceTask?.flowInstance?.id) {
-            let ref = this.modal.create({
+           this.drawerService.create({
                 nzTitle: '查看流程',
                 nzContent: EruptFlowComponent,
-                nzStyle:{
-                    top: '12px'
+                nzContentParams: {
+                    eruptBuild: this.eruptBuild,
+                    modelValue: this.selectedInstanceTask?.flowInstance.rule,
+                    readonly: true
                 },
                 nzBodyStyle: {
                     padding: '0',
                     background: 'rgb(245 245 245)'
                 },
-                nzWidth: '80%',
-                nzFooter:null
+                nzPlacement: 'bottom',
+                nzHeight: '85%',
+                nzFooter: null
             })
-            ref.getContentComponent().eruptBuild = this.eruptBuild;
-            ref.getContentComponent().modelValue = this.selectedInstanceTask?.flowInstance.rule;
-            ref.getContentComponent().readonly = true;
         }
     }
 
