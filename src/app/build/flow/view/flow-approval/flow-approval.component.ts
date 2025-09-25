@@ -9,6 +9,7 @@ import {FlowApiService} from "@flow/service/flow-api.service";
 import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 import {SignaturePadComponent} from "../../../erupt/components/signature-pad/signature-pad.component";
+import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
 
 
 @Component({
@@ -556,6 +557,28 @@ export class FlowApprovalComponent implements OnInit {
 
             }
         });
+    }
+
+    // 新增方法：查看流程图
+    viewFlow() {
+        if (this.selectedInstanceTask?.flowInstance?.id) {
+            let ref = this.modal.create({
+                nzTitle: '查看流程',
+                nzContent: EruptFlowComponent,
+                nzStyle:{
+                    top: '12px'
+                },
+                nzBodyStyle: {
+                    padding: '0',
+                    background: 'rgb(245 245 245)'
+                },
+                nzWidth: '80%',
+                nzFooter:null
+            })
+            ref.getContentComponent().eruptBuild = this.eruptBuild;
+            ref.getContentComponent().modelValue = this.selectedInstanceTask?.flowInstance.rule;
+            ref.getContentComponent().readonly = true;
+        }
     }
 
     protected readonly ApprovalView = ApprovalView;

@@ -1,14 +1,6 @@
 <div class="flow-approval-container">
     <!-- 左侧导航栏 -->
     <div class="sidebar" [class.collapsed]="sidebarCollapsed">
-        <!-- 移动端头部 -->
-        <div class="sidebar-header">
-            <div class="search-section">
-                <span nz-icon nzType="search" nzTheme="outline"></span>
-                <span class="search-text">搜索审批</span>
-            </div>
-        </div>
-
         <div class="navigation-menu">
             <ul nz-menu
                 nzMode="inline"
@@ -166,6 +158,9 @@
                     <nz-tab nzTitle="审批记录">
                         <div class="tab-content">
                             <div class="section">
+                                <button nz-button (click)="viewFlow()" style="margin-bottom: 12px">
+                                    查看流程图
+                                </button>
                                 <div *ngIf="instanceTasks.length > 0; else noTasks">
                                     <nz-table
                                         #recordsTable
@@ -180,8 +175,8 @@
                                             <th>任务类型</th>
                                             <th>任务状态</th>
                                             <th>审批意见</th>
-                                            <th>创建时间</th>
                                             <th>审批签名</th>
+                                            <th>创建时间</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -205,12 +200,12 @@
                                             </td>
                                             <td>{{ task.comment || '-' }}</td>
                                             <td>
+                                                <img nz-image *ngIf="task.signature" [nzSrc]="task.signature" style="cursor: pointer" alt="signature">
+                                            </td>
+                                            <td>
                                                 <div class="time-info">
                                                     <div>{{ task.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</div>
                                                 </div>
-                                            </td>
-                                            <td>
-                                                <img nz-image *ngIf="task.signature" [nzSrc]="task.signature" style="cursor: pointer" alt="signature">
                                             </td>
                                         </tr>
                                         </tbody>

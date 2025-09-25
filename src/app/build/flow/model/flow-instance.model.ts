@@ -1,4 +1,5 @@
 import {FlowConfig} from "@flow/model/flow.model";
+import {NodeRule} from "@flow/model/node.model";
 
 export enum ApprovalView {
     TODO = 'TODO',
@@ -14,6 +15,7 @@ export interface FlowInstance {
     erupt: string;
     eruptModelId: string;
     status: InstanceStatus;
+    rule: NodeRule[];
     initiatorUser: User;
     finishTime: string;
     createTime: string;
