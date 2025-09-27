@@ -343,15 +343,16 @@
                         </button>
                     </ng-container>
                     <ng-container *ngIf="ApprovalView.CREATED === selectedView">
+                        <button nz-button nzSize="default" (click)="urge()" class="action-button"
+                                *ngIf="!selectedInstanceTask.flowInstance.finishTime" >
+                            <span nz-icon nzType="bell" nzTheme="outline"></span>
+                            催办
+                        </button>
                         <button nz-button nzSize="default" (click)="withdraw()" class="action-button"
                                 *ngIf="!selectedInstanceTask.flowInstance.finishTime" >
                             <span nz-icon nzType="undo" nzTheme="outline"></span>
                             撤销
                         </button>
-<!--                        <button nz-button nzSize="default" (click)="resubmit()">-->
-<!--                            <span nz-icon nzType="redo" nzTheme="outline"></span>-->
-<!--                            再次提交-->
-<!--                        </button>-->
                     </ng-container>
                 </div>
             </div>

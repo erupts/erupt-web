@@ -3,7 +3,7 @@
 </div>
 <div class="approval-mode">
     <nz-radio-group [(ngModel)]="reviewUserMode.mode" (ngModelChange)="changeReview()" style="width: 100%">
-        <label nz-radio [nzValue]="ApprovalMode.DEPARTMENT_HEAD">部门负责人</label>
+        <label nz-radio [nzValue]="ApprovalMode.ORG_HEAD">组织负责人</label>
         <label nz-radio [nzValue]="ApprovalMode.ROLE">角色</label>
         <label nz-radio [nzValue]="ApprovalMode.POST">岗位</label>
         <label nz-radio [nzValue]="ApprovalMode.SPECIFIED_USER">指定人员</label>
@@ -11,7 +11,7 @@
     </nz-radio-group>
 </div>
 <hr style="border: 1px solid #f0f0f0;margin: 8px 0;" *ngIf="reviewUserMode.mode != ApprovalMode.SUBMITTER_HIMSELF"/>
-<div style="display: flex;align-items:center" *ngIf="reviewUserMode.mode == ApprovalMode.DEPARTMENT_HEAD">
+<div style="display: flex;align-items:center" *ngIf="reviewUserMode.mode == ApprovalMode.ORG_HEAD">
     <div style="margin-right: 12px">提交人的</div>
     <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
         <nz-option *ngFor="let org of deptHeads" [nzValue]="org.key" [nzLabel]="org.value"/>

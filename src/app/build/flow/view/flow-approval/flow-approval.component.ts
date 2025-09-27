@@ -392,7 +392,16 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     withdraw() {
-        this.flowInstanceApiService.withdraw(this.selectedInstanceTask?.flowInstance?.id, '撤回').subscribe({
+        this.flowInstanceApiService.withdraw(this.selectedInstanceTask.flowInstance.id, '撤回').subscribe({
+            next: (data) => {
+                this.message.success('撤回成功');
+                this.loadInstanceDetail(this.selectedInstanceTask);
+            }
+        })
+    }
+
+    urge(){
+        this.flowInstanceApiService.urge(this.selectedInstanceTask.flowInstance.id, '催办').subscribe({
             next: (data) => {
                 this.message.success('撤回成功');
                 this.loadInstanceDetail(this.selectedInstanceTask);
