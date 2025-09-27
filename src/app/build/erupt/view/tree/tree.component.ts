@@ -116,16 +116,15 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.behavior = Scene.ADD;
         this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
             this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
+            this.fetchTreeData();
+            this.dataHandler.emptyEruptValue(this.eruptBuildModel);
+            this.msg.success(this.i18n.fanyi("global.add.success"));
+        }, error => {
             this.loading = false;
-            if (result.status == Status.SUCCESS) {
-                this.fetchTreeData();
-                this.dataHandler.emptyEruptValue(this.eruptBuildModel);
-                this.msg.success(this.i18n.fanyi("global.add.success"));
-            }
         });
     }
 
-    save() {
+    update() {
         //校验菜单和合法性
         if (this.validateParentIdValue()) {
             this.loading = true;
@@ -135,6 +134,8 @@ export class TreeComponent implements OnInit, OnDestroy {
                     this.msg.success(this.i18n.fanyi("global.update.success"));
                     this.fetchTreeData();
                 }
+                this.loading = false;
+            }, () => {
                 this.loading = false;
             });
         }
