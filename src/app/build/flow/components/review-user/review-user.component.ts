@@ -30,8 +30,8 @@ export class ReviewUserComponent implements OnInit {
         this.users = this.upmsDataService.users;
         this.posts = this.upmsDataService.posts;
         this.roles = this.upmsDataService.roles;
-        for (let i = 0; i <= 15; i++) {
-            this.deptHeads.push({key: i, value: "直属部门负责人" + (i == 0 ? "" : `加 ${i} 级负责人`)})
+        for (let i = 0; i <= 10; i++) {
+            this.deptHeads.push({key: i, value: "直属组织负责人" + (i == 0 ? "" : `加 ${i} 级负责人`)})
         }
     }
 

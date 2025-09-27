@@ -8,6 +8,7 @@ import {
     ArrowDownOutline,
     ArrowLeftOutline,
     ArrowRightOutline,
+    BellOutline,
     BuildOutline,
     BulbOutline,
     BulbTwoTone,
@@ -130,5 +131,6 @@ export const ICONS_AUTO = [
     SwapOutline,
     UserAddOutline,
     RollbackOutline,
-    WarningTwoTone
+    WarningTwoTone,
+    BellOutline
 ];

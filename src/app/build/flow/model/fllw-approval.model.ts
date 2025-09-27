@@ -4,23 +4,17 @@ export enum ReviewMode {
     /** 提交人本人 */
     SUBMITTER_HIMSELF = 'SUBMITTER_HIMSELF',
 
-    /** 直属上级 */
-    DIRECT_MANAGER = 'DIRECT_MANAGER',
-
-    /** 部门负责人 */
-    DEPARTMENT_HEAD = 'DEPARTMENT_HEAD',
-
     /** 角色 */
     ROLE = 'ROLE',
 
-    /** 部门内指定岗位 */
+    /** 指定岗位 */
     POST = 'POST',
 
     /** 指定人员 */
     SPECIFIED_USER = 'SPECIFIED_USER',
 
-    /** 多级上级 */
-    MULTI_LEVEL_SUPERVISOR = 'MULTI_LEVEL_SUPERVISOR',
+    /** 组织负责人 */
+    ORG_HEAD = 'ORG_HEAD',
 
 }
 

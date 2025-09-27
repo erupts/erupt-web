@@ -87,6 +87,13 @@ export class FlowInstanceApiService {
         })
     }
 
+    urge(instanceId: number, comment: string): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/urge", null, {
+            instanceId,
+            comment
+        })
+    }
+
     agree(instanceTaskId: number, comment: string, signature: string): Observable<R<void>> {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/agree", {
             comment,
