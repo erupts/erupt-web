@@ -7,16 +7,7 @@ import {EditTypeComponent} from "../../components/edit-type/edit-type.component"
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
-import {
-    FormSize,
-    OperationIfExprBehavior,
-    OperationMode,
-    OperationType,
-    PagingType,
-    RestPath,
-    Scene,
-    SelectMode
-} from "../../model/erupt.enum";
+import {FormSize, OperationIfExprBehavior, OperationMode, OperationType, PagingType, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
@@ -788,13 +779,11 @@ export class TableComponent implements OnInit, OnDestroy {
                         if (this._drill) {
                             Object.assign(header, DataService.drillToHeader(this._drill));
                         }
-                        let res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                        await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
                             this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
-                        if (res.status === Status.SUCCESS) {
-                            this.msg.success(this.i18n.fanyi("global.add.success"));
-                            this.query();
-                            return true;
-                        }
+                        this.msg.success(this.i18n.fanyi("global.add.success"));
+                        this.query();
+                        return true;
                     }
                 }
                 return false;

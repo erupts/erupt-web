@@ -96,9 +96,9 @@
                     </span>
                 </div>
                 <div class="header-right">
-<!--                    <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="链接">-->
-<!--                        <span nz-icon nzType="link" nzTheme="outline"></span>-->
-<!--                    </button>-->
+                    <!--                    <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="链接">-->
+                    <!--                        <span nz-icon nzType="link" nzTheme="outline"></span>-->
+                    <!--                    </button>-->
                     <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="刷新" (click)="selectItem(selectedInstanceTask)">
                         <span nz-icon nzType="reload" nzTheme="outline"></span>
                     </button>
@@ -175,7 +175,6 @@
                                             <th>任务类型</th>
                                             <th>任务状态</th>
                                             <th>审批意见</th>
-                                            <th>审批签名</th>
                                             <th>创建时间</th>
                                             <th>审批时间</th>
                                         </tr>
@@ -196,12 +195,14 @@
                                             <td>{{ (task.taskType || '-')  | translate }}</td>
                                             <td>
                                                 <nz-tag>
-                                                    {{ task.taskStatus | translate}}
+                                                    {{ task.taskStatus | translate }}
                                                 </nz-tag>
                                             </td>
-                                            <td>{{ task.comment || '-' }}</td>
                                             <td>
-                                                <img nz-image *ngIf="task.signature" [nzSrc]="task.signature" style="cursor: pointer" alt="signature">
+                                                <div>{{ task.comment || '-' }}</div>
+                                                <div *ngIf="task.signature">
+                                                    <img nz-image [nzSrc]="task.signature" style="cursor: pointer;margin-top: 4px;width:100px;border:1px solid #f0f0f0" alt="signature">
+                                                </div>
                                             </td>
                                             <td>
                                                 <div class="time-info">
@@ -344,12 +345,12 @@
                     </ng-container>
                     <ng-container *ngIf="ApprovalView.CREATED === selectedView">
                         <button nz-button nzSize="default" (click)="urge()" class="action-button"
-                                *ngIf="!selectedInstanceTask.flowInstance.finishTime" >
+                                *ngIf="!selectedInstanceTask.flowInstance.finishTime">
                             <span nz-icon nzType="bell" nzTheme="outline"></span>
                             催办
                         </button>
                         <button nz-button nzSize="default" (click)="withdraw()" class="action-button"
-                                *ngIf="!selectedInstanceTask.flowInstance.finishTime" >
+                                *ngIf="!selectedInstanceTask.flowInstance.finishTime">
                             <span nz-icon nzType="undo" nzTheme="outline"></span>
                             撤销
                         </button>
