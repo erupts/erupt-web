@@ -3,7 +3,6 @@ export interface EruptApiModel {
     success: boolean;
     message: string;
     data: any;
-    errorIntercept: boolean;
     promptWay: PromptWay;
 }
 

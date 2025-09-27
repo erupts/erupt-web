@@ -142,16 +142,13 @@ export class DefaultInterceptor implements HttpInterceptor {
                                     break;
                             }
                         }
-                        if ((eruptApiBody.errorIntercept || eruptApiBody.promptWay !== PromptWay.NONE) && eruptApiBody.status === Status.ERROR) {
-                            // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：this.http.get('/').subscribe() 并不会触发
-                            return throwError({});
+                        if (eruptApiBody.promptWay != PromptWay.NONE && (eruptApiBody.status === Status.WARNING || eruptApiBody.status === Status.ERROR)) {
+                            return throwError(() => eruptApiBody);
                         }
                     }
-                    // 重新修改 `body` 内容为 `response` 内容，对于绝大多数场景已经无须再关心业务状态码
-                    // return of(new HttpResponse(Object.assign(event, { body: body.response })));
                 }
-                break;
-            case 401: // 未登录状态码)
+                return of(event);
+            case 401: // 未登录
                 if (this.router.url !== "/passport/login") {
                     this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
                 }
@@ -176,13 +173,13 @@ export class DefaultInterceptor implements HttpInterceptor {
                         this.goTo("/passport/login");
                     }
                 }
-                break;
+                break
             case 404:
                 if (event.url.indexOf("/form-value") != -1) {
                     break;
                 }
                 this.goTo("/exception/404");
-                break;
+                break
             case 403: //无权限
                 if (event.url.indexOf("/erupt-api/build/") != -1) {
                     this.goTo("/exception/403");
@@ -191,7 +188,7 @@ export class DefaultInterceptor implements HttpInterceptor {
                         nzTitle: this.i18n.fanyi("none_permission")
                     });
                 }
-                break;
+                break
             case 500:
                 event = <HttpErrorResponse>event;
                 if (event.url.indexOf("/erupt-api/build/") != -1) {
@@ -211,15 +208,15 @@ export class DefaultInterceptor implements HttpInterceptor {
                         }
                     });
                 }
-                return of(new HttpResponse(event));
+                break
             default:
                 if (event instanceof HttpErrorResponse) {
                     console.warn("Unknown errors, mostly due to unresponsive backend or invalid configuration", event);
                     this.msg.error(event.message);
                 }
-                break;
+                break
         }
-        return of(event);
+        return throwError(() => event);
     }
 
     intercept(
@@ -274,7 +271,14 @@ export class DefaultInterceptor implements HttpInterceptor {
                 // 若一切都正常，则后续操作
                 return of(event);
             }),
-            catchError((err: HttpErrorResponse) => this.handleData(err))
+            catchError((err: HttpErrorResponse) => {
+                // 如果是业务错误（EruptApiModel），直接抛出
+                if (err && typeof err === 'object' && 'status' in err && 'message' in err && 'promptWay' in err) {
+                    return throwError(() => err);
+                }
+                // 其他HTTP错误，调用handleData处理
+                return this.handleData(err);
+            })
         );
     }
 }
