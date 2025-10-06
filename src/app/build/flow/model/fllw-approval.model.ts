@@ -1,5 +1,16 @@
 import {FormAccessEnum} from "@flow/model/flow.model";
 
+export enum ApprovalQueryType {
+    TODO = "TODO",
+    DONE = "DONE",
+    CREATED = "CREATED",
+    CC = "CC"
+}
+
+export class ApprovalQuery {
+    approvalQueryType: ApprovalQueryType;
+}
+
 export enum ReviewMode {
     /** 提交人本人 */
     SUBMITTER_HIMSELF = 'SUBMITTER_HIMSELF',

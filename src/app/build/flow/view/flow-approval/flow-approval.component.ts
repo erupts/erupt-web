@@ -11,6 +11,7 @@ import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 import {SignaturePadComponent} from "../../../erupt/components/signature-pad/signature-pad.component";
 import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {ApprovalQueryType} from "@flow/model/fllw-approval.model";
 
 
 @Component({
@@ -400,7 +401,7 @@ export class FlowApprovalComponent implements OnInit {
         })
     }
 
-    urge(){
+    urge() {
         this.flowInstanceApiService.urge(this.selectedInstanceTask.flowInstance.id, '催办').subscribe({
             next: (data) => {
                 this.message.success('撤回成功');
@@ -439,7 +440,9 @@ export class FlowApprovalComponent implements OnInit {
 
         switch (view) {
             case ApprovalView.TODO:
-                this.flowInstanceApiService.todoList().subscribe({
+                this.flowInstanceApiService.list({
+                    approvalQueryType: ApprovalQueryType.TODO,
+                }).subscribe({
                     next: (data) => {
                         this.flowInstanceTask = data.data;
                         this.selectedInstanceTask = this.flowInstanceTask[0] || null;
@@ -449,7 +452,9 @@ export class FlowApprovalComponent implements OnInit {
                 });
                 break;
             case ApprovalView.DONE:
-                this.flowInstanceApiService.doneList().subscribe({
+                this.flowInstanceApiService.list({
+                    approvalQueryType: ApprovalQueryType.DONE,
+                }).subscribe({
                     next: (data) => {
                         this.flowInstanceTask = data.data;
                         this.selectedInstanceTask = this.flowInstanceTask[0] || null;
@@ -458,7 +463,9 @@ export class FlowApprovalComponent implements OnInit {
                 });
                 break;
             case ApprovalView.CC:
-                this.flowInstanceApiService.ccList().subscribe({
+                this.flowInstanceApiService.list({
+                    approvalQueryType: ApprovalQueryType.CC,
+                }).subscribe({
                     next: (data) => {
                         this.flowInstanceTask = data.data;
                         this.selectedInstanceTask = this.flowInstanceTask[0] || null;
@@ -467,7 +474,9 @@ export class FlowApprovalComponent implements OnInit {
                 });
                 break;
             case ApprovalView.CREATED:
-                this.flowInstanceApiService.createdList().subscribe({
+                this.flowInstanceApiService.list({
+                    approvalQueryType: ApprovalQueryType.CREATED,
+                }).subscribe({
                     next: (data) => {
                         this.flowInstanceTask = data.data;
                         this.selectedInstanceTask = this.flowInstanceTask[0] || null;
@@ -569,7 +578,7 @@ export class FlowApprovalComponent implements OnInit {
     // 新增方法：查看流程图
     viewFlow() {
         if (this.selectedInstanceTask?.flowInstance?.id) {
-           this.drawerService.create({
+            this.drawerService.create({
                 nzTitle: '查看流程',
                 nzContent: EruptFlowComponent,
                 nzContentParams: {
