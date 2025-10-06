@@ -6,6 +6,7 @@ import {RestPath} from "../../erupt/model/erupt.enum";
 import {FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/flow-instance.model";
 import {NodeRule} from "@flow/model/node.model";
 import {FlowConfig} from "@flow/model/flow.model";
+import {ApprovalQuery} from "@flow/model/fllw-approval.model";
 
 @Injectable({
     providedIn: 'root'
@@ -26,20 +27,8 @@ export class FlowInstanceApiService {
         });
     }
 
-    todoList(): Observable<R<FlowInstanceTask[]>> {
-        return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/approval/list/todo")
-    }
-
-    doneList(): Observable<R<FlowInstanceTask[]>> {
-        return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/approval/list/done")
-    }
-
-    ccList(): Observable<R<FlowInstanceTask[]>> {
-        return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/approval/list/cc")
-    }
-
-    createdList(): Observable<R<FlowInstanceTask[]>> {
-        return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/approval/list/created")
+    list(query: ApprovalQuery): Observable<R<FlowInstanceTask[]>> {
+        return this._http.post<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/approval/list", query)
     }
 
     detail(instanceId: number): Observable<R<FlowInstance>> {
