@@ -16,8 +16,6 @@ export class NodeComponent implements AfterViewInit {
     @Input() content = '';
     @Input() readonly = false;
     @Input() model: NodeRule;
-    @Input() showError = false;
-    @Input() errorInfo = '';
     @Input() showClose = true;
     @Input() showBody = true;
     @Input() hasConfig: boolean = true;
@@ -65,6 +63,7 @@ export class NodeComponent implements AfterViewInit {
         if (!this.hasConfig || this.readonly) {
             return;
         }
+        this.model.error = null;
         this.showDrawer = true;
         this.select.emit();
     }

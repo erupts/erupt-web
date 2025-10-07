@@ -404,7 +404,7 @@ export class FlowApprovalComponent implements OnInit {
     urge() {
         this.flowInstanceApiService.urge(this.selectedInstanceTask.flowInstance.id, '催办').subscribe({
             next: (data) => {
-                this.message.success('撤回成功');
+                this.message.success('催办成功');
                 this.loadInstanceDetail(this.selectedInstanceTask);
             }
         })
