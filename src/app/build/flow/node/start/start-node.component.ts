@@ -21,9 +21,6 @@ export class StartNodeComponent extends ANode {
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
 
-    showErr = false;
-    errInfo: any = null;
-
     override onSelect() {
         this.select.emit(this.model);
     }

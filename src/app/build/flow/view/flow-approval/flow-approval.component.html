@@ -79,7 +79,9 @@
                             <span class="submitter-name">{{ item.flowInstance?.initiatorUser?.name }}</span>
                         </div>
                         <div class="time-info">
-                            <span class="process-time" *ngIf="item.flowInstance?.finishTime">{{ item.flowInstance?.finishTime }}</span>
+                            <span class="process-time">
+                                {{ item.flowInstance?.createTime }}
+                            </span>
                         </div>
                     </div>
                 </div>

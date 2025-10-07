@@ -60,6 +60,7 @@ export class BranchNodeComponent implements AfterViewInit {
     }
 
     onSelect() {
+        this.modelValue.error = null;
         this.select.emit();
     }
 
