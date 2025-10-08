@@ -34,7 +34,14 @@ export interface FlowInstanceComment {
     createUser: User;
     createTime: string;
     comment: string;
+}
 
+export interface FlowInstanceDataHistory {
+    id: number;
+    createUser: User;
+    createTime: string;
+    beforeData: string;
+    afterData: string;
 }
 
 export interface FlowInstanceTask {

@@ -4,6 +4,7 @@ import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {FormSize} from "../../../erupt/model/erupt.enum";
+import {FormAccessEnum} from "@flow/model/flow.model";
 
 @Component({
     selector: 'erupt-flow-form',
@@ -21,6 +22,8 @@ export class EruptFlowFormComponent implements OnInit {
     @Input() erupt: string;
 
     @Input() initValue: boolean = true;
+
+    @Input() formAccesses: Record<string, FormAccessEnum>;
 
     constructor(private dataService: DataService,
                 private flowApiService: FlowApiService,
@@ -45,6 +48,37 @@ export class EruptFlowFormComponent implements OnInit {
         } else {
             if (this.initValue) {
                 this.initEruptValue();
+            }
+        }
+        if (this.formAccesses) {
+            if (this.eruptBuild) {
+                for (let eruptFieldModel of this.eruptBuild.eruptModel.eruptFieldModels) {
+                    let access: FormAccessEnum = this.formAccesses[eruptFieldModel.fieldName];
+                    if (access) {
+                        switch (access) {
+                            case FormAccessEnum.READONLY:
+                                eruptFieldModel.eruptFieldJson.edit.readOnly = {
+                                    add: true,
+                                    edit: true,
+                                };
+                                break;
+                            case FormAccessEnum.READ_WRITE:
+                                eruptFieldModel.eruptFieldJson.edit.readOnly = {
+                                    add: false,
+                                    edit: false,
+                                };
+                                break;
+                            case FormAccessEnum.HIDE:
+                                eruptFieldModel.eruptFieldJson.edit.show = false;
+                                break;
+                        }
+                    } else {
+                        eruptFieldModel.eruptFieldJson.edit.readOnly = {
+                            add: true,
+                            edit: true,
+                        };
+                    }
+                }
             }
         }
     }

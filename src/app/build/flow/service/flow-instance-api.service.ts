@@ -3,7 +3,7 @@ import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
 import {R} from "@shared/model/api.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
-import {FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/flow-instance.model";
+import {FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask} from "@flow/model/flow-instance.model";
 import {NodeRule} from "@flow/model/node.model";
 import {FlowConfig} from "@flow/model/flow.model";
 import {ApprovalQuery} from "@flow/model/fllw-approval.model";
@@ -58,6 +58,18 @@ export class FlowInstanceApiService {
 
     commentList(instanceId: number): Observable<R<FlowInstanceComment[]>> {
         return this._http.get<R<FlowInstanceComment[]>>(RestPath.erupt + "/flow/instance/comment/list", {
+            instanceId
+        })
+    }
+
+    updateData(instanceId: number, data: object): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/update-data", data, {
+            instanceId
+        })
+    }
+
+    dataHistories(instanceId: number): Observable<R<FlowInstanceDataHistory[]>> {
+        return this._http.get<R<FlowInstanceDataHistory[]>>(RestPath.erupt + "/flow/instance/data-histories", {
             instanceId
         })
     }

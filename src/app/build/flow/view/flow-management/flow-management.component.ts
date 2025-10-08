@@ -239,16 +239,8 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
             nzOnOk: () => {
                 this.flowApiService.groupDelete(item.id).subscribe({
                     next: (response: R<void>) => {
-                        if (response.success) {
-                            this.message.success('分组删除成功');
-                            this.loadGroups(); // 重新加载分组列表
-                        } else {
-                            this.message.error(response.message || '删除分组失败');
-                        }
-                    },
-                    error: (error) => {
-                        console.error('删除分组失败:', error);
-                        this.message.error('删除分组失败');
+                        this.message.success('分组删除成功');
+                        this.loadGroups();
                     }
                 });
             }
