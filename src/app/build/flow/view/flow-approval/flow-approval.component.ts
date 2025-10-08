@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
-import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceTask} from "@flow/model/flow-instance.model";
+import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask} from "@flow/model/flow-instance.model";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
@@ -12,6 +12,7 @@ import {SignaturePadComponent} from "../../../erupt/components/signature-pad/sig
 import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {ApprovalQueryType} from "@flow/model/fllw-approval.model";
+import {NzCodeEditorComponent} from "ng-zorro-antd/code-editor";
 
 
 @Component({
@@ -31,6 +32,8 @@ export class FlowApprovalComponent implements OnInit {
 
     // 调整为 FlowInstanceTask[] 类型
     flowInstanceTask: FlowInstanceTask[] = [];
+
+    dataHistories: FlowInstanceDataHistory[] = [];
 
     selectedInstanceTask: FlowInstanceTask;
 
@@ -159,11 +162,10 @@ export class FlowApprovalComponent implements OnInit {
 
     // 提交同意
     submitApprove() {
-        if (!this.approveReason.trim()) {
+        if (this.nodeInfo?.prop?.requireApprovalNote && !this.approveReason.trim()) {
             this.message.warning('请填写同意原因');
             return;
         }
-
         this.approveModalVisible = true;
         this.flowInstanceApiService.agree(this.selectedInstanceTask.id, this.approveReason, this.approveSignature).subscribe(res => {
             this.approveModalVisible = false;
@@ -389,7 +391,21 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     modify() {
-        this.message.info('修改功能');
+        let data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
+        this.flowInstanceApiService.updateData(this.selectedInstanceTask.flowInstance.id, data).subscribe({
+            next: (data) => {
+                this.message.success('修改成功');
+                this.getDataHistories(this.selectedInstanceTask.flowInstance.id);
+            }
+        })
+    }
+
+    getDataHistories(instanceId: number) {
+        this.flowInstanceApiService.dataHistories(this.selectedInstanceTask.flowInstance.id).subscribe({
+            next: (data) => {
+                this.dataHistories = data.data;
+            }
+        })
     }
 
     withdraw() {
@@ -524,6 +540,8 @@ export class FlowApprovalComponent implements OnInit {
             }
         });
 
+        this.getDataHistories(task.flowInstance.id);
+
         // 加载节点信息
         if (task.id) {
             this.flowInstanceApiService.taskNodeInfo(task.id).subscribe({
@@ -597,7 +615,25 @@ export class FlowApprovalComponent implements OnInit {
         }
     }
 
+    showDiff(history: FlowInstanceDataHistory) {
+        let ref = this.modal.create({
+            nzTitle: '变更详情',
+            nzContent: NzCodeEditorComponent,
+            nzBodyStyle: {
+                height: '500px'
+            },
+            nzWidth: '60%',
+            nzFooter: null,
+            nzCancelText: null
+        });
+        ref.componentInstance.nzEditorMode = 'diff';
+        ref.componentInstance.nzEditorOption = {language: 'json', readOnly: true};
+        ref.componentInstance.nzOriginalText = history.beforeData;
+        ref.componentInstance.writeValue(history.afterData);
+    }
+
     protected readonly ApprovalView = ApprovalView;
     protected readonly NodeType = NodeType;
 
+    protected readonly Object = Object;
 }

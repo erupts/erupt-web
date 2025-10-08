@@ -75,7 +75,7 @@
                             <nz-avatar [nzText]="item.flowInstance?.initiatorUser?.name.substring(0,1)"
                                        [ngStyle]="{backgroundColor: getAvatarColor(item.flowInstance?.initiatorUser.name?.substring(0,1))}"
                                        [nzSrc]="item.flowInstance?.initiatorUser?.avatar"
-                                       nzSize="default"></nz-avatar>
+                                       nzSize="small"></nz-avatar>
                             <span class="submitter-name">{{ item.flowInstance?.initiatorUser?.name }}</span>
                         </div>
                         <div class="time-info">
@@ -137,23 +137,9 @@
                     <nz-tab nzTitle="审批信息">
                         <div class="tab-content">
                             <div class="section" *ngIf="eruptBuild">
-                                <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="true"></erupt-flow-form>
+                                <erupt-flow-form [eruptBuild]="eruptBuild"
+                                                 [formAccesses]="nodeInfo?.prop?.formAccesses || {}"></erupt-flow-form>
                             </div>
-                            <!--                            <div class="section" *ngIf="nodeInfo">-->
-                            <!--                                <h3 class="section-title">流程节点</h3>-->
-                            <!--                                <div class="node-info">-->
-                            <!--                                    <div class="node-item">-->
-                            <!--                                        <span class="node-name">{{ nodeInfo.name }}</span>-->
-                            <!--                                        <span class="node-type">{{ nodeInfo.type }}</span>-->
-                            <!--                                    </div>-->
-                            <!--                                    <div class="node-branches" *ngIf="nodeInfo.branches && nodeInfo.branches.length > 0">-->
-                            <!--                                        <div class="branch-item" *ngFor="let branch of nodeInfo.branches">-->
-                            <!--                                            <span class="branch-name">{{ branch.name }}</span>-->
-                            <!--                                            <span class="branch-type">{{ branch.type }}</span>-->
-                            <!--                                        </div>-->
-                            <!--                                    </div>-->
-                            <!--                                </div>-->
-                            <!--                            </div>-->
                         </div>
                     </nz-tab>
 
@@ -189,7 +175,7 @@
                                                         <nz-avatar [nzText]="task.assigneeUser?.name?.substring(0,1)"
                                                                    [ngStyle]="{backgroundColor: getAvatarColor(task.assigneeUser?.name?.substring(0,1))}"
                                                                    [nzSrc]="task.assigneeUser.avatar"
-                                                                   nzSize="default" class="mr-sm"></nz-avatar>
+                                                                   nzSize="small" class="mr-sm"></nz-avatar>
                                                     </ng-container>
                                                     <span class="approver-name">{{ task.assigneeUser?.name || '-' }}</span>
                                                 </div>
@@ -293,16 +279,35 @@
                                         [nzShowPagination]="false"
                                         [nzSize]="'small'"
                                         class="records-table"
+                                        [nzData]="dataHistories"
                                     >
                                         <thead>
                                         <tr>
                                             <th>操作人</th>
                                             <th>操作时间</th>
-                                            <th>动作</th>
-                                            <th>变化记录</th>
+                                            <th>变更内容</th>
                                         </tr>
                                         </thead>
                                         <tbody>
+                                        <tr *ngFor="let history of dataHistories">
+                                            <td>
+                                                <div class="approver-info">
+                                                    <ng-container *ngIf="history.createUser?.id">
+                                                        <nz-avatar [nzText]="history.createUser?.name?.substring(0,1)"
+                                                                   [ngStyle]="{backgroundColor: getAvatarColor(history.createUser?.name?.substring(0,1))}"
+                                                                   [nzSrc]="history.createUser.avatar"
+                                                                   nzSize="small" class="mr-sm"></nz-avatar>
+                                                    </ng-container>
+                                                    <span class="approver-name">{{ history.createUser?.name || '-' }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {{ history.createTime }}
+                                            </td>
+                                            <td>
+                                                <button nz-button nzSize="small" (click)="showDiff(history)">查看详情</button>
+                                            </td>
+                                        </tr>
                                         </tbody>
                                     </nz-table>
                                 </div>
@@ -340,7 +345,7 @@
                             <span nz-icon nzType="rollback" nzTheme="outline"></span>
                             退回
                         </button>
-                        <button nz-button nzSize="default" (click)="modify()" class="action-button">
+                        <button nz-button nzSize="default" (click)="modify()" class="action-button" *ngIf="Object.keys(nodeInfo?.prop?.formAccesses||{}).length">
                             <span nz-icon nzType="edit" nzTheme="outline"></span>
                             修改
                         </button>
@@ -387,7 +392,7 @@
     <div *nzModalContent>
         <div class="modal-content">
             <ng-container *ngIf="nodeInfo?.prop?.requireSignature">
-                <p class="modal-description">同意签名：</p>
+                <p class="modal-description"><span style="color: #f00">*</span> 同意签名：</p>
                 <div style="width: 100%;height: 200px;position: relative;border: 1px solid #d9d9d9;border-radius: 2px">
                     <img *ngIf="approveSignature" [src]="approveSignature" alt="" style="height: 200px;width: 100%">
                     <button nz-button nzType="default" (click)="openSign()" nzShape="circle"
@@ -396,7 +401,9 @@
                     </button>
                 </div>
             </ng-container>
-            <p class="modal-description" style="margin-top: 16px">请填写同意原因：</p>
+            <p class="modal-description" style="margin-top: 16px">
+                <span style="color: #f00" *ngIf="this.nodeInfo?.prop?.requireApprovalNote">*</span> 请填写同意原因：
+            </p>
             <nz-input-group>
                 <textarea
                     nz-input
@@ -422,7 +429,7 @@
 >
     <div *nzModalContent>
         <div class="modal-content">
-            <p class="modal-description">请填写拒绝原因：</p>
+            <p class="modal-description"><span style="color: #f00">*</span> 请填写拒绝原因：</p>
             <nz-input-group>
                 <textarea
                     nz-input
@@ -448,7 +455,7 @@
     <div *nzModalContent>
         <div class="modal-content">
             <div class="form-item">
-                <label class="form-label">抄送人员：</label>
+                <label class="form-label"><span style="color: #f00">*</span> 抄送人员：</label>
                 <nz-select
                     [(ngModel)]="ccUsers"
                     [nzMode]="'multiple'"
@@ -465,7 +472,7 @@
                 </nz-select>
             </div>
             <div class="form-item">
-                <label class="form-label">抄送说明：</label>
+                <label class="form-label"><span style="color: #f00">*</span> 抄送说明：</label>
                 <nz-input-group>
                     <textarea
                         nz-input
@@ -492,7 +499,7 @@
     <div *nzModalContent>
         <div class="modal-content">
             <div class="form-item">
-                <label class="form-label">转交人员：</label>
+                <label class="form-label"><span style="color: #f00">*</span> 转交人员：</label>
                 <nz-select
                     [(ngModel)]="transferUser"
                     [nzPlaceHolder]="'请选择转交人员'"
@@ -508,7 +515,7 @@
                 </nz-select>
             </div>
             <div class="form-item">
-                <label class="form-label">转交说明：</label>
+                <label class="form-label"><span style="color: #f00">*</span> 转交说明：</label>
                 <nz-input-group>
                     <textarea
                         nz-input
@@ -535,14 +542,14 @@
     <div *nzModalContent>
         <div class="modal-content">
             <div class="form-item">
-                <label class="form-label">加签类型：</label>
+                <label class="form-label"><span style="color: #f00">*</span> 加签类型：</label>
                 <nz-radio-group [(ngModel)]="addSignType" class="add-sign-type-group">
                     <label nz-radio [nzValue]="'before'">前加签</label>
                     <label nz-radio [nzValue]="'after'">后加签</label>
                 </nz-radio-group>
             </div>
             <div class="form-item">
-                <label class="form-label">加签人员：</label>
+                <label class="form-label"><span style="color: #f00">*</span> 加签人员：</label>
                 <nz-select
                     [(ngModel)]="addSignUsers"
                     [nzMode]="'multiple'"
@@ -559,7 +566,7 @@
                 </nz-select>
             </div>
             <div class="form-item">
-                <label class="form-label">加签说明：</label>
+                <label class="form-label"><span style="color: #f00">*</span> 加签说明：</label>
                 <nz-input-group>
                     <textarea
                         nz-input
@@ -587,7 +594,7 @@
     <div *nzModalContent>
         <div class="modal-content">
             <div class="form-item">
-                <label class="form-label">退回节点：</label>
+                <label class="form-label"><span style="color: #f00">*</span> 退回节点：</label>
                 <nz-select
                     [(ngModel)]="returnNode"
                     [nzPlaceHolder]="'请选择退回节点'"
@@ -603,7 +610,7 @@
                 </nz-select>
             </div>
             <div class="form-item">
-                <label class="form-label">退回说明：</label>
+                <label class="form-label"><span style="color: #f00">*</span> 退回说明：</label>
                 <nz-input-group>
                     <textarea
                         nz-input

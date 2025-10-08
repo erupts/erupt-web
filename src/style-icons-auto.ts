@@ -42,6 +42,7 @@ import {
     MenuUnfoldOutline,
     MinusOutline,
     MinusSquareOutline,
+    MoreOutline,
     PieChartTwoTone,
     PlusOutline,
     PlusSquareOutline,
@@ -132,5 +133,6 @@ export const ICONS_AUTO = [
     UserAddOutline,
     RollbackOutline,
     WarningTwoTone,
-    BellOutline
+    BellOutline,
+    MoreOutline
 ];

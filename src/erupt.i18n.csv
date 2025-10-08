@@ -135,3 +135,7 @@ DELETED,已删除,已刪除,Deleted,Supprimé,削除,삭제됨,Удалено,El
 TERMINATED,已终止,已終止,Terminated,Terminé,強制終了,종료됨,Прервано,Terminado,Beendet,Terminado,Dihentikan,منتهي
 REVOKED,已撤销,已撤銷,Revoked,Révoqué,取消,취소됨,Аннулировано,Revocado,Widerrufen,Revogado,Dicabut,ملغى
 TRANSFER,已转交,已轉交,Transferred,Transféré,転送済み,전송됨,Передано,Transferido,Übertragen,Transferido,Transfer,تم النقل
+
+PENDING,审批中,審批中,Pending,En attente,審査中,대기 중,На рассмотрении,Pendiente,Ausstehend,Pendente,Menunggu,قيد الانتظار
+COMPLETED,已完成,已完成,Finished,Terminé,完了,완료,Завершено,Finalizado,Abgeschlossen,Concluído,Selesai,منتهي
+REJECTED,已拒绝,已拒絕,Rejected,Rejeté,拒否,거부됨,Отклонено,Rechazado,Abgelehnt,Rejeitado,Ditolak,مرفوض
