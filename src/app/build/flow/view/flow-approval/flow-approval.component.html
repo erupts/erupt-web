@@ -63,7 +63,6 @@
                             {{ item.flowInstance?.eruptFlowConfig?.name }}
                         </h3>
                         <nz-tag
-                            [nzColor]="getStatusColor(item.flowInstance?.status)"
                             class="status-tag"
                             style="margin-right: 0"
                         >
@@ -114,8 +113,6 @@
                 <div class="content-header">
                     <h1 class="content-title">{{ selectedInstanceTask.flowInstance?.eruptFlowConfig?.name }}</h1>
                     <nz-tag
-                        [nzColor]="'#09f'"
-                        class="status-tag-large"
                     >
                         {{ selectedInstanceTask.flowInstance?.status | translate }}
                     </nz-tag>
@@ -394,9 +391,14 @@
             <ng-container *ngIf="nodeInfo?.prop?.requireSignature">
                 <p class="modal-description"><span style="color: #f00">*</span> 同意签名：</p>
                 <div style="width: 100%;height: 200px;position: relative;border: 1px solid #d9d9d9;border-radius: 2px">
-                    <img *ngIf="approveSignature" [src]="approveSignature" alt="" style="height: 200px;width: 100%">
+                    <ng-container *ngIf="approveSignature">
+                        <button nz-button nzType="default" (click)="approveSignature = null" nzShape="circle" style="position: absolute;right:16px;top: 16px">
+                            <span nz-icon nzType="clear" nzTheme="outline"></span>
+                        </button>
+                        <img [src]="approveSignature" alt="" style="height: 200px;width: 100%">
+                    </ng-container>
                     <button nz-button nzType="default" (click)="openSign()" nzShape="circle"
-                            style="position: absolute;;top: 42%;left: 50%;transform: translate(-50%);">
+                            style="position: absolute;;top: 42%;left: 50%;transform: translate(-50%);" *ngIf="!approveSignature">
                         <span nz-icon nzType="edit" nzTheme="outline"></span>
                     </button>
                 </div>

@@ -100,21 +100,6 @@ export class FlowApprovalComponent implements OnInit {
         }
     }
 
-    getStatusColor(status: string): string {
-        switch (status) {
-            case 'processing':
-                return 'processing';
-            case 'approved':
-                return 'success';
-            case 'rejected':
-                return 'error';
-            case 'pending':
-                return 'warning';
-            default:
-                return 'default';
-        }
-    }
-
     // 新增方法：获取任务状态文本
 
     getAvatarColor(avatar: string): string {
