@@ -514,7 +514,23 @@ export class FlowApprovalComponent implements OnInit {
         // 加载任务列表
         this.flowInstanceApiService.tasks(task.flowInstance.id).subscribe({
             next: (data) => {
-                this.instanceTasks = data.data || [];
+                const arr = data.data || [];
+                for (let i = 0; i < arr.length;) {
+                    if (!arr[i].nodeId) {
+                        i++;
+                        continue;
+                    }
+                    let span = 1;
+                    while (i + span < arr.length && arr[i + span].nodeId === arr[i].nodeId) {
+                        span++;
+                    }
+                    if (span > 1) {
+                        arr[i].nodeRowspan = span;
+                        for (let j = 1; j < span; j++) arr[i + j].nodeId = null;
+                    }
+                    i += span;
+                }
+                this.instanceTasks = arr;
             }
         });
 
