@@ -86,3 +86,9 @@ export class CcNode {
     formAccesses: Record<string, FormAccessEnum> = {};
 
 }
+
+export class StartNode {
+
+    formAccesses: Record<string, FormAccessEnum> = {};
+
+}

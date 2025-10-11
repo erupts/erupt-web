@@ -2,7 +2,7 @@ import {NodeType} from "@flow/model/node.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 
 export function geneNodeId(): string {
-    return 'e' + crypto.randomUUID().replace(/-/g, '').slice(0, 8);
+    return crypto.randomUUID().replace(/-/g, '').slice(0, 5).toUpperCase();
 }
 
 

@@ -15,12 +15,14 @@ export class FormAccessComponent implements OnInit {
 
     @Input() formAccesses: Record<string, FormAccessEnum> = {};
 
+    @Input() access: FormAccessEnum = FormAccessEnum.READONLY;
+
     protected readonly FormAccessEnum = FormAccessEnum;
 
     ngOnInit(): void {
         for (let eruptFieldModel of this.eruptBuild.eruptModel.eruptFieldModels) {
-            if (!this.formAccesses[eruptFieldModel.fieldName]){
-                this.formAccesses[eruptFieldModel.fieldName] = FormAccessEnum.READONLY;
+            if (!this.formAccesses[eruptFieldModel.fieldName]) {
+                this.formAccesses[eruptFieldModel.fieldName] = this.access;
             }
         }
     }

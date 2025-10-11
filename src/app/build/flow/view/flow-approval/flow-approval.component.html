@@ -112,10 +112,12 @@
             <div class="detail-content" *ngIf="selectedInstanceTask">
                 <div class="content-header">
                     <h1 class="content-title">{{ selectedInstanceTask.flowInstance?.eruptFlowConfig?.name }}</h1>
-                    <nz-tag
-                    >
+                    <nz-tag>
                         {{ selectedInstanceTask.flowInstance?.status | translate }}
                     </nz-tag>
+                    <button nz-button (click)="viewFlow()" style="margin-left: auto">
+                        查看流程图
+                    </button>
                 </div>
 
                 <div class="submitter-info-large">
@@ -143,9 +145,6 @@
                     <nz-tab nzTitle="审批记录">
                         <div class="tab-content">
                             <div class="section">
-                                <button nz-button (click)="viewFlow()" style="margin-bottom: 12px">
-                                    查看流程图
-                                </button>
                                 <div *ngIf="instanceTasks.length > 0; else noTasks">
                                     <nz-table
                                         #recordsTable
@@ -156,6 +155,7 @@
                                     >
                                         <thead>
                                         <tr>
+                                            <th>节点 ID</th>
                                             <th>审批人</th>
                                             <th>任务类型</th>
                                             <th>任务状态</th>
@@ -166,6 +166,9 @@
                                         </thead>
                                         <tbody>
                                         <tr *ngFor="let task of instanceTasks">
+                                            <td [rowSpan]="1">
+                                                {{ task.nodeId }}
+                                            </td>
                                             <td>
                                                 <div class="approver-info">
                                                     <ng-container *ngIf="task.assigneeUser?.id">
@@ -175,6 +178,17 @@
                                                                    nzSize="small" class="mr-sm"></nz-avatar>
                                                     </ng-container>
                                                     <span class="approver-name">{{ task.assigneeUser?.name || '-' }}</span>
+
+                                                    <ng-container *ngIf="task.parentTask">
+                                                        <div>&nbsp;←&nbsp;</div>
+                                                        <ng-container *ngIf="task.parentTask.assigneeUser?.id">
+                                                            <nz-avatar [nzText]="task.parentTask.assigneeUser?.name?.substring(0,1)"
+                                                                       [ngStyle]="{backgroundColor: getAvatarColor(task.parentTask.assigneeUser?.name?.substring(0,1))}"
+                                                                       [nzSrc]="task.parentTask.assigneeUser.avatar"
+                                                                       nzSize="small" class="mr-sm"></nz-avatar>
+                                                        </ng-container>
+                                                        <span class="approver-name">{{ task.parentTask.assigneeUser?.name || '-' }}</span>
+                                                    </ng-container>
                                                 </div>
                                             </td>
                                             <td>{{ (task.taskType || '-')  | translate }}</td>

@@ -46,6 +46,7 @@ export interface FlowInstanceDataHistory {
 
 export interface FlowInstanceTask {
     id: number;
+    nodeId: number;
     assigneeUser: User;
     createTime: string;
     completedAt: string;
@@ -54,6 +55,7 @@ export interface FlowInstanceTask {
     comment: string;
     flowInstance: FlowInstance;
     signature: string;
+    parentTask: FlowInstanceTask
 }
 
 export interface User {
