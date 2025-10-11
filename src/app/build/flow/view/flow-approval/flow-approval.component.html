@@ -166,7 +166,7 @@
                                         </thead>
                                         <tbody>
                                         <tr *ngFor="let task of instanceTasks">
-                                            <td [rowSpan]="1">
+                                            <td [rowSpan]="task.nodeRowspan || 1" *ngIf="task.nodeId">
                                                 {{ task.nodeId }}
                                             </td>
                                             <td>
