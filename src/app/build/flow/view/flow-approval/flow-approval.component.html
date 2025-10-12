@@ -403,21 +403,23 @@
     <div *nzModalContent>
         <div class="modal-content">
             <ng-container *ngIf="nodeInfo?.prop?.requireSignature">
-                <p class="modal-description"><span style="color: #f00">*</span> 同意签名：</p>
-                <div style="width: 100%;height: 200px;position: relative;border: 1px solid #d9d9d9;border-radius: 2px">
-                    <ng-container *ngIf="approveSignature">
-                        <button nz-button nzType="default" (click)="approveSignature = null" nzShape="circle" style="position: absolute;right:16px;top: 16px">
-                            <span nz-icon nzType="clear" nzTheme="outline"></span>
+                <div style="margin-bottom: 16px">
+                    <p class="modal-description"><span style="color: #f00">*</span> 同意签名：</p>
+                    <div style="width: 100%;height: 200px;position: relative;border: 1px solid #d9d9d9;border-radius: 2px">
+                        <ng-container *ngIf="approveSignature">
+                            <button nz-button nzType="default" (click)="approveSignature = null" nzShape="circle" style="position: absolute;right:16px;top: 16px">
+                                <span nz-icon nzType="clear" nzTheme="outline"></span>
+                            </button>
+                            <img [src]="approveSignature" alt="" style="height: 200px;width: 100%">
+                        </ng-container>
+                        <button nz-button nzType="default" (click)="openSign()" nzShape="circle"
+                                style="position: absolute;;top: 42%;left: 50%;transform: translate(-50%);" *ngIf="!approveSignature">
+                            <span nz-icon nzType="edit" nzTheme="outline"></span>
                         </button>
-                        <img [src]="approveSignature" alt="" style="height: 200px;width: 100%">
-                    </ng-container>
-                    <button nz-button nzType="default" (click)="openSign()" nzShape="circle"
-                            style="position: absolute;;top: 42%;left: 50%;transform: translate(-50%);" *ngIf="!approveSignature">
-                        <span nz-icon nzType="edit" nzTheme="outline"></span>
-                    </button>
+                    </div>
                 </div>
             </ng-container>
-            <p class="modal-description" style="margin-top: 16px">
+            <p class="modal-description">
                 <span style="color: #f00" *ngIf="this.nodeInfo?.prop?.requireApprovalNote">*</span> 请填写同意原因：
             </p>
             <nz-input-group>
