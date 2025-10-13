@@ -3,10 +3,10 @@ import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
 import {R} from "@shared/model/api.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
-import {FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask} from "@flow/model/flow-instance.model";
+import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask} from "@flow/model/flow-instance.model";
 import {NodeRule} from "@flow/model/node.model";
 import {FlowConfig} from "@flow/model/flow.model";
-import {ApprovalQuery} from "@flow/model/fllw-approval.model";
+import {AddSignType, ApprovalQuery} from "@flow/model/fllw-approval.model";
 
 @Injectable({
     providedIn: 'root'
@@ -27,8 +27,8 @@ export class FlowInstanceApiService {
         });
     }
 
-    list(query: ApprovalQuery): Observable<R<FlowInstanceTask[]>> {
-        return this._http.post<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/approval/list", query)
+    list(query: ApprovalQuery): Observable<R<FlowInstance[]>> {
+        return this._http.post<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/list", query)
     }
 
     detail(instanceId: number): Observable<R<FlowInstance>> {
@@ -50,9 +50,16 @@ export class FlowInstanceApiService {
         })
     }
 
-    taskNodeInfo(instanceTaskId: number): Observable<R<NodeRule>> {
-        return this._http.get<R<NodeRule>>(RestPath.erupt + "/flow/instance/approval/task-node-info", {
-            instanceTaskId
+    currTask(instanceId: number, approvalView: ApprovalView): Observable<R<FlowInstanceTask>> {
+        return this._http.get<R<FlowInstanceTask>>(RestPath.erupt + "/flow/instance/curr-task", {
+            instanceId,
+            approvalView
+        })
+    }
+
+    taskNodeInfo(taskId: number): Observable<R<NodeRule>> {
+        return this._http.get<R<NodeRule>>(RestPath.erupt + "/flow/instance/task-node-info", {
+            taskId
         })
     }
 
@@ -127,10 +134,12 @@ export class FlowInstanceApiService {
         })
     }
 
-    addSign(instanceTaskId: number, addSignType: 'PRE_SIGN' | 'POST_SIGN', userId: number, comment: string): Observable<R<void>> {
+    addSign(instanceTaskId: number, addSignType: AddSignType, userIds: number[], comment: string): Observable<R<void>> {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/add-sign", null, {
             instanceTaskId,
-            comment
+            comment,
+            addSignType,
+            userIds
         })
     }
 

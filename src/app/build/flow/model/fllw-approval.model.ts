@@ -1,14 +1,13 @@
 import {FormAccessEnum} from "@flow/model/flow.model";
-
-export enum ApprovalQueryType {
-    TODO = "TODO",
-    DONE = "DONE",
-    CREATED = "CREATED",
-    CC = "CC"
-}
+import {ApprovalView} from "@flow/model/flow-instance.model";
 
 export class ApprovalQuery {
-    approvalQueryType: ApprovalQueryType;
+    approvalView: ApprovalView;
+}
+
+export enum AddSignType {
+    PRE_SIGN = "PRE_SIGN",
+    POST_SIGN = "POST_SIGN"
 }
 
 export enum ReviewMode {
