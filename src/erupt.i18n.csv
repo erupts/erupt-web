@@ -128,6 +128,9 @@ NOT_IN,不包含于,不包含於,Not contains,Ne contient pas,含まれない,�
 USER_APPROVAL,或签审批,或簽審批,Sequential Approval,Approbation Séquentielle,順次承認,순차 승인,Последовательное утверждение,Aprobación Secuencial,Sequentielle Genehmigung,Aprovação Sequencial,Persetujuan Berurutan,الموافقة التسلسلية
 USER_APPROVAL_PARALLEL,会签审批,會簽審批,Parallel Approval,Approbation Parallèle,並列承認,병렬 승인,Параллельное утверждение,Aprobación Paralela,Parallele Genehmigung,Aprovação Paralela,Persetujuan Paralel,الموافقة المتوازية
 CC,抄送,副本,CC,Cc,CC,참조,Копия,CC,CC,CC,CC,نسخة
+PRE_SIGN,前加签,前加簽,Pre-sign,Pré-signature,事前署名,사전 서명,Предварительная подпись,Firma previa,Vorunterschrift,Pré-assinatura,Tanda tangan awal,التوقيع المسبق
+POST_SIGN,后加签,後加簽,Post-sign,Post-signature,事後署名,사후 서명,Последующая подпись,Firma posterior,Nachunterschrift,Pós-assinatura,Tanda tangan akhir,التوقيع اللاحق
+
 PENDING,审批中,審批中,Pending,En attente,審査中,대기 중,На рассмотрении,Pendiente,Ausstehend,Pendente,Menunggu,قيد الانتظار
 FINISH,已完成,已完成,Finished,Terminé,完了,완료,Завершено,Finalizado,Abgeschlossen,Concluído,Selesai,منتهي
 REJECTED,已拒绝,已拒絕,Rejected,Rejeté,拒否,거부됨,Отклонено,Rechazado,Abgelehnt,Rejeitado,Ditolak,مرفوض

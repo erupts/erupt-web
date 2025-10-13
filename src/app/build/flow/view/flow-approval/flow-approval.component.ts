@@ -11,7 +11,7 @@ import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 import {SignaturePadComponent} from "../../../erupt/components/signature-pad/signature-pad.component";
 import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
-import {ApprovalQueryType} from "@flow/model/fllw-approval.model";
+import {AddSignType} from "@flow/model/fllw-approval.model";
 import {NzCodeEditorComponent} from "ng-zorro-antd/code-editor";
 
 
@@ -30,17 +30,22 @@ export class FlowApprovalComponent implements OnInit {
 
     todoCount: number = 0
 
-    // 调整为 FlowInstanceTask[] 类型
-    flowInstanceTask: FlowInstanceTask[] = [];
+    flowInstances: FlowInstance[] = [];
+
+    selectedInstance: FlowInstance;
+
 
     dataHistories: FlowInstanceDataHistory[] = [];
 
-    selectedInstanceTask: FlowInstanceTask;
-
     // 新增属性存储接口返回的数据
     instanceDetail: FlowInstance = null;
+
     instanceTasks: FlowInstanceTask[] = [];
+
+
     nodeInfo: NodeRule | null = null;
+    currTask: FlowInstanceTask = null;
+
     comments: FlowInstanceComment[] = [];
 
     // 评论相关
@@ -58,19 +63,15 @@ export class FlowApprovalComponent implements OnInit {
     returnModalVisible = false;
 
     // 表单数据
-    approveReason = '';
     approveSignature: string = null;
 
-    rejectReason = '';
-    ccReason = '';
+    reason: string;
+
     ccUsers: number[] = [];
     transferUser: number | null = null;
-    transferReason = '';
     addSignUsers: number[] = [];
-    addSignReason = '';
-    addSignType: 'before' | 'after' = 'before';
+    addSignType: AddSignType = AddSignType.PRE_SIGN;
     returnNode: number | null = null;
-    returnReason = '';
 
     // 可用用户列表（用于抄送选择）
     availableUsers: any[] = [];
@@ -93,10 +94,10 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     // 调整参数类型为 FlowInstanceTask
-    selectItem(task: FlowInstanceTask) {
-        this.selectedInstanceTask = task;
-        if (task?.flowInstance?.id) {
-            this.loadInstanceDetail(task);
+    selectItem(flow: FlowInstance) {
+        this.selectedInstance = flow;
+        if (flow?.id) {
+            this.loadInstanceDetail(flow);
         }
     }
 
@@ -115,31 +116,19 @@ export class FlowApprovalComponent implements OnInit {
 
     // 同意审批
     approve() {
-        if (!this.selectedInstanceTask) {
-            this.message.warning('请先选择一个审批项目');
-            return;
-        }
-        this.approveReason = '';
+        this.reason = null;
         this.approveModalVisible = true;
     }
 
     // 拒绝审批
     reject() {
-        if (!this.selectedInstanceTask) {
-            this.message.warning('请先选择一个审批项目');
-            return;
-        }
-        this.rejectReason = '';
+        this.reason = null;
         this.rejectModalVisible = true;
     }
 
     // 抄送审批
     cc() {
-        if (!this.selectedInstanceTask) {
-            this.message.warning('请先选择一个审批项目');
-            return;
-        }
-        this.ccReason = '';
+        this.reason = null;
         this.ccUsers = [];
         this.loadAvailableUsers();
         this.ccModalVisible = true;
@@ -147,18 +136,18 @@ export class FlowApprovalComponent implements OnInit {
 
     // 提交同意
     submitApprove() {
-        if (this.nodeInfo?.prop?.requireApprovalNote && !this.approveReason.trim()) {
+        if (this.nodeInfo?.prop?.requireApprovalNote && !this.reason.trim()) {
             this.message.warning('请填写同意原因');
             return;
         }
         this.approveModalVisible = true;
-        this.flowInstanceApiService.agree(this.selectedInstanceTask.id, this.approveReason, this.approveSignature).subscribe(res => {
+        this.flowInstanceApiService.agree(this.currTask.id, this.reason, this.approveSignature).subscribe(res => {
             this.approveModalVisible = false;
-            this.approveReason = '';
+            this.reason = null;
             this.message.success('审批已同意');
             // 刷新数据
-            if (this.selectedInstanceTask?.flowInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstanceTask);
+            if (this.selectedInstance?.id) {
+                this.loadInstanceDetail(this.selectedInstance);
             }
         })
 
@@ -166,18 +155,18 @@ export class FlowApprovalComponent implements OnInit {
 
     // 提交拒绝
     submitReject() {
-        if (!this.rejectReason.trim()) {
+        if (!this.reason.trim()) {
             this.message.warning('请填写拒绝原因');
             return;
         }
         this.approveModalVisible = true;
-        this.flowInstanceApiService.refuse(this.selectedInstanceTask.id, this.approveReason).subscribe(res => {
+        this.flowInstanceApiService.refuse(this.currTask.id, this.reason).subscribe(res => {
             this.rejectModalVisible = false;
-            this.rejectReason = '';
+            this.reason = null;
             this.message.success('审批已拒绝');
             // 刷新数据
-            if (this.selectedInstanceTask?.flowInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstanceTask);
+            if (this.selectedInstance?.id) {
+                this.loadInstanceDetail(this.selectedInstance);
             }
         })
     }
@@ -189,19 +178,19 @@ export class FlowApprovalComponent implements OnInit {
             return;
         }
 
-        if (!this.ccReason.trim()) {
+        if (!this.reason.trim()) {
             this.message.warning('请填写抄送说明');
             return;
         }
 
-        this.flowInstanceApiService.cc(this.selectedInstanceTask.id, this.ccUsers, this.ccReason).subscribe(res => {
-            this.ccReason = '';
+        this.flowInstanceApiService.cc(this.currTask.id, this.ccUsers, this.reason).subscribe(res => {
+            this.reason = null;
             this.ccUsers = [];
             this.ccModalVisible = false;
             this.message.success('抄送成功');
             // 刷新数据
-            if (this.selectedInstanceTask?.flowInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstanceTask);
+            if (this.selectedInstance?.id) {
+                this.loadInstanceDetail(this.selectedInstance);
             }
         })
     }
@@ -231,17 +220,6 @@ export class FlowApprovalComponent implements OnInit {
         });
     }
 
-    // 加载可用退回节点列表
-    loadAvailableReturnNodes() {
-        // TODO: 调用获取可退回节点接口
-        // 这里先模拟一些节点数据
-        this.availableReturnNodes = [
-            {id: 1, name: '部门经理审批'},
-            {id: 2, name: '财务审核'},
-            {id: 3, name: '总经理审批'}
-        ];
-    }
-
     // 提交转交
     submitTransfer() {
         if (!this.transferUser) {
@@ -249,22 +227,22 @@ export class FlowApprovalComponent implements OnInit {
             return;
         }
 
-        if (!this.transferReason.trim()) {
+        if (!this.reason.trim()) {
             this.message.warning('请填写转交说明');
             return;
         }
 
-        this.flowInstanceApiService.transfer(this.selectedInstanceTask.id, this.transferUser, this.transferReason).subscribe(res => {
+        this.flowInstanceApiService.transfer(this.currTask.id, this.transferUser, this.reason).subscribe(res => {
             this.transferModalVisible = false;
             // 模拟接口调用
             this.message.success('转交成功');
             this.transferModalVisible = false;
-            this.transferReason = '';
+            this.reason = null;
             this.transferUser = null;
 
             // 刷新数据
-            if (this.selectedInstanceTask?.flowInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstanceTask);
+            if (this.selectedInstance?.id) {
+                this.loadInstanceDetail(this.selectedInstance);
             }
         })
     }
@@ -281,30 +259,19 @@ export class FlowApprovalComponent implements OnInit {
             return;
         }
 
-        if (!this.addSignReason.trim()) {
+        if (!this.reason.trim()) {
             this.message.warning('请填写加签说明');
             return;
         }
 
-        // TODO: 调用加签接口
-        console.log('加签审批:', {
-            instanceTaskId: this.selectedInstanceTask?.flowInstance?.id,
-            type: this.addSignType,
-            users: this.addSignUsers,
-            reason: this.addSignReason
-        });
+        this.flowInstanceApiService.addSign(this.currTask.id, this.addSignType, this.addSignUsers, this.reason).subscribe(res => {
+            this.message.success('加签成功');
+            this.addSignModalVisible = false;
+            if (this.selectedInstance?.id) {
+                this.loadInstanceDetail(this.selectedInstance);
+            }
+        })
 
-        // 模拟接口调用
-        this.message.success('加签成功');
-        this.addSignModalVisible = false;
-        this.addSignReason = '';
-        this.addSignUsers = [];
-        this.addSignType = 'before';
-
-        // 刷新数据
-        if (this.selectedInstanceTask?.flowInstance?.id) {
-            this.loadInstanceDetail(this.selectedInstanceTask);
-        }
     }
 
     // 提交退回
@@ -314,79 +281,65 @@ export class FlowApprovalComponent implements OnInit {
             return;
         }
 
-        if (!this.returnReason.trim()) {
+        if (!this.reason.trim()) {
             this.message.warning('请填写退回说明');
             return;
         }
 
-        // TODO: 调用退回接口
         console.log('退回审批:', {
-            instanceTaskId: this.selectedInstanceTask?.flowInstance?.id,
+            instanceTaskId: this.selectedInstance?.id,
             nodeId: this.returnNode,
-            reason: this.returnReason
+            reason: this.reason
         });
 
         // 模拟接口调用
         this.message.success('退回成功');
         this.returnModalVisible = false;
-        this.returnReason = '';
+        this.reason = null;
         this.returnNode = null;
 
         // 刷新数据
-        if (this.selectedInstanceTask?.flowInstance?.id) {
-            this.loadInstanceDetail(this.selectedInstanceTask);
+        if (this.selectedInstance?.id) {
+            this.loadInstanceDetail(this.selectedInstance);
         }
     }
 
     // 转交审批
     transfer() {
-        if (!this.selectedInstanceTask) {
-            this.message.warning('请先选择一个审批项目');
-            return;
-        }
         this.transferUser = null;
-        this.transferReason = '';
+        this.reason = null;
         this.loadAvailableUsers();
         this.transferModalVisible = true;
     }
 
     // 加签审批
     addSigner() {
-        if (!this.selectedInstanceTask) {
-            this.message.warning('请先选择一个审批项目');
-            return;
-        }
         this.addSignUsers = [];
-        this.addSignReason = '';
-        this.addSignType = 'before';
+        this.reason = null;
+        this.addSignType = AddSignType.PRE_SIGN;
         this.loadAvailableUsers();
         this.addSignModalVisible = true;
     }
 
     // 退回审批
     return() {
-        if (!this.selectedInstanceTask) {
-            this.message.warning('请先选择一个审批项目');
-            return;
-        }
         this.returnNode = null;
-        this.returnReason = '';
-        this.loadAvailableReturnNodes();
+        this.reason = null;
         this.returnModalVisible = true;
     }
 
     modify() {
         let data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
-        this.flowInstanceApiService.updateData(this.selectedInstanceTask.flowInstance.id, data).subscribe({
+        this.flowInstanceApiService.updateData(this.selectedInstance.id, data).subscribe({
             next: (data) => {
                 this.message.success('修改成功');
-                this.getDataHistories(this.selectedInstanceTask.flowInstance.id);
+                this.getDataHistories(this.selectedInstance.id);
             }
         })
     }
 
     getDataHistories(instanceId: number) {
-        this.flowInstanceApiService.dataHistories(this.selectedInstanceTask.flowInstance.id).subscribe({
+        this.flowInstanceApiService.dataHistories(instanceId).subscribe({
             next: (data) => {
                 this.dataHistories = data.data;
             }
@@ -394,25 +347,21 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     withdraw() {
-        this.flowInstanceApiService.withdraw(this.selectedInstanceTask.flowInstance.id, '撤回').subscribe({
+        this.flowInstanceApiService.withdraw(this.selectedInstance.id, '撤回').subscribe({
             next: (data) => {
                 this.message.success('撤回成功');
-                this.loadInstanceDetail(this.selectedInstanceTask);
+                this.loadInstanceDetail(this.selectedInstance);
             }
         })
     }
 
     urge() {
-        this.flowInstanceApiService.urge(this.selectedInstanceTask.flowInstance.id, '催办').subscribe({
+        this.flowInstanceApiService.urge(this.selectedInstance.id, '催办').subscribe({
             next: (data) => {
                 this.message.success('催办成功');
-                this.loadInstanceDetail(this.selectedInstanceTask);
+                this.loadInstanceDetail(this.selectedInstance);
             }
         })
-    }
-
-    resubmit() {
-        this.message.info('再次提交功能');
     }
 
 
@@ -420,9 +369,6 @@ export class FlowApprovalComponent implements OnInit {
         if (!no) return;
         navigator.clipboard.writeText(no).then(() => {
             this.message.success('编号已复制到剪贴板');
-        }).catch(err => {
-            this.message.error('复制失败，请手动复制');
-            console.error('复制失败:', err);
         });
     }
 
@@ -432,66 +378,37 @@ export class FlowApprovalComponent implements OnInit {
 
     onSwitchView(view: ApprovalView) {
         this.selectedView = view;
-        this.selectedInstanceTask = null;
+        this.selectedInstance = null;
         // 清空详情数据
         this.instanceDetail = null;
         this.instanceTasks = [];
         this.nodeInfo = null;
         this.comments = [];
+        this.loadFlows();
+    }
 
-        switch (view) {
-            case ApprovalView.TODO:
-                this.flowInstanceApiService.list({
-                    approvalQueryType: ApprovalQueryType.TODO,
-                }).subscribe({
-                    next: (data) => {
-                        this.flowInstanceTask = data.data;
-                        this.selectedInstanceTask = this.flowInstanceTask[0] || null;
-                        this.selectedInstanceTask && this.selectItem(this.selectedInstanceTask);
-                        this.todoCount = this.flowInstanceTask.length;
-                    }
-                });
-                break;
-            case ApprovalView.DONE:
-                this.flowInstanceApiService.list({
-                    approvalQueryType: ApprovalQueryType.DONE,
-                }).subscribe({
-                    next: (data) => {
-                        this.flowInstanceTask = data.data;
-                        this.selectedInstanceTask = this.flowInstanceTask[0] || null;
-                        this.selectedInstanceTask && this.selectItem(this.selectedInstanceTask);
-                    }
-                });
-                break;
-            case ApprovalView.CC:
-                this.flowInstanceApiService.list({
-                    approvalQueryType: ApprovalQueryType.CC,
-                }).subscribe({
-                    next: (data) => {
-                        this.flowInstanceTask = data.data;
-                        this.selectedInstanceTask = this.flowInstanceTask[0] || null;
-                        this.selectedInstanceTask && this.selectItem(this.selectedInstanceTask);
-                    }
-                });
-                break;
-            case ApprovalView.CREATED:
-                this.flowInstanceApiService.list({
-                    approvalQueryType: ApprovalQueryType.CREATED,
-                }).subscribe({
-                    next: (data) => {
-                        this.flowInstanceTask = data.data;
-                        this.selectedInstanceTask = this.flowInstanceTask[0] || null;
-                        this.selectedInstanceTask && this.selectItem(this.selectedInstanceTask);
-                    }
-                });
-                break;
-        }
+    loadFlows(selectFirst: boolean = true) {
+        this.flowInstanceApiService.list({
+            approvalView: this.selectedView,
+        }).subscribe({
+            next: (data) => {
+                this.flowInstances = data.data;
+                if (selectFirst) {
+                    this.selectedInstance = this.flowInstances[0] || null;
+                    this.selectedInstance && this.selectItem(this.selectedInstance);
+                }
+                if (this.selectedView == ApprovalView.TODO) {
+                    this.todoCount = this.flowInstances.length;
+                }
+            }
+        });
     }
 
     // 新增方法：加载实例详情
-    loadInstanceDetail(task: FlowInstanceTask) {
+    loadInstanceDetail(flow: FlowInstance) {
+        this.loadFlows(false);
         // 加载实例详情
-        this.flowInstanceApiService.detail(task.flowInstance.id).subscribe({
+        this.flowInstanceApiService.detail(flow.id).subscribe({
             next: (data) => {
                 this.instanceDetail = data.data;
                 this.flowApiService.eruptFlowBuild(this.instanceDetail.erupt).subscribe({
@@ -500,7 +417,7 @@ export class FlowApprovalComponent implements OnInit {
                         setTimeout(() => {
                             this.dataHandlerService.initErupt(res.data)
                             this.eruptBuild = res.data;
-                            this.flowInstanceApiService.eruptData(task.flowInstance.id).subscribe({
+                            this.flowInstanceApiService.eruptData(flow.id).subscribe({
                                 next: res => {
                                     this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
                                 }
@@ -512,7 +429,7 @@ export class FlowApprovalComponent implements OnInit {
         });
 
         // 加载任务列表
-        this.flowInstanceApiService.tasks(task.flowInstance.id).subscribe({
+        this.flowInstanceApiService.tasks(flow.id).subscribe({
             next: (data) => {
                 const arr = data.data || [];
                 for (let i = 0; i < arr.length;) {
@@ -535,19 +452,22 @@ export class FlowApprovalComponent implements OnInit {
         });
 
         // 加载评论列表
-        this.flowInstanceApiService.commentList(task.flowInstance.id).subscribe({
+        this.flowInstanceApiService.commentList(flow.id).subscribe({
             next: (data) => {
                 this.comments = data.data || [];
             }
         });
 
-        this.getDataHistories(task.flowInstance.id);
-
-        // 加载节点信息
-        if (task.id) {
-            this.flowInstanceApiService.taskNodeInfo(task.id).subscribe({
-                next: (data) => {
-                    this.nodeInfo = data.data;
+        this.getDataHistories(flow.id);
+        if (this.selectedView == ApprovalView.TODO) {
+            this.flowInstanceApiService.currTask(flow.id, this.selectedView).subscribe({
+                next: (res) => {
+                    this.currTask = res.data;
+                    this.flowInstanceApiService.taskNodeInfo(res.data.id).subscribe({
+                        next: (data) => {
+                            this.nodeInfo = data.data;
+                        }
+                    });
                 }
             });
         }
@@ -555,18 +475,18 @@ export class FlowApprovalComponent implements OnInit {
 
     // 新增方法：提交评论
     submitComment() {
-        if (!this.newComment.trim() || !this.selectedInstanceTask?.flowInstance?.id) {
+        if (!this.newComment.trim() || !this.selectedInstance?.id) {
             return;
         }
 
         this.isSubmittingComment = true;
-        this.flowInstanceApiService.commentCreate(Number(this.selectedInstanceTask.flowInstance.id), this.newComment).subscribe({
+        this.flowInstanceApiService.commentCreate(Number(this.selectedInstance.id), this.newComment).subscribe({
             next: () => {
                 this.message.success('评论提交成功');
                 this.newComment = '';
                 // 重新加载评论列表
-                if (this.selectedInstanceTask?.flowInstance?.id) {
-                    this.flowInstanceApiService.commentList(Number(this.selectedInstanceTask.flowInstance.id)).subscribe(data => {
+                if (this.selectedInstance?.id) {
+                    this.flowInstanceApiService.commentList(Number(this.selectedInstance.id)).subscribe(data => {
                         this.comments = data.data || [];
                     });
                 }
@@ -596,13 +516,13 @@ export class FlowApprovalComponent implements OnInit {
 
     // 新增方法：查看流程图
     viewFlow() {
-        if (this.selectedInstanceTask?.flowInstance?.id) {
+        if (this.selectedInstance?.id) {
             this.drawerService.create({
                 nzTitle: '查看流程',
                 nzContent: EruptFlowComponent,
                 nzContentParams: {
                     eruptBuild: this.eruptBuild,
-                    modelValue: this.selectedInstanceTask?.flowInstance.rule,
+                    modelValue: this.selectedInstance.rule,
                     readonly: true
                 },
                 nzBodyStyle: {
@@ -637,4 +557,5 @@ export class FlowApprovalComponent implements OnInit {
     protected readonly NodeType = NodeType;
 
     protected readonly Object = Object;
+    protected readonly AddSignType = AddSignType;
 }
