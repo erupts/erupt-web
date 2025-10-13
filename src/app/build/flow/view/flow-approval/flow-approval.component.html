@@ -41,14 +41,13 @@
         <!-- 中间列表区域 -->
         <div class="list-section">
             <div class="list-header">
-                <div class="time-filter">
-                    <span>所有时间</span>
-                    <span nz-icon nzType="down" nzTheme="outline"></span>
-                </div>
-                <div class="separator"></div>
-                <button nz-button nzType="text" nzSize="small">
-                    <span nz-icon nzType="more" nzTheme="outline"></span>
-                </button>
+                <nz-select [(ngModel)]="selectFlow" (ngModelChange)="changeFlow()"
+                           style="width: 100%" [nzPlaceHolder]="'流程筛选'" nzBorderless nzAllowClear>
+                    <ng-container *ngFor="let flow of uniqFlowInstances(flowInstances)">
+                        <nz-option [nzValue]="flow.eruptFlowConfig.id" [nzLabel]="flow.eruptFlowConfig.name">
+                        </nz-option>
+                    </ng-container>
+                </nz-select>
             </div>
 
             <div class="approval-list">
@@ -56,7 +55,7 @@
                     class="approval-item"
                     *ngFor="let item of flowInstances"
                     [class.active]="item?.id === selectedInstance?.id"
-                    (click)="selectItem(item)"
+                    (click)="selectItem(item);"
                 >
                     <div class="item-header">
                         <h3 class="item-title">

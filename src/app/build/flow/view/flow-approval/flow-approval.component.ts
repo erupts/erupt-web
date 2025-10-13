@@ -32,6 +32,8 @@ export class FlowApprovalComponent implements OnInit {
 
     flowInstances: FlowInstance[] = [];
 
+    selectFlow: number = null;
+
     selectedInstance: FlowInstance;
 
 
@@ -41,7 +43,6 @@ export class FlowApprovalComponent implements OnInit {
     instanceDetail: FlowInstance = null;
 
     instanceTasks: FlowInstanceTask[] = [];
-
 
     nodeInfo: NodeRule | null = null;
     currTask: FlowInstanceTask = null;
@@ -54,6 +55,7 @@ export class FlowApprovalComponent implements OnInit {
 
     eruptBuild: EruptBuildModel
 
+
     // 弹窗相关属性
     approveModalVisible = false;
     rejectModalVisible = false;
@@ -62,17 +64,13 @@ export class FlowApprovalComponent implements OnInit {
     addSignModalVisible = false;
     returnModalVisible = false;
 
-    // 表单数据
-    approveSignature: string = null;
-
     reason: string;
-
+    approveSignature: string = null;
     ccUsers: number[] = [];
     transferUser: number | null = null;
     addSignUsers: number[] = [];
     addSignType: AddSignType = AddSignType.PRE_SIGN;
     returnNode: number | null = null;
-
     // 可用用户列表（用于抄送选择）
     availableUsers: any[] = [];
     // 可用退回节点列表
@@ -93,6 +91,97 @@ export class FlowApprovalComponent implements OnInit {
         this.onSwitchView(ApprovalView.TODO);
     }
 
+    // 新增方法：加载实例详情
+    loadInstanceDetail(flow: FlowInstance) {
+        this.loadFlows(false);
+        // 加载实例详情
+        this.flowInstanceApiService.detail(flow.id).subscribe({
+            next: (data) => {
+                this.instanceDetail = data.data;
+                this.flowApiService.eruptFlowBuild(this.instanceDetail.erupt).subscribe({
+                    next: res => {
+                        this.eruptBuild = null;
+                        setTimeout(() => {
+                            this.dataHandlerService.initErupt(res.data)
+                            this.eruptBuild = res.data;
+                            this.flowInstanceApiService.eruptData(flow.id).subscribe({
+                                next: res => {
+                                    this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
+                                }
+                            })
+                        }, 50)
+                    }
+                })
+            }
+        });
+
+        // 加载任务列表
+        this.flowInstanceApiService.tasks(flow.id).subscribe({
+            next: (data) => {
+                const arr = data.data || [];
+                for (let i = 0; i < arr.length;) {
+                    if (!arr[i].nodeId) {
+                        i++;
+                        continue;
+                    }
+                    let span = 1;
+                    while (i + span < arr.length && arr[i + span].nodeId === arr[i].nodeId) {
+                        span++;
+                    }
+                    if (span > 1) {
+                        arr[i].nodeRowspan = span;
+                        for (let j = 1; j < span; j++) arr[i + j].nodeId = null;
+                    }
+                    i += span;
+                }
+                this.instanceTasks = arr;
+            }
+        });
+
+        // 加载评论列表
+        this.flowInstanceApiService.commentList(flow.id).subscribe({
+            next: (data) => {
+                this.comments = data.data || [];
+            }
+        });
+
+        this.getDataHistories(flow.id);
+        if (this.selectedView == ApprovalView.TODO) {
+            this.flowInstanceApiService.currTask(flow.id, this.selectedView).subscribe({
+                next: (res) => {
+                    this.currTask = res.data;
+                    this.flowInstanceApiService.taskNodeInfo(res.data.id).subscribe({
+                        next: (data) => {
+                            this.nodeInfo = data.data;
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    loadFlows(selectFirst: boolean = true) {
+        this.flowInstanceApiService.list({
+            approvalView: this.selectedView,
+            flowId: this.selectFlow
+        }).subscribe({
+            next: (data) => {
+                this.flowInstances = data.data;
+                if (selectFirst) {
+                    this.selectedInstance = this.flowInstances[0] || null;
+                    this.selectedInstance && this.selectItem(this.selectedInstance);
+                }
+                if (this.selectedView == ApprovalView.TODO) {
+                    this.todoCount = this.flowInstances.length;
+                }
+            }
+        });
+    }
+
+    changeFlow() {
+        this.loadFlows(true)
+    }
+
     // 调整参数类型为 FlowInstanceTask
     selectItem(flow: FlowInstance) {
         this.selectedInstance = flow;
@@ -100,6 +189,10 @@ export class FlowApprovalComponent implements OnInit {
             this.loadInstanceDetail(flow);
         }
     }
+
+    uniqFlowInstances = (arr: FlowInstance[]) => [
+        ...new Map(arr.map(item => [item.eruptFlowConfig.id, item])).values()
+    ];
 
     // 新增方法：获取任务状态文本
 
@@ -377,6 +470,7 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     onSwitchView(view: ApprovalView) {
+        this.selectFlow = null;
         this.selectedView = view;
         this.selectedInstance = null;
         // 清空详情数据
@@ -385,92 +479,6 @@ export class FlowApprovalComponent implements OnInit {
         this.nodeInfo = null;
         this.comments = [];
         this.loadFlows();
-    }
-
-    loadFlows(selectFirst: boolean = true) {
-        this.flowInstanceApiService.list({
-            approvalView: this.selectedView,
-        }).subscribe({
-            next: (data) => {
-                this.flowInstances = data.data;
-                if (selectFirst) {
-                    this.selectedInstance = this.flowInstances[0] || null;
-                    this.selectedInstance && this.selectItem(this.selectedInstance);
-                }
-                if (this.selectedView == ApprovalView.TODO) {
-                    this.todoCount = this.flowInstances.length;
-                }
-            }
-        });
-    }
-
-    // 新增方法：加载实例详情
-    loadInstanceDetail(flow: FlowInstance) {
-        this.loadFlows(false);
-        // 加载实例详情
-        this.flowInstanceApiService.detail(flow.id).subscribe({
-            next: (data) => {
-                this.instanceDetail = data.data;
-                this.flowApiService.eruptFlowBuild(this.instanceDetail.erupt).subscribe({
-                    next: res => {
-                        this.eruptBuild = null;
-                        setTimeout(() => {
-                            this.dataHandlerService.initErupt(res.data)
-                            this.eruptBuild = res.data;
-                            this.flowInstanceApiService.eruptData(flow.id).subscribe({
-                                next: res => {
-                                    this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
-                                }
-                            })
-                        }, 50)
-                    }
-                })
-            }
-        });
-
-        // 加载任务列表
-        this.flowInstanceApiService.tasks(flow.id).subscribe({
-            next: (data) => {
-                const arr = data.data || [];
-                for (let i = 0; i < arr.length;) {
-                    if (!arr[i].nodeId) {
-                        i++;
-                        continue;
-                    }
-                    let span = 1;
-                    while (i + span < arr.length && arr[i + span].nodeId === arr[i].nodeId) {
-                        span++;
-                    }
-                    if (span > 1) {
-                        arr[i].nodeRowspan = span;
-                        for (let j = 1; j < span; j++) arr[i + j].nodeId = null;
-                    }
-                    i += span;
-                }
-                this.instanceTasks = arr;
-            }
-        });
-
-        // 加载评论列表
-        this.flowInstanceApiService.commentList(flow.id).subscribe({
-            next: (data) => {
-                this.comments = data.data || [];
-            }
-        });
-
-        this.getDataHistories(flow.id);
-        if (this.selectedView == ApprovalView.TODO) {
-            this.flowInstanceApiService.currTask(flow.id, this.selectedView).subscribe({
-                next: (res) => {
-                    this.currTask = res.data;
-                    this.flowInstanceApiService.taskNodeInfo(res.data.id).subscribe({
-                        next: (data) => {
-                            this.nodeInfo = data.data;
-                        }
-                    });
-                }
-            });
-        }
     }
 
     // 新增方法：提交评论
