@@ -23,5 +23,9 @@ export class FlowUpmsApiService {
         return this._http.get<R<KV<number, string>[]>>(RestPath.erupt + "/flow/upms/users")
     }
 
+    org(): Observable<R<KV<number, string>[]>> {
+        return this._http.get<R<KV<number, string>[]>>(RestPath.erupt + "/flow/upms/orgs")
+    }
+
 
 }
