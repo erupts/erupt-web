@@ -3,8 +3,7 @@
         <span nz-tooltip [nzTooltipTitle]="modelValue.error" nz-icon nzType="warning" nzTheme="twotone" [nzTwotoneColor]="'#FF4D4F'" class="node-err-tip"></span>
     </ng-container>
 
-    <div class="p-node-body"
-         [style.--shadowColor]="color">
+    <div class="p-node-body" [style.--shadowColor]="color" [ngClass]="progress?.[modelValue.id]">
 
         <div class="p-node-move" (click)="onMoveL()">
             <span *ngIf="!readonly && moveLn && !isDefault" nz-icon nzType="left"></span>

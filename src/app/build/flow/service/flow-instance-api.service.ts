@@ -3,7 +3,7 @@ import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
 import {R} from "@shared/model/api.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
-import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask} from "@flow/model/flow-instance.model";
+import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask, FlowTurn} from "@flow/model/flow-instance.model";
 import {NodeRule} from "@flow/model/node.model";
 import {FlowConfig} from "@flow/model/flow.model";
 import {AddSignType, ApprovalQuery} from "@flow/model/fllw-approval.model";
@@ -15,6 +15,12 @@ export class FlowInstanceApiService {
 
     constructor(private _http: _HttpClient) {
 
+    }
+
+    progress(instanceId: number) {
+        return this._http.get<R<Record<string, FlowTurn>>>(RestPath.erupt + "/flow/instance/progress", {
+            instanceId
+        })
     }
 
     userFlows(): Observable<R<FlowConfig[]>> {

@@ -1,6 +1,6 @@
 <div style="position: relative">
     <div style="display: flex;justify-content: center;">
-        <div title="网关汇聚">
+        <div title="网关汇聚" [ngClass]="progress?.[modelValue.id]">
             <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
                 <path fill="#d9d9d9"
                       d="M537.6 409.6L537.6 307.2 896 307.2 896 0l-51.2 0 0 256.00000001-307.2-1e-8L537.6 51.2l-51.2 0 0 204.8-307.2 1e-8L179.2 0l-51.2 0 0 307.2 358.4 0 0 102.4-102.4 0 128 204.8 128-204.8-102.4 0z m153.6 563.2l0-256c0-28.16-23.04-51.2-51.2-51.2l-256 0c-28.16 0-51.2 23.04-51.2 51.2l0 256c0 28.16 23.04 51.2 51.2 51.2L640 1024c28.16 0 51.2-23.04 51.2-51.2z"
@@ -9,6 +9,7 @@
         </div>
     </div>
     <erupt-node
+        [progress]="progress"
         [eruptBuild]="eruptBuild"
         [readonly]="readonly"
         [class]="{'p-branch-end': branch.length === index + 1}"

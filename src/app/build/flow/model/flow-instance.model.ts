@@ -8,6 +8,15 @@ export enum ApprovalView {
     CREATED = 'CREATED'
 }
 
+export enum FlowTurn {
+    NEXT = "NEXT",
+    WAIT = "WAIT",
+    WAIT_API_TRIGGER = "WAIT_API_TRIGGER",
+    ERROR = "ERROR",
+    REENTRY = "REENTRY",
+    END = "END"
+}
+
 export interface FlowInstance {
     id: number;
     no: string;

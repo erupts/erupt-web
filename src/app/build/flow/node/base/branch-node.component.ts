@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewC
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {NodeRule, NodeType} from "@flow/model/node.model";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
     selector: 'app-branch-node',
@@ -26,6 +27,8 @@ export class BranchNodeComponent implements AfterViewInit {
     @Input() isDefault = false;
     @Input() placeholder = '请设置';
     @Input() desc = '';
+
+    @Input() progress: Record<string, FlowTurn>;
 
     @Output() modelValueChange = new EventEmitter<NodeRule>();
     @Output() select = new EventEmitter<void>();

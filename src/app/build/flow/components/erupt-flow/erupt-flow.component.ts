@@ -16,6 +16,7 @@ import {StartNodeComponent} from "@flow/node/start/start-node.component";
 import {NodeRule} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {EndNodeComponent} from "@flow/node/end/end-node.component";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
     selector: 'erupt-flow',
@@ -33,6 +34,8 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
     @Output() modelValueChange = new EventEmitter<NodeRule[]>();
 
     @Output() select = new EventEmitter<any>();
+
+    @Input() progress: Record<string, FlowTurn>
 
     @ViewChild('canvasContainer') canvasContainer: ElementRef;
 

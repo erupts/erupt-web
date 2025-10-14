@@ -6,6 +6,7 @@ import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {EruptSearchModel} from "../../../erupt/model/erupt-search.model";
 import {SmartSearchComponent} from "../../../erupt/components/smart-search/smart-search.component";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 export enum GatewayType {
     EXCLUSIVE = 'EXCLUSIVE',
@@ -43,6 +44,8 @@ export class GatewayNodeComponent extends ANode implements OnInit {
     @Output() moveR = new EventEmitter<void>();
 
     @Input() gatewayNode: GatewayNode = {} as GatewayNode;
+
+    @Input() progress: Record<string, FlowTurn>;
 
     @ViewChild(SmartSearchComponent, {static: false})
     smartSearchComponent!: SmartSearchComponent;

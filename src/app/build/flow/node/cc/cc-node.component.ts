@@ -5,6 +5,7 @@ import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {CcNode, ReviewMode} from "@flow/model/fllw-approval.model";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
     selector: 'app-cc-node',
@@ -17,6 +18,8 @@ export class CcNodeComponent extends ANode implements OnInit {
     @Input() modelValue: NodeRule;
     @Input() branch: any[] = [];
     @Input() index = 0;
+    @Input() progress: Record<string, FlowTurn>;
+
     @Output() modelValueChange = new EventEmitter<any>();
     @Output() select = new EventEmitter<any>();
     @Output() delete = new EventEmitter<any>();
