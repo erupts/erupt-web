@@ -7,6 +7,7 @@
     (insertNode)="onInsertNode($event)"
     (insertFlexNode)="onInsertFlexNode($event)"
     (saveProp)="onSaveProp()"
+    [progress]="progress"
     (delete)="onDelete()">
     <div config>
         <erupt-flow-form *ngIf="flexErupt" [eruptBuild]="flexErupt" [initValue]="false" [readonly]="false"/>

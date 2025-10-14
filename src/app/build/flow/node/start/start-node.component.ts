@@ -6,6 +6,7 @@ import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {StartNode} from "@flow/model/fllw-approval.model";
 import {FormAccessEnum} from "@flow/model/flow.model";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
     selector: 'app-start-node',
@@ -19,6 +20,8 @@ export class StartNodeComponent extends ANode implements OnInit {
     @Input() eruptBuild: EruptBuildModel;
     @Input() branch: any[] = [];
     @Input() index = 0;
+    @Input() progress: Record<string, FlowTurn>;
+
     @Output() modelChange = new EventEmitter<any>();
     @Output() select = new EventEmitter<any>();
     @Output() delete = new EventEmitter<any>();

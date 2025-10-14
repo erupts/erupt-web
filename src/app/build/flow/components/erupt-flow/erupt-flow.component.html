@@ -22,6 +22,7 @@
                     [eruptBuild]="eruptBuild"
                     [node]="node"
                     [branch]="modelValue"
+                    [progress]="progress"
                     [index]="i"
                     (nodeChange)="modelValue[i] = $event; modelValueChange.emit(modelValue)"
                     (select)="selectNode($event)">

@@ -8,6 +8,7 @@ import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlowDataService} from "@flow/service/flow-data.service";
 import {FormSize} from "../../../erupt/model/erupt.enum";
 import {DataHandlerService} from "../../../erupt/service/data-handler.service";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
     selector: 'erupt-flex-node',
@@ -25,6 +26,8 @@ export class FlexNodeComponent extends ANode implements OnInit {
     @Output() select = new EventEmitter<any>();
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
+
+    @Input() progress: Record<string, FlowTurn>;
 
     flexErupt: EruptBuildModel;
 

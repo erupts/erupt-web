@@ -5,6 +5,7 @@ import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {ApprovalStrategy, ApproveNode, ReviewMode} from "@flow/model/fllw-approval.model";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
     selector: 'app-approval-node',
@@ -22,6 +23,8 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
     @Output() select = new EventEmitter<any>();
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
+
+    @Input() progress: Record<string, FlowTurn>;
 
     approveNode: ApproveNode = new ApproveNode();
 

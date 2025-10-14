@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewC
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
     selector: 'erupt-node',
@@ -19,6 +20,8 @@ export class NodeComponent implements AfterViewInit {
     @Input() showClose = true;
     @Input() showBody = true;
     @Input() hasConfig: boolean = true;
+
+    @Input() progress: Record<string, FlowTurn>;
 
     @Output() modelChange = new EventEmitter<any>();
     @Output() select = new EventEmitter<void>();
@@ -88,4 +91,6 @@ export class NodeComponent implements AfterViewInit {
         this.saveProp.emit();
         this.showDrawer = false;
     }
+
+    protected readonly process = module
 }

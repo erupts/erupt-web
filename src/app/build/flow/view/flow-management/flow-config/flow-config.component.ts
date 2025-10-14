@@ -195,6 +195,14 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         })
     }
 
+    copyConfig() {
+        if (this.flowConfig.rule) {
+            navigator.clipboard.writeText(JSON.stringify(this.flowConfig.rule, null, 2)).then(() => {
+                this.msg.success('已复制到剪贴板');
+            });
+        }
+    }
+
     close(): void {
         this.modal.confirm({
             nzTitle: '提示',

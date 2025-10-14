@@ -4,6 +4,7 @@
     </ng-container>
     <div *ngIf="showBody"
          class="p-node-body"
+         [ngClass]="progress?.[model.id]"
          [style.background]="headerColor"
          [style.--shadowColor]="headerColor">
         <div class="p-node-header" [style.background-color]="headerColor">

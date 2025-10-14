@@ -1,8 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
-import {NodeType} from "@flow/model/node.model";
+import {NodeRule, NodeType} from "@flow/model/node.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {geneNodeId} from "@flow/util/flow.util";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
   selector: 'app-end-node',
@@ -11,6 +12,11 @@ import {geneNodeId} from "@flow/util/flow.util";
 })
 export class EndNodeComponent extends ANode {
 
+    @Input() progress: Record<string, FlowTurn>;
+
+    @Input() model: NodeRule;
+
+    @Output() modelChange = new EventEmitter<any>();
 
     override onSelect() {
 

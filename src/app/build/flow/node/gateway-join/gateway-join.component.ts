@@ -3,6 +3,7 @@ import {NodeRule, NodeType} from "@flow/model/node.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {insertFlexNodeFun} from "@flow/util/flow.util";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
   selector: 'app-gateway-join',
@@ -18,6 +19,8 @@ export class GatewayJoinComponent {
     @Input() modelValue: NodeRule;
     @Input() branch: any[] = [];
     @Input() index = 0;
+    @Input() progress: Record<string, FlowTurn>;
+
     @Output() modelValueChange = new EventEmitter<any>();
     @Output() select = new EventEmitter<any>();
     @Output() delete = new EventEmitter<any>();

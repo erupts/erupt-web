@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
-import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask} from "@flow/model/flow-instance.model";
+import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask, FlowTurn} from "@flow/model/flow-instance.model";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
@@ -35,6 +35,8 @@ export class FlowApprovalComponent implements OnInit {
     selectFlow: number = null;
 
     selectedInstance: FlowInstance;
+
+    progress: Record<string, FlowTurn> = null;
 
 
     dataHistories: FlowInstanceDataHistory[] = [];
@@ -524,24 +526,25 @@ export class FlowApprovalComponent implements OnInit {
 
     // 新增方法：查看流程图
     viewFlow() {
-        if (this.selectedInstance?.id) {
-            this.drawerService.create({
-                nzTitle: '查看流程',
-                nzContent: EruptFlowComponent,
-                nzContentParams: {
-                    eruptBuild: this.eruptBuild,
-                    modelValue: this.selectedInstance.rule,
-                    readonly: true
-                },
-                nzBodyStyle: {
-                    padding: '0',
-                    background: 'rgb(245 245 245)'
-                },
-                nzPlacement: 'bottom',
-                nzHeight: '85%',
-                nzFooter: null
-            })
-        }
+        let ref = this.drawerService.create({
+            nzTitle: '查看流程',
+            nzContent: EruptFlowComponent,
+            nzContentParams: {
+                eruptBuild: this.eruptBuild,
+                modelValue: this.selectedInstance.rule,
+                readonly: true
+            },
+            nzBodyStyle: {
+                padding: '0',
+                background: 'rgb(245 245 245)'
+            },
+            nzPlacement: 'bottom',
+            nzHeight: '85%',
+            nzFooter: null
+        })
+        this.flowInstanceApiService.progress(this.selectedInstance.id).subscribe(res => {
+            ref.getContentComponent().progress = res.data;
+        })
     }
 
     showDiff(history: FlowInstanceDataHistory) {

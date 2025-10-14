@@ -11,9 +11,10 @@
         (modelChange)="nodeChange.emit($event)"
         (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
         (delete)="deleteNode(branch, $event.index)"
+        [progress]="progress"
         (select)="select.emit($event)">
     </app-start-node>
-    <app-end-node *ngSwitchCase="nodeType.END">
+    <app-end-node *ngSwitchCase="nodeType.END" [progress]="progress" [(model)]="node">
 
     </app-end-node>
 
@@ -24,6 +25,7 @@
         [eruptBuild]="eruptBuild"
         [branch]="branch"
         [index]="index"
+        [progress]="progress"
         (modelValueChange)="nodeChange.emit($event)"
         (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
         (delete)="deleteNode(branch, $event.index)"
@@ -38,6 +40,7 @@
         [eruptBuild]="eruptBuild"
         [branch]="branch"
         [index]="index"
+        [progress]="progress"
         (modelValueChange)="nodeChange.emit($event)"
         (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
         (delete)="deleteNode(branch, $event.index)"
@@ -52,6 +55,7 @@
         [eruptBuild]="eruptBuild"
         [branch]="branch"
         [index]="index"
+        [progress]="progress"
         (modelValueChange)="nodeChange.emit($event)"
         (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
         (delete)="deleteNode(branch, $event.index)"
@@ -66,6 +70,7 @@
         [eruptBuild]="eruptBuild"
         [branch]="branch"
         [index]="index"
+        [progress]="progress"
         (modelValueChange)="nodeChange.emit($event)"
         (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
         (delete)="deleteNode(branch, $event.index)"
@@ -77,6 +82,7 @@
                       [eruptBuild]="eruptBuild"
                       [branch]="branch"
                       [index]="index"
+                      [progress]="progress"
                       (modelValueChange)="nodeChange.emit($event)"
                       (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
                       (delete)="deleteNode(branch, $event.index)"
@@ -99,6 +105,7 @@
                     <app-gateway-node [readonly]="readonly"
                                       [(modelValue)]="node.branches[i]"
                                       [index]="i"
+                                      [progress]="progress"
                                       [eruptBuild]="eruptBuild"
                                       [branch]="node.branches[i].branches"
                                       [moveRn]="node.type === nodeType.GATEWAY_PARALLEL ? i < node.branches.length - 1 : i < node.branches.length - 2"
@@ -119,6 +126,7 @@
                             [eruptBuild]="eruptBuild"
                             [readonly]="readonly"
                             [node]="childNode"
+                            [progress]="progress"
                             [branch]="branch.branches"
                             [index]="bi"
                             (nodeChange)="branch[bi] = $event"
@@ -134,6 +142,7 @@
             *ngIf="node.type === nodeType.GATEWAY_EXCLUSION"
             [eruptBuild]="eruptBuild"
             [readonly]="readonly"
+            [progress]="progress"
             [class]="{'p-branch-end': branch.length === index + 1}"
             (insertFlexNode)="onInsertFlexNode($event)"
             [showBody]="false"
