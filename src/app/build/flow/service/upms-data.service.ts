@@ -11,6 +11,8 @@ export class UpmsDataService {
 
     roles: KV<number, string>[] = [];
 
+    orgs: KV<number, string>[] = [];
+
     constructor(private flowUpmsApiService: FlowUpmsApiService) {
         this.flowUpmsApiService.users().subscribe(res => {
             this.users = res.data;
@@ -20,6 +22,9 @@ export class UpmsDataService {
         });
         this.flowUpmsApiService.roles().subscribe(res => {
             this.roles = res.data;
+        });
+        this.flowUpmsApiService.org().subscribe(res => {
+            this.orgs = res.data;
         });
     }
 }

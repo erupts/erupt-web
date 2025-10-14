@@ -9,6 +9,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {StartNode} from "@flow/model/fllw-approval.model";
 
 @Component({
     selector: 'app-create-instance',
@@ -25,28 +26,38 @@ export class CreateInstanceComponent implements OnInit {
 
     @Output() close = new EventEmitter();
 
+    startNode: StartNode;
+
     loading: boolean = false;
 
     eruptBuild: EruptBuildModel;
 
-    constructor(private flowApiService: FlowApiService,
-                private msg: NzMessageService,
+    constructor(private msg: NzMessageService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 private dataHandlerService: DataHandlerService,
                 @Inject(NzDrawerService)
                 private drawerService: NzDrawerService,
+                private flowApiService: FlowApiService,
                 private flowInstanceApiService: FlowInstanceApiService) {
 
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.loading = true;
         if (this.erupt) {
-            this.flowApiService.eruptFlowBuild(this.erupt).subscribe(res => {
-                res.data.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
-                this.dataHandlerService.initErupt(res.data)
-                this.eruptBuild = res.data;
+            Promise.all([
+                this.flowApiService.eruptFlowBuild(this.erupt),
+                this.flowApiService.startNode(this.flow.id),
+            ]).then(([eruptBuild, startNode]) => {
+                eruptBuild.subscribe(res => {
+                    this.dataHandlerService.initErupt(res.data)
+                    res.data.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
+                    this.eruptBuild = res.data;
+                });
+                startNode.subscribe(res=>{
+                    this.startNode = res.data
+                })
                 this.loading = false;
             })
         }

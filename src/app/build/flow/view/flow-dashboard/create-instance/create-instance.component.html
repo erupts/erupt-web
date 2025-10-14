@@ -1,7 +1,7 @@
 <nz-spin [nzSpinning]="loading" style="width: 100%;min-height: 300px">
     <ng-container *ngIf="eruptBuild">
         <div style="padding: 16px;height:calc(100vh - 108px);overflow: auto">
-            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="false">
+            <erupt-flow-form [eruptBuild]="eruptBuild" [formAccesses]="startNode?.formAccesses">
 
             </erupt-flow-form>
         </div>

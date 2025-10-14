@@ -44,22 +44,28 @@ export class UpmsSelectComponent implements OnInit {
             label: '用户',
             icon: 'user',
             items: [],
-            searchText: ''
+            searchText: null
         },
         {
             key: UpmsScope.ROLE,
             label: '角色',
             icon: 'safety-certificate',
             items: [],
-            searchText: ''
+            searchText: null
         },
-
         {
             key: UpmsScope.POST,
             label: '岗位',
             icon: 'idcard',
             items: [],
-            searchText: ''
+            searchText: null
+        },
+        {
+            key: UpmsScope.ORG,
+            label: '组织',
+            icon: 'apartment',
+            items: [],
+            searchText: null
         }
     ];
 
@@ -76,6 +82,7 @@ export class UpmsSelectComponent implements OnInit {
         this.tabs.find(tab => tab.key === UpmsScope.USER)!.items = this.upmsDataService.users;
         this.tabs.find(tab => tab.key === UpmsScope.POST)!.items = this.upmsDataService.posts;
         this.tabs.find(tab => tab.key === UpmsScope.ROLE)!.items = this.upmsDataService.roles;
+        this.tabs.find(tab => tab.key === UpmsScope.ORG)!.items = this.upmsDataService.orgs;
     }
 
 

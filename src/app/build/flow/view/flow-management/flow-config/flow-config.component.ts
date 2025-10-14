@@ -256,6 +256,12 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                     return post.value;
                 }
             }
+        } else if (upmsScope.scope == UpmsScope.ORG) {
+            for (let org of this.upmsDataService.orgs) {
+                if (org.key == upmsScope.scopeValue) {
+                    return org.value;
+                }
+            }
         }
         return upmsScope.scopeValue.toString();
     }
