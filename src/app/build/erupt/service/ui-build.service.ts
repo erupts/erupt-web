@@ -361,7 +361,7 @@ export class UiBuildService {
                             }
                             let imgElements = [];
                             for (let i in imgs) {
-                                imgElements[i] = `<img width="100%" class="e-table-img" src="${DataService.previewAttachment(imgs[i])}" alt=""/>`;
+                                imgElements[i] = `<img width="100%" class="e-table-img" src="${DataService.previewAttachment(imgs[i])}" alt="${imgs[i]}"/>`;
                             }
                             return `<div style="text-align: center;display:flex;justify-content: center;" title="${view.title}">
                                         ${imgElements.join(" ")}
