@@ -299,6 +299,14 @@ export class DataHandlerService {
                         break;
                     case EditType.TAB_TABLE_ADD:
                         if (edit.$value) {
+                            if (typeof edit.$value === "object") {
+                                let pk = eruptBuildModel.tabErupts[field.fieldName].eruptModel.eruptJson.primaryKeyCol
+                                for (let val of edit.$value) {
+                                    if (val[pk] < 0) {
+                                        val[pk] = null;
+                                    }
+                                }
+                            }
                             eruptData[field.fieldName] = edit.$value;
                         }
                         break;
