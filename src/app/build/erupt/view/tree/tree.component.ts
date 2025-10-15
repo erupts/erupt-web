@@ -119,6 +119,7 @@ export class TreeComponent implements OnInit, OnDestroy {
             this.fetchTreeData();
             this.dataHandler.emptyEruptValue(this.eruptBuildModel);
             this.msg.success(this.i18n.fanyi("global.add.success"));
+            this.loading = false;
         }, error => {
             this.loading = false;
         });
