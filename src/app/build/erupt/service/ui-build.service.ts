@@ -278,8 +278,12 @@ export class UiBuildService {
                             nzTitle: view.title,
                             nzContent: MarkdownComponent
                         });
+                        view.eruptFieldModel.eruptFieldJson.edit.$value = item[view.column];
                         Object.assign(ref.getContentComponent(), {
-                            value: item[view.column]
+                            value: item[view.column],
+                            readonly: true,
+                            erupt: eruptBuildModel.eruptModel,
+                            eruptField: view.eruptFieldModel
                         });
 
                     };
