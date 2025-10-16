@@ -94,8 +94,8 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     // 新增方法：加载实例详情
-    loadInstanceDetail(flow: FlowInstance) {
-        this.loadFlows(false);
+    loadInstanceDetail(flow: FlowInstance, loadFlows: boolean = false) {
+        this.loadFlows(loadFlows);
         // 加载实例详情
         this.flowInstanceApiService.detail(flow.id).subscribe({
             next: (data) => {
@@ -181,7 +181,7 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     changeFlow() {
-        this.loadFlows(true)
+        this.loadFlows()
     }
 
     // 调整参数类型为 FlowInstanceTask
@@ -240,10 +240,8 @@ export class FlowApprovalComponent implements OnInit {
             this.approveModalVisible = false;
             this.reason = null;
             this.message.success('审批已同意');
-            // 刷新数据
-            if (this.selectedInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstance);
-            }
+            this.selectedInstance = null;
+            this.loadInstanceDetail(this.selectedInstance, true);
         })
 
     }
@@ -254,15 +252,12 @@ export class FlowApprovalComponent implements OnInit {
             this.message.warning('请填写拒绝原因');
             return;
         }
-        this.approveModalVisible = true;
         this.flowInstanceApiService.refuse(this.currTask.id, this.reason).subscribe(res => {
             this.rejectModalVisible = false;
             this.reason = null;
             this.message.success('审批已拒绝');
-            // 刷新数据
-            if (this.selectedInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstance);
-            }
+            this.selectedInstance = null;
+            this.loadInstanceDetail(this.selectedInstance, true);
         })
     }
 
