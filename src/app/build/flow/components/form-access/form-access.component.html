@@ -15,10 +15,11 @@
             <tr>
                 <td>{{ field.eruptFieldJson.edit.title }}</td>
                 <td>
-                    <nz-radio-group [(ngModel)]="formAccesses[field.fieldName]" style="width: 100%">
+                    <nz-radio-group [(ngModel)]="formAccesses[field.fieldName]" style="width: 100%"
+                                    [nzDisabled]="field.eruptFieldJson.edit.readOnly.add">
                         <div style="display: flex;gap: 50px;justify-content:space-evenly">
                             <label nz-radio [nzValue]="FormAccessEnum.READONLY"></label>
-                            <label nz-radio [nzValue]="FormAccessEnum.READ_WRITE" [nzDisabled]="field.eruptFieldJson.edit.readOnly.add"></label>
+                            <label nz-radio [nzValue]="FormAccessEnum.READ_WRITE"></label>
                             <label nz-radio [nzValue]="FormAccessEnum.HIDE"></label>
                         </div>
                     </nz-radio-group>
