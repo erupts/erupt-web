@@ -13,6 +13,7 @@ import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.compone
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {AddSignType} from "@flow/model/fllw-approval.model";
 import {NzCodeEditorComponent} from "ng-zorro-antd/code-editor";
+import {KV} from "../../../erupt/model/util.model";
 
 
 @Component({
@@ -72,11 +73,11 @@ export class FlowApprovalComponent implements OnInit {
     transferUser: number | null = null;
     addSignUsers: number[] = [];
     addSignType: AddSignType = AddSignType.PRE_SIGN;
-    returnNode: number | null = null;
+    returnNode: string;
     // 可用用户列表（用于抄送选择）
     availableUsers: any[] = [];
     // 可用退回节点列表
-    availableReturnNodes: any[] = [];
+    availableReturnNodes: KV<string, string>[] = [];
 
     constructor(
         private message: NzMessageService,
@@ -376,22 +377,13 @@ export class FlowApprovalComponent implements OnInit {
             return;
         }
 
-        console.log('退回审批:', {
-            instanceTaskId: this.selectedInstance?.id,
-            nodeId: this.returnNode,
-            reason: this.reason
-        });
-
-        // 模拟接口调用
-        this.message.success('退回成功');
-        this.returnModalVisible = false;
-        this.reason = null;
-        this.returnNode = null;
-
-        // 刷新数据
-        if (this.selectedInstance?.id) {
+        this.flowInstanceApiService.rollback(this.currTask.id, this.returnNode, this.reason).subscribe(res => {
+            this.message.success('退回成功');
+            this.returnModalVisible = false;
+            this.reason = null;
+            this.returnNode = null;
             this.loadInstanceDetail(this.selectedInstance);
-        }
+        })
     }
 
     // 转交审批
@@ -416,6 +408,11 @@ export class FlowApprovalComponent implements OnInit {
         this.returnNode = null;
         this.reason = null;
         this.returnModalVisible = true;
+        this.flowInstanceApiService.approvalNodes(this.selectedInstance.eruptFlowConfig.id).subscribe({
+            next: (data) => {
+                this.availableReturnNodes = data.data || [];
+            }
+        })
     }
 
     modify() {

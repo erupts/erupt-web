@@ -8,7 +8,6 @@ import {VL} from "../../erupt/model/erupt-field.model";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {NodeRule} from "@flow/model/node.model";
-import {StartNode} from "@flow/model/fllw-approval.model";
 
 @Injectable()
 export class FlowApiService {
@@ -98,12 +97,6 @@ export class FlowApiService {
 
     ruleCheck(rule: NodeRule[]): Observable<R<NodeRule[]>> {
         return this._http.post<R<NodeRule[]>>(RestPath.erupt + "/flow/rule-check", rule);
-    }
-
-    startNode(flowId: number): Observable<R<StartNode>> {
-        return this._http.get<R<StartNode>>(RestPath.erupt + "/flow/start-node", {
-            flowId
-        });
     }
 
 }

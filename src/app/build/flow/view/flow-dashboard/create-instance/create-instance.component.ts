@@ -48,18 +48,15 @@ export class CreateInstanceComponent implements OnInit {
         if (this.erupt) {
             Promise.all([
                 this.flowApiService.eruptFlowBuild(this.erupt),
-                this.flowApiService.startNode(this.flow.id),
-            ]).then(([eruptBuild, startNode]) => {
+            ]).then(([eruptBuild]) => {
                 eruptBuild.subscribe(res => {
                     this.dataHandlerService.initErupt(res.data)
                     res.data.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
                     this.eruptBuild = res.data;
                 });
-                startNode.subscribe(res=>{
-                    this.startNode = res.data
-                })
                 this.loading = false;
             })
+            this.startNode = this.flow.rule[0].prop;
         }
     }
 

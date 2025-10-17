@@ -264,5 +264,5 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
     }
 
     protected readonly FlowTurn = FlowTurn;
-    protected readonly Object = Object;
+
 }
