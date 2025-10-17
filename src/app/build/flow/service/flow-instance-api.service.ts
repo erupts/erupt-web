@@ -7,6 +7,7 @@ import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory
 import {NodeRule} from "@flow/model/node.model";
 import {FlowConfig} from "@flow/model/flow.model";
 import {AddSignType, ApprovalQuery} from "@flow/model/fllw-approval.model";
+import {KV} from "../../erupt/model/util.model";
 
 @Injectable({
     providedIn: 'root'
@@ -152,8 +153,15 @@ export class FlowInstanceApiService {
     rollback(instanceTaskId: number, rtnNode: string, comment: string): Observable<R<void>> {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/rollback", null, {
             instanceTaskId,
+            rtnNode,
             comment
         })
+    }
+
+    approvalNodes(flowId: number) {
+        return this._http.get<R<KV<string, string>[]>>(RestPath.erupt + "/flow/instance/approval/approval-nodes", {
+            flowId
+        });
     }
 
 }

@@ -1,7 +1,7 @@
 <div class="flow">
     <div class="operation">
         <div *ngIf="progress" style="zoom: .6">
-            <div *ngFor="let ft of Object.keys(FlowTurn)" [ngClass]="ft" style="padding: 6px;margin-bottom: 16px">
+            <div *ngFor="let ft of FlowTurn | enumToArray" [ngClass]="ft" style="padding: 6px;margin-bottom: 16px">
                 {{ft | translate}}
             </div>
         </div>

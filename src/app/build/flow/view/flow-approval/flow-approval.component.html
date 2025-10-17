@@ -621,8 +621,8 @@
                 >
                     <nz-option
                         *ngFor="let node of availableReturnNodes"
-                        [nzValue]="node.id"
-                        [nzLabel]="node.name"
+                        [nzValue]="node.key"
+                        [nzLabel]="node.value"
                     ></nz-option>
                 </nz-select>
             </div>

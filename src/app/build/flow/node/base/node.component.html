@@ -25,7 +25,7 @@
 
         <div class="p-node-content" (click)="onSelect()">
             <ng-content></ng-content>
-            <span *ngIf="hasConfig" nz-icon nzType="arrow-right" class="w-p-node-click"></span>
+            <span *ngIf="hasConfig && !readonly" nz-icon nzType="arrow-right" class="w-p-node-click"></span>
         </div>
     </div>
     <div class="p-node-add">
