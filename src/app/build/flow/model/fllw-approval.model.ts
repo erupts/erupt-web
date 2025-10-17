@@ -1,6 +1,5 @@
 import {FormAccessEnum} from "@flow/model/flow.model";
 import {ApprovalView} from "@flow/model/flow-instance.model";
-import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 
 export class ApprovalQuery {
     approvalView: ApprovalView;
@@ -102,7 +101,5 @@ export class SubNode {
         source: string
         target: string
     }[] = [];
-
-    eruptBuildModel?: EruptBuildModel;
 
 }
