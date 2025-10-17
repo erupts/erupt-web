@@ -32,6 +32,8 @@ export class SubNodeComponent extends ANode implements OnInit {
 
     flowConfigs: FlowConfig[] = [];
 
+    subEruptBuild: EruptBuildModel;
+
     constructor(private flowApi?: FlowApiService) {
         super();
     }
@@ -39,12 +41,15 @@ export class SubNodeComponent extends ANode implements OnInit {
     ngOnInit(): void {
         this.flowApi.configList().subscribe(res => {
             this.flowConfigs = res.data;
+            if (this.modelValue.prop) {
+                this.subNode = this.modelValue.prop;
+                if (this.subNode.subFlowId) {
+                    this.changeSubFlow(this.subNode.subFlowId, false);
+                }
+            } else {
+                this.subNode = new SubNode();
+            }
         })
-        if (this.modelValue.prop) {
-            this.subNode = this.modelValue.prop;
-        } else {
-            this.subNode = new SubNode();
-        }
     }
 
     color(): string {
@@ -94,11 +99,13 @@ export class SubNodeComponent extends ANode implements OnInit {
         return NodeType.SUB;
     }
 
-    changeSubFlow(val: number) {
+    changeSubFlow(val: number, clearMapping: boolean = true) {
         let flowConfig = this.flowConfigs.find(config => config.id === val);
-        this.subNode.mappings = [{source: null, target: null}];
+        if (clearMapping) {
+            this.subNode.mappings = [{source: null, target: null}];
+        }
         this.flowApi.eruptFlowBuild(flowConfig.erupt).subscribe(res => {
-            this.subNode.eruptBuildModel = res.data;
+            this.subEruptBuild = res.data;
         })
     }
 

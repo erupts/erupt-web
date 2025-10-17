@@ -10,7 +10,7 @@
     (saveProp)="onSaveProp()"
     (delete)="onDelete()">
     子流程
-    <div config>
+    <div config *ngIf="subNode">
         <nz-select style="width: 100%" nzShowSearch nzSize="large" nzPlaceHolder="选择子流程"
                    [(ngModel)]="subNode.subFlowId" (ngModelChange)="changeSubFlow($event)">
             <nz-option *ngFor="let config of flowConfigs" [nzValue]="config.id" [nzLabel]="config.name">
@@ -18,7 +18,7 @@
             </nz-option>
         </nz-select>
 
-        <div style="margin: 12px 0" *ngIf="subNode.eruptBuildModel">
+        <div style="margin: 12px 0" *ngIf="subEruptBuild">
             <ng-container *ngFor="let mapping of subNode.mappings; let i = index">
                 <div style="display: flex;align-items:center;gap: 8px;margin-bottom: 12px">
                     <nz-select nzShowSearch nzSize="large" nzPlaceHolder="主流程字段" style="flex: 1" [(ngModel)]="mapping.source">
@@ -31,7 +31,7 @@
                     </nz-select>
                     →
                     <nz-select nzShowSearch nzSize="large" nzPlaceHolder="子流程字段" style="flex: 1" [(ngModel)]="mapping.target">
-                        <ng-container *ngFor="let field of subNode.eruptBuildModel.eruptModel.eruptFieldModels">
+                        <ng-container *ngFor="let field of subEruptBuild.eruptModel.eruptFieldModels">
                             <nz-option *ngIf="field.eruptFieldJson.edit.title"
                                        [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title">
 
