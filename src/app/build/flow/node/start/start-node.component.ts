@@ -79,7 +79,6 @@ export class StartNodeComponent extends ANode implements OnInit {
     }
 
     override onSaveProp(): void {
-        console.log(this.startNode)
         this.model.prop = this.startNode;
     }
 

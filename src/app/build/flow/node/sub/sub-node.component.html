@@ -9,5 +9,43 @@
     [progress]="progress"
     (saveProp)="onSaveProp()"
     (delete)="onDelete()">
-    子节点
+    子流程
+    <div config>
+        <nz-select style="width: 100%" nzShowSearch nzSize="large" nzPlaceHolder="选择子流程"
+                   [(ngModel)]="subNode.subFlowId" (ngModelChange)="changeSubFlow($event)">
+            <nz-option *ngFor="let config of flowConfigs" [nzValue]="config.id" [nzLabel]="config.name">
+
+            </nz-option>
+        </nz-select>
+
+        <div style="margin: 12px 0" *ngIf="subNode.eruptBuildModel">
+            <ng-container *ngFor="let mapping of subNode.mappings; let i = index">
+                <div style="display: flex;align-items:center;gap: 8px;margin-bottom: 12px">
+                    <nz-select nzShowSearch nzSize="large" nzPlaceHolder="主流程字段" style="flex: 1" [(ngModel)]="mapping.source">
+                        <ng-container *ngFor="let field of this.eruptBuild.eruptModel.eruptFieldModels">
+                            <nz-option *ngIf="field.eruptFieldJson.edit.title"
+                                       [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title">
+
+                            </nz-option>
+                        </ng-container>
+                    </nz-select>
+                    →
+                    <nz-select nzShowSearch nzSize="large" nzPlaceHolder="子流程字段" style="flex: 1" [(ngModel)]="mapping.target">
+                        <ng-container *ngFor="let field of subNode.eruptBuildModel.eruptModel.eruptFieldModels">
+                            <nz-option *ngIf="field.eruptFieldJson.edit.title"
+                                       [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title">
+
+                            </nz-option>
+                        </ng-container>
+                    </nz-select>
+                    <button nz-button nzType="text" nzDanger (click)="subNode.mappings.splice(i, 1)">
+                        <span nz-icon nzType="minus-circle" nzTheme="outline"></span>
+                    </button>
+                </div>
+            </ng-container>
+            <div style="margin: 12px 0">
+                <button nz-button nzType="primary" (click)="addMapping()">添加映射</button>
+            </div>
+        </div>
+    </div>
 </erupt-node>

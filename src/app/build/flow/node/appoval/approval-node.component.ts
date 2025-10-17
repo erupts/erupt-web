@@ -105,8 +105,6 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
         this.modelValue.prop = this.approveNode;
     }
 
-    protected readonly ApprovalMode = ReviewMode;
-
     protected readonly ApprovalStrategy = ApprovalStrategy;
 
 

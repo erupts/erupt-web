@@ -40,6 +40,7 @@ import {
     LockOutline,
     MenuFoldOutline,
     MenuUnfoldOutline,
+    MinusCircleOutline,
     MinusOutline,
     MinusSquareOutline,
     MoreOutline,
@@ -67,7 +68,7 @@ import {
     UnorderedListOutline,
     UserAddOutline,
     UserOutline,
-    WarningTwoTone
+    WarningTwoTone,
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -134,5 +135,6 @@ export const ICONS_AUTO = [
     RollbackOutline,
     WarningTwoTone,
     BellOutline,
-    MoreOutline
+    MoreOutline,
+    MinusCircleOutline
 ];

@@ -5,6 +5,9 @@ import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {FlowTurn} from "@flow/model/flow-instance.model";
+import {FlowApiService} from "@flow/service/flow-api.service";
+import {FlowConfig} from "@flow/model/flow.model";
+import {SubNode} from "@flow/model/fllw-approval.model";
 
 @Component({
     selector: 'app-sub-node',
@@ -25,7 +28,23 @@ export class SubNodeComponent extends ANode implements OnInit {
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
 
+    subNode: SubNode;
+
+    flowConfigs: FlowConfig[] = [];
+
+    constructor(private flowApi?: FlowApiService) {
+        super();
+    }
+
     ngOnInit(): void {
+        this.flowApi.configList().subscribe(res => {
+            this.flowConfigs = res.data;
+        })
+        if (this.modelValue.prop) {
+            this.subNode = this.modelValue.prop;
+        } else {
+            this.subNode = new SubNode();
+        }
     }
 
     color(): string {
@@ -41,7 +60,7 @@ export class SubNodeComponent extends ANode implements OnInit {
     }
 
     name(): string {
-        return "子节点";
+        return "子流程";
     }
 
     onDelete(): void {
@@ -56,9 +75,15 @@ export class SubNodeComponent extends ANode implements OnInit {
     }
 
     onInsertNode(type: NodeType): void {
+        this.insertNode.emit({
+            branch: this.branch,
+            index: this.index,
+            type: type
+        });
     }
 
     onSaveProp(): void {
+        this.modelValue.prop = this.subNode;
     }
 
     onSelect(): void {
@@ -67,6 +92,18 @@ export class SubNodeComponent extends ANode implements OnInit {
 
     type(): NodeType {
         return NodeType.SUB;
+    }
+
+    changeSubFlow(val: number) {
+        let flowConfig = this.flowConfigs.find(config => config.id === val);
+        this.subNode.mappings = [{source: null, target: null}];
+        this.flowApi.eruptFlowBuild(flowConfig.erupt).subscribe(res => {
+            this.subNode.eruptBuildModel = res.data;
+        })
+    }
+
+    addMapping() {
+        this.subNode.mappings.push({source: null, target: null});
     }
 
 }

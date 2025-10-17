@@ -7,7 +7,8 @@ import {
     OperatorNumberType,
     OperatorReferenceType,
     OperatorStringType,
-    OperatorType
+    OperatorType,
+    OperatorUpmsType
 } from "../../model/erupt-search.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 
@@ -25,6 +26,8 @@ export class SmartSearchComponent implements OnInit {
     @Output() searchChange = new EventEmitter<EruptSearchModel[][]>();
 
     @Input() requiredHasCondition: boolean = false;
+
+    SUBMITTER = "SUBMITTER";
 
     searchTypeMapping: Partial<Record<EditType, OperatorType>> = {
         [EditType.INPUT]: OperatorType.STRING,
@@ -105,6 +108,11 @@ export class SmartSearchComponent implements OnInit {
     }
 
     onFieldChange(condition: EruptSearchModel): void {
+        if (condition.field === this.SUBMITTER) {
+            condition.operatorType = OperatorType.UPMS;
+            condition.operator = OperatorStringType.EQ;
+            return;
+        }
         condition.operatorType = this.searchTypeMapping[this.eruptModel.eruptFieldModelMap.get(condition.field)?.eruptFieldJson.edit.type] || OperatorType.STRING;
         switch (condition.operatorType) {
             case OperatorType.STRING:
@@ -119,6 +127,7 @@ export class SmartSearchComponent implements OnInit {
             case OperatorType.REFERENCE:
             case OperatorType.BOOLEAN:
             case OperatorType.CHOICE:
+            case OperatorType.UPMS:
                 condition.operator = OperatorReferenceType.EQ;
                 break;
         }
@@ -173,6 +182,7 @@ export class SmartSearchComponent implements OnInit {
     protected readonly OperatorNumberType = OperatorNumberType;
     protected readonly OperatorDateType = OperatorDateType;
     protected readonly OperatorReferenceType = OperatorReferenceType;
+    protected readonly OperatorUpmsType = OperatorUpmsType;
 }
 
 
