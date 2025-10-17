@@ -72,6 +72,7 @@
                                                    [ngModelOptions]="{standalone: true}"
                                                    nzPlaceHolder="请选择字段" nzShowSearch
                                                    class="field-select">
+                                            <nz-option [nzValue]="SUBMITTER" [nzLabel]="'提交人'"></nz-option>
                                             <ng-container *ngFor="let field of eruptModel.eruptFieldModels">
                                                 <ng-container *ngIf="searchTypeMapping[field.eruptFieldJson.edit.type] && field.eruptFieldJson.edit?.title">
                                                     <nz-option [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title"></nz-option>
@@ -125,6 +126,13 @@
                                                 <ng-container *ngSwitchCase="OperatorType.REFERENCE">
                                                     <nz-option
                                                         *ngFor="let op of OperatorReferenceType | enumToArray"
+                                                        [nzValue]="op"
+                                                        [nzLabel]="op | translate"
+                                                    ></nz-option>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="OperatorType.UPMS">
+                                                    <nz-option
+                                                        *ngFor="let op of OperatorUpmsType | enumToArray"
                                                         [nzValue]="op"
                                                         [nzLabel]="op | translate"
                                                     ></nz-option>
@@ -240,6 +248,9 @@
                                                     <erupt-reference style="width: 100%" [eruptModel]="eruptModel" [field]="eruptModel.eruptFieldModelMap.get(condition.field)" [size]="'default'"
                                                                      [readonly]="false"></erupt-reference>
                                                 </ng-container>
+                                            </ng-container>
+                                            <ng-container *ngIf="condition.operatorType === OperatorType.UPMS">
+                                                UPMS-SELECT
                                             </ng-container>
                                         </nz-form-item>
                                     </div>

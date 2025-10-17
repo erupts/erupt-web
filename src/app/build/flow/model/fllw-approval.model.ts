@@ -1,5 +1,6 @@
 import {FormAccessEnum} from "@flow/model/flow.model";
 import {ApprovalView} from "@flow/model/flow-instance.model";
+import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 
 export class ApprovalQuery {
     approvalView: ApprovalView;
@@ -90,5 +91,18 @@ export class CcNode {
 export class StartNode {
 
     formAccesses: Record<string, FormAccessEnum> = {};
+
+}
+
+export class SubNode {
+
+    subFlowId: number;
+
+    mappings: {
+        source: string
+        target: string
+    }[] = [];
+
+    eruptBuildModel?: EruptBuildModel;
 
 }

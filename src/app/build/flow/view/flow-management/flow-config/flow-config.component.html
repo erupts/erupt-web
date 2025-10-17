@@ -44,7 +44,7 @@
             <!--        <span>{{ incompleteItems }}项不完善</span>-->
             <!--        <i nz-icon nzType="down"></i>-->
             <!--      </div>-->
-            <button nz-button  (click)="copyConfig()">
+            <button nz-button (click)="copyConfig()" *ngIf="this.flowConfig?.rule">
                 复制配置
             </button>
             <button nz-button nzType="primary" class="publish-btn" (click)="publish()">

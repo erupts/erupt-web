@@ -12,6 +12,7 @@ export enum OperatorType {
     BOOLEAN = 'BOOLEAN',
     CHOICE = 'CHOICE',
     REFERENCE = 'REFERENCE',
+    UPMS = 'UPMS',
 }
 
 export enum OperatorStringType {
@@ -59,3 +60,7 @@ export enum OperatorReferenceType {
     NOT_NULL = 'NOT_NULL',
 }
 
+export enum OperatorUpmsType {
+    EQ = 'EQ',
+    NEQ = 'NEQ'
+}
