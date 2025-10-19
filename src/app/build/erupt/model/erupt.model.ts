@@ -60,7 +60,7 @@ interface Layout {
 interface LinkTree {
     field: string;
     dependNode: boolean;
-    value: any;
+    value: string[];
 }
 
 export interface Drill {
