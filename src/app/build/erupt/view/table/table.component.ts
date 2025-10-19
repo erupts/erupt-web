@@ -348,6 +348,7 @@ export class TableComponent implements OnInit, OnDestroy {
             }
             tableOperators.push({
                 icon: "eye",
+                tooltip: this.i18n.fanyi("global.view"),
                 click: (record: any, modal: any) => {
                     let params = {
                         readonly: true,
@@ -491,6 +492,7 @@ export class TableComponent implements OnInit, OnDestroy {
             }
             tableOperators.push({
                 icon: "edit",
+                tooltip: this.i18n.fanyi("global.editor"),
                 click: (record: any) => {
                     let params = {
                         eruptBuildModel: this.eruptBuildModel,
@@ -556,6 +558,7 @@ export class TableComponent implements OnInit, OnDestroy {
                     theme: "twotone",
                     twoToneColor: "#f00"
                 },
+                tooltip: this.i18n.fanyi("global.delete"),
                 pop: this.i18n.fanyi("table.delete.hint"),
                 type: "del",
                 click: (record) => {
@@ -581,6 +584,17 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         tableOperators.push(...tableButtons);
+        if (this.eruptBuildModel.eruptModel.tags?.["EruptFlow"]) {
+            tableOperators.push({
+                icon: "node-index",
+                click: (record: any, modal: any) => {
+
+                },
+                iif: (item) => {
+                    return true;
+                }
+            });
+        }
         if (isFoldButtons) {
             let children: STColumnButton[] = [];
             eruptJson.rowOperation.forEach(ro => {
@@ -608,10 +622,12 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         if (tableOperators.length > 0) {
+            console.log(this.eruptBuildModel.eruptModel.tags?.size)
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                width: eruptJson.layout.tableOperatorWidth ? eruptJson.layout.tableOperatorWidth : (tableOperators.length * 35 + 18 + (isFoldButtons ? 60 : 0)),
+                width: eruptJson.layout.tableOperatorWidth ? eruptJson.layout.tableOperatorWidth :
+                    ((tableOperators.length + (this.eruptBuildModel.eruptModel.tags?.size || 0)) * 35 + 18 + (isFoldButtons ? 60 : 0)),
                 className: "text-center",
                 buttons: tableOperators,
                 resizable: false

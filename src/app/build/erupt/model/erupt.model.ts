@@ -9,6 +9,7 @@ export interface EruptModel {
     extraRow: boolean;
     //# customer prop
     eruptFieldModelMap?: Map<String, EruptFieldModel>;
+    tags?: Map<String, object>;
     tableColumns?: View[];
     searchCondition: any;
 }
