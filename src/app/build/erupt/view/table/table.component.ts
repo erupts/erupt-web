@@ -587,11 +587,12 @@ export class TableComponent implements OnInit, OnDestroy {
         if (this.eruptBuildModel.eruptModel.tags?.["EruptFlow"]) {
             tableOperators.push({
                 icon: "node-index",
+                tooltip: "查看流程",
                 click: (record: any, modal: any) => {
-
+                    alert("TODO show flow page")
                 },
                 iif: (item) => {
-                    return true;
+                    return item["__flow_id__"];
                 }
             });
         }
@@ -622,7 +623,6 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         if (tableOperators.length > 0) {
-            console.log(this.eruptBuildModel.eruptModel.tags?.size)
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
@@ -914,7 +914,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
 
-    clickTreeNode(event:string[]) {
+    clickTreeNode(event: string[]) {
         this.showTable = true;
         this.eruptBuildModel.eruptModel.eruptJson.linkTree.value = event;
         this.searchErupt.eruptJson.linkTree.value = event;
