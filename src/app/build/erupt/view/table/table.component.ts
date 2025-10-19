@@ -914,7 +914,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
 
-    clickTreeNode(event) {
+    clickTreeNode(event:string[]) {
         this.showTable = true;
         this.eruptBuildModel.eruptModel.eruptJson.linkTree.value = event;
         this.searchErupt.eruptJson.linkTree.value = event;
