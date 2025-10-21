@@ -588,7 +588,7 @@ export class TableComponent implements OnInit, OnDestroy {
         if (this.eruptBuildModel.eruptModel.tags?.["EruptFlow"]) {
             tableOperators.push({
                 icon: "node-index",
-                tooltip: "查看流程",
+                tooltip: this.i18n.fanyi("VIEW_FLOW"),
                 click: (record: any, modal: any) => {
                     this.drawerService.create({
                         nzClosable: false,
