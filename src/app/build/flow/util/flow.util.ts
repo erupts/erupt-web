@@ -30,3 +30,14 @@ export function insertFlexNodeFun(branch: any[], i: number, flex: FlexNodeModel)
         color: flex.color
     });
 }
+
+export function getAvatarColor(avatar: string): string {
+    const colors = [
+        '#667eea', '#764ba2', '#f093fb', '#f5576c',
+        '#4facfe', '#00f2fe', '#43e97b', '#38f9d7',
+        '#fa709a', '#fee140', '#a8edea', '#fed6e3',
+        '#ffecd2', '#fcb69f', '#ff9a9e', '#fecfef'
+    ];
+    const index = avatar.charCodeAt(0) % colors.length;
+    return colors[index];
+}

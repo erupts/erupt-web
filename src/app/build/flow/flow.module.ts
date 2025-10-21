@@ -93,6 +93,7 @@ import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.comp
 import {UpmsDataService} from "@flow/service/upms-data.service";
 import {SubNodeComponent} from '@flow/node/sub/sub-node.component';
 import {NzImageModule} from "ng-zorro-antd/image";
+import {FlowApprovalDetailComponent} from '@flow/view/flow-approval-detail/flow-approval-detail.component';
 
 @NgModule({
     declarations: [
@@ -118,7 +119,8 @@ import {NzImageModule} from "ng-zorro-antd/image";
         GatewayJoinComponent,
         ReviewUserComponent,
         UpmsSelectComponent,
-        SubNodeComponent
+        SubNodeComponent,
+        FlowApprovalDetailComponent
     ],
     providers: [
         FlowApiService,
