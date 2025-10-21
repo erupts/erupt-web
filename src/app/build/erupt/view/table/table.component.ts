@@ -25,6 +25,7 @@ import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {TableStyle} from "../../model/erupt.vo";
+import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 
 @Component({
@@ -589,7 +590,24 @@ export class TableComponent implements OnInit, OnDestroy {
                 icon: "node-index",
                 tooltip: "查看流程",
                 click: (record: any, modal: any) => {
-                    alert("TODO show flow page")
+                    this.drawerService.create({
+                        nzClosable: false,
+                        nzKeyboard: true,
+                        nzMaskClosable: true,
+                        // @ts-ignore
+                        nzPlacement: "right",
+                        nzWidth: "40%",
+                        nzBodyStyle: {
+                            padding: 0
+                        },
+                        nzFooter: null,
+                        nzContent: EruptIframeComponent,
+                        nzContentParams: {
+                            url: location.origin + "/#/fill/flow/approval-detail/" + record["__flow_id__"],
+                            height: "100%",
+                            width: '100%'
+                        }
+                    })
                 },
                 iif: (item) => {
                     return item["__flow_id__"];

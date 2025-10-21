@@ -1,10 +1,10 @@
-<div class="detail-section" *ngIf="selectedInstance; else emptyDetail">
+<div style="background: #fff" *ngIf="selectedInstance; else emptyDetail">
     <div class="detail-header">
         <div class="header-left">
-                                        <span class="item-id" (click)="copyToClipboard(selectedInstance?.no)" style="cursor: pointer;">
+            <span class="item-id" (click)="copyToClipboard(selectedInstance?.no)" style="cursor: pointer;">
                        编号: {{ selectedInstance?.no }}
-                                            <span nz-icon nzType="copy" nzTheme="outline" class="copy-icon"></span>
-                    </span>
+                <span nz-icon nzType="copy" nzTheme="outline" class="copy-icon"></span>
+            </span>
         </div>
         <div class="header-right">
             <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="链接" (click)="copyLink()">
