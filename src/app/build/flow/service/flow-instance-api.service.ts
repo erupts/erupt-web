@@ -38,9 +38,9 @@ export class FlowInstanceApiService {
         return this._http.post<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/list", query)
     }
 
-    detail(instanceId: number): Observable<R<FlowInstance>> {
+    detail(no: string): Observable<R<FlowInstance>> {
         return this._http.get<R<FlowInstance>>(RestPath.erupt + "/flow/instance/detail", {
-            instanceId
+            no
         })
     }
 
