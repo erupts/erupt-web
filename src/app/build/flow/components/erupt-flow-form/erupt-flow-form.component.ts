@@ -71,6 +71,9 @@ export class EruptFlowFormComponent implements OnInit {
                             case FormAccessEnum.HIDE:
                                 eruptFieldModel.eruptFieldJson.edit.show = false;
                                 break;
+                            case FormAccessEnum.NOT_NULL:
+                                eruptFieldModel.eruptFieldJson.edit.notNull = true;
+                                break;
                         }
                     } else {
                         eruptFieldModel.eruptFieldJson.edit.readOnly = {

@@ -5,6 +5,7 @@
         <th style="display: flex;gap: 50px;justify-content:space-evenly">
             <span>只读</span>
             <span>编辑</span>
+            <span>必填</span>
             <span>隐藏</span>
         </th>
     </tr>
@@ -20,6 +21,7 @@
                         <div style="display: flex;gap: 50px;justify-content:space-evenly">
                             <label nz-radio [nzValue]="FormAccessEnum.READONLY"></label>
                             <label nz-radio [nzValue]="FormAccessEnum.READ_WRITE"></label>
+                            <label nz-radio [nzValue]="FormAccessEnum.NOT_NULL"></label>
                             <label nz-radio [nzValue]="FormAccessEnum.HIDE"></label>
                         </div>
                     </nz-radio-group>
