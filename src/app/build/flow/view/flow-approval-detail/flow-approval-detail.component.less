@@ -1,284 +1,291 @@
 :host {
-    .detail-header {
-        padding: 12px 16px;
-        border-bottom: 1px solid #e5e5e5;
+    .approval-detail {
+        background: #fff;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-shrink: 0; // 防止头部被压缩
+        flex-direction: column;
+        height: 100%;
 
-        .header-left {
-            .item-id {
-                font-size: 14px;
-                color: #666;
-            }
-        }
-
-        .header-right {
+        .detail-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e5e5;
             display: flex;
-            gap: 8px;
-        }
-    }
-
-    .detail-content {
-        flex: 1;
-        overflow-y: auto; // 只有内容区域可以滚动
-        // 为底部固定按钮留出空间
-        padding: 16px 16px 70px;
-
-        .content-header {
-            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
+            flex-shrink: 0; // 防止头部被压缩
 
-            .content-title {
-                margin: 0;
-                font-size: 25px;
-                font-weight: 600;
-                color: #333;
+            .header-left {
+                .item-id {
+                    font-size: 14px;
+                    color: #666;
+                }
             }
 
-            .status-tag-large {
-
+            .header-right {
+                display: flex;
+                gap: 8px;
             }
         }
 
-        .submitter-info-large {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-            padding: 12px;
-            background-color: #fafafa;
-            border-radius: 4px;
+        .detail-content {
+            flex: 1;
+            overflow-y: auto; // 只有内容区域可以滚动
+            // 为底部固定按钮留出空间
+            padding: 16px 16px 70px;
 
-            .avatar-large {
-                width: 48px;
-                height: 48px;
-                border-radius: 50%;
+            .content-header {
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 18px;
-                font-weight: 600;
-            }
+                gap: 12px;
+                margin-bottom: 12px;
 
-            .submitter-details {
-                display: flex;
-                align-items: flex-end;
-                justify-content: center;
-                gap: 4px;
-
-                .submitter-name-large {
-                    font-size: 16px;
+                .content-title {
+                    margin: 0;
+                    font-size: 25px;
                     font-weight: 600;
                     color: #333;
                 }
 
-                .submitter-dept {
-                    font-size: 14px;
-                    color: #666;
-                }
+                .status-tag-large {
 
-                .submit-time {
-                    font-size: 13px;
-                    color: #999;
                 }
             }
-        }
 
-        .detail-tabs {
-            ::ng-deep .ant-tabs-nav {
-                margin-bottom: 16px;
-            }
+            .submitter-info-large {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 12px;
+                padding: 12px;
+                background-color: #fafafa;
+                border-radius: 4px;
 
-            .tab-content {
-                .section {
+                .avatar-large {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-size: 18px;
+                    font-weight: 600;
+                }
 
-                    .section-title {
+                .submitter-details {
+                    display: flex;
+                    align-items: flex-end;
+                    justify-content: center;
+                    gap: 4px;
+
+                    .submitter-name-large {
                         font-size: 16px;
                         font-weight: 600;
                         color: #333;
-                        margin-bottom: 16px;
-                        padding-bottom: 8px;
-                        border-bottom: 1px solid #e5e5e5;
                     }
 
-                    .detail-descriptions {
-                        ::ng-deep .ant-descriptions-item-label {
-                            font-weight: 500;
-                            color: #666;
-                        }
+                    .submitter-dept {
+                        font-size: 14px;
+                        color: #666;
                     }
 
-                    .expense-table {
-                        margin-bottom: 16px;
+                    .submit-time {
+                        font-size: 13px;
+                        color: #999;
+                    }
+                }
+            }
 
-                        ::ng-deep .ant-table-thead > tr > th {
-                            background-color: #fafafa;
+            .detail-tabs {
+                ::ng-deep .ant-tabs-nav {
+                    margin-bottom: 16px;
+                }
+
+                .tab-content {
+                    .section {
+
+                        .section-title {
+                            font-size: 16px;
                             font-weight: 600;
                             color: #333;
+                            margin-bottom: 16px;
+                            padding-bottom: 8px;
+                            border-bottom: 1px solid #e5e5e5;
                         }
-                    }
 
-                    .expense-summary {
-                        background-color: #fafafa;
-                        padding: 16px;
-                        border-radius: 6px;
-
-                        .summary-descriptions {
+                        .detail-descriptions {
                             ::ng-deep .ant-descriptions-item-label {
                                 font-weight: 500;
                                 color: #666;
                             }
                         }
-                    }
 
-                    .records-table {
-                        ::ng-deep .ant-table-thead > tr > th {
-                            background-color: #fafafa;
-                            font-weight: 600;
-                            color: #333;
-                        }
+                        .expense-table {
+                            margin-bottom: 16px;
 
-                        .approver-info {
-                            display: flex;
-                            align-items: center;
-                            gap: 4px;
-
-                            .avatar-small {
-                                width: 20px;
-                                height: 20px;
-                                border-radius: 50%;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                color: white;
-                                font-size: 10px;
-                                font-weight: 500;
-                            }
-
-                            .approver-name {
-                                font-size: 13px;
+                            ::ng-deep .ant-table-thead > tr > th {
+                                background-color: #fafafa;
+                                font-weight: 600;
                                 color: #333;
                             }
                         }
 
-                        .time-info {
-                            .time-detail {
-                                font-size: 12px;
-                                color: #999;
-                                margin-top: 2px;
+                        .expense-summary {
+                            background-color: #fafafa;
+                            padding: 16px;
+                            border-radius: 6px;
+
+                            .summary-descriptions {
+                                ::ng-deep .ant-descriptions-item-label {
+                                    font-weight: 500;
+                                    color: #666;
+                                }
+                            }
+                        }
+
+                        .records-table {
+                            ::ng-deep .ant-table-thead > tr > th {
+                                background-color: #fafafa;
+                                font-weight: 600;
+                                color: #333;
+                            }
+
+                            .approver-info {
+                                display: flex;
+                                align-items: center;
+                                gap: 4px;
+
+                                .avatar-small {
+                                    width: 20px;
+                                    height: 20px;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    color: white;
+                                    font-size: 10px;
+                                    font-weight: 500;
+                                }
+
+                                .approver-name {
+                                    font-size: 13px;
+                                    color: #333;
+                                }
+                            }
+
+                            .time-info {
+                                .time-detail {
+                                    font-size: 12px;
+                                    color: #999;
+                                    margin-top: 2px;
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
 
-    // 固定在右侧底部的功能按钮
-    .fixed-bottom-actions {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: white;
-        border-top: 1px solid #e5e5e5;
-        display: flex;
-        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
-        z-index: 10;
-        flex-shrink: 0;
-        padding: 0 16px;
-
-        .action-buttons {
+        // 固定在右侧底部的功能按钮
+        .fixed-bottom-actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e5e5;
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+            z-index: 10;
+            flex-shrink: 0;
+            padding: 0 16px;
 
-            .action-button {
-                margin: 12px 4px;
-            }
-        }
-    }
-
-    // 评论表单样式
-    .comment-form {
-        margin-bottom: 0;
-        padding: 16px;
-        background-color: #fafafa;
-
-        ::ng-deep .ant-input-group-wrapper {
-            width: 100%;
-        }
-
-        ::ng-deep .ant-input {
-            border-radius: 6px 0 0 6px;
-        }
-
-        ::ng-deep .ant-btn {
-            border-radius: 0 6px 6px 0;
-            height: 32px;
-        }
-    }
-
-    // 评论列表样式
-    .comments-list {
-        .comment-item {
-            &:hover {
-                background-color: #f0f0f0;
-            }
-
-            transition: background-color 0.3s ease;
-            padding: 16px;
-            border-bottom: 1px solid #f0f0f0;
-
-            &:last-child {
-                border-bottom: none;
-                margin-bottom: 0;
-            }
-
-            .comment-header {
+            .action-buttons {
                 display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 8px;
+                gap: 8px;
+                flex-wrap: wrap;
 
-                .comment-user {
+                .action-button {
+                    margin: 12px 4px;
+                }
+            }
+        }
+
+        // 评论表单样式
+        .comment-form {
+            margin-bottom: 0;
+            padding: 16px;
+            background-color: #fafafa;
+
+            ::ng-deep .ant-input-group-wrapper {
+                width: 100%;
+            }
+
+            ::ng-deep .ant-input {
+                border-radius: 6px 0 0 6px;
+            }
+
+            ::ng-deep .ant-btn {
+                border-radius: 0 6px 6px 0;
+                height: 32px;
+            }
+        }
+
+        // 评论列表样式
+        .comments-list {
+            .comment-item {
+                &:hover {
+                    background-color: #f0f0f0;
+                }
+
+                transition: background-color 0.3s ease;
+                padding: 16px;
+                border-bottom: 1px solid #f0f0f0;
+
+                &:last-child {
+                    border-bottom: none;
+                    margin-bottom: 0;
+                }
+
+                .comment-header {
                     display: flex;
+                    justify-content: space-between;
                     align-items: center;
-                    gap: 8px;
+                    margin-bottom: 8px;
 
-                    .avatar-small {
-                        width: 24px;
-                        height: 24px;
-                        border-radius: 50%;
+                    .comment-user {
                         display: flex;
                         align-items: center;
-                        justify-content: center;
-                        color: white;
+                        gap: 8px;
+
+                        .avatar-small {
+                            width: 24px;
+                            height: 24px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: white;
+                            font-size: 12px;
+                            font-weight: 500;
+                        }
+
+                        .comment-username {
+                            font-weight: 500;
+                            color: #333;
+                        }
+                    }
+
+                    .comment-time {
                         font-size: 12px;
-                        font-weight: 500;
-                    }
-
-                    .comment-username {
-                        font-weight: 500;
-                        color: #333;
+                        color: #999;
                     }
                 }
 
-                .comment-time {
-                    font-size: 12px;
-                    color: #999;
+                .comment-content {
+                    color: #333;
+                    line-height: 1.5;
+                    padding-left: 32px;
                 }
-            }
-
-            .comment-content {
-                color: #333;
-                line-height: 1.5;
-                padding-left: 32px;
             }
         }
     }
