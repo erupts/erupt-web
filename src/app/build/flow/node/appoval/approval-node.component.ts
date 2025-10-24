@@ -28,9 +28,6 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
 
     approveNode: ApproveNode = new ApproveNode();
 
-    showErr = false;
-    errInfo: any = null;
-
     selectTab: number = 0;
 
 
@@ -97,7 +94,8 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
         return {
             id: geneNodeId(),
             type: this.type(),
-            name: this.name()
+            name: this.name(),
+            prop: this.approveNode
         };
     }
 
