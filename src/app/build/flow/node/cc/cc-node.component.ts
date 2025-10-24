@@ -29,8 +29,6 @@ export class CcNodeComponent extends ANode implements OnInit {
 
     ccNode: CcNode = new CcNode();
 
-    showErr = false;
-    errInfo: any = null;
 
     ngOnInit(): void {
         if (this.modelValue.prop) {
@@ -91,6 +89,7 @@ export class CcNodeComponent extends ANode implements OnInit {
             id: geneNodeId(),
             type: this.type(),
             name: this.name(),
+            prop: this.ccNode
         }
     }
 

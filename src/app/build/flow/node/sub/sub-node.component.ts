@@ -83,7 +83,8 @@ export class SubNodeComponent extends ANode implements OnInit {
         this.insertNode.emit({
             branch: this.branch,
             index: this.index,
-            type: type
+            type: type,
+            prop: this.subNode
         });
     }
 
