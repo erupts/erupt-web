@@ -3,7 +3,7 @@
         <erupt-edit-type [loading]="loading" #eruptEdit [eruptBuildModel]="eruptBuildModel" [readonly]="readonly"
                          [mode]="behavior"></erupt-edit-type>
         <nz-tabset *ngIf="eruptBuildModel.tabErupts" [nzType]="'card'" style="margin-top: 5px">
-            <ng-container *ngFor="let item of eruptBuildModel.tabErupts | keyvalue">
+            <ng-container *ngFor="let item of tabErupts">
                 <nz-tab [nzTitle]="tabTitle"
                         *ngIf="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.show">
                     <ng-container [ngSwitch]="eruptFieldModelMap.get(item.key).eruptFieldJson.edit.type">

@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
 import {EditType, Scene} from "../../model/erupt.enum";
-import {SettingsService} from "@delon/theme";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {EruptFieldModel} from "../../model/erupt-field.model";
@@ -37,13 +36,17 @@ export class EditComponent implements OnInit, OnDestroy {
 
     eruptFieldModelMap: Map<String, EruptFieldModel>;
 
+    tabErupts: {
+        key: string,
+        value: EruptBuildModel
+    }[] = [];
+
     constructor(
         @Inject(NzMessageService)
         private msg: NzMessageService,
         @Inject(NzModalService)
         private modal: NzModalService,
         private dataService: DataService,
-        private settingSrv: SettingsService,
         private i18n: I18NService,
         private dataHandlerService: DataHandlerService) {
 
@@ -51,6 +54,18 @@ export class EditComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
+        for (let eruptFieldModel of this.eruptBuildModel.eruptModel.eruptFieldModels) {
+            switch (eruptFieldModel.eruptFieldJson.edit.type) {
+                case EditType.TAB_TABLE_REFER:
+                case EditType.TAB_TABLE_ADD:
+                case EditType.TAB_TREE:
+                    this.tabErupts.push({
+                        key: eruptFieldModel.fieldName,
+                        value: this.eruptBuildModel.tabErupts[eruptFieldModel.fieldName]
+                    })
+                    break;
+            }
+        }
         if (this.behavior == Scene.ADD) {
             this.loading = true;
             this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName, null, this.header).subscribe(data => {
