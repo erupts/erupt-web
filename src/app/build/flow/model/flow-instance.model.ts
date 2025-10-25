@@ -28,6 +28,7 @@ export interface FlowInstance {
     initiatorUser: User;
     finishTime: string;
     createTime: string;
+    parent: FlowInstance;
 }
 
 export enum InstanceStatus {
