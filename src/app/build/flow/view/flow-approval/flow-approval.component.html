@@ -60,12 +60,18 @@
                         <h3 class="item-title">
                             {{ item?.eruptFlowConfig?.name }}
                         </h3>
-                        <nz-tag
-                            class="status-tag"
-                            style="margin-right: 0"
-                        >
-                            {{ item?.status | translate }}
-                        </nz-tag>
+                        <div>
+                            <nz-tag *ngIf="item?.parent" nzColor="orange"
+                                    style="margin-right: 6px"
+                            >
+                                子流程
+                            </nz-tag>
+                            <nz-tag
+                                style="margin-right: 0"
+                            >
+                                {{ item?.status | translate }}
+                            </nz-tag>
+                        </div>
                     </div>
                     <div class="item-footer">
                         <div class="submitter-info">
