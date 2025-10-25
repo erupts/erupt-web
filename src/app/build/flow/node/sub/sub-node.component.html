@@ -9,7 +9,7 @@
     [progress]="progress"
     (saveProp)="onSaveProp()"
     (delete)="onDelete()">
-    子流程
+    {{'SUB_FLOW'|translate}}
     <div config *ngIf="subNode">
         <nz-select style="width: 100%" nzShowSearch nzSize="large" nzPlaceHolder="选择子流程"
                    [(ngModel)]="subNode.subFlowId" (ngModelChange)="changeSubFlow($event)">
