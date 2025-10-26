@@ -16,7 +16,7 @@
 
                 <ng-template #tabTitleTemplate>
                     <span nz-icon [nzType]="tab.icon" nzTheme="outline"></span>
-                    <span class="tab-label">{{ tab.label }}</span>
+                    <span class="tab-label">{{ tab.key | translate }}</span>
                 </ng-template>
 
                 <!-- 搜索框 -->
@@ -24,7 +24,7 @@
                     <nz-input-group nzSize="default">
                         <input
                             nz-input
-                            [placeholder]="'搜索' + tab.label + '名称...'"
+                            [placeholder]="'搜索' + i18n.fanyi(tab.key) + '名称...'"
                             [(ngModel)]="tab.searchText"
                             (ngModelChange)="onSearchChange(tab.key, $event)"
                         />
@@ -89,7 +89,7 @@
                     <div class="group-container">
                         <div class="group-header">
                             <span nz-icon [nzType]="group.icon" nzTheme="outline"></span>
-                            <span class="group-label">{{ group.label }}</span>
+                            <span class="group-label">{{ i18n.fanyi(group.scope) }}</span>
                             <span class="group-count">({{ group.items.length }})</span>
                         </div>
                         <div class="group-tags" *ngIf="group.items.length > 0">
@@ -104,7 +104,7 @@
                         </div>
                         <div class="group-empty" *ngIf="group.items.length === 0">
                             <span nz-icon nzType="inbox" nzTheme="outline"></span>
-                            <span class="empty-text">暂无已选{{ group.label }}</span>
+                            <span class="empty-text">暂无已选{{ i18n.fanyi(group.scope) }}</span>
                         </div>
                         <div class="group-actions" *ngIf="group.items.length > 0">
                             <button
@@ -115,10 +115,10 @@
                                 (click)="onClearAll(group.scope)"
                                 class="clear-group-btn"
                                 nz-tooltip
-                                [nzTooltipTitle]="'清空' + group.label"
+                                [nzTooltipTitle]="'清空' + i18n.fanyi(group.scope)"
                             >
                                 <span nz-icon nzType="delete" nzTheme="outline"></span>
-                                清空{{ group.label }}
+                                清空{{ i18n.fanyi(group.scope) }}
                             </button>
                         </div>
                     </div>

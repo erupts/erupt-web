@@ -72,7 +72,7 @@
                                                    [ngModelOptions]="{standalone: true}"
                                                    nzPlaceHolder="请选择字段" nzShowSearch
                                                    class="field-select">
-                                            <nz-option [nzValue]="SUBMITTER" [nzLabel]="'提交人'"></nz-option>
+                                            <nz-option *ngIf="upmsData" [nzValue]="SUBMITTER" [nzLabel]="'提交人'"></nz-option>
                                             <ng-container *ngFor="let field of eruptModel.eruptFieldModels">
                                                 <ng-container *ngIf="searchTypeMapping[field.eruptFieldJson.edit.type] && field.eruptFieldJson.edit?.title">
                                                     <nz-option [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title"></nz-option>
@@ -162,13 +162,13 @@
                                                 <ng-container *ngIf="condition.operator === OperatorNumberType.RANGE">
                                                     <div style="display: flex; align-items: center; gap: 12px;width: 100%">
                                                         <nz-input-number style="flex: 1;" [ngModelOptions]="{standalone: true}"
-                                                                        [(ngModel)]="condition.value[0]"
-                                                                        placeholder="最小值">
+                                                                         [(ngModel)]="condition.value[0]"
+                                                                         placeholder="最小值">
                                                         </nz-input-number>
                                                         <span class="range-separator">至</span>
                                                         <nz-input-number style="flex: 1" [ngModelOptions]="{standalone: true}"
-                                                                        [(ngModel)]="condition.value[1]"
-                                                                        placeholder="最大值">
+                                                                         [(ngModel)]="condition.value[1]"
+                                                                         placeholder="最大值">
                                                         </nz-input-number>
                                                     </div>
                                                 </ng-container>
@@ -250,7 +250,47 @@
                                                 </ng-container>
                                             </ng-container>
                                             <ng-container *ngIf="condition.operatorType === OperatorType.UPMS">
-                                                UPMS-SELECT
+                                                <div style="gap: 12px;display: flex;width: 100%">
+                                                    <nz-select [ngModelOptions]="{standalone: true}"
+                                                               style="width: 30%"
+                                                               [nzPlaceHolder]="'请选择'"
+                                                               [(ngModel)]="condition.upmsScope">
+                                                        <nz-option *ngFor="let item of UpmsScope | enumToArray" [nzValue]="item" [nzLabel]="item | translate"></nz-option>
+                                                    </nz-select>
+
+                                                    <nz-select [ngModelOptions]="{standalone: true}"
+                                                               *ngIf="condition.upmsScope === UpmsScope.USER"
+                                                               style="width: 70%"
+                                                               nzMode="multiple"
+                                                               [nzPlaceHolder]="'请选择'"
+                                                               [(ngModel)]="condition.value">
+                                                        <nz-option *ngFor="let item of upmsData?.users" [nzValue]="item.key" [nzLabel]="item.value"></nz-option>
+                                                    </nz-select>
+                                                    <nz-select [ngModelOptions]="{standalone: true}"
+                                                               *ngIf="condition.upmsScope === UpmsScope.ORG"
+                                                               style="width: 70%"
+                                                               nzMode="multiple"
+                                                               [nzPlaceHolder]="'请选择'"
+                                                               [(ngModel)]="condition.value">
+                                                        <nz-option *ngFor="let item of upmsData?.orgs" [nzValue]="item.key" [nzLabel]="item.value"></nz-option>
+                                                    </nz-select>
+                                                    <nz-select [ngModelOptions]="{standalone: true}"
+                                                               *ngIf="condition.upmsScope === UpmsScope.POST"
+                                                               style="width: 70%"
+                                                               nzMode="multiple"
+                                                               [nzPlaceHolder]="'请选择'"
+                                                               [(ngModel)]="condition.value">
+                                                        <nz-option *ngFor="let item of upmsData?.posts" [nzValue]="item.key" [nzLabel]="item.value"></nz-option>
+                                                    </nz-select>
+                                                    <nz-select [ngModelOptions]="{standalone: true}"
+                                                               *ngIf="condition.upmsScope === UpmsScope.ROLE"
+                                                               style="width: 70%"
+                                                               nzMode="multiple"
+                                                               [nzPlaceHolder]="'请选择'"
+                                                               [(ngModel)]="condition.value">
+                                                        <nz-option *ngFor="let item of upmsData?.roles" [nzValue]="item.key" [nzLabel]="item.value"></nz-option>
+                                                    </nz-select>
+                                                </div>
                                             </ng-container>
                                         </nz-form-item>
                                     </div>

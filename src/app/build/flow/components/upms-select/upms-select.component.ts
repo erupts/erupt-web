@@ -2,10 +2,10 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {KV} from "../../../erupt/model/util.model";
 import {FlowUpmsScope, UpmsScope} from "@flow/model/flow.model";
 import {UpmsDataService} from "@flow/service/upms-data.service";
+import {I18NService} from "@core";
 
 interface TabData {
     key: UpmsScope;
-    label: string;
     icon: string;
     items: KV<number, string>[];
     searchText: string;
@@ -21,7 +21,6 @@ interface FlowUpmsScopeDisplay extends FlowUpmsScope {
 // 分组显示数据
 interface GroupedDisplayData {
     scope: UpmsScope;
-    label: string;
     icon: string;
     items: FlowUpmsScopeDisplay[];
 }
@@ -41,35 +40,33 @@ export class UpmsSelectComponent implements OnInit {
     tabs: TabData[] = [
         {
             key: UpmsScope.USER,
-            label: '用户',
             icon: 'user',
             items: [],
             searchText: null
         },
         {
             key: UpmsScope.ROLE,
-            label: '角色',
             icon: 'safety-certificate',
             items: [],
             searchText: null
         },
         {
             key: UpmsScope.POST,
-            label: '岗位',
             icon: 'idcard',
             items: [],
             searchText: null
         },
         {
             key: UpmsScope.ORG,
-            label: '组织',
             icon: 'apartment',
             items: [],
             searchText: null
         }
     ];
 
-    constructor(private upmsDataService: UpmsDataService) {
+    constructor(private upmsDataService: UpmsDataService,
+                public i18n: I18NService
+    ) {
 
     }
 
@@ -79,10 +76,10 @@ export class UpmsSelectComponent implements OnInit {
 
     private loadData() {
         // 加载用户数据
-        this.tabs.find(tab => tab.key === UpmsScope.USER)!.items = this.upmsDataService.users;
-        this.tabs.find(tab => tab.key === UpmsScope.POST)!.items = this.upmsDataService.posts;
-        this.tabs.find(tab => tab.key === UpmsScope.ROLE)!.items = this.upmsDataService.roles;
-        this.tabs.find(tab => tab.key === UpmsScope.ORG)!.items = this.upmsDataService.orgs;
+        this.tabs.find(tab => tab.key === UpmsScope.USER)!.items = this.upmsDataService.upmsData.users;
+        this.tabs.find(tab => tab.key === UpmsScope.POST)!.items = this.upmsDataService.upmsData.posts;
+        this.tabs.find(tab => tab.key === UpmsScope.ROLE)!.items = this.upmsDataService.upmsData.roles;
+        this.tabs.find(tab => tab.key === UpmsScope.ORG)!.items = this.upmsDataService.upmsData.orgs;
     }
 
 
@@ -171,23 +168,13 @@ export class UpmsSelectComponent implements OnInit {
         return this.tabs[this.activeTab];
     }
 
-    // 获取当前标签页的键
-    get currentTabKey(): UpmsScope {
-        return this.currentTab.key;
-    }
-
-    // 获取当前标签页的标签
-    get currentTabLabel(): string {
-        return this.currentTab.label;
-    }
-
     // 获取列表标题
     getListTitle(tabKey: UpmsScope): string {
         const tab = this.tabs.find(t => t.key === tabKey);
         if (!tab) return '';
 
         const count = this.getFilteredItems(tabKey).length;
-        return `共 ${count} 个${tab.label}`;
+        return `共 ${count} 个${this.i18n.fanyi(tab.key)}`;
     }
 
     // 获取空状态提示
@@ -195,7 +182,7 @@ export class UpmsSelectComponent implements OnInit {
         const tab = this.tabs.find(t => t.key === tabKey);
         if (!tab) return '';
 
-        return `未找到匹配的${tab.label}`;
+        return `未找到匹配的${this.i18n.fanyi(tab.key)}`;
     }
 
     // 获取空选择状态提示
@@ -318,7 +305,6 @@ export class UpmsSelectComponent implements OnInit {
             if (items.length > 0) {
                 groupedData.push({
                     scope: tab.key,
-                    label: tab.label,
                     icon: tab.icon,
                     items: items
                 });

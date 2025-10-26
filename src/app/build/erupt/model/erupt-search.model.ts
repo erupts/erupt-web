@@ -1,7 +1,10 @@
+import {UpmsScope} from "./upms.model";
+
 export interface EruptSearchModel {
     field: string;
     operatorType: OperatorType;
     operator: OperatorDateType | OperatorNumberType | OperatorReferenceType | OperatorStringType;
+    upmsScope: UpmsScope;
     value: any;
 }
 

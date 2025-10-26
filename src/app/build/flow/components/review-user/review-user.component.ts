@@ -27,9 +27,9 @@ export class ReviewUserComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.users = this.upmsDataService.users;
-        this.posts = this.upmsDataService.posts;
-        this.roles = this.upmsDataService.roles;
+        this.users = this.upmsDataService.upmsData.users;
+        this.posts = this.upmsDataService.upmsData.posts;
+        this.roles = this.upmsDataService.upmsData.roles;
         for (let i = 0; i <= 10; i++) {
             this.deptHeads.push({key: i, value: "直属组织负责人" + (i == 0 ? "" : `加 ${i} 级负责人`)})
         }
