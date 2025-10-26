@@ -247,25 +247,25 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     getScopeValue(upmsScope: FlowUpmsScope): string {
         if (upmsScope.scope == UpmsScope.USER) {
-            for (let user of this.upmsDataService.users) {
+            for (let user of this.upmsDataService.upmsData.users) {
                 if (user.key == upmsScope.scopeValue) {
                     return user.value;
                 }
             }
         } else if (upmsScope.scope == UpmsScope.ROLE) {
-            for (let role of this.upmsDataService.roles) {
+            for (let role of this.upmsDataService.upmsData.roles) {
                 if (role.key == upmsScope.scopeValue) {
                     return role.value;
                 }
             }
         } else if (upmsScope.scope == UpmsScope.POST) {
-            for (let post of this.upmsDataService.posts) {
+            for (let post of this.upmsDataService.upmsData.posts) {
                 if (post.key == upmsScope.scopeValue) {
                     return post.value;
                 }
             }
         } else if (upmsScope.scope == UpmsScope.ORG) {
-            for (let org of this.upmsDataService.orgs) {
+            for (let org of this.upmsDataService.upmsData.orgs) {
                 if (org.key == upmsScope.scopeValue) {
                     return org.value;
                 }

@@ -11,6 +11,7 @@ import {
     OperatorUpmsType
 } from "../../model/erupt-search.model";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {UpmsData, UpmsScope} from "../../model/upms.model";
 
 @Component({
     selector: 'erupt-smart-search',
@@ -26,6 +27,8 @@ export class SmartSearchComponent implements OnInit {
     @Output() searchChange = new EventEmitter<EruptSearchModel[][]>();
 
     @Input() requiredHasCondition: boolean = false;
+
+    @Input() upmsData: UpmsData;
 
     SUBMITTER = "SUBMITTER";
 
@@ -52,8 +55,6 @@ export class SmartSearchComponent implements OnInit {
     };
 
     constructor(@Inject(NzMessageService) private msg: NzMessageService,) {
-
-
     }
 
 
@@ -88,23 +89,8 @@ export class SmartSearchComponent implements OnInit {
         }
     }
 
-    isInputOperator(operator: string): boolean {
-        return [OperatorStringType.LIKE, OperatorStringType.NOT_LIKE, OperatorStringType.START_WITH, OperatorStringType.END_WITH].includes(operator as OperatorStringType);
-    }
-
-    // ngOnChanges(changes: SimpleChanges): void {
-    //     if (changes['search'] && !changes['search'].firstChange) {
-    //         // 保证每个分组至少有一个条件项
-    //         if (this.search.length === 0) {
-    //             this.search = [[this.createEmptyCondition()]];
-    //         } else {
-    //             this.search = this.search.map(group => (group && group.length ? group : [this.createEmptyCondition()]));
-    //         }
-    //     }
-    // }
-
     private createEmptyCondition(): EruptSearchModel {
-        return {field: '', operatorType: null, operator: null, value: null};
+        return {field: '', operatorType: null, operator: null, value: null, upmsScope: null};
     }
 
     onFieldChange(condition: EruptSearchModel): void {
@@ -132,12 +118,13 @@ export class SmartSearchComponent implements OnInit {
                 break;
         }
         condition.value = null;
+        condition.upmsScope = null;
     }
 
     onOperatorChange(condition: EruptSearchModel): void {
         if (condition.operatorType === OperatorType.NUMBER && condition.operator === OperatorNumberType.RANGE as OperatorNumberType) {
             condition.value = [];
-        } else if(condition.operatorType === OperatorType.CHOICE){
+        } else if (condition.operatorType === OperatorType.CHOICE || condition.operatorType === OperatorType.UPMS) {
             condition.value = [];
         } else {
             condition.value = null;
@@ -183,6 +170,7 @@ export class SmartSearchComponent implements OnInit {
     protected readonly OperatorDateType = OperatorDateType;
     protected readonly OperatorReferenceType = OperatorReferenceType;
     protected readonly OperatorUpmsType = OperatorUpmsType;
+    protected readonly UpmsScope = UpmsScope;
 }
 
 

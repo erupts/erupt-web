@@ -31,7 +31,7 @@
 >
     <ng-container *nzDrawerContent>
         <ng-container>
-            <erupt-smart-search [requiredHasCondition]="gatewayType != GatewayType.PARALLEL"
+            <erupt-smart-search [requiredHasCondition]="gatewayType != GatewayType.PARALLEL" [upmsData]="upmsData"
                                 [eruptModel]="eruptBuild.eruptModel" [(search)]="gatewayNode.conditions"/>
         </ng-container>
     </ng-container>

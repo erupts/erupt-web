@@ -7,6 +7,8 @@ import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {EruptSearchModel} from "../../../erupt/model/erupt-search.model";
 import {SmartSearchComponent} from "../../../erupt/components/smart-search/smart-search.component";
 import {FlowTurn} from "@flow/model/flow-instance.model";
+import {UpmsData} from "../../../erupt/model/upms.model";
+import {UpmsDataService} from "@flow/service/upms-data.service";
 
 export enum GatewayType {
     EXCLUSIVE = 'EXCLUSIVE',
@@ -50,11 +52,18 @@ export class GatewayNodeComponent extends ANode implements OnInit {
     @ViewChild(SmartSearchComponent, {static: false})
     smartSearchComponent!: SmartSearchComponent;
 
+    upmsData: UpmsData;
+
     showErr = false;
 
     errInfo: any = null;
 
     showDrawer: boolean = false;
+
+    constructor(private upmsDataService?: UpmsDataService) {
+        super();
+        this.upmsData = this.upmsDataService?.upmsData;
+    }
 
     ngOnInit(): void {
         this.gatewayNode = this.modelValue.prop;

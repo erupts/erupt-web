@@ -158,3 +158,8 @@ FLOW_TODO,待办,待辦,Todo,À faire,やること,할 일,Сделать,Por ha
 FLOW_DONE,已办,已辦,Done,Fait,完了,완료,Выполнено,Hecho,Erledigt,Concluído,Selesai,تم
 CREATED,已创建,已創建,Created,Créé,作成済,생성됨,Создано,Creado,Erstellt,Criado,Dibuat,تم الإنشاء
 CC,抄送我,抄送我,CC Me,Me mettre en CC,私にCC,나에게 참조,Отправить копию мне,CC a mí,CC mich,CC para mim,CC saya,نسخة لي
+
+ORG,组织,組織,Organization,Organisation,組織,조직,Организация,Organización,Organisation,Organização,Organisasi,منظمة
+USER,用户,用戶,User,Utilisateur,ユーザー,사용자,Пользователь,Usuario,Benutzer,Utilizador,Pengguna,مستخدم
+POST,岗位,崗位,Position,Poste,ポスト,직위,Должность,Puesto,Position,Cargo,Jabatan,منصب
+ROLE,角色,角色,Role,Rôle,ロール,역할,Роль,Rol,Rolle,Função,Peran,دور
