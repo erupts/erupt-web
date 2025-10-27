@@ -1,24 +1,20 @@
-import {Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
-import {EditType, Scene} from "../../model/erupt.enum";
+import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from "@angular/core";
+import {Scene} from "../../model/erupt.enum";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataHandlerService} from "../../service/data-handler.service";
-import {EruptFieldModel} from "../../model/erupt-field.model";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {DataService} from "@shared/service/data.service";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {NzModalService} from "ng-zorro-antd/modal";
 
 @Component({
     selector: "erupt-edit",
     templateUrl: "./edit.component.html",
     styleUrls: ["./edit.component.less"]
 })
-export class EditComponent implements OnInit, OnDestroy {
+export class EditComponent implements OnInit {
 
-    loading = false;
-
-    editType = EditType;
+    loading: boolean = false;
 
     @Input() behavior: Scene = Scene.ADD;
 
@@ -32,20 +28,11 @@ export class EditComponent implements OnInit, OnDestroy {
 
     @Input() header: object = {};
 
-    @ViewChild("eruptEdit", {static: false}) eruptEdit: EditTypeComponent;
-
-    eruptFieldModelMap: Map<String, EruptFieldModel>;
-
-    tabErupts: {
-        key: string,
-        value: EruptBuildModel
-    }[] = [];
+    @ViewChild("eruptEdit", {static: false}) eruptEditComponent: EditTypeComponent;
 
     constructor(
         @Inject(NzMessageService)
         private msg: NzMessageService,
-        @Inject(NzModalService)
-        private modal: NzModalService,
         private dataService: DataService,
         private i18n: I18NService,
         private dataHandlerService: DataHandlerService) {
@@ -54,18 +41,6 @@ export class EditComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
-        for (let eruptFieldModel of this.eruptBuildModel.eruptModel.eruptFieldModels) {
-            switch (eruptFieldModel.eruptFieldJson.edit.type) {
-                case EditType.TAB_TABLE_REFER:
-                case EditType.TAB_TABLE_ADD:
-                case EditType.TAB_TREE:
-                    this.tabErupts.push({
-                        key: eruptFieldModel.fieldName,
-                        value: this.eruptBuildModel.tabErupts[eruptFieldModel.fieldName]
-                    })
-                    break;
-            }
-        }
         if (this.behavior == Scene.ADD) {
             this.loading = true;
             this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName, null, this.header).subscribe(data => {
@@ -79,19 +54,6 @@ export class EditComponent implements OnInit, OnDestroy {
                 this.loading = false;
             });
         }
-        this.eruptFieldModelMap = this.eruptBuildModel.eruptModel.eruptFieldModelMap;
-    }
-
-    isReadonly(eruptFieldModel: EruptFieldModel) {
-        if (this.readonly) {
-            return true;
-        }
-        let ro = eruptFieldModel.eruptFieldJson.edit.readOnly;
-        if (this.behavior === Scene.ADD) {
-            return ro.add;
-        } else {
-            return ro.edit;
-        }
     }
 
     beforeSaveValidate(): boolean {
@@ -99,11 +61,8 @@ export class EditComponent implements OnInit, OnDestroy {
             this.msg.warning(this.i18n.fanyi('global.update.loading.hint'));
             return false;
         } else {
-            return this.eruptEdit.eruptEditValidate();
+            return this.eruptEditComponent.eruptEditValidate();
         }
-    }
-
-    ngOnDestroy(): void {
     }
 
 

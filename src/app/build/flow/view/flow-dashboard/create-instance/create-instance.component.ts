@@ -79,9 +79,6 @@ export class CreateInstanceComponent implements OnInit {
         })
     }
 
-    /**
-     * 发起流程
-     */
     onSubmit(): void {
         let data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
         this.flowInstanceApiService.create(this.flow.id, data).subscribe(res => {
@@ -95,9 +92,6 @@ export class CreateInstanceComponent implements OnInit {
         })
     }
 
-    /**
-     * 取消操作
-     */
     onCancel(): void {
         this.close.emit();
         if (this.onClose) {

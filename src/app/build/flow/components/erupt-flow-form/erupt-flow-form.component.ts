@@ -75,11 +75,6 @@ export class EruptFlowFormComponent implements OnInit {
                                 eruptFieldModel.eruptFieldJson.edit.notNull = true;
                                 break;
                         }
-                    } else {
-                        eruptFieldModel.eruptFieldJson.edit.readOnly = {
-                            add: true,
-                            edit: true,
-                        };
                     }
                 }
             }

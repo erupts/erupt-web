@@ -64,6 +64,11 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     iframeHeight = IframeHeight;
 
+    tabErupts: {
+        key: string,
+        value: EruptBuildModel
+    }[] = [];
+
     constructor(public dataService: DataService,
                 private i18n: I18NService,
                 private differs: KeyValueDiffers,
@@ -81,6 +86,16 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             this.col = colRules[1];
         }
         for (let model of this.eruptModel.eruptFieldModels) {
+            switch (model.eruptFieldJson.edit.type) {
+                case EditType.TAB_TABLE_REFER:
+                case EditType.TAB_TABLE_ADD:
+                case EditType.TAB_TREE:
+                    this.tabErupts.push({
+                        key: model.fieldName,
+                        value: this.eruptBuildModel.tabErupts[model.fieldName]
+                    })
+                    break;
+            }
             model.eruptFieldJson.edit.$valueDiff = this.differs.find(model.eruptFieldJson.edit).create();
             model.eruptFieldJson.edit.$valueSubject = new BehaviorSubject<any>(null);
             let edit = model.eruptFieldJson.edit;
@@ -114,7 +129,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     ngDoCheck() {
         for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
-            if (eruptFieldModel.eruptFieldJson.edit.$valueDiff.diff(eruptFieldModel.eruptFieldJson.edit)) {
+            if (eruptFieldModel.eruptFieldJson.edit.$valueDiff?.diff(eruptFieldModel.eruptFieldJson.edit)) {
                 eruptFieldModel.eruptFieldJson.edit.$valueSubject.next(eruptFieldModel.eruptFieldJson.edit.$value);
             }
         }
@@ -215,20 +230,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             window.open(DataService.previewAttachment(file.response.data));
         }
     };
-
-    changeTagAll($event, field: EruptFieldModel) {
-        for (let vl of field.componentValue) {
-            vl.$viewValue = $event;
-        }
-    }
-
-    getFromData(): any {
-        let result = {};
-        for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
-            result[eruptFieldModel.fieldName] = eruptFieldModel.eruptFieldJson.edit.$value;
-        }
-        return result;
-    }
 
     copy(val) {
         if (!val) {
