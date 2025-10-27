@@ -1,5 +1,29 @@
 :host {
     ::ng-deep {
+        .ant-tabs {
+            border: 1px solid #e8e8e8;
+
+            .ant-tabs-nav {
+                margin: 0;
+            }
+
+            .ant-tabs-tab-active {
+                border-bottom: 1px solid #e8e8e8 !important;
+            }
+
+            .ant-tabs-tab {
+                padding: 8px 30px;
+                border-top: none;
+                border-left: none;
+                margin-left: 0 !important;
+            }
+
+            .ant-tabs-content {
+                padding: 12px;
+            }
+
+        }
+
         .search-card {
             background: #fafafa;
             margin-bottom: 0;
@@ -87,6 +111,18 @@
 
             .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table {
                 border-top: none;
+            }
+
+            .ant-tabs {
+                border: 1px solid #434343;
+
+                .ant-tabs-nav {
+                    margin: 0;
+                }
+
+                .ant-tabs-tab-active {
+                    border-bottom: 1px solid #434343 !important;
+                }
             }
         }
     }
