@@ -104,6 +104,7 @@ export class SubNodeComponent extends ANode implements OnInit {
         let flowConfig = this.flowConfigs.find(config => config.id === val);
         if (clearMapping) {
             this.subNode.mappings = [{source: null, target: null}];
+            this.subNode.mappingsReverse = [];
         }
         this.flowApi.eruptFlowBuild(flowConfig.erupt).subscribe(res => {
             this.subEruptBuild = res.data;
@@ -112,6 +113,10 @@ export class SubNodeComponent extends ANode implements OnInit {
 
     addMapping() {
         this.subNode.mappings.push({source: null, target: null});
+    }
+
+    addMappingForParent() {
+        this.subNode.mappingsReverse.push({source: null, target: null});
     }
 
 }

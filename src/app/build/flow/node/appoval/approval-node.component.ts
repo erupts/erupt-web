@@ -34,9 +34,6 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
     ngOnInit(): void {
         if (this.modelValue.prop) {
             this.approveNode = this.modelValue.prop;
-            if (!this.approveNode.formAccesses){
-                this.approveNode.formAccesses = {};
-            }
         }
     }
 

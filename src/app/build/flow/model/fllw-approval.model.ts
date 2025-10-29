@@ -93,13 +93,17 @@ export class StartNode {
 
 }
 
+export interface Mapping {
+    source: string
+    target: string
+}
+
 export class SubNode {
 
     subFlowId: number;
 
-    mappings: {
-        source: string
-        target: string
-    }[] = [];
+    mappings: Mapping[] = [];
+
+    mappingsReverse: Mapping[] = [];
 
 }

@@ -15,7 +15,7 @@ export class EruptFlowFormComponent implements OnInit {
 
     loading: boolean = false;
 
-    @Input() readonly: boolean;
+    @Input() readonly: boolean = false;
 
     @Input() eruptBuild: EruptBuildModel;
 
@@ -24,6 +24,8 @@ export class EruptFlowFormComponent implements OnInit {
     @Input() initValue: boolean = true;
 
     @Input() formAccesses: Record<string, FormAccessEnum>;
+
+    @Input() defaultFormAccess: FormAccessEnum = FormAccessEnum.DEFAULT
 
     constructor(private dataService: DataService,
                 private flowApiService: FlowApiService,
@@ -74,6 +76,27 @@ export class EruptFlowFormComponent implements OnInit {
                             case FormAccessEnum.NOT_NULL:
                                 eruptFieldModel.eruptFieldJson.edit.notNull = true;
                                 break;
+                        }
+                    } else {
+                        switch (this.defaultFormAccess) {
+                            case FormAccessEnum.READ_WRITE:
+                                eruptFieldModel.eruptFieldJson.edit.readOnly = {
+                                    add: false,
+                                    edit: false,
+                                };
+                                break
+                            case FormAccessEnum.NOT_NULL:
+                                eruptFieldModel.eruptFieldJson.edit.notNull = true;
+                                break
+                            case FormAccessEnum.HIDE:
+                                eruptFieldModel.eruptFieldJson.edit.show = false;
+                                break
+                            case FormAccessEnum.READONLY:
+                                eruptFieldModel.eruptFieldJson.edit.readOnly = {
+                                    add: true,
+                                    edit: true,
+                                };
+                                break
                         }
                     }
                 }
