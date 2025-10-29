@@ -47,7 +47,7 @@
                 <div class="tab-content">
                     <div class="section" *ngIf="eruptBuild">
                         <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== selectedView"
-                                         [formAccesses]="nodeInfo?.prop?.formAccesses || {}"></erupt-flow-form>
+                                         [formAccesses]="nodeInfo?.prop?.formAccesses || {}" [defaultFormAccess]="FormAccessEnum.READONLY"></erupt-flow-form>
                     </div>
                 </div>
             </nz-tab>

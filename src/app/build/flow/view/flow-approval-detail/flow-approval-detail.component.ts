@@ -16,6 +16,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {getAvatarColor} from "@flow/util/flow.util";
 import {ActivatedRoute} from "@angular/router";
+import {FormAccessEnum} from "@flow/model/flow.model";
 
 @Component({
     selector: 'flow-approval-detail',
@@ -504,4 +505,5 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     protected readonly getAvatarColor = getAvatarColor;
 
+    protected readonly FormAccessEnum = FormAccessEnum;
 }
