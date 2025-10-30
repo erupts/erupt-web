@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -291,20 +291,22 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataPage.pi = page || this.dataPage.pi;
         this.dataPage.ps = size || this.dataPage.ps;
         this.dataPage.sort = sort || this.dataPage.sort;
-        let sortString = null;
+        let orderBy: Sort[] = null;
         if (this.dataPage.sort) {
-            let arr = [];
+            orderBy = [];
             for (let key in this.dataPage.sort) {
-                arr.push(key + ' ' + this.dataPage.sort[key]);
+                orderBy.push({
+                    field: key,
+                    direction: this.dataPage.sort[key]
+                })
             }
-            sortString = arr.join(",")
         }
         this.selectedRows = [];
         this.dataPage.querying = true;
         this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url, {
             pageIndex: this.dataPage.pi,
             pageSize: this.dataPage.ps,
-            sort: sortString,
+            sort: orderBy,
             ...query
         }, this.header).subscribe(page => {
             this.dataPage.querying = false;

@@ -77,9 +77,14 @@ export interface Page {
     pageSize: number;
     totalPage?: number;
     total?: number;
-    sort?: string;
+    sort?: Sort[];
     list?: any[];
     alert?: Alert;
+}
+
+export interface Sort {
+    field: string;
+    direction?: "asc" | "desc";
 }
 
 export interface Alert {
