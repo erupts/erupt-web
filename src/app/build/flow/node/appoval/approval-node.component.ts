@@ -4,7 +4,7 @@ import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
-import {ApprovalStrategy, ApproveNode, ReviewMode} from "@flow/model/fllw-approval.model";
+import {ApprovalStrategy, ApprovalTimeoutAction, ApproveNode, ReviewMode} from "@flow/model/fllw-approval.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
@@ -103,4 +103,5 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
     protected readonly ApprovalStrategy = ApprovalStrategy;
 
 
+    protected readonly ApprovalTimeoutAction = ApprovalTimeoutAction;
 }
