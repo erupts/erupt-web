@@ -41,12 +41,26 @@
                 <span nz-icon nzType="plus" nzTheme="outline"></span>
                 添加审批人
             </button>
+            <nz-divider style="margin: 12px 0"></nz-divider>
             <div>
                 <h4>多人审批时使用的审批方式</h4>
                 <nz-radio-group [(ngModel)]="approveNode.approvalStrategy">
                     <label style="width: 100%" nz-radio [nzValue]="ApprovalStrategy.ANY_APPROVE">或签（一名审批人同意即可）</label>
                     <label style="width: 100%;margin-top: 8px" nz-radio [nzValue]="ApprovalStrategy.ALL_APPROVE">会签（需所有审批人同意）</label>
                 </nz-radio-group>
+            </div>
+            <nz-divider style="margin: 12px 0"></nz-divider>
+            <div>
+                <h4>审批超时设置</h4>
+                <nz-switch [(ngModel)]="approveNode.approvalTimeoutEnabled"></nz-switch>
+                <div *ngIf="approveNode.approvalTimeoutEnabled" style="margin-top: 12px">
+                    <nz-input-number [(ngModel)]="approveNode.approvalTimeoutHours" [nzMin]="1" [nzStep]="1" style="width: 120px"></nz-input-number>
+                    <span style="margin: 0 8px"> 小时后 → </span>
+                    <nz-radio-group [(ngModel)]="approveNode.approvalTimeoutAction">
+                        <label nz-radio [nzValue]="ApprovalTimeoutAction.AUTO_PASS">自动同意</label>
+                        <label nz-radio [nzValue]="ApprovalTimeoutAction.AUTO_REJECT">自动拒绝</label>
+                    </nz-radio-group>
+                </div>
             </div>
         </ng-container>
         <ng-container *ngIf="selectTab==1">
@@ -62,9 +76,9 @@
             <div class="allow-item">
                 <label nz-checkbox [(ngModel)]="approveNode.allowCc">允许抄送</label>
             </div>
-<!--            <div class="allow-item">-->
-<!--                <label nz-checkbox [(ngModel)]="approveNode.allowReturn">允许退回</label>-->
-<!--            </div>-->
+            <!--            <div class="allow-item">-->
+            <!--                <label nz-checkbox [(ngModel)]="approveNode.allowReturn">允许退回</label>-->
+            <!--            </div>-->
             <div class="allow-item">
                 <label nz-checkbox [(ngModel)]="approveNode.requireSignature">审批同意时需手写签名</label>
             </div>

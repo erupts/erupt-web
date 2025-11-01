@@ -72,6 +72,19 @@ export class ApproveNode {
 
     /** 审批同意时需手写签名 */
     requireSignature: boolean = false;
+
+    approvalTimeoutEnabled: boolean = false;
+
+    approvalTimeoutHours: number;
+
+    approvalTimeoutAction: ApprovalTimeoutAction;
+}
+
+export enum ApprovalTimeoutAction {
+
+    AUTO_PASS = 'AUTO_PASS',
+    AUTO_REJECT = 'AUTO_REJECT',
+
 }
 
 export class CcNode {
