@@ -73,7 +73,7 @@ export interface Edit {
     desc: string;
     type: EditType;
     show: boolean;
-    dynamicOn: { dependField: string, condition: string, noMatch: FormCtrl, match: FormCtrl };
+    dynamic: { dependField: string, condition: string, noMatch: FormCtrl, match: FormCtrl };
     readOnly: Readonly;
     placeHolder: string;
     search: Search;

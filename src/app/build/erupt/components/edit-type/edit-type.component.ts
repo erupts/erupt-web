@@ -104,8 +104,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                     edit.$viewValue = [];
                 }
             }
-            let dynamicOn = model.eruptFieldJson.edit.dynamicOn;
-            if (dynamicOn) {
+            let dynamic = model.eruptFieldJson.edit.dynamic;
+            if (dynamic) {
                 if (!this.dynamicByFieldModels) {
                     this.dynamicByFieldModels = [];
                 }
@@ -135,7 +135,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         }
         if (this.dynamicByFieldModels) {
             for (let model of this.dynamicByFieldModels) {
-                let dynamicBy = model.eruptFieldJson.edit.dynamicOn;
+                let dynamicBy = model.eruptFieldJson.edit.dynamic;
                 let edit = this.eruptModel.eruptFieldModelMap.get(dynamicBy.dependField).eruptFieldJson.edit;
                 if (edit.$beforeValue != edit.$value) {
                     edit.$beforeValue = edit.$value;
@@ -148,7 +148,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     dynamicByCheck(model: EruptFieldModel) {
-        let dynamicBy = model.eruptFieldJson.edit.dynamicOn;
+        let dynamicBy = model.eruptFieldJson.edit.dynamic;
         let value = this.eruptModel.eruptFieldModelMap.get(dynamicBy.dependField).eruptFieldJson.edit.$value;
         try {
             let match = !!eval(dynamicBy.condition);
