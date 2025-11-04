@@ -58,7 +58,7 @@
                 >
                     <div class="item-header">
                         <h3 class="item-title">
-                            {{ item?.eruptFlowConfig?.name }}
+                            <p style="margin-bottom: 0">{{ item?.eruptFlowConfig?.name }}</p>
                         </h3>
                         <div>
                             <nz-tag *ngIf="item?.parent" nzColor="orange"
@@ -73,6 +73,11 @@
                             </nz-tag>
                         </div>
                     </div>
+                    <p *ngIf="item?.eruptFlowConfig?.setting?.subTitleFields?.length && item?.data" style="margin-bottom: 8px;">
+                        <ng-container *ngFor="let field of item?.eruptFlowConfig?.setting?.subTitleFields">
+                            <p><span>{{JSON.parse(item?.data)?.[field]}}</span></p>
+                        </ng-container>
+                    </p>
                     <div class="item-footer">
                         <div class="submitter-info">
                             <nz-avatar [nzText]="item?.initiatorUser?.name.substring(0,1)"

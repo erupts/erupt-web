@@ -20,6 +20,7 @@ export enum FlowTurn {
 export interface FlowInstance {
     id: number;
     no: string;
+    data: any;
     eruptFlowConfig: FlowConfig;
     erupt: string;
     eruptModelId: string;

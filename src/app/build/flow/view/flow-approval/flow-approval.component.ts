@@ -83,4 +83,5 @@ export class FlowApprovalComponent implements OnInit {
 
     protected readonly getAvatarColor = getAvatarColor;
 
+    protected readonly JSON = JSON;
 }

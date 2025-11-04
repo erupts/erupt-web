@@ -143,11 +143,8 @@
                         <!-- 添加评论 -->
                         <div class="comment-form">
                             <nz-input-group [nzSuffix]="commentSuffix">
-                                <input
-                                    nz-input
-                                    [(ngModel)]="newComment"
-                                    placeholder="请输入评论内容..."
-                                    (keyup.enter)="submitComment()"
+                                <input nz-input placeholder="请输入评论内容..."
+                                       [(ngModel)]="newComment" (keyup.enter)="submitComment()"
                                 />
                             </nz-input-group>
                             <ng-template #commentSuffix>
