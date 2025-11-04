@@ -25,7 +25,11 @@ export class FlowConfig {
     rule: NodeRule[];
     permission: FlowPermission = FlowPermission.ALL;
     permissionScope: FlowUpmsScope[]
-    setting: Record<string, any> = {};
+    setting: FlowConfigSetting = new FlowConfigSetting();
+}
+
+export class FlowConfigSetting {
+    subTitleFields: string[] = [];
 }
 
 export interface FlowRuleNode {
