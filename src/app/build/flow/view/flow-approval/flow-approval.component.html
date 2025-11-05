@@ -61,14 +61,10 @@
                             <p style="margin-bottom: 0">{{ item?.eruptFlowConfig?.name }}</p>
                         </h3>
                         <div>
-                            <nz-tag *ngIf="item?.parent" nzColor="orange"
-                                    style="margin-right: 6px"
-                            >
+                            <nz-tag *ngIf="item?.parent" nzColor="orange" style="margin-right: 6px">
                                 {{'SUB_FLOW'|translate}}
                             </nz-tag>
-                            <nz-tag
-                                style="margin-right: 0"
-                            >
+                            <nz-tag style="margin-right: 0">
                                 {{ item?.status | translate }}
                             </nz-tag>
                         </div>
