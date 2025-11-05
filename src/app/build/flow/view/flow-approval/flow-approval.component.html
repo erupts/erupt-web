@@ -75,7 +75,7 @@
                     </div>
                     <p *ngIf="item?.eruptFlowConfig?.setting?.subTitleFields?.length && item?.data" style="margin-bottom: 8px;">
                         <ng-container *ngFor="let field of item?.eruptFlowConfig?.setting?.subTitleFields">
-                            <p><span>{{JSON.parse(item?.data)?.[field]}}</span></p>
+                            <p style="margin-bottom: 0.25em">{{JSON.parse(item?.data)?.[field]}}</p>
                         </ng-container>
                     </p>
                     <div class="item-footer">
