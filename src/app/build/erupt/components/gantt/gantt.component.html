@@ -53,10 +53,11 @@
                         <div
                             class="gantt-plan"
                             [ngStyle]="{
-                   width: item.scheduledStartTime && item.scheduledEndTime && gattWidth(item.scheduledStartTime || data.min, item.scheduledEndTime || data.min),
-                   left: item.scheduledStartTime && gattLeft(data.min || data.min, item.scheduledStartTime || data.min),
-                   height: (item.actualStartTime && item.actualEndTime) ? null : '16px',
-                   top: (item.actualStartTime && item.actualEndTime) ? null : '12px' }"
+                               width: item.scheduledStartTime && item.scheduledEndTime && gattWidth(item.scheduledStartTime || data.min, item.scheduledEndTime || data.min),
+                               left: item.scheduledStartTime && gattLeft(data.min || data.min, item.scheduledStartTime || data.min),
+                               height: '16px',
+                               top: '12px'
+                            }"
                             nz-popover
                             [nzPopoverTitle]="planTitle"
                             [nzPopoverContent]="plan"
@@ -72,25 +73,6 @@
                                 [ngStyle]="{top: (item.actualStartTime && item.actualEndTime) ?  null : '0' }">{{ item.scheduledStartTime && getDate(item.scheduledStartTime) }}</span>
                             <span
                                 [ngStyle]="{top: (item.actualStartTime && item.actualEndTime) ?  null : '0'}">{{ item.scheduledEndTime && getDate(item.scheduledEndTime) }}</span>
-                        </div>
-                        <div class="gantt-actual"
-                             *ngIf='item.actualStartTime && item.actualEndTime'
-                             [ngStyle]="{
-                      width: item.actualStartTime && item.actualEndTime && gattWidth(item.actualStartTime , item.actualEndTime),
-                      left: item.actualStartTime && gattLeft(data.min, item.actualStartTime)}"
-                             nz-popover
-                             [nzPopoverTitle]="actualTitle"
-                             [nzPopoverContent]="actual"
-                        >
-                            <ng-template #actualTitle>
-                                <div>{{ item.name }}的实际时间</div>
-                            </ng-template>
-                            <ng-template #actual>
-                                <p>实际开始时间：{{ item.actualStartTime && getDate(item.actualStartTime) }}</p>
-                                <p>实际结束时间：{{ item.actualEndTime && getDate(item.actualEndTime) }}</p>
-                            </ng-template>
-                            <span>{{ item.actualStartTime && getDate(item.actualStartTime) }}</span>
-                            <span>{{ item.actualEndTime && getDate(item.actualEndTime) }}</span>
                         </div>
                     </div>
                 </td>
