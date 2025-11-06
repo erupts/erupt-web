@@ -1,7 +1,7 @@
 ---
 
 <p align="center"><img src="./src/erupt.svg" height="150" alt="logo"/></p>
-<h2 align="center">Erupt Framework &nbsp; 🚀 &nbsp; 通用后台管理框架</h2>
+<h2 align="center">Erupt Engine &nbsp; 🚀 &nbsp; 通用后台管理框架</h2>
 <h3 align="center">前端源码</h3>
 <h3 align="center"><a href="https://erupt.xyz" target="_blank">https://www.erupt.xyz</a></h3>
 
@@ -12,7 +12,7 @@
 ---
 
 <p align="center">
-    <a href="https://www.erupt.xyz" target="_blank"><img src="https://img.shields.io/badge/Erupt-Framework-brightgreen" alt="Erupt Framework"></a>
+    <a href="https://www.erupt.xyz" target="_blank"><img src="https://img.shields.io/badge/Erupt-Framework-brightgreen" alt="Erupt Engine"></a>
     <a href="https://mvnrepository.com/search?q=erupt"><img src="https://img.shields.io/maven-central/v/xyz.erupt/erupt" alt="maven-central"></a>
     <a href="https://www.oracle.com/technetwork/java/javase/downloads/index.html"><img src="https://img.shields.io/badge/JDK-8+-green.svg" alt="jdk 8+"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-Apache%202-blue" alt="license Apache 2.0"></a>

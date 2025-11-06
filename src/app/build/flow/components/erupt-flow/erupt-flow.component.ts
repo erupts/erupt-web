@@ -15,7 +15,8 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {StartNodeComponent} from "@flow/node/start/start-node.component";
 import {NodeRule} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
-import {NodeMap} from '@flow/node/process-nodes';
+import {EndNodeComponent} from "@flow/node/end/end-node.component";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
     selector: 'erupt-flow',
@@ -33,6 +34,8 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
     @Output() modelValueChange = new EventEmitter<NodeRule[]>();
 
     @Output() select = new EventEmitter<any>();
+
+    @Input() progress: Record<string, FlowTurn>
 
     @ViewChild('canvasContainer') canvasContainer: ElementRef;
 
@@ -73,7 +76,7 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         // 加载的时候判断，赋默认值
         if (!this.modelValue) {
-            this.modelValue = [new StartNodeComponent().create()];
+            this.modelValue = [new StartNodeComponent().create(), new EndNodeComponent().create()];
             this.modelValueChange.emit(this.modelValue);
         }
     }
@@ -223,9 +226,6 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
 
     selectNode(node: any) {
         this.select.emit(node);
-        // if (NodeComponentConfigs[this.activeNode.type]) {
-        //     this.nodeConfVisible = true;
-        // }
     }
 
     /**
@@ -263,28 +263,6 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
         }
     }
 
-    /**
-     * 删除某个元素
-     * @param branch 要删除的元素所在支路
-     * @param i 删除的元素在该支路内索引位置
-     */
-    deleteNode(branch: any[], i: number) {
-        branch.splice(i, 1);
-        this.modelValueChange.emit(this.modelValue);
-    }
-
-    /**
-     * 插入节点
-     * @param branch 该节点要插入的支路（节点数组）
-     * @param i 插入哪个元素后面的索引，实际插入位置为i+1
-     * @param type 要插入的节点类型
-     */
-    insertNode(branch: any[], i: number, type: string) {
-        if (NodeMap[type] && NodeMap[type].create) {
-            const newNode = NodeMap[type].create();
-            branch.splice(i + 1, 0, newNode);
-            this.modelValueChange.emit(this.modelValue);
-        }
-    }
+    protected readonly FlowTurn = FlowTurn;
 
 }

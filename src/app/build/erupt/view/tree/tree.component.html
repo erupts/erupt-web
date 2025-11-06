@@ -33,7 +33,7 @@
                 <div nz-row class="mb-sm">
                     <div nz-col [nzXs]="24">
                         <ng-container *ngIf="selectLeaf">
-                            <button nz-button (click)="save()" [disabled]="loading" id="erupt-btn-save"
+                            <button nz-button (click)="update()" [disabled]="loading" id="erupt-btn-save"
                                     *ngIf="eruptBuildModel.eruptModel.eruptJson.power.edit">
                                 <i nz-icon nzType="save" theme="outline"></i>{{ 'tree.update'|translate }}
                             </button>

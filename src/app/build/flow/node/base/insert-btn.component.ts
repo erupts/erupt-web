@@ -2,6 +2,8 @@ import {Component, EventEmitter, Output} from '@angular/core';
 import {Nodes} from '../process-nodes';
 import {ANode} from "@flow/node/abstract-node";
 import {NodeType} from "@flow/model/node.model";
+import {FlowDataService} from "@flow/service/flow-data.service";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
 
 @Component({
     selector: 'app-insert-btn',
@@ -9,7 +11,10 @@ import {NodeType} from "@flow/model/node.model";
     styleUrls: ['./insert-btn.component.less']
 })
 export class InsertBtnComponent {
-    @Output() insertNode = new EventEmitter<string>();
+
+    @Output() insertNode = new EventEmitter<NodeType>();
+
+    @Output() insertFlexNode = new EventEmitter<FlexNodeModel>();
 
     popoverVisible: boolean = false;
 
@@ -17,8 +22,21 @@ export class InsertBtnComponent {
 
     nodeType = NodeType
 
-    onInsertNode(type: string) {
+    flexNodes: FlexNodeModel[] = [];
+
+    constructor(flowDataService: FlowDataService) {
+        this.flexNodes = flowDataService.flexNodes;
+    }
+
+
+    onInsertNode(type: NodeType) {
         this.insertNode.emit(type);
         this.popoverVisible = false;
     }
+
+    onInsertFlexNode(flexNode: FlexNodeModel) {
+        this.insertFlexNode.emit(flexNode);
+        this.popoverVisible = false;
+    }
+
 }

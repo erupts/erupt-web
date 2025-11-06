@@ -2,11 +2,17 @@
     [(model)]="model"
     [readonly]="readonly"
     [showClose]="false"
-    [showError]="showErr"
-    [errorInfo]="errInfo"
+    [eruptBuild]="eruptBuild"
     (select)="onSelect()"
+    (saveProp)="onSaveProp()"
     (insertNode)="onInsertNode($event)"
-    headerColor="#80929C"
-    headerIcon="user">
+    (insertFlexNode)="onInsertFlexNode($event)"
+    [headerColor]="color()"
+    [progress]="progress"
+    [hasConfig]="true">
     流程从本节点开始
+    <div config>
+        <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="startNode.formAccesses"
+                         [access]="FormAccessEnum.READ_WRITE"/>
+    </div>
 </erupt-node>

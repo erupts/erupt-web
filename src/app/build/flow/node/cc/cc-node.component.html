@@ -1,12 +1,48 @@
 <erupt-node
-  [(model)]="modelValue"
-  [readonly]="readonly"
-  [showError]="showErr"
-  [errorInfo]="errInfo"
-  [headerColor]="color()"
-  headerIcon="notification"
-  (select)="onSelect()"
-  (insertNode)="onInsertNode($event)"
-  (delete)="onDelete()">
+    [(model)]="modelValue"
+    [readonly]="readonly"
+    [headerColor]="color()"
+    [eruptBuild]="eruptBuild"
+    (select)="onSelect()"
+    (insertNode)="onInsertNode($event)"
+    (insertFlexNode)="onInsertFlexNode($event)"
+    (saveProp)="onSaveProp()"
+    [progress]="progress"
+    (delete)="onDelete()">
     抄送人
+    <div config>
+        <nz-segmented [nzOptions]="['设置抄送人','表单权限']" [(ngModel)]="selectTab" style="margin-bottom: 12px">
+
+        </nz-segmented>
+        <ng-container *ngIf="selectTab==0">
+            <ng-container *ngFor="let reviewUserMode of ccNode.reviewUserModes; let i = index">
+                <nz-card nzTitle="抄送人" nzSize="small" style="margin-bottom: 12px">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <app-review-user [reviewUserMode]="reviewUserMode">
+                            </app-review-user>
+                        </div>
+                        <button
+                            *ngIf="ccNode.reviewUserModes.length > 1"
+                            nz-button
+                            nzType="text"
+                            nzDanger
+                            nzSize="small"
+                            (click)="deleteReviewUser(i)"
+                            [nz-tooltip]="'删除审批人'"
+                            style="margin-left: 8px;">
+                            <span nz-icon nzType="delete" nzTheme="outline"></span>
+                        </button>
+                    </div>
+                </nz-card>
+            </ng-container>
+            <button nz-button style="margin-bottom: 12px" (click)="addReviewUsers()">
+                <span nz-icon nzType="plus" nzTheme="outline"></span>
+                添加抄送
+            </button>
+        </ng-container>
+        <ng-container *ngIf="selectTab==1">
+            <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="ccNode.formAccesses"/>
+        </ng-container>
+    </div>
 </erupt-node>

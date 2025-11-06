@@ -13,7 +13,7 @@
     </ng-container>
     <nz-spin [nzSpinning]="loading">
         <st #st resizable (change)="stChange($event)" *ngIf="!loading"
-            [scroll]="{x: (clientWidth > 768 ? ((tabErupt.eruptBuildModel.eruptModel.tableColumns.length * 130) + 'px') : '460px')}"
+            [scroll]="{x: (clientWidth > 768 ? tableWidth : '460px')}"
             [size]="'small'" [columns]="column" [ps]="20"
             [data]="tabErupt.eruptFieldModel.eruptFieldJson.edit.$value"
             [bordered]="true" [page]="stConfig.stPage"

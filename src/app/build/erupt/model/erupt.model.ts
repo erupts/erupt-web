@@ -9,6 +9,7 @@ export interface EruptModel {
     extraRow: boolean;
     //# customer prop
     eruptFieldModelMap?: Map<String, EruptFieldModel>;
+    tags?: Map<String, object>;
     tableColumns?: View[];
     searchCondition: any;
 }
@@ -59,7 +60,7 @@ interface Layout {
 interface LinkTree {
     field: string;
     dependNode: boolean;
-    value: any;
+    value: string[];
 }
 
 export interface Drill {
@@ -76,9 +77,14 @@ export interface Page {
     pageSize: number;
     totalPage?: number;
     total?: number;
-    sort?: string;
+    sort?: Sort[];
     list?: any[];
     alert?: Alert;
+}
+
+export interface Sort {
+    field: string;
+    direction?: "asc" | "desc";
 }
 
 export interface Alert {

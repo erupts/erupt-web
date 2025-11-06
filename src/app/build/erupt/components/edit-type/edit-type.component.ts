@@ -1,14 +1,6 @@
 import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
-import {EruptFieldModel} from "../../model/erupt-field.model";
-import {
-    AttachmentEnum,
-    ChoiceEnum,
-    EditType,
-    FormSize,
-    HtmlEditTypeEnum,
-    MultiChoiceEnum,
-    Scene
-} from "../../model/erupt.enum";
+import {Edit, EruptFieldModel, FormCtrl} from "../../model/erupt-field.model";
+import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, MultiChoiceEnum, Scene} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
@@ -22,6 +14,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzUploadFile} from "ng-zorro-antd/upload/interface";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {BehaviorSubject} from "rxjs";
+import {SignaturePadComponent} from "../signature-pad/signature-pad.component";
 
 @Component({
     selector: "erupt-edit-type",
@@ -51,7 +44,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     @Input() readonly: boolean = false;
 
-    private showByFieldModels: EruptFieldModel[];
+    private dynamicByFieldModels: EruptFieldModel[];
 
     eruptModel: EruptModel;
 
@@ -71,6 +64,11 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     iframeHeight = IframeHeight;
 
+    tabErupts: {
+        key: string,
+        value: EruptBuildModel
+    }[] = [];
+
     constructor(public dataService: DataService,
                 private i18n: I18NService,
                 private differs: KeyValueDiffers,
@@ -88,6 +86,16 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             this.col = colRules[1];
         }
         for (let model of this.eruptModel.eruptFieldModels) {
+            switch (model.eruptFieldJson.edit.type) {
+                case EditType.TAB_TABLE_REFER:
+                case EditType.TAB_TABLE_ADD:
+                case EditType.TAB_TREE:
+                    this.tabErupts.push({
+                        key: model.fieldName,
+                        value: this.eruptBuildModel.tabErupts[model.fieldName]
+                    })
+                    break;
+            }
             model.eruptFieldJson.edit.$valueDiff = this.differs.find(model.eruptFieldJson.edit).create();
             model.eruptFieldJson.edit.$valueSubject = new BehaviorSubject<any>(null);
             let edit = model.eruptFieldJson.edit;
@@ -96,18 +104,18 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                     edit.$viewValue = [];
                 }
             }
-            let showBy = model.eruptFieldJson.edit.showBy;
-            if (showBy) {
-                if (!this.showByFieldModels) {
-                    this.showByFieldModels = [];
+            let dynamic = model.eruptFieldJson.edit.dynamic;
+            if (dynamic) {
+                if (!this.dynamicByFieldModels) {
+                    this.dynamicByFieldModels = [];
                 }
-                this.showByFieldModels.push(model);
-                this.showByCheck(model);
+                this.dynamicByFieldModels.push(model);
+                this.dynamicByCheck(model);
             }
         }
     }
 
-    isReadonly(eruptFieldModel: EruptFieldModel):boolean {
+    isReadonly(eruptFieldModel: EruptFieldModel): boolean {
         if (this.readonly) {
             return true;
         }
@@ -121,31 +129,62 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     ngDoCheck() {
         for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
-            if (eruptFieldModel.eruptFieldJson.edit.$valueDiff.diff(eruptFieldModel.eruptFieldJson.edit)) {
+            if (eruptFieldModel.eruptFieldJson.edit.$valueDiff?.diff(eruptFieldModel.eruptFieldJson.edit)) {
                 eruptFieldModel.eruptFieldJson.edit.$valueSubject.next(eruptFieldModel.eruptFieldJson.edit.$value);
             }
         }
-        if (this.showByFieldModels) {
-            for (let model of this.showByFieldModels) {
-                let showBy = model.eruptFieldJson.edit.showBy;
-                let edit = this.eruptModel.eruptFieldModelMap.get(showBy.dependField).eruptFieldJson.edit;
+        if (this.dynamicByFieldModels) {
+            for (let model of this.dynamicByFieldModels) {
+                let dynamicBy = model.eruptFieldJson.edit.dynamic;
+                let edit = this.eruptModel.eruptFieldModelMap.get(dynamicBy.dependField).eruptFieldJson.edit;
                 if (edit.$beforeValue != edit.$value) {
                     edit.$beforeValue = edit.$value;
-                    this.showByFieldModels.forEach(m => {
-                        this.showByCheck(m);
+                    this.dynamicByFieldModels.forEach(m => {
+                        this.dynamicByCheck(m);
                     });
                 }
             }
         }
     }
 
-    showByCheck(model: EruptFieldModel) {
-        let showBy = model.eruptFieldJson.edit.showBy;
-        let value = this.eruptModel.eruptFieldModelMap.get(showBy.dependField).eruptFieldJson.edit.$value;
+    dynamicByCheck(model: EruptFieldModel) {
+        let dynamicBy = model.eruptFieldJson.edit.dynamic;
+        let value = this.eruptModel.eruptFieldModelMap.get(dynamicBy.dependField).eruptFieldJson.edit.$value;
         try {
-            model.eruptFieldJson.edit.show = !!eval(showBy.expr);
+            let match = !!eval(dynamicBy.condition);
+            if (match) {
+                this.dynamicMatch(model, dynamicBy.noMatch, false)
+                this.dynamicMatch(model, dynamicBy.match, true)
+            } else {
+                this.dynamicMatch(model, dynamicBy.match, false)
+                this.dynamicMatch(model, dynamicBy.noMatch, true)
+            }
         } catch (e) {
-            console.error(model.fieldName + " showBy expr err: " + e)
+            console.error(model.fieldName + " DynamicBy expr err: " + e)
+        }
+
+    }
+
+    dynamicMatch(model: EruptFieldModel, formCtrl: FormCtrl, match: boolean) {
+        if (match) {
+            model.eruptFieldJson.edit.show = true;
+        }
+        switch (formCtrl) {
+            case FormCtrl.SHOW:
+                model.eruptFieldJson.edit.show = match
+                break
+            case FormCtrl.HIDE:
+                model.eruptFieldJson.edit.show = !match
+                break
+            case FormCtrl.NOTNULL:
+                model.eruptFieldJson.edit.notNull = match
+                break
+            case FormCtrl.READONLY:
+                model.eruptFieldJson.edit.readOnly = {
+                    edit: match,
+                    add: match
+                }
+                break
         }
     }
 
@@ -192,20 +231,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         }
     };
 
-    changeTagAll($event, field: EruptFieldModel) {
-        for (let vl of field.componentValue) {
-            vl.$viewValue = $event;
-        }
-    }
-
-    getFromData(): any {
-        let result = {};
-        for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
-            result[eruptFieldModel.fieldName] = eruptFieldModel.eruptFieldJson.edit.$value;
-        }
-        return result;
-    }
-
     copy(val) {
         if (!val) {
             val = "";
@@ -229,6 +254,27 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 this.eruptModel.eruptFieldModelMap.get(key).eruptFieldJson.edit.$value = data[key];
             }
         }
+    }
+
+    clearSign(edit: Edit): void {
+        edit.$value = null;
+    }
+
+    openSign(edit: Edit) {
+        this.modal.create({
+            nzTitle: '签名',
+            nzContent: SignaturePadComponent,
+            nzMaskClosable: false,
+            nzWidth: '50%',
+            nzOkText: '保存',
+            nzCancelText: '取消',
+            nzOnOk: (sign: SignaturePadComponent) => {
+                edit.$value = sign.getSign();
+            },
+            nzOnCancel: () => {
+
+            }
+        });
     }
 
 }

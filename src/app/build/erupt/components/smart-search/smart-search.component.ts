@@ -1,138 +1,176 @@
-import {Component, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-
-export interface ConditionField {
-  id: string;
-  name: string;
-  type: 'string' | 'number' | 'date' | 'select';
-  options?: { value: string; label: string }[];
-}
-
-export interface ConditionItem {
-  field: string;
-  operator: string;
-  value: string;
-}
-
-export interface ConditionGroup {
-  id: string;
-  conditions: ConditionItem[];
-  logicOperator: 'and' | 'or';
-}
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {EruptModel} from "../../model/erupt.model";
+import {EditType} from "../../model/erupt.enum";
+import {
+    EruptSearchModel,
+    OperatorDateType,
+    OperatorNumberType,
+    OperatorReferenceType,
+    OperatorStringType,
+    OperatorType,
+    OperatorUpmsType
+} from "../../model/erupt-search.model";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {UpmsData, UpmsScope} from "../../model/upms.model";
 
 @Component({
-  selector: 'app-smart-search',
-  templateUrl: './smart-search.component.html',
-  styleUrls: ['./smart-search.component.less']
+    selector: 'erupt-smart-search',
+    templateUrl: './smart-search.component.html',
+    styleUrls: ['./smart-search.component.less']
 })
 export class SmartSearchComponent implements OnInit {
-  conditionForm: FormGroup;
 
-  // 可用的字段
-  availableFields: ConditionField[] = [
-    { id: 'paymentMethod', name: '付款方式', type: 'select', options: [
-      { value: 'bankCard', label: '银行卡' },
-      { value: 'alipay', label: '支付宝' },
-      { value: 'wechat', label: '微信支付' },
-      { value: 'cash', label: '现金' }
-    ]},
-    { id: 'amount', name: '金额', type: 'number' },
-    { id: 'date', name: '日期', type: 'date' },
-    { id: 'status', name: '状态', type: 'select', options: [
-      { value: 'pending', label: '待处理' },
-      { value: 'completed', label: '已完成' },
-      { value: 'failed', label: '失败' }
-    ]}
-  ];
+    @Input() eruptModel: EruptModel;
 
-  // 操作符
-  operators = [
-    { value: 'equals', label: '等于' },
-    { value: 'notEquals', label: '不等于' },
-    { value: 'contains', label: '包含' },
-    { value: 'greaterThan', label: '大于' },
-    { value: 'lessThan', label: '小于' },
-    { value: 'between', label: '介于' }
-  ];
+    @Input() search: EruptSearchModel[][] = [];
 
-  constructor(private fb: FormBuilder) {
-    this.conditionForm = this.fb.group({
-      conditionGroups: this.fb.array([])
-    });
-  }
+    @Output() searchChange = new EventEmitter<EruptSearchModel[][]>();
 
-  ngOnInit(): void {
-    // 初始化一个条件组
-    this.addConditionGroup();
-  }
+    @Input() requiredHasCondition: boolean = false;
 
-  get conditionGroups(): FormArray {
-    return this.conditionForm.get('conditionGroups') as FormArray;
-  }
+    @Input() upmsData: UpmsData;
 
-  // 添加条件组
-  addConditionGroup(): void {
-    const conditionGroup = this.fb.group({
-      id: [this.generateId()],
-      logicOperator: ['and'],
-      conditions: this.fb.array([])
-    });
+    SUBMITTER = "SUBMITTER";
 
-    this.conditionGroups.push(conditionGroup);
+    searchTypeMapping: Partial<Record<EditType, OperatorType>> = {
+        [EditType.INPUT]: OperatorType.STRING,
+        [EditType.COLOR]: OperatorType.STRING,
+        [EditType.TEXTAREA]: OperatorType.STRING,
+        [EditType.MARKDOWN]: OperatorType.STRING,
+        [EditType.HTML_EDITOR]: OperatorType.STRING,
+        [EditType.CODE_EDITOR]: OperatorType.STRING,
+        [EditType.AUTO_COMPLETE]: OperatorType.STRING,
 
-    // 为新条件组添加一个初始条件
-    this.addCondition(this.conditionGroups.length - 1);
-  }
+        [EditType.NUMBER]: OperatorType.NUMBER,
+        [EditType.SLIDER]: OperatorType.NUMBER,
+        [EditType.RATE]: OperatorType.NUMBER,
 
-  // 删除条件组
-  removeConditionGroup(groupIndex: number): void {
-    this.conditionGroups.removeAt(groupIndex);
-  }
+        [EditType.DATE]: OperatorType.DATE,
 
-  // 获取条件组中的条件数组
-  getConditions(groupIndex: number): FormArray {
-    return this.conditionGroups.at(groupIndex).get('conditions') as FormArray;
-  }
+        [EditType.BOOLEAN]: OperatorType.BOOLEAN,
+        [EditType.CHOICE]: OperatorType.CHOICE,
+        [EditType.MULTI_CHOICE]: OperatorType.CHOICE,
+        [EditType.REFERENCE_TABLE]: OperatorType.REFERENCE,
+        [EditType.REFERENCE_TREE]: OperatorType.REFERENCE,
+    };
 
-  // 添加条件
-  addCondition(groupIndex: number): void {
-    const condition = this.fb.group({
-      field: ['', Validators.required],
-      operator: ['equals', Validators.required],
-      value: ['', Validators.required]
-    });
-
-    this.getConditions(groupIndex).push(condition);
-  }
-
-  // 删除条件
-  removeCondition(groupIndex: number, conditionIndex: number): void {
-    this.getConditions(groupIndex).removeAt(conditionIndex);
-  }
-
-  // 获取字段的选项
-  getFieldOptions(fieldId: string): { value: string; label: string }[] {
-    const field = this.availableFields.find(f => f.id === fieldId);
-    return field?.options || [];
-  }
-
-  // 生成唯一ID
-  private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  // 提交表单
-  onSubmit(): void {
-    if (this.conditionForm.valid) {
-      console.log('条件设置:', this.conditionForm.value);
-      // 这里可以处理提交逻辑
+    constructor(@Inject(NzMessageService) private msg: NzMessageService,) {
     }
-  }
 
-  // 重置表单
-  resetForm(): void {
-    this.conditionForm.reset();
-    this.conditionGroups.clear();
-    this.addConditionGroup();
-  }
+
+    public saveCondition = (): boolean => {
+        for (let group of this.search) {
+            for (let sh of group) {
+                if (!sh.field) {
+                    this.msg.error('请选择字段');
+                    return false;
+                }
+                if (!sh.operator) {
+                    this.msg.error('请选择运算符');
+                    return false;
+                }
+                if (sh.operator != OperatorDateType.NOT_NULL && sh.operator != OperatorDateType.NULL) {
+                    if (sh.value == null) {
+                        this.msg.error('请输入值');
+                        return false;
+                    }
+                }
+            }
+        }
+        this.searchChange.emit(this.search);
+        return true;
+    }
+
+    ngOnInit(): void {
+        if (this.requiredHasCondition) {
+            if (!this.search || this.search.length === 0) {
+                this.search = [[this.createEmptyCondition()]];
+            }
+        }
+    }
+
+    private createEmptyCondition(): EruptSearchModel {
+        return {field: '', operatorType: null, operator: null, value: null, upmsScope: null};
+    }
+
+    onFieldChange(condition: EruptSearchModel): void {
+        if (condition.field === this.SUBMITTER) {
+            condition.operatorType = OperatorType.UPMS;
+            condition.operator = OperatorStringType.EQ;
+            return;
+        }
+        condition.operatorType = this.searchTypeMapping[this.eruptModel.eruptFieldModelMap.get(condition.field)?.eruptFieldJson.edit.type] || OperatorType.STRING;
+        switch (condition.operatorType) {
+            case OperatorType.STRING:
+                condition.operator = OperatorStringType.EQ;
+                break;
+            case OperatorType.NUMBER:
+                condition.operator = OperatorNumberType.EQ;
+                break;
+            case OperatorType.DATE:
+                condition.operator = OperatorDateType.TODAY;
+                break;
+            case OperatorType.REFERENCE:
+            case OperatorType.BOOLEAN:
+            case OperatorType.CHOICE:
+            case OperatorType.UPMS:
+                condition.operator = OperatorReferenceType.EQ;
+                break;
+        }
+        condition.value = null;
+        condition.upmsScope = null;
+    }
+
+    onOperatorChange(condition: EruptSearchModel): void {
+        if (condition.operatorType === OperatorType.NUMBER && condition.operator === OperatorNumberType.RANGE as OperatorNumberType) {
+            condition.value = [];
+        } else if (condition.operatorType === OperatorType.CHOICE || condition.operatorType === OperatorType.UPMS) {
+            condition.value = [];
+        } else {
+            condition.value = null;
+        }
+    }
+
+    // 添加条件组（基于 search）
+    addConditionGroup(): void {
+        this.search.push([this.createEmptyCondition()]);
+    }
+
+    // 删除条件组（基于 search）
+    removeConditionGroup(groupIndex: number): void {
+        if (groupIndex >= 0 && groupIndex < this.search.length) {
+            this.search.splice(groupIndex, 1);
+        }
+    }
+
+    // 添加条件（基于 search）
+    addCondition(groupIndex: number): void {
+        if (!this.search[groupIndex]) {
+            this.search[groupIndex] = [];
+        }
+        this.search[groupIndex].push(this.createEmptyCondition());
+    }
+
+    // 删除条件（基于 search）
+    removeCondition(groupIndex: number, conditionIndex: number): void {
+        if (this.search[groupIndex]) {
+            this.search[groupIndex].splice(conditionIndex, 1);
+        }
+    }
+
+    // 重置
+    resetForm(): void {
+        this.search = [[this.createEmptyCondition()]];
+    }
+
+    protected readonly editType = EditType;
+    protected readonly OperatorType = OperatorType;
+    protected readonly OperatorStringType = OperatorStringType;
+    protected readonly OperatorNumberType = OperatorNumberType;
+    protected readonly OperatorDateType = OperatorDateType;
+    protected readonly OperatorReferenceType = OperatorReferenceType;
+    protected readonly OperatorUpmsType = OperatorUpmsType;
+    protected readonly UpmsScope = UpmsScope;
 }
+
+

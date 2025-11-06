@@ -86,8 +86,8 @@ export class UiBuildService {
                 switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
                     case EditType.CHOICE:
                         obj.format = (item: any) => {
-                            if (item[view.column]) {
-                                return view.eruptFieldModel.choiceMap.get(item[view.column] + "").label;
+                            if (item[view.column] != null) {
+                                return view.eruptFieldModel.choiceMap.get(item[view.column] + "")?.label;
                             } else {
                                 return "";
                             }
@@ -278,8 +278,12 @@ export class UiBuildService {
                             nzTitle: view.title,
                             nzContent: MarkdownComponent
                         });
+                        view.eruptFieldModel.eruptFieldJson.edit.$value = item[view.column];
                         Object.assign(ref.getContentComponent(), {
-                            value: item[view.column]
+                            value: item[view.column],
+                            readonly: true,
+                            erupt: eruptBuildModel.eruptModel,
+                            eruptField: view.eruptFieldModel
                         });
 
                     };
@@ -361,7 +365,7 @@ export class UiBuildService {
                             }
                             let imgElements = [];
                             for (let i in imgs) {
-                                imgElements[i] = `<img width="100%" class="e-table-img" src="${DataService.previewAttachment(imgs[i])}" alt=""/>`;
+                                imgElements[i] = `<img width="100%" class="e-table-img" src="${DataService.previewAttachment(imgs[i])}" alt="${imgs[i]}"/>`;
                             }
                             return `<div style="text-align: center;display:flex;justify-content: center;" title="${view.title}">
                                         ${imgElements.join(" ")}

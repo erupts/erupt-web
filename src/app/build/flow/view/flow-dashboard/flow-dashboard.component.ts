@@ -1,11 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FlowApiService} from '@flow/service/FlowApiService';
+import {FlowApiService} from '@flow/service/flow-api.service';
 import {FlowConfig, FlowGroup} from '@flow/model/flow.model';
 import {R} from '@shared/model/api.model';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {NzDrawerService} from "ng-zorro-antd/drawer";
-import {EruptFlowFormComponent} from "@flow/components/erupt-flow-form/erupt-flow-form.component";
+import {CreateInstanceComponent} from "@flow/view/flow-dashboard/create-instance/create-instance.component";
+import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 
 interface Category {
     key: string;
@@ -23,6 +24,7 @@ interface FlowGroupWithFlows {
     styleUrls: ['./flow-dashboard.component.less']
 })
 export class FlowDashboardComponent implements OnInit, OnDestroy {
+
     private destroy$ = new Subject<void>();
 
     // 分类数据 - 从API动态获取
@@ -46,7 +48,9 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     private flowGroupsCache: FlowGroupWithFlows[] = [];
     private categoryFlowGroupsCache: Map<string, FlowGroupWithFlows[]> = new Map();
 
-    constructor(private flowApiService: FlowApiService, private drawerService: NzDrawerService,) {
+    constructor(private flowApiService: FlowApiService,
+                private instanceApiService: FlowInstanceApiService,
+                private drawerService: NzDrawerService) {
     }
 
     ngOnInit(): void {
@@ -105,7 +109,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
      */
     private loadFlowConfigs(): Promise<void> {
         return new Promise((resolve) => {
-            this.flowApiService.configList()
+            this.instanceApiService.userFlows()
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                     next: (response: R<FlowConfig[]>) => {
@@ -200,52 +204,25 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 流程点击事件
+     * 发起流程
      */
-    onFlowClick(flow: FlowConfig): void {
+    launchFlow(flow: FlowConfig): void {
         if (flow.enable) {
-            this.drawerService.create({
+            const drawer = this.drawerService.create({
                 nzTitle: flow.name,
-                nzContent: EruptFlowFormComponent,
+                nzContent: CreateInstanceComponent,
                 nzContentParams: {
                     erupt: flow.erupt,
-                    readonly: false
+                    flow: flow,
+                    onClose: () => drawer.close()
                 },
-                nzWidth: '420px',
+                nzWidth: '520px',
                 nzBodyStyle: {
-                    padding: '16px'
+                    padding: '0'
                 },
-                nzMaskClosable: false,
-                nzFooter: "提交"
+                nzMaskClosable: false
             });
         }
-    }
-
-    /**
-     * 获取流程图标
-     */
-    getFlowIcon(flow: FlowConfig): string {
-        // 优先使用配置的图标
-        if (flow.icon) {
-            return flow.icon;
-        }
-
-        // 根据分组名称获取默认图标
-        const groupName = flow.flowGroup?.name || '';
-        const typeMap: { [key: string]: string } = {
-            '财务': 'dollar',
-            '出勤': 'clock-circle',
-            '防疫': 'safety-certificate',
-            '人事': 'user',
-            '行政': 'setting'
-        };
-
-        for (const [key, value] of Object.entries(typeMap)) {
-            if (groupName.includes(key)) {
-                return value;
-            }
-        }
-        return 'setting';
     }
 
     /**
@@ -256,16 +233,6 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
             return this.flowConfigs.length;
         }
         return this.flowConfigs.filter(config => config.flowGroup?.name === categoryKey).length;
-    }
-
-    /**
-     * 获取状态颜色
-     */
-    getStatusColor(flow: FlowConfig): string {
-        if (!flow.enable) {
-            return 'orange';
-        }
-        return 'green';
     }
 
     /**

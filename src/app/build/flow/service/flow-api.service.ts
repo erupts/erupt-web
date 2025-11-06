@@ -6,6 +6,8 @@ import {FlowConfig, FlowGroup} from "@flow/model/flow.model";
 import {R} from "@shared/model/api.model";
 import {VL} from "../../erupt/model/erupt-field.model";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
+import {NodeRule} from "@flow/model/node.model";
 
 @Injectable()
 export class FlowApiService {
@@ -43,45 +45,58 @@ export class FlowApiService {
     }
 
     eruptFlows(): Observable<R<VL[]>> {
-        return this._http.get<R<VL[]>>(RestPath.erupt + "/flow/erupts");
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/flow/flex/erupts");
     }
 
     eruptFlowBuild(erupt: string): Observable<R<EruptBuildModel>> {
-        return this._http.get<R<EruptBuildModel>>(RestPath.erupt + "/flow/erupt-build/" + erupt);
+        return this._http.get<R<EruptBuildModel>>(RestPath.erupt + "/flow/flex/erupt-build/" + erupt);
     }
+
+    flexEruptFlowBuild(erupt: string): Observable<R<EruptBuildModel>> {
+        return this._http.get<R<EruptBuildModel>>(RestPath.erupt + "/flow/flex/flex-erupt-build/" + erupt);
+    }
+
+    flexNodes(): Observable<R<FlexNodeModel[]>> {
+        return this._http.get<R<FlexNodeModel[]>>(RestPath.erupt + "/flow/flex/flex-nodes");
+    }
+
 
     configList(): Observable<R<FlowConfig[]>> {
-        return this._http.get<R<FlowConfig[]>>(RestPath.erupt + "/flow/config/list", null);
+        return this._http.get<R<FlowConfig[]>>(RestPath.erupt + "/flow/list", null);
     }
 
-    configAdd(config: FlowConfig): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/add", config);
+    configCreate(config: FlowConfig): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/create", config);
     }
 
     configUpdate(config: FlowConfig): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/update", config);
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/update", config);
     }
 
     configCopy(id: number): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/copy", null, {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/copy", null, {
             id
         });
     }
 
     configDelete(id: number): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/delete", null, {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/delete", null, {
             id
         });
     }
 
     configSwitchEnable(id: number): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + "/flow/config/switch-enable", null, {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/switch-enable", null, {
             id
         });
     }
 
     configGet(id: number): Observable<R<FlowConfig>> {
-        return this._http.get<R<FlowConfig>>(RestPath.erupt + "/flow/config/get/" + id);
+        return this._http.get<R<FlowConfig>>(RestPath.erupt + "/flow/get/" + id);
+    }
+
+    ruleCheck(rule: NodeRule[]): Observable<R<NodeRule[]>> {
+        return this._http.post<R<NodeRule[]>>(RestPath.erupt + "/flow/rule-check", rule);
     }
 
 }

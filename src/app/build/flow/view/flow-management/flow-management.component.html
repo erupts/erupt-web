@@ -49,8 +49,8 @@
                     <!-- 全部选项 -->
                     <div
                         class="category-item"
-                        [class.active]="selectedCategory === ''"
-                        (click)="selectCategory('')"
+                        [class.active]="selectedCategory === null"
+                        (click)="selectCategory(null)"
                     >
                         <span class="category-name">全部</span>
                         <span class="category-count">({{ flowConfigs.length }})</span>
@@ -61,8 +61,8 @@
                         class="category-item draggable-item"
                         cdkDrag
                         *ngFor="let item of categoryItems; let i = index"
-                        (click)="selectCategory(item.name)"
-                        [class.active]="selectedCategory === item.name"
+                        (click)="selectCategory(item.id)"
+                        [class.active]="selectedCategory === item.id"
                     >
                         <div class="category-content">
                             <span class="category-name">{{ item.name }}</span>

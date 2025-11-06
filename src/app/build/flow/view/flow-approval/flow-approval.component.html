@@ -1,45 +1,35 @@
 <div class="flow-approval-container">
     <!-- 左侧导航栏 -->
-    <div class="sidebar" [class.collapsed]="sidebarCollapsed">
-        <!-- 移动端头部 -->
-        <div class="sidebar-header">
-            <div class="search-section">
-                <span nz-icon nzType="search" nzTheme="outline"></span>
-                <span class="search-text">搜索审批</span>
-            </div>
-        </div>
-
+    <div class="sidebar">
         <div class="navigation-menu">
             <ul nz-menu
                 nzMode="inline"
-                [nzInlineCollapsed]="sidebarCollapsed"
-                (nzClick)="onMenuClick($event)"
                 class="approval-menu">
 
                 <!-- 待办 -->
-                <li nz-menu-item nzKey="todo">
+                <li nz-menu-item (click)="loadFlows(ApprovalView.TODO)" [nzSelected]="ApprovalView.TODO === selectedView">
                     <div style="display: flex;align-items: center">
                         <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
-                        <span class="menu-title">待办</span>
-                        <nz-badge style="margin-left:auto" [nzCount]="5" nzShowZero class="menu-badge"></nz-badge>
+                        <span class="menu-title">{{ 'FLOW_TODO' | translate }}</span>
+                        <nz-badge style="margin-left:auto" [nzCount]="todoCount" class="menu-badge"></nz-badge>
                     </div>
                 </li>
                 <!-- 已办 -->
-                <li nz-menu-item nzKey="done" nzTitle="已办">
+                <li nz-menu-item (click)="loadFlows(ApprovalView.DONE)" [nzSelected]="ApprovalView.DONE === selectedView">
                     <span nz-icon nzType="check-circle" nzTheme="outline"></span>
-                    <span class="menu-title">已办</span>
+                    <span class="menu-title">{{ 'FLOW_DONE' | translate }}</span>
                 </li>
 
                 <!-- 抄送我 -->
-                <li nz-menu-item nzKey="cc">
+                <li nz-menu-item (click)="loadFlows(ApprovalView.CC)" [nzSelected]="ApprovalView.CC === selectedView">
                     <span nz-icon nzType="copy" nzTheme="outline"></span>
-                    <span class="menu-title">抄送我</span>
+                    <span class="menu-title">{{ 'CC' | translate }}</span>
                 </li>
 
                 <!-- 已发起 -->
-                <li nz-menu-item nzKey="initiated">
+                <li nz-menu-item (click)="loadFlows(ApprovalView.CREATED)" [nzSelected]="ApprovalView.CREATED === selectedView">
                     <span nz-icon nzType="rocket" nzTheme="outline"></span>
-                    <span class="menu-title">已发起</span>
+                    <span class="menu-title">{{ 'CREATED' | translate }}</span>
                 </li>
             </ul>
         </div>
@@ -50,192 +40,57 @@
         <!-- 中间列表区域 -->
         <div class="list-section">
             <div class="list-header">
-                <div class="time-filter">
-                    <span>所有时间</span>
-                    <span nz-icon nzType="down" nzTheme="outline"></span>
-                </div>
-                <div class="separator"></div>
-                <button nz-button nzType="text" nzSize="small">
-                    <span nz-icon nzType="more" nzTheme="outline"></span>
-                </button>
+                <nz-select [(ngModel)]="selectFlow" (ngModelChange)="onSelectFlow($event)"
+                           style="width: 100%" [nzPlaceHolder]="'流程筛选'" nzBorderless nzAllowClear>
+                    <ng-container *ngFor="let flow of uniqFlowInstances(flowInstances)">
+                        <nz-option [nzValue]="flow.eruptFlowConfig.id" [nzLabel]="flow.eruptFlowConfig.name">
+                        </nz-option>
+                    </ng-container>
+                </nz-select>
             </div>
 
             <div class="approval-list">
                 <div
                     class="approval-item"
-                    *ngFor="let item of approvalList"
-                    [class.active]="selectedItem?.id === item.id"
-                    (click)="selectItem(item)"
+                    *ngFor="let item of flowInstances"
+                    [class.active]="item?.id === selectedInstance?.id"
+                    (click)="selectInstance(item);"
                 >
                     <div class="item-header">
-                        <h3 class="item-title">{{ item.type }}</h3>
-                        <nz-tag
-                            [nzColor]="getStatusColor(item.status)"
-                            class="status-tag"
-                        >
-                            {{ getStatusText(item.status) }}
-                        </nz-tag>
+                        <h3 class="item-title">
+                            <p style="margin-bottom: 0">{{ item?.eruptFlowConfig?.name }}</p>
+                        </h3>
+                        <div>
+                            <nz-tag *ngIf="item?.parent" nzColor="orange" style="margin-right: 6px">
+                                {{'SUB_FLOW'|translate}}
+                            </nz-tag>
+                            <nz-tag style="margin-right: 0">
+                                {{ item?.status | translate }}
+                            </nz-tag>
+                        </div>
                     </div>
+                    <p *ngIf="item?.eruptFlowConfig?.setting?.subTitleFields?.length && item?.data" style="margin-bottom: 8px;">
+                        <ng-container *ngFor="let field of item?.eruptFlowConfig?.setting?.subTitleFields">
+                            <p style="margin-bottom: 0.25em">{{JSON.parse(item?.data)?.[field]}}</p>
+                        </ng-container>
+                    </p>
                     <div class="item-footer">
                         <div class="submitter-info">
-                            <div class="avatar" [style.background-color]="getAvatarColor(item.submitter.avatar)">
-                                {{ item.submitter.avatar }}
-                            </div>
-                            <span class="submitter-name">{{ item.submitter.name }}</span>
+                            <nz-avatar [nzText]="item?.initiatorUser?.name.substring(0,1)"
+                                       [ngStyle]="{backgroundColor: getAvatarColor(item?.initiatorUser.name?.substring(0,1))}"
+                                       [nzSrc]="item?.initiatorUser?.avatar"
+                                       nzSize="small"></nz-avatar>
+                            <span class="submitter-name">{{ item?.initiatorUser?.name }}</span>
                         </div>
                         <div class="time-info">
-                            <span class="process-time" *ngIf="item.processTime">处理时间 {{ item.processTime }}</span>
+                            <span class="process-time">
+                                {{ item?.createTime }}
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- 右侧详情区域 -->
-        <div class="detail-section" *ngIf="selectedItem; else emptyDetail">
-            <div class="detail-header">
-                <div class="header-left">
-                    <span class="item-id">编号: {{ selectedItem.id }}</span>
-                </div>
-                <div class="header-right">
-                    <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="链接">
-                        <span nz-icon nzType="link" nzTheme="outline"></span>
-                    </button>
-                    <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="刷新">
-                        <span nz-icon nzType="reload" nzTheme="outline"></span>
-                    </button>
-                    <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="打印">
-                        <span nz-icon nzType="printer" nzTheme="outline"></span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="detail-content">
-                <div class="content-header">
-                    <h1 class="content-title">{{ selectedItem.type }}</h1>
-                    <nz-tag
-                        [nzColor]="getStatusColor(selectedItem.status)"
-                        class="status-tag-large"
-                    >
-                        {{ getStatusText(selectedItem.status) }}
-                    </nz-tag>
-                </div>
-
-                <div class="submitter-info-large">
-                    <div class="submitter-details">
-                        <span class="submitter-name-large">{{ selectedItem.submitter.name }}</span>&nbsp;&nbsp;
-                        <span class="submitter-dept">{{ selectedItem.submitter.department }}</span>&nbsp;&nbsp;
-                        <span class="submit-time">提交于 {{ selectedItem.submitTime }}</span>
-                    </div>
-                </div>
-
-                <!-- 标签页导航 -->
-                <nz-tabset
-                    class="detail-tabs"
-                    (nzSelectedIndexChange)="onTabChange($event)"
-                    [nzSelectedIndex]="activeTabIndex"
-                >
-                    <nz-tab nzTitle="审批详情">
-                        <div class="tab-content">
-                            <div>xxx</div>
-                        </div>
-                    </nz-tab>
-
-                    <nz-tab nzTitle="审批记录">
-                        <div class="tab-content">
-                            <div class="section">
-                                <h3 class="section-title">| 审批记录</h3>
-                                <nz-table
-                                    #recordsTable
-                                    [nzData]="approvalRecords"
-                                    [nzShowPagination]="false"
-                                    [nzSize]="'small'"
-                                    class="records-table"
-                                >
-                                    <thead>
-                                    <tr>
-                                        <th>节点名称</th>
-                                        <th>审批人</th>
-                                        <th>审批结果</th>
-                                        <th>审批意见</th>
-                                        <th>审批时间</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr *ngFor="let record of approvalRecords">
-                                        <td>{{ record.nodeName }}</td>
-                                        <td>
-                                            <div class="approver-info">
-                                                <div class="avatar-small"
-                                                     [style.background-color]="getAvatarColor(record.approver.avatar)">
-                                                    {{ record.approver.avatar }}
-                                                </div>
-                                                <span class="approver-name">{{ record.approver.name }}</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <nz-tag nzColor="success">{{ record.result }}</nz-tag>
-                                        </td>
-                                        <td>{{ record.opinion || '-' }}</td>
-                                        <td>
-                                            <div class="time-info">
-                                                <div>{{ record.time }}</div>
-                                                <div class="time-detail">7月30日 23:34</div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </nz-table>
-                            </div>
-                        </div>
-                    </nz-tab>
-
-                    <nz-tab nzTitle="全文评论 (1)">
-                        <div class="tab-content">
-                            <div class="section">
-                                <nz-empty
-                                    nzNotFoundImage="simple"
-                                    nzNotFoundContent="暂无评论内容"
-                                ></nz-empty>
-                            </div>
-                        </div>
-                    </nz-tab>
-                </nz-tabset>
-            </div>
-
-            <!-- 固定在右侧底部的功能按钮 -->
-            <div class="fixed-bottom-actions">
-                <div class="action-buttons">
-                    <button nz-button nzSize="default" (click)="cc()">
-                        <span nz-icon nzType="send" nzTheme="outline"></span>
-                        抄送
-                    </button>
-                    <button nz-button nzSize="default" (click)="modify()">
-                        <span nz-icon nzType="edit" nzTheme="outline"></span>
-                        修改
-                    </button>
-                    <button nz-button nzSize="default" (click)="recall()">
-                        <span nz-icon nzType="undo" nzTheme="outline"></span>
-                        撤销
-                    </button>
-                    <button nz-button nzSize="default" (click)="resubmit()">
-                        <span nz-icon nzType="redo" nzTheme="outline"></span>
-                        再次提交
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 空状态模板 -->
-        <ng-template #emptyDetail>
-            <div class="detail-section empty-detail">
-                <div class="empty-content">
-                    <nz-empty
-                        nzNotFoundImage="simple"
-                        nzNotFoundContent="请选择一个审批项目查看详情"
-                    ></nz-empty>
-                </div>
-            </div>
-        </ng-template>
+        <flow-approval-detail (reloadFlows)="reloadFlows()" class="detail-section"/>
     </div>
 </div>

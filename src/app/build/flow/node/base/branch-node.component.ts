@@ -1,4 +1,8 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
+import {NodeRule, NodeType} from "@flow/model/node.model";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
     selector: 'app-branch-node',
@@ -6,6 +10,10 @@ import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewC
     styleUrls: ['./branch-node.component.less']
 })
 export class BranchNodeComponent implements AfterViewInit {
+
+    @Input() eruptBuild: EruptBuildModel;
+    @Output() insertFlexNode = new EventEmitter<FlexNodeModel>();
+
     @Input() moveLn = false;
     @Input() moveRn = false;
     @Input() type = '';
@@ -13,24 +21,25 @@ export class BranchNodeComponent implements AfterViewInit {
     @Input() headerIcon = '';
     @Input() content = '';
     @Input() readonly = false;
-    @Input() modelValue: any;
+    @Input() modelValue: NodeRule;
     @Input() showError = false;
     @Input() errorInfo = '';
     @Input() isDefault = false;
     @Input() placeholder = '请设置';
     @Input() desc = '';
 
-    @Output() modelValueChange = new EventEmitter<any>();
+    @Input() progress: Record<string, FlowTurn>;
+
+    @Output() modelValueChange = new EventEmitter<NodeRule>();
     @Output() select = new EventEmitter<void>();
     @Output() delete = new EventEmitter<void>();
-    @Output() insertNode = new EventEmitter<string>();
+    @Output() insertNode = new EventEmitter<NodeType>();
     @Output() copy = new EventEmitter<void>();
     @Output() moveL = new EventEmitter<void>();
     @Output() moveR = new EventEmitter<void>();
 
     @ViewChild('nodeNameInput', {static: false}) nodeNameInput!: ElementRef;
 
-    showDrawer: boolean = false;
 
     enableEdit = false;
 
@@ -54,7 +63,7 @@ export class BranchNodeComponent implements AfterViewInit {
     }
 
     onSelect() {
-        this.showDrawer = true;
+        this.modelValue.error = null;
         this.select.emit();
     }
 
@@ -62,8 +71,12 @@ export class BranchNodeComponent implements AfterViewInit {
         this.delete.emit();
     }
 
-    onInsertNode(type: string) {
+    onInsertNode(type: NodeType) {
         this.insertNode.emit(type);
+    }
+
+    onInsertFlexNode(flex: FlexNodeModel) {
+        this.insertFlexNode.emit(flex);
     }
 
     onCopy() {
@@ -78,7 +91,4 @@ export class BranchNodeComponent implements AfterViewInit {
         this.moveR.emit();
     }
 
-    close(): void {
-        this.showDrawer = false;
-    }
 }

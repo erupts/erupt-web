@@ -4,7 +4,7 @@ import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {SettingsService} from "@delon/theme";
 import {I18NService} from "@core";
-import {NzFormatEmitEvent} from "ng-zorro-antd/core/tree";
+import {NzFormatEmitEvent, NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
 
 @Component({
     selector: 'layout-tree',
@@ -22,7 +22,7 @@ export class LayoutTreeComponent implements OnInit {
 
     @Input() eruptModel: EruptModel;
 
-    @Output() trigger = new EventEmitter();
+    @Output() trigger: EventEmitter<string[]> = new EventEmitter();
 
     searchValue: string;
 
@@ -30,7 +30,7 @@ export class LayoutTreeComponent implements OnInit {
 
     selectedKeys: any[];
 
-    list: any;
+    list: NzTreeNodeOptions[];
 
     dataLength: number = 0;
 
@@ -46,7 +46,7 @@ export class LayoutTreeComponent implements OnInit {
             }
             if (this.eruptModel.eruptJson.linkTree.dependNode) {
                 if (data.length > 0) {
-                    this.trigger.emit(data[0].id);
+                    this.trigger.emit(this.getSubKeys(this.list, data[0].id));
                     this.selectedKeys = [data[0].id];
                 }
             } else {
@@ -76,14 +76,33 @@ export class LayoutTreeComponent implements OnInit {
                 this.trigger.emit(null);
                 this.selectedKeys = [undefined];
             } else {
-                this.trigger.emit(event.node.origin.key);
+                this.trigger.emit(this.getSubKeys(this.list, event.node.origin.key));
                 this.selectedKeys = [event.node.origin.key];
             }
         }
-        // this.data.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
-        //     this.loading = false;
-        //     this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
-        // });
     }
 
+    /**
+     *  Get all keys under the selected node (including itself)
+     */
+    getSubKeys(options: NzTreeNodeOptions[], key: string): string[] {
+        const find = (nodes: NzTreeNodeOptions[]): NzTreeNodeOptions | null => {
+            for (const n of nodes) {
+                if (n.key === key) return n;                 // 命中
+                const child = find(n.children ?? []);        // 去子树里找
+                if (child) return child;
+            }
+            return null;
+        };
+        const target = find(options);
+        if (!target) return [];
+        /* 2. 从目标节点开始 DFS，只收它子树的 key */
+        const keys: string[] = [];
+        const dfs = (n: NzTreeNodeOptions) => {
+            keys.push(n.key);
+            (n.children ?? []).forEach(dfs);
+        };
+        dfs(target);
+        return keys;
+    }
 }

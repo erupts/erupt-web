@@ -1,22 +1,13 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
-import {
-    FormSize,
-    OperationIfExprBehavior,
-    OperationMode,
-    OperationType,
-    PagingType,
-    RestPath,
-    Scene,
-    SelectMode
-} from "../../model/erupt.enum";
+import {FormSize, OperationIfExprBehavior, OperationMode, OperationType, PagingType, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
@@ -34,6 +25,7 @@ import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {TableStyle} from "../../model/erupt.vo";
+import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 
 @Component({
@@ -299,20 +291,22 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataPage.pi = page || this.dataPage.pi;
         this.dataPage.ps = size || this.dataPage.ps;
         this.dataPage.sort = sort || this.dataPage.sort;
-        let sortString = null;
+        let orderBy: Sort[] = null;
         if (this.dataPage.sort) {
-            let arr = [];
+            orderBy = [];
             for (let key in this.dataPage.sort) {
-                arr.push(key + ' ' + this.dataPage.sort[key]);
+                orderBy.push({
+                    field: key,
+                    direction: this.dataPage.sort[key]
+                })
             }
-            sortString = arr.join(",")
         }
         this.selectedRows = [];
         this.dataPage.querying = true;
         this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url, {
             pageIndex: this.dataPage.pi,
             pageSize: this.dataPage.ps,
-            sort: sortString,
+            sort: orderBy,
             ...query
         }, this.header).subscribe(page => {
             this.dataPage.querying = false;
@@ -357,6 +351,7 @@ export class TableComponent implements OnInit, OnDestroy {
             }
             tableOperators.push({
                 icon: "eye",
+                tooltip: this.i18n.fanyi("global.view"),
                 click: (record: any, modal: any) => {
                     let params = {
                         readonly: true,
@@ -500,6 +495,7 @@ export class TableComponent implements OnInit, OnDestroy {
             }
             tableOperators.push({
                 icon: "edit",
+                tooltip: this.i18n.fanyi("global.editor"),
                 click: (record: any) => {
                     let params = {
                         eruptBuildModel: this.eruptBuildModel,
@@ -565,6 +561,7 @@ export class TableComponent implements OnInit, OnDestroy {
                     theme: "twotone",
                     twoToneColor: "#f00"
                 },
+                tooltip: this.i18n.fanyi("global.delete"),
                 pop: this.i18n.fanyi("table.delete.hint"),
                 type: "del",
                 click: (record) => {
@@ -590,6 +587,35 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         tableOperators.push(...tableButtons);
+        if (this.eruptBuildModel.eruptModel.tags?.["EruptFlow"]) {
+            tableOperators.push({
+                icon: "node-index",
+                tooltip: this.i18n.fanyi("VIEW_FLOW"),
+                click: (record: any, modal: any) => {
+                    this.drawerService.create({
+                        nzClosable: false,
+                        nzKeyboard: true,
+                        nzMaskClosable: true,
+                        // @ts-ignore
+                        nzPlacement: "right",
+                        nzWidth: "40%",
+                        nzBodyStyle: {
+                            padding: 0
+                        },
+                        nzFooter: null,
+                        nzContent: EruptIframeComponent,
+                        nzContentParams: {
+                            url: location.origin + "/#/fill/flow/approval-detail/" + record["__flow_id__"],
+                            height: "100%",
+                            width: '100%'
+                        }
+                    })
+                },
+                iif: (item) => {
+                    return item["__flow_id__"];
+                }
+            });
+        }
         if (isFoldButtons) {
             let children: STColumnButton[] = [];
             eruptJson.rowOperation.forEach(ro => {
@@ -620,7 +646,8 @@ export class TableComponent implements OnInit, OnDestroy {
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                width: eruptJson.layout.tableOperatorWidth ? eruptJson.layout.tableOperatorWidth : (tableOperators.length * 35 + 18 + (isFoldButtons ? 60 : 0)),
+                width: eruptJson.layout.tableOperatorWidth ? eruptJson.layout.tableOperatorWidth :
+                    ((tableOperators.length + (this.eruptBuildModel.eruptModel.tags?.size || 0)) * 35 + 18 + (isFoldButtons ? 60 : 0)),
                 className: "text-center",
                 buttons: tableOperators,
                 resizable: false
@@ -788,13 +815,11 @@ export class TableComponent implements OnInit, OnDestroy {
                         if (this._drill) {
                             Object.assign(header, DataService.drillToHeader(this._drill));
                         }
-                        let res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                        await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
                             this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
-                        if (res.status === Status.SUCCESS) {
-                            this.msg.success(this.i18n.fanyi("global.add.success"));
-                            this.query();
-                            return true;
-                        }
+                        this.msg.success(this.i18n.fanyi("global.add.success"));
+                        this.query();
+                        return true;
                     }
                 }
                 return false;
@@ -909,7 +934,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
 
-    clickTreeNode(event) {
+    clickTreeNode(event: string[]) {
         this.showTable = true;
         this.eruptBuildModel.eruptModel.eruptJson.linkTree.value = event;
         this.searchErupt.eruptJson.linkTree.value = event;

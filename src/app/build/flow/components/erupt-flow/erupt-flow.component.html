@@ -1,6 +1,11 @@
 <div class="flow">
-    <div class="p-operation">
-        <div class="p-operation-zoom">
+    <div class="operation">
+        <div *ngIf="progress" style="zoom: .6">
+            <div *ngFor="let ft of FlowTurn | enumToArray" [ngClass]="ft" style="padding: 6px;margin-bottom: 16px">
+                {{ft | translate}}
+            </div>
+        </div>
+        <div class="operation-zoom">
             <button nz-button nzSize="small" (click)="doZoom(-1)">
                 <span nz-icon nzType="minus"></span>
             </button>
@@ -13,7 +18,6 @@
             </button>
         </div>
     </div>
-    {{modelValue|json}}
     <div #canvasContainer class="canvas-container" style="width: 100%;height: 100%;position: relative;">
         <div class="process">
             <ng-container *ngFor="let node of modelValue; let i = index;">
@@ -23,14 +27,12 @@
                     [eruptBuild]="eruptBuild"
                     [node]="node"
                     [branch]="modelValue"
+                    [progress]="progress"
                     [index]="i"
                     (nodeChange)="modelValue[i] = $event; modelValueChange.emit(modelValue)"
-                    (select)="selectNode($event)"
-                    (delete)="deleteNode($event.branch, $event.index)"
-                    (insertNode)="insertNode($event.branch, $event.index, $event.type)">
+                    (select)="selectNode($event)">
                 </app-recursive-node>
             </ng-container>
-            <div class="process-end">流程结束</div>
         </div>
     </div>
 </div>

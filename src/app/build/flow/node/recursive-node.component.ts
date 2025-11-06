@@ -1,8 +1,11 @@
-import {Component, ElementRef, EventEmitter, Input, Output, QueryList, ViewChildren} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {NodeMap} from '@flow/node/process-nodes';
-import {reloadNodeId} from '@flow/util/flow-util';
-import {NodeRule, NodeType} from "@flow/model/node.model";
+import {geneNodeId, insertFlexNodeFun, reloadNodeId} from '@flow/util/flow.util';
+import {BranchType, NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
+import {GatewayType} from "@flow/node/gateway/gateway-node.component";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
     selector: 'app-recursive-node',
@@ -15,6 +18,8 @@ export class RecursiveNodeComponent {
     @Input() branch: NodeRule[] = [];
     @Input() index = 0;
 
+    @Input() progress: Record<string, FlowTurn>;
+
     @Input() eruptBuild: EruptBuildModel;
 
     @Output() nodeChange = new EventEmitter<any>();
@@ -22,9 +27,9 @@ export class RecursiveNodeComponent {
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
 
-    @ViewChildren('startNode, approvalNode, ccNode, exclusiveNode, parallelNode, branchNode, childNodeRef') nodeRefs!: QueryList<ElementRef>;
 
     nodeType = NodeType;
+    gatewayType = GatewayType;
 
     /**
      * 插入节点
@@ -32,9 +37,20 @@ export class RecursiveNodeComponent {
      * @param i 插入哪个元素后面的索引，实际插入位置为i+1
      * @param type 要插入的节点类型
      */
-    insertNodeFun(branch: any[], i: number, type: string) {
+    insertNodeFun(branch: any[], i: number, type: NodeType) {
         const newNode = NodeMap[type].create();
         branch.splice(i + 1, 0, newNode);
+        if (newNode.type === NodeType.GATEWAY_PARALLEL || newNode.type === NodeType.GATEWAY_INCLUSIVE) {
+            branch.splice(i + 2, 0, {
+                id: geneNodeId(),
+                type: NodeType.GATEWAY_JOIN,
+                name: newNode.type + "_JOIN",
+            });
+        }
+    }
+
+    onInsertFlexNode(flex: FlexNodeModel) {
+        insertFlexNodeFun(this.branch, this.index, flex);
     }
 
     /**
@@ -43,7 +59,12 @@ export class RecursiveNodeComponent {
      * @param i 删除的元素在该支路内索引位置
      */
     deleteNode(branch: any[], i: number) {
-        branch.splice(i, 1);
+        console.log(branch[i].type)
+        if (branch[i].type === NodeType.GATEWAY_PARALLEL || branch[i].type === NodeType.GATEWAY_INCLUSIVE) {
+            branch.splice(i, 2);
+        } else {
+            branch.splice(i, 1);
+        }
     }
 
     // 添加网关分支
@@ -75,11 +96,7 @@ export class RecursiveNodeComponent {
     // 删除网关分支
     deleteBranch(i: number) {
         if (this.node.branches.length <= 2) {
-            // 只有两个分支，那么就直接删除整个网关
-            this.delete.emit({
-                branch: this.branch,
-                index: this.index
-            });
+            this.deleteNode(this.branch, this.index);
         } else {
             this.node.branches.splice(i, 1);
         }
@@ -109,4 +126,5 @@ export class RecursiveNodeComponent {
         // }
     }
 
+    protected readonly BranchType = BranchType;
 }

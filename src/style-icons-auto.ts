@@ -8,6 +8,7 @@ import {
     ArrowDownOutline,
     ArrowLeftOutline,
     ArrowRightOutline,
+    BellOutline,
     BuildOutline,
     BulbOutline,
     BulbTwoTone,
@@ -31,6 +32,7 @@ import {
     FullscreenExitOutline,
     FullscreenOutline,
     GlobalOutline,
+    IdcardOutline,
     ImportOutline,
     InboxOutline,
     LinkOutline,
@@ -38,8 +40,11 @@ import {
     LockOutline,
     MenuFoldOutline,
     MenuUnfoldOutline,
+    MinusCircleOutline,
     MinusOutline,
     MinusSquareOutline,
+    MoreOutline,
+    NodeIndexOutline,
     PieChartTwoTone,
     PlusOutline,
     PlusSquareOutline,
@@ -50,16 +55,21 @@ import {
     ReloadOutline,
     RocketOutline,
     RocketTwoTone,
+    RollbackOutline,
+    SafetyCertificateOutline,
     SaveOutline,
     SearchOutline,
     SendOutline,
     SettingOutline,
     StopOutline,
+    SwapOutline,
     SyncOutline,
     TableOutline,
     UndoOutline,
     UnorderedListOutline,
-    UserOutline
+    UserAddOutline,
+    UserOutline,
+    WarningTwoTone
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -118,5 +128,15 @@ export const ICONS_AUTO = [
     LinkOutline,
     SendOutline,
     UndoOutline,
-    RedoOutline
+    RedoOutline,
+    IdcardOutline,
+    SafetyCertificateOutline,
+    SwapOutline,
+    UserAddOutline,
+    RollbackOutline,
+    WarningTwoTone,
+    BellOutline,
+    MoreOutline,
+    MinusCircleOutline,
+    NodeIndexOutline
 ];

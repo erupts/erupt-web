@@ -4,14 +4,14 @@
     overflow: auto;
     position: relative;
 
-    .p-operation {
+    .operation {
         position: fixed;
         bottom: 20px;
         left: 20px;
         z-index: 99;
         transition: all .3s ease;
 
-        .p-operation-zoom {
+        .operation-zoom {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -60,7 +60,7 @@
             align-items: center;
             min-width: 100%;
             min-height: 100%;
-            padding: 20px;
+            padding: 40px;
             width: max-content;
             height: max-content;
             transform-origin: center center;
@@ -69,7 +69,7 @@
                 display: flex;
                 justify-content: center;
                 width: 100%;
-                margin-bottom: 20px;
+                margin-bottom: 28px;
                 min-width: 200px;
             }
 
@@ -81,15 +81,6 @@
                 margin-top: 16px;
                 min-width: 100px;
             }
-        }
-
-        // 确保节点可以正常交互
-        .process-node, app-recursive-node {
-            cursor: default;
-            user-select: text;
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
         }
     }
 }

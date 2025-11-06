@@ -1,15 +1,18 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
-import {geneNodeId} from "@flow/util/flow-util";
+import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
+import {FlexNodeModel} from "@flow/model/flex-node.model";
+import {ApprovalStrategy, ApprovalTimeoutAction, ApproveNode, ReviewMode} from "@flow/model/fllw-approval.model";
+import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
     selector: 'app-approval-node',
     templateUrl: './approval-node.component.html',
     styleUrls: ['./approval-node.component.less']
 })
-export class ApprovalNodeComponent extends ANode {
+export class ApprovalNodeComponent extends ANode implements OnInit {
 
     @Input() readonly = false;
     @Input() eruptBuild: EruptBuildModel;
@@ -21,35 +24,58 @@ export class ApprovalNodeComponent extends ANode {
     @Output() delete = new EventEmitter<any>();
     @Output() insertNode = new EventEmitter<any>();
 
-    showErr = false;
-    errInfo: any = null;
+    @Input() progress: Record<string, FlowTurn>;
+
+    approveNode: ApproveNode = new ApproveNode();
+
+    selectTab: number = 0;
 
 
-    type(): NodeType {
+    ngOnInit(): void {
+        if (this.modelValue.prop) {
+            this.approveNode = this.modelValue.prop;
+        }
+    }
+
+    addReviewUsers() {
+        this.approveNode.reviewUserModes.push({
+            mode: ReviewMode.SPECIFIED_USER,
+            modeValue: null
+        })
+    }
+
+    deleteReviewUser(index: number) {
+        // 确保最少保留一个审批人
+        if (this.approveNode.reviewUserModes.length > 1) {
+            this.approveNode.reviewUserModes.splice(index, 1);
+        }
+    }
+
+    override type(): NodeType {
         return NodeType.APPROVAL;
     }
 
-    name(): string {
+    override name(): string {
         return "审批人";
     }
 
-    color(): string {
+    override color(): string {
         return "#EC8151";
     }
 
 
-    onSelect() {
+    override onSelect() {
         // this.select.emit(this.modelValue);
     }
 
-    onDelete() {
+    override onDelete() {
         this.delete.emit({
             branch: this.branch,
             index: this.index
         });
     }
 
-    onInsertNode(type: string) {
+    override onInsertNode(type: NodeType) {
         this.insertNode.emit({
             branch: this.branch,
             index: this.index,
@@ -57,15 +83,25 @@ export class ApprovalNodeComponent extends ANode {
         });
     }
 
-    click(): void {
+    override onInsertFlexNode(flex: FlexNodeModel) {
+        insertFlexNodeFun(this.branch, this.index, flex);
     }
 
-    create(): any {
+    override create(): any {
         return {
             id: geneNodeId(),
             type: this.type(),
-            name: this.name()
+            name: this.name(),
+            prop: this.approveNode
         };
     }
 
+    override onSaveProp(): void {
+        this.modelValue.prop = this.approveNode;
+    }
+
+    protected readonly ApprovalStrategy = ApprovalStrategy;
+
+
+    protected readonly ApprovalTimeoutAction = ApprovalTimeoutAction;
 }

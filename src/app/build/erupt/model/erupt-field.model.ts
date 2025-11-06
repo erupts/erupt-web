@@ -1,14 +1,4 @@
-import {
-    AttachmentEnum,
-    ChoiceEnum,
-    DateEnum,
-    EditType,
-    HtmlEditTypeEnum,
-    MultiChoiceEnum,
-    PickerMode,
-    TabEnum,
-    ViewType
-} from "./erupt.enum";
+import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, MultiChoiceEnum, PickerMode, TabEnum, ViewType} from "./erupt.enum";
 import {KeyValueDiffer} from "@angular/core";
 import {Subject} from "rxjs";
 
@@ -55,6 +45,13 @@ export enum DrawerPlacement {
     BOTTOM = "BOTTOM"
 }
 
+export enum FormCtrl {
+    HIDE = "HIDE",
+    SHOW = "SHOW",
+    NOTNULL = "NOTNULL",
+    READONLY = "READONLY",
+}
+
 export interface View {
     className: string;
     column: string;
@@ -76,7 +73,7 @@ export interface Edit {
     desc: string;
     type: EditType;
     show: boolean;
-    showBy: { dependField: string, expr: string };
+    dynamic: { dependField: string, condition: string, noMatch: FormCtrl, match: FormCtrl };
     readOnly: Readonly;
     placeHolder: string;
     search: Search;

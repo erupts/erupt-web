@@ -30,12 +30,12 @@
                     <span class="step-number">3</span>
                     <span class="step-text">流程设计</span>
                 </div>
-                <!--                <div class="step-item"-->
-                <!--                     [class.active]="currentStep === 4"-->
-                <!--                     (click)="switchStep(4)">-->
-                <!--                    <span class="step-number">4</span>-->
-                <!--                    <span class="step-text">更多设置</span>-->
-                <!--                </div>-->
+                <div class="step-item"
+                     [class.active]="currentStep === 4"
+                     (click)="switchStep(4)">
+                    <span class="step-number">4</span>
+                    <span class="step-text">更多设置</span>
+                </div>
             </div>
         </div>
 
@@ -44,6 +44,9 @@
             <!--        <span>{{ incompleteItems }}项不完善</span>-->
             <!--        <i nz-icon nzType="down"></i>-->
             <!--      </div>-->
+            <button nz-button (click)="copyConfig()" *ngIf="this.flowConfig?.rule">
+                复制配置
+            </button>
             <button nz-button nzType="primary" class="publish-btn" (click)="publish()">
                 发布
             </button>
@@ -108,7 +111,7 @@
                 <div class="form-item">
                     <label class="form-label required">数据模型</label>
                     <nz-select [(ngModel)]="flowConfig.erupt"
-                               [disabled]="flowConfig.rule?.length > 1"
+                               [disabled]="flowConfig.rule?.length > 2"
                                (ngModelChange)="changeErupt($event)"
                                class="form-select">
                         <nz-option *ngFor="let option of eruptFlows"
@@ -128,11 +131,43 @@
                 <div class="form-item">
                     <label class="form-label required">谁可以提交该审批</label>
                     <nz-select placeholder="请选择提交权限"
+                               [(ngModel)]="flowConfig.permission"
+                               (ngModelChange)="changeSubmitPermission($event)"
                                class="form-select">
-                        <nz-option *ngFor="let option of submitPermissionOptions"
-                                   [nzValue]="option.value"
-                                   [nzLabel]="option.label"></nz-option>
+                        <nz-option [nzValue]="FlowPermission.ALL" [nzLabel]="'全员'"></nz-option>
+                        <nz-option [nzValue]="FlowPermission.MANAGER" [nzLabel]="'组织负责人'"></nz-option>
+                        <nz-option [nzValue]="FlowPermission.SPECIFIC" [nzLabel]="'指定人员'"></nz-option>
+                        <nz-option [nzValue]="FlowPermission.NO" [nzLabel]="'均不可提交'"></nz-option>
                     </nz-select>
+
+                    <!-- 已选择的权限范围标签 -->
+                    <div class="permission-scopes" *ngIf="flowConfig.permissionScope?.length > 0">
+                        <div>
+                            <ng-container *ngFor="let scope of flowConfig.permissionScope;">
+                                <nz-tag
+                                    [nzColor]="getScopeTagColor(scope.scope)"
+                                    nz-tooltip
+                                >
+                                    <span nz-icon [nzType]="getScopeIcon(scope.scope)" nzTheme="outline"></span>
+                                    <span class="tag-text">{{ getScopeValue(scope) }}</span>
+                                </nz-tag>
+                            </ng-container>
+                            <button nz-button nzType="default" nzSize="small" (click)="changeSubmitPermission(FlowPermission.SPECIFIC)">
+                                <i nz-icon nzType="plus" nzTheme="outline"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 空状态提示 -->
+                    <div class="permission-scopes empty" *ngIf="flowConfig.permission === FlowPermission.SPECIFIC && (!flowConfig.permissionScope || flowConfig.permissionScope.length === 0)">
+                        <span class="empty-text">
+                            <span nz-icon nzType="info-circle" nzTheme="outline"></span>
+                            请选择具体的权限范围
+                            <button nz-button nzType="default" nzSize="small" (click)="changeSubmitPermission(FlowPermission.SPECIFIC)">
+                                <i nz-icon nzType="plus" nzTheme="outline"></i>
+                            </button>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -156,6 +191,25 @@
             <ng-container *ngIf="eruptBuild">
                 <erupt-flow [(modelValue)]="flowConfig.rule" [eruptBuild]="eruptBuild"/>
             </ng-container>
+        </div>
+        <div class="form-section" *ngIf="currentStep == 4">
+            <div class="flow-form">
+                <!-- 审批标题设置 -->
+                <div class="form-item" *ngIf="eruptBuild">
+                    <label class="form-label">审批子标题字段设置</label>
+                    <div class="form-input" style="display: block;">
+                        <div style="margin-top: 12px;">
+                            <nz-select class="form-select" nzMode="multiple" nzPlaceHolder="请选择字段"
+                                [(ngModel)]="flowConfig.setting.subTitleFields">
+                                <ng-container *ngFor="let f of eruptBuild.eruptModel.eruptFieldModels">
+                                    <nz-option *ngIf="f.eruptFieldJson.edit.title" [nzValue]="f.fieldName"
+                                               [nzLabel]="f.eruptFieldJson.edit.title"></nz-option>
+                                </ng-container>
+                            </nz-select>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

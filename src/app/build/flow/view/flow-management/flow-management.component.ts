@@ -1,12 +1,13 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {FlowApiService} from '@flow/service/FlowApiService';
+import {FlowApiService} from '@flow/service/flow-api.service';
 import {FlowConfig, FlowGroup} from '@flow/model/flow.model';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {R} from '@shared/model/api.model';
-import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {FlowConfigComponent} from "@flow/view/flow-management/flow-config/flow-config.component";
+import {FlowDataService} from "@flow/service/flow-data.service";
 
 // 扩展 FlowGroup 接口，添加 count 属性
 interface FlowGroupWithCount extends FlowGroup {
@@ -18,12 +19,12 @@ interface FlowGroupWithCount extends FlowGroup {
     templateUrl: './flow-management.component.html',
     styleUrls: ['./flow-management.component.less']
 })
-export class FlowManagementComponent implements OnInit {
+export class FlowManagementComponent implements OnInit, OnDestroy {
 
     searchValue = '';
     flowConfigs: FlowConfig[] = []; // 流程配置列表
     categories: string[] = [];
-    selectedCategory: string = '';
+    selectedCategory: number = null;
 
     // 排序相关
     categoryItems: FlowGroupWithCount[] = [];
@@ -39,12 +40,21 @@ export class FlowManagementComponent implements OnInit {
     editGroupName = '';
     editingGroup: FlowGroupWithCount | null = null;
 
+    configDrawerRef: NzDrawerRef;
+
     constructor(
         private flowApiService: FlowApiService,
         private message: NzMessageService,
         private modal: NzModalService,
+        private flowDataService: FlowDataService,
         @Inject(NzDrawerService) private drawerService: NzDrawerService,
     ) {
+    }
+
+    ngOnDestroy(): void {
+        if (this.configDrawerRef) {
+            this.configDrawerRef.close();
+        }
     }
 
     ngOnInit(): void {
@@ -60,7 +70,7 @@ export class FlowManagementComponent implements OnInit {
                 id: group.id,
                 name: group.name,
                 sort: group.sort || index,
-                count: this.getConfigsByCategory(group.name).length
+                count: this.getConfigsByCategory(group.id).length
             }));
 
             // 按sort排序
@@ -93,16 +103,16 @@ export class FlowManagementComponent implements OnInit {
     // 更新分组计数 - 基于流程配置数据
     updateCategoryCounts(): void {
         this.categoryItems.forEach(item => {
-            item.count = this.getConfigsByCategory(item.name).length;
+            item.count = this.getConfigsByCategory(item.id).length;
         });
     }
 
     // 根据分组获取流程配置
-    getConfigsByCategory(category: string): FlowConfig[] {
-        return this.flowConfigs.filter(config => config.flowGroup?.name === category);
+    getConfigsByCategory(category: number): FlowConfig[] {
+        return this.flowConfigs.filter(config => config.flowGroup?.id === category);
     }
 
-    selectCategory(category: string): void {
+    selectCategory(category: number): void {
         this.selectedCategory = category;
     }
 
@@ -229,16 +239,8 @@ export class FlowManagementComponent implements OnInit {
             nzOnOk: () => {
                 this.flowApiService.groupDelete(item.id).subscribe({
                     next: (response: R<void>) => {
-                        if (response.success) {
-                            this.message.success('分组删除成功');
-                            this.loadGroups(); // 重新加载分组列表
-                        } else {
-                            this.message.error(response.message || '删除分组失败');
-                        }
-                    },
-                    error: (error) => {
-                        console.error('删除分组失败:', error);
-                        this.message.error('删除分组失败');
+                        this.message.success('分组删除成功');
+                        this.loadGroups();
                     }
                 });
             }
@@ -282,7 +284,7 @@ export class FlowManagementComponent implements OnInit {
     }
 
     onCreateApproval(id?: number): void {
-        const drawerRef = this.drawerService.create({
+        this.configDrawerRef = this.drawerService.create({
             nzTitle: null,
             nzWidth: "100%",
             nzClosable: false,
@@ -295,13 +297,12 @@ export class FlowManagementComponent implements OnInit {
                 padding: '0px'
             }
         });
-
         // 使用轮询方式等待组件实例可用
         const checkComponent = () => {
-            const componentInstance = drawerRef.getContentComponent();
+            const componentInstance = this.configDrawerRef.getContentComponent();
             if (componentInstance) {
                 componentInstance.closeConfig.subscribe(() => {
-                    drawerRef.close();
+                    this.configDrawerRef.close();
                     this.loadFlowConfigs();
                 });
             } else {
