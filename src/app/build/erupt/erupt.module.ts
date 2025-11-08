@@ -27,7 +27,7 @@ import {MarkdownComponent} from './components/markdown/markdown.component';
 import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
-import {CardComponent} from './components/card/card.component';
+import {CardComponent} from './viz/card/card.component';
 import {TagSelectModule} from "@delon/abc/tag-select";
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import {SearchComponent} from './components/search/search.component';
