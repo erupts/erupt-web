@@ -24,6 +24,23 @@ export interface Erupt {
     rowOperation: RowOperation[];
     drills: Drill[];
     layout: Layout;
+    viz: Viz[];
+}
+
+export interface Viz {
+    code: string;
+    title: string;
+    desc: string;
+    fields: string[];
+    type: VizType;
+}
+
+export enum VizType {
+    TABLE = "TABLE",
+    GANTT = "GANTT",
+    CARD = "CARD",
+    BOARD = "BOARD",
+    TPL = "TPL"
 }
 
 export interface CardView {
