@@ -171,10 +171,12 @@
                 </div>
             </div>
         </div>
-
-        <div class="step-placeholder" *ngIf="currentStep == 2">
+        <ng-template #notFoundErupt>
             <nz-empty nzNotFoundImage="simple" *ngIf="!flowConfig.erupt" [nzNotFoundContent]="'请选择数据模型'">
             </nz-empty>
+        </ng-template>
+        <div class="step-placeholder" *ngIf="currentStep == 2">
+            <ng-container *ngIf="!flowConfig.erupt" [ngTemplateOutlet]="notFoundErupt"></ng-container>
             <ng-container *ngIf="eruptBuild">
                 <div style="display: flex;justify-content: center;height: 100%;padding: 16px">
                     <div class="phone-wrapper">
@@ -186,29 +188,31 @@
             </ng-container>
         </div>
         <div class="step-placeholder" *ngIf="currentStep == 3">
-            <nz-empty nzNotFoundImage="simple" *ngIf="!flowConfig.erupt" [nzNotFoundContent]="'请选择数据模型'">
-            </nz-empty>
+            <ng-container *ngIf="!flowConfig.erupt" [ngTemplateOutlet]="notFoundErupt"></ng-container>
             <ng-container *ngIf="eruptBuild">
                 <erupt-flow [(modelValue)]="flowConfig.rule" [eruptBuild]="eruptBuild"/>
             </ng-container>
         </div>
         <div class="form-section" *ngIf="currentStep == 4">
             <div class="flow-form">
-                <!-- 审批标题设置 -->
-                <div class="form-item" *ngIf="eruptBuild">
-                    <label class="form-label">审批子标题字段设置</label>
-                    <div class="form-input" style="display: block;">
-                        <div style="margin-top: 12px;">
-                            <nz-select class="form-select" nzMode="multiple" nzPlaceHolder="请选择字段"
-                                [(ngModel)]="flowConfig.setting.subTitleFields">
-                                <ng-container *ngFor="let f of eruptBuild.eruptModel.eruptFieldModels">
-                                    <nz-option *ngIf="f.eruptFieldJson.edit.title" [nzValue]="f.fieldName"
-                                               [nzLabel]="f.eruptFieldJson.edit.title"></nz-option>
-                                </ng-container>
-                            </nz-select>
+                <nz-empty nzNotFoundImage="simple" *ngIf="!flowConfig.erupt" [nzNotFoundContent]="'请选择数据模型'">
+                </nz-empty>
+                <ng-container *ngIf="flowConfig.erupt">
+                    <div class="form-item" *ngIf="eruptBuild">
+                        <label class="form-label">审批子标题字段设置</label>
+                        <div class="form-input" style="display: block;">
+                            <div style="margin-top: 12px;">
+                                <nz-select class="form-select" nzMode="multiple" nzPlaceHolder="请选择字段"
+                                           [(ngModel)]="flowConfig.setting.subTitleFields">
+                                    <ng-container *ngFor="let f of eruptBuild.eruptModel.eruptFieldModels">
+                                        <nz-option *ngIf="f.eruptFieldJson.edit.title" [nzValue]="f.fieldName"
+                                                   [nzLabel]="f.eruptFieldJson.edit.title"></nz-option>
+                                    </ng-container>
+                                </nz-select>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </ng-container>
             </div>
         </div>
     </div>
