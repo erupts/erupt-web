@@ -276,6 +276,9 @@ export class DataHandlerService {
                         break;
                     case EditType.TAB_TREE:
                         if (edit.$value) {
+                            if (!eruptBuildModel.tabErupts) {
+                                return;
+                            }
                             let ids = [];
                             (<any[]>edit.$value).forEach(val => {
                                 const obj = {};
@@ -287,6 +290,9 @@ export class DataHandlerService {
                         break;
                     case EditType.TAB_TABLE_REFER:
                         if (edit.$value) {
+                            if (!eruptBuildModel.tabErupts) {
+                                return;
+                            }
                             let ids = [];
                             (<any[]>edit.$value).forEach(val => {
                                 const obj = {};
@@ -300,6 +306,9 @@ export class DataHandlerService {
                     case EditType.TAB_TABLE_ADD:
                         if (edit.$value) {
                             if (typeof edit.$value === "object") {
+                                if (!eruptBuildModel.tabErupts) {
+                                    return;
+                                }
                                 let pk = eruptBuildModel.tabErupts[field.fieldName].eruptModel.eruptJson.primaryKeyCol
                                 for (let val of edit.$value) {
                                     if (val[pk] < 0) {

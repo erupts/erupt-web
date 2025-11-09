@@ -33,6 +33,8 @@ export interface Viz {
     desc: string;
     fields: string[];
     type: VizType;
+    cardView: CardView;
+    ganttView: GanttView;
 }
 
 export enum VizType {
@@ -47,6 +49,16 @@ export interface CardView {
     galleryField: string;
     galleryCover: GalleryCover;
     viewFields: string[];
+}
+
+export interface GanttView {
+
+    startDateField: string;
+
+    endDateField: string;
+
+    pidField: string;
+
 }
 
 export interface DrillInput {
