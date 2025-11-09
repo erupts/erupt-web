@@ -1,0 +1,46 @@
+<ng-container>
+    <div nz-row [nzGutter]="16" *ngIf="data">
+        <ng-container *ngFor="let d of data">
+            <div nz-col [nzXXl]="eruptBuildModel.eruptModel.eruptJson.linkTree ? 6 : 4"
+                 [nzXl]="6" [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXs]="24">
+                <nz-card [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'12px'}" [nzHoverable]="true"
+                         [nzBordered]="true" class="erupt-card"
+                         [nzActions]="[actionEllipsis]">
+                    <ng-container *ngIf="viz.fields.length">
+                        <ng-container *ngFor="let v of viz.fields">
+                            {{ eruptBuildModel.eruptModel.eruptFieldModelMap.get(v).eruptFieldJson?.edit?.title }}
+                            :&nbsp; <span [innerHTML]="(d[v]||'')|safeHtml"></span> <br>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="!viz.fields.length">
+                        <ng-container *ngFor="let field of eruptBuildModel.eruptModel.eruptFieldModels">
+                            {{field.eruptFieldJson?.edit?.title}}
+                            :&nbsp; <span [innerHTML]="(d[field.fieldName]||'')|safeHtml"></span> <br>
+                        </ng-container>
+                    </ng-container>
+                </nz-card>
+                <ng-template #coverTemplate>
+                    <div class="card-img-container">
+                        <!--                        <ng-container *ngIf="d[cardView.galleryField]">-->
+                        <!--                            <div class="card-img" (click)="previewImage(d[cardView.galleryField])" [ngStyle]="viewImageStyle(d[cardView.galleryField])"></div>-->
+                        <!--                        </ng-container>-->
+                        <!--                        <ng-container *ngIf="!d[cardView.galleryField]">-->
+                        <img src="./assets/image/no-img.svg" alt="" width="44px" class="no-image">
+                        <!--                        </ng-container>-->
+                    </div>
+                </ng-template>
+                <ng-template #actionEllipsis>
+                    <i nz-icon nzType="ellipsis" nz-dropdown [nzDropdownMenu]="menu"></i>
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                        <ul nz-menu nzSelectable>
+                            <li nz-menu-item *ngFor="let i of [1,2,3,4]">
+                                <i nz-icon nzType="edit" nzTheme="twotone"></i>1st menu item
+                            </li>
+                        </ul>
+                    </nz-dropdown-menu>
+                </ng-template>
+            </div>
+        </ng-container>
+    </div>
+</ng-container>
+

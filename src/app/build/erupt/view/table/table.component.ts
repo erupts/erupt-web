@@ -1,13 +1,23 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Viz, VizType} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
-import {FormSize, OperationIfExprBehavior, OperationMode, OperationType, PagingType, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
+import {
+    FormSize,
+    OperationIfExprBehavior,
+    OperationMode,
+    OperationType,
+    PagingType,
+    RestPath,
+    Scene,
+    SelectMode,
+    ViewType
+} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
@@ -119,6 +129,12 @@ export class TableComponent implements OnInit, OnDestroy {
         url: null
     };
 
+    viz: Viz[];
+
+    selectedVizIndex: number = 0;
+
+    vizOptions = [];
+
     adding: boolean = false; //新增行为防抖
 
     header: object;
@@ -206,6 +222,11 @@ export class TableComponent implements OnInit, OnDestroy {
         this.header = req.header;
         this.dataPage.url = req.url;
         observable.subscribe(eb => {
+                this.viz = eb.eruptModel.eruptJson.viz || [];
+                this.vizOptions = this.viz.map(i => ({
+                    label: i.title,
+                    value: i.code
+                }));
                 eb.eruptModel.eruptJson.rowOperation.forEach((item) => {
                     if (item.mode != OperationMode.SINGLE) {
                         if (item.fold) {
@@ -272,6 +293,10 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.query(1);
             }
         );
+    }
+
+    vizChange(e: number) {
+
     }
 
     query(page?: number, size?: number, sort?: object) {
@@ -990,5 +1015,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
+    protected readonly viewType = ViewType;
+    protected readonly VizType = VizType;
 }
 

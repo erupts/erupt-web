@@ -140,39 +140,28 @@
                             <span [innerHTML]="alert.message | safeHtml"></span>
                         </ng-template>
                     </ng-container>
-                    <nz-card *ngIf="hasSearchFields" [nzBodyStyle]="{padding:'10px'}" class="search-card"
-                             [hidden]="hideCondition">
-                        <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'">
-
-                        </erupt-search>
+                    <nz-card *ngIf="hasSearchFields" [nzBodyStyle]="{padding:'10px'}" class="search-card" [hidden]="hideCondition">
+                        <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'" />
                     </nz-card>
-                    <!--                    <div style="overflow: auto;width: 100%;margin: 16px 0;background: #fff">-->
-                    <!--                        <gantt-view></gantt-view>-->
-                    <!--                    </div>-->
-                    <!--                    <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.cardView">-->
-                    <!--                        <div style="margin: 16px 0">-->
-                    <!--                            <erupt-card [eruptBuildModel]="eruptBuildModel"></erupt-card>-->
-                    <!--                        </div>-->
-                    <!--                    </ng-container>-->
-                    <div [syncVirtualScroll]="dataPage.data.length >= 100">
-                        <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
-                            [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
-                            [virtualScroll]="dataPage.data.length >= 100"
-                            [virtualItemSize]="47"
-                            [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
-                            (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
-                            [page]="dataPage.page" [size]="'middle'"
-                        >
-                            <ng-template #bodyTpl>
-                                <tr *ngFor="let row of extraRows" [ngClass]="row.className">
-                                    <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
-                                        [ngClass]="column.className">
-                                        {{ column.value }}
-                                    </td>
-                                </tr>
-                            </ng-template>
-                        </st>
+                    <div *ngIf="viz.length">
+                        <nz-segmented [nzOptions]="vizOptions" style="margin: 16px 0" [(ngModel)]="selectedVizIndex"
+                                      (ngModelChange)="vizChange($event)"/>
+                        <ng-container *ngIf="viz[selectedVizIndex].type != VizType.TABLE">
+                            <div *ngIf="!dataPage.data || dataPage.data.length == 0" style="background: #fff;padding: 32px">
+                                <nz-empty nzNotFoundImage="simple" />
+                            </div>
+                        </ng-container>
+                        <ng-container [ngSwitch]="viz[selectedVizIndex].type">
+                            <ng-container *ngSwitchCase="VizType.CARD">
+                                <viz-card [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                          *ngIf="dataPage.data && dataPage.data.length" [viz]="viz[selectedVizIndex]" />
+                            </ng-container>
+                            <ng-container *ngSwitchCase="VizType.TABLE">
+                                <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
+                            </ng-container>
+                        </ng-container>
                     </div>
+                    <ng-container *ngIf="!viz.length" [ngTemplateOutlet]="eruptTable"></ng-container>
                     <ng-container *ngIf="dataPage.showPagination">
                         <nz-pagination style="text-align: center;margin-top: 12px" nzShowSizeChanger nzShowQuickJumper
                                        [nzPageIndex]="dataPage.pi" [nzShowTotal]="totalTemplate"
@@ -191,3 +180,24 @@
         </div>
     </div>
 </ng-container>
+<ng-template #eruptTable>
+    <div [syncVirtualScroll]="dataPage.data.length >= 100">
+        <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
+            [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
+            [virtualScroll]="dataPage.data.length >= 100"
+            [virtualItemSize]="47"
+            [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
+            (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
+            [page]="dataPage.page" [size]="'middle'"
+        >
+            <ng-template #bodyTpl>
+                <tr *ngFor="let row of extraRows" [ngClass]="row.className">
+                    <td *ngFor="let column of row.columns" [colSpan]="column.colspan"
+                        [ngClass]="column.className">
+                        {{ column.value }}
+                    </td>
+                </tr>
+            </ng-template>
+        </st>
+    </div>
+</ng-template>

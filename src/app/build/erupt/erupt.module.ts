@@ -44,6 +44,7 @@ import {MultiChoiceComponent} from './components/multi-choice/multi-choice.compo
 import {GanttComponent} from "./components/gantt/gantt.component";
 import {SignaturePadComponent} from './components/signature-pad/signature-pad.component';
 import {SmartSearchComponent} from './components/smart-search/smart-search.component';
+import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 
 @NgModule({
     imports: [
@@ -57,7 +58,8 @@ import {SmartSearchComponent} from './components/smart-search/smart-search.compo
         NzImageModule,
         NzQRCodeModule,
         NzRateModule,
-        NzEmptyModule
+        NzEmptyModule,
+        NzSegmentedModule
     ],
     providers: [
         DataHandlerService,
