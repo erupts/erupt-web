@@ -20,14 +20,18 @@
                     </ng-container>
                 </nz-card>
                 <ng-template #coverTemplate>
-                    <div class="card-img-container">
-                        <!--                        <ng-container *ngIf="d[cardView.galleryField]">-->
-                        <!--                            <div class="card-img" (click)="previewImage(d[cardView.galleryField])" [ngStyle]="viewImageStyle(d[cardView.galleryField])"></div>-->
-                        <!--                        </ng-container>-->
-                        <!--                        <ng-container *ngIf="!d[cardView.galleryField]">-->
-                        <img src="./assets/image/no-img.svg" alt="" width="44px" class="no-image">
-                        <!--                        </ng-container>-->
-                    </div>
+                    <ng-container *ngIf="viz.cardView.coverField">
+                        <div class="card-img-container">
+                            <ng-container *ngIf="d[viz.cardView.coverField]">
+                                <div style="width: 100%; height: 100%;" [ngStyle]="viewImageStyle(d[viz.cardView.coverField], eruptBuildModel.eruptModel.eruptFieldModelMap.get(viz.cardView.coverField))">
+
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="!d[viz.cardView.coverField]">
+                                <img src="./assets/image/no-img.svg" alt="" width="44px" class="no-image">
+                            </ng-container>
+                        </div>
+                    </ng-container>
                 </ng-template>
                 <ng-template #actionEllipsis>
                     <i nz-icon nzType="ellipsis" nz-dropdown [nzDropdownMenu]="menu"></i>
