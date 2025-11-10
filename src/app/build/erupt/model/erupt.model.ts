@@ -46,8 +46,8 @@ export enum VizType {
 }
 
 export interface CardView {
-    galleryField: string;
-    galleryCover: GalleryCover;
+    coverField: string;
+    coverEffect: CoverEffect;
     viewFields: string[];
 }
 
@@ -68,7 +68,7 @@ export interface DrillInput {
     val: any
 }
 
-export enum GalleryCover {
+export enum CoverEffect {
     FIT = "FIT", //适应
     CLIP = "CLIP", //剪裁
 }
