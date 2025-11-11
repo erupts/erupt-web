@@ -296,7 +296,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     vizChange(e: number) {
-
+        this.query();
     }
 
     query(page?: number, size?: number, sort?: object) {
@@ -331,6 +331,7 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url, {
             pageIndex: this.dataPage.pi,
             pageSize: this.dataPage.ps,
+            viz: this.viz[this.selectedVizIndex]?.code,
             sort: orderBy,
             ...query
         }, this.header).subscribe(page => {
@@ -522,54 +523,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 icon: "edit",
                 tooltip: this.i18n.fanyi("global.editor"),
                 click: (record: any) => {
-                    let params = {
-                        eruptBuildModel: this.eruptBuildModel,
-                        id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
-                        behavior: Scene.EDIT
-                    }
-                    const model = this.modal.create({
-                        nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-                        nzWidth: fullLine ? 550 : null,
-                        nzStyle: {top: "60px"},
-                        nzMaskClosable: false,
-                        nzKeyboard: false,
-                        nzTitle: this.i18n.fanyi("global.editor"),
-                        nzOkText: this.i18n.fanyi("global.update"),
-                        nzContent: EditComponent,
-                        nzFooter: [
-                            {
-                                label: this.i18n.fanyi("global.cancel"),
-                                onClick: () => {
-                                    model.close();
-                                }
-                            },
-                            ...getEditButtons(record),
-                            {
-                                label: this.i18n.fanyi("global.update"),
-                                type: "primary",
-                                onClick: () => {
-                                    return model.triggerOk();
-                                }
-                            },
-                        ],
-                        nzOnOk: async () => {
-                            let validateResult = model.getContentComponent().beforeSaveValidate();
-                            if (validateResult) {
-                                let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
-                                let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
-                                if (res.status === Status.SUCCESS) {
-                                    this.msg.success(this.i18n.fanyi("global.update.success"));
-                                    this.query();
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-                            } else {
-                                return false;
-                            }
-                        }
-                    });
-                    Object.assign(model.getContentComponent(), params)
+                    this.onEdit(record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol], fullLine, getEditButtons(record));
                 },
                 iif: (item) => {
                     if (item[TableStyle.power]) {
@@ -684,6 +638,57 @@ export class TableComponent implements OnInit, OnDestroy {
         } else {
             this.tableWidth = (this.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length * 160 * this.i18n.getCurrLangInfo().columnWidthZoom) + "px"
         }
+    }
+
+    onEdit(pk: any, fullLine = false, buttons: ModalButtonOptions[] = []) {
+        let params = {
+            eruptBuildModel: this.eruptBuildModel,
+            id: pk,
+            behavior: Scene.EDIT
+        }
+        const model = this.modal.create({
+            nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+            nzWidth: fullLine ? 550 : null,
+            nzStyle: {top: "60px"},
+            nzMaskClosable: false,
+            nzKeyboard: false,
+            nzTitle: this.i18n.fanyi("global.editor"),
+            nzOkText: this.i18n.fanyi("global.update"),
+            nzContent: EditComponent,
+            nzFooter: [
+                {
+                    label: this.i18n.fanyi("global.cancel"),
+                    onClick: () => {
+                        model.close();
+                    }
+                },
+                ...buttons,
+                {
+                    label: this.i18n.fanyi("global.update"),
+                    type: "primary",
+                    onClick: () => {
+                        return model.triggerOk();
+                    }
+                },
+            ],
+            nzOnOk: async () => {
+                let validateResult = model.getContentComponent().beforeSaveValidate();
+                if (validateResult) {
+                    let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
+                    let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
+                    if (res.status === Status.SUCCESS) {
+                        this.msg.success(this.i18n.fanyi("global.update.success"));
+                        this.query();
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        });
+        Object.assign(model.getContentComponent(), params)
     }
 
 

@@ -25,9 +25,11 @@ import {
     DeleteTwoTone,
     DownloadOutline,
     EditFill,
+    EditTwoTone,
     EllipsisOutline,
     EyeInvisibleOutline,
     EyeOutline,
+    EyeTwoTone,
     FileImageOutline,
     FullscreenExitOutline,
     FullscreenOutline,
@@ -138,5 +140,7 @@ export const ICONS_AUTO = [
     BellOutline,
     MoreOutline,
     MinusCircleOutline,
-    NodeIndexOutline
+    NodeIndexOutline,
+    EyeTwoTone,
+    EditTwoTone
 ];

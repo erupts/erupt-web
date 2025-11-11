@@ -104,6 +104,7 @@ export interface Drill {
 export interface Page {
     pageIndex: number;
     pageSize: number;
+    viz: string;
     totalPage?: number;
     total?: number;
     sort?: Sort[];
