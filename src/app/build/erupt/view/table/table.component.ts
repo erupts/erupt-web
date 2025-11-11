@@ -227,6 +227,9 @@ export class TableComponent implements OnInit, OnDestroy {
                     label: i.title,
                     value: i.code
                 }));
+                this.vizOptions.splice(0,0,{
+                    icon: 'table'
+                })
                 eb.eruptModel.eruptJson.rowOperation.forEach((item) => {
                     if (item.mode != OperationMode.SINGLE) {
                         if (item.fold) {
