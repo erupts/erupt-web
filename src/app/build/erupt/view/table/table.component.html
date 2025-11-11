@@ -141,25 +141,28 @@
                         </ng-template>
                     </ng-container>
                     <nz-card *ngIf="hasSearchFields" [nzBodyStyle]="{padding:'10px'}" class="search-card" [hidden]="hideCondition">
-                        <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'" />
+                        <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'"/>
                     </nz-card>
                     <div *ngIf="viz.length">
-                        <nz-segmented [nzOptions]="vizOptions" style="margin: 16px 0" [(ngModel)]="selectedVizIndex"
+                        <nz-segmented *ngIf="viz.length > 1" [nzOptions]="vizOptions" [ngStyle]="{marginTop:hideCondition?'0':'12px'}" [(ngModel)]="selectedVizIndex"
                                       (ngModelChange)="vizChange($event)"/>
                         <ng-container *ngIf="viz[selectedVizIndex].type != VizType.TABLE">
-                            <div *ngIf="!dataPage.data || dataPage.data.length == 0" style="background: #fff;padding: 32px">
-                                <nz-empty nzNotFoundImage="simple" />
+                            <div *ngIf="!dataPage.data || dataPage.data.length == 0" style="background: #fff;padding: 32px;">
+                                <nz-empty nzNotFoundImage="simple"/>
                             </div>
                         </ng-container>
-                        <ng-container [ngSwitch]="viz[selectedVizIndex].type">
-                            <ng-container *ngSwitchCase="VizType.CARD">
-                                <viz-card [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
-                                          *ngIf="dataPage.data && dataPage.data.length" [viz]="viz[selectedVizIndex]" />
+                        <div [ngStyle]="{marginTop:hideCondition?'0':'12px'}">
+                            <ng-container [ngSwitch]="viz[selectedVizIndex].type">
+                                <ng-container *ngSwitchCase="VizType.CARD">
+                                    <viz-card [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                              (onEdit)="onEdit($event)"
+                                              *ngIf="dataPage.data && dataPage.data.length" [viz]="viz[selectedVizIndex]"/>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="VizType.TABLE">
+                                    <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
+                                </ng-container>
                             </ng-container>
-                            <ng-container *ngSwitchCase="VizType.TABLE">
-                                <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
-                            </ng-container>
-                        </ng-container>
+                        </div>
                     </div>
                     <ng-container *ngIf="!viz.length" [ngTemplateOutlet]="eruptTable"></ng-container>
                     <ng-container *ngIf="dataPage.showPagination">

@@ -1,9 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {CoverEffect, Page, Viz} from "../../model/erupt.model";
 import {NzImageService} from "ng-zorro-antd/image";
 import {EruptFieldModel} from "../../model/erupt-field.model";
+import {UiBuildService} from "../../service/ui-build.service";
+import {STColumn} from "@delon/abc/st";
 
 @Component({
     selector: 'viz-card',
@@ -13,7 +15,7 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 })
 export class CardComponent implements OnInit {
 
-    constructor(private imageService: NzImageService) {
+    constructor(private imageService: NzImageService, private uiBuildService: UiBuildService) {
     }
 
     @Input() eruptBuildModel: EruptBuildModel;
@@ -22,11 +24,23 @@ export class CardComponent implements OnInit {
 
     @Input() viz: Viz;
 
+    columnMap: Map<any, STColumn>;
+
+    @Output() onEdit = new EventEmitter<any>();
+
     page: Page;
 
     ngOnInit() {
-        let eruptModel = this.eruptBuildModel.eruptModel;
-        // this.cardView = eruptModel.eruptJson.cardView;
+        this.columnMap = new Map<string, STColumn>()
+        for (let col of this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true)) {
+            this.columnMap.set(col.index, col);
+        }
+        console.log(this.columnMap)
+    }
+
+    clickField(e,field: string) {
+        e.stopPropagation();
+        this.columnMap.get(field)?.click(this.data[0]);
     }
 
     viewImageStyle(path: string, eruptFieldModel: EruptFieldModel): object {
@@ -47,4 +61,5 @@ export class CardComponent implements OnInit {
     }
 
 
+    protected readonly clearInterval = clearInterval;
 }

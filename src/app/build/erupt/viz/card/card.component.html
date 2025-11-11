@@ -3,27 +3,45 @@
         <ng-container *ngFor="let d of data">
             <div nz-col [nzXXl]="eruptBuildModel.eruptModel.eruptJson.linkTree ? 6 : 4"
                  [nzXl]="6" [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXs]="24">
-                <nz-card [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'12px'}" [nzHoverable]="true"
-                         [nzBordered]="true" class="erupt-card"
-                         [nzActions]="[actionEllipsis]">
+                <nz-card class="erupt-card" [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'0'}"
+                         [nzBordered]="true" (click)="onEdit.emit(d[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])">
                     <ng-container *ngIf="viz.fields.length">
-                        <ng-container *ngFor="let v of viz.fields">
-                            {{ eruptBuildModel.eruptModel.eruptFieldModelMap.get(v).eruptFieldJson?.edit?.title }}
-                            :&nbsp; <span [innerHTML]="(d[v]||'')|safeHtml"></span> <br>
-                        </ng-container>
+                        <div style="padding: 12px">
+                            <ng-container *ngFor="let field of viz.fields">
+                                {{ eruptBuildModel.eruptModel.eruptFieldModelMap.get(field).eruptFieldJson?.edit?.title }}
+                                :&nbsp;
+                                <span (click)="clickField($event,field)">
+                                    <ng-container *ngIf="columnMap.get(field)?.format">
+                                        <span [innerHTML]="(columnMap.get(field)?.format(d,columnMap.get(field),null)||'')|safeHtml"></span>
+                                    </ng-container>
+                                    <ng-container *ngIf="!columnMap.get(field)?.format">
+                                        <span [innerHTML]="(d[field]||'')|safeHtml"></span>
+                                    </ng-container>
+                                </span>
+                                <br>
+                            </ng-container>
+                        </div>
                     </ng-container>
-                    <ng-container *ngIf="!viz.fields.length">
-                        <ng-container *ngFor="let field of eruptBuildModel.eruptModel.eruptFieldModels">
-                            {{field.eruptFieldJson?.edit?.title}}
-                            :&nbsp; <span [innerHTML]="(d[field.fieldName]||'')|safeHtml"></span> <br>
-                        </ng-container>
-                    </ng-container>
+                    <!--                    <div class="actions">-->
+                    <!--                        <i nz-icon nzType="eye" nzTheme="twotone"></i>-->
+                    <!--                        <i nz-icon nzType="edit" nzTheme="twotone"></i>-->
+                    <!--                        <i nz-icon nzType="delete" nzTheme="outline" style="color: #f00"></i>-->
+                    <!--                        <i nz-icon nzType="ellipsis" nz-dropdown [nzDropdownMenu]="menu"></i>-->
+                    <!--                        <nz-dropdown-menu #menu="nzDropdownMenu">-->
+                    <!--                            <ul nz-menu nzSelectable>-->
+                    <!--                                <li nz-menu-item *ngFor="let i of [1,2,3,4]">-->
+                    <!--                                    <i nz-icon nzType="edit" nzTheme="twotone"></i>1st menu item-->
+                    <!--                                </li>-->
+                    <!--                            </ul>-->
+                    <!--                        </nz-dropdown-menu>-->
+                    <!--                    </div>-->
                 </nz-card>
                 <ng-template #coverTemplate>
                     <ng-container *ngIf="viz.cardView.coverField">
                         <div class="card-img-container">
                             <ng-container *ngIf="d[viz.cardView.coverField]">
-                                <div style="width: 100%; height: 100%;" [ngStyle]="viewImageStyle(d[viz.cardView.coverField], eruptBuildModel.eruptModel.eruptFieldModelMap.get(viz.cardView.coverField))">
+                                <div style="width: 100%; height: 100%;"
+                                     [ngStyle]="viewImageStyle(d[viz.cardView.coverField], eruptBuildModel.eruptModel.eruptFieldModelMap.get(viz.cardView.coverField))">
                                 </div>
                             </ng-container>
                             <ng-container *ngIf="!d[viz.cardView.coverField]">
@@ -31,16 +49,6 @@
                             </ng-container>
                         </div>
                     </ng-container>
-                </ng-template>
-                <ng-template #actionEllipsis>
-                    <i nz-icon nzType="ellipsis" nz-dropdown [nzDropdownMenu]="menu"></i>
-                    <nz-dropdown-menu #menu="nzDropdownMenu">
-                        <ul nz-menu nzSelectable>
-                            <li nz-menu-item *ngFor="let i of [1,2,3,4]">
-                                <i nz-icon nzType="edit" nzTheme="twotone"></i>1st menu item
-                            </li>
-                        </ul>
-                    </nz-dropdown-menu>
                 </ng-template>
             </div>
         </ng-container>
