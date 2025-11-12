@@ -65,7 +65,8 @@
         "tslib": "^2.3.0",
         "vditor": "^3.11.1",
         "signature_pad": "^5.0.10",
-        "zone.js": "~0.13.3"
+        "zone.js": "~0.13.3",
+        "@worktile/gantt": "^16.0.3"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "^16.2.12",

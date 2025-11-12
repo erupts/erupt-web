@@ -35,7 +35,6 @@ export class CardComponent implements OnInit {
         for (let col of this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true)) {
             this.columnMap.set(col.index, col);
         }
-        console.log(this.columnMap)
     }
 
     clickField(e,field: string) {
