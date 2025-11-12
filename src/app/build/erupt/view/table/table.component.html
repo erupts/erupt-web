@@ -155,14 +155,14 @@
                             <ng-container [ngSwitch]="viz[selectedVizIndex]?.type">
                                 <ng-container *ngSwitchCase="VizType.CARD">
                                     <viz-card [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
-                                              (onEdit)="onEdit($event)"
-                                              *ngIf="dataPage.data && dataPage.data.length" [viz]="viz[selectedVizIndex]"/>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="VizType.GANTT">
-                                    <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
+                                              (onEdit)="onEdit($event)" [viz]="viz[selectedVizIndex]"/>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="VizType.TABLE">
                                     <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="VizType.GANTT">
+                                    <viz-gantt [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                               (onEdit)="onEdit($event)" [viz]="viz[selectedVizIndex]"/>
                                 </ng-container>
                                 <ng-container *ngSwitchDefault>
                                     <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>

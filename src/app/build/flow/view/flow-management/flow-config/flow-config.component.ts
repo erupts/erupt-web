@@ -12,6 +12,7 @@ import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
 import {UpmsDataService} from "@flow/service/upms-data.service";
 import {DataHandlerService} from "../../../../erupt/service/data-handler.service";
+import html2canvas from "html2canvas";
 
 @Component({
     selector: 'app-flow-config',
@@ -37,6 +38,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     // 分组选项
     groupOptions: FlowGroup[] = [];
+
+    shotLoading = false;
 
     @ViewChild('iconPopover') iconPopover!: NzPopoverComponent;
 
@@ -201,6 +204,22 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                 this.msg.success('已复制到剪贴板');
             });
         }
+    }
+
+    async shot() {
+        this.shotLoading = true;
+        const el = document.getElementById('flow-canvas');
+        const canvas = await html2canvas(el, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: false,
+        });
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = `${this.flowConfig.name||'flow'}.png`;
+        link.click();
+        link.remove()
+        this.shotLoading = false;
     }
 
     close(): void {
