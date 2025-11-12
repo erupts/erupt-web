@@ -41,10 +41,11 @@ import {NzRateModule} from "ng-zorro-antd/rate";
 import {AttachmentSelectComponent} from './components/attachment-select/attachment-select.component';
 import {NzEmptyModule} from "ng-zorro-antd/empty";
 import {MultiChoiceComponent} from './components/multi-choice/multi-choice.component';
-import {GanttComponent} from "./components/gantt/gantt.component";
 import {SignaturePadComponent} from './components/signature-pad/signature-pad.component';
 import {SmartSearchComponent} from './components/smart-search/smart-search.component';
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
+import {GanttComponent} from "./viz/gantt/gantt.component";
+import {NgxGanttModule} from "@worktile/gantt";
 
 @NgModule({
     imports: [
@@ -59,7 +60,8 @@ import {NzSegmentedModule} from "ng-zorro-antd/segmented";
         NzQRCodeModule,
         NzRateModule,
         NzEmptyModule,
-        NzSegmentedModule
+        NzSegmentedModule,
+        NgxGanttModule
     ],
     providers: [
         DataHandlerService,
@@ -112,9 +114,9 @@ import {NzSegmentedModule} from "ng-zorro-antd/segmented";
         MarkdownComponent,
         AttachmentSelectComponent,
         MultiChoiceComponent,
-        GanttComponent,
         SignaturePadComponent,
         SmartSearchComponent,
+        GanttComponent
     ]
 })
 export class EruptModule {

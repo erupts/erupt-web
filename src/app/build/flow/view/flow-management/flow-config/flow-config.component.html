@@ -40,10 +40,9 @@
         </div>
 
         <div class="header-right">
-            <!--      <div class="incomplete-items">-->
-            <!--        <span>{{ incompleteItems }}项不完善</span>-->
-            <!--        <i nz-icon nzType="down"></i>-->
-            <!--      </div>-->
+            <button nz-button (click)="shot()" *ngIf="currentStep === 3 && this.flowConfig?.rule" [nzLoading]="shotLoading">
+                导出流程图
+            </button>
             <button nz-button (click)="copyConfig()" *ngIf="this.flowConfig?.rule">
                 复制配置
             </button>
