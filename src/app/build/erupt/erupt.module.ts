@@ -110,12 +110,11 @@ import {NzSegmentedModule} from "ng-zorro-antd/segmented";
         CodeEditorComponent,
         SafeTemplateComponent,
         MarkdownComponent,
-        CardComponent,
         AttachmentSelectComponent,
         MultiChoiceComponent,
         GanttComponent,
         SignaturePadComponent,
-        SmartSearchComponent
+        SmartSearchComponent,
     ]
 })
 export class EruptModule {

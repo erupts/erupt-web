@@ -144,21 +144,27 @@
                         <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'"/>
                     </nz-card>
                     <div *ngIf="viz.length">
-                        <nz-segmented [nzOptions]="vizOptions" [ngStyle]="{marginTop:hideCondition?0:'12px','marginBottom':'12px'}" [(ngModel)]="selectedVizIndex"
+                        <nz-segmented [nzOptions]="vizOptions" [ngStyle]="{marginTop:hideCondition ? 0 : '8px', 'marginBottom':'8px'}" [(ngModel)]="selectedVizIndex"
                                       (ngModelChange)="vizChange($event)"/>
-                        <ng-container *ngIf="viz[selectedVizIndex].type != VizType.TABLE">
+                        <ng-container *ngIf="viz[selectedVizIndex]?.type != VizType.TABLE">
                             <div *ngIf="!dataPage.data || dataPage.data.length == 0" style="background: #fff;padding: 32px;">
                                 <nz-empty nzNotFoundImage="simple"/>
                             </div>
                         </ng-container>
                         <div>
-                            <ng-container [ngSwitch]="viz[selectedVizIndex].type">
+                            <ng-container [ngSwitch]="viz[selectedVizIndex]?.type">
                                 <ng-container *ngSwitchCase="VizType.CARD">
                                     <viz-card [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
                                               (onEdit)="onEdit($event)"
                                               *ngIf="dataPage.data && dataPage.data.length" [viz]="viz[selectedVizIndex]"/>
                                 </ng-container>
+                                <ng-container *ngSwitchCase="VizType.GANTT">
+                                    <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
+                                </ng-container>
                                 <ng-container *ngSwitchCase="VizType.TABLE">
+                                    <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
+                                </ng-container>
+                                <ng-container *ngSwitchDefault>
                                     <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
                                 </ng-container>
                             </ng-container>

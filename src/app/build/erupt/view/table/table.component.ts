@@ -223,13 +223,15 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataPage.url = req.url;
         observable.subscribe(eb => {
                 this.viz = eb.eruptModel.eruptJson.viz || [];
-                this.vizOptions = this.viz.map(i => ({
-                    label: i.title,
-                    value: i.code
-                }));
-                this.vizOptions.splice(0,0,{
-                    icon: 'table'
-                })
+                if (this.viz.length) {
+                    this.hideCondition = true;
+                    this.vizOptions = [...this.viz.map(i => ({
+                        label: i.title,
+                        value: i.code
+                    })), {
+                        icon: 'table'
+                    }]
+                }
                 eb.eruptModel.eruptJson.rowOperation.forEach((item) => {
                     if (item.mode != OperationMode.SINGLE) {
                         if (item.fold) {
