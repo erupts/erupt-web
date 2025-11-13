@@ -1,15 +1,18 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {GanttItem, GanttViewType} from "@worktile/gantt";
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {GanttItem, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {Viz} from "../../model/erupt.model";
 import * as moment from 'moment';
+import {EruptField} from "../../model/erupt-field.model";
+import {STColumn} from "@delon/abc/st";
+import {UiBuildService} from "../../service/ui-build.service";
 
 @Component({
     selector: 'viz-gantt',
     templateUrl: './gantt.component.html',
     styleUrls: ['./gantt.component.less']
 })
-export class GanttComponent implements OnChanges {
+export class GanttComponent implements OnChanges, OnInit {
 
     @Input() eruptBuildModel: EruptBuildModel;
 
@@ -19,37 +22,62 @@ export class GanttComponent implements OnChanges {
 
     @Output() onEdit = new EventEmitter<any>();
 
-    items: GanttItem[] = [
-        { id: '000000', title: 'Task 0', start: 1627729997000, end: 1628421197000, expandable: true },
-        { id: '000001', title: 'Task 1', start: 1617361997000, end: 1625483597000, expandable: true },
-        { id: '000002', title: 'Task 2', start: 1610536397000, end: 1610622797000 },
-        { id: '000003', title: 'Task 3', start: 1628507597000, end: 1633345997000, expandable: true }
-    ];
+    @ViewChild('gantt', {static: false}) ganttComponent: NgxGanttComponent;
+
+    clientHeight: number = document.body.clientHeight;
+
+    columnMap: Map<any, STColumn>;
+
+    items: GanttItem[] = [];
 
     protected readonly GanttViewType = GanttViewType;
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['data'] || changes['viz'] || changes['eruptBuildModel']) {
-            // this.convertDataToGanttItems();
+    constructor(private uiBuildService: UiBuildService,) {
+    }
+
+    ngOnInit(): void {
+        this.columnMap = new Map<string, STColumn>()
+        for (let col of this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true)) {
+            this.columnMap.set(col.index, col);
         }
     }
 
+    dragEnded(e) {
+        console.log(e);
+    }
+
+    edit(item: GanttItem) {
+        this.onEdit.emit(item.id)
+    }
+
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['data']) {
+            this.convertDataToGanttItems();
+        }
+    }
+
+    scrollToToday(): void {
+        if (this.ganttComponent) {
+            // 使用 scrollToToday 方法直接定位到今天
+            this.ganttComponent.scrollToToday();
+        }
+    }
+
+    getEruptField(field: string): EruptField {
+        return this.eruptBuildModel.eruptModel.eruptFieldModelMap.get(field).eruptFieldJson;
+    }
+
     private convertDataToGanttItems(): void {
-        if (!this.data || !this.data.length || !this.viz || !this.viz.ganttView || !this.eruptBuildModel) {
+        if (!this.data || !this.data.length) {
             this.items = [];
             return;
         }
-
         const ganttView = this.viz.ganttView;
         const startDateField = ganttView.startDateField;
         const endDateField = ganttView.endDateField;
-        const pidField = ganttView.pidField;
         const primaryKeyCol = this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
-
-        // 获取标题字段（使用第一个字段作为标题，或者使用 primaryKeyCol）
-        const titleField = this.viz.fields && this.viz.fields.length > 0
-            ? this.viz.fields[0]
-            : primaryKeyCol;
+        let pidField = ganttView.pidField;
 
         // 先创建所有项目
         const itemMap = new Map<string, GanttItem>();
@@ -59,25 +87,21 @@ export class GanttComponent implements OnChanges {
             const id = String(row[primaryKeyCol] || index);
             const start = this.parseDate(row[startDateField]);
             const end = this.parseDate(row[endDateField]);
-
-            // 只处理有效的日期数据
-            if (!start || !end) {
-                return;
-            }
-
             const item: GanttItem = {
                 id: id,
-                title: String(row[titleField] || `任务 ${index + 1}`),
+                title: id,
                 start: start,
-                end: end
+                end: end,
+                origin: row,
+                progress: 30,
             };
-
             itemMap.set(id, item);
             allItems.push(item);
         });
 
         // 如果有父级字段，构建层级结构
         if (pidField) {
+            pidField = pidField.replace(/\./g, '_');
             const rootItems: GanttItem[] = [];
 
             allItems.forEach(item => {
@@ -89,6 +113,7 @@ export class GanttComponent implements OnChanges {
                         if (!parent.children) {
                             parent.children = [];
                             parent.expandable = true;
+                            parent.expanded = true;
                         }
                         parent.children.push(item);
                     } else {
@@ -100,7 +125,7 @@ export class GanttComponent implements OnChanges {
                     rootItems.push(item);
                 }
             });
-
+            console.log(rootItems)
             this.items = rootItems;
         } else {
             this.items = allItems;
@@ -121,4 +146,5 @@ export class GanttComponent implements OnChanges {
         // 返回毫秒级时间戳
         return momentDate.valueOf();
     }
+
 }

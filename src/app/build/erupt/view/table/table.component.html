@@ -146,7 +146,7 @@
                     <div *ngIf="viz.length">
                         <nz-segmented [nzOptions]="vizOptions" [ngStyle]="{marginTop:hideCondition ? 0 : '8px', 'marginBottom':'8px'}" [(ngModel)]="selectedVizIndex"
                                       (ngModelChange)="vizChange($event)"/>
-                        <ng-container *ngIf="viz[selectedVizIndex]?.type != VizType.TABLE">
+                        <ng-container *ngIf="viz[selectedVizIndex]?.type == VizType.CARD">
                             <div *ngIf="!dataPage.data || dataPage.data.length == 0" style="background: #fff;padding: 32px;">
                                 <nz-empty nzNotFoundImage="simple"/>
                             </div>

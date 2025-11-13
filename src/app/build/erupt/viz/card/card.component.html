@@ -15,7 +15,7 @@
                                         <span [innerHTML]="(columnMap.get(field)?.format(d,columnMap.get(field),null)||'')|safeHtml"></span>
                                     </ng-container>
                                     <ng-container *ngIf="!columnMap.get(field)?.format">
-                                        <span [innerHTML]="(d[field]||'')|safeHtml"></span>
+                                        <span [innerHTML]="(d[field]==null?'':d[field])|safeHtml"></span>
                                     </ng-container>
                                 </span>
                                 <br>
