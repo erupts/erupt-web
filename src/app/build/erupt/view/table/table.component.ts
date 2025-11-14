@@ -48,13 +48,13 @@ export class TableComponent implements OnInit, OnDestroy {
 
     constructor(
         public settingSrv: SettingsService,
-        public dataService: DataService,
         private dataHandlerService: DataHandlerService,
         @Inject(NzMessageService)
         private msg: NzMessageService,
         @Inject(NzModalService)
         private modal: NzModalService,
         private appViewService: AppViewService,
+        public dataService: DataService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
         private i18n: I18NService,
@@ -225,12 +225,15 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.viz = eb.eruptModel.eruptJson.viz || [];
                 if (this.viz.length) {
                     this.hideCondition = true;
-                    this.vizOptions = [...this.viz.map(i => ({
+                    this.vizOptions = this.viz.map(i => ({
                         label: i.title,
                         value: i.code
-                    })), {
-                        icon: 'table'
-                    }]
+                    }))
+                    if (eb.eruptModel.eruptJson.vizRawTable) {
+                        this.vizOptions.push({
+                            icon: 'table'
+                        })
+                    }
                 }
                 eb.eruptModel.eruptJson.rowOperation.forEach((item) => {
                     if (item.mode != OperationMode.SINGLE) {

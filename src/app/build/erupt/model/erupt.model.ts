@@ -24,6 +24,7 @@ export interface Erupt {
     rowOperation: RowOperation[];
     drills: Drill[];
     layout: Layout;
+    vizRawTable: boolean;
     viz: Viz[];
 }
 
