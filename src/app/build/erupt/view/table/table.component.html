@@ -144,8 +144,8 @@
                         <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'"/>
                     </nz-card>
                     <div *ngIf="viz.length">
-                        <nz-segmented [nzOptions]="vizOptions" [ngStyle]="{marginTop:hideCondition ? 0 : '8px', 'marginBottom':'8px'}" [(ngModel)]="selectedVizIndex"
-                                      (ngModelChange)="vizChange($event)"/>
+                        <nz-segmented [nzOptions]="vizOptions" [ngStyle]="{marginTop: hideCondition? 0: '8px', marginBottom: '8px'}" [(ngModel)]="selectedVizIndex"
+                                      (ngModelChange)="vizChange($event)" *ngIf="vizOptions.length > 1"/>
                         <ng-container *ngIf="viz[selectedVizIndex]?.type == VizType.CARD">
                             <div *ngIf="!dataPage.data || dataPage.data.length == 0" style="background: #fff;padding: 32px;">
                                 <nz-empty nzNotFoundImage="simple"/>

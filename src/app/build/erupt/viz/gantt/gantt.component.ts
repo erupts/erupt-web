@@ -1,11 +1,14 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
-import {GanttItem, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
+import {GanttDragEvent, GanttItem, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {Viz} from "../../model/erupt.model";
 import * as moment from 'moment';
 import {EruptField} from "../../model/erupt-field.model";
 import {STColumn} from "@delon/abc/st";
 import {UiBuildService} from "../../service/ui-build.service";
+import {DataService} from "@shared/service/data.service";
+import {DataHandlerService} from "../../service/data-handler.service";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
     selector: 'viz-gantt',
@@ -22,6 +25,8 @@ export class GanttComponent implements OnChanges, OnInit {
 
     @Output() onEdit = new EventEmitter<any>();
 
+    @Output() onUpdate = new EventEmitter<any>();
+
     @ViewChild('gantt', {static: false}) ganttComponent: NgxGanttComponent;
 
     clientHeight: number = document.body.clientHeight;
@@ -32,7 +37,10 @@ export class GanttComponent implements OnChanges, OnInit {
 
     protected readonly GanttViewType = GanttViewType;
 
-    constructor(private uiBuildService: UiBuildService,) {
+    constructor(private uiBuildService: UiBuildService,
+                private msg: NzMessageService,
+                public dataService: DataService,
+                private dataHandler: DataHandlerService,) {
     }
 
     ngOnInit(): void {
@@ -42,14 +50,15 @@ export class GanttComponent implements OnChanges, OnInit {
         }
     }
 
-    dragEnded(e) {
-        console.log(e);
+    dragEnded(e: GanttDragEvent) {
+        let start = moment(e.item.start * 1000).format('YYYY-MM-DD 00:00:00');
+        let end = moment(e.item.end * 1000).format('YYYY-MM-DD 23:59:59');
+        console.log(start, end)
     }
 
     edit(item: GanttItem) {
         this.onEdit.emit(item.id)
     }
-
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['data']) {
@@ -77,9 +86,6 @@ export class GanttComponent implements OnChanges, OnInit {
         const startDateField = ganttView.startDateField;
         const endDateField = ganttView.endDateField;
         const primaryKeyCol = this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
-        let pidField = ganttView.pidField;
-
-        // 先创建所有项目
         const itemMap = new Map<string, GanttItem>();
         const allItems: GanttItem[] = [];
 
@@ -93,17 +99,15 @@ export class GanttComponent implements OnChanges, OnInit {
                 start: start,
                 end: end,
                 origin: row,
-                progress: 30,
             };
             itemMap.set(id, item);
             allItems.push(item);
         });
 
-        // 如果有父级字段，构建层级结构
+        let pidField = ganttView.pidField;
         if (pidField) {
             pidField = pidField.replace(/\./g, '_');
             const rootItems: GanttItem[] = [];
-
             allItems.forEach(item => {
                 const row = this.data.find(r => String(r[primaryKeyCol]) === item.id);
                 if (row && row[pidField]) {
@@ -117,15 +121,12 @@ export class GanttComponent implements OnChanges, OnInit {
                         }
                         parent.children.push(item);
                     } else {
-                        // 父级不存在，作为根节点
                         rootItems.push(item);
                     }
                 } else {
-                    // 没有父级，作为根节点
                     rootItems.push(item);
                 }
             });
-            console.log(rootItems)
             this.items = rootItems;
         } else {
             this.items = allItems;
@@ -136,14 +137,10 @@ export class GanttComponent implements OnChanges, OnInit {
         if (!dateValue) {
             return null;
         }
-
-        // 使用 moment 解析日期
         const momentDate = moment(dateValue);
         if (!momentDate.isValid()) {
             return null;
         }
-
-        // 返回毫秒级时间戳
         return momentDate.valueOf();
     }
 

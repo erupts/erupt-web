@@ -1,5 +1,5 @@
 <div class="gantt-container">
-    <ngx-gantt #gantt [items]="items || []" [viewType]="GanttViewType.day" [draggable]="false" [showToolbar]="true"
+    <ngx-gantt #gantt [items]="items || []" [viewType]="GanttViewType.day" [draggable]="true" [showToolbar]="true"
                [ngStyle]="{height: (44 * 13) + 'px'}"
                [virtualScrollEnabled]="true"
                (dragEnded)="dragEnded($event)">
