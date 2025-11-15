@@ -60,6 +60,10 @@ export interface GanttView {
 
     pidField: string;
 
+    colorField: string;
+
+    progressField: string;
+
 }
 
 export interface DrillInput {
