@@ -1,10 +1,13 @@
 <div class="gantt-container">
-    <ngx-gantt #gantt [items]="items || []" [viewType]="GanttViewType.day" [draggable]="eruptBuildModel.eruptModel.eruptJson.power.edit" [showToolbar]="true"
+    <ngx-gantt #gantt [items]="items || []" [viewType]="GanttViewType.day" [draggable]="eruptBuildModel.eruptModel.eruptJson.power.edit"
+               [showToolbar]="true"
+               [toolbarOptions]="{viewTypes:[GanttViewType.day, GanttViewType.week, GanttViewType.month,GanttViewType.quarter, GanttViewType.year]}"
                [ngStyle]="{height: (44 * 13) + 'px'}"
                [virtualScrollEnabled]="true"
-               (dragEnded)="dragEnded($event)">
+               (dragEnded)="dragEnded($event)"
+               (viewChange)="onViewChange()">
         <ngx-gantt-table>
-            <ngx-gantt-column width="90px">
+            <ngx-gantt-column width="90px" *ngIf="eruptBuildModel.eruptModel.eruptJson.power.edit">
                 <ng-template #header>
                     <div style="text-align: center;width: 100%">#</div>
                 </ng-template>

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
-import {GanttDragEvent, GanttItem, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
+import {GanttDragEvent, GanttItem, GanttItemType, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {Viz} from "../../model/erupt.model";
 import * as moment from 'moment';
@@ -7,7 +7,6 @@ import {EruptField} from "../../model/erupt-field.model";
 import {STColumn} from "@delon/abc/st";
 import {UiBuildService} from "../../service/ui-build.service";
 import {DataService} from "@shared/service/data.service";
-import {DataHandlerService} from "../../service/data-handler.service";
 import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
@@ -39,8 +38,7 @@ export class GanttComponent implements OnChanges, OnInit {
 
     constructor(private uiBuildService: UiBuildService,
                 private msg: NzMessageService,
-                public dataService: DataService,
-                private dataHandler: DataHandlerService,) {
+                public dataService: DataService) {
     }
 
     ngOnInit(): void {
@@ -54,6 +52,12 @@ export class GanttComponent implements OnChanges, OnInit {
         let start = moment(e.item.start * 1000).format('YYYY-MM-DD 00:00:00');
         let end = moment(e.item.end * 1000).format('YYYY-MM-DD 23:59:59');
         this.dataService.updateGanttDate(this.eruptBuildModel.eruptModel.eruptName, this.viz.code, e.item.id, start, end).subscribe(res => {
+            for (let datum of this.data) {
+                if (datum[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] == e.item.id) {
+                    datum[this.viz.ganttView.startDateField] = start;
+                    datum[this.viz.ganttView.endDateField] = end;
+                }
+            }
         });
     }
 
@@ -72,6 +76,13 @@ export class GanttComponent implements OnChanges, OnInit {
             // 使用 scrollToToday 方法直接定位到今天
             this.ganttComponent.scrollToToday();
         }
+    }
+
+    onViewChange() {
+        this.convertDataToGanttItems();
+        setTimeout(() => {
+            this.scrollToToday();
+        }, 100)
     }
 
     getEruptField(field: string): EruptField {
@@ -100,7 +111,14 @@ export class GanttComponent implements OnChanges, OnInit {
                 start: start,
                 end: end,
                 origin: row,
+                type: GanttItemType.bar,
             };
+            if (ganttView.colorField && row[ganttView.colorField]) {
+                item.color = row[ganttView.colorField];
+            }
+            if (ganttView.progressField) {
+                item.progress = row[ganttView.progressField] ? Number(row[ganttView.progressField] / 100.0) : 0;
+            }
             itemMap.set(id, item);
             allItems.push(item);
         });
