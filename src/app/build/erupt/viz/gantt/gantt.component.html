@@ -1,36 +1,36 @@
 <div class="gantt-container">
-    <ngx-gantt #gantt [items]="items || []" [viewType]="GanttViewType.day" [draggable]="true" [showToolbar]="true"
+    <ngx-gantt #gantt [items]="items || []" [viewType]="GanttViewType.day" [draggable]="eruptBuildModel.eruptModel.eruptJson.power.edit" [showToolbar]="true"
                [ngStyle]="{height: (44 * 13) + 'px'}"
                [virtualScrollEnabled]="true"
                (dragEnded)="dragEnded($event)">
-    <ngx-gantt-table>
-        <ngx-gantt-column width="90px">
-            <ng-template #header>
-                <div style="text-align: center;width: 100%">#</div>
-            </ng-template>
-            <ng-template #cell let-item="item">
-                <div (click)="edit(item)">
-                    <i nz-icon nzType="edit" nzTheme="twotone" style="cursor: pointer"></i>
-                </div>
-            </ng-template>
-        </ngx-gantt-column>
-        <ng-container *ngIf="viz.fields.length">
-            <ng-container *ngFor="let field of viz.fields; let first = first">
-                <ngx-gantt-column [name]="getEruptField(field)?.edit?.title">
-                    <ng-template #cell let-item="item">
-                        <div (click)="columnMap.get(field)?.click(item?.origin)" style="cursor: pointer;">
-                            <ng-container *ngIf="columnMap.get(field)?.format">
-                                <div style="text-align: center" [innerHTML]="(columnMap.get(field)?.format(item?.origin,columnMap.get(field),null)||'')|safeHtml"></div>
-                            </ng-container>
-                            <ng-container *ngIf="!columnMap.get(field)?.format">
-                                <div [innerHTML]="(item?.origin?.[field]==null?'':item?.origin?.[field])|safeHtml"></div>
-                            </ng-container>
-                        </div>
-                    </ng-template>
-                </ngx-gantt-column>
+        <ngx-gantt-table>
+            <ngx-gantt-column width="90px">
+                <ng-template #header>
+                    <div style="text-align: center;width: 100%">#</div>
+                </ng-template>
+                <ng-template #cell let-item="item">
+                    <div (click)="edit(item)">
+                        <i nz-icon nzType="edit" nzTheme="twotone" style="cursor: pointer"></i>
+                    </div>
+                </ng-template>
+            </ngx-gantt-column>
+            <ng-container *ngIf="viz.fields.length">
+                <ng-container *ngFor="let field of viz.fields; let first = first">
+                    <ngx-gantt-column [name]="getEruptField(field)?.edit?.title">
+                        <ng-template #cell let-item="item">
+                            <div (click)="columnMap.get(field)?.click(item?.origin)" style="cursor: pointer;">
+                                <ng-container *ngIf="columnMap.get(field)?.format">
+                                    <div style="text-align: center" [innerHTML]="(columnMap.get(field)?.format(item?.origin,columnMap.get(field),null)||'')|safeHtml"></div>
+                                </ng-container>
+                                <ng-container *ngIf="!columnMap.get(field)?.format">
+                                    <div [innerHTML]="(item?.origin?.[field]==null?'':item?.origin?.[field])|safeHtml"></div>
+                                </ng-container>
+                            </div>
+                        </ng-template>
+                    </ngx-gantt-column>
+                </ng-container>
             </ng-container>
-        </ng-container>
-    </ngx-gantt-table>
+        </ngx-gantt-table>
     </ngx-gantt>
     <button nz-button nzType="primary" nzShape="circle" nzSize="large"
             class="scroll-to-today-btn"
