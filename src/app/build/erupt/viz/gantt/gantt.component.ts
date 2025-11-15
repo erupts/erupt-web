@@ -53,7 +53,8 @@ export class GanttComponent implements OnChanges, OnInit {
     dragEnded(e: GanttDragEvent) {
         let start = moment(e.item.start * 1000).format('YYYY-MM-DD 00:00:00');
         let end = moment(e.item.end * 1000).format('YYYY-MM-DD 23:59:59');
-        console.log(start, end)
+        this.dataService.updateGanttDate(this.eruptBuildModel.eruptModel.eruptName, this.viz.code, e.item.id, start, end).subscribe(res => {
+        });
     }
 
     edit(item: GanttItem) {
