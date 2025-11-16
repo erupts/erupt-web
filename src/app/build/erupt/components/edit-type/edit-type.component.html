@@ -34,7 +34,6 @@
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                [name]="field.fieldName"
                                                [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                               [required]="field.eruptFieldJson.edit.notNull"
                                                [disabled]="isReadonly(field)">
                                     </nz-input-group>
                                     <ng-template #prefixTemplate>
@@ -60,7 +59,6 @@
                                                [placeholder]="field.eruptFieldJson.edit.placeHolder"
                                                [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                [name]="field.fieldName"
-                                               [required]="field.eruptFieldJson.edit.notNull"
                                                [disabled]="isReadonly(field)">
                                     </nz-input-group>
                                     <!--prefix and suffix template-->
@@ -134,7 +132,6 @@
                                            [(ngModel)]="field.eruptFieldJson.edit.$value"
                                            [name]="field.fieldName"
                                            [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                           [required]="field.eruptFieldJson.edit.notNull"
                                            [disabled]="isReadonly(field)">
                                 </nz-input-group>
                                 <ng-template #suffixTemplate>
