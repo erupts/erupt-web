@@ -1,6 +1,6 @@
 <div class="gantt-container">
-    <ngx-gantt #gantt [items]="items || []" [viewType]="GanttViewType.day" [draggable]="eruptBuildModel.eruptModel.eruptJson.power.edit"
-               [showToolbar]="true"
+    <ngx-gantt #gantt [items]="items || []" [groups]="groups" [showToolbar]="true"
+               [viewType]="GanttViewType.day" [draggable]="eruptBuildModel.eruptModel.eruptJson.power.edit"
                [toolbarOptions]="{viewTypes:[GanttViewType.day, GanttViewType.week, GanttViewType.month,GanttViewType.quarter, GanttViewType.year]}"
                [ngStyle]="{height: (44 * 13) + 'px'}"
                [virtualScrollEnabled]="true"

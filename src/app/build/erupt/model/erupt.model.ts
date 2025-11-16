@@ -64,6 +64,8 @@ export interface GanttView {
 
     progressField: string;
 
+    groupField: string;
+
 }
 
 export interface DrillInput {
