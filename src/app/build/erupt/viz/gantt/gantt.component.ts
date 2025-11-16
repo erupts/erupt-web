@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
-import {GanttDragEvent, GanttItem, GanttItemType, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
+import {GanttDragEvent, GanttGroup, GanttItem, GanttItemType, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {Viz} from "../../model/erupt.model";
 import * as moment from 'moment';
@@ -33,6 +33,8 @@ export class GanttComponent implements OnChanges, OnInit {
     columnMap: Map<any, STColumn>;
 
     items: GanttItem[] = [];
+
+    groups: GanttGroup[] = [];
 
     protected readonly GanttViewType = GanttViewType;
 
@@ -95,6 +97,20 @@ export class GanttComponent implements OnChanges, OnInit {
             return;
         }
         const ganttView = this.viz.ganttView;
+        if (ganttView.groupField) {
+            for (let d of this.data) {
+                let group = this.groups.find(g => g.id == d[ganttView.groupField]);
+                if (!group) {
+                    group = {
+                        id: d[ganttView.groupField],
+                        title: d[ganttView.groupField] || 'No Group',
+                    }
+                    this.groups.push(group);
+                }
+            }
+        } else {
+            this.groups = []
+        }
         const startDateField = ganttView.startDateField;
         const endDateField = ganttView.endDateField;
         const primaryKeyCol = this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
@@ -118,6 +134,9 @@ export class GanttComponent implements OnChanges, OnInit {
             }
             if (ganttView.progressField) {
                 item.progress = row[ganttView.progressField] ? Number(row[ganttView.progressField] / 100.0) : 0;
+            }
+            if (ganttView.groupField) {
+                item.group_id = row[ganttView.groupField];
             }
             itemMap.set(id, item);
             allItems.push(item);
