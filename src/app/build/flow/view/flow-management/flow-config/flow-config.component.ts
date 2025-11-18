@@ -6,7 +6,7 @@ import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlowConfig, FlowGroup, FlowPermission, FlowUpmsScope, UpmsScope} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {FormSize} from "../../../../erupt/model/erupt.enum";
+import {EditType, FormSize} from "../../../../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
@@ -293,4 +293,5 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         return upmsScope.scopeValue.toString();
     }
 
+    protected readonly EditType = EditType;
 }

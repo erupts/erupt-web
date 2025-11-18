@@ -204,8 +204,13 @@
                                 <nz-select class="form-select" nzMode="multiple" nzPlaceHolder="请选择字段"
                                            [(ngModel)]="flowConfig.setting.subTitleFields">
                                     <ng-container *ngFor="let f of eruptBuild.eruptModel.eruptFieldModels">
-                                        <nz-option *ngIf="f.eruptFieldJson.edit.title" [nzValue]="f.fieldName"
-                                                   [nzLabel]="f.eruptFieldJson.edit.title"></nz-option>
+                                        <ng-container *ngIf="f.eruptFieldJson.edit.title && (f.eruptFieldJson.edit.type === EditType.INPUT ||
+                                            f.eruptFieldJson.edit.type === EditType.NUMBER ||
+                                            f.eruptFieldJson.edit.type === EditType.TEXTAREA ||
+                                            f.eruptFieldJson.edit.type === EditType.DATE
+                                        )">
+                                            <nz-option [nzValue]="f.fieldName" [nzLabel]="f.eruptFieldJson.edit.title"></nz-option>
+                                        </ng-container>
                                     </ng-container>
                                 </nz-select>
                             </div>
