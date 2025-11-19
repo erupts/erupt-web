@@ -21,7 +21,10 @@
                         <div style="display: flex;gap: 50px;justify-content:space-evenly">
                             <label nz-radio [nzValue]="FormAccessEnum.READONLY"></label>
                             <label nz-radio [nzValue]="FormAccessEnum.READ_WRITE"></label>
-                            <label nz-radio [nzValue]="FormAccessEnum.NOT_NULL"></label>
+                            <label nz-radio [nzValue]="FormAccessEnum.NOT_NULL"
+                                   [nzDisabled]="(field.eruptFieldJson.edit.type == EditType.DIVIDE
+                                    || field.eruptFieldJson.edit.type == EditType.TPL
+                                    || field.eruptFieldJson.edit.type == EditType.EMPTY)"></label>
                             <label nz-radio [nzValue]="FormAccessEnum.HIDE"></label>
                         </div>
                     </nz-radio-group>
