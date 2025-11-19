@@ -55,18 +55,19 @@
                         <span class="group-count">({{ group.flows.length }})</span>
                     </h3>
                     <div class="flow-grid">
-                        <div class="flow-item"
-                             *ngFor="let flow of group.flows"
-                             (click)="launchFlow(flow)"
-                             [ngClass]="{'flow-disabled': !flow.enable}">
-                            <div class="flow-icon" [style]="{background:flow.color}">
-                                <span [classList]="flow.icon"></span>
+                        <ng-container *ngFor="let flow of group.flows">
+                            <div class="flow-item" *ngIf="flow.enable"
+                                 (click)="launchFlow(flow)"
+                                 [ngClass]="{'flow-disabled': !flow.enable}">
+                                <div class="flow-icon" [style]="{background:flow.color}">
+                                    <span [classList]="flow.icon"></span>
+                                </div>
+                                <div class="flow-info">
+                                    <div class="flow-name">{{ flow.name }}</div>
+                                    <div class="flow-desc" *ngIf="flow.remark">{{ flow.remark }}</div>
+                                </div>
                             </div>
-                            <div class="flow-info">
-                                <div class="flow-name">{{ flow.name }}</div>
-                                <div class="flow-desc" *ngIf="flow.remark">{{ flow.remark }}</div>
-                            </div>
-                        </div>
+                        </ng-container>
                     </div>
                 </div>
             </div>

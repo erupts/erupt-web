@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FormAccessEnum} from "@flow/model/flow.model";
+import {EditType} from "../../../erupt/model/erupt.enum";
 
 @Component({
     selector: 'app-form-access',
@@ -20,12 +21,7 @@ export class FormAccessComponent implements OnInit {
     protected readonly FormAccessEnum = FormAccessEnum;
 
     ngOnInit(): void {
-        // for (let eruptFieldModel of this.eruptBuild.eruptModel.eruptFieldModels) {
-        //     if (!eruptFieldModel.eruptFieldJson.edit.readOnly.add){
-        //         if (!this.formAccesses[eruptFieldModel.fieldName]) {
-        //             this.formAccesses[eruptFieldModel.fieldName] = this.access;
-        //         }
-        //     }
-        // }
     }
+
+    protected readonly EditType = EditType;
 }
