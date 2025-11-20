@@ -37,6 +37,7 @@ export interface NoticeMessage {
     title: string;
     content: string;
     noticeScene: NoticeScene;
+    createTime: string;
 }
 
 export enum NoticeStatus {

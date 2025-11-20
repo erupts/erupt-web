@@ -22,13 +22,15 @@
         </div>
 
         <!-- 消息列表 -->
-        <nz-list [nzDataSource]="messages" [nzLoading]="loadingMessages"  [nzSize]="'small'"
+        <nz-list [nzDataSource]="messages" [nzLoading]="loadingMessages" [nzSize]="'small'"
                  class="message-list">
             <nz-list-item *ngFor="let message of messages" [class.unread]="isUnread(message.status)"
                           (click)="viewMessageDetail(message)" class="message-item">
-                <div>
+                <div style="width: 100%">
                     <div class="message-header">
-                        <h3 class="message-title">{{ message.noticeLog?.title }}</h3>
+                        <h3 class="message-title">{{ message.noticeLog?.title }}
+                            <span style="margin-bottom: 0;float: right;font-size: .7em">{{ message.noticeLog?.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</span>
+                        </h3>
                     </div>
                     <p class="message-content" *ngIf="message.noticeLog?.content" [innerHTML]="message.noticeLog.content|safeHtml">
                     </p>
