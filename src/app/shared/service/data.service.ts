@@ -1,7 +1,7 @@
 import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
-import {LoginModel, Userinfo} from "../model/user.model";
+import {LoginModel, NoticeChannel, NoticeMessageDetail, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
@@ -506,6 +506,22 @@ export class DataService {
 
     getFieldTplPath(eruptName: string, fieldName: string): string {
         return RestPath.tpl + "/" + "html-field/" + eruptName + "/" + fieldName + "?_token=" + this.tokenService.get().token + "&_erupt=" + eruptName;
+    }
+
+    noticeChannels() {
+        return this._http.get<NoticeChannel[]>(RestPath.erupt + "/notice/channels");
+    }
+
+    noticeMessages(channel: string, page: number, size: number) {
+        return this._http.get<NoticeMessageDetail[]>(RestPath.erupt + "/notice/messages", {
+            channel, page, size
+        });
+    }
+
+    noticeMessageDetail(id: number) {
+        return this._http.get<NoticeMessageDetail>(RestPath.erupt + "/notice/message-detail", {
+            id
+        });
     }
 
 

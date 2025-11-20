@@ -1,0 +1,52 @@
+<div class="notice-container">
+    <!-- 头部 -->
+    <div class="notice-header">
+        <div class="header-title">
+            <span nz-icon nzType="bell" nzTheme="outline"></span>
+            <span class="title-text">通知中心</span>
+        </div>
+        <button nz-button nzType="text" nzSize="small" (click)="close()" class="close-btn">
+            <span nz-icon nzType="close"></span>
+        </button>
+    </div>
+
+    <!-- 消息列表视图 -->
+    <div class="notice-content">
+        <div class="channel-segmented" *ngIf="channels.length > 0">
+            <nz-segmented [nzBlock]="true"
+                          [nzOptions]="channelOptions"
+                          [(ngModel)]="selectedChannelIndex"
+                          (ngModelChange)="onChannelChange($event)"
+                          [nzSize]="'small'">
+            </nz-segmented>
+        </div>
+
+        <!-- 消息列表 -->
+        <nz-list [nzDataSource]="messages" [nzLoading]="loadingMessages"  [nzSize]="'small'"
+                 class="message-list">
+            <nz-list-item *ngFor="let message of messages" [class.unread]="isUnread(message.status)"
+                          (click)="viewMessageDetail(message)" class="message-item">
+                <div>
+                    <div class="message-header">
+                        <h3 class="message-title">{{ message.noticeLog?.title }}</h3>
+                    </div>
+                    <p class="message-content" *ngIf="message.noticeLog?.content" [innerHTML]="message.noticeLog.content|safeHtml">
+                    </p>
+                </div>
+            </nz-list-item>
+        </nz-list>
+
+        <!-- 分页 -->
+        <div class="notice-pagination" *ngIf="total > 0">
+            <nz-pagination
+                [nzPageIndex]="pageIndex"
+                [nzPageSize]="pageSize"
+                [nzTotal]="total"
+                [nzSize]="'small'"
+                [nzShowSizeChanger]="false"
+                (nzPageIndexChange)="onPageIndexChange($event)">
+            </nz-pagination>
+        </div>
+    </div>
+
+</div>

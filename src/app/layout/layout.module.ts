@@ -44,6 +44,8 @@ import {MenuComponent} from './erupt/menu/menu.component';
 import {NzBreadCrumbModule} from "ng-zorro-antd/breadcrumb";
 import {LayoutEruptComponent} from "./erupt/erupt.component";
 import {NzWaterMarkModule} from "ng-zorro-antd/water-mark";
+import {NzSegmentedModule} from "ng-zorro-antd/segmented";
+import {NoticeComponent} from './erupt/component/notice/notice.component';
 
 const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent];
 
@@ -94,9 +96,10 @@ const PASSPORT = [LayoutPassportComponent];
         ReuseTabModule,
         NzBreadCrumbModule,
         NzWaterMarkModule,
+        NzSegmentedModule,
         DragDropModule
     ],
-    declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT, MenuComponent],
+    declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT, MenuComponent, NoticeComponent],
     exports: [...COMPONENTS, ...PASSPORT]
 })
 export class LayoutModule {

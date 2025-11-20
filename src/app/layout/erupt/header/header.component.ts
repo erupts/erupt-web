@@ -12,6 +12,8 @@ import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
+import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {NoticeComponent} from "../component/notice/notice.component";
 
 @Component({
     selector: "layout-header",
@@ -50,6 +52,10 @@ export class HeaderComponent implements OnInit {
         return EruptAppData.get().properties["erupt-ai"];
     }
 
+    get isEruptNotice(): boolean {
+        return EruptAppData.get().properties["erupt-notice"];
+    }
+
     openDrawer() {
         this.drawerVisible = true;
     }
@@ -61,6 +67,7 @@ export class HeaderComponent implements OnInit {
     constructor(public settings: SettingsService,
                 private router: Router,
                 private appViewService: AppViewService,
+                @Inject(NzDrawerService) private drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(NzModalService) private modal: NzModalService) {
         if (this.tenantDomainInfo) {
@@ -108,6 +115,24 @@ export class HeaderComponent implements OnInit {
         });
         model.getContentComponent().url = "ai-chat.html?_token=" + this.tokenService.get().token;
         model.getContentComponent().height = "83vh"
+    }
+
+    openEruptNotice() {
+        this.drawer.create({
+            nzTitle: null,
+            nzContent: NoticeComponent,
+            nzWidth: "360px",
+            nzFooter: null,
+            nzClosable: false,
+            nzMaskClosable: true,
+            nzKeyboard: true,
+            nzPlacement: "right",
+            nzBodyStyle: {
+                padding: "0"
+            },
+        }).afterClose.subscribe(res => {
+            console.log(res);
+        });
     }
 
     toggleCollapsedSidebar() {
