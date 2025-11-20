@@ -84,6 +84,11 @@
                 <i class="fa fa-magic" aria-hidden="true"></i>
             </div>
         </li>
+        <li *ngIf="isEruptNotice">
+            <div class="alain-default__nav-item" (click)="openEruptNotice()">
+                <i nz-icon nzType="bell"></i>
+            </div>
+        </li>
 
         <li>
             <header-user></header-user>
