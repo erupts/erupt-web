@@ -1,4 +1,4 @@
-<h3 style="margin-bottom: 26px;text-align: center">{{ (tenantDomainInfo ? 'login.account_pwd_login' : '租户登录')|translate }}</h3>
+<h3 style="margin-bottom: 26px;text-align: center">{{ (tenantDomainInfo ? 'login.account_pwd_login' : 'tenant.login')|translate }}</h3>
 <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
     <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
     <nz-form-item [hidden]="tenantDomainInfo">
