@@ -149,7 +149,7 @@
                                 color: #333;
                             }
 
-                            .approver-info {
+                            .approval-info {
                                 display: flex;
                                 align-items: center;
                                 gap: 4px;
@@ -166,7 +166,7 @@
                                     font-weight: 500;
                                 }
 
-                                .approver-name {
+                                .approval-name {
                                     font-size: 13px;
                                     color: #333;
                                 }
@@ -333,6 +333,10 @@
             resize: vertical;
         }
     }
+}
+
+::ng-deep .ant-avatar-string {
+    transform: scale(1) translateX(-50%);
 }
 
 // 弹窗按钮样式优化
