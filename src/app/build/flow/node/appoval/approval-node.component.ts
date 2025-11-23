@@ -92,7 +92,7 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
             id: geneNodeId(),
             type: this.type(),
             name: this.name(),
-            prop: this.approveNode
+            prop: new ApproveNode()
         };
     }
 

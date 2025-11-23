@@ -72,7 +72,7 @@ export class StartNodeComponent extends ANode implements OnInit {
             id: geneNodeId(),
             type: this.type(),
             name: this.name(),
-            prop: this.startNode
+            prop: new StartNode()
         }
     }
 
