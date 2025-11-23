@@ -46,8 +46,15 @@
             <nz-tab nzTitle="审批信息">
                 <div class="tab-content">
                     <div class="section" *ngIf="eruptBuild">
-                        <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== selectedView"
-                                         [formAccesses]="nodeInfo?.prop?.formAccesses || {}" [defaultFormAccess]="FormAccessEnum.READONLY"></erupt-flow-form>
+                        <ng-container *ngIf="!dataDeleted">
+                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== selectedView"
+                                             [formAccesses]="nodeInfo?.prop?.formAccesses || {}" [defaultFormAccess]="FormAccessEnum.READONLY"></erupt-flow-form>
+                        </ng-container>
+                        <ng-container *ngIf="dataDeleted">
+                            <div style="text-align: center;margin: 100px 0;color:#F44336">
+                                Date deleted
+                            </div>
+                        </ng-container>
                     </div>
                 </div>
             </nz-tab>
@@ -80,24 +87,24 @@
                                         {{ task.nodeId }}
                                     </td>
                                     <td>
-                                        <div class="approver-info">
+                                        <div class="approval-info">
                                             <ng-container *ngIf="task.assigneeUser?.id">
-                                                <nz-avatar [nzText]="task.assigneeUser?.name?.substring(0,1)"
-                                                           [ngStyle]="{backgroundColor: getAvatarColor(task.assigneeUser?.name?.substring(0,1))}"
-                                                           [nzSrc]="task.assigneeUser.avatar"
+                                                <nz-avatar [nzText]="task?.assigneeUser?.name?.substring(0,1)"
+                                                           [ngStyle]="{backgroundColor: getAvatarColor(task?.assigneeUser?.name?.substring(0,1))}"
+                                                           [nzSrc]="task?.assigneeUser.avatar||null"
                                                            nzSize="small" class="mr-sm"></nz-avatar>
                                             </ng-container>
-                                            <span class="approver-name">{{ task.assigneeUser?.name || '-' }}</span>
+                                            <span class="approval-name">{{ task.assigneeUser?.name || '-' }}</span>
 
                                             <ng-container *ngIf="task.parentTask">
                                                 <div>&nbsp;←&nbsp;</div>
                                                 <ng-container *ngIf="task.parentTask.assigneeUser?.id">
                                                     <nz-avatar [nzText]="task.parentTask.assigneeUser?.name?.substring(0,1)"
                                                                [ngStyle]="{backgroundColor: getAvatarColor(task.parentTask.assigneeUser?.name?.substring(0,1))}"
-                                                               [nzSrc]="task.parentTask.assigneeUser.avatar"
+                                                               [nzSrc]="task.parentTask.assigneeUser.avatar||null"
                                                                nzSize="small" class="mr-sm"></nz-avatar>
                                                 </ng-container>
-                                                <span class="approver-name">{{ task.parentTask.assigneeUser?.name || '-' }}</span>
+                                                <span class="approval-name">{{ task.parentTask.assigneeUser?.name || '-' }}</span>
                                             </ng-container>
                                         </div>
                                     </td>
@@ -168,7 +175,7 @@
                                     <div class="comment-user">
                                         <nz-avatar [nzText]="comment.createUser?.name?.substring(0,1)"
                                                    [ngStyle]="{backgroundColor: getAvatarColor(comment.createUser?.name?.substring(0,1))}"
-                                                   [nzSrc]="comment.createUser.avatar"
+                                                   [nzSrc]="comment.createUser.avatar||null"
                                                    nzSize="small"></nz-avatar>
                                         <span class="comment-username">{{ comment.createUser?.name || '-' }}</span>
                                     </div>
@@ -209,14 +216,14 @@
                                 <tbody>
                                 <tr *ngFor="let history of dataHistories">
                                     <td>
-                                        <div class="approver-info">
+                                        <div class="approval-info">
                                             <ng-container *ngIf="history.createUser?.id">
                                                 <nz-avatar [nzText]="history.createUser?.name?.substring(0,1)"
                                                            [ngStyle]="{backgroundColor: getAvatarColor(history.createUser?.name?.substring(0,1))}"
-                                                           [nzSrc]="history.createUser.avatar"
+                                                           [nzSrc]="history.createUser.avatar || null"
                                                            nzSize="small" class="mr-sm"></nz-avatar>
                                             </ng-container>
-                                            <span class="approver-name">{{ history.createUser?.name || '-' }}</span>
+                                            <span class="approval-name">{{ history.createUser?.name || '-' }}</span>
                                         </div>
                                     </td>
                                     <td>
@@ -236,7 +243,7 @@
     </div>
 
     <!-- 固定在右侧底部的功能按钮 -->
-    <div class="fixed-bottom-actions">
+    <div class="fixed-bottom-actions" *ngIf="!dataDeleted">
         <div class="action-buttons">
             <ng-container *ngIf="ApprovalView.TODO === selectedView && currTask">
                 <button nz-button nzSize="default" nzType="primary" nzGhost (click)="approve()" class="action-button">

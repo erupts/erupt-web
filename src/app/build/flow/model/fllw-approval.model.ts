@@ -65,7 +65,7 @@ export class ApproveNode {
     allowCc: boolean = true;
 
     /** 允许退回 */
-    allowReturn: boolean = false;
+    allowReturn: boolean = true;
 
     /** 提交审批需填写审批意见 */
     requireApprovalNote: boolean = false;

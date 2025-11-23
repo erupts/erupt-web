@@ -65,6 +65,8 @@ export class FlowApprovalDetailComponent implements OnInit {
     availableUsers: KV<number, string>[] = [];
     availableReturnNodes: KV<string, string>[] = [];
 
+    dataDeleted: boolean = false;
+
     @Input() selectedInstance: FlowInstance;
 
     @Input() selectedView: ApprovalView = ApprovalView.TODO;
@@ -116,7 +118,12 @@ export class FlowApprovalDetailComponent implements OnInit {
                             this.eruptBuild = res.data;
                             this.flowInstanceApiService.eruptData(flow.id).subscribe({
                                 next: res => {
-                                    this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
+                                    if (res.success) {
+                                        this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
+                                        this.dataDeleted = false;
+                                    } else {
+                                        this.dataDeleted = true;
+                                    }
                                 }
                             })
                         }, 30)
