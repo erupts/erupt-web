@@ -86,7 +86,7 @@ export class CcNodeComponent extends ANode implements OnInit {
             id: geneNodeId(),
             type: this.type(),
             name: this.name(),
-            prop: this.ccNode
+            prop: new CcNode()
         }
     }
 

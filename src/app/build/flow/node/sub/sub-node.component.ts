@@ -84,7 +84,7 @@ export class SubNodeComponent extends ANode implements OnInit {
             branch: this.branch,
             index: this.index,
             type: type,
-            prop: this.subNode
+            prop: new SubNode()
         });
     }
 
