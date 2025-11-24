@@ -137,6 +137,7 @@ PENDING,审批中,審批中,Pending,En attente,審査中,대기 중,На рас�
 FINISH,已完成,已完成,Finished,Terminé,完了,완료,Завершено,Finalizado,Abgeschlossen,Concluído,Selesai,منتهي
 REJECTED,已拒绝,已拒絕,Rejected,Rejeté,拒否,거부됨,Отклонено,Rechazado,Abgelehnt,Rejeitado,Ditolak,مرفوض
 WITHDRAWN,已撤回,已撤回,Withdrawn,Retiré,撤回,철회됨,Отозвано,Retirado,Zurückgezogen,Retirado,Ditarik,مسحوب
+ROLLBACK,已回退,已回退,Rolled back,Rétour,ロールバック됨,롤백됨,Откат,Revertido,Zurückgesetzt,Revertido,Dikembalikan,تم التراجع
 DELETED,已删除,已刪除,Deleted,Supprimé,削除,삭제됨,Удалено,Eliminado,Gelöscht,Excluído,Dihapus,محذوف
 TERMINATED,已终止,已終止,Terminated,Terminé,強制終了,종료됨,Прервано,Terminado,Beendet,Terminado,Dihentikan,منتهي
 REVOKED,已撤销,已撤銷,Revoked,Révoqué,取消,취소됨,Аннулировано,Revocado,Widerrufen,Revogado,Dicabut,ملغى
