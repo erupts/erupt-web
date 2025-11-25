@@ -3,3 +3,8 @@ export interface R<T> {
     message: string;
     data: T;
 }
+
+export interface SimplePage<T> {
+    list: T[],
+    total: number;
+}

@@ -86,7 +86,9 @@
         </li>
         <li *ngIf="isEruptNotice">
             <div class="alain-default__nav-item" (click)="openEruptNotice()">
-                <i nz-icon nzType="bell"></i>
+                <nz-badge nzSize="small" [nzCount]="unreadCount"  [nzOffset]="[2, -5]">
+                    <i nz-icon nzType="bell"></i>
+                </nz-badge>
             </div>
         </li>
 
