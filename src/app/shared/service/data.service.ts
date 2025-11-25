@@ -12,6 +12,7 @@ import {VL} from "../../build/erupt/model/erupt-field.model";
 import {Checkbox, DrillInput, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
+import {R, SimplePage} from "@shared/model/api.model";
 
 @Injectable()
 export class DataService {
@@ -509,19 +510,23 @@ export class DataService {
     }
 
     noticeChannels() {
-        return this._http.get<NoticeChannel[]>(RestPath.erupt + "/notice/channels");
+        return this._http.get<R<NoticeChannel[]>>(RestPath.erupt + "/notice/channels");
     }
 
     noticeMessages(channel: string, page: number, size: number) {
-        return this._http.get<NoticeMessageDetail[]>(RestPath.erupt + "/notice/messages", {
+        return this._http.get<R<SimplePage<NoticeMessageDetail>>>(RestPath.erupt + "/notice/messages", {
             channel, page, size
         });
     }
 
     noticeMessageDetail(id: number) {
-        return this._http.get<NoticeMessageDetail>(RestPath.erupt + "/notice/message-detail", {
+        return this._http.get<R<NoticeMessageDetail>>(RestPath.erupt + "/notice/message-detail", {
             id
         });
+    }
+
+    noticeUnreadCount() {
+        return this._http.get<R<number>>(RestPath.erupt + "/notice/unread-count");
     }
 
 

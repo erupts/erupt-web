@@ -48,6 +48,8 @@ export class HeaderComponent implements OnInit {
 
     tenantDomainInfo = EruptTenantInfoData.get();
 
+    unreadCount: number = 0;
+
     get isEruptAi(): boolean {
         return EruptAppData.get().properties["erupt-ai"];
     }
@@ -67,6 +69,7 @@ export class HeaderComponent implements OnInit {
     constructor(public settings: SettingsService,
                 private router: Router,
                 private appViewService: AppViewService,
+                private dataService: DataService,
                 @Inject(NzDrawerService) private drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(NzModalService) private modal: NzModalService) {
@@ -86,6 +89,11 @@ export class HeaderComponent implements OnInit {
         })
         if (EruptAppData.get().locales.length <= 1) {
             this.showI18n = false;
+        }
+        if (this.isEruptNotice){
+            this.dataService.noticeUnreadCount().subscribe(res => {
+                this.unreadCount = res.data;
+            })
         }
     }
 

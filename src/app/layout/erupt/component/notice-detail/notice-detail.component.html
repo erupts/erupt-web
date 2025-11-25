@@ -1,0 +1,11 @@
+<nz-spin [nzSpinning]="noticeMessageDetail === null">
+    <ng-container *ngIf="noticeMessageDetail">
+        <div style="padding: 12px">
+            <p class="message-content" [innerHTML]="noticeMessageDetail.noticeLog.content|safeHtml"></p>
+        </div>
+        <div style="padding: 12px;border: 1px solid #e8e8e8;">
+            <nz-tag [nzColor]="'volcano'"> {{ noticeMessageDetail.noticeLog.noticeScene?.name }}</nz-tag>
+            <span style="float: right">{{ noticeMessageDetail.noticeLog.createTime }}</span>
+        </div>
+    </ng-container>
+</nz-spin>

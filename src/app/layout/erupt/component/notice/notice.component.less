@@ -45,11 +45,15 @@
     .message-list {
         flex: 1;
         overflow: auto;
+
         .message-item {
             cursor: pointer;
 
             .message-content {
-                max-height: 300px;
+                max-height: 80px;
+                overflow: auto;
+                white-space: pre-line;
+                margin-bottom: 0;
             }
         }
 

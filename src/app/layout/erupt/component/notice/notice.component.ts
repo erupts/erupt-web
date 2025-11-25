@@ -5,6 +5,7 @@ import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {NzDrawerRef} from 'ng-zorro-antd/drawer';
 import {NzModalService} from "ng-zorro-antd/modal";
+import {NoticeDetailComponent} from "../notice-detail/notice-detail.component";
 
 // 导出枚举以便在模板中使用
 export {NoticeStatus};
@@ -17,10 +18,8 @@ export {NoticeStatus};
 export class NoticeComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
-    // 渠道相关
     channels: NoticeChannel[] = [];
     channelOptions: string[] = [];
-    selectedChannel: string = '';
     selectedChannelIndex: number = 0;
 
     messages: NoticeMessageDetail[] = [];
@@ -51,9 +50,9 @@ export class NoticeComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (channels) => {
-                    this.channels = channels;
-                    this.channelOptions = channels.map(c => c.label);
-                    if (channels.length > 0) {
+                    this.channels = channels.data;
+                    this.channelOptions = channels.data.map(c => c.label);
+                    if (channels.data.length > 0) {
                         this.selectedChannelIndex = 0;
                         this.loadMessages();
                     }
@@ -79,21 +78,8 @@ export class NoticeComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (result) => {
-                    // 如果返回的是数组，直接使用
-                    if (Array.isArray(result)) {
-                        this.messages = result;
-                        this.total = result.length;
-                    }
-                    // 如果返回的是分页对象
-                    else if (result && typeof result === 'object' && 'list' in result) {
-                        this.messages = (result as any).list || [];
-                        this.total = (result as any).total || 0;
-                    }
-                    // 其他情况
-                    else {
-                        this.messages = [];
-                        this.total = 0;
-                    }
+                    this.messages = result.data.list;
+                    this.total = result.data.total;
                     this.loadingMessages = false;
                 },
                 error: () => {
@@ -112,14 +98,17 @@ export class NoticeComponent implements OnInit, OnDestroy {
 
     // 查看消息详情
     viewMessageDetail(message: NoticeMessageDetail): void {
-        // 尝试从消息中获取 id（可能在 noticeLog 或其他字段中）
+        message.status = NoticeStatus.READ;
         const messageId = (message as any).id || (message.noticeLog as any)?.id;
-        this.modal.create({
+        let ref = this.modal.create({
             nzTitle: message.noticeLog?.title,
+            nzBodyStyle: {
+                padding: '0'
+            },
             nzFooter: null,
-            nzBodyStyle: {height: '55vh', scrollY: 'auto'},
-            nzContent: message.noticeLog?.content || ''
+            nzContent: NoticeDetailComponent,
         });
+        ref.componentInstance.messageId = messageId;
     }
 
     // 关闭抽屉
@@ -131,4 +120,6 @@ export class NoticeComponent implements OnInit, OnDestroy {
     isUnread(status: NoticeStatus | string): boolean {
         return status === NoticeStatus.UNREAD || status === 'UNREAD';
     }
+
+    protected readonly NoticeStatus = NoticeStatus;
 }
