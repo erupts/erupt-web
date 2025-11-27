@@ -158,9 +158,9 @@ export class FlowInstanceApiService {
         })
     }
 
-    approvalNodes(flowId: number) {
-        return this._http.get<R<KV<string, string>[]>>(RestPath.erupt + "/flow/instance/approval/approval-nodes", {
-            flowId
+    availableReturnNodes(flowInstanceTaskId: number) {
+        return this._http.get<R<KV<string, string>[]>>(RestPath.erupt + "/flow/instance/approval/available-return-nodes", {
+            flowInstanceTaskId
         });
     }
 
