@@ -104,81 +104,52 @@
 
         <!-- 右侧应用列表 -->
         <div class="app-content">
-            <div class="app-list">
+            <div class="app-list" cdkDropList (cdkDropListDropped)="onFlowDrop($event)">
                 <!-- 加载状态 -->
                 <nz-spin [nzSpinning]="configLoading" nzSize="large" style="height: 100%">
-                    <div
-                        class="app-item"
-                        *ngFor="let config of getCurrentConfigs()"
-                    >
-                        <!-- 应用信息 -->
-                        <div class="app-info">
-                            <div class="app-icon" [style.background-color]="config.color || '#1890ff'">
-                                <span [class]="config.icon || 'fa fa-dot-circle-o'"></span>
-                            </div>
-                            <div class="app-details">
-                                <div class="app-name">
-                                    {{ config.name }}
-                                    <nz-tag *ngIf="!config.enable" nzColor="red">
-                                        已停用
-                                    </nz-tag>
+                    <div cdkDrag *ngFor="let config of getCurrentConfigs()">
+                        <div class="app-item">
+                            <!-- 应用信息 -->
+                            <div class="app-info">
+                                <div class="app-icon" [style.background-color]="config.color || '#1890ff'">
+                                    <span [class]="config.icon || 'fa fa-dot-circle-o'"></span>
                                 </div>
-                                <div class="app-description">{{ config.remark || '' }}</div>
+                                <div class="app-details">
+                                    <div class="app-name">
+                                        {{ config.name }}
+                                        <nz-tag *ngIf="!config.enable" nzColor="red">
+                                            已停用
+                                        </nz-tag>
+                                    </div>
+                                    <div class="app-description">{{ config.remark || '' }}</div>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- 操作按钮 -->
-                        <div class="action-icons">
-                            <button
-                                nz-button
-                                nzType="text"
-                                nzSize="small"
-                                (click)="onEdit(config)"
-                                nz-tooltip="编辑"
-                            >
-                                <span nz-icon nzType="edit"></span>
-                            </button>
-
-                            <button
-                                nz-button
-                                nzType="text"
-                                nzSize="small"
-                                (click)="onDuplicate(config)"
-                                nz-tooltip="复制"
-                            >
-                                <span nz-icon nzType="copy"></span>
-                            </button>
-
-                            <button
-                                nz-button
-                                nzType="text"
-                                nzSize="small"
-                                (click)="onToggleVisibility(config)"
-                                [nz-tooltip]="config.enable ? '停用' : '启用'"
-                            >
-                                <span
-                                    nz-icon
-                                    [nzType]="config.enable ? 'stop' : 'check'"
-                                    [style.color]="config.enable ? '' : '#52c41a'"
+                            <!-- 操作按钮 -->
+                            <div class="action-icons">
+                                <button nz-button nzType="text" nzSize="small" cdkDragHandle (click)="$event.stopPropagation()" nz-tooltip="拖拽排序">
+                                    <span>⋮⋮</span>
+                                </button>
+                                <button nz-button nzType="text" nzSize="small" (click)="onEdit(config)" nz-tooltip="编辑">
+                                    <span nz-icon nzType="edit"></span>
+                                </button>
+                                <button nz-button nzType="text" nzSize="small" (click)="onDuplicate(config)" nz-tooltip="复制">
+                                    <span nz-icon nzType="copy"></span>
+                                </button>
+                                <button nz-button nzType="text" nzSize="small" (click)="onToggleVisibility(config)" [nz-tooltip]="config.enable ? '停用' : '启用'">
+                                <span nz-icon [nzType]="config.enable ? 'stop' : 'check'" [style.color]="config.enable ? '' : '#52c41a'"
                                 ></span>
-                            </button>
-
-                            <button
-                                nz-button
-                                nzType="text"
-                                nzSize="small"
-                                (click)="onDelete(config)"
-                                nz-tooltip="删除"
-                            >
-                                <span nz-icon nzType="delete"></span>
-                            </button>
+                                </button>
+                                <button nz-button nzType="text" nzSize="small" (click)="onDelete(config)" nz-tooltip="删除">
+                                    <span nz-icon nzType="delete"></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-
                     <!-- 空状态 -->
                     <div *ngIf="!configLoading && getCurrentConfigs().length === 0" class="empty-state">
                         <nz-empty style="margin-top: 20%"
-                            [nzNotFoundImage]="'simple'"
+                                  [nzNotFoundImage]="'simple'"
                         ></nz-empty>
                     </div>
                 </nz-spin>
