@@ -353,7 +353,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.returnNode = null;
         this.reason = null;
         this.returnModalVisible = true;
-        this.flowInstanceApiService.approvalNodes(this.selectedInstance.eruptFlowConfig.id).subscribe({
+        this.flowInstanceApiService.availableReturnNodes(this.currTask.id).subscribe({
             next: (data) => {
                 this.availableReturnNodes = data.data || [];
             }
