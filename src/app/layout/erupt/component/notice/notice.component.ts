@@ -6,6 +6,7 @@ import {takeUntil} from 'rxjs/operators';
 import {NzDrawerRef} from 'ng-zorro-antd/drawer';
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NoticeDetailComponent} from "../notice-detail/notice-detail.component";
+import {I18NService} from "@core";
 
 // 导出枚举以便在模板中使用
 export {NoticeStatus};
@@ -31,12 +32,18 @@ export class NoticeComponent implements OnInit, OnDestroy {
     constructor(
         private dataService: DataService,
         private drawerRef: NzDrawerRef,
+        private i18nService: I18NService,
         @Inject(NzModalService) private modal: NzModalService
     ) {
     }
 
     ngOnInit(): void {
-        this.loadChannels();
+        this.channelOptions = [
+            this.i18nService.fanyi('notice'),
+            this.i18nService.fanyi('notice.announcement')
+        ]
+        this.selectedChannelIndex = 0;
+        this.loadMessages();
     }
 
     ngOnDestroy(): void {
@@ -45,22 +52,22 @@ export class NoticeComponent implements OnInit, OnDestroy {
     }
 
     // 加载渠道列表
-    loadChannels(): void {
-        this.dataService.noticeChannels()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-                next: (channels) => {
-                    this.channels = channels.data;
-                    this.channelOptions = channels.data.map(c => c.label);
-                    if (channels.data.length > 0) {
-                        this.selectedChannelIndex = 0;
-                        this.loadMessages();
-                    }
-                },
-                error: () => {
-                }
-            });
-    }
+    // loadChannels(): void {
+    //     this.dataService.noticeChannels()
+    //         .pipe(takeUntil(this.destroy$))
+    //         .subscribe({
+    //             next: (channels) => {
+    //                 this.channels = channels.data;
+    //                 this.channelOptions = channels.data.map(c => c.label);
+    //                 if (channels.data.length > 0) {
+    //                     this.selectedChannelIndex = 0;
+    //                     this.loadMessages();
+    //                 }
+    //             },
+    //             error: () => {
+    //             }
+    //         });
+    // }
 
     // 选择渠道（通过索引）
     onChannelChange(index: number): void {
@@ -74,7 +81,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
     // 加载消息列表
     loadMessages(): void {
         this.loadingMessages = true;
-        this.dataService.noticeMessages(this.channels[this.selectedChannelIndex].value, this.pageIndex, this.pageSize)
+        this.dataService.noticeMessages(this.pageIndex, this.pageSize)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (result) => {

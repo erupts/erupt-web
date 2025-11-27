@@ -513,9 +513,9 @@ export class DataService {
         return this._http.get<R<NoticeChannel[]>>(RestPath.erupt + "/notice/channels");
     }
 
-    noticeMessages(channel: string, page: number, size: number) {
+    noticeMessages(page: number, size: number) {
         return this._http.get<R<SimplePage<NoticeMessageDetail>>>(RestPath.erupt + "/notice/messages", {
-            channel, page, size
+            page, size
         });
     }
 

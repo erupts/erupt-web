@@ -106,6 +106,9 @@ theme.dark,黑夜主题,黑夜主題,Dark theme,Thème nuit noire,夜のテー�
 theme.compact,紧凑主题,緊湊主題,Compact theme,Un thème compact,コンパクトなテーマです,주제를 잘 정리하다,Компактный предмет,Tema compacto,Ein neues thema.,Um tema compacto,Tema padat,موضوع ضيق
 notice.center,通知中心,通知中心,Notification Center,Centre de notifications,通知センター,알림 센터,Центр уведомлений,Centro de notificaciones,Benachrichtigungszentrum,Centro de Notificações,Pusat Pemberitahuan,مركز الإشعارات
 tenant.login,租户登录,租戶登入,Tenant Login,Connexion du locataire,テナントログイン,테넌트 로그인,Вход арендатора,Inicio del inquilino,Mieter-Login,Login do inquilino,Masuk penyewa,تسجيل دخول المستأجر
+notice,通知,通知,Notice,Avis,お知らせ,공지,Уведомление,Aviso,Hinweis,Aviso,Pemberitahuan,إشعار
+notice.announcement,公告,公告,Announcement,Annonce,お知らせ,공지,Объявление,Anuncio,Bekanntmachung,Anúncio,Pengumuman,إعلان
+
 TODAY,今天,今天,Today,Aujourd'hui,今日,오늘,Сегодня,Hoy,Heute,Hoje,Hari ini,اليوم
 FEW_DAYS,过去 N 天,過去 N 天,Past N days,Les N derniers jours,過去N日間,지난 N일,Последние N дней,Últimos N días,Letzte N Tage,Últimos N dias,N hari terakhir,الأيام N الماضية
 FUTURE_DAYS,未来 N 天,未來 N 天,Next N days,Les N prochains jours,今後N日間,향후 N일,Следующие N дней,Próximos N días,Nächste N Tage,Próximos N dias,N hari ke depan,الأيام N القادمة
