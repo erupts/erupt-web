@@ -47,6 +47,7 @@ import {NzWaterMarkModule} from "ng-zorro-antd/water-mark";
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 import {NoticeComponent} from './erupt/component/notice/notice.component';
 import {NoticeDetailComponent} from './erupt/component/notice-detail/notice-detail.component';
+import {AnnouncementDetailComponent} from './erupt/component/announcement-detail/announcement-detail.component';
 
 const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent];
 
@@ -100,7 +101,7 @@ const PASSPORT = [LayoutPassportComponent];
         NzSegmentedModule,
         DragDropModule
     ],
-    declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT, MenuComponent, NoticeComponent, NoticeDetailComponent],
+    declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT, MenuComponent, NoticeComponent, NoticeDetailComponent, AnnouncementDetailComponent],
     exports: [...COMPONENTS, ...PASSPORT]
 })
 export class LayoutModule {

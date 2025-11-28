@@ -32,10 +32,10 @@ import {NzIconService} from "ng-zorro-antd/icon";
 import {ResetPwdComponent} from "../../routes/reset-pwd/reset-pwd.component";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {EruptAppData} from "@shared/model/erupt-app.model";
-import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {Userinfo} from "@shared/model/user.model";
 import {UtilsService} from "@shared/service/utils.service";
 import {SocketService} from "@shared/service/socket.service";
+import {AnnouncementDetailComponent} from "./component/announcement-detail/announcement-detail.component";
 
 // #region icons
 
@@ -101,7 +101,6 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 private socketService: SocketService,
-                @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
                 private i18n: I18NService,
                 private utilsService: UtilsService,
                 @Optional()
@@ -243,6 +242,24 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                         ele.removeChild(spanRipper);
                     }, 800);
                 });
+            }
+        });
+        this.data.announcementPopups().subscribe(res => {
+            if (res.data.length > 0) {
+                for (let ann of res.data) {
+                    let ref = this.modal.create({
+                        nzWrapClassName: "modal-lg",
+                        nzTitle: ann.title,
+                        nzBodyStyle: {
+                            padding: '0'
+                        },
+                        nzFooter: null,
+                        nzContent: AnnouncementDetailComponent,
+                        nzKeyboard: false,
+                        nzMaskClosable: false,
+                    });
+                    ref.componentInstance.announcement = ann;
+                }
             }
         });
         let userinfoObservable: Observable<Userinfo>;

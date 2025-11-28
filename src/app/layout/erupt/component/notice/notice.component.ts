@@ -1,12 +1,13 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from '@shared/service/data.service';
-import {NoticeChannel, NoticeMessageDetail, NoticeStatus} from '@shared/model/user.model';
+import {Announcement, NoticeChannel, NoticeMessageDetail, NoticeStatus} from '@shared/model/user.model';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {NzDrawerRef} from 'ng-zorro-antd/drawer';
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NoticeDetailComponent} from "../notice-detail/notice-detail.component";
 import {I18NService} from "@core";
+import {AnnouncementDetailComponent} from "../announcement-detail/announcement-detail.component";
 
 // 导出枚举以便在模板中使用
 export {NoticeStatus};
@@ -23,7 +24,8 @@ export class NoticeComponent implements OnInit, OnDestroy {
     channelOptions: string[] = [];
     selectedChannelIndex: number = 0;
 
-    messages: NoticeMessageDetail[] = [];
+    messages: any[] = []; // 复用 messages 对象，可以存储 NoticeMessageDetail 或 Announcement
+
     loadingMessages = false;
     pageIndex = 1;
     pageSize = 10;
@@ -71,30 +73,48 @@ export class NoticeComponent implements OnInit, OnDestroy {
 
     // 选择渠道（通过索引）
     onChannelChange(index: number): void {
-        if (index >= 0 && index < this.channels.length) {
-            this.selectedChannelIndex = index;
-            this.pageIndex = 1;
-            this.loadMessages();
-        }
+        this.selectedChannelIndex = index;
+        this.pageIndex = 1;
+        this.loadMessages();
     }
 
     // 加载消息列表
     loadMessages(): void {
         this.loadingMessages = true;
-        this.dataService.noticeMessages(this.pageIndex, this.pageSize)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-                next: (result) => {
-                    this.messages = result.data.list;
-                    this.total = result.data.total;
-                    this.loadingMessages = false;
-                },
-                error: () => {
-                    this.messages = [];
-                    this.total = 0;
-                    this.loadingMessages = false;
-                }
-            });
+
+        if (this.selectedChannelIndex === 0) {
+            // 加载通知消息
+            this.dataService.noticeMessages(this.pageIndex, this.pageSize)
+                .pipe(takeUntil(this.destroy$))
+                .subscribe({
+                    next: (result) => {
+                        this.messages = result.data.list;
+                        this.total = result.data.total;
+                        this.loadingMessages = false;
+                    },
+                    error: () => {
+                        this.messages = [];
+                        this.total = 0;
+                        this.loadingMessages = false;
+                    }
+                });
+        } else if (this.selectedChannelIndex === 1) {
+            // 加载公告
+            this.dataService.announcement(this.pageIndex, this.pageSize)
+                .pipe(takeUntil(this.destroy$))
+                .subscribe({
+                    next: (res) => {
+                        this.messages = res.data.list;
+                        this.total = res.data.total;
+                        this.loadingMessages = false;
+                    },
+                    error: () => {
+                        this.messages = [];
+                        this.total = 0;
+                        this.loadingMessages = false;
+                    }
+                });
+        }
     }
 
     // 分页变化
@@ -118,14 +138,22 @@ export class NoticeComponent implements OnInit, OnDestroy {
         ref.componentInstance.messageId = messageId;
     }
 
+    viewAnnouncementDetail(announcement: Announcement): void {
+        let ref = this.modal.create({
+            nzWrapClassName: "modal-lg",
+            nzTitle: announcement.title,
+            nzBodyStyle: {
+                padding: '0'
+            },
+            nzFooter: null,
+            nzContent: AnnouncementDetailComponent,
+        });
+        ref.componentInstance.announcement = announcement;
+    }
+
     // 关闭抽屉
     close(): void {
         this.drawerRef.close();
-    }
-
-    // 检查是否为未读状态
-    isUnread(status: NoticeStatus | string): boolean {
-        return status === NoticeStatus.UNREAD || status === 'UNREAD';
     }
 
     protected readonly NoticeStatus = NoticeStatus;

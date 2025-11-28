@@ -24,23 +24,31 @@
         <!-- 消息列表 -->
         <nz-list [nzDataSource]="messages" [nzLoading]="loadingMessages" [nzSize]="'small'"
                  class="message-list">
-            <ng-container *ngIf="selectedChannelIndex === 0">
-                <nz-list-item *ngFor="let message of messages" (click)="viewMessageDetail(message)" class="message-item">
-                    <div style="width: 100%">
-                        <div class="message-header">
-                            <h3 class="message-title">
-                                <div style="display: flex;align-items: center;">
-                                    <nz-badge nzStatus="error" *ngIf="message.status == NoticeStatus.UNREAD"></nz-badge>
-                                    <span>{{ message.noticeLog?.title }}</span>
-                                    <span style="font-size: .7em;margin-left: auto">{{ message.noticeLog?.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</span>
-                                </div>
-                            </h3>
-                        </div>
-                        <p class="message-content" *ngIf="message.noticeLog?.content" [innerHTML]="message.noticeLog.content|safeHtml">
-                        </p>
+            <nz-list-item *ngFor="let item of messages" 
+                         (click)="selectedChannelIndex === 0 ? viewMessageDetail(item) : viewAnnouncementDetail(item)" 
+                         class="message-item">
+                <div style="width: 100%">
+                    <div class="message-header">
+                        <h3 class="message-title">
+                            <div style="display: flex;align-items: center;">
+                                <!-- 通知消息显示未读标记 -->
+                                <nz-badge nzStatus="error" *ngIf="selectedChannelIndex === 0 && item.status == NoticeStatus.UNREAD"></nz-badge>
+                                <!-- 根据类型显示标题 -->
+                                <span>{{ selectedChannelIndex === 0 ? item.noticeLog?.title : item.title }}</span>
+                                <!-- 根据类型显示时间 -->
+                                <span style="font-size: .7em;margin-left: auto">
+                                    {{ (selectedChannelIndex === 0 ? item.noticeLog?.createTime : item.createTime) | date:'yyyy-MM-dd HH:mm:ss' }}
+                                </span>
+                            </div>
+                        </h3>
                     </div>
-                </nz-list-item>
-            </ng-container>
+                    <!-- 根据类型显示内容 -->
+                    <p class="message-content" 
+                       *ngIf="selectedChannelIndex === 0 ? item.noticeLog?.content : item.content" 
+                       [innerHTML]="(selectedChannelIndex === 0 ? item.noticeLog?.content : item.content) | safeHtml">
+                    </p>
+                </div>
+            </nz-list-item>
         </nz-list>
 
         <!-- 分页 -->

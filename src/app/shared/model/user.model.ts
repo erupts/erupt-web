@@ -40,6 +40,19 @@ export interface NoticeMessage {
     createTime: string;
 }
 
+export interface Announcement {
+    id: string;
+    title: string;
+    content: string;
+    status: AnnouncementStatus;
+    createTime: string;
+}
+
+export enum AnnouncementStatus {
+    OPEN = "OPEN",
+    CLOSE = "CLOSE"
+}
+
 export enum NoticeStatus {
     SENT = "SENT",
     UNREAD = "UNREAD",
