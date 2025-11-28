@@ -1,7 +1,7 @@
 import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
-import {LoginModel, NoticeChannel, NoticeMessageDetail, Userinfo} from "../model/user.model";
+import {Announcement, LoginModel, NoticeChannel, NoticeMessageDetail, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
@@ -527,6 +527,20 @@ export class DataService {
 
     noticeUnreadCount() {
         return this._http.get<R<number>>(RestPath.erupt + "/notice/unread-count");
+    }
+
+    announcement(page: number, size: number) {
+        return this._http.get<R<SimplePage<Announcement>>>(RestPath.erupt + "/announcement/list", {
+            page, size
+        });
+    }
+
+    announcementPopups() {
+        return this._http.get<R<Announcement[]>>(RestPath.erupt + "/announcement/popups");
+    }
+
+    announcementMarkRead(id: number) {
+        return this._http.get<R<void>>(RestPath.erupt + "/announcement/mark-read/" + id);
     }
 
 

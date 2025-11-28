@@ -1,77 +1,79 @@
 
 :host {
-  ::ng-deep {
-    [nz-carousel-content] {
-      height: auto !important;
-    }
+    ::ng-deep {
+        [nz-carousel-content] {
+            height: auto !important;
+        }
 
-    .slick-list {
-      height: auto !important;
-    }
+        .slick-list {
+            height: auto !important;
+        }
 
-    .slick-track {
-      height: auto !important;
-    }
+        .slick-track {
+            height: auto !important;
+        }
 
-    .grayscale {
-      filter: grayscale(100%)
-    }
+        .grayscale {
+            filter: grayscale(100%)
+        }
 
-    .carousel-ul {
-      display: flex;
-      justify-content: center;
-      height: 80px;
-      width: 100%;
-      text-align: center;
-      margin-top: 12px;
-      margin-bottom: 0;
-      padding-left: 0;
-      overflow: auto;
-    }
-
-    .view_inner_html {
-      figure.table {
-        overflow: auto;
-
-        table {
-          width: 100%;
-
-          tr {
-            transition: all 0.3s;
-
-            &:hover {
-              background: #e6f7ff;
-            }
-          }
-
-          td, th {
-            padding: 12px 8px;
-            border: 1px solid #e8e8e8;
-          }
-
-          th {
-            background: #fafafa;
+        .carousel-ul {
+            display: flex;
+            justify-content: center;
+            height: 80px;
+            width: 100%;
             text-align: center;
-          }
+            margin-top: 12px;
+            margin-bottom: 0;
+            padding-left: 0;
+            overflow: auto;
+        }
+
+        .view_inner_html {
+            overflow: auto;
+
+            figure.table {
+                overflow: auto;
+
+                table {
+                    width: 100%;
+
+                    tr {
+                        transition: all 0.3s;
+
+                        &:hover {
+                            background: #e6f7ff;
+                        }
+                    }
+
+                    td, th {
+                        padding: 12px 8px;
+                        border: 1px solid #e8e8e8;
+                    }
+
+                    th {
+                        background: #fafafa;
+                        text-align: center;
+                    }
+
+                }
+            }
+
+            p {
+                line-height: 35px;
+                font-size: 18px;
+                word-wrap: break-word;
+                word-break: break-all;
+                text-align: justify;
+            }
+
+            img {
+                max-width: 100%;
+                width: auto;
+                display: block;
+                margin: 0 auto;
+            }
 
         }
-      }
-
-      p {
-        line-height: 35px;
-        font-size: 18px;
-        word-wrap: break-word;
-        word-break: break-all;
-        text-align: justify;
-      }
-
-      img {
-        max-width: 100%;
-        width: auto;
-        display: block;
-        margin: 0 auto;
-      }
-
     }
-  }
 }
