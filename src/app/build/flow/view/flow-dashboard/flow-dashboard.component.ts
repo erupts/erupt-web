@@ -197,10 +197,24 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
             groupMap.get(groupName)!.push(flow);
         });
 
-        return Array.from(groupMap.entries()).map(([title, flows]) => ({
-            title,
-            flows
-        }));
+        // 创建分组名称到 sort 值的映射
+        const groupSortMap = new Map<string, number>();
+        this.flowGroups.forEach(group => {
+            groupSortMap.set(group.name, group.sort);
+        });
+
+        // 将 Map 转换为数组，并按照 sort 排序
+        return Array.from(groupMap.entries())
+            .map(([title, flows]) => ({
+                title,
+                flows,
+                sort: groupSortMap.get(title) ?? Number.MAX_SAFE_INTEGER // 不在 flowGroups 中的分组排在最后
+            }))
+            .sort((a, b) => a.sort - b.sort)
+            .map(({title, flows}) => ({
+                title,
+                flows
+            }));
     }
 
     /**
