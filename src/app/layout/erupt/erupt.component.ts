@@ -257,6 +257,11 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                         nzContent: AnnouncementDetailComponent,
                         nzKeyboard: false,
                         nzMaskClosable: false,
+                        nzOnCancel: () => {
+                            this.data.announcementMarkRead(ann.id).subscribe(res => {
+                                ref.close();
+                            });
+                        }
                     });
                     ref.componentInstance.announcement = ann;
                 }
@@ -303,3 +308,4 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         this.notify$.unsubscribe();
     }
 }
+
