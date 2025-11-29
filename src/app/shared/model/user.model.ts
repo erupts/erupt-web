@@ -41,7 +41,7 @@ export interface NoticeMessage {
 }
 
 export interface Announcement {
-    id: string;
+    id: number;
     title: string;
     content: string;
     status: AnnouncementStatus;
