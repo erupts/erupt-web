@@ -83,7 +83,7 @@
                                 </thead>
                                 <tbody>
                                 <tr *ngFor="let task of instanceTasks">
-                                    <td [rowSpan]="task.nodeRowspan || 1" *ngIf="task.nodeId">
+                                    <td [rowSpan]="task.nodeRowspan || 1" *ngIf="task.nodeId || task.nodeId === null">
                                         {{ task.nodeId }}
                                     </td>
                                     <td>

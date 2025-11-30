@@ -147,7 +147,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                     }
                     if (span > 1) {
                         arr[i].nodeRowspan = span;
-                        for (let j = 1; j < span; j++) arr[i + j].nodeId = null;
+                        for (let j = 1; j < span; j++) arr[i + j].nodeId = '';
                     }
                     i += span;
                 }
