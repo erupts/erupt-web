@@ -58,7 +58,7 @@ export interface FlowInstanceDataHistory {
 export interface FlowInstanceTask {
     nodeRowspan?: number;
     id: number;
-    nodeId: number;
+    nodeId: string;
     assigneeUser: User;
     createTime: string;
     completedAt: string;
