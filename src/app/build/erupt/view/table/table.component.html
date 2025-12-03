@@ -145,7 +145,16 @@
                     </nz-card>
                     <div *ngIf="viz.length">
                         <nz-segmented [nzOptions]="vizOptions" [ngStyle]="{marginTop: hideCondition? 0: '8px', marginBottom: '8px'}" [(ngModel)]="selectedVizIndex"
-                                      (ngModelChange)="vizChange($event)" *ngIf="vizOptions.length > 1"/>
+                                      (ngModelChange)="vizChange($event)" [nzLabelTemplate]="segmentedTemplate" *ngIf="vizOptions.length > 1">
+                        </nz-segmented>
+                        <ng-template #segmentedTemplate let-index="index">
+                            <ng-container [ngSwitch]="index">
+                                {{ vizOptions[index].label }}
+                                <ng-container *ngIf="viz[index].desc">
+                                    &nbsp;<i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="viz[index].desc"></i>
+                                </ng-container>
+                            </ng-container>
+                        </ng-template>
                         <ng-container *ngIf="viz[selectedVizIndex]?.type == VizType.CARD">
                             <div *ngIf="!dataPage.data || dataPage.data.length == 0" style="background: #fff;padding: 32px;">
                                 <nz-empty nzNotFoundImage="simple"/>
@@ -163,6 +172,13 @@
                                 <ng-container *ngSwitchCase="VizType.GANTT">
                                     <viz-gantt [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
                                                (onEdit)="onEdit($event)" [viz]="viz[selectedVizIndex]"/>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="VizType.TPL">
+                                    <nz-spin [nzSpinning]="!getVizTplData()" [ngStyle]="{height: viz[selectedVizIndex].tplView.height || ((525 + (clientHeight - 814)) + 'px')}">
+                                        <erupt-iframe *ngIf="getVizTplData()" [url]="dataService.getEruptVizTpl(eruptBuildModel.eruptModel.eruptName,viz[selectedVizIndex].code)"
+                                                      height="100%" width="'100%'"/>
+                                    </nz-spin>
+
                                 </ng-container>
                                 <ng-container *ngSwitchDefault>
                                     <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
