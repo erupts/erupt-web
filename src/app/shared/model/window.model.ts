@@ -1,5 +1,7 @@
 export class WindowModel {
 
+    public static VIZ_TPL_DATA_KEY: string = "vizTplData";
+
     public static config: any = window["eruptSiteConfig"] || {};
 
     public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';

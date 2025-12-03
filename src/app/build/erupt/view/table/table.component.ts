@@ -7,17 +7,7 @@ import {EditTypeComponent} from "../../components/edit-type/edit-type.component"
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
-import {
-    FormSize,
-    OperationIfExprBehavior,
-    OperationMode,
-    OperationType,
-    PagingType,
-    RestPath,
-    Scene,
-    SelectMode,
-    ViewType
-} from "../../model/erupt.enum";
+import {FormSize, OperationIfExprBehavior, OperationMode, OperationType, PagingType, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
@@ -36,6 +26,7 @@ import {CodeEditorComponent} from "../../components/code-editor/code-editor.comp
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {TableStyle} from "../../model/erupt.vo";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
+import {WindowModel} from "@shared/model/window.model";
 
 
 @Component({
@@ -227,7 +218,8 @@ export class TableComponent implements OnInit, OnDestroy {
                     this.hideCondition = true;
                     this.vizOptions = this.viz.map(i => ({
                         label: i.title,
-                        value: i.code
+                        value: i.code,
+                        useTemplate: true
                     }))
                     if (eb.eruptModel.eruptJson.vizRawTable) {
                         this.vizOptions.push({
@@ -330,12 +322,13 @@ export class TableComponent implements OnInit, OnDestroy {
             for (let key in this.dataPage.sort) {
                 orderBy.push({
                     field: key,
-                    direction: this.dataPage.sort[key]
+                    direction: this.dataPage.sort[key].toUpperCase()
                 })
             }
         }
         this.selectedRows = [];
         this.dataPage.querying = true;
+        this.setVizTplData(null)
         this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url, {
             pageIndex: this.dataPage.pi,
             pageSize: this.dataPage.ps,
@@ -347,8 +340,19 @@ export class TableComponent implements OnInit, OnDestroy {
             this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
             this.alert = page.alert;
+            if (this.viz[this.selectedVizIndex].type == VizType.TPL) {
+                this.setVizTplData(this.dataPage.data);
+            }
         })
         this.extraRowFun(query);
+    }
+
+    setVizTplData(data: any[]) {
+        window[WindowModel.VIZ_TPL_DATA_KEY] = data;
+    }
+
+    getVizTplData(): any[] {
+        return window[WindowModel.VIZ_TPL_DATA_KEY];
     }
 
     buildTableConfig() {
@@ -1028,7 +1032,6 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    protected readonly viewType = ViewType;
     protected readonly VizType = VizType;
 }
 

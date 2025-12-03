@@ -127,6 +127,11 @@ export class DataService {
             "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName + "&ids=" + ids;
     }
 
+    getEruptVizTpl(eruptName: string, vizCode: string) {
+        return RestPath.tpl + "/viz-tpl/" + eruptName + "/" + vizCode +
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
+    }
+
     getEruptViewTpl(eruptName: string, field: string, id: any) {
         return RestPath.tpl + "/view-tpl/" + eruptName + "/" + field + "/" + id +
             "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;

@@ -36,6 +36,7 @@ export interface Viz {
     type: VizType;
     cardView: CardView;
     ganttView: GanttView;
+    tplView: Tpl
 }
 
 export enum VizType {
@@ -121,7 +122,7 @@ export interface Page {
 
 export interface Sort {
     field: string;
-    direction?: "asc" | "desc";
+    direction?: "ASC" | "DESC";
 }
 
 export interface Alert {
