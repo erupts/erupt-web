@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Viz, VizType} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -120,11 +120,11 @@ export class TableComponent implements OnInit, OnDestroy {
         url: null
     };
 
-    viz: Viz[];
+    vis: Vis[];
 
-    selectedVizIndex: number = 0;
+    selectedVisIndex: number = 0;
 
-    vizOptions = [];
+    visOptions = [];
 
     adding: boolean = false; //新增行为防抖
 
@@ -213,16 +213,16 @@ export class TableComponent implements OnInit, OnDestroy {
         this.header = req.header;
         this.dataPage.url = req.url;
         observable.subscribe(eb => {
-                this.viz = eb.eruptModel.eruptJson.viz || [];
-                if (this.viz.length) {
+                this.vis = eb.eruptModel.eruptJson.vis || [];
+                if (this.vis.length) {
                     this.hideCondition = true;
-                    this.vizOptions = this.viz.map(i => ({
+                    this.visOptions = this.vis.map(i => ({
                         label: i.title,
                         value: i.code,
                         useTemplate: true
                     }))
-                    if (eb.eruptModel.eruptJson.vizRawTable) {
-                        this.vizOptions.push({
+                    if (eb.eruptModel.eruptJson.visRawTable) {
+                        this.visOptions.push({
                             icon: 'table'
                         })
                     }
@@ -295,7 +295,7 @@ export class TableComponent implements OnInit, OnDestroy {
         );
     }
 
-    vizChange(e: number) {
+    visChange(e: number) {
         this.query();
     }
 
@@ -328,11 +328,11 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         this.selectedRows = [];
         this.dataPage.querying = true;
-        this.setVizTplData(null)
+        this.setVisTplData(null)
         this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url, {
             pageIndex: this.dataPage.pi,
             pageSize: this.dataPage.ps,
-            viz: this.viz[this.selectedVizIndex]?.code,
+            vis: this.vis[this.selectedVisIndex]?.code,
             sort: orderBy,
             ...query
         }, this.header).subscribe(page => {
@@ -340,19 +340,19 @@ export class TableComponent implements OnInit, OnDestroy {
             this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
             this.alert = page.alert;
-            if (this.viz[this.selectedVizIndex].type == VizType.TPL) {
-                this.setVizTplData(this.dataPage.data);
+            if (this.vis[this.selectedVisIndex].type == VisType.TPL) {
+                this.setVisTplData(this.dataPage.data);
             }
         })
         this.extraRowFun(query);
     }
 
-    setVizTplData(data: any[]) {
-        window[WindowModel.VIZ_TPL_DATA_KEY] = data;
+    setVisTplData(data: any[]) {
+        window[WindowModel.VIS_TPL_DATA_KEY] = data;
     }
 
-    getVizTplData(): any[] {
-        return window[WindowModel.VIZ_TPL_DATA_KEY];
+    getVisTplData(): any[] {
+        return window[WindowModel.VIS_TPL_DATA_KEY];
     }
 
     buildTableConfig() {
@@ -1032,6 +1032,6 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    protected readonly VizType = VizType;
+    protected readonly VisType = VisType;
 }
 

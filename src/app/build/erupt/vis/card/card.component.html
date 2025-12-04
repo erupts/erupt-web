@@ -5,9 +5,9 @@
                  [nzXl]="6" [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXs]="24">
                 <nz-card class="erupt-card" [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'0'}"
                          [nzBordered]="true" (click)="onEdit.emit(d[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])">
-                    <ng-container *ngIf="viz.fields.length">
+                    <ng-container *ngIf="vis.fields.length">
                         <div style="padding: 12px">
-                            <ng-container *ngFor="let field of viz.fields">
+                            <ng-container *ngFor="let field of vis.fields">
                                 {{ eruptBuildModel.eruptModel.eruptFieldModelMap.get(field).eruptFieldJson?.edit?.title }}
                                 :&nbsp;
                                 <span (click)="clickField($event,field)">
@@ -37,14 +37,14 @@
                     <!--                    </div>-->
                 </nz-card>
                 <ng-template #coverTemplate>
-                    <ng-container *ngIf="viz.cardView.coverField">
+                    <ng-container *ngIf="vis.cardView.coverField">
                         <div class="card-img-container">
-                            <ng-container *ngIf="d[viz.cardView.coverField]">
+                            <ng-container *ngIf="d[vis.cardView.coverField]">
                                 <div style="width: 100%; height: 100%;"
-                                     [ngStyle]="viewImageStyle(d[viz.cardView.coverField], eruptBuildModel.eruptModel.eruptFieldModelMap.get(viz.cardView.coverField))">
+                                     [ngStyle]="viewImageStyle(d[vis.cardView.coverField], eruptBuildModel.eruptModel.eruptFieldModelMap.get(vis.cardView.coverField))">
                                 </div>
                             </ng-container>
-                            <ng-container *ngIf="!d[viz.cardView.coverField]">
+                            <ng-container *ngIf="!d[vis.cardView.coverField]">
                                 <img src="./assets/image/no-img.svg" alt="" width="44px" class="no-image">
                             </ng-container>
                         </div>
