@@ -143,39 +143,39 @@
                     <nz-card *ngIf="hasSearchFields" [nzBodyStyle]="{padding:'10px'}" class="search-card" [hidden]="hideCondition">
                         <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'"/>
                     </nz-card>
-                    <div *ngIf="viz.length">
-                        <nz-segmented [nzOptions]="vizOptions" [ngStyle]="{marginTop: hideCondition? 0: '8px', marginBottom: '8px'}" [(ngModel)]="selectedVizIndex"
-                                      (ngModelChange)="vizChange($event)" [nzLabelTemplate]="segmentedTemplate" *ngIf="vizOptions.length > 1">
+                    <div *ngIf="vis.length">
+                        <nz-segmented [nzOptions]="visOptions" [ngStyle]="{marginTop: hideCondition? 0: '8px', marginBottom: '8px'}" [(ngModel)]="selectedVisIndex"
+                                      (ngModelChange)="visChange($event)" [nzLabelTemplate]="segmentedTemplate" *ngIf="visOptions.length > 1">
                         </nz-segmented>
                         <ng-template #segmentedTemplate let-index="index">
                             <ng-container [ngSwitch]="index">
-                                {{ vizOptions[index].label }}
-                                <ng-container *ngIf="viz[index].desc">
-                                    &nbsp;<i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="viz[index].desc"></i>
+                                {{ visOptions[index].label }}
+                                <ng-container *ngIf="vis[index].desc">
+                                    &nbsp;<i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="vis[index].desc"></i>
                                 </ng-container>
                             </ng-container>
                         </ng-template>
-                        <ng-container *ngIf="viz[selectedVizIndex]?.type == VizType.CARD">
+                        <ng-container *ngIf="vis[selectedVisIndex]?.type == VisType.CARD">
                             <div *ngIf="!dataPage.data || dataPage.data.length == 0" style="background: #fff;padding: 32px;">
                                 <nz-empty nzNotFoundImage="simple"/>
                             </div>
                         </ng-container>
                         <div>
-                            <ng-container [ngSwitch]="viz[selectedVizIndex]?.type">
-                                <ng-container *ngSwitchCase="VizType.CARD">
-                                    <viz-card [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
-                                              (onEdit)="onEdit($event)" [viz]="viz[selectedVizIndex]"/>
+                            <ng-container [ngSwitch]="vis[selectedVisIndex]?.type">
+                                <ng-container *ngSwitchCase="VisType.CARD">
+                                    <vis-card [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                              (onEdit)="onEdit($event)" [vis]="vis[selectedVisIndex]"/>
                                 </ng-container>
-                                <ng-container *ngSwitchCase="VizType.TABLE">
+                                <ng-container *ngSwitchCase="VisType.TABLE">
                                     <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
                                 </ng-container>
-                                <ng-container *ngSwitchCase="VizType.GANTT">
-                                    <viz-gantt [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
-                                               (onEdit)="onEdit($event)" [viz]="viz[selectedVizIndex]"/>
+                                <ng-container *ngSwitchCase="VisType.GANTT">
+                                    <vis-gantt [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                               (onEdit)="onEdit($event)" [vis]="vis[selectedVisIndex]"/>
                                 </ng-container>
-                                <ng-container *ngSwitchCase="VizType.TPL">
-                                    <nz-spin [nzSpinning]="!getVizTplData()" [ngStyle]="{height: viz[selectedVizIndex].tplView.height || ((525 + (clientHeight - 814)) + 'px')}">
-                                        <erupt-iframe *ngIf="getVizTplData()" [url]="dataService.getEruptVizTpl(eruptBuildModel.eruptModel.eruptName,viz[selectedVizIndex].code)"
+                                <ng-container *ngSwitchCase="VisType.TPL">
+                                    <nz-spin [nzSpinning]="!getVisTplData()" [ngStyle]="{height: vis[selectedVisIndex].tplView.height || ((525 + (clientHeight - 814)) + 'px')}">
+                                        <erupt-iframe *ngIf="getVisTplData()" [url]="dataService.getEruptVisTpl(eruptBuildModel.eruptModel.eruptName,vis[selectedVisIndex].code)"
                                                       height="100%" width="'100%'"/>
                                     </nz-spin>
 
@@ -186,7 +186,7 @@
                             </ng-container>
                         </div>
                     </div>
-                    <ng-container *ngIf="!viz.length" [ngTemplateOutlet]="eruptTable"></ng-container>
+                    <ng-container *ngIf="!vis.length" [ngTemplateOutlet]="eruptTable"></ng-container>
                     <ng-container *ngIf="dataPage.showPagination">
                         <nz-pagination style="text-align: center;margin-top: 12px" nzShowSizeChanger nzShowQuickJumper
                                        [nzPageIndex]="dataPage.pi" [nzShowTotal]="totalTemplate"

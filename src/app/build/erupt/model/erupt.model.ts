@@ -24,22 +24,22 @@ export interface Erupt {
     rowOperation: RowOperation[];
     drills: Drill[];
     layout: Layout;
-    vizRawTable: boolean;
-    viz: Viz[];
+    visRawTable: boolean;
+    vis: Vis[];
 }
 
-export interface Viz {
+export interface Vis {
     code: string;
     title: string;
     desc: string;
     fields: string[];
-    type: VizType;
+    type: VisType;
     cardView: CardView;
     ganttView: GanttView;
     tplView: Tpl
 }
 
-export enum VizType {
+export enum VisType {
     TABLE = "TABLE",
     GANTT = "GANTT",
     CARD = "CARD",
@@ -112,7 +112,7 @@ export interface Drill {
 export interface Page {
     pageIndex: number;
     pageSize: number;
-    viz: string;
+    vis: string;
     totalPage?: number;
     total?: number;
     sort?: Sort[];

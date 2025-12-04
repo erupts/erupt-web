@@ -1,14 +1,14 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
-import {CoverEffect, Page, Viz} from "../../model/erupt.model";
+import {CoverEffect, Page, Vis} from "../../model/erupt.model";
 import {NzImageService} from "ng-zorro-antd/image";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {UiBuildService} from "../../service/ui-build.service";
 import {STColumn} from "@delon/abc/st";
 
 @Component({
-    selector: 'viz-card',
+    selector: 'vis-card',
     templateUrl: './card.component.html',
     styles: [],
     styleUrls: ["./card.component.less"]
@@ -22,7 +22,7 @@ export class CardComponent implements OnInit {
 
     @Input() data: any[] = [];
 
-    @Input() viz: Viz;
+    @Input() vis: Vis;
 
     columnMap: Map<any, STColumn>;
 
@@ -45,7 +45,7 @@ export class CardComponent implements OnInit {
     viewImageStyle(path: string, eruptFieldModel: EruptFieldModel): object {
         return {
             backgroundImage: 'url(' + DataService.previewAttachment(path.split(eruptFieldModel.eruptFieldJson.edit?.attachmentType?.fileSeparator || "|")[0]) + ')',
-            backgroundSize: this.viz.cardView.coverEffect == CoverEffect.FIT ? "contain" : "cover",
+            backgroundSize: this.vis.cardView.coverEffect == CoverEffect.FIT ? "contain" : "cover",
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center'
         };

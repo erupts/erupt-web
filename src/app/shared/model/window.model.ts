@@ -1,6 +1,6 @@
 export class WindowModel {
 
-    public static VIZ_TPL_DATA_KEY: string = "vizTplData";
+    public static VIS_TPL_DATA_KEY: string = "visTplData";
 
     public static config: any = window["eruptSiteConfig"] || {};
 
