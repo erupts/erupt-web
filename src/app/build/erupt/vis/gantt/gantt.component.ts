@@ -141,7 +141,6 @@ export class GanttComponent implements OnChanges, OnInit {
             itemMap.set(id, item);
             allItems.push(item);
         });
-
         let pidField = ganttView.pidField;
         if (pidField) {
             pidField = pidField.replace(/\./g, '_');

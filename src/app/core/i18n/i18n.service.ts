@@ -79,6 +79,26 @@ const LANGS: { [key: string]: LangConfigData } = {
         columnWidthZoom: 1.3,
         color: '#1E88E5'
     },
+    'fr-FR': {
+        abbr: '🇫🇷',
+        text: 'En français',
+        date: dfFr,
+        ng: ngFr,
+        zorro: zorroFr,
+        delon: delonFr,
+        columnWidthZoom: 1.5,
+        color: '#3949AB'
+    },
+    'de-DE': {
+        abbr: '🇩🇪',
+        text: 'Deutsch',
+        date: dfDe,
+        ng: ngDe,
+        zorro: zorroDe,
+        delon: delonEnUS, // 若无 delon.de_DE 可保留英文
+        columnWidthZoom: 1.5,
+        color: '#6D4C41'
+    },
     'zh-CN': {
         abbr: '🇨🇳',
         text: '简体中文',
@@ -119,16 +139,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         columnWidthZoom: 1,
         color: '#00ACC1'
     },
-    'fr-FR': {
-        abbr: '🇫🇷',
-        text: 'En français',
-        date: dfFr,
-        ng: ngFr,
-        zorro: zorroFr,
-        delon: delonFr,
-        columnWidthZoom: 1.5,
-        color: '#3949AB'
-    },
     'ru-RU': {
         abbr: '🇷🇺',
         text: 'русск',
@@ -138,16 +148,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         delon: delonEs,
         columnWidthZoom: 1.5,
         color: '#546E7A'
-    },
-    'de-DE': {
-        abbr: '🇩🇪',
-        text: 'Deutsch',
-        date: dfDe,
-        ng: ngDe,
-        zorro: zorroDe,
-        delon: delonEnUS, // 若无 delon.de_DE 可保留英文
-        columnWidthZoom: 1.5,
-        color: '#6D4C41'
     },
     'es-ES': {
         abbr: '🇪🇸',
