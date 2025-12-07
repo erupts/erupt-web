@@ -33,6 +33,18 @@
                     </ngx-gantt-column>
                 </ng-container>
             </ng-container>
+            <ngx-gantt-column width="50px">
+                <ng-template #header>
+                    <div style="text-align: center;width: 100%">
+                        <i nz-icon nzType="aim" nzTheme="outline"></i>
+                    </div>
+                </ng-template>
+                <ng-template #cell let-item="item">
+                    <div (click)="scrollToDate(item)" *ngIf="item.start || item.end" style="text-align: center">
+                        <i nz-icon nzType="aim" nzTheme="outline" style="cursor: pointer;color: #09f"></i>
+                    </div>
+                </ng-template>
+            </ngx-gantt-column>
         </ngx-gantt-table>
     </ngx-gantt>
     <button nz-button nzType="primary" nzShape="circle" nzSize="large"

@@ -75,8 +75,14 @@ export class GanttComponent implements OnChanges, OnInit {
 
     scrollToToday(): void {
         if (this.ganttComponent) {
-            // 使用 scrollToToday 方法直接定位到今天
             this.ganttComponent.scrollToToday();
+            // this.ganttComponent.scrollToDate(new Date().getTime());
+        }
+    }
+
+    scrollToDate(item: GanttItem): void {
+        if (this.ganttComponent) {
+            this.ganttComponent.scrollToDate(item.start || item.end);
         }
     }
 
@@ -98,6 +104,7 @@ export class GanttComponent implements OnChanges, OnInit {
         }
         const ganttView = this.vis.ganttView;
         if (ganttView.groupField) {
+            ganttView.groupField = ganttView.groupField.replace(/\./g, '_');
             for (let d of this.data) {
                 let group = this.groups.find(g => g.id == d[ganttView.groupField]);
                 if (!group) {
