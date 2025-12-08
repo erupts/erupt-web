@@ -14,6 +14,7 @@ import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NoticeComponent} from "../component/notice/notice.component";
+import {NzNotificationService} from "ng-zorro-antd/notification";
 
 @Component({
     selector: "layout-header",
@@ -72,7 +73,8 @@ export class HeaderComponent implements OnInit {
                 private dataService: DataService,
                 @Inject(NzDrawerService) private drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
-                @Inject(NzModalService) private modal: NzModalService) {
+                @Inject(NzModalService) private modal: NzModalService,
+                @Inject(NzNotificationService) private notification: NzNotificationService) {
         if (this.tenantDomainInfo) {
             if (this.tenantDomainInfo.logo) {
                 this.logoPath = DataService.previewAttachment(this.tenantDomainInfo.logo)
@@ -90,11 +92,27 @@ export class HeaderComponent implements OnInit {
         if (EruptAppData.get().locales.length <= 1) {
             this.showI18n = false;
         }
-        if (this.isEruptNotice){
-            this.dataService.noticeUnreadCount().subscribe(res => {
-                this.unreadCount = res.data;
-            })
+        if (this.isEruptNotice) {
+            this.getNoticeUnreadCount();
+            window["eruptNotice"] = this.eruptNotice.bind(this);
         }
+    }
+
+    getNoticeUnreadCount() {
+        this.dataService.noticeUnreadCount().subscribe(res => {
+            this.unreadCount = res.data;
+        })
+    }
+
+    eruptNotice(title: string, content: string) {
+        this.unreadCount++;
+        this.notification.create(
+            'blank',
+            title,
+            content, {
+                nzDuration: -1
+            }
+        );
     }
 
     renderTool(tool: CustomerTool): string {
@@ -139,7 +157,7 @@ export class HeaderComponent implements OnInit {
                 padding: "0"
             },
         }).afterClose.subscribe(res => {
-            console.log(res);
+            this.getNoticeUnreadCount();
         });
     }
 
