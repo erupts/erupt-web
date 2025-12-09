@@ -7,13 +7,24 @@
                (dragEnded)="dragEnded($event)"
                (viewChange)="onViewChange()">
         <ngx-gantt-table>
-            <ngx-gantt-column width="90px" *ngIf="eruptBuildModel.eruptModel.eruptJson.power.edit">
+            <ngx-gantt-column [width]="editColumnWidth" *ngIf="editColumnWidth">
                 <ng-template #header>
-                    <div style="text-align: center;width: 100%">#</div>
+                    <div style="text-align: center;width: 100%">
+                        <label nz-checkbox
+                               [nzChecked]="isAllSelected()"
+                               [nzIndeterminate]="isIndeterminate()"
+                               (nzCheckedChange)="toggleSelectAll($event)"
+                               (click)="$event.stopPropagation()">
+                        </label>
+                    </div>
                 </ng-template>
                 <ng-template #cell let-item="item">
-                    <div (click)="edit(item)">
-                        <i nz-icon nzType="edit" nzTheme="twotone" style="cursor: pointer"></i>
+                    <div style="text-align: center" (click)="toggleSelection(item)">
+                        <label nz-checkbox
+                               [nzChecked]="isSelected(item)"
+                               (nzCheckedChange)="toggleSelection(item)"
+                               (click)="$event.stopPropagation()">
+                        </label>
                     </div>
                 </ng-template>
             </ngx-gantt-column>
@@ -33,6 +44,18 @@
                     </ngx-gantt-column>
                 </ng-container>
             </ng-container>
+            <ngx-gantt-column [width]="50" *ngIf="eruptBuildModel.eruptModel.eruptJson.power.edit">
+                <ng-template #header>
+                    <div style="text-align: center;width: 100%">
+                        <i nz-icon nzType="edit" ></i>
+                    </div>
+                </ng-template>
+                <ng-template #cell let-item="item">
+                    <div (click)="edit(item)">
+                        <i nz-icon nzType="edit" nzTheme="twotone" style="cursor: pointer"></i>
+                    </div>
+                </ng-template>
+            </ngx-gantt-column>
             <ngx-gantt-column width="50px">
                 <ng-template #header>
                     <div style="text-align: center;width: 100%">

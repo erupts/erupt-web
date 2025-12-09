@@ -560,10 +560,10 @@ export class TableComponent implements OnInit, OnDestroy {
                         record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
                         .subscribe(result => {
                             if (result.status === Status.SUCCESS) {
-                                if (this.st._data.length == 1) {
-                                    this.query(this.st.pi == 1 ? 1 : this.st.pi - 1);
+                                if (this.dataPage.data.length <= 1) {
+                                    this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
                                 } else {
-                                    this.query(this.st.pi);
+                                    this.query(this.dataPage.pi);
                                 }
                                 this.msg.success(this.i18n.fanyi('global.delete.success'));
                             }
@@ -899,10 +899,10 @@ export class TableComponent implements OnInit, OnDestroy {
                         let res = await this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
                         this.deleting = false;
                         if (res.status == Status.SUCCESS) {
-                            if (this.selectedRows.length == this.st._data.length) {
-                                this.query(this.st.pi == 1 ? 1 : this.st.pi - 1);
+                            if (this.selectedRows.length == this.dataPage.data.length) {
+                                this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
                             } else {
-                                this.query(this.st.pi);
+                                this.query(this.dataPage.pi);
                             }
                             this.selectedRows = [];
                             this.msg.success(this.i18n.fanyi("global.delete.success"));

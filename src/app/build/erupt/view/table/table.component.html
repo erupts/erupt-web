@@ -171,7 +171,9 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="VisType.GANTT">
                                     <vis-gantt [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
-                                               (onEdit)="onEdit($event)" [vis]="vis[selectedVisIndex]"/>
+                                               (onEdit)="onEdit($event)" 
+                                               (onSelectionChange)="selectedRows = $event"
+                                               [vis]="vis[selectedVisIndex]"/>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="VisType.TPL">
                                     <nz-spin [nzSpinning]="!getVisTplData()" [ngStyle]="{height: vis[selectedVisIndex].tplView.height || ((525 + (clientHeight - 814)) + 'px')}">
