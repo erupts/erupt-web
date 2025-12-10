@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {GanttDragEvent, GanttGroup, GanttItem, GanttItemType, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
 import {EruptBuildModel} from "../../model/erupt-build.model";
-import {Viz} from "../../model/erupt.model";
+import {Vis} from "../../model/erupt.model";
 import * as moment from 'moment';
 import {EruptField} from "../../model/erupt-field.model";
 import {STColumn} from "@delon/abc/st";
@@ -10,7 +10,7 @@ import {DataService} from "@shared/service/data.service";
 import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
-    selector: 'viz-gantt',
+    selector: 'vis-gantt',
     templateUrl: './gantt.component.html',
     styleUrls: ['./gantt.component.less']
 })
@@ -20,7 +20,7 @@ export class GanttComponent implements OnChanges, OnInit {
 
     @Input() data: any[] = [];
 
-    @Input() viz: Viz;
+    @Input() vis: Vis;
 
     @Output() onEdit = new EventEmitter<any>();
 
@@ -53,11 +53,11 @@ export class GanttComponent implements OnChanges, OnInit {
     dragEnded(e: GanttDragEvent) {
         let start = moment(e.item.start * 1000).format('YYYY-MM-DD 00:00:00');
         let end = moment(e.item.end * 1000).format('YYYY-MM-DD 23:59:59');
-        this.dataService.updateGanttDate(this.eruptBuildModel.eruptModel.eruptName, this.viz.code, e.item.id, start, end).subscribe(res => {
+        this.dataService.updateGanttDate(this.eruptBuildModel.eruptModel.eruptName, this.vis.code, e.item.id, start, end).subscribe(res => {
             for (let datum of this.data) {
                 if (datum[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] == e.item.id) {
-                    datum[this.viz.ganttView.startDateField] = start;
-                    datum[this.viz.ganttView.endDateField] = end;
+                    datum[this.vis.ganttView.startDateField] = start;
+                    datum[this.vis.ganttView.endDateField] = end;
                 }
             }
         });
@@ -75,8 +75,14 @@ export class GanttComponent implements OnChanges, OnInit {
 
     scrollToToday(): void {
         if (this.ganttComponent) {
-            // 使用 scrollToToday 方法直接定位到今天
             this.ganttComponent.scrollToToday();
+            // this.ganttComponent.scrollToDate(new Date().getTime());
+        }
+    }
+
+    scrollToDate(item: GanttItem): void {
+        if (this.ganttComponent) {
+            this.ganttComponent.scrollToDate(item.start || item.end);
         }
     }
 
@@ -96,8 +102,9 @@ export class GanttComponent implements OnChanges, OnInit {
             this.items = [];
             return;
         }
-        const ganttView = this.viz.ganttView;
+        const ganttView = this.vis.ganttView;
         if (ganttView.groupField) {
+            ganttView.groupField = ganttView.groupField.replace(/\./g, '_');
             for (let d of this.data) {
                 let group = this.groups.find(g => g.id == d[ganttView.groupField]);
                 if (!group) {
@@ -141,7 +148,6 @@ export class GanttComponent implements OnChanges, OnInit {
             itemMap.set(id, item);
             allItems.push(item);
         });
-
         let pidField = ganttView.pidField;
         if (pidField) {
             pidField = pidField.replace(/\./g, '_');

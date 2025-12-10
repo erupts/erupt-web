@@ -27,7 +27,7 @@ import {MarkdownComponent} from './components/markdown/markdown.component';
 import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
-import {CardComponent} from './viz/card/card.component';
+import {CardComponent} from './vis/card/card.component';
 import {TagSelectModule} from "@delon/abc/tag-select";
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import {SearchComponent} from './components/search/search.component';
@@ -44,7 +44,7 @@ import {MultiChoiceComponent} from './components/multi-choice/multi-choice.compo
 import {SignaturePadComponent} from './components/signature-pad/signature-pad.component';
 import {SmartSearchComponent} from './components/smart-search/smart-search.component';
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
-import {GanttComponent} from "./viz/gantt/gantt.component";
+import {GanttComponent} from "./vis/gantt/gantt.component";
 import {NgxGanttModule} from "@worktile/gantt";
 
 @NgModule({
