@@ -205,7 +205,11 @@ export class FlowApprovalDetailComponent implements OnInit {
             return;
         }
         this.approveModalVisible = true;
-        this.flowInstanceApiService.agree(this.currTask.id, this.reason, this.approveSignature).subscribe(res => {
+        let data;
+        if (Object.keys(this.nodeInfo?.prop?.formAccesses || {}).length) {
+            data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
+        }
+        this.flowInstanceApiService.agree(this.currTask.id, this.reason, this.approveSignature, data).subscribe(res => {
             this.approveModalVisible = false;
             this.reason = null;
             this.message.success('审批已同意');
