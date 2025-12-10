@@ -1,23 +1,13 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Viz, VizType} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
-import {
-    FormSize,
-    OperationIfExprBehavior,
-    OperationMode,
-    OperationType,
-    PagingType,
-    RestPath,
-    Scene,
-    SelectMode,
-    ViewType
-} from "../../model/erupt.enum";
+import {FormSize, OperationIfExprBehavior, OperationMode, OperationType, PagingType, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
@@ -36,6 +26,7 @@ import {CodeEditorComponent} from "../../components/code-editor/code-editor.comp
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {TableStyle} from "../../model/erupt.vo";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
+import {WindowModel} from "@shared/model/window.model";
 
 
 @Component({
@@ -129,11 +120,11 @@ export class TableComponent implements OnInit, OnDestroy {
         url: null
     };
 
-    viz: Viz[];
+    vis: Vis[];
 
-    selectedVizIndex: number = 0;
+    selectedVisIndex: number = 0;
 
-    vizOptions = [];
+    visOptions = [];
 
     adding: boolean = false; //新增行为防抖
 
@@ -222,15 +213,16 @@ export class TableComponent implements OnInit, OnDestroy {
         this.header = req.header;
         this.dataPage.url = req.url;
         observable.subscribe(eb => {
-                this.viz = eb.eruptModel.eruptJson.viz || [];
-                if (this.viz.length) {
+                this.vis = eb.eruptModel.eruptJson.vis || [];
+                if (this.vis.length) {
                     this.hideCondition = true;
-                    this.vizOptions = this.viz.map(i => ({
+                    this.visOptions = this.vis.map(i => ({
                         label: i.title,
-                        value: i.code
+                        value: i.code,
+                        useTemplate: true
                     }))
-                    if (eb.eruptModel.eruptJson.vizRawTable) {
-                        this.vizOptions.push({
+                    if (eb.eruptModel.eruptJson.visRawTable) {
+                        this.visOptions.push({
                             icon: 'table'
                         })
                     }
@@ -303,7 +295,7 @@ export class TableComponent implements OnInit, OnDestroy {
         );
     }
 
-    vizChange(e: number) {
+    visChange(e: number) {
         this.query();
     }
 
@@ -330,16 +322,17 @@ export class TableComponent implements OnInit, OnDestroy {
             for (let key in this.dataPage.sort) {
                 orderBy.push({
                     field: key,
-                    direction: this.dataPage.sort[key]
+                    direction: this.dataPage.sort[key].toUpperCase()
                 })
             }
         }
         this.selectedRows = [];
         this.dataPage.querying = true;
+        this.setVisTplData(null)
         this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url, {
             pageIndex: this.dataPage.pi,
             pageSize: this.dataPage.ps,
-            viz: this.viz[this.selectedVizIndex]?.code,
+            vis: this.vis[this.selectedVisIndex]?.code,
             sort: orderBy,
             ...query
         }, this.header).subscribe(page => {
@@ -347,8 +340,19 @@ export class TableComponent implements OnInit, OnDestroy {
             this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
             this.alert = page.alert;
+            if (this.vis[this.selectedVisIndex].type == VisType.TPL) {
+                this.setVisTplData(this.dataPage.data);
+            }
         })
         this.extraRowFun(query);
+    }
+
+    setVisTplData(data: any[]) {
+        window[WindowModel.VIS_TPL_DATA_KEY] = data;
+    }
+
+    getVisTplData(): any[] {
+        return window[WindowModel.VIS_TPL_DATA_KEY];
     }
 
     buildTableConfig() {
@@ -1028,7 +1032,6 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    protected readonly viewType = ViewType;
-    protected readonly VizType = VizType;
+    protected readonly VisType = VisType;
 }
 

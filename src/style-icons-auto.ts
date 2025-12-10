@@ -4,6 +4,7 @@
  */
 
 import {
+    AimOutline,
     ApartmentOutline,
     ArrowDownOutline,
     ArrowLeftOutline,
@@ -142,5 +143,6 @@ export const ICONS_AUTO = [
     MinusCircleOutline,
     NodeIndexOutline,
     EyeTwoTone,
-    EditTwoTone
+    EditTwoTone,
+    AimOutline
 ];

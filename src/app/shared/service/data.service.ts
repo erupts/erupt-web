@@ -127,6 +127,11 @@ export class DataService {
             "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName + "&ids=" + ids;
     }
 
+    getEruptVisTpl(eruptName: string, visCode: string) {
+        return RestPath.tpl + "/vis-tpl/" + eruptName + "/" + visCode +
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
+    }
+
     getEruptViewTpl(eruptName: string, field: string, id: any) {
         return RestPath.tpl + "/view-tpl/" + eruptName + "/" + field + "/" + id +
             "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
@@ -176,9 +181,9 @@ export class DataService {
         });
     }
 
-    updateGanttDate(eruptName: string, vizCode: string, pk: any, startDate: string, endDate: string): Observable<any> {
+    updateGanttDate(eruptName: string, visCode: string, pk: any, startDate: string, endDate: string): Observable<any> {
         return this._http.post(RestPath.dataModify + "/gantt/" + eruptName + "/update_date", {
-            vizCode, pk,
+            visCode: visCode, pk,
             startDate, endDate
         }, {}, {
             observe: "body",
