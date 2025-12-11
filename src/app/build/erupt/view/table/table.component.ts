@@ -896,16 +896,20 @@ export class TableComponent implements OnInit, OnDestroy {
                     nzContent: "",
                     nzOnOk: async () => {
                         this.deleting = true;
-                        let res = await this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
-                        this.deleting = false;
-                        if (res.status == Status.SUCCESS) {
-                            if (this.selectedRows.length == this.dataPage.data.length) {
-                                this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
-                            } else {
-                                this.query(this.dataPage.pi);
+                        try {
+                            let res = await this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
+                            this.deleting = false;
+                            if (res.status == Status.SUCCESS) {
+                                if (this.selectedRows.length == this.dataPage.data.length) {
+                                    this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
+                                } else {
+                                    this.query(this.dataPage.pi);
+                                }
+                                this.selectedRows = [];
+                                this.msg.success(this.i18n.fanyi("global.delete.success"));
                             }
-                            this.selectedRows = [];
-                            this.msg.success(this.i18n.fanyi("global.delete.success"));
+                        } catch (e) {
+                            this.deleting = false;
                         }
                     }
                 }
