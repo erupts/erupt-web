@@ -957,6 +957,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     clearCondition() {
         this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt});
+        this.selectedSorts = [];
         this.query(1);
     }
 
@@ -1120,24 +1121,6 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         this.showSortPopover = false;
         this.query(1, this.dataPage.ps, this.dataPage.sort);
-    }
-
-    // 同步排序状态（打开popover时调用）
-    syncSortToUI() {
-        this.selectedSorts = [];
-        this.tempSelectedField = null;
-        if (this.dataPage.sort && Object.keys(this.dataPage.sort).length > 0) {
-            for (let fieldColumn in this.dataPage.sort) {
-                let view = this.sortFields.find(f => f.column === fieldColumn);
-                if (view) {
-                    let direction = this.dataPage.sort[fieldColumn].toUpperCase() as SortType;
-                    this.selectedSorts.push({
-                        field: view,
-                        direction: direction
-                    });
-                }
-            }
-        }
     }
 
     // 字段选择变化处理

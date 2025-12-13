@@ -50,8 +50,7 @@
                                     [nzPopoverContent]="sortPopoverContent"
                                     nzPopoverTrigger="click"
                                     nzPopoverPlacement="bottomLeft"
-                                    [style.border-color]="selectedSorts.length?'#09f':null"
-                                    (click)="syncSortToUI()">
+                                    [style.border-color]="selectedSorts.length?'#09f':null">
                                 <i nz-icon nzType="swap" nzTheme="outline" style="transform: rotateZ(90deg)"></i> {{ 'global.sort'|translate }}
                             </button>
                             <ng-template #sortPopoverContent>
