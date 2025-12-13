@@ -1,4 +1,5 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
 import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
 
@@ -7,11 +8,22 @@ import {EditTypeComponent} from "../../components/edit-type/edit-type.component"
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
-import {FormSize, OperationIfExprBehavior, OperationMode, OperationType, PagingType, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
+import {
+    FormSize,
+    OperationIfExprBehavior,
+    OperationMode,
+    OperationType,
+    PagingType,
+    RestPath,
+    Scene,
+    SelectMode,
+    SortType,
+    ViewType
+} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
-import {EruptFieldModel} from "../../model/erupt-field.model";
+import {EruptFieldModel, View} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
@@ -36,6 +48,7 @@ import {WindowModel} from "@shared/model/window.model";
 })
 export class TableComponent implements OnInit, OnDestroy {
 
+    protected readonly VisType = VisType;
 
     constructor(
         public settingSrv: SettingsService,
@@ -48,7 +61,7 @@ export class TableComponent implements OnInit, OnDestroy {
         public dataService: DataService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
-        private i18n: I18NService,
+        public i18n: I18NService,
         @Inject(NzDrawerService)
         private drawerService: NzDrawerService
     ) {
@@ -97,7 +110,7 @@ export class TableComponent implements OnInit, OnDestroy {
         pageSizes: number[],
         ps: number;
         pi: number;
-        sort: object | null;
+        sort: Record<string, SortType>;
         total: number;
         data: any[];
         multiSort?: string[]
@@ -135,6 +148,14 @@ export class TableComponent implements OnInit, OnDestroy {
     existMultiRowFoldButtons: boolean = false;
 
     tableWidth: string;
+
+    showSortPopover: boolean = false;
+
+    sortFields: View[] = [];
+
+    selectedSorts: { field: View, direction: SortType }[] = [];
+
+    tempSelectedField: View = null;
 
     @Input() set drill(drill: DrillInput) {
         this._drill = drill;
@@ -210,6 +231,10 @@ export class TableComponent implements OnInit, OnDestroy {
         this.searchErupt = null;
         this.hasSearchFields = false;
         this.existMultiRowFoldButtons = false;
+        this.sortFields = [];
+        this.selectedSorts = [];
+        this.tempSelectedField = null;
+        this.showSortPopover = false;
         this.header = req.header;
         this.dataPage.url = req.url;
         observable.subscribe(eb => {
@@ -234,6 +259,15 @@ export class TableComponent implements OnInit, OnDestroy {
                         }
                     }
                 })
+
+                for (let eruptFieldModel of eb.eruptModel.eruptFieldModels) {
+                    for (let view of eruptFieldModel.eruptFieldJson.views) {
+                        if (view.sortable) {
+                            this.sortFields.push(view);
+                        }
+                    }
+                }
+
                 let layout = eb.eruptModel.eruptJson.layout;
                 if (layout) {
                     if (layout.pageSizes) {
@@ -299,7 +333,7 @@ export class TableComponent implements OnInit, OnDestroy {
         this.query();
     }
 
-    query(page?: number, size?: number, sort?: object) {
+    query(page?: number, size?: number, sort?: Record<string, SortType>) {
         if (!this.eruptBuildModel.power.query) {
             return;
         }
@@ -322,7 +356,7 @@ export class TableComponent implements OnInit, OnDestroy {
             for (let key in this.dataPage.sort) {
                 orderBy.push({
                     field: key,
-                    direction: this.dataPage.sort[key].toUpperCase()
+                    direction: this.dataPage.sort[key].toUpperCase() as SortType
                 })
             }
         }
@@ -340,8 +374,10 @@ export class TableComponent implements OnInit, OnDestroy {
             this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
             this.alert = page.alert;
-            if (this.vis[this.selectedVisIndex].type == VisType.TPL) {
-                this.setVisTplData(this.dataPage.data);
+            if (this.selectedVisIndex) {
+                if (this.vis[this.selectedVisIndex].type == VisType.TPL) {
+                    this.setVisTplData(this.dataPage.data);
+                }
             }
         })
         this.extraRowFun(query);
@@ -951,7 +987,7 @@ export class TableComponent implements OnInit, OnDestroy {
             if (layout && layout.pagingType && layout.pagingType != PagingType.BACKEND) {
                 return;
             }
-            this.query(1, this.dataPage.ps, event.sort.map);
+            this.query(1, this.dataPage.ps, (event.sort.map as Record<string, SortType>));
         }
     }
 
@@ -1036,6 +1072,84 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    protected readonly VisType = VisType;
+
+    protected readonly SortType = SortType;
+
+    // 判断字段是否为数字或时间类型
+    isNumericOrDateType(field: View): boolean {
+        return field.viewType === ViewType.NUMBER ||
+            field.viewType === ViewType.DATE ||
+            field.viewType === ViewType.DATE_TIME;
+    }
+
+    // 获取可选的字段列表（排除已选择的）
+    getAvailableFields(): View[] {
+        return this.sortFields.filter(f => !this.selectedSorts.some(s => s.field.column === f.column));
+    }
+
+    // 添加排序字段
+    addSortField(field: View) {
+        if (!this.selectedSorts.some(s => s.field.column === field.column)) {
+            this.selectedSorts.push({
+                field: field,
+                direction: SortType.ASC
+            });
+        }
+    }
+
+    // 移除排序字段
+    removeSortField(index: number) {
+        this.selectedSorts.splice(index, 1);
+    }
+
+    // 拖拽排序
+    onSortDrop(event: CdkDragDrop<Array<{ field: View, direction: SortType }>>) {
+        moveItemInArray(this.selectedSorts, event.previousIndex, event.currentIndex);
+    }
+
+    // 应用排序
+    applySort() {
+        if (this.selectedSorts.length === 0) {
+            this.dataPage.sort = null;
+        } else {
+            let sortObj = {};
+            this.selectedSorts.forEach(sort => {
+                sortObj[sort.field.column] = sort.direction;
+            });
+            this.dataPage.sort = sortObj;
+        }
+        this.showSortPopover = false;
+        this.query(1, this.dataPage.ps, this.dataPage.sort);
+    }
+
+    // 同步排序状态（打开popover时调用）
+    syncSortToUI() {
+        this.selectedSorts = [];
+        this.tempSelectedField = null;
+        if (this.dataPage.sort && Object.keys(this.dataPage.sort).length > 0) {
+            for (let fieldColumn in this.dataPage.sort) {
+                let view = this.sortFields.find(f => f.column === fieldColumn);
+                if (view) {
+                    let direction = this.dataPage.sort[fieldColumn].toUpperCase() as SortType;
+                    this.selectedSorts.push({
+                        field: view,
+                        direction: direction
+                    });
+                }
+            }
+        }
+    }
+
+    // 字段选择变化处理
+    onFieldSelectChange(field: View) {
+        if (field) {
+            this.addSortField(field);
+            // 清空选择，以便可以再次选择同一个字段
+            setTimeout(() => {
+                this.tempSelectedField = null;
+            }, 0);
+        }
+    }
+
 }
 

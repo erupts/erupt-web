@@ -1,5 +1,5 @@
 import {EruptFieldModel, Tpl, View} from "./erupt-field.model";
-import {FormSize, OperationIfExprBehavior, OperationMode, OperationType, PagingType} from "./erupt.enum";
+import {FormSize, OperationIfExprBehavior, OperationMode, OperationType, PagingType, SortType} from "./erupt.enum";
 
 
 export interface EruptModel {
@@ -122,7 +122,7 @@ export interface Page {
 
 export interface Sort {
     field: string;
-    direction?: "ASC" | "DESC";
+    direction?: SortType;
 }
 
 export interface Alert {

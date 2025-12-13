@@ -2,6 +2,7 @@ import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {SharedModule} from "@shared/shared.module";
 import {HttpClientModule} from "@angular/common/http";
+import {DragDropModule} from "@angular/cdk/drag-drop";
 import {DataHandlerService} from "./service/data-handler.service";
 import {EditTypeComponent} from "./components/edit-type/edit-type.component";
 import {ViewTypeComponent} from "./components/view-type/view-type.component";
@@ -53,6 +54,7 @@ import {NgxGanttModule} from "@worktile/gantt";
         SharedModule,
         HttpClientModule,
         EruptRoutingModule,
+        DragDropModule,
         TagSelectModule,
         NzCodeEditorModule,
         NzPipesModule,

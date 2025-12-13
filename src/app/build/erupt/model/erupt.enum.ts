@@ -151,3 +151,8 @@ export enum PagingType {
     //不分页
     NONE = "NONE"
 }
+
+export enum SortType {
+    ASC = "ASC",
+    DESC = "DESC",
+}
