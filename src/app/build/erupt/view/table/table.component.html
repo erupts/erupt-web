@@ -44,6 +44,88 @@
                             &nbsp;
                         </ng-container>
 
+                        <ng-container *ngIf="sortFields.length">
+                            <button nz-button nzType="default" nz-popover class="mb-sm"
+                                    [(nzPopoverVisible)]="showSortPopover"
+                                    [nzPopoverContent]="sortPopoverContent"
+                                    nzPopoverTrigger="click"
+                                    nzPopoverPlacement="bottomLeft"
+                                    [style.border-color]="selectedSorts.length?'#09f':null"
+                                    (click)="syncSortToUI()">
+                                <i nz-icon nzType="swap" nzTheme="outline" style="transform: rotateZ(90deg)"></i> {{ 'global.sort'|translate }}
+                            </button>
+                            <ng-template #sortPopoverContent>
+                                <div style="width: 400px;">
+                                    <div style="border: 1px solid #d9d9d9; border-radius: 4px; padding: 8px; background: #fafafa; max-height: 400px; overflow-y: auto;">
+                                        <div cdkDropList (cdkDropListDropped)="onSortDrop($event)">
+                                            <div *ngFor="let sort of selectedSorts; let i = index"
+                                                 cdkDrag
+                                                 style="display: flex; align-items: center; gap: 8px; padding: 8px; margin-bottom: 4px; background: #fff; border: 1px solid #e8e8e8; border-radius: 4px; cursor: move;">
+                                                <i nz-icon nzType="holder" nzTheme="outline" style="color: #8c8c8c; font-size: 16px; flex-shrink: 0;"></i>
+                                                <nz-select [(ngModel)]="sort.field"
+                                                           style="flex: 1; min-width: 120px;"
+                                                           nzShowSearch
+                                                           [nzDisabled]="true"
+                                                           [nzPlaceHolder]="i18n.fanyi('table.sort.select_field')"
+                                                           nzSize="small">
+                                                    <nz-option *ngFor="let field of sortFields"
+                                                               [nzValue]="field"
+                                                               [nzLabel]="field.title">
+                                                    </nz-option>
+                                                </nz-select>
+                                                <nz-radio-group nzSize="small" [(ngModel)]="sort.direction" style="flex-shrink: 0;">
+                                                    <ng-container *ngIf="isNumericOrDateType(sort.field)">
+                                                        <label nz-radio-button [nzValue]="SortType.ASC">
+                                                            0 → 9
+                                                        </label>
+                                                        <label nz-radio-button [nzValue]="SortType.DESC">
+                                                            9 → 0
+                                                        </label>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="!isNumericOrDateType(sort.field)">
+                                                        <label nz-radio-button [nzValue]="SortType.ASC">
+                                                            A → Z
+                                                        </label>
+                                                        <label nz-radio-button [nzValue]="SortType.DESC">
+                                                            Z → A
+                                                        </label>
+                                                    </ng-container>
+                                                </nz-radio-group>
+                                                <button nz-button nzType="text" nzSize="small"
+                                                        (click)="removeSortField(i)"
+                                                        style="color: #ff4d4f; padding: 0 4px; flex-shrink: 0;">
+                                                    <i nz-icon nzType="close" nzTheme="outline"></i>
+                                                </button>
+                                            </div>
+                                            <div *ngIf="selectedSorts.length === 0" style="text-align: center; color: #8c8c8c; padding: 40px 20px;">
+                                                {{ 'table.sort.not_field' | translate }}
+                                            </div>
+                                        </div>
+                                        <div style="margin-top: 8px; border-top: 1px solid #e8e8e8; padding-top: 8px;">
+                                            <nz-select [(ngModel)]="tempSelectedField"
+                                                       (ngModelChange)="onFieldSelectChange($event)"
+                                                       [nzPlaceHolder]="i18n.fanyi('table.sort.select_field')"
+                                                       nzShowSearch
+                                                       style="width: 100%;">
+                                                <nz-option *ngFor="let field of getAvailableFields()"
+                                                           [nzValue]="field"
+                                                           [nzLabel]="field.title">
+                                                </nz-option>
+                                            </nz-select>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; justify-content: flex-end;padding-top: 8px;">
+                                        <button nz-button nzSize="small" (click)="showSortPopover = false">
+                                            {{ 'global.cancel'|translate }}
+                                        </button>
+                                        <button nz-button nzType="primary" nzSize="small" (click)="applySort()">
+                                            {{ 'global.ok'|translate }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ng-container>
+
                         <ng-container *ngIf="eruptBuildModel.eruptModel.eruptJson.power.query">
                             <button nz-button nzType="default" [nzSearch]="true"
                                     class="mb-sm" [nzLoading]="dataPage.querying" id="erupt-btn-query"
@@ -171,7 +253,7 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="VisType.GANTT">
                                     <vis-gantt [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
-                                               (onEdit)="onEdit($event)" 
+                                               (onEdit)="onEdit($event)"
                                                (onSelectionChange)="selectedRows = $event"
                                                [vis]="vis[selectedVisIndex]"/>
                                 </ng-container>
