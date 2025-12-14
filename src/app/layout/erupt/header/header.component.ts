@@ -128,7 +128,7 @@ export class HeaderComponent implements OnInit {
         })
     }
 
-    eruptNotice(title: string, content: string) {
+    eruptNotice(id: number, title: string, content: string) {
         this.unreadCount++;
         this.notification.create(
             'blank',
