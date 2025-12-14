@@ -24,8 +24,8 @@
         <!-- 消息列表 -->
         <nz-list [nzDataSource]="messages" [nzLoading]="loadingMessages" [nzSize]="'small'"
                  class="message-list">
-            <nz-list-item *ngFor="let item of messages" 
-                         (click)="selectedChannelIndex === 0 ? viewMessageDetail(item) : viewAnnouncementDetail(item)" 
+            <nz-list-item *ngFor="let item of messages"
+                         (click)="selectedChannelIndex === 0 ? viewMessageDetail(item) : viewAnnouncementDetail(item)"
                          class="message-item">
                 <div style="width: 100%">
                     <div class="message-header">
@@ -35,6 +35,15 @@
                                 <nz-badge nzStatus="error" *ngIf="selectedChannelIndex === 0 && item.status == NoticeStatus.UNREAD"></nz-badge>
                                 <!-- 根据类型显示标题 -->
                                 <span>{{ selectedChannelIndex === 0 ? item.noticeLog?.title : item.title }}</span>
+                                <!-- URL 图标 -->
+                                <span nz-icon
+                                      nzType="link"
+                                      nzTheme="outline"
+                                      *ngIf="selectedChannelIndex === 0 && item.noticeLog?.url"
+                                      (click)="openUrlDrawer(item.noticeLog.url, item.noticeLog.title || ''); $event.stopPropagation()"
+                                      style="margin-left: 8px; cursor: pointer; color: #1890ff;"
+                                      nz-tooltip>
+                                </span>
                                 <!-- 根据类型显示时间 -->
                                 <span style="font-size: .7em;margin-left: auto">
                                     {{ (selectedChannelIndex === 0 ? item.noticeLog?.createTime : item.createTime) | date:'yyyy-MM-dd HH:mm:ss' }}
@@ -43,8 +52,8 @@
                         </h3>
                     </div>
                     <!-- 根据类型显示内容 -->
-                    <p class="message-content" 
-                       *ngIf="selectedChannelIndex === 0 ? item.noticeLog?.content : item.content" 
+                    <p class="message-content"
+                       *ngIf="selectedChannelIndex === 0 ? item.noticeLog?.content : item.content"
                        [innerHTML]="(selectedChannelIndex === 0 ? item.noticeLog?.content : item.content) | safeHtml">
                     </p>
                 </div>
