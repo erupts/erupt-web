@@ -119,6 +119,14 @@
                     </nz-select>
                 </div>
                 <div class="form-item">
+                    <label class="form-label required">通知渠道</label>
+                    <nz-select nzMode="multiple" class="form-select" [(ngModel)]="flowConfig.channels">
+                        <nz-option *ngFor="let channel of noticeChannel"
+                                   [nzValue]="channel.value"
+                                   [nzLabel]="channel.label"></nz-option>
+                    </nz-select>
+                </div>
+                <div class="form-item">
                     <label class="form-label">说明</label>
                     <textarea nz-input
                               [(ngModel)]="flowConfig.remark"

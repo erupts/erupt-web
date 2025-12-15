@@ -13,6 +13,8 @@ import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.comp
 import {UpmsDataService} from "@flow/service/upms-data.service";
 import {DataHandlerService} from "../../../../erupt/service/data-handler.service";
 import html2canvas from "html2canvas";
+import {DataService} from "@shared/service/data.service";
+import {NoticeChannel} from "@shared/model/user.model";
 
 @Component({
     selector: 'app-flow-config',
@@ -39,6 +41,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     // 分组选项
     groupOptions: FlowGroup[] = [];
 
+    noticeChannel: NoticeChannel[];
+
     shotLoading = false;
 
     @ViewChild('iconPopover') iconPopover!: NzPopoverComponent;
@@ -48,6 +52,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     constructor(private flowApiService: FlowApiService, private modal: NzModalService,
                 private dataHandlerService: DataHandlerService,
                 private msg: NzMessageService,
+                private dataService: DataService,
                 private upmsDataService: UpmsDataService) {
 
     }
@@ -80,6 +85,9 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         });
         this.flowApiService.flexNodes().subscribe(res => {
             this.flexNodes = res.data;
+        })
+        this.dataService.noticeChannels().subscribe(res => {
+            this.noticeChannel = res.data;
         })
     }
 
@@ -172,6 +180,10 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             this.msg.warning('请选择提交权限');
             return;
         }
+        if (!this.flowConfig.channels || this.flowConfig.channels.length === 0) {
+            this.msg.warning('请选择通知渠道');
+            return;
+        }
         this.flowApiService.ruleCheck(this.flowConfig.rule).subscribe(res => {
             if (res.success) {
                 if (this.flowId) {
@@ -216,7 +228,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         });
         const link = document.createElement('a');
         link.href = canvas.toDataURL('image/png');
-        link.download = `${this.flowConfig.name||'flow'}.png`;
+        link.download = `${this.flowConfig.name || 'flow'}.png`;
         link.click();
         link.remove()
         this.shotLoading = false;

@@ -18,6 +18,7 @@ export class FlowConfig {
     name: string;
     remark: string;
     erupt: string;
+    channels: string[] = [];
     icon: string = 'fa fa-user';
     color: string = '#1890ff';
     flowGroup: FlowGroup;
