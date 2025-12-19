@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, Input, OnInit, Renderer2} from '@angular/core';
 import {MultiChoiceEnum} from "../../model/erupt.enum";
 import {EruptModel} from "../../model/erupt.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
@@ -9,7 +9,7 @@ import {DataService} from "@shared/service/data.service";
     templateUrl: './multi-choice.component.html',
     styleUrls: ['./multi-choice.component.less']
 })
-export class MultiChoiceComponent implements OnInit {
+export class MultiChoiceComponent implements OnInit, AfterViewChecked {
 
     @Input() eruptModel: EruptModel;
 
@@ -23,7 +23,7 @@ export class MultiChoiceComponent implements OnInit {
 
     multiChoiceEnum = MultiChoiceEnum;
 
-    constructor(private dataService: DataService) {
+    constructor(private dataService: DataService, private el: ElementRef, private renderer: Renderer2) {
 
     }
 
@@ -45,6 +45,29 @@ export class MultiChoiceComponent implements OnInit {
                     }
                 })
             })
+        }
+    }
+
+    ngAfterViewChecked(): void {
+        this.applyTagColors();
+    }
+
+    applyTagColors(): void {
+        if (this.eruptField.eruptFieldJson.edit.multiChoiceType.type === this.multiChoiceEnum.SELECT) {
+            const selectElement = this.el.nativeElement.querySelector('.multi-choice-select');
+            if (selectElement && this.eruptField.eruptFieldJson.edit.$value) {
+                const tags = selectElement.querySelectorAll('.ant-select-selection-item');
+                tags.forEach((tag: HTMLElement) => {
+                    const content = tag.querySelector('.ant-select-selection-item-content');
+                    if (content) {
+                        const label = content.textContent?.trim();
+                        const matchedItem = this.eruptField.componentValue?.find(vl => vl.label === label);
+                        if (matchedItem?.color && !matchedItem.disable) {
+                            this.renderer.setStyle(content, 'color', matchedItem.color);
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -70,6 +93,14 @@ export class MultiChoiceComponent implements OnInit {
 
     checkboxChange(e: any[]) {
         this.eruptField.eruptFieldJson.edit.$value = e;
+    }
+
+    getValueColor(value: any): string {
+        const item = this.eruptField.componentValue?.find(vl => {
+            const vlValue = this.isNumeric(vl.value) ? parseInt(vl.value) : vl.value;
+            return vlValue == value;
+        });
+        return item?.color || '';
     }
 
     protected readonly parseInt = parseInt;
