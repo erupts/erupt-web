@@ -30,6 +30,19 @@
 
         <!-- 右侧流程内容 -->
         <div class="content-area">
+            <!-- 搜索框 -->
+            <div class="search-container" *ngIf="!loading">
+                <nz-input-group nzPrefixIcon="search" nzSize="default">
+                    <input
+                        type="text"
+                        nz-input
+                        style="width: 200px"
+                        [(ngModel)]="searchKeyword"
+                        (ngModelChange)="onSearchChange()"
+                        placeholder="搜索流程名称...">
+                </nz-input-group>
+            </div>
+
             <!-- 加载状态 -->
             <div class="loading-container" *ngIf="loading">
                 <nz-spin nzSize="large">
@@ -40,16 +53,20 @@
             <!-- 流程内容 -->
             <div class="flow-groups" *ngIf="!loading">
                 <!-- 空状态 -->
-                <div class="empty-state" *ngIf="getAllFlowGroups().length === 0">
+                <div class="empty-state" *ngIf="filteredFlowGroups.length === 0">
                     <i nz-icon nzType="inbox" nzTheme="outline"></i>
-                    <p>暂无流程数据</p>
-                    <button nz-button nzType="primary" (click)="refreshData()">
+                    <p *ngIf="!searchKeyword">暂无流程数据</p>
+                    <p *ngIf="searchKeyword">未找到匹配的流程</p>
+                    <button nz-button nzType="primary" (click)="refreshData()" *ngIf="!searchKeyword">
                         刷新数据
+                    </button>
+                    <button nz-button nzType="default" (click)="searchKeyword = ''; onSearchChange()" *ngIf="searchKeyword">
+                        清除搜索
                     </button>
                 </div>
 
                 <!-- 流程分组 -->
-                <div class="group-section" *ngFor="let group of getFlowGroups()">
+                <div class="group-section" *ngFor="let group of filteredFlowGroups">
                     <h3 class="group-title">
                         {{ group.title }}
                         <span class="group-count">({{ group.flows.length }})</span>
