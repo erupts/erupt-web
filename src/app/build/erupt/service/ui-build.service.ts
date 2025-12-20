@@ -112,6 +112,17 @@ export class UiBuildService {
                         }
                     };
                     break;
+                case EditType.CHOICE:
+                    obj.format = (item: any) => {
+                        if (item[view.column] != null) {
+                            return "<span style='color:" + view.eruptFieldModel.choiceLabelMap.get(item[view.column] + "")?.color + "'>"
+                                + item[view.column]
+                                + "</span>";
+                        } else {
+                            return "";
+                        }
+                    };
+                    break;
             }
 
             obj.width = titleWidth;
