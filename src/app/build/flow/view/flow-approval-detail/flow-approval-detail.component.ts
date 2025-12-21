@@ -8,7 +8,7 @@ import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
-import {NodeRule} from "@flow/model/node.model";
+import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {AddSignType} from "@flow/model/fllw-approval.model";
 import {KV} from "../../../erupt/model/util.model";
@@ -53,6 +53,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     transferModalVisible: boolean = false;
     addSignModalVisible: boolean = false;
     returnModalVisible: boolean = false;
+    resubmitModalVisible: boolean = false;
 
     reason: string;
     approveSignature: string = null;
@@ -364,6 +365,24 @@ export class FlowApprovalDetailComponent implements OnInit {
         })
     }
 
+    // 重新提交
+    resubmit() {
+        this.reason = null;
+        this.resubmitModalVisible = true;
+    }
+
+    // 提交重新提交
+    submitResubmit() {
+        let data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
+        this.flowInstanceApiService.resubmit(this.currTask.id, this.reason, data).subscribe(res => {
+            this.resubmitModalVisible = false;
+            this.reason = null;
+            this.message.success('提交成功');
+            this.selectedInstance = null;
+            this.loadInstanceDetail(this.selectedInstance, true);
+        })
+    }
+
     modify() {
         let data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
         this.flowInstanceApiService.updateData(this.selectedInstance.id, data).subscribe({
@@ -517,4 +536,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     protected readonly getAvatarColor = getAvatarColor;
 
     protected readonly FormAccessEnum = FormAccessEnum;
+
+    protected readonly NodeType = NodeType;
+
 }
