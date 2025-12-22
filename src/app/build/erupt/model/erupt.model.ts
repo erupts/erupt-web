@@ -20,7 +20,6 @@ export interface Erupt {
     power: Power;
     tree: Tree;
     linkTree: LinkTree;
-    cardView: CardView;
     rowOperation: RowOperation[];
     drills: Drill[];
     layout: Layout;
@@ -32,7 +31,7 @@ export interface Vis {
     code: string;
     title: string;
     desc: string;
-    fields: string[];
+    excludeFields: string[];
     type: VisType;
     cardView: CardView;
     ganttView: GanttView;

@@ -28,20 +28,22 @@
                     </div>
                 </ng-template>
             </ngx-gantt-column>
-            <ng-container *ngIf="vis.fields.length">
-                <ng-container *ngFor="let field of vis.fields; let first = first">
-                    <ngx-gantt-column [name]="getEruptField(field)?.edit?.title">
-                        <ng-template #cell let-item="item">
-                            <div (click)="columnMap.get(field)?.click(item?.origin)" style="cursor: pointer;">
-                                <ng-container *ngIf="columnMap.get(field)?.format">
-                                    <div style="text-align: center" [innerHTML]="(columnMap.get(field)?.format(item?.origin,columnMap.get(field),null)||'')|safeHtml"></div>
-                                </ng-container>
-                                <ng-container *ngIf="!columnMap.get(field)?.format">
-                                    <div [innerHTML]="(item?.origin?.[field]==null?'':item?.origin?.[field])|safeHtml"></div>
-                                </ng-container>
-                            </div>
-                        </ng-template>
-                    </ngx-gantt-column>
+            <ng-container *ngFor="let field of eruptBuildModel.eruptModel.eruptFieldModels; let first = first">
+                <ng-container *ngFor="let view of field.eruptFieldJson.views">
+                    <ng-container *ngIf="vis.excludeFields.indexOf(view.column) === -1">
+                        <ngx-gantt-column [name]="view.title">
+                            <ng-template #cell let-item="item">
+                                <div (click)="columnMap.get(field.fieldName)?.click(item?.origin)" style="cursor: pointer;">
+                                    <ng-container *ngIf="columnMap.get(field.fieldName)?.format">
+                                        <div style="text-align: center" [innerHTML]="(columnMap.get(field.fieldName)?.format(item?.origin,columnMap.get(field.fieldName),null)||'')|safeHtml"></div>
+                                    </ng-container>
+                                    <ng-container *ngIf="!columnMap.get(field.fieldName)?.format">
+                                        <div [innerHTML]="(item?.origin[view.column]==null?'':item?.origin[view.column])|safeHtml"></div>
+                                    </ng-container>
+                                </div>
+                            </ng-template>
+                        </ngx-gantt-column>
+                    </ng-container>
                 </ng-container>
             </ng-container>
             <ngx-gantt-column [width]="50" *ngIf="eruptBuildModel.eruptModel.eruptJson.power.edit">
