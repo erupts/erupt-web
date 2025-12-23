@@ -70,8 +70,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     @Input() selectedInstance: FlowInstance;
 
-    @Input() selectedView: ApprovalView = ApprovalView.TODO;
-
+    @Input() approvalView: ApprovalView = ApprovalView.TODO;
 
     @Output() reloadFlows = new EventEmitter<void>();
 
@@ -87,7 +86,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         if (no) {
             flowInstanceApiService.detail(no).subscribe({
                 next: (res) => {
-                    this.onSelectFlow(ApprovalView.TODO, res.data);
+                    this.onSelectFlow(ApprovalView.ADMIN, res.data);
                 }
             })
         }
@@ -97,7 +96,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     }
 
     onSelectFlow(selectedView: ApprovalView, selectedInstance: FlowInstance) {
-        this.selectedView = selectedView;
+        this.approvalView = selectedView;
         this.selectedInstance = selectedInstance;
         if (this.selectedInstance) {
             this.loadInstanceDetail(selectedInstance);
@@ -164,8 +163,8 @@ export class FlowApprovalDetailComponent implements OnInit {
         });
 
         this.getDataHistories(flow.id);
-        if (this.selectedView == ApprovalView.TODO) {
-            this.flowInstanceApiService.currTask(flow.id, this.selectedView).subscribe({
+        if (this.approvalView == ApprovalView.TODO) {
+            this.flowInstanceApiService.currTask(flow.id, this.approvalView).subscribe({
                 next: (res) => {
                     this.currTask = res.data;
                     this.flowInstanceApiService.taskNodeInfo(res.data.id).subscribe({

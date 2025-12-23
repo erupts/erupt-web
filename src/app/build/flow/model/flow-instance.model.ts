@@ -5,7 +5,8 @@ export enum ApprovalView {
     TODO = 'TODO',
     DONE = 'DONE',
     CC = 'CC',
-    CREATED = 'CREATED'
+    CREATED = 'CREATED',
+    ADMIN = 'ADMIN'
 }
 
 export enum FlowTurn {

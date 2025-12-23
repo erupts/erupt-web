@@ -534,6 +534,10 @@ export class DataService {
         return this._http.get<R<number>>(RestPath.erupt + "/notice/unread-count");
     }
 
+    noticeReadAllCount() {
+        return this._http.get<R<void>>(RestPath.erupt + "/notice/read-all");
+    }
+
     announcement(page: number, size: number) {
         return this._http.get<R<SimplePage<Announcement>>>(RestPath.erupt + "/announcement/list", {
             page, size
