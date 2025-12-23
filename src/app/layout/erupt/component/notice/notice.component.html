@@ -13,12 +13,23 @@
     <!-- 消息列表视图 -->
     <div class="notice-content">
         <div class="channel-segmented">
-            <nz-segmented [nzBlock]="true"
-                          [nzOptions]="channelOptions"
-                          [(ngModel)]="selectedChannelIndex"
-                          (ngModelChange)="onChannelChange($event)"
-                          [nzSize]="'small'">
-            </nz-segmented>
+            <div class="channel-header">
+                <nz-segmented [nzBlock]="true"
+                              [nzOptions]="channelOptions"
+                              [(ngModel)]="selectedChannelIndex"
+                              (ngModelChange)="onChannelChange($event)"
+                              [nzSize]="'small'">
+                </nz-segmented>
+                <button nz-button
+                        nzType="link"
+                        nzSize="small"
+                        *ngIf="selectedChannelIndex === 0 && messages.length > 0"
+                        (click)="markAllAsRead()"
+                        class="read-all-btn">
+                    <span nz-icon nzType="check" nzTheme="outline"></span>
+                    {{ 'notice.readAll' | translate }}
+                </button>
+            </div>
         </div>
 
         <!-- 消息列表 -->

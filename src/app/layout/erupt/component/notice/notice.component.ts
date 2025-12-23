@@ -176,5 +176,31 @@ export class NoticeComponent implements OnInit, OnDestroy {
         });
     }
 
+    // 全部已读
+    markAllAsRead(): void {
+        this.modal.confirm({
+            nzTitle: this.i18nService.fanyi('notice.confirm.title'),
+            nzContent: this.i18nService.fanyi('notice.confirm.readAll'),
+            nzOnOk: () => {
+                return new Promise((resolve, reject) => {
+                    this.dataService.noticeReadAllCount()
+                        .pipe(takeUntil(this.destroy$))
+                        .subscribe({
+                            next: () => {
+                                // 将当前页面所有未读消息标记为已读
+                                this.messages.forEach((msg: NoticeMessageDetail) => {
+                                    msg.status = NoticeStatus.READ;
+                                });
+                                resolve(true);
+                            },
+                            error: (err) => {
+                                reject(err);
+                            }
+                        });
+                });
+            }
+        });
+    }
+
     protected readonly NoticeStatus = NoticeStatus;
 }

@@ -47,9 +47,9 @@
                 <div class="tab-content">
                     <div class="section" *ngIf="eruptBuild">
                         <ng-container *ngIf="!dataDeleted">
-                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== selectedView"
+                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== approvalView"
                                              [formAccesses]="nodeInfo?.prop?.formAccesses || {}"
-                                             [defaultFormAccess]="nodeInfo.type==NodeType.START ? FormAccessEnum.DEFAULT : FormAccessEnum.READONLY"></erupt-flow-form>
+                                             [defaultFormAccess]="nodeInfo?.type==NodeType.START ? FormAccessEnum.DEFAULT : FormAccessEnum.READONLY"></erupt-flow-form>
                         </ng-container>
                         <ng-container *ngIf="dataDeleted">
                             <div style="text-align: center;margin: 100px 0;color:#F44336">
@@ -246,14 +246,14 @@
     <!-- 固定在右侧底部的功能按钮 -->
     <div class="fixed-bottom-actions" *ngIf="!dataDeleted">
         <div class="action-buttons">
-            <ng-container *ngIf="ApprovalView.TODO === selectedView && currTask">
-                <ng-container *ngIf="nodeInfo.type==NodeType.START">
+            <ng-container *ngIf="ApprovalView.TODO === approvalView && currTask">
+                <ng-container *ngIf="nodeInfo?.type==NodeType.START">
                     <button nz-button nzSize="default" nzType="primary" nzGhost class="action-button" (click)="resubmit()">
                         <span nz-icon nzType="check" nzTheme="outline"></span>
                         重新提交
                     </button>
                 </ng-container>
-                <ng-container *ngIf="nodeInfo.type==NodeType.APPROVAL">
+                <ng-container *ngIf="nodeInfo?.type==NodeType.APPROVAL">
                     <button nz-button nzSize="default" nzType="primary" nzGhost (click)="approve()" class="action-button">
                         <span nz-icon nzType="check" nzTheme="outline"></span>
                         同意
@@ -284,7 +284,7 @@
                     </button>
                 </ng-container>
             </ng-container>
-            <ng-container *ngIf="ApprovalView.CREATED === selectedView">
+            <ng-container *ngIf="ApprovalView.CREATED === approvalView">
                 <button nz-button nzSize="default" (click)="urge()" class="action-button"
                         *ngIf="!selectedInstance.finishTime">
                     <span nz-icon nzType="bell" nzTheme="outline"></span>
