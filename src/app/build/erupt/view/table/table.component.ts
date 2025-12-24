@@ -625,7 +625,7 @@ export class TableComponent implements OnInit, OnDestroy {
                         nzMaskClosable: true,
                         // @ts-ignore
                         nzPlacement: "right",
-                        nzWidth: "40%",
+                        nzWidth: "60%",
                         nzBodyStyle: {
                             padding: 0
                         },
