@@ -42,6 +42,14 @@ export enum ApprovalStrategy {
     ANY_APPROVE = 'ANY_APPROVE',
 }
 
+export enum NobodyStrategy {
+    /** 无审批人时，转交给管理员 */
+    REDIRECT_TO_ADMIN = 'REDIRECT_TO_ADMIN',
+
+    /** 无审批人时，重定向到指定审批人 */
+    REDIRECT_TO_SPECIFIED_USER = 'REDIRECT_TO_SPECIFIED_USER',
+}
+
 export class ApproveNode {
 
     reviewUserModes: ReviewModeValue[] = [
@@ -54,6 +62,10 @@ export class ApproveNode {
     formAccesses: Record<string, FormAccessEnum> = {};
 
     approvalStrategy: ApprovalStrategy = ApprovalStrategy.ANY_APPROVE;
+
+    nobodyStrategy: NobodyStrategy = NobodyStrategy.REDIRECT_TO_ADMIN;
+
+    nobodyRedirectToUser: number;
 
     /** 允许转交 */
     allowTransfer: boolean = true;
