@@ -143,7 +143,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
                 type: NodeType.GATEWAY_EXCLUSION,
                 name: this.name(),
                 branches: [
-                    this.createBranch(1),
+                    this.createBranch(0),
                     {
                         id: geneNodeId(),
                         type: NodeType.GATEWAY_BRANCH,
@@ -162,8 +162,8 @@ export class GatewayNodeComponent extends ANode implements OnInit {
                 type: NodeType.GATEWAY_PARALLEL,
                 name: this.name(),
                 branches: [
-                    this.createBranch(1),
-                    this.createBranch(2)
+                    this.createBranch(0),
+                    this.createBranch(1)
                 ]
             }
         } else {
@@ -172,7 +172,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
                 type: NodeType.GATEWAY_INCLUSIVE,
                 name: this.name(),
                 branches: [
-                    this.createBranch(1),
+                    this.createBranch(0),
                     {
                         id: geneNodeId(),
                         type: NodeType.GATEWAY_BRANCH,
@@ -200,7 +200,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
             return {
                 id: geneNodeId(),
                 type: NodeType.GATEWAY_BRANCH,
-                name: '互斥条件' + i,
+                name: '互斥条件' + (i + 1),
                 prop: {
                     type: BranchType.CONDITION,
                     conditions: []
@@ -211,7 +211,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
             return {
                 id: geneNodeId(),
                 type: NodeType.GATEWAY_BRANCH,
-                name: '并行路径' + i,
+                name: '并行路径' + (i + 1),
                 prop: {
                     type: BranchType.PARALLEL_CONDITION,
                     conditions: []
@@ -222,7 +222,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
             return {
                 id: geneNodeId(),
                 type: NodeType.GATEWAY_BRANCH,
-                name: '包容条件' + i,
+                name: '包容条件' + (i + 1),
                 prop: {
                     type: BranchType.CONDITION,
                     conditions: []

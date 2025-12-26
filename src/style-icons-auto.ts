@@ -35,6 +35,7 @@ import {
     FullscreenExitOutline,
     FullscreenOutline,
     GlobalOutline,
+    HolderOutline,
     IdcardOutline,
     ImportOutline,
     InboxOutline,
@@ -144,5 +145,6 @@ export const ICONS_AUTO = [
     NodeIndexOutline,
     EyeTwoTone,
     EditTwoTone,
-    AimOutline
+    AimOutline,
+    HolderOutline
 ];

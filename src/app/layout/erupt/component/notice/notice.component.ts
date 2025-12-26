@@ -3,11 +3,12 @@ import {DataService} from '@shared/service/data.service';
 import {Announcement, NoticeChannel, NoticeMessageDetail, NoticeStatus} from '@shared/model/user.model';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {NzDrawerRef} from 'ng-zorro-antd/drawer';
+import {NzDrawerRef, NzDrawerService} from 'ng-zorro-antd/drawer';
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NoticeDetailComponent} from "../notice-detail/notice-detail.component";
 import {I18NService} from "@core";
 import {AnnouncementDetailComponent} from "../announcement-detail/announcement-detail.component";
+import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 // 导出枚举以便在模板中使用
 export {NoticeStatus};
@@ -35,7 +36,8 @@ export class NoticeComponent implements OnInit, OnDestroy {
         private dataService: DataService,
         private drawerRef: NzDrawerRef,
         private i18nService: I18NService,
-        @Inject(NzModalService) private modal: NzModalService
+        @Inject(NzModalService) private modal: NzModalService,
+        private drawerService: NzDrawerService
     ) {
     }
 
@@ -154,6 +156,50 @@ export class NoticeComponent implements OnInit, OnDestroy {
     // 关闭抽屉
     close(): void {
         this.drawerRef.close();
+    }
+
+    // 打开 URL 链接
+    openUrlDrawer(url: string, title: string): void {
+        this.drawerService.create({
+            nzTitle: title,
+            nzContent: EruptIframeComponent,
+            nzContentParams: {
+                url: url,
+                height: "100%",
+                width: '100%'
+            },
+            nzWidth: '45%',
+            nzBodyStyle: {
+                padding: 0
+            },
+            nzMaskClosable: true
+        });
+    }
+
+    // 全部已读
+    markAllAsRead(): void {
+        this.modal.confirm({
+            nzTitle: this.i18nService.fanyi('notice.confirm.title'),
+            nzContent: this.i18nService.fanyi('notice.confirm.readAll'),
+            nzOnOk: () => {
+                return new Promise((resolve, reject) => {
+                    this.dataService.noticeReadAllCount()
+                        .pipe(takeUntil(this.destroy$))
+                        .subscribe({
+                            next: () => {
+                                // 将当前页面所有未读消息标记为已读
+                                this.messages.forEach((msg: NoticeMessageDetail) => {
+                                    msg.status = NoticeStatus.READ;
+                                });
+                                resolve(true);
+                            },
+                            error: (err) => {
+                                reject(err);
+                            }
+                        });
+                });
+            }
+        });
     }
 
     protected readonly NoticeStatus = NoticeStatus;

@@ -26,6 +26,8 @@ export class GanttComponent implements OnChanges, OnInit {
 
     @Output() onUpdate = new EventEmitter<any>();
 
+    @Output() onSelectionChange = new EventEmitter<any[]>();
+
     @ViewChild('gantt', {static: false}) ganttComponent: NgxGanttComponent;
 
     clientHeight: number = document.body.clientHeight;
@@ -35,6 +37,10 @@ export class GanttComponent implements OnChanges, OnInit {
     items: GanttItem[] = [];
 
     groups: GanttGroup[] = [];
+
+    editColumnWidth: number = 0; // 编辑列宽度，根据树层级动态计算
+
+    selectedItemIds: Set<string> = new Set<string>(); // 存储选中的项目ID
 
     protected readonly GanttViewType = GanttViewType;
 
@@ -67,9 +73,124 @@ export class GanttComponent implements OnChanges, OnInit {
         this.onEdit.emit(item.id)
     }
 
+    /**
+     * 切换项目的选中状态
+     * @param item 甘特图项目
+     */
+    toggleSelection(item: GanttItem, event?: Event): void {
+        const itemId = item.id;
+        if (this.selectedItemIds.has(itemId)) {
+            this.selectedItemIds.delete(itemId);
+            // 取消选中时，同时取消选中所有子节点
+            this.unselectChildren(item);
+        } else {
+            this.selectedItemIds.add(itemId);
+        }
+        this.emitSelectionChange();
+    }
+
+    /**
+     * 取消选中所有子节点
+     * @param item 父节点
+     */
+    private unselectChildren(item: GanttItem): void {
+        if (item.children && item.children.length > 0) {
+            item.children.forEach(child => {
+                this.selectedItemIds.delete(child.id);
+                this.unselectChildren(child);
+            });
+        }
+    }
+
+    /**
+     * 检查项目是否被选中
+     * @param item 甘特图项目
+     * @returns 是否选中
+     */
+    isSelected(item: GanttItem): boolean {
+        return this.selectedItemIds.has(item.id);
+    }
+
+    /**
+     * 检查所有项目（包括子节点）是否都被选中
+     * @returns 是否全部选中
+     */
+    isAllSelected(): boolean {
+        const checkAllSelected = (items: GanttItem[]): boolean => {
+            return items.every(item => {
+                const itemSelected = this.selectedItemIds.has(item.id);
+                if (item.children && item.children.length > 0) {
+                    return itemSelected && checkAllSelected(item.children);
+                }
+                return itemSelected;
+            });
+        };
+        return this.items.length > 0 && checkAllSelected(this.items);
+    }
+
+    /**
+     * 检查是否有部分项目被选中（用于显示半选状态）
+     * @returns 是否有部分选中
+     */
+    isIndeterminate(): boolean {
+        const hasSelected = (items: GanttItem[]): boolean => {
+            return items.some(item => {
+                const itemSelected = this.selectedItemIds.has(item.id);
+                if (item.children && item.children.length > 0) {
+                    return itemSelected || hasSelected(item.children);
+                }
+                return itemSelected;
+            });
+        };
+        return hasSelected(this.items) && !this.isAllSelected();
+    }
+
+    /**
+     * 全选/取消全选
+     * @param checked 是否选中
+     */
+    toggleSelectAll(checked: boolean): void {
+        const selectAllItems = (items: GanttItem[]) => {
+            items.forEach(item => {
+                if (checked) {
+                    this.selectedItemIds.add(item.id);
+                } else {
+                    this.selectedItemIds.delete(item.id);
+                }
+                if (item.children && item.children.length > 0) {
+                    selectAllItems(item.children);
+                }
+            });
+        };
+        selectAllItems(this.items);
+        this.emitSelectionChange();
+    }
+
+    /**
+     * 收集所有选中的行数据并发送给上级组件
+     */
+    private emitSelectionChange(): void {
+        const selectedRows: any[] = [];
+        const collectSelectedRows = (items: GanttItem[]) => {
+            items.forEach(item => {
+                if (this.selectedItemIds.has(item.id) && item.origin) {
+                    selectedRows.push(item.origin);
+                }
+                if (item.children && item.children.length > 0) {
+                    collectSelectedRows(item.children);
+                }
+            });
+        };
+        collectSelectedRows(this.items);
+        this.onSelectionChange.emit(selectedRows);
+    }
+
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['data']) {
             this.convertDataToGanttItems();
+            // 数据变化时清空选中状态
+            this.selectedItemIds.clear();
+            this.emitSelectionChange();
         }
     }
 
@@ -172,9 +293,33 @@ export class GanttComponent implements OnChanges, OnInit {
                 }
             });
             this.items = rootItems;
+            // 计算树的最大深度并更新列宽度
+            const maxDepth = this.calculateMaxDepth(rootItems);
+            this.editColumnWidth = (90 + maxDepth * 20);
         } else {
             this.items = allItems;
+            this.editColumnWidth = 90;
         }
+    }
+
+    /**
+     * 计算树的最大深度
+     * @param items 甘特图项目数组
+     * @param currentDepth 当前深度（从1开始）
+     * @returns 最大深度
+     */
+    private calculateMaxDepth(items: GanttItem[], currentDepth: number = 1): number {
+        if (!items || items.length === 0) {
+            return currentDepth - 1;
+        }
+        let maxDepth = currentDepth;
+        items.forEach(item => {
+            if (item.children && item.children.length > 0) {
+                const childDepth = this.calculateMaxDepth(item.children, currentDepth + 1);
+                maxDepth = Math.max(maxDepth, childDepth);
+            }
+        });
+        return maxDepth;
     }
 
     private parseDate(dateValue: any): number {

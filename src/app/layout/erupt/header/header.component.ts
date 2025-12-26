@@ -15,6 +15,7 @@ import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NoticeComponent} from "../component/notice/notice.component";
 import {NzNotificationService} from "ng-zorro-antd/notification";
+import {AnnouncementDetailComponent} from "../component/announcement-detail/announcement-detail.component";
 
 @Component({
     selector: "layout-header",
@@ -95,6 +96,29 @@ export class HeaderComponent implements OnInit {
         if (this.isEruptNotice) {
             this.getNoticeUnreadCount();
             window["eruptNotice"] = this.eruptNotice.bind(this);
+            this.dataService.announcementPopups().subscribe(res => {
+                if (res.data.length > 0) {
+                    for (let ann of res.data) {
+                        let ref = this.modal.create({
+                            nzWrapClassName: "modal-lg",
+                            nzTitle: ann.title,
+                            nzBodyStyle: {
+                                padding: '0'
+                            },
+                            nzFooter: null,
+                            nzContent: AnnouncementDetailComponent,
+                            nzKeyboard: false,
+                            nzMaskClosable: false,
+                            nzOnCancel: () => {
+                                this.dataService.announcementMarkRead(ann.id).subscribe(res => {
+                                    ref.close();
+                                });
+                            }
+                        });
+                        ref.componentInstance.announcement = ann;
+                    }
+                }
+            });
         }
     }
 
@@ -104,7 +128,7 @@ export class HeaderComponent implements OnInit {
         })
     }
 
-    eruptNotice(title: string, content: string) {
+    eruptNotice(id: number, title: string, content: string) {
         this.unreadCount++;
         this.notification.create(
             'blank',

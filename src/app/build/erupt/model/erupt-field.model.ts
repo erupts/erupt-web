@@ -7,6 +7,7 @@ export interface EruptFieldModel {
     fieldName: string;
     eruptFieldJson: EruptField;
     choiceMap?: Map<String, VL>;
+    choiceLabelMap?: Map<String, VL>;
     componentValue?: any;
 
     value?: any;
@@ -234,6 +235,7 @@ export interface MapType {
 export interface VL {
     value: string;
     label: string;
+    color: string;
     desc?: string;
     disable?: boolean;
 }

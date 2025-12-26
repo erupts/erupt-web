@@ -1,6 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {DataService} from "@shared/service/data.service";
 import {NoticeMessageDetail} from "@shared/model/user.model";
+import {NzDrawerService} from 'ng-zorro-antd/drawer';
+import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 @Component({
     selector: 'app-notice-detail',
@@ -13,7 +15,10 @@ export class NoticeDetailComponent implements OnInit {
 
     noticeMessageDetail: NoticeMessageDetail;
 
-    constructor(private dataService: DataService,) {
+    constructor(
+        private dataService: DataService,
+        private drawerService: NzDrawerService
+    ) {
     }
 
     ngOnInit(): void {
@@ -27,5 +32,22 @@ export class NoticeDetailComponent implements OnInit {
             });
     }
 
+    // 打开 URL 链接
+    openUrlDrawer(url: string, title: string): void {
+        this.drawerService.create({
+            nzTitle: title,
+            nzContent: EruptIframeComponent,
+            nzContentParams: {
+                url: url,
+                height: "100%",
+                width: '100%'
+            },
+            nzWidth: '45%',
+            nzBodyStyle: {
+                padding: 0
+            },
+            nzMaskClosable: true
+        });
+    }
 
 }

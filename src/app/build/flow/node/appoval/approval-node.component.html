@@ -43,6 +43,19 @@
             </button>
             <nz-divider style="margin: 12px 0"></nz-divider>
             <div>
+                <h4>审批人不存在时</h4>
+                <nz-radio-group [(ngModel)]="approveNode.nobodyStrategy">
+                    <label nz-radio [nzValue]="NobodyStrategy.REDIRECT_TO_ADMIN">转交给管理员</label>
+                    <label nz-radio [nzValue]="NobodyStrategy.REDIRECT_TO_SPECIFIED_USER">转交到指定审批人</label>
+                    <div style="width: 100%;margin-top: 8px" *ngIf="approveNode.nobodyStrategy == NobodyStrategy.REDIRECT_TO_SPECIFIED_USER">
+                        <nz-select style="width: 100%" nzShowSearch [(ngModel)]="approveNode.nobodyRedirectToUser">
+                            <nz-option *ngFor="let org of upmsDataService.upmsData.users" [nzValue]="org.key" [nzLabel]="org.value"/>
+                        </nz-select>
+                    </div>
+                </nz-radio-group>
+            </div>
+            <nz-divider style="margin: 12px 0"></nz-divider>
+            <div>
                 <h4>多人审批时使用的审批方式</h4>
                 <nz-radio-group [(ngModel)]="approveNode.approvalStrategy">
                     <label style="width: 100%" nz-radio [nzValue]="ApprovalStrategy.ANY_APPROVE">或签（一名审批人同意即可）</label>

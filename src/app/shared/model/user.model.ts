@@ -36,6 +36,7 @@ export interface NoticeMessageDetail {
 export interface NoticeMessage {
     title: string;
     content: string;
+    url: string;
     noticeScene: NoticeScene;
     createTime: string;
 }
