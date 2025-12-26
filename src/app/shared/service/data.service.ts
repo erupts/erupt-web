@@ -25,9 +25,12 @@ export class DataService {
 
     public excelImport: string = RestPath.excel + "/import/";
 
+    private static tokenService: ITokenService
+
     constructor(private _http: _HttpClient,
                 private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
+        DataService.tokenService = this.tokenService;
     }
 
     static postExcelFile(url: string, params?: any) { //params是post请求需要的参数，url是请求url地址
@@ -62,23 +65,18 @@ export class DataService {
         }
     }
 
-    static downloadAttachment(path: string): string {
+    static previewAttachment(path: string, download: boolean = false): string {
+        // let token = "_token=" + DataService.tokenService.get().token;
         if (path && (path.startsWith("http://") || path.startsWith("https://"))) {
             return path;
         } else if (WindowModel.fileDomain) {
             return WindowModel.fileDomain + path;
         } else {
-            return RestPath.file + "/download-attachment" + path;
-        }
-    }
-
-    static previewAttachment(path: string): string {
-        if (path && (path.startsWith("http://") || path.startsWith("https://"))) {
-            return path;
-        } else if (WindowModel.fileDomain) {
-            return WindowModel.fileDomain + path;
-        } else {
-            return RestPath.eruptAttachment + path;
+            if (download) {
+                return RestPath.file + "/download-attachment" + path;
+            } else {
+                return RestPath.eruptAttachment + path;
+            }
         }
     }
 

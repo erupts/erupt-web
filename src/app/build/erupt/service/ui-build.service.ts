@@ -627,7 +627,7 @@ export class UiBuildService {
         if ($paths.length == 1) {
             if (viewType == ViewType.DOWNLOAD || viewType == ViewType.ATTACHMENT) {
                 const a = document.createElement('a');
-                a.href = DataService.downloadAttachment(path);
+                a.href = DataService.previewAttachment(path, true);
                 a.click();
                 a.remove();
             } else if (viewType == ViewType.ATTACHMENT_DIALOG) {
