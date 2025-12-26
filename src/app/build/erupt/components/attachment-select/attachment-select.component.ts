@@ -21,7 +21,7 @@ export class AttachmentSelectComponent {
 
     open(path) {
         if (this.view.viewType == ViewType.DOWNLOAD || this.view.viewType == ViewType.ATTACHMENT) {
-            window.open(DataService.downloadAttachment(path));
+            window.open(DataService.previewAttachment(path, true));
         } else if (this.view.viewType == ViewType.ATTACHMENT_DIALOG) {
             let ref = this.modal.create({
                 nzWrapClassName: "modal-lg modal-body-nopadding",
