@@ -54,8 +54,10 @@ export class DataHandlerService {
             }
             if (field.componentValue) {
                 field.choiceMap = new Map<String, VL>();
+                field.choiceLabelMap = new Map<String, VL>()
                 for (let vl of field.componentValue) {
                     field.choiceMap.set(vl.value, vl);
+                    field.choiceLabelMap.set(vl.label, vl)
                 }
             }
             field.eruptFieldJson.edit.$value = field.value;

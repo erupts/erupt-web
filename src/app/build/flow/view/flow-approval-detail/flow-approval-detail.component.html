@@ -47,8 +47,9 @@
                 <div class="tab-content">
                     <div class="section" *ngIf="eruptBuild">
                         <ng-container *ngIf="!dataDeleted">
-                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== selectedView"
-                                             [formAccesses]="nodeInfo?.prop?.formAccesses || {}" [defaultFormAccess]="FormAccessEnum.READONLY"></erupt-flow-form>
+                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== approvalView"
+                                             [formAccesses]="nodeInfo?.prop?.formAccesses || {}"
+                                             [defaultFormAccess]="nodeInfo?.type==NodeType.START ? FormAccessEnum.DEFAULT : FormAccessEnum.READONLY"></erupt-flow-form>
                         </ng-container>
                         <ng-container *ngIf="dataDeleted">
                             <div style="text-align: center;margin: 100px 0;color:#F44336">
@@ -245,37 +246,45 @@
     <!-- 固定在右侧底部的功能按钮 -->
     <div class="fixed-bottom-actions" *ngIf="!dataDeleted">
         <div class="action-buttons">
-            <ng-container *ngIf="ApprovalView.TODO === selectedView && currTask">
-                <button nz-button nzSize="default" nzType="primary" nzGhost (click)="approve()" class="action-button">
-                    <span nz-icon nzType="check" nzTheme="outline"></span>
-                    同意
-                </button>
-                <button nz-button nzSize="default" nzDanger (click)="reject()" class="action-button">
-                    <span nz-icon nzType="close" nzTheme="outline"></span>
-                    拒绝
-                </button>
-                <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo?.prop?.allowCc" class="action-button">
-                    <span nz-icon nzType="send" nzTheme="outline"></span>
-                    抄送
-                </button>
-                <button nz-button nzSize="default" (click)="transfer()" *ngIf="nodeInfo?.prop?.allowTransfer" class="action-button">
-                    <span nz-icon nzType="swap" nzTheme="outline"></span>
-                    转交
-                </button>
-                <button nz-button nzSize="default" (click)="addSigner()" *ngIf="nodeInfo?.prop?.allowAddSign" class="action-button">
-                    <span nz-icon nzType="user-add" nzTheme="outline"></span>
-                    加签
-                </button>
-                <button nz-button nzSize="default" (click)="return()" *ngIf="nodeInfo?.prop?.allowReturn" class="action-button">
-                    <span nz-icon nzType="rollback" nzTheme="outline"></span>
-                    退回
-                </button>
-                <button nz-button nzSize="default" (click)="modify()" class="action-button" *ngIf="Object.keys(nodeInfo?.prop?.formAccesses||{}).length">
-                    <span nz-icon nzType="edit" nzTheme="outline"></span>
-                    修改
-                </button>
+            <ng-container *ngIf="ApprovalView.TODO === approvalView && currTask">
+                <ng-container *ngIf="nodeInfo?.type==NodeType.START">
+                    <button nz-button nzSize="default" nzType="primary" nzGhost class="action-button" (click)="resubmit()">
+                        <span nz-icon nzType="check" nzTheme="outline"></span>
+                        重新提交
+                    </button>
+                </ng-container>
+                <ng-container *ngIf="nodeInfo?.type==NodeType.APPROVAL">
+                    <button nz-button nzSize="default" nzType="primary" nzGhost (click)="approve()" class="action-button">
+                        <span nz-icon nzType="check" nzTheme="outline"></span>
+                        同意
+                    </button>
+                    <button nz-button nzSize="default" nzDanger (click)="reject()" class="action-button">
+                        <span nz-icon nzType="close" nzTheme="outline"></span>
+                        拒绝
+                    </button>
+                    <button nz-button nzSize="default" (click)="cc()" *ngIf="nodeInfo?.prop?.allowCc" class="action-button">
+                        <span nz-icon nzType="send" nzTheme="outline"></span>
+                        抄送
+                    </button>
+                    <button nz-button nzSize="default" (click)="transfer()" *ngIf="nodeInfo?.prop?.allowTransfer" class="action-button">
+                        <span nz-icon nzType="swap" nzTheme="outline"></span>
+                        转交
+                    </button>
+                    <button nz-button nzSize="default" (click)="addSigner()" *ngIf="nodeInfo?.prop?.allowAddSign" class="action-button">
+                        <span nz-icon nzType="user-add" nzTheme="outline"></span>
+                        加签
+                    </button>
+                    <button nz-button nzSize="default" (click)="return()" *ngIf="nodeInfo?.prop?.allowReturn" class="action-button">
+                        <span nz-icon nzType="rollback" nzTheme="outline"></span>
+                        退回
+                    </button>
+                    <button nz-button nzSize="default" (click)="modify()" class="action-button" *ngIf="Object.keys(nodeInfo?.prop?.formAccesses||{}).length">
+                        <span nz-icon nzType="edit" nzTheme="outline"></span>
+                        修改
+                    </button>
+                </ng-container>
             </ng-container>
-            <ng-container *ngIf="ApprovalView.CREATED === selectedView">
+            <ng-container *ngIf="ApprovalView.CREATED === approvalView">
                 <button nz-button nzSize="default" (click)="urge()" class="action-button"
                         *ngIf="!selectedInstance.finishTime">
                     <span nz-icon nzType="bell" nzTheme="outline"></span>
@@ -549,6 +558,31 @@
                     ></textarea>
                 </nz-input-group>
             </div>
+        </div>
+    </div>
+</nz-modal>
+
+<!-- 重新提交弹窗 -->
+<nz-modal
+    [(nzVisible)]="resubmitModalVisible"
+    nzTitle="重新提交"
+    nzOkText="确定"
+    nzCancelText="取消"
+    (nzOnOk)="submitResubmit()"
+    (nzOnCancel)="resubmitModalVisible = false"
+>
+    <div *nzModalContent>
+        <div class="modal-content">
+            <p class="modal-description">提交说明：</p>
+            <nz-input-group>
+                <textarea
+                    nz-input
+                    [(ngModel)]="reason"
+                    placeholder="提交说明..."
+                    [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+                    class="reason-textarea"
+                ></textarea>
+            </nz-input-group>
         </div>
     </div>
 </nz-modal>

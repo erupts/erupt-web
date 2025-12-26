@@ -69,9 +69,15 @@ export class RecursiveNodeComponent {
 
     // 添加网关分支
     addBranch() {
-        const index = this.node.branches.length - 1;
+        let hasElse: boolean = false;
+        for (let branch of this.node.branches) {
+            if (branch.prop?.type === BranchType.ELSE) {
+                hasElse = true;
+            }
+        }
+        const index = this.node.branches.length - (hasElse ? 1 : 0);
         const type = this.node.type;
-        this.node.branches.splice(index, 0, NodeMap[type].createBranch(index + 1));
+        this.node.branches.splice(index, 0, NodeMap[type].createBranch(index));
     }
 
     deepCopy(obj: any) {

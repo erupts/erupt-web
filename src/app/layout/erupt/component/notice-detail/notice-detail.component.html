@@ -5,6 +5,14 @@
         </div>
         <div style="padding: 12px;border: 1px solid #e8e8e8;">
             <nz-tag [nzColor]="'volcano'"> {{ noticeMessageDetail.noticeLog.noticeScene?.name }}</nz-tag>
+            <span nz-icon
+                  nzType="link"
+                  nzTheme="outline"
+                  *ngIf="noticeMessageDetail.noticeLog?.url"
+                  (click)="openUrlDrawer(noticeMessageDetail.noticeLog.url, noticeMessageDetail.noticeLog.title || '')"
+                  style="margin-left: 8px; cursor: pointer; color: #1890ff;"
+                  nz-tooltip>
+            </span>
             <span style="float: right">{{ noticeMessageDetail.noticeLog.createTime }}</span>
         </div>
     </ng-container>
