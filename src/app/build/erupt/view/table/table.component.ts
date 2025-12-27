@@ -188,6 +188,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 eruptParent: reference.parentEruptName || ''
             }
         }, (eb: EruptBuildModel) => {
+            this.vis = [];
             let erupt = eb.eruptModel.eruptJson;
             erupt.rowOperation = [];
             erupt.drills = [];

@@ -86,11 +86,17 @@
                     </ng-template>
                 </div>
 
+<!--                <div class="form-item" *ngIf="flowConfig.code">-->
+<!--                    <input nz-input class="form-input" [value]="flowConfig.code" [disabled]="true"/>-->
+<!--                </div>-->
+
                 <!-- 名称 -->
                 <div class="form-item">
                     <label class="form-label required">名称</label>
-                    <input nz-input placeholder="请输入名称" class="form-input" [(ngModel)]="flowConfig.name"
-                           name="name"/>
+                    <nz-input-group [nzAddOnBefore]="flowConfig.code">
+                        <input nz-input placeholder="请输入名称" class="form-input" [(ngModel)]="flowConfig.name"
+                               name="name"/>
+                    </nz-input-group>
                 </div>
 
                 <!-- 分组 -->
