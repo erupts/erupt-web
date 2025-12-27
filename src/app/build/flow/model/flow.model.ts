@@ -15,6 +15,7 @@ export enum FlowPermission {
 
 export class FlowConfig {
     id: number;
+    code: string;
     name: string;
     remark: string;
     erupt: string;
