@@ -31,7 +31,8 @@ export interface Vis {
     code: string;
     title: string;
     desc: string;
-    excludeFields: string[];
+    fields: string[];
+    fieldVisibility: FieldVisibility;
     type: VisType;
     cardView: CardView;
     ganttView: GanttView;
@@ -44,6 +45,11 @@ export enum VisType {
     CARD = "CARD",
     BOARD = "BOARD",
     TPL = "TPL"
+}
+
+export enum FieldVisibility {
+    INCLUDE = "INCLUDE",
+    EXCLUDE = "EXCLUDE"
 }
 
 export interface CardView {

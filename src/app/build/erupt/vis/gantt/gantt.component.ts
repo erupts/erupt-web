@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {GanttDragEvent, GanttGroup, GanttItem, GanttItemType, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
 import {EruptBuildModel} from "../../model/erupt-build.model";
-import {Vis} from "../../model/erupt.model";
+import {FieldVisibility, Vis} from "../../model/erupt.model";
 import * as moment from 'moment';
 import {EruptField} from "../../model/erupt-field.model";
 import {STColumn} from "@delon/abc/st";
@@ -333,4 +333,5 @@ export class GanttComponent implements OnChanges, OnInit {
         return momentDate.valueOf();
     }
 
+    protected readonly FieldScope = FieldVisibility;
 }
