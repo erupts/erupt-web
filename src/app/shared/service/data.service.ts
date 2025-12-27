@@ -66,16 +66,24 @@ export class DataService {
     }
 
     static previewAttachment(path: string, download: boolean = false): string {
-        // let token = "_token=" + DataService.tokenService.get().token;
+        let token = "_token=" + DataService.tokenService.get().token;
         if (path && (path.startsWith("http://") || path.startsWith("https://"))) {
-            return path;
+            if (path.indexOf("?") == -1) {
+                return path + "?" + token;
+            } else {
+                return path + "&" + token;
+            }
         } else if (WindowModel.fileDomain) {
-            return WindowModel.fileDomain + path;
+            if (WindowModel.fileDomain.indexOf("?") == -1) {
+                return WindowModel.fileDomain + path + "?" + token;
+            } else {
+                return WindowModel.fileDomain + path + "&" + token;
+            }
         } else {
             if (download) {
-                return RestPath.file + "/download-attachment" + path;
+                return RestPath.file + "/download-attachment" + path + "?" + token;
             } else {
-                return RestPath.eruptAttachment + path;
+                return RestPath.eruptAttachment + path + "?" + token;
             }
         }
     }
