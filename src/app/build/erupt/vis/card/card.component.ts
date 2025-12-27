@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
-import {CoverEffect, Page, Vis} from "../../model/erupt.model";
+import {CoverEffect, FieldVisibility, Page, Vis} from "../../model/erupt.model";
 import {NzImageService} from "ng-zorro-antd/image";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {UiBuildService} from "../../service/ui-build.service";
@@ -61,4 +61,5 @@ export class CardComponent implements OnInit {
 
 
     protected readonly clearInterval = clearInterval;
+    protected readonly FieldScope = FieldVisibility;
 }
