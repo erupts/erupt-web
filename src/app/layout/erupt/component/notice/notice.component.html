@@ -20,16 +20,30 @@
                               (ngModelChange)="onChannelChange($event)"
                               [nzSize]="'small'">
                 </nz-segmented>
-                <button nz-button
-                        nzType="link"
-                        nzSize="small"
-                        *ngIf="selectedChannelIndex === 0 && messages.length > 0"
-                        (click)="markAllAsRead()"
-                        class="read-all-btn">
-                    <span nz-icon nzType="check" nzTheme="outline"></span>
-                    {{ 'notice.readAll' | translate }}
-                </button>
             </div>
+        </div>
+
+        <!-- 搜索框和全部已读按钮 -->
+        <div class="search-box">
+            <nz-input-group [nzSuffix]="suffixIconSearch">
+                <input type="search" [nzSize]="'small'"
+                       nz-input
+                       [(ngModel)]="searchKeyword"
+                       (keyup.enter)="onSearch(searchKeyword)"
+                       [placeholder]="'gobal.search' | translate"/>
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+                <span nz-icon nzType="search" (click)="onSearch(searchKeyword)" style="cursor: pointer"></span>
+            </ng-template>
+            <button nz-button
+                    nzType="link"
+                    nzSize="small"
+                    *ngIf="selectedChannelIndex === 0 && messages.length > 0"
+                    (click)="markAllAsRead()"
+                    class="read-all-btn">
+                <span nz-icon nzType="check" nzTheme="outline"></span>
+                {{ 'notice.readAll' | translate }}
+            </button>
         </div>
 
         <!-- 消息列表 -->

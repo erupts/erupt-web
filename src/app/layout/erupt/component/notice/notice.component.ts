@@ -31,6 +31,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
     pageIndex = 1;
     pageSize = 10;
     total = 0;
+    searchKeyword: string = ''; // 搜索关键字
 
     constructor(
         private dataService: DataService,
@@ -77,6 +78,14 @@ export class NoticeComponent implements OnInit, OnDestroy {
     onChannelChange(index: number): void {
         this.selectedChannelIndex = index;
         this.pageIndex = 1;
+        this.searchKeyword = ''; // 切换渠道时清空搜索
+        this.loadMessages();
+    }
+
+    // 搜索
+    onSearch(keyword: string): void {
+        this.searchKeyword = keyword;
+        this.pageIndex = 1; // 搜索时重置到第一页
         this.loadMessages();
     }
 
@@ -86,7 +95,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
 
         if (this.selectedChannelIndex === 0) {
             // 加载通知消息
-            this.dataService.noticeMessages(this.pageIndex, this.pageSize)
+            this.dataService.noticeMessages(this.pageIndex, this.pageSize, this.searchKeyword || null)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                     next: (result) => {
@@ -102,7 +111,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
                 });
         } else if (this.selectedChannelIndex === 1) {
             // 加载公告
-            this.dataService.announcement(this.pageIndex, this.pageSize)
+            this.dataService.announcement(this.pageIndex, this.pageSize, this.searchKeyword || null)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                     next: (res) => {
