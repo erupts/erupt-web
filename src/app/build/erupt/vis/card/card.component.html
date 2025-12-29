@@ -5,31 +5,12 @@
                  [nzXl]="6" [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXs]="24">
                 <nz-card class="erupt-card" [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'0'}"
                          [nzBordered]="true" (click)="onEdit.emit(d[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])">
-                    <ng-container *ngIf="vis.fieldVisibility == FieldScope.INCLUDE">
-                        <ng-container *ngIf="vis.fields.length">
-                            <div style="padding: 12px">
-                                <ng-container *ngFor="let field of vis.fields">
-                                    {{ eruptBuildModel.eruptModel.eruptFieldModelMap.get(field).eruptFieldJson?.edit?.title }}
-                                    :&nbsp;
-                                    <span (click)="clickField($event,field)">
-                                        <ng-container *ngIf="columnMap.get(field)?.format">
-                                            <span [innerHTML]="(columnMap.get(field)?.format(d,columnMap.get(field),null)||'')|safeHtml"></span>
-                                        </ng-container>
-                                        <ng-container *ngIf="!columnMap.get(field)?.format">
-                                            <span [innerHTML]="(d[field]==null?'':d[field])|safeHtml"></span>
-                                        </ng-container>
-                                    </span>
-                                    <br>
-                                </ng-container>
-                            </div>
-                        </ng-container>
-                    </ng-container>
-                    <ng-container *ngIf="vis.fieldVisibility == FieldScope.EXCLUDE">
-                        <ng-container *ngIf="vis.fields.length < eruptBuildModel.eruptModel.eruptFieldModels.length">
+                    <ng-container *ngIf="vis.fields.length < eruptBuildModel.eruptModel.eruptFieldModels.length">
+                        <ng-container *ngIf="(vis.fieldVisibility === FieldVisibility.INCLUDE)? vis.fields.length:true">
                             <div style="padding: 12px">
                                 <ng-container *ngFor="let field of eruptBuildModel.eruptModel.eruptFieldModels">
                                     <ng-container *ngFor="let view of field.eruptFieldJson.views">
-                                        <ng-container *ngIf="vis.fields.indexOf(view.column) === -1">
+                                        <ng-container *ngIf="(vis.fieldVisibility==FieldVisibility.EXCLUDE)?vis.fields.indexOf(view.column) === -1:vis.fields.indexOf(view.column) !== -1">
                                             {{ view.title }}:&nbsp;
                                             <span (click)="clickField($event, field.fieldName)">
                                                 <ng-container *ngIf="columnMap.get(field.fieldName)?.format">
