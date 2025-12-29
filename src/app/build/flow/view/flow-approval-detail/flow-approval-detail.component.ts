@@ -86,7 +86,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         if (no) {
             flowInstanceApiService.detail(no).subscribe({
                 next: (res) => {
-                    this.onSelectFlow(ApprovalView.ADMIN, res.data);
+                    this.onSelectFlow(ApprovalView.TODO, res.data);
                 }
             })
         }

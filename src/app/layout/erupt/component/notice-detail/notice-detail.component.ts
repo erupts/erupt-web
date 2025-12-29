@@ -35,7 +35,8 @@ export class NoticeDetailComponent implements OnInit {
     // 打开 URL 链接
     openUrlDrawer(url: string, title: string): void {
         this.drawerService.create({
-            nzTitle: title,
+            nzTitle: null,
+            nzClosable: false,
             nzContent: EruptIframeComponent,
             nzContentParams: {
                 url: url,
