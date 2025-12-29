@@ -524,9 +524,11 @@ export class DataService {
         return this._http.get<R<NoticeChannel[]>>(RestPath.erupt + "/notice/channels");
     }
 
-    noticeMessages(page: number, size: number) {
+    noticeMessages(page: number, size: number, search: string) {
         return this._http.get<R<SimplePage<NoticeMessageDetail>>>(RestPath.erupt + "/notice/messages", {
-            page, size
+            page,
+            size,
+            [search ? 'search' : '']: search
         });
     }
 
@@ -544,9 +546,11 @@ export class DataService {
         return this._http.get<R<void>>(RestPath.erupt + "/notice/read-all");
     }
 
-    announcement(page: number, size: number) {
+    announcement(page: number, size: number, search: string) {
         return this._http.get<R<SimplePage<Announcement>>>(RestPath.erupt + "/announcement/list", {
-            page, size
+            page,
+            size,
+            [search ? 'search' : '']: search
         });
     }
 
