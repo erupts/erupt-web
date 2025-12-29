@@ -333,5 +333,5 @@ export class GanttComponent implements OnChanges, OnInit {
         return momentDate.valueOf();
     }
 
-    protected readonly FieldScope = FieldVisibility;
+    protected readonly FieldVisibility = FieldVisibility;
 }

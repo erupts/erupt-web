@@ -61,5 +61,5 @@ export class CardComponent implements OnInit {
 
 
     protected readonly clearInterval = clearInterval;
-    protected readonly FieldScope = FieldVisibility;
+    protected readonly FieldVisibility = FieldVisibility;
 }
