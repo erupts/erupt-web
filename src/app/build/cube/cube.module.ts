@@ -57,10 +57,13 @@ import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {SharedModule} from "@shared/shared.module";
 import {CommonModule} from "@angular/common";
 import {CubeRoutingModule} from "./cube-routing.module";
+import {CubeManagementComponent} from './view/cube-management/cube-management.component';
 
 
 @NgModule({
-    declarations: [],
+    declarations: [
+    CubeManagementComponent
+  ],
     providers: [],
     imports: [
         SharedModule,
