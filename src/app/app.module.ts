@@ -1,11 +1,20 @@
 /* eslint-disable import/order */
 /* eslint-disable import/no-duplicates */
 // #region Http Interceptors
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {
+    HTTP_INTERCEPTORS,
+    HttpClientModule,
+    HttpInterceptor,
+    HttpRequest,
+    HttpHandler,
+    HttpEvent
+} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 import {APP_INITIALIZER, NgModule, Type} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {SimpleInterceptor} from '@delon/auth';
+import {authSimpleInterceptor} from '@delon/auth';
 import {NzNotificationModule} from 'ng-zorro-antd/notification';
 
 import {DefaultInterceptor, I18NService, StartupService} from '@core';
@@ -29,8 +38,19 @@ const GLOBAL_THIRD_MODULES: Array<Type<any>> = [BidiModule];
 
 // #endregion
 
+// Angular 17: SimpleInterceptor 已改为函数式拦截器 authSimpleInterceptor
+// 创建包装类以兼容现有的类拦截器方式
+@Injectable()
+class AuthSimpleInterceptorWrapper implements HttpInterceptor {
+    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        return authSimpleInterceptor(req, (r) => {
+            return next.handle(r)
+        });
+    }
+}
+
 const INTERCEPTOR_PROVIDES = [
-    {provide: HTTP_INTERCEPTORS, useClass: SimpleInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: AuthSimpleInterceptorWrapper, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true}
 ];
 

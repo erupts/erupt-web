@@ -2,6 +2,7 @@ import {ModuleWithProviders, NgModule, Optional, SkipSelf} from '@angular/core';
 import {DelonACLModule} from '@delon/acl';
 import {AlainThemeModule} from '@delon/theme';
 import {AlainConfig, ALAIN_CONFIG} from '@delon/util/config';
+import {ReuseTabModule} from '@delon/abc/reuse-tab';
 import {throwIfAlreadyLoaded} from '@core';
 import {environment} from '@env/environment';
 
@@ -9,11 +10,19 @@ import {environment} from '@env/environment';
 const alainConfig: AlainConfig = {
     st: {modal: {size: 'lg'}},
     pageHeader: {homeI18n: 'home'},
-    auth: {login_url: '/passport/login'}
+    auth: {
+        login_url: '/passport/login',
+        ignores: [
+            /\/erupt-app$/,
+            /\/tenant\/domain-info$/,
+            /erupt-api\/login/,
+            /erupt-api\/tenant\/login/
+        ]
+    }
 };
 
-const alainModules: any[] = [AlainThemeModule.forRoot(), DelonACLModule.forRoot()];
-const alainProvides = [{provide: ALAIN_CONFIG, useValue: alainConfig}];
+const alainModules: any[] = [AlainThemeModule.forRoot(), DelonACLModule, ReuseTabModule];
+const alainProvides: any[] = [{provide: ALAIN_CONFIG, useValue: alainConfig}];
 
 // #region reuse-tab
 /**
@@ -31,6 +40,8 @@ const alainProvides = [{provide: ALAIN_CONFIG, useValue: alainConfig}];
 import {RouteReuseStrategy} from '@angular/router';
 import {ReuseTabService, ReuseTabStrategy} from '@delon/abc/reuse-tab';
 
+// 显式提供 ReuseTabService
+alainProvides.push(ReuseTabService);
 alainProvides.push({
     provide: RouteReuseStrategy,
     useClass: ReuseTabStrategy,
@@ -48,7 +59,8 @@ const zorroProvides = [{provide: NZ_CONFIG, useValue: ngZorroConfig}];
 // #endregion
 
 @NgModule({
-    imports: [...alainModules, ...(environment.modules || [])]
+    imports: [...alainModules, ...(environment.modules || [])],
+    exports: []
 })
 export class GlobalConfigModule {
     constructor(@Optional() @SkipSelf() parentModule: GlobalConfigModule) {

@@ -82,7 +82,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
 
     columns: STColumn[] = [];
 
-    timer: NodeJS.Timer;
+    timer: ReturnType<typeof setInterval> | null = null;
 
     downloading: boolean = false;
 
@@ -100,7 +100,10 @@ export class SkeletonComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe(params => {
-            this.timer && clearInterval(this.timer);
+            if (this.timer) {
+                clearInterval(this.timer);
+                this.timer = null;
+            }
             this.name = params['name'];
             this.biTable.data = null;
             this.dataService.getBiBuild(this.name).subscribe(res => {
