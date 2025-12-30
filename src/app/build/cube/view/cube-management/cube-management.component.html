@@ -1,1 +1,17 @@
-<p>cube-management works!</p>
+<div class="cube-puzzle-container" [style.height]="isFillRoute ? '100vh' : 'calc(100vh - 50px)'">
+    <div class="puzzle-filter">
+        Filter Filter
+    </div>
+    <gridster [options]="options">
+        <gridster-item [item]="item" *ngFor="let item of dashboard">
+            <div style="height: 100%; position: relative;">
+                <div class="puzzle-content">
+                    <div class="drag-handler" title="Drag">
+                        <span style="transform: rotate(90deg)">⋮⋮</span>
+                    </div>
+                    <img [src]="item['src']" alt="" style="width: 100%">
+                </div>
+            </div>
+        </gridster-item>
+    </gridster>
+</div>
