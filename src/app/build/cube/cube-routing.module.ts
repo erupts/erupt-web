@@ -4,7 +4,7 @@ import {CubeManagementComponent} from "./view/cube-management/cube-management.co
 
 const routes: Routes = [
     {
-        path: "/puzzle/management",
+        path: "puzzle/management",
         component: CubeManagementComponent,
     }
 ];

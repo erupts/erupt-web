@@ -24,7 +24,7 @@ import {NzModalModule} from 'ng-zorro-antd/modal';
 import {NzPopconfirmModule} from 'ng-zorro-antd/popconfirm';
 import {NzToolTipModule} from 'ng-zorro-antd/tooltip';
 import {NzPopoverModule} from 'ng-zorro-antd/popover';
-import {NzCardModule} from 'ng-zorro-antd/card';
+import {NzCardComponent, NzCardModule} from 'ng-zorro-antd/card';
 import {NzDividerModule} from 'ng-zorro-antd/divider';
 import {NzSpaceModule} from 'ng-zorro-antd/space';
 import {NzGridModule} from 'ng-zorro-antd/grid';
@@ -55,74 +55,26 @@ import {NzMentionModule} from 'ng-zorro-antd/mention';
 import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete';
 import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
 import {SharedModule} from "@shared/shared.module";
-import {CommonModule} from "@angular/common";
+import {CommonModule, NgForOf} from "@angular/common";
 import {CubeRoutingModule} from "./cube-routing.module";
 import {CubeManagementComponent} from './view/cube-management/cube-management.component';
+import {GridsterComponent, GridsterItemComponent} from "angular-gridster2";
 
 
 @NgModule({
     declarations: [
-    CubeManagementComponent
-  ],
+        CubeManagementComponent
+    ],
     providers: [],
     imports: [
         SharedModule,
         CubeRoutingModule,
         CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        DragDropModule,
-        NzButtonModule,
-        NzInputModule,
-        NzDrawerModule,
-        NzMessageModule,
-        NzIconModule,
-        NzTypographyModule,
-        NzFormModule,
-        NzSelectModule,
-        NzCheckboxModule,
-        NzRadioModule,
-        NzDatePickerModule,
-        NzTimePickerModule,
-        NzSwitchModule,
-        NzSliderModule,
-        NzRateModule,
-        NzUploadModule,
-        NzModalModule,
-        NzPopconfirmModule,
-        NzToolTipModule,
-        NzPopoverModule,
+        NgForOf,
+        GridsterComponent,
+        GridsterItemComponent,
         NzCardModule,
-        NzDividerModule,
-        NzSpaceModule,
-        NzGridModule,
-        NzLayoutModule,
-        NzMenuModule,
-        NzPageHeaderModule,
-        NzTabsModule,
-        NzTableModule,
-        NzListModule,
-        NzAvatarModule,
-        NzBadgeModule,
-        NzTagModule,
-        NzProgressModule,
-        NzSpinModule,
-        NzSkeletonModule,
-        NzAlertModule,
-        NzNotificationModule,
-        NzResultModule,
-        NzEmptyModule,
-        NzDescriptionsModule,
-        NzTimelineModule,
-        NzStepsModule,
-        NzCollapseModule,
-        NzTreeModule,
-        NzTransferModule,
-        NzCascaderModule,
-        NzMentionModule,
-        NzAutocompleteModule,
-        NzInputNumberModule,
+        NzIconModule
     ]
 })
 export class CubeModule {
