@@ -11,7 +11,6 @@ import {
     OnDestroy,
     OnInit,
     Optional,
-    Renderer2,
     TemplateRef,
     ViewEncapsulation
 } from '@angular/core';
@@ -19,9 +18,8 @@ import {NavigationEnd, Router} from '@angular/router';
 import {filter, merge, Subject, takeUntil} from 'rxjs';
 
 import {ReuseTabService} from '@delon/abc/reuse-tab';
-import {Menu, MenuService, SettingsService, TitleService} from '@delon/theme';
+import {Menu, MenuService, TitleService} from '@delon/theme';
 import {AlainConfigService} from '@delon/util/config';
-import {InputBoolean, InputNumber} from '@delon/util/decorator';
 import type {NzSafeAny} from 'ng-zorro-antd/core/types';
 import {I18NService} from "@core";
 
@@ -74,18 +72,18 @@ export class NavComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy
         }
     }
 
-    @Input() @InputBoolean() loading = false;
-    @Input() @InputBoolean() wide = false;
+    @Input() loading: boolean = false;
+    @Input() wide: boolean = false;
     @Input() home?: string;
     @Input() homeLink?: string;
     @Input() homeI18n?: string;
-    @Input() @InputBoolean() autoBreadcrumb!: boolean;
-    @Input() @InputBoolean() autoTitle!: boolean;
-    @Input() @InputBoolean() syncTitle!: boolean;
-    @Input() @InputBoolean() fixed!: boolean;
-    @Input() @InputNumber() fixedOffsetTop!: number;
+    @Input() autoBreadcrumb!: boolean;
+    @Input() autoTitle!: boolean;
+    @Input() syncTitle!: boolean;
+    @Input() fixed!: boolean;
+    @Input() fixedOffsetTop!: number;
     @Input() breadcrumb?: TemplateRef<NzSafeAny> | null = null;
-    @Input() @InputBoolean() recursiveBreadcrumb!: boolean;
+    @Input() recursiveBreadcrumb!: boolean;
     @Input() logo?: TemplateRef<void> | null = null;
     @Input() action?: TemplateRef<void> | null = null;
     @Input() content?: TemplateRef<void> | null = null;
