@@ -5,7 +5,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
     standalone: false,
     selector: 'exception-403',
     template: `
-        <exception type="403" style="min-height: 700px; height: 80%;"></exception>`,
+        <exception [type]="403" style="min-height: 700px; height: 80%;"></exception>`,
 })
 export class Exception403Component {
     constructor(@Inject(NzModalService) private modal: NzModalService) {
