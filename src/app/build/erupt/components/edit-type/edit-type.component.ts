@@ -11,7 +11,7 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {NzUploadFile} from "ng-zorro-antd/upload/interface";
+import {NzUploadFile} from "ng-zorro-antd/upload";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {BehaviorSubject} from "rxjs";
 import {SignaturePadComponent} from "../signature-pad/signature-pad.component";

@@ -4,8 +4,7 @@ import {BiDataService} from "../service/data.service";
 import {ActivatedRoute} from "@angular/router";
 import {HandlerService} from "../service/handler.service";
 import {SettingsService} from "@delon/theme";
-import {STColumn, STComponent} from "@delon/abc/st";
-import {STPage} from "@delon/abc/st/st.interfaces";
+import {STColumn, STComponent, STPage} from "@delon/abc/st";
 import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({

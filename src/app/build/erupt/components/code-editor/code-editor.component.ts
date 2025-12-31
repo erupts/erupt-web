@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Edit} from "../../model/erupt-field.model";
 import {CacheService} from "@delon/cache";
-import {JoinedEditorOptions} from "ng-zorro-antd/code-editor/typings";
+import {JoinedEditorOptions} from "ng-zorro-antd/code-editor";
 import {NzConfigService} from "ng-zorro-antd/core/config";
 
 let codeEditorDarkKey = "code_editor_dark";

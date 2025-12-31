@@ -2,8 +2,8 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Edit, EruptFieldModel} from "../../model/erupt-field.model";
 import {DateEnum, PickerMode} from "../../model/erupt.enum";
 import {DatePipe} from "@angular/common";
-import {DisabledDateFn, NzDateMode, PresetRanges} from "ng-zorro-antd/date-picker/standard-types";
-import * as moment from 'moment';
+import {DisabledDateFn, NzDateMode, PresetRanges} from "ng-zorro-antd/date-picker";
+import moment from 'moment';
 import {I18NService} from "@core";
 
 @Component({
