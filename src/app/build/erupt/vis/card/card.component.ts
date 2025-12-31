@@ -8,6 +8,7 @@ import {UiBuildService} from "../../service/ui-build.service";
 import {STColumn} from "@delon/abc/st";
 
 @Component({
+    standalone: false,
     selector: 'vis-card',
     templateUrl: './card.component.html',
     styles: [],

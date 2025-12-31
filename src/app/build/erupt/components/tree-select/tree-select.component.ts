@@ -6,6 +6,7 @@ import {DataHandlerService} from "../../service/data-handler.service";
 import {NzFormatEmitEvent, NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
 
 @Component({
+    standalone: false,
     selector: "app-tree-select",
     templateUrl: "./tree-select.component.html",
     styles: []

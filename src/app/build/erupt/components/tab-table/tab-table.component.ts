@@ -17,6 +17,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 
 
 @Component({
+    standalone: false,
     selector: "tab-table",
     templateUrl: "./tab-table.component.html",
     styles: [],

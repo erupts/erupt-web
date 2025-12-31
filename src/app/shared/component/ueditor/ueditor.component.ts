@@ -42,6 +42,7 @@ export type EventTypes =
     | 'afterSelectionChange';
 
 @Component({
+    standalone: false,
     selector: 'ueditor',
     template: `
         <nz-spin [nzSpinning]="loading">

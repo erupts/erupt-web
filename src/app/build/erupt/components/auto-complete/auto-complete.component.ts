@@ -5,6 +5,7 @@ import {NzSizeLDSType} from "ng-zorro-antd/core/types";
 import {EruptModel} from "../../model/erupt.model";
 
 @Component({
+    standalone: false,
     selector: 'erupt-auto-complete',
     templateUrl: './auto-complete.component.html',
     styleUrls: ['./auto-complete.component.less']

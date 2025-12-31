@@ -10,6 +10,7 @@ import {I18NService} from "@core";
 import {TableComponent} from "../../view/table/table.component";
 
 @Component({
+    standalone: false,
     selector: 'erupt-reference',
     templateUrl: './reference.component.html',
     styleUrls: ['./reference.component.less']

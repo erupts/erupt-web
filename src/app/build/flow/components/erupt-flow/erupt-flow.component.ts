@@ -19,6 +19,7 @@ import {EndNodeComponent} from "@flow/node/end/end-node.component";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
+    standalone: false,
     selector: 'erupt-flow',
     templateUrl: './erupt-flow.component.html',
     styleUrls: ['./erupt-flow.component.less']

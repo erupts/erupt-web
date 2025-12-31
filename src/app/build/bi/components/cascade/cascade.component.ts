@@ -5,6 +5,7 @@ import {HandlerService} from "../../service/handler.service";
 import {I18NService} from "@core";
 
 @Component({
+    standalone: false,
     selector: "erupt-bi-cascade",
     templateUrl: "./cascade.component.html",
     styles: []

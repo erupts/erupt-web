@@ -12,6 +12,7 @@ import {UtilsService} from "@shared/service/utils.service";
 import {SocketService} from "@shared/service/socket.service";
 
 @Component({
+    standalone: false,
     selector: "header-user",
     template: `
         <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown nzPlacement="bottomRight"

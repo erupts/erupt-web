@@ -1,6 +1,7 @@
 import {Directive, HostListener, Input} from '@angular/core';
 
 @Directive({
+    standalone: false,
     selector: '[ripper]'
 })
 export class RipperDirective {

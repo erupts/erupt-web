@@ -8,6 +8,7 @@ import {GatewayType} from "@flow/node/gateway/gateway-node.component";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
+    standalone: false,
     selector: 'app-recursive-node',
     templateUrl: './recursive-node.component.html',
     styleUrls: ['./recursive-node.component.less']

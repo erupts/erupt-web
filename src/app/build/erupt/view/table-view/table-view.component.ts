@@ -4,6 +4,7 @@ import {Subscription} from "rxjs";
 import {SettingsService} from "@delon/theme";
 
 @Component({
+    standalone: false,
     selector: "erupt-table-view",
     templateUrl: "./table-view.component.html",
     styleUrls: ["./table-view.component.less"]

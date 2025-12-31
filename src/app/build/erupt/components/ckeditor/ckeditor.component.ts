@@ -8,6 +8,7 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 declare const DecoupledDocumentEditor;
 
 @Component({
+    standalone: false,
     selector: "ckeditor",
     templateUrl: "./ckeditor.component.html",
     styles: []

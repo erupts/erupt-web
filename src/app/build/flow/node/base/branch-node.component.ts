@@ -5,6 +5,7 @@ import {NodeRule, NodeType} from "@flow/model/node.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
+    standalone: false,
     selector: 'app-branch-node',
     templateUrl: './branch-node.component.html',
     styleUrls: ['./branch-node.component.less']

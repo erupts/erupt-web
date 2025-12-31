@@ -6,6 +6,7 @@ import {HandlerService} from "../../service/handler.service";
 import {NzTreeComponent} from "ng-zorro-antd/tree";
 
 @Component({
+    standalone: false,
     selector: "erupt-bi-reference-select",
     templateUrl: "./reference.component.html",
     styles: []

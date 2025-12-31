@@ -14,6 +14,7 @@ import {EruptIframeComponent} from "@shared/component/iframe.component";
 export {NoticeStatus};
 
 @Component({
+    standalone: false,
     selector: 'erupt-notice',
     templateUrl: './notice.component.html',
     styleUrls: ['./notice.component.less']

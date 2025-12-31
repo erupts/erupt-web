@@ -247,15 +247,9 @@
             <div>
               @if (visOptions.length > 1) {
                 <nz-segmented [nzOptions]="visOptions" [ngStyle]="{marginTop: hideCondition? 0: '8px', marginBottom: '8px'}" [(ngModel)]="selectedVisIndex"
-                  (ngModelChange)="visChange($event)" [nzLabelTemplate]="segmentedTemplate">
+                  (ngModelChange)="visChange($event)">
                 </nz-segmented>
               }
-              <ng-template #segmentedTemplate let-index="index">
-                {{ visOptions[index].label }}
-                @if (vis[index].desc) {
-                  &nbsp;<i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="vis[index].desc"></i>
-                }
-              </ng-template>
               @if (vis[selectedVisIndex]?.type == VisType.CARD) {
                 @if (!dataPage.data || dataPage.data.length == 0) {
                   <div style="background: #fff;padding: 32px;">

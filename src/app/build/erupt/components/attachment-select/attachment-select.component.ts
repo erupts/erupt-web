@@ -6,6 +6,7 @@ import {DataService} from "@shared/service/data.service";
 import {ViewTypeComponent} from "../view-type/view-type.component";
 
 @Component({
+    standalone: false,
     selector: 'app-attachment-select',
     templateUrl: './attachment-select.component.html',
     styleUrls: ['./attachment-select.component.less']

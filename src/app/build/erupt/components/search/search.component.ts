@@ -16,6 +16,7 @@ import {ChoiceComponent} from "../choice/choice.component";
 import {BehaviorSubject} from "rxjs";
 
 @Component({
+    standalone: false,
     selector: 'erupt-search',
     templateUrl: './search.component.html',
     styleUrls: ['./search.component.less']

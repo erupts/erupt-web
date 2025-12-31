@@ -34,6 +34,7 @@ const SHOWCLS = 'sidebar-nav__floating-show';
 const FLOATINGCLS = 'sidebar-nav__floating';
 
 @Component({
+    standalone: false,
     selector: 'erupt-menu',
     templateUrl: './menu.component.html',
     host: {

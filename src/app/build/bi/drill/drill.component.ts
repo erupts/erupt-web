@@ -8,6 +8,7 @@ import {STColumn, STComponent, STPage} from "@delon/abc/st";
 import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
+    standalone: false,
     selector: 'erupt-drill',
     templateUrl: './drill.component.html',
     styles: []

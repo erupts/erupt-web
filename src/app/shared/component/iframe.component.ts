@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {IframeHeight} from "@shared/util/window.util";
 
 @Component({
+    standalone: false,
     selector: 'erupt-iframe',
     template: `
         <nz-spin [nzSpinning]="spin" style="height: 100%;width: 100%">

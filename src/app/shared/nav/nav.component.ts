@@ -32,6 +32,7 @@ interface PageHeaderPath {
 }
 
 @Component({
+    standalone: false,
     selector: 'erupt-nav',
     templateUrl: './nav.component.html',
     styleUrls: ['./nav.component.less'],

@@ -9,6 +9,7 @@ import {FlowTurn} from "@flow/model/flow-instance.model";
 import {UpmsDataService} from "@flow/service/upms-data.service";
 
 @Component({
+    standalone: false,
     selector: 'app-approval-node',
     templateUrl: './approval-node.component.html',
     styleUrls: ['./approval-node.component.less']

@@ -7,6 +7,7 @@ import {DataHandlerService} from "../../service/data-handler.service";
 import {NzCarouselComponent} from "ng-zorro-antd/carousel";
 
 @Component({
+    standalone: false,
     selector: "erupt-view-type",
     templateUrl: "./view-type.component.html",
     styleUrls: ["./view-type.component.less"],

@@ -3,6 +3,7 @@ import SignaturePad from "signature_pad";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 
 @Component({
+    standalone: false,
     selector: 'erupt-signature-pad',
     templateUrl: './signature-pad.component.html',
     styleUrls: ['./signature-pad.component.less']

@@ -2,6 +2,7 @@ import {Pipe, PipeTransform} from "@angular/core";
 import {DomSanitizer} from "@angular/platform-browser";
 
 @Pipe({
+    standalone: false,
   name: "safeScript"
 })
 export class SafeScriptPipe implements PipeTransform {

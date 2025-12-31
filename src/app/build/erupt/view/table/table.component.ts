@@ -41,6 +41,7 @@ import {WindowModel} from "@shared/model/window.model";
 
 
 @Component({
+    standalone: false,
     selector: "erupt-table",
     templateUrl: "./table.component.html",
     styleUrls: ["./table.component.less"]
