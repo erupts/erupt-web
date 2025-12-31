@@ -48,6 +48,7 @@ import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 import {GanttComponent} from "./vis/gantt/gantt.component";
 import {NgxGanttModule} from "@worktile/gantt";
 import {NzButtonModule} from "ng-zorro-antd/button";
+import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 
 @NgModule({
     imports: [
@@ -65,7 +66,8 @@ import {NzButtonModule} from "ng-zorro-antd/button";
         NzEmptyModule,
         NzSegmentedModule,
         NgxGanttModule,
-        NzButtonModule
+        NzButtonModule,
+        NzTooltipDirective
     ],
     providers: [
         DataHandlerService,
