@@ -469,7 +469,7 @@
                     </ng-container>
                     <ng-container *ngSwitchCase="editType.COMBINE">
                         <div nz-col [nzSpan]="24" style="margin-top: 8px">
-                            <nz-collapse nzAccordion [nzExpandIconPosition]="'right'">
+                            <nz-collapse nzAccordion [nzExpandIconPosition]="'end'">
                                 <nz-collapse-panel [nzActive]="true" [nzHeader]="field.eruptFieldJson.edit.title">
                                     <erupt-edit-type
                                         [eruptBuildModel]="{eruptModel:eruptBuildModel.combineErupts[field.fieldName]}"></erupt-edit-type>
