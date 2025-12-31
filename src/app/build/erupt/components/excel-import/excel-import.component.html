@@ -1,18 +1,20 @@
 <button nz-button nzType="default" class="mb-sm" (click)="this.dataService.downloadExcelTemplate(eruptModel.eruptName)">
-    <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download_template'|translate}}
+  <i nz-icon nzType="download" nzTheme="outline"></i>{{'table.download_template'|translate}}
 </button>
-<nz-alert *ngIf="errorText" style="margin-bottom: 8px;" nzType="error" nzCloseable [nzDescription]="errorText">
-</nz-alert>
+@if (errorText) {
+  <nz-alert style="margin-bottom: 8px;" nzType="error" nzCloseable [nzDescription]="errorText">
+  </nz-alert>
+}
 <nz-upload nzType="drag"
-           [nzAccept]="['.xls','.xlsx']"
-           [(nzFileList)]="fileList"
-           [nzLimit]="1"
-           [nzHeaders]="header"
-           [nzAction]="dataService.excelImport + eruptModel.eruptName"
-           [nzShowButton]="true"
-           (nzChange)="upLoadNzChange($event)">
-    <p class="ant-upload-drag-icon">
-        <i nz-icon nzType="inbox"></i>
-    </p>
-    <p class="ant-upload-text">{{'table.excel.import_hint'|translate}}</p>
+  [nzAccept]="['.xls','.xlsx']"
+  [(nzFileList)]="fileList"
+  [nzLimit]="1"
+  [nzHeaders]="header"
+  [nzAction]="dataService.excelImport + eruptModel.eruptName"
+  [nzShowButton]="true"
+  (nzChange)="upLoadNzChange($event)">
+  <p class="ant-upload-drag-icon">
+    <i nz-icon nzType="inbox"></i>
+  </p>
+  <p class="ant-upload-text">{{'table.excel.import_hint'|translate}}</p>
 </nz-upload>

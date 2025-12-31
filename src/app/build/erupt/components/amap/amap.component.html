@@ -1,21 +1,25 @@
 <nz-spin [nzSpinning]="loading">
-    <div [hidden]="readonly" class="search-container" style="">
-        <input nz-input [value]="viewValue" [nzAutocomplete]="auto" [placeholder]="'global.keyword'|translate"
-               nzSize="default"
-               style="width: 300px" #tipInput [disabled]="!loaded" (blur)="blur()"/> &nbsp;
-        <button nz-button nzType="default" [disabled]="!loaded" id="mapOk">&nbsp; {{"global.ok"|translate}} &nbsp;
+  <div [hidden]="readonly" class="search-container" style="">
+    <input nz-input [value]="viewValue" [nzAutocomplete]="auto" [placeholder]="'global.keyword'|translate"
+      nzSize="default"
+      style="width: 300px" #tipInput [disabled]="!loaded" (blur)="blur()"/> &nbsp;
+      <button nz-button nzType="default" [disabled]="!loaded" id="mapOk">&nbsp; {{"global.ok"|translate}} &nbsp;
+      </button>
+      @if (value) {
+        <button nz-button nzType="default" nzDanger [disabled]="!loaded" style="padding: 4px 10px"
+          class="mb-sm"
+          (click)="clearLocation()"><i nz-icon nzType="close" nzTheme="outline"></i>
         </button>
-        <button nz-button nzType="default" nzDanger [disabled]="!loaded" *ngIf="value" style="padding: 4px 10px"
-                class="mb-sm"
-                (click)="clearLocation()"><i nz-icon nzType="close" nzTheme="outline"></i>
-        </button>
+      }
     </div>
 
     <nz-autocomplete #auto>
-        <nz-auto-option *ngFor="let auto of autocompleteList"
-                        [nzValue]="auto" (click)="choiceList(auto)"
-                        [nzLabel]="auto.name">{{auto.name}}
+      @for (auto of autocompleteList; track auto) {
+        <nz-auto-option
+          [nzValue]="auto" (click)="choiceList(auto)"
+          [nzLabel]="auto.name">{{auto.name}}
         </nz-auto-option>
+      }
     </nz-autocomplete>
     <div id="amap" tabindex="0" style="min-height: 550px;border: 1px solid #d9d9d9;outline: none;border-radius: 4px">
 
@@ -27,12 +31,12 @@
     <!--            <label nz-radio val="polygon" [nzValue]="'polygon'">面多边形</label>-->
     <!--            <label nz-radio val="rectangle" [nzValue]="'rectangle'">画矩形</label>-->
     <!--            <label nz-radio val="circle" [nzValue]="'circle'">画圆形</label>-->
-    <!--        </nz-radio-group>-->
-    <!--        <button nz-button id="clear" (click)="clearDraw()" nzType="default" [disabled]="!loaded" [nzSize]="'small'">-->
-    <!--            &nbsp; 清除 &nbsp;-->
-    <!--        </button>-->
-    <!--        <button nz-button id="close" (click)="closeDraw()" nzType="default" [disabled]="!loaded" [nzSize]="'small'">-->
-    <!--            &nbsp; 关闭绘图 &nbsp;-->
-    <!--        </button>-->
-    <!--    </div>-->
+  <!--        </nz-radio-group>-->
+  <!--        <button nz-button id="clear" (click)="clearDraw()" nzType="default" [disabled]="!loaded" [nzSize]="'small'">-->
+  <!--            &nbsp; 清除 &nbsp;-->
+<!--        </button>-->
+<!--        <button nz-button id="close" (click)="closeDraw()" nzType="default" [disabled]="!loaded" [nzSize]="'small'">-->
+<!--            &nbsp; 关闭绘图 &nbsp;-->
+<!--        </button>-->
+<!--    </div>-->
 </nz-spin>

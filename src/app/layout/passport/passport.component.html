@@ -1,30 +1,36 @@
 <div style="position: absolute;right: 5%;top: 5%;z-index: 999">
-    <i18n-choice style="font-size: 1.3em;color: #000"></i18n-choice>
+  <i18n-choice style="font-size: 1.3em;color: #000"></i18n-choice>
 </div>
 <div class="container">
-    <div class="wrap">
-        <div class="top">
-            <div class="head">
-                <img class="logo" *ngIf="logoPath" [src]="logoPath" alt="logo">
-                <span class="title">{{title}}</span>
-            </div>
-            <div class="desc">
-                <span *ngIf="desc">{{desc}}</span>
-            </div>
-        </div>
-        <div style="display: flex; justify-content: center;">
-            <div class="pass-form">
-                <router-outlet></router-outlet>
-            </div>
-        </div>
-        <global-footer *ngIf="copyright">
-            <ng-container *ngIf="copyrightTxt">
-                <p [innerHTML]="copyrightTxt"></p>
-            </ng-container>
-            <ng-container *ngIf="!copyrightTxt">
-                <i nz-icon nzType="copyright" nzTheme="outline"></i> 2018 - {{nowYear}}
-                <a href="https://www.erupt.xyz" target="_blank">Erupt Engine</a>&nbsp; All rights reserved.
-            </ng-container>
-        </global-footer>
+  <div class="wrap">
+    <div class="top">
+      <div class="head">
+        @if (logoPath) {
+          <img class="logo" [src]="logoPath" alt="logo">
+        }
+        <span class="title">{{title}}</span>
+      </div>
+      <div class="desc">
+        @if (desc) {
+          <span>{{desc}}</span>
+        }
+      </div>
     </div>
+    <div style="display: flex; justify-content: center;">
+      <div class="pass-form">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+    @if (copyright) {
+      <global-footer>
+        @if (copyrightTxt) {
+          <p [innerHTML]="copyrightTxt"></p>
+        }
+        @if (!copyrightTxt) {
+          <i nz-icon nzType="copyright" nzTheme="outline"></i> 2018 - {{nowYear}}
+          <a href="https://www.erupt.xyz" target="_blank">Erupt Engine</a>&nbsp; All rights reserved.
+        }
+      </global-footer>
+    }
+  </div>
 </div>

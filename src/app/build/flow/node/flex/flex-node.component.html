@@ -1,18 +1,20 @@
 <erupt-node
-    [(model)]="modelValue"
-    [readonly]="readonly"
-    [headerColor]="color()"
-    [eruptBuild]="eruptBuild"
-    (select)="onSelect()"
-    (insertNode)="onInsertNode($event)"
-    (insertFlexNode)="onInsertFlexNode($event)"
-    (saveProp)="onSaveProp()"
-    [progress]="progress"
-    (delete)="onDelete()">
-    <div config>
-        <erupt-flow-form *ngIf="flexErupt" [eruptBuild]="flexErupt" [initValue]="false" [readonly]="false"/>
-    </div>
-    <div>
-        {{ modelValue?.name }}
-    </div>
+  [(model)]="modelValue"
+  [readonly]="readonly"
+  [headerColor]="color()"
+  [eruptBuild]="eruptBuild"
+  (select)="onSelect()"
+  (insertNode)="onInsertNode($event)"
+  (insertFlexNode)="onInsertFlexNode($event)"
+  (saveProp)="onSaveProp()"
+  [progress]="progress"
+  (delete)="onDelete()">
+  <div config>
+    @if (flexErupt) {
+      <erupt-flow-form [eruptBuild]="flexErupt" [initValue]="false" [readonly]="false"/>
+    }
+  </div>
+  <div>
+    {{ modelValue?.name }}
+  </div>
 </erupt-node>

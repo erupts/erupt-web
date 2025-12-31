@@ -1,48 +1,50 @@
 <ng-container>
-    <div nz-row [nzGutter]="16" *ngIf="data">
-        <ng-container *ngFor="let d of data">
-            <div nz-col [nzXXl]="eruptBuildModel.eruptModel.eruptJson.linkTree ? 6 : 4"
-                 [nzXl]="6" [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXs]="24">
-                <nz-card class="erupt-card" [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'0'}"
-                         [nzBordered]="true" (click)="onEdit.emit(d[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])">
-                    <ng-container *ngIf="vis.fields.length < eruptBuildModel.eruptModel.eruptFieldModels.length">
-                        <ng-container *ngIf="(vis.fieldVisibility === FieldVisibility.INCLUDE)? vis.fields.length:true">
-                            <div style="padding: 12px">
-                                <ng-container *ngFor="let field of eruptBuildModel.eruptModel.eruptFieldModels">
-                                    <ng-container *ngFor="let view of field.eruptFieldJson.views">
-                                        <ng-container *ngIf="(vis.fieldVisibility==FieldVisibility.EXCLUDE)?vis.fields.indexOf(view.column) === -1:vis.fields.indexOf(view.column) !== -1">
-                                            {{ view.title }}:&nbsp;
-                                            <span (click)="clickField($event, field.fieldName)">
-                                                <ng-container *ngIf="columnMap.get(field.fieldName)?.format">
-                                                    <span [innerHTML]="(columnMap.get(field.fieldName)?.format(d,columnMap.get(field.fieldName),null)||'')|safeHtml"></span>
-                                                </ng-container>
-                                                <ng-container *ngIf="!columnMap.get(field.fieldName)?.format">
-                                                    <span [innerHTML]="(d[view.column]==null?'':d[view.column])|safeHtml"></span>
-                                                </ng-container>
-                                            </span><br>
-                                        </ng-container>
-                                    </ng-container>
-                                </ng-container>
-                            </div>
-                        </ng-container>
-                    </ng-container>
-                </nz-card>
-                <ng-template #coverTemplate>
-                    <ng-container *ngIf="vis.cardView.coverField">
-                        <div class="card-img-container">
-                            <ng-container *ngIf="d[vis.cardView.coverField]">
-                                <div style="width: 100%; height: 100%;"
-                                     [ngStyle]="viewImageStyle(d[vis.cardView.coverField], eruptBuildModel.eruptModel.eruptFieldModelMap.get(vis.cardView.coverField))">
-                                </div>
-                            </ng-container>
-                            <ng-container *ngIf="!d[vis.cardView.coverField]">
-                                <img src="./assets/image/no-img.svg" alt="" width="44px" class="no-image">
-                            </ng-container>
-                        </div>
-                    </ng-container>
-                </ng-template>
-            </div>
-        </ng-container>
+  @if (data) {
+    <div nz-row [nzGutter]="16">
+      @for (d of data; track d) {
+        <div nz-col [nzXXl]="eruptBuildModel.eruptModel.eruptJson.linkTree ? 6 : 4"
+          [nzXl]="6" [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXs]="24">
+          <nz-card class="erupt-card" [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'0'}"
+            [nzBordered]="true" (click)="onEdit.emit(d[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])">
+            @if (vis.fields.length < eruptBuildModel.eruptModel.eruptFieldModels.length) {
+              @if ((vis.fieldVisibility === FieldVisibility.INCLUDE)? vis.fields.length:true) {
+                <div style="padding: 12px">
+                  @for (field of eruptBuildModel.eruptModel.eruptFieldModels; track field) {
+                    @for (view of field.eruptFieldJson.views; track view) {
+                      @if ((vis.fieldVisibility==FieldVisibility.EXCLUDE)?vis.fields.indexOf(view.column) === -1:vis.fields.indexOf(view.column) !== -1) {
+                        {{ view.title }}:&nbsp;
+                        <span (click)="clickField($event, field.fieldName)">
+                          @if (columnMap.get(field.fieldName)?.format) {
+                            <span [innerHTML]="(columnMap.get(field.fieldName)?.format(d,columnMap.get(field.fieldName),null)||'')|safeHtml"></span>
+                          }
+                          @if (!columnMap.get(field.fieldName)?.format) {
+                            <span [innerHTML]="(d[view.column]==null?'':d[view.column])|safeHtml"></span>
+                          }
+                        </span><br>
+                      }
+                    }
+                  }
+                </div>
+              }
+            }
+          </nz-card>
+          <ng-template #coverTemplate>
+            @if (vis.cardView.coverField) {
+              <div class="card-img-container">
+                @if (d[vis.cardView.coverField]) {
+                  <div style="width: 100%; height: 100%;"
+                    [ngStyle]="viewImageStyle(d[vis.cardView.coverField], eruptBuildModel.eruptModel.eruptFieldModelMap.get(vis.cardView.coverField))">
+                  </div>
+                }
+                @if (!d[vis.cardView.coverField]) {
+                  <img src="./assets/image/no-img.svg" alt="" width="44px" class="no-image">
+                }
+              </div>
+            }
+          </ng-template>
+        </div>
+      }
     </div>
+  }
 </ng-container>
 

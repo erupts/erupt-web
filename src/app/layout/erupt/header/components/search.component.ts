@@ -7,31 +7,39 @@ import {generateMenuPath} from "@shared/util/erupt.util";
 @Component({
     selector: 'header-search',
     template: `
-        <ng-container *ngIf="menu">
-            <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
-                <input nz-input autofocus [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()" (input)="onInput($event)"
-                       [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto"
-                       (keydown.enter)="search($event)">
-                <nz-autocomplete #auto [nzBackfill]="false">
-                    <nz-auto-option *ngFor="let menu of options" [nzValue]="menu.name"
-                                    [nzLabel]="menu.name" (click)="toMenu(menu)" [nzDisabled]="!menu.value">
-                        <i *ngIf="menu.icon" [class]="menu.icon"></i>
-                        <i *ngIf="!menu.icon" nz-icon nzType="unordered-list" nzTheme="outline"></i>
-                        &nbsp; {{ menu.name }}
-                    </nz-auto-option>
-                </nz-autocomplete>
-            </nz-input-group>
-            <ng-template #prefixTemplateInfo>
-                <i nz-icon nzType="search" nzTheme="outline"
-                   [ngStyle]="{color:focus?'#000':'#999'}" style="margin-top: 2px;transition: all 500ms"></i>&nbsp;&nbsp;
-            </ng-template>
-            <ng-template #suffixTemplateInfo>
-                <i nz-icon nzType="arrow-right" nzTheme="outline" *ngIf="text"
-                   style="cursor: pointer;transition:.5s all;"
-                   [ngStyle]="{color:focus?'#000':'#fff'}"></i>
-            </ng-template>
-        </ng-container>
-    `,
+        @if (menu) {
+          <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
+            <input nz-input autofocus [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()" (input)="onInput($event)"
+              [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto"
+              (keydown.enter)="search($event)">
+            <nz-autocomplete #auto [nzBackfill]="false">
+              @for (menu of options; track menu) {
+                <nz-auto-option [nzValue]="menu.name"
+                  [nzLabel]="menu.name" (click)="toMenu(menu)" [nzDisabled]="!menu.value">
+                  @if (menu.icon) {
+                    <i [class]="menu.icon"></i>
+                  }
+                  @if (!menu.icon) {
+                    <i nz-icon nzType="unordered-list" nzTheme="outline"></i>
+                  }
+                  &nbsp; {{ menu.name }}
+                </nz-auto-option>
+              }
+            </nz-autocomplete>
+          </nz-input-group>
+          <ng-template #prefixTemplateInfo>
+            <i nz-icon nzType="search" nzTheme="outline"
+            [ngStyle]="{color:focus?'#000':'#999'}" style="margin-top: 2px;transition: all 500ms"></i>&nbsp;&nbsp;
+          </ng-template>
+          <ng-template #suffixTemplateInfo>
+            @if (text) {
+              <i nz-icon nzType="arrow-right" nzTheme="outline"
+                style="cursor: pointer;transition:.5s all;"
+              [ngStyle]="{color:focus?'#000':'#fff'}"></i>
+            }
+          </ng-template>
+        }
+        `,
 })
 export class HeaderSearchComponent implements AfterViewInit {
 

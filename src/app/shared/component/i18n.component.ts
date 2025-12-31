@@ -7,21 +7,23 @@ import {EruptAppData} from "@shared/model/erupt-app.model";
 @Component({
     selector: 'i18n-choice',
     template: `
-        <ng-container *ngIf="langs.length > 1">
-            <i nz-dropdown [nzDropdownMenu]="langMenu"
-               nzPlacement="bottomRight" nz-icon
-               nzType="global"></i>
-            <nz-dropdown-menu #langMenu>
-                <ul nz-menu nzSelectable>
-                    <li nz-menu-item *ngFor="let item of langs" [nzSelected]="item.code == curLangCode"
-                        (click)="change(item.code)">
-                        <span role="img" [attr.aria-label]="item.text" class="pr-xs">{{ item.abbr }}</span>
-                        {{ item.text }}
-                    </li>
-                </ul>
-            </nz-dropdown-menu>
-        </ng-container>
-    `,
+        @if (langs.length > 1) {
+          <i nz-dropdown [nzDropdownMenu]="langMenu"
+            nzPlacement="bottomRight" nz-icon
+          nzType="global"></i>
+          <nz-dropdown-menu #langMenu>
+            <ul nz-menu nzSelectable>
+              @for (item of langs; track item) {
+                <li nz-menu-item [nzSelected]="item.code == curLangCode"
+                  (click)="change(item.code)">
+                  <span role="img" [attr.aria-label]="item.text" class="pr-xs">{{ item.abbr }}</span>
+                  {{ item.text }}
+                </li>
+              }
+            </ul>
+          </nz-dropdown-menu>
+        }
+        `,
     host: {
         '[class.flex-1]': 'true'
     },
