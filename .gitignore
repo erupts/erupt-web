@@ -42,6 +42,10 @@ testem.log
 yarn-error.log
 /_all.less
 
+# Vite
+node_modules/.vite
+.vite
+
 # e2e
 /e2e/*.map
 
