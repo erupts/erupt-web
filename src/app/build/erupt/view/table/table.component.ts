@@ -1,7 +1,18 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
+import {
+    Alert,
+    Drill,
+    DrillInput,
+    EruptModel,
+    Power,
+    Row,
+    RowOperation,
+    Sort,
+    Vis,
+    VisType
+} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -471,7 +482,7 @@ export class TableComponent implements OnInit, OnDestroy {
         let exprEval = (expr, item) => {
             try {
                 if (expr) {
-                    return eval(expr);
+                    return new Function("item", expr)(item);
                 } else {
                     return true;
                 }
