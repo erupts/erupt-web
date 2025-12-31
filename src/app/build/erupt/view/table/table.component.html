@@ -27,15 +27,15 @@
               </button>
             }
             @if (eruptBuildModel.eruptModel.eruptJson.power.importable) {
-              <nz-button-group>
+              <span style="margin-left:8px">
                 <button nz-button (click)="importableExcel()" id="erupt-btn-importable">
                   <i nz-icon nzType="import" nzTheme="outline"></i>
                   &nbsp;{{ 'table.import'|translate }}
                 </button>
-                <button nz-button nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight">
+                <button nz-button nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight" style="margin-left: -1px">
                   <i nz-icon nzType="ellipsis"></i>
                 </button>
-              </nz-button-group>
+              </span>
               <nz-dropdown-menu #menu1="nzDropdownMenu">
                 <ul nz-menu>
                   <li nz-menu-item (click)="downloadExcelTemplate()">
@@ -291,7 +291,7 @@
             <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
           }
           @if (dataPage.showPagination) {
-            <nz-pagination style="text-align: center;margin-top: 12px" nzShowSizeChanger nzShowQuickJumper
+            <nz-pagination style="justify-content: center;margin-top: 12px" nzShowSizeChanger nzShowQuickJumper
               [nzPageIndex]="dataPage.pi" [nzShowTotal]="totalTemplate"
               [nzPageSize]="dataPage.ps"
               [nzTotal]="dataPage.total"
