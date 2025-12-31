@@ -7,7 +7,6 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {NzDrawerModule} from 'ng-zorro-antd/drawer';
-import {NzMessageModule} from 'ng-zorro-antd/message';
 import {NzIconModule} from 'ng-zorro-antd/icon';
 import {NzTypographyModule} from 'ng-zorro-antd/typography';
 import {NzFormModule} from 'ng-zorro-antd/form';
@@ -41,7 +40,6 @@ import {NzProgressModule} from 'ng-zorro-antd/progress';
 import {NzSpinModule} from 'ng-zorro-antd/spin';
 import {NzSkeletonModule} from 'ng-zorro-antd/skeleton';
 import {NzAlertModule} from 'ng-zorro-antd/alert';
-import {NzNotificationModule} from 'ng-zorro-antd/notification';
 import {NzResultModule} from 'ng-zorro-antd/result';
 import {NzEmptyModule} from 'ng-zorro-antd/empty';
 import {NzDescriptionsModule} from 'ng-zorro-antd/descriptions';
@@ -140,7 +138,6 @@ import {FlowApprovalDetailComponent} from '@flow/view/flow-approval-detail/flow-
         NzButtonModule,
         NzInputModule,
         NzDrawerModule,
-        NzMessageModule,
         NzIconModule,
         NzTypographyModule,
         NzFormModule,
@@ -174,7 +171,6 @@ import {FlowApprovalDetailComponent} from '@flow/view/flow-approval-detail/flow-
         NzSpinModule,
         NzSkeletonModule,
         NzAlertModule,
-        NzNotificationModule,
         NzResultModule,
         NzEmptyModule,
         NzDescriptionsModule,
