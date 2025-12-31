@@ -7,8 +7,8 @@
           [optionalHelp]="field.eruptFieldJson.edit.desc">
           @if (field.eruptFieldJson.edit.inputType.prefix.length==0&&
             field.eruptFieldJson.edit.inputType.suffix.length==0) {
-            <nz-input-group [nzAddOnBefore]="supportCopy&&prefixTemplate"
-              [nzSuffix]="closeSuffixTemplate" class="erupt-input" [nzSize]="size">
+            <nz-input-wrapper [nzAddonBefore]="supportCopy&&prefixTemplate"
+              [nzSuffix]="closeSuffixTemplate" class="erupt-input" >
               <input nz-input [nzSize]="size" autocomplete="off" nz-tooltip
                 nzTooltipTrigger="focus"
                 nzTooltipPlacement="topLeft"
@@ -19,7 +19,7 @@
                 [name]="field.fieldName"
                 [placeholder]="field.eruptFieldJson.edit.placeHolder"
                 [disabled]="isReadonly(field)">
-            </nz-input-group>
+            </nz-input-wrapper>
             <ng-template #prefixTemplate>
               <span nz-icon nzType="copy" (click)="copy(field.eruptFieldJson.edit.$value)"
               style="cursor: pointer" nzTheme="outline"></span>
@@ -27,10 +27,10 @@
           }
           @if (field.eruptFieldJson.edit.inputType.prefix.length>0||
             field.eruptFieldJson.edit.inputType.suffix.length>0) {
-            <nz-input-group
-              [nzAddOnBefore]="field.eruptFieldJson.edit.inputType.prefix.length>0&&addOnBeforeTemplate"
-              [nzAddOnAfter]="field.eruptFieldJson.edit.inputType.suffix.length>0&&addOnAfterTemplate"
-              [nzSize]="size" class="erupt-input">
+            <nz-input-wrapper
+              [nzAddonBefore]="field.eruptFieldJson.edit.inputType.prefix.length>0&&addOnBeforeTemplate"
+              [nzAddonAfter]="field.eruptFieldJson.edit.inputType.suffix.length>0&&addOnAfterTemplate"
+              class="erupt-input">
               <input nz-input autocomplete="off"
                 [type]="field.eruptFieldJson.edit.inputType.type"
                 [maxLength]="field.eruptFieldJson.edit.inputType.length"
@@ -38,7 +38,7 @@
                 [(ngModel)]="field.eruptFieldJson.edit.$value"
                 [name]="field.fieldName"
                 [disabled]="isReadonly(field)">
-            </nz-input-group>
+            </nz-input-wrapper>
             <!--prefix and suffix template-->
             <ng-template #addOnBeforeTemplate>
               @if (field.eruptFieldJson.edit.inputType.prefix.length==1) {
