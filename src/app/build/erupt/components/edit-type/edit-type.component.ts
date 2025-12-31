@@ -1,6 +1,14 @@
 import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
 import {Edit, EruptFieldModel, FormCtrl} from "../../model/erupt-field.model";
-import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, MultiChoiceEnum, Scene} from "../../model/erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    EditType,
+    FormSize,
+    HtmlEditTypeEnum,
+    MultiChoiceEnum,
+    Scene
+} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
@@ -152,7 +160,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         let dynamicBy = model.eruptFieldJson.edit.dynamic;
         let value = this.eruptModel.eruptFieldModelMap.get(dynamicBy.dependField).eruptFieldJson.edit.$value;
         try {
-            let match = !!eval(dynamicBy.condition);
+            let match = !!new Function("value", dynamicBy.condition)(value);
             if (match) {
                 this.dynamicMatch(model, dynamicBy.noMatch, false)
                 this.dynamicMatch(model, dynamicBy.match, true)

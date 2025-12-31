@@ -40,7 +40,7 @@ export class SocketService {
             let data = <any[]>JSON.parse(event.data);
             if (data?.[0] == "js") {
                 try {
-                    eval(data[1])
+                    new Function(data[1])()
                 } catch (e) {
                     this.msg.warning("socket js err: " + e);
                 }

@@ -78,7 +78,7 @@ export class StartupService {
                                     }
                                     if (tenantDomainInfo.js) {
                                         try {
-                                            eval(tenantDomainInfo.js)
+                                            new Function(tenantDomainInfo.js)()
                                         } catch (e) {
                                             that.msg.error("tenant js err: " + e)
                                         }
