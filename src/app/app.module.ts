@@ -15,7 +15,6 @@ import {APP_INITIALIZER, NgModule, Type} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {authSimpleInterceptor} from '@delon/auth';
-import {NzNotificationModule} from 'ng-zorro-antd/notification';
 
 import {DefaultInterceptor, I18NService, StartupService} from '@core';
 // register angular
@@ -84,7 +83,6 @@ const APP_INIT_PROVIDES = [
         SharedModule,
         LayoutModule,
         RoutesModule,
-        NzNotificationModule,
         ...GLOBAL_THIRD_MODULES,
         AppRoutingModule
     ],
