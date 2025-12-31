@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {GanttDragEvent, GanttGroup, GanttItem, GanttItemType, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {FieldVisibility, Vis} from "../../model/erupt.model";
-import * as moment from 'moment';
+import moment from 'moment';
 import {EruptField} from "../../model/erupt-field.model";
 import {STColumn} from "@delon/abc/st";
 import {UiBuildService} from "../../service/ui-build.service";

@@ -1,9 +1,8 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Bi, Dimension, DimType} from "../../model/bi.model";
 import {BiDataService} from "../../service/data.service";
-import {STColumn, STComponent} from "@delon/abc/st";
+import {STColumn, STComponent, STChange, STPage} from "@delon/abc/st";
 import {SettingsService} from "@delon/theme";
-import {STChange, STPage} from "@delon/abc/st/st.interfaces";
 
 @Component({
     selector: 'bi-reference-table',

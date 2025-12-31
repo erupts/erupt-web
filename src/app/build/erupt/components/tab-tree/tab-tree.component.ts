@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {NzTreeNode} from "ng-zorro-antd/core/tree/nz-tree-base-node";
+import {NzTreeNode} from "ng-zorro-antd/core/tree";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {DataService} from "@shared/service/data.service";
 import {calcChecks} from "@shared/util/zorro.util";

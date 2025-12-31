@@ -9,7 +9,7 @@ import {DatePipe} from "@angular/common";
 import moment from 'moment';
 import {QueryCondition} from "../model/erupt.vo";
 import {isNotNull} from "@shared/util/erupt.util";
-import {NzUploadFile} from "ng-zorro-antd/upload/interface";
+import {NzUploadFile} from "ng-zorro-antd/upload";
 import {NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
 import {I18NService} from "@core";
 
