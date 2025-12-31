@@ -1,18 +1,24 @@
 <nz-spin [nzSpinning]="loading">
-    <ng-container [ngSwitch]="dim.type">
-        <ng-container *ngSwitchCase="dimType.REFERENCE_RADIO">
-            <nz-radio-group [(ngModel)]="dim.$value" [name]="dim.code">
-                <label nz-radio [nzValue]="null" *ngIf="!dim.notNull">{{'global.check_none'|translate}}</label>
-                <label nz-radio *ngFor="let i of data" [nzValue]="i.id">{{i.title}}</label>
-            </nz-radio-group>
-        </ng-container>
-        <ng-container *ngSwitchCase="dimType.REFERENCE_CHECKBOX">
-            <label nz-checkbox [(nzChecked)]="dim.$viewValue"
-                   (nzCheckedChange)="checkedChangeAll($event)">{{'global.check_all'|translate}}</label>
-            <nz-checkbox-wrapper (nzOnChange)="checkedChange($event)">
-                <label nz-checkbox [nzChecked]="dim.$viewValue" *ngFor="let i of data"
-                       [nzValue]="i.id">{{i.title}}</label>
-            </nz-checkbox-wrapper>
-        </ng-container>
-    </ng-container>
+  @switch (dim.type) {
+    @case (dimType.REFERENCE_RADIO) {
+      <nz-radio-group [(ngModel)]="dim.$value" [name]="dim.code">
+        @if (!dim.notNull) {
+          <label nz-radio [nzValue]="null">{{'global.check_none'|translate}}</label>
+        }
+        @for (i of data; track i) {
+          <label nz-radio [nzValue]="i.id">{{i.title}}</label>
+        }
+      </nz-radio-group>
+    }
+    @case (dimType.REFERENCE_CHECKBOX) {
+      <label nz-checkbox [(nzChecked)]="dim.$viewValue"
+      (nzCheckedChange)="checkedChangeAll($event)">{{'global.check_all'|translate}}</label>
+      <nz-checkbox-wrapper (nzOnChange)="checkedChange($event)">
+        @for (i of data; track i) {
+          <label nz-checkbox [nzChecked]="dim.$viewValue"
+          [nzValue]="i.id">{{i.title}}</label>
+        }
+      </nz-checkbox-wrapper>
+    }
+  }
 </nz-spin>

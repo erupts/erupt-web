@@ -1,152 +1,161 @@
 <!-- 递归渲染节点 -->
-<ng-container [ngSwitch]="node.type">
-    <!-- 开始节点 -->
+@switch (node.type) {
+  <!-- 开始节点 -->
+  @case (nodeType.START) {
     <app-start-node
-        *ngSwitchCase="nodeType.START"
-        [readonly]="readonly"
-        [(model)]="node"
-        [eruptBuild]="eruptBuild"
-        [branch]="branch"
-        [index]="index"
-        (modelChange)="nodeChange.emit($event)"
-        (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
-        (delete)="deleteNode(branch, $event.index)"
-        [progress]="progress"
-        (select)="select.emit($event)">
+      [readonly]="readonly"
+      [(model)]="node"
+      [eruptBuild]="eruptBuild"
+      [branch]="branch"
+      [index]="index"
+      (modelChange)="nodeChange.emit($event)"
+      (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
+      (delete)="deleteNode(branch, $event.index)"
+      [progress]="progress"
+      (select)="select.emit($event)">
     </app-start-node>
-    <app-end-node *ngSwitchCase="nodeType.END" [progress]="progress" [(model)]="node">
-
+  }
+  @case (nodeType.END) {
+    <app-end-node [progress]="progress" [(model)]="node">
     </app-end-node>
-
+  }
+  @case (nodeType.FlEX) {
     <erupt-flex-node
-        *ngSwitchCase="nodeType.FlEX"
-        [readonly]="readonly"
-        [(modelValue)]="node"
-        [eruptBuild]="eruptBuild"
-        [branch]="branch"
-        [index]="index"
-        [progress]="progress"
-        (modelValueChange)="nodeChange.emit($event)"
-        (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
-        (delete)="deleteNode(branch, $event.index)"
-        (select)="select.emit($event)">
+      [readonly]="readonly"
+      [(modelValue)]="node"
+      [eruptBuild]="eruptBuild"
+      [branch]="branch"
+      [index]="index"
+      [progress]="progress"
+      (modelValueChange)="nodeChange.emit($event)"
+      (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
+      (delete)="deleteNode(branch, $event.index)"
+      (select)="select.emit($event)">
     </erupt-flex-node>
-
-    <!-- 子节点 -->
+  }
+  <!-- 子节点 -->
+  @case (nodeType.SUB) {
     <app-sub-node
-        *ngSwitchCase="nodeType.SUB"
-        [readonly]="readonly"
-        [(modelValue)]="node"
-        [eruptBuild]="eruptBuild"
-        [branch]="branch"
-        [index]="index"
-        [progress]="progress"
-        (modelValueChange)="nodeChange.emit($event)"
-        (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
-        (delete)="deleteNode(branch, $event.index)"
-        (select)="select.emit($event)">
+      [readonly]="readonly"
+      [(modelValue)]="node"
+      [eruptBuild]="eruptBuild"
+      [branch]="branch"
+      [index]="index"
+      [progress]="progress"
+      (modelValueChange)="nodeChange.emit($event)"
+      (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
+      (delete)="deleteNode(branch, $event.index)"
+      (select)="select.emit($event)">
     </app-sub-node>
-
-    <!-- 审批节点 -->
+  }
+  <!-- 审批节点 -->
+  @case (nodeType.APPROVAL) {
     <app-approval-node
-        *ngSwitchCase="nodeType.APPROVAL"
-        [readonly]="readonly"
-        [(modelValue)]="node"
-        [eruptBuild]="eruptBuild"
-        [branch]="branch"
-        [index]="index"
-        [progress]="progress"
-        (modelValueChange)="nodeChange.emit($event)"
-        (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
-        (delete)="deleteNode(branch, $event.index)"
-        (select)="select.emit($event)">
+      [readonly]="readonly"
+      [(modelValue)]="node"
+      [eruptBuild]="eruptBuild"
+      [branch]="branch"
+      [index]="index"
+      [progress]="progress"
+      (modelValueChange)="nodeChange.emit($event)"
+      (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
+      (delete)="deleteNode(branch, $event.index)"
+      (select)="select.emit($event)">
     </app-approval-node>
-
-    <!-- 抄送节点 -->
+  }
+  <!-- 抄送节点 -->
+  @case (nodeType.CC) {
     <app-cc-node
-        *ngSwitchCase="nodeType.CC"
-        [readonly]="readonly"
-        [(modelValue)]="node"
-        [eruptBuild]="eruptBuild"
-        [branch]="branch"
-        [index]="index"
-        [progress]="progress"
-        (modelValueChange)="nodeChange.emit($event)"
-        (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
-        (delete)="deleteNode(branch, $event.index)"
-        (select)="select.emit($event)">
+      [readonly]="readonly"
+      [(modelValue)]="node"
+      [eruptBuild]="eruptBuild"
+      [branch]="branch"
+      [index]="index"
+      [progress]="progress"
+      (modelValueChange)="nodeChange.emit($event)"
+      (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
+      (delete)="deleteNode(branch, $event.index)"
+      (select)="select.emit($event)">
     </app-cc-node>
-    <app-gateway-join *ngSwitchCase="nodeType.GATEWAY_JOIN"
-                      [readonly]="readonly"
-                      [(modelValue)]="node"
-                      [eruptBuild]="eruptBuild"
-                      [branch]="branch"
-                      [index]="index"
-                      [progress]="progress"
-                      (modelValueChange)="nodeChange.emit($event)"
-                      (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
-                      (delete)="deleteNode(branch, $event.index)"
-                      (select)="select.emit($event)"
-    >
+  }
+  @case (nodeType.GATEWAY_JOIN) {
+    <app-gateway-join
+      [readonly]="readonly"
+      [(modelValue)]="node"
+      [eruptBuild]="eruptBuild"
+      [branch]="branch"
+      [index]="index"
+      [progress]="progress"
+      (modelValueChange)="nodeChange.emit($event)"
+      (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
+      (delete)="deleteNode(branch, $event.index)"
+      (select)="select.emit($event)"
+      >
     </app-gateway-join>
-    <!-- 并行节点、排他节点和包容节点 - 递归渲染 -->
-    <div *ngSwitchDefault class="p-gateway">
-        <div class="p-branch">
-            <button nz-button nzType="default" nzShape="round"
-                    *ngIf="!readonly"
-                    (click)="addBranch()"
-                    class="p-gateway-add">
-                添加分支
-            </button>
-            <!-- 分支遍历 -->
-            <div *ngFor="let branch of node.branches; let i = index;"
-                 [class]="'p-branch-item' + (i === 0 ? ' p-branch-item-l' : '') + (i === node.branches.length - 1 ? ' p-branch-item-r' : '')">
-                <div>
-                    <app-gateway-node [readonly]="readonly"
-                                      [(modelValue)]="node.branches[i]"
-                                      [index]="i"
-                                      [progress]="progress"
-                                      [eruptBuild]="eruptBuild"
-                                      [branch]="node.branches[i].branches"
-                                      [moveRn]="node.type === nodeType.GATEWAY_PARALLEL ? i < node.branches.length - 1 : i < node.branches.length - 2"
-                                      [moveLn]="i > 0"
-                                      [isDefault]="branch.prop?.type === BranchType.ELSE"
-                                      [gatewayType]="node.type === nodeType.GATEWAY_PARALLEL ? gatewayType.PARALLEL : (node.type === nodeType.GATEWAY_EXCLUSION ? gatewayType.EXCLUSIVE : gatewayType.INCLUSIVE)"
-                                      (insertNode)="insertNodeFun(node.branches[i].branches, -1, $event.type)"
-                                      (delete)="deleteBranch(i)"
-                                      (copy)="copyBranch(i)"
-                                      (moveL)="moveL(i)"
-                                      (moveR)="moveR(i)"
-                                      (select)="selectFun($event, i)">
-                    </app-gateway-node>
-
-                    <!-- 递归渲染分支内的节点 -->
-                    <ng-container *ngFor="let childNode of branch.branches; let bi = index;">
-                        <app-recursive-node
-                            [eruptBuild]="eruptBuild"
-                            [readonly]="readonly"
-                            [node]="childNode"
-                            [progress]="progress"
-                            [branch]="branch.branches"
-                            [index]="bi"
-                            (nodeChange)="branch[bi] = $event"
-                            (insertNode)="insertNodeFun(branch.branches, $event.index, $event.type)"
-                            (delete)="deleteNode(branch.branches, $event.index)"
-                            (select)="select.emit($event)">
-                        </app-recursive-node>
-                    </ng-container>
-                </div>
+  }
+  <!-- 并行节点、排他节点和包容节点 - 递归渲染 -->
+  @default {
+    <div class="p-gateway">
+      <div class="p-branch">
+        @if (!readonly) {
+          <button nz-button nzType="default" nzShape="round"
+            (click)="addBranch()"
+            class="p-gateway-add">
+            添加分支
+          </button>
+        }
+        <!-- 分支遍历 -->
+        @for (branch of node.branches; track branch; let i = $index) {
+          <div
+            [class]="'p-branch-item' + (i === 0 ? ' p-branch-item-l' : '') + (i === node.branches.length - 1 ? ' p-branch-item-r' : '')">
+            <div>
+              <app-gateway-node [readonly]="readonly"
+                [(modelValue)]="node.branches[i]"
+                [index]="i"
+                [progress]="progress"
+                [eruptBuild]="eruptBuild"
+                [branch]="node.branches[i].branches"
+                [moveRn]="node.type === nodeType.GATEWAY_PARALLEL ? i < node.branches.length - 1 : i < node.branches.length - 2"
+                [moveLn]="i > 0"
+                [isDefault]="branch.prop?.type === BranchType.ELSE"
+                [gatewayType]="node.type === nodeType.GATEWAY_PARALLEL ? gatewayType.PARALLEL : (node.type === nodeType.GATEWAY_EXCLUSION ? gatewayType.EXCLUSIVE : gatewayType.INCLUSIVE)"
+                (insertNode)="insertNodeFun(node.branches[i].branches, -1, $event.type)"
+                (delete)="deleteBranch(i)"
+                (copy)="copyBranch(i)"
+                (moveL)="moveL(i)"
+                (moveR)="moveR(i)"
+                (select)="selectFun($event, i)">
+              </app-gateway-node>
+              <!-- 递归渲染分支内的节点 -->
+              @for (childNode of branch.branches; track childNode; let bi = $index) {
+                <app-recursive-node
+                  [eruptBuild]="eruptBuild"
+                  [readonly]="readonly"
+                  [node]="childNode"
+                  [progress]="progress"
+                  [branch]="branch.branches"
+                  [index]="bi"
+                  (nodeChange)="branch[bi] = $event"
+                  (insertNode)="insertNodeFun(branch.branches, $event.index, $event.type)"
+                  (delete)="deleteNode(branch.branches, $event.index)"
+                  (select)="select.emit($event)">
+                </app-recursive-node>
+              }
             </div>
-        </div>
+          </div>
+        }
+      </div>
+      @if (node.type === nodeType.GATEWAY_EXCLUSION) {
         <erupt-node
-            *ngIf="node.type === nodeType.GATEWAY_EXCLUSION"
-            [eruptBuild]="eruptBuild"
-            [readonly]="readonly"
-            [progress]="progress"
-            [class]="{'p-branch-end': branch.length === index + 1}"
-            (insertFlexNode)="onInsertFlexNode($event)"
-            [showBody]="false"
-            (insertNode)="insertNodeFun(branch, index, $event)">
+          [eruptBuild]="eruptBuild"
+          [readonly]="readonly"
+          [progress]="progress"
+          [class]="{'p-branch-end': branch.length === index + 1}"
+          (insertFlexNode)="onInsertFlexNode($event)"
+          [showBody]="false"
+          (insertNode)="insertNodeFun(branch, index, $event)">
         </erupt-node>
+      }
     </div>
-</ng-container>
+  }
+}

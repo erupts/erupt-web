@@ -1,83 +1,80 @@
-<ng-container *ngIf="range">
-    <ng-container *ngIf="edit.dateType.type != dateEnum.TIME">
-        <nz-range-picker [nzSize]="size" class="erupt-input stander-line-height"
-                         [name]="field.fieldName"
-                         [(ngModel)]="edit.$value"
-                         [nzDisabled]="readonly"
-                         [nzShowTime]="edit.dateType.type == dateEnum.DATE_TIME"
-                         [nzMode]="rangeMode"
-                         [nzPlaceHolder]="edit.placeHolder"
-                         [nzDisabledDate]="disabledDate"
-                         [nzRanges]="dateRanges">
-        </nz-range-picker>
-    </ng-container>
-<!--    <ng-container *ngIf="edit.dateType.type == dateEnum.TIME">-->
-<!--        <nz-time-picker [nzSize]="size" class="erupt-input stander-line-height"-->
-<!--                        [(ngModel)]="edit.$value"-->
-<!--                        [nzDisabled]="readonly"-->
-<!--                        [nzPlaceHolder]="edit.placeHolder"-->
-<!--                        [name]="field.fieldName">-->
+@if (range) {
+  @if (edit.dateType.type != dateEnum.TIME) {
+    <nz-range-picker [nzSize]="size" class="erupt-input stander-line-height"
+      [name]="field.fieldName"
+      [(ngModel)]="edit.$value"
+      [nzDisabled]="readonly"
+      [nzShowTime]="edit.dateType.type == dateEnum.DATE_TIME"
+      [nzMode]="rangeMode"
+      [nzPlaceHolder]="edit.placeHolder"
+      [nzDisabledDate]="disabledDate"
+      [nzRanges]="dateRanges">
+    </nz-range-picker>
+  }
+  <!--    <ng-container *ngIf="edit.dateType.type == dateEnum.TIME">-->
+  <!--        <nz-time-picker [nzSize]="size" class="erupt-input stander-line-height"-->
+  <!--                        [(ngModel)]="edit.$value"-->
+  <!--                        [nzDisabled]="readonly"-->
+  <!--                        [nzPlaceHolder]="edit.placeHolder"-->
+  <!--                        [name]="field.fieldName">-->
 <!--        </nz-time-picker>-->
 <!--    </ng-container>-->
-</ng-container>
-<ng-container *ngIf="!range">
-    <ng-container [ngSwitch]="edit.dateType.type">
-        <ng-container *ngSwitchCase="dateEnum.DATE">
-            <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
-                            [(ngModel)]="edit.$value"
-                            [nzDisabled]="readonly"
-                            [nzPlaceHolder]="edit.placeHolder"
-                            [nzDisabledDate]="disabledDate"
-                            [name]="field.fieldName">
-            </nz-date-picker>
-        </ng-container>
-        <ng-container *ngSwitchCase="dateEnum.DATE_TIME">
-            <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
-                            [(ngModel)]="edit.$value"
-                            [nzDisabled]="readonly"
-                            [nzPlaceHolder]="edit.placeHolder"
-                            [nzDisabledDate]="disabledDate"
-                            [name]="field.fieldName"
-                            nzShowTime>
-            </nz-date-picker>
-        </ng-container>
-        <ng-container *ngSwitchCase="dateEnum.TIME">
-            <nz-time-picker [nzSize]="size" class="erupt-input stander-line-height"
-                            [(ngModel)]="edit.$value"
-                            [nzDisabled]="readonly"
-                            [nzPlaceHolder]="edit.placeHolder"
-                            [name]="field.fieldName">
-
-            </nz-time-picker>
-        </ng-container>
-        <ng-container *ngSwitchCase="dateEnum.WEEK">
-            <nz-week-picker [nzSize]="size" class="erupt-input stander-line-height"
-                            [(ngModel)]="edit.$value"
-                            [nzDisabled]="readonly"
-                            [nzDisabledDate]="disabledDate"
-                            [nzPlaceHolder]="edit.placeHolder"
-                            [name]="field.fieldName">
-
-            </nz-week-picker>
-        </ng-container>
-        <ng-container *ngSwitchCase="dateEnum.MONTH">
-            <nz-month-picker [nzSize]="size" class="erupt-input stander-line-height"
-                             [(ngModel)]="edit.$value"
-                             [nzDisabled]="readonly"
-                             [nzPlaceHolder]="edit.placeHolder"
-                             [nzDisabledDate]="disabledDate"
-                             [name]="field.fieldName">
-
-            </nz-month-picker>
-        </ng-container>
-        <ng-container *ngSwitchCase="dateEnum.YEAR">
-            <nz-year-picker [nzSize]="size" class="erupt-input stander-line-height"
-                            [(ngModel)]="edit.$value"
-                            [nzDisabled]="readonly"
-                            [nzDisabledDate]="disabledDate"
-                            [nzPlaceHolder]="edit.placeHolder"
-                            [name]="field.fieldName">
-            </nz-year-picker>
-        </ng-container>
-    </ng-container>
-</ng-container>
+}
+@if (!range) {
+  @switch (edit.dateType.type) {
+    @case (dateEnum.DATE) {
+      <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
+        [(ngModel)]="edit.$value"
+        [nzDisabled]="readonly"
+        [nzPlaceHolder]="edit.placeHolder"
+        [nzDisabledDate]="disabledDate"
+        [name]="field.fieldName">
+      </nz-date-picker>
+    }
+    @case (dateEnum.DATE_TIME) {
+      <nz-date-picker [nzSize]="size" class="erupt-input stander-line-height"
+        [(ngModel)]="edit.$value"
+        [nzDisabled]="readonly"
+        [nzPlaceHolder]="edit.placeHolder"
+        [nzDisabledDate]="disabledDate"
+        [name]="field.fieldName"
+        nzShowTime>
+      </nz-date-picker>
+    }
+    @case (dateEnum.TIME) {
+      <nz-time-picker [nzSize]="size" class="erupt-input stander-line-height"
+        [(ngModel)]="edit.$value"
+        [nzDisabled]="readonly"
+        [nzPlaceHolder]="edit.placeHolder"
+        [name]="field.fieldName">
+      </nz-time-picker>
+    }
+    @case (dateEnum.WEEK) {
+      <nz-week-picker [nzSize]="size" class="erupt-input stander-line-height"
+        [(ngModel)]="edit.$value"
+        [nzDisabled]="readonly"
+        [nzDisabledDate]="disabledDate"
+        [nzPlaceHolder]="edit.placeHolder"
+        [name]="field.fieldName">
+      </nz-week-picker>
+    }
+    @case (dateEnum.MONTH) {
+      <nz-month-picker [nzSize]="size" class="erupt-input stander-line-height"
+        [(ngModel)]="edit.$value"
+        [nzDisabled]="readonly"
+        [nzPlaceHolder]="edit.placeHolder"
+        [nzDisabledDate]="disabledDate"
+        [name]="field.fieldName">
+      </nz-month-picker>
+    }
+    @case (dateEnum.YEAR) {
+      <nz-year-picker [nzSize]="size" class="erupt-input stander-line-height"
+        [(ngModel)]="edit.$value"
+        [nzDisabled]="readonly"
+        [nzDisabledDate]="disabledDate"
+        [nzPlaceHolder]="edit.placeHolder"
+        [name]="field.fieldName">
+      </nz-year-picker>
+    }
+  }
+}

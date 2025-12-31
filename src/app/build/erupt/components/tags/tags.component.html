@@ -1,15 +1,19 @@
 <nz-select [nzAllowClear]='!eruptField.eruptFieldJson.edit.notNull'
-           [nzDisabled]="readonly"
-           [nzSize]="size" [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
-           [name]="eruptField.fieldName" (nzOpenChange)="load($event)"
-           [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
-           [nzTokenSeparators]="[eruptField.eruptFieldJson.edit.tagsType.joinSeparator]"
-           [nzMode]="eruptField.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'">
-    <nz-option *ngFor="let item of this.eruptField.componentValue" [nzLabel]="item"
-               [nzValue]="item"></nz-option>
-    <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
-        <div class="text-center">
-            <i nz-icon nzType="loading" class="loading-icon"></i>
-        </div>
+  [nzDisabled]="readonly"
+  [nzSize]="size" [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
+  [name]="eruptField.fieldName" (nzOpenChange)="load($event)"
+  [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
+  [nzTokenSeparators]="[eruptField.eruptFieldJson.edit.tagsType.joinSeparator]"
+  [nzMode]="eruptField.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'">
+  @for (item of this.eruptField.componentValue; track item) {
+    <nz-option [nzLabel]="item"
+    [nzValue]="item"></nz-option>
+  }
+  @if (isLoading) {
+    <nz-option nzDisabled nzCustomContent>
+      <div class="text-center">
+        <i nz-icon nzType="loading" class="loading-icon"></i>
+      </div>
     </nz-option>
+  }
 </nz-select>

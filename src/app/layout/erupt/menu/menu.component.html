@@ -1,80 +1,103 @@
 <ng-template #icon let-i>
-    <ng-container *ngIf="i" [ngSwitch]="i.type">
+  @if (i) {
+    @switch (i.type) {
+      @case ('icon') {
         <i
-            *ngSwitchCase="'icon'"
-            class="sidebar-nav__item-icon"
-            nz-icon
-            [nzType]="i.value"
-            [nzTheme]="i.theme"
-            [nzSpin]="i.spin"
-            [nzTwotoneColor]="i.twoToneColor"
-            [nzIconfont]="i.iconfont"
-            [nzRotate]="i.rotate"
+          class="sidebar-nav__item-icon"
+          nz-icon
+          [nzType]="i.value"
+          [nzTheme]="i.theme"
+          [nzSpin]="i.spin"
+          [nzTwotoneColor]="i.twoToneColor"
+          [nzIconfont]="i.iconfont"
+          [nzRotate]="i.rotate"
         ></i>
-        <i *ngSwitchCase="'iconfont'" class="sidebar-nav__item-icon" nz-icon [nzIconfont]="i.iconfont"></i>
-        <img *ngSwitchCase="'img'" [src]="i.value" class="sidebar-nav__item-icon sidebar-nav__item-img"/>
-        <span *ngSwitchCase="'svg'" class="sidebar-nav__item-icon sidebar-nav__item-svg" [innerHTML]="i.value"></span>
-        <i *ngSwitchDefault class="sidebar-nav__item-icon {{ i.value }}"></i>
-    </ng-container>
+      }
+      @case ('iconfont') {
+        <i class="sidebar-nav__item-icon" nz-icon [nzIconfont]="i.iconfont"></i>
+      }
+      @case ('img') {
+        <img [src]="i.value" class="sidebar-nav__item-icon sidebar-nav__item-img"/>
+      }
+      @case ('svg') {
+        <span class="sidebar-nav__item-icon sidebar-nav__item-svg" [innerHTML]="i.value"></span>
+      }
+      @default {
+        <i class="sidebar-nav__item-icon {{ i.value }}"></i>
+      }
+    }
+  }
 </ng-template>
 <ng-template #tree let-ls>
-    <ng-container *ngFor="let i of ls">
-        <li
-            *ngIf="i._hidden !== true"
-            class="sidebar-nav__item"
-            [class.sidebar-nav__selected]="i._selected"
-            [class.sidebar-nav__open]="i.open"
+  @for (i of ls; track i) {
+    @if (i._hidden !== true) {
+      <li
+        class="sidebar-nav__item"
+        [class.sidebar-nav__selected]="i._selected"
+        [class.sidebar-nav__open]="i.open"
         >
-            <!-- link -->
-            <a *ngIf="i.children.length === 0"
-               (click)="to(i)"
-               [attr.data-id]="i._id"
-               class="sidebar-nav__item-link"
-               [ngClass]="{ 'sidebar-nav__item-disabled': i.disabled }"
-               (mouseenter)="closeSubMenu()"
-               [href]="'#'+i.link">
-                <ng-container *ngIf="i._needIcon">
-                    <ng-container *ngIf="!collapsed">
-                        <ng-template [ngTemplateOutlet]="icon"
-                                     [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
-                    </ng-container>
-                    <span *ngIf="collapsed" nz-tooltip nzTooltipPlacement="right" [nzTooltipTitle]="i.text">
-                        <ng-template [ngTemplateOutlet]="icon"
-                                     [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
-                    </span>
-                </ng-container>
-                <span class="sidebar-nav__item-text" [innerHTML]="i._text" [attr.title]="i.text"></span>
-            </a>
-            <!-- has children link -->
-            <a
-                *ngIf="i.children.length > 0"
-                (click)="toggleOpen(i)"
-                (mouseenter)="showSubMenu($event, i)"
-                class="sidebar-nav__item-link"
+        <!-- link -->
+        @if (i.children.length === 0) {
+          <a
+            (click)="to(i)"
+            [attr.data-id]="i._id"
+            class="sidebar-nav__item-link"
+            [ngClass]="{ 'sidebar-nav__item-disabled': i.disabled }"
+            (mouseenter)="closeSubMenu()"
+            [href]="'#'+i.link">
+            @if (i._needIcon) {
+              @if (!collapsed) {
+                <ng-template [ngTemplateOutlet]="icon"
+                [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
+              }
+              @if (collapsed) {
+                <span nz-tooltip nzTooltipPlacement="right" [nzTooltipTitle]="i.text">
+                  <ng-template [ngTemplateOutlet]="icon"
+                  [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
+                </span>
+              }
+            }
+            <span class="sidebar-nav__item-text" [innerHTML]="i._text" [attr.title]="i.text"></span>
+          </a>
+        }
+        <!-- has children link -->
+        @if (i.children.length > 0) {
+          <a
+            (click)="toggleOpen(i)"
+            (mouseenter)="showSubMenu($event, i)"
+            class="sidebar-nav__item-link"
             >
-                <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
-                <span class="sidebar-nav__item-text" [innerHTML]="i._text" [attr.title]="i.text"></span>
-                <i class="sidebar-nav__sub-arrow"></i>
-            </a>
-            <!-- badge -->
-            <nz-badge *ngIf="i.badge" [nzCount]="i.badge"></nz-badge>
-            <ul *ngIf="i.children.length > 0" class="sidebar-nav sidebar-nav__sub sidebar-nav__depth{{ i._depth }}">
-                <ng-template [ngTemplateOutlet]="tree"
-                             [ngTemplateOutletContext]="{ $implicit: i.children }"></ng-template>
-            </ul>
-        </li>
-    </ng-container>
+            <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
+            <span class="sidebar-nav__item-text" [innerHTML]="i._text" [attr.title]="i.text"></span>
+            <i class="sidebar-nav__sub-arrow"></i>
+          </a>
+        }
+        <!-- badge -->
+        @if (i.badge) {
+          <nz-badge [nzCount]="i.badge"></nz-badge>
+        }
+        @if (i.children.length > 0) {
+          <ul class="sidebar-nav sidebar-nav__sub sidebar-nav__depth{{ i._depth }}">
+            <ng-template [ngTemplateOutlet]="tree"
+            [ngTemplateOutletContext]="{ $implicit: i.children }"></ng-template>
+          </ul>
+        }
+      </li>
+    }
+  }
 </ng-template>
 <ul class="sidebar-nav">
-    <ng-container *ngIf="loading">
-        <nz-skeleton [nzParagraph]="{ rows: 12 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>
-    </ng-container>
-    <ng-container *ngIf="!loading">
-        <ng-container *ngFor="let group of list">
-            <li class="sidebar-nav__item sidebar-nav__group-title" *ngIf="group.group">
-                <span [innerHTML]="group._text"></span>
-            </li>
-            <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: group.children }"></ng-template>
-        </ng-container>
-    </ng-container>
+  @if (loading) {
+    <nz-skeleton [nzParagraph]="{ rows: 12 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>
+  }
+  @if (!loading) {
+    @for (group of list; track group) {
+      @if (group.group) {
+        <li class="sidebar-nav__item sidebar-nav__group-title">
+          <span [innerHTML]="group._text"></span>
+        </li>
+      }
+      <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: group.children }"></ng-template>
+    }
+  }
 </ul>

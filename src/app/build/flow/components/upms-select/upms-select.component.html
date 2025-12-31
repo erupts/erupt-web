@@ -1,135 +1,145 @@
 <div class="upms-select-container">
-    <!-- 左侧面板：选择 -->
-    <div class="left-panel">
-        <!-- 使用 ng-zorro 的标签页 -->
-        <nz-tabset
-            [(nzSelectedIndex)]="activeTab"
-            (nzSelectedIndexChange)="onTabChange($event)"
-            [nzTabPosition]="'top'"
-            [nzType]="'line'"
-            [nzSize]="'default'"
-            class="custom-tabs">
+  <!-- 左侧面板：选择 -->
+  <div class="left-panel">
+    <!-- 使用 ng-zorro 的标签页 -->
+    <nz-tabset
+      [(nzSelectedIndex)]="activeTab"
+      (nzSelectedIndexChange)="onTabChange($event)"
+      [nzTabPosition]="'top'"
+      [nzType]="'line'"
+      [nzSize]="'default'"
+      class="custom-tabs">
 
-            <nz-tab
-                *ngFor="let tab of tabs; let i = index"
-                [nzTitle]="tabTitleTemplate">
-
-                <ng-template #tabTitleTemplate>
-                    <span nz-icon [nzType]="tab.icon" nzTheme="outline"></span>
-                    <span class="tab-label">{{ tab.key | translate }}</span>
-                </ng-template>
-
-                <!-- 搜索框 -->
-                <div class="search-container">
-                    <nz-input-group nzSize="default">
-                        <input
-                            nz-input
-                            [placeholder]="'搜索' + i18n.fanyi(tab.key) + '名称...'"
-                            [(ngModel)]="tab.searchText"
-                            (ngModelChange)="onSearchChange(tab.key, $event)"
-                        />
-                    </nz-input-group>
-                </div>
-
-                <!-- 项目列表 -->
-                <div class="item-list">
-                    <div class="item-list-header">
-                        <span class="item-count">{{ getListTitle(tab.key) }}</span>
-                        <span class="item-tip">点击选择或取消选择</span>
-                    </div>
-                    <div
-                        *ngFor="let item of getFilteredItems(tab.key); trackBy: trackByKey"
-                        class="item-item"
-                        [class.selected]="isItemSelected(tab.key, item.key)"
-                        (click)="onItemToggle(tab.key, item)"
-                    >
-                        <label
-                            nz-checkbox
-                            [ngModel]="isItemSelected(tab.key, item.key)"
-                            (ngModelChange)="onItemToggle(tab.key, item)"
-                            (click)="$event.stopPropagation()"
-                        ></label>
-                        <span class="item-name">{{ item.value }}</span>
-                    </div>
-
-                    <div *ngIf="getFilteredItems(tab.key).length === 0" class="empty-state">
-                        <span nz-icon nzType="search" nzTheme="outline"></span>
-                        <p>{{ getEmptyStateText(tab.key) }}</p>
-                    </div>
-                </div>
-            </nz-tab>
-        </nz-tabset>
-    </div>
-
-    <!-- 右侧面板：已选项目 -->
-    <div class="right-panel">
-        <div class="selected-header">
-            <div class="header-info">
-                <h3 class="panel-title">已选{{ flowUpmsScopes.length }} 项</h3>
+      @for (tab of tabs; track tab; let i = $index) {
+        <nz-tab
+          [nzTitle]="tabTitleTemplate">
+          <ng-template #tabTitleTemplate>
+            <span nz-icon [nzType]="tab.icon" nzTheme="outline"></span>
+            <span class="tab-label">{{ tab.key | translate }}</span>
+          </ng-template>
+          <!-- 搜索框 -->
+          <div class="search-container">
+            <nz-input-group nzSize="default">
+              <input
+                nz-input
+                [placeholder]="'搜索' + i18n.fanyi(tab.key) + '名称...'"
+                [(ngModel)]="tab.searchText"
+                (ngModelChange)="onSearchChange(tab.key, $event)"
+                />
+            </nz-input-group>
+          </div>
+          <!-- 项目列表 -->
+          <div class="item-list">
+            <div class="item-list-header">
+              <span class="item-count">{{ getListTitle(tab.key) }}</span>
+              <span class="item-tip">点击选择或取消选择</span>
             </div>
-            <div class="header-actions">
-                <button
-                    *ngIf="flowUpmsScopes.length > 0"
-                    nz-button
-                    nzType="link"
-                    nzSize="small"
-                    nzDanger
-                    (click)="onClearAll()"
-                    class="clear-all-btn"
+            @for (item of getFilteredItems(tab.key); track trackByKey($index, item)) {
+              <div
+                class="item-item"
+                [class.selected]="isItemSelected(tab.key, item.key)"
+                (click)="onItemToggle(tab.key, item)"
                 >
-                    <span nz-icon nzType="delete" nzTheme="outline"></span>
-                    清空全部
-                </button>
-            </div>
-        </div>
+                <label
+                  nz-checkbox
+                  [ngModel]="isItemSelected(tab.key, item.key)"
+                  (ngModelChange)="onItemToggle(tab.key, item)"
+                  (click)="$event.stopPropagation()"
+                ></label>
+                <span class="item-name">{{ item.value }}</span>
+              </div>
+            }
+            @if (getFilteredItems(tab.key).length === 0) {
+              <div class="empty-state">
+                <span nz-icon nzType="search" nzTheme="outline"></span>
+                <p>{{ getEmptyStateText(tab.key) }}</p>
+              </div>
+            }
+          </div>
+        </nz-tab>
+      }
+    </nz-tabset>
+  </div>
 
-        <div class="selected-items">
-            <div class="tags-container">
-                <ng-container *ngFor="let group of getGroupedDisplayData(); trackBy: trackByGroup">
-                    <div class="group-container">
-                        <div class="group-header">
-                            <span nz-icon [nzType]="group.icon" nzTheme="outline"></span>
-                            <span class="group-label">{{ i18n.fanyi(group.scope) }}</span>
-                            <span class="group-count">({{ group.items.length }})</span>
-                        </div>
-                        <div class="group-tags" *ngIf="group.items.length > 0">
-                            <nz-tag
-                                *ngFor="let item of group.items; trackBy: trackByScope"
-                                [nzColor]="getTagColor(item.scope)" style="margin-bottom: 6px"
-                            >
-                                <span nz-icon [nzType]="item.icon" nzTheme="outline"></span>
-                                <span class="tag-text">{{ item.displayName }}</span>
-                                <i nz-icon nzType="close" nzTheme="outline" (click)="onItemRemove(item)"></i>
-                            </nz-tag>
-                        </div>
-                        <div class="group-empty" *ngIf="group.items.length === 0">
-                            <span nz-icon nzType="inbox" nzTheme="outline"></span>
-                            <span class="empty-text">暂无已选{{ i18n.fanyi(group.scope) }}</span>
-                        </div>
-                        <div class="group-actions" *ngIf="group.items.length > 0">
-                            <button
-                                nz-button
-                                nzType="link"
-                                nzSize="small"
-                                nzDanger
-                                (click)="onClearAll(group.scope)"
-                                class="clear-group-btn"
-                                nz-tooltip
-                                [nzTooltipTitle]="'清空' + i18n.fanyi(group.scope)"
-                            >
-                                <span nz-icon nzType="delete" nzTheme="outline"></span>
-                                清空{{ i18n.fanyi(group.scope) }}
-                            </button>
-                        </div>
-                    </div>
-                </ng-container>
-            </div>
-
-            <div *ngIf="flowUpmsScopes.length === 0" class="empty-selected">
-                <span nz-icon nzType="inbox" nzTheme="outline"></span>
-                <p>{{ getEmptySelectedText() }}</p>
-                <span class="empty-tip">{{ getEmptySelectedTip() }}</span>
-            </div>
-        </div>
+  <!-- 右侧面板：已选项目 -->
+  <div class="right-panel">
+    <div class="selected-header">
+      <div class="header-info">
+        <h3 class="panel-title">已选{{ flowUpmsScopes.length }} 项</h3>
+      </div>
+      <div class="header-actions">
+        @if (flowUpmsScopes.length > 0) {
+          <button
+            nz-button
+            nzType="link"
+            nzSize="small"
+            nzDanger
+            (click)="onClearAll()"
+            class="clear-all-btn"
+            >
+            <span nz-icon nzType="delete" nzTheme="outline"></span>
+            清空全部
+          </button>
+        }
+      </div>
     </div>
+
+    <div class="selected-items">
+      <div class="tags-container">
+        @for (group of getGroupedDisplayData(); track trackByGroup($index, group)) {
+          <div class="group-container">
+            <div class="group-header">
+              <span nz-icon [nzType]="group.icon" nzTheme="outline"></span>
+              <span class="group-label">{{ i18n.fanyi(group.scope) }}</span>
+              <span class="group-count">({{ group.items.length }})</span>
+            </div>
+            @if (group.items.length > 0) {
+              <div class="group-tags">
+                @for (item of group.items; track trackByScope($index, item)) {
+                  <nz-tag
+                    [nzColor]="getTagColor(item.scope)" style="margin-bottom: 6px"
+                    >
+                    <span nz-icon [nzType]="item.icon" nzTheme="outline"></span>
+                    <span class="tag-text">{{ item.displayName }}</span>
+                    <i nz-icon nzType="close" nzTheme="outline" (click)="onItemRemove(item)"></i>
+                  </nz-tag>
+                }
+              </div>
+            }
+            @if (group.items.length === 0) {
+              <div class="group-empty">
+                <span nz-icon nzType="inbox" nzTheme="outline"></span>
+                <span class="empty-text">暂无已选{{ i18n.fanyi(group.scope) }}</span>
+              </div>
+            }
+            @if (group.items.length > 0) {
+              <div class="group-actions">
+                <button
+                  nz-button
+                  nzType="link"
+                  nzSize="small"
+                  nzDanger
+                  (click)="onClearAll(group.scope)"
+                  class="clear-group-btn"
+                  nz-tooltip
+                  [nzTooltipTitle]="'清空' + i18n.fanyi(group.scope)"
+                  >
+                  <span nz-icon nzType="delete" nzTheme="outline"></span>
+                  清空{{ i18n.fanyi(group.scope) }}
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      @if (flowUpmsScopes.length === 0) {
+        <div class="empty-selected">
+          <span nz-icon nzType="inbox" nzTheme="outline"></span>
+          <p>{{ getEmptySelectedText() }}</p>
+          <span class="empty-tip">{{ getEmptySelectedTip() }}</span>
+        </div>
+      }
+    </div>
+  </div>
 </div>

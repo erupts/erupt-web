@@ -1,16 +1,22 @@
 <div [class.page-header-rtl]="dir === 'rtl'">
-    <ng-container *ngIf="!breadcrumb; else breadcrumb!">
-        <nz-breadcrumb *ngIf="paths && paths.length > 0">
-            <nz-breadcrumb-item *ngFor="let i of paths">
-                <ng-container *ngIf="i.link">
-                    <a [routerLink]="i.link">
-                        {{ i.title }}
-                    </a>
-                </ng-container>
-                <ng-container *ngIf="!i.link">
-                    {{ i.title }}
-                </ng-container>
-            </nz-breadcrumb-item>
-        </nz-breadcrumb>
-    </ng-container>
+  @if (!breadcrumb) {
+    @if (paths && paths.length > 0) {
+      <nz-breadcrumb>
+        @for (i of paths; track i) {
+          <nz-breadcrumb-item>
+            @if (i.link) {
+              <a [routerLink]="i.link">
+                {{ i.title }}
+              </a>
+            }
+            @if (!i.link) {
+              {{ i.title }}
+            }
+          </nz-breadcrumb-item>
+        }
+      </nz-breadcrumb>
+    }
+  } @else {
+    <ng-template [ngTemplateOutlet]="breadcrumb!"></ng-template>
+  }
 </div>
