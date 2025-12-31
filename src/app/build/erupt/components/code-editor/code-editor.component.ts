@@ -7,6 +7,7 @@ import {NzConfigService} from "ng-zorro-antd/core/config";
 let codeEditorDarkKey = "code_editor_dark";
 
 @Component({
+    standalone: false,
     selector: 'erupt-code-editor',
     templateUrl: './code-editor.component.html',
     styleUrls: ["./code-editor.component.less"]

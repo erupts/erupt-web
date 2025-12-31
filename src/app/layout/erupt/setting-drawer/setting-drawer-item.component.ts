@@ -1,6 +1,7 @@
 // import { Component, Input } from '@angular/core';
 //
 // @Component({
+    standalone: false,
 //   // tslint:disable-next-line:component-selector
 //   selector: 'setting-drawer-item',
 //   templateUrl: './setting-drawer-item.component.html',

@@ -58,6 +58,7 @@ const ICONS = [
 // #endregion
 
 @Component({
+    standalone: false,
     selector: "layout-erupt",
     templateUrl: "./erupt.component.html",
     preserveWhitespaces: false,

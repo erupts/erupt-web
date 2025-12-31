@@ -5,6 +5,7 @@ import {STColumn, STComponent, STChange, STPage} from "@delon/abc/st";
 import {SettingsService} from "@delon/theme";
 
 @Component({
+    standalone: false,
     selector: 'bi-reference-table',
     templateUrl: './reference-table.component.html',
     styleUrls: ['./reference-table.component.less']

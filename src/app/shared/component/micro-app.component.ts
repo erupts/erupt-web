@@ -3,6 +3,7 @@ import microApp from '@micro-zoe/micro-app'
 import {ContextKey, EruptContextService} from "@shared/service/erupt-context.service";
 
 @Component({
+    standalone: false,
     selector: 'erupt-micro-app',
     template: `
         <micro-app #microApp name="erupt-micro-app-ele" id="erupt-micro-app-ele"

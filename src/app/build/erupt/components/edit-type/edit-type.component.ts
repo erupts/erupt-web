@@ -17,6 +17,7 @@ import {BehaviorSubject} from "rxjs";
 import {SignaturePadComponent} from "../signature-pad/signature-pad.component";
 
 @Component({
+    standalone: false,
     selector: "erupt-edit-type",
     templateUrl: "./edit-type.component.html",
     styleUrls: ["./edit-type.component.less"]

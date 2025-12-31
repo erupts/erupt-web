@@ -19,6 +19,7 @@ import {ActivatedRoute} from "@angular/router";
 import {FormAccessEnum} from "@flow/model/flow.model";
 
 @Component({
+    standalone: false,
     selector: 'flow-approval-detail',
     templateUrl: './flow-approval-detail.component.html',
     styleUrls: ['./flow-approval-detail.component.less']

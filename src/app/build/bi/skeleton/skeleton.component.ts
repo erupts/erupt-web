@@ -16,6 +16,7 @@ import {CodeEditorComponent} from "../../erupt/components/code-editor/code-edito
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 @Component({
+    standalone: false,
     selector: 'bi-skeleton',
     templateUrl: './skeleton.component.html',
     styleUrls: ["./skeleton.component.less"],

@@ -6,6 +6,7 @@ import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 
 @Component({
+    standalone: false,
     selector: 'app-site',
     templateUrl: './site.component.html',
     styles: []

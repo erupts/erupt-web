@@ -32,7 +32,7 @@
         <span nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip [nzTooltipTitle]="descTpl">
         </span>
         <ng-template #descTpl>
-          <div [innerHTML]="desc|html">
+          <div [innerHTML]="desc|safeHtml">
           </div>
         </ng-template>
       </li>

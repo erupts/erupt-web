@@ -41,11 +41,11 @@
       style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
     }
     @case (viewType.HTML) {
-      <div [innerHTML]="value|html" class="view_inner_html">
+      <div [innerHTML]="value|safeHtml" class="view_inner_html">
       </div>
     }
     @case (viewType.MOBILE_HTML) {
-      <div [innerHTML]="value|html" class="view_inner_html">
+      <div [innerHTML]="value|safeHtml" class="view_inner_html">
       </div>
     }
     @case (viewType.QR_CODE) {

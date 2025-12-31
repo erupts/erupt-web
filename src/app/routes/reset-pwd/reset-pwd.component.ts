@@ -12,6 +12,7 @@ import {Observable} from "rxjs";
 import {UtilsService} from "@shared/service/utils.service";
 
 @Component({
+    standalone: false,
     selector: "reset-pwd",
     templateUrl: "./reset-pwd.component.html",
     styleUrls: ["./reset-pwd.component.less"],

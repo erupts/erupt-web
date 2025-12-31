@@ -27,6 +27,7 @@ import {SocketService} from "@shared/service/socket.service";
 import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 import {SyncVirtualScrollDirective} from "@shared/directive/sync-virtual-scroll.directive";
 import {EnumToArrayPipe} from "@shared/pipe/enum-array.pipe";
+import {KeysPipe} from "@shared/pipe/keys.pipe";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -36,7 +37,7 @@ const THIRDMODULES: Array<Type<any>> = [];
 
 // #region your componets & directives
 const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent];
-const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, SyncVirtualScrollDirective];
+const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, SyncVirtualScrollDirective, KeysPipe];
 
 // #endregion
 
@@ -71,7 +72,6 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
         FormsModule,
         ReactiveFormsModule,
         RouterModule,
-        AlainThemeModule,
         DelonACLModule,
         ...SHARED_DELON_MODULES,
         ...SHARED_ZORRO_MODULES,

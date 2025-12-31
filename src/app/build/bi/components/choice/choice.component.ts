@@ -3,6 +3,7 @@ import {Bi, Dimension, DimType, Reference} from "../../model/bi.model";
 import {BiDataService} from "../../service/data.service";
 
 @Component({
+    standalone: false,
     selector: 'erupt-bi-choice',
     templateUrl: './choice.component.html',
     styles: [`

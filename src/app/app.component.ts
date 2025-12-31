@@ -13,7 +13,8 @@ import {DomSanitizer} from "@angular/platform-browser";
     selector: 'app-root',
     template: `
         <router-outlet></router-outlet>
-    `
+    `,
+    standalone: false
 })
 export class AppComponent implements OnInit {
     constructor(

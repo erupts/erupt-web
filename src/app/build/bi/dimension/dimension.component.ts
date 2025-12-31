@@ -10,6 +10,7 @@ import {I18NService} from "@core";
 import {ReferenceTableComponent} from "../components/reference-table/reference-table.component";
 
 @Component({
+    standalone: false,
     selector: 'bi-dimension',
     templateUrl: './dimension.component.html',
     styleUrls: ['./dimension.component.less'],

@@ -5,6 +5,7 @@ import {SettingsService} from '@delon/theme';
 import {EruptAppData} from "@shared/model/erupt-app.model";
 
 @Component({
+    standalone: false,
     selector: 'i18n-choice',
     template: `
         @if (langs.length > 1) {

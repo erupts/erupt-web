@@ -7,6 +7,7 @@ import moment from 'moment';
 import {I18NService} from "@core";
 
 @Component({
+    standalone: false,
     selector: 'erupt-date',
     templateUrl: './date.component.html',
     styles: []

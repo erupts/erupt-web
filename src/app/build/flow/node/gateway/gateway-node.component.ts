@@ -22,6 +22,7 @@ export interface GatewayNode {
 }
 
 @Component({
+    standalone: false,
     selector: 'app-gateway-node',
     templateUrl: './gateway-node.component.html',
     styleUrls: ['./gateway-node.component.less']

@@ -8,6 +8,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzUploadChangeParam} from "ng-zorro-antd/upload";
 
 @Component({
+    standalone: false,
     selector: "app-excel-import",
     templateUrl: "./excel-import.component.html",
     styles: []

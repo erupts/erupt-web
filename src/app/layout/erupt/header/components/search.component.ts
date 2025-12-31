@@ -5,6 +5,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {generateMenuPath} from "@shared/util/erupt.util";
 
 @Component({
+    standalone: false,
     selector: 'header-search',
     template: `
         @if (menu) {
