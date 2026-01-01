@@ -5,6 +5,7 @@ import {AlainConfig, ALAIN_CONFIG} from '@delon/util/config';
 import {ReuseTabModule} from '@delon/abc/reuse-tab';
 import {throwIfAlreadyLoaded} from '@core';
 import {environment} from '@env/environment';
+import {GANTT_GLOBAL_CONFIG, GANTT_I18N_LOCALE_TOKEN, zhHansLocale} from '@worktile/gantt';
 
 
 const alainConfig: AlainConfig = {
@@ -58,6 +59,15 @@ const zorroProvides = [{provide: NZ_CONFIG, useValue: ngZorroConfig}];
 
 // #endregion
 
+// #region Gantt Config
+
+const ganttProvides = [
+    {provide: GANTT_GLOBAL_CONFIG, useValue: {}},
+    {provide: GANTT_I18N_LOCALE_TOKEN, useValue: [zhHansLocale]}
+];
+
+// #endregion
+
 @NgModule({
     imports: [...alainModules, ...(environment.modules || [])],
     exports: []
@@ -70,7 +80,7 @@ export class GlobalConfigModule {
     static forRoot(): ModuleWithProviders<GlobalConfigModule> {
         return {
             ngModule: GlobalConfigModule,
-            providers: [...alainProvides, ...zorroProvides]
+            providers: [...alainProvides, ...zorroProvides, ...ganttProvides]
         };
     }
 }
