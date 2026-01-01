@@ -30,17 +30,13 @@
     <a href="https://www.yuque.com/erupts" target="_blank"><b>📕 使用文档</b></a>
 </p>
 
-<p align="center">
-    QQ交流群：<a href="https://jq.qq.com/?_wv=1027&k=MCd4plZ0">821389129 🔥</a>
-</p>
-
 ---
 
 ## ⛰ 环境搭建
 
 在开始之前，请确保你的开发环境中包括 Node.js 和 npm 包管理器。
 
-Angular 需要 Node.js 版本 16.14.0 或更高版本。
+Angular 需要 Node.js 版本 22.0.0 或更高版本。
 
 要检查你的版本，请在终端/控制台窗口中运行 node -v
 
