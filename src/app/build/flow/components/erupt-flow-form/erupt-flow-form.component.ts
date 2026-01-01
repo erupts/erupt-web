@@ -7,6 +7,7 @@ import {FormSize} from "../../../erupt/model/erupt.enum";
 import {FormAccessEnum} from "@flow/model/flow.model";
 
 @Component({
+    standalone: false,
     selector: 'erupt-flow-form',
     templateUrl: './erupt-flow-form.component.html',
     styleUrls: ['./erupt-flow-form.component.less']

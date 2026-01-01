@@ -1,19 +1,22 @@
 <nz-spin [nzSpinning]="loading">
-    <div style="background: #eee;" *ngIf="!editorError">
-        <div id="toolbar-container"></div>
-        <div id="editor"
-             style="padding: 5px 10px;min-height: 60px;max-height: 500px;overflow-y: auto;background: #fff;border: 1px solid #c4c4c4;">
-
-        </div>
+  @if (!editorError) {
+    <div style="background: #eee;">
+      <div id="toolbar-container"></div>
+      <div id="editor"
+        style="padding: 5px 10px;min-height: 60px;max-height: 500px;overflow-y: auto;background: #fff;border: 1px solid #c4c4c4;">
+      </div>
     </div>
-    <div *ngIf="editorError">
-        <p style="color: red">The text editor cannot be loaded. It is recommended to replace or upgrade your browser</p>
-        <textarea nz-input class="erupt-input" [name]="eruptField.fieldName"
-                  [nzAutosize]="{ minRows: 3, maxRows: 20 }"
-                  [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
-                  [placeholder]="'The text editor cannot be loaded. It is recommended to replace or upgrade your browser'"
-                  [required]="eruptField.eruptFieldJson.edit.notNull"
-                  [disabled]="readonly"
-        ></textarea>
+  }
+  @if (editorError) {
+    <div>
+      <p style="color: red">The text editor cannot be loaded. It is recommended to replace or upgrade your browser</p>
+      <textarea nz-input class="erupt-input" [name]="eruptField.fieldName"
+        [nzAutosize]="{ minRows: 3, maxRows: 20 }"
+        [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
+        [placeholder]="'The text editor cannot be loaded. It is recommended to replace or upgrade your browser'"
+        [required]="eruptField.eruptFieldJson.edit.notNull"
+        [disabled]="readonly"
+      ></textarea>
     </div>
+  }
 </nz-spin>

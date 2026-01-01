@@ -1,22 +1,26 @@
 <div>
-    <ng-container *ngIf="!onlyRead">
-        <div class="tab-bar">
-            <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzGhost nzType="primary"
-                    [nzSize]="'default'">
-                <i nz-icon nzType="plus" theme="outline"></i>{{'global.new'|translate}}
-            </button>
-            <button (click)="deleteData()" nz-button *ngIf="checkedRow.length>0"
-                    nzType="default" nzDanger [nzSize]="'default'">
-                <i nz-icon nzType="delete" theme="outline"></i>{{'global.delete'|translate}}
-            </button>
-        </div>
-    </ng-container>
-    <nz-spin [nzSpinning]="loading">
-        <st #st resizable (change)="stChange($event)" *ngIf="!loading"
-            [scroll]="{x: (clientWidth > 768 ? tableWidth : '460px')}"
-            [size]="'small'" [columns]="column" [ps]="20"
-            [data]="tabErupt.eruptFieldModel.eruptFieldJson.edit.$value"
-            [bordered]="true" [page]="stConfig.stPage"
-        ></st>
-    </nz-spin>
+  @if (!onlyRead) {
+    <div class="tab-bar">
+      <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzGhost nzType="primary"
+        [nzSize]="'default'">
+        <i nz-icon nzType="plus" theme="outline"></i>{{'global.new'|translate}}
+      </button>
+      @if (checkedRow.length>0) {
+        <button (click)="deleteData()" nz-button
+          nzType="default" nzDanger [nzSize]="'default'">
+          <i nz-icon nzType="delete" theme="outline"></i>{{'global.delete'|translate}}
+        </button>
+      }
+    </div>
+  }
+  <nz-spin [nzSpinning]="loading">
+    @if (!loading) {
+      <st #st resizable (change)="stChange($event)"
+        [scroll]="{x: (clientWidth > 768 ? tableWidth : '460px')}"
+        [size]="'small'" [columns]="column" [ps]="20"
+        [data]="tabErupt.eruptFieldModel.eruptFieldJson.edit.$value"
+        [bordered]="true" [page]="stConfig.stPage"
+      ></st>
+    }
+  </nz-spin>
 </div>

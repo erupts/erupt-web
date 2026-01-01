@@ -7,6 +7,7 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {LazyService} from "@delon/util";
 
 @Component({
+    standalone: false,
     selector: 'erupt-markdown',
     templateUrl: './markdown.component.html',
     styleUrls: ['./markdown.component.less']

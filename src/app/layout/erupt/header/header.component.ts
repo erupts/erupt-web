@@ -18,6 +18,7 @@ import {NzNotificationService} from "ng-zorro-antd/notification";
 import {AnnouncementDetailComponent} from "../component/announcement-detail/announcement-detail.component";
 
 @Component({
+    standalone: false,
     selector: "layout-header",
     templateUrl: "./header.component.html",
     styleUrls: [

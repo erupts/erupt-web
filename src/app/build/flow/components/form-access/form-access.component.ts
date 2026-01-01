@@ -4,6 +4,7 @@ import {FormAccessEnum} from "@flow/model/flow.model";
 import {EditType} from "../../../erupt/model/erupt.enum";
 
 @Component({
+    standalone: false,
     selector: 'app-form-access',
     templateUrl: './form-access.component.html',
     styleUrls: ['./form-access.component.less']

@@ -6,6 +6,7 @@ import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
+    standalone: false,
   selector: 'app-gateway-join',
   templateUrl: './gateway-join.component.html',
   styleUrls: ['./gateway-join.component.less']

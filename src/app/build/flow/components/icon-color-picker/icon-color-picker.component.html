@@ -14,12 +14,13 @@
     <div class="color-section">
       <h4>选择颜色</h4>
       <div class="color-grid">
-        <div class="color-item"
-             *ngFor="let color of bgColors"
-             [class.selected]="previewColor === color"
-             [style]="getIconOptionStyle(color)"
-             (click)="selectColor(color, $event)">
-        </div>
+        @for (color of bgColors; track color) {
+          <div class="color-item"
+            [class.selected]="previewColor === color"
+            [style]="getIconOptionStyle(color)"
+            (click)="selectColor(color, $event)">
+          </div>
+        }
       </div>
     </div>
 
@@ -27,14 +28,15 @@
     <div class="icon-section">
       <h4>选择图标</h4>
       <div class="icon-grid">
-        <div class="icon-item"
-             *ngFor="let icon of icons"
-             [class.selected]="previewIcon === icon"
-             (click)="selectIcon(icon, $event)">
-          <div class="icon-square" style="color:#000">
-            <i class="{{ icon }}"></i>
+        @for (icon of icons; track icon) {
+          <div class="icon-item"
+            [class.selected]="previewIcon === icon"
+            (click)="selectIcon(icon, $event)">
+            <div class="icon-square" style="color:#000">
+              <i class="{{ icon }}"></i>
+            </div>
           </div>
-        </div>
+        }
       </div>
     </div>
   </div>

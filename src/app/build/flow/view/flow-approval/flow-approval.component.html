@@ -1,96 +1,101 @@
 <div class="flow-approval-container" [style.height]="'calc(100vh - ' + (settingSrv.layout['reuse'] ? '84px' : '44px') + ')'">
-    <!-- 左侧导航栏 -->
-    <div class="sidebar">
-        <div class="navigation-menu">
-            <ul nz-menu
-                nzMode="inline"
-                class="approval-menu">
+  <!-- 左侧导航栏 -->
+  <div class="sidebar">
+    <div class="navigation-menu">
+      <ul nz-menu
+        nzMode="inline"
+        class="approval-menu">
 
-                <!-- 待办 -->
-                <li nz-menu-item (click)="loadFlows(ApprovalView.TODO)" [nzSelected]="ApprovalView.TODO === selectedView">
-                    <div style="display: flex;align-items: center">
-                        <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
-                        <span class="menu-title">{{ 'FLOW_TODO' | translate }}</span>
-                        <nz-badge style="margin-left:auto" [nzCount]="todoCount" class="menu-badge"></nz-badge>
-                    </div>
-                </li>
-                <!-- 已办 -->
-                <li nz-menu-item (click)="loadFlows(ApprovalView.DONE)" [nzSelected]="ApprovalView.DONE === selectedView">
-                    <span nz-icon nzType="check-circle" nzTheme="outline"></span>
-                    <span class="menu-title">{{ 'FLOW_DONE' | translate }}</span>
-                </li>
+        <!-- 待办 -->
+        <li nz-menu-item (click)="loadFlows(ApprovalView.TODO)" [nzSelected]="ApprovalView.TODO === selectedView">
+          <div style="display: flex;align-items: center">
+            <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+            <span class="menu-title">{{ 'FLOW_TODO' | translate }}</span>
+            <nz-badge style="margin-left:auto" [nzCount]="todoCount" class="menu-badge"></nz-badge>
+          </div>
+        </li>
+        <!-- 已办 -->
+        <li nz-menu-item (click)="loadFlows(ApprovalView.DONE)" [nzSelected]="ApprovalView.DONE === selectedView">
+          <span nz-icon nzType="check-circle" nzTheme="outline"></span>
+          <span class="menu-title">{{ 'FLOW_DONE' | translate }}</span>
+        </li>
 
-                <!-- 抄送我 -->
-                <li nz-menu-item (click)="loadFlows(ApprovalView.CC)" [nzSelected]="ApprovalView.CC === selectedView">
-                    <span nz-icon nzType="copy" nzTheme="outline"></span>
-                    <span class="menu-title">{{ 'CC' | translate }}</span>
-                </li>
+        <!-- 抄送我 -->
+        <li nz-menu-item (click)="loadFlows(ApprovalView.CC)" [nzSelected]="ApprovalView.CC === selectedView">
+          <span nz-icon nzType="copy" nzTheme="outline"></span>
+          <span class="menu-title">{{ 'CC' | translate }}</span>
+        </li>
 
-                <!-- 已发起 -->
-                <li nz-menu-item (click)="loadFlows(ApprovalView.CREATED)" [nzSelected]="ApprovalView.CREATED === selectedView">
-                    <span nz-icon nzType="rocket" nzTheme="outline"></span>
-                    <span class="menu-title">{{ 'CREATED' | translate }}</span>
-                </li>
-            </ul>
-        </div>
+        <!-- 已发起 -->
+        <li nz-menu-item (click)="loadFlows(ApprovalView.CREATED)" [nzSelected]="ApprovalView.CREATED === selectedView">
+          <span nz-icon nzType="rocket" nzTheme="outline"></span>
+          <span class="menu-title">{{ 'CREATED' | translate }}</span>
+        </li>
+      </ul>
     </div>
+  </div>
 
-    <!-- 主内容区域 -->
-    <div class="main-content">
-        <!-- 中间列表区域 -->
-        <div class="list-section">
-            <div class="list-header">
-                <nz-select [(ngModel)]="selectFlow" (ngModelChange)="onSelectFlow($event)"
-                           style="width: 100%" [nzPlaceHolder]="'流程筛选'" nzBorderless nzAllowClear>
-                    <ng-container *ngFor="let flow of uniqFlowInstances(flowInstances)">
-                        <nz-option [nzValue]="flow.eruptFlowConfig.id" [nzLabel]="flow.eruptFlowConfig.name">
-                        </nz-option>
-                    </ng-container>
-                </nz-select>
-            </div>
+  <!-- 主内容区域 -->
+  <div class="main-content">
+    <!-- 中间列表区域 -->
+    <div class="list-section">
+      <div class="list-header">
+        <nz-select [(ngModel)]="selectFlow" (ngModelChange)="onSelectFlow($event)"
+          style="width: 100%" [nzPlaceHolder]="'流程筛选'" nzBorderless nzAllowClear>
+          @for (flow of uniqFlowInstances(flowInstances); track flow) {
+            <nz-option [nzValue]="flow.eruptFlowConfig.id" [nzLabel]="flow.eruptFlowConfig.name">
+            </nz-option>
+          }
+        </nz-select>
+      </div>
 
-            <div class="approval-list">
-                <div
-                    class="approval-item"
-                    *ngFor="let item of flowInstances"
-                    [class.active]="item?.id === selectedInstance?.id"
-                    (click)="selectInstance(item);"
-                >
-                    <div class="item-header">
-                        <h3 class="item-title">
-                            <p style="margin-bottom: 0">{{ item?.eruptFlowConfig?.name }}</p>
-                        </h3>
-                        <div>
-                            <nz-tag *ngIf="item?.parent" nzColor="orange" style="margin-right: 6px">
-                                {{'SUB_FLOW'|translate}}
-                            </nz-tag>
-                            <nz-tag style="margin-right: 0">
-                                {{ item?.status | translate }}
-                            </nz-tag>
-                        </div>
-                    </div>
-                    <p *ngIf="item?.eruptFlowConfig?.setting?.subTitleFields?.length && item?.data" style="margin-bottom: 8px;">
-                        <ng-container *ngFor="let field of item?.eruptFlowConfig?.setting?.subTitleFields">
-                            <p style="margin-bottom: 0.25em">{{JSON.parse(item?.data)?.[field]}}</p>
-                        </ng-container>
-                    </p>
-                    <div class="item-footer">
-                        <div class="submitter-info">
-                            <nz-avatar [nzText]="item?.initiatorUser?.name.substring(0,1)"
-                                       [ngStyle]="{backgroundColor: getAvatarColor(item?.initiatorUser.name?.substring(0,1))}"
-                                       [nzSrc]="item?.initiatorUser?.avatar"
-                                       nzSize="small"></nz-avatar>
-                            <span class="submitter-name">{{ item?.initiatorUser?.name }}</span>
-                        </div>
-                        <div class="time-info">
-                            <span class="process-time">
-                                {{ item?.createTime }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
+      <div class="approval-list">
+        @for (item of flowInstances; track item) {
+          <div
+            class="approval-item"
+            [class.active]="item?.id === selectedInstance?.id"
+            (click)="selectInstance(item);"
+            >
+            <div class="item-header">
+              <h3 class="item-title">
+                <p style="margin-bottom: 0">{{ item?.eruptFlowConfig?.name }}</p>
+              </h3>
+              <div>
+                @if (item?.parent) {
+                  <nz-tag nzColor="orange" style="margin-right: 6px">
+                    {{'SUB_FLOW'|translate}}
+                  </nz-tag>
+                }
+                <nz-tag style="margin-right: 0">
+                  {{ item?.status | translate }}
+                </nz-tag>
+              </div>
             </div>
-        </div>
-        <flow-approval-detail (reloadFlows)="reloadFlows()" class="detail-section"/>
+            @if (item?.eruptFlowConfig?.setting?.subTitleFields?.length && item?.data) {
+              <p style="margin-bottom: 8px;">
+                @for (field of item?.eruptFlowConfig?.setting?.subTitleFields; track field) {
+                  <p style="margin-bottom: 0.25em">{{JSON.parse(item?.data)?.[field]}}</p>
+                }
+              </p>
+            }
+            <div class="item-footer">
+              <div class="submitter-info">
+                <nz-avatar [nzText]="item?.initiatorUser?.name.substring(0,1)"
+                  [ngStyle]="{backgroundColor: getAvatarColor(item?.initiatorUser.name?.substring(0,1))}"
+                  [nzSrc]="item?.initiatorUser?.avatar"
+                nzSize="small"></nz-avatar>
+                <span class="submitter-name">{{ item?.initiatorUser?.name }}</span>
+              </div>
+              <div class="time-info">
+                <span class="process-time">
+                  {{ item?.createTime }}
+                </span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
     </div>
+    <flow-approval-detail (reloadFlows)="reloadFlows()" class="detail-section"/>
+  </div>
 </div>

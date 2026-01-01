@@ -10,6 +10,7 @@ import {FlowConfig} from "@flow/model/flow.model";
 import {SubNode} from "@flow/model/fllw-approval.model";
 
 @Component({
+    standalone: false,
     selector: 'app-sub-node',
     templateUrl: './sub-node.component.html',
     styleUrls: ['./sub-node.component.less']

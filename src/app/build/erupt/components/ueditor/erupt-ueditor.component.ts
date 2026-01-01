@@ -7,6 +7,7 @@ import {WindowModel} from "@shared/model/window.model";
 import {UEditorComponent} from "@shared/component/ueditor/ueditor.component";
 
 @Component({
+    standalone: false,
     selector: 'erupt-ueditor',
     template: `
         <ueditor #ue [name]="eruptField.fieldName" [(ngModel)]="eruptField.eruptFieldJson.edit.$value"

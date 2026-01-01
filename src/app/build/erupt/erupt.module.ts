@@ -47,6 +47,8 @@ import {SmartSearchComponent} from './components/smart-search/smart-search.compo
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 import {GanttComponent} from "./vis/gantt/gantt.component";
 import {NgxGanttModule} from "@worktile/gantt";
+import {NzButtonModule} from "ng-zorro-antd/button";
+import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 
 @NgModule({
     imports: [
@@ -63,7 +65,9 @@ import {NgxGanttModule} from "@worktile/gantt";
         NzRateModule,
         NzEmptyModule,
         NzSegmentedModule,
-        NgxGanttModule
+        NgxGanttModule,
+        NzButtonModule,
+        NzTooltipDirective
     ],
     providers: [
         DataHandlerService,

@@ -16,6 +16,7 @@ import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 
 @Component({
+    standalone: false,
     selector: "passport-login",
     templateUrl: "./login.component.html",
     styleUrls: ["./login.component.less"],

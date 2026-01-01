@@ -8,6 +8,7 @@ import {CcNode, ReviewMode} from "@flow/model/fllw-approval.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
+    standalone: false,
     selector: 'app-cc-node',
     templateUrl: './cc-node.component.html',
     styleUrls: ['./cc-node.component.less']

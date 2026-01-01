@@ -8,6 +8,7 @@ import {SettingsService} from "@delon/theme";
 
 
 @Component({
+    standalone: false,
     selector: 'app-flow-approval',
     templateUrl: './flow-approval.component.html',
     styleUrls: ['./flow-approval.component.less']

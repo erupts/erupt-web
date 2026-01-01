@@ -17,6 +17,7 @@ import {DataService} from "@shared/service/data.service";
 import {NoticeChannel} from "@shared/model/user.model";
 
 @Component({
+    standalone: false,
     selector: 'app-flow-config',
     templateUrl: './flow-config.component.html',
     styleUrls: ['./flow-config.component.less']

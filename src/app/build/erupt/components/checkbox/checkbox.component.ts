@@ -5,6 +5,7 @@ import {DataService} from "@shared/service/data.service";
 import {Checkbox} from "../../model/erupt.model";
 
 @Component({
+    standalone: false,
     selector: 'erupt-checkbox',
     templateUrl: './checkbox.component.html',
     styleUrls: ['./checkbox.component.less']

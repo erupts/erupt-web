@@ -19,6 +19,7 @@ interface FlowGroupWithFlows {
 }
 
 @Component({
+    standalone: false,
     selector: 'app-flow-dashboard',
     templateUrl: './flow-dashboard.component.html',
     styleUrls: ['./flow-dashboard.component.less']

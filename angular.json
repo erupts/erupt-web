@@ -18,13 +18,16 @@
             },
             "architect": {
                 "build": {
-                    "builder": "@angular-devkit/build-angular:browser",
+                    "builder": "@angular/build:application",
                     "options": {
-                        "outputPath": "/Users/liyuepeng/git/erupt/erupt-web/src/main/resources/public",
+                        "outputPath": {
+                          "base": "/Users/liyuepeng/git/erupt/erupt-web/src/main/resources/public"
+                        },
                         "index": "src/index.html",
-                        "main": "src/main.ts",
                         "tsConfig": "tsconfig.app.json",
-                        "polyfills": "src/polyfills.ts",
+                        "polyfills": [
+                          "src/polyfills.ts"
+                        ],
                         "assets": [
                             "src/favicon.ico",
                             "src/assets",
@@ -85,7 +88,8 @@
                             "includePaths": [
                                 "node_modules/"
                             ]
-                        }
+                        },
+                        "browser": "src/main.ts"
                     },
                     "configurations": {
                         "production": {
@@ -110,9 +114,7 @@
                             ]
                         },
                         "development": {
-                            "buildOptimizer": false,
-                            "optimization": false,
-                            "vendorChunk": true,
+                          "optimization": false,
                             "extractLicenses": false,
                             "sourceMap": true,
                             "namedChunks": true
@@ -121,25 +123,25 @@
                     "defaultConfiguration": "production"
                 },
                 "serve": {
-                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "builder": "@angular/build:dev-server",
                     "options": {
-                        "browserTarget": "erupt:build",
+                        "buildTarget": "erupt:build",
                         "proxyConfig": "proxy.conf.js"
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "erupt:build:production"
+                            "buildTarget": "erupt:build:production"
                         },
                         "development": {
-                            "browserTarget": "erupt:build:development"
+                            "buildTarget": "erupt:build:development"
                         }
                     },
                     "defaultConfiguration": "development"
                 },
                 "extract-i18n": {
-                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "builder": "@angular/build:extract-i18n",
                     "options": {
-                        "browserTarget": "erupt:build"
+                        "buildTarget": "erupt:build"
                     }
                 },
                 "lint": {

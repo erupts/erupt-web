@@ -5,6 +5,7 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 
 @Component({
+    standalone: false,
     selector: 'erupt-multi-choice',
     templateUrl: './multi-choice.component.html',
     styleUrls: ['./multi-choice.component.less']

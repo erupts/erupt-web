@@ -200,6 +200,7 @@
 // };
 //
 // @Component({
+    standalone: false,
 //   // tslint:disable-next-line:component-selector
 //   selector: "setting-drawer",
 //   templateUrl: "./setting-drawer.component.html",
