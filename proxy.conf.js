@@ -5,22 +5,30 @@
  *
  * Note: The proxy is only valid for real requests, Mock does not actually generate requests, so the priority of Mock will be higher than the proxy
  */
+
+const host = "http://localhost:9999";
+
 module.exports = {
     /**
      * The following means that all requests are directed to the backend `https://localhost:9000/`
      */
     '/erupt-api': {
-        target: 'http://localhost:9999',
+        target: host,
         secure: false, // SSL certificates
         changeOrigin: true,
         // target: 'https://www.erupt.xyz/demo',
         // secure: true, // SSL certificates
         // changeOrigin: true
     },
-    // "/erupt": {
-    //     target: 'http://localhost:9999',
-    //     secure: false,
-    //     changeOrigin: true,
-    //     ws: true,
-    // }
+    '/log': {
+        target: host,
+        secure: false,
+        changeOrigin: true,
+    },
+    "/erupt-websocket": {
+        target: host,
+        secure: false,
+        changeOrigin: true,
+        ws: true,
+    }
 };

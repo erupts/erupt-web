@@ -1,110 +1,110 @@
 <erupt-node
-  [(model)]="modelValue"
-  [readonly]="readonly"
-  [headerColor]="color()"
-  (select)="onSelect()"
-  (insertNode)="onInsertNode($event)"
-  (insertFlexNode)="onInsertFlexNode($event)"
-  [eruptBuild]="eruptBuild"
-  (saveProp)="onSaveProp()"
-  [progress]="progress"
-  (delete)="onDelete()">
-  {{ name() }}
-  <div config>
-    <nz-segmented [nzOptions]="['设置审核人','表单权限','操作权限']" [(ngModel)]="selectTab" style="margin-bottom: 12px">
+    [(model)]="modelValue"
+    [readonly]="readonly"
+    [headerColor]="color()"
+    (select)="onSelect()"
+    (insertNode)="onInsertNode($event)"
+    (insertFlexNode)="onInsertFlexNode($event)"
+    [eruptBuild]="eruptBuild"
+    (saveProp)="onSaveProp()"
+    [progress]="progress"
+    (delete)="onDelete()">
+    {{ name() }}
+    <div config>
+        <nz-segmented [nzOptions]="[{value:0,label:'设置审核人'},{value:1,label:'表单权限'},{value:2,label:'操作权限'}]" [(ngModel)]="selectTab" style="margin-bottom: 12px">
 
-    </nz-segmented>
-    @if (selectTab==0) {
-      @for (reviewUserMode of approveNode.reviewUserModes; track reviewUserMode; let i = $index) {
-        <nz-card nzTitle="审批人" nzSize="small" style="margin-bottom: 12px">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div style="flex: 1;">
-              <app-review-user
-                [reviewUserMode]="reviewUserMode">
-              </app-review-user>
-            </div>
-            @if (approveNode.reviewUserModes.length > 1) {
-              <button
-                nz-button
-                nzType="text"
-                nzDanger
-                nzSize="small"
-                (click)="deleteReviewUser(i)"
-                [nz-tooltip]="'删除审批人'"
-                style="margin-left: 8px;">
-                <span nz-icon nzType="delete" nzTheme="outline"></span>
-              </button>
+        </nz-segmented>
+        @if (selectTab == 0) {
+            @for (reviewUserMode of approveNode.reviewUserModes; track reviewUserMode; let i = $index) {
+                <nz-card nzTitle="审批人" nzSize="small" style="margin-bottom: 12px">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <app-review-user
+                                [reviewUserMode]="reviewUserMode">
+                            </app-review-user>
+                        </div>
+                        @if (approveNode.reviewUserModes.length > 1) {
+                            <button
+                                nz-button
+                                nzType="text"
+                                nzDanger
+                                nzSize="small"
+                                (click)="deleteReviewUser(i)"
+                                [nz-tooltip]="'删除审批人'"
+                                style="margin-left: 8px;">
+                                <span nz-icon nzType="delete" nzTheme="outline"></span>
+                            </button>
+                        }
+                    </div>
+                </nz-card>
             }
-          </div>
-        </nz-card>
-      }
-      <button nz-button style="margin-bottom: 12px" (click)="addReviewUsers()">
-        <span nz-icon nzType="plus" nzTheme="outline"></span>
-        添加审批人
-      </button>
-      <nz-divider style="margin: 12px 0"></nz-divider>
-      <div>
-        <h4>审批人不存在时</h4>
-        <nz-radio-group [(ngModel)]="approveNode.nobodyStrategy">
-          <label nz-radio [nzValue]="NobodyStrategy.REDIRECT_TO_ADMIN">转交给管理员</label>
-          <label nz-radio [nzValue]="NobodyStrategy.REDIRECT_TO_SPECIFIED_USER">转交到指定审批人</label>
-          @if (approveNode.nobodyStrategy == NobodyStrategy.REDIRECT_TO_SPECIFIED_USER) {
-            <div style="width: 100%;margin-top: 8px">
-              <nz-select style="width: 100%" nzShowSearch [(ngModel)]="approveNode.nobodyRedirectToUser">
-                @for (org of upmsDataService.upmsData.users; track org) {
-                  <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
-                }
-              </nz-select>
+            <button nz-button style="margin-bottom: 12px" (click)="addReviewUsers()">
+                <span nz-icon nzType="plus" nzTheme="outline"></span>
+                添加审批人
+            </button>
+            <nz-divider style="margin: 12px 0"></nz-divider>
+            <div>
+                <h4>审批人不存在时</h4>
+                <nz-radio-group [(ngModel)]="approveNode.nobodyStrategy">
+                    <label nz-radio [nzValue]="NobodyStrategy.REDIRECT_TO_ADMIN">转交给管理员</label>
+                    <label nz-radio [nzValue]="NobodyStrategy.REDIRECT_TO_SPECIFIED_USER">转交到指定审批人</label>
+                    @if (approveNode.nobodyStrategy == NobodyStrategy.REDIRECT_TO_SPECIFIED_USER) {
+                        <div style="width: 100%;margin-top: 8px">
+                            <nz-select style="width: 100%" nzShowSearch [(ngModel)]="approveNode.nobodyRedirectToUser">
+                                @for (org of upmsDataService.upmsData.users; track org) {
+                                    <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
+                                }
+                            </nz-select>
+                        </div>
+                    }
+                </nz-radio-group>
             </div>
-          }
-        </nz-radio-group>
-      </div>
-      <nz-divider style="margin: 12px 0"></nz-divider>
-      <div>
-        <h4>多人审批时使用的审批方式</h4>
-        <nz-radio-group [(ngModel)]="approveNode.approvalStrategy">
-          <label style="width: 100%" nz-radio [nzValue]="ApprovalStrategy.ANY_APPROVE">或签（一名审批人同意即可）</label>
-          <label style="width: 100%;margin-top: 8px" nz-radio [nzValue]="ApprovalStrategy.ALL_APPROVE">会签（需所有审批人同意）</label>
-        </nz-radio-group>
-      </div>
-      <nz-divider style="margin: 12px 0"></nz-divider>
-      <div>
-        <h4>审批超时设置</h4>
-        <nz-switch [(ngModel)]="approveNode.approvalTimeoutEnabled"></nz-switch>
-        @if (approveNode.approvalTimeoutEnabled) {
-          <div style="margin-top: 12px">
-            <nz-input-number [(ngModel)]="approveNode.approvalTimeoutHours" [nzMin]="1" [nzStep]="1" style="width: 120px"></nz-input-number>
-            <span style="margin: 0 8px"> 小时后 → </span>
-            <nz-radio-group [(ngModel)]="approveNode.approvalTimeoutAction">
-              <label nz-radio [nzValue]="ApprovalTimeoutAction.AUTO_PASS">自动同意</label>
-              <label nz-radio [nzValue]="ApprovalTimeoutAction.AUTO_REJECT">自动拒绝</label>
-            </nz-radio-group>
-          </div>
+            <nz-divider style="margin: 12px 0"></nz-divider>
+            <div>
+                <h4>多人审批时使用的审批方式</h4>
+                <nz-radio-group [(ngModel)]="approveNode.approvalStrategy">
+                    <label style="width: 100%" nz-radio [nzValue]="ApprovalStrategy.ANY_APPROVE">或签（一名审批人同意即可）</label>
+                    <label style="width: 100%;margin-top: 8px" nz-radio [nzValue]="ApprovalStrategy.ALL_APPROVE">会签（需所有审批人同意）</label>
+                </nz-radio-group>
+            </div>
+            <nz-divider style="margin: 12px 0"></nz-divider>
+            <div>
+                <h4>审批超时设置</h4>
+                <nz-switch [(ngModel)]="approveNode.approvalTimeoutEnabled"></nz-switch>
+                @if (approveNode.approvalTimeoutEnabled) {
+                    <div style="margin-top: 12px">
+                        <nz-input-number [(ngModel)]="approveNode.approvalTimeoutHours" [nzMin]="1" [nzStep]="1" style="width: 120px"></nz-input-number>
+                        <span style="margin: 0 8px"> 小时后 → </span>
+                        <nz-radio-group [(ngModel)]="approveNode.approvalTimeoutAction">
+                            <label nz-radio [nzValue]="ApprovalTimeoutAction.AUTO_PASS">自动同意</label>
+                            <label nz-radio [nzValue]="ApprovalTimeoutAction.AUTO_REJECT">自动拒绝</label>
+                        </nz-radio-group>
+                    </div>
+                }
+            </div>
         }
-      </div>
-    }
-    @if (selectTab==1) {
-      <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="approveNode.formAccesses"/>
-    }
-    @if (selectTab==2) {
-      <div class="allow-item">
-        <label nz-checkbox [(ngModel)]="approveNode.allowTransfer">允许转交</label>
-      </div>
-      <div class="allow-item">
-        <label nz-checkbox [(ngModel)]="approveNode.allowAddSign">允许加签</label>
-      </div>
-      <div class="allow-item">
-        <label nz-checkbox [(ngModel)]="approveNode.allowCc">允许抄送</label>
-      </div>
-      <div class="allow-item">
-        <label nz-checkbox [(ngModel)]="approveNode.allowReturn">允许退回</label>
-      </div>
-      <div class="allow-item">
-        <label nz-checkbox [(ngModel)]="approveNode.requireSignature">审批同意时需手写签名</label>
-      </div>
-      <div class="allow-item">
-        <label nz-checkbox [(ngModel)]="approveNode.requireApprovalNote">提交审批需填写审批意见</label>
-      </div>
-    }
-  </div>
+        @if (selectTab == 1) {
+            <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="approveNode.formAccesses"/>
+        }
+        @if (selectTab == 2) {
+            <div class="allow-item">
+                <label nz-checkbox [(ngModel)]="approveNode.allowTransfer">允许转交</label>
+            </div>
+            <div class="allow-item">
+                <label nz-checkbox [(ngModel)]="approveNode.allowAddSign">允许加签</label>
+            </div>
+            <div class="allow-item">
+                <label nz-checkbox [(ngModel)]="approveNode.allowCc">允许抄送</label>
+            </div>
+            <div class="allow-item">
+                <label nz-checkbox [(ngModel)]="approveNode.allowReturn">允许退回</label>
+            </div>
+            <div class="allow-item">
+                <label nz-checkbox [(ngModel)]="approveNode.requireSignature">审批同意时需手写签名</label>
+            </div>
+            <div class="allow-item">
+                <label nz-checkbox [(ngModel)]="approveNode.requireApprovalNote">提交审批需填写审批意见</label>
+            </div>
+        }
+    </div>
 </erupt-node>

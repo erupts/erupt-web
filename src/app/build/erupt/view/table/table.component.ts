@@ -1,18 +1,7 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {
-    Alert,
-    Drill,
-    DrillInput,
-    EruptModel,
-    Power,
-    Row,
-    RowOperation,
-    Sort,
-    Vis,
-    VisType
-} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -39,10 +28,8 @@ import {Observable} from "rxjs";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {NzModalService} from "ng-zorro-antd/modal";
-import {STColumn, STColumnButton, STComponent, STChange, STPage} from "@delon/abc/st";
-import {NzModalRef} from "ng-zorro-antd/modal";
-import {ModalButtonOptions} from "ng-zorro-antd/modal";
+import {ModalButtonOptions, NzModalRef, NzModalService} from "ng-zorro-antd/modal";
+import {STChange, STColumn, STColumnButton, STComponent, STPage} from "@delon/abc/st";
 import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
@@ -148,7 +135,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     selectedVisIndex: number = 0;
 
-    visOptions = [];
+    visOptions: any[] = [];
 
     adding: boolean = false; //新增行为防抖
 
@@ -253,9 +240,9 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.vis = eb.eruptModel.eruptJson.vis || [];
                 if (this.vis.length) {
                     this.hideCondition = true;
-                    this.visOptions = this.vis.map(i => ({
+                    this.visOptions = this.vis.map((i, index) => ({
                         label: i.title,
-                        value: i.code,
+                        value: index,
                         useTemplate: true
                     }))
                     if (eb.eruptModel.eruptJson.visRawTable) {
@@ -800,13 +787,7 @@ export class TableComponent implements OnInit, OnDestroy {
                         if (res.status === Status.SUCCESS) {
                             this.query();
                             if (res.data) {
-                                try {
-                                    let ev = this.evalVar();
-                                    let codeModal = ev.codeModal;
-                                    eval(res.data);
-                                } catch (e) {
-                                    this.msg.error(e);
-                                }
+                                this.execExpr(res.data);
                             }
                             return true;
                         } else {
@@ -841,13 +822,7 @@ export class TableComponent implements OnInit, OnDestroy {
                                 .toPromise().then();
                             this.query();
                             if (res.data) {
-                                try {
-                                    let ev = this.evalVar();
-                                    let codeModal = ev.codeModal;
-                                    eval(res.data);
-                                } catch (e) {
-                                    this.msg.error(e);
-                                }
+                                this.execExpr(res.data);
                             }
                         }
                     });
@@ -857,13 +832,7 @@ export class TableComponent implements OnInit, OnDestroy {
                     this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids, null).subscribe(res => {
                         this.msg.remove(msgLoading.messageId);
                         if (res.data) {
-                            try {
-                                let ev = this.evalVar();
-                                let codeModal = ev.codeModal;
-                                eval(res.data);
-                            } catch (e) {
-                                this.msg.error(e);
-                            }
+                            this.execExpr(res.data);
                         }
                     });
 
@@ -1064,8 +1033,8 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     //提供自定义表达式可调用函数
-    evalVar() {
-        return {
+    execExpr(expr: string) {
+        let ev = {
             codeModal: (lang: string, code: any) => {
                 let ref = this.modal.create({
                     nzKeyboard: true,
@@ -1082,6 +1051,11 @@ export class TableComponent implements OnInit, OnDestroy {
                 // @ts-ignore
                 ref.getContentComponent().edit = {$value: code}
             }
+        }
+        try {
+            new Function(...Object.keys(ev), expr)(...Object.values(ev));
+        } catch (e) {
+            this.msg.error(e);
         }
     }
 
