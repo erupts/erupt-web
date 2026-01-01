@@ -8,6 +8,7 @@ import { NzModalService } from "ng-zorro-antd/modal";
 import {TableComponent} from "../../view/table/table.component";
 
 @Component({
+    standalone: false,
     selector: "app-reference-table",
     template: `
         <erupt-table #et

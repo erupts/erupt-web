@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {GanttDragEvent, GanttGroup, GanttItem, GanttItemType, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {FieldVisibility, Vis} from "../../model/erupt.model";
-import * as moment from 'moment';
+import moment from 'moment';
 import {EruptField} from "../../model/erupt-field.model";
 import {STColumn} from "@delon/abc/st";
 import {UiBuildService} from "../../service/ui-build.service";
@@ -10,6 +10,7 @@ import {DataService} from "@shared/service/data.service";
 import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
+    standalone: false,
     selector: 'vis-gantt',
     templateUrl: './gantt.component.html',
     styleUrls: ['./gantt.component.less']
@@ -57,8 +58,8 @@ export class GanttComponent implements OnChanges, OnInit {
     }
 
     dragEnded(e: GanttDragEvent) {
-        let start = moment(e.item.start * 1000).format('YYYY-MM-DD 00:00:00');
-        let end = moment(e.item.end * 1000).format('YYYY-MM-DD 23:59:59');
+        let start = moment(Number(e.item.start) * 1000).format('YYYY-MM-DD 00:00:00');
+        let end = moment(Number(e.item.end) * 1000).format('YYYY-MM-DD 23:59:59');
         this.dataService.updateGanttDate(this.eruptBuildModel.eruptModel.eruptName, this.vis.code, e.item.id, start, end).subscribe(res => {
             for (let datum of this.data) {
                 if (datum[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] == e.item.id) {

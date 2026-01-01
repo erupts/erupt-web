@@ -4,6 +4,7 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 
 @Component({
+    standalone: false,
     selector: 'erupt-tags',
     templateUrl: './tags.component.html',
     styles: []

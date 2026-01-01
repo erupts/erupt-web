@@ -1,6 +1,7 @@
 import {AfterViewInit, Directive, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
 
 @Directive({
+    standalone: false,
     selector: '[syncVirtualScroll]'
 })
 export class SyncVirtualScrollDirective implements AfterViewInit, OnChanges {

@@ -14,6 +14,7 @@ import {EruptIframeComponent} from "@shared/component/iframe.component";
 export {NoticeStatus};
 
 @Component({
+    standalone: false,
     selector: 'erupt-notice',
     templateUrl: './notice.component.html',
     styleUrls: ['./notice.component.less']
@@ -22,7 +23,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
     channels: NoticeChannel[] = [];
-    channelOptions: string[] = [];
+    channelOptions: any[] = [];
     selectedChannelIndex: number = 0;
 
     messages: any[] = []; // 复用 messages 对象，可以存储 NoticeMessageDetail 或 Announcement
@@ -43,10 +44,13 @@ export class NoticeComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.channelOptions = [
-            this.i18nService.fanyi('notice'),
-            this.i18nService.fanyi('notice.announcement')
-        ]
+        this.channelOptions = [{
+            label: this.i18nService.fanyi('notice'),
+            value: 0
+        }, {
+            label: this.i18nService.fanyi('notice.announcement'),
+            value: 1
+        }]
         this.selectedChannelIndex = 0;
         this.loadMessages();
     }
@@ -55,24 +59,6 @@ export class NoticeComponent implements OnInit, OnDestroy {
         this.destroy$.next();
         this.destroy$.complete();
     }
-
-    // 加载渠道列表
-    // loadChannels(): void {
-    //     this.dataService.noticeChannels()
-    //         .pipe(takeUntil(this.destroy$))
-    //         .subscribe({
-    //             next: (channels) => {
-    //                 this.channels = channels.data;
-    //                 this.channelOptions = channels.data.map(c => c.label);
-    //                 if (channels.data.length > 0) {
-    //                     this.selectedChannelIndex = 0;
-    //                     this.loadMessages();
-    //                 }
-    //             },
-    //             error: () => {
-    //             }
-    //         });
-    // }
 
     // 选择渠道（通过索引）
     onChannelChange(index: number): void {

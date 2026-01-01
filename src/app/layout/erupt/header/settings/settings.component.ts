@@ -6,6 +6,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 
 @Component({
+    standalone: false,
     selector: 'erupt-settings',
     templateUrl: './settings.component.html',
     styleUrls: ["./settings.component.less"],

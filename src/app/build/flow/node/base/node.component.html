@@ -1,53 +1,64 @@
 <div class="p-node">
-    <ng-container *ngIf="model?.error">
-        <span nz-tooltip [nzTooltipTitle]="model.error" nz-icon nzType="warning" nzTheme="twotone" [nzTwotoneColor]="'#FF4D4F'" class="node-err-tip"></span>
-    </ng-container>
-    <div *ngIf="showBody"
-         class="p-node-body"
-         [ngClass]="progress?.[model.id]"
-         [style.background]="headerColor"
-         [style.--shadowColor]="headerColor">
-        <div class="p-node-header" [style.background-color]="headerColor">
-            <div>
-                <input *ngIf="enableEdit"
-                       style="color: #000;"
-                       #nodeNameInput
-                       autofocus
-                       (blur)="onBlur()"
-                       [(ngModel)]="model.name"/>
-                <div *ngIf="!enableEdit"
-                     class="row-text"
-                     (click)="onEnableEdit()">{{ model.name }}
-                </div>
+  @if (model?.error) {
+    <span nz-tooltip [nzTooltipTitle]="model.error" nz-icon nzType="warning" nzTheme="twotone" [nzTwotoneColor]="'#FF4D4F'" class="node-err-tip"></span>
+  }
+  @if (showBody) {
+    <div
+      class="p-node-body"
+      [ngClass]="progress?.[model.id]"
+      [style.background]="headerColor"
+      [style.--shadowColor]="headerColor">
+      <div class="p-node-header" [style.background-color]="headerColor">
+        <div>
+          @if (enableEdit) {
+            <input
+              style="color: #000;"
+              #nodeNameInput
+              autofocus
+              (blur)="onBlur()"
+              [(ngModel)]="model.name"/>
+          }
+          @if (!enableEdit) {
+            <div
+              class="row-text"
+              (click)="onEnableEdit()">{{ model.name }}
             </div>
-            <span *ngIf="showClose && !readonly" class="fa fa-close" (click)="onDelete()"></span>
+          }
         </div>
-
-        <div class="p-node-content" (click)="onSelect()">
-            <ng-content></ng-content>
-            <span *ngIf="hasConfig && !readonly" nz-icon nzType="arrow-right" class="w-p-node-click"></span>
-        </div>
+        @if (showClose && !readonly) {
+          <span class="fa fa-close" (click)="onDelete()"></span>
+        }
+      </div>
+      <div class="p-node-content" (click)="onSelect()">
+        <ng-content></ng-content>
+        @if (hasConfig && !readonly) {
+          <span nz-icon nzType="arrow-right" class="w-p-node-click"></span>
+        }
+      </div>
     </div>
-    <div class="p-node-add">
-        <app-insert-btn *ngIf="!readonly" (insertNode)="onInsertNode($event)" (insertFlexNode)="onInsertFlexNode($event)"></app-insert-btn>
-    </div>
+  }
+  <div class="p-node-add">
+    @if (!readonly) {
+      <app-insert-btn (insertNode)="onInsertNode($event)" (insertFlexNode)="onInsertFlexNode($event)"></app-insert-btn>
+    }
+  </div>
 </div>
 <nz-drawer
-    [nzVisible]="showDrawer"
-    (nzOnClose)="close()"
-    nzPlacement="right"
-    [nzTitle]="model?.name"
-    [nzBodyStyle]="{padding: '16px'}"
-    [nzFooter]="footerTpl"
-    [nzWidth]="600"
->
-    <ng-container *nzDrawerContent>
-        <ng-content select="[config]"></ng-content>
-    </ng-container>
+  [nzVisible]="showDrawer"
+  (nzOnClose)="close()"
+  nzPlacement="right"
+  [nzTitle]="model?.name"
+  [nzBodyStyle]="{padding: '16px'}"
+  [nzFooter]="footerTpl"
+  [nzWidth]="600"
+  >
+  <ng-container *nzDrawerContent>
+    <ng-content select="[config]"></ng-content>
+  </ng-container>
 </nz-drawer>
 <ng-template #footerTpl>
-    <div style="float: right">
-        <button nz-button style="margin-right: 8px;" (click)="close()">Cancel</button>
-        <button nz-button nzType="primary" (click)="save()">Save</button>
-    </div>
+  <div style="float: right">
+    <button nz-button style="margin-right: 8px;" (click)="close()">Cancel</button>
+    <button nz-button nzType="primary" (click)="save()">Save</button>
+  </div>
 </ng-template>

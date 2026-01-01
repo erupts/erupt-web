@@ -15,6 +15,7 @@ interface FlowGroupWithCount extends FlowGroup {
 }
 
 @Component({
+    standalone: false,
     selector: 'erupt-flow-management',
     templateUrl: './flow-management.component.html',
     styleUrls: ['./flow-management.component.less']

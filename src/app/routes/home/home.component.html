@@ -1,6 +1,8 @@
 <div class="page-container">
-    <nz-spin [nzSpinning]="spin" style="height:100%;width: 100%">
-        <iframe *ngIf="url" (load)="iframeLoad()" [src]="url | safeUrl" frameborder="0" height="100%" width="100%" style="vertical-align: bottom;">
-        </iframe>
-    </nz-spin>
+  <nz-spin [nzSpinning]="spin" style="height:100%;width: 100%">
+    @if (url) {
+      <iframe (load)="iframeLoad()" [src]="url | safeUrl" frameborder="0" height="100%" width="100%" style="vertical-align: bottom;">
+      </iframe>
+    }
+  </nz-spin>
 </div>

@@ -29,7 +29,7 @@ export class SocketService {
         } else {
             websocketUrl = (location.protocol === 'http:' ? 'ws:' : 'wss:') + "//" + location.host + location.pathname;
         }
-        this.socket = new WebSocket(websocketUrl + 'erupt?token=' + this.tokenService.get().token);
+        this.socket = new WebSocket(websocketUrl + 'erupt-websocket?token=' + this.tokenService.get().token);
 
         this.socket.onopen = () => {
             // 启动心跳
@@ -40,7 +40,7 @@ export class SocketService {
             let data = <any[]>JSON.parse(event.data);
             if (data?.[0] == "js") {
                 try {
-                    eval(data[1])
+                    new Function(data[1])()
                 } catch (e) {
                     this.msg.warning("socket js err: " + e);
                 }

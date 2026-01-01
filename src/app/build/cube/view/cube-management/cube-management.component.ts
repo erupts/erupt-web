@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig, GridsterItem} from "angular-gridster2";
 
 @Component({
+    standalone: false,
     selector: 'app-cube-management',
     templateUrl: './cube-management.component.html',
     styleUrls: ['./cube-management.component.less']

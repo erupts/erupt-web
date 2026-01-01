@@ -14,6 +14,7 @@ import {EruptAppData} from "@shared/model/erupt-app.model";
 import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 
 @Component({
+    standalone: false,
     selector: "passport-login",
     templateUrl: "./tenant-login.component.html",
     styleUrls: ["./tenant-login.component.less"],

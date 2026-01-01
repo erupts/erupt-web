@@ -12,6 +12,7 @@ import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {StartNode} from "@flow/model/fllw-approval.model";
 
 @Component({
+    standalone: false,
     selector: 'app-create-instance',
     templateUrl: './create-instance.component.html',
     styleUrls: ['./create-instance.component.less']

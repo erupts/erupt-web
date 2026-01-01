@@ -58,6 +58,7 @@ const ICONS = [
 // #endregion
 
 @Component({
+    standalone: false,
     selector: "layout-erupt",
     templateUrl: "./erupt.component.html",
     preserveWhitespaces: false,
@@ -108,11 +109,11 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 @Inject(DOCUMENT) private doc: any) {
         iconSrv.addIcon(...ICONS);
         let initReuseTab = false;
-        this.themes = [
-            {key: 'default', text: this.i18n.fanyi("theme.default")},
-            {key: 'dark', text: this.i18n.fanyi("theme.dark")},
-            {key: 'compact', text: this.i18n.fanyi("theme.compact")},
-        ]
+        // this.themes = [
+        //     {key: 'default', text: this.i18n.fanyi("theme.default")},
+        //     {key: 'dark', text: this.i18n.fanyi("theme.dark")},
+        //     {key: 'compact', text: this.i18n.fanyi("theme.compact")},
+        // ]
         router.events.subscribe(evt => {
             if (!this.isFetching && evt instanceof RouteConfigLoadStart) {
                 this.isFetching = true;

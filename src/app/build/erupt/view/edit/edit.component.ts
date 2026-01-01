@@ -8,6 +8,7 @@ import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
+    standalone: false,
     selector: "erupt-edit",
     templateUrl: "./edit.component.html",
     styleUrls: ["./edit.component.less"]

@@ -2,7 +2,7 @@ import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/c
 import {Bi, Dimension, DimType} from "../model/bi.model";
 import {colRules} from "@shared/model/util.model";
 import {ReferenceComponent} from "../components/reference/reference.component";
-import {PresetRanges} from "ng-zorro-antd/date-picker/standard-types";
+import {PresetRanges} from "ng-zorro-antd/date-picker";
 import moment from 'moment';
 import {DatePipe} from "@angular/common";
 import {NzModalService} from "ng-zorro-antd/modal";
@@ -10,6 +10,7 @@ import {I18NService} from "@core";
 import {ReferenceTableComponent} from "../components/reference-table/reference-table.component";
 
 @Component({
+    standalone: false,
     selector: 'bi-dimension',
     templateUrl: './dimension.component.html',
     styleUrls: ['./dimension.component.less'],

@@ -15,6 +15,7 @@ import {AppViewService} from "@shared/service/app-view.service";
 import {Scene} from "../../model/erupt.enum";
 
 @Component({
+    standalone: false,
     selector: "erupt-tree",
     templateUrl: "./tree.component.html",
     styleUrls: ["./tree.component.less"]

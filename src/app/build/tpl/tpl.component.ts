@@ -5,6 +5,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {SettingsService} from "@delon/theme";
 
 @Component({
+    standalone: false,
     selector: 'app-tpl',
     templateUrl: './tpl.component.html'
 })

@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/
 import {ChartApi} from "../model/bi.model";
 
 @Component({
+    standalone: false,
     selector: 'erupt-chart-table',
     templateUrl: './chart-table.component.html',
     styleUrls: ['./chart-table.component.less'],

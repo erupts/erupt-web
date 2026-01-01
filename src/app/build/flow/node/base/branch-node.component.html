@@ -1,51 +1,62 @@
 <div class="p-node">
-    <ng-container *ngIf="modelValue?.error">
-        <span nz-tooltip [nzTooltipTitle]="modelValue.error" nz-icon nzType="warning" nzTheme="twotone" [nzTwotoneColor]="'#FF4D4F'" class="node-err-tip"></span>
-    </ng-container>
+  @if (modelValue?.error) {
+    <span nz-tooltip [nzTooltipTitle]="modelValue.error" nz-icon nzType="warning" nzTheme="twotone" [nzTwotoneColor]="'#FF4D4F'" class="node-err-tip"></span>
+  }
 
-    <div class="p-node-body" [style.--shadowColor]="color" [ngClass]="progress?.[modelValue.id]">
+  <div class="p-node-body" [style.--shadowColor]="color" [ngClass]="progress?.[modelValue.id]">
 
-        <div class="p-node-move" (click)="onMoveL()">
-            <span *ngIf="!readonly && moveLn && !isDefault" nz-icon nzType="left"></span>
-        </div>
-
-        <div style="flex: 1">
-            <div class="p-node-header">
-                <div [style.color]="isDefault ? '#898989' : color">
-                    <input *ngIf="enableEdit"
-                           #nodeNameInput
-                           autofocus
-                           (blur)="onBlur()"
-                           [(ngModel)]="modelValue.name"/>
-                    <div *ngIf="!enableEdit"
-                         class="row-text"
-                         (click)="onEnableEdit()">{{ modelValue.name }}
-                    </div>
-                </div>
-
-                <div *ngIf="!readonly && !isDefault" class="node-action">
-                    <!--                    <span class="fa fa-copy" (click)="onCopy()"></span>-->
-                    <span class="fa fa-close" (click)="onDelete()"></span>
-                </div>
-
-                <nz-typography nzType="secondary" nzSize="small" class="node-desc">{{ desc }}</nz-typography>
-            </div>
-
-            <div class="p-node-content" (click)="!readonly&&onSelect()">
-                <nz-typography nzEllipsis nzEllipsisRows="4">
-                    {{ content || placeholder }}
-                </nz-typography>
-            </div>
-        </div>
-
-        <div class="p-node-move" (click)="onMoveR()">
-            <span *ngIf="!readonly && moveRn && !isDefault" nz-icon nzType="right"></span>
-        </div>
+    <div class="p-node-move" (click)="onMoveL()">
+      @if (!readonly && moveLn && !isDefault) {
+        <span nz-icon nzType="left"></span>
+      }
     </div>
-    <div class="p-node-add">
-        <app-insert-btn *ngIf="!readonly" (insertNode)="onInsertNode($event)"
-                        (insertFlexNode)="onInsertFlexNode($event)">
 
-        </app-insert-btn>
+    <div style="flex: 1">
+      <div class="p-node-header">
+        <div [style.color]="isDefault ? '#898989' : color">
+          @if (enableEdit) {
+            <input
+              #nodeNameInput
+              autofocus
+              (blur)="onBlur()"
+              [(ngModel)]="modelValue.name"/>
+          }
+          @if (!enableEdit) {
+            <div
+              class="row-text"
+              (click)="onEnableEdit()">{{ modelValue.name }}
+            </div>
+          }
+        </div>
+
+        @if (!readonly && !isDefault) {
+          <div class="node-action">
+            <!--                    <span class="fa fa-copy" (click)="onCopy()"></span>-->
+            <span class="fa fa-close" (click)="onDelete()"></span>
+          </div>
+        }
+
+        <nz-typography nzType="secondary" nzSize="small" class="node-desc">{{ desc }}</nz-typography>
+      </div>
+
+      <div class="p-node-content" (click)="!readonly&&onSelect()">
+        <nz-typography nzEllipsis nzEllipsisRows="4">
+          {{ content || placeholder }}
+        </nz-typography>
+      </div>
     </div>
+
+    <div class="p-node-move" (click)="onMoveR()">
+      @if (!readonly && moveRn && !isDefault) {
+        <span nz-icon nzType="right"></span>
+      }
+    </div>
+  </div>
+  <div class="p-node-add">
+    @if (!readonly) {
+      <app-insert-btn (insertNode)="onInsertNode($event)"
+        (insertFlexNode)="onInsertFlexNode($event)">
+      </app-insert-btn>
+    }
+  </div>
 </div>

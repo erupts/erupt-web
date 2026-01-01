@@ -6,6 +6,7 @@ import {FlowDataService} from "@flow/service/flow-data.service";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 
 @Component({
+    standalone: false,
     selector: 'app-insert-btn',
     templateUrl: './insert-btn.component.html',
     styleUrls: ['./insert-btn.component.less']

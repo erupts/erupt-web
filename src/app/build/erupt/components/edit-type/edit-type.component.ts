@@ -1,6 +1,14 @@
 import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
 import {Edit, EruptFieldModel, FormCtrl} from "../../model/erupt-field.model";
-import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, MultiChoiceEnum, Scene} from "../../model/erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    EditType,
+    FormSize,
+    HtmlEditTypeEnum,
+    MultiChoiceEnum,
+    Scene
+} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
@@ -11,12 +19,13 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {NzUploadFile} from "ng-zorro-antd/upload/interface";
+import {NzUploadFile} from "ng-zorro-antd/upload";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {BehaviorSubject} from "rxjs";
 import {SignaturePadComponent} from "../signature-pad/signature-pad.component";
 
 @Component({
+    standalone: false,
     selector: "erupt-edit-type",
     templateUrl: "./edit-type.component.html",
     styleUrls: ["./edit-type.component.less"]
@@ -151,7 +160,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         let dynamicBy = model.eruptFieldJson.edit.dynamic;
         let value = this.eruptModel.eruptFieldModelMap.get(dynamicBy.dependField).eruptFieldJson.edit.$value;
         try {
-            let match = !!eval(dynamicBy.condition);
+            let match = !!new Function("value", dynamicBy.condition)(value);
             if (match) {
                 this.dynamicMatch(model, dynamicBy.noMatch, false)
                 this.dynamicMatch(model, dynamicBy.match, true)

@@ -4,6 +4,7 @@ import {KV} from "../../../erupt/model/util.model";
 import {UpmsDataService} from "@flow/service/upms-data.service";
 
 @Component({
+    standalone: false,
     selector: 'app-review-user',
     templateUrl: './review-user.component.html',
     styleUrls: ['./review-user.component.less']

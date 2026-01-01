@@ -7,6 +7,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 declare const AMap;
 
 @Component({
+    standalone: false,
     selector: "amap",
     templateUrl: "./amap.component.html",
     styleUrls: ["./amap.component.less"]

@@ -1,44 +1,45 @@
 <app-branch-node
-    [(modelValue)]="modelValue"
-    [readonly]="readonly"
-    [showError]="showErr"
-    [errorInfo]="errInfo"
-    [color]="color()"
-    [headerIcon]="getHeaderIcon()"
-    [eruptBuild]="eruptBuild"
-    [isDefault]="isDefault"
-    [moveRn]="moveRn"
-    [moveLn]="moveLn"
-    [desc]="getDescription()"
-    [content]="getContent()"
-    (insertNode)="onInsertNode($event)"
-    (insertFlexNode)="onInsertFlexNode($event)"
-    [progress]="progress"
-    (moveL)="onMoveL()"
-    (moveR)="onMoveR()"
-    (delete)="onDelete()"
-    (select)="onSelect()">
+  [(modelValue)]="modelValue"
+  [readonly]="readonly"
+  [showError]="showErr"
+  [errorInfo]="errInfo"
+  [color]="color()"
+  [headerIcon]="getHeaderIcon()"
+  [eruptBuild]="eruptBuild"
+  [isDefault]="isDefault"
+  [moveRn]="moveRn"
+  [moveLn]="moveLn"
+  [desc]="getDescription()"
+  [content]="getContent()"
+  (insertNode)="onInsertNode($event)"
+  (insertFlexNode)="onInsertFlexNode($event)"
+  [progress]="progress"
+  (moveL)="onMoveL()"
+  (moveR)="onMoveR()"
+  (delete)="onDelete()"
+  (select)="onSelect()">
 </app-branch-node>
-<nz-drawer
+@if (showDrawer) {
+  <nz-drawer
     [nzVisible]="showDrawer"
-    *ngIf="showDrawer"
     (nzOnClose)="closeDrawer()"
     [nzMaskClosable]="false"
     nzPlacement="right"
     [nzTitle]="modelValue.name"
     [nzFooter]="footerTpl"
     [nzWidth]="600"
->
+    >
     <ng-container *nzDrawerContent>
-        <ng-container>
-            <erupt-smart-search [requiredHasCondition]="gatewayType != GatewayType.PARALLEL" [upmsData]="upmsData"
-                                [eruptModel]="eruptBuild.eruptModel" [(search)]="gatewayNode.conditions"/>
-        </ng-container>
+      <ng-container>
+        <erupt-smart-search [requiredHasCondition]="gatewayType != GatewayType.PARALLEL" [upmsData]="upmsData"
+          [eruptModel]="eruptBuild.eruptModel" [(search)]="gatewayNode.conditions"/>
+      </ng-container>
     </ng-container>
-</nz-drawer>
+  </nz-drawer>
+}
 <ng-template #footerTpl>
-    <div style="float: right">
-        <button nz-button style="margin-right: 8px;" (click)="closeDrawer()">Cancel</button>
-        <button nz-button nzType="primary" (click)="onSaveProp()">Save</button>
-    </div>
+  <div style="float: right">
+    <button nz-button style="margin-right: 8px;" (click)="closeDrawer()">Cancel</button>
+    <button nz-button nzType="primary" (click)="onSaveProp()">Save</button>
+  </div>
 </ng-template>

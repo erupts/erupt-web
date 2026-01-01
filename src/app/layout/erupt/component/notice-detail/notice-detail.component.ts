@@ -5,6 +5,7 @@ import {NzDrawerService} from 'ng-zorro-antd/drawer';
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 @Component({
+    standalone: false,
     selector: 'app-notice-detail',
     templateUrl: './notice-detail.component.html',
     styleUrls: ['./notice-detail.component.less']

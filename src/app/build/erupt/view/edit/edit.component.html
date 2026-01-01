@@ -1,6 +1,8 @@
-<div *ngIf="eruptBuildModel!=null">
+@if (eruptBuildModel!=null) {
+  <div>
     <nz-spin [nzSpinning]="loading">
-        <erupt-edit-type [loading]="loading" #eruptEdit [eruptBuildModel]="eruptBuildModel" [readonly]="readonly"
-                         [mode]="behavior"></erupt-edit-type>
+      <erupt-edit-type [loading]="loading" #eruptEdit [eruptBuildModel]="eruptBuildModel" [readonly]="readonly"
+      [mode]="behavior"></erupt-edit-type>
     </nz-spin>
-</div>
+  </div>
+}

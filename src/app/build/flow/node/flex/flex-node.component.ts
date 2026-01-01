@@ -11,6 +11,7 @@ import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
+    standalone: false,
     selector: 'erupt-flex-node',
     templateUrl: './flex-node.component.html',
     styleUrls: ['./flex-node.component.less']

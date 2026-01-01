@@ -36,6 +36,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {ChartTableComponent} from "../chart-table/chart-table.component";
 
 @Component({
+    standalone: false,
     selector: 'bi-chart',
     templateUrl: "./chart.component.html",
     styleUrls: ['./chart.component.less'],

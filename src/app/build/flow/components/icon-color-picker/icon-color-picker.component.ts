@@ -6,6 +6,7 @@ export interface IconColorConfig {
 }
 
 @Component({
+    standalone: false,
     selector: 'app-icon-color-picker',
     templateUrl: './icon-color-picker.component.html',
     styleUrls: ['./icon-color-picker.component.less']

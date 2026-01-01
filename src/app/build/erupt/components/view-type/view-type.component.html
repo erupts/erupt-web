@@ -1,98 +1,100 @@
-<ng-container *ngIf="show">
-    <ng-container [ngSwitch]="view.viewType">
-        <ng-container *ngSwitchCase="viewType.IMAGE">
-            <nz-carousel class="text-center" onselectstart="return false;" unselectable="on"
-                         style="-moz-user-select:none;" #carousel>
-                <div nz-carousel-content *ngFor="let img of paths">
-                    <img class="full-max-width" [src]="img|safeUrl" ondragstart="return false;"
-                         style="display: inline-block;"/>
-                </div>
-            </nz-carousel>
-            <ul class="carousel-ul" *ngIf="paths.length>1">
-                <li *ngFor="let img of paths;let i = index"
-                    style="list-style: none;margin-right: 8px">
-                    <img [src]="img|safeUrl" ondragstart="return false;" (click)="goToCarouselIndex(i)"
-                         style="height: 80px;" [class]="currIndex==i?'':'grayscale'"/>
-                </li>
-            </ul>
-        </ng-container>
-        <ng-container *ngSwitchCase="viewType.SWF">
-            <nz-carousel class="text-center">
-                <div nz-carousel-content *ngFor="let swf of paths">
-                    <embed style="width:100%;height:600px" align="center" [src]="swf|safeUrl"
-                           type="application/x-shockwave-flash" quality="high"/>
-                </div>
-            </nz-carousel>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="viewType.LINK_DIALOG">
-            <iframe [src]="value|safeUrl" [frameBorder]="0"
-                    style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
-        </ng-container>
-
-        <ng-container *ngSwitchCase="viewType.ATTACHMENT_DIALOG">
-            <iframe [src]="value|safeUrl" [frameBorder]="0"
-                    style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
-        </ng-container>
-
-
-        <ng-container *ngSwitchCase="viewType.HTML">
-            <div [innerHTML]="value|html" class="view_inner_html">
-
-            </div>
-        </ng-container>
-        <ng-container *ngSwitchCase="viewType.MOBILE_HTML">
-            <div [innerHTML]="value|html" class="view_inner_html">
-
-            </div>
-        </ng-container>
-        <ng-container *ngSwitchCase="viewType.QR_CODE">
-            <div style="width: 100%;text-align: center">
-                <nz-qrcode [nzValue]="value" [nzLevel]="'M'"></nz-qrcode>
-            </div>
-        </ng-container>
-        <ng-container *ngSwitchCase="viewType.MAP">
-            <amap [value]="value" [readonly]="true" [zoom]="18"></amap>
-        </ng-container>
-        <ng-container *ngSwitchCase="viewType.IMAGE_BASE64">
-            <img class="full-max-width" [src]="value" style="display: inline-block;"/>
-        </ng-container>
-        <ng-container *ngSwitchCase="viewType.TAB_VIEW">
-            <nz-spin [nzSpinning]="loading">
-                <ng-container [ngSwitch]="view.eruptFieldModel.eruptFieldJson.edit.type">
-                    <ng-container *ngSwitchCase="editType.TAB_TABLE_ADD">
-                        <tab-table
-                            [onlyRead]="true"
+@if (show) {
+  @switch (view.viewType) {
+    @case (viewType.IMAGE) {
+      <nz-carousel class="text-center" onselectstart="return false;" unselectable="on"
+        style="-moz-user-select:none;" #carousel>
+        @for (img of paths; track img) {
+          <div nz-carousel-content>
+            <img class="full-max-width" [src]="img|safeUrl" ondragstart="return false;"
+              style="display: inline-block;"/>
+          </div>
+        }
+      </nz-carousel>
+      @if (paths.length>1) {
+        <ul class="carousel-ul">
+          @for (img of paths; track img; let i = $index) {
+            <li
+              style="list-style: none;margin-right: 8px">
+              <img [src]="img|safeUrl" ondragstart="return false;" (click)="goToCarouselIndex(i)"
+                style="height: 80px;" [class]="currIndex==i?'':'grayscale'"/>
+            </li>
+          }
+        </ul>
+      }
+    }
+    @case (viewType.SWF) {
+      <nz-carousel class="text-center">
+        @for (swf of paths; track swf) {
+          <div nz-carousel-content>
+            <embed style="width:100%;height:600px" align="center" [src]="swf|safeUrl"
+              type="application/x-shockwave-flash" quality="high"/>
+          </div>
+        }
+      </nz-carousel>
+    }
+    @case (viewType.LINK_DIALOG) {
+      <iframe [src]="value|safeUrl" [frameBorder]="0"
+      style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
+    }
+    @case (viewType.ATTACHMENT_DIALOG) {
+      <iframe [src]="value|safeUrl" [frameBorder]="0"
+      style="display: block;width: 100%;height: 650px;vertical-align: bottom;"></iframe>
+    }
+    @case (viewType.HTML) {
+      <div [innerHTML]="value|safeHtml" class="view_inner_html">
+      </div>
+    }
+    @case (viewType.MOBILE_HTML) {
+      <div [innerHTML]="value|safeHtml" class="view_inner_html">
+      </div>
+    }
+    @case (viewType.QR_CODE) {
+      <div style="width: 100%;text-align: center">
+        <nz-qrcode [nzValue]="value" [nzLevel]="'M'"></nz-qrcode>
+      </div>
+    }
+    @case (viewType.MAP) {
+      <amap [value]="value" [readonly]="true" [zoom]="18"></amap>
+    }
+    @case (viewType.IMAGE_BASE64) {
+      <img class="full-max-width" [src]="value" style="display: inline-block;"/>
+    }
+    @case (viewType.TAB_VIEW) {
+      <nz-spin [nzSpinning]="loading">
+        @switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
+          @case (editType.TAB_TABLE_ADD) {
+            <tab-table
+              [onlyRead]="true"
                             [tabErupt]="{eruptBuildModel:eruptBuildModel.tabErupts[view.eruptFieldModel.fieldName]
                                             ,eruptFieldModel:eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)}"
-                            [eruptBuildModel]="eruptBuildModel"
-                        ></tab-table>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.TAB_TABLE_REFER">
-                        <tab-table [onlyRead]="true"
+              [eruptBuildModel]="eruptBuildModel"
+            ></tab-table>
+          }
+          @case (editType.TAB_TABLE_REFER) {
+            <tab-table [onlyRead]="true"
                                    [tabErupt]="{eruptBuildModel:eruptBuildModel.tabErupts[view.eruptFieldModel.fieldName]
                                             ,eruptFieldModel:eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)}"
-                                   [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
-                        ></tab-table>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.TAB_TREE">
-                        <erupt-tab-tree [onlyRead]="true"
-                                        [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"
-                                        [eruptBuildModel]="eruptBuildModel"></erupt-tab-tree>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.CHECKBOX">
-                        <erupt-checkbox [eruptBuildModel]="eruptBuildModel" [onlyRead]="true"
-                                        [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)">
-                        </erupt-checkbox>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.MULTI_CHOICE">
-                        <erupt-multi-choice [eruptModel]="eruptBuildModel.eruptModel"
-                                            [eruptField]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"
-                                            [readonly]="true">
-                        </erupt-multi-choice>
-                    </ng-container>
-                </ng-container>
-            </nz-spin>
-        </ng-container>
-    </ng-container>
-</ng-container>
+              [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
+            ></tab-table>
+          }
+          @case (editType.TAB_TREE) {
+            <erupt-tab-tree [onlyRead]="true"
+              [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"
+            [eruptBuildModel]="eruptBuildModel"></erupt-tab-tree>
+          }
+          @case (editType.CHECKBOX) {
+            <erupt-checkbox [eruptBuildModel]="eruptBuildModel" [onlyRead]="true"
+              [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)">
+            </erupt-checkbox>
+          }
+          @case (editType.MULTI_CHOICE) {
+            <erupt-multi-choice [eruptModel]="eruptBuildModel.eruptModel"
+              [eruptField]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"
+              [readonly]="true">
+            </erupt-multi-choice>
+          }
+        }
+      </nz-spin>
+    }
+  }
+}

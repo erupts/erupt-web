@@ -7,6 +7,7 @@ import {I18NService} from "@core";
 import {NzFormatEmitEvent, NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
 
 @Component({
+    standalone: false,
     selector: 'layout-tree',
     templateUrl: './layout-tree.component.html',
     styles: []
