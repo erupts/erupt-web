@@ -93,5 +93,4 @@ export class NodeComponent implements AfterViewInit {
         this.showDrawer = false;
     }
 
-    protected readonly process = module
 }
