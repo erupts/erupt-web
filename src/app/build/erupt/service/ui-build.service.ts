@@ -572,7 +572,7 @@ export class UiBuildService {
                 obj.format = (item: any) => {
                     try {
                         let value = item[view.column];
-                        return new Function('value', view.template)(value);
+                        return new Function('value', "return " + view.template)(value);
                     } catch (e) {
                         console.error(e);
                         this.msg.error(e.toString());

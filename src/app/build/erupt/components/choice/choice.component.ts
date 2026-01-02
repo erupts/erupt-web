@@ -58,9 +58,10 @@ export class ChoiceComponent implements OnInit {
                 } else {
                     this.choiceVL = this.eruptField.componentValue.filter(vl => {
                         try {
-                            return new Function("vl", choiceType.dependExpr)(vl);
+                            return new Function("vl", "return " + choiceType.dependExpr)(vl);
                         } catch (e) {
                             this.msg.error(e);
+                            return false;
                         } finally {
                             clean();
                         }

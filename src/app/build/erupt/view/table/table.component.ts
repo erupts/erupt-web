@@ -469,7 +469,7 @@ export class TableComponent implements OnInit, OnDestroy {
         let exprEval = (expr, item) => {
             try {
                 if (expr) {
-                    return new Function("item", expr)(item);
+                    return new Function("item", "return " + expr)(item);
                 } else {
                     return true;
                 }

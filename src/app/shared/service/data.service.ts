@@ -66,7 +66,7 @@ export class DataService {
     }
 
     static previewAttachment(path: string, download: boolean = false): string {
-        let token = "_token=" + DataService.tokenService.get().token;
+        let token = "_token=" + (DataService.tokenService.get().token || '');
         if (path && (path.startsWith("http://") || path.startsWith("https://"))) {
             if (path.indexOf("?") == -1) {
                 return path + "?" + token;
