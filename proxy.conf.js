@@ -18,6 +18,7 @@ module.exports = {
     '/monitor': proxy,
     '/magic': proxy,
     '/log': proxy,
+    '/erupt-attachment': proxy,
     '/erupt-websocket': {
         ...proxy,
         ws: true
