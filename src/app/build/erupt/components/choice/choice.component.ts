@@ -50,24 +50,10 @@ export class ChoiceComponent implements OnInit {
                         this.eruptField.eruptFieldJson.edit.$value = null;
                     }
                 }
-                if (choiceType.dependExpr == '') {
-                    this.dataService.findChoiceItemFilter(this.eruptModel.eruptName, this.eruptField.fieldName, this.getFromData(), this.eruptParentName).subscribe(data => {
-                        this.choiceVL = data;
-                        clean();
-                    })
-                } else {
-                    this.choiceVL = this.eruptField.componentValue.filter(vl => {
-                        try {
-                            return new Function("vl", "return " + choiceType.dependExpr)(vl);
-                        } catch (e) {
-                            this.msg.error(e);
-                            return false;
-                        } finally {
-                            clean();
-                        }
-                    })
-                }
-
+                this.dataService.findChoiceItemFilter(this.eruptModel.eruptName, this.eruptField.fieldName, this.getFromData(), this.eruptParentName).subscribe(data => {
+                    this.choiceVL = data;
+                    clean();
+                })
             })
         } else {
             this.choiceVL = this.eruptField.componentValue
