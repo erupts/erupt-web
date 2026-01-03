@@ -325,13 +325,14 @@ export class DataService {
         });
     }
 
-
-    //下钻新增
-    addEruptDrillData(eruptName: string, code: string, val: any, data: any): Observable<any> {
-        return this._http.post<any>(RestPath.data + "/add/" + eruptName + "/drill/" + code + "/" + val, data, null, {
-            observe: null,
+    onChange(erupt: string, field: string, data: any) {
+        return this._http.post<R<{
+            formData: Record<string, any>,
+            editExpr: Record<string, string>
+        }>>(RestPath.erupt + "/data/onchange/" + erupt + "/" + field, data, null, {
+            observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: erupt
             }
         });
     }

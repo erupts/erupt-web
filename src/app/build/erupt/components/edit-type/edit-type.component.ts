@@ -113,6 +113,31 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 this.dynamicByFieldModels.push(model);
                 this.dynamicByCheck(model);
             }
+            if (model.eruptFieldJson.edit.onchange && model.eruptFieldJson.edit.onchange != "OnChange") {
+                model.eruptFieldJson.edit.$valueSubject.subscribe((value) => {
+                    this.dataService.onChange(this.eruptModel.eruptName, model.fieldName, this.dataHandlerService.eruptValueToObject(this.eruptBuildModel)).subscribe(res => {
+                        if (res.data.formData) {
+                            for (let k of Object.keys(res.data.formData)) {
+                                let v = res.data.formData[k];
+                                let eruptFieldModel: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(k);
+                                if (eruptFieldModel) {
+                                    eruptFieldModel.eruptFieldJson.edit.$value = v;
+                                }
+                            }
+                        }
+                        if (res.data.editExpr) {
+                            for (let k of Object.keys(res.data.editExpr)) {
+                                let v = res.data.editExpr[k];
+                                let eruptFieldModel: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(k);
+                                if (eruptFieldModel) {
+                                    let e = eruptFieldModel.eruptFieldJson.edit;
+                                    new Function("edit", v)(e);
+                                }
+                            }
+                        }
+                    })
+                })
+            }
         }
     }
 

@@ -75,6 +75,7 @@ export interface Edit {
     type: EditType;
     show: boolean;
     dynamic: { dependField: string, condition: string, noMatch: FormCtrl, match: FormCtrl };
+    onchange: string;
     readOnly: Readonly;
     placeHolder: string;
     search: Search;
