@@ -30,6 +30,8 @@ export class WindowModel {
 
     public static copyrightTxt: any; //授权文本
 
+    public static theme: any
+
     public static r_tools: CustomerTool[];
 
     public static userTools: UserTool[];
@@ -51,6 +53,7 @@ export class WindowModel {
         WindowModel.copyright = WindowModel.config["copyright"];
         WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //授权文本
         WindowModel.upload = WindowModel.config["upload"] || false;
+        WindowModel.theme = WindowModel.config["theme"] || {}
     }
 
     public static eruptEvent: {

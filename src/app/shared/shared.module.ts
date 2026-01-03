@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {CUSTOM_ELEMENTS_SCHEMA, NgModule, Type} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {DelonACLModule} from '@delon/acl';
@@ -31,13 +31,11 @@ import {KeysPipe} from "@shared/pipe/keys.pipe";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
-
-const THIRDMODULES: Array<Type<any>> = [];
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: Array<Type<any>> = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent];
-const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, SyncVirtualScrollDirective, KeysPipe];
+const COMPONENTS: any[] = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent];
+const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, SyncVirtualScrollDirective, KeysPipe];
 
 // #endregion
 
@@ -52,13 +50,7 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
         ...SHARED_DELON_MODULES,
         ...SHARED_ZORRO_MODULES,
         // third libs
-        ...THIRDMODULES,
         NzAffixModule
-    ],
-    declarations: [
-        // your components
-        ...COMPONENTS,
-        ...DIRECTIVES,
     ],
     providers: [
         DataService,
@@ -66,6 +58,11 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
         EruptContextService,
         EruptStorageService,
         SocketService
+    ],
+    declarations: [
+        // your components
+        ...COMPONENTS,
+        ...DIRECTIVES,
     ],
     exports: [
         CommonModule,
@@ -75,9 +72,6 @@ const DIRECTIVES: Array<Type<any>> = [RipperDirective, SafeHtmlPipe, SafeScriptP
         DelonACLModule,
         ...SHARED_DELON_MODULES,
         ...SHARED_ZORRO_MODULES,
-        // third libs
-        ...THIRDMODULES,
-        // your components
         ...COMPONENTS,
         ...DIRECTIVES
     ],

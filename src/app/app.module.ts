@@ -1,17 +1,9 @@
 /* eslint-disable import/order */
 /* eslint-disable import/no-duplicates */
 // #region Http Interceptors
-import {
-    HTTP_INTERCEPTORS,
-    HttpClientModule,
-    HttpInterceptor,
-    HttpRequest,
-    HttpHandler,
-    HttpEvent
-} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {HTTP_INTERCEPTORS, HttpClientModule, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {APP_INITIALIZER, Injectable, NgModule} from '@angular/core';
 import {Observable} from 'rxjs';
-import {APP_INITIALIZER, NgModule, Type} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {authSimpleInterceptor} from '@delon/auth';
@@ -27,15 +19,14 @@ import {RoutesModule} from './routes/routes.module';
 import {SharedModule} from '@shared/shared.module';
 import {AppRoutingModule} from "./app-routing.module";
 import {AppViewService} from "@shared/service/app-view.service";
-
+import {NzConfig, provideNzConfig} from 'ng-zorro-antd/core/config';
+import {WindowModel} from "@shared/model/window.model";
 
 // #region global third module
 
-const GLOBAL_THIRD_MODULES: Array<Type<any>> = [BidiModule];
-
-// #endregion
-
-// #endregion
+const ngZorroConfig: NzConfig = {
+    theme: WindowModel.theme
+};
 
 // Angular 17: SimpleInterceptor 已改为函数式拦截器 authSimpleInterceptor
 // 创建包装类以兼容现有的类拦截器方式
@@ -83,10 +74,10 @@ const APP_INIT_PROVIDES = [
         SharedModule,
         LayoutModule,
         RoutesModule,
-        ...GLOBAL_THIRD_MODULES,
+        BidiModule,
         AppRoutingModule
     ],
-    providers: [...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, AppViewService],
+    providers: [...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, AppViewService, provideNzConfig(ngZorroConfig)],
     bootstrap: [AppComponent]
 })
 export class AppModule {
