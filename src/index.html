@@ -23,11 +23,12 @@
             var SW = new SiriWave({
                 width: innerWidth < 512 ? innerWidth : 512,
                 height: 200,
-                wave: innerWidth < 512 ? 2 : new Date().getHours() % 6 + 2,
+                wave: innerWidth < 512 ? 2 : new Date().getMinutes() % 5 + 2,
                 container: document.getElementById("preload")
             });
             SW.set(0.4, 0.2);
             SW.start();
+            window.SW = SW;
         </script>
     </div>
     <div id="preloader-tip">
@@ -42,7 +43,7 @@
 </style>
 <div class="old-browser" style="padding: 60px 30px 0;text-align: center">
     <a href="https://support.dmeng.net/upgrade-your-browser.html" target="_blank">
-        <img src="assets/image/older-browsers.png" style="width: 100%;max-width: 1000px"
+        <img src="/assets/image/older-browsers.png" style="width: 100%;max-width: 1000px"
              alt="Browser outdated. Please update for security and better experience.">
     </a>
 </div>

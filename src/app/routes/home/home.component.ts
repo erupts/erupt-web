@@ -4,6 +4,7 @@ import {Router} from "@angular/router";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 
 @Component({
+    standalone: false,
     templateUrl: './home.component.html',
     styles: []
 })

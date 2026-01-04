@@ -19,6 +19,7 @@ interface FlowGroupWithFlows {
 }
 
 @Component({
+    standalone: false,
     selector: 'app-flow-dashboard',
     templateUrl: './flow-dashboard.component.html',
     styleUrls: ['./flow-dashboard.component.less']
@@ -41,12 +42,18 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     // 选中的分类
     selectedCategory: string = '';
 
+    // 搜索关键词
+    searchKeyword: string = '';
+
     // 加载状态
     loading = false;
 
     // 缓存的流程分组数据
     private flowGroupsCache: FlowGroupWithFlows[] = [];
     private categoryFlowGroupsCache: Map<string, FlowGroupWithFlows[]> = new Map();
+
+    // 过滤后的流程分组（用于模板显示）
+    filteredFlowGroups: FlowGroupWithFlows[] = [];
 
     constructor(private flowApiService: FlowApiService,
                 private instanceApiService: FlowInstanceApiService,
@@ -156,6 +163,9 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
                 this.categoryFlowGroupsCache.set(category.key, this.groupFlows(categoryFlows));
             }
         });
+
+        // 更新过滤后的流程分组
+        this.updateFilteredFlowGroups();
     }
 
     /**
@@ -163,24 +173,36 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
      */
     onCategorySelect(categoryKey: string): void {
         this.selectedCategory = categoryKey;
+        this.updateFilteredFlowGroups();
     }
 
     /**
-     * 获取指定分类的流程分组（使用缓存）
+     * 更新过滤后的流程分组
      */
-    getFlowGroups(): FlowGroupWithFlows[] {
+    private updateFilteredFlowGroups(): void {
+        let groups: FlowGroupWithFlows[] = [];
+
         if (!this.selectedCategory) {
-            return this.flowGroupsCache;
+            groups = this.flowGroupsCache;
+        } else {
+            groups = this.categoryFlowGroupsCache.get(this.selectedCategory) || [];
         }
 
-        return this.categoryFlowGroupsCache.get(this.selectedCategory) || [];
-    }
-
-    /**
-     * 获取所有流程分组（使用缓存）
-     */
-    getAllFlowGroups(): FlowGroupWithFlows[] {
-        return this.flowGroupsCache;
+        // 如果有搜索关键词，进行过滤
+        if (this.searchKeyword && this.searchKeyword.trim()) {
+            const keyword = this.searchKeyword.trim().toLowerCase();
+            this.filteredFlowGroups = groups
+                .map(group => ({
+                    title: group.title,
+                    flows: group.flows.filter(flow =>
+                        flow.name.toLowerCase().includes(keyword) ||
+                        (flow.remark && flow.remark.toLowerCase().includes(keyword))
+                    )
+                }))
+                .filter(group => group.flows.length > 0);
+        } else {
+            this.filteredFlowGroups = groups;
+        }
     }
 
     /**
@@ -240,5 +262,12 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
      */
     refreshData(): void {
         this.loadData();
+    }
+
+    /**
+     * 搜索关键词变化事件
+     */
+    onSearchChange(): void {
+        this.updateFilteredFlowGroups();
     }
 }

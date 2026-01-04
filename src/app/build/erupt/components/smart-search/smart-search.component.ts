@@ -14,6 +14,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {UpmsData, UpmsScope} from "../../model/upms.model";
 
 @Component({
+    standalone: false,
     selector: 'erupt-smart-search',
     templateUrl: './smart-search.component.html',
     styleUrls: ['./smart-search.component.less']

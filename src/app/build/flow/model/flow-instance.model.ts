@@ -5,7 +5,8 @@ export enum ApprovalView {
     TODO = 'TODO',
     DONE = 'DONE',
     CC = 'CC',
-    CREATED = 'CREATED'
+    CREATED = 'CREATED',
+    ADMIN = 'ADMIN'
 }
 
 export enum FlowTurn {
@@ -58,7 +59,7 @@ export interface FlowInstanceDataHistory {
 export interface FlowInstanceTask {
     nodeRowspan?: number;
     id: number;
-    nodeId: number;
+    nodeId: string;
     assigneeUser: User;
     createTime: string;
     completedAt: string;

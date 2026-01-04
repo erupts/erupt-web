@@ -8,7 +8,7 @@ import {FlowUpmsApiService} from "@flow/service/flow-upms-api.service";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
-import {NodeRule} from "@flow/model/node.model";
+import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {AddSignType} from "@flow/model/fllw-approval.model";
 import {KV} from "../../../erupt/model/util.model";
@@ -19,6 +19,7 @@ import {ActivatedRoute} from "@angular/router";
 import {FormAccessEnum} from "@flow/model/flow.model";
 
 @Component({
+    standalone: false,
     selector: 'flow-approval-detail',
     templateUrl: './flow-approval-detail.component.html',
     styleUrls: ['./flow-approval-detail.component.less']
@@ -53,6 +54,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     transferModalVisible: boolean = false;
     addSignModalVisible: boolean = false;
     returnModalVisible: boolean = false;
+    resubmitModalVisible: boolean = false;
 
     reason: string;
     approveSignature: string = null;
@@ -65,10 +67,11 @@ export class FlowApprovalDetailComponent implements OnInit {
     availableUsers: KV<number, string>[] = [];
     availableReturnNodes: KV<string, string>[] = [];
 
+    dataDeleted: boolean = false;
+
     @Input() selectedInstance: FlowInstance;
 
-    @Input() selectedView: ApprovalView = ApprovalView.TODO;
-
+    @Input() approvalView: ApprovalView = ApprovalView.TODO;
 
     @Output() reloadFlows = new EventEmitter<void>();
 
@@ -94,7 +97,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     }
 
     onSelectFlow(selectedView: ApprovalView, selectedInstance: FlowInstance) {
-        this.selectedView = selectedView;
+        this.approvalView = selectedView;
         this.selectedInstance = selectedInstance;
         if (this.selectedInstance) {
             this.loadInstanceDetail(selectedInstance);
@@ -116,7 +119,12 @@ export class FlowApprovalDetailComponent implements OnInit {
                             this.eruptBuild = res.data;
                             this.flowInstanceApiService.eruptData(flow.id).subscribe({
                                 next: res => {
-                                    this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
+                                    if (res.success) {
+                                        this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
+                                        this.dataDeleted = false;
+                                    } else {
+                                        this.dataDeleted = true;
+                                    }
                                 }
                             })
                         }, 30)
@@ -140,7 +148,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                     }
                     if (span > 1) {
                         arr[i].nodeRowspan = span;
-                        for (let j = 1; j < span; j++) arr[i + j].nodeId = null;
+                        for (let j = 1; j < span; j++) arr[i + j].nodeId = '';
                     }
                     i += span;
                 }
@@ -156,8 +164,8 @@ export class FlowApprovalDetailComponent implements OnInit {
         });
 
         this.getDataHistories(flow.id);
-        if (this.selectedView == ApprovalView.TODO) {
-            this.flowInstanceApiService.currTask(flow.id, this.selectedView).subscribe({
+        if (this.approvalView == ApprovalView.TODO) {
+            this.flowInstanceApiService.currTask(flow.id, this.approvalView).subscribe({
                 next: (res) => {
                     this.currTask = res.data;
                     this.flowInstanceApiService.taskNodeInfo(res.data.id).subscribe({
@@ -198,7 +206,11 @@ export class FlowApprovalDetailComponent implements OnInit {
             return;
         }
         this.approveModalVisible = true;
-        this.flowInstanceApiService.agree(this.currTask.id, this.reason, this.approveSignature).subscribe(res => {
+        let data;
+        if (Object.keys(this.nodeInfo?.prop?.formAccesses || {}).length) {
+            data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
+        }
+        this.flowInstanceApiService.agree(this.currTask.id, this.reason, this.approveSignature, data).subscribe(res => {
             this.approveModalVisible = false;
             this.reason = null;
             this.message.success('审批已同意');
@@ -346,10 +358,28 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.returnNode = null;
         this.reason = null;
         this.returnModalVisible = true;
-        this.flowInstanceApiService.approvalNodes(this.selectedInstance.eruptFlowConfig.id).subscribe({
+        this.flowInstanceApiService.availableReturnNodes(this.currTask.id).subscribe({
             next: (data) => {
                 this.availableReturnNodes = data.data || [];
             }
+        })
+    }
+
+    // 重新提交
+    resubmit() {
+        this.reason = null;
+        this.resubmitModalVisible = true;
+    }
+
+    // 提交重新提交
+    submitResubmit() {
+        let data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
+        this.flowInstanceApiService.resubmit(this.currTask.id, this.reason, data).subscribe(res => {
+            this.resubmitModalVisible = false;
+            this.reason = null;
+            this.message.success('提交成功');
+            this.selectedInstance = null;
+            this.loadInstanceDetail(this.selectedInstance, true);
         })
     }
 
@@ -506,4 +536,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     protected readonly getAvatarColor = getAvatarColor;
 
     protected readonly FormAccessEnum = FormAccessEnum;
+
+    protected readonly NodeType = NodeType;
+
 }

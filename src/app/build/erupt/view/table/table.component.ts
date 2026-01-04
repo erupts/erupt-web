@@ -1,53 +1,65 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
-import {FormSize, OperationIfExprBehavior, OperationMode, OperationType, PagingType, RestPath, Scene, SelectMode} from "../../model/erupt.enum";
+import {
+    FormSize,
+    OperationIfExprBehavior,
+    OperationMode,
+    OperationType,
+    PagingType,
+    RestPath,
+    Scene,
+    SelectMode,
+    SortType,
+    ViewType
+} from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
-import {EruptFieldModel} from "../../model/erupt-field.model";
+import {EruptFieldModel, View} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {UiBuildService} from "../../service/ui-build.service";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {NzModalService} from "ng-zorro-antd/modal";
-import {STColumn, STColumnButton, STComponent} from "@delon/abc/st";
-import {NzModalRef} from "ng-zorro-antd/modal/modal-ref";
-import {ModalButtonOptions} from "ng-zorro-antd/modal/modal-types";
-import {STChange, STPage} from "@delon/abc/st/st.interfaces";
+import {ModalButtonOptions, NzModalRef, NzModalService} from "ng-zorro-antd/modal";
+import {STChange, STColumn, STColumnButton, STComponent, STPage} from "@delon/abc/st";
 import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {TableStyle} from "../../model/erupt.vo";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
+import {WindowModel} from "@shared/model/window.model";
 
 
 @Component({
+    standalone: false,
     selector: "erupt-table",
     templateUrl: "./table.component.html",
     styleUrls: ["./table.component.less"]
 })
 export class TableComponent implements OnInit, OnDestroy {
 
+    protected readonly VisType = VisType;
 
     constructor(
         public settingSrv: SettingsService,
-        public dataService: DataService,
         private dataHandlerService: DataHandlerService,
         @Inject(NzMessageService)
         private msg: NzMessageService,
         @Inject(NzModalService)
         private modal: NzModalService,
         private appViewService: AppViewService,
+        public dataService: DataService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
-        private i18n: I18NService,
+        public i18n: I18NService,
         @Inject(NzDrawerService)
         private drawerService: NzDrawerService
     ) {
@@ -96,7 +108,7 @@ export class TableComponent implements OnInit, OnDestroy {
         pageSizes: number[],
         ps: number;
         pi: number;
-        sort: object | null;
+        sort: Record<string, SortType>;
         total: number;
         data: any[];
         multiSort?: string[]
@@ -119,6 +131,12 @@ export class TableComponent implements OnInit, OnDestroy {
         url: null
     };
 
+    vis: Vis[];
+
+    selectedVisIndex: number = 0;
+
+    visOptions: any[] = [];
+
     adding: boolean = false; //新增行为防抖
 
     header: object;
@@ -128,6 +146,14 @@ export class TableComponent implements OnInit, OnDestroy {
     existMultiRowFoldButtons: boolean = false;
 
     tableWidth: string;
+
+    showSortPopover: boolean = false;
+
+    sortFields: View[] = [];
+
+    selectedSorts: { field: View, direction: SortType }[] = [];
+
+    tempSelectedField: View = null;
 
     @Input() set drill(drill: DrillInput) {
         this._drill = drill;
@@ -160,6 +186,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 eruptParent: reference.parentEruptName || ''
             }
         }, (eb: EruptBuildModel) => {
+            this.vis = [];
             let erupt = eb.eruptModel.eruptJson;
             erupt.rowOperation = [];
             erupt.drills = [];
@@ -203,9 +230,27 @@ export class TableComponent implements OnInit, OnDestroy {
         this.searchErupt = null;
         this.hasSearchFields = false;
         this.existMultiRowFoldButtons = false;
+        this.sortFields = [];
+        this.selectedSorts = [];
+        this.tempSelectedField = null;
+        this.showSortPopover = false;
         this.header = req.header;
         this.dataPage.url = req.url;
         observable.subscribe(eb => {
+                this.vis = eb.eruptModel.eruptJson.vis || [];
+                if (this.vis.length) {
+                    this.hideCondition = true;
+                    this.visOptions = this.vis.map((i, index) => ({
+                        label: i.title,
+                        value: index,
+                        useTemplate: true
+                    }))
+                    if (eb.eruptModel.eruptJson.visRawTable) {
+                        this.visOptions.push({
+                            icon: 'table'
+                        })
+                    }
+                }
                 eb.eruptModel.eruptJson.rowOperation.forEach((item) => {
                     if (item.mode != OperationMode.SINGLE) {
                         if (item.fold) {
@@ -213,6 +258,15 @@ export class TableComponent implements OnInit, OnDestroy {
                         }
                     }
                 })
+
+                for (let eruptFieldModel of eb.eruptModel.eruptFieldModels) {
+                    for (let view of eruptFieldModel.eruptFieldJson.views) {
+                        if (view.sortable) {
+                            this.sortFields.push(view);
+                        }
+                    }
+                }
+
                 let layout = eb.eruptModel.eruptJson.layout;
                 if (layout) {
                     if (layout.pageSizes) {
@@ -274,7 +328,11 @@ export class TableComponent implements OnInit, OnDestroy {
         );
     }
 
-    query(page?: number, size?: number, sort?: object) {
+    visChange(e: number) {
+        this.query();
+    }
+
+    query(page?: number, size?: number, sort?: Record<string, SortType>) {
         if (!this.eruptBuildModel.power.query) {
             return;
         }
@@ -297,15 +355,17 @@ export class TableComponent implements OnInit, OnDestroy {
             for (let key in this.dataPage.sort) {
                 orderBy.push({
                     field: key,
-                    direction: this.dataPage.sort[key]
+                    direction: this.dataPage.sort[key].toUpperCase() as SortType
                 })
             }
         }
         this.selectedRows = [];
         this.dataPage.querying = true;
+        this.setVisTplData(null)
         this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url, {
             pageIndex: this.dataPage.pi,
             pageSize: this.dataPage.ps,
+            vis: this.vis[this.selectedVisIndex]?.code,
             sort: orderBy,
             ...query
         }, this.header).subscribe(page => {
@@ -313,8 +373,21 @@ export class TableComponent implements OnInit, OnDestroy {
             this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
             this.alert = page.alert;
+            if (this.selectedVisIndex) {
+                if (this.vis[this.selectedVisIndex].type == VisType.TPL) {
+                    this.setVisTplData(this.dataPage.data);
+                }
+            }
         })
         this.extraRowFun(query);
+    }
+
+    setVisTplData(data: any[]) {
+        window[WindowModel.VIS_TPL_DATA_KEY] = data;
+    }
+
+    getVisTplData(): any[] {
+        return window[WindowModel.VIS_TPL_DATA_KEY];
     }
 
     buildTableConfig() {
@@ -396,7 +469,7 @@ export class TableComponent implements OnInit, OnDestroy {
         let exprEval = (expr, item) => {
             try {
                 if (expr) {
-                    return eval(expr);
+                    return new Function("item", "return " + expr)(item);
                 } else {
                     return true;
                 }
@@ -497,54 +570,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 icon: "edit",
                 tooltip: this.i18n.fanyi("global.editor"),
                 click: (record: any) => {
-                    let params = {
-                        eruptBuildModel: this.eruptBuildModel,
-                        id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
-                        behavior: Scene.EDIT
-                    }
-                    const model = this.modal.create({
-                        nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-                        nzWidth: fullLine ? 550 : null,
-                        nzStyle: {top: "60px"},
-                        nzMaskClosable: false,
-                        nzKeyboard: false,
-                        nzTitle: this.i18n.fanyi("global.editor"),
-                        nzOkText: this.i18n.fanyi("global.update"),
-                        nzContent: EditComponent,
-                        nzFooter: [
-                            {
-                                label: this.i18n.fanyi("global.cancel"),
-                                onClick: () => {
-                                    model.close();
-                                }
-                            },
-                            ...getEditButtons(record),
-                            {
-                                label: this.i18n.fanyi("global.update"),
-                                type: "primary",
-                                onClick: () => {
-                                    return model.triggerOk();
-                                }
-                            },
-                        ],
-                        nzOnOk: async () => {
-                            let validateResult = model.getContentComponent().beforeSaveValidate();
-                            if (validateResult) {
-                                let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
-                                let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
-                                if (res.status === Status.SUCCESS) {
-                                    this.msg.success(this.i18n.fanyi("global.update.success"));
-                                    this.query();
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-                            } else {
-                                return false;
-                            }
-                        }
-                    });
-                    Object.assign(model.getContentComponent(), params)
+                    this.onEdit(record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol], fullLine, getEditButtons(record));
                 },
                 iif: (item) => {
                     if (item[TableStyle.power]) {
@@ -569,10 +595,10 @@ export class TableComponent implements OnInit, OnDestroy {
                         record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
                         .subscribe(result => {
                             if (result.status === Status.SUCCESS) {
-                                if (this.st._data.length == 1) {
-                                    this.query(this.st.pi == 1 ? 1 : this.st.pi - 1);
+                                if (this.dataPage.data.length <= 1) {
+                                    this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
                                 } else {
-                                    this.query(this.st.pi);
+                                    this.query(this.dataPage.pi);
                                 }
                                 this.msg.success(this.i18n.fanyi('global.delete.success'));
                             }
@@ -598,7 +624,7 @@ export class TableComponent implements OnInit, OnDestroy {
                         nzMaskClosable: true,
                         // @ts-ignore
                         nzPlacement: "right",
-                        nzWidth: "40%",
+                        nzWidth: "60%",
                         nzBodyStyle: {
                             padding: 0
                         },
@@ -661,6 +687,57 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
+    onEdit(pk: any, fullLine = false, buttons: ModalButtonOptions[] = []) {
+        let params = {
+            eruptBuildModel: this.eruptBuildModel,
+            id: pk,
+            behavior: Scene.EDIT
+        }
+        const model = this.modal.create({
+            nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+            nzWidth: fullLine ? 550 : null,
+            nzStyle: {top: "60px"},
+            nzMaskClosable: false,
+            nzKeyboard: false,
+            nzTitle: this.i18n.fanyi("global.editor"),
+            nzOkText: this.i18n.fanyi("global.update"),
+            nzContent: EditComponent,
+            nzFooter: [
+                {
+                    label: this.i18n.fanyi("global.cancel"),
+                    onClick: () => {
+                        model.close();
+                    }
+                },
+                ...buttons,
+                {
+                    label: this.i18n.fanyi("global.update"),
+                    type: "primary",
+                    onClick: () => {
+                        return model.triggerOk();
+                    }
+                },
+            ],
+            nzOnOk: async () => {
+                let validateResult = model.getContentComponent().beforeSaveValidate();
+                if (validateResult) {
+                    let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
+                    let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
+                    if (res.status === Status.SUCCESS) {
+                        this.msg.success(this.i18n.fanyi("global.update.success"));
+                        this.query();
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        });
+        Object.assign(model.getContentComponent(), params)
+    }
+
 
     /**
      * 自定义功能触发
@@ -710,13 +787,7 @@ export class TableComponent implements OnInit, OnDestroy {
                         if (res.status === Status.SUCCESS) {
                             this.query();
                             if (res.data) {
-                                try {
-                                    let ev = this.evalVar();
-                                    let codeModal = ev.codeModal;
-                                    eval(res.data);
-                                } catch (e) {
-                                    this.msg.error(e);
-                                }
+                                this.execExpr(res.data);
                             }
                             return true;
                         } else {
@@ -751,13 +822,7 @@ export class TableComponent implements OnInit, OnDestroy {
                                 .toPromise().then();
                             this.query();
                             if (res.data) {
-                                try {
-                                    let ev = this.evalVar();
-                                    let codeModal = ev.codeModal;
-                                    eval(res.data);
-                                } catch (e) {
-                                    this.msg.error(e);
-                                }
+                                this.execExpr(res.data);
                             }
                         }
                     });
@@ -767,13 +832,7 @@ export class TableComponent implements OnInit, OnDestroy {
                     this.dataService.execOperatorFun(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids, null).subscribe(res => {
                         this.msg.remove(msgLoading.messageId);
                         if (res.data) {
-                            try {
-                                let ev = this.evalVar();
-                                let codeModal = ev.codeModal;
-                                eval(res.data);
-                            } catch (e) {
-                                this.msg.error(e);
-                            }
+                            this.execExpr(res.data);
                         }
                     });
 
@@ -854,16 +913,20 @@ export class TableComponent implements OnInit, OnDestroy {
                     nzContent: "",
                     nzOnOk: async () => {
                         this.deleting = true;
-                        let res = await this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
-                        this.deleting = false;
-                        if (res.status == Status.SUCCESS) {
-                            if (this.selectedRows.length == this.st._data.length) {
-                                this.query(this.st.pi == 1 ? 1 : this.st.pi - 1);
-                            } else {
-                                this.query(this.st.pi);
+                        try {
+                            let res = await this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
+                            this.deleting = false;
+                            if (res.status == Status.SUCCESS) {
+                                if (this.selectedRows.length == this.dataPage.data.length) {
+                                    this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
+                                } else {
+                                    this.query(this.dataPage.pi);
+                                }
+                                this.selectedRows = [];
+                                this.msg.success(this.i18n.fanyi("global.delete.success"));
                             }
-                            this.selectedRows = [];
-                            this.msg.success(this.i18n.fanyi("global.delete.success"));
+                        } catch (e) {
+                            this.deleting = false;
                         }
                     }
                 }
@@ -875,6 +938,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     clearCondition() {
         this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt});
+        this.selectedSorts = [];
         this.query(1);
     }
 
@@ -905,7 +969,7 @@ export class TableComponent implements OnInit, OnDestroy {
             if (layout && layout.pagingType && layout.pagingType != PagingType.BACKEND) {
                 return;
             }
-            this.query(1, this.dataPage.ps, event.sort.map);
+            this.query(1, this.dataPage.ps, (event.sort.map as Record<string, SortType>));
         }
     }
 
@@ -969,8 +1033,8 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     //提供自定义表达式可调用函数
-    evalVar() {
-        return {
+    execExpr(expr: string) {
+        let ev = {
             codeModal: (lang: string, code: any) => {
                 let ref = this.modal.create({
                     nzKeyboard: true,
@@ -987,6 +1051,72 @@ export class TableComponent implements OnInit, OnDestroy {
                 // @ts-ignore
                 ref.getContentComponent().edit = {$value: code}
             }
+        }
+        try {
+            new Function(...Object.keys(ev), expr)(...Object.values(ev));
+        } catch (e) {
+            this.msg.error(e);
+        }
+    }
+
+
+    protected readonly SortType = SortType;
+
+    // 判断字段是否为数字或时间类型
+    isNumericOrDateType(field: View): boolean {
+        return field.viewType === ViewType.NUMBER ||
+            field.viewType === ViewType.DATE ||
+            field.viewType === ViewType.DATE_TIME;
+    }
+
+    // 获取可选的字段列表（排除已选择的）
+    getAvailableFields(): View[] {
+        return this.sortFields.filter(f => !this.selectedSorts.some(s => s.field.column === f.column));
+    }
+
+    // 添加排序字段
+    addSortField(field: View) {
+        if (!this.selectedSorts.some(s => s.field.column === field.column)) {
+            this.selectedSorts.push({
+                field: field,
+                direction: SortType.ASC
+            });
+        }
+    }
+
+    // 移除排序字段
+    removeSortField(index: number) {
+        this.selectedSorts.splice(index, 1);
+    }
+
+    // 拖拽排序
+    onSortDrop(event: CdkDragDrop<Array<{ field: View, direction: SortType }>>) {
+        moveItemInArray(this.selectedSorts, event.previousIndex, event.currentIndex);
+    }
+
+    // 应用排序
+    applySort() {
+        if (this.selectedSorts.length === 0) {
+            this.dataPage.sort = null;
+        } else {
+            let sortObj = {};
+            this.selectedSorts.forEach(sort => {
+                sortObj[sort.field.column] = sort.direction;
+            });
+            this.dataPage.sort = sortObj;
+        }
+        this.showSortPopover = false;
+        this.query(1, this.dataPage.ps, this.dataPage.sort);
+    }
+
+    // 字段选择变化处理
+    onFieldSelectChange(field: View) {
+        if (field) {
+            this.addSortField(field);
+            // 清空选择，以便可以再次选择同一个字段
+            setTimeout(() => {
+                this.tempSelectedField = null;
+            }, 0);
         }
     }
 

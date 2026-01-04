@@ -5,9 +5,10 @@ import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {NzUploadChangeParam} from "ng-zorro-antd/upload/interface";
+import {NzUploadChangeParam} from "ng-zorro-antd/upload";
 
 @Component({
+    standalone: false,
     selector: "app-excel-import",
     templateUrl: "./excel-import.component.html",
     styles: []

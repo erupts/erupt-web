@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Dimension} from "../../model/bi.model";
 
 @Component({
+    standalone: false,
     selector: 'bi-search-se',
     templateUrl: './search-se.component.html',
     styleUrls: ['./search-se.component.less']

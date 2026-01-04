@@ -24,7 +24,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {I18NService} from "../i18n/i18n.service";
 
 /**
- * 默认HTTP拦截器，其注册细节见 `app.module.ts`
+ * Default HTTP interceptor.See registration for details `app.module.ts`
  */
 @Injectable()
 export class DefaultInterceptor implements HttpInterceptor {
@@ -180,7 +180,7 @@ export class DefaultInterceptor implements HttpInterceptor {
                 }
                 this.goTo("/exception/404");
                 break
-            case 403: //无权限
+            case 403: //No authority
                 if (event.url.indexOf("/erupt-api/build/") != -1) {
                     this.goTo("/exception/403");
                 } else {

@@ -12,35 +12,44 @@ import {UtilsService} from "@shared/service/utils.service";
 import {SocketService} from "@shared/service/socket.service";
 
 @Component({
+    standalone: false,
     selector: "header-user",
     template: `
         <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown nzPlacement="bottomRight"
-             [nzDropdownMenu]="avatarMenu">
-            <nz-avatar [nzText]="settings.user.name&&settings.user.name.substring(0,1)"
-                       [nzSrc]="settings.user.avatar"
-                       nzSize="default" class="mr-sm"></nz-avatar>
-            <span class="hidden-mobile">{{ settings.user.name }}</span>
+          [nzDropdownMenu]="avatarMenu">
+          <nz-avatar [nzText]="settings.user.name&&settings.user.name.substring(0,1)"
+            [nzSrc]="settings.user.avatar||null"
+          nzSize="default" class="mr-sm"></nz-avatar>
+          <span class="hidden-mobile">{{ settings.user.name }}</span>
         </div>
         <nz-dropdown-menu #avatarMenu>
-            <div nz-menu class="width-sm" style="padding: 0">
-                <div *ngIf="settings.user['tenantName']" style="padding: 8px 12px;border-bottom:1px solid #eee">
-                    {{ settings.user['tenantName'] }}
+          <div nz-menu class="width-sm" style="padding: 0">
+            @if (settings.user['tenantName']) {
+              <div style="padding: 8px 12px;border-bottom:1px solid #eee">
+                {{ settings.user['tenantName'] }}
+              </div>
+            }
+            @if (userTools) {
+              @for (tool of userTools; track tool) {
+                <div nz-menu-item (click)="tool.click($event)">
+                  @if (tool.icon) {
+                    <i [ngClass]="tool.icon" class="mr-sm"></i>
+                  }
+                  <span [innerHTML]="tool.text | safeHtml"></span>
                 </div>
-                <ng-container *ngIf="userTools">
-                    <div nz-menu-item *ngFor="let tool of userTools" (click)="tool.click($event)">
-                        <i *ngIf="tool.icon" [ngClass]="tool.icon" class="mr-sm"></i>
-                        <span [innerHTML]="tool.text | safeHtml"></span>
-                    </div>
-                </ng-container>
-                <div nz-menu-item (click)="changePwd()" *ngIf="resetPassword">
-                    <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>{{ 'global.reset_pwd'|translate }}
-                </div>
-                <div nz-menu-item (click)="logout()">
-                    <i nz-icon nzType="logout" nzTheme="outline" class="mr-sm"></i>{{ 'global.logout'|translate }}
-                </div>
+              }
+            }
+            @if (resetPassword) {
+              <div nz-menu-item (click)="changePwd()">
+                <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>{{ 'global.reset_pwd'|translate }}
+              </div>
+            }
+            <div nz-menu-item (click)="logout()">
+              <i nz-icon nzType="logout" nzTheme="outline" class="mr-sm"></i>{{ 'global.logout'|translate }}
             </div>
+          </div>
         </nz-dropdown-menu>
-    `
+        `
 })
 export class HeaderUserComponent {
 

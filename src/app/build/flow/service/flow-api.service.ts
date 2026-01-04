@@ -44,6 +44,10 @@ export class FlowApiService {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/group/sort", ids);
     }
 
+    flowSort(ids: number[], group: number): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/sort/" + group, ids);
+    }
+
     eruptFlows(): Observable<R<VL[]>> {
         return this._http.get<R<VL[]>>(RestPath.erupt + "/flow/flex/erupts");
     }

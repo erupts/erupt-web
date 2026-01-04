@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, HostListener} from '@angular/core';
 import {RTLService} from '@delon/theme';
 
 @Component({
+    standalone: false,
     selector: 'header-rtl',
     template: `
 <!--        <i nz-icon [nzType]="rtl.nextDir === 'rtl' ? 'border-left' : 'border-right'"></i>-->

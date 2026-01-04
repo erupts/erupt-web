@@ -1,7 +1,7 @@
 import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
-import {LoginModel, Userinfo} from "../model/user.model";
+import {Announcement, LoginModel, NoticeChannel, NoticeMessageDetail, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
@@ -12,6 +12,7 @@ import {VL} from "../../build/erupt/model/erupt-field.model";
 import {Checkbox, DrillInput, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
+import {R, SimplePage} from "@shared/model/api.model";
 
 @Injectable()
 export class DataService {
@@ -24,9 +25,12 @@ export class DataService {
 
     public excelImport: string = RestPath.excel + "/import/";
 
+    private static tokenService: ITokenService
+
     constructor(private _http: _HttpClient,
                 private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
+        DataService.tokenService = this.tokenService;
     }
 
     static postExcelFile(url: string, params?: any) { //params是post请求需要的参数，url是请求url地址
@@ -61,23 +65,26 @@ export class DataService {
         }
     }
 
-    static downloadAttachment(path: string): string {
+    static previewAttachment(path: string, download: boolean = false): string {
+        let token = "_token=" + (DataService.tokenService.get().token || '');
         if (path && (path.startsWith("http://") || path.startsWith("https://"))) {
-            return path;
+            if (path.indexOf("?") == -1) {
+                return path + "?" + token;
+            } else {
+                return path + "&" + token;
+            }
         } else if (WindowModel.fileDomain) {
-            return WindowModel.fileDomain + path;
+            if (WindowModel.fileDomain.indexOf("?") == -1) {
+                return WindowModel.fileDomain + path + "?" + token;
+            } else {
+                return WindowModel.fileDomain + path + "&" + token;
+            }
         } else {
-            return RestPath.file + "/download-attachment" + path;
-        }
-    }
-
-    static previewAttachment(path: string): string {
-        if (path && (path.startsWith("http://") || path.startsWith("https://"))) {
-            return path;
-        } else if (WindowModel.fileDomain) {
-            return WindowModel.fileDomain + path;
-        } else {
-            return RestPath.eruptAttachment + path;
+            if (download) {
+                return RestPath.file + "/download-attachment" + path + "?" + token;
+            } else {
+                return RestPath.eruptAttachment + path + "?" + token;
+            }
         }
     }
 
@@ -126,6 +133,11 @@ export class DataService {
             "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName + "&ids=" + ids;
     }
 
+    getEruptVisTpl(eruptName: string, visCode: string) {
+        return RestPath.tpl + "/vis-tpl/" + eruptName + "/" + visCode +
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
+    }
+
     getEruptViewTpl(eruptName: string, field: string, id: any) {
         return RestPath.tpl + "/view-tpl/" + eruptName + "/" + field + "/" + id +
             "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
@@ -171,6 +183,18 @@ export class DataService {
                 erupt: eruptName,
                 eruptParent: eruptParentName || '',
                 ...header
+            }
+        });
+    }
+
+    updateGanttDate(eruptName: string, visCode: string, pk: any, startDate: string, endDate: string): Observable<any> {
+        return this._http.post(RestPath.dataModify + "/gantt/" + eruptName + "/update_date", {
+            visCode: visCode, pk,
+            startDate, endDate
+        }, {}, {
+            observe: "body",
+            headers: {
+                erupt: eruptName
             }
         });
     }
@@ -301,13 +325,14 @@ export class DataService {
         });
     }
 
-
-    //下钻新增
-    addEruptDrillData(eruptName: string, code: string, val: any, data: any): Observable<any> {
-        return this._http.post<any>(RestPath.data + "/add/" + eruptName + "/drill/" + code + "/" + val, data, null, {
-            observe: null,
+    onChange(erupt: string, field: string, data: any) {
+        return this._http.post<R<{
+            formData: Record<string, any>,
+            editExpr: Record<string, string>
+        }>>(RestPath.erupt + "/data/onchange/" + erupt + "/" + field, data, null, {
+            observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: erupt
             }
         });
     }
@@ -494,6 +519,48 @@ export class DataService {
 
     getFieldTplPath(eruptName: string, fieldName: string): string {
         return RestPath.tpl + "/" + "html-field/" + eruptName + "/" + fieldName + "?_token=" + this.tokenService.get().token + "&_erupt=" + eruptName;
+    }
+
+    noticeChannels() {
+        return this._http.get<R<NoticeChannel[]>>(RestPath.erupt + "/notice/channels");
+    }
+
+    noticeMessages(page: number, size: number, search: string) {
+        return this._http.get<R<SimplePage<NoticeMessageDetail>>>(RestPath.erupt + "/notice/messages", {
+            page,
+            size,
+            [search ? 'search' : '']: search
+        });
+    }
+
+    noticeMessageDetail(id: number) {
+        return this._http.get<R<NoticeMessageDetail>>(RestPath.erupt + "/notice/message-detail", {
+            id
+        });
+    }
+
+    noticeUnreadCount() {
+        return this._http.get<R<number>>(RestPath.erupt + "/notice/unread-count");
+    }
+
+    noticeReadAllCount() {
+        return this._http.get<R<void>>(RestPath.erupt + "/notice/read-all");
+    }
+
+    announcement(page: number, size: number, search: string) {
+        return this._http.get<R<SimplePage<Announcement>>>(RestPath.erupt + "/announcement/list", {
+            page,
+            size,
+            [search ? 'search' : '']: search
+        });
+    }
+
+    announcementPopups() {
+        return this._http.get<R<Announcement[]>>(RestPath.erupt + "/announcement/popups");
+    }
+
+    announcementMarkRead(id: number) {
+        return this._http.get<R<void>>(RestPath.erupt + "/announcement/mark-read/" + id);
     }
 
 

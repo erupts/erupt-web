@@ -1,5 +1,7 @@
 export class WindowModel {
 
+    public static VIS_TPL_DATA_KEY: string = "visTplData";
+
     public static config: any = window["eruptSiteConfig"] || {};
 
     public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';
@@ -28,6 +30,8 @@ export class WindowModel {
 
     public static copyrightTxt: any; //授权文本
 
+    public static theme: any
+
     public static r_tools: CustomerTool[];
 
     public static userTools: UserTool[];
@@ -49,6 +53,7 @@ export class WindowModel {
         WindowModel.copyright = WindowModel.config["copyright"];
         WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //授权文本
         WindowModel.upload = WindowModel.config["upload"] || false;
+        WindowModel.theme = WindowModel.config["theme"] || {}
     }
 
     public static eruptEvent: {

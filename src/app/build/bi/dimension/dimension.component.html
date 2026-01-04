@@ -1,185 +1,181 @@
 <form nz-form nzLayout="horizontal">
-    <div nz-row [nzGutter]="16">
-        <ng-container *ngFor="let dim of bi.dimensions;">
-            <ng-container [ngSwitch]="dim.type">
-                <ng-container *ngSwitchCase="dimType.REFERENCE_RADIO">
-                    <div nz-col [nzXs]="24">
-                        <bi-search-se [dimension]="dim">
-                            <erupt-bi-choice [dim]="dim" [bi]="bi"></erupt-bi-choice>
-                        </bi-search-se>
-                    </div>
-                </ng-container>
-                <ng-container *ngSwitchCase="dimType.REFERENCE_CHECKBOX">
-                    <div nz-col>
-                        <bi-search-se [dimension]="dim">
-                            <erupt-bi-choice [dim]="dim" [bi]="bi"></erupt-bi-choice>
-                        </bi-search-se>
-                    </div>
-                </ng-container>
-                <ng-container *ngSwitchDefault>
-                    <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
-                         [nzLg]="col.lg"
-                         [nzXl]="col.xl"
-                         [nzXXl]="col.xxl">
-                        <bi-search-se [dimension]="dim">
-                            <ng-container [ngSwitch]="dim.type">
-                                <ng-container *ngSwitchCase="dimType.TAG">
-                                    <nz-select [nzMode]="'tags'" [(ngModel)]="dim.$value" [name]="dim.code"
-                                               style="width: 100%">
-                                    </nz-select>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="dimType.INPUT">
-                                    <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input">
-                                        <input nz-input autocomplete="off"
-                                               class="full-width" [(ngModel)]="dim.$value"
-                                               [name]="dim.code" [required]="dim.notNull"
-                                               (keydown)="enterEvent($event)">
-                                    </nz-input-group>
-                                    <ng-template #suffixTemplate>
-                                        <i nz-icon nz-tooltip class="ant-input-clear-icon" nzTheme="fill"
-                                           nzType="close-circle" *ngIf="dim.$value"
-                                           (click)="dim.$value = null"></i>
-                                    </ng-template>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="dimType.NUMBER">
-                                    <nz-input-number [(ngModel)]="dim.$value" class="full-width"
-                                                     (keydown)="enterEvent($event)" [name]="dim.code"></nz-input-number>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="dimType.NUMBER_RANGE">
-                                    <nz-input-group class="erupt-input" style="display: flex;align-items: center">
-                                        <nz-input-number style="width: 45%;" [(ngModel)]="dim.$value[0]"
-                                                         [name]="dim.code"></nz-input-number>
-                                        <input disabled nz-input placeholder="~"
-                                               style="width: 30px; border-left: 0; border-right: 0; pointer-events: none;"
-                                        />
-                                        <nz-input-number style="width: 45%;" [(ngModel)]="dim.$value[1]"
-                                                         [name]="dim.code"></nz-input-number>
-                                    </nz-input-group>
-                                </ng-container>
-                                <ng-container>
-                                    <ng-template #refBtn>
-                                        <ng-container *ngIf="dim.$value">
-                                            <i nz-icon nzType="close-circle" theme="fill" class="point"
-                                               (click)="clearRef(dim)"></i>
-                                        </ng-container>
-                                        <ng-container *ngIf="!dim.$value">
-                                            <i nz-icon nzType="database" theme="fill" class="point"
-                                               (click)="ref(dim)"></i>
-                                        </ng-container>
-                                    </ng-template>
-                                    <ng-container *ngSwitchCase="dimType.REFERENCE">
-                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
-                                            <input nz-input autocomplete="off" [required]="dim.notNull"
-                                                   [readOnly]="true"
-                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
-                                        </nz-input-group>
-                                    </ng-container>
-                                    <ng-container *ngSwitchCase="dimType.REFERENCE_MULTI">
-                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
-                                            <input nz-input autocomplete="off" [required]="dim.notNull"
-                                                   [readOnly]="true"
-                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
-                                        </nz-input-group>
-                                    </ng-container>
-                                    <ng-container *ngSwitchCase="dimType.REFERENCE_TREE_MULTI">
-                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
-                                            <input nz-input autocomplete="off" [required]="dim.notNull"
-                                                   [readOnly]="true"
-                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
-                                        </nz-input-group>
-                                    </ng-container>
-                                    <ng-container *ngSwitchCase="dimType.REFERENCE_TREE_RADIO">
-                                        <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
-                                            <input nz-input autocomplete="off" [required]="dim.notNull"
-                                                   [readOnly]="true"
-                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
-                                        </nz-input-group>
-                                    </ng-container>
-                                    <ng-template #refTableBtn>
-                                        <ng-container *ngIf="dim.$value">
-                                            <i nz-icon nzType="close-circle" theme="fill" class="point"
-                                               (click)="clearRef(dim)"></i>
-                                        </ng-container>
-                                        <ng-container *ngIf="!dim.$value">
-                                            <i nz-icon nzType="database" theme="fill" class="point"
-                                               (click)="refTable(dim)"></i>
-                                        </ng-container>
-                                    </ng-template>
-                                    <ng-container *ngSwitchCase="dimType.REFERENCE_TABLE_RADIO">
-                                        <nz-input-group class="full-width" [nzAddOnAfter]="refTableBtn">
-                                            <input nz-input autocomplete="off" [required]="dim.notNull"
-                                                   [readOnly]="true"
-                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="refTable(dim)">
-                                        </nz-input-group>
-                                    </ng-container>
-                                    <ng-container *ngSwitchCase="dimType.REFERENCE_TABLE_MULTI">
-                                        <nz-input-group class="full-width" [nzAddOnAfter]="refTableBtn">
-                                            <input nz-input autocomplete="off" [required]="dim.notNull"
-                                                   [readOnly]="true"
-                                                   [value]="dim.$viewValue||null" [name]="dim.code" (click)="refTable(dim)">
-                                        </nz-input-group>
-                                    </ng-container>
-                                </ng-container>
-
-                                <ng-container *ngSwitchCase="dimType.REFERENCE_CASCADE">
-                                    <erupt-bi-cascade [dim]="dim" [bi]="bi"></erupt-bi-cascade>
-                                </ng-container>
-
-                                <ng-container *ngSwitchCase="dimType.DATE">
-                                    <nz-date-picker class="full-width"
-                                                    [(ngModel)]="dim.$value"
-                                                    [name]="dim.code" nzShowToday>
-                                    </nz-date-picker>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="dimType.DATE_RANGE">
-                                    <nz-range-picker class="full-width"
-                                                     [(ngModel)]="dim.$value"
-                                                     [nzRanges]="dateRanges"
-                                                     [name]="dim.code" nzShowToday>
-                                    </nz-range-picker>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="dimType.TIME">
-                                    <nz-time-picker [(ngModel)]="dim.$value" class="full-width"
-                                                    [name]="dim.code"></nz-time-picker>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="dimType.DATETIME">
-                                    <nz-date-picker class="full-width"
-                                                    [(ngModel)]="dim.$value"
-                                                    nzShowTime
-                                                    nzShowToday
-                                                    [name]="dim.code">
-                                    </nz-date-picker>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="dimType.DATETIME_RANGE">
-                                    <nz-range-picker class="full-width"
-                                                     [(ngModel)]="dim.$value"
-                                                     [name]="dim.code"
-                                                     [nzRanges]="dateRanges"
-                                                     nzShowToday
-                                                     nzShowTime>
-                                    </nz-range-picker>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="dimType.WEEK">
-                                    <nz-week-picker [(ngModel)]="dim.$value" class="full-width"
-                                                    [name]="dim.code"></nz-week-picker>
-
-                                </ng-container>
-                                <ng-container *ngSwitchCase="dimType.MONTH">
-                                    <nz-month-picker [(ngModel)]="dim.$value" class="full-width"
-                                                     [name]="dim.code">
-
-                                    </nz-month-picker>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="dimType.YEAR">
-                                    <nz-year-picker [(ngModel)]="dim.$value" class="full-width"
-                                                    [name]="dim.code">
-                                    </nz-year-picker>
-                                </ng-container>
-                            </ng-container>
-                        </bi-search-se>
-                    </div>
-                </ng-container>
-            </ng-container>
-        </ng-container>
-    </div>
+  <div nz-row [nzGutter]="16">
+    @for (dim of bi.dimensions; track dim) {
+      <ng-template #refTableBtn>
+        @if (dim.$value) {
+          <i nz-icon nzType="close-circle" theme="fill" class="point"
+          (click)="clearRef(dim)"></i>
+        }
+        @if (!dim.$value) {
+          <i nz-icon nzType="database" theme="fill" class="point"
+          (click)="refTable(dim)"></i>
+        }
+      </ng-template>
+      <ng-template #refBtn>
+        @if (dim.$value) {
+          <i nz-icon nzType="close-circle" theme="fill" class="point"
+          (click)="clearRef(dim)"></i>
+        }
+        @if (!dim.$value) {
+          <i nz-icon nzType="database" theme="fill" class="point"
+          (click)="ref(dim)"></i>
+        }
+      </ng-template>
+      <ng-template #suffixTemplate>
+        @if (dim.$value) {
+          <i nz-icon nz-tooltip class="ant-input-clear-icon" nzTheme="fill"
+            nzType="close-circle"
+          (click)="dim.$value = null"></i>
+        }
+      </ng-template>
+      @switch (dim.type) {
+        @case (dimType.REFERENCE_RADIO) {
+          <div nz-col [nzXs]="24">
+            <bi-search-se [dimension]="dim">
+              <erupt-bi-choice [dim]="dim" [bi]="bi"></erupt-bi-choice>
+            </bi-search-se>
+          </div>
+        }
+        @case (dimType.REFERENCE_CHECKBOX) {
+          <div nz-col>
+            <bi-search-se [dimension]="dim">
+              <erupt-bi-choice [dim]="dim" [bi]="bi"></erupt-bi-choice>
+            </bi-search-se>
+          </div>
+        }
+        @default {
+          <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+            [nzLg]="col.lg"
+            [nzXl]="col.xl"
+            [nzXXl]="col.xxl">
+            <bi-search-se [dimension]="dim">
+              @switch (dim.type) {
+                @case (dimType.TAG) {
+                  <nz-select  [nzMode]="'tags'" [(ngModel)]="dim.$value" [name]="dim.code"
+                    style="width: 100%">
+                  </nz-select>
+                }
+                @case (dimType.INPUT) {
+                  <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input">
+                    <input nz-input autocomplete="off"
+                      class="full-width" [(ngModel)]="dim.$value"
+                      [name]="dim.code" [required]="dim.notNull"
+                      (keydown)="enterEvent($event)">
+                  </nz-input-group>
+                }
+                @case (dimType.NUMBER) {
+                  <nz-input-number [(ngModel)]="dim.$value" class="full-width"
+                  (keydown)="enterEvent($event)" [name]="dim.code"></nz-input-number>
+                }
+                @case (dimType.NUMBER_RANGE) {
+                  <nz-input-group class="erupt-input" style="display: flex;align-items: center">
+                    <nz-input-number style="width: 45%;" [(ngModel)]="dim.$value[0]"
+                    [name]="dim.code"></nz-input-number>
+                    <input disabled nz-input placeholder="~"
+                      style="width: 30px; border-left: 0; border-right: 0; pointer-events: none;"
+                      />
+                    <nz-input-number style="width: 45%;" [(ngModel)]="dim.$value[1]"
+                    [name]="dim.code"></nz-input-number>
+                  </nz-input-group>
+                }
+                @case (dimType.REFERENCE) {
+                  <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                    <input nz-input autocomplete="off" [required]="dim.notNull"
+                      [readOnly]="true"
+                      [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
+                  </nz-input-group>
+                }
+                @case (dimType.REFERENCE_MULTI) {
+                  <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                    <input nz-input autocomplete="off" [required]="dim.notNull"
+                      [readOnly]="true"
+                      [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
+                  </nz-input-group>
+                }
+                @case (dimType.REFERENCE_TREE_MULTI) {
+                  <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                    <input nz-input autocomplete="off" [required]="dim.notNull"
+                      [readOnly]="true"
+                      [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
+                  </nz-input-group>
+                }
+                @case (dimType.REFERENCE_TREE_RADIO) {
+                  <nz-input-group class="full-width" [nzAddOnAfter]="refBtn">
+                    <input nz-input autocomplete="off" [required]="dim.notNull"
+                      [readOnly]="true"
+                      [value]="dim.$viewValue||null" [name]="dim.code" (click)="ref(dim)">
+                  </nz-input-group>
+                }
+                @case (dimType.REFERENCE_TABLE_RADIO) {
+                  <nz-input-group class="full-width" [nzAddOnAfter]="refTableBtn">
+                    <input nz-input autocomplete="off" [required]="dim.notNull"
+                      [readOnly]="true"
+                      [value]="dim.$viewValue||null" [name]="dim.code" (click)="refTable(dim)">
+                  </nz-input-group>
+                }
+                @case (dimType.REFERENCE_TABLE_MULTI) {
+                  <nz-input-group class="full-width" [nzAddOnAfter]="refTableBtn">
+                    <input nz-input autocomplete="off" [required]="dim.notNull"
+                      [readOnly]="true"
+                      [value]="dim.$viewValue||null" [name]="dim.code" (click)="refTable(dim)">
+                  </nz-input-group>
+                }
+                @case (dimType.REFERENCE_CASCADE) {
+                  <erupt-bi-cascade [dim]="dim" [bi]="bi"></erupt-bi-cascade>
+                }
+                @case (dimType.DATE) {
+                  <nz-date-picker class="full-width"
+                    [(ngModel)]="dim.$value"
+                    [name]="dim.code" nzShowToday>
+                  </nz-date-picker>
+                }
+                @case (dimType.DATE_RANGE) {
+                  <nz-range-picker  class="full-width"
+                    [(ngModel)]="dim.$value"
+                    [nzRanges]="dateRanges"
+                    [name]="dim.code" nzShowToday>
+                  </nz-range-picker>
+                }
+                @case (dimType.TIME) {
+                  <nz-time-picker  [(ngModel)]="dim.$value" class="full-width"
+                  [name]="dim.code"></nz-time-picker>
+                }
+                @case (dimType.DATETIME) {
+                  <nz-date-picker class="full-width"
+                    [(ngModel)]="dim.$value"
+                    nzShowTime
+                    nzShowToday
+                    [name]="dim.code">
+                  </nz-date-picker>
+                }
+                @case (dimType.DATETIME_RANGE) {
+                  <nz-range-picker class="full-width"
+                    [(ngModel)]="dim.$value"
+                    [name]="dim.code"
+                    [nzRanges]="dateRanges"
+                    nzShowToday
+                    nzShowTime>
+                  </nz-range-picker>
+                }
+                @case (dimType.WEEK) {
+                  <nz-week-picker [(ngModel)]="dim.$value" class="full-width"
+                  [name]="dim.code"></nz-week-picker>
+                }
+                @case (dimType.MONTH) {
+                  <nz-month-picker [(ngModel)]="dim.$value" class="full-width"
+                    [name]="dim.code">
+                  </nz-month-picker>
+                }
+                @case (dimType.YEAR) {
+                  <nz-year-picker [(ngModel)]="dim.$value" class="full-width"
+                    [name]="dim.code">
+                  </nz-year-picker>
+                }
+              }
+            </bi-search-se>
+          </div>
+        }
+      }
+    }
+  </div>
 </form>

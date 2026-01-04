@@ -2,6 +2,7 @@ import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {SharedModule} from "@shared/shared.module";
 import {HttpClientModule} from "@angular/common/http";
+import {DragDropModule} from "@angular/cdk/drag-drop";
 import {DataHandlerService} from "./service/data-handler.service";
 import {EditTypeComponent} from "./components/edit-type/edit-type.component";
 import {ViewTypeComponent} from "./components/view-type/view-type.component";
@@ -27,7 +28,7 @@ import {MarkdownComponent} from './components/markdown/markdown.component';
 import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
-import {CardComponent} from './components/card/card.component';
+import {CardComponent} from './vis/card/card.component';
 import {TagSelectModule} from "@delon/abc/tag-select";
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import {SearchComponent} from './components/search/search.component';
@@ -41,9 +42,13 @@ import {NzRateModule} from "ng-zorro-antd/rate";
 import {AttachmentSelectComponent} from './components/attachment-select/attachment-select.component';
 import {NzEmptyModule} from "ng-zorro-antd/empty";
 import {MultiChoiceComponent} from './components/multi-choice/multi-choice.component';
-import {GanttComponent} from "./components/gantt/gantt.component";
 import {SignaturePadComponent} from './components/signature-pad/signature-pad.component';
 import {SmartSearchComponent} from './components/smart-search/smart-search.component';
+import {NzSegmentedModule} from "ng-zorro-antd/segmented";
+import {GanttComponent} from "./vis/gantt/gantt.component";
+import {NgxGanttModule} from "@worktile/gantt";
+import {NzButtonModule} from "ng-zorro-antd/button";
+import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 
 @NgModule({
     imports: [
@@ -51,13 +56,18 @@ import {SmartSearchComponent} from './components/smart-search/smart-search.compo
         SharedModule,
         HttpClientModule,
         EruptRoutingModule,
+        DragDropModule,
         TagSelectModule,
         NzCodeEditorModule,
         NzPipesModule,
         NzImageModule,
         NzQRCodeModule,
         NzRateModule,
-        NzEmptyModule
+        NzEmptyModule,
+        NzSegmentedModule,
+        NgxGanttModule,
+        NzButtonModule,
+        NzTooltipDirective
     ],
     providers: [
         DataHandlerService,
@@ -108,12 +118,11 @@ import {SmartSearchComponent} from './components/smart-search/smart-search.compo
         CodeEditorComponent,
         SafeTemplateComponent,
         MarkdownComponent,
-        CardComponent,
         AttachmentSelectComponent,
         MultiChoiceComponent,
-        GanttComponent,
         SignaturePadComponent,
-        SmartSearchComponent
+        SmartSearchComponent,
+        GanttComponent
     ]
 })
 export class EruptModule {

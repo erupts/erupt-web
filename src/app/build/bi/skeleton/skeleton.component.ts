@@ -8,8 +8,7 @@ import {HandlerService} from "../service/handler.service";
 import {SettingsService} from "@delon/theme";
 import {isNotNull, isNull} from "@shared/util/erupt.util";
 import {DrillComponent} from "../drill/drill.component";
-import {STColumn, STComponent} from "@delon/abc/st";
-import {STPage} from "@delon/abc/st/st.interfaces";
+import {STColumn, STComponent, STPage} from "@delon/abc/st";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {AppViewService} from "@shared/service/app-view.service";
@@ -17,6 +16,7 @@ import {CodeEditorComponent} from "../../erupt/components/code-editor/code-edito
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 @Component({
+    standalone: false,
     selector: 'bi-skeleton',
     templateUrl: './skeleton.component.html',
     styleUrls: ["./skeleton.component.less"],
@@ -82,7 +82,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
 
     columns: STColumn[] = [];
 
-    timer: NodeJS.Timer;
+    timer: ReturnType<typeof setInterval> | null = null;
 
     downloading: boolean = false;
 
@@ -100,7 +100,10 @@ export class SkeletonComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe(params => {
-            this.timer && clearInterval(this.timer);
+            if (this.timer) {
+                clearInterval(this.timer);
+                this.timer = null;
+            }
             this.name = params['name'];
             this.biTable.data = null;
             this.dataService.getBiBuild(this.name).subscribe(res => {

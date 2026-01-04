@@ -1,104 +1,109 @@
 <div nz-row [nzGutter]="16">
     <form nz-form [nzLayout]="layout" se-container style="width: 100%" class="erupt-form">
-        <ng-container *ngFor="let field of eruptModel.eruptFieldModels;">
-            <ng-container
-                *ngIf="field.eruptFieldJson.edit&&field.eruptFieldJson.edit.show&&field.eruptFieldJson.edit.title">
-                <ng-container [ngSwitch]="field.eruptFieldJson.edit.type">
-                    <ng-container *ngSwitchCase="editType.INPUT">
-                        <ng-container *ngIf="field.eruptFieldJson.edit.inputType.fullSpan">
+        @for (field of eruptModel.eruptFieldModels; track field) {
+            <ng-template #inputSe>
+                <se [label]="field.eruptFieldJson.edit.title"
+                    [required]="field.eruptFieldJson.edit.notNull"
+                    [optionalHelp]="field.eruptFieldJson.edit.desc">
+                    @if (field.eruptFieldJson.edit.inputType.prefix.length == 0 && field.eruptFieldJson.edit.inputType.suffix.length == 0) {
+                        <nz-input-wrapper class="erupt-input" nzAllowClear>
+                            @if (supportCopy) {
+                                <div nzInputAddonBefore>
+                                    <span nz-icon nzType="copy" (click)="copy(field.eruptFieldJson.edit.$value)"
+                                      style="cursor: pointer" nzTheme="outline"></span>
+                                </div>
+                            }
+                            <input nz-input [nzSize]="size" autocomplete="off" nz-tooltip
+                                   nzTooltipTrigger="focus"
+                                   nzTooltipPlacement="topLeft"
+                                   [nzTooltipTitle]="field.eruptFieldJson.edit.$value"
+                                   [type]="field.eruptFieldJson.edit.inputType.type"
+                                   [maxLength]="field.eruptFieldJson.edit.inputType.length"
+                                   [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                   [name]="field.fieldName"
+                                   [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                   [disabled]="isReadonly(field)">
+                        </nz-input-wrapper>
+
+                    }
+                    @if (field.eruptFieldJson.edit.inputType.prefix.length > 0 ||
+                    field.eruptFieldJson.edit.inputType.suffix.length > 0) {
+                        <nz-input-wrapper
+                            class="erupt-input">
+                            <input nz-input autocomplete="off"
+                                   [type]="field.eruptFieldJson.edit.inputType.type"
+                                   [maxLength]="field.eruptFieldJson.edit.inputType.length"
+                                   [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                   [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                   [name]="field.fieldName"
+                                   [disabled]="isReadonly(field)">
+                            <div nzInputAddonBefore>
+                                @if (field.eruptFieldJson.edit.inputType.prefix.length == 1) {
+                                    {{ field.eruptFieldJson.edit.inputType.prefix[0].label }}
+                                }
+                                @if (field.eruptFieldJson.edit.inputType.prefix.length > 1) {
+                                    <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType.prefixValue"
+                                               [name]="field.fieldName+'before'" style="min-width: 70px;">
+                                        @for (vl of field.eruptFieldJson.edit.inputType.prefix; track vl) {
+                                            <nz-option [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
+                                        }
+                                    </nz-select>
+                                }
+                            </div>
+                            <div nzInputAddonAfter>
+                                @if (field.eruptFieldJson.edit.inputType.suffix.length == 1) {
+                                    {{ field.eruptFieldJson.edit.inputType.suffix[0]['label'] }}
+                                }
+                                @if (field.eruptFieldJson.edit.inputType.suffix.length > 1) {
+                                    <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType.suffixValue"
+                                               [name]="field.fieldName+'after'" style="min-width: 70px;">
+                                        @for (vl of field.eruptFieldJson.edit.inputType.suffix; track vl) {
+                                            <nz-option [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
+                                        }
+                                    </nz-select>
+                                }
+                            </div>
+                        </nz-input-wrapper>
+                    }
+                </se>
+            </ng-template>
+            <ng-template #choiceTpl>
+                <se [label]="field.eruptFieldJson.edit.title"
+                    [required]="field.eruptFieldJson.edit.notNull"
+                    [optionalHelp]="field.eruptFieldJson.edit.desc">
+                    <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
+                                  [eruptParentName]="parentEruptName" [editType]="this"
+                                  [readonly]="isReadonly(field)">
+                    </erupt-choice>
+                </se>
+            </ng-template>
+            <ng-template #multiChoiceTpl>
+                <se [label]="field.eruptFieldJson.edit.title"
+                    [required]="field.eruptFieldJson.edit.notNull"
+                    [optionalHelp]="field.eruptFieldJson.edit.desc">
+                    <erupt-multi-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
+                                        [eruptParentName]="parentEruptName"
+                                        [readonly]="isReadonly(field)">
+                    </erupt-multi-choice>
+                </se>
+            </ng-template>
+            @if (field.eruptFieldJson.edit && field.eruptFieldJson.edit.show && field.eruptFieldJson.edit.title) {
+                @switch (field.eruptFieldJson.edit.type) {
+                    @case (editType.INPUT) {
+                        @if (field.eruptFieldJson.edit.inputType.fullSpan) {
                             <div nz-col [nzSpan]="24">
                                 <ng-container [ngTemplateOutlet]="inputSe"></ng-container>
                             </div>
-                        </ng-container>
-                        <ng-container *ngIf="!field.eruptFieldJson.edit.inputType.fullSpan">
+                        }
+                        @if (!field.eruptFieldJson.edit.inputType.fullSpan) {
                             <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                                  [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
                                 <ng-container [ngTemplateOutlet]="inputSe"></ng-container>
                             </div>
-                        </ng-container>
-
-                        <ng-template #inputSe>
-                            <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==0&&
-                                                             field.eruptFieldJson.edit.inputType.suffix.length==0">
-                                    <nz-input-group [nzAddOnBefore]="supportCopy&&prefixTemplate"
-                                                    [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size">
-                                        <input nz-input [nzSize]="size" autocomplete="off" nz-tooltip
-                                               nzTooltipTrigger="focus"
-                                               nzTooltipPlacement="topLeft"
-                                               [nzTooltipTitle]="field.eruptFieldJson.edit.$value"
-                                               [type]="field.eruptFieldJson.edit.inputType.type"
-                                               [maxLength]="field.eruptFieldJson.edit.inputType.length"
-                                               [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                               [name]="field.fieldName"
-                                               [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                               [required]="field.eruptFieldJson.edit.notNull"
-                                               [disabled]="isReadonly(field)">
-                                    </nz-input-group>
-                                    <ng-template #prefixTemplate>
-                                        <span nz-icon nzType="copy" (click)="copy(field.eruptFieldJson.edit.$value)"
-                                              style="cursor: pointer" nzTheme="outline"></span>
-                                    </ng-template>
-                                    <ng-template #suffixTemplate>
-                                        <i nz-icon class="ant-input-clear-icon" nzTheme="fill"
-                                           nzType="close-circle"
-                                           *ngIf="field.eruptFieldJson.edit.$value&&!isReadonly(field)"
-                                           (click)="field.eruptFieldJson.edit.$value = null"></i>
-                                    </ng-template>
-                                </ng-container>
-                                <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length>0||
-                                                             field.eruptFieldJson.edit.inputType.suffix.length>0">
-                                    <nz-input-group
-                                        [nzAddOnBefore]="field.eruptFieldJson.edit.inputType.prefix.length>0&&addOnBeforeTemplate"
-                                        [nzAddOnAfter]="field.eruptFieldJson.edit.inputType.suffix.length>0&&addOnAfterTemplate"
-                                        [nzSize]="size" class="erupt-input">
-                                        <input nz-input autocomplete="off"
-                                               [type]="field.eruptFieldJson.edit.inputType.type"
-                                               [maxLength]="field.eruptFieldJson.edit.inputType.length"
-                                               [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                               [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                               [name]="field.fieldName"
-                                               [required]="field.eruptFieldJson.edit.notNull"
-                                               [disabled]="isReadonly(field)">
-                                    </nz-input-group>
-                                    <!--prefix and suffix template-->
-                                    <ng-template #addOnBeforeTemplate>
-                                        <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length==1">
-                                            {{ field.eruptFieldJson.edit.inputType.prefix[0].label }}
-                                        </ng-container>
-                                        <ng-container *ngIf="field.eruptFieldJson.edit.inputType.prefix.length>1">
-                                            <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType.prefixValue"
-                                                       [name]="field.fieldName+'before'" style="min-width: 70px;">
-                                                <ng-container
-                                                    *ngFor="let vl of field.eruptFieldJson.edit.inputType.prefix">
-                                                    <nz-option [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
-                                                </ng-container>
-                                            </nz-select>
-                                        </ng-container>
-                                    </ng-template>
-                                    <ng-template #addOnAfterTemplate>
-                                        <ng-container *ngIf="field.eruptFieldJson.edit.inputType.suffix.length==1">
-                                            {{ field.eruptFieldJson.edit.inputType.suffix[0]['label'] }}
-                                        </ng-container>
-                                        <ng-container *ngIf="field.eruptFieldJson.edit.inputType.suffix.length>1">
-                                            <nz-select [(ngModel)]="field.eruptFieldJson.edit.inputType.suffixValue"
-                                                       [name]="field.fieldName+'after'" style="min-width: 70px;">
-                                                <ng-container
-                                                    *ngFor="let vl of field.eruptFieldJson.edit.inputType.suffix">
-                                                    <nz-option [nzLabel]="vl.label" [nzValue]="vl.value"></nz-option>
-                                                </ng-container>
-                                            </nz-select>
-                                        </ng-container>
-                                    </ng-template>
-                                    <!--end prefix and suffix template-->
-                                </ng-container>
-                            </se>
-                        </ng-template>
-                    </ng-container>
+                        }
+                    }
                     <!-- number-->
-                    <ng-container *ngSwitchCase="editType.NUMBER">
+                    @case (editType.NUMBER) {
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                              [nzLg]="col.lg"
                              [nzXl]="col.xl"
@@ -116,9 +121,9 @@
                                                  [nzStep]="1"></nz-input-number>
                             </se>
                         </div>
-                    </ng-container>
+                    }
                     <!--COLOR-->
-                    <ng-container *ngSwitchCase="editType.COLOR">
+                    @case (editType.COLOR) {
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                              [nzLg]="col.lg"
                              [nzXl]="col.xl"
@@ -126,7 +131,7 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <nz-input-group [nzSuffix]="suffixTemplate" class="erupt-input" [nzSize]="size">
+                                <nz-input-wrapper class="erupt-input" nzAllowClear>
                                     <input nz-input [nzSize]="size" autocomplete="off" nz-tooltip
                                            nzTooltipTrigger="focus"
                                            nzTooltipPlacement="topLeft"
@@ -134,101 +139,73 @@
                                            [(ngModel)]="field.eruptFieldJson.edit.$value"
                                            [name]="field.fieldName"
                                            [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                           [required]="field.eruptFieldJson.edit.notNull"
                                            [disabled]="isReadonly(field)">
-                                </nz-input-group>
-                                <ng-template #suffixTemplate>
-                                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill"
-                                       nzType="close-circle"
-                                       *ngIf="field.eruptFieldJson.edit.$value&&!isReadonly(field)"
-                                       (click)="field.eruptFieldJson.edit.$value = null"></i>
-                                </ng-template>
+                                </nz-input-wrapper>
                             </se>
                         </div>
-                    </ng-container>
+                    }
                     <!--text area-->
-                    <ng-container *ngSwitchCase="editType.TEXTAREA">
+                    @case (editType.TEXTAREA) {
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                        <textarea nz-input class="erupt-input" [name]="field.fieldName"
-                                                  [nzAutosize]="{ minRows: 3, maxRows: 20 }"
-                                                  [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                                  [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                                  [disabled]="isReadonly(field)"
-                                        ></textarea>
+                <textarea nz-input class="erupt-input" [name]="field.fieldName"
+                          [nzAutosize]="{ minRows: 3, maxRows: 20 }"
+                          [(ngModel)]="field.eruptFieldJson.edit.$value"
+                          [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                          [disabled]="isReadonly(field)"
+                ></textarea>
                             </se>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.MARKDOWN">
+                    }
+                    @case (editType.MARKDOWN) {
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <erupt-markdown [eruptField]="field" [erupt]="eruptModel" [readonly]="isReadonly(field)"></erupt-markdown>
+                                <erupt-markdown [eruptField]="field" [erupt]="eruptModel"
+                                                [readonly]="isReadonly(field)"></erupt-markdown>
                             </se>
                         </div>
-                    </ng-container>
+                    }
                     <!--choice-->
-                    <ng-container *ngSwitchCase="editType.CHOICE">
-                        <ng-container [ngSwitch]="field.eruptFieldJson.edit.choiceType.type">
-                            <ng-container *ngSwitchCase="choiceEnum.RADIO">
+                    @case (editType.CHOICE) {
+                        @switch (field.eruptFieldJson.edit.choiceType.type) {
+                            @case (choiceEnum.RADIO) {
                                 <div nz-col [nzXs]="24">
                                     <ng-container [ngTemplateOutlet]="choiceTpl"></ng-container>
                                 </div>
-                            </ng-container>
-                            <ng-container *ngSwitchCase="choiceEnum.SELECT">
+                            }
+                            @case (choiceEnum.SELECT) {
                                 <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                                      [nzLg]="col.lg"
                                      [nzXl]="col.xl"
                                      [nzXXl]="col.xxl">
                                     <ng-container [ngTemplateOutlet]="choiceTpl"></ng-container>
                                 </div>
-                            </ng-container>
-                            <ng-template #choiceTpl>
-                                <se [label]="field.eruptFieldJson.edit.title"
-                                    [required]="field.eruptFieldJson.edit.notNull"
-                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                    <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
-                                                  [eruptParentName]="parentEruptName" [editType]="this"
-                                                  [readonly]="isReadonly(field)">
-
-                                    </erupt-choice>
-                                </se>
-                            </ng-template>
-                        </ng-container>
-                    </ng-container>
+                            }
+                        }
+                    }
                     <!--multi-choice-->
-                    <ng-container *ngSwitchCase="editType.MULTI_CHOICE">
-                        <ng-container [ngSwitch]="field.eruptFieldJson.edit.multiChoiceType.type">
-                            <ng-container *ngSwitchCase="multiChoiceEnum.CHECKBOX">
+                    @case (editType.MULTI_CHOICE) {
+                        @switch (field.eruptFieldJson.edit.multiChoiceType.type) {
+                            @case (multiChoiceEnum.CHECKBOX) {
                                 <div nz-col [nzXs]="24">
                                     <ng-container [ngTemplateOutlet]="multiChoiceTpl"></ng-container>
                                 </div>
-                            </ng-container>
-                            <ng-container *ngSwitchCase="multiChoiceEnum.SELECT">
+                            }
+                            @case (multiChoiceEnum.SELECT) {
                                 <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                                      [nzLg]="col.lg"
                                      [nzXl]="col.xl"
                                      [nzXXl]="col.xxl">
                                     <ng-container [ngTemplateOutlet]="multiChoiceTpl"></ng-container>
                                 </div>
-                            </ng-container>
-                            <ng-template #multiChoiceTpl>
-                                <se [label]="field.eruptFieldJson.edit.title"
-                                    [required]="field.eruptFieldJson.edit.notNull"
-                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                    <erupt-multi-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
-                                                        [eruptParentName]="parentEruptName"
-                                                        [readonly]="isReadonly(field)">
-
-                                    </erupt-multi-choice>
-                                </se>
-                            </ng-template>
-                        </ng-container>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.TAGS">
+                            }
+                        }
+                    }
+                    @case (editType.TAGS) {
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
@@ -241,13 +218,15 @@
                                            [nzTokenSeparators]="[field.eruptFieldJson.edit.tagsType.joinSeparator]"
                                            [nzMaxMultipleCount]="field.eruptFieldJson.edit.tagsType.maxTagCount"
                                            [nzMode]="field.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'">
-                                    <nz-option *ngFor="let item of field.componentValue" [nzLabel]="item"
-                                               [nzValue]="item"></nz-option>
+                                    @for (item of field.componentValue; track item) {
+                                        <nz-option [nzLabel]="item"
+                                                   [nzValue]="item"></nz-option>
+                                    }
                                 </nz-select>
                             </se>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.CHECKBOX">
+                    }
+                    @case (editType.CHECKBOX) {
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
@@ -256,8 +235,8 @@
                                                 [eruptFieldModel]="field" style="max-height: 20px"></erupt-checkbox>
                             </se>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.SLIDER">
+                    }
+                    @case (editType.SLIDER) {
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl" [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
@@ -274,8 +253,8 @@
                                            [nzDisabled]="isReadonly(field)"></nz-slider>
                             </se>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.RATE">
+                    }
+                    @case (editType.RATE) {
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl" [nzXXl]="col.xxl">
                             <se [label]="field.eruptFieldJson.edit.title"
@@ -294,9 +273,9 @@
                                 </nz-rate>
                             </se>
                         </div>
-                    </ng-container>
+                    }
                     <!--date-->
-                    <ng-container *ngSwitchCase="editType.DATE">
+                    @case (editType.DATE) {
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
@@ -305,9 +284,9 @@
                                 <erupt-date [field]="field" [size]="size" [readonly]="isReadonly(field)"></erupt-date>
                             </se>
                         </div>
-                    </ng-container>
+                    }
                     <!--reference-->
-                    <ng-container *ngSwitchCase="editType.REFERENCE_TREE">
+                    @case (editType.REFERENCE_TREE) {
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
@@ -319,8 +298,8 @@
                                                  [parentEruptName]="parentEruptName"></erupt-reference>
                             </se>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.REFERENCE_TABLE">
+                    }
+                    @case (editType.REFERENCE_TABLE) {
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
@@ -332,9 +311,9 @@
                                                  [parentEruptName]="parentEruptName"></erupt-reference>
                             </se>
                         </div>
-                    </ng-container>
+                    }
                     <!--bool-->
-                    <ng-container *ngSwitchCase="editType.BOOLEAN">
+                    @case (editType.BOOLEAN) {
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
@@ -362,14 +341,14 @@
                                 </nz-radio-group>
                             </se>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.ATTACHMENT">
+                    }
+                    @case (editType.ATTACHMENT) {
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <ng-container [ngSwitch]="field.eruptFieldJson.edit.attachmentType.type">
-                                    <ng-container *ngSwitchCase="attachmentEnum.IMAGE">
+                                @switch (field.eruptFieldJson.edit.attachmentType.type) {
+                                    @case (attachmentEnum.IMAGE) {
                                         <nz-upload nzListType="picture-card"
                                                    [nzAccept]="['.bmp','.jpg','.jpeg','.png','.gif','.webp','.heic','.avif','.svg']"
                                                    [nzDisabled]="isReadonly(field)"
@@ -385,33 +364,37 @@
                                                 <i nz-icon nzType="plus"></i>
                                             </p>
                                         </nz-upload>
-                                    </ng-container>
-                                    <ng-container *ngSwitchCase="attachmentEnum.BASE">
-                                        <nz-upload nzType="drag" *ngIf="field.eruptFieldJson.edit.$viewValue"
-                                                   [nzAccept]="uploadAccept(field.eruptFieldJson.edit.attachmentType.fileTypes)"
-                                                   [nzLimit]="field.eruptFieldJson.edit.attachmentType.maxLimit"
-                                                   [nzDisabled]="isReadonly(field)||field.eruptFieldJson.edit.$viewValue.length==field.eruptFieldJson.edit.attachmentType.maxLimit"
-                                                   (nzChange)="upLoadNzChange($event,field)"
-                                                   [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
-                                                   [nzHeaders]="{token:tokenService.get().token, erupt:eruptModel.eruptName,eruptParent:parentEruptName||''}"
-                                                   [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
-                                            <p class="ant-upload-drag-icon">
-                                                <i nz-icon nzType="inbox"></i>
-                                            </p>
-                                            <p class="ant-upload-text">{{ 'component.attachment.upload_hint'|translate }}</p>
-                                            <p class="ant-upload-hint"
-                                               *ngIf="field.eruptFieldJson.edit.attachmentType.fileTypes.length>0">
-                                                {{ 'component.attachment.upload_format'|translate }}
-                                                ：<span>{{ field.eruptFieldJson.edit.attachmentType.fileTypes.join("&nbsp; / &nbsp;") }}</span>
-                                            </p>
-                                            <p class="ant-upload-hint">{{ field.eruptFieldJson.edit.placeHolder }}</p>
-                                        </nz-upload>
-                                    </ng-container>
-                                </ng-container>
+                                    }
+                                    @case (attachmentEnum.BASE) {
+                                        @if (field.eruptFieldJson.edit.$viewValue) {
+                                            <nz-upload nzType="drag"
+                                                       [nzAccept]="uploadAccept(field.eruptFieldJson.edit.attachmentType.fileTypes)"
+                                                       [nzLimit]="field.eruptFieldJson.edit.attachmentType.maxLimit"
+                                                       [nzDisabled]="isReadonly(field)||field.eruptFieldJson.edit.$viewValue.length==field.eruptFieldJson.edit.attachmentType.maxLimit"
+                                                       (nzChange)="upLoadNzChange($event,field)"
+                                                       [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
+                                                       [nzHeaders]="{token:tokenService.get().token, erupt:eruptModel.eruptName,eruptParent:parentEruptName||''}"
+                                                       [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
+                                                <p class="ant-upload-drag-icon">
+                                                    <i nz-icon nzType="inbox"></i>
+                                                </p>
+                                                <p class="ant-upload-text">{{ 'component.attachment.upload_hint'|translate }}</p>
+                                                @if (field.eruptFieldJson.edit.attachmentType.fileTypes.length > 0) {
+                                                    <p class="ant-upload-hint"
+                                                    >
+                                                        {{ 'component.attachment.upload_format'|translate }}
+                                                        ：<span>{{ field.eruptFieldJson.edit.attachmentType.fileTypes.join("&nbsp; / &nbsp;") }}</span>
+                                                    </p>
+                                                }
+                                                <p class="ant-upload-hint">{{ field.eruptFieldJson.edit.placeHolder }}</p>
+                                            </nz-upload>
+                                        }
+                                    }
+                                }
                             </se>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.AUTO_COMPLETE">
+                    }
+                    @case (editType.AUTO_COMPLETE) {
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
@@ -422,29 +405,26 @@
                                                      [eruptModel]="eruptModel"></erupt-auto-complete>
                             </se>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.HTML_EDITOR">
+                    }
+                    @case (editType.HTML_EDITOR) {
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <ng-container
-                                    *ngIf="field.eruptFieldJson.edit.htmlEditorType.value===htmlEditorType.CKEDITOR">
+                                @if (field.eruptFieldJson.edit.htmlEditorType.value === htmlEditorType.CKEDITOR) {
                                     <ckeditor [(value)]="field.eruptFieldJson.edit.$value"
                                               [readonly]="isReadonly(field)"
                                               [eruptField]="field" [erupt]="eruptModel"></ckeditor>
-                                </ng-container>
-                                <ng-container
-                                    *ngIf="field.eruptFieldJson.edit.htmlEditorType.value===htmlEditorType.UEDITOR">
+                                }
+                                @if (field.eruptFieldJson.edit.htmlEditorType.value === htmlEditorType.UEDITOR) {
                                     <erupt-ueditor [eruptField]="field" [erupt]="eruptModel"
                                                    [readonly]="isReadonly(field)">
-
                                     </erupt-ueditor>
-                                </ng-container>
+                                }
                             </se>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.TPL">
+                    }
+                    @case (editType.TPL) {
                         <div nz-col [nzSpan]="24">
                             <iframe
                                 [src]="dataService.getFieldTplPath(eruptBuildModel.eruptModel.eruptName,field.fieldName) | safeUrl"
@@ -452,113 +432,126 @@
                                 (load)="iframeHeight($event)">
                             </iframe>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.MAP">
+                    }
+                    @case (editType.MAP) {
                         <div nz-col [nzSpan]="24">
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <amap [(value)]="field.eruptFieldJson.edit.$value" *ngIf="!loading"
-                                      [mapType]="field.eruptFieldJson.edit.mapType"></amap>
+                                @if (!loading) {
+                                    <amap [(value)]="field.eruptFieldJson.edit.$value"
+                                          [mapType]="field.eruptFieldJson.edit.mapType"></amap>
+                                }
                             </se>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.EMPTY">
+                    }
+                    @case (editType.EMPTY) {
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg"
                              [nzXl]="col.xl"
                              [nzXXl]="col.xxl">
-
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.COMBINE">
+                    }
+                    @case (editType.COMBINE) {
                         <div nz-col [nzSpan]="24" style="margin-top: 8px">
-                            <nz-collapse nzAccordion [nzExpandIconPosition]="'right'">
+                            <nz-collapse nzAccordion [nzExpandIconPosition]="'end'">
                                 <nz-collapse-panel [nzActive]="true" [nzHeader]="field.eruptFieldJson.edit.title">
                                     <erupt-edit-type
                                         [eruptBuildModel]="{eruptModel:eruptBuildModel.combineErupts[field.fieldName]}"></erupt-edit-type>
                                 </nz-collapse-panel>
                             </nz-collapse>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.CODE_EDITOR">
-                        <div nz-col [nzSpan]="24" *ngIf="!loading">
-                            <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <erupt-code-editor [edit]="field.eruptFieldJson.edit"
-                                                   [readonly]="isReadonly(field)"
-                                                   [height]="field.eruptFieldJson.edit.codeEditType.height"
-                                                   [language]="field.eruptFieldJson.edit.codeEditType.language">
-                                </erupt-code-editor>
-                            </se>
-                        </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.SIGNATURE">
-                        <div nz-col [nzSpan]="24" *ngIf="!loading">
-                            <se [label]="field.eruptFieldJson.edit.title"
-                                [required]="field.eruptFieldJson.edit.notNull"
-                                [optionalHelp]="field.eruptFieldJson.edit.desc">
-                                <div style="width: 100%;height: 200px;border: 1px solid #d9d9d9;border-radius: 2px">
-                                    <ng-container *ngIf="field.eruptFieldJson.edit.$value">
-                                        <img [src]="field.eruptFieldJson.edit.$value" style="width: 100%;height: 100%;" alt="sign"/>
-                                        <button nz-button nzType="default" (click)="clearSign(field.eruptFieldJson.edit)" nzShape="circle" style="position: absolute;right:16px;top: 16px">
-                                            <span nz-icon nzType="clear" nzTheme="outline"></span>
-                                        </button>
-                                    </ng-container>
-                                    <button nz-button nzType="default" *ngIf="!field.eruptFieldJson.edit.$value"
-                                            (click)="openSign(field.eruptFieldJson.edit)" nzShape="circle"
-                                            style="position: absolute;;top: 45%;left: 50%;transform: translate(-50%);">
-                                        <span nz-icon nzType="edit" nzTheme="outline"></span>
-                                    </button>
-                                </div>
-                            </se>
-                        </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.DIVIDE">
+                    }
+                    @case (editType.CODE_EDITOR) {
+                        @if (!loading) {
+                            <div nz-col [nzSpan]="24">
+                                <se [label]="field.eruptFieldJson.edit.title"
+                                    [required]="field.eruptFieldJson.edit.notNull"
+                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                    <erupt-code-editor [edit]="field.eruptFieldJson.edit"
+                                                       [readonly]="isReadonly(field)"
+                                                       [height]="field.eruptFieldJson.edit.codeEditType.height"
+                                                       [language]="field.eruptFieldJson.edit.codeEditType.language">
+                                    </erupt-code-editor>
+                                </se>
+                            </div>
+                        }
+                    }
+                    @case (editType.SIGNATURE) {
+                        @if (!loading) {
+                            <div nz-col [nzSpan]="24">
+                                <se [label]="field.eruptFieldJson.edit.title"
+                                    [required]="field.eruptFieldJson.edit.notNull"
+                                    [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                    <div style="width: 100%;height: 200px;border: 1px solid #d9d9d9;border-radius: 2px">
+                                        @if (field.eruptFieldJson.edit.$value) {
+                                            <img [src]="field.eruptFieldJson.edit.$value"
+                                                 style="width: 100%;height: 100%;" alt="sign"/>
+                                            <button nz-button nzType="default"
+                                                    (click)="clearSign(field.eruptFieldJson.edit)" nzShape="circle"
+                                                    style="position: absolute;right:16px;top: 16px">
+                                                <span nz-icon nzType="clear" nzTheme="outline"></span>
+                                            </button>
+                                        }
+                                        @if (!field.eruptFieldJson.edit.$value) {
+                                            <button nz-button nzType="default"
+                                                    (click)="openSign(field.eruptFieldJson.edit)" nzShape="circle"
+                                                    style="position: absolute;;top: 45%;left: 50%;transform: translate(-50%);">
+                                                <span nz-icon nzType="edit" nzTheme="outline"></span>
+                                            </button>
+                                        }
+                                    </div>
+                                </se>
+                            </div>
+                        }
+                    }
+                    @case (editType.DIVIDE) {
                         <div nz-col [nzSpan]="24" style="margin-bottom: 0">
                             <nz-divider [nzDashed]="false" [nzText]="field.eruptFieldJson.edit.title"></nz-divider>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchDefault>
-
-                    </ng-container>
-                </ng-container>
-            </ng-container>
-        </ng-container>
+                    }
+                    @default {
+                    }
+                }
+            }
+        }
     </form>
 
-    <nz-tabset *ngIf="eruptBuildModel.tabErupts" [nzType]="'card'" style="margin-top: 5px">
-        <ng-container *ngFor="let item of tabErupts">
-            <nz-tab [nzTitle]="tabTitle"
-                    *ngIf="eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.show">
-                <ng-container [ngSwitch]="eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.type">
-                    <ng-container *ngSwitchCase="editType.TAB_TABLE_ADD">
-                        <tab-table [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
-                                   [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptModel.eruptFieldModelMap.get(item.key)}"
-                                   [eruptBuildModel]="eruptBuildModel"
-                        ></tab-table>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.TAB_TABLE_REFER">
-                        <tab-table [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
-                                   [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptModel.eruptFieldModelMap.get(item.key)}"
-                                   [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
-                        ></tab-table>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="editType.TAB_TREE">
-                        <erupt-tab-tree [eruptFieldModel]="eruptModel.eruptFieldModelMap.get(item.key)"
-                                        [eruptBuildModel]="eruptBuildModel"
-                                        [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
-                        ></erupt-tab-tree>
-                    </ng-container>
-                </ng-container>
-            </nz-tab>
-            <ng-template #tabTitle>
-                {{eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.title}}
-                <ng-container *ngIf="eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.desc">
-                    <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
-                       [nzTooltipTitle]="eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.desc"></i>
-                </ng-container>
-            </ng-template>
-        </ng-container>
-    </nz-tabset>
+    @if (eruptBuildModel.tabErupts) {
+        <nz-tabset [nzType]="'card'" style="margin-top: 5px">
+            @for (item of tabErupts; track item) {
+                @if (eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.show) {
+                    <nz-tab [nzTitle]="tabTitle"
+                    >
+                        @switch (eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.type) {
+                            @case (editType.TAB_TABLE_ADD) {
+                                <tab-table [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
+                                           [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptModel.eruptFieldModelMap.get(item.key)}"
+                                           [eruptBuildModel]="eruptBuildModel"
+                                ></tab-table>
+                            }
+                            @case (editType.TAB_TABLE_REFER) {
+                                <tab-table [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
+                                           [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptModel.eruptFieldModelMap.get(item.key)}"
+                                           [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
+                                ></tab-table>
+                            }
+                            @case (editType.TAB_TREE) {
+                                <erupt-tab-tree [eruptFieldModel]="eruptModel.eruptFieldModelMap.get(item.key)"
+                                                [eruptBuildModel]="eruptBuildModel"
+                                                [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
+                                ></erupt-tab-tree>
+                            }
+                        }
+                    </nz-tab>
+                }
+                <ng-template #tabTitle>
+                    {{ eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.title }}
+                    @if (eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.desc) {
+                        <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+                           [nzTooltipTitle]="eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.desc"></i>
+                    }
+                </ng-template>
+            }
+        </nz-tabset>
+    }
 </div>

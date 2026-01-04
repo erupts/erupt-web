@@ -12,8 +12,13 @@ import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
+import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {NoticeComponent} from "../component/notice/notice.component";
+import {NzNotificationService} from "ng-zorro-antd/notification";
+import {AnnouncementDetailComponent} from "../component/announcement-detail/announcement-detail.component";
 
 @Component({
+    standalone: false,
     selector: "layout-header",
     templateUrl: "./header.component.html",
     styleUrls: [
@@ -46,8 +51,14 @@ export class HeaderComponent implements OnInit {
 
     tenantDomainInfo = EruptTenantInfoData.get();
 
+    unreadCount: number = 0;
+
     get isEruptAi(): boolean {
         return EruptAppData.get().properties["erupt-ai"];
+    }
+
+    get isEruptNotice(): boolean {
+        return EruptAppData.get().properties["erupt-notice"];
     }
 
     openDrawer() {
@@ -61,8 +72,11 @@ export class HeaderComponent implements OnInit {
     constructor(public settings: SettingsService,
                 private router: Router,
                 private appViewService: AppViewService,
+                private dataService: DataService,
+                @Inject(NzDrawerService) private drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
-                @Inject(NzModalService) private modal: NzModalService) {
+                @Inject(NzModalService) private modal: NzModalService,
+                @Inject(NzNotificationService) private notification: NzNotificationService) {
         if (this.tenantDomainInfo) {
             if (this.tenantDomainInfo.logo) {
                 this.logoPath = DataService.previewAttachment(this.tenantDomainInfo.logo)
@@ -80,6 +94,50 @@ export class HeaderComponent implements OnInit {
         if (EruptAppData.get().locales.length <= 1) {
             this.showI18n = false;
         }
+        if (this.isEruptNotice) {
+            this.getNoticeUnreadCount();
+            window["eruptNotice"] = this.eruptNotice.bind(this);
+            this.dataService.announcementPopups().subscribe(res => {
+                if (res.data.length > 0) {
+                    for (let ann of res.data) {
+                        let ref = this.modal.create({
+                            nzWrapClassName: "modal-lg",
+                            nzTitle: ann.title,
+                            nzBodyStyle: {
+                                padding: '0'
+                            },
+                            nzFooter: null,
+                            nzContent: AnnouncementDetailComponent,
+                            nzKeyboard: false,
+                            nzMaskClosable: false,
+                            nzOnCancel: () => {
+                                this.dataService.announcementMarkRead(ann.id).subscribe(res => {
+                                    ref.close();
+                                });
+                            }
+                        });
+                        ref.componentInstance.announcement = ann;
+                    }
+                }
+            });
+        }
+    }
+
+    getNoticeUnreadCount() {
+        this.dataService.noticeUnreadCount().subscribe(res => {
+            this.unreadCount = res.data;
+        })
+    }
+
+    eruptNotice(id: number, title: string, content: string) {
+        this.unreadCount++;
+        this.notification.create(
+            'blank',
+            title,
+            content, {
+                nzDuration: -1
+            }
+        );
     }
 
     renderTool(tool: CustomerTool): string {
@@ -108,6 +166,24 @@ export class HeaderComponent implements OnInit {
         });
         model.getContentComponent().url = "ai-chat.html?_token=" + this.tokenService.get().token;
         model.getContentComponent().height = "83vh"
+    }
+
+    openEruptNotice() {
+        this.drawer.create({
+            nzTitle: null,
+            nzContent: NoticeComponent,
+            nzWidth: "360px",
+            nzFooter: null,
+            nzClosable: false,
+            nzMaskClosable: true,
+            nzKeyboard: true,
+            nzPlacement: "right",
+            nzBodyStyle: {
+                padding: "0"
+            },
+        }).afterClose.subscribe(res => {
+            this.getNoticeUnreadCount();
+        });
     }
 
     toggleCollapsedSidebar() {

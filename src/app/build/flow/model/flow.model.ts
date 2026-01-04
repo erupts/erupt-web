@@ -15,9 +15,11 @@ export enum FlowPermission {
 
 export class FlowConfig {
     id: number;
+    code: string;
     name: string;
     remark: string;
     erupt: string;
+    channels: string[] = [];
     icon: string = 'fa fa-user';
     color: string = '#1890ff';
     flowGroup: FlowGroup;

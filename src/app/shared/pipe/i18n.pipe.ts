@@ -2,6 +2,7 @@ import {Pipe, PipeTransform} from "@angular/core";
 import {I18NService} from "@core";
 
 @Pipe({
+    standalone: false,
     name: "translate"
 })
 export class I18nPipe implements PipeTransform {

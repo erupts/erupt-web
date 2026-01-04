@@ -26,6 +26,7 @@ interface GroupedDisplayData {
 }
 
 @Component({
+    standalone: false,
     selector: 'erupt-upms-select',
     templateUrl: './upms-select.component.html',
     styleUrls: ['./upms-select.component.less']

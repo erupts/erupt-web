@@ -7,6 +7,7 @@ export interface EruptFieldModel {
     fieldName: string;
     eruptFieldJson: EruptField;
     choiceMap?: Map<String, VL>;
+    choiceLabelMap?: Map<String, VL>;
     componentValue?: any;
 
     value?: any;
@@ -74,6 +75,7 @@ export interface Edit {
     type: EditType;
     show: boolean;
     dynamic: { dependField: string, condition: string, noMatch: FormCtrl, match: FormCtrl };
+    onchange: string;
     readOnly: Readonly;
     placeHolder: string;
     search: Search;
@@ -177,10 +179,8 @@ interface ChoiceType {
     type: ChoiceEnum;
     anewFetch: boolean;
     dependField: string;
-    dependExpr: string;
     items: VL[],
     trigger: string;
-
     onVLChange(value, oldValue): void;
 }
 
@@ -234,6 +234,7 @@ export interface MapType {
 export interface VL {
     value: string;
     label: string;
+    color: string;
     desc?: string;
     disable?: boolean;
 }

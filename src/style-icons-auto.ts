@@ -4,6 +4,7 @@
  */
 
 import {
+    AimOutline,
     ApartmentOutline,
     ArrowDownOutline,
     ArrowLeftOutline,
@@ -25,13 +26,16 @@ import {
     DeleteTwoTone,
     DownloadOutline,
     EditFill,
+    EditTwoTone,
     EllipsisOutline,
     EyeInvisibleOutline,
     EyeOutline,
+    EyeTwoTone,
     FileImageOutline,
     FullscreenExitOutline,
     FullscreenOutline,
     GlobalOutline,
+    HolderOutline,
     IdcardOutline,
     ImportOutline,
     InboxOutline,
@@ -138,5 +142,9 @@ export const ICONS_AUTO = [
     BellOutline,
     MoreOutline,
     MinusCircleOutline,
-    NodeIndexOutline
+    NodeIndexOutline,
+    EyeTwoTone,
+    EditTwoTone,
+    AimOutline,
+    HolderOutline
 ];

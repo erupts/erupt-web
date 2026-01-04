@@ -8,6 +8,7 @@ import {I18NService} from "@core";
 import {EditTypeComponent} from "../edit-type/edit-type.component";
 
 @Component({
+    standalone: false,
     selector: 'erupt-choice',
     templateUrl: './choice.component.html',
     styleUrls: ['./choice.component.less'],
@@ -49,23 +50,10 @@ export class ChoiceComponent implements OnInit {
                         this.eruptField.eruptFieldJson.edit.$value = null;
                     }
                 }
-                if (choiceType.dependExpr == '') {
-                    this.dataService.findChoiceItemFilter(this.eruptModel.eruptName, this.eruptField.fieldName, this.getFromData(), this.eruptParentName).subscribe(data => {
-                        this.choiceVL = data;
-                        clean();
-                    })
-                } else {
-                    this.choiceVL = this.eruptField.componentValue.filter(vl => {
-                        try {
-                            return eval(choiceType.dependExpr);
-                        } catch (e) {
-                            this.msg.error(e);
-                        } finally {
-                            clean();
-                        }
-                    })
-                }
-
+                this.dataService.findChoiceItemFilter(this.eruptModel.eruptName, this.eruptField.fieldName, this.getFromData(), this.eruptParentName).subscribe(data => {
+                    this.choiceVL = data;
+                    clean();
+                })
             })
         } else {
             this.choiceVL = this.eruptField.componentValue

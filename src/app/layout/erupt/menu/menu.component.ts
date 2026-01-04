@@ -20,7 +20,7 @@ import {NavigationEnd, Router} from '@angular/router';
 import {filter, Subject, takeUntil} from 'rxjs';
 
 import {Menu, MenuIcon, MenuInner, MenuService, SettingsService} from '@delon/theme';
-import {InputBoolean, InputNumber, ZoneOutside} from '@delon/util/decorator';
+import {ZoneOutside} from '@delon/util/decorator';
 import {WINDOW} from '@delon/util/token';
 import type {NzSafeAny} from 'ng-zorro-antd/core/types';
 import {AppViewService} from "@shared/service/app-view.service";
@@ -34,6 +34,7 @@ const SHOWCLS = 'sidebar-nav__floating-show';
 const FLOATINGCLS = 'sidebar-nav__floating';
 
 @Component({
+    standalone: false,
     selector: 'erupt-menu',
     templateUrl: './menu.component.html',
     host: {
@@ -59,19 +60,18 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     loading: boolean = true;
 
-    @Input() @InputBoolean() disabledAcl = false;
+    @Input() disabledAcl = false;
 
-    @Input() @InputBoolean() autoCloseUnderPad = true;
+    @Input() autoCloseUnderPad = true;
 
-    @Input() @InputBoolean() recursivePath = true;
+    @Input() recursivePath = true;
 
     @Input()
-    @InputBoolean()
     set openStrictly(value: boolean) {
         this.menuSrv.openStrictly = value;
     }
 
-    @Input() @InputNumber() maxLevelIcon = 3;
+    @Input() maxLevelIcon = 3;
 
     @Output() readonly select = new EventEmitter<Menu>();
 

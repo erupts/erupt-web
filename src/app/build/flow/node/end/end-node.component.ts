@@ -6,6 +6,7 @@ import {geneNodeId} from "@flow/util/flow.util";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
+    standalone: false,
   selector: 'app-end-node',
   templateUrl: './end-node.component.html',
   styleUrls: ['./end-node.component.less']

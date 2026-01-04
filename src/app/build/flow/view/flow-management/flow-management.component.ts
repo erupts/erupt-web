@@ -15,6 +15,7 @@ interface FlowGroupWithCount extends FlowGroup {
 }
 
 @Component({
+    standalone: false,
     selector: 'erupt-flow-management',
     templateUrl: './flow-management.component.html',
     styleUrls: ['./flow-management.component.less']
@@ -279,6 +280,77 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
             error: (error) => {
                 console.error('分组排序失败:', error);
                 this.message.error('分组排序失败');
+            }
+        });
+    }
+
+    // 流程拖拽排序
+    onFlowDrop(event: CdkDragDrop<FlowConfig[]>): void {
+        // 只有在选中了分组时才允许排序
+        if (this.selectedCategory === null) {
+            this.message.warning('请先选择分组后再进行排序');
+            return;
+        }
+
+        // 获取当前分组的所有流程配置（用于验证）
+        const currentConfigs = this.getConfigsByCategory(this.selectedCategory);
+
+        // 如果当前显示的配置数量与分组配置数量不一致（可能被搜索过滤），则不允许排序
+        const displayedConfigs = this.getCurrentConfigs();
+        if (currentConfigs.length !== displayedConfigs.length) {
+            this.message.warning('搜索状态下无法排序，请先清除搜索条件');
+            return;
+        }
+
+        // 找到当前分组配置在原始数组中的索引范围
+        const groupConfigIndices: number[] = [];
+        this.flowConfigs.forEach((config, index) => {
+            if (config.flowGroup?.id === this.selectedCategory) {
+                groupConfigIndices.push(index);
+            }
+        });
+
+        // 如果索引数量不匹配，重新加载数据
+        if (groupConfigIndices.length !== currentConfigs.length) {
+            this.loadFlowConfigs();
+            return;
+        }
+
+        // 计算在原始数组中的实际索引
+        const fromIndex = groupConfigIndices[event.previousIndex];
+        const toIndex = groupConfigIndices[event.currentIndex];
+
+        // 更新原始数组顺序
+        moveItemInArray(this.flowConfigs, fromIndex, toIndex);
+
+        // 调用排序API
+        this.sortFlows();
+    }
+
+    // 排序流程
+    sortFlows(): void {
+        if (!this.selectedCategory) {
+            return;
+        }
+
+        // 获取当前分组的所有流程配置（按新的顺序）
+        const currentConfigs = this.getConfigsByCategory(this.selectedCategory);
+        const ids = currentConfigs.map(config => config.id).filter(id => id !== undefined) as number[];
+
+        if (ids.length === 0) {
+            return;
+        }
+
+        this.flowApiService.flowSort(ids, this.selectedCategory).subscribe({
+            next: (response: R<void>) => {
+                if (!response.success) {
+                    this.loadFlowConfigs();
+                    this.message.error(response.message || 'Sort Error');
+                }
+            },
+            error: (error) => {
+                this.loadFlowConfigs();
+                this.message.error('Sort Error');
             }
         });
     }

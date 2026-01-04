@@ -32,7 +32,6 @@ import {NzIconService} from "ng-zorro-antd/icon";
 import {ResetPwdComponent} from "../../routes/reset-pwd/reset-pwd.component";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {EruptAppData} from "@shared/model/erupt-app.model";
-import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {Userinfo} from "@shared/model/user.model";
 import {UtilsService} from "@shared/service/utils.service";
 import {SocketService} from "@shared/service/socket.service";
@@ -59,6 +58,7 @@ const ICONS = [
 // #endregion
 
 @Component({
+    standalone: false,
     selector: "layout-erupt",
     templateUrl: "./erupt.component.html",
     preserveWhitespaces: false,
@@ -101,7 +101,6 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 private socketService: SocketService,
-                @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
                 private i18n: I18NService,
                 private utilsService: UtilsService,
                 @Optional()
@@ -110,11 +109,11 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 @Inject(DOCUMENT) private doc: any) {
         iconSrv.addIcon(...ICONS);
         let initReuseTab = false;
-        this.themes = [
-            {key: 'default', text: this.i18n.fanyi("theme.default")},
-            {key: 'dark', text: this.i18n.fanyi("theme.dark")},
-            {key: 'compact', text: this.i18n.fanyi("theme.compact")},
-        ]
+        // this.themes = [
+        //     {key: 'default', text: this.i18n.fanyi("theme.default")},
+        //     {key: 'dark', text: this.i18n.fanyi("theme.dark")},
+        //     {key: 'compact', text: this.i18n.fanyi("theme.compact")},
+        // ]
         router.events.subscribe(evt => {
             if (!this.isFetching && evt instanceof RouteConfigLoadStart) {
                 this.isFetching = true;
@@ -286,3 +285,4 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         this.notify$.unsubscribe();
     }
 }
+

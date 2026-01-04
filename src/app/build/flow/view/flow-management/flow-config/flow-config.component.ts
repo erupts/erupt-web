@@ -6,14 +6,18 @@ import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlowConfig, FlowGroup, FlowPermission, FlowUpmsScope, UpmsScope} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {FormSize} from "../../../../erupt/model/erupt.enum";
+import {EditType, FormSize} from "../../../../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
 import {UpmsDataService} from "@flow/service/upms-data.service";
 import {DataHandlerService} from "../../../../erupt/service/data-handler.service";
+import html2canvas from "html2canvas";
+import {DataService} from "@shared/service/data.service";
+import {NoticeChannel} from "@shared/model/user.model";
 
 @Component({
+    standalone: false,
     selector: 'app-flow-config',
     templateUrl: './flow-config.component.html',
     styleUrls: ['./flow-config.component.less']
@@ -38,6 +42,10 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     // 分组选项
     groupOptions: FlowGroup[] = [];
 
+    noticeChannel: NoticeChannel[];
+
+    shotLoading = false;
+
     @ViewChild('iconPopover') iconPopover!: NzPopoverComponent;
 
     @Output() closeConfig = new EventEmitter();
@@ -45,6 +53,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     constructor(private flowApiService: FlowApiService, private modal: NzModalService,
                 private dataHandlerService: DataHandlerService,
                 private msg: NzMessageService,
+                private dataService: DataService,
                 private upmsDataService: UpmsDataService) {
 
     }
@@ -77,6 +86,9 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         });
         this.flowApiService.flexNodes().subscribe(res => {
             this.flexNodes = res.data;
+        })
+        this.dataService.noticeChannels().subscribe(res => {
+            this.noticeChannel = res.data;
         })
     }
 
@@ -169,6 +181,10 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             this.msg.warning('请选择提交权限');
             return;
         }
+        if (!this.flowConfig.channels || this.flowConfig.channels.length === 0) {
+            this.msg.warning('请选择通知渠道');
+            return;
+        }
         this.flowApiService.ruleCheck(this.flowConfig.rule).subscribe(res => {
             if (res.success) {
                 if (this.flowId) {
@@ -201,6 +217,22 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                 this.msg.success('已复制到剪贴板');
             });
         }
+    }
+
+    async shot() {
+        this.shotLoading = true;
+        const el = document.getElementById('flow-canvas');
+        const canvas = await html2canvas(el, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: false,
+        });
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = `${this.flowConfig.name || 'flow'}.png`;
+        link.click();
+        link.remove()
+        this.shotLoading = false;
     }
 
     close(): void {
@@ -274,4 +306,5 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         return upmsScope.scopeValue.toString();
     }
 
+    protected readonly EditType = EditType;
 }

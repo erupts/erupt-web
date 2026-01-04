@@ -3,6 +3,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
+    standalone: false,
   selector: 'header-storage',
   template: `
   <i nz-icon nzType="tool"></i>

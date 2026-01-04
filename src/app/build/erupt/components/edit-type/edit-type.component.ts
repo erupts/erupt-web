@@ -11,12 +11,13 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {NzUploadFile} from "ng-zorro-antd/upload/interface";
+import {NzUploadFile} from "ng-zorro-antd/upload";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {BehaviorSubject} from "rxjs";
 import {SignaturePadComponent} from "../signature-pad/signature-pad.component";
 
 @Component({
+    standalone: false,
     selector: "erupt-edit-type",
     templateUrl: "./edit-type.component.html",
     styleUrls: ["./edit-type.component.less"]
@@ -112,6 +113,31 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 this.dynamicByFieldModels.push(model);
                 this.dynamicByCheck(model);
             }
+            if (model.eruptFieldJson.edit.onchange && model.eruptFieldJson.edit.onchange != "OnChange") {
+                model.eruptFieldJson.edit.$valueSubject.subscribe((value) => {
+                    this.dataService.onChange(this.eruptModel.eruptName, model.fieldName, this.dataHandlerService.eruptValueToObject(this.eruptBuildModel)).subscribe(res => {
+                        if (res.data.formData) {
+                            for (let k of Object.keys(res.data.formData)) {
+                                let v = res.data.formData[k];
+                                let eruptFieldModel: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(k);
+                                if (eruptFieldModel) {
+                                    eruptFieldModel.eruptFieldJson.edit.$value = v;
+                                }
+                            }
+                        }
+                        if (res.data.editExpr) {
+                            for (let k of Object.keys(res.data.editExpr)) {
+                                let v = res.data.editExpr[k];
+                                let eruptFieldModel: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(k);
+                                if (eruptFieldModel) {
+                                    let e = eruptFieldModel.eruptFieldJson.edit;
+                                    new Function("edit", v)(e);
+                                }
+                            }
+                        }
+                    })
+                })
+            }
         }
     }
 
@@ -151,7 +177,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         let dynamicBy = model.eruptFieldJson.edit.dynamic;
         let value = this.eruptModel.eruptFieldModelMap.get(dynamicBy.dependField).eruptFieldJson.edit.$value;
         try {
-            let match = !!eval(dynamicBy.condition);
+            let match = !!new Function("value", "return " + dynamicBy.condition)(value);
             if (match) {
                 this.dynamicMatch(model, dynamicBy.noMatch, false)
                 this.dynamicMatch(model, dynamicBy.match, true)

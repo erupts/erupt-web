@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, HostListener} from "@angular/core";
 import screenfull from 'screenfull';
 
 @Component({
+    standalone: false,
     selector: "header-fullscreen",
     template: `
         <i nz-icon [nzType]="status ? 'fullscreen-exit' : 'fullscreen'"></i>

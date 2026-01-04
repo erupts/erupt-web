@@ -1,0 +1,20 @@
+<nz-spin [nzSpinning]="noticeMessageDetail === null">
+  @if (noticeMessageDetail) {
+    <div style="padding: 12px">
+      <p class="message-content" [innerHTML]="noticeMessageDetail.noticeLog.content|safeHtml"></p>
+    </div>
+    <div style="padding: 12px;border: 1px solid #e8e8e8;">
+      <nz-tag [nzColor]="'volcano'"> {{ noticeMessageDetail.noticeLog.noticeScene?.name }}</nz-tag>
+      @if (noticeMessageDetail.noticeLog?.url) {
+        <span nz-icon
+          nzType="link"
+          nzTheme="outline"
+          (click)="openUrlDrawer(noticeMessageDetail.noticeLog.url, noticeMessageDetail.noticeLog.title || '')"
+          style="margin-left: 8px; cursor: pointer; color: #1890ff;"
+          nz-tooltip>
+        </span>
+      }
+      <span style="float: right">{{ noticeMessageDetail.noticeLog.createTime }}</span>
+    </div>
+  }
+</nz-spin>

@@ -112,6 +112,17 @@ export class UiBuildService {
                         }
                     };
                     break;
+                case EditType.CHOICE:
+                    obj.format = (item: any) => {
+                        if (item[view.column] != null) {
+                            return "<span style='color:" + view.eruptFieldModel.choiceLabelMap.get(item[view.column] + "")?.color + "'>"
+                                + item[view.column]
+                                + "</span>";
+                        } else {
+                            return "";
+                        }
+                    };
+                    break;
             }
 
             obj.width = titleWidth;
@@ -561,7 +572,7 @@ export class UiBuildService {
                 obj.format = (item: any) => {
                     try {
                         let value = item[view.column];
-                        return eval(view.template);
+                        return new Function('value', "return " + view.template)(value);
                     } catch (e) {
                         console.error(e);
                         this.msg.error(e.toString());
@@ -627,7 +638,7 @@ export class UiBuildService {
         if ($paths.length == 1) {
             if (viewType == ViewType.DOWNLOAD || viewType == ViewType.ATTACHMENT) {
                 const a = document.createElement('a');
-                a.href = DataService.downloadAttachment(path);
+                a.href = DataService.previewAttachment(path, true);
                 a.click();
                 a.remove();
             } else if (viewType == ViewType.ATTACHMENT_DIALOG) {

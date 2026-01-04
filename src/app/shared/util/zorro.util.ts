@@ -1,4 +1,4 @@
-import {NzTreeNode} from "ng-zorro-antd/core/tree/nz-tree-base-node";
+import {NzTreeNode} from "ng-zorro-antd/core/tree";
 
 export function calcChecks(nodes: NzTreeNode[]): any[] {
     let arr = [];

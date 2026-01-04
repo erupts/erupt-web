@@ -2,16 +2,14 @@ import {Edit, EruptFieldModel, VL} from "../model/erupt-field.model";
 import {EruptModel, Tree} from "../model/erupt.model";
 import {DateEnum, EditType} from "../model/erupt.enum";
 import {deepCopy} from "@delon/util";
-import {Inject, Injectable} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {EruptBuildModel} from "../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {DatePipe} from "@angular/common";
 import moment from 'moment';
 import {QueryCondition} from "../model/erupt.vo";
 import {isNotNull} from "@shared/util/erupt.util";
-import {NzModalService} from "ng-zorro-antd/modal";
-import {NzMessageService} from "ng-zorro-antd/message";
-import {NzUploadFile} from "ng-zorro-antd/upload/interface";
+import {NzUploadFile} from "ng-zorro-antd/upload";
 import {NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
 import {I18NService} from "@core";
 
@@ -20,10 +18,7 @@ export class DataHandlerService {
 
     private datePipe: DatePipe;
 
-    constructor(
-        @Inject(NzModalService) private modal: NzModalService,
-        @Inject(NzMessageService) private msg: NzMessageService,
-        private i18n: I18NService) {
+    constructor(private i18n: I18NService) {
         this.datePipe = i18n.datePipe;
     }
 
@@ -59,8 +54,10 @@ export class DataHandlerService {
             }
             if (field.componentValue) {
                 field.choiceMap = new Map<String, VL>();
+                field.choiceLabelMap = new Map<String, VL>()
                 for (let vl of field.componentValue) {
                     field.choiceMap.set(vl.value, vl);
+                    field.choiceLabelMap.set(vl.label, vl)
                 }
             }
             field.eruptFieldJson.edit.$value = field.value;
@@ -99,26 +96,6 @@ export class DataHandlerService {
                 eruptModel.tableColumns.push(view);
             });
         });
-    }
-
-    //非空验证
-    validateNotNull(eruptModel: EruptModel, combineErupt?: { [key: string]: EruptModel }): boolean {
-        for (let field of eruptModel.eruptFieldModels) {
-            if (field.eruptFieldJson.edit.notNull) {
-                if (!field.eruptFieldJson.edit.$value) {
-                    this.msg.error(field.eruptFieldJson.edit.title + "必填！");
-                    return false;
-                }
-            }
-        }
-        if (combineErupt) {
-            for (let key in combineErupt) {
-                if (!this.validateNotNull(combineErupt[key])) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     dataTreeToZorroTree(nodes: Tree[], expandLevel: number): NzTreeNodeOptions[] {
@@ -276,6 +253,9 @@ export class DataHandlerService {
                         break;
                     case EditType.TAB_TREE:
                         if (edit.$value) {
+                            if (!eruptBuildModel.tabErupts) {
+                                return;
+                            }
                             let ids = [];
                             (<any[]>edit.$value).forEach(val => {
                                 const obj = {};
@@ -287,6 +267,9 @@ export class DataHandlerService {
                         break;
                     case EditType.TAB_TABLE_REFER:
                         if (edit.$value) {
+                            if (!eruptBuildModel.tabErupts) {
+                                return;
+                            }
                             let ids = [];
                             (<any[]>edit.$value).forEach(val => {
                                 const obj = {};
@@ -300,6 +283,9 @@ export class DataHandlerService {
                     case EditType.TAB_TABLE_ADD:
                         if (edit.$value) {
                             if (typeof edit.$value === "object") {
+                                if (!eruptBuildModel.tabErupts) {
+                                    return;
+                                }
                                 let pk = eruptBuildModel.tabErupts[field.fieldName].eruptModel.eruptJson.primaryKeyCol
                                 for (let val of edit.$value) {
                                     if (val[pk] < 0) {

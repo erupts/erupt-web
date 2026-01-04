@@ -4,9 +4,11 @@ import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {NodeType} from "@flow/model/node.model";
 import {getAvatarColor} from "@flow/util/flow.util";
 import {FlowApprovalDetailComponent} from "@flow/view/flow-approval-detail/flow-approval-detail.component";
+import {SettingsService} from "@delon/theme";
 
 
 @Component({
+    standalone: false,
     selector: 'app-flow-approval',
     templateUrl: './flow-approval.component.html',
     styleUrls: ['./flow-approval.component.less']
@@ -27,6 +29,7 @@ export class FlowApprovalComponent implements OnInit {
     @ViewChild(FlowApprovalDetailComponent) private approvalDetail!: FlowApprovalDetailComponent;
 
     constructor(
+        public settingSrv: SettingsService,
         private flowInstanceApiService: FlowInstanceApiService,
     ) {
     }

@@ -1,85 +1,89 @@
 <erupt-node
-    [(model)]="modelValue"
-    [readonly]="readonly"
-    [headerColor]="color()"
-    [eruptBuild]="eruptBuild"
-    (select)="onSelect()"
-    (insertNode)="onInsertNode($event)"
-    (insertFlexNode)="onInsertFlexNode($event)"
-    [progress]="progress"
-    (saveProp)="onSaveProp()"
-    (delete)="onDelete()">
-    {{'SUB_FLOW'|translate}}
-    <div config *ngIf="subNode">
-        <nz-select style="width: 100%" nzShowSearch nzPlaceHolder="选择子流程" [(ngModel)]="subNode.subFlowId" (ngModelChange)="changeSubFlow($event)">
-            <nz-option *ngFor="let config of flowConfigs" [nzValue]="config.id" [nzLabel]="config.name">
-
-            </nz-option>
-        </nz-select>
-
-        <div style="margin: 12px 0" *ngIf="subEruptBuild">
-
-            <nz-tabset>
-                <nz-tab nzTitle="父流程 → 子流程">
-                    <ng-container *ngFor="let mapping of subNode.mappings; let i = index">
-                        <div style="display: flex;align-items:center;gap: 8px;margin-bottom: 12px">
-                            <nz-select nzShowSearch nzPlaceHolder="主流程字段" style="flex: 1" [(ngModel)]="mapping.source">
-                                <ng-container *ngFor="let field of this.eruptBuild.eruptModel.eruptFieldModels">
-                                    <nz-option *ngIf="field.eruptFieldJson.edit.title"
-                                               [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title">
-
-                                    </nz-option>
-                                </ng-container>
-                            </nz-select>
-                            →
-                            <nz-select nzShowSearch nzPlaceHolder="子流程字段" style="flex: 1" [(ngModel)]="mapping.target">
-                                <ng-container *ngFor="let field of subEruptBuild.eruptModel.eruptFieldModels">
-                                    <nz-option *ngIf="field.eruptFieldJson.edit.title"
-                                               [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title">
-
-                                    </nz-option>
-                                </ng-container>
-                            </nz-select>
-                            <button nz-button nzType="text" nzDanger (click)="subNode.mappings.splice(i, 1)">
-                                <span nz-icon nzType="minus-circle" nzTheme="outline"></span>
-                            </button>
-                        </div>
-                    </ng-container>
-                    <div style="margin: 12px 0">
-                        <button nz-button nzType="primary" (click)="addMapping()">添加映射</button>
-                    </div>
-                </nz-tab>
-                <nz-tab nzTitle="子流程 → 父流程">
-                    <ng-container *ngFor="let mapping of subNode.mappingsReverse; let i = index">
-                        <div style="display: flex;align-items:center;gap: 8px;margin-bottom: 12px">
-                            <nz-select nzShowSearch nzPlaceHolder="子流程字段" style="flex: 1" [(ngModel)]="mapping.source">
-                                <ng-container *ngFor="let field of subEruptBuild.eruptModel.eruptFieldModels">
-                                    <nz-option *ngIf="field.eruptFieldJson.edit.title"
-                                               [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title">
-
-                                    </nz-option>
-                                </ng-container>
-                            </nz-select>
-                            →
-                            <nz-select nzShowSearch nzPlaceHolder="主流程字段" style="flex: 1" [(ngModel)]="mapping.target">
-                                <ng-container *ngFor="let field of this.eruptBuild.eruptModel.eruptFieldModels">
-                                    <nz-option *ngIf="field.eruptFieldJson.edit.title"
-                                               [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title">
-
-                                    </nz-option>
-                                </ng-container>
-                            </nz-select>
-                            <button nz-button nzType="text" nzDanger (click)="subNode.mappingsReverse.splice(i, 1)">
-                                <span nz-icon nzType="minus-circle" nzTheme="outline"></span>
-                            </button>
-                        </div>
-                    </ng-container>
-                    <div style="margin: 12px 0">
-                        <button nz-button nzType="primary" (click)="addMappingForParent()">添加映射</button>
-                    </div>
-                </nz-tab>
-            </nz-tabset>
-
+  [(model)]="modelValue"
+  [readonly]="readonly"
+  [headerColor]="color()"
+  [eruptBuild]="eruptBuild"
+  (select)="onSelect()"
+  (insertNode)="onInsertNode($event)"
+  (insertFlexNode)="onInsertFlexNode($event)"
+  [progress]="progress"
+  (saveProp)="onSaveProp()"
+  (delete)="onDelete()">
+  {{ 'SUB_FLOW'|translate }}
+  @if (subNode) {
+    <div config>
+      <nz-select style="width: 100%" nzShowSearch nzPlaceHolder="选择子流程" [(ngModel)]="subNode.subFlowId" (ngModelChange)="changeSubFlow($event)">
+        @for (config of flowConfigs; track config) {
+          <nz-option [nzValue]="config.id" [nzLabel]="config.name">
+          </nz-option>
+        }
+      </nz-select>
+      @if (subEruptBuild) {
+        <div style="margin: 12px 0">
+          <nz-tabset>
+            <nz-tab nzTitle="父流程 → 子流程">
+              @for (mapping of subNode.mappings; track mapping; let i = $index) {
+                <div style="display: flex;align-items:center;gap: 8px;margin-bottom: 12px">
+                  <nz-select nzShowSearch nzPlaceHolder="主流程字段" style="flex: 1" [(ngModel)]="mapping.source" (ngModelChange)="mapping.target = null">
+                    @for (field of this.eruptBuild.eruptModel.eruptFieldModels; track field) {
+                      @if (field.eruptFieldJson.edit.title) {
+                        <nz-option
+                          [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title">
+                        </nz-option>
+                      }
+                    }
+                  </nz-select>
+                  →
+                  <nz-select nzShowSearch nzPlaceHolder="子流程字段" [disabled]="!mapping.source" style="flex: 1" [(ngModel)]="mapping.target">
+                    @for (field of subEruptBuild.eruptModel.eruptFieldModels; track field) {
+                      @if (field.eruptFieldJson.edit.title && field.eruptFieldJson.edit.type == this.eruptBuild.eruptModel.eruptFieldModelMap?.get(mapping.source)?.eruptFieldJson.edit.type) {
+                        <nz-option [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title">
+                        </nz-option>
+                      }
+                    }
+                  </nz-select>
+                  <button nz-button nzType="text" nzDanger (click)="subNode.mappings.splice(i, 1)">
+                    <span nz-icon nzType="minus-circle" nzTheme="outline"></span>
+                  </button>
+                </div>
+              }
+              <div style="margin: 12px 0">
+                <button nz-button nzType="primary" (click)="addMapping()">添加映射</button>
+              </div>
+            </nz-tab>
+            <nz-tab nzTitle="子流程 → 父流程">
+              @for (mapping of subNode.mappingsReverse; track mapping; let i = $index) {
+                <div style="display: flex;align-items:center;gap: 8px;margin-bottom: 12px">
+                  <nz-select nzShowSearch nzPlaceHolder="子流程字段" style="flex: 1" [(ngModel)]="mapping.source" (ngModelChange)="mapping.target = null">
+                    @for (field of subEruptBuild.eruptModel.eruptFieldModels; track field) {
+                      @if (field.eruptFieldJson.edit.title) {
+                        <nz-option
+                          [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title">
+                        </nz-option>
+                      }
+                    }
+                  </nz-select>
+                  →
+                  <nz-select nzShowSearch nzPlaceHolder="主流程字段" [disabled]="!mapping.source" style="flex: 1" [(ngModel)]="mapping.target">
+                    @for (field of this.eruptBuild.eruptModel.eruptFieldModels; track field) {
+                      @if (field.eruptFieldJson.edit.title && field.eruptFieldJson.edit.type == this.eruptBuild.eruptModel.eruptFieldModelMap?.get(mapping.source)?.eruptFieldJson.edit.type) {
+                        <nz-option [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title">
+                        </nz-option>
+                      }
+                    }
+                  </nz-select>
+                  <button nz-button nzType="text" nzDanger (click)="subNode.mappingsReverse.splice(i, 1)">
+                    <span nz-icon nzType="minus-circle" nzTheme="outline"></span>
+                  </button>
+                </div>
+              }
+              <div style="margin: 12px 0">
+                <button nz-button nzType="primary" (click)="addMappingForParent()">添加映射</button>
+              </div>
+            </nz-tab>
+          </nz-tabset>
         </div>
+      }
     </div>
+  }
 </erupt-node>

@@ -4,10 +4,12 @@ import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
-import {ApprovalStrategy, ApprovalTimeoutAction, ApproveNode, ReviewMode} from "@flow/model/fllw-approval.model";
+import {ApprovalStrategy, ApprovalTimeoutAction, ApproveNode, NobodyStrategy, ReviewMode} from "@flow/model/fllw-approval.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
+import {UpmsDataService} from "@flow/service/upms-data.service";
 
 @Component({
+    standalone: false,
     selector: 'app-approval-node',
     templateUrl: './approval-node.component.html',
     styleUrls: ['./approval-node.component.less']
@@ -29,6 +31,10 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
     approveNode: ApproveNode = new ApproveNode();
 
     selectTab: number = 0;
+
+    constructor(protected upmsDataService?: UpmsDataService) {
+        super();
+    }
 
 
     ngOnInit(): void {
@@ -92,7 +98,7 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
             id: geneNodeId(),
             type: this.type(),
             name: this.name(),
-            prop: this.approveNode
+            prop: new ApproveNode()
         };
     }
 
@@ -102,6 +108,7 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
 
     protected readonly ApprovalStrategy = ApprovalStrategy;
 
+    protected readonly NobodyStrategy = NobodyStrategy;
 
     protected readonly ApprovalTimeoutAction = ApprovalTimeoutAction;
 }

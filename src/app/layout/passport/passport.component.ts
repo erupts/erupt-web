@@ -5,6 +5,7 @@ import {EruptTenantInfoData} from "../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
 
 @Component({
+    standalone: false,
     selector: "layout-passport",
     templateUrl: "./passport.component.html",
     styleUrls: ["./passport.component.less"]

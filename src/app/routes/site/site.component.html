@@ -1,9 +1,13 @@
 <div class="page-container">
-    <p *ngIf="targetUrl" class="text-center" style="font-size: 2.6em;position: relative;top: 30%;">
-        <a [href]="targetUrl" target="_blank">{{targetUrl}}</a>
+  @if (targetUrl) {
+    <p class="text-center" style="font-size: 2.6em;position: relative;top: 30%;">
+      <a [href]="targetUrl" target="_blank">{{targetUrl}}</a>
     </p>
-    <nz-spin *ngIf="url" [nzSpinning]="spin" style="height:100%;width: 100%">
-        <iframe (load)="iframeLoad()" [src]="url | safeUrl" frameborder="0" height="100%" width="100%" style="vertical-align: bottom;">
-        </iframe>
+  }
+  @if (url) {
+    <nz-spin [nzSpinning]="spin" style="height:100%;width: 100%">
+      <iframe (load)="iframeLoad()" [src]="url | safeUrl" frameborder="0" height="100%" width="100%" style="vertical-align: bottom;">
+      </iframe>
     </nz-spin>
+  }
 </div>

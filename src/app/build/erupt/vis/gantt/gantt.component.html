@@ -1,0 +1,90 @@
+<div class="gantt-container">
+    <ngx-gantt #gantt [items]="items || []" [groups]="groups" [showToolbar]="true"
+               [viewType]="GanttViewType.day" [draggable]="eruptBuildModel.eruptModel.eruptJson.power.edit"
+               [toolbarOptions]="{viewTypes:[GanttViewType.day, GanttViewType.week, GanttViewType.month,GanttViewType.quarter, GanttViewType.year]}"
+               [ngStyle]="{height: (44 * 13) + 'px'}"
+               [virtualScrollEnabled]="true"
+               (dragEnded)="dragEnded($event)"
+               (viewChange)="onViewChange()">
+        <ngx-gantt-table>
+            @if (editColumnWidth) {
+                <ngx-gantt-column [width]="editColumnWidth">
+                    <ng-template #header>
+                        <div style="text-align: center;width: 100%">
+                            <label nz-checkbox
+                                   [nzChecked]="isAllSelected()"
+                                   [nzIndeterminate]="isIndeterminate()"
+                                   (nzCheckedChange)="toggleSelectAll($event)"
+                                   (click)="$event.stopPropagation()">
+                            </label>
+                        </div>
+                    </ng-template>
+                    <ng-template #cell let-item="item">
+                        <div style="text-align: center" (click)="toggleSelection(item)">
+                            <label nz-checkbox
+                                   [nzChecked]="isSelected(item)"
+                                   (nzCheckedChange)="toggleSelection(item)"
+                                   (click)="$event.stopPropagation()">
+                            </label>
+                        </div>
+                    </ng-template>
+                </ngx-gantt-column>
+            }
+            @for (field of eruptBuildModel.eruptModel.eruptFieldModels; track field.fieldName;) {
+                @for (view of field.eruptFieldJson.views;track view) {
+                    @if ((vis.fieldVisibility == FieldVisibility.EXCLUDE) ? vis.fields.indexOf(view.column) === -1 : vis.fields.indexOf(view.column) !== -1) {
+                        <ngx-gantt-column [name]="view.title">
+                            <ng-template #cell let-item="item">
+                                <div (click)="columnMap.get(field.fieldName)?.click(item?.origin)"
+                                     style="cursor: pointer;">
+                                    @if (columnMap.get(field.fieldName)?.format) {
+                                        <div style="text-align: center"
+                                             [innerHTML]="(columnMap.get(field.fieldName)?.format(item?.origin,columnMap.get(field.fieldName),null)||'')|safeHtml"></div>
+                                    } @else {
+                                        <div
+                                            [innerHTML]="(item?.origin[view.column]==null?'':item?.origin[view.column])|safeHtml"></div>
+                                    }
+                                </div>
+                            </ng-template>
+                        </ngx-gantt-column>
+                    }
+                }
+            }
+            @if (eruptBuildModel.eruptModel.eruptJson.power.edit) {
+                <ngx-gantt-column [width]="50">
+                    <ng-template #header>
+                        <div style="text-align: center;width: 100%">
+                            <i nz-icon nzType="edit"></i>
+                        </div>
+                    </ng-template>
+                    <ng-template #cell let-item="item">
+                        <div (click)="edit(item)">
+                            <i nz-icon nzType="edit" nzTheme="twotone" style="cursor: pointer"></i>
+                        </div>
+                    </ng-template>
+                </ngx-gantt-column>
+            }
+
+            <ngx-gantt-column width="50px">
+                <ng-template #header>
+                    <div style="text-align: center;width: 100%">
+                        <i nz-icon nzType="aim" nzTheme="outline"></i>
+                    </div>
+                </ng-template>
+                <ng-template #cell let-item="item">
+                    @if (item.start || item.end) {
+                        <div (click)="scrollToDate(item)" style="text-align: center">
+                            <i nz-icon nzType="aim" nzTheme="outline" style="cursor: pointer;color: #09f"></i>
+                        </div>
+                    }
+                </ng-template>
+            </ngx-gantt-column>
+        </ngx-gantt-table>
+    </ngx-gantt>
+    <button nz-button nzType="primary" nzShape="circle" nzSize="large"
+            class="scroll-to-today-btn"
+            (click)="scrollToToday()"
+            nz-tooltip nzTooltipTitle="定位到今天">
+        <i nz-icon nzType="calendar" nzTheme="outline"></i>
+    </button>
+</div>

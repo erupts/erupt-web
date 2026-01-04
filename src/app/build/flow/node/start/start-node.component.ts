@@ -9,6 +9,7 @@ import {FormAccessEnum} from "@flow/model/flow.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
+    standalone: false,
     selector: 'app-start-node',
     templateUrl: './start-node.component.html',
     styleUrls: ['./start-node.component.less']
@@ -72,7 +73,7 @@ export class StartNodeComponent extends ANode implements OnInit {
             id: geneNodeId(),
             type: this.type(),
             name: this.name(),
-            prop: this.startNode
+            prop: new StartNode()
         }
     }
 

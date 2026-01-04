@@ -5,6 +5,7 @@ import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
+    standalone: false,
     selector: 'erupt-node',
     templateUrl: './node.component.html',
     styleUrls: ['./node.component.less']
@@ -92,5 +93,4 @@ export class NodeComponent implements AfterViewInit {
         this.showDrawer = false;
     }
 
-    protected readonly process = module
 }

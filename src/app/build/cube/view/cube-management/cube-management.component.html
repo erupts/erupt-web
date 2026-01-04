@@ -1,0 +1,19 @@
+<div class="cube-puzzle-container" [style.height]="isFillRoute ? '100vh' : 'calc(100vh - 50px)'">
+  <div class="puzzle-filter">
+    Filter Filter
+  </div>
+  <gridster [options]="options">
+    @for (item of dashboard; track item) {
+      <gridster-item [item]="item">
+        <div style="height: 100%; position: relative;">
+          <div class="puzzle-content">
+            <div class="drag-handler" title="Drag">
+              <span style="transform: rotate(90deg)">⋮⋮</span>
+            </div>
+            <img [src]="item['src']" alt="" style="width: 100%">
+          </div>
+        </div>
+      </gridster-item>
+    }
+  </gridster>
+</div>
