@@ -11,60 +11,64 @@
         color: #fff;
     }
 
-    .puzzle-content {
-        overflow: auto;
+    .puzzle-item {
         height: 100%;
         position: relative;
-        //padding: 12px;
 
-        // 当鼠标悬停在内容区域时显示拖拽手柄
         &:hover .drag-handler {
             opacity: 1;
             visibility: visible;
         }
-    }
 
-    .drag-handler {
-        position: absolute;
-        top: 6px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 0 6px;
-        z-index: 100;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 255, 255, 0.5);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 4px;
-        cursor: move;
-        user-select: none;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.2s;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-        span {
-            font-size: 14px;
-            color: #595959;
-            line-height: 1;
-            transition: color 0.2s;
+        .puzzle-content {
+            overflow: auto;
+            height: 100%;
+            position: relative;
+            //padding: 12px;
         }
 
-        &:hover {
-            background: rgba(255, 255, 255, 0.95);
-            border-color: rgba(0, 0, 0, 0.15);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        .drag-handler {
+            position: fixed;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0 6px;
+            z-index: 100;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            cursor: move;
+            user-select: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
             span {
-                color: #262626;
+                font-size: 14px;
+                color: #595959;
+                line-height: 1;
+                transition: color 0.2s;
             }
-        }
 
-        &:active {
-            transform: translateX(-50%) scale(0.95);
+            &:hover {
+                background: rgba(255, 255, 255, 0.95);
+                border-color: rgba(0, 0, 0, 0.15);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+                span {
+                    color: #262626;
+                }
+            }
+
+            &:active {
+                transform: translateX(-50%) scale(0.95);
+            }
         }
     }
 }
