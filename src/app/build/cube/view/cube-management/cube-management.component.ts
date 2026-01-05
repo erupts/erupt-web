@@ -26,7 +26,7 @@ export class CubeManagementComponent implements OnInit {
         this.checkFillRoute();
 
         this.options = {
-            gridType: 'fit',
+            gridType: 'scrollVertical',
             compactType: 'none',
             margin: 12,
             outerMargin: true,
@@ -39,7 +39,7 @@ export class CubeManagementComponent implements OnInit {
             minCols: 1,
             maxCols: 24,
             minRows: 1,
-            maxRows: 1000,
+            maxRows: 10000,
             maxItemCols: 24,
             minItemCols: 1,
             maxItemRows: 100,
@@ -49,7 +49,7 @@ export class CubeManagementComponent implements OnInit {
             defaultItemCols: 1,
             defaultItemRows: 1,
             fixedColWidth: 105,
-            fixedRowHeight: 105,
+            fixedRowHeight: 55,
             keepFixedHeightInMobile: false,
             keepFixedWidthInMobile: false,
             scrollSensitivity: 10,
