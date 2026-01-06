@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ReviewMode, ReviewModeValue} from "@flow/model/fllw-approval.model";
+import {ReviewMode, ReviewModeValue} from "@flow/model/flow-approval.model";
 import {KV} from "../../../erupt/model/util.model";
 import {UpmsDataService} from "@flow/service/upms-data.service";
 

@@ -10,7 +10,7 @@ import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
-import {AddSignType} from "@flow/model/fllw-approval.model";
+import {AddSignType} from "@flow/model/flow-approval.model";
 import {KV} from "../../../erupt/model/util.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";

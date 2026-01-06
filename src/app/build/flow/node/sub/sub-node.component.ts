@@ -7,7 +7,7 @@ import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlowConfig} from "@flow/model/flow.model";
-import {SubNode} from "@flow/model/fllw-approval.model";
+import {SubNode} from "@flow/model/flow-approval.model";
 
 @Component({
     standalone: false,

@@ -4,7 +4,7 @@ import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
-import {ApprovalStrategy, ApprovalTimeoutAction, ApproveNode, NobodyStrategy, ReviewMode} from "@flow/model/fllw-approval.model";
+import {ApprovalStrategy, ApprovalTimeoutAction, ApproveNode, NobodyStrategy, ReviewMode} from "@flow/model/flow-approval.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 import {UpmsDataService} from "@flow/service/upms-data.service";
 

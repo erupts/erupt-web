@@ -9,7 +9,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
-import {StartNode} from "@flow/model/fllw-approval.model";
+import {StartNode} from "@flow/model/flow-approval.model";
 
 @Component({
     standalone: false,

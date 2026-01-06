@@ -6,7 +6,7 @@ import {RestPath} from "../../erupt/model/erupt.enum";
 import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask, FlowTurn} from "@flow/model/flow-instance.model";
 import {NodeRule} from "@flow/model/node.model";
 import {FlowConfig} from "@flow/model/flow.model";
-import {AddSignType, ApprovalQuery} from "@flow/model/fllw-approval.model";
+import {AddSignType, ApprovalQuery} from "@flow/model/flow-approval.model";
 import {KV} from "../../erupt/model/util.model";
 
 @Injectable({
