@@ -1,5 +1,15 @@
 :host {
+    display: block;
+    width: 100%;
+    
     ::ng-deep {
+        .code-editor-container {
+            position: relative;
+            width: 100%;
+            min-height: 100px;
+            display: block;
+        }
+        
         .toolbar {
             position: absolute;
             right: 10px;
@@ -8,10 +18,17 @@
             padding: 6px 12px;
             display: flex;
             align-items: center;
+            z-index: 10;
         }
 
         .code-editor-style {
-            border: 1px solid rgb(217 217 217)
+            border: 1px solid rgb(217 217 217);
+            width: 100% !important;
+            display: block !important;
+            
+            .monaco-editor {
+                min-height: 100px;
+            }
         }
     }
 }
