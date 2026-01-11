@@ -1,2 +1,2 @@
 1. 尽量复用 ng-zorro / ng-alain 组件
-2. 当前 angular 为 20 版本
+2. 当前 angular 为 20 版本,请保证使用 @if @for 语法
