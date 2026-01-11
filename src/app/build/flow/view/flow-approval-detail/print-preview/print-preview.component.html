@@ -1,0 +1,20 @@
+<div class="print-preview-container">
+    <div class="print-header">
+        <h1 class="print-title">{{ instance?.eruptFlowConfig?.name }}</h1>
+<!--        <div class="qr-section">-->
+<!--            <div class="qr-label">扫码查看流程</div>-->
+<!--            <img [src]="1" class="qr-code" alt="二维码" crossorigin="anonymous"/>-->
+<!--        </div>-->
+    </div>
+
+    <div class="print-info">
+        @if (eruptBuild) {
+            <erupt-edit-type [eruptBuildModel]="eruptBuild" [readonly]="true"
+                             [mode]="null" size="default"/>
+        }
+    </div>
+    <!--    <div class="print-footer">-->
+    <!--        <div class="footer-item">打印人：{{ 1 }}</div>-->
+    <!--        <div class="footer-item">打印时间：{{ 1 }}</div>-->
+    <!--    </div>-->
+</div>
