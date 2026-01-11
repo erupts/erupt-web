@@ -92,6 +92,7 @@ import {UpmsDataService} from "@flow/service/upms-data.service";
 import {SubNodeComponent} from '@flow/node/sub/sub-node.component';
 import {NzImageModule} from "ng-zorro-antd/image";
 import {FlowApprovalDetailComponent} from '@flow/view/flow-approval-detail/flow-approval-detail.component';
+import {FlowPrintPreviewComponent} from '@flow/view/flow-approval-detail/print-preview/print-preview.component';
 
 @NgModule({
     declarations: [
@@ -118,7 +119,8 @@ import {FlowApprovalDetailComponent} from '@flow/view/flow-approval-detail/flow-
         ReviewUserComponent,
         UpmsSelectComponent,
         SubNodeComponent,
-        FlowApprovalDetailComponent
+        FlowApprovalDetailComponent,
+        FlowPrintPreviewComponent
     ],
     providers: [
         FlowApiService,

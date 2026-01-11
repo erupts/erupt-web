@@ -17,6 +17,7 @@ import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {getAvatarColor} from "@flow/util/flow.util";
 import {ActivatedRoute} from "@angular/router";
 import {FormAccessEnum} from "@flow/model/flow.model";
+import {FlowPrintPreviewComponent} from "./print-preview/print-preview.component";
 
 @Component({
     standalone: false,
@@ -525,6 +526,28 @@ export class FlowApprovalDetailComponent implements OnInit {
         navigator.clipboard.writeText(link).then(() => {
             this.message.success('地址已复制到剪贴板');
         });
+    }
+
+    // 打印预览功能
+    print() {
+        const modalRef = this.modal.create({
+            nzTitle: '打印预览',
+            nzContent: FlowPrintPreviewComponent,
+            nzWidth: '700px',
+            nzStyle: {top: "30px"},
+            nzOkText: "打印",
+            nzOnOk: () => {
+                (modalRef.componentInstance as FlowPrintPreviewComponent).print();
+            },
+            nzBodyStyle: {
+                maxHeight: "75vh",
+                padding: '0',
+                overflow: 'auto'
+            }
+        });
+        modalRef.componentInstance.instance = this.selectedInstance;
+        modalRef.componentInstance.tasks = this.instanceTasks;
+        modalRef.componentInstance.eruptBuild =  this.eruptBuild;
     }
 
     protected readonly AddSignType = AddSignType;

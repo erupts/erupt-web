@@ -18,8 +18,8 @@ export class FlowInstanceApiService {
 
     }
 
-    progress(instanceId: number) {
-        return this._http.get<R<Record<string, FlowTurn>>>(RestPath.erupt + "/flow/instance/progress", {
+    progress(instanceId: number): Observable<R<Record<string, FlowTurn>>> {
+        return this._http.get(RestPath.erupt + "/flow/instance/progress", {
             instanceId
         })
     }
