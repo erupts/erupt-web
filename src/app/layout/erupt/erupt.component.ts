@@ -161,14 +161,6 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => {
             this.reuseTabService.clear(true);
         }, 500)
-        if (!environment.production) {
-            // setTimeout(() => {
-            //     const settingFactory = this.resolver.resolveComponentFactory(
-            //         SettingDrawerComponent
-            //     );
-            //     this.settingHost.createComponent(settingFactory);
-            // }, 22);
-        }
     }
 
     ngOnInit() {
