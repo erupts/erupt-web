@@ -60,3 +60,12 @@ span.ripple {
     justify-content: center;
     align-items: center;
 }
+
+// 打印场景的样式优化 - 支持中文显示
+@media print {
+    * {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
