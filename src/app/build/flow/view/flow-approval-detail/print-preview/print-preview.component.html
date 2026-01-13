@@ -1,7 +1,7 @@
 <div class="print-preview-container">
     <div class="print-meta">
-        <div>Printed by: {{ settingsService.user.name || '-' }}</div>
-        <div>Printed at: {{ currentDate | date:'yyyy-MM-dd HH:mm:ss' }}</div>
+        <div>打印人: {{ settingsService.user.name || '-' }}</div>
+        <div>打印时间: {{ currentDate | date:'yyyy-MM-dd HH:mm:ss' }}</div>
     </div>
 
     <div class="print-header">
@@ -11,16 +11,16 @@
     <div class="print-info-table">
         <table class="info-table">
             <tr>
-                <td class="label-cell">Requester</td>
+                <td class="label-cell">申请人</td>
                 <td class="value-cell">{{ instance?.initiatorUser?.name || '-' }}</td>
-                <td class="label-cell">Application Date</td>
+                <td class="label-cell">申请日期</td>
                 <td class="value-cell">{{ instance?.createTime }}</td>
             </tr>
             <tr>
-                <td class="label-cell">Flow No</td>
+                <td class="label-cell">流程编号</td>
                 <td class="value-cell">{{ instance?.no }}</td>
-                <td class="label-cell">Approval Status</td>
-                <td class="value-cell">{{ this.instance.status | translate  }}</td>
+                <td class="label-cell">审批状态</td>
+                <td class="value-cell">{{ this.instance.status | translate }}</td>
             </tr>
         </table>
     </div>

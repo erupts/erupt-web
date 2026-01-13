@@ -76,364 +76,357 @@ span.ripple {
         margin: 10mm;
     }
 
-    // 页面宽度优化
-    body {
-        max-width: 100% !important;
-        width: 100% !important;
-    }
-
-
-    // ========== 隐藏所有不必要的交互元素 ==========
-    button,
-    .ant-btn,
-    .ant-upload,
-    .ant-upload-select,
-    .ant-upload-list-item-actions,
-    nz-upload,
-    .ant-input-suffix,
-    .ant-input-prefix,
-    .ant-input-clear-icon,
-    .ant-select-arrow,
-    .ant-picker-suffix,
-    .ant-picker-clear,
-    .ant-input-number-handler-wrap,
-    .ant-input-group-addon,
-    .ant-switch,
-    .ant-slider-handle,
-    .ant-slider-rail,
-    .ant-slider-track,
-    .ant-collapse-arrow,
-    .ant-tabs-nav,
-    .ant-tabs-nav-wrap,
-    .ant-tabs-nav-list,
-    .ant-form-item-extra,
-    .se__label-optional,
-    nz-icon[nztype="copy"],
-    [nz-icon][nztype="copy"],
-    span[nz-icon][nztype="copy"],
-    .ant-pagination,
-    .ant-table-pagination,
-    nz-pagination,
-    nz-tooltip,
-    [nz-tooltip],
-        //.ant-modal-mask,
-        //.ant-modal-wrap,
-    .ant-drawer,
-    .ant-popover {
-        display: none !important;
-    }
-
-
-    // ========== 输入框和表单控件样式优化 ==========
-    input,
-    textarea,
-    select,
-    input[nz-input],
-    .ant-input,
-    .ant-input-number,
-    .ant-select,
-    .ant-picker {
-        border: 1px solid #d9d9d9 !important;
-        box-shadow: none !important;
-        background: transparent !important;
-        padding: 8px !important;
-        color: #333 !important;
-        -webkit-text-fill-color: #333 !important;
-        -webkit-appearance: none !important;
-        appearance: none !important;
-    }
-
-    // 强制显示 ng-zorro 输入框的值
-    input[nz-input] {
-        display: inline-block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-
-    // ng-zorro 输入框包装器
-    nz-input-wrapper,
-    nz-input-group {
-        border: none !important;
-        background: transparent !important;
-    }
-
-    // 禁用状态的输入框保持可读
-    .ant-input[disabled],
-    .ant-input-disabled,
-    .ant-input-number-disabled,
-    .ant-select-disabled,
-    .ant-picker-disabled,
-    textarea[disabled],
-    input[nz-input][disabled] {
-        opacity: 1 !important;
-        color: #333 !important;
-        -webkit-text-fill-color: #333 !important;
-        cursor: text !important;
-        background: transparent !important;
-    }
-
-    // 输入框包装器
-    .ant-input-affix-wrapper,
-    .ant-input-wrapper,
-    nz-input-wrapper {
-        border: none !important;
-        background: transparent !important;
-        padding: 0 !important;
-    }
-
-    .ant-input-number-input {
-        padding: 0 !important;
-        text-align: left !important;
-    }
-
-    // ========== 选择器样式优化 ==========
-    .ant-select-selector {
-        border: none !important;
-        background: transparent !important;
-        padding: 0 !important;
-    }
-
-    .ant-select-selection-item {
-        color: #333 !important;
-        padding: 0 !important;
-    }
-
-    // ========== 单选框和复选框优化 ==========
-    .ant-radio-wrapper,
-    .ant-checkbox-wrapper {
-        color: #333 !important;
-        margin-right: 12px !important;
-
-        .ant-radio-inner,
-        .ant-checkbox-inner {
-            border-color: #333 !important;
-            background: white !important;
-        }
-
-        .ant-radio-checked .ant-radio-inner::after {
-            background: #333 !important;
-        }
-
-        .ant-checkbox-checked .ant-checkbox-inner::after {
-            border-color: #333 !important;
-        }
-    }
-
-    // ========== 文本域优化 ==========
-    textarea.ant-input {
-        resize: none !important;
-        padding: 0 !important;
-        line-height: 1.6 !important;
-        min-height: auto !important;
-        word-break: break-word !important;
-    }
-
-    // ========== 日期选择器优化 ==========
-    .ant-picker-input > input {
-        color: #333 !important;
-        padding: 0 !important;
-    }
-
-    // ========== 评分组件优化 ==========
-    .ant-rate {
-        .ant-rate-star {
-            margin-right: 4px !important;
-        }
-    }
-
-    // ========== 图片上传组件 - 只显示图片 ==========
-    .ant-upload-list {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
-
-        .ant-upload-list-item {
-            border: 1px solid #d9d9d9 !important;
-            padding: 4px !important;
-            margin: 0 !important;
-            page-break-inside: avoid !important;
-
-            .ant-upload-list-item-thumbnail {
-                img {
-                    object-fit: contain !important;
-                }
-            }
-        }
-
-        &.ant-upload-list-picture-card {
-            .ant-upload-list-item {
-                width: 100px !important;
-                height: 100px !important;
-            }
-        }
-    }
-
-    // ========== 折叠面板优化 - 展开所有内容 ==========
-    .ant-collapse {
-        border: 1px solid #d9d9d9 !important;
-        margin-top: 16px !important;
-
-        .ant-collapse-item {
-            border: none !important;
-
-            .ant-collapse-header {
-                padding: 10px 12px !important;
-                font-weight: 600 !important;
-                color: #333 !important;
-                background: #f5f5f5 !important;
-                border-bottom: 1px solid #d9d9d9 !important;
-            }
-
-            // 强制展开所有折叠面板内容
-            .ant-collapse-content {
-                display: block !important;
-                height: auto !important;
-                border: none !important;
-
-                .ant-collapse-content-box {
-                    padding: 12px !important;
-                    background: white !important;
-                    display: block !important;
-                }
-            }
-        }
-    }
-
-    // ========== 标签页优化 - 显示所有标签页内容 ==========
-    .ant-tabs {
-        border: none !important;
-        margin-top: 16px !important;
-
-        .ant-tabs-content {
-            padding: 0 !important;
-        }
-
-        // 强制显示所有标签页内容
-        .ant-tabs-tabpane {
-            display: block !important;
-            height: auto !important;
-            page-break-inside: avoid !important;
-
-            &::before {
-                content: attr(data-label);
-                display: block;
-                font-weight: 600;
-                color: #333;
-                padding: 10px 0;
-                border-bottom: 1px solid #d9d9d9;
-                margin-bottom: 10px;
-            }
-        }
-    }
-
-    // ========== 表格优化 ==========
-    .ant-table {
-        page-break-inside: avoid !important;
-        border-collapse: collapse !important;
-
-        .ant-table-thead > tr > th {
-            background: #f5f5f5 !important;
-            color: #333 !important;
-            font-weight: 600 !important;
-            border: 1px solid #d9d9d9 !important;
-            padding: 8px 12px !important;
-        }
-
-        .ant-table-tbody > tr > td {
-            color: #333 !important;
-            border: 1px solid #d9d9d9 !important;
-            padding: 8px 12px !important;
-        }
-    }
-
-    // ========== 签名组件优化 ==========
-    [style*="width: 100%;height: 200px"] {
-        page-break-inside: avoid !important;
-        height: auto !important;
-        min-height: 60px !important;
-        max-height: 120px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-
-        img {
-            max-width: 150px !important;
-            max-height: 80px !important;
-            width: auto !important;
-            height: auto !important;
-            border: 1px solid #d9d9d9 !important;
-            padding: 4px !important;
-        }
-    }
-
-    // ========== 隐藏必填标记 ==========
-    .ant-form-item-required::before {
-        display: none !important;
-    }
-
-    // ========== 避免分页中断 ==========
-    .erupt-form,
-    se,
-    .ant-form-item,
-    .ant-collapse-item,
-    .ant-table-row {
-        page-break-inside: avoid !important;
-    }
-
-    // ========== 表单布局优化 - 保持原有响应式布局 ==========
-    [nz-row],
-    .ant-row {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        width: 100% !important;
-    }
-
-    [nz-col] {
-        flex: 0 0 auto !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-
-        // nzSpan=24 占满整行
-        &[nzspan="24"],
-        &.ant-col-24 {
-            flex: 0 0 100% !important;
-            max-width: 100% !important;
-        }
-
-        // nzSpan=12 占半行
-        &[nzspan="12"],
-        &.ant-col-12 {
-            flex: 0 0 50% !important;
-            max-width: 50% !important;
-        }
-
-        // nzSpan=8 占1/3行
-        &[nzspan="8"],
-        &.ant-col-8,
-        &.ant-col-xs-24,
-        &.ant-col-sm-12,
-        &.ant-col-md-12,
-        &.ant-col-lg-8,
-        &.ant-col-xl-8,
-        &.ant-col-xxl-8 {
-            flex: 0 0 33.33% !important;
-            max-width: 33.33% !important;
-        }
-
-        // nzSpan=6 占1/4行
-        &[nzspan="6"],
-        &.ant-col-6 {
-            flex: 0 0 25% !important;
-            max-width: 25% !important;
-        }
-    }
-
-    [se-container],
-    .erupt-form {
-        se {
-            .ant-form-item-label {
-                font-weight: 500 !important;
-            }
-        }
-    }
+    //// ========== 隐藏所有不必要的交互元素 ==========
+    //button,
+    //.ant-btn,
+    //.ant-upload,
+    //.ant-upload-select,
+    //.ant-upload-list-item-actions,
+    //nz-upload,
+    //.ant-input-suffix,
+    //.ant-input-prefix,
+    //.ant-input-clear-icon,
+    //.ant-select-arrow,
+    //.ant-picker-suffix,
+    //.ant-picker-clear,
+    //.ant-input-number-handler-wrap,
+    //.ant-input-group-addon,
+    //.ant-switch,
+    //.ant-slider-handle,
+    //.ant-slider-rail,
+    //.ant-slider-track,
+    //.ant-collapse-arrow,
+    //.ant-tabs-nav,
+    //.ant-tabs-nav-wrap,
+    //.ant-tabs-nav-list,
+    //.ant-form-item-extra,
+    //.se__label-optional,
+    //nz-icon[nztype="copy"],
+    //[nz-icon][nztype="copy"],
+    //span[nz-icon][nztype="copy"],
+    //.ant-pagination,
+    //.ant-table-pagination,
+    //nz-pagination,
+    //nz-tooltip,
+    //[nz-tooltip],
+    //    //.ant-modal-mask,
+    //    //.ant-modal-wrap,
+    //.ant-drawer,
+    //.ant-popover {
+    //    display: none !important;
+    //}
+    //
+    //
+    //// ========== 输入框和表单控件样式优化 ==========
+    //input,
+    //textarea,
+    //select,
+    //input[nz-input],
+    //.ant-input,
+    //.ant-input-number,
+    //.ant-select,
+    //.ant-picker {
+    //    border: 1px solid #d9d9d9 !important;
+    //    box-shadow: none !important;
+    //    background: transparent !important;
+    //    padding: 8px !important;
+    //    color: #333 !important;
+    //    -webkit-text-fill-color: #333 !important;
+    //    -webkit-appearance: none !important;
+    //    appearance: none !important;
+    //}
+    //
+    //// 强制显示 ng-zorro 输入框的值
+    //input[nz-input] {
+    //    display: inline-block !important;
+    //    visibility: visible !important;
+    //    opacity: 1 !important;
+    //}
+    //
+    //// ng-zorro 输入框包装器
+    //nz-input-wrapper,
+    //nz-input-group {
+    //    border: none !important;
+    //    background: transparent !important;
+    //}
+    //
+    //// 禁用状态的输入框保持可读
+    //.ant-input[disabled],
+    //.ant-input-disabled,
+    //.ant-input-number-disabled,
+    //.ant-select-disabled,
+    //.ant-picker-disabled,
+    //textarea[disabled],
+    //input[nz-input][disabled] {
+    //    opacity: 1 !important;
+    //    color: #333 !important;
+    //    -webkit-text-fill-color: #333 !important;
+    //    cursor: text !important;
+    //    background: transparent !important;
+    //}
+    //
+    //// 输入框包装器
+    //.ant-input-affix-wrapper,
+    //.ant-input-wrapper,
+    //nz-input-wrapper {
+    //    border: none !important;
+    //    background: transparent !important;
+    //    padding: 0 !important;
+    //}
+    //
+    //.ant-input-number-input {
+    //    padding: 0 !important;
+    //    text-align: left !important;
+    //}
+    //
+    //// ========== 选择器样式优化 ==========
+    //.ant-select-selector {
+    //    border: none !important;
+    //    background: transparent !important;
+    //    padding: 0 !important;
+    //}
+    //
+    //.ant-select-selection-item {
+    //    color: #333 !important;
+    //    padding: 0 !important;
+    //}
+    //
+    //// ========== 单选框和复选框优化 ==========
+    //.ant-radio-wrapper,
+    //.ant-checkbox-wrapper {
+    //    color: #333 !important;
+    //    margin-right: 12px !important;
+    //
+    //    .ant-radio-inner,
+    //    .ant-checkbox-inner {
+    //        border-color: #333 !important;
+    //        background: white !important;
+    //    }
+    //
+    //    .ant-radio-checked .ant-radio-inner::after {
+    //        background: #333 !important;
+    //    }
+    //
+    //    .ant-checkbox-checked .ant-checkbox-inner::after {
+    //        border-color: #333 !important;
+    //    }
+    //}
+    //
+    //// ========== 文本域优化 ==========
+    //textarea.ant-input {
+    //    resize: none !important;
+    //    padding: 0 !important;
+    //    line-height: 1.6 !important;
+    //    min-height: auto !important;
+    //    word-break: break-word !important;
+    //}
+    //
+    //// ========== 日期选择器优化 ==========
+    //.ant-picker-input > input {
+    //    color: #333 !important;
+    //    padding: 0 !important;
+    //}
+    //
+    //// ========== 评分组件优化 ==========
+    //.ant-rate {
+    //    .ant-rate-star {
+    //        margin-right: 4px !important;
+    //    }
+    //}
+    //
+    //// ========== 图片上传组件 - 只显示图片 ==========
+    //.ant-upload-list {
+    //    display: flex !important;
+    //    flex-wrap: wrap !important;
+    //    gap: 8px !important;
+    //
+    //    .ant-upload-list-item {
+    //        border: 1px solid #d9d9d9 !important;
+    //        padding: 4px !important;
+    //        margin: 0 !important;
+    //        page-break-inside: avoid !important;
+    //
+    //        .ant-upload-list-item-thumbnail {
+    //            img {
+    //                object-fit: contain !important;
+    //            }
+    //        }
+    //    }
+    //
+    //    &.ant-upload-list-picture-card {
+    //        .ant-upload-list-item {
+    //            width: 100px !important;
+    //            height: 100px !important;
+    //        }
+    //    }
+    //}
+    //
+    //// ========== 折叠面板优化 - 展开所有内容 ==========
+    //.ant-collapse {
+    //    border: 1px solid #d9d9d9 !important;
+    //    margin-top: 16px !important;
+    //
+    //    .ant-collapse-item {
+    //        border: none !important;
+    //
+    //        .ant-collapse-header {
+    //            padding: 10px 12px !important;
+    //            font-weight: 600 !important;
+    //            color: #333 !important;
+    //            background: #f5f5f5 !important;
+    //            border-bottom: 1px solid #d9d9d9 !important;
+    //        }
+    //
+    //        // 强制展开所有折叠面板内容
+    //        .ant-collapse-content {
+    //            display: block !important;
+    //            height: auto !important;
+    //            border: none !important;
+    //
+    //            .ant-collapse-content-box {
+    //                padding: 12px !important;
+    //                background: white !important;
+    //                display: block !important;
+    //            }
+    //        }
+    //    }
+    //}
+    //
+    //// ========== 标签页优化 - 显示所有标签页内容 ==========
+    //.ant-tabs {
+    //    border: none !important;
+    //    margin-top: 16px !important;
+    //
+    //    .ant-tabs-content {
+    //        padding: 0 !important;
+    //    }
+    //
+    //    // 强制显示所有标签页内容
+    //    .ant-tabs-tabpane {
+    //        display: block !important;
+    //        height: auto !important;
+    //        page-break-inside: avoid !important;
+    //
+    //        &::before {
+    //            content: attr(data-label);
+    //            display: block;
+    //            font-weight: 600;
+    //            color: #333;
+    //            padding: 10px 0;
+    //            border-bottom: 1px solid #d9d9d9;
+    //            margin-bottom: 10px;
+    //        }
+    //    }
+    //}
+    //
+    //// ========== 表格优化 ==========
+    //.ant-table {
+    //    page-break-inside: avoid !important;
+    //    border-collapse: collapse !important;
+    //
+    //    .ant-table-thead > tr > th {
+    //        background: #f5f5f5 !important;
+    //        color: #333 !important;
+    //        font-weight: 600 !important;
+    //        border: 1px solid #d9d9d9 !important;
+    //        padding: 8px 12px !important;
+    //    }
+    //
+    //    .ant-table-tbody > tr > td {
+    //        color: #333 !important;
+    //        border: 1px solid #d9d9d9 !important;
+    //        padding: 8px 12px !important;
+    //    }
+    //}
+    //
+    //// ========== 签名组件优化 ==========
+    //[style*="width: 100%;height: 200px"] {
+    //    page-break-inside: avoid !important;
+    //    height: auto !important;
+    //    min-height: 60px !important;
+    //    max-height: 120px !important;
+    //    display: flex !important;
+    //    align-items: center !important;
+    //    justify-content: flex-start !important;
+    //
+    //    img {
+    //        max-width: 150px !important;
+    //        max-height: 80px !important;
+    //        width: auto !important;
+    //        height: auto !important;
+    //        border: 1px solid #d9d9d9 !important;
+    //        padding: 4px !important;
+    //    }
+    //}
+    //
+    //// ========== 隐藏必填标记 ==========
+    //.ant-form-item-required::before {
+    //    display: none !important;
+    //}
+    //
+    //// ========== 避免分页中断 ==========
+    //.erupt-form,
+    //se,
+    //.ant-form-item,
+    //.ant-collapse-item,
+    //.ant-table-row {
+    //    page-break-inside: avoid !important;
+    //}
+    //
+    //// ========== 表单布局优化 - 保持原有响应式布局 ==========
+    //[nz-row],
+    //.ant-row {
+    //    display: flex !important;
+    //    flex-wrap: wrap !important;
+    //    width: 100% !important;
+    //}
+    //
+    //[nz-col] {
+    //    flex: 0 0 auto !important;
+    //    page-break-inside: avoid !important;
+    //    break-inside: avoid !important;
+    //
+    //    // nzSpan=24 占满整行
+    //    &[nzspan="24"],
+    //    &.ant-col-24 {
+    //        flex: 0 0 100% !important;
+    //        max-width: 100% !important;
+    //    }
+    //
+    //    // nzSpan=12 占半行
+    //    &[nzspan="12"],
+    //    &.ant-col-12 {
+    //        flex: 0 0 50% !important;
+    //        max-width: 50% !important;
+    //    }
+    //
+    //    // nzSpan=8 占1/3行
+    //    &[nzspan="8"],
+    //    &.ant-col-8,
+    //    &.ant-col-xs-24,
+    //    &.ant-col-sm-12,
+    //    &.ant-col-md-12,
+    //    &.ant-col-lg-8,
+    //    &.ant-col-xl-8,
+    //    &.ant-col-xxl-8 {
+    //        flex: 0 0 33.33% !important;
+    //        max-width: 33.33% !important;
+    //    }
+    //
+    //    // nzSpan=6 占1/4行
+    //    &[nzspan="6"],
+    //    &.ant-col-6 {
+    //        flex: 0 0 25% !important;
+    //        max-width: 25% !important;
+    //    }
+    //}
+    //
+    //[se-container],
+    //.erupt-form {
+    //    se {
+    //        .ant-form-item-label {
+    //            font-weight: 500 !important;
+    //        }
+    //    }
+    //}
 }
