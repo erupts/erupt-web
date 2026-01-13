@@ -30,7 +30,19 @@ export class FlowPrintPreviewComponent implements OnInit {
         printJS({
             printable: this.elementRef.nativeElement.querySelector('.print-preview-container'),
             type: 'html',
-            targetStyles: ['*']
+            targetStyles: ['*'],
+            style: `
+                * {
+                    font-family: 'Heiti SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+
+                @page {
+                    size: A4 portrait;
+                    margin: 10mm;
+                }
+              `
         });
     }
 
