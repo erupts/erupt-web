@@ -122,6 +122,7 @@ span.ripple {
     input,
     textarea,
     select,
+    input[nz-input],
     .ant-input,
     .ant-input-number,
     .ant-select,
@@ -132,6 +133,22 @@ span.ripple {
         padding: 0 !important;
         color: #333 !important;
         -webkit-text-fill-color: #333 !important;
+        -webkit-appearance: none !important;
+        appearance: none !important;
+    }
+
+    // 强制显示 ng-zorro 输入框的值
+    input[nz-input] {
+        display: inline-block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    // ng-zorro 输入框包装器
+    nz-input-wrapper,
+    nz-input-group {
+        border: none !important;
+        background: transparent !important;
     }
 
     // 禁用状态的输入框保持可读
@@ -140,11 +157,13 @@ span.ripple {
     .ant-input-number-disabled,
     .ant-select-disabled,
     .ant-picker-disabled,
-    textarea[disabled] {
+    textarea[disabled],
+    input[nz-input][disabled] {
         opacity: 1 !important;
         color: #333 !important;
         -webkit-text-fill-color: #333 !important;
         cursor: text !important;
+        background: transparent !important;
     }
 
     // 输入框包装器
