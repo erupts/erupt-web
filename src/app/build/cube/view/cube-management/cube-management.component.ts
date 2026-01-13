@@ -26,7 +26,7 @@ export class CubeManagementComponent implements OnInit {
         this.checkFillRoute();
 
         this.options = {
-            gridType: 'scrollVertical',
+            gridType: 'verticalFixed',
             compactType: 'none',
             margin: 12,
             outerMargin: true,
