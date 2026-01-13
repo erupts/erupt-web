@@ -72,8 +72,14 @@ span.ripple {
 
     // 页面设置
     @page {
-        size: A4;
-        margin: 15mm;
+        size: A4 landscape;
+        margin: 10mm;
+    }
+
+    // 页面宽度优化
+    body {
+        max-width: 100% !important;
+        width: 100% !important;
     }
 
 
@@ -127,10 +133,10 @@ span.ripple {
     .ant-input-number,
     .ant-select,
     .ant-picker {
-        border: none !important;
+        border: 1px solid #d9d9d9 !important;
         box-shadow: none !important;
         background: transparent !important;
-        padding: 0 !important;
+        padding: 8px !important;
         color: #333 !important;
         -webkit-text-fill-color: #333 !important;
         -webkit-appearance: none !important;
@@ -374,12 +380,56 @@ span.ripple {
         page-break-inside: avoid !important;
     }
 
-    // ========== 表单布局优化 ==========
-    .erupt-form {
-        .ant-form-item {
-            margin-bottom: 12px !important;
+    // ========== 表单布局优化 - 保持原有响应式布局 ==========
+    [nz-row],
+    .ant-row {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        width: 100% !important;
+    }
+
+    [nz-col] {
+        flex: 0 0 auto !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+
+        // nzSpan=24 占满整行
+        &[nzspan="24"],
+        &.ant-col-24 {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
         }
 
+        // nzSpan=12 占半行
+        &[nzspan="12"],
+        &.ant-col-12 {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+        }
+
+        // nzSpan=8 占1/3行
+        &[nzspan="8"],
+        &.ant-col-8,
+        &.ant-col-xs-24,
+        &.ant-col-sm-12,
+        &.ant-col-md-12,
+        &.ant-col-lg-8,
+        &.ant-col-xl-8,
+        &.ant-col-xxl-8 {
+            flex: 0 0 33.33% !important;
+            max-width: 33.33% !important;
+        }
+
+        // nzSpan=6 占1/4行
+        &[nzspan="6"],
+        &.ant-col-6 {
+            flex: 0 0 25% !important;
+            max-width: 25% !important;
+        }
+    }
+
+    [se-container],
+    .erupt-form {
         se {
             .ant-form-item-label {
                 font-weight: 500 !important;
