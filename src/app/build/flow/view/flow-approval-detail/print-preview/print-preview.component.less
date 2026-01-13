@@ -8,40 +8,80 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     min-height: 500px;
 
-    .print-header {
+    .print-meta {
+        color: #2c3e50;
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #e5e5e5;
+        margin-bottom: 20px;
+    }
+
+    .print-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
 
         .print-title {
             font-size: 28px;
             font-weight: 600;
             color: #333;
             margin: 0;
-            flex: 1;
-        }
-
-        .qr-section {
             text-align: center;
-            margin-left: 20px;
+        }
+    }
 
-            .qr-label {
-                font-size: 12px;
-                color: #666;
-                margin-bottom: 8px;
-            }
+    .print-request-info {
+        margin-bottom: 15px;
 
-            .qr-code {
-                width: 120px;
-                height: 120px;
-                border: 1px solid #e5e5e5;
-                padding: 4px;
-                background: white;
+        .request-no {
+            font-size: 14px;
+            color: #333;
+        }
+    }
+
+    .print-info-table {
+        margin-bottom: 20px;
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #000;
+
+            tr {
+                td {
+                    border: 1px solid #000;
+                    padding: 8px 12px;
+                    font-size: 14px;
+
+                    &.label-cell {
+                        width: 15%;
+                        background-color: #f5f5f5;
+                        font-weight: 500;
+                        color: #333;
+                    }
+
+                    &.value-cell {
+                        width: 35%;
+                        color: #666;
+                    }
+                }
             }
         }
+    }
+
+    .print-details-title {
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        margin: 20px 0 15px 0;
+        padding: 8px 0;
+        background-color: #f5f5f5;
+        border: 1px solid #000;
+        border-bottom: 2px solid #000;
+    }
+
+    .print-info {
+        margin-bottom: 20px;
     }
 
     .print-footer {
@@ -64,4 +104,26 @@
         display: block;
     }
 
+    .print-preview-container {
+        .info-table {
+            border: 1px solid #000 !important;
+
+            tr td {
+                border: 1px solid #000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+
+                &.label-cell {
+                    background-color: #f5f5f5 !important;
+                }
+            }
+        }
+
+        .print-details-title {
+            border: 1px solid #000 !important;
+            background-color: #f5f5f5 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
 }
