@@ -16,7 +16,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {getAvatarColor} from "@flow/util/flow.util";
 import {ActivatedRoute} from "@angular/router";
-import {FormAccessEnum} from "@flow/model/flow.model";
+import {FormAccessEnum, PrintSetting} from "@flow/model/flow.model";
 import {FlowPrintPreviewComponent} from "./print-preview/print-preview.component";
 
 @Component({
@@ -562,4 +562,5 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     protected readonly NodeType = NodeType;
 
+    protected readonly PrintSetting = PrintSetting;
 }

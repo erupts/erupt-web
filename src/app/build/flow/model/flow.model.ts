@@ -32,6 +32,14 @@ export class FlowConfig {
 
 export class FlowConfigSetting {
     subTitleFields: string[] = [];
+    printSetting: PrintSetting = PrintSetting.DEFAULT;
+    printTemplate: string = null;
+}
+
+export enum PrintSetting {
+    CLOSE = 'CLOSE',
+    DEFAULT = 'DEFAULT',
+    CUSTOM = 'CUSTOM'
 }
 
 export interface FlowRuleNode {
