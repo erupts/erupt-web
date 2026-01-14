@@ -6,15 +6,20 @@ import {NzCardModule} from 'ng-zorro-antd/card';
 import {SharedModule} from "@shared/shared.module";
 import {CommonModule} from "@angular/common";
 import {CubeRoutingModule} from "./cube-routing.module";
-import {CubeManagementComponent} from './view/cube-management/cube-management.component';
+import {CubePuzzleComponent} from './view/cube-puzzle/cube-puzzle.component';
+import {CubePuzzleConfig} from './view/cube-puzzle-config/cube-puzzle-config';
 import {GridsterComponent, GridsterItemComponent} from "angular-gridster2";
+import {CubeApiService} from "./service/cube-api.service";
 
 
 @NgModule({
     declarations: [
-        CubeManagementComponent
+        CubePuzzleComponent,
+        CubePuzzleConfig
     ],
-    providers: [],
+    providers: [
+        CubeApiService
+    ],
     imports: [
         SharedModule,
         CubeRoutingModule,

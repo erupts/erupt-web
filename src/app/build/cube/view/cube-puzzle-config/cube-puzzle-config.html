@@ -1,0 +1,100 @@
+<div class="cube-puzzle-config-container">
+    <div nz-row [nzGutter]="8">
+        <!-- 左侧图表预览 -->
+        <div nz-col [nzSpan]="16">
+            <nz-card [nzBordered]="false" class="chart-preview-card">
+                <div #chartContainer style="height: 400px;"></div>
+            </nz-card>
+        </div>
+
+        <!-- 右侧配置表单 -->
+        <div nz-col [nzSpan]="8">
+            <div style="background: #fff;padding: 0 8px;height: 100%">
+                <nz-tabs>
+                    <nz-tab nzTitle="基础配置">
+                        <form nz-form nzLayout="vertical">
+                            <nz-form-item>
+                                <nz-form-label>标题</nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input [(ngModel)]="config.title" name="title" />
+                                </nz-form-control>
+                            </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label>图表类型</nz-form-label>
+                                <nz-form-control>
+                                    <nz-select [(ngModel)]="chartType" name="chartType" (ngModelChange)="onConfigChange()">
+                                        <nz-option nzValue="line" nzLabel="折线图"></nz-option>
+                                        <nz-option nzValue="column" nzLabel="柱状图"></nz-option>
+                                        <nz-option nzValue="bar" nzLabel="条形图"></nz-option>
+                                        <nz-option nzValue="pie" nzLabel="饼图"></nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+
+                            <nz-form-item>
+                                <nz-form-label>维度 (xField / colorField)</nz-form-label>
+                                <nz-form-control>
+                                    <nz-select [(ngModel)]="config.xField" name="xField" (ngModelChange)="onConfigChange()" nzShowSearch nzAllowClear>
+                                        <nz-option *ngFor="let dim of cubeMeta?.dimensions" [nzValue]="dim.code" [nzLabel]="dim.title || dim.code"></nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+
+                            <nz-form-item>
+                                <nz-form-label>指标 (yField / angleField)</nz-form-label>
+                                <nz-form-control>
+                                    <nz-select [(ngModel)]="config.yField" name="yField" (ngModelChange)="onConfigChange()" nzShowSearch nzAllowClear>
+                                        <nz-option *ngFor="let mea of cubeMeta?.measures" [nzValue]="mea.code" [nzLabel]="mea.title || mea.code"></nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+
+                            <nz-form-item *ngIf="chartType !== 'pie'">
+                                <nz-form-label>分组字段 (seriesField)</nz-form-label>
+                                <nz-form-control>
+                                    <nz-select [(ngModel)]="config.seriesField" name="seriesField" (ngModelChange)="onConfigChange()" nzShowSearch nzAllowClear>
+                                        <nz-option *ngFor="let dim of cubeMeta?.dimensions" [nzValue]="dim.code" [nzLabel]="dim.title || dim.code"></nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </form>
+                    </nz-tab>
+                    <nz-tab nzTitle="自定义配置">
+                        <form nz-form nzLayout="vertical">
+                            <nz-form-item *ngIf="chartType === 'line'">
+                                <nz-form-control>
+                                    <label nz-checkbox [(ngModel)]="config.smooth" name="smooth" (ngModelChange)="onConfigChange()">
+                                        平滑曲线
+                                    </label>
+                                </nz-form-control>
+                            </nz-form-item>
+
+                            <nz-form-item *ngIf="chartType === 'column' || chartType === 'bar'">
+                                <nz-form-control>
+                                    <label nz-checkbox [(ngModel)]="config.isStack" name="isStack" (ngModelChange)="onConfigChange()">
+                                        堆叠图
+                                    </label>
+                                    <label nz-checkbox [(ngModel)]="config.isPercent" name="isPercent" (ngModelChange)="onConfigChange()">
+                                        百分比模式
+                                    </label>
+                                </nz-form-control>
+                            </nz-form-item>
+
+                            <nz-form-item>
+                                <nz-form-label>图例位置</nz-form-label>
+                                <nz-form-control>
+                                    <nz-select [(ngModel)]="config.legendPosition" name="legendPosition" (ngModelChange)="onConfigChange()">
+                                        <nz-option nzValue="top" nzLabel="顶部"></nz-option>
+                                        <nz-option nzValue="bottom" nzLabel="底部"></nz-option>
+                                        <nz-option nzValue="left" nzLabel="左侧"></nz-option>
+                                        <nz-option nzValue="right" nzLabel="右侧"></nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </form>
+                    </nz-tab>
+                </nz-tabs>
+            </div>
+        </div>
+    </div>
+</div>
