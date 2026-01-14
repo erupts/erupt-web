@@ -4,6 +4,7 @@ import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
 import {NodeType} from "@flow/model/node.model";
 import printJS from 'print-js';
 import {SettingsService} from "@delon/theme";
+import {PrintSetting} from "@flow/model/flow.model";
 
 @Component({
     standalone: false,
@@ -47,4 +48,5 @@ export class FlowPrintPreviewComponent implements OnInit {
     }
 
     protected readonly NodeType = NodeType;
+    protected readonly PrintSetting = PrintSetting;
 }
