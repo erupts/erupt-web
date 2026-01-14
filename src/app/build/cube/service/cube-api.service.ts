@@ -3,6 +3,7 @@ import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
 import {FlowGroup} from "@flow/model/flow.model";
 import {R} from "@shared/model/api.model";
+import {CubeMeta, Dashboard} from "../cube/cube.model";
 
 @Injectable()
 export class CubeApiService {
@@ -11,16 +12,12 @@ export class CubeApiService {
 
     }
 
-    dashboardList() {
-        return this._http.get<R<FlowGroup[]>>(RestPath.erupt + "/cube/dashboard/list", {});
-    }
-
     dashboardDetail(code: string) {
-        return this._http.get<R<void>>(RestPath.erupt + "/cube/dashboard/detail", code);
+        return this._http.get<R<Dashboard>>(RestPath.erupt + "/cube/dashboard/detail/" + code);
     }
 
-    delete(code: string) {
-        return this._http.post<R<void>>(RestPath.erupt + "/cube/dashboard/delete", code);
+    cubeMetadata(cube: string, explore: string) {
+        return this._http.get<R<CubeMeta>>(RestPath.erupt + "/cube/semantic/metadata/" + cube + "/" + explore);
     }
 
 
