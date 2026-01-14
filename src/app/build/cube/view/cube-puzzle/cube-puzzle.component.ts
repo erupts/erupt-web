@@ -14,64 +14,9 @@ import {CubePuzzleConfig} from "../cube-puzzle-config/cube-puzzle-config";
 })
 export class CubePuzzleComponent implements OnInit {
 
-    options: GridsterConfig = {
-        gridType: 'verticalFixed',
-        compactType: 'none',
-        margin: 12,
-        outerMargin: true,
-        outerMarginTop: null,
-        outerMarginRight: null,
-        outerMarginBottom: null,
-        outerMarginLeft: null,
-        useTransformPositioning: true,
-        mobileBreakpoint: 640,
-        minCols: 1,
-        maxCols: 24,
-        minRows: 1,
-        maxRows: 10000,
-        maxItemCols: 24,
-        minItemCols: 1,
-        maxItemRows: 100,
-        minItemRows: 1,
-        maxItemArea: 2500,
-        minItemArea: 1,
-        defaultItemCols: 1,
-        defaultItemRows: 1,
-        fixedColWidth: 105,
-        fixedRowHeight: 55,
-        keepFixedHeightInMobile: false,
-        keepFixedWidthInMobile: false,
-        scrollSensitivity: 10,
-        scrollSpeed: 20,
-        enableEmptyCellClick: false,
-        enableEmptyCellContextMenu: false,
-        enableEmptyCellDrop: false,
-        enableEmptyCellDrag: false,
-        emptyCellDragMaxCols: 50,
-        emptyCellDragMaxRows: 50,
-        ignoreMarginInRow: false,
-        draggable: {
-            enabled: true,
-            ignoreContent: true,  // 忽略内容区域，只有拖拽手柄可以拖拽
-            ignoreContentClass: 'gridster-item-content',  // 排除内容区域
-            dragHandleClass: 'drag-handler',  // 只有带此类的元素才能拖拽
-            dropOverItems: true,  // 允许拖拽到其他项目上
-            dropOverItemsCallback: null,
-        },
-        resizable: {
-            enabled: true
-        },
-        swap: true,  // 启用交换位置功能
-        swapWhileDragging: false,  // 是否在拖拽过程中实时交换（false 表示释放时交换）
-        pushItems: true,
-        disablePushOnDrag: false,
-        disablePushOnResize: false,
-        pushResizeItems: false,
-        displayGrid: 'onDrag&Resize',
-        disableWindowResize: false,
-        disableWarnings: false,
-        scrollToNewItems: false
-    };
+    options: GridsterConfig;
+
+    edit = false;
 
     gridsterItems: GridsterItem[];
 
@@ -83,6 +28,8 @@ export class CubePuzzleComponent implements OnInit {
 
     cubeMeta: CubeMeta;
 
+    filters: { [key: string]: any } = {};
+
     constructor(private router: Router, private route: ActivatedRoute,
                 private cubeApiService: CubeApiService,
                 @Inject(NzModalService) private modal: NzModalService
@@ -91,6 +38,64 @@ export class CubePuzzleComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.options = {
+            gridType: 'verticalFixed',
+            compactType: 'none',
+            margin: 12,
+            outerMargin: true,
+            outerMarginTop: null,
+            outerMarginRight: null,
+            outerMarginBottom: null,
+            outerMarginLeft: null,
+            useTransformPositioning: true,
+            mobileBreakpoint: 640,
+            minCols: 1,
+            maxCols: 24,
+            minRows: 1,
+            maxRows: 10000,
+            maxItemCols: 24,
+            minItemCols: 1,
+            maxItemRows: 100,
+            minItemRows: 1,
+            maxItemArea: 2500,
+            minItemArea: 1,
+            defaultItemCols: 1,
+            defaultItemRows: 1,
+            fixedColWidth: 105,
+            fixedRowHeight: 55,
+            keepFixedHeightInMobile: false,
+            keepFixedWidthInMobile: false,
+            scrollSensitivity: 10,
+            scrollSpeed: 20,
+            enableEmptyCellClick: false,
+            enableEmptyCellContextMenu: false,
+            enableEmptyCellDrop: false,
+            enableEmptyCellDrag: false,
+            emptyCellDragMaxCols: 50,
+            emptyCellDragMaxRows: 50,
+            ignoreMarginInRow: false,
+            draggable: {
+                enabled: this.edit,
+                ignoreContent: true,  // 忽略内容区域，只有拖拽手柄可以拖拽
+                ignoreContentClass: 'gridster-item-content',  // 排除内容区域
+                dragHandleClass: 'drag-handler',  // 只有带此类的元素才能拖拽
+                dropOverItems: true,  // 允许拖拽到其他项目上
+                dropOverItemsCallback: null,
+            },
+            resizable: {
+                enabled: this.edit
+            },
+            swap: true,  // 启用交换位置功能
+            swapWhileDragging: false,  // 是否在拖拽过程中实时交换（false 表示释放时交换）
+            pushItems: true,
+            disablePushOnDrag: false,
+            disablePushOnResize: false,
+            pushResizeItems: false,
+            displayGrid: 'onDrag&Resize',
+            disableWindowResize: false,
+            disableWarnings: false,
+            scrollToNewItems: false
+        };
         this.checkFillRoute();
         this.code = this.route.snapshot.paramMap.get('code')!;
         this.cubeApiService.dashboardDetail(this.code).subscribe(res => {
@@ -131,6 +136,27 @@ export class CubePuzzleComponent implements OnInit {
                 y: 4,
             }
         ];
+    }
+
+    startEdit() {
+        this.edit = true;
+        this.options.draggable!.enabled = true;
+        this.options.resizable!.enabled = true;
+        this.changedOptions();
+    }
+
+    cancelEdit() {
+        this.edit = false;
+        this.options.draggable!.enabled = false;
+        this.options.resizable!.enabled = false;
+        this.changedOptions();
+    }
+
+    saveEdit() {
+        this.edit = false;
+        this.options.draggable!.enabled = false;
+        this.options.resizable!.enabled = false;
+        this.changedOptions();
     }
 
     changedOptions() {
