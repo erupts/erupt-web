@@ -547,7 +547,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         });
         modalRef.componentInstance.instance = this.selectedInstance;
         modalRef.componentInstance.tasks = this.instanceTasks;
-        modalRef.componentInstance.eruptBuild =  this.eruptBuild;
+        modalRef.componentInstance.eruptBuild = this.eruptBuild;
     }
 
     protected readonly AddSignType = AddSignType;
