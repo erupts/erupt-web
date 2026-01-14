@@ -2,11 +2,10 @@
 .cube-puzzle-container {
     display: flex;
     flex-direction: column;
-    //background-color: #f8fbff;
-    //background-image:
-    //    linear-gradient(rgba(226, 232, 240, 0.8) 1px, transparent 1px),
-    //    linear-gradient(90deg, rgba(226, 232, 240, 0.8) 1px, transparent 1px);
-    //background-size: 20px 20px;
+    background-image:
+        linear-gradient(rgba(226, 232, 240, 0.8) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(226, 232, 240, 0.8) 1px, transparent 1px);
+    background-size: 20px 20px;
 
     .puzzle-header {
         height: 50px;
@@ -28,12 +27,45 @@
                 margin-right: 12px;
                 color: #262626;
             }
+
+            .dashboard-description-icon {
+                font-size: 16px;
+                color: #8c8c8c;
+                margin-right: 12px;
+                cursor: pointer;
+            }
         }
     }
 
     .gridster-wrapper {
         flex: 1;
         overflow: auto;
+        padding-bottom: 12px;
+    }
+
+    .puzzle-filter-row {
+        padding: 8px 12px;
+        background: #fff;
+        border-bottom: 1px solid #e8e8e8;
+        overflow-x: auto;
+
+        .filter-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+
+            .filter-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .filter-label {
+                    font-size: 13px;
+                    color: #595959;
+                    white-space: nowrap;
+                }
+            }
+        }
     }
 
     .puzzle-item {

@@ -10,6 +10,7 @@ import {CubePuzzleComponent} from './view/cube-puzzle/cube-puzzle.component';
 import {CubePuzzleConfig} from './view/cube-puzzle-config/cube-puzzle-config';
 import {GridsterComponent, GridsterItemComponent} from "angular-gridster2";
 import {CubeApiService} from "./service/cube-api.service";
+import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import {CubeApiService} from "./service/cube-api.service";
         GridsterComponent,
         GridsterItemComponent,
         NzCardModule,
-        NzIconModule
+        NzIconModule,
+        NzTooltipDirective
     ]
 })
 export class CubeModule {

@@ -5,43 +5,82 @@
                 <nz-icon nzType="close"></nz-icon>
             </button>
             <span class="dashboard-title">{{ dashboard?.name }}</span>
-            <nz-tag nzColor="blue">Editing</nz-tag>
+            @if (dashboard?.description) {
+                <span nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+                      [nzTooltipTitle]="dashboard?.description"
+                      class="dashboard-description-icon"></span>
+            }
         </div>
         <div class="header-center">
-            <div class="action-buttons">
-                <button nz-button nzType="default" (click)="addItem()">
-                    <span nz-icon nzType="plus"></span> Add Report
-                </button>
-                <button nz-button nzType="default" >
-                    <span nz-icon nzType="filter"></span> Add Filter
-                </button>
-            </div>
+            @if (edit) {
+                <div class="action-buttons">
+                    <button nz-button nzType="default" (click)="addItem()">
+                        <span nz-icon nzType="plus"></span> Add Report
+                    </button>
+                    <button nz-button nzType="default">
+                        <span nz-icon nzType="filter"></span> Add Filter
+                    </button>
+                </div>
+            }
         </div>
         <div class="header-right">
-            <button nz-button nzType="default">Cancel</button>
-            <button nz-button nzType="primary">
-                <span nz-icon nzType="save"></span> Save
-            </button>
+            @if (edit) {
+                <button nz-button nzType="default" (click)="cancelEdit()">Cancel</button>
+                <button nz-button nzType="primary" (click)="saveEdit()">
+                    <span nz-icon nzType="save"></span> Save
+                </button>
+            } @else {
+                <button nz-button nzType="primary" (click)="startEdit()">
+                    <span nz-icon nzType="edit"></span> Edit
+                </button>
+            }
         </div>
     </div>
+    @if (cubeMeta) {
+        <div class="puzzle-filter-row">
+            <div class="filter-items">
+                @for (dim of cubeMeta.dimensions; track dim.code) {
+                    @if (!dim.hidden) {
+                        <div class="filter-item">
+                            <span class="filter-label">{{ dim.title }}</span>
+                            <nz-select nzShowSearch nzAllowClear [nzPlaceHolder]="'Select ' + dim.title"
+                                       [(ngModel)]="filters[dim.code]"
+                                       style="width: 150px" nzSize="small">
+                                <!-- 暂时留空，后续对接数据 -->
+                            </nz-select>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
     <div class="gridster-wrapper">
         <gridster [options]="options">
             @for (item of gridsterItems; track item) {
                 <gridster-item [item]="item">
                     <div class="puzzle-item">
-                        <div class="drag-handler" title="Drag">
-                            <button nz-button nzType="text" nzSize="small">
-                                <nz-icon nzType="holder" nzTheme="outline" />
-                            </button>
-                        </div>
-                        <div class="item-actions">
-                            <button nz-button nzType="text" nzSize="small" (click)="editItem(item)" title="Edit">
-                                <span nz-icon nzType="edit"></span>
-                            </button>
-                            <button nz-button nzType="text" nzSize="small" nzDanger (click)="removeItem(item)" title="Remove">
-                                <span nz-icon nzType="delete"></span>
-                            </button>
-                        </div>
+                        @if (edit) {
+                            <div class="drag-handler" title="Drag">
+                                <button nz-button nzType="text" nzSize="small">
+                                    <nz-icon nzType="holder" nzTheme="outline"/>
+                                </button>
+                            </div>
+                            <div class="item-actions">
+                                <button nz-button nzType="text" nzSize="small" (click)="editItem(item)" title="Edit">
+                                    <span nz-icon nzType="edit"></span>
+                                </button>
+                                <button nz-button nzType="text" nzSize="small" nzDanger (click)="removeItem(item)"
+                                        title="Remove">
+                                    <span nz-icon nzType="delete"></span>
+                                </button>
+                            </div>
+                        } @else {
+                            <div class="item-actions">
+                                <button nz-button nzType="text" nzSize="small">
+                                    <span nz-icon nzType="redo"></span>
+                                </button>
+                            </div>
+                        }
                         <div class="puzzle-content" style="background-color: #09f">
                         </div>
                     </div>
