@@ -308,6 +308,13 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     }
 
     configPrintTemplate() {
+        let vars = [];
+        this.eruptBuild.eruptModel.eruptFieldModels.forEach(f => {
+            vars.push({
+                value: f.fieldName,
+                label: f.eruptFieldJson.edit.title
+            })
+        })
         this.modal.create({
             nzTitle: '配置打印模板',
             nzContent: PrintTemplate,
@@ -316,13 +323,14 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             nzKeyboard: false,
             nzData: {
                 value: this.flowConfig.setting.printTemplate,
+                vars: vars,
                 height: 400,
                 valueChange: (value: string) => {
                     this.flowConfig.setting.printTemplate = value;
                 }
             },
             nzOnOk: () => {
-                console.log(this.flowConfig.setting.printTemplate);
+
             },
             nzStyle: {
                 // top: "30px"

@@ -234,7 +234,7 @@ export interface MapType {
 export interface VL {
     value: string;
     label: string;
-    color: string;
+    color?: string;
     desc?: string;
     disable?: boolean;
 }
