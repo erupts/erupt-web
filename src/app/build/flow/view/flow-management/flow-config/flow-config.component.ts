@@ -3,7 +3,7 @@ import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {VL} from "../../../../erupt/model/erupt-field.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
-import {FlowConfig, FlowGroup, FlowPermission, FlowUpmsScope, UpmsScope} from "@flow/model/flow.model";
+import {FlowConfig, FlowGroup, FlowPermission, FlowUpmsScope, PrintSetting, UpmsScope} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {EditType, FormSize} from "../../../../erupt/model/erupt.enum";
@@ -15,6 +15,7 @@ import {DataHandlerService} from "../../../../erupt/service/data-handler.service
 import html2canvas from "html2canvas";
 import {DataService} from "@shared/service/data.service";
 import {NoticeChannel} from "@shared/model/user.model";
+import {PrintTemplate} from "@shared/component/print-template/print-template";
 
 @Component({
     standalone: false,
@@ -306,5 +307,32 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         return upmsScope.scopeValue.toString();
     }
 
+    configPrintTemplate() {
+        this.modal.create({
+            nzTitle: '配置打印模板',
+            nzContent: PrintTemplate,
+            nzWidth: '800px',
+            nzMaskClosable: false,
+            nzKeyboard: false,
+            nzData: {
+                value: this.flowConfig.setting.printTemplate,
+                height: 400,
+                valueChange: (value: string) => {
+                    this.flowConfig.setting.printTemplate = value;
+                }
+            },
+            nzOnOk: () => {
+                console.log(this.flowConfig.setting.printTemplate);
+            },
+            nzStyle: {
+                // top: "30px"
+            },
+            nzBodyStyle: {
+                // padding: "0",
+            }
+        })
+    }
+
     protected readonly EditType = EditType;
+    protected readonly PrintSetting = PrintSetting;
 }
