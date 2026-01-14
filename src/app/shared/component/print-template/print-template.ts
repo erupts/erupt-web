@@ -5,6 +5,9 @@ import {NzSpinComponent} from "ng-zorro-antd/spin";
 import {NzAutosizeDirective, NzInputDirective} from "ng-zorro-antd/input";
 import {FormsModule} from "@angular/forms";
 import {NZ_MODAL_DATA} from "ng-zorro-antd/modal";
+import {NzDropDownModule} from "ng-zorro-antd/dropdown";
+import {NzButtonComponent} from "ng-zorro-antd/button";
+import {NzIconDirective} from "ng-zorro-antd/icon";
 
 declare const DecoupledDocumentEditor;
 
@@ -14,7 +17,10 @@ declare const DecoupledDocumentEditor;
         NzSpinComponent,
         NzInputDirective,
         NzAutosizeDirective,
-        FormsModule
+        FormsModule,
+        NzDropDownModule,
+        NzButtonComponent,
+        NzIconDirective
     ],
     templateUrl: './print-template.html',
     styleUrl: './print-template.less'
@@ -33,6 +39,10 @@ export class PrintTemplate implements OnInit {
 
     editorError: boolean = false;
 
+    vars: { value: string, label: string }[];
+
+    editor: any;
+
     constructor(private lazy: LazyService, private ref: ElementRef,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
                 @Inject(NZ_MODAL_DATA) private data: any) {
@@ -40,7 +50,43 @@ export class PrintTemplate implements OnInit {
             this.value = data.value;
             this.height = data.height || this.height;
             this.readonly = data.readonly || this.readonly;
+            this.vars = data.vars || [];
         }
+    }
+
+    initMention(editor: any) {
+        const vars = this.vars;
+        if (!vars || vars.length === 0) return;
+
+        // 这种方案最稳妥：拦截 setData 和 getData
+        const originalSetData = editor.setData.bind(editor);
+        editor.setData = (data) => {
+            let processedData = data;
+            vars.forEach(v => {
+                const reg = new RegExp(`\\{\\{${v.value}\\}\\}`, 'g');
+                processedData = processedData.replace(reg, `<span class="mention" data-variable="true" data-id="${v.value}" style="background: #e8e8e8;color: #1890ff;padding: 0 4px;border-radius: 4px;font-weight: bold;">${v.label}</span>`);
+            });
+            originalSetData(processedData);
+        };
+
+        const originalGetData = editor.getData.bind(editor);
+        editor.getData = () => {
+            let data = originalGetData();
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = data;
+            tempDiv.querySelectorAll('span[data-variable="true"]').forEach((el: any) => {
+                const id = el.getAttribute('data-id');
+                el.replaceWith(`{{${id}}}`);
+            });
+            return tempDiv.innerHTML;
+        };
+    }
+
+    addVar(v: { value: string, label: string }) {
+        this.editor.model.change(writer => {
+            const insertText = `{{${v.value}}}`;
+            this.editor.model.insertContent(writer.createText(insertText));
+        });
     }
 
     onValueChange(data: string) {
@@ -141,10 +187,14 @@ export class PrintTemplate implements OnInit {
                     //     ]
                     // }
                 }).then(editor => {
+                    this.editor = editor;
                     editor.isReadOnly = this.readonly;
                     that.loading = false;
                     const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
                     toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+                    if (this.vars && this.vars.length > 0) {
+                        this.initMention(editor);
+                    }
                     if (that.value) {
                         editor.setData(that.value);
                     }
