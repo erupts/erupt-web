@@ -1,0 +1,52 @@
+<div class="cube-puzzle-container" [style.height]="isFillRoute ? '100vh' : 'calc(100vh - 50px)'">
+    <div class="puzzle-header">
+        <div class="header-left">
+            <button nz-button nzType="text" style="margin-right: 10px">
+                <nz-icon nzType="close"></nz-icon>
+            </button>
+            <span class="dashboard-title">{{ dashboard?.name }}</span>
+            <nz-tag nzColor="blue">Editing</nz-tag>
+        </div>
+        <div class="header-center">
+            <div class="action-buttons">
+                <button nz-button nzType="default" (click)="addItem()">
+                    <span nz-icon nzType="plus"></span> Add Report
+                </button>
+                <button nz-button nzType="default" >
+                    <span nz-icon nzType="filter"></span> Add Filter
+                </button>
+            </div>
+        </div>
+        <div class="header-right">
+            <button nz-button nzType="default">Cancel</button>
+            <button nz-button nzType="primary">
+                <span nz-icon nzType="save"></span> Save
+            </button>
+        </div>
+    </div>
+    <div class="gridster-wrapper">
+        <gridster [options]="options">
+            @for (item of gridsterItems; track item) {
+                <gridster-item [item]="item">
+                    <div class="puzzle-item">
+                        <div class="drag-handler" title="Drag">
+                            <button nz-button nzType="text" nzSize="small">
+                                <nz-icon nzType="holder" nzTheme="outline" />
+                            </button>
+                        </div>
+                        <div class="item-actions">
+                            <button nz-button nzType="text" nzSize="small" (click)="editItem(item)" title="Edit">
+                                <span nz-icon nzType="edit"></span>
+                            </button>
+                            <button nz-button nzType="text" nzSize="small" nzDanger (click)="removeItem(item)" title="Remove">
+                                <span nz-icon nzType="delete"></span>
+                            </button>
+                        </div>
+                        <div class="puzzle-content" style="background-color: #09f">
+                        </div>
+                    </div>
+                </gridster-item>
+            }
+        </gridster>
+    </div>
+</div>
