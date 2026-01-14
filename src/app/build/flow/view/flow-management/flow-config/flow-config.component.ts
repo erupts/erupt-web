@@ -308,7 +308,12 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     }
 
     configPrintTemplate() {
-        let vars = [];
+        let vars = [
+            {value: 'flow.initiatorUser', label: '申请人'},
+            {value: 'flow.createTime', label: '申请时间'},
+            {value: 'flow.no', label: '审批单号'},
+            {value: 'flow.status', label: '审批状态'},
+        ];
         this.eruptBuild.eruptModel.eruptFieldModels.forEach(f => {
             vars.push({
                 value: f.fieldName,
@@ -322,9 +327,9 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             nzMaskClosable: false,
             nzKeyboard: false,
             nzData: {
-                value: this.flowConfig.setting.printTemplate,
                 vars: vars,
                 height: 400,
+                value: this.flowConfig.setting.printTemplate,
                 valueChange: (value: string) => {
                     this.flowConfig.setting.printTemplate = value;
                 }
