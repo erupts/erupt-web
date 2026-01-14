@@ -64,7 +64,12 @@ export class PrintTemplate implements OnInit {
             let processedData = data;
             vars.forEach(v => {
                 const reg = new RegExp(`\\{\\{${v.value}\\}\\}`, 'g');
-                processedData = processedData.replace(reg, `<span class="mention" data-variable="true" data-id="${v.value}" style="background: #e8e8e8;color: #1890ff;padding: 0 4px;border-radius: 4px;font-weight: bold;">${v.label}</span>`);
+                processedData = processedData.replace(reg,
+                    `<span class="mention" data-variable="true" data-id="${v.value}" style="color: #1890ff;margin: 0 2px;font-weight: bold;">
+                       <span style=" opacity: 0.5;">{</span>
+                            ${v.label}
+                       <span style="opacity: 0.5;">}</span>
+                    </span>`);
             });
             originalSetData(processedData);
         };
