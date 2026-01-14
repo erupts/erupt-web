@@ -1,8 +1,8 @@
 <nz-spin [nzSpinning]="loading">
     @if (!editorError) {
         @if (vars && vars.length > 0) {
-            <div style="padding-right: 12px">
-                <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="text">
+            <div style="margin-bottom: 10px">
+                <button nz-button nz-dropdown [nzDropdownMenu]="menu">
                     插入变量 <span nz-icon nzType="down"></span>
                 </button>
                 <nz-dropdown-menu #menu="nzDropdownMenu">
