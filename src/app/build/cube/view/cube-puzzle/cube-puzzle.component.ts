@@ -1,10 +1,12 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig, GridsterItem} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
-import {CubeMeta, Dashboard} from "../../cube/cube.model";
 import {CubePuzzleConfig} from "../cube-puzzle-config/cube-puzzle-config";
+import {TransferItem} from "ng-zorro-antd/transfer";
+import {Dashboard} from "../../cube/dashboard.model";
+import {CubeMeta} from "../../cube/cube.model";
 
 @Component({
     standalone: false,
@@ -29,6 +31,8 @@ export class CubePuzzleComponent implements OnInit {
     cubeMeta: CubeMeta;
 
     filters: { [key: string]: any } = {};
+
+    activeFilterCodes: Set<string> = new Set();
 
     constructor(private router: Router, private route: ActivatedRoute,
                 private cubeApiService: CubeApiService,
@@ -219,6 +223,47 @@ export class CubePuzzleComponent implements OnInit {
         // 检查根路由是否是 fill（路径以 /fill 开头）
         // 例如: /fill/cube/puzzle/123
         this.isFillRoute = url.startsWith('/fill/');
+    }
+
+    @ViewChild('transferTpl') transferTpl: any;
+
+    transferList: TransferItem[] = [];
+
+    addFilter() {
+        this.transferList = [];
+        this.cubeMeta.dimensions.forEach(dim => {
+            if (!dim.hidden) {
+                this.transferList.push({
+                    key: dim.code,
+                    title: dim.title,
+                    direction: this.activeFilterCodes.has(dim.code) ? 'right' : 'left'
+                });
+            }
+        });
+        this.cubeMeta.measures.forEach(mea => {
+            if (!mea.hidden) {
+                this.transferList.push({
+                    key: mea.code,
+                    title: mea.title,
+                    direction: this.activeFilterCodes.has(mea.code) ? 'right' : 'left'
+                });
+            }
+        });
+        this.modal.create({
+            nzTitle: 'Add Filter',
+            nzWidth: 600,
+            nzContent: this.transferTpl,
+            nzOnOk: () => {
+                const selectedKeys = this.transferList
+                    .filter(item => item.direction === 'right')
+                    .map(item => item['key']);
+                this.activeFilterCodes = new Set(selectedKeys);
+            }
+        });
+    }
+
+    transferChange(params: any) {
+        // console.log(params);
     }
 
 }
