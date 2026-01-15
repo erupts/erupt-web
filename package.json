@@ -56,7 +56,6 @@
         "@panzoom/panzoom": "^4.6.0",
         "@worktile/gantt": "^20.0.0",
         "angular-gridster2": "^20.0.0",
-        "ckeditor4": "^4.25.1",
         "date-fns": "^4.0.0",
         "eslint": "^9.0.0",
         "font-awesome": "^4.7.0",
