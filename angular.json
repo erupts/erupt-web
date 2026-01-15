@@ -48,6 +48,11 @@
                             "src/erupt.i18n.csv",
                             {
                                 "glob": "**/*",
+                                "input": "node_modules/ckeditor4/",
+                                "output": "assets/ckeditor4/"
+                            },
+                            {
+                                "glob": "**/*",
                                 "input": "./libs/ueditor/",
                                 "output": "/assets/ueditor/"
                             },
