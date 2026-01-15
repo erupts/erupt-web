@@ -28,29 +28,6 @@
                     display: flex;
                     gap: 8px;
                     align-items: center;
-
-                    button {
-                        border-radius: 4px;
-                        height: 32px;
-                        padding: 0 16px;
-                        font-weight: 400;
-                        transition: all 0.2s ease;
-
-                        &[nzType="primary"] {
-                            background: #1890ff;
-                            border-color: #1890ff;
-                            color: #fff;
-
-                            &:hover {
-                                background: #40a9ff;
-                                border-color: #40a9ff;
-                            }
-
-                            span {
-                                margin-right: 4px;
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -105,8 +82,8 @@
 
                             &:hover {
                                 background: #f5f5f5;
-                                border-color: #1890ff;
-                                color: #1890ff;
+                                border-color: var(--ant-primary-color);
+                                color: var(--ant-primary-color);
                             }
 
                             span {
@@ -146,17 +123,16 @@
                         }
 
                         &.active {
-                            background: #e6f7ff;
-                            border-color: #91d5ff;
+                            background: var(--ant-primary-1);
                             z-index: 5;
 
                             .category-content .category-name {
-                                color: #1890ff;
+                                color: var(--ant-primary-color);
                                 font-weight: 500;
                             }
 
                             .category-content .category-count {
-                                background: #1890ff;
+                                background: var(--ant-primary-color);
                                 color: #fff;
                             }
                         }
@@ -251,7 +227,7 @@
 
                                 &:hover {
                                     background: #f0f0f0;
-                                    color: #1890ff;
+                                    color: var(--ant-primary-color);
                                 }
                             }
                         }
@@ -277,7 +253,7 @@
 
                             &:hover, &:focus {
                                 background: #f0f0f0;
-                                color: #1890ff;
+                                color: var(--ant-primary-color);
                             }
 
                             &:active {
@@ -481,7 +457,7 @@
 
                                     &:hover {
                                         background: #f0f0f0;
-                                        color: #1890ff;
+                                        color: var(--ant-primary-color);
                                     }
 
                                     &:active {
