@@ -139,18 +139,17 @@
                             padding: 16px 20px;
                             cursor: pointer;
                             transition: all 0.2s ease;
-                            border-bottom: 1px solid #f0f0f0;
                             display: flex;
                             justify-content: space-between;
                             align-items: center;
 
                             &:hover {
-                                background: #f5f5f5;
+                                background: var(--ant-primary-2);
                             }
 
                             &.active {
-                                background: #1890ff;
-                                color: white;
+                                background: var(--ant-primary-1);
+                                color: var(--ant-primary-color);
                                 font-weight: 500;
                             }
 
@@ -264,7 +263,7 @@
                                     &:hover {
                                         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                                         transform: translateY(-2px);
-                                        border-color: #1890ff;
+                                        border-color: var(--ant-primary-color);
                                     }
 
                                     &.flow-disabled {
