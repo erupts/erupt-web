@@ -96,32 +96,7 @@ export class CkeditorComponent implements OnInit {
                     ckfinder: {
                         uploadUrl: RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
                             this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token
-                    },
-                    // mediaEmbed: {
-                    //     providers: [
-                    //         {
-                    //             name: 'myprovider',
-                    //             url: [
-                    //                 /^lizzy.*\.com.*\/media\/(\w+)/,
-                    //                 /^www\.lizzy.*/,
-                    //                 /^.*/
-                    //             ],
-                    //             html: match => {
-                    //                 //获取媒体url
-                    //                 const input = match['input'];
-                    //                 //console.log('input' + match['input']);
-                    //                 return (
-                    //                     '<div style="position: relative; padding-bottom: 100%; height: 0; padding-bottom: 70%;">' +
-                    //                     `<iframe src="${input}" ` +
-                    //                     'style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;" ' +
-                    //                     'frameborder="0" allowtransparency="true" allow="encrypted-media">' +
-                    //                     '</iframe>' +
-                    //                     '</div>'
-                    //                 );
-                    //             }
-                    //         }
-                    //     ]
-                    // }
+                    }
                 }).then(editor => {
                     editor.isReadOnly = this.readonly;
                     that.loading = false;

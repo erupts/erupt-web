@@ -59,12 +59,6 @@ export class StartupService {
             xhr.send();
             xhr.onreadystatechange = () => {
                 if (xhr.readyState == 4 && xhr.status == 200) {
-                    setTimeout(() => {
-                        if (window['SW']) {
-                            window['SW'].stop();
-                            window['SW'] = null;
-                        }
-                    }, 2000)
                     let eruptAppProp = <EruptAppModel>JSON.parse(xhr.responseText);
                     EruptAppData.put(eruptAppProp);
                     if (!!EruptAppData.get().properties["erupt-tenant"]) {
