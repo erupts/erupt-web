@@ -17,7 +17,7 @@
                     <button nz-button nzType="default" (click)="addItem()">
                         <span nz-icon nzType="plus"></span> Add Report
                     </button>
-                    <button nz-button nzType="default">
+                    <button nz-button nzType="default" (click)="addFilter()">
                         <span nz-icon nzType="filter"></span> Add Filter
                     </button>
                 </div>
@@ -36,15 +36,27 @@
             }
         </div>
     </div>
-    @if (cubeMeta) {
+    @if (cubeMeta && activeFilterCodes.size > 0) {
         <div class="puzzle-filter-row">
             <div class="filter-items">
                 @for (dim of cubeMeta.dimensions; track dim.code) {
-                    @if (!dim.hidden) {
+                    @if (!dim.hidden && activeFilterCodes.has(dim.code)) {
                         <div class="filter-item">
                             <span class="filter-label">{{ dim.title }}</span>
                             <nz-select nzShowSearch nzAllowClear [nzPlaceHolder]="'Select ' + dim.title"
                                        [(ngModel)]="filters[dim.code]"
+                                       style="width: 150px" nzSize="small">
+                                <!-- 暂时留空，后续对接数据 -->
+                            </nz-select>
+                        </div>
+                    }
+                }
+                @for (mea of cubeMeta.measures; track mea.code) {
+                    @if (!mea.hidden && activeFilterCodes.has(mea.code)) {
+                        <div class="filter-item">
+                            <span class="filter-label">{{ mea.title }}</span>
+                            <nz-select nzShowSearch nzAllowClear [nzPlaceHolder]="'Select ' + mea.title"
+                                       [(ngModel)]="filters[mea.code]"
                                        style="width: 150px" nzSize="small">
                                 <!-- 暂时留空，后续对接数据 -->
                             </nz-select>
@@ -88,4 +100,11 @@
             }
         </gridster>
     </div>
+    <ng-template #transferTpl>
+        <nz-transfer
+            [nzDataSource]="transferList"
+            [nzTitles]="['Available', 'Selected']"
+            (nzChange)="transferChange($event)">
+        </nz-transfer>
+    </ng-template>
 </div>

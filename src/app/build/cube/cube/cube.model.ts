@@ -1,25 +1,3 @@
-/**
- * Dashboard 接口定义
- * 对应后端类: xyz.erupt.cube.puzzle.model.Dashboard
- */
-export interface Dashboard {
-    id?: number | string;
-    createTime?: Date | string;
-    updateTime?: Date | string;
-    createUser?: string;
-    updateUser?: string;
-    code: string;                // 编码
-    name: string;                 // 名称 (notNull = true)
-    description?: string;         // 描述
-
-    cube: string;                 // Cube (notNull = true)
-    explore: string;              // Explore (notNull = true)
-
-    draftDsl?: any;               // 草稿 DSL (对应 DashboardDSL)
-    publishDsl?: any;             // 已发布 DSL (对应 DashboardDSL)
-    publishTime?: Date | string;  // 发布时间
-}
-
 export interface CubeMeta {
     code: string;                       // Cube 编码
     title: string;                      // Cube 名称
