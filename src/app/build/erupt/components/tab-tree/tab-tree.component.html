@@ -14,7 +14,7 @@
         [nzVirtualHeight]="treeData.length > 50 ? '420px' : null"
         [nzCheckStrictly]="true"
         [nzData]="treeData"
-        (nzCheckBoxChange)="checkBoxChange($event)"
+        (nzCheckboxChange)="checkBoxChange($event)"
         [nzSearchValue]="eruptFieldModel.eruptFieldJson.edit.$tempValue"
         [nzCheckedKeys]="arrayAnyToString(eruptFieldModel.eruptFieldJson.edit.$value)">
       </nz-tree>
