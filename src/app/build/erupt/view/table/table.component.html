@@ -52,7 +52,7 @@
                 [nzPopoverContent]="sortPopoverContent"
                 nzPopoverTrigger="click"
                 nzPopoverPlacement="bottomLeft"
-                [style.border-color]="selectedSorts.length?'#09f':null">
+                [style.border-color]="selectedSorts.length?'var(--ant-primary-color-hover)':null">
                 <i nz-icon nzType="swap" nzTheme="outline" style="transform: rotateZ(90deg)"></i> {{ 'global.sort'|translate }}
               </button>
               <ng-template #sortPopoverContent>
