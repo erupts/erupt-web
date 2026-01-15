@@ -36,6 +36,7 @@ import {NzAutocompleteModule} from "ng-zorro-antd/auto-complete";
 import {NzTreeModule} from "ng-zorro-antd/tree";
 import {NzSkeletonModule} from "ng-zorro-antd/skeleton";
 import {NzCarouselModule} from "ng-zorro-antd/carousel";
+import {NzTransferModule} from "ng-zorro-antd/transfer";
 
 export const SHARED_ZORRO_MODULES = [
     NzButtonModule,
@@ -76,4 +77,5 @@ export const SHARED_ZORRO_MODULES = [
     NzSkeletonModule,
     NzCarouselModule,
     NzBreadCrumbModule,
+    NzTransferModule
 ];
