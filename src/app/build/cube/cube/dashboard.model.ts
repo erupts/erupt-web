@@ -1,15 +1,17 @@
+import {GridsterItem} from "angular-gridster2";
+
 export interface Dashboard {
-    id?: number | string;
+    id?: number;
     createTime?: Date | string;
     updateTime?: Date | string;
     createUser?: string;
     updateUser?: string;
-    code: string;                // 编码
-    name: string;                 // 名称 (notNull = true)
-    description?: string;         // 描述
+    code: string;
+    name: string;
+    description?: string;
 
-    cube: string;                 // Cube (notNull = true)
-    explore: string;              // Explore (notNull = true)
+    cuber: string;
+    explore: string;
 
     draftDsl?: DashboardDSL;
     publishDsl?: DashboardDSL;
@@ -27,14 +29,31 @@ export interface DashboardDSL {
 /**
  * 报表 DSL 定义
  */
-export interface ReportDSL {
-    cols?: number; // 最大网格 24
-    rows?: number;
-    x?: number;    // 最大网格 24
-    y?: number;    // 最大网格 24
+export interface ReportDSL extends GridsterItem {
     type?: ReportType;
+    title?: string;
+    description?: string;
     cubeQuery?: CubeQuery;
-    config?: any;
+    cube?: Partial<Record<CubeKey | string, string[] | string>>
+    ui?: Record<string, any>;
+    xField?: string;
+    yField?: string;
+}
+
+export enum CubeKey {
+    X = 'X',
+    Y = 'Y',
+    xField = 'xField',
+    yField = 'yField',
+    seriesField = 'seriesField',
+    COLOR = 'COLOR',
+    SIZE = 'SIZE',
+    SHAPE = 'SHAPE',
+    TEXT = 'TEXT',
+    LABEL = 'LABEL',
+    DIMENSION = 'DIMENSION',
+    MEASURE = 'MEASURE',
+    FILTER = 'FILTER',
 }
 
 /**

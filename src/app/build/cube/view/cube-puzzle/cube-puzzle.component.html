@@ -26,7 +26,7 @@
         <div class="header-right">
             @if (edit) {
                 <button nz-button nzType="default" (click)="cancelEdit()">Cancel</button>
-                <button nz-button nzType="primary" (click)="saveEdit()">
+                <button nz-button nzType="primary" (click)="saveEdit()" [nzLoading]="saving">
                     <span nz-icon nzType="save"></span> Save
                 </button>
             } @else {
@@ -68,35 +68,40 @@
     }
     <div class="gridster-wrapper">
         <gridster [options]="options">
-            @for (item of gridsterItems; track item) {
-                <gridster-item [item]="item">
-                    <div class="puzzle-item">
-                        @if (edit) {
-                            <div class="drag-handler" title="Drag">
-                                <button nz-button nzType="text" nzSize="small">
-                                    <nz-icon nzType="holder" nzTheme="outline"/>
-                                </button>
+            @if (dsl?.reports) {
+                @for (report of dsl.reports; track $index) {
+                    <gridster-item [item]="report">
+                        <div class="puzzle-item">
+                            @if (edit) {
+                                <div class="drag-handler item-actions" title="Drag" style="left: 5px;right: auto">
+                                    <button nz-button nzType="text" nzSize="small">
+                                        <span nz-icon nzType="holder" nzTheme="outline"></span>
+                                    </button>
+                                </div>
+                                <div class="item-actions">
+                                    <button nz-button nzType="text" nzSize="small" (click)="editItem(report)" title="Edit">
+                                        <span nz-icon nzType="edit"></span>
+                                    </button>
+                                    <button nz-button nzType="text" nzSize="small" nzDanger (click)="removeItem($index)"
+                                            title="Remove">
+                                        <span nz-icon nzType="delete"></span>
+                                    </button>
+                                </div>
+                            } @else {
+                                <div class="item-actions">
+                                    <button nz-button nzType="text" nzSize="small">
+                                        <span nz-icon nzType="redo"></span>
+                                    </button>
+                                </div>
+                            }
+                            <div class="puzzle-content" style="background-color: var(--ant-primary-1)">
+                                <nz-card [nzTitle]="report.title" nzSize="small" style="height: 100%;margin-bottom: 0">
+                                    {{report | json}}
+                                </nz-card>
                             </div>
-                            <div class="item-actions">
-                                <button nz-button nzType="text" nzSize="small" (click)="editItem(item)" title="Edit">
-                                    <span nz-icon nzType="edit"></span>
-                                </button>
-                                <button nz-button nzType="text" nzSize="small" nzDanger (click)="removeItem(item)"
-                                        title="Remove">
-                                    <span nz-icon nzType="delete"></span>
-                                </button>
-                            </div>
-                        } @else {
-                            <div class="item-actions">
-                                <button nz-button nzType="text" nzSize="small">
-                                    <span nz-icon nzType="redo"></span>
-                                </button>
-                            </div>
-                        }
-                        <div class="puzzle-content" style="background-color: var(--ant-primary-1)">
                         </div>
-                    </div>
-                </gridster-item>
+                    </gridster-item>
+                }
             }
         </gridster>
     </div>
