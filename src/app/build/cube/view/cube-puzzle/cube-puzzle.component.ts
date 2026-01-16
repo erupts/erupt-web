@@ -5,7 +5,7 @@ import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
 import {TransferItem} from "ng-zorro-antd/transfer";
-import {CubeKey, Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../cube/dashboard.model";
+import {Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../cube/dashboard.model";
 import {CubeMeta} from "../../cube/cube.model";
 import {cloneDeep} from "lodash";
 

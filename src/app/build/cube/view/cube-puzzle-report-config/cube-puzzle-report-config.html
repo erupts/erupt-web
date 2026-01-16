@@ -22,12 +22,16 @@
                             <nz-form-item>
                                 <nz-form-label>图表类型</nz-form-label>
                                 <nz-form-control>
-                                    <nz-select [(ngModel)]="chartType" name="chartType"
+                                    <nz-select [(ngModel)]="reportDSL.type" name="chartType"
                                                (ngModelChange)="onConfigChange()">
-                                        <nz-option nzValue="line" nzLabel="折线图"></nz-option>
-                                        <nz-option nzValue="column" nzLabel="柱状图"></nz-option>
-                                        <nz-option nzValue="bar" nzLabel="条形图"></nz-option>
-                                        <nz-option nzValue="pie" nzLabel="饼图"></nz-option>
+                                        <nz-option [nzValue]="ReportType.LINE" nzLabel="折线图"></nz-option>
+                                        <nz-option [nzValue]="ReportType.AREA" nzLabel="面积图"></nz-option>
+                                        <nz-option [nzValue]="ReportType.COLUMN" nzLabel="柱状图"></nz-option>
+                                        <nz-option [nzValue]="ReportType.BAR" nzLabel="条形图"></nz-option>
+                                        <nz-option [nzValue]="ReportType.PIE" nzLabel="饼图"></nz-option>
+                                        <nz-option [nzValue]="ReportType.SCATTER" nzLabel="散点图"></nz-option>
+                                        <nz-option [nzValue]="ReportType.RADAR" nzLabel="雷达图"></nz-option>
+                                        <nz-option [nzValue]="ReportType.FUNNEL" nzLabel="漏斗图"></nz-option>
                                     </nz-select>
                                 </nz-form-control>
                             </nz-form-item>
@@ -56,40 +60,63 @@
                                     </nz-select>
                                 </nz-form-control>
                             </nz-form-item>
-
-                            <nz-form-item *ngIf="chartType !== 'pie'">
-                                <nz-form-label>分组字段 (seriesField)</nz-form-label>
-                                <nz-form-control>
-                                    <nz-select [(ngModel)]="reportDSL.cube[CubeKey.seriesField]" name="seriesField"
-                                               (ngModelChange)="onConfigChange()" nzShowSearch nzAllowClear>
-                                        @for (dim of cubeMeta.dimensions; track dim.code) {
-                                            <nz-option [nzValue]="dim.code"
-                                                       [nzLabel]="dim.title"></nz-option>
-                                        }
-                                    </nz-select>
-                                </nz-form-control>
-                            </nz-form-item>
+                            @if (reportDSL.type !== ReportType.PIE) {
+                                <nz-form-item>
+                                    <nz-form-label>分组字段 (seriesField)</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-select [(ngModel)]="reportDSL.cube[CubeKey.seriesField]" name="seriesField"
+                                                   (ngModelChange)="onConfigChange()" nzShowSearch nzAllowClear>
+                                            @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                <nz-option [nzValue]="dim.code"
+                                                           [nzLabel]="dim.title"></nz-option>
+                                            }
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            }
                         </form>
                     </nz-tab>
                     <nz-tab nzTitle="自定义配置">
                         <form nz-form nzLayout="vertical">
-                            <nz-form-item *ngIf="chartType === 'line'">
+                            @if (reportDSL.type === ReportType.LINE || reportDSL.type === ReportType.AREA) {
+                                <nz-form-item>
+                                    <nz-form-control>
+                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['smooth']" name="smooth"
+                                               (ngModelChange)="onConfigChange()">
+                                            平滑曲线
+                                        </label>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            }
+                            @if (reportDSL.type === ReportType.COLUMN || reportDSL.type === ReportType.BAR || reportDSL.type === ReportType.AREA) {
+                                <nz-form-item>
+                                    <nz-form-control>
+                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['isStack']" name="isStack"
+                                               (ngModelChange)="onConfigChange()">
+                                            堆叠图
+                                        </label>
+                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['isPercent']" name="isPercent"
+                                               (ngModelChange)="onConfigChange()">
+                                            百分比模式
+                                        </label>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            }
+                            @if (reportDSL.type === ReportType.PIE) {
+                                <nz-form-item>
+                                    <nz-form-label>内环半径</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-slider [nzMin]="0" [nzMax]="0.9" [nzStep]="0.1"
+                                                   [(ngModel)]="reportDSL.ui['innerRadius']" name="innerRadius"
+                                                   (ngModelChange)="onConfigChange()"></nz-slider>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            }
+                            <nz-form-item>
                                 <nz-form-control>
-                                    <label nz-checkbox [(ngModel)]="reportDSL.ui['smooth']" name="smooth"
+                                    <label nz-checkbox [(ngModel)]="reportDSL.ui['showLabel']" name="showLabel"
                                            (ngModelChange)="onConfigChange()">
-                                        平滑曲线
-                                    </label>
-                                </nz-form-control>
-                            </nz-form-item>
-                            <nz-form-item *ngIf="chartType === 'column' || chartType === 'bar'">
-                                <nz-form-control>
-                                    <label nz-checkbox [(ngModel)]="reportDSL.ui['isStack']" name="isStack"
-                                           (ngModelChange)="onConfigChange()">
-                                        堆叠图
-                                    </label>
-                                    <label nz-checkbox [(ngModel)]="reportDSL.ui['isPercent']" name="isPercent"
-                                           (ngModelChange)="onConfigChange()">
-                                        百分比模式
+                                        显示数值标签
                                     </label>
                                 </nz-form-control>
                             </nz-form-item>
@@ -102,6 +129,10 @@
                                         <nz-option nzValue="bottom" nzLabel="底部"></nz-option>
                                         <nz-option nzValue="left" nzLabel="左侧"></nz-option>
                                         <nz-option nzValue="right" nzLabel="右侧"></nz-option>
+                                        <nz-option nzValue="top-left" nzLabel="左上"></nz-option>
+                                        <nz-option nzValue="top-right" nzLabel="右上"></nz-option>
+                                        <nz-option nzValue="bottom-left" nzLabel="左下"></nz-option>
+                                        <nz-option nzValue="bottom-right" nzLabel="右下"></nz-option>
                                     </nz-select>
                                 </nz-form-control>
                             </nz-form-item>
