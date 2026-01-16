@@ -53,6 +53,7 @@ export class DimensionComponent implements OnInit {
     ref(dim: Dimension) {
         let ref = this.modal.create({
             nzWrapClassName: "modal-xs",
+            nzDraggable:true,
             nzKeyboard: true,
             nzStyle: {top: "30px"},
             nzTitle: dim.title,
@@ -70,6 +71,7 @@ export class DimensionComponent implements OnInit {
 
     refTable(dim: Dimension) {
         let ref = this.modal.create({
+            nzDraggable:true,
             nzStyle: {top: "20px"},
             nzWrapClassName: "modal-xxl",
             nzBodyStyle: {

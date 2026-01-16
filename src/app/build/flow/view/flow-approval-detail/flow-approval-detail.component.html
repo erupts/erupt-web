@@ -340,6 +340,7 @@
 
 <!-- 同意弹窗 -->
 <nz-modal
+    [nzDraggable]="true"
     [(nzVisible)]="approveModalVisible"
     nzTitle="同意审批"
     nzOkText="确定"
@@ -388,6 +389,7 @@
 
 <!-- 拒绝弹窗 -->
 <nz-modal
+    [nzDraggable]="true"
     [(nzVisible)]="rejectModalVisible"
     nzTitle="拒绝审批"
     nzOkText="确定"
@@ -413,7 +415,7 @@
 </nz-modal>
 
 <!-- 抄送弹窗 -->
-<nz-modal
+<nz-modal [nzDraggable]="true"
     [(nzVisible)]="ccModalVisible"
     nzTitle="抄送审批"
     nzOkText="确定"
@@ -458,7 +460,7 @@
 </nz-modal>
 
 <!-- 转交弹窗 -->
-<nz-modal
+<nz-modal [nzDraggable]="true"
     [(nzVisible)]="transferModalVisible"
     nzTitle="转交审批"
     nzOkText="确定"
@@ -502,7 +504,7 @@
 </nz-modal>
 
 <!-- 加签弹窗 -->
-<nz-modal
+<nz-modal [nzDraggable]="true"
     [(nzVisible)]="addSignModalVisible"
     nzTitle="加签审批"
     nzOkText="确定"
@@ -554,7 +556,7 @@
 </nz-modal>
 
 <!-- 退回弹窗 -->
-<nz-modal
+<nz-modal [nzDraggable]="true"
     [(nzVisible)]="returnModalVisible"
     nzTitle="退回审批"
     nzOkText="确定"
@@ -599,7 +601,7 @@
 </nz-modal>
 
 <!-- 重新提交弹窗 -->
-<nz-modal
+<nz-modal [nzDraggable]="true"
     [(nzVisible)]="resubmitModalVisible"
     nzTitle="重新提交"
     nzOkText="确定"

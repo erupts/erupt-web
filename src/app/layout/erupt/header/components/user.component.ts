@@ -96,9 +96,9 @@ export class HeaderUserComponent {
 
     changePwd() {
         this.modal.create({
+            nzDraggable:true,
             nzTitle: this.i18n.fanyi("global.reset_pwd"),
             nzMaskClosable: false,
-            nzDraggable: true,
             nzContent: ResetPwdComponent,
             nzFooter: null,
             nzBodyStyle: {

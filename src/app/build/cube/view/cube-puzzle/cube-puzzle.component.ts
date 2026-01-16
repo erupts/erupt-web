@@ -1,14 +1,14 @@
-import {Component, Inject, OnInit, ViewChild, ViewChildren, QueryList, ElementRef} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
 import {TransferItem} from "ng-zorro-antd/transfer";
-import {Dashboard, DashboardDSL, ReportDSL, ReportType, CubeKey} from "../../cube/dashboard.model";
+import {CubeKey, Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../cube/dashboard.model";
 import {CubeMeta} from "../../cube/cube.model";
 import {cloneDeep} from "lodash";
-import {Line, Column, Bar, Pie, Area, Scatter, Radar, Funnel, Gauge, Waterfall, WordCloud, Rose, RadialBar, Sankey, Chord} from '@antv/g2plot';
+import {Area, Bar, Chord, Column, Funnel, Gauge, Line, Pie, Radar, RadialBar, Rose, Sankey, Scatter, Waterfall, WordCloud} from '@antv/g2plot';
 
 @Component({
     standalone: false,
@@ -362,10 +362,10 @@ export class CubePuzzleComponent implements OnInit {
 
     addItem() {
         let ref = this.modal.create({
+            nzDraggable:true,
             nzTitle: 'Add Report',
             nzContent: CubePuzzleReportConfig,
             nzWidth: 1000,
-            nzDraggable: true,
             nzMaskClosable: false,
             nzStyle: {top: '50px', padding: 0},
             nzBodyStyle: {
@@ -392,10 +392,10 @@ export class CubePuzzleComponent implements OnInit {
 
     editItem(item: ReportDSL) {
         let ref = this.modal.create({
+            nzDraggable:true,
             nzTitle: 'Edit Report',
             nzContent: CubePuzzleReportConfig,
             nzWidth: 1000,
-            nzDraggable: true,
             nzMaskClosable: false,
             nzStyle: {top: '50px', padding: 0},
             nzBodyStyle: {
@@ -442,8 +442,8 @@ export class CubePuzzleComponent implements OnInit {
         });
         this.modal.create({
             nzTitle: 'Add Filter',
+            nzDraggable:true,
             nzWidth: 600,
-            nzDraggable: true,
             nzContent: this.transferTpl,
             nzOnOk: () => {
                 const selectedKeys = this.transferList
