@@ -3,7 +3,7 @@
         <!-- 左侧图表预览 -->
         <div nz-col [nzSpan]="16">
             <nz-card [nzBordered]="false" class="chart-preview-card">
-                <div [hidden]="reportDSL.type === ReportType.TABLE" #chartContainer style="height: 400px;"></div>
+                <div [hidden]="reportDSL.type === ReportType.TABLE" #chartContainer style="height: 500px;"></div>
                 @if (reportDSL.type === ReportType.TABLE) {
                     <div style="height: 400px; overflow: auto;">
                         <nz-table #basicTable [nzData]="chartData" [nzFrontPagination]="false"
@@ -56,13 +56,10 @@
                                         <nz-option [nzValue]="ReportType.SCATTER" nzLabel="散点图"></nz-option>
                                         <nz-option [nzValue]="ReportType.RADAR" nzLabel="雷达图"></nz-option>
                                         <nz-option [nzValue]="ReportType.FUNNEL" nzLabel="漏斗图"></nz-option>
-                                        <nz-option [nzValue]="ReportType.DUAL_AXES" nzLabel="混合图"></nz-option>
+<!--                                        <nz-option [nzValue]="ReportType.DUAL_AXES" nzLabel="混合图"></nz-option>-->
                                         <nz-option [nzValue]="ReportType.GAUGE" nzLabel="仪表盘"></nz-option>
                                         <nz-option [nzValue]="ReportType.WATERFALL" nzLabel="瀑布图"></nz-option>
                                         <nz-option [nzValue]="ReportType.WORD_CLOUD" nzLabel="词云图"></nz-option>
-                                        <nz-option [nzValue]="ReportType.STEP_LINE" nzLabel="阶梯折线图"></nz-option>
-                                        <nz-option [nzValue]="ReportType.STACKED_COLUMN" nzLabel="堆叠柱状图"></nz-option>
-                                        <nz-option [nzValue]="ReportType.RING" nzLabel="环形图"></nz-option>
                                         <nz-option [nzValue]="ReportType.ROSE" nzLabel="玫瑰图"></nz-option>
                                         <nz-option [nzValue]="ReportType.RADIAL_BAR" nzLabel="玉玦图"></nz-option>
                                         <nz-option [nzValue]="ReportType.SANKEY" nzLabel="桑基图"></nz-option>
@@ -73,7 +70,7 @@
                                 </nz-form-control>
                             </nz-form-item>
 
-                            @if (reportDSL.type !== ReportType.PIE && reportDSL.type !== ReportType.RING && reportDSL.type !== ReportType.GAUGE && reportDSL.type !== ReportType.WORD_CLOUD && reportDSL.type !== ReportType.SANKEY && reportDSL.type !== ReportType.CHORD && reportDSL.type !== ReportType.TABLE) {
+                            @if (reportDSL.type !== ReportType.PIE && reportDSL.type !== ReportType.GAUGE && reportDSL.type !== ReportType.WORD_CLOUD && reportDSL.type !== ReportType.SANKEY && reportDSL.type !== ReportType.CHORD && reportDSL.type !== ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>维度</nz-form-label>
                                     <nz-form-control>
@@ -192,7 +189,7 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type !== ReportType.PIE && reportDSL.type !== ReportType.RING && reportDSL.type !== ReportType.GAUGE && reportDSL.type !== ReportType.WORD_CLOUD && reportDSL.type !== ReportType.SANKEY && reportDSL.type !== ReportType.CHORD) {
+                            @if (reportDSL.type !== ReportType.PIE && reportDSL.type !== ReportType.GAUGE && reportDSL.type !== ReportType.WORD_CLOUD && reportDSL.type !== ReportType.SANKEY && reportDSL.type !== ReportType.CHORD) {
                                 <nz-form-item>
                                     <nz-form-label>分组字段</nz-form-label>
                                     <nz-form-control>
@@ -210,17 +207,23 @@
                     </nz-tab>
                     <nz-tab nzTitle="自定义配置">
                         <form nz-form nzLayout="vertical">
-                            @if (reportDSL.type === ReportType.LINE || reportDSL.type === ReportType.AREA || reportDSL.type === ReportType.STEP_LINE) {
+                            @if (reportDSL.type === ReportType.LINE || reportDSL.type === ReportType.AREA) {
                                 <nz-form-item>
                                     <nz-form-control>
                                         <label nz-checkbox [(ngModel)]="reportDSL.ui['smooth']" name="smooth"
                                                (ngModelChange)="onConfigChange()">
                                             平滑曲线
                                         </label>
+                                        @if (reportDSL.type === ReportType.LINE) {
+                                            <label nz-checkbox [(ngModel)]="reportDSL.ui['stepType']" name="stepType"
+                                                   (ngModelChange)="onConfigChange()">
+                                                阶梯折线图
+                                            </label>
+                                        }
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type === ReportType.COLUMN || reportDSL.type === ReportType.BAR || reportDSL.type === ReportType.AREA || reportDSL.type === ReportType.STACKED_COLUMN ) {
+                            @if (reportDSL.type === ReportType.COLUMN || reportDSL.type === ReportType.BAR || reportDSL.type === ReportType.AREA) {
                                 <nz-form-item>
                                     <nz-form-control>
                                         <label nz-checkbox [(ngModel)]="reportDSL.ui['isStack']" name="isStack"
@@ -234,7 +237,7 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type === ReportType.PIE || reportDSL.type === ReportType.RING) {
+                            @if (reportDSL.type === ReportType.PIE) {
                                 <nz-form-item>
                                     <nz-form-label>内环半径</nz-form-label>
                                     <nz-form-control>
