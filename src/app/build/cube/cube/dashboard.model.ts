@@ -61,9 +61,13 @@ export enum CubeKey {
  */
 export enum ReportType {
     LINE = 'LINE',
+    AREA = 'AREA',
     BAR = 'BAR',
+    COLUMN = 'COLUMN',
     PIE = 'PIE',
+    SCATTER = 'SCATTER',
     RADAR = 'RADAR',
+    FUNNEL = 'FUNNEL',
     TABLE = 'TABLE'
 }
 
