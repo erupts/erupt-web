@@ -174,13 +174,12 @@ export class CubePuzzleComponent implements OnInit {
         let chart;
         switch (reportDSL.type) {
             case ReportType.LINE:
-            case ReportType.STEP_LINE:
                 chart = new Line(container, {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
                     seriesField: reportDSL.cube[CubeKey.seriesField] as string,
-                    stepType: reportDSL.type === ReportType.STEP_LINE ? 'hv' : undefined,
+                    stepType: reportDSL.ui["stepType"] ? 'hv' : undefined,
                 });
                 break;
             case ReportType.AREA:
@@ -192,13 +191,11 @@ export class CubePuzzleComponent implements OnInit {
                 });
                 break;
             case ReportType.COLUMN:
-            case ReportType.STACKED_COLUMN:
                 chart = new Column(container, {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
                     seriesField: reportDSL.cube[CubeKey.seriesField] as string,
-                    isStack: reportDSL.type === ReportType.STACKED_COLUMN || commonConfig['isStack'],
                 });
                 break;
             case ReportType.BAR:
@@ -210,13 +207,12 @@ export class CubePuzzleComponent implements OnInit {
                 });
                 break;
             case ReportType.PIE:
-            case ReportType.RING:
                 chart = new Pie(container, {
                     ...commonConfig,
                     angleField: reportDSL.cube[CubeKey.yField] as string,
                     colorField: reportDSL.cube[CubeKey.xField] as string,
-                    radius: reportDSL.type === ReportType.RING ? 1 : (reportDSL.ui["innerRadius"] ? 1 : 0.8),
-                    innerRadius: reportDSL.type === ReportType.RING ? 0.6 : (reportDSL.ui["innerRadius"] || 0),
+                    radius: reportDSL.ui["innerRadius"] ? 1 : 0.8,
+                    innerRadius: reportDSL.ui["innerRadius"] || 0,
                     label: reportDSL.ui["showLabel"] ? {type: 'outer'} : false
                 });
                 break;

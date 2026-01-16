@@ -1,5 +1,21 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, Input} from '@angular/core';
-import {Line, Column, Bar, Pie, Area, Scatter, Radar, Funnel, DualAxes, Gauge, Waterfall, WordCloud, Rose, RadialBar, Sankey, Chord} from '@antv/g2plot';
+import {AfterViewInit, Component, ElementRef, inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+    Area,
+    Bar,
+    Chord,
+    Column,
+    Funnel,
+    Gauge,
+    Line,
+    Pie,
+    Radar,
+    RadialBar,
+    Rose,
+    Sankey,
+    Scatter,
+    Waterfall,
+    WordCloud
+} from '@antv/g2plot';
 import {NZ_MODAL_DATA} from 'ng-zorro-antd/modal';
 import {CubeMeta} from "../../cube/cube.model";
 import {CubeKey, ReportDSL, ReportType} from "../../cube/dashboard.model";
@@ -142,13 +158,12 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
 
         switch (this.reportDSL.type) {
             case ReportType.LINE:
-            case ReportType.STEP_LINE:
                 this.chart = new Line(this.chartContainer.nativeElement, {
                     ...commonConfig,
                     xField: this.reportDSL.cube[CubeKey.xField] as string,
                     yField: this.reportDSL.cube[CubeKey.yField] as string,
                     seriesField: this.reportDSL.cube[CubeKey.seriesField] as string,
-                    stepType: this.reportDSL.type === ReportType.STEP_LINE ? 'hv' : undefined,
+                    stepType: this.reportDSL.ui["stepType"] ? 'hv' : undefined,
                 });
                 break;
             case ReportType.AREA:
@@ -160,13 +175,11 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
                 });
                 break;
             case ReportType.COLUMN:
-            case ReportType.STACKED_COLUMN:
                 this.chart = new Column(this.chartContainer.nativeElement, {
                     ...commonConfig,
                     xField: this.reportDSL.cube[CubeKey.xField] as string,
                     yField: this.reportDSL.cube[CubeKey.yField] as string,
                     seriesField: this.reportDSL.cube[CubeKey.seriesField] as string,
-                    isStack: this.reportDSL.type === ReportType.STACKED_COLUMN || commonConfig['isStack'],
                 });
                 break;
             case ReportType.BAR:
@@ -178,13 +191,12 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
                 });
                 break;
             case ReportType.PIE:
-            case ReportType.RING:
                 this.chart = new Pie(this.chartContainer.nativeElement, {
                     ...commonConfig,
                     angleField: this.reportDSL.cube[CubeKey.yField] as string,
                     colorField: this.reportDSL.cube[CubeKey.xField] as string,
-                    radius: this.reportDSL.type === ReportType.RING ? 1 : (this.reportDSL.ui["innerRadius"] ? 1 : 0.8),
-                    innerRadius: this.reportDSL.type === ReportType.RING ? 0.6 : (this.reportDSL.ui["innerRadius"] || 0),
+                    radius: this.reportDSL.ui["innerRadius"] ? 1 : 0.8,
+                    innerRadius: this.reportDSL.ui["innerRadius"] || 0,
                     label: this.reportDSL.ui["showLabel"] ? {type: 'outer'} : false
                 });
                 break;
