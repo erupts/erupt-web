@@ -216,6 +216,7 @@ export class HeaderComponent implements OnInit {
     search() {
         let model = this.modal.create({
             nzWrapClassName: "modal-xs",
+            nzDraggable: true,
             nzMaskClosable: true,
             nzKeyboard: true,
             nzFooter: null,
