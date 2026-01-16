@@ -16,13 +16,14 @@
                             <nz-form-item>
                                 <nz-form-label>标题</nz-form-label>
                                 <nz-form-control>
-                                    <input nz-input [(ngModel)]="config.title" name="title" />
+                                    <input nz-input [(ngModel)]="reportDSL.title" name="title"/>
                                 </nz-form-control>
                             </nz-form-item>
                             <nz-form-item>
                                 <nz-form-label>图表类型</nz-form-label>
                                 <nz-form-control>
-                                    <nz-select [(ngModel)]="chartType" name="chartType" (ngModelChange)="onConfigChange()">
+                                    <nz-select [(ngModel)]="chartType" name="chartType"
+                                               (ngModelChange)="onConfigChange()">
                                         <nz-option nzValue="line" nzLabel="折线图"></nz-option>
                                         <nz-option nzValue="column" nzLabel="柱状图"></nz-option>
                                         <nz-option nzValue="bar" nzLabel="条形图"></nz-option>
@@ -34,8 +35,12 @@
                             <nz-form-item>
                                 <nz-form-label>维度 (xField / colorField)</nz-form-label>
                                 <nz-form-control>
-                                    <nz-select [(ngModel)]="config.xField" name="xField" (ngModelChange)="onConfigChange()" nzShowSearch nzAllowClear>
-                                        <nz-option *ngFor="let dim of cubeMeta?.dimensions" [nzValue]="dim.code" [nzLabel]="dim.title || dim.code"></nz-option>
+                                    <nz-select [(ngModel)]="reportDSL.cube[CubeKey.xField]" name="xField"
+                                               (ngModelChange)="onConfigChange()" nzShowSearch nzAllowClear>
+                                        @for (dim of cubeMeta.dimensions; track dim.code) {
+                                            <nz-option [nzValue]="dim.code"
+                                                       [nzLabel]="dim.title"></nz-option>
+                                        }
                                     </nz-select>
                                 </nz-form-control>
                             </nz-form-item>
@@ -43,8 +48,11 @@
                             <nz-form-item>
                                 <nz-form-label>指标 (yField / angleField)</nz-form-label>
                                 <nz-form-control>
-                                    <nz-select [(ngModel)]="config.yField" name="yField" (ngModelChange)="onConfigChange()" nzShowSearch nzAllowClear>
-                                        <nz-option *ngFor="let mea of cubeMeta?.measures" [nzValue]="mea.code" [nzLabel]="mea.title || mea.code"></nz-option>
+                                    <nz-select [(ngModel)]="reportDSL.cube[CubeKey.yField]" name="yField"
+                                               (ngModelChange)="onConfigChange()" nzShowSearch nzAllowClear>
+                                        @for (mea of cubeMeta.measures; track mea.code) {
+                                            <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                        }
                                     </nz-select>
                                 </nz-form-control>
                             </nz-form-item>
@@ -52,8 +60,12 @@
                             <nz-form-item *ngIf="chartType !== 'pie'">
                                 <nz-form-label>分组字段 (seriesField)</nz-form-label>
                                 <nz-form-control>
-                                    <nz-select [(ngModel)]="config.seriesField" name="seriesField" (ngModelChange)="onConfigChange()" nzShowSearch nzAllowClear>
-                                        <nz-option *ngFor="let dim of cubeMeta?.dimensions" [nzValue]="dim.code" [nzLabel]="dim.title || dim.code"></nz-option>
+                                    <nz-select [(ngModel)]="reportDSL.cube[CubeKey.seriesField]" name="seriesField"
+                                               (ngModelChange)="onConfigChange()" nzShowSearch nzAllowClear>
+                                        @for (dim of cubeMeta.dimensions; track dim.code) {
+                                            <nz-option [nzValue]="dim.code"
+                                                       [nzLabel]="dim.title"></nz-option>
+                                        }
                                     </nz-select>
                                 </nz-form-control>
                             </nz-form-item>
@@ -63,27 +75,29 @@
                         <form nz-form nzLayout="vertical">
                             <nz-form-item *ngIf="chartType === 'line'">
                                 <nz-form-control>
-                                    <label nz-checkbox [(ngModel)]="config.smooth" name="smooth" (ngModelChange)="onConfigChange()">
+                                    <label nz-checkbox [(ngModel)]="reportDSL.ui['smooth']" name="smooth"
+                                           (ngModelChange)="onConfigChange()">
                                         平滑曲线
                                     </label>
                                 </nz-form-control>
                             </nz-form-item>
-
                             <nz-form-item *ngIf="chartType === 'column' || chartType === 'bar'">
                                 <nz-form-control>
-                                    <label nz-checkbox [(ngModel)]="config.isStack" name="isStack" (ngModelChange)="onConfigChange()">
+                                    <label nz-checkbox [(ngModel)]="reportDSL.ui['isStack']" name="isStack"
+                                           (ngModelChange)="onConfigChange()">
                                         堆叠图
                                     </label>
-                                    <label nz-checkbox [(ngModel)]="config.isPercent" name="isPercent" (ngModelChange)="onConfigChange()">
+                                    <label nz-checkbox [(ngModel)]="reportDSL.ui['isPercent']" name="isPercent"
+                                           (ngModelChange)="onConfigChange()">
                                         百分比模式
                                     </label>
                                 </nz-form-control>
                             </nz-form-item>
-
                             <nz-form-item>
                                 <nz-form-label>图例位置</nz-form-label>
                                 <nz-form-control>
-                                    <nz-select [(ngModel)]="config.legendPosition" name="legendPosition" (ngModelChange)="onConfigChange()">
+                                    <nz-select [(ngModel)]="reportDSL.ui['legendPosition']" name="legendPosition"
+                                               (ngModelChange)="onConfigChange()">
                                         <nz-option nzValue="top" nzLabel="顶部"></nz-option>
                                         <nz-option nzValue="bottom" nzLabel="底部"></nz-option>
                                         <nz-option nzValue="left" nzLabel="左侧"></nz-option>
