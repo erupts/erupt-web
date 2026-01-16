@@ -41,19 +41,14 @@ export interface ReportDSL extends GridsterItem {
 }
 
 export enum CubeKey {
-    X = 'X',
-    Y = 'Y',
     xField = 'xField',
     yField = 'yField',
     seriesField = 'seriesField',
     COLOR = 'COLOR',
     SIZE = 'SIZE',
-    SHAPE = 'SHAPE',
-    TEXT = 'TEXT',
-    LABEL = 'LABEL',
-    DIMENSION = 'DIMENSION',
-    MEASURE = 'MEASURE',
-    FILTER = 'FILTER',
+    sourceField = 'sourceField',
+    targetField = 'targetField',
+    weightField = 'weightField',
 }
 
 /**
@@ -68,6 +63,18 @@ export enum ReportType {
     SCATTER = 'SCATTER',
     RADAR = 'RADAR',
     FUNNEL = 'FUNNEL',
+    DUAL_AXES = 'DUAL_AXES',
+    GAUGE = 'GAUGE',
+    WATERFALL = 'WATERFALL',
+    WORD_CLOUD = 'WORD_CLOUD',
+    STEP_LINE = 'STEP_LINE',
+    STACKED_COLUMN = 'STACKED_COLUMN',
+    RING = 'RING',
+    ROSE = 'ROSE',
+    RADIAL_BAR = 'RADIAL_BAR',
+    SANKEY = 'SANKEY',
+    CHORD = 'CHORD',
+    BUBBLE = 'BUBBLE',
     TABLE = 'TABLE'
 }
 
