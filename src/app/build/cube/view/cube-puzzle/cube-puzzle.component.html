@@ -96,7 +96,27 @@
                             }
                             <div class="puzzle-content" style="background-color: var(--ant-primary-1)">
                                 <nz-card [nzTitle]="report.title" nzSize="small" style="height: 100%;margin-bottom: 0">
-                                    {{report | json}}
+                                    @if (report.type === ReportType.TABLE) {
+                                        <div style="height: 100%; overflow: auto;">
+                                            <nz-table #basicTable [nzData]="[]" [nzFrontPagination]="false"
+                                                      [nzShowPagination]="false" nzSize="small">
+                                                <thead>
+                                                <tr>
+                                                    @for (col of (report.cube['xField'] || []); track col) {
+                                                        <th>{{ col }}</th>
+                                                    }
+                                                    @for (col of (report.cube['yField'] || []); track col) {
+                                                        <th>{{ col }}</th>
+                                                    }
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </nz-table>
+                                        </div>
+                                    } @else {
+                                        <div #chartContainer style="height: 100%;"></div>
+                                    }
                                 </nz-card>
                             </div>
                         </div>
