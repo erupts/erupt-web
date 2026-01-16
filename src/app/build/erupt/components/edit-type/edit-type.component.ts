@@ -289,6 +289,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     openSign(edit: Edit) {
         this.modal.create({
             nzTitle: '签名',
+            nzDraggable:true,
             nzContent: SignaturePadComponent,
             nzMaskClosable: false,
             nzWidth: '50%',

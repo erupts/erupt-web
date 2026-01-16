@@ -228,10 +228,10 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable:true,
                             nzWrapClassName: "modal-lg modal-body-nopadding",
                             nzStyle: {top: "20px"},
                             nzMaskClosable: false,
-                            nzDraggable: true,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,
@@ -256,6 +256,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable:true,
                             nzWrapClassName: "modal-sm",
                             nzMaskClosable: true,
                             nzKeyboard: true,
@@ -281,6 +282,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable:true,
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "24px"},
                             nzBodyStyle: {padding: "0"},
@@ -313,6 +315,7 @@ export class UiBuildService {
                     obj.click = (item) => {
                         let codeEditType = view.eruptFieldModel.eruptFieldJson.edit.codeEditType;
                         let ref = this.modal.create({
+                            nzDraggable:true,
                             nzWrapClassName: "modal-lg",
                             nzBodyStyle: {padding: "0"},
                             nzMaskClosable: true,
@@ -345,6 +348,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable:true,
                             nzWrapClassName: "modal-lg",
                             nzBodyStyle: {
                                 padding: "0"
@@ -406,6 +410,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable:true,
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "50px"},
                             nzMaskClosable: true,
@@ -432,6 +437,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable:true,
                             nzWrapClassName: "modal-xs",
                             nzMaskClosable: true,
                             nzKeyboard: true,
@@ -458,6 +464,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable:true,
                             nzWrapClassName: "modal-lg modal-body-nopadding",
                             nzStyle: {top: "40px"},
                             nzMaskClosable: true,
@@ -485,6 +492,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable:true,
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "50px", textAlign: 'center'},
                             nzMaskClosable: true,
@@ -549,6 +557,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable:true,
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "50px"},
                             nzMaskClosable: false,
@@ -644,6 +653,7 @@ export class UiBuildService {
                 a.remove();
             } else if (viewType == ViewType.ATTACHMENT_DIALOG) {
                 let ref = this.modal.create({
+                    nzDraggable:true,
                     nzWrapClassName: "modal-lg modal-body-nopadding",
                     nzStyle: {top: "30px"},
                     nzKeyboard: true,
@@ -657,6 +667,7 @@ export class UiBuildService {
             }
         } else {
             let ref = this.modal.create({
+                nzDraggable:true,
                 nzWrapClassName: "modal-xs modal-body-nopadding",
                 nzStyle: {top: "30px"},
                 nzKeyboard: true,
@@ -675,6 +686,7 @@ export class UiBuildService {
         if (!tpl.openWay || tpl.openWay == OpenWay.MODAL) {
             let isIframe = !tpl.embedType || tpl.embedType == PageEmbedType.IFRAME;
             let ref = this.modal.create({
+                nzDraggable:true,
                 nzKeyboard: true,
                 nzTitle: title,
                 nzMaskClosable: false,

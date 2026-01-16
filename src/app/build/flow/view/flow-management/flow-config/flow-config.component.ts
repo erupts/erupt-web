@@ -111,6 +111,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             let ref = this.modal.create({
                 nzTitle: '请选择可见范围',
                 nzWidth: '880px',
+                nzDraggable:true,
                 nzStyle: {top: '30px'},
                 nzBodyStyle: {padding: '0'},
                 nzContent: UpmsSelectComponent,
@@ -322,6 +323,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         })
         this.modal.create({
             nzTitle: '配置打印模板',
+            nzDraggable:true,
             nzContent: PrintTemplate,
             nzWidth: '800px',
             nzMaskClosable: false,

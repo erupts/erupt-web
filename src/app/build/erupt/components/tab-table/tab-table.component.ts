@@ -92,6 +92,7 @@ export class TabTableComponent implements OnInit {
                         this.dataHandlerService.objectToEruptValue(record, this.tabErupt.eruptBuildModel);
                         let ref = this.modal.create({
                             nzWrapClassName: "modal-lg",
+                            nzDraggable:true,
                             nzStyle: {top: "20px"},
                             nzMaskClosable: false,
                             nzKeyboard: false,
@@ -160,6 +161,7 @@ export class TabTableComponent implements OnInit {
             this.dataHandlerService.objectToEruptValue(data, this.tabErupt.eruptBuildModel);
             let ref = this.modal.create({
                 nzWrapClassName: "modal-lg",
+                nzDraggable:true,
                 nzStyle: {top: "50px"},
                 nzMaskClosable: false,
                 nzKeyboard: false,
@@ -206,6 +208,7 @@ export class TabTableComponent implements OnInit {
 
         let ref = this.modal.create({
             nzStyle: {top: "20px"},
+            nzDraggable:true,
             nzWrapClassName: "modal-xxl",
             nzMaskClosable: false,
             nzKeyboard: false,

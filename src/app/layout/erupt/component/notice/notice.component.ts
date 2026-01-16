@@ -125,6 +125,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
         message.status = NoticeStatus.READ;
         const messageId = (message as any).id || (message.noticeLog as any)?.id;
         let ref = this.modal.create({
+            nzDraggable:true,
             nzTitle: message.noticeLog?.title,
             nzBodyStyle: {
                 padding: '0'
@@ -137,6 +138,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
 
     viewAnnouncementDetail(announcement: Announcement): void {
         let ref = this.modal.create({
+            nzDraggable:true,
             nzWrapClassName: "modal-lg",
             nzTitle: announcement.title,
             nzBodyStyle: {
