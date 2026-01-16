@@ -60,6 +60,7 @@ export class ReferenceComponent implements OnInit {
         let ref = this.modal.create({
             nzWrapClassName: "modal-xs",
             nzKeyboard: true,
+            nzDraggable:true,
             nzStyle: {top: "30px"},
             nzTitle: field.eruptFieldJson.edit.title + (field.eruptFieldJson.edit.$viewValue ? "【" + field.eruptFieldJson.edit.$viewValue + "】" : ""),
             nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
@@ -102,6 +103,7 @@ export class ReferenceComponent implements OnInit {
         // @ts-ignore
         let ref = this.modal.create({
             nzWrapClassName: "modal-xxl",
+            nzDraggable:true,
             nzKeyboard: true,
             nzStyle: {top: "24px"},
             nzBodyStyle: {padding: "16px"},
