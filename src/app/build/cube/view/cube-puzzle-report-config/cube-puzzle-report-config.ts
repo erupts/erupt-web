@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, Input} from '@angular/core';
-import {Line, Column, Bar, Pie} from '@antv/g2plot';
+import {Line, Column, Bar, Pie, Area, Scatter, Radar, Funnel} from '@antv/g2plot';
 import {NZ_MODAL_DATA} from 'ng-zorro-antd/modal';
 import {CubeMeta} from "../../cube/cube.model";
-import {CubeKey, ReportDSL} from "../../cube/dashboard.model";
+import {CubeKey, ReportDSL, ReportType} from "../../cube/dashboard.model";
 
 @Component({
     standalone: false,
@@ -19,8 +19,6 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
     @Input() reportDSL: ReportDSL;
 
     @ViewChild('chartContainer', {static: false}) chartContainer: ElementRef;
-
-    chartType: 'line' | 'column' | 'bar' | 'pie' = 'column';
 
     chart: any;
 
@@ -42,16 +40,19 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
             if (this.nzModalData.cubeMeta) {
                 this.cubeMeta = this.nzModalData.cubeMeta;
             }
-            if (this.nzModalData.chartType) {
-                this.chartType = this.nzModalData.chartType;
-            }
             if (this.nzModalData.config) {
                 this.reportDSL = {...this.reportDSL, ...this.nzModalData.config};
             }
         }
-        this.reportDSL.ui = {};
-        this.reportDSL.cube[CubeKey.xField] = this.cubeMeta.dimensions?.[0].code;
-        this.reportDSL.cube[CubeKey.yField] = this.cubeMeta.measures?.[0].code;
+        if (!this.reportDSL.ui) {
+            this.reportDSL.ui = {};
+        }
+        if (!this.reportDSL.cube[CubeKey.xField]) {
+            this.reportDSL.cube[CubeKey.xField] = this.cubeMeta.dimensions?.[0]?.code;
+        }
+        if (!this.reportDSL.cube[CubeKey.yField]) {
+            this.reportDSL.cube[CubeKey.yField] = this.cubeMeta.measures?.[0]?.code;
+        }
     }
 
     ngAfterViewInit() {
@@ -75,41 +76,75 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
         };
         if (this.reportDSL.ui["legendPosition"]) {
             commonConfig["legend"] = {
-                enabled: true,
+                layout: 'horizontal',
                 position: this.reportDSL.ui["legendPosition"],
+            };
+        }
+        if (this.reportDSL.ui["showLabel"]) {
+            commonConfig["label"] = {
+                position: 'middle',
             };
         }
         console.log(commonConfig);
 
-        switch (this.chartType) {
-            case 'line':
+        switch (this.reportDSL.type) {
+            case ReportType.LINE:
                 this.chart = new Line(this.chartContainer.nativeElement, {
                     ...commonConfig,
                 });
                 break;
-            case 'column':
+            case ReportType.AREA:
+                this.chart = new Area(this.chartContainer.nativeElement, {
+                    ...commonConfig,
+                });
+                break;
+            case ReportType.COLUMN:
                 this.chart = new Column(this.chartContainer.nativeElement, {
                     ...commonConfig,
                     xField: this.reportDSL.cube[CubeKey.xField] as string,
                     yField: this.reportDSL.cube[CubeKey.yField] as string,
                 });
                 break;
-            case 'bar':
+            case ReportType.BAR:
                 this.chart = new Bar(this.chartContainer.nativeElement, {
                     ...commonConfig,
                     xField: this.reportDSL.cube[CubeKey.xField] as string,
                     yField: this.reportDSL.cube[CubeKey.yField] as string,
                 });
                 break;
-            case 'pie':
+            case ReportType.PIE:
                 this.chart = new Pie(this.chartContainer.nativeElement, {
                     ...commonConfig,
-                    angleField: this.reportDSL.yField,
-                    colorField: this.reportDSL.xField,
-                    radius: 0.8,
+                    angleField: this.reportDSL.cube[CubeKey.yField] as string,
+                    colorField: this.reportDSL.cube[CubeKey.xField] as string,
+                    radius: this.reportDSL.ui["innerRadius"] ? 1 : 0.8,
+                    innerRadius: this.reportDSL.ui["innerRadius"] || 0,
                     label: {
                         type: 'outer',
                     },
+                });
+                break;
+            case ReportType.SCATTER:
+                this.chart = new Scatter(this.chartContainer.nativeElement, {
+                    ...commonConfig,
+                    xField: this.reportDSL.cube[CubeKey.xField] as string,
+                    yField: this.reportDSL.cube[CubeKey.yField] as string,
+                    colorField: this.reportDSL.cube[CubeKey.seriesField] as string,
+                });
+                break;
+            case ReportType.RADAR:
+                this.chart = new Radar(this.chartContainer.nativeElement, {
+                    ...commonConfig,
+                    xField: this.reportDSL.cube[CubeKey.xField] as string,
+                    yField: this.reportDSL.cube[CubeKey.yField] as string,
+                    seriesField: this.reportDSL.cube[CubeKey.seriesField] as string,
+                });
+                break;
+            case ReportType.FUNNEL:
+                this.chart = new Funnel(this.chartContainer.nativeElement, {
+                    ...commonConfig,
+                    xField: this.reportDSL.cube[CubeKey.xField] as string,
+                    yField: this.reportDSL.cube[CubeKey.yField] as string,
                 });
                 break;
         }
@@ -121,4 +156,5 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
     }
 
     protected readonly CubeKey = CubeKey;
+    protected readonly ReportType = ReportType;
 }
