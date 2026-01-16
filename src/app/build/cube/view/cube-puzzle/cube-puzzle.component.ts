@@ -1,12 +1,13 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {GridsterConfig, GridsterItem} from "angular-gridster2";
+import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
-import {CubePuzzleConfig} from "../cube-puzzle-config/cube-puzzle-config";
+import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
 import {TransferItem} from "ng-zorro-antd/transfer";
-import {Dashboard} from "../../cube/dashboard.model";
+import {CubeKey, Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../cube/dashboard.model";
 import {CubeMeta} from "../../cube/cube.model";
+import {cloneDeep} from "lodash";
 
 @Component({
     standalone: false,
@@ -20,11 +21,11 @@ export class CubePuzzleComponent implements OnInit {
 
     edit = false;
 
-    gridsterItems: GridsterItem[];
-
     isFillRoute = false;
 
     code!: string;
+
+    saving: boolean = false;
 
     dashboard: Dashboard;
 
@@ -33,6 +34,10 @@ export class CubePuzzleComponent implements OnInit {
     filters: { [key: string]: any } = {};
 
     activeFilterCodes: Set<string> = new Set();
+
+    tempDsl: DashboardDSL;
+
+    dsl: DashboardDSL;
 
     constructor(private router: Router, private route: ActivatedRoute,
                 private cubeApiService: CubeApiService,
@@ -104,48 +109,18 @@ export class CubePuzzleComponent implements OnInit {
         this.code = this.route.snapshot.paramMap.get('code')!;
         this.cubeApiService.dashboardDetail(this.code).subscribe(res => {
             this.dashboard = res.data;
-            this.cubeApiService.cubeMetadata(this.dashboard.cube, this.dashboard.explore).subscribe(res => {
+            this.dsl = res.data.draftDsl;
+            this.cubeApiService.cubeMetadata(this.dashboard.cuber, this.dashboard.explore).subscribe(res => {
                 this.cubeMeta = res.data;
             })
         })
-        this.gridsterItems = [
-            {
-                cols: 6,
-                rows: 4,
-                x: 0,
-                y: 0,
-            },
-            {
-                cols: 6,
-                rows: 4,
-                x: 6,
-                y: 0,
-            },
-            {
-                cols: 6,
-                rows: 4,
-                x: 12,
-                y: 0,
-            },
-            {
-                cols: 6,
-                rows: 4,
-                x: 18,
-                y: 0,
-            },
-            {
-                cols: 16,
-                rows: 6,
-                x: 0,
-                y: 4,
-            }
-        ];
     }
 
     startEdit() {
         this.edit = true;
         this.options.draggable!.enabled = true;
         this.options.resizable!.enabled = true;
+        this.tempDsl = cloneDeep(this.dsl);
         this.changedOptions();
     }
 
@@ -153,69 +128,65 @@ export class CubePuzzleComponent implements OnInit {
         this.edit = false;
         this.options.draggable!.enabled = false;
         this.options.resizable!.enabled = false;
+        this.dsl = this.tempDsl;
+        this.tempDsl = null;
         this.changedOptions();
     }
 
     saveEdit() {
-        this.edit = false;
-        this.options.draggable!.enabled = false;
-        this.options.resizable!.enabled = false;
-        this.changedOptions();
+        this.saving = true;
+        this.cubeApiService.updateDsl(this.dashboard.id, this.dsl).subscribe(res => {
+            this.tempDsl = null;
+            this.options.draggable!.enabled = false;
+            this.options.resizable!.enabled = false;
+            this.changedOptions();
+            this.edit = false;
+        }, () => {
+        }, () => {
+            this.saving = false;
+        })
     }
 
     changedOptions() {
         this.options.api.optionsChanged();
     }
 
-    removeItem(item: GridsterItem) {
-        this.gridsterItems.splice(this.gridsterItems.indexOf(item), 1);
+    removeItem(index: number) {
+        this.dsl.reports.splice(index, 1);
+        this.options.api.optionsChanged();
     }
 
     addItem() {
         let ref = this.modal.create({
             nzTitle: 'Add Report',
-            nzContent: CubePuzzleConfig,
+            nzContent: CubePuzzleReportConfig,
             nzWidth: 1000,
             nzMaskClosable: false,
             nzStyle: {top: '50px', padding: 0},
             nzBodyStyle: {
                 padding: "0"
             },
-            nzData: {
-                cubeMeta: this.cubeMeta
-            },
             nzOnOk: (instance) => {
-                this.gridsterItems.push({
-                    cols: 6,
-                    rows: 4,
-                    x: 0,
-                    y: 0,
-                    chartType: instance.chartType,
-                    config: instance.config
-                });
+                if (!this.dsl.reports) {
+                    this.dsl.reports = [];
+                }
+                this.dsl.reports.push(instance.reportDSL);
             }
         })
+        ref.getContentComponent().cubeMeta = this.cubeMeta;
+        ref.getContentComponent().reportDSL = {
+            cols: 8,
+            rows: 4,
+            x: 0,
+            y: 0,
+            type: ReportType.BAR,
+            title: '图表标题',
+            cube: {}
+        };
     }
 
-    editItem(item: GridsterItem) {
-        let ref = this.modal.create({
-            nzTitle: 'Edit Report',
-            nzContent: CubePuzzleConfig,
-            nzWidth: 1000,
-            nzMaskClosable: false,
-            nzStyle: {top: '50px', padding: 0},
-            nzBodyStyle: {
-                padding: "0"
-            },
-            nzData: {
-                cubeMeta: this.cubeMeta,
-                chartType: item['chartType'] || 'column',
-                config: item['config'] || {}
-            },
-            nzOnOk: (instance) => {
+    editItem(item: ReportDSL) {
 
-            }
-        });
     }
 
     private checkFillRoute() {

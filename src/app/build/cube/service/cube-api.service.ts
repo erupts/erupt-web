@@ -3,7 +3,7 @@ import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
 import {R} from "@shared/model/api.model";
 import {CubeMeta} from "../cube/cube.model";
-import {Dashboard} from "../cube/dashboard.model";
+import {Dashboard, DashboardDSL} from "../cube/dashboard.model";
 
 @Injectable()
 export class CubeApiService {
@@ -18,6 +18,10 @@ export class CubeApiService {
 
     cubeMetadata(cube: string, explore: string) {
         return this._http.get<R<CubeMeta>>(RestPath.erupt + "/cube/semantic/metadata/" + cube + "/" + explore);
+    }
+
+    updateDsl(id: number, dsl: DashboardDSL) {
+        return this._http.post<R<void>>(RestPath.erupt + "/cube/dashboard/update-dsl/" + id, dsl);
     }
 
 
