@@ -2,8 +2,8 @@
     <div nz-row [nzGutter]="8">
         <!-- 左侧图表预览 -->
         <div nz-col [nzSpan]="16">
-            <nz-card [nzBordered]="false" class="chart-preview-card">
-                <div [hidden]="reportDSL.type === ReportType.TABLE" #chartContainer style="height: 500px;"></div>
+            <nz-card [nzBordered]="false" class="chart-preview-card" [nzBodyStyle]="{height: '100%',display: 'flex', 'align-items': 'center'}">
+                <div [hidden]="reportDSL.type === ReportType.TABLE" #chartContainer style="height: 400px;width: 100%"></div>
                 @if (reportDSL.type === ReportType.TABLE) {
                     <div style="height: 400px; overflow: auto;">
                         <nz-table #basicTable [nzData]="chartData" [nzFrontPagination]="false"

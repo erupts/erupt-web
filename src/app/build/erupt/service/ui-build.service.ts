@@ -231,6 +231,7 @@ export class UiBuildService {
                             nzWrapClassName: "modal-lg modal-body-nopadding",
                             nzStyle: {top: "20px"},
                             nzMaskClosable: false,
+                            nzDraggable: true,
                             nzKeyboard: true,
                             nzFooter: null,
                             nzTitle: view.title,

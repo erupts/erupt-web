@@ -365,6 +365,7 @@ export class CubePuzzleComponent implements OnInit {
             nzTitle: 'Add Report',
             nzContent: CubePuzzleReportConfig,
             nzWidth: 1000,
+            nzDraggable: true,
             nzMaskClosable: false,
             nzStyle: {top: '50px', padding: 0},
             nzBodyStyle: {
@@ -394,6 +395,7 @@ export class CubePuzzleComponent implements OnInit {
             nzTitle: 'Edit Report',
             nzContent: CubePuzzleReportConfig,
             nzWidth: 1000,
+            nzDraggable: true,
             nzMaskClosable: false,
             nzStyle: {top: '50px', padding: 0},
             nzBodyStyle: {
@@ -441,6 +443,7 @@ export class CubePuzzleComponent implements OnInit {
         this.modal.create({
             nzTitle: 'Add Filter',
             nzWidth: 600,
+            nzDraggable: true,
             nzContent: this.transferTpl,
             nzOnOk: () => {
                 const selectedKeys = this.transferList

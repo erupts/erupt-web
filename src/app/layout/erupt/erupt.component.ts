@@ -261,6 +261,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.modal.create({
                     nzTitle: this.i18n.fanyi("global.reset_pwd"),
                     nzMaskClosable: false,
+                    nzDraggable: true,
                     nzClosable: true,
                     nzKeyboard: true,
                     nzContent: ResetPwdComponent,
