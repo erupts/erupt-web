@@ -5,9 +5,20 @@
       <span nz-icon nzType="bell" nzTheme="outline"></span>
       <span class="title-text">{{ 'notice.center' | translate }}</span>
     </div>
-    <button nz-button nzType="text" nzSize="small" (click)="close()" class="close-btn">
-      <span nz-icon nzType="close"></span>
-    </button>
+    <div class="header-actions">
+      @if (selectedChannelIndex === 0 && messages.length > 0) {
+          <button nz-button
+                  nzType="link"
+                  nzSize="small"
+                  (click)="markAllAsRead()"
+                  class="read-all-btn">
+              {{ 'notice.readAll' | translate }}
+          </button>
+      }
+      <button nz-button nzType="text" nzSize="small" (click)="close()" class="close-btn">
+        <span nz-icon nzType="close"></span>
+      </button>
+    </div>
   </div>
 
   <!-- 消息列表视图 -->
@@ -23,7 +34,6 @@
       </div>
     </div>
 
-    <!-- 搜索框和全部已读按钮 -->
     <div class="search-box">
       <nz-input-group [nzSuffix]="suffixIconSearch">
         <input type="search" [nzSize]="'small'"
@@ -39,16 +49,6 @@
         <label nz-checkbox [(ngModel)]="onlyUnread" (ngModelChange)="onOnlyUnreadChange($event)" style="margin-left: 8px;white-space: nowrap">
           {{ 'notice.unread' | translate }}
         </label>
-        @if (messages.length > 0) {
-          <button nz-button
-            nzType="link"
-            nzSize="small"
-            (click)="markAllAsRead()"
-            class="read-all-btn">
-            <span nz-icon nzType="check" nzTheme="outline"></span>
-            {{ 'notice.readAll' | translate }}
-          </button>
-        }
       }
     </div>
 

@@ -93,12 +93,12 @@ export class NoticeComponent implements OnInit, OnDestroy {
                     next: (result) => {
                         this.messages = result.data.list;
                         this.total = result.data.total;
-                        this.loadingMessages = false;
-                        this.cdr.detectChanges();
                     },
                     error: () => {
                         this.messages = [];
                         this.total = 0;
+                    },
+                    complete: () => {
                         this.loadingMessages = false;
                         this.cdr.detectChanges();
                     }
@@ -111,12 +111,12 @@ export class NoticeComponent implements OnInit, OnDestroy {
                     next: (res) => {
                         this.messages = res.data.list;
                         this.total = res.data.total;
-                        this.loadingMessages = false;
-                        this.cdr.detectChanges();
                     },
                     error: () => {
                         this.messages = [];
                         this.total = 0;
+                    },
+                    complete: () => {
                         this.loadingMessages = false;
                         this.cdr.detectChanges();
                     }
@@ -135,7 +135,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
         message.status = NoticeStatus.READ;
         const messageId = (message as any).id || (message.noticeLog as any)?.id;
         let ref = this.modal.create({
-            nzDraggable:true,
+            nzDraggable: true,
             nzTitle: message.noticeLog?.title,
             nzBodyStyle: {
                 padding: '0'
@@ -148,7 +148,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
 
     viewAnnouncementDetail(announcement: Announcement): void {
         let ref = this.modal.create({
-            nzDraggable:true,
+            nzDraggable: true,
             nzWrapClassName: "modal-lg",
             nzTitle: announcement.title,
             nzBodyStyle: {
