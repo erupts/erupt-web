@@ -1,6 +1,6 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from '@shared/service/data.service';
-import {Announcement, NoticeChannel, NoticeMessageDetail, NoticeStatus} from '@shared/model/user.model';
+import {Announcement, NoticeMessageDetail, NoticeStatus} from '@shared/model/user.model';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {NzDrawerRef, NzDrawerService} from 'ng-zorro-antd/drawer';
@@ -22,7 +22,6 @@ export {NoticeStatus};
 export class NoticeComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
-    channels: NoticeChannel[] = [];
     channelOptions: any[] = [];
     selectedChannelIndex: number = 0;
 
@@ -38,6 +37,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
         private dataService: DataService,
         private drawerRef: NzDrawerRef,
         private i18nService: I18NService,
+        private cdr: ChangeDetectorRef,
         @Inject(NzModalService) private modal: NzModalService,
         private drawerService: NzDrawerService
     ) {
@@ -78,7 +78,6 @@ export class NoticeComponent implements OnInit, OnDestroy {
     // 加载消息列表
     loadMessages(): void {
         this.loadingMessages = true;
-
         if (this.selectedChannelIndex === 0) {
             // 加载通知消息
             this.dataService.noticeMessages(this.pageIndex, this.pageSize, this.searchKeyword || null)
@@ -88,11 +87,13 @@ export class NoticeComponent implements OnInit, OnDestroy {
                         this.messages = result.data.list;
                         this.total = result.data.total;
                         this.loadingMessages = false;
+                        this.cdr.detectChanges();
                     },
                     error: () => {
                         this.messages = [];
                         this.total = 0;
                         this.loadingMessages = false;
+                        this.cdr.detectChanges();
                     }
                 });
         } else if (this.selectedChannelIndex === 1) {
@@ -104,11 +105,13 @@ export class NoticeComponent implements OnInit, OnDestroy {
                         this.messages = res.data.list;
                         this.total = res.data.total;
                         this.loadingMessages = false;
+                        this.cdr.detectChanges();
                     },
                     error: () => {
                         this.messages = [];
                         this.total = 0;
                         this.loadingMessages = false;
+                        this.cdr.detectChanges();
                     }
                 });
         }
@@ -189,6 +192,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
                                 this.messages.forEach((msg: NoticeMessageDetail) => {
                                     msg.status = NoticeStatus.READ;
                                 });
+                                this.cdr.detectChanges();
                                 resolve(true);
                             },
                             error: (err) => {
