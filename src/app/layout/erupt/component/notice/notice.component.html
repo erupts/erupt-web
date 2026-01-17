@@ -35,15 +35,20 @@
       <ng-template #suffixIconSearch>
         <span nz-icon nzType="search" (click)="onSearch(searchKeyword)" style="cursor: pointer"></span>
       </ng-template>
-      @if (selectedChannelIndex === 0 && messages.length > 0) {
-        <button nz-button
-          nzType="link"
-          nzSize="small"
-          (click)="markAllAsRead()"
-          class="read-all-btn">
-          <span nz-icon nzType="check" nzTheme="outline"></span>
-          {{ 'notice.readAll' | translate }}
-        </button>
+      @if (selectedChannelIndex === 0) {
+        <label nz-checkbox [(ngModel)]="onlyUnread" (ngModelChange)="onOnlyUnreadChange($event)" style="margin-left: 8px;white-space: nowrap">
+          {{ 'notice.unread' | translate }}
+        </label>
+        @if (messages.length > 0) {
+          <button nz-button
+            nzType="link"
+            nzSize="small"
+            (click)="markAllAsRead()"
+            class="read-all-btn">
+            <span nz-icon nzType="check" nzTheme="outline"></span>
+            {{ 'notice.readAll' | translate }}
+          </button>
+        }
       }
     </div>
 
@@ -95,14 +100,16 @@
     <!-- 分页 -->
     @if (total > 0) {
       <div class="notice-pagination">
-        <nz-pagination
-          [nzPageIndex]="pageIndex"
-          [nzPageSize]="pageSize"
-          [nzTotal]="total"
-          [nzSize]="'small'"
-          [nzShowSizeChanger]="false"
-          (nzPageIndexChange)="onPageIndexChange($event)">
-        </nz-pagination>
+        <nz-space>
+          <button *nzSpaceItem nz-button nzSize="small" (click)="onPageIndexChange(pageIndex - 1)" [disabled]="pageIndex <= 1">
+            <span nz-icon nzType="left"></span>
+            {{ 'global.previous_page' | translate }}
+          </button>
+          <button *nzSpaceItem nz-button nzSize="small" (click)="onPageIndexChange(pageIndex + 1)" [disabled]="pageIndex * pageSize >= total">
+            {{ 'global.next_page' | translate }}
+            <span nz-icon nzType="right"></span>
+          </button>
+        </nz-space>
       </div>
     }
   </div>

@@ -32,6 +32,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
     pageSize = 10;
     total = 0;
     searchKeyword: string = ''; // 搜索关键字
+    onlyUnread: boolean = true; // 仅显示未读
 
     constructor(
         private dataService: DataService,
@@ -75,12 +76,18 @@ export class NoticeComponent implements OnInit, OnDestroy {
         this.loadMessages();
     }
 
+    onOnlyUnreadChange(onlyUnread: boolean): void {
+        this.onlyUnread = onlyUnread;
+        this.pageIndex = 1;
+        this.loadMessages();
+    }
+
     // 加载消息列表
     loadMessages(): void {
         this.loadingMessages = true;
         if (this.selectedChannelIndex === 0) {
             // 加载通知消息
-            this.dataService.noticeMessages(this.pageIndex, this.pageSize, this.searchKeyword || null)
+            this.dataService.noticeMessages(this.pageIndex, this.pageSize, this.searchKeyword || null, this.onlyUnread ? NoticeStatus.UNREAD : null)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                     next: (result) => {

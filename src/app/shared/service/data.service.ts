@@ -13,6 +13,7 @@ import {Checkbox, DrillInput, Page, Row, Tree} from "../../build/erupt/model/eru
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {R, SimplePage} from "@shared/model/api.model";
+import {NoticeStatus} from "@shared/model/notice.model";
 
 @Injectable()
 export class DataService {
@@ -525,11 +526,12 @@ export class DataService {
         return this._http.get<R<NoticeChannel[]>>(RestPath.erupt + "/notice/channels");
     }
 
-    noticeMessages(page: number, size: number, search: string) {
+    noticeMessages(page: number, size: number, search: string, status: NoticeStatus) {
         return this._http.get<R<SimplePage<NoticeMessageDetail>>>(RestPath.erupt + "/notice/messages", {
             page,
             size,
-            [search ? 'search' : '']: search
+            [search ? 'search' : '']: search,
+            [status ? 'status' : '']: status
         });
     }
 
