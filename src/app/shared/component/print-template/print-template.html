@@ -1,34 +1,27 @@
-<nz-spin [nzSpinning]="loading">
-    @if (!editorError) {
-        @if (vars && vars.length > 0) {
-            <div style="margin-bottom: 10px">
-                <button nz-button nz-dropdown [nzDropdownMenu]="menu">
-                    插入变量 <span nz-icon nzType="down"></span>
-                </button>
-                <nz-dropdown-menu #menu="nzDropdownMenu">
-                    <ul nz-menu style="max-height: 300px;overflow-y: auto">
-                        @for (v of vars; track v) {
-                            <li nz-menu-item (click)="addVar(v)">{{ v.label }}</li>
-                        }
-                    </ul>
-                </nz-dropdown-menu>
-            </div>
-        }
-        <div style="background: #eee;">
-            <div id="toolbar-container"></div>
-            <div id="editor"
-                 [style.min-height.px]="height"
-                 style="padding: 5px 10px;max-height: 800px;overflow-y: auto;background: #fff;border: 1px solid #c4c4c4;">
-            </div>
-        </div>
+<div style="margin-bottom: 10px; display: flex; gap: 8px;">
+    @if (templates && templates.length > 0) {
+        <button nz-button nz-dropdown [nzDropdownMenu]="templateMenu">
+            选择模板 <span nz-icon nzType="down"></span>
+        </button>
+        <nz-dropdown-menu #templateMenu="nzDropdownMenu">
+            <ul nz-menu style="max-height: 300px;overflow-y: auto">
+                @for (t of templates; track t.name) {
+                    <li nz-menu-item (click)="applyTemplate(t.content)">{{ t.name }}</li>
+                }
+            </ul>
+        </nz-dropdown-menu>
     }
-    @if (editorError) {
-        <div>
-            <p style="color: red">The text editor cannot be loaded. It is recommended to replace or upgrade your browser</p>
-            <textarea nz-input class="erupt-input" name="printTemplate"
-                      [nzAutosize]="{ minRows: 3, maxRows: 20 }" [(ngModel)]="value" [disabled]="readonly"
-                      [placeholder]="'The text editor cannot be loaded. It is recommended to replace or upgrade your browser'"
-            ></textarea>
-        </div>
+    @if (vars && vars.length > 0) {
+        <button nz-button nz-dropdown [nzDropdownMenu]="varMenu" style="margin-left: 0">
+            插入变量 <span nz-icon nzType="down"></span>
+        </button>
+        <nz-dropdown-menu #varMenu="nzDropdownMenu">
+            <ul nz-menu style="max-height: 300px;overflow-y: auto">
+                @for (v of vars; track v.value) {
+                    <li nz-menu-item (click)="addVar(v)">{{ v.label }}</li>
+                }
+            </ul>
+        </nz-dropdown-menu>
     }
-</nz-spin>
+</div>
+<ueditor #ue [name]="'print-template'" [(ngModel)]="value" [config]="{serverUrl:''}" (onReady)="onReady($event)" (onPreReady)="onPreReady($event)"></ueditor>

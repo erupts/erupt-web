@@ -565,5 +565,13 @@ export class DataService {
         return this._http.get<R<void>>(RestPath.erupt + "/announcement/mark-read/" + id);
     }
 
+    printTemplates() {
+        return this._http.get<R<{ name: string, content: string }[]>>(RestPath.erupt + "/print/templates");
+    }
+
+    printVars() {
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/print/vars");
+    }
+
 
 }
