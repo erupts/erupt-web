@@ -309,42 +309,32 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     }
 
     configPrintTemplate() {
-        let vars = [
-            {value: 'flow.initiatorUser', label: '申请人'},
-            {value: 'flow.createTime', label: '申请时间'},
-            {value: 'flow.no', label: '审批单号'},
-            {value: 'flow.status', label: '审批状态'},
-        ];
-        this.eruptBuild.eruptModel.eruptFieldModels.forEach(f => {
-            vars.push({
-                value: f.fieldName,
-                label: f.eruptFieldJson.edit.title
-            })
-        })
-        this.modal.create({
-            nzTitle: '配置打印模板',
-            nzDraggable:true,
-            nzContent: PrintTemplate,
-            nzWidth: '800px',
-            nzMaskClosable: false,
-            nzKeyboard: false,
-            nzData: {
-                vars: vars,
-                height: 400,
-                value: this.flowConfig.setting.printTemplate,
-                valueChange: (value: string) => {
-                    this.flowConfig.setting.printTemplate = value;
-                }
-            },
-            nzOnOk: () => {
-
-            },
-            nzStyle: {
-                // top: "30px"
-            },
-            nzBodyStyle: {
-                // padding: "0",
+        this.dataService.printVars().subscribe(res => {
+            let vars = res.data || [];
+            if (this.eruptBuild && this.eruptBuild.eruptModel) {
+                this.eruptBuild.eruptModel.eruptFieldModels.forEach(f => {
+                    vars.push({
+                        value: f.fieldName,
+                        label: f.eruptFieldJson.edit.title
+                    })
+                })
             }
+            let ref = this.modal.create({
+                nzTitle: '配置打印模板',
+                nzDraggable: true,
+                nzContent: PrintTemplate,
+                nzWidth: '800px',
+                nzMaskClosable: false,
+                nzKeyboard: false,
+                nzData: {
+                    vars: vars,
+                    height: 400,
+                    value: this.flowConfig.setting.printTemplate,
+                },
+                nzOnOk: () => {
+                    this.flowConfig.setting.printTemplate = ref.getContentComponent().value;
+                }
+            })
         })
     }
 
