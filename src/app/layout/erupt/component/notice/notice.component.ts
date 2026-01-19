@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from '@shared/service/data.service';
-import {Announcement, NoticeMessageDetail, NoticeStatus} from '@shared/model/user.model';
+import {Announcement, NoticeMessageDetail, NoticeScene, NoticeStatus} from '@shared/model/user.model';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {NzDrawerRef, NzDrawerService} from 'ng-zorro-antd/drawer';
@@ -25,7 +25,8 @@ export class NoticeComponent implements OnInit, OnDestroy {
     channelOptions: any[] = [];
     selectedChannelIndex: number = 0;
 
-    messages: any[] = []; // 复用 messages 对象，可以存储 NoticeMessageDetail 或 Announcement
+    notices: NoticeMessageDetail[] = [];
+    announcements: Announcement[] = [];
 
     loadingMessages = false;
     pageIndex = 1;
@@ -33,6 +34,9 @@ export class NoticeComponent implements OnInit, OnDestroy {
     total = 0;
     searchKeyword: string = ''; // 搜索关键字
     onlyUnread: boolean = true; // 仅显示未读
+
+    scene: number;
+    scenes: NoticeScene[] = [];
 
     constructor(
         private dataService: DataService,
@@ -53,6 +57,9 @@ export class NoticeComponent implements OnInit, OnDestroy {
             value: 1
         }]
         this.selectedChannelIndex = 0;
+        this.dataService.noticeScenes().subscribe(res => {
+            this.scenes = res.data;
+        });
         this.loadMessages();
     }
 
@@ -82,20 +89,26 @@ export class NoticeComponent implements OnInit, OnDestroy {
         this.loadMessages();
     }
 
+    onSceneChange(scene: number): void {
+        this.scene = scene;
+        this.pageIndex = 1;
+        this.loadMessages();
+    }
+
     // 加载消息列表
     loadMessages(): void {
         this.loadingMessages = true;
         if (this.selectedChannelIndex === 0) {
             // 加载通知消息
-            this.dataService.noticeMessages(this.pageIndex, this.pageSize, this.searchKeyword || null, this.onlyUnread ? NoticeStatus.UNREAD : null)
+            this.dataService.noticeMessages(this.pageIndex, this.pageSize, this.searchKeyword || null, this.onlyUnread ? NoticeStatus.UNREAD : null, this.scene)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                     next: (result) => {
-                        this.messages = result.data.list;
+                        this.notices = result.data.list;
                         this.total = result.data.total;
                     },
                     error: () => {
-                        this.messages = [];
+                        this.notices = [];
                         this.total = 0;
                     },
                     complete: () => {
@@ -109,11 +122,11 @@ export class NoticeComponent implements OnInit, OnDestroy {
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                     next: (res) => {
-                        this.messages = res.data.list;
+                        this.announcements = res.data.list;
                         this.total = res.data.total;
                     },
                     error: () => {
-                        this.messages = [];
+                        this.announcements = [];
                         this.total = 0;
                     },
                     complete: () => {
@@ -166,7 +179,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
     }
 
     // 打开 URL 链接
-    openUrlDrawer(url: string, title: string): void {
+    openUrl(url: string, title: string): void {
         this.drawerService.create({
             nzTitle: null,
             nzClosable: false,
@@ -196,7 +209,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
                         .subscribe({
                             next: () => {
                                 // 将当前页面所有未读消息标记为已读
-                                this.messages.forEach((msg: NoticeMessageDetail) => {
+                                this.notices.forEach((msg: NoticeMessageDetail) => {
                                     msg.status = NoticeStatus.READ;
                                 });
                                 this.cdr.detectChanges();
