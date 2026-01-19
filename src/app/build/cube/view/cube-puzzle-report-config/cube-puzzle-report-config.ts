@@ -8,17 +8,23 @@ import {
     Gauge,
     Line,
     Pie,
+    Progress,
     Radar,
     RadialBar,
+    RingProgress,
     Rose,
     Sankey,
     Scatter,
+    TinyArea,
+    TinyColumn,
+    TinyLine,
     Waterfall,
     WordCloud
 } from '@antv/g2plot';
 import {NZ_MODAL_DATA} from 'ng-zorro-antd/modal';
 import {CubeMeta} from "../../cube/cube.model";
-import {CubeKey, ReportDSL, ReportType} from "../../cube/dashboard.model";
+import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../cube/dashboard.model";
+import {CubeApiService} from "../../service/cube-api.service";
 
 @Component({
     standalone: false,
@@ -34,24 +40,21 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
 
     @Input() reportDSL: ReportDSL;
 
+    @Input() dashboard: Dashboard;
+
     @ViewChild('chartContainer', {static: false}) chartContainer: ElementRef;
 
     chart: any;
 
     tableColumns: string[] = [];
 
-    chartData = [
-        {input: '分类一', count: 27, date: 'A'},
-        {input: '分类二', count: 25, date: 'A'},
-        {input: '分类三', count: 18, date: 'A'},
-        {input: '分类四', count: 15, date: 'A'},
-        {input: '分类五', count: 10, date: 'A'},
-        {input: '分类一', count: 7, date: 'B'},
-        {input: '分类二', count: 5, date: 'B'},
-        {input: '分类三', count: 3, date: 'B'},
-        {input: '分类四', count: 5, date: 'B'},
-        {input: '分类五', count: 10, date: 'B'},
-    ];
+    querying: boolean = false;
+
+    chartData: any[] = [];
+
+    constructor(private cubeApiService: CubeApiService) {
+
+    }
 
     ngOnInit() {
         if (this.nzModalData) {
@@ -87,7 +90,7 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
     }
 
     ngAfterViewInit() {
-        this.renderChart();
+        this.changeCube();
     }
 
     ngOnDestroy() {
@@ -117,7 +120,7 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
             }
             return;
         }
-        const commonConfig = {
+        const commonConfig: any = {
             data: this.chartData,
             ...this.reportDSL.cube,
             ...this.reportDSL.ui
@@ -154,8 +157,6 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
         if (this.reportDSL.ui["color"] && this.reportDSL.ui["color"].length > 0) {
             commonConfig["color"] = this.reportDSL.ui["color"];
         }
-        console.log(commonConfig);
-
         switch (this.reportDSL.type) {
             case ReportType.LINE:
                 this.chart = new Line(this.chartContainer.nativeElement, {
@@ -342,8 +343,76 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit, OnDestroy 
                     },
                 });
                 break;
+            case ReportType.TINY_LINE:
+                this.chart = new TinyLine(this.chartContainer.nativeElement, {
+                    ...commonConfig,
+                    data: this.chartData.map(item => item[this.reportDSL.cube[CubeKey.yField] as string]),
+                });
+                break;
+            case ReportType.TINY_AREA:
+                this.chart = new TinyArea(this.chartContainer.nativeElement, {
+                    ...commonConfig,
+                    data: this.chartData.map(item => item[this.reportDSL.cube[CubeKey.yField] as string]),
+                });
+                break;
+            case ReportType.TINY_COLUMN:
+                this.chart = new TinyColumn(this.chartContainer.nativeElement, {
+                    ...commonConfig,
+                    data: this.chartData.map(item => item[this.reportDSL.cube[CubeKey.yField] as string]),
+                });
+                break;
+            case ReportType.PROGRESS:
+                this.chart = new Progress(this.chartContainer.nativeElement, {
+                    ...commonConfig,
+                    percent: (this.chartData && this.chartData.length > 0) ? (this.chartData[0][this.reportDSL.cube[CubeKey.yField] as string] || this.chartData[0].count || 0) / 100 : 0,
+                    color: this.reportDSL.ui["color"] || ['#5B8FF9', '#E8EDF3'],
+                });
+                break;
+            case ReportType.RING_PROGRESS:
+                this.chart = new RingProgress(this.chartContainer.nativeElement, {
+                    ...commonConfig,
+                    percent: (this.chartData && this.chartData.length > 0) ? (this.chartData[0][this.reportDSL.cube[CubeKey.yField] as string] || this.chartData[0].count || 0) / 100 : 0,
+                    color: this.reportDSL.ui["color"] || ['#5B8FF9', '#E8EDF3'],
+                    innerRadius: this.reportDSL.ui["innerRadius"] || 0.8,
+                    radius: 0.98,
+                });
+                break;
         }
         this.chart.render();
+    }
+
+    changeCube() {
+        this.querying = true;
+        let dimensions = [];
+        let measures = [];
+        if (this.reportDSL.cube[CubeKey.xField]){
+            if (Array.isArray(this.reportDSL.cube[CubeKey.xField])){
+                dimensions = this.reportDSL.cube[CubeKey.xField];
+            }else{
+                dimensions = [this.reportDSL.cube[CubeKey.xField]];
+            }
+        }
+        if (this.reportDSL.cube[CubeKey.yField]){
+            if (Array.isArray(this.reportDSL.cube[CubeKey.yField])){
+                measures = this.reportDSL.cube[CubeKey.yField];
+            }else{
+                measures = [this.reportDSL.cube[CubeKey.yField]];
+            }
+        }
+        this.cubeApiService.query({
+            cube: this.dashboard.cuber,
+            explore: this.dashboard.explore,
+            dimensions: dimensions,
+            measures: measures,
+        }).subscribe({
+            next: (response) => {
+                this.chartData = response.data;
+                this.onConfigChange();
+            },
+            complete: () => {
+                this.querying = false;
+            }
+        })
     }
 
     onConfigChange() {

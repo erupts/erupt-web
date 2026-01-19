@@ -28,3 +28,4 @@ export interface CubeMetaMeasure {
     hidden: boolean;     // 是否隐藏
     tags: string[];      // 标签列表
 }
+
