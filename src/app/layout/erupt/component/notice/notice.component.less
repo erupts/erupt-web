@@ -80,6 +80,36 @@
     }
 }
 
+.scene-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 0;
+
+    .scene-item {
+        padding: 2px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.3s;
+        border: 1px solid transparent;
+        background: #f5f5f5;
+        color: #595959;
+
+        &:hover {
+            color: #1890ff;
+        }
+
+        &.active {
+            background: #e6f7ff;
+            color: #1890ff;
+            border-color: #91d5ff;
+        }
+    }
+}
+
 .notice-pagination {
     padding: 12px 16px;
     border-top: 1px solid #f0f0f0;
