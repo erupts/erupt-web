@@ -36,32 +36,21 @@
             }
         </div>
     </div>
-    @if (cubeMeta && activeFilterCodes.size > 0) {
+    @if (cubeMeta && dsl?.filters?.length) {
         <div class="puzzle-filter-row">
             <div class="filter-items">
-                @for (dim of cubeMeta.dimensions; track dim.code) {
-                    @if (!dim.hidden && activeFilterCodes.has(dim.code)) {
-                        <div class="filter-item">
-                            <span class="filter-label">{{ dim.title }}</span>
-                            <nz-select nzShowSearch nzAllowClear [nzPlaceHolder]="'Select ' + dim.title"
-                                       [(ngModel)]="filters[dim.code]"
-                                       style="width: 150px" nzSize="small">
-                                <!-- 暂时留空，后续对接数据 -->
-                            </nz-select>
-                        </div>
-                    }
-                }
-                @for (mea of cubeMeta.measures; track mea.code) {
-                    @if (!mea.hidden && activeFilterCodes.has(mea.code)) {
-                        <div class="filter-item">
-                            <span class="filter-label">{{ mea.title }}</span>
-                            <nz-select nzShowSearch nzAllowClear [nzPlaceHolder]="'Select ' + mea.title"
-                                       [(ngModel)]="filters[mea.code]"
-                                       style="width: 150px" nzSize="small">
-                                <!-- 暂时留空，后续对接数据 -->
-                            </nz-select>
-                        </div>
-                    }
+                @for (filter of dsl.filters; track $index) {
+                    <div class="filter-item">
+                        <span class="filter-label">{{ getFieldTitle(filter.field) }}</span>
+                        <span style="margin-right: 4px; color: #888;">{{ filter.operator }}</span>
+                        <input nz-input [(ngModel)]="filter.value" [placeholder]="'Value'"
+                               style="width: 120px" nzSize="small"/>
+                        @if (edit) {
+                            <button nz-button nzType="text" nzDanger nzSize="small" (click)="removeFilter($index)">
+                                <span nz-icon nzType="close"></span>
+                            </button>
+                        }
+                    </div>
                 }
             </div>
         </div>
@@ -79,7 +68,8 @@
                                     </button>
                                 </div>
                                 <div class="item-actions">
-                                    <button nz-button nzType="text" nzSize="small" (click)="editItem(report)" title="Edit">
+                                    <button nz-button nzType="text" nzSize="small" (click)="editItem(report)"
+                                            title="Edit">
                                         <span nz-icon nzType="edit"></span>
                                     </button>
                                     <button nz-button nzType="text" nzSize="small" nzDanger (click)="removeItem($index)"
@@ -95,29 +85,7 @@
                                 </div>
                             }
                             <div class="puzzle-content" style="background-color: var(--ant-primary-1)">
-                                <nz-card [nzTitle]="report.title" nzSize="small" style="height: 100%;margin-bottom: 0">
-                                    @if (report.type === ReportType.TABLE) {
-                                        <div style="height: 100%; overflow: auto;">
-                                            <nz-table #basicTable [nzData]="[]" [nzFrontPagination]="false"
-                                                      [nzShowPagination]="false" nzSize="small">
-                                                <thead>
-                                                <tr>
-                                                    @for (col of (report.cube['xField'] || []); track col) {
-                                                        <th>{{ col }}</th>
-                                                    }
-                                                    @for (col of (report.cube['yField'] || []); track col) {
-                                                        <th>{{ col }}</th>
-                                                    }
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </nz-table>
-                                        </div>
-                                    } @else {
-                                        <div #chartContainer style="height: 100%;"></div>
-                                    }
-                                </nz-card>
+                                <cube-puzzle-report [report]="report" [dashboard]="dashboard"/>
                             </div>
                         </div>
                     </gridster-item>
@@ -125,11 +93,44 @@
             }
         </gridster>
     </div>
-    <ng-template #transferTpl>
-        <nz-transfer
-            [nzDataSource]="transferList"
-            [nzTitles]="['Available', 'Selected']"
-            (nzChange)="transferChange($event)">
-        </nz-transfer>
+    <ng-template #filterAddTpl>
+        <div>
+            <div style="margin-bottom: 16px;">
+                <div style="margin-bottom: 8px;">Field</div>
+                <nz-select [(ngModel)]="addingFilter.field" style="width: 100%;" nzShowSearch
+                           nzPlaceHolder="Select field">
+                    <nz-option-group nzLabel="Dimensions">
+                        @for (dim of cubeMeta.dimensions; track dim.code) {
+                            @if (!dim.hidden) {
+                                <nz-option [nzLabel]="dim.title + ' (' + dim.code + ')'"
+                                           [nzValue]="dim.code"></nz-option>
+                            }
+                        }
+                    </nz-option-group>
+                    <nz-option-group nzLabel="Measures">
+                        @for (mea of cubeMeta.measures; track mea.code) {
+                            @if (!mea.hidden) {
+                                <nz-option [nzLabel]="mea.title + ' (' + mea.code + ')'"
+                                           [nzValue]="mea.code"></nz-option>
+                            }
+                        }
+                    </nz-option-group>
+                </nz-select>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <div style="margin-bottom: 8px;">Operator</div>
+                <nz-select [(ngModel)]="addingFilter.operator" style="width: 100%;">
+                    @for (op of operators; track op.value) {
+                        <nz-option [nzLabel]="op.label" [nzValue]="op.value"></nz-option>
+                    }
+                </nz-select>
+            </div>
+
+            <div style="margin-bottom: 8px;">
+                <div style="margin-bottom: 8px;">Default Value</div>
+                <input nz-input [(ngModel)]="addingFilter.value" placeholder="Enter default value"/>
+            </div>
+        </div>
     </ng-template>
 </div>

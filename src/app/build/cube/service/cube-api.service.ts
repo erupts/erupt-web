@@ -4,6 +4,7 @@ import {_HttpClient} from "@delon/theme";
 import {R} from "@shared/model/api.model";
 import {CubeMeta} from "../cube/cube.model";
 import {Dashboard, DashboardDSL} from "../cube/dashboard.model";
+import {CubeQuery, CubeQueryResponse} from "../cube/cube-query.model";
 
 @Injectable()
 export class CubeApiService {
@@ -24,5 +25,8 @@ export class CubeApiService {
         return this._http.post<R<void>>(RestPath.erupt + "/cube/dashboard/update-dsl/" + id, dsl);
     }
 
+    query(cubeQuery: CubeQuery) {
+        return this._http.post<R<Record<string, CubeQueryResponse>[]>>(RestPath.erupt + "/cube/semantic/query", cubeQuery);
+    }
 
 }
