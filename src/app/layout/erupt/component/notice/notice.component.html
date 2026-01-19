@@ -6,7 +6,7 @@
       <span class="title-text">{{ 'notice.center' | translate }}</span>
     </div>
     <div class="header-actions">
-      @if (selectedChannelIndex === 0 && messages.length > 0) {
+      @if (selectedChannelIndex === 0 && notices.length > 0) {
           <button nz-button
                   nzType="link"
                   nzSize="small"
@@ -35,7 +35,7 @@
     </div>
 
     <div class="search-box">
-      <nz-input-group [nzSuffix]="suffixIconSearch">
+      <nz-input-group [nzSuffix]="suffixIconSearch" style="flex: 1">
         <input type="search" [nzSize]="'small'"
           nz-input
           [(ngModel)]="searchKeyword"
@@ -52,48 +52,73 @@
       }
     </div>
 
-    <!-- 消息列表 -->
-    <nz-list [nzDataSource]="messages" [nzLoading]="loadingMessages" [nzSize]="'small'"
-      class="message-list">
-      @for (item of messages; track item) {
-        <nz-list-item
-          (click)="selectedChannelIndex === 0 ? viewMessageDetail(item) : viewAnnouncementDetail(item)"
-          class="message-item">
-          <div style="width: 100%">
-            <div class="message-header">
-              <h3 class="message-title">
-                <div style="display: flex;align-items: center;">
-                  <!-- 通知消息显示未读标记 -->
-                  @if (selectedChannelIndex === 0 && item.status == NoticeStatus.UNREAD) {
-                    <nz-badge nzStatus="error"></nz-badge>
-                  }
-                  <!-- 根据类型显示标题 -->
-                  <span>{{ selectedChannelIndex === 0 ? item.noticeLog?.title : item.title }}</span>
-                  <!-- URL 图标 -->
-                  @if (selectedChannelIndex === 0 && item.noticeLog?.url) {
-                    <span nz-icon
-                      nzType="link"
-                      nzTheme="outline"
-                      (click)="openUrlDrawer(item.noticeLog.url, item.noticeLog.title || ''); $event.stopPropagation()"
-                      style="margin-left: 8px; cursor: pointer; color: #1890ff;"
-                      nz-tooltip>
-                    </span>
-                  }
-                  <!-- 根据类型显示时间 -->
-                  <span style="font-size: .7em;margin-left: auto">
-                    {{ (selectedChannelIndex === 0 ? item.noticeLog?.createTime : item.createTime) | date:'yyyy-MM-dd HH:mm:ss' }}
-                  </span>
-                </div>
-              </h3>
-            </div>
-            <!-- 根据类型显示内容 -->
-            @if (selectedChannelIndex === 0 ? item.noticeLog?.content : item.content) {
-              <p class="message-content"
-                [innerHTML]="(selectedChannelIndex === 0 ? item.noticeLog?.content : item.content) | safeHtml">
-              </p>
-            }
+    @if (selectedChannelIndex === 0 && scenes.length > 0) {
+      <div class="scene-box">
+        <div class="scene-item" [class.active]="!scene" (click)="onSceneChange(null)">
+          {{ 'global.all' | translate }}
+        </div>
+        @for (item of scenes; track item.id) {
+          <div class="scene-item" [class.active]="scene === item.id" (click)="onSceneChange(item.id)">
+            {{ item.name }}
           </div>
-        </nz-list-item>
+        }
+      </div>
+    }
+
+    <nz-list [nzDataSource]="selectedChannelIndex === 0 ? notices : announcements" [nzLoading]="loadingMessages" [nzSize]="'small'"
+      class="message-list">
+      @if (selectedChannelIndex === 0) {
+        @for (item of notices; track item) {
+          <nz-list-item (click)="viewMessageDetail(item)" class="message-item">
+            <div style="width: 100%">
+              <div class="message-header">
+                <h3 class="message-title">
+                  <div style="display: flex;align-items: center;">
+                    @if (item.status == NoticeStatus.UNREAD) {
+                      <nz-badge nzStatus="error"></nz-badge>
+                    }
+                    <span>{{ item.noticeLog?.title }}</span>
+                    @if (item.noticeLog?.url) {
+                      <span nz-icon
+                        nzType="link"
+                        nzTheme="outline"
+                        (click)="openUrl(item.noticeLog.url, item.noticeLog.title || ''); $event.stopPropagation()"
+                        style="margin-left: 8px; cursor: pointer; color: #1890ff;"
+                        nz-tooltip>
+                      </span>
+                    }
+                    <span style="font-size: .7em;margin-left: auto">
+                      {{ item.noticeLog?.createTime | date:'yyyy-MM-dd HH:mm:ss' }}
+                    </span>
+                  </div>
+                </h3>
+              </div>
+              @if (item.noticeLog?.content) {
+                <div class="rich-content-html message-content" [innerHTML]="item.noticeLog.content | safeHtml"></div>
+              }
+            </div>
+          </nz-list-item>
+        }
+      } @else {
+        @for (item of announcements; track item) {
+          <nz-list-item (click)="viewAnnouncementDetail(item)" class="message-item">
+            <div style="width: 100%">
+              <div class="message-header">
+                <h3 class="message-title">
+                  <div style="display: flex;align-items: center;">
+                    <span>{{ item.title }}</span>
+                    <span style="font-size: .7em;margin-left: auto">
+                      {{ item.createTime | date:'yyyy-MM-dd HH:mm:ss' }}
+                    </span>
+                  </div>
+                </h3>
+              </div>
+              @if (item.content) {
+                <div class="rich-content-html message-content" [innerHTML]="item.content | safeHtml"></div>
+              }
+            </div>
+          </nz-list-item>
+        }
       }
     </nz-list>
 

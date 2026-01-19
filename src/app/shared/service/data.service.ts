@@ -1,7 +1,7 @@
 import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
-import {Announcement, LoginModel, NoticeChannel, NoticeMessageDetail, Userinfo} from "../model/user.model";
+import {Announcement, LoginModel, NoticeChannel, NoticeMessageDetail, NoticeScene, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
@@ -526,12 +526,18 @@ export class DataService {
         return this._http.get<R<NoticeChannel[]>>(RestPath.erupt + "/notice/channels");
     }
 
-    noticeMessages(page: number, size: number, search: string, status: NoticeStatus) {
+    noticeScenes() {
+        return this._http.get<R<NoticeScene[]>>(RestPath.erupt + "/notice/scenes");
+    }
+
+
+    noticeMessages(page: number, size: number, search: string, status: NoticeStatus, scene: number) {
         return this._http.get<R<SimplePage<NoticeMessageDetail>>>(RestPath.erupt + "/notice/messages", {
             page,
             size,
             [search ? 'search' : '']: search,
-            [status ? 'status' : '']: status
+            [status ? 'status' : '']: status,
+            [scene ? 'scene' : '']: scene,
         });
     }
 

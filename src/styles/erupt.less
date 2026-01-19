@@ -76,3 +76,68 @@ span.ripple {
         margin: 10mm;
     }
 }
+
+.rich-content-html {
+    overflow: auto;
+
+    table {
+        width: 100%;
+
+        tr {
+            transition: all 0.3s;
+        }
+
+        td, th {
+            padding: 12px 8px;
+            border: 1px solid #e8e8e8;
+        }
+
+        th {
+            background: #fafafa;
+            text-align: center;
+        }
+
+    }
+
+    figure.table {
+        overflow: auto;
+
+        table {
+            width: 100%;
+
+            tr {
+                transition: all 0.3s;
+
+                &:hover {
+                    background: var(--ant-primary-color-hover);
+                }
+            }
+
+            td, th {
+                padding: 12px 8px;
+                border: 1px solid #e8e8e8;
+            }
+
+            th {
+                background: #fafafa;
+                text-align: center;
+            }
+
+        }
+    }
+
+    p {
+        margin-bottom: 0;
+        word-wrap: break-word;
+        word-break: break-all;
+        text-align: justify;
+    }
+
+    img {
+        max-width: 100%;
+        width: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
+}

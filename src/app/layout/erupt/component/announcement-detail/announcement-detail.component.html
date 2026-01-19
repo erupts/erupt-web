@@ -1,5 +1,5 @@
 <div style="padding: 12px">
-    <p class="message-content" [innerHTML]="announcement.content|safeHtml"></p>
+    <div class="message-content rich-content-html" [innerHTML]="announcement.content|safeHtml"></div>
 </div>
 <div style="padding: 12px;border: 1px solid #e8e8e8;text-align: right;">
     <span>{{ announcement.createTime }}</span>
