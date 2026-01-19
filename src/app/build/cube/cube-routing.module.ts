@@ -1,11 +1,11 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {CubePuzzleComponent} from "./view/cube-puzzle/cube-puzzle.component";
+import {CubePuzzleDashboardComponent} from "./view/cube-puzzle-dashboard/cube-puzzle-dashboard.component";
 
 const routes: Routes = [
     {
         path: "puzzle/:code",
-        component: CubePuzzleComponent,
+        component: CubePuzzleDashboardComponent,
     }
 ];
 

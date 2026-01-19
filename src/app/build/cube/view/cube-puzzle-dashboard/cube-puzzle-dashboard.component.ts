@@ -5,18 +5,47 @@ import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
 import {TransferItem} from "ng-zorro-antd/transfer";
-import {CubeKey, Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../cube/dashboard.model";
+import {
+    CubeFilter,
+    CubeKey,
+    CubeOperator,
+    Dashboard,
+    DashboardDSL,
+    ReportDSL,
+    ReportType
+} from "../../cube/dashboard.model";
 import {CubeMeta} from "../../cube/cube.model";
 import {cloneDeep} from "lodash";
-import {Area, Bar, Chord, Column, Funnel, Gauge, Line, Pie, Radar, RadialBar, Rose, Sankey, Scatter, Waterfall, WordCloud} from '@antv/g2plot';
+import {
+    Area,
+    Bar,
+    Chord,
+    Column,
+    Funnel,
+    Gauge,
+    Line,
+    Pie,
+    Progress,
+    Radar,
+    RadialBar,
+    RingProgress,
+    Rose,
+    Sankey,
+    Scatter,
+    TinyArea,
+    TinyColumn,
+    TinyLine,
+    Waterfall,
+    WordCloud
+} from '@antv/g2plot';
 
 @Component({
     standalone: false,
     selector: 'app-cube-management',
-    templateUrl: './cube-puzzle.component.html',
-    styleUrls: ['./cube-puzzle.component.less']
+    templateUrl: './cube-puzzle-dashboard.component.html',
+    styleUrls: ['./cube-puzzle-dashboard.component.less']
 })
-export class CubePuzzleComponent implements OnInit {
+export class CubePuzzleDashboardComponent implements OnInit {
 
     options: GridsterConfig;
 
@@ -32,9 +61,11 @@ export class CubePuzzleComponent implements OnInit {
 
     cubeMeta: CubeMeta;
 
-    filters: { [key: string]: any } = {};
+    operators = Object.keys(CubeOperator).map(key => ({label: key, value: CubeOperator[key]}));
 
-    activeFilterCodes: Set<string> = new Set();
+    addingFilter: CubeFilter = {
+        operator: CubeOperator.EQ
+    };
 
     tempDsl: DashboardDSL;
 
@@ -154,6 +185,12 @@ export class CubePuzzleComponent implements OnInit {
             ...reportDSL.cube,
             ...reportDSL.ui
         };
+        if (reportDSL.description) {
+            commonConfig.description = {
+                visible: true,
+                text: reportDSL.description
+            };
+        }
         if (reportDSL.ui["legendPosition"]) {
             commonConfig["legend"] = {
                 layout: 'horizontal',
@@ -168,8 +205,8 @@ export class CubePuzzleComponent implements OnInit {
         if (reportDSL.ui["showSlider"]) {
             commonConfig["slider"] = {};
         }
-        if (reportDSL.ui["color"] && reportDSL.ui["color"].length > 0) {
-            commonConfig["color"] = reportDSL.ui["color"];
+        if (reportDSL.ui["showTooltip"] === false) {
+            commonConfig["tooltip"] = false;
         }
         let chart;
         switch (reportDSL.type) {
@@ -313,6 +350,40 @@ export class CubePuzzleComponent implements OnInit {
                     shape: 'circle',
                 });
                 break;
+            case ReportType.TINY_LINE:
+                chart = new TinyLine(container, {
+                    ...commonConfig,
+                    data: this.chartData.map(item => item[reportDSL.cube[CubeKey.yField] as string]),
+                });
+                break;
+            case ReportType.TINY_AREA:
+                chart = new TinyArea(container, {
+                    ...commonConfig,
+                    data: this.chartData.map(item => item[reportDSL.cube[CubeKey.yField] as string]),
+                });
+                break;
+            case ReportType.TINY_COLUMN:
+                chart = new TinyColumn(container, {
+                    ...commonConfig,
+                    data: this.chartData.map(item => item[reportDSL.cube[CubeKey.yField] as string]),
+                });
+                break;
+            case ReportType.PROGRESS:
+                chart = new Progress(container, {
+                    ...commonConfig,
+                    percent: (this.chartData && this.chartData.length > 0) ? (this.chartData[0][reportDSL.cube[CubeKey.yField] as string] || this.chartData[0].count || 0) / 100 : 0,
+                    color: reportDSL.ui["color"] || ['#5B8FF9', '#E8EDF3'],
+                });
+                break;
+            case ReportType.RING_PROGRESS:
+                chart = new RingProgress(container, {
+                    ...commonConfig,
+                    percent: (this.chartData && this.chartData.length > 0) ? (this.chartData[0][reportDSL.cube[CubeKey.yField] as string] || this.chartData[0].count || 0) / 100 : 0,
+                    color: reportDSL.ui["color"] || ['#5B8FF9', '#E8EDF3'],
+                    innerRadius: reportDSL.ui["innerRadius"] || 0.8,
+                    radius: 0.98,
+                });
+                break;
         }
         if (chart) {
             chart.render();
@@ -379,6 +450,7 @@ export class CubePuzzleComponent implements OnInit {
             }
         })
         ref.getContentComponent().cubeMeta = this.cubeMeta;
+        ref.getContentComponent().dashboard = this.dashboard;
         ref.getContentComponent().reportDSL = {
             cols: 8,
             rows: 4,
@@ -416,46 +488,38 @@ export class CubePuzzleComponent implements OnInit {
         this.isFillRoute = url.startsWith('/fill/');
     }
 
-    @ViewChild('transferTpl') transferTpl: any;
-
-    transferList: TransferItem[] = [];
+    @ViewChild('filterAddTpl') filterAddTpl: any;
 
     addFilter() {
-        this.transferList = [];
-        this.cubeMeta.dimensions.forEach(dim => {
-            if (!dim.hidden) {
-                this.transferList.push({
-                    key: dim.code,
-                    title: dim.title,
-                    direction: this.activeFilterCodes.has(dim.code) ? 'right' : 'left'
-                });
-            }
-        });
-        this.cubeMeta.measures.forEach(mea => {
-            if (!mea.hidden) {
-                this.transferList.push({
-                    key: mea.code,
-                    title: mea.title,
-                    direction: this.activeFilterCodes.has(mea.code) ? 'right' : 'left'
-                });
-            }
-        });
+        this.addingFilter = {
+            operator: CubeOperator.EQ
+        };
         this.modal.create({
             nzTitle: 'Add Filter',
-            nzDraggable:true,
-            nzWidth: 600,
-            nzContent: this.transferTpl,
+            nzContent: this.filterAddTpl,
+            nzWidth: 400,
             nzOnOk: () => {
-                const selectedKeys = this.transferList
-                    .filter(item => item.direction === 'right')
-                    .map(item => item['key']);
-                this.activeFilterCodes = new Set(selectedKeys);
+                if (this.addingFilter.field) {
+                    if (!this.dsl.filters) {
+                        this.dsl.filters = [];
+                    }
+                    this.dsl.filters.push({...this.addingFilter});
+                }
             }
         });
     }
 
-    transferChange(params: any) {
-        // console.log(params);
+    removeFilter(index: number) {
+        this.dsl.filters.splice(index, 1);
+    }
+
+    getFieldTitle(code: string) {
+        if (!this.cubeMeta) return code;
+        const dim = this.cubeMeta.dimensions.find(d => d.code === code);
+        if (dim) return dim.title;
+        const mea = this.cubeMeta.measures.find(m => m.code === code);
+        if (mea) return mea.title;
+        return code;
     }
 
     protected readonly ReportType = ReportType;

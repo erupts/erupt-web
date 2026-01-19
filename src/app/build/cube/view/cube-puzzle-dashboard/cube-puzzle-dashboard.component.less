@@ -58,13 +58,35 @@
                 display: flex;
                 align-items: center;
                 gap: 8px;
+                background: #f5f5f5;
+                padding: 4px 8px;
+                border-radius: 4px;
 
                 .filter-label {
                     font-size: 13px;
                     color: #595959;
                     white-space: nowrap;
+                    font-weight: bold;
                 }
             }
+        }
+    }
+
+    .filter-add-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background 0.3s;
+        border-radius: 4px;
+
+        &:hover {
+            background: #f0f0f0;
+            color: var(--ant-primary-color);
+        }
+
+        &.active {
+            background: var(--ant-primary-1);
+            color: var(--ant-primary-color);
+            font-weight: bold;
         }
     }
 

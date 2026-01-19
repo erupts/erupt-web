@@ -22,7 +22,7 @@ export interface Dashboard {
  * 仪表板 DSL 定义
  */
 export interface DashboardDSL {
-    filters?: string[];
+    filters?: CubeFilter[];
     reports?: ReportDSL[];
 }
 
@@ -72,6 +72,11 @@ export enum ReportType {
     SANKEY = 'SANKEY',
     CHORD = 'CHORD',
     BUBBLE = 'BUBBLE',
+    TINY_LINE = 'TINY_LINE',
+    TINY_AREA = 'TINY_AREA',
+    TINY_COLUMN = 'TINY_COLUMN',
+    PROGRESS = 'PROGRESS',
+    RING_PROGRESS = 'RING_PROGRESS',
     TABLE = 'TABLE'
 }
 
