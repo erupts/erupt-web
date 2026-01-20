@@ -1,8 +1,8 @@
 <div class="cube-puzzle-container" [style.height]="isFillRoute ? '100vh' : 'calc(100vh - 50px)'">
     <div class="puzzle-header">
         <div class="header-left">
-            <button nz-button nzType="text" style="margin-right: 10px">
-                <nz-icon nzType="close"></nz-icon>
+            <button nz-button nzType="text" style="margin-right: 10px" [routerLink]="['/build/table/CubeDashboard']">
+                <nz-icon nzType="arrow-left"></nz-icon>
             </button>
             <span class="dashboard-title">{{ dashboard?.name }}</span>
             @if (dashboard?.description) {
