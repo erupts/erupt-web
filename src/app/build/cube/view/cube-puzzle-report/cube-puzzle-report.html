@@ -1,5 +1,8 @@
-<nz-card [nzBordered]="false" [nzTitle]="report.title" nzSize="small"
-         style="height: 100%;margin-bottom: 0">
+<nz-card [nzBordered]="false" [nzTitle]="report.title" nzSize="small" [nzLoading]="querying"
+         style="height: 100%;width: 100%;margin-bottom: 0" [nzBodyStyle]="{height: 'calc(100% - 38px)'}">
+    <div [hidden]="report.type === ReportType.TABLE" #chartContainer style="height: 100%;width: 100%">
+
+    </div>
     @if (report.type === ReportType.TABLE) {
         <div style="height: 100%; overflow: auto;">
             <nz-table #basicTable [nzData]="chartData" [nzFrontPagination]="false"
@@ -15,12 +18,18 @@
                 </tr>
                 </thead>
                 <tbody>
+                @for (row of chartData; track row) {
+                    <tr>
+                        @for (col of (report.cube[CubeKey.xField] || []); track col) {
+                            <td>{{ row[col] }}</td>
+                        }
+                        @for (col of (report.cube[CubeKey.yField] || []); track col) {
+                            <td>{{ row[col] }}</td>
+                        }
+                    </tr>
+                }
                 </tbody>
             </nz-table>
-        </div>
-    } @else {
-        <div #chartContainer style="height: 100%;width: 100%">
-            X
         </div>
     }
 </nz-card>
