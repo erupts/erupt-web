@@ -56,14 +56,18 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.querying = true;
-        this.observer = new IntersectionObserver(([entry]) => {
-            if (entry.isIntersecting) {
-                this.visible = true;
-                this.refresh();
-                this.observer.disconnect();
+        this.observer = new IntersectionObserver((entries) => {
+            if (entries.some(entry => entry.isIntersecting || entry.intersectionRatio > 0)) {
+                if (!this.visible) {
+                    this.visible = true;
+                    this.refresh();
+                    if (this.observer) {
+                        this.observer.disconnect();
+                    }
+                }
             }
         }, {
-            rootMargin: '50px',
+            rootMargin: '100px',
         });
         this.observer.observe(this.el.nativeElement);
     }
