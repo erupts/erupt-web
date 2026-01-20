@@ -1,7 +1,18 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
+import {
+    Alert,
+    Drill,
+    DrillInput,
+    EruptModel,
+    Power,
+    Row,
+    RowOperation,
+    Sort,
+    Vis,
+    VisType
+} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -442,7 +453,7 @@ export class TableComponent implements OnInit, OnDestroy {
                         });
                     } else {
                         let ref = this.modal.create({
-                            nzDraggable:true,
+                            nzDraggable: true,
                             nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
                             nzWidth: fullLine ? 550 : null,
                             nzStyle: {top: "60px"},
@@ -513,7 +524,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
         let createDrillModel = (drill: Drill, id: any) => {
             let ref = this.modal.create({
-                nzDraggable:true,
+                nzDraggable: true,
                 nzWrapClassName: "modal-xxl",
                 nzStyle: {top: "30px"},
                 nzBodyStyle: {padding: "18px"},
@@ -696,7 +707,7 @@ export class TableComponent implements OnInit, OnDestroy {
             behavior: Scene.EDIT
         }
         const model = this.modal.create({
-            nzDraggable:true,
+            nzDraggable: true,
             nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
             nzWidth: fullLine ? 550 : null,
             nzStyle: {top: "60px"},
@@ -764,7 +775,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         if (ro.type === OperationType.TPL) {
             let url = this.dataService.getEruptOperationTpl(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids);
-            this.uiBuildService.openTpl(ro.title, url, ro.tpl)
+            this.uiBuildService.openTpl(data, ro.title, url, ro.tpl)
         } else if (ro.type === OperationType.ERUPT) {
             let operationErupt: EruptModel = null;
             if (this.eruptBuildModel.operationErupts) {
@@ -776,7 +787,7 @@ export class TableComponent implements OnInit, OnDestroy {
                     eruptModel: operationErupt
                 });
                 let modal: NzModalRef = this.modal.create({
-                    nzDraggable:true,
+                    nzDraggable: true,
                     nzKeyboard: false,
                     nzTitle: ro.title,
                     nzMaskClosable: false,
@@ -853,7 +864,7 @@ export class TableComponent implements OnInit, OnDestroy {
             fullLine = true;
         }
         const modal = this.modal.create({
-            nzDraggable:true,
+            nzDraggable: true,
             nzStyle: {top: "60px"},
             nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
             nzWidth: fullLine ? 550 : null,
@@ -1021,7 +1032,7 @@ export class TableComponent implements OnInit, OnDestroy {
     // excel导入
     importableExcel() {
         let model = this.modal.create({
-            nzDraggable:true,
+            nzDraggable: true,
             nzKeyboard: true,
             nzTitle: "Excel " + this.i18n.fanyi("table.import"),
             nzOkText: null,
@@ -1043,7 +1054,7 @@ export class TableComponent implements OnInit, OnDestroy {
         let ev = {
             codeModal: (lang: string, code: any) => {
                 let ref = this.modal.create({
-                    nzDraggable:true,
+                    nzDraggable: true,
                     nzKeyboard: true,
                     nzMaskClosable: true,
                     nzCancelText: this.i18n.fanyi("global.close"),
