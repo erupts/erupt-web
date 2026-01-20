@@ -441,6 +441,13 @@ export class CubePuzzleDashboardComponent implements OnInit {
         }
     }
 
+    download(index: number){
+        const reportComponent = this.reports.toArray()[index];
+        if (reportComponent) {
+            reportComponent.download();
+        }
+    }
+
     addItem() {
         let ref = this.modal.create({
             nzDraggable: true,
