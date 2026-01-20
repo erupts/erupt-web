@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../cube/dashboard.model";
 import {NzCardComponent} from "ng-zorro-antd/card";
 import {
@@ -10,6 +10,7 @@ import {
     NzTrDirective
 } from "ng-zorro-antd/table";
 import {CubeApiService} from "../../service/cube-api.service";
+import {renderChart} from "../../util/chart.util";
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -25,7 +26,7 @@ import {CubeApiService} from "../../service/cube-api.service";
     templateUrl: './cube-puzzle-report.html',
     styleUrl: './cube-puzzle-report.less'
 })
-export class CubePuzzleReport implements OnInit {
+export class CubePuzzleReport implements OnInit,OnDestroy {
 
     @Input() report: ReportDSL;
 
@@ -37,25 +38,31 @@ export class CubePuzzleReport implements OnInit {
 
     chartData: Record<string, any>[] = [];
 
+    chart: any;
+
     constructor(private cubeApiService: CubeApiService) {
 
     }
 
     ngOnInit(): void {
+        this.refresh();
+    }
+
+    refresh(): void {
         this.querying = true;
         let dimensions = [];
         let measures = [];
-        if (this.report.cube[CubeKey.xField]){
-            if (Array.isArray(this.report.cube[CubeKey.xField])){
+        if (this.report.cube[CubeKey.xField]) {
+            if (Array.isArray(this.report.cube[CubeKey.xField])) {
                 dimensions = this.report.cube[CubeKey.xField];
-            }else{
+            } else {
                 dimensions = [this.report.cube[CubeKey.xField]];
             }
         }
-        if (this.report.cube[CubeKey.yField]){
-            if (Array.isArray(this.report.cube[CubeKey.yField])){
+        if (this.report.cube[CubeKey.yField]) {
+            if (Array.isArray(this.report.cube[CubeKey.yField])) {
                 measures = this.report.cube[CubeKey.yField];
-            }else{
+            } else {
                 measures = [this.report.cube[CubeKey.yField]];
             }
         }
@@ -67,11 +74,27 @@ export class CubePuzzleReport implements OnInit {
         }).subscribe({
             next: (response) => {
                 this.chartData = response.data;
+                this.render();
             },
             complete: () => {
                 this.querying = false;
             }
         })
+    }
+
+    render() {
+        if (this.chart) {
+            this.chart.destroy();
+            this.chart = null;
+        }
+        this.chart = renderChart(this.chartContainer, this.report, this.chartData)
+    }
+
+    ngOnDestroy(): void {
+        if (this.chart) {
+            this.chart.destroy();
+            this.chart = null;
+        }
     }
 
     protected readonly ReportType = ReportType;

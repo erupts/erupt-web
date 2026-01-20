@@ -41,8 +41,8 @@
             <div class="filter-items">
                 @for (filter of dsl.filters; track $index) {
                     <div class="filter-item">
-                        <span class="filter-label">{{ getFieldTitle(filter.field) }}</span>
-                        <span style="margin-right: 4px; color: #888;">{{ filter.operator }}</span>
+                        <span class="filter-label">{{ getFieldTitle(filter.field) }}: </span>
+<!--                        <span style="margin-right: 4px; color: #888;">{{ filter.operator }}</span>-->
                         <input nz-input [(ngModel)]="filter.value" [placeholder]="'Value'"
                                style="width: 120px" nzSize="small"/>
                         @if (edit) {
@@ -68,7 +68,7 @@
                                     </button>
                                 </div>
                                 <div class="item-actions">
-                                    <button nz-button nzType="text" nzSize="small" (click)="editItem(report)"
+                                    <button nz-button nzType="text" nzSize="small" (click)="editItem($index,report)"
                                             title="Edit">
                                         <span nz-icon nzType="edit"></span>
                                     </button>
@@ -79,7 +79,7 @@
                                 </div>
                             } @else {
                                 <div class="item-actions">
-                                    <button nz-button nzType="text" nzSize="small">
+                                    <button nz-button nzType="text" nzSize="small" (click)="refreshItem($index)">
                                         <span nz-icon nzType="redo"></span>
                                     </button>
                                 </div>
