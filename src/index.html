@@ -10,7 +10,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <meta name="renderer" content="webkit">
     <link href="pre.css" rel="stylesheet">
-    <script src="pre.js"></script>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="black">
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#E7E9E8">
@@ -19,22 +18,23 @@
 <div class="preloader">
     <div class="cs-loader">
         <div class="cs-loader-inner" id="preload"></div>
-        <script>
-            var SW = new SiriWave({
-                width: innerWidth < 512 ? innerWidth : 512,
-                height: 200,
-                wave: innerWidth < 512 ? 2 : new Date().getMinutes() % 5 + 2,
-                container: document.getElementById("preload")
-            });
-            SW.set(0.4, 0.2);
-            SW.start();
-            window.SW = SW;
-        </script>
     </div>
     <div id="preloader-tip">
         Stuck? Press Ctrl + Shift + R to reload.
     </div>
 </div>
+<script type="text/javascript" src="pre.js"></script>
+<script>
+    var SW = new SiriWave({
+        width: innerWidth < 512 ? innerWidth : 512,
+        height: 200,
+        wave: innerWidth < 512 ? 2 : new Date().getMinutes() % 5 + 3,
+        container: document.getElementById("preload")
+    });
+    SW.set(0.4, 0.2);
+    SW.start();
+    window.SW = SW;
+</script>
 <!--[if lte IE 11]>
 <style>
     .preloader {
