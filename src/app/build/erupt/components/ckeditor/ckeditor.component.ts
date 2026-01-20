@@ -75,7 +75,8 @@ export class CkeditorComponent implements OnInit {
                             'subscript',
                             'todoList',
                             'mediaEmbed'
-                        ]
+                        ],
+                        shouldNotGroupWhenFull: true
                     },
                     image: {
                         toolbar: [
@@ -114,7 +115,7 @@ export class CkeditorComponent implements OnInit {
                     console.error(error);
                 });
             });
-        }, 200);
+        }, 800);
     }
 
 }
