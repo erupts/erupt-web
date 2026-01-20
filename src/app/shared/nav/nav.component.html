@@ -2,7 +2,7 @@
   @if (!breadcrumb) {
     @if (paths && paths.length > 0) {
       <nz-breadcrumb>
-        @for (i of paths; track i) {
+        @for (i of paths; track $index) {
           <nz-breadcrumb-item>
             @if (i.link) {
               <a [routerLink]="i.link">

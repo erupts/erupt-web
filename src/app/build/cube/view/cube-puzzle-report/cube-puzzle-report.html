@@ -19,7 +19,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                        @for (row of chartData; track row) {
+                        @for (row of chartData; track $index) {
                             <tr>
                                 @for (col of (report.cube[CubeKey.xField] || []); track col) {
                                     <td>{{ row[col] }}</td>
