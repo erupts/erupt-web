@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NZ_MODAL_DATA} from 'ng-zorro-antd/modal';
-import {CubeMeta} from "../../cube/cube.model";
-import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../cube/dashboard.model";
+import {CubeMeta, CubeMetaDimension, CubeMetaMeasure} from "../../model/cube.model";
+import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
 
 @Component({
@@ -67,7 +67,33 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         this.puzzleReport.render();
     }
 
+    supportSeriesField(type: ReportType): boolean {
+        return [
+            ReportType.LINE,
+            ReportType.AREA,
+            ReportType.COLUMN,
+            ReportType.BAR,
+            ReportType.SCATTER,
+            ReportType.BUBBLE,
+            ReportType.RADAR,
+            ReportType.WATERFALL,
+            ReportType.ROSE,
+            ReportType.RADIAL_BAR,
+            ReportType.DUAL_AXES
+        ].includes(type);
+    }
+
     changeCube() {
+        const dimensions = this.selectedDimensions;
+        const measures = this.selectedMeasures;
+        const sortField = this.report.cube[CubeKey.sortField] as string;
+        if (sortField) {
+            const isDim = dimensions.some(dim => dim.code === sortField);
+            const isMea = measures.some(mea => mea.code === sortField);
+            if (!isDim && !isMea) {
+                this.report.cube[CubeKey.sortField] = null;
+            }
+        }
         this.puzzleReport.refresh();
     }
 
@@ -90,6 +116,67 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         this.renderChart();
     }
 
+    toggleSort(field: string | string[]) {
+        if (!field) return;
+        const fieldStr = Array.isArray(field) ? field[0] : field;
+        if (this.report.cube[CubeKey.sortField] === fieldStr) {
+            if (this.report.cube[CubeKey.sortDirection] === 'ASC') {
+                this.report.cube[CubeKey.sortDirection] = 'DESC';
+            } else if (this.report.cube[CubeKey.sortDirection] === 'DESC') {
+                this.report.cube[CubeKey.sortField] = null;
+                this.report.cube[CubeKey.sortDirection] = null;
+            } else {
+                this.report.cube[CubeKey.sortDirection] = 'ASC';
+            }
+        } else {
+            this.report.cube[CubeKey.sortField] = fieldStr;
+            this.report.cube[CubeKey.sortDirection] = 'ASC';
+        }
+        this.changeCube();
+    }
+
     protected readonly CubeKey = CubeKey;
     protected readonly ReportType = ReportType;
+
+    get selectedDimensions(): CubeMetaDimension[] {
+        if (!this.cubeMeta || !this.cubeMeta.dimensions) return [];
+        const selectedCodes = new Set<string>();
+        const cube = this.report.cube;
+
+        // Collect all possible dimension selections
+        const fields = [CubeKey.xField, CubeKey.seriesField, CubeKey.sourceField, CubeKey.targetField];
+        fields.forEach(key => {
+            const val = cube[key];
+            if (val) {
+                if (Array.isArray(val)) {
+                    val.forEach(v => selectedCodes.add(v));
+                } else {
+                    selectedCodes.add(val as string);
+                }
+            }
+        });
+
+        return this.cubeMeta.dimensions.filter(dim => selectedCodes.has(dim.code));
+    }
+
+    get selectedMeasures(): CubeMetaMeasure[] {
+        if (!this.cubeMeta || !this.cubeMeta.measures) return [];
+        const selectedCodes = new Set<string>();
+        const cube = this.report.cube;
+
+        // Collect all possible measure selections
+        const fields = [CubeKey.yField, 'yField2', 'sizeField', CubeKey.weightField];
+        fields.forEach(key => {
+            const val = cube[key];
+            if (val) {
+                if (Array.isArray(val)) {
+                    val.forEach(v => selectedCodes.add(v));
+                } else {
+                    selectedCodes.add(val as string);
+                }
+            }
+        });
+
+        return this.cubeMeta.measures.filter(mea => selectedCodes.has(mea.code));
+    }
 }

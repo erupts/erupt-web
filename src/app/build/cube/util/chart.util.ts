@@ -13,7 +13,7 @@ import {
     Waterfall,
     WordCloud
 } from "@antv/g2plot";
-import {CubeKey, ReportDSL, ReportType} from "../cube/dashboard.model";
+import {CubeKey, ReportDSL, ReportType} from "../model/dashboard.model";
 import {ElementRef} from "@angular/core";
 
 export function renderChart(chartContainer: ElementRef, reportDSL: ReportDSL, data: Record<string, any>[]): any {

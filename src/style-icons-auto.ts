@@ -75,7 +75,9 @@ import {
     UserOutline,
     WarningTwoTone,
     FileTwoTone,
-    FilterOutline
+    FilterOutline,
+    SortAscendingOutline,
+    SortDescendingOutline,
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -150,5 +152,7 @@ export const ICONS_AUTO = [
     AimOutline,
     HolderOutline,
     FileTwoTone,
-    FilterOutline
+    FilterOutline,
+    SortAscendingOutline,
+    SortDescendingOutline,
 ];

@@ -49,6 +49,8 @@ export enum CubeKey {
     sourceField = 'sourceField',
     targetField = 'targetField',
     weightField = 'weightField',
+    sortField = 'sortField',
+    sortDirection = 'sortDirection',
 }
 
 /**
@@ -77,7 +79,9 @@ export enum ReportType {
     TINY_COLUMN = 'TINY_COLUMN',
     PROGRESS = 'PROGRESS',
     RING_PROGRESS = 'RING_PROGRESS',
-    TABLE = 'TABLE'
+    TABLE = 'TABLE',
+    PIVOT_TABLE = 'PIVOT_TABLE',
+    KPI = 'KPI',
 }
 
 /**

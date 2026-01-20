@@ -2,9 +2,9 @@ import {Injectable} from "@angular/core";
 import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
 import {R} from "@shared/model/api.model";
-import {CubeMeta} from "../cube/cube.model";
-import {Dashboard, DashboardDSL} from "../cube/dashboard.model";
-import {CubeQuery, CubeQueryResponse} from "../cube/cube-query.model";
+import {CubeMeta} from "../model/cube.model";
+import {Dashboard, DashboardDSL} from "../model/dashboard.model";
+import {CubeQuery, CubeQueryResponse} from "../model/cube-query.model";
 
 @Injectable()
 export class CubeApiService {
