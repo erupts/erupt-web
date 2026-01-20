@@ -20,7 +20,7 @@ export function renderChart(chartContainer: ElementRef, reportDSL: ReportDSL, da
     const commonConfig: any = {
         data: data,
         ...reportDSL.cube,
-        ...reportDSL.ui
+        ...reportDSL.ui,
     };
     if (reportDSL.ui["legendPosition"]) {
         commonConfig["legend"] = {
