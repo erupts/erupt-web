@@ -1,5 +1,5 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../cube/dashboard.model";
+import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {NzCardComponent} from "ng-zorro-antd/card";
 import {
     NzTableCellDirective,
@@ -11,6 +11,9 @@ import {
 } from "ng-zorro-antd/table";
 import {CubeApiService} from "../../service/cube-api.service";
 import {renderChart} from "../../util/chart.util";
+import {NzSpinComponent} from "ng-zorro-antd/spin";
+import {PivotSheet} from '@antv/s2';
+import {CubeFilter} from "../../model/cube-query.model";
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -21,7 +24,8 @@ import {renderChart} from "../../util/chart.util";
         NzTbodyComponent,
         NzThMeasureDirective,
         NzTheadComponent,
-        NzTrDirective
+        NzTrDirective,
+        NzSpinComponent
     ],
     templateUrl: './cube-puzzle-report.html',
     styleUrl: './cube-puzzle-report.less'
@@ -32,6 +36,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     @Input() dashboard: Dashboard;
 
+    @Input() filters: CubeFilter[] = [];
+
     @ViewChild('chartContainer', {static: false}) chartContainer: ElementRef;
 
     querying: boolean = false;
@@ -40,12 +46,26 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     chart: any;
 
-    constructor(private cubeApiService: CubeApiService) {
+    private observer: IntersectionObserver;
+
+    private visible: boolean = false;
+
+    constructor(private cubeApiService: CubeApiService, private el: ElementRef) {
 
     }
 
     ngOnInit(): void {
-        this.refresh();
+        this.querying = true;
+        this.observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+                this.visible = true;
+                this.refresh();
+                this.observer.disconnect();
+            }
+        }, {
+            rootMargin: '50px',
+        });
+        this.observer.observe(this.el.nativeElement);
     }
 
     download() {
@@ -102,6 +122,9 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     }
 
     refresh(): void {
+        if (!this.visible) {
+            return;
+        }
         this.querying = true;
         let dimensions = [];
         let measures = [];
@@ -124,6 +147,11 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             explore: this.dashboard.explore,
             dimensions: dimensions,
             measures: measures,
+            sorts: this.report.cube[CubeKey.sortField] ? [{
+                field: this.report.cube[CubeKey.sortField] as string,
+                direction: this.report.cube[CubeKey.sortDirection] as any || 'ASC'
+            }] : [],
+            filters: this.filters
         }).subscribe({
             next: (response) => {
                 this.chartData = response.data;
@@ -138,14 +166,45 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     }
 
     render() {
+        if (!this.visible) {
+            return;
+        }
         if (this.chart) {
             this.chart.destroy();
             this.chart = null;
         }
-        this.chart = renderChart(this.chartContainer, this.report, this.chartData)
+        if (this.report.type == ReportType.PIVOT_TABLE) {
+            const dataConfig = {
+                fields: {
+                    rows: ['province', 'city'],
+                    columns: ['category'],
+                    values: ['price', 'cost'],
+                },
+                data: [
+                    {province: 'Guangdong', city: 'Guangzhou', category: 'A', price: 120, cost: 100},
+                    {province: 'Guangdong', city: 'Shenzhen', category: 'B', price: 80, cost: 60},
+                    {province: 'Beijing', city: 'Beijing', category: 'A', price: 150, cost: 130},
+                ]
+            };
+            const options = {
+                width: 800,
+                height: 300,
+                showSeriesNumber: true
+            };
+            const ele = this.chartContainer.nativeElement;
+            ele.style.overflow = 'auto';
+            const s2 = new PivotSheet(ele, dataConfig, options);
+            s2.setThemeCfg({name: 'gray'});
+            s2.render();
+        } else {
+            this.chart = renderChart(this.chartContainer, this.report, this.chartData)
+        }
     }
 
     ngOnDestroy(): void {
+        if (this.observer) {
+            this.observer.disconnect();
+        }
         if (this.chart) {
             this.chart.destroy();
             this.chart = null;
@@ -155,4 +214,5 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     protected readonly ReportType = ReportType;
 
     protected readonly CubeKey = CubeKey;
+
 }

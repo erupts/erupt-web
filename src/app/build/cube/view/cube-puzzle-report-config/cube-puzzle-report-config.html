@@ -63,6 +63,7 @@
                                                        nzLabel="进度环"></nz-option>
                                         </nz-option-group>
                                         <nz-option-group nzLabel="其他">
+                                            <nz-option [nzValue]="ReportType.PIVOT_TABLE" nzLabel="透视表"></nz-option>
                                             <nz-option [nzValue]="ReportType.TABLE" nzLabel="表格"></nz-option>
                                         </nz-option-group>
                                     </nz-select>
@@ -73,13 +74,22 @@
                                 <nz-form-item>
                                     <nz-form-label>维度</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
-                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
-                                            @for (dim of cubeMeta.dimensions; track dim.code) {
-                                                <nz-option [nzValue]="dim.code"
-                                                           [nzLabel]="dim.title"></nz-option>
-                                            }
-                                        </nz-select>
+                                        <nz-input-group [nzAddOnAfter]="sortTemplate">
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
+                                                       (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
+                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code"
+                                                               [nzLabel]="dim.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-input-group>
+                                        <ng-template #sortTemplate>
+                                            <i nz-tooltip="排序" nz-icon
+                                               [nzType]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.xField])) ? (report.cube[CubeKey.sortDirection] === 'ASC' ? 'sort-ascending' : 'sort-descending') : 'swap'"
+                                               [style.color]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.xField])) ? '#1890ff' : '#ccc'"
+                                               (click)="toggleSort(report.cube[CubeKey.xField])"
+                                               style="cursor: pointer;"></i>
+                                        </ng-template>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
@@ -91,8 +101,14 @@
                                                    nzMode="multiple"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (dim of cubeMeta.dimensions; track dim.code) {
-                                                <nz-option [nzValue]="dim.code"
-                                                           [nzLabel]="dim.title"></nz-option>
+                                                <nz-option nzCustomContent [nzValue]="dim.code" [nzLabel]="dim.title">
+                                                    {{dim.title}}
+                                                    <i nz-icon
+                                                       [nzType]="report.cube[CubeKey.sortField] === dim.code ? (report.cube[CubeKey.sortDirection] === 'ASC' ? 'sort-ascending' : 'sort-descending') : 'swap'"
+                                                       [style.color]="report.cube[CubeKey.sortField] === dim.code ? '#1890ff' : '#ccc'"
+                                                       (click)="$event.stopPropagation();toggleSort(dim.code)"
+                                                       style="float: right; margin-top: 4px;"></i>
+                                                </nz-option>
                                             }
                                         </nz-select>
                                     </nz-form-control>
@@ -103,12 +119,21 @@
                                 <nz-form-item>
                                     <nz-form-label>指标</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
-                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
-                                            @for (mea of cubeMeta.measures; track mea.code) {
-                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
-                                            }
-                                        </nz-select>
+                                        <nz-input-group [nzAddOnAfter]="sortTemplateMea">
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
+                                                       (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
+                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-input-group>
+                                        <ng-template #sortTemplateMea>
+                                            <i nz-tooltip="排序" nz-icon
+                                               [nzType]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.yField])) ? (report.cube[CubeKey.sortDirection] === 'ASC' ? 'sort-ascending' : 'sort-descending') : 'swap'"
+                                               [style.color]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.yField])) ? '#1890ff' : '#ccc'"
+                                               (click)="toggleSort(report.cube[CubeKey.yField])"
+                                               style="cursor: pointer;"></i>
+                                        </ng-template>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
@@ -120,7 +145,14 @@
                                                    nzMode="multiple"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (mea of cubeMeta.measures; track mea.code) {
-                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                                <nz-option nzCustomContent [nzValue]="mea.code" [nzLabel]="mea.title">
+                                                    {{mea.title}}
+                                                    <i nz-icon
+                                                       [nzType]="report.cube[CubeKey.sortField] === mea.code ? (report.cube[CubeKey.sortDirection] === 'ASC' ? 'sort-ascending' : 'sort-descending') : 'swap'"
+                                                       [style.color]="report.cube[CubeKey.sortField] === mea.code ? '#1890ff' : '#ccc'"
+                                                       (click)="$event.stopPropagation();toggleSort(mea.code)"
+                                                       style="float: right; margin-top: 4px;"></i>
+                                                </nz-option>
                                             }
                                         </nz-select>
                                     </nz-form-control>
@@ -131,34 +163,61 @@
                                 <nz-form-item>
                                     <nz-form-label>来源字段</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.sourceField]" name="sourceField"
-                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
-                                            @for (dim of cubeMeta.dimensions; track dim.code) {
-                                                <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
-                                            }
-                                        </nz-select>
+                                        <nz-input-group [nzAddOnAfter]="sortTemplateSource">
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.sourceField]" name="sourceField"
+                                                       (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
+                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-input-group>
+                                        <ng-template #sortTemplateSource>
+                                            <i nz-tooltip="排序" nz-icon
+                                               [nzType]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.sourceField])) ? (report.cube[CubeKey.sortDirection] === 'ASC' ? 'sort-ascending' : 'sort-descending') : 'swap'"
+                                               [style.color]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.sourceField])) ? '#1890ff' : '#ccc'"
+                                               (click)="toggleSort(report.cube[CubeKey.sourceField])"
+                                               style="cursor: pointer;"></i>
+                                        </ng-template>
                                     </nz-form-control>
                                 </nz-form-item>
                                 <nz-form-item>
                                     <nz-form-label>目标字段</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.targetField]" name="targetField"
-                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
-                                            @for (dim of cubeMeta.dimensions; track dim.code) {
-                                                <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
-                                            }
-                                        </nz-select>
+                                        <nz-input-group [nzAddOnAfter]="sortTemplateTarget">
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.targetField]" name="targetField"
+                                                       (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
+                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-input-group>
+                                        <ng-template #sortTemplateTarget>
+                                            <i nz-tooltip="排序" nz-icon
+                                               [nzType]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.targetField])) ? (report.cube[CubeKey.sortDirection] === 'ASC' ? 'sort-ascending' : 'sort-descending') : 'swap'"
+                                               [style.color]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.targetField])) ? '#1890ff' : '#ccc'"
+                                               (click)="toggleSort(report.cube[CubeKey.targetField])"
+                                               style="cursor: pointer;"></i>
+                                        </ng-template>
                                     </nz-form-control>
                                 </nz-form-item>
                                 <nz-form-item>
                                     <nz-form-label>权重字段</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.weightField]" name="weightField"
-                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
-                                            @for (mea of cubeMeta.measures; track mea.code) {
-                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
-                                            }
-                                        </nz-select>
+                                        <nz-input-group [nzAddOnAfter]="sortTemplateWeight">
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.weightField]" name="weightField"
+                                                       (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
+                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-input-group>
+                                        <ng-template #sortTemplateWeight>
+                                            <i nz-tooltip="排序" nz-icon
+                                               [nzType]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.weightField])) ? (report.cube[CubeKey.sortDirection] === 'ASC' ? 'sort-ascending' : 'sort-descending') : 'swap'"
+                                               [style.color]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.weightField])) ? '#1890ff' : '#ccc'"
+                                               (click)="toggleSort(report.cube[CubeKey.weightField])"
+                                               style="cursor: pointer;"></i>
+                                        </ng-template>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
@@ -166,12 +225,21 @@
                                 <nz-form-item>
                                     <nz-form-label>指标2</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube['yField2']" name="yField2"
-                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
-                                            @for (mea of cubeMeta.measures; track mea.code) {
-                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
-                                            }
-                                        </nz-select>
+                                        <nz-input-group [nzAddOnAfter]="sortTemplateMea2">
+                                            <nz-select [(ngModel)]="report.cube['yField2']" name="yField2"
+                                                       (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
+                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-input-group>
+                                        <ng-template #sortTemplateMea2>
+                                            <i nz-tooltip="排序" nz-icon
+                                               [nzType]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube['yField2'])) ? (report.cube[CubeKey.sortDirection] === 'ASC' ? 'sort-ascending' : 'sort-descending') : 'swap'"
+                                               [style.color]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube['yField2'])) ? '#1890ff' : '#ccc'"
+                                               (click)="toggleSort(report.cube['yField2'])"
+                                               style="cursor: pointer;"></i>
+                                        </ng-template>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
@@ -179,26 +247,44 @@
                                 <nz-form-item>
                                     <nz-form-label>尺寸字段</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube['sizeField']" name="sizeField"
-                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
-                                            @for (mea of cubeMeta.measures; track mea.code) {
-                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
-                                            }
-                                        </nz-select>
+                                        <nz-input-group [nzAddOnAfter]="sortTemplateSize">
+                                            <nz-select [(ngModel)]="report.cube['sizeField']" name="sizeField"
+                                                       (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
+                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-input-group>
+                                        <ng-template #sortTemplateSize>
+                                            <i nz-tooltip="排序" nz-icon
+                                               [nzType]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube['sizeField'])) ? (report.cube[CubeKey.sortDirection] === 'ASC' ? 'sort-ascending' : 'sort-descending') : 'swap'"
+                                               [style.color]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube['sizeField'])) ? '#1890ff' : '#ccc'"
+                                               (click)="toggleSort(report.cube['sizeField'])"
+                                               style="cursor: pointer;"></i>
+                                        </ng-template>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (report.type !== ReportType.PIE && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS) {
+                            @if (supportSeriesField(report.type)) {
                                 <nz-form-item>
                                     <nz-form-label>分组字段</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.seriesField]" name="seriesField"
-                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
-                                            @for (dim of cubeMeta.dimensions; track dim.code) {
-                                                <nz-option [nzValue]="dim.code"
-                                                           [nzLabel]="dim.title"></nz-option>
-                                            }
-                                        </nz-select>
+                                        <nz-input-group [nzAddOnAfter]="sortTemplateSeries">
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.seriesField]" name="seriesField"
+                                                       (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
+                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code"
+                                                               [nzLabel]="dim.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-input-group>
+                                        <ng-template #sortTemplateSeries>
+                                            <i nz-tooltip="排序" nz-icon
+                                               [nzType]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.seriesField])) ? (report.cube[CubeKey.sortDirection] === 'ASC' ? 'sort-ascending' : 'sort-descending') : 'swap'"
+                                               [style.color]="report.cube[CubeKey.sortField] && (report.cube[CubeKey.sortField] === (report.cube[CubeKey.seriesField])) ? '#1890ff' : '#ccc'"
+                                               (click)="toggleSort(report.cube[CubeKey.seriesField])"
+                                               style="cursor: pointer;"></i>
+                                        </ng-template>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
