@@ -26,7 +26,7 @@ import {renderChart} from "../../util/chart.util";
     templateUrl: './cube-puzzle-report.html',
     styleUrl: './cube-puzzle-report.less'
 })
-export class CubePuzzleReport implements OnInit,OnDestroy {
+export class CubePuzzleReport implements OnInit, OnDestroy {
 
     @Input() report: ReportDSL;
 
@@ -46,6 +46,59 @@ export class CubePuzzleReport implements OnInit,OnDestroy {
 
     ngOnInit(): void {
         this.refresh();
+    }
+
+    download() {
+        if (this.report.type == ReportType.TABLE) {
+            let csv = [];
+            let header = [];
+            if (this.report.cube[CubeKey.xField]) {
+                header.push(...(Array.isArray(this.report.cube[CubeKey.xField]) ? this.report.cube[CubeKey.xField] : [this.report.cube[CubeKey.xField]]));
+            }
+            if (this.report.cube[CubeKey.yField]) {
+                header.push(...(Array.isArray(this.report.cube[CubeKey.yField]) ? this.report.cube[CubeKey.yField] : [this.report.cube[CubeKey.yField]]));
+            }
+            csv.push(header.map(it => '"' + it.replace(/"/g, '""') + '"').join(','));
+            for (let row of this.chartData) {
+                let values = [];
+                for (let col of header) {
+                    let val = row[col];
+                    if (val === null || val === undefined) {
+                        val = '';
+                    } else if (typeof val === 'string') {
+                        val = '"' + val.replace(/"/g, '""') + '"';
+                    }
+                    values.push(val);
+                }
+                csv.push(values.join(','));
+            }
+            let csvContent = csv.join('\n');
+            let blob = new Blob(['\ufeff' + csvContent], {type: 'text/csv;charset=utf-8;'});
+            let url = URL.createObjectURL(blob);
+            let anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = this.report.title + '.csv';
+            anchor.click();
+            URL.revokeObjectURL(url);
+        } else {
+            if (this.chart) {
+                let canvas = this.chartContainer.nativeElement.querySelector("canvas");
+                let src = canvas.toDataURL("image/png");
+                let anchor = document.createElement('a');
+                if ('download' in anchor) {
+                    anchor.style.visibility = 'hidden';
+                    anchor.href = src;
+                    anchor.download = this.report.title;
+                    document.body.appendChild(anchor);
+                    let evt = document.createEvent('MouseEvents');
+                    evt.initEvent('click', true, true);
+                    anchor.dispatchEvent(evt);
+                    document.body.removeChild(anchor);
+                } else {
+                    window.open(src);
+                }
+            }
+        }
     }
 
     refresh(): void {
@@ -74,7 +127,9 @@ export class CubePuzzleReport implements OnInit,OnDestroy {
         }).subscribe({
             next: (response) => {
                 this.chartData = response.data;
-                this.render();
+                if (this.report.type != ReportType.TABLE) {
+                    this.render();
+                }
             },
             complete: () => {
                 this.querying = false;

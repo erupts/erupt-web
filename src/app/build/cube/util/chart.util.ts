@@ -55,7 +55,6 @@ export function renderChart(chartContainer: ElementRef, reportDSL: ReportDSL, da
         commonConfig["color"] = reportDSL.ui["color"];
     }
     let chart: any = null;
-    console.log(chartContainer);
     switch (reportDSL.type) {
         case ReportType.LINE:
             chart = new Line(chartContainer.nativeElement, {
