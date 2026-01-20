@@ -42,7 +42,6 @@
                 @for (filter of dsl.filters; track $index) {
                     <div class="filter-item">
                         <span class="filter-label">{{ getFieldTitle(filter.field) }}: </span>
-<!--                        <span style="margin-right: 4px; color: #888;">{{ filter.operator }}</span>-->
                         <input nz-input [(ngModel)]="filter.value" [placeholder]="'Value'"
                                style="width: 120px" nzSize="small"/>
                         @if (edit) {
@@ -52,6 +51,9 @@
                         }
                     </div>
                 }
+                <div style="margin-left: auto">
+                    <button nz-button nzType="primary" nzSize="small" (click)="query()">查询</button>
+                </div>
             </div>
         </div>
     }

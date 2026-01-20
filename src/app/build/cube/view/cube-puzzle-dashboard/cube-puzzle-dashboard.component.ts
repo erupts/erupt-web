@@ -13,8 +13,8 @@ import {
     DashboardDSL,
     ReportDSL,
     ReportType
-} from "../../cube/dashboard.model";
-import {CubeMeta} from "../../cube/cube.model";
+} from "../../model/dashboard.model";
+import {CubeMeta} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
 import {
     Area,
@@ -156,6 +156,12 @@ export class CubePuzzleDashboardComponent implements OnInit {
                 this.renderAllCharts();
             }, 500);
         })
+    }
+
+    query() {
+        for (let report of this.reports) {
+            report.refresh();
+        }
     }
 
     renderAllCharts() {
@@ -441,7 +447,7 @@ export class CubePuzzleDashboardComponent implements OnInit {
         }
     }
 
-    download(index: number){
+    download(index: number) {
         const reportComponent = this.reports.toArray()[index];
         if (reportComponent) {
             reportComponent.download();
@@ -546,5 +552,4 @@ export class CubePuzzleDashboardComponent implements OnInit {
         return code;
     }
 
-    protected readonly ReportType = ReportType;
 }
