@@ -38,6 +38,7 @@ import {
     Waterfall,
     WordCloud
 } from '@antv/g2plot';
+import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
 
 @Component({
     standalone: false,
@@ -72,6 +73,8 @@ export class CubePuzzleDashboardComponent implements OnInit {
     dsl: DashboardDSL;
 
     @ViewChildren('chartContainer') chartContainers: QueryList<ElementRef>;
+
+    @ViewChildren(CubePuzzleReport) reports: QueryList<CubePuzzleReport>;
 
     charts: any[] = [];
 
@@ -431,9 +434,16 @@ export class CubePuzzleDashboardComponent implements OnInit {
         this.options.api.optionsChanged();
     }
 
+    refreshItem(index: number) {
+        const reportComponent = this.reports.toArray()[index];
+        if (reportComponent) {
+            reportComponent.refresh();
+        }
+    }
+
     addItem() {
         let ref = this.modal.create({
-            nzDraggable:true,
+            nzDraggable: true,
             nzTitle: 'Add Report',
             nzContent: CubePuzzleReportConfig,
             nzWidth: 1000,
@@ -446,12 +456,12 @@ export class CubePuzzleDashboardComponent implements OnInit {
                 if (!this.dsl.reports) {
                     this.dsl.reports = [];
                 }
-                this.dsl.reports.push(instance.reportDSL);
+                this.dsl.reports.push(instance.report);
             }
         })
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().dashboard = this.dashboard;
-        ref.getContentComponent().reportDSL = {
+        ref.getContentComponent().report = {
             cols: 8,
             rows: 4,
             x: 0,
@@ -462,9 +472,9 @@ export class CubePuzzleDashboardComponent implements OnInit {
         };
     }
 
-    editItem(item: ReportDSL) {
+    editItem(index: number, item: ReportDSL) {
         let ref = this.modal.create({
-            nzDraggable:true,
+            nzDraggable: true,
             nzTitle: 'Edit Report',
             nzContent: CubePuzzleReportConfig,
             nzWidth: 1000,
@@ -474,11 +484,18 @@ export class CubePuzzleDashboardComponent implements OnInit {
                 padding: "0"
             },
             nzOnOk: (instance) => {
-                Object.assign(item, instance.reportDSL);
+                Object.assign(item, instance.report);
+                if (index !== -1) {
+                    const reportComponent = this.reports.toArray()[index];
+                    if (reportComponent) {
+                        reportComponent.refresh();
+                    }
+                }
             }
         })
         ref.getContentComponent().cubeMeta = this.cubeMeta;
-        ref.getContentComponent().reportDSL = cloneDeep(item);
+        ref.getContentComponent().dashboard = this.dashboard;
+        ref.getContentComponent().report = cloneDeep(item);
     }
 
     private checkFillRoute() {

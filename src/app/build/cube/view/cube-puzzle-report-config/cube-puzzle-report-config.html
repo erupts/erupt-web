@@ -2,37 +2,8 @@
     <div nz-row [nzGutter]="8">
         <!-- 左侧图表预览 -->
         <div nz-col [nzSpan]="16">
-            <nz-card [nzBordered]="false" class="chart-preview-card"
-                     [nzBodyStyle]="{height: '100%',display: 'flex', 'align-items': 'center'}">
-                <div [hidden]="reportDSL.type === ReportType.TABLE" #chartContainer
-                     style="height: 460px;width: 100%"></div>
-                @if (reportDSL.type === ReportType.TABLE) {
-                    <div style="height: 460px; overflow: auto;">
-                        <nz-table #basicTable [nzData]="chartData" [nzFrontPagination]="false"
-                                  [nzShowPagination]="false"
-                                  nzSize="small">
-                            <thead>
-                            <tr>
-                                @for (col of tableColumns; track col) {
-                                    <th>{{ col }}</th>
-                                }
-                            </tr>
-                            </thead>
-                            <tbody>
-                                @for (data of basicTable.data; track $index) {
-                                    <tr>
-                                        @for (col of tableColumns; track col) {
-                                            <td>{{ data[col] }}</td>
-                                        }
-                                    </tr>
-                                }
-                            </tbody>
-                        </nz-table>
-                    </div>
-                }
-            </nz-card>
+            <cube-puzzle-report style="height: 500px;display: block" #puzzleReport [report]="report" [dashboard]="dashboard"/>
         </div>
-
         <!-- 右侧配置表单 -->
         <div nz-col [nzSpan]="8">
             <div style="background: #fff;padding: 0 8px;height: 500px;overflow: auto;">
@@ -42,13 +13,13 @@
                             <nz-form-item>
                                 <nz-form-label>标题</nz-form-label>
                                 <nz-form-control>
-                                    <input nz-input [(ngModel)]="reportDSL.title" name="title"/>
+                                    <input nz-input [(ngModel)]="report.title" name="title"/>
                                 </nz-form-control>
                             </nz-form-item>
                             <nz-form-item>
                                 <nz-form-label>描述</nz-form-label>
                                 <nz-form-control>
-                                    <textarea nz-input [(ngModel)]="reportDSL.description" name="description"
+                                    <textarea nz-input [(ngModel)]="report.description" name="description"
                                               placeholder="请输入描述信息">
                                     </textarea>
                                 </nz-form-control>
@@ -56,7 +27,7 @@
                             <nz-form-item>
                                 <nz-form-label>图表类型</nz-form-label>
                                 <nz-form-control>
-                                    <nz-select [(ngModel)]="reportDSL.type" name="chartType"
+                                    <nz-select [(ngModel)]="report.type" name="chartType"
                                                (ngModelChange)="onConfigChange()">
                                         <nz-option-group nzLabel="基础图表">
                                             <nz-option [nzValue]="ReportType.LINE" nzLabel="折线图"></nz-option>
@@ -98,11 +69,11 @@
                                 </nz-form-control>
                             </nz-form-item>
 
-                            @if (reportDSL.type !== ReportType.PIE && reportDSL.type !== ReportType.GAUGE && reportDSL.type !== ReportType.WORD_CLOUD && reportDSL.type !== ReportType.SANKEY && reportDSL.type !== ReportType.CHORD && reportDSL.type !== ReportType.TABLE && reportDSL.type !== ReportType.PROGRESS && reportDSL.type !== ReportType.RING_PROGRESS) {
+                            @if (report.type !== ReportType.PIE && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TABLE && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS) {
                                 <nz-form-item>
                                     <nz-form-label>维度</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.cube[CubeKey.xField]" name="xField"
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (dim of cubeMeta.dimensions; track dim.code) {
                                                 <nz-option [nzValue]="dim.code"
@@ -112,11 +83,11 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type === ReportType.TABLE) {
+                            @if (report.type === ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>维度</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.cube[CubeKey.xField]" name="xField"
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
                                                    nzMode="multiple"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (dim of cubeMeta.dimensions; track dim.code) {
@@ -128,11 +99,11 @@
                                 </nz-form-item>
                             }
 
-                            @if (reportDSL.type !== ReportType.SANKEY && reportDSL.type !== ReportType.CHORD && reportDSL.type !== ReportType.TABLE) {
+                            @if (report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>指标</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.cube[CubeKey.yField]" name="yField"
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (mea of cubeMeta.measures; track mea.code) {
                                                 <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
@@ -141,11 +112,11 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type === ReportType.TABLE) {
+                            @if (report.type === ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>指标</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.cube[CubeKey.yField]" name="yField"
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
                                                    nzMode="multiple"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (mea of cubeMeta.measures; track mea.code) {
@@ -156,11 +127,11 @@
                                 </nz-form-item>
                             }
 
-                            @if (reportDSL.type === ReportType.SANKEY || reportDSL.type === ReportType.CHORD) {
+                            @if (report.type === ReportType.SANKEY || report.type === ReportType.CHORD) {
                                 <nz-form-item>
                                     <nz-form-label>来源字段</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.cube[CubeKey.sourceField]" name="sourceField"
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.sourceField]" name="sourceField"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (dim of cubeMeta.dimensions; track dim.code) {
                                                 <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
@@ -171,7 +142,7 @@
                                 <nz-form-item>
                                     <nz-form-label>目标字段</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.cube[CubeKey.targetField]" name="targetField"
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.targetField]" name="targetField"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (dim of cubeMeta.dimensions; track dim.code) {
                                                 <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
@@ -182,7 +153,7 @@
                                 <nz-form-item>
                                     <nz-form-label>权重字段</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.cube[CubeKey.weightField]" name="weightField"
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.weightField]" name="weightField"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (mea of cubeMeta.measures; track mea.code) {
                                                 <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
@@ -191,11 +162,11 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type === ReportType.DUAL_AXES) {
+                            @if (report.type === ReportType.DUAL_AXES) {
                                 <nz-form-item>
                                     <nz-form-label>指标2</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.cube['yField2']" name="yField2"
+                                        <nz-select [(ngModel)]="report.cube['yField2']" name="yField2"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (mea of cubeMeta.measures; track mea.code) {
                                                 <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
@@ -204,11 +175,11 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type === ReportType.BUBBLE) {
+                            @if (report.type === ReportType.BUBBLE) {
                                 <nz-form-item>
                                     <nz-form-label>尺寸字段</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.cube['sizeField']" name="sizeField"
+                                        <nz-select [(ngModel)]="report.cube['sizeField']" name="sizeField"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (mea of cubeMeta.measures; track mea.code) {
                                                 <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
@@ -217,11 +188,11 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type !== ReportType.PIE && reportDSL.type !== ReportType.GAUGE && reportDSL.type !== ReportType.WORD_CLOUD && reportDSL.type !== ReportType.SANKEY && reportDSL.type !== ReportType.CHORD && reportDSL.type !== ReportType.TINY_LINE && reportDSL.type !== ReportType.TINY_AREA && reportDSL.type !== ReportType.TINY_COLUMN && reportDSL.type !== ReportType.PROGRESS && reportDSL.type !== ReportType.RING_PROGRESS) {
+                            @if (report.type !== ReportType.PIE && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS) {
                                 <nz-form-item>
                                     <nz-form-label>分组字段</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.cube[CubeKey.seriesField]" name="seriesField"
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.seriesField]" name="seriesField"
                                                    (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                             @for (dim of cubeMeta.dimensions; track dim.code) {
                                                 <nz-option [nzValue]="dim.code"
@@ -235,15 +206,15 @@
                     </nz-tab>
                     <nz-tab nzTitle="自定义配置">
                         <form nz-form nzLayout="vertical">
-                            @if (reportDSL.type === ReportType.LINE || reportDSL.type === ReportType.AREA) {
+                            @if (report.type === ReportType.LINE || report.type === ReportType.AREA) {
                                 <nz-form-item>
                                     <nz-form-control>
-                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['smooth']" name="smooth"
+                                        <label nz-checkbox [(ngModel)]="report.ui['smooth']" name="smooth"
                                                (ngModelChange)="onConfigChange()">
                                             平滑曲线
                                         </label>
-                                        @if (reportDSL.type === ReportType.LINE) {
-                                            <label nz-checkbox [(ngModel)]="reportDSL.ui['stepType']" name="stepType"
+                                        @if (report.type === ReportType.LINE) {
+                                            <label nz-checkbox [(ngModel)]="report.ui['stepType']" name="stepType"
                                                    (ngModelChange)="onConfigChange()">
                                                 阶梯折线图
                                             </label>
@@ -251,45 +222,45 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type === ReportType.COLUMN || reportDSL.type === ReportType.BAR || reportDSL.type === ReportType.AREA) {
+                            @if (report.type === ReportType.COLUMN || report.type === ReportType.BAR || report.type === ReportType.AREA) {
                                 <nz-form-item>
                                     <nz-form-control>
-                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['isStack']" name="isStack"
+                                        <label nz-checkbox [(ngModel)]="report.ui['isStack']" name="isStack"
                                                (ngModelChange)="onConfigChange()">
                                             堆叠图
                                         </label>
-                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['isPercent']" name="isPercent"
+                                        <label nz-checkbox [(ngModel)]="report.ui['isPercent']" name="isPercent"
                                                (ngModelChange)="onConfigChange()">
                                             百分比模式
                                         </label>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type === ReportType.PIE) {
+                            @if (report.type === ReportType.PIE) {
                                 <nz-form-item>
                                     <nz-form-label>内环半径</nz-form-label>
                                     <nz-form-control>
                                         <nz-slider [nzMin]="0" [nzMax]="0.9" [nzStep]="0.1"
-                                                   [(ngModel)]="reportDSL.ui['innerRadius']" name="innerRadius"
+                                                   [(ngModel)]="report.ui['innerRadius']" name="innerRadius"
                                                    (ngModelChange)="onConfigChange()"></nz-slider>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type !== ReportType.PROGRESS && reportDSL.type !== ReportType.RING_PROGRESS && reportDSL.type !== ReportType.TABLE) {
+                            @if (report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-control>
-                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['showLabel']" name="showLabel"
+                                        <label nz-checkbox [(ngModel)]="report.ui['showLabel']" name="showLabel"
                                                (ngModelChange)="onConfigChange()">
                                             显示数值标签
                                         </label>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type !== ReportType.TINY_LINE && reportDSL.type !== ReportType.TINY_AREA && reportDSL.type !== ReportType.TINY_COLUMN && reportDSL.type !== ReportType.PROGRESS && reportDSL.type !== ReportType.RING_PROGRESS && reportDSL.type !== ReportType.TABLE) {
+                            @if (report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>图例位置</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.ui['legendPosition']" name="legendPosition"
+                                        <nz-select [(ngModel)]="report.ui['legendPosition']" name="legendPosition"
                                                    (ngModelChange)="onConfigChange()" nzAllowClear>
                                             <nz-option nzValue="top" nzLabel="顶部"></nz-option>
                                             <nz-option nzValue="bottom" nzLabel="底部"></nz-option>
@@ -303,16 +274,16 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type !== ReportType.GAUGE && reportDSL.type !== ReportType.WORD_CLOUD && reportDSL.type !== ReportType.TABLE
-                            && reportDSL.type !== ReportType.TINY_LINE && reportDSL.type !== ReportType.TINY_AREA && reportDSL.type !== ReportType.TINY_COLUMN && reportDSL.type !== ReportType.PROGRESS && reportDSL.type !== ReportType.RING_PROGRESS
-                            && reportDSL.type !== ReportType.SANKEY && reportDSL.type !== ReportType.CHORD) {
+                            @if (report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.TABLE
+                            && report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS
+                            && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD) {
                                 <nz-form-item>
                                     <nz-form-control>
-                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['showSlider']" name="showSlider"
+                                        <label nz-checkbox [(ngModel)]="report.ui['showSlider']" name="showSlider"
                                                (ngModelChange)="onConfigChange()">
                                             缩略轴 (Slider)
                                         </label>
-                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['scrollbar']"
+                                        <label nz-checkbox [(ngModel)]="report.ui['scrollbar']"
                                                name="showScrollbar"
                                                (ngModelChange)="onConfigChange()">
                                             滚动条 (Scrollbar)
@@ -320,32 +291,32 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type !== ReportType.TINY_LINE && reportDSL.type !== ReportType.TINY_AREA && reportDSL.type !== ReportType.TINY_COLUMN && reportDSL.type !== ReportType.PROGRESS && reportDSL.type !== ReportType.RING_PROGRESS
-                            && reportDSL.type !== ReportType.TABLE && reportDSL.type !== ReportType.GAUGE && reportDSL.type !== ReportType.WORD_CLOUD
-                            && reportDSL.type !== ReportType.SANKEY && reportDSL.type !== ReportType.CHORD) {
+                            @if (report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS
+                            && report.type !== ReportType.TABLE && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD
+                            && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD) {
                                 <nz-form-item>
                                     <nz-form-label>辅助配置</nz-form-label>
                                     <nz-form-control>
-                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['xAxis']" name="showXAxis"
+                                        <label nz-checkbox [(ngModel)]="report.ui['xAxis']" name="showXAxis"
                                                (ngModelChange)="onConfigChange()">
                                             显示X轴
                                         </label>
-                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['yAxis']" name="showYAxis"
+                                        <label nz-checkbox [(ngModel)]="report.ui['yAxis']" name="showYAxis"
                                                (ngModelChange)="onConfigChange()">
                                             显示Y轴
                                         </label>
-                                        <label nz-checkbox [(ngModel)]="reportDSL.ui['tooltip']" name="showTooltip"
+                                        <label nz-checkbox [(ngModel)]="report.ui['tooltip']" name="showTooltip"
                                                (ngModelChange)="onConfigChange()">
                                             显示提示信息
                                         </label>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type !== ReportType.TINY_LINE && reportDSL.type !== ReportType.TINY_AREA && reportDSL.type !== ReportType.TINY_COLUMN && reportDSL.type !== ReportType.PROGRESS && reportDSL.type !== ReportType.RING_PROGRESS && reportDSL.type !== ReportType.TABLE) {
+                            @if (report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>主题颜色</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.ui['theme']" name="theme"
+                                        <nz-select [(ngModel)]="report.ui['theme']" name="theme"
                                                    (ngModelChange)="onConfigChange()" nzAllowClear>
                                             <nz-option nzValue="dark" nzLabel="暗黑"></nz-option>
                                             <nz-option nzValue="light" nzLabel="明亮"></nz-option>
@@ -353,11 +324,11 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (reportDSL.type !== ReportType.TINY_LINE && reportDSL.type !== ReportType.TINY_AREA && reportDSL.type !== ReportType.TINY_COLUMN && reportDSL.type !== ReportType.TABLE) {
+                            @if (report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>自定义色板</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="reportDSL.ui['color']" name="color"
+                                        <nz-select [(ngModel)]="report.ui['color']" name="color"
                                                    (ngModelChange)="onConfigChange()" nzMode="tags" nzAllowClear
                                                    nzPlaceHolder="输入颜色值并按回车">
                                             <nz-option nzValue="#5B8FF9" nzLabel="蓝色"></nz-option>
