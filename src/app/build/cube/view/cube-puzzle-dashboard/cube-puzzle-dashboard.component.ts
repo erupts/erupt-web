@@ -1,10 +1,10 @@
-import {Component, ElementRef, Inject, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
-import {FilterDSL, CubeKey, Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {CubeKey, Dashboard, DashboardDSL, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeMeta} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
 import {
@@ -424,7 +424,7 @@ export class CubePuzzleDashboardComponent implements OnInit {
     }
 
     changedOptions() {
-        this.options.api.optionsChanged();
+        this.options.api?.optionsChanged();
     }
 
     removeItem(index: number) {

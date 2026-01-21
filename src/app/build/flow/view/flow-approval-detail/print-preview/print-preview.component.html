@@ -1,6 +1,6 @@
 <div class="print-preview-container">
     @if (instance.eruptFlowConfig.setting.printSetting == PrintSetting.CUSTOM) {
-        <div [innerHTML]="instance.eruptFlowConfig.setting.printTemplate|safeHtml"></div>
+        <div class="rich-content-html" [innerHTML]="instance.eruptFlowConfig.setting.printTemplate|safeHtml"></div>
     } @else {
         <div class="print-meta">
             <span>打印人: {{ settingsService.user.name || '-' }}</span>
@@ -27,7 +27,6 @@
                 </tr>
             </table>
         </div>
-        <!--    <div class="print-details-title">Details</div>-->
         <div class="print-info">
             @if (eruptBuild) {
                 <erupt-edit-type [eruptBuildModel]="eruptBuild" [readonly]="true"

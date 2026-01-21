@@ -11,6 +11,18 @@
             </ul>
         </nz-dropdown-menu>
     }
+    @if (globalVars && globalVars.length > 0) {
+        <button nz-button nz-dropdown [nzDropdownMenu]="globalVarMenu" style="margin-left: 0">
+            插入全局变量 <span nz-icon nzType="down"></span>
+        </button>
+        <nz-dropdown-menu #globalVarMenu="nzDropdownMenu">
+            <ul nz-menu style="max-height: 300px;overflow-y: auto">
+                @for (v of globalVars; track v.value) {
+                    <li nz-menu-item (click)="addVar(v)">{{ v.label }}</li>
+                }
+            </ul>
+        </nz-dropdown-menu>
+    }
     @if (vars && vars.length > 0) {
         <button nz-button nz-dropdown [nzDropdownMenu]="varMenu" style="margin-left: 0">
             插入变量 <span nz-icon nzType="down"></span>
@@ -24,4 +36,4 @@
         </nz-dropdown-menu>
     }
 </div>
-<ueditor #ue [name]="'print-template'" [(ngModel)]="value" [config]="{serverUrl:''}" (onReady)="onReady($event)" (onPreReady)="onPreReady($event)"></ueditor>
+<ueditor #ue [height]="height" [name]="'print-template'" [(ngModel)]="value" [config]="{serverUrl:''}" (onReady)="onReady($event)" (onPreReady)="onPreReady($event)"></ueditor>

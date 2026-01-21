@@ -14,6 +14,7 @@ import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 import {CubePuzzleReport} from "./view/cube-puzzle-report/cube-puzzle-report";
 import {CubePuzzleFilterConfig} from "./view/cube-puzzle-filter-config/cube-puzzle-filter-config";
 import {CubePuzzleFilterComp} from "./view/cube-puzzle-filter-comp/cube-puzzle-filter-comp";
+import {NzEmptyComponent} from "ng-zorro-antd/empty";
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import {CubePuzzleFilterComp} from "./view/cube-puzzle-filter-comp/cube-puzzle-f
         GridsterItemComponent,
         NzCardModule,
         NzIconModule,
-        NzTooltipDirective
+        NzTooltipDirective,
+        NzEmptyComponent
     ]
 })
 export class CubeModule {
