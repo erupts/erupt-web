@@ -1,20 +1,28 @@
 import {
     Area,
-    Bar, Chord,
+    Bar,
+    Chord,
     Column,
     Funnel,
     Gauge,
     Line,
-    Pie, Progress,
+    Pie,
+    Progress,
     Radar,
-    RadialBar, RingProgress,
-    Rose, Sankey,
-    Scatter, TinyArea, TinyColumn, TinyLine,
+    RadialBar,
+    RingProgress,
+    Rose,
+    Sankey,
+    Scatter,
+    TinyArea,
+    TinyColumn,
+    TinyLine,
     Waterfall,
     WordCloud
 } from "@antv/g2plot";
 import {CubeKey, ReportDSL, ReportType} from "../model/dashboard.model";
 import {ElementRef} from "@angular/core";
+import {WindowModel} from "@shared/model/window.model";
 
 export function renderChart(chartContainer: ElementRef, reportDSL: ReportDSL, data: Record<string, any>[]): any {
     const commonConfig: any = {
@@ -22,6 +30,9 @@ export function renderChart(chartContainer: ElementRef, reportDSL: ReportDSL, da
         ...reportDSL.cube,
         ...reportDSL.ui,
     };
+    if(WindowModel.theme.primaryColor){
+        // commonConfig.color = WindowModel.theme.primaryColor
+    }
     if (reportDSL.ui["legendPosition"]) {
         commonConfig["legend"] = {
             layout: 'horizontal',

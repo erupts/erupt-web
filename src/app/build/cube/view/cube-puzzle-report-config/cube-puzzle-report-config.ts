@@ -59,6 +59,10 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
             if (!this.report.cube[CubeKey.valuesField]) {
                 this.report.cube[CubeKey.valuesField] = [this.cubeMeta.measures?.[0]?.code];
             }
+        } else if (this.report.type === ReportType.KPI) {
+            if (!this.report.cube[CubeKey.yField]) {
+                this.report.cube[CubeKey.yField] = this.cubeMeta.measures?.[0]?.code;
+            }
         } else {
             if (!this.report.cube[CubeKey.xField]) {
                 this.report.cube[CubeKey.xField] = this.cubeMeta.dimensions?.[0]?.code;
@@ -108,10 +112,14 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     }
 
     onConfigChange() {
-        if (this.report.type !== ReportType.TABLE) {
+        if (this.report.type !== ReportType.TABLE && this.report.type !== ReportType.KPI) {
             if (Array.isArray(this.report.cube[CubeKey.xField])) {
                 this.report.cube[CubeKey.xField] = this.report.cube[CubeKey.xField][0];
             }
+            if (Array.isArray(this.report.cube[CubeKey.yField])) {
+                this.report.cube[CubeKey.yField] = this.report.cube[CubeKey.yField][0];
+            }
+        } else if (this.report.type === ReportType.KPI) {
             if (Array.isArray(this.report.cube[CubeKey.yField])) {
                 this.report.cube[CubeKey.yField] = this.report.cube[CubeKey.yField][0];
             }

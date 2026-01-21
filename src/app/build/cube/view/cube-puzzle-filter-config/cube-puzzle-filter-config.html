@@ -16,13 +16,13 @@
         <div style="margin-bottom: 8px;">Operator</div>
         <nz-select [(ngModel)]="filter.operator" style="width: 100%;">
             @for (op of operators; track op.value) {
-                <nz-option [nzLabel]="op.label" [nzValue]="op.value"></nz-option>
+                <nz-option [nzLabel]="op.label | translate" [nzValue]="op.value"></nz-option>
             }
         </nz-select>
     </div>
 
     <div style="margin-bottom: 8px;">
         <div style="margin-bottom: 8px;">Default Value</div>
-        <input nz-input [(ngModel)]="filter.defaultValues" placeholder="Enter default value"/>
+        <cube-puzzle-filter-comp [filter]="filter" [cubeMeta]="cubeMeta"></cube-puzzle-filter-comp>
     </div>
 </div>
