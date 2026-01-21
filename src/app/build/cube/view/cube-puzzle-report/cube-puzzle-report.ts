@@ -125,27 +125,42 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
     }
 
-    refresh(): void {
+    refresh(filter?: CubeFilter[] ): void {
         if (!this.visible) {
             return;
         }
         this.querying = true;
         let dimensions = [];
         let measures = [];
-        if (this.report.cube[CubeKey.xField]) {
-            if (Array.isArray(this.report.cube[CubeKey.xField])) {
-                dimensions = this.report.cube[CubeKey.xField];
-            } else {
-                dimensions = [this.report.cube[CubeKey.xField]];
+
+        if (this.report.type === ReportType.PIVOT_TABLE) {
+            if (this.report.cube[CubeKey.rowsField]) {
+                dimensions = this.report.cube[CubeKey.rowsField] as string[];
+            }
+            if (this.report.cube[CubeKey.columnsField]) {
+                dimensions.push(...this.report.cube[CubeKey.rowsField] as string[]);
+            }
+            if (this.report.cube[CubeKey.valuesField]) {
+                measures = this.report.cube[CubeKey.valuesField] as string[];
+            }
+        } else {
+            // For other chart types
+            if (this.report.cube[CubeKey.xField]) {
+                if (Array.isArray(this.report.cube[CubeKey.xField])) {
+                    dimensions = this.report.cube[CubeKey.xField];
+                } else {
+                    dimensions = [this.report.cube[CubeKey.xField]];
+                }
+            }
+            if (this.report.cube[CubeKey.yField]) {
+                if (Array.isArray(this.report.cube[CubeKey.yField])) {
+                    measures = this.report.cube[CubeKey.yField];
+                } else {
+                    measures = [this.report.cube[CubeKey.yField]];
+                }
             }
         }
-        if (this.report.cube[CubeKey.yField]) {
-            if (Array.isArray(this.report.cube[CubeKey.yField])) {
-                measures = this.report.cube[CubeKey.yField];
-            } else {
-                measures = [this.report.cube[CubeKey.yField]];
-            }
-        }
+
         this.cubeApiService.query({
             cube: this.dashboard.cuber,
             explore: this.dashboard.explore,
@@ -155,7 +170,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 field: this.report.cube[CubeKey.sortField] as string,
                 direction: this.report.cube[CubeKey.sortDirection] as any || 'ASC'
             }] : [],
-            filters: this.filters
+            filters: filter
         }).subscribe({
             next: (response) => {
                 this.chartData = response.data;
@@ -173,34 +188,29 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         if (!this.visible) {
             return;
         }
-        if (this.chart) {
-            this.chart.destroy();
-            this.chart = null;
-        }
-        if (this.report.type == ReportType.PIVOT_TABLE) {
+        if (this.report.type == ReportType.TABLE) {
+            return;
+        } else if (this.report.type == ReportType.PIVOT_TABLE) {
             const dataConfig = {
                 fields: {
-                    rows: ['province', 'city'],
-                    columns: ['category'],
-                    values: ['price', 'cost'],
+                    rows: this.report.cube[CubeKey.rowsField] as string[],
+                    columns: this.report.cube[CubeKey.columnsField] as string[],
+                    values: this.report.cube[CubeKey.valuesField] as string[],
                 },
-                data: [
-                    {province: 'Guangdong', city: 'Guangzhou', category: 'A', price: 120, cost: 100},
-                    {province: 'Guangdong', city: 'Shenzhen', category: 'B', price: 80, cost: 60},
-                    {province: 'Beijing', city: 'Beijing', category: 'A', price: 150, cost: 130},
-                ]
-            };
-            const options = {
-                width: 800,
-                height: 300,
-                showSeriesNumber: true
+                data: this.chartData,
             };
             const ele = this.chartContainer.nativeElement;
-            ele.style.overflow = 'auto';
-            const s2 = new PivotSheet(ele, dataConfig, options);
+            const s2 = new PivotSheet(ele, dataConfig, {
+                width: this.chartContainer.nativeElement.clientWidth,
+                height: this.chartContainer.nativeElement.clientHeight
+            });
             s2.setThemeCfg({name: 'gray'});
             s2.render();
         } else {
+            if (this.chart) {
+                this.chart.destroy();
+                this.chart = null;
+            }
             this.chart = renderChart(this.chartContainer, this.report, this.chartData)
         }
     }

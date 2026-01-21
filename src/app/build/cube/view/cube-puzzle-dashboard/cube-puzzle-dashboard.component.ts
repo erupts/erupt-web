@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, ElementRef, Inject, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
@@ -61,6 +61,8 @@ export class CubePuzzleDashboardComponent implements OnInit {
     dashboard: Dashboard;
 
     cubeMeta: CubeMeta;
+
+    filters: CubeFilter[] = [];
 
     operators = Object.keys(CubeOperator).map(key => ({label: key, value: CubeOperator[key]}));
 
@@ -159,8 +161,13 @@ export class CubePuzzleDashboardComponent implements OnInit {
     }
 
     query() {
+        this.filters = [{
+            field: this.cubeMeta.dimensions[0].code,
+            operator: CubeOperator.EQ,
+            value: "1"
+        }]
         for (let report of this.reports) {
-            report.refresh();
+            report.refresh(this.filters);
         }
     }
 
@@ -428,6 +435,9 @@ export class CubePuzzleDashboardComponent implements OnInit {
         }, () => {
         }, () => {
             this.saving = false;
+            for (let report of this.reports) {
+                report.render()
+            }
         })
     }
 

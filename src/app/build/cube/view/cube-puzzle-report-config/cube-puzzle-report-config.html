@@ -70,6 +70,7 @@
                                 </nz-form-control>
                             </nz-form-item>
 
+
                             @if (report.type !== ReportType.PIE && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TABLE && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS) {
                                 <nz-form-item>
                                     <nz-form-label>维度</nz-form-label>
@@ -152,6 +153,54 @@
                                                        [style.color]="report.cube[CubeKey.sortField] === mea.code ? '#1890ff' : '#ccc'"
                                                        (click)="$event.stopPropagation();toggleSort(mea.code)"
                                                        style="float: right; margin-top: 4px;"></i>
+                                                </nz-option>
+                                            }
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            }
+
+                            @if (report.type === ReportType.PIVOT_TABLE) {
+                                <nz-form-item>
+                                    <nz-form-label>行字段</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.rowsField]" name="rowsField"
+                                                   nzMode="multiple"
+                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear
+                                                   nzPlaceHolder="选择行字段">
+                                            @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
+                                                    {{dim.title}}
+                                                </nz-option>
+                                            }
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <nz-form-item>
+                                    <nz-form-label>列字段</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.columnsField]" name="columnsField"
+                                                   nzMode="multiple"
+                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear
+                                                   nzPlaceHolder="选择列字段">
+                                            @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
+                                                    {{dim.title}}
+                                                </nz-option>
+                                            }
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <nz-form-item>
+                                    <nz-form-label>值字段</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.valuesField]" name="valuesField"
+                                                   nzMode="multiple"
+                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear
+                                                   nzPlaceHolder="选择值字段">
+                                            @for (mea of cubeMeta.measures; track mea.code) {
+                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
+                                                    {{mea.title}}
                                                 </nz-option>
                                             }
                                         </nz-select>

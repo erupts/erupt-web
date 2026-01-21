@@ -49,6 +49,16 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
             if (!this.report.cube[CubeKey.yField]) {
                 this.report.cube[CubeKey.yField] = [this.cubeMeta.measures?.[0]?.code];
             }
+        } else if (this.report.type === ReportType.PIVOT_TABLE) {
+            if (!this.report.cube[CubeKey.rowsField]) {
+                this.report.cube[CubeKey.rowsField] = [this.cubeMeta.dimensions?.[0]?.code];
+            }
+            if (!this.report.cube[CubeKey.columnsField]) {
+                this.report.cube[CubeKey.columnsField] = [];
+            }
+            if (!this.report.cube[CubeKey.valuesField]) {
+                this.report.cube[CubeKey.valuesField] = [this.cubeMeta.measures?.[0]?.code];
+            }
         } else {
             if (!this.report.cube[CubeKey.xField]) {
                 this.report.cube[CubeKey.xField] = this.cubeMeta.dimensions?.[0]?.code;
@@ -144,7 +154,7 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         const cube = this.report.cube;
 
         // Collect all possible dimension selections
-        const fields = [CubeKey.xField, CubeKey.seriesField, CubeKey.sourceField, CubeKey.targetField];
+        const fields = [CubeKey.xField, CubeKey.seriesField, CubeKey.sourceField, CubeKey.targetField, CubeKey.rowsField, CubeKey.columnsField];
         fields.forEach(key => {
             const val = cube[key];
             if (val) {
@@ -165,7 +175,7 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         const cube = this.report.cube;
 
         // Collect all possible measure selections
-        const fields = [CubeKey.yField, 'yField2', 'sizeField', CubeKey.weightField];
+        const fields = [CubeKey.yField, 'yField2', 'sizeField', CubeKey.weightField, CubeKey.valuesField];
         fields.forEach(key => {
             const val = cube[key];
             if (val) {
