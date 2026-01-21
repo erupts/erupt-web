@@ -1,7 +1,4 @@
 import {Component, Input} from '@angular/core';
-import {NzInputDirective} from "ng-zorro-antd/input";
-import {NzOptionComponent, NzSelectComponent} from "ng-zorro-antd/select";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {FilterDSL} from "../../model/dashboard.model";
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubeMeta} from "../../model/cube.model";
