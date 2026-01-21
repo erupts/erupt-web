@@ -62,8 +62,6 @@ export class CubePuzzleDashboardComponent implements OnInit {
 
     cubeMeta: CubeMeta;
 
-    filters: CubeFilter[] = [];
-
     operators = Object.keys(CubeOperator).map(key => ({label: key, value: CubeOperator[key]}));
 
     addingFilter: CubeFilter = {
@@ -161,13 +159,8 @@ export class CubePuzzleDashboardComponent implements OnInit {
     }
 
     query() {
-        this.filters = [{
-            field: this.cubeMeta.dimensions[0].code,
-            operator: CubeOperator.EQ,
-            value: "1"
-        }]
         for (let report of this.reports) {
-            report.refresh(this.filters);
+            report.refresh();
         }
     }
 
