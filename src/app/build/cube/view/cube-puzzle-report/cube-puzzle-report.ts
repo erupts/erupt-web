@@ -125,7 +125,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
     }
 
-    refresh(filter?: CubeFilter[] ): void {
+    refresh(): void {
         if (!this.visible) {
             return;
         }
@@ -160,7 +160,14 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 }
             }
         }
-
+        let cf: CubeFilter[] = [];
+        if (this.filters) {
+            for (let f of this.filters) {
+                if (f.value) {
+                    cf.push(f);
+                }
+            }
+        }
         this.cubeApiService.query({
             cube: this.dashboard.cuber,
             explore: this.dashboard.explore,
@@ -170,7 +177,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 field: this.report.cube[CubeKey.sortField] as string,
                 direction: this.report.cube[CubeKey.sortDirection] as any || 'ASC'
             }] : [],
-            filters: filter
+            filters: cf
         }).subscribe({
             next: (response) => {
                 this.chartData = response.data;
