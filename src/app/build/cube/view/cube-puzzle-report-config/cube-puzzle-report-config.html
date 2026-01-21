@@ -72,7 +72,7 @@
                             </nz-form-item>
 
 
-                            @if (report.type !== ReportType.KPI && report.type !== ReportType.PIE && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TABLE && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS) {
+                            @if (report.type !== ReportType.KPI && report.type !== ReportType.PIE && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TABLE && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.PIVOT_TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>维度</nz-form-label>
                                     <nz-form-control>
@@ -117,7 +117,7 @@
                                 </nz-form-item>
                             }
 
-                            @if (report.type !== ReportType.KPI && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TABLE) {
+                            @if (report.type !== ReportType.KPI && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TABLE && report.type !== ReportType.PIVOT_TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>指标</nz-form-label>
                                     <nz-form-control>

@@ -3,13 +3,11 @@
     <nz-spin [nzSpinning]="querying" style="height: 100%;width: 100%">
         <div [hidden]="report.type === ReportType.TABLE || report.type === ReportType.KPI" #chartContainer
              style="height: 100%;width: 100%;overflow: hidden">
-
         </div>
         @if (report.type === ReportType.KPI) {
             <div style="height: 100%; display: flex; align-items: center; justify-content: center;">
                 @if (chartData && chartData.length > 0) {
-                    <nz-statistic [nzValue]="chartData[0][report.cube[CubeKey.yField] + '']"
-                                  [nzTitle]="report.description"></nz-statistic>
+                    <nz-statistic [nzValue]="chartData[0][report.cube[CubeKey.yField] + '']"></nz-statistic>
                 }
             </div>
         }
