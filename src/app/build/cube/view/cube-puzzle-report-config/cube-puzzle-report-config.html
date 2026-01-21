@@ -63,6 +63,7 @@
                                                        nzLabel="进度环"></nz-option>
                                         </nz-option-group>
                                         <nz-option-group nzLabel="其他">
+                                            <nz-option [nzValue]="ReportType.KPI" nzLabel="KPI"></nz-option>
                                             <nz-option [nzValue]="ReportType.PIVOT_TABLE" nzLabel="透视表"></nz-option>
                                             <nz-option [nzValue]="ReportType.TABLE" nzLabel="表格"></nz-option>
                                         </nz-option-group>
@@ -71,7 +72,7 @@
                             </nz-form-item>
 
 
-                            @if (report.type !== ReportType.PIE && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TABLE && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS) {
+                            @if (report.type !== ReportType.KPI && report.type !== ReportType.PIE && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TABLE && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS) {
                                 <nz-form-item>
                                     <nz-form-label>维度</nz-form-label>
                                     <nz-form-control>
@@ -116,7 +117,7 @@
                                 </nz-form-item>
                             }
 
-                            @if (report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TABLE) {
+                            @if (report.type !== ReportType.KPI && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD && report.type !== ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>指标</nz-form-label>
                                     <nz-form-control>
@@ -135,6 +136,19 @@
                                                (click)="toggleSort(report.cube[CubeKey.yField])"
                                                style="cursor: pointer;"></i>
                                         </ng-template>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            }
+                            @if (report.type === ReportType.KPI) {
+                                <nz-form-item>
+                                    <nz-form-label>指标</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
+                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
+                                            @for (mea of cubeMeta.measures; track mea.code) {
+                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                            }
+                                        </nz-select>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
@@ -381,7 +395,7 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
+                            @if (report.type !== ReportType.KPI && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-control>
                                         <label nz-checkbox [(ngModel)]="report.ui['showLabel']" name="showLabel"
@@ -391,7 +405,7 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
+                            @if (report.type !== ReportType.KPI && report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>图例位置</nz-form-label>
                                     <nz-form-control>
@@ -409,7 +423,7 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.TABLE
+                            @if (report.type !== ReportType.KPI && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.TABLE
                             && report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS
                             && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD) {
                                 <nz-form-item>
@@ -426,7 +440,7 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS
+                            @if (report.type !== ReportType.KPI && report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS
                             && report.type !== ReportType.TABLE && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD
                             && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD) {
                                 <nz-form-item>
@@ -447,7 +461,7 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
+                            @if (report.type !== ReportType.KPI && report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>主题颜色</nz-form-label>
                                     <nz-form-control>

@@ -31,6 +31,7 @@ import {NzToolTipModule} from 'ng-zorro-antd/tooltip';
 import {NzUploadModule} from 'ng-zorro-antd/upload';
 import {NzPaginationModule} from "ng-zorro-antd/pagination";
 import {NzSliderModule} from "ng-zorro-antd/slider";
+import {NzStatisticModule} from "ng-zorro-antd/statistic";
 import {NzCollapseModule} from "ng-zorro-antd/collapse";
 import {NzAutocompleteModule} from "ng-zorro-antd/auto-complete";
 import {NzTreeModule} from "ng-zorro-antd/tree";
@@ -71,6 +72,7 @@ export const SHARED_ZORRO_MODULES = [
     NzUploadModule,
     NzPaginationModule,
     NzSliderModule,
+    NzStatisticModule,
     NzCollapseModule,
     NzAutocompleteModule,
     NzTreeModule,
