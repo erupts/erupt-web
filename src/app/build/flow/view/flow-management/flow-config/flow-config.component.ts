@@ -309,31 +309,37 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     }
 
     configPrintTemplate() {
-        this.dataService.printVars().subscribe(res => {
-            let vars = res.data || [];
-            if (this.eruptBuild && this.eruptBuild.eruptModel) {
-                this.eruptBuild.eruptModel.eruptFieldModels.forEach(f => {
+        let vars = []
+        vars.push({value: 'flow.no', label: '流程-流水号'});
+        vars.push({value: 'flow.initiator_name', label: '流程-发起人'});
+        vars.push({value: 'flow.create_time', label: '流程-发起时间'});
+        vars.push({value: 'flow.status', label: '流程-状态'});
+        vars.push({value: 'flow.print_user', label: '流程-打印人'});
+        if (this.eruptBuild && this.eruptBuild.eruptModel) {
+            this.eruptBuild.eruptModel.eruptFieldModels.forEach(f => {
+                if (f.eruptFieldJson.edit.title) {
                     vars.push({
                         value: f.fieldName,
                         label: f.eruptFieldJson.edit.title
                     })
-                })
-            }
-            let ref = this.modal.create({
-                nzTitle: '配置打印模板',
-                nzDraggable: true,
-                nzContent: PrintTemplate,
-                nzWidth: '800px',
-                nzMaskClosable: false,
-                nzKeyboard: false,
-                nzOnOk: () => {
-                    this.flowConfig.setting.printTemplate = ref.getContentComponent().value;
                 }
             })
-            ref.getContentComponent().vars = vars;
-            ref.getContentComponent().height = 400;
-            ref.getContentComponent().value = this.flowConfig.setting.printTemplate;
+        }
+        let ref = this.modal.create({
+            nzTitle: '配置打印模板',
+            nzDraggable: true,
+            nzContent: PrintTemplate,
+            nzWidth: '900px',
+            nzStyle: {top: '30px'},
+            nzMaskClosable: false,
+            nzKeyboard: false,
+            nzOnOk: () => {
+                this.flowConfig.setting.printTemplate = ref.getContentComponent().value;
+            }
         })
+        ref.getContentComponent().height = 460;
+        ref.getContentComponent().vars = vars;
+        ref.getContentComponent().value = this.flowConfig.setting.printTemplate;
     }
 
     protected readonly EditType = EditType;

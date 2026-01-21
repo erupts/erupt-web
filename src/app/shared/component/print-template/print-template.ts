@@ -1,11 +1,11 @@
-import {Component, ElementRef, Inject, Input, OnInit, ViewChild} from '@angular/core';
-import {LazyService} from "@delon/util";
-import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
+import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {NZ_MODAL_DATA} from "ng-zorro-antd/modal";
 import {SharedModule} from "@shared/shared.module";
 import {UEditorComponent} from "../ueditor/ueditor.component";
 import {DataService} from "@shared/service/data.service";
+import {LV} from "../../../build/erupt/model/common.model";
+import {deepCopy} from "@delon/util";
 
 @Component({
     selector: 'erupt-print-template',
@@ -20,9 +20,9 @@ export class PrintTemplate implements OnInit {
 
     @Input() value: string;
 
-    @Input() height: number | string = 300;
+    @Input() height: number = 360;
 
-    @Input() readonly: boolean;
+    @Input() readonly: boolean = false;
 
     @ViewChild('ue') ue: UEditorComponent;
 
@@ -30,18 +30,12 @@ export class PrintTemplate implements OnInit {
 
     templates: { name: string, content: string }[] = [];
 
-    vars: { value: string, label: string }[] = [];
+    vars: LV<string, string>[] = [];
 
-    constructor(private lazy: LazyService, private ref: ElementRef,
-                @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
-                @Inject(NZ_MODAL_DATA) private data: any,
+    globalVars: LV<string, string>[] = [];
+
+    constructor(@Inject(NZ_MODAL_DATA) private data: any,
                 private dataService: DataService) {
-        if (data) {
-            this.value = data.value;
-            this.height = data.height || this.height;
-            this.readonly = data.readonly || this.readonly;
-            this.vars = data.vars || [];
-        }
     }
 
     getContent(): string {
@@ -49,10 +43,11 @@ export class PrintTemplate implements OnInit {
     }
 
     initMention(editor: any) {
-        const vars = this.vars;
+        const vars = deepCopy(this.vars);
+        vars.push(...this.globalVars);
         if (!vars || vars.length === 0) return;
-        if (editor.getContent && editor.getContent.isHijacked) return;
 
+        if (editor.getContent && editor.getContent.isHijacked) return;
         // 这种方案最稳妥：拦截 setContent 和 getContent
         if (editor.setContent) {
             const originalSetContent = editor.setContent;
@@ -84,7 +79,7 @@ export class PrintTemplate implements OnInit {
         }
     }
 
-    addVar(v: { value: string, label: string }) {
+    addVar(v: LV<string, string>) {
         this.ue.Instance.execCommand('inserthtml', `<span class="mention" data-variable="true" data-id="${v.value}" style="color: #1890ff;margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{</span>${v.label}<span style="opacity: 0.5;">}</span></span>`);
     }
 
@@ -114,14 +109,9 @@ export class PrintTemplate implements OnInit {
         this.dataService.printTemplates().subscribe(res => {
             this.templates = res.data || [];
         });
-        if (this.vars.length === 0) {
-            this.dataService.printVars().subscribe(res => {
-                if (res.data) {
-                    this.vars.push(...res.data);
-                }
-            });
-        }
+        this.dataService.printVars().subscribe(res => {
+            this.globalVars = res.data;
+        });
     }
 
-    protected readonly confirm = confirm;
 }
