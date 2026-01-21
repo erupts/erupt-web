@@ -126,10 +126,12 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
         if (this.report.type === ReportType.PIVOT_TABLE) {
             if (this.report.cube[CubeKey.rowsField]) {
-                dimensions = this.report.cube[CubeKey.rowsField] as string[];
+                dimensions = [...this.report.cube[CubeKey.rowsField] as string[]];
             }
             if (this.report.cube[CubeKey.columnsField]) {
-                dimensions.push(...this.report.cube[CubeKey.rowsField] as string[]);
+                if (this.report.cube[CubeKey.columnsField]) {
+                    dimensions.push(...this.report.cube[CubeKey.columnsField] as string[]);
+                }
             }
             if (this.report.cube[CubeKey.valuesField]) {
                 measures = this.report.cube[CubeKey.valuesField] as string[];
@@ -184,6 +186,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         if (!this.visible) {
             return;
         }
+        if (this.chart) {
+            this.chart.destroy();
+            this.chart = null;
+        }
         if (this.report.type == ReportType.TABLE || this.report.type == ReportType.KPI) {
             return;
         } else if (this.report.type == ReportType.PIVOT_TABLE) {
@@ -200,13 +206,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 width: this.chartContainer.nativeElement.clientWidth,
                 height: this.chartContainer.nativeElement.clientHeight
             });
+            console.log(s2);
             s2.setThemeCfg({name: 'gray'});
             s2.render();
         } else {
-            if (this.chart) {
-                this.chart.destroy();
-                this.chart = null;
-            }
             this.chart = renderChart(this.chartContainer, this.report, this.chartData)
         }
     }
