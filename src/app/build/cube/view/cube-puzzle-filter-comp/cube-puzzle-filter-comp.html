@@ -9,5 +9,5 @@
 } @else if (CubeOperator.BETWEEN == filter.operator) {
     <nz-range-picker [(ngModel)]="filter.value" style="width: 100%;" [nzSize]="size"></nz-range-picker>
 } @else {
-    <input nz-input [(ngModel)]="filter.value" style="width: 100%;" [nzSize]="size"/>
+    <input nz-input [(ngModel)]="filter.value" style="width: 100%;" [nzSize]="size" autocomplete="off"/>
 }
