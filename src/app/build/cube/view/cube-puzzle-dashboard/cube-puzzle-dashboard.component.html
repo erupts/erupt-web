@@ -96,7 +96,7 @@
                                 </div>
                             }
                             <div class="puzzle-content" style="background-color: var(--ant-primary-1)">
-                                <cube-puzzle-report [report]="report" [dashboard]="dashboard"/>
+                                <cube-puzzle-report [filters]="dsl.filters" [report]="report" [dashboard]="dashboard"/>
                             </div>
                         </div>
                     </gridster-item>
@@ -110,22 +110,12 @@
                 <div style="margin-bottom: 8px;">Field</div>
                 <nz-select [(ngModel)]="addingFilter.field" style="width: 100%;" nzShowSearch
                            nzPlaceHolder="Select field">
-                    <nz-option-group nzLabel="Dimensions">
-                        @for (dim of cubeMeta.dimensions; track dim.code) {
-                            @if (!dim.hidden) {
-                                <nz-option [nzLabel]="dim.title + ' (' + dim.code + ')'"
-                                           [nzValue]="dim.code"></nz-option>
-                            }
+                    @for (dim of cubeMeta.dimensions; track dim.code) {
+                        @if (!dim.hidden) {
+                            <nz-option [nzLabel]="dim.title"
+                                       [nzValue]="dim.code"></nz-option>
                         }
-                    </nz-option-group>
-                    <nz-option-group nzLabel="Measures">
-                        @for (mea of cubeMeta.measures; track mea.code) {
-                            @if (!mea.hidden) {
-                                <nz-option [nzLabel]="mea.title + ' (' + mea.code + ')'"
-                                           [nzValue]="mea.code"></nz-option>
-                            }
-                        }
-                    </nz-option-group>
+                    }
                 </nz-select>
             </div>
 
