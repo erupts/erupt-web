@@ -12,12 +12,15 @@ import {GridsterComponent, GridsterItemComponent} from "angular-gridster2";
 import {CubeApiService} from "./service/cube-api.service";
 import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 import {CubePuzzleReport} from "./view/cube-puzzle-report/cube-puzzle-report";
+import {CubePuzzleFilterConfig} from "./view/cube-puzzle-filter-config/cube-puzzle-filter-config";
 
 
 @NgModule({
     declarations: [
         CubePuzzleDashboardComponent,
-        CubePuzzleReportConfig
+        CubePuzzleFilterConfig,
+        CubePuzzleReport,
+        CubePuzzleReportConfig,
     ],
     providers: [
         CubeApiService
@@ -30,8 +33,7 @@ import {CubePuzzleReport} from "./view/cube-puzzle-report/cube-puzzle-report";
         GridsterItemComponent,
         NzCardModule,
         NzIconModule,
-        NzTooltipDirective,
-        CubePuzzleReport
+        NzTooltipDirective
     ]
 })
 export class CubeModule {

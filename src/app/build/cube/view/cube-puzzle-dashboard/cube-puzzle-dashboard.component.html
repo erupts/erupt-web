@@ -38,14 +38,22 @@
     </div>
     @if (cubeMeta && dsl?.filters?.length) {
         <div class="puzzle-filter-row">
-            <div class="filter-items">
+            <div class="filter-items" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropFilter($event)">
                 @for (filter of dsl.filters; track $index) {
-                    <div class="filter-item">
+                    <div class="filter-item" cdkDrag [cdkDragDisabled]="!edit">
+                        @if (edit) {
+                            <span class="drag-handle" cdkDragHandle>
+                                <span nz-icon nzType="holder" nzTheme="outline"></span>
+                            </span>
+                        }
                         <span class="filter-label">{{ getFieldTitle(filter.field) }}: </span>
                         <input nz-input [(ngModel)]="filter.value" [placeholder]="'Value'"
                                style="width: 120px" nzSize="small"/>
                         @if (edit) {
-                            <button nz-button nzType="text" nzDanger nzSize="small" (click)="removeFilter($index)">
+                            <button nz-button nzType="text" nzSize="small" (click)="editFilter($index)">
+                                <span nz-icon nzType="edit"></span>
+                            </button>
+                            <button nz-button nzType="text" nzDanger nzSize="small" style="margin-left: 0"  (click)="removeFilter($index)">
                                 <span nz-icon nzType="close"></span>
                             </button>
                         }
@@ -104,34 +112,4 @@
             }
         </gridster>
     </div>
-    <ng-template #filterAddTpl>
-        <div>
-            <div style="margin-bottom: 16px;">
-                <div style="margin-bottom: 8px;">Field</div>
-                <nz-select [(ngModel)]="addingFilter.field" style="width: 100%;" nzShowSearch
-                           nzPlaceHolder="Select field">
-                    @for (dim of cubeMeta.dimensions; track dim.code) {
-                        @if (!dim.hidden) {
-                            <nz-option [nzLabel]="dim.title"
-                                       [nzValue]="dim.code"></nz-option>
-                        }
-                    }
-                </nz-select>
-            </div>
-
-            <div style="margin-bottom: 16px;">
-                <div style="margin-bottom: 8px;">Operator</div>
-                <nz-select [(ngModel)]="addingFilter.operator" style="width: 100%;">
-                    @for (op of operators; track op.value) {
-                        <nz-option [nzLabel]="op.label" [nzValue]="op.value"></nz-option>
-                    }
-                </nz-select>
-            </div>
-
-            <div style="margin-bottom: 8px;">
-                <div style="margin-bottom: 8px;">Default Value</div>
-                <input nz-input [(ngModel)]="addingFilter.value" placeholder="Enter default value"/>
-            </div>
-        </div>
-    </ng-template>
 </div>

@@ -1,0 +1,28 @@
+<div>
+    <div style="margin-bottom: 16px;">
+        <div style="margin-bottom: 8px;">Field</div>
+        <nz-select [(ngModel)]="filter.field" style="width: 100%;" nzShowSearch nzPlaceHolder="Select field">
+            @if (cubeMeta) {
+                @for (dim of cubeMeta.dimensions; track dim.code) {
+                    @if (!dim.hidden) {
+                        <nz-option [nzLabel]="dim.title" [nzValue]="dim.code"></nz-option>
+                    }
+                }
+            }
+        </nz-select>
+    </div>
+
+    <div style="margin-bottom: 16px;">
+        <div style="margin-bottom: 8px;">Operator</div>
+        <nz-select [(ngModel)]="filter.operator" style="width: 100%;">
+            @for (op of operators; track op.value) {
+                <nz-option [nzLabel]="op.label" [nzValue]="op.value"></nz-option>
+            }
+        </nz-select>
+    </div>
+
+    <div style="margin-bottom: 8px;">
+        <div style="margin-bottom: 8px;">Default Value</div>
+        <input nz-input [(ngModel)]="filter.value" placeholder="Enter default value"/>
+    </div>
+</div>

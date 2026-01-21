@@ -63,6 +63,31 @@
                 padding: 4px 8px;
                 border-radius: 4px;
 
+                &.cdk-drag-preview {
+                    opacity: 0.8;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+                }
+
+                &.cdk-drag-placeholder {
+                    opacity: 0.3;
+                }
+
+                &.cdk-drag-animating {
+                    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+                }
+
+                .drag-handle {
+                    cursor: move;
+                    display: flex;
+                    align-items: center;
+                    color: #8c8c8c;
+                    padding: 2px;
+
+                    &:hover {
+                        color: #262626;
+                    }
+                }
+
                 .filter-label {
                     font-size: 13px;
                     color: #595959;
