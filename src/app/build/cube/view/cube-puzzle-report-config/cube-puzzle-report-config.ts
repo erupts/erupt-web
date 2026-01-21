@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, inject, Input, OnInit, ViewChild} from '@angular/core';
 import {NZ_MODAL_DATA} from 'ng-zorro-antd/modal';
 import {CubeMeta, CubeMetaDimension, CubeMetaMeasure} from "../../model/cube.model";
 import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../model/dashboard.model";

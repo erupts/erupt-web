@@ -1,17 +1,7 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../model/dashboard.model";
-import {NzCardComponent} from "ng-zorro-antd/card";
-import {
-    NzTableCellDirective,
-    NzTableComponent,
-    NzTbodyComponent,
-    NzTheadComponent,
-    NzThMeasureDirective,
-    NzTrDirective
-} from "ng-zorro-antd/table";
 import {CubeApiService} from "../../service/cube-api.service";
 import {renderChart} from "../../util/chart.util";
-import {NzSpinComponent} from "ng-zorro-antd/spin";
 import {PivotSheet} from '@antv/s2';
 import {CubeFilter} from "../../model/cube-query.model";
 
