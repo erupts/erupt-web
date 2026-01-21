@@ -15,6 +15,8 @@ export class CubePuzzleFilterComp implements OnInit {
 
     @Input() cubeMeta: CubeMeta;
 
+    @Input() size: "large" | "small" | "default" = "default";
+
     ngOnInit(): void {
     }
 
