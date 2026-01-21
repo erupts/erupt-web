@@ -50,16 +50,17 @@ export enum CubeKey {
     xField = 'xField',
     yField = 'yField',
     seriesField = 'seriesField',
-    COLOR = 'COLOR',
-    SIZE = 'SIZE',
+
     sourceField = 'sourceField',
     targetField = 'targetField',
     weightField = 'weightField',
-    sortField = 'sortField',
-    sortDirection = 'sortDirection',
+
     rowsField = 'rowsField',
     columnsField = 'columnsField',
     valuesField = 'valuesField',
+
+    sortField = 'sortField',
+    sortDirection = 'sortDirection',
 }
 
 /**
