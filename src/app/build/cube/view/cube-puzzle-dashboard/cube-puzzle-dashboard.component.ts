@@ -514,6 +514,8 @@ export class CubePuzzleDashboardComponent implements OnInit {
         let ref = this.modal.create({
             nzTitle: 'Add Filter',
             nzContent: CubePuzzleFilterConfig,
+            nzDraggable: true,
+            nzMaskClosable: false,
             nzWidth: 400,
             nzOnOk: () => {
                 let filter = ref.getContentComponent().filter;
@@ -527,6 +529,7 @@ export class CubePuzzleDashboardComponent implements OnInit {
         });
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().filter = {
+            field: this.cubeMeta.dimensions?.[0].code,
             operator: CubeOperator.EQ
         }
     }
@@ -539,6 +542,8 @@ export class CubePuzzleDashboardComponent implements OnInit {
         let ref = this.modal.create({
             nzTitle: 'Add Filter',
             nzContent: CubePuzzleFilterConfig,
+            nzMaskClosable: false,
+            nzDraggable: true,
             nzWidth: 400,
             nzOnOk: () => {
                 let filter = ref.getContentComponent().filter;
