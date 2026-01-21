@@ -47,7 +47,7 @@
                             </span>
                         }
                         <span class="filter-label">{{ getFieldTitle(filter.field) }}: </span>
-                        <cube-puzzle-filter-comp style="width: 160px" [filter]="filter" [cubeMeta]="cubeMeta"></cube-puzzle-filter-comp>
+                        <cube-puzzle-filter-comp style="width: 160px" size="small" [filter]="filter" [cubeMeta]="cubeMeta"></cube-puzzle-filter-comp>
                         @if (edit) {
                             <button nz-button nzType="text" nzSize="small" (click)="editFilter($index)">
                                 <span nz-icon nzType="edit"></span>
