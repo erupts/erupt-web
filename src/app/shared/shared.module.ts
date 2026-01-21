@@ -28,6 +28,7 @@ import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 import {SyncVirtualScrollDirective} from "@shared/directive/sync-virtual-scroll.directive";
 import {EnumToArrayPipe} from "@shared/pipe/enum-array.pipe";
 import {KeysPipe} from "@shared/pipe/keys.pipe";
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -50,7 +51,8 @@ const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUr
         ...SHARED_DELON_MODULES,
         ...SHARED_ZORRO_MODULES,
         // third libs
-        NzAffixModule
+        NzAffixModule,
+        DragDropModule
     ],
     providers: [
         DataService,
@@ -73,7 +75,8 @@ const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUr
         ...SHARED_DELON_MODULES,
         ...SHARED_ZORRO_MODULES,
         ...COMPONENTS,
-        ...DIRECTIVES
+        ...DIRECTIVES,
+        DragDropModule
     ],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA

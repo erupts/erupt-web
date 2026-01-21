@@ -326,15 +326,13 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                 nzWidth: '800px',
                 nzMaskClosable: false,
                 nzKeyboard: false,
-                nzData: {
-                    vars: vars,
-                    height: 400,
-                    value: this.flowConfig.setting.printTemplate,
-                },
                 nzOnOk: () => {
                     this.flowConfig.setting.printTemplate = ref.getContentComponent().value;
                 }
             })
+            ref.getContentComponent().vars = vars;
+            ref.getContentComponent().height = 400;
+            ref.getContentComponent().value = this.flowConfig.setting.printTemplate;
         })
     }
 

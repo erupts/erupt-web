@@ -1,19 +1,10 @@
-import {Component, ElementRef, Inject, Input, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
-import {TransferItem} from "ng-zorro-antd/transfer";
-import {
-    CubeFilter,
-    CubeKey,
-    CubeOperator,
-    Dashboard,
-    DashboardDSL,
-    ReportDSL,
-    ReportType
-} from "../../model/dashboard.model";
+import {FilterDSL, CubeKey, Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeMeta} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
 import {
@@ -39,6 +30,10 @@ import {
     WordCloud
 } from '@antv/g2plot';
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {CubeOperator} from "../../model/cube-query.model";
+import {CubePuzzleFilterConfig} from "../cube-puzzle-filter-config/cube-puzzle-filter-config";
+import {deepCopy} from "@delon/util";
 
 @Component({
     standalone: false,
@@ -61,12 +56,6 @@ export class CubePuzzleDashboardComponent implements OnInit {
     dashboard: Dashboard;
 
     cubeMeta: CubeMeta;
-
-    operators = Object.keys(CubeOperator).map(key => ({label: key, value: CubeOperator[key]}));
-
-    addingFilter: CubeFilter = {
-        operator: CubeOperator.EQ
-    };
 
     tempDsl: DashboardDSL;
 
@@ -521,29 +510,48 @@ export class CubePuzzleDashboardComponent implements OnInit {
         this.isFillRoute = url.startsWith('/fill/');
     }
 
-    @ViewChild('filterAddTpl') filterAddTpl: any;
-
     addFilter() {
-        this.addingFilter = {
-            operator: CubeOperator.EQ
-        };
-        this.modal.create({
+        let ref = this.modal.create({
             nzTitle: 'Add Filter',
-            nzContent: this.filterAddTpl,
+            nzContent: CubePuzzleFilterConfig,
             nzWidth: 400,
             nzOnOk: () => {
-                if (this.addingFilter.field) {
+                let filter = ref.getContentComponent().filter;
+                if (filter.field) {
                     if (!this.dsl.filters) {
                         this.dsl.filters = [];
                     }
-                    this.dsl.filters.push({...this.addingFilter});
                 }
+                this.dsl.filters.push(filter);
             }
         });
+        ref.getContentComponent().cubeMeta = this.cubeMeta;
+        ref.getContentComponent().filter = {
+            operator: CubeOperator.EQ
+        }
     }
 
     removeFilter(index: number) {
         this.dsl.filters.splice(index, 1);
+    }
+
+    editFilter(index: number) {
+        let ref = this.modal.create({
+            nzTitle: 'Add Filter',
+            nzContent: CubePuzzleFilterConfig,
+            nzWidth: 400,
+            nzOnOk: () => {
+                let filter = ref.getContentComponent().filter;
+                if (filter.field) {
+                    if (!this.dsl.filters) {
+                        this.dsl.filters = [];
+                    }
+                }
+                this.dsl.filters[index] = filter;
+            }
+        });
+        ref.getContentComponent().cubeMeta = this.cubeMeta;
+        ref.getContentComponent().filter = deepCopy(this.dsl.filters[index])
     }
 
     getFieldTitle(code: string) {
@@ -553,6 +561,10 @@ export class CubePuzzleDashboardComponent implements OnInit {
         const mea = this.cubeMeta.measures.find(m => m.code === code);
         if (mea) return mea.title;
         return code;
+    }
+
+    dropFilter(event: CdkDragDrop<FilterDSL[]>) {
+        moveItemInArray(this.dsl.filters, event.previousIndex, event.currentIndex);
     }
 
 }
