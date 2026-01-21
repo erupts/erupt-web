@@ -7,7 +7,7 @@
         @if (report.type === ReportType.KPI) {
             <div style="height: 100%; display: flex; align-items: center; justify-content: center;">
                 @if (chartData && chartData.length > 0) {
-                    <nz-statistic [nzValue]="chartData[0][report.cube[CubeKey.yField] + '']"></nz-statistic>
+                    <div style="font-size: 18px">{{chartData[0][report.cube[CubeKey.yField] + '']}}</div>
                 }
             </div>
         }
