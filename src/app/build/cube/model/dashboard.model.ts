@@ -28,8 +28,8 @@ export interface DashboardDSL {
 }
 
 export interface FilterDSL {
-    field?: string;
-    operator?: CubeOperator;
+    field: string;
+    operator: CubeOperator;
     defaultValues?: any;
     value?: any;
 }

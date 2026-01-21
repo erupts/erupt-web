@@ -14,7 +14,7 @@ import {CubeMeta} from "../../model/cube.model";
 })
 export class CubePuzzleFilterConfig {
 
-    @Input() filter: FilterDSL = {};
+    @Input() filter: FilterDSL;
 
     @Input() cubeMeta: CubeMeta;
 
