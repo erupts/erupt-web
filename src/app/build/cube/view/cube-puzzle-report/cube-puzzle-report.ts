@@ -17,16 +17,7 @@ import {CubeFilter} from "../../model/cube-query.model";
 
 @Component({
     selector: 'cube-puzzle-report',
-    imports: [
-        NzCardComponent,
-        NzTableCellDirective,
-        NzTableComponent,
-        NzTbodyComponent,
-        NzThMeasureDirective,
-        NzTheadComponent,
-        NzTrDirective,
-        NzSpinComponent
-    ],
+    standalone: false,
     templateUrl: './cube-puzzle-report.html',
     styleUrl: './cube-puzzle-report.less'
 })
