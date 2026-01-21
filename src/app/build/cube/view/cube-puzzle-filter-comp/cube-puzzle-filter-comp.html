@@ -1,0 +1,13 @@
+@if (filter.operator == CubeOperator.EGT || filter.operator == CubeOperator.ELT || filter.operator == CubeOperator.GT || filter.operator == CubeOperator.LT || filter.operator == CubeOperator.FEW_DAYS || filter.operator == CubeOperator.FUTURE_DAYS) {
+    <nz-input-number [(ngModel)]="filter.value" style="width: 100%;"></nz-input-number>
+} @else if (CubeOperator.NULL == filter.operator || CubeOperator.NOT_NULL == filter.operator) {
+
+} @else if (CubeOperator.IN == filter.operator || CubeOperator.NOT_IN == filter.operator) {
+    <nz-select [(ngModel)]="filter.value" style="width: 100%;" nzMode="tags" nzAllowClear>
+
+    </nz-select>
+} @else if (CubeOperator.BETWEEN == filter.operator) {
+    <nz-range-picker [(ngModel)]="filter.value" style="width: 100%;"></nz-range-picker>
+} @else {
+    <input nz-input [(ngModel)]="filter.value" style="width: 100%;"/>
+}

@@ -13,12 +13,14 @@ import {CubeApiService} from "./service/cube-api.service";
 import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 import {CubePuzzleReport} from "./view/cube-puzzle-report/cube-puzzle-report";
 import {CubePuzzleFilterConfig} from "./view/cube-puzzle-filter-config/cube-puzzle-filter-config";
+import {CubePuzzleFilterComp} from "./view/cube-puzzle-filter-comp/cube-puzzle-filter-comp";
 
 
 @NgModule({
     declarations: [
         CubePuzzleDashboardComponent,
         CubePuzzleFilterConfig,
+        CubePuzzleFilterComp,
         CubePuzzleReport,
         CubePuzzleReportConfig,
     ],

@@ -172,9 +172,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }).subscribe({
             next: (response) => {
                 this.chartData = response.data;
-                if (this.report.type != ReportType.TABLE) {
-                    this.render();
-                }
+                this.render();
             },
             complete: () => {
                 this.querying = false;
@@ -186,7 +184,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         if (!this.visible) {
             return;
         }
-        if (this.report.type == ReportType.TABLE) {
+        if (this.report.type == ReportType.TABLE || this.report.type == ReportType.KPI) {
             return;
         } else if (this.report.type == ReportType.PIVOT_TABLE) {
             const dataConfig = {

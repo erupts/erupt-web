@@ -28,11 +28,15 @@ export enum CubeOperator {
     NOT_IN = "NOT_IN",
     NULL = "NULL",
     NOT_NULL = "NOT_NULL",
+
     GT = "GT",
     LT = "LT",
     EGT = "EGT",
     ELT = "ELT",
-    RANGE = "RANGE"
+
+    BETWEEN = "BETWEEN",
+    FEW_DAYS = "FEW_DAYS",
+    FUTURE_DAYS = "FUTURE_DAYS",
 }
 
 /**
