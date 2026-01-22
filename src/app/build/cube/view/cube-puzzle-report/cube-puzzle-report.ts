@@ -261,17 +261,14 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         if (reportDSL.ui["showScrollbar"]) {
             commonConfig["scrollbar"] = {};
         }
-        if (reportDSL.ui["showXAxis"] === false) {
+        if (reportDSL.ui["hideXAxis"] == true) {
             commonConfig["xAxis"] = false;
         }
-        if (reportDSL.ui["showYAxis"] === false) {
+        if (reportDSL.ui["hideYAxis"] == true) {
             commonConfig["yAxis"] = false;
         }
-        if (reportDSL.ui["showTooltip"] === false) {
+        if (reportDSL.ui["hideTooltip"] == true) {
             commonConfig["tooltip"] = false;
-        }
-        if (reportDSL.ui["theme"]) {
-            commonConfig["theme"] = reportDSL.ui["theme"];
         }
         if (reportDSL.ui["color"] && reportDSL.ui["color"].length > 0) {
             commonConfig["color"] = reportDSL.ui["color"];

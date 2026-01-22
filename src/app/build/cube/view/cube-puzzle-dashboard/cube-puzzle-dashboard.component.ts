@@ -143,6 +143,7 @@ export class CubePuzzleDashboardComponent implements OnInit {
     }
 
     query() {
+        this.changedOptions();
         for (let report of this.reports) {
             report.refresh();
         }
