@@ -50,6 +50,7 @@ export enum CubeKey {
     xField = 'xField',
     yField = 'yField',
     seriesField = 'seriesField',
+    sizeField = "sizeField",
 
     sourceField = 'sourceField',
     targetField = 'targetField',
