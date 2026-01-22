@@ -442,30 +442,18 @@
                                 <nz-form-item>
                                     <nz-form-label>辅助配置</nz-form-label>
                                     <nz-form-control>
-                                        <label nz-checkbox [(ngModel)]="report.ui['xAxis']" name="showXAxis"
+                                        <label nz-checkbox [(ngModel)]="report.ui['hideXAxis']" name="hideXAxis"
                                                (ngModelChange)="onConfigChange()">
-                                            显示X轴
+                                            隐藏X轴
                                         </label>
-                                        <label nz-checkbox [(ngModel)]="report.ui['yAxis']" name="showYAxis"
+                                        <label nz-checkbox [(ngModel)]="report.ui['hideYAxis']" name="hideYAxis"
                                                (ngModelChange)="onConfigChange()">
-                                            显示Y轴
+                                            隐藏Y轴
                                         </label>
-                                        <!--                                        <label nz-checkbox [(ngModel)]="report.ui['tooltip']" name="showTooltip"-->
-                                        <!--                                               (ngModelChange)="onConfigChange()">-->
-                                        <!--                                            显示提示信息-->
-                                        <!--                                        </label>-->
-                                    </nz-form-control>
-                                </nz-form-item>
-                            }
-                            @if (report.type !== ReportType.KPI && report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
-                                <nz-form-item>
-                                    <nz-form-label>主题颜色</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-select [(ngModel)]="report.ui['theme']" name="theme"
-                                                   (ngModelChange)="onConfigChange()" nzAllowClear>
-                                            <nz-option nzValue="dark" nzLabel="暗黑"></nz-option>
-                                            <nz-option nzValue="light" nzLabel="明亮"></nz-option>
-                                        </nz-select>
+                                        <label nz-checkbox [(ngModel)]="report.ui['hideTooltip']" name="hideTooltip"
+                                               (ngModelChange)="onConfigChange()">
+                                            隐藏提示信息
+                                        </label>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
