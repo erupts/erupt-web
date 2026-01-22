@@ -37,7 +37,7 @@ import {deepCopy} from "@delon/util";
 
 @Component({
     standalone: false,
-    selector: 'app-cube-management',
+    selector: 'cube-puzzle-dashboard',
     templateUrl: './cube-puzzle-dashboard.component.html',
     styleUrls: ['./cube-puzzle-dashboard.component.less']
 })
@@ -60,8 +60,6 @@ export class CubePuzzleDashboardComponent implements OnInit {
     tempDsl: DashboardDSL;
 
     dsl: DashboardDSL;
-
-    @ViewChildren('chartContainer') chartContainers: QueryList<ElementRef>;
 
     @ViewChildren(CubePuzzleReport) reports: QueryList<CubePuzzleReport>;
 
@@ -141,251 +139,12 @@ export class CubePuzzleDashboardComponent implements OnInit {
             this.cubeApiService.cubeMetadata(this.dashboard.cuber, this.dashboard.explore).subscribe(res => {
                 this.cubeMeta = res.data;
             })
-            setTimeout(() => {
-                this.renderAllCharts();
-            }, 500);
         })
     }
 
     query() {
         for (let report of this.reports) {
             report.refresh();
-        }
-    }
-
-    renderAllCharts() {
-        this.charts.forEach(c => c.destroy());
-        this.charts = [];
-        this.chartContainers.forEach((container, index) => {
-            const report = this.dsl.reports.filter(r => r.type !== ReportType.TABLE)[index];
-            if (report) {
-                this.renderChart(container.nativeElement, report);
-            }
-        });
-    }
-
-    chartData = [
-        {input: '分类一', count: 27, date: 'A'},
-        {input: '分类二', count: 25, date: 'A'},
-        {input: '分类三', count: 18, date: 'A'},
-        {input: '分类四', count: 15, date: 'A'},
-        {input: '分类五', count: 10, date: 'A'},
-        {input: '分类一', count: 7, date: 'B'},
-        {input: '分类二', count: 5, date: 'B'},
-        {input: '分类三', count: 3, date: 'B'},
-        {input: '分类四', count: 5, date: 'B'},
-        {input: '分类五', count: 10, date: 'B'},
-    ];
-
-    renderChart(container: HTMLElement, reportDSL: ReportDSL) {
-        const commonConfig: any = {
-            data: this.chartData,
-            ...reportDSL.cube,
-            ...reportDSL.ui
-        };
-        if (reportDSL.description) {
-            commonConfig.description = {
-                visible: true,
-                text: reportDSL.description
-            };
-        }
-        if (reportDSL.ui["legendPosition"]) {
-            commonConfig["legend"] = {
-                layout: 'horizontal',
-                position: reportDSL.ui["legendPosition"],
-            };
-        }
-        if (reportDSL.ui["showLabel"]) {
-            commonConfig["label"] = {
-                position: reportDSL.type === ReportType.PIE ? 'outer' : 'middle',
-            };
-        }
-        if (reportDSL.ui["showSlider"]) {
-            commonConfig["slider"] = {};
-        }
-        if (reportDSL.ui["showTooltip"] === false) {
-            commonConfig["tooltip"] = false;
-        }
-        let chart;
-        switch (reportDSL.type) {
-            case ReportType.LINE:
-                chart = new Line(container, {
-                    ...commonConfig,
-                    xField: reportDSL.cube[CubeKey.xField] as string,
-                    yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
-                    stepType: reportDSL.ui["stepType"] ? 'hv' : undefined,
-                });
-                break;
-            case ReportType.AREA:
-                chart = new Area(container, {
-                    ...commonConfig,
-                    xField: reportDSL.cube[CubeKey.xField] as string,
-                    yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
-                });
-                break;
-            case ReportType.COLUMN:
-                chart = new Column(container, {
-                    ...commonConfig,
-                    xField: reportDSL.cube[CubeKey.xField] as string,
-                    yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
-                });
-                break;
-            case ReportType.BAR:
-                chart = new Bar(container, {
-                    ...commonConfig,
-                    xField: reportDSL.cube[CubeKey.xField] as string,
-                    yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
-                });
-                break;
-            case ReportType.PIE:
-                chart = new Pie(container, {
-                    ...commonConfig,
-                    angleField: reportDSL.cube[CubeKey.yField] as string,
-                    colorField: reportDSL.cube[CubeKey.xField] as string,
-                    radius: reportDSL.ui["innerRadius"] ? 1 : 0.8,
-                    innerRadius: reportDSL.ui["innerRadius"] || 0,
-                    label: reportDSL.ui["showLabel"] ? {type: 'outer'} : false
-                });
-                break;
-            case ReportType.SCATTER:
-                chart = new Scatter(container, {
-                    ...commonConfig,
-                    xField: reportDSL.cube[CubeKey.xField] as string,
-                    yField: reportDSL.cube[CubeKey.yField] as string,
-                    colorField: reportDSL.cube[CubeKey.seriesField] as string,
-                });
-                break;
-            case ReportType.RADAR:
-                chart = new Radar(container, {
-                    ...commonConfig,
-                    xField: reportDSL.cube[CubeKey.xField] as string,
-                    yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
-                });
-                break;
-            case ReportType.FUNNEL:
-                chart = new Funnel(container, {
-                    ...commonConfig,
-                    xField: reportDSL.cube[CubeKey.xField] as string,
-                    yField: reportDSL.cube[CubeKey.yField] as string,
-                });
-                break;
-            case ReportType.GAUGE:
-                chart = new Gauge(container, {
-                    ...commonConfig,
-                    percent: (this.chartData && this.chartData.length > 0) ? (this.chartData[0][reportDSL.cube[CubeKey.yField] as string] || this.chartData[0].count || 0) / 100 : 0,
-                    range: {color: 'l(0) 0:#B8E1FF 1:#3D76DD'},
-                    startAngle: Math.PI,
-                    endAngle: 2 * Math.PI,
-                    statistic: {
-                        content: {
-                            formatter: ({percent}) => `Rate: ${(percent * 100).toFixed(0)}%`,
-                            style: {color: 'rgba(0,0,0,0.65)', fontSize: '18px'},
-                        },
-                    },
-                });
-                break;
-            case ReportType.WATERFALL:
-                chart = new Waterfall(container, {
-                    ...commonConfig,
-                    xField: reportDSL.cube[CubeKey.xField] as string,
-                    yField: reportDSL.cube[CubeKey.yField] as string,
-                });
-                break;
-            case ReportType.WORD_CLOUD:
-                chart = new WordCloud(container, {
-                    ...commonConfig,
-                    wordField: reportDSL.cube[CubeKey.xField] as string,
-                    weightField: reportDSL.cube[CubeKey.yField] as string,
-                    colorField: reportDSL.cube[CubeKey.xField] as string,
-                    wordStyle: {fontFamily: 'Verdana', fontSize: [12, 40]},
-                });
-                break;
-            case ReportType.ROSE:
-                chart = new Rose(container, {
-                    ...commonConfig,
-                    xField: reportDSL.cube[CubeKey.xField] as string,
-                    yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
-                    radius: 0.9,
-                });
-                break;
-            case ReportType.RADIAL_BAR:
-                chart = new RadialBar(container, {
-                    ...commonConfig,
-                    xField: reportDSL.cube[CubeKey.xField] as string,
-                    yField: reportDSL.cube[CubeKey.yField] as string,
-                    maxAngle: 270,
-                });
-                break;
-            case ReportType.SANKEY:
-                chart = new Sankey(container, {
-                    ...commonConfig,
-                    sourceField: reportDSL.cube[CubeKey.sourceField] as string || 'source',
-                    targetField: reportDSL.cube[CubeKey.targetField] as string || 'target',
-                    weightField: reportDSL.cube[CubeKey.weightField] as string || 'value',
-                });
-                break;
-            case ReportType.CHORD:
-                chart = new Chord(container, {
-                    ...commonConfig,
-                    sourceField: reportDSL.cube[CubeKey.sourceField] as string || 'source',
-                    targetField: reportDSL.cube[CubeKey.targetField] as string || 'target',
-                    weightField: reportDSL.cube[CubeKey.weightField] as string || 'value',
-                });
-                break;
-            case ReportType.BUBBLE:
-                chart = new Scatter(container, {
-                    ...commonConfig,
-                    xField: reportDSL.cube[CubeKey.xField] as string,
-                    yField: reportDSL.cube[CubeKey.yField] as string,
-                    sizeField: reportDSL.cube['sizeField'] as string || reportDSL.cube[CubeKey.yField] as string,
-                    size: [4, 20],
-                    shape: 'circle',
-                });
-                break;
-            case ReportType.TINY_LINE:
-                chart = new TinyLine(container, {
-                    ...commonConfig,
-                    data: this.chartData.map(item => item[reportDSL.cube[CubeKey.yField] as string]),
-                });
-                break;
-            case ReportType.TINY_AREA:
-                chart = new TinyArea(container, {
-                    ...commonConfig,
-                    data: this.chartData.map(item => item[reportDSL.cube[CubeKey.yField] as string]),
-                });
-                break;
-            case ReportType.TINY_COLUMN:
-                chart = new TinyColumn(container, {
-                    ...commonConfig,
-                    data: this.chartData.map(item => item[reportDSL.cube[CubeKey.yField] as string]),
-                });
-                break;
-            case ReportType.PROGRESS:
-                chart = new Progress(container, {
-                    ...commonConfig,
-                    percent: (this.chartData && this.chartData.length > 0) ? (this.chartData[0][reportDSL.cube[CubeKey.yField] as string] || this.chartData[0].count || 0) / 100 : 0,
-                    color: reportDSL.ui["color"] || ['#5B8FF9', '#E8EDF3'],
-                });
-                break;
-            case ReportType.RING_PROGRESS:
-                chart = new RingProgress(container, {
-                    ...commonConfig,
-                    percent: (this.chartData && this.chartData.length > 0) ? (this.chartData[0][reportDSL.cube[CubeKey.yField] as string] || this.chartData[0].count || 0) / 100 : 0,
-                    color: reportDSL.ui["color"] || ['#5B8FF9', '#E8EDF3'],
-                    innerRadius: reportDSL.ui["innerRadius"] || 0.8,
-                    radius: 0.98,
-                });
-                break;
-        }
-        if (chart) {
-            chart.render();
-            this.charts.push(chart);
         }
     }
 
@@ -471,7 +230,7 @@ export class CubePuzzleDashboardComponent implements OnInit {
             rows: 4,
             x: 0,
             y: 0,
-            type: ReportType.BAR,
+            type: ReportType.LINE,
             title: '图表标题',
             cube: {}
         };
