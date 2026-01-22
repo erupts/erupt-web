@@ -48,7 +48,7 @@
                                             <nz-option [nzValue]="ReportType.RADIAL_BAR" nzLabel="玉玦图"></nz-option>
                                         </nz-option-group>
                                         <nz-option-group nzLabel="关系/特殊图表">
-                                            <nz-option [nzValue]="ReportType.SANKEY" nzLabel="桑基图"></nz-option>
+                                            <!--                                            <nz-option [nzValue]="ReportType.SANKEY" nzLabel="桑基图"></nz-option>-->
                                             <nz-option [nzValue]="ReportType.CHORD" nzLabel="和弦图"></nz-option>
                                             <nz-option [nzValue]="ReportType.WORD_CLOUD" nzLabel="词云图"></nz-option>
                                         </nz-option-group>
@@ -59,7 +59,8 @@
                                                        nzLabel="迷你面积图"></nz-option>
                                             <nz-option [nzValue]="ReportType.TINY_COLUMN"
                                                        nzLabel="迷你柱状图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.PROGRESS" nzLabel="进度条"></nz-option>
+                                            <nz-option [nzValue]="ReportType.PROGRESS"
+                                                       nzLabel="进度条"></nz-option>
                                             <nz-option [nzValue]="ReportType.RING_PROGRESS"
                                                        nzLabel="进度环"></nz-option>
                                         </nz-option-group>
@@ -111,7 +112,7 @@
                                         </nz-select>
                                     </nz-form-control>
                                 </nz-form-item>
-                            } @else if (report.type === ReportType.KPI) {
+                            } @else if (report.type === ReportType.KPI || report.type === ReportType.PROGRESS || report.type === ReportType.GAUGE || report.type === ReportType.RING_PROGRESS) {
                                 <nz-form-item>
                                     <nz-form-label>指标</nz-form-label>
                                     <nz-form-control>
@@ -281,7 +282,8 @@
                                                 <nz-select [(ngModel)]="report.cube['yField2']" name="yField2"
                                                            (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                                     @for (mea of cubeMeta.measures; track mea.code) {
-                                                        <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                                        <nz-option [nzValue]="mea.code"
+                                                                   [nzLabel]="mea.title"></nz-option>
                                                     }
                                                 </nz-select>
                                             </nz-input-group>
@@ -300,10 +302,11 @@
                                         <nz-form-label>尺寸字段</nz-form-label>
                                         <nz-form-control>
                                             <nz-input-group [nzAddOnAfter]="sortTemplateSize">
-                                                <nz-select [(ngModel)]="report.cube['sizeField']" name="sizeField"
+                                                <nz-select [(ngModel)]="report.cube[CubeKey.sizeField]" name="sizeField"
                                                            (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                                     @for (mea of cubeMeta.measures; track mea.code) {
-                                                        <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                                        <nz-option [nzValue]="mea.code"
+                                                                   [nzLabel]="mea.title"></nz-option>
                                                     }
                                                 </nz-select>
                                             </nz-input-group>
@@ -322,7 +325,8 @@
                                         <nz-form-label>分组字段</nz-form-label>
                                         <nz-form-control>
                                             <nz-input-group [nzAddOnAfter]="sortTemplateSeries">
-                                                <nz-select [(ngModel)]="report.cube[CubeKey.seriesField]" name="seriesField"
+                                                <nz-select [(ngModel)]="report.cube[CubeKey.seriesField]"
+                                                           name="seriesField"
                                                            (ngModelChange)="changeCube()" nzShowSearch nzAllowClear>
                                                     @for (dim of cubeMeta.dimensions; track dim.code) {
                                                         <nz-option [nzValue]="dim.code"
@@ -364,10 +368,12 @@
                             @if (report.type === ReportType.COLUMN || report.type === ReportType.BAR || report.type === ReportType.AREA) {
                                 <nz-form-item>
                                     <nz-form-control>
-                                        <label nz-checkbox [(ngModel)]="report.ui['isStack']" name="isStack"
-                                               (ngModelChange)="onConfigChange()">
-                                            堆叠图
-                                        </label>
+                                        @if (report.type !== ReportType.AREA) {
+                                            <label nz-checkbox [(ngModel)]="report.ui['isStack']" name="isStack"
+                                                   (ngModelChange)="onConfigChange()">
+                                                堆叠图
+                                            </label>
+                                        }
                                         <label nz-checkbox [(ngModel)]="report.ui['isPercent']" name="isPercent"
                                                (ngModelChange)="onConfigChange()">
                                             百分比模式
@@ -385,7 +391,7 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (report.type !== ReportType.KPI && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
+                            @if (report.type !== ReportType.KPI && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE && report.type !== ReportType.PIVOT_TABLE) {
                                 <nz-form-item>
                                     <nz-form-control>
                                         <label nz-checkbox [(ngModel)]="report.ui['showLabel']" name="showLabel"
@@ -444,10 +450,10 @@
                                                (ngModelChange)="onConfigChange()">
                                             显示Y轴
                                         </label>
-                                        <label nz-checkbox [(ngModel)]="report.ui['tooltip']" name="showTooltip"
-                                               (ngModelChange)="onConfigChange()">
-                                            显示提示信息
-                                        </label>
+                                        <!--                                        <label nz-checkbox [(ngModel)]="report.ui['tooltip']" name="showTooltip"-->
+                                        <!--                                               (ngModelChange)="onConfigChange()">-->
+                                        <!--                                            显示提示信息-->
+                                        <!--                                        </label>-->
                                     </nz-form-control>
                                 </nz-form-item>
                             }

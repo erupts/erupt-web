@@ -88,12 +88,12 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
             ReportType.COLUMN,
             ReportType.BAR,
             ReportType.SCATTER,
-            ReportType.BUBBLE,
             ReportType.RADAR,
             ReportType.WATERFALL,
             ReportType.ROSE,
             ReportType.RADIAL_BAR,
-            ReportType.DUAL_AXES
+            ReportType.DUAL_AXES,
+            ReportType.FUNNEL,
         ].includes(type);
     }
 
@@ -112,23 +112,35 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     }
 
     onConfigChange() {
-        if (this.report.type !== ReportType.TABLE && this.report.type !== ReportType.KPI) {
+        if (this.report.type === ReportType.KPI || this.report.type === ReportType.PROGRESS  || this.report.type === ReportType.RING_PROGRESS || this.report.type === ReportType.GAUGE) {
+            let yField: string | string[];
+            if (Array.isArray(this.report.cube[CubeKey.yField])) {
+                yField = this.report.cube[CubeKey.yField][0];
+            }else{
+                yField = this.report.cube[CubeKey.yField] as string;
+            }
+            this.report.cube = {};
+            this.report.cube[CubeKey.yField] = yField;
+            this.puzzleReport.refresh()
+        } else if (this.report.type == ReportType.TABLE) {
+            if (this.report.cube[CubeKey.xField] && !Array.isArray(this.report.cube[CubeKey.xField])) {
+                this.report.cube[CubeKey.xField] = [this.report.cube[CubeKey.xField] as string];
+            }
+            if (this.report.cube[CubeKey.yField] && !Array.isArray(this.report.cube[CubeKey.yField])) {
+                this.report.cube[CubeKey.yField] = [this.report.cube[CubeKey.yField] as string];
+            }
+            this.report.cube[CubeKey.seriesField] = null;
+        } else if (this.report.type == ReportType.PIVOT_TABLE) {
+            this.report.cube = {};
+        } else {
             if (Array.isArray(this.report.cube[CubeKey.xField])) {
                 this.report.cube[CubeKey.xField] = this.report.cube[CubeKey.xField][0];
             }
             if (Array.isArray(this.report.cube[CubeKey.yField])) {
                 this.report.cube[CubeKey.yField] = this.report.cube[CubeKey.yField][0];
             }
-        } else if (this.report.type === ReportType.KPI) {
-            if (Array.isArray(this.report.cube[CubeKey.yField])) {
-                this.report.cube[CubeKey.yField] = this.report.cube[CubeKey.yField][0];
-            }
-        } else {
-            if (this.report.cube[CubeKey.xField] && !Array.isArray(this.report.cube[CubeKey.xField])) {
-                this.report.cube[CubeKey.xField] = [this.report.cube[CubeKey.xField] as string];
-            }
-            if (this.report.cube[CubeKey.yField] && !Array.isArray(this.report.cube[CubeKey.yField])) {
-                this.report.cube[CubeKey.yField] = [this.report.cube[CubeKey.yField] as string];
+            if (!this.supportSeriesField(this.report.type)) {
+                this.report.cube[CubeKey.seriesField] = null;
             }
         }
         this.renderChart();
