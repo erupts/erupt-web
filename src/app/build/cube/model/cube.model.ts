@@ -1,10 +1,11 @@
 export interface CubeMeta {
-    code: string;                       // Cube 编码
-    title: string;                      // Cube 名称
-    description?: string;               // Cube 描述
+    code: string;
+    title: string;
+    description?: string;
     tags: string[];                     // 标签列表
     dimensions: CubeMetaDimension[];    // 维度列表
     measures: CubeMetaMeasure[];        // 指标列表
+    parameters: CubeMetaParameter[];
 }
 
 /**
@@ -29,3 +30,8 @@ export interface CubeMetaMeasure {
     tags: string[];      // 标签列表
 }
 
+export interface CubeMetaParameter {
+    code: string;        // 字段名
+    title: string;       // 标题
+    description?: string; // 描述
+}

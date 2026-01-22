@@ -3,10 +3,21 @@
         <div style="margin-bottom: 8px;">Field</div>
         <nz-select [(ngModel)]="filter.field" style="width: 100%;" nzShowSearch nzPlaceHolder="Select field">
             @if (cubeMeta) {
-                @for (dim of cubeMeta.dimensions; track dim.code) {
-                    @if (!dim.hidden) {
-                        <nz-option [nzLabel]="dim.title" [nzValue]="dim.code"></nz-option>
-                    }
+                @if (cubeMeta.dimensions.length) {
+                    <nz-option-group nzLabel="Dimensions">
+                        @for (dim of cubeMeta.dimensions; track dim.code) {
+                            @if (!dim.hidden) {
+                                <nz-option [nzLabel]="dim.title" [nzValue]="dim.code"></nz-option>
+                            }
+                        }
+                    </nz-option-group>
+                }
+                @if (cubeMeta.parameters.length) {
+                    <nz-option-group nzLabel="Parameters">
+                        @for (parameter of cubeMeta.parameters; track parameter.code) {
+                            <nz-option [nzLabel]="parameter.title" [nzValue]="parameter.code"></nz-option>
+                        }
+                    </nz-option-group>
                 }
             }
         </nz-select>
