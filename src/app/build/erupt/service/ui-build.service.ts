@@ -84,19 +84,6 @@ export class UiBuildService {
                     })
                 };
             }
-            if (dataConvert) {
-                switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
-                    case EditType.CHOICE:
-                        obj.format = (item: any) => {
-                            if (item[view.column] != null) {
-                                return view.eruptFieldModel.choiceMap.get(item[view.column] + "")?.label;
-                            } else {
-                                return "";
-                            }
-                        };
-                        break;
-                }
-            }
 
             switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
                 case EditType.TAGS:
@@ -117,9 +104,15 @@ export class UiBuildService {
                 case EditType.CHOICE:
                     obj.format = (item: any) => {
                         if (item[view.column] != null) {
-                            return "<span style='color:" + view.eruptFieldModel.choiceLabelMap.get(item[view.column] + "")?.color + "'>"
-                                + item[view.column]
-                                + "</span>";
+                            if (dataConvert) {
+                                return "<span style='color:" + view.eruptFieldModel.choiceMap.get(item[view.column] + "")?.color + "'>"
+                                    + view.eruptFieldModel.choiceMap.get(item[view.column] + "")?.label
+                                    + "</span>";
+                            } else {
+                                return "<span style='color:" + view.eruptFieldModel.choiceLabelMap.get(item[view.column] + "")?.color + "'>"
+                                    + item[view.column]
+                                    + "</span>";
+                            }
                         } else {
                             return "";
                         }
