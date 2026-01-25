@@ -174,4 +174,10 @@ export class FlowInstanceApiService {
         });
     }
 
+    print(instanceId: number) {
+        return this._http.get<R<string>>(RestPath.erupt + "/flow/instance/print", {
+            instanceId
+        });
+    }
+
 }

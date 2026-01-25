@@ -54,7 +54,7 @@ export class PrintTemplate implements OnInit {
             editor.setContent = function (data: string, isAppendTo: boolean) {
                 let processedData = data;
                 vars.forEach(v => {
-                    const reg = new RegExp(`\\\\{\\\\{${v.value}\\\\}\\\\}`, 'g');
+                    const reg = new RegExp(`\\$\\\\{${v.value}\\\\}`, 'g');
                     processedData = (processedData || '').replace(reg,
                         `<span class="mention" data-variable="true" data-id="${v.value}" style="color: #1890ff;margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{</span>&nbsp;${v.label}&nbsp;<span style="opacity: 0.5;">}</span></span>`);
                 });
@@ -71,7 +71,7 @@ export class PrintTemplate implements OnInit {
                 tempDiv.innerHTML = data;
                 tempDiv.querySelectorAll('span[data-variable="true"]').forEach((el: any) => {
                     const id = el.getAttribute('data-id');
-                    el.replaceWith(`{{${id}}}`);
+                    el.replaceWith('$' + `{${id}}`);
                 });
                 return tempDiv.innerHTML;
             };

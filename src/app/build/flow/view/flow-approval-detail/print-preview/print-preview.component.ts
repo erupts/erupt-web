@@ -5,6 +5,7 @@ import {NodeType} from "@flow/model/node.model";
 import printJS from 'print-js';
 import {SettingsService} from "@delon/theme";
 import {PrintSetting} from "@flow/model/flow.model";
+import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 
 @Component({
     standalone: false,
@@ -18,12 +19,21 @@ export class FlowPrintPreviewComponent implements OnInit {
     @Input() tasks: FlowInstanceTask[];
     @Input() eruptBuild: EruptBuildModel;
 
+    printContent: string;
+
     currentDate = new Date();
 
-    constructor(private elementRef: ElementRef, protected settingsService: SettingsService,) {
+    constructor(private elementRef: ElementRef,
+                protected settingsService: SettingsService,
+                private flowInstanceApiService: FlowInstanceApiService,) {
     }
 
     ngOnInit() {
+        if (this.instance.eruptFlowConfig.setting.printSetting == PrintSetting.CUSTOM) {
+            this.flowInstanceApiService.print(this.instance.id).subscribe(res => {
+                this.printContent = res.data;
+            });
+        }
     }
 
     // 打印方法 - 只打印当前组件的内容
