@@ -311,10 +311,9 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     configPrintTemplate() {
         let vars = []
         vars.push({value: 'flow.no', label: '流程-流水号'});
-        vars.push({value: 'flow.initiator_name', label: '流程-发起人'});
-        vars.push({value: 'flow.create_time', label: '流程-发起时间'});
+        vars.push({value: 'flow.initiatorUser.name', label: '流程-发起人'});
+        vars.push({value: 'flow.createTime', label: '流程-发起时间'});
         vars.push({value: 'flow.status', label: '流程-状态'});
-        vars.push({value: 'flow.print_user', label: '流程-打印人'});
         if (this.eruptBuild && this.eruptBuild.eruptModel) {
             this.eruptBuild.eruptModel.eruptFieldModels.forEach(f => {
                 if (f.eruptFieldJson.edit.title) {
