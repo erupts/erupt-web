@@ -34,8 +34,24 @@ export class PrintTemplate implements OnInit {
 
     globalVars: LV<string, string>[] = [];
 
+    primaryColor: string = "#1890ff";
+
     constructor(@Inject(NZ_MODAL_DATA) private data: any,
                 private dataService: DataService) {
+    }
+
+    ngOnInit() {
+        const rootStyles = getComputedStyle(document.documentElement);
+        const primaryColor = rootStyles.getPropertyValue('--ant-primary-color');
+        if (primaryColor) {
+            this.primaryColor = primaryColor;
+        }
+        this.dataService.printTemplates().subscribe(res => {
+            this.templates = res.data || [];
+        });
+        this.dataService.printVars().subscribe(res => {
+            this.globalVars = res.data;
+        });
     }
 
     getContent(): string {
@@ -44,6 +60,7 @@ export class PrintTemplate implements OnInit {
 
     initMention(editor: any) {
         const vars = deepCopy(this.vars);
+        let primaryColor = this.primaryColor;
         vars.push(...this.globalVars);
         if (!vars || vars.length === 0) return;
 
@@ -54,11 +71,11 @@ export class PrintTemplate implements OnInit {
             editor.setContent = function (data: string, isAppendTo: boolean) {
                 let processedData = data;
                 vars.forEach(v => {
-                    const reg = new RegExp(`\\$\\\\{${v.value}\\\\}`, 'g');
+                    const reg = new RegExp(`\\$\\{${v.value}\\}`, 'g');
                     processedData = (processedData || '').replace(reg,
-                        `<span class="mention" data-variable="true" data-id="${v.value}" style="color: #1890ff;margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{</span>&nbsp;${v.label}&nbsp;<span style="opacity: 0.5;">}</span></span>`);
+                        `<span class="mention" data-variable="true" data-id="${v.value}" style="color: ${primaryColor};margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{</span>&nbsp;${v.label}&nbsp;<span style="opacity: 0.5;">}</span></span>`);
                 });
-                return originalSetContent.apply(this, arguments);
+                return originalSetContent.call(this, processedData, isAppendTo);
             };
         }
 
@@ -80,7 +97,8 @@ export class PrintTemplate implements OnInit {
     }
 
     addVar(v: LV<string, string>) {
-        this.ue.Instance.execCommand('inserthtml', `<span class="mention" data-variable="true" data-id="${v.value}" style="color: #1890ff;margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{</span>${v.label}<span style="opacity: 0.5;">}</span></span>`);
+        let primaryColor = this.primaryColor;
+        this.ue.Instance.execCommand('inserthtml', `<span class="mention" data-variable="true" data-id="${v.value}" style="color: ${primaryColor};margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{</span>${v.label}<span style="opacity: 0.5;">}</span></span>`);
     }
 
     applyTemplate(content: string) {
@@ -103,15 +121,6 @@ export class PrintTemplate implements OnInit {
         if (this.value) {
             ue.Instance.setContent(this.value);
         }
-    }
-
-    ngOnInit() {
-        this.dataService.printTemplates().subscribe(res => {
-            this.templates = res.data || [];
-        });
-        this.dataService.printVars().subscribe(res => {
-            this.globalVars = res.data;
-        });
     }
 
 }
