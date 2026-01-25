@@ -459,7 +459,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     openSign() {
         this.modal.create({
-            nzDraggable:true,
+            nzDraggable: true,
             nzTitle: '签名',
             nzContent: SignaturePadComponent,
             nzMaskClosable: false,
@@ -500,7 +500,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     showDiff(history: FlowInstanceDataHistory) {
         let ref = this.modal.create({
-            nzDraggable:true,
+            nzDraggable: true,
             nzTitle: '变更详情',
             nzContent: NzCodeEditorComponent,
             nzBodyStyle: {
@@ -533,7 +533,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     // 打印预览功能
     print() {
         const modalRef = this.modal.create({
-            nzDraggable:true,
+            nzDraggable: true,
             nzTitle: '打印预览',
             nzContent: FlowPrintPreviewComponent,
             nzWidth: '700px',
