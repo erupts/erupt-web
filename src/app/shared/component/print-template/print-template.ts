@@ -66,14 +66,14 @@ export class PrintTemplate implements OnInit {
 
         if (editor.getContent && editor.getContent.isHijacked) return;
         // 这种方案最稳妥：拦截 setContent 和 getContent
+        let that = this;
         if (editor.setContent) {
             const originalSetContent = editor.setContent;
             editor.setContent = function (data: string, isAppendTo: boolean) {
                 let processedData = data;
                 vars.forEach(v => {
                     const reg = new RegExp(`\\$\\{${v.value}\\}`, 'g');
-                    processedData = (processedData || '').replace(reg,
-                        `<span class="mention" data-variable="true" data-id="${v.value}" style="color: ${primaryColor};margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{</span>&nbsp;${v.label}&nbsp;<span style="opacity: 0.5;">}</span></span>`);
+                    processedData = (processedData || '').replace(reg, that.renderVar(v));
                 });
                 return originalSetContent.call(this, processedData, isAppendTo);
             };
@@ -97,8 +97,12 @@ export class PrintTemplate implements OnInit {
     }
 
     addVar(v: LV<string, string>) {
+        this.ue.Instance.execCommand('inserthtml', this.renderVar(v));
+    }
+
+    renderVar(v: LV<string, string>) {
         let primaryColor = this.primaryColor;
-        this.ue.Instance.execCommand('inserthtml', `<span class="mention" data-variable="true" data-id="${v.value}" style="color: ${primaryColor};margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{</span>${v.label}<span style="opacity: 0.5;">}</span></span>`);
+        return `<span class="mention" data-variable="true" data-id="${v.value}" style="color: ${primaryColor};margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{&nbsp;</span>${v.label}<span style="opacity: 0.5;">&nbsp;}</span></span>`;
     }
 
     applyTemplate(content: string) {

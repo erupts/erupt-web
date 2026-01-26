@@ -25,6 +25,44 @@
                     <td class="label-cell">审批状态</td>
                     <td class="value-cell">{{ this.instance.status | translate }}</td>
                 </tr>
+                @if (tasks.length) {
+                    <tr>
+                        <td class="label-cell" colspan="4" style="text-align: center">审批记录</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">
+                            审批人
+                        </td>
+                        <td class="label-cell">
+                            任务状态
+                        </td>
+                        <td class="label-cell">
+                            审批意见
+                        </td>
+                        <td class="label-cell">
+                            审批时间
+                        </td>
+                    </tr>
+                    @for (task of tasks; track task.id) {
+                        <tr>
+                            <td>
+                                {{ task.assigneeUser.name }}
+                            </td>
+                            <td>
+                                {{ task.taskStatus | translate  }}
+                            </td>
+                            <td>
+                                <div>{{ task.comment || '-' }}</div>
+                                @if (task.signature) {
+                                    <div>
+                                        <img nz-image [nzSrc]="task.signature" style="cursor: pointer;margin-top: 4px;width:100px;border:1px solid #f0f0f0" alt="signature">
+                                    </div>
+                                }
+                            </td>
+                            <td>{{ task.completedAt }}</td>
+                        </tr>
+                    }
+                }
             </table>
         </div>
         <div class="print-info">
