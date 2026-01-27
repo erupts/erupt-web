@@ -1,4 +1,5 @@
 import {NodeRule} from "@flow/model/node.model";
+import {PrintPageConfig} from "@shared/model/erupt-print";
 
 export interface FlowGroup {
     id: number;
@@ -34,7 +35,9 @@ export class FlowConfigSetting {
     subTitleFields: string[] = [];
     printSetting: PrintSetting = PrintSetting.DEFAULT;
     printTemplate: string = null;
+    printPageConfig: PrintPageConfig = null;
 }
+
 
 export enum PrintSetting {
     CLOSE = 'CLOSE',

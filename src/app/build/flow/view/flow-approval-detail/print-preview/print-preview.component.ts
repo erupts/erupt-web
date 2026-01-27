@@ -38,6 +38,23 @@ export class FlowPrintPreviewComponent implements OnInit {
 
     // 打印方法 - 只打印当前组件的内容
     print() {
+        // 获取页面配置
+        const pageConfig = this.instance.eruptFlowConfig.setting.printPageConfig || {
+            paperSize: 'A4',
+            orientation: 'portrait',
+            marginTop: 10,
+            marginRight: 10,
+            marginBottom: 10,
+            marginLeft: 10
+        };
+
+        // 构建 @page 样式
+        const pageSize = pageConfig.paperSize === 'Custom' 
+            ? 'auto' 
+            : `${pageConfig.paperSize} ${pageConfig.orientation}`;
+        
+        const margin = `${pageConfig.marginTop}mm ${pageConfig.marginRight}mm ${pageConfig.marginBottom}mm ${pageConfig.marginLeft}mm`;
+
         printJS({
             printable: this.elementRef.nativeElement.querySelector('.print-preview-container'),
             type: 'html',
@@ -50,8 +67,8 @@ export class FlowPrintPreviewComponent implements OnInit {
                 }
 
                 @page {
-                    size: A4 portrait;
-                    margin: 10mm;
+                    size: ${pageSize};
+                    margin: ${margin};
                 }
               `
         });
