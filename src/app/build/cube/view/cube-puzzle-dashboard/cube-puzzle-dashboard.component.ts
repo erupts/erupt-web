@@ -309,6 +309,7 @@ export class CubePuzzleDashboardComponent implements OnInit {
                 this.dsl.filters.push(filter);
             }
         });
+        ref.getContentComponent().dashboard = this.dashboard;
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().filter = {
             field: this.cubeMeta.dimensions?.[0].code,
