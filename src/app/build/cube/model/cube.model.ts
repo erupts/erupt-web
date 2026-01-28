@@ -17,6 +17,7 @@ export interface CubeMetaDimension {
     description?: string; // 描述
     hidden: boolean;     // 是否隐藏
     tags: string[];      // 标签列表
+    type: FieldType;
 }
 
 /**
@@ -28,10 +29,18 @@ export interface CubeMetaMeasure {
     description?: string; // 描述
     hidden: boolean;     // 是否隐藏
     tags: string[];      // 标签列表
+    type: FieldType;
 }
 
 export interface CubeMetaParameter {
     code: string;        // 字段名
     title: string;       // 标题
     description?: string; // 描述
+    type: FieldType;
+}
+
+export enum FieldType {
+    NUMBER = "NUMBER",
+    STRING = "STRING",
+    DATE_TIME = "DATE_TIME"
 }

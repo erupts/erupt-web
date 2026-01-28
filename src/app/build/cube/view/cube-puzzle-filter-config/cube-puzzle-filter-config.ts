@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Dashboard, FilterControl, FilterDSL} from "../../model/dashboard.model";
 import {CubeOperator} from "../../model/cube-query.model";
-import {CubeMeta} from "../../model/cube.model";
+import {CubeMeta, FieldType} from "../../model/cube.model";
 import {CubeApiService} from "../../service/cube-api.service";
 
 @Component({
@@ -22,8 +22,28 @@ export class CubePuzzleFilterConfig implements OnInit {
 
     constructor(private cubeApiService: CubeApiService) {
     }
+
     ngOnInit(): void {
 
+    }
+
+    fieldType(): FieldType {
+        for (let dimension of this.cubeMeta.dimensions) {
+            if (dimension.code === this.filter.field) {
+                return dimension.type;
+            }
+        }
+        for (let measure of this.cubeMeta.measures) {
+            if (measure.code === this.filter.field) {
+                return measure.type;
+            }
+        }
+        for (let parameter of this.cubeMeta.parameters) {
+            if (parameter.code === this.filter.field) {
+                return parameter.type;
+            }
+        }
+        return FieldType.STRING;
     }
 
     fieldInDimension() {
@@ -35,4 +55,5 @@ export class CubePuzzleFilterConfig implements OnInit {
 
     protected readonly FilterControl = FilterControl;
     protected readonly CubeOperator = CubeOperator;
+    protected readonly FieldType = FieldType;
 }

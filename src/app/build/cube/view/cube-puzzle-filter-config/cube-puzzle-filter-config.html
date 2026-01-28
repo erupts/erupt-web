@@ -24,6 +24,32 @@
     </div>
 
     @if (filter.field) {
+        <div style="margin-bottom: 16px;">
+            <div style="margin-bottom: 8px;">Control</div>
+            <nz-select [(ngModel)]="filter.control" style="width: 100%;">
+                @switch (fieldType()) {
+                    @case (FieldType.STRING) {
+                        @if (filter.operator == CubeOperator.IN || filter.operator == CubeOperator.NOT_IN) {
+                            <nz-option [nzLabel]="FilterControl.MULTI_SELECT"
+                                       [nzValue]="FilterControl.MULTI_SELECT"></nz-option>
+                            <nz-option [nzLabel]="FilterControl.CHECKBOX"
+                                       [nzValue]="FilterControl.CHECKBOX"></nz-option>
+                        } @else {
+                            <nz-option [nzLabel]="FilterControl.SINGLE_SELECT"
+                                       [nzValue]="FilterControl.SINGLE_SELECT"></nz-option>
+                            <nz-option [nzLabel]="FilterControl.RADIO" [nzValue]="FilterControl.RADIO"></nz-option>
+                        }
+                    }
+                    @case (FieldType.NUMBER) {
+
+                    }
+                    @case (FieldType.DATE_TIME) {
+
+                    }
+                }
+            </nz-select>
+        </div>
+
         @if (fieldInDimension()) {
             <div style="margin-bottom: 16px;">
                 <div style="margin-bottom: 8px;">Operator</div>
@@ -34,28 +60,13 @@
                 </nz-select>
             </div>
         }
-        @if (filter.operator) {
-            <div style="margin-bottom: 16px;">
-                <div style="margin-bottom: 8px;">Control</div>
-                <nz-select [(ngModel)]="filter.control" style="width: 100%;">
-                    @if (filter.operator == CubeOperator.IN || filter.operator == CubeOperator.NOT_IN) {
-                        <nz-option [nzLabel]="FilterControl.MULTI_SELECT"
-                                   [nzValue]="FilterControl.MULTI_SELECT"></nz-option>
-                        <nz-option [nzLabel]="FilterControl.CHECKBOX" [nzValue]="FilterControl.CHECKBOX"></nz-option>
-                    } @else {
-                        <nz-option [nzLabel]="FilterControl.SINGLE_SELECT"
-                                   [nzValue]="FilterControl.SINGLE_SELECT"></nz-option>
-                        <nz-option [nzLabel]="FilterControl.RADIO" [nzValue]="FilterControl.RADIO"></nz-option>
-                    }
-                </nz-select>
-            </div>
-            @if (filter.control) {
-                <div style="margin-bottom: 8px;">
-                    <div style="margin-bottom: 8px;">Default Value</div>
-                    <cube-puzzle-filter-control [dashboard]="dashboard" [filter]="filter"
-                                                [cubeMeta]="cubeMeta"></cube-puzzle-filter-control>
-                </div>
-            }
-        }
+    }
+
+    @if (filter.control) {
+        <div style="margin-bottom: 8px;">
+            <div style="margin-bottom: 8px;">Default Value</div>
+            <cube-puzzle-filter-control [dashboard]="dashboard" [filter]="filter"
+                                        [cubeMeta]="cubeMeta"></cube-puzzle-filter-control>
+        </div>
     }
 </div>
