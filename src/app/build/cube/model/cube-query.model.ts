@@ -26,6 +26,7 @@ export enum CubeOperator {
     END_WITH = "END_WITH",
     IN = "IN",
     NOT_IN = "NOT_IN",
+
     NULL = "NULL",
     NOT_NULL = "NOT_NULL",
 

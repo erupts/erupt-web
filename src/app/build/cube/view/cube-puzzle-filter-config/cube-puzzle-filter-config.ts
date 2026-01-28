@@ -1,8 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Dashboard, FilterControl, FilterDSL} from "../../model/dashboard.model";
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubeMeta, FieldType} from "../../model/cube.model";
 import {CubeApiService} from "../../service/cube-api.service";
+import {CubePuzzleFilterControl} from "../cube-puzzle-filter-control/cube-puzzle-filter-control";
 
 @Component({
     selector: 'cube-puzzle-filter-config',
@@ -18,7 +19,7 @@ export class CubePuzzleFilterConfig implements OnInit {
 
     @Input() dashboard: Dashboard;
 
-    operators = Object.keys(CubeOperator).map(key => ({label: key, value: CubeOperator[key]}));
+    @ViewChild("filterControl") filterControl: CubePuzzleFilterControl;
 
     constructor(private cubeApiService: CubeApiService) {
     }
@@ -51,6 +52,24 @@ export class CubePuzzleFilterConfig implements OnInit {
             return this.cubeMeta.dimensions.find(dim => dim.code === this.filter.field);
         }
         return false;
+    }
+
+    changeField(e) {
+        switch (this.fieldType()) {
+            case FieldType.STRING:
+                this.filter.control = FilterControl.MULTI_SELECT;
+                this.filter.operator = CubeOperator.IN;
+                break;
+            case FieldType.NUMBER:
+                this.filter.control = FilterControl.NUMBER;
+                this.filter.operator = CubeOperator.EQ;
+                break;
+            case FieldType.DATE_TIME:
+                this.filter.control = FilterControl.DATE;
+                this.filter.operator = CubeOperator.BETWEEN;
+        }
+        this.filter.defaultValues = null;
+        this.filterControl.reload();
     }
 
     protected readonly FilterControl = FilterControl;
