@@ -45,8 +45,6 @@ export enum FilterControl {
     NUMBER = "NUMBER",
     DATE = "DATE",
     DATETIME = "DATETIME",
-    RANGE_DATE = "RANGE_DATE",
-    RANGE_DATETIME = "RANGE_DATETIME",
 }
 
 /**

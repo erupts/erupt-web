@@ -18,7 +18,8 @@ import {
     RadialBar,
     RingProgress,
     Rose,
-    Sankey, SankeyOptions,
+    Sankey,
+    SankeyOptions,
     Scatter,
     TinyArea,
     TinyColumn,
@@ -180,7 +181,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         let cf: CubeFilter[] = [];
         if (this.filters) {
             for (let f of this.filters) {
-                if (f.value) {
+                if (f.value && (f.value?.length != 0)) {
                     if (this.cubeMeta.parameters.filter(it => it.code === f.field).length > 0) {
                         parameters[f.field] = f.value;
                     } else {

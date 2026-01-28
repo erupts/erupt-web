@@ -22,6 +22,8 @@ export class CubePuzzleFilterControl implements OnInit {
 
     data: Record<string, any>[] = [];
 
+    isLoading = false;
+
     constructor(private cubeApiService: CubeApiService) {
     }
 
@@ -30,15 +32,18 @@ export class CubePuzzleFilterControl implements OnInit {
     }
 
     reload() {
+        this.isLoading = true;
         if (this.filter.field) {
             if (this.cubeMeta.parameters.filter(it => it.code == this.filter.field).length == 0) {
                 this.cubeApiService.query({
                     cube: this.cubeMeta.code,
                     explore: this.dashboard.explore,
                     dimensions: [this.filter.field],
+                    measures: [],
                     limit: 300,
                 }).subscribe(res => {
                     this.data = res.data;
+                    this.isLoading = false;
                 })
             } else {
                 //TODO fetch parameters list
