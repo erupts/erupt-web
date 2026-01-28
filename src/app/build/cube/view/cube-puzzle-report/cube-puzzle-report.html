@@ -1,13 +1,17 @@
 <nz-card [nzBordered]="false" [nzTitle]="report.title" nzSize="small"
-         style="height: 100%;width: 100%;margin-bottom: 0" [nzBodyStyle]="{height: 'calc(100% - 38px)'}">
+         style="height: 100%;width: 100%;margin-bottom: 0"
+         [nzBodyStyle]="{height: 'calc(100% - ' + (report.title ? 38 : 0) + 'px)', background: report.ui['background'] || 'transparent'}">
     <nz-spin [nzSpinning]="querying" style="height: 100%;width: 100%">
         <div [hidden]="report.type === ReportType.TABLE || report.type === ReportType.KPI" #chartContainer
              style="height: 100%;width: 100%;overflow: hidden">
         </div>
         @if (report.type === ReportType.KPI) {
-            <div style="height: 100%; display: flex; align-items: center; justify-content: center;">
+            <div style="height: 100%; display: flex; align-items: center; justify-content: center;overflow: hidden">
                 @if (chartData && chartData.length > 0) {
-                    <div style="font-size: 18px">{{chartData[0][report.cube[CubeKey.yField] + '']}}</div>
+                    <span [style.font-size]="(report.ui['fontSize'] || 22) + 'px'"
+                          [style.color]="report.ui['color'] || '#000'">
+                        {{ chartData[0][report.cube[CubeKey.yField] + ''] }}
+                    </span>
                 }
             </div>
         }

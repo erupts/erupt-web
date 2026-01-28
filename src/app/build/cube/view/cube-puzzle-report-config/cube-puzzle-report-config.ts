@@ -97,6 +97,24 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         ].includes(type);
     }
 
+    standardChart(type: ReportType): boolean {
+        return [
+            ReportType.LINE,
+            ReportType.AREA,
+            ReportType.BAR,
+            ReportType.COLUMN,
+            ReportType.PIE,
+            ReportType.SCATTER,
+            ReportType.RADAR,
+            ReportType.FUNNEL,
+            ReportType.DUAL_AXES,
+            ReportType.WATERFALL,
+            ReportType.WORD_CLOUD,
+            ReportType.ROSE,
+            ReportType.RADIAL_BAR
+        ].includes(type);
+    }
+
     changeCube() {
         const dimensions = this.selectedDimensions;
         const measures = this.selectedMeasures;

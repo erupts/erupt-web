@@ -26,6 +26,7 @@ import {
     Waterfall,
     WordCloud
 } from "@antv/g2plot";
+import {CubeMeta} from "../../model/cube.model";
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -40,6 +41,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     @Input() dashboard: Dashboard;
 
     @Input() filters: CubeFilter[] = [];
+
+    @Input() cubeMeta: CubeMeta;
 
     @ViewChild('chartContainer', {static: false}) chartContainer: ElementRef;
 
@@ -173,11 +176,20 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
 
         }
+        let parameters: Record<string, any> = {};
         let cf: CubeFilter[] = [];
         if (this.filters) {
             for (let f of this.filters) {
                 if (f.value) {
-                    cf.push(f);
+                    if (this.cubeMeta.parameters.filter(it => it.code === f.field).length > 0) {
+                        parameters[f.field] = f.value;
+                    } else {
+                        cf.push({
+                            field: f.field,
+                            operator: f.operator,
+                            value: f.value
+                        });
+                    }
                 }
             }
         }
@@ -190,7 +202,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 field: this.report.cube[CubeKey.sortField] as string,
                 direction: this.report.cube[CubeKey.sortDirection] as any || 'ASC'
             }] : [],
-            filters: cf
+            filters: cf,
+            parameters: parameters
         }).subscribe({
             next: (response) => {
                 this.chartData = response.data;
@@ -226,7 +239,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 width: this.chartContainer.nativeElement.clientWidth,
                 height: this.chartContainer.nativeElement.clientHeight
             });
-            s2.setThemeCfg({name: 'gray'});
+            s2.setThemeCfg({name: this.report.ui['pivotTheme'] || 'gray'});
             s2.render();
         } else {
             this.chart = this.renderChart(this.chartData)

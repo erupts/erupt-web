@@ -47,7 +47,7 @@
                             </span>
                         }
                         <span class="filter-label">{{ getFieldTitle(filter.field) }}: </span>
-                        <cube-puzzle-filter-comp style="width: 160px" size="small" [filter]="filter" [cubeMeta]="cubeMeta"></cube-puzzle-filter-comp>
+                        <cube-puzzle-filter-control style="width: 160px" size="small" [filter]="filter" [cubeMeta]="cubeMeta" [dashboard]="dashboard"></cube-puzzle-filter-control>
                         @if (edit) {
                             <button nz-button nzType="text" nzSize="small" (click)="editFilter($index)">
                                 <span nz-icon nzType="edit"></span>
@@ -84,6 +84,10 @@
                                                 title="Edit">
                                             <span nz-icon nzType="edit"></span>
                                         </button>
+                                        <button nz-button nzType="text" nzSize="small" (click)="copyItem($index,report)"
+                                                title="Copy">
+                                            <span nz-icon nzType="copy"></span>
+                                        </button>
                                         <button nz-button nzType="text" nzSize="small" nzDanger (click)="removeItem($index)"
                                                 title="Remove">
                                             <span nz-icon nzType="delete"></span>
@@ -106,7 +110,7 @@
                                     </div>
                                 }
                                 <div class="puzzle-content" style="background-color: var(--ant-primary-1)">
-                                    <cube-puzzle-report [filters]="dsl.filters" [report]="report" [dashboard]="dashboard"/>
+                                    <cube-puzzle-report [cubeMeta]="cubeMeta" [filters]="dsl.filters" [report]="report" [dashboard]="dashboard"/>
                                 </div>
                             </div>
                         </gridster-item>
