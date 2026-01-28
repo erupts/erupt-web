@@ -41,6 +41,12 @@ export enum FilterControl {
     CHECKBOX = "CHECKBOX",
     SINGLE_SELECT = "SINGLE_SELECT",
     RADIO = "RADIO",
+
+    NUMBER = "NUMBER",
+    DATE = "DATE",
+    DATETIME = "DATETIME",
+    RANGE_DATE = "RANGE_DATE",
+    RANGE_DATETIME = "RANGE_DATETIME",
 }
 
 /**
