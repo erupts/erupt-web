@@ -1,0 +1,18 @@
+<!--@if (filter.operator == CubeOperator.EGT || filter.operator == CubeOperator.ELT || filter.operator == CubeOperator.GT || filter.operator == CubeOperator.LT || filter.operator == CubeOperator.FEW_DAYS || filter.operator == CubeOperator.FUTURE_DAYS) {-->
+<!--    <nz-input-number [(ngModel)]="filter.value" style="width: 100%;" [nzSize]="size"></nz-input-number>-->
+<!--} @else if (CubeOperator.NULL == filter.operator || CubeOperator.NOT_NULL == filter.operator) {-->
+
+<!--} @else if (CubeOperator.IN == filter.operator || CubeOperator.NOT_IN == filter.operator) {-->
+<!--    <nz-select [(ngModel)]="filter.value" style="width: 100%;" nzMode="tags" nzAllowClear [nzSize]="size">-->
+
+<!--    </nz-select>-->
+<!--} @else if (CubeOperator.BETWEEN == filter.operator) {-->
+<!--    <nz-range-picker [(ngModel)]="filter.value" style="width: 100%;" [nzSize]="size"></nz-range-picker>-->
+<!--} @else {-->
+<!--    <input nz-input [(ngModel)]="filter.value" style="width: 100%;" [nzSize]="size" autocomplete="off"/>-->
+<!--}-->
+<nz-select [(ngModel)]="filter.value" style="width: 100%;" nzAllowClear [nzSize]="size">
+    @for (item of data; track item) {
+        <nz-option [nzLabel]="item[filter.field]" [nzValue]="item[filter.field]"></nz-option>
+    }
+</nz-select>

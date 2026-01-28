@@ -29,11 +29,19 @@ export interface DashboardDSL {
 
 export interface FilterDSL {
     field: string;
-    operator: CubeOperator;
+    operator?: CubeOperator;
+    control?: FilterControl
     defaultValues?: any;
     value?: any;
 }
 
+
+export enum FilterControl {
+    MULTI_SELECT = "MULTI_SELECT",
+    CHECKBOX = "CHECKBOX",
+    SINGLE_SELECT = "SINGLE_SELECT",
+    RADIO = "RADIO",
+}
 
 /**
  * 报表 DSL 定义
@@ -82,9 +90,11 @@ export enum ReportType {
     WORD_CLOUD = 'WORD_CLOUD',
     ROSE = 'ROSE',
     RADIAL_BAR = 'RADIAL_BAR',
+
     SANKEY = 'SANKEY',
     CHORD = 'CHORD',
     BUBBLE = 'BUBBLE',
+
     TINY_LINE = 'TINY_LINE',
     TINY_AREA = 'TINY_AREA',
     TINY_COLUMN = 'TINY_COLUMN',

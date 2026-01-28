@@ -65,6 +65,6 @@ export interface CubeQuery {
 }
 
 export interface CubeQueryResponse {
-    data: any[];
+    data: Record<string, any>[];
     total: number;
 }

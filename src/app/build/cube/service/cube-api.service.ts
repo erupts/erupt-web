@@ -26,7 +26,7 @@ export class CubeApiService {
     }
 
     query(cubeQuery: CubeQuery) {
-        return this._http.post<R<Record<string, CubeQueryResponse>[]>>(RestPath.erupt + "/cube/semantic/query", cubeQuery);
+        return this._http.post<R<Record<string, any>[]>>(RestPath.erupt + "/cube/semantic/query", cubeQuery);
     }
 
 }

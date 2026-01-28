@@ -4,7 +4,15 @@ import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
-import {CubeKey, Dashboard, DashboardDSL, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {
+    CubeKey,
+    Dashboard,
+    DashboardDSL,
+    FilterControl,
+    FilterDSL,
+    ReportDSL,
+    ReportType
+} from "../../model/dashboard.model";
 import {CubeMeta} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
 import {
@@ -34,6 +42,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubePuzzleFilterConfig} from "../cube-puzzle-filter-config/cube-puzzle-filter-config";
 import {deepCopy} from "@delon/util";
+import {R} from "@shared/model/api.model";
 
 @Component({
     standalone: false,
@@ -232,9 +241,22 @@ export class CubePuzzleDashboardComponent implements OnInit {
             x: 0,
             y: 0,
             type: ReportType.LINE,
-            title: '图表标题',
+            title: '标题',
             cube: {}
         };
+    }
+
+    copyItem(index: number, item: ReportDSL) {
+        this.modal.confirm({
+            nzTitle: '确定要复制吗',
+            nzOnOk: () => {
+                let dsl = deepCopy(item);
+                dsl.x = 0;
+                dsl.y = 0;
+                this.dsl.reports.push(dsl);
+            }
+        });
+
     }
 
     editItem(index: number, item: ReportDSL) {
@@ -290,7 +312,8 @@ export class CubePuzzleDashboardComponent implements OnInit {
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().filter = {
             field: this.cubeMeta.dimensions?.[0].code,
-            operator: CubeOperator.EQ
+            operator: CubeOperator.IN,
+            control: FilterControl.MULTI_SELECT
         }
     }
 
