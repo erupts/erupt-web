@@ -349,7 +349,41 @@
                     </nz-tab>
                     <nz-tab nzTitle="自定义配置">
                         <form nz-form nzLayout="vertical">
-                            @if (report.type === ReportType.LINE || report.type === ReportType.AREA) {
+                            @if (report.type === ReportType.KPI) {
+                                <nz-form-item>
+                                    <nz-form-control>
+                                        <nz-form-label>字体大小</nz-form-label>
+                                        <nz-slider [nzMin]="30" [nzMax]="300" [nzStep]="1" name="fontSize"
+                                                   [(ngModel)]="report.ui['fontSize']"></nz-slider>
+                                    </nz-form-control>
+                                    <nz-form-control>
+                                        <div style="display: flex;align-items: center;gap:10px">
+                                            <div style="display: flex;align-items: center">文本颜色&nbsp;
+                                                <nz-color-picker [(ngModel)]="report.ui['color']"
+                                                                 name="color"></nz-color-picker>
+                                            </div>
+                                            <div style="display: flex;align-items: center">背景颜色&nbsp;
+                                                <nz-color-picker [(ngModel)]="report.ui['background']"
+                                                                 name="background"></nz-color-picker>
+                                            </div>
+                                        </div>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            }
+                            @if (report.type === ReportType.PIVOT_TABLE) {
+                                <nz-form-item>
+                                    <nz-form-label>主题</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-select [(ngModel)]="report.ui['pivotTheme']" name="pivotTheme"
+                                                   (ngModelChange)="renderChart()" nzAllowClear>
+                                            <nz-option nzValue="gray" nzLabel="Gray"></nz-option>
+                                            <nz-option nzValue="dark" nzLabel="Dark"></nz-option>
+                                            <nz-option nzValue="colorful" nzLabel="Colorful"></nz-option>
+                                            <nz-option nzValue="default" nzLabel="Blue"></nz-option>
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            } @else if (report.type === ReportType.LINE || report.type === ReportType.AREA) {
                                 <nz-form-item>
                                     <nz-form-control>
                                         <label nz-checkbox [(ngModel)]="report.ui['smooth']" name="smooth"
@@ -362,6 +396,15 @@
                                                 阶梯折线图
                                             </label>
                                         }
+                                    </nz-form-control>
+                                </nz-form-item>
+                            } @else if (report.type === ReportType.PIE) {
+                                <nz-form-item>
+                                    <nz-form-label>内环半径</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-slider [nzMin]="0" [nzMax]="0.9" [nzStep]="0.1"
+                                                   [(ngModel)]="report.ui['innerRadius']" name="innerRadius"
+                                                   (ngModelChange)="onConfigChange()"></nz-slider>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
@@ -381,17 +424,7 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (report.type === ReportType.PIE) {
-                                <nz-form-item>
-                                    <nz-form-label>内环半径</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-slider [nzMin]="0" [nzMax]="0.9" [nzStep]="0.1"
-                                                   [(ngModel)]="report.ui['innerRadius']" name="innerRadius"
-                                                   (ngModelChange)="onConfigChange()"></nz-slider>
-                                    </nz-form-control>
-                                </nz-form-item>
-                            }
-                            @if (report.type !== ReportType.KPI && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE && report.type !== ReportType.PIVOT_TABLE) {
+                            @if (supportSeriesField(report.type)) {
                                 <nz-form-item>
                                     <nz-form-control>
                                         <label nz-checkbox [(ngModel)]="report.ui['showLabel']" name="showLabel"
@@ -401,7 +434,7 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
-                            @if (report.type !== ReportType.KPI && report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS && report.type !== ReportType.TABLE) {
+                            @if (supportSeriesField(report.type)) {
                                 <nz-form-item>
                                     <nz-form-label>图例位置</nz-form-label>
                                     <nz-form-control>
@@ -418,10 +451,6 @@
                                         </nz-select>
                                     </nz-form-control>
                                 </nz-form-item>
-                            }
-                            @if (report.type !== ReportType.KPI && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD && report.type !== ReportType.TABLE
-                            && report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS
-                            && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD) {
                                 <nz-form-item>
                                     <nz-form-control>
                                         <label nz-checkbox [(ngModel)]="report.ui['showSlider']" name="showSlider"
@@ -435,10 +464,6 @@
                                         </label>
                                     </nz-form-control>
                                 </nz-form-item>
-                            }
-                            @if (report.type !== ReportType.KPI && report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.PROGRESS && report.type !== ReportType.RING_PROGRESS
-                            && report.type !== ReportType.TABLE && report.type !== ReportType.GAUGE && report.type !== ReportType.WORD_CLOUD
-                            && report.type !== ReportType.SANKEY && report.type !== ReportType.CHORD) {
                                 <nz-form-item>
                                     <nz-form-label>辅助配置</nz-form-label>
                                     <nz-form-control>
@@ -456,8 +481,6 @@
                                         </label>
                                     </nz-form-control>
                                 </nz-form-item>
-                            }
-                            @if (report.type !== ReportType.TINY_LINE && report.type !== ReportType.TINY_AREA && report.type !== ReportType.TINY_COLUMN && report.type !== ReportType.TABLE) {
                                 <nz-form-item>
                                     <nz-form-label>自定义色板</nz-form-label>
                                     <nz-form-control>

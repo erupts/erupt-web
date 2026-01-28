@@ -23,17 +23,39 @@
         </nz-select>
     </div>
 
-    <div style="margin-bottom: 16px;">
-        <div style="margin-bottom: 8px;">Operator</div>
-        <nz-select [(ngModel)]="filter.operator" style="width: 100%;">
-            @for (op of operators; track op.value) {
-                <nz-option [nzLabel]="op.label | translate" [nzValue]="op.value"></nz-option>
+    @if (filter.field) {
+        @if (fieldInDimension()) {
+            <div style="margin-bottom: 16px;">
+                <div style="margin-bottom: 8px;">Operator</div>
+                <nz-select [(ngModel)]="filter.operator" style="width: 100%;">
+                    @for (op of operators; track op.value) {
+                        <nz-option [nzLabel]="op.label | translate" [nzValue]="op.value"></nz-option>
+                    }
+                </nz-select>
+            </div>
+        }
+        @if (filter.operator) {
+            <div style="margin-bottom: 16px;">
+                <div style="margin-bottom: 8px;">Control</div>
+                <nz-select [(ngModel)]="filter.control" style="width: 100%;">
+                    @if (filter.operator == CubeOperator.IN || filter.operator == CubeOperator.NOT_IN) {
+                        <nz-option [nzLabel]="FilterControl.MULTI_SELECT"
+                                   [nzValue]="FilterControl.MULTI_SELECT"></nz-option>
+                        <nz-option [nzLabel]="FilterControl.CHECKBOX" [nzValue]="FilterControl.CHECKBOX"></nz-option>
+                    } @else {
+                        <nz-option [nzLabel]="FilterControl.SINGLE_SELECT"
+                                   [nzValue]="FilterControl.SINGLE_SELECT"></nz-option>
+                        <nz-option [nzLabel]="FilterControl.RADIO" [nzValue]="FilterControl.RADIO"></nz-option>
+                    }
+                </nz-select>
+            </div>
+            @if (filter.control) {
+                <div style="margin-bottom: 8px;">
+                    <div style="margin-bottom: 8px;">Default Value</div>
+                    <cube-puzzle-filter-control [dashboard]="dashboard" [filter]="filter"
+                                                [cubeMeta]="cubeMeta"></cube-puzzle-filter-control>
+                </div>
             }
-        </nz-select>
-    </div>
-
-    <div style="margin-bottom: 8px;">
-        <div style="margin-bottom: 8px;">Default Value</div>
-        <cube-puzzle-filter-comp [filter]="filter" [cubeMeta]="cubeMeta"></cube-puzzle-filter-comp>
-    </div>
+        }
+    }
 </div>
