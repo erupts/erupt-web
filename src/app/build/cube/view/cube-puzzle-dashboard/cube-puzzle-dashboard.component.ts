@@ -330,7 +330,9 @@ export class CubePuzzleDashboardComponent implements OnInit {
             nzDraggable: true,
             nzWidth: 400,
             nzOnOk: () => {
+                // ref.getContentComponent()
                 let filter = ref.getContentComponent().filter;
+                ref.getContentComponent().clean();
                 if (filter.field) {
                     if (!this.dsl.filters) {
                         this.dsl.filters = [];
@@ -339,6 +341,7 @@ export class CubePuzzleDashboardComponent implements OnInit {
                 this.dsl.filters[index] = filter;
             }
         });
+        ref.getContentComponent().dashboard = this.dashboard;
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().filter = deepCopy(this.dsl.filters[index])
     }
