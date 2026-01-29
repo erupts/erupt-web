@@ -22,41 +22,12 @@
             }
         </nz-select>
     </div>
-
-    @if (filter.field) {
-        <div style="margin-bottom: 16px;">
-            <div style="margin-bottom: 8px;">Control</div>
-            <nz-select [(ngModel)]="filter.control" style="width: 100%;">
-                @switch (fieldType()) {
-                    @case (FieldType.STRING) {
-                        @if (filter.operator == CubeOperator.IN || filter.operator == CubeOperator.NOT_IN) {
-                            <nz-option [nzLabel]="FilterControl.MULTI_SELECT"
-                                       [nzValue]="FilterControl.MULTI_SELECT"></nz-option>
-                            <nz-option [nzLabel]="FilterControl.CHECKBOX"
-                                       [nzValue]="FilterControl.CHECKBOX"></nz-option>
-                        } @else {
-                            <nz-option [nzLabel]="FilterControl.SINGLE_SELECT"
-                                       [nzValue]="FilterControl.SINGLE_SELECT"></nz-option>
-                            <nz-option [nzLabel]="FilterControl.RADIO" [nzValue]="FilterControl.RADIO"></nz-option>
-                        }
-                    }
-                    @case (FieldType.NUMBER) {
-
-                    }
-                    @case (FieldType.DATE_TIME) {
-
-                    }
-                }
-            </nz-select>
-        </div>
-    }
-
     @if (fieldInDimension()) {
         <div style="margin-bottom: 16px;">
             <div style="margin-bottom: 8px;">Operator</div>
             <nz-select [(ngModel)]="filter.operator" style="width: 100%;">
-                <nz-option [nzLabel]="CubeOperator.EQ" [nzValue]="CubeOperator.EQ"></nz-option>
-                <nz-option [nzLabel]="CubeOperator.NEQ" [nzValue]="CubeOperator.NEQ"></nz-option>
+                <nz-option [nzLabel]="CubeOperator.EQ | translate" [nzValue]="CubeOperator.EQ"></nz-option>
+                <nz-option [nzLabel]="CubeOperator.NEQ | translate" [nzValue]="CubeOperator.NEQ"></nz-option>
                 @switch (fieldType()) {
                     @case (FieldType.STRING) {
                         <nz-option [nzLabel]="CubeOperator.LIKE | translate" [nzValue]="CubeOperator.LIKE"></nz-option>
@@ -79,8 +50,8 @@
                         <nz-option [nzLabel]="CubeOperator.FUTURE_DAYS | translate" [nzValue]="CubeOperator.FUTURE_DAYS"></nz-option>
                     }
                 }
-                <nz-option [nzLabel]="CubeOperator.NULL" [nzValue]="CubeOperator.NULL"></nz-option>
-                <nz-option [nzLabel]="CubeOperator.NOT_NULL" [nzValue]="CubeOperator.NOT_NULL"></nz-option>
+                <nz-option [nzLabel]="CubeOperator.NULL | translate" [nzValue]="CubeOperator.NULL"></nz-option>
+                <nz-option [nzLabel]="CubeOperator.NOT_NULL | translate" [nzValue]="CubeOperator.NOT_NULL"></nz-option>
             </nz-select>
         </div>
     }

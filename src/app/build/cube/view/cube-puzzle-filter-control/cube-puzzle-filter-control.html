@@ -1,21 +1,32 @@
-@switch (filter.control) {
-    @case (FilterControl.SINGLE_SELECT || FilterControl.MULTI_SELECT) {
-        <nz-select [(ngModel)]="filter.value" [nzDropdownRender]="renderTemplate" style="width: 100%;" nzAllowClear [nzSize]="size" [nzMode]="filter.control==FilterControl.SINGLE_SELECT ? 'default' : 'tags'">
-            @for (item of data; track item) {
-                <nz-option [nzLabel]="item[filter.field]" [nzValue]="item[filter.field]"></nz-option>
-            }
-        </nz-select>
-        <ng-template #renderTemplate>
-            @if (isLoading) {
-                <nz-spin></nz-spin>
-            }
-        </ng-template>
+@switch (fieldType()) {
+    @case (FieldType.STRING) {
+        @if (filter.operator == CubeOperator.LIKE || filter.operator == CubeOperator.NOT_LIKE || filter.operator == CubeOperator.START_WITH || filter.operator == CubeOperator.END_WITH) {
+            <input nz-input [(ngModel)]="filter.value" [nzSize]="size" style="width: 100%;"/>
+        } @else if (filter.operator == CubeOperator.NULL || filter.operator == CubeOperator.NOT_NULL) {
+            <input nz-input [value]="filter.operator | translate" disabled [nzSize]="size" style="width: 100%;"/>
+        } @else {
+            <nz-select [(ngModel)]="filter.value" style="width: 100%;" nzAllowClear [nzSize]="size"
+                       [nzMode]="(filter.operator == CubeOperator.IN || filter.operator == CubeOperator.NOT_IN) ? 'tags' : 'default'"
+                       (nzOpenChange)="openSelect()">
+                @if (isLoading) {
+                    <nz-option nzDisabled nzCustomContent>
+                        <div class="text-center">
+                            <i nz-icon nzType="loading" class="loading-icon"></i>
+                        </div>
+                    </nz-option>
+                } @else {
+                    @for (item of data || []; track item) {
+                        <nz-option [nzLabel]="item[filter.field]" [nzValue]="item[filter.field]"></nz-option>
+                    }
+                }
+            </nz-select>
+        }
     }
-    @case (FilterControl.DATE) {
-        <nz-date-picker [ngModel]="filter.value"/>
+    @case (FieldType.NUMBER) {
+        <nz-input-number [(ngModel)]="filter.value" [nzSize]="size" style="width: 100%;"></nz-input-number>
     }
-    @case (FilterControl.DATETIME) {
-        <nz-date-picker [ngModel]="filter.value" [nzShowTime]="true"/>
+    @case (FieldType.DATE_TIME) {
+        <nz-date-picker [ngModel]="filter.value" [nzShowTime]="true" style="width: 100%;"/>
     }
 }
 

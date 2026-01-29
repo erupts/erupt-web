@@ -28,6 +28,10 @@ export class CubePuzzleFilterConfig implements OnInit {
 
     }
 
+    clean() {
+        this.filterControl.clean();
+    }
+
     fieldType(): FieldType {
         for (let dimension of this.cubeMeta.dimensions) {
             if (dimension.code === this.filter.field) {
@@ -68,8 +72,9 @@ export class CubePuzzleFilterConfig implements OnInit {
                 this.filter.control = FilterControl.DATE;
                 this.filter.operator = CubeOperator.BETWEEN;
         }
+        this.filter.value = null;
         this.filter.defaultValues = null;
-        this.filterControl.reload();
+        this.filterControl.clean();
     }
 
     protected readonly FilterControl = FilterControl;
