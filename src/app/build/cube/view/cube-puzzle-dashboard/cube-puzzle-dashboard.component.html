@@ -61,6 +61,7 @@
                     }
                 }
                 <div style="margin-left: auto">
+                    <button nz-button nzSize="small" (click)="reset()">Reset</button>
                     <button nz-button nzType="primary" nzSize="small" (click)="query()">查询</button>
                 </div>
             </div>
@@ -103,9 +104,11 @@
                                                   [nzTooltipTitle]="report.description"></span>
                                             </button>
                                         }
-                                        <button nz-button nzType="text" nzSize="small" (click)="download($index)">
-                                            <span nz-icon nzType="download"></span>
-                                        </button>
+                                        @if (report.type != ReportType.KPI) {
+                                            <button nz-button nzType="text" nzSize="small" (click)="download($index)">
+                                                <span nz-icon nzType="download"></span>
+                                            </button>
+                                        }
                                         <button nz-button nzType="text" nzSize="small" (click)="refreshItem($index)">
                                             <span nz-icon nzType="redo"></span>
                                         </button>

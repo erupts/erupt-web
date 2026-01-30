@@ -32,7 +32,7 @@ export interface FilterDSL {
     hidden?: boolean;
     operator?: CubeOperator;
     control?: FilterControl
-    defaultValues?: any;
+    defaultValue?: any;
     value?: any;
 }
 
