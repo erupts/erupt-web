@@ -1,0 +1,51 @@
+.filter-config {
+    .filter-config-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+
+        .filter-config-label {
+            font-size: 13px;
+            color: rgba(0, 0, 0, 0.65);
+            margin-bottom: 4px;
+            white-space: nowrap;
+        }
+
+        .filter-config-field {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .filter-config-operator {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .filter-config-hidden {
+            flex-shrink: 0;
+            padding-top: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            .filter-config-label {
+                margin-bottom: 4px;
+            }
+
+            label[nz-checkbox] {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .filter-config-default {
+        flex-direction: column;
+        gap: 4px;
+
+        cube-puzzle-filter-control {
+            width: 100%;
+        }
+    }
+}
