@@ -298,7 +298,7 @@ export class CubePuzzleDashboardComponent implements OnInit {
             nzContent: CubePuzzleFilterConfig,
             nzDraggable: true,
             nzMaskClosable: false,
-            nzWidth: 400,
+            nzWidth: 600,
             nzOnOk: () => {
                 let filter = ref.getContentComponent().filter;
                 if (filter.field) {
@@ -328,7 +328,7 @@ export class CubePuzzleDashboardComponent implements OnInit {
             nzContent: CubePuzzleFilterConfig,
             nzMaskClosable: false,
             nzDraggable: true,
-            nzWidth: 400,
+            nzWidth: 600,
             nzOnOk: () => {
                 // ref.getContentComponent()
                 let filter = ref.getContentComponent().filter;

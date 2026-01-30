@@ -42,5 +42,6 @@ export interface CubeMetaParameter {
 export enum FieldType {
     NUMBER = "NUMBER",
     STRING = "STRING",
+    DATE = "DATE",
     DATE_TIME = "DATE_TIME"
 }

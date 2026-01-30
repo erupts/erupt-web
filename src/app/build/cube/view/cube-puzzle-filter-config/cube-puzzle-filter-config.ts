@@ -61,20 +61,28 @@ export class CubePuzzleFilterConfig implements OnInit {
     changeField(e) {
         switch (this.fieldType()) {
             case FieldType.STRING:
-                this.filter.control = FilterControl.MULTI_SELECT;
-                this.filter.operator = CubeOperator.IN;
-                break;
-            case FieldType.NUMBER:
-                this.filter.control = FilterControl.NUMBER;
                 this.filter.operator = CubeOperator.EQ;
                 break;
+            case FieldType.NUMBER:
+                this.filter.operator = CubeOperator.EQ;
+
+                break;
             case FieldType.DATE_TIME:
-                this.filter.control = FilterControl.DATE;
                 this.filter.operator = CubeOperator.BETWEEN;
+                break;
         }
         this.filter.value = null;
         this.filter.defaultValues = null;
         this.filterControl.clean();
+    }
+
+    changeOperator(e) {
+        if (this.filter.operator === CubeOperator.BETWEEN) {
+            this.filter.value = [null, null];
+        } else {
+            this.filter.value = null;
+        }
+        this.filter.defaultValues = null;
     }
 
     protected readonly FilterControl = FilterControl;

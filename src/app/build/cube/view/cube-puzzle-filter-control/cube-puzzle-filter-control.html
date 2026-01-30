@@ -15,18 +15,39 @@
                         </div>
                     </nz-option>
                 } @else {
-                    @for (item of data || []; track item) {
-                        <nz-option [nzLabel]="item[filter.field]" [nzValue]="item[filter.field]"></nz-option>
+                    @for (item of data || []; track item.value) {
+                        <nz-option [nzLabel]="item.value" [nzValue]="item.label"></nz-option>
                     }
                 }
             </nz-select>
         }
     }
     @case (FieldType.NUMBER) {
-        <nz-input-number [(ngModel)]="filter.value" [nzSize]="size" style="width: 100%;"></nz-input-number>
+        @if (filter.operator == CubeOperator.BETWEEN) {
+            @if (filter.value) {
+                <div class="number-range-inputs">
+                    <nz-input-number nzChangeOnWheel [(ngModel)]="filter.value[0]" [nzSize]="size"
+                                     style="width: calc(50% - 4px);"/>
+                    <span class="range-sep">~</span>
+                    <nz-input-number nzChangeOnWheel [(ngModel)]="filter.value[1]" [nzSize]="size"
+                                     style="width: calc(50% - 4px);"/>
+                </div>
+            }
+        } @else {
+            <nz-input-number nzChangeOnWheel [(ngModel)]="filter.value" [nzSize]="size"
+                             style="width: 100%;"></nz-input-number>
+        }
     }
-    @case (FieldType.DATE_TIME) {
-        <nz-date-picker [ngModel]="filter.value" [nzShowTime]="true" style="width: 100%;"/>
+    @case (FieldType.DATE_TIME || FieldType.DATE) {
+        @if (filter.operator == CubeOperator.BETWEEN) {
+            <nz-range-picker [ngModel]="filter.value" [nzSize]="size" [nzShowTime]="fieldType()==FieldType.DATE_TIME"
+                             [nzShowNow]="true" style="width: 100%;"/>
+        } @else if (filter.operator == CubeOperator.FEW_DAYS || filter.operator == CubeOperator.FUTURE_DAYS) {
+            <nz-input-number [(ngModel)]="filter.value" [nzSize]="size" style="width: 100%;"></nz-input-number>
+        } @else {
+            <nz-date-picker [ngModel]="filter.value" [nzSize]="size" [nzShowTime]="fieldType()==FieldType.DATE_TIME"
+                            [nzShowNow]="true" style="width: 100%;"/>
+        }
     }
 }
 
