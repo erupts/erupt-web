@@ -40,7 +40,8 @@
         <div class="puzzle-filter-row">
             <div class="filter-items" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropFilter($event)">
                 @for (filter of dsl.filters; track $index) {
-                    <div class="filter-item" cdkDrag [cdkDragDisabled]="!edit">
+                    @if (edit || !filter.hidden) {
+                    <div class="filter-item" [class.filter-item-hidden]="edit && filter.hidden" cdkDrag [cdkDragDisabled]="!edit">
                         @if (edit) {
                             <span class="drag-handle" cdkDragHandle>
                                 <span nz-icon nzType="holder" nzTheme="outline"></span>
@@ -57,6 +58,7 @@
                             </button>
                         }
                     </div>
+                    }
                 }
                 <div style="margin-left: auto">
                     <button nz-button nzType="primary" nzSize="small" (click)="query()">查询</button>

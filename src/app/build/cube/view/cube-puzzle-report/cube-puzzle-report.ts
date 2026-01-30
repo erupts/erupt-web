@@ -181,7 +181,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         let cf: CubeFilter[] = [];
         if (this.filters) {
             for (let f of this.filters) {
-                if (f.value && (f.value?.length != 0)) {
+                if (f.value != null) {
                     if (this.cubeMeta.parameters.filter(it => it.code === f.field).length > 0) {
                         parameters[f.field] = f.value;
                     } else {

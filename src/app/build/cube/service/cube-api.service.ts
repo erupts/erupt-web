@@ -5,6 +5,7 @@ import {R} from "@shared/model/api.model";
 import {CubeMeta} from "../model/cube.model";
 import {Dashboard, DashboardDSL} from "../model/dashboard.model";
 import {CubeQuery, CubeQueryResponse} from "../model/cube-query.model";
+import {VL} from "../../erupt/model/erupt-field.model";
 
 @Injectable()
 export class CubeApiService {
@@ -27,6 +28,10 @@ export class CubeApiService {
 
     query(cubeQuery: CubeQuery) {
         return this._http.post<R<Record<string, any>[]>>(RestPath.erupt + "/cube/semantic/query", cubeQuery);
+    }
+
+    parameterItems(cube: string, parameter: string) {
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/cube/semantic/parameter-items/" + cube + "/" + parameter);
     }
 
 }

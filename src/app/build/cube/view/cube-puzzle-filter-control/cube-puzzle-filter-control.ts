@@ -1,8 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Dashboard, FilterControl, FilterDSL} from "../../model/dashboard.model";
+import {Dashboard, FilterDSL} from "../../model/dashboard.model";
 import {CubeMeta, FieldType} from "../../model/cube.model";
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubeApiService} from "../../service/cube-api.service";
+import {VL} from "../../../erupt/model/erupt-field.model";
 
 @Component({
     selector: 'cube-puzzle-filter-control',
@@ -20,7 +21,7 @@ export class CubePuzzleFilterControl implements OnInit {
 
     @Input() size: "large" | "small" | "default" = "default";
 
-    data: Record<string, any>[] = null;
+    data: VL[] = null;
 
     isLoading = false;
 
@@ -28,6 +29,9 @@ export class CubePuzzleFilterControl implements OnInit {
     }
 
     ngOnInit(): void {
+        if (!this.filter.value && this.filter.operator == CubeOperator.BETWEEN) {
+            this.filter.value = [null, null];
+        }
     }
 
     fieldType(): FieldType {
@@ -57,25 +61,34 @@ export class CubePuzzleFilterControl implements OnInit {
         if (!this.data) {
             this.isLoading = true;
             if (this.filter.field) {
-                if (this.cubeMeta.parameters.filter(it => it.code == this.filter.field).length == 0) {
+                if (this.cubeMeta.parameters.filter(it => it.code == this.filter.field).length > 0) {
+                    this.cubeApiService.parameterItems(this.cubeMeta.code, this.filter.field).subscribe({
+                        next: res => {
+                            this.data = res.data;
+                        },
+                        complete: () => this.isLoading = false
+                    })
+                } else {
                     this.cubeApiService.query({
                         cube: this.cubeMeta.code,
                         explore: this.dashboard.explore,
                         dimensions: [this.filter.field],
-                        measures: [],
                         limit: 300,
-                    }).subscribe(res => {
-                        this.data = res.data;
-                        this.isLoading = false;
+                    }).subscribe({
+                        next: res => {
+                            let d: VL[] = [];
+                            for (let datum of res.data) {
+                                d.push({label: datum[this.filter.field], value: datum[this.filter.field]})
+                            }
+                            this.data = d;
+                        },
+                        complete: () => this.isLoading = false
                     })
-                } else {
-                    //TODO fetch parameters list
                 }
             }
         }
     }
 
     protected readonly CubeOperator = CubeOperator;
-    protected readonly FilterControl = FilterControl;
     protected readonly FieldType = FieldType;
 }
