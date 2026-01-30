@@ -59,20 +59,23 @@ export class CubePuzzleFilterConfig implements OnInit {
     }
 
     changeField(e) {
-        switch (this.fieldType()) {
-            case FieldType.STRING:
-                this.filter.operator = CubeOperator.EQ;
-                break;
-            case FieldType.NUMBER:
-                this.filter.operator = CubeOperator.EQ;
-
-                break;
-            case FieldType.DATE_TIME:
-                this.filter.operator = CubeOperator.BETWEEN;
-                break;
+        if (this.fieldInDimension()) {
+            switch (this.fieldType()) {
+                case FieldType.STRING:
+                    this.filter.operator = CubeOperator.EQ;
+                    break;
+                case FieldType.NUMBER:
+                    this.filter.operator = CubeOperator.EQ;
+                    break;
+                case FieldType.DATE_TIME:
+                    this.filter.operator = CubeOperator.BETWEEN;
+                    break;
+            }
+        } else {
+            this.filter.operator = null;
         }
         this.filter.value = null;
-        this.filter.defaultValues = null;
+        this.filter.defaultValue = null;
         this.filterControl.clean();
     }
 
@@ -82,7 +85,7 @@ export class CubePuzzleFilterConfig implements OnInit {
         } else {
             this.filter.value = null;
         }
-        this.filter.defaultValues = null;
+        this.filter.defaultValue = null;
     }
 
     protected readonly FilterControl = FilterControl;

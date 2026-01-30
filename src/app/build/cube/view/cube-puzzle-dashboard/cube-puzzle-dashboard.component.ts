@@ -158,6 +158,23 @@ export class CubePuzzleDashboardComponent implements OnInit {
         }
     }
 
+    reset() {
+        for (let filter of this.dsl.filters) {
+            if (filter.defaultValue) {
+                filter.value = filter.defaultValue;
+            } else {
+                if (filter.operator == CubeOperator.BETWEEN) {
+                    filter.value = [null, null];
+                } else {
+                    filter.value = null;
+                }
+            }
+        }
+        for (let report of this.reports) {
+            report.refresh();
+        }
+    }
+
     startEdit() {
         this.edit = true;
         this.options.draggable!.enabled = true;
@@ -359,4 +376,5 @@ export class CubePuzzleDashboardComponent implements OnInit {
         moveItemInArray(this.dsl.filters, event.previousIndex, event.currentIndex);
     }
 
+    protected readonly ReportType = ReportType;
 }
