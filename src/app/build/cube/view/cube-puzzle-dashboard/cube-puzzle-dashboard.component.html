@@ -115,7 +115,8 @@
                                     </div>
                                 }
                                 <div class="puzzle-content" style="background-color: var(--ant-primary-1)">
-                                    <cube-puzzle-report [cubeMeta]="cubeMeta" [filters]="dsl.filters" [report]="report" [dashboard]="dashboard"/>
+                                    <cube-puzzle-report [cubeMeta]="cubeMeta" [filters]="dsl.filters" [report]="report" [dashboard]="dashboard"
+                                    (filterLink)="onFilterLink($event)"/>
                                 </div>
                             </div>
                         </gridster-item>
