@@ -330,8 +330,7 @@ export class CubePuzzleDashboardComponent implements OnInit {
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().filter = {
             field: this.cubeMeta.dimensions?.[0].code,
-            operator: CubeOperator.IN,
-            control: FilterControl.MULTI_SELECT
+            operator: CubeOperator.IN
         }
     }
 
@@ -374,6 +373,31 @@ export class CubePuzzleDashboardComponent implements OnInit {
 
     dropFilter(event: CdkDragDrop<FilterDSL[]>) {
         moveItemInArray(this.dsl.filters, event.previousIndex, event.currentIndex);
+    }
+
+    /**
+     * 图表联动筛选：点击图表 X 轴对应元素时，将对应维度值写入筛选并刷新
+     */
+    onFilterLink(payload: { field: string; value: any }) {
+        if (!this.dsl || !payload?.field) {
+            return;
+        }
+        if (!this.dsl.filters) {
+            this.dsl.filters = [];
+        }
+        let filter = this.dsl.filters.find(f => f.field === payload.field);
+        if (filter) {
+            filter.value = Array.isArray(filter.value) ? [payload.value] : payload.value;
+            filter.operator = filter.operator ?? CubeOperator.IN;
+        } else {
+            this.dsl.filters.push({
+                field: payload.field,
+                operator: CubeOperator.IN,
+                hidden: true,
+                value: [payload.value]
+            });
+        }
+        this.query();
     }
 
     protected readonly ReportType = ReportType;

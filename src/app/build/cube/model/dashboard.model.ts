@@ -31,7 +31,7 @@ export interface FilterDSL {
     field: string;
     hidden?: boolean;
     operator?: CubeOperator;
-    control?: FilterControl
+    // control?: FilterControl
     defaultValue?: any;
     value?: any;
 }
