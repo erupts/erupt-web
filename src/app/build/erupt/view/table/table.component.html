@@ -269,7 +269,8 @@
                   @case (VisType.GANTT) {
                     <vis-gantt [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
                       (onEdit)="onEdit($event)"
-                      (onSelectionChange)="selectedRows = $event"
+                      (onSelectionChange)="handleGanttSelectionChange($event)"
+                      [selectionMode]="_reference ? _reference.mode : null"
                       [vis]="vis[selectedVisIndex]"/>
                   }
                   @case (VisType.TPL) {
