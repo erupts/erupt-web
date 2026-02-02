@@ -29,22 +29,17 @@ export interface DashboardDSL {
 
 export interface FilterDSL {
     field: string;
+    hidden?: boolean;
     operator?: CubeOperator;
-    control?: FilterControl
-    defaultValues?: any;
+    // control?: FilterControl
+    defaultValue?: any;
     value?: any;
 }
 
 
 export enum FilterControl {
     MULTI_SELECT = "MULTI_SELECT",
-    CHECKBOX = "CHECKBOX",
-    SINGLE_SELECT = "SINGLE_SELECT",
     RADIO = "RADIO",
-
-    NUMBER = "NUMBER",
-    DATE = "DATE",
-    DATETIME = "DATETIME",
 }
 
 /**

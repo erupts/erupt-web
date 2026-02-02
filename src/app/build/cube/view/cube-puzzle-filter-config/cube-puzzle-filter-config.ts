@@ -28,6 +28,10 @@ export class CubePuzzleFilterConfig implements OnInit {
 
     }
 
+    clean() {
+        this.filterControl.clean();
+    }
+
     fieldType(): FieldType {
         for (let dimension of this.cubeMeta.dimensions) {
             if (dimension.code === this.filter.field) {
@@ -55,21 +59,33 @@ export class CubePuzzleFilterConfig implements OnInit {
     }
 
     changeField(e) {
-        switch (this.fieldType()) {
-            case FieldType.STRING:
-                this.filter.control = FilterControl.MULTI_SELECT;
-                this.filter.operator = CubeOperator.IN;
-                break;
-            case FieldType.NUMBER:
-                this.filter.control = FilterControl.NUMBER;
-                this.filter.operator = CubeOperator.EQ;
-                break;
-            case FieldType.DATE_TIME:
-                this.filter.control = FilterControl.DATE;
-                this.filter.operator = CubeOperator.BETWEEN;
+        if (this.fieldInDimension()) {
+            switch (this.fieldType()) {
+                case FieldType.STRING:
+                    this.filter.operator = CubeOperator.EQ;
+                    break;
+                case FieldType.NUMBER:
+                    this.filter.operator = CubeOperator.EQ;
+                    break;
+                case FieldType.DATE_TIME:
+                    this.filter.operator = CubeOperator.BETWEEN;
+                    break;
+            }
+        } else {
+            this.filter.operator = null;
         }
-        this.filter.defaultValues = null;
-        this.filterControl.reload();
+        this.filter.value = null;
+        this.filter.defaultValue = null;
+        this.filterControl.clean();
+    }
+
+    changeOperator(e) {
+        if (this.filter.operator === CubeOperator.BETWEEN) {
+            this.filter.value = [null, null];
+        } else {
+            this.filter.value = null;
+        }
+        this.filter.defaultValue = null;
     }
 
     protected readonly FilterControl = FilterControl;
