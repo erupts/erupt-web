@@ -2,7 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, V
 import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
-import {CubeFilter} from "../../model/cube-query.model";
+import {CubeFilter, CubeOperator} from "../../model/cube-query.model";
 import {WindowModel} from "@shared/model/window.model";
 import {
     Area,
@@ -77,6 +77,9 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     scrollConfig: any = {x: '100%'};
 
     enableDrill: boolean = true; // 是否启用下钻功能
+
+    // 表格筛选功能
+    activeFilters: Map<string, any> = new Map(); // 当前激活的筛选条件
 
     constructor(private cubeApiService: CubeApiService,
                 private el: ElementRef,
@@ -219,6 +222,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
         let parameters: Record<string, any> = {};
         let cf: CubeFilter[] = [];
+        
+        // 合并外部筛选器和用户点击的维度筛选
         if (this.filters) {
             for (let f of this.filters) {
                 if (f.value != null) {
@@ -234,6 +239,16 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 }
             }
         }
+        
+        // 添加用户点击维度产生的筛选条件
+        for (let [field, value] of this.activeFilters) {
+            cf.push({
+                field: field,
+                operator: CubeOperator.EQ,
+                value: value
+            });
+        }
+        
         this.cubeApiService.query({
             cube: this.dashboard.cuber,
             explore: this.dashboard.explore,
@@ -250,7 +265,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 this.chartData = response.data;
                 if (this.report.type == ReportType.TABLE) {
                     this.buildStColumns();
-                    // 数据量大于500条时启用虚拟滚动
+                    // 数据量大于200条时启用虚拟滚动
                     this.virtualScroll = this.chartData.length > 200;
                     // 延迟更新表格高度，确保 DOM 已渲染
                     setTimeout(() => {
@@ -620,13 +635,18 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         const xFieldsArray = Array.isArray(xFields) ? xFields : [xFields];
         const yFieldsArray = Array.isArray(yFields) ? yFields : [yFields];
 
-        // 添加维度列（X轴字段）
+        // 添加维度列（X轴字段）- 支持点击筛选
         xFieldsArray.forEach(field => {
             if (field) {
                 this.stColumns.push({
                     title: field,
                     index: field,
                     width: 150,
+                    type: 'link',
+                    className: 'dimension-column',
+                    click: (record: any) => {
+                        this.toggleDimensionFilter(field, record[field]);
+                    },
                     sort: {
                         compare: (a: any, b: any) => {
                             const valA = a[field];
@@ -697,6 +717,50 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 this.stColumns.push(column);
             }
         });
+    }
+
+    /**
+     * 切换维度筛选
+     */
+    toggleDimensionFilter(field: string, value: any): void {
+        if (this.activeFilters.has(field) && this.activeFilters.get(field) === value) {
+            // 如果已经筛选该值，则取消筛选
+            this.activeFilters.delete(field);
+        } else {
+            // 否则添加筛选
+            this.activeFilters.set(field, value);
+        }
+        
+        // 重新请求后端数据
+        this.refresh();
+    }
+
+    /**
+     * 清除所有筛选
+     */
+    clearAllFilters(): void {
+        this.activeFilters.clear();
+        // 重新请求后端数据
+        this.refresh();
+    }
+
+    /**
+     * 清除单个筛选
+     */
+    clearFilter(field: string): void {
+        this.activeFilters.delete(field);
+        // 重新请求后端数据
+        this.refresh();
+    }
+
+    /**
+     * 获取筛选条件数组（用于显示）
+     */
+    getActiveFiltersArray(): Array<{field: string, value: any}> {
+        return Array.from(this.activeFilters.entries()).map(([field, value]) => ({
+            field,
+            value
+        }));
     }
 
     /**
