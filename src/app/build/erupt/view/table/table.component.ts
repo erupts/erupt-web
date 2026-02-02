@@ -1,18 +1,7 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {
-    Alert,
-    Drill,
-    DrillInput,
-    EruptModel,
-    Power,
-    Row,
-    RowOperation,
-    Sort,
-    Vis,
-    VisType
-} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -197,7 +186,6 @@ export class TableComponent implements OnInit, OnDestroy {
                 eruptParent: reference.parentEruptName || ''
             }
         }, (eb: EruptBuildModel) => {
-            this.vis = [];
             let erupt = eb.eruptModel.eruptJson;
             erupt.rowOperation = [];
             erupt.drills = [];
@@ -986,6 +974,27 @@ export class TableComponent implements OnInit, OnDestroy {
                 return;
             }
             this.query(1, this.dataPage.ps, (event.sort.map as Record<string, SortType>));
+        }
+    }
+
+    // 处理甘特图选择变化
+    handleGanttSelectionChange(selectedRows: any[]) {
+        this.selectedRows = selectedRows;
+
+        // 如果是引用表模式，将选中的数据存储到 $tempValue
+        if (this._reference) {
+            if (selectedRows && selectedRows.length > 0) {
+                // 检查是单选还是多选模式
+                if (this._reference.mode === SelectMode.radio) {
+                    // 单选模式：取第一项
+                    this._reference.eruptField.eruptFieldJson.edit.$tempValue = selectedRows[0];
+                } else {
+                    // 多选模式：保存整个数组
+                    this._reference.eruptField.eruptFieldJson.edit.$tempValue = selectedRows;
+                }
+            } else {
+                this._reference.eruptField.eruptFieldJson.edit.$tempValue = null;
+            }
         }
     }
 

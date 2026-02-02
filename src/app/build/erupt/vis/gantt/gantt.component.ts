@@ -8,6 +8,7 @@ import {STColumn} from "@delon/abc/st";
 import {UiBuildService} from "../../service/ui-build.service";
 import {DataService} from "@shared/service/data.service";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {SelectMode} from "../../model/erupt.enum";
 
 @Component({
     standalone: false,
@@ -22,6 +23,8 @@ export class GanttComponent implements OnChanges, OnInit {
     @Input() data: any[] = [];
 
     @Input() vis: Vis;
+
+    @Input() selectionMode: SelectMode | null = null; // 选择模式，null 表示使用默认多选
 
     @Output() onEdit = new EventEmitter<any>();
 
@@ -80,14 +83,38 @@ export class GanttComponent implements OnChanges, OnInit {
      */
     toggleSelection(item: GanttItem, event?: Event): void {
         const itemId = item.id;
-        if (this.selectedItemIds.has(itemId)) {
-            this.selectedItemIds.delete(itemId);
-            // 取消选中时，同时取消选中所有子节点
-            this.unselectChildren(item);
+
+        // 如果是单选模式
+        if (this.selectionMode === SelectMode.radio) {
+            if (this.selectedItemIds.has(itemId)) {
+                this.selectedItemIds.delete(itemId);
+            } else {
+                // 清除所有选中项，只选中当前项
+                this.selectedItemIds.clear();
+                this.selectedItemIds.add(itemId);
+            }
         } else {
-            this.selectedItemIds.add(itemId);
+            // 多选模式
+            if (this.selectedItemIds.has(itemId)) {
+                this.selectedItemIds.delete(itemId);
+                // 取消选中时，同时取消选中所有子节点
+                this.unselectChildren(item);
+            } else {
+                this.selectedItemIds.add(itemId);
+            }
         }
         this.emitSelectionChange();
+    }
+
+    /**
+     * 处理单选框点击事件
+     * @param item 甘特图项目
+     * @param event 点击事件
+     */
+    onRadioClick(item: GanttItem, event: Event): void {
+        event.stopPropagation();
+        event.preventDefault();
+        this.toggleSelection(item);
     }
 
     /**
@@ -151,6 +178,9 @@ export class GanttComponent implements OnChanges, OnInit {
      * @param checked 是否选中
      */
     toggleSelectAll(checked: boolean): void {
+        if (this.selectionMode === SelectMode.radio) {
+            return;
+        }
         const selectAllItems = (items: GanttItem[]) => {
             items.forEach(item => {
                 if (checked) {
@@ -335,4 +365,5 @@ export class GanttComponent implements OnChanges, OnInit {
     }
 
     protected readonly FieldVisibility = FieldVisibility;
+    protected readonly SelectMode = SelectMode;
 }
