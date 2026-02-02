@@ -1,0 +1,130 @@
+.drill-detail-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .drill-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        background: #fafafa;
+        border-bottom: 1px solid #e8e8e8;
+
+        .drill-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+
+            .drill-label {
+                color: #666;
+                font-size: 13px;
+                margin-right: 6px;
+            }
+
+            .drill-value {
+                color: #333;
+                font-size: 14px;
+                font-weight: 500;
+
+                &.highlight {
+                    color: #1890ff;
+                    font-weight: 600;
+                }
+            }
+        }
+
+        .drill-actions {
+            display: flex;
+            gap: 8px;
+        }
+    }
+
+    .drill-content {
+        flex: 1;
+        padding: 16px;
+        overflow: hidden;
+
+        ::ng-deep {
+            st {
+                height: 100%;
+                display: block;
+
+                .measure-column {
+                    background: #f0f7ff !important;
+                    font-weight: 600;
+                    color: #1890ff;
+                }
+
+                .ant-table {
+                    font-size: 12px;
+
+                    .ant-table-thead > tr > th {
+                        font-weight: 600;
+                        background: #fafafa;
+                        padding: 8px;
+                    }
+
+                    .ant-table-tbody > tr > td {
+                        padding: 8px;
+                    }
+
+                    // 高亮指标列
+                    .ant-table-tbody > tr > td.measure-column {
+                        background: #f0f7ff;
+                        font-weight: 600;
+                        color: #1890ff;
+                    }
+                }
+            }
+        }
+    }
+
+    nz-empty {
+        margin-top: 100px;
+    }
+}
+
+// 暗色主题
+[data-theme='dark'] {
+    .drill-detail-container {
+        .drill-header {
+            background: #1f1f1f;
+            border-bottom-color: #434343;
+
+            .drill-info {
+                .drill-label {
+                    color: #999;
+                }
+
+                .drill-value {
+                    color: #e8e8e8;
+
+                    &.highlight {
+                        color: #1890ff;
+                    }
+                }
+            }
+        }
+
+        .drill-content {
+            ::ng-deep {
+                st {
+                    .measure-column {
+                        background: #111d2c !important;
+                    }
+
+                    .ant-table {
+                        .ant-table-thead > tr > th {
+                            background: #1f1f1f;
+                        }
+
+                        .ant-table-tbody > tr > td.measure-column {
+                            background: #111d2c;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

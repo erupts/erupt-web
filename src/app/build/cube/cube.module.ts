@@ -16,6 +16,7 @@ import {CubePuzzleFilterConfig} from "./view/cube-puzzle-filter-config/cube-puzz
 import {CubePuzzleFilterControl} from "./view/cube-puzzle-filter-control/cube-puzzle-filter-control";
 import {NzEmptyComponent} from "ng-zorro-antd/empty";
 import {NzColorPickerComponent} from "ng-zorro-antd/color-picker";
+import {CubeDrillDetailComponent} from "./view/cube-drill-detail/cube-drill-detail.component";
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import {NzColorPickerComponent} from "ng-zorro-antd/color-picker";
         CubePuzzleFilterControl,
         CubePuzzleReport,
         CubePuzzleReportConfig,
+        CubeDrillDetailComponent,
     ],
     providers: [
         CubeApiService
