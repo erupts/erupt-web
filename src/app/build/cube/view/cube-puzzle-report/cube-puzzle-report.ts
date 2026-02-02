@@ -28,6 +28,9 @@ import {
     WordCloud
 } from "@antv/g2plot";
 import {CubeMeta} from "../../model/cube.model";
+import {STColumn, STComponent} from "@delon/abc/st";
+import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {CubeDrillDetailComponent, DrillDetailParams} from "../cube-drill-detail/cube-drill-detail.component";
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -50,6 +53,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     @ViewChild('chartContainer', {static: false}) chartContainer: ElementRef;
 
+    @ViewChild('st', {static: false}) st: STComponent;
+
+    @ViewChild('tableContainer', {static: false}) tableContainer: ElementRef;
+
     querying: boolean = false;
 
     chartData: Record<string, any>[] = [];
@@ -58,9 +65,22 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     private observer: IntersectionObserver;
 
+    private resizeObserver: ResizeObserver;
+
     private visible: boolean = false;
 
-    constructor(private cubeApiService: CubeApiService, private el: ElementRef) {
+    // ST 组件配置
+    stColumns: STColumn[] = [];
+
+    virtualScroll: boolean = false;
+
+    scrollConfig: any = {x: '100%'};
+
+    enableDrill: boolean = true; // 是否启用下钻功能
+
+    constructor(private cubeApiService: CubeApiService,
+                private el: ElementRef,
+                private drawerService: NzDrawerService) {
 
     }
 
@@ -80,6 +100,23 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             rootMargin: '100px',
         });
         this.observer.observe(this.el.nativeElement);
+
+    }
+
+
+    /**
+     * 更新表格高度
+     */
+    private updateTableHeight(): void {
+        if (this.tableContainer && this.tableContainer.nativeElement) {
+            const containerHeight = this.tableContainer.nativeElement.clientHeight;
+            if (containerHeight > 0) {
+                this.scrollConfig = {
+                    x: '100%',
+                    y: `${containerHeight - 39}px`
+                };
+            }
+        }
     }
 
     download() {
@@ -211,6 +248,15 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }).subscribe({
             next: (response) => {
                 this.chartData = response.data;
+                if (this.report.type == ReportType.TABLE) {
+                    this.buildStColumns();
+                    // 数据量大于500条时启用虚拟滚动
+                    this.virtualScroll = this.chartData.length > 200;
+                    // 延迟更新表格高度，确保 DOM 已渲染
+                    setTimeout(() => {
+                        this.updateTableHeight();
+                    }, 100);
+                }
                 this.render();
             },
             complete: () => {
@@ -530,7 +576,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
             const value = data[linkageField];
             if (value !== undefined && value !== null) {
-                this.filterLink.emit({ field: linkageField, value });
+                this.filterLink.emit({field: linkageField, value});
             }
         };
         g2Chart.on('element:click', handler);
@@ -540,7 +586,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             if (target === 'axis-label' || (ev.target?.cfg?.component?.options?.type === 'axis')) {
                 const value = ev.target?.get?.('datum') ?? ev.target?.cfg?.datum ?? ev.data?.value;
                 if (value !== undefined && value !== null) {
-                    this.filterLink.emit({ field: linkageField, value });
+                    this.filterLink.emit({field: linkageField, value});
                 }
             }
         });
@@ -563,9 +609,132 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         return null;
     }
 
+    /**
+     * 构建 ST 组件列配置
+     */
+    buildStColumns(): void {
+        this.stColumns = [];
+        const xFields = this.report.cube[CubeKey.xField] || [];
+        const yFields = this.report.cube[CubeKey.yField] || [];
+
+        const xFieldsArray = Array.isArray(xFields) ? xFields : [xFields];
+        const yFieldsArray = Array.isArray(yFields) ? yFields : [yFields];
+
+        // 添加维度列（X轴字段）
+        xFieldsArray.forEach(field => {
+            if (field) {
+                this.stColumns.push({
+                    title: field,
+                    index: field,
+                    width: 150,
+                    sort: {
+                        compare: (a: any, b: any) => {
+                            const valA = a[field];
+                            const valB = b[field];
+                            if (valA === null || valA === undefined) return -1;
+                            if (valB === null || valB === undefined) return 1;
+                            if (typeof valA === 'number' && typeof valB === 'number') {
+                                return valA - valB;
+                            }
+                            if (typeof valA === 'string' && typeof valB === 'string') {
+                                return valA.localeCompare(valB);
+                            }
+                            return 0;
+                        }
+                    },
+                    filter: {
+                        type: 'keyword',
+                        fn: (filter: any, record: any) => {
+                            if (filter.value) {
+                                const val = record[field];
+                                if (val !== null && val !== undefined) {
+                                    return val.toString().indexOf(filter.value) !== -1;
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                    }
+                });
+            }
+        });
+
+        // 添加指标列（Y轴字段）- 支持下钻
+        yFieldsArray.forEach(field => {
+            if (field) {
+                const column: STColumn = {
+                    title: field,
+                    index: field,
+                    width: 150,
+                    sort: {
+                        compare: (a: any, b: any) => {
+                            const valA = a[field];
+                            const valB = b[field];
+                            if (valA === null || valA === undefined) return -1;
+                            if (valB === null || valB === undefined) return 1;
+                            if (typeof valA === 'number' && typeof valB === 'number') {
+                                return valA - valB;
+                            }
+                            return 0;
+                        }
+                    },
+                    format: (item: any) => {
+                        const val = item[field];
+                        if (typeof val === 'number') {
+                            return val.toLocaleString();
+                        }
+                        return val;
+                    },
+                };
+                if (this.enableDrill && xFieldsArray.length > 0) {
+                    column.type = "link";
+                    column.click = (record: any) => {
+                        console.log(record)
+                        this.openDrillDrawer(xFieldsArray[0], record[xFieldsArray[0]], field, record);
+                    };
+                    column.className = 'drillable-column';
+                }
+                this.stColumns.push(column);
+            }
+        });
+    }
+
+    /**
+     * 打开下钻抽屉
+     */
+    openDrillDrawer(field: string, value: any, measure: string, record: any): void {
+        const params: DrillDetailParams = {
+            field: field,
+            value: value,
+            dimension: field,
+            measure: measure,
+            dashboard: this.dashboard,
+            cubeMeta: this.cubeMeta
+        };
+
+        this.drawerService.create({
+            nzTitle: `下钻分析 - ${field}: ${value}`,
+            nzContent: CubeDrillDetailComponent,
+            nzContentParams: {
+                params: params
+            },
+            nzWidth: '75%',
+            nzClosable: true,
+            nzMaskClosable: true,
+            nzKeyboard: true,
+            nzBodyStyle: {
+                padding: 0,
+                height: '100%'
+            }
+        });
+    }
+
     ngOnDestroy(): void {
         if (this.observer) {
             this.observer.disconnect();
+        }
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
         }
         if (this.chart) {
             this.chart.destroy();
