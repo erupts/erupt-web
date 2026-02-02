@@ -20,10 +20,12 @@ export interface Sort {
 export enum CubeOperator {
     EQ = "EQ",
     NEQ = "NEQ",
+
     LIKE = "LIKE",
     NOT_LIKE = "NOT_LIKE",
     START_WITH = "START_WITH",
     END_WITH = "END_WITH",
+
     IN = "IN",
     NOT_IN = "NOT_IN",
 

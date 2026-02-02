@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
@@ -44,6 +44,9 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     @Input() filters: CubeFilter[] = [];
 
     @Input() cubeMeta: CubeMeta;
+
+    /** 点击图表元素（如 X 轴对应柱子/点）时触发联动筛选 */
+    @Output() filterLink = new EventEmitter<{ field: string; value: any }>();
 
     @ViewChild('chartContainer', {static: false}) chartContainer: ElementRef;
 
@@ -181,7 +184,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         let cf: CubeFilter[] = [];
         if (this.filters) {
             for (let f of this.filters) {
-                if (f.value && (f.value?.length != 0)) {
+                if (f.value != null) {
                     if (this.cubeMeta.parameters.filter(it => it.code === f.field).length > 0) {
                         parameters[f.field] = f.value;
                     } else {
@@ -504,9 +507,61 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 break;
         }
         chart.render();
+        this.bindFilterLinkIfNeeded(chart);
         return chart;
     }
 
+    /**
+     * 为带维度（如 xField）的 G2 Plot 图表绑定点击联动：点击图表元素或 X 轴对应数据时触发筛选联动
+     */
+    private bindFilterLinkIfNeeded(chart: any): void {
+        if (!chart?.chart) {
+            return;
+        }
+        const linkageField = this.getLinkageDimensionField();
+        if (!linkageField) {
+            return;
+        }
+        const g2Chart = chart.chart;
+        const handler = (ev: any) => {
+            const data = ev.data?.data ?? ev.data;
+            if (!data || typeof data !== 'object') {
+                return;
+            }
+            const value = data[linkageField];
+            if (value !== undefined && value !== null) {
+                this.filterLink.emit({ field: linkageField, value });
+            }
+        };
+        g2Chart.on('element:click', handler);
+        // 点击 X 轴标签时也触发联动（G2 中轴标签属于 component）
+        g2Chart.on('component:click', (ev: any) => {
+            const target = ev.target?.get?.('type') ?? ev.target?.cfg?.name;
+            if (target === 'axis-label' || (ev.target?.cfg?.component?.options?.type === 'axis')) {
+                const value = ev.target?.get?.('datum') ?? ev.target?.cfg?.datum ?? ev.data?.value;
+                if (value !== undefined && value !== null) {
+                    this.filterLink.emit({ field: linkageField, value });
+                }
+            }
+        });
+    }
+
+    /** 当前报表用于联动筛选的维度字段（X 轴或分类轴），无则返回 null */
+    private getLinkageDimensionField(): string | null {
+        if (!this.report?.cube) {
+            return null;
+        }
+        const cube = this.report.cube;
+        if (this.report.type === ReportType.PIE) {
+            const f = cube[CubeKey.xField];
+            return Array.isArray(f) ? f[0] : (f ?? null);
+        }
+        const x = cube[CubeKey.xField];
+        if (x) {
+            return Array.isArray(x) ? x[0] : x;
+        }
+        return null;
+    }
 
     ngOnDestroy(): void {
         if (this.observer) {
