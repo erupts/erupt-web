@@ -22,7 +22,6 @@ import {
     UserOutline
 } from "@ant-design/icons-angular/icons";
 import {DataService} from "@shared/service/data.service";
-import {environment} from "@env/environment";
 import {generateMenuPath} from "@shared/util/erupt.util";
 import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
@@ -161,14 +160,6 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => {
             this.reuseTabService.clear(true);
         }, 500)
-        if (!environment.production) {
-            // setTimeout(() => {
-            //     const settingFactory = this.resolver.resolveComponentFactory(
-            //         SettingDrawerComponent
-            //     );
-            //     this.settingHost.createComponent(settingFactory);
-            // }, 22);
-        }
     }
 
     ngOnInit() {
@@ -267,6 +258,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (userinfo.resetPwd && EruptAppData.get().resetPwd) {
                 this.modal.create({
+                    nzDraggable:true,
                     nzTitle: this.i18n.fanyi("global.reset_pwd"),
                     nzMaskClosable: false,
                     nzClosable: true,

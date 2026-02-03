@@ -48,6 +48,7 @@ import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 import {NoticeComponent} from './erupt/component/notice/notice.component';
 import {NoticeDetailComponent} from './erupt/component/notice-detail/notice-detail.component';
 import {AnnouncementDetailComponent} from './erupt/component/announcement-detail/announcement-detail.component';
+import {NzSpaceComponent, NzSpaceItemDirective} from "ng-zorro-antd/space";
 
 const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent];
 
@@ -99,7 +100,9 @@ const PASSPORT = [LayoutPassportComponent];
         NzBreadCrumbModule,
         NzWaterMarkModule,
         NzSegmentedModule,
-        DragDropModule
+        DragDropModule,
+        NzSpaceComponent,
+        NzSpaceItemDirective
     ],
     declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT, MenuComponent, NoticeComponent, NoticeDetailComponent, AnnouncementDetailComponent],
     exports: [...COMPONENTS, ...PASSPORT]

@@ -112,6 +112,7 @@
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                                 <nz-input-number class="erupt-input" [nzSize]="size"
+                                                 nzChangeOnWheel
                                                  [nzDisabled]="isReadonly(field)"
                                                  [(ngModel)]="field.eruptFieldJson.edit.$value"
                                                  [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"

@@ -49,11 +49,11 @@ export class AppComponent implements OnInit {
             }
             if (configLoad && ev instanceof NavigationError) {
                 this.modalSrv.confirm({
-                    nzTitle: `提醒`,
-                    nzContent: environment.production ? `应用可能已发布新版本，请点击刷新才能生效。` : `无法加载路由：${ev.url}`,
+                    nzTitle: `Reminder`,
+                    nzContent: environment.production ? `A new version may have been released. Please click refresh to apply changes.` : `Failed to load route: ${ev.url}`,
                     nzCancelDisabled: false,
-                    nzOkText: '刷新',
-                    nzCancelText: '忽略',
+                    nzOkText: 'Refresh',
+                    nzCancelText: 'Ignore',
                     nzOnOk: () => location.reload()
                 });
             }

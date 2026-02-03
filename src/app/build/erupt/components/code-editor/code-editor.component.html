@@ -1,5 +1,7 @@
-<div style="position: relative">
-    <nz-code-editor [ngStyle]="{height:height+'px'}" class="code-editor-style"
+<div class="code-editor-container" [style.height.px]="height">
+    <nz-code-editor #codeEditor
+                    [ngStyle]="{height:height+'px', width: '100%'}" 
+                    class="code-editor-style"
                     (nzEditorInitialized)="codeEditorInit($event)"
                     [(ngModel)]="edit.$value"
                     [nzLoading]="!initComplete"

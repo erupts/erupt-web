@@ -1,0 +1,128 @@
+<div class="cube-puzzle-container" [style.height]="isFillRoute ? '100vh' : 'calc(100vh - 50px)'">
+    <div class="puzzle-header">
+        <div class="header-left">
+            <button nz-button nzType="text" style="margin-right: 10px" [routerLink]="['/build/table/CubeDashboard']">
+                <nz-icon nzType="arrow-left"></nz-icon>
+            </button>
+            <span class="dashboard-title">{{ dashboard?.name }}</span>
+            @if (dashboard?.description) {
+                <span nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+                      [nzTooltipTitle]="dashboard?.description"
+                      class="dashboard-description-icon"></span>
+            }
+        </div>
+        <div class="header-center">
+            @if (edit) {
+                <div class="action-buttons">
+                    <button nz-button nzType="default" (click)="addFilter()">
+                        <span nz-icon nzType="filter"></span> Add Filter
+                    </button>
+                    <button nz-button nzType="default" (click)="addItem()">
+                        <span nz-icon nzType="plus"></span> Add Report
+                    </button>
+                </div>
+            }
+        </div>
+        <div class="header-right">
+            @if (edit) {
+                <button nz-button nzType="default" (click)="cancelEdit()">Cancel</button>
+                <button nz-button nzType="primary" (click)="saveEdit()" [nzLoading]="saving">
+                    <span nz-icon nzType="save"></span> Save
+                </button>
+            } @else {
+                <button nz-button nzType="primary" (click)="startEdit()">
+                    <span nz-icon nzType="edit"></span> Edit
+                </button>
+            }
+        </div>
+    </div>
+    @if (cubeMeta && dsl?.filters?.length) {
+        <div class="puzzle-filter-row">
+            <div class="filter-items" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropFilter($event)">
+                @for (filter of dsl.filters; track $index) {
+                    @if (edit || !filter.hidden) {
+                    <div class="filter-item" [class.filter-item-hidden]="edit && filter.hidden" cdkDrag [cdkDragDisabled]="!edit">
+                        @if (edit) {
+                            <span class="drag-handle" cdkDragHandle>
+                                <span nz-icon nzType="holder" nzTheme="outline"></span>
+                            </span>
+                        }
+                        <span class="filter-label">{{ getFieldTitle(filter.field) }}: </span>
+                        <cube-puzzle-filter-control style="width: 180px" size="small" [filter]="filter" [cubeMeta]="cubeMeta" [dashboard]="dashboard"></cube-puzzle-filter-control>
+                        @if (edit) {
+                            <button nz-button nzType="text" nzSize="small" (click)="editFilter($index)">
+                                <span nz-icon nzType="edit"></span>
+                            </button>
+                            <button nz-button nzType="text" nzDanger nzSize="small" style="margin-left: 0" (click)="removeFilter($index)">
+                                <span nz-icon nzType="close"></span>
+                            </button>
+                        }
+                    </div>
+                    }
+                }
+                <div style="margin-left: auto">
+                    <button nz-button nzSize="small" (click)="reset()">Reset</button>
+                    <button nz-button nzType="primary" nzSize="small" (click)="query()">查询</button>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="gridster-wrapper">
+        @if (!dsl?.reports || dsl.reports.length == 0) {
+            <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" style="margin-top: 20%"></nz-empty>
+        } @else {
+            <gridster [options]="options">
+                @if (dsl?.reports) {
+                    @for (report of dsl.reports; track $index) {
+                        <gridster-item [item]="report">
+                            <div class="puzzle-item">
+                                @if (edit) {
+                                    <div class="drag-handler item-actions" title="Drag" style="left: 49%;right: auto;transform: rotateZ(90deg)">
+                                        <button nz-button nzType="text" nzSize="small">
+                                            <span nz-icon nzType="holder" nzTheme="outline"></span>
+                                        </button>
+                                    </div>
+                                    <div class="item-actions">
+                                        <button nz-button nzType="text" nzSize="small" (click)="editItem($index,report)"
+                                                title="Edit">
+                                            <span nz-icon nzType="edit"></span>
+                                        </button>
+                                        <button nz-button nzType="text" nzSize="small" (click)="copyItem($index,report)"
+                                                title="Copy">
+                                            <span nz-icon nzType="copy"></span>
+                                        </button>
+                                        <button nz-button nzType="text" nzSize="small" nzDanger (click)="removeItem($index)"
+                                                title="Remove">
+                                            <span nz-icon nzType="delete"></span>
+                                        </button>
+                                    </div>
+                                } @else {
+                                    <div class="item-actions">
+                                        @if (report.description) {
+                                            <button nz-button nzType="text" nzSize="small">
+                                            <span nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+                                                  [nzTooltipTitle]="report.description"></span>
+                                            </button>
+                                        }
+                                        @if (report.type != ReportType.KPI) {
+                                            <button nz-button nzType="text" nzSize="small" (click)="download($index)">
+                                                <span nz-icon nzType="download"></span>
+                                            </button>
+                                        }
+                                        <button nz-button nzType="text" nzSize="small" (click)="refreshItem($index)">
+                                            <span nz-icon nzType="redo"></span>
+                                        </button>
+                                    </div>
+                                }
+                                <div class="puzzle-content" style="background-color: var(--ant-primary-1)">
+                                    <cube-puzzle-report [cubeMeta]="cubeMeta" [filters]="dsl.filters" [report]="report" [dashboard]="dashboard"
+                                    (filterLink)="onFilterLink($event)"/>
+                                </div>
+                            </div>
+                        </gridster-item>
+                    }
+                }
+            </gridster>
+        }
+    </div>
+</div>

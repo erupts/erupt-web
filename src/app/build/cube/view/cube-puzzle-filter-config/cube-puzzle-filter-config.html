@@ -1,0 +1,71 @@
+<div class="filter-config">
+    <div class="filter-config-row">
+        <div class="filter-config-field">
+            <div class="filter-config-label">Field</div>
+            <nz-select [(ngModel)]="filter.field" (ngModelChange)="changeField($event)" style="width: 100%;" nzShowSearch nzPlaceHolder="Select field">
+                @if (cubeMeta) {
+                    @if (cubeMeta.dimensions.length) {
+                        <nz-option-group nzLabel="Dimensions">
+                            @for (dim of cubeMeta.dimensions; track dim.code) {
+                                @if (!dim.hidden) {
+                                    <nz-option [nzLabel]="dim.title" [nzValue]="dim.code"></nz-option>
+                                }
+                            }
+                        </nz-option-group>
+                    }
+                    @if (cubeMeta.parameters.length) {
+                        <nz-option-group nzLabel="Parameters">
+                            @for (parameter of cubeMeta.parameters; track parameter.code) {
+                                <nz-option [nzLabel]="parameter.title" [nzValue]="parameter.code"></nz-option>
+                            }
+                        </nz-option-group>
+                    }
+                }
+            </nz-select>
+        </div>
+        @if (fieldInDimension()) {
+            <div class="filter-config-operator">
+                <div class="filter-config-label">Operator</div>
+                <nz-select [(ngModel)]="filter.operator" (ngModelChange)="changeOperator($event)" style="width: 100%;">
+                    <nz-option [nzLabel]="CubeOperator.EQ | translate" [nzValue]="CubeOperator.EQ"></nz-option>
+                    <nz-option [nzLabel]="CubeOperator.NEQ | translate" [nzValue]="CubeOperator.NEQ"></nz-option>
+                    @switch (fieldType()) {
+                        @case (FieldType.STRING) {
+                            <nz-option [nzLabel]="CubeOperator.LIKE | translate" [nzValue]="CubeOperator.LIKE"></nz-option>
+                            <nz-option [nzLabel]="CubeOperator.NOT_LIKE | translate" [nzValue]="CubeOperator.NOT_LIKE"></nz-option>
+                            <nz-option [nzLabel]="CubeOperator.START_WITH | translate" [nzValue]="CubeOperator.START_WITH"></nz-option>
+                            <nz-option [nzLabel]="CubeOperator.END_WITH | translate" [nzValue]="CubeOperator.END_WITH"></nz-option>
+                            <nz-option [nzLabel]="CubeOperator.IN | translate" [nzValue]="CubeOperator.IN"></nz-option>
+                            <nz-option [nzLabel]="CubeOperator.NOT_IN | translate" [nzValue]="CubeOperator.NOT_IN"></nz-option>
+                        }
+                        @case (FieldType.NUMBER) {
+                            <nz-option [nzLabel]="CubeOperator.GT | translate" [nzValue]="CubeOperator.GT"></nz-option>
+                            <nz-option [nzLabel]="CubeOperator.EGT | translate" [nzValue]="CubeOperator.EGT"></nz-option>
+                            <nz-option [nzLabel]="CubeOperator.LT | translate" [nzValue]="CubeOperator.LT"></nz-option>
+                            <nz-option [nzLabel]="CubeOperator.ELT | translate" [nzValue]="CubeOperator.ELT"></nz-option>
+                            <nz-option [nzLabel]="CubeOperator.BETWEEN | translate" [nzValue]="CubeOperator.BETWEEN"></nz-option>
+                        }
+                        @case (FieldType.DATE_TIME || FieldType.DATE) {
+                            <nz-option [nzLabel]="CubeOperator.BETWEEN | translate" [nzValue]="CubeOperator.BETWEEN"></nz-option>
+                            <nz-option [nzLabel]="CubeOperator.FEW_DAYS | translate" [nzValue]="CubeOperator.FEW_DAYS"></nz-option>
+                            <nz-option [nzLabel]="CubeOperator.FUTURE_DAYS | translate" [nzValue]="CubeOperator.FUTURE_DAYS"></nz-option>
+                        }
+                    }
+                    <nz-option [nzLabel]="CubeOperator.NULL | translate" [nzValue]="CubeOperator.NULL"></nz-option>
+                    <nz-option [nzLabel]="CubeOperator.NOT_NULL | translate" [nzValue]="CubeOperator.NOT_NULL"></nz-option>
+                </nz-select>
+            </div>
+        }
+        <div class="filter-config-hidden">
+            <div class="filter-config-label">隐藏</div>
+            <label nz-checkbox [(ngModel)]="filter.hidden">隐藏</label>
+        </div>
+    </div>
+    @if (filter.field) {
+        <div class="filter-config-row filter-config-default">
+            <div class="filter-config-label">Default Value</div>
+            <cube-puzzle-filter-control #filterControl [dashboard]="dashboard" [filter]="filter"
+                                        [cubeMeta]="cubeMeta"></cube-puzzle-filter-control>
+        </div>
+    }
+</div>

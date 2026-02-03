@@ -3,6 +3,24 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {AppModule} from './app/app.module';
 import {environment} from '@env/environment';
 
+if (environment.production) {
+    enableProdMode();
+}
+// Angular 17: preserveWhitespaces 选项已移除
+platformBrowserDynamic().bootstrapModule(AppModule, {
+    defaultEncapsulation: ViewEncapsulation.Emulated
+}).then(res => {
+    const win = window as any;
+    if (win && win.appBootstrap) {
+        win.appBootstrap();
+    }
+    removePreloader();
+    return res;
+}).catch(err => {
+    console.error(err);
+    removePreloader();
+});
+
 // 手动实现 preloaderFinished 功能
 function removePreloader(): void {
     const body = document.querySelector('body');
@@ -24,24 +42,6 @@ function removePreloader(): void {
         setTimeout(() => {
             preloader.className = 'preloader-hidden';
             body.style.overflow = '';
-        }, 1000);
+        }, 100);
     }
 }
-
-if (environment.production) {
-    enableProdMode();
-}
-// Angular 17: preserveWhitespaces 选项已移除
-platformBrowserDynamic().bootstrapModule(AppModule, {
-    defaultEncapsulation: ViewEncapsulation.Emulated
-}).then(res => {
-    const win = window as any;
-    if (win && win.appBootstrap) {
-        win.appBootstrap();
-    }
-    removePreloader();
-    return res;
-}).catch(err => {
-    console.error(err);
-    removePreloader();
-});

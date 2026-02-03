@@ -1,0 +1,75 @@
+<div class="print-preview-container">
+    @if (instance.eruptFlowConfig.setting.printSetting == PrintSetting.CUSTOM) {
+        <div class="rich-content-html" [innerHTML]="(printContent || instance.eruptFlowConfig.setting.printTemplate)|safeHtml"></div>
+    } @else {
+        <div class="print-meta">
+            <span>打印人: {{ settingsService.user.name || '-' }}</span>
+            <span>打印时间: {{ currentDate | date:'yyyy-MM-dd HH:mm:ss' }}</span>
+        </div>
+
+        <div class="print-header">
+            <h1 class="print-title">{{ instance?.eruptFlowConfig?.name }}</h1>
+        </div>
+
+        <div class="print-info-table">
+            <table class="info-table">
+                <tr>
+                    <td class="label-cell">申请人</td>
+                    <td class="value-cell">{{ instance?.initiatorUser?.name || '-' }}</td>
+                    <td class="label-cell">申请日期</td>
+                    <td class="value-cell">{{ instance?.createTime }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">流程编号</td>
+                    <td class="value-cell">{{ instance?.no }}</td>
+                    <td class="label-cell">审批状态</td>
+                    <td class="value-cell">{{ this.instance.status | translate }}</td>
+                </tr>
+                @if (tasks.length) {
+                    <tr>
+                        <td class="label-cell" colspan="4" style="text-align: center">审批记录</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">
+                            审批人
+                        </td>
+                        <td class="label-cell">
+                            任务状态
+                        </td>
+                        <td class="label-cell">
+                            审批意见
+                        </td>
+                        <td class="label-cell">
+                            审批时间
+                        </td>
+                    </tr>
+                    @for (task of tasks; track task.id) {
+                        <tr>
+                            <td>
+                                {{ task.assigneeUser.name }}
+                            </td>
+                            <td>
+                                {{ task.taskStatus | translate  }}
+                            </td>
+                            <td>
+                                <div>{{ task.comment || '-' }}</div>
+                                @if (task.signature) {
+                                    <div>
+                                        <img nz-image [nzSrc]="task.signature" style="cursor: pointer;margin-top: 4px;width:100px;border:1px solid #f0f0f0" alt="signature">
+                                    </div>
+                                }
+                            </td>
+                            <td>{{ task.completedAt }}</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+        <div class="print-info">
+            @if (eruptBuild) {
+                <erupt-edit-type [eruptBuildModel]="eruptBuild" [readonly]="true"
+                                 [mode]="null" size="default"/>
+            }
+        </div>
+    }
+</div>

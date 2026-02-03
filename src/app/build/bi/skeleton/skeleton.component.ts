@@ -203,6 +203,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                 col.type = "link";
                                 col.click = (row) => {
                                     let model = this.modal.create({
+                                        nzDraggable:true,
                                         nzWrapClassName: "modal-lg",
                                         nzKeyboard: true,
                                         nzMaskClosable: false,
@@ -226,6 +227,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                 }
                                 col.click = (item) => {
                                     let model = this.modal.create({
+                                        nzDraggable:true,
                                         nzWrapClassName: "modal-lg",
                                         nzKeyboard: true,
                                         nzBodyStyle: {
@@ -248,6 +250,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                         window.open(item[column.name]);
                                     } else {
                                         let ref = this.modal.create({
+                                            nzDraggable:true,
                                             nzWrapClassName: "modal-lg modal-body-nopadding",
                                             nzStyle: {top: "20px"},
                                             nzMaskClosable: false,

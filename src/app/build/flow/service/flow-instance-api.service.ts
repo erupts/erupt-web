@@ -6,7 +6,7 @@ import {RestPath} from "../../erupt/model/erupt.enum";
 import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask, FlowTurn} from "@flow/model/flow-instance.model";
 import {NodeRule} from "@flow/model/node.model";
 import {FlowConfig} from "@flow/model/flow.model";
-import {AddSignType, ApprovalQuery} from "@flow/model/fllw-approval.model";
+import {AddSignType, ApprovalQuery} from "@flow/model/flow-approval.model";
 import {KV} from "../../erupt/model/util.model";
 
 @Injectable({
@@ -18,8 +18,8 @@ export class FlowInstanceApiService {
 
     }
 
-    progress(instanceId: number) {
-        return this._http.get<R<Record<string, FlowTurn>>>(RestPath.erupt + "/flow/instance/progress", {
+    progress(instanceId: number): Observable<R<Record<string, FlowTurn>>> {
+        return this._http.get(RestPath.erupt + "/flow/instance/progress", {
             instanceId
         })
     }
@@ -171,6 +171,12 @@ export class FlowInstanceApiService {
     availableReturnNodes(flowInstanceTaskId: number) {
         return this._http.get<R<KV<string, string>[]>>(RestPath.erupt + "/flow/instance/approval/available-return-nodes", {
             flowInstanceTaskId
+        });
+    }
+
+    print(instanceId: number) {
+        return this._http.get<R<string>>(RestPath.erupt + "/flow/instance/print", {
+            instanceId
         });
     }
 

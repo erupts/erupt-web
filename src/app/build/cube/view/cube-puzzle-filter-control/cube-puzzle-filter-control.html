@@ -1,0 +1,53 @@
+@switch (fieldType()) {
+    @case (FieldType.STRING) {
+        @if (filter.operator == CubeOperator.LIKE || filter.operator == CubeOperator.NOT_LIKE || filter.operator == CubeOperator.START_WITH || filter.operator == CubeOperator.END_WITH) {
+            <input nz-input [(ngModel)]="filter.value" [nzSize]="size" style="width: 100%;"/>
+        } @else if (filter.operator == CubeOperator.NULL || filter.operator == CubeOperator.NOT_NULL) {
+            <input nz-input [value]="filter.operator | translate" disabled [nzSize]="size" style="width: 100%;"/>
+        } @else {
+            <nz-select [(ngModel)]="filter.value" style="width: 100%;" nzAllowClear [nzSize]="size"
+                       [nzMode]="(filter.operator == CubeOperator.IN || filter.operator == CubeOperator.NOT_IN) ? 'tags' : 'default'"
+                       (nzOpenChange)="openSelect()">
+                @if (isLoading) {
+                    <nz-option nzDisabled nzCustomContent>
+                        <div class="text-center">
+                            <i nz-icon nzType="loading" class="loading-icon"></i>
+                        </div>
+                    </nz-option>
+                } @else {
+                    @for (item of data || []; track item.value) {
+                        <nz-option [nzLabel]="item.value" [nzValue]="item.label"></nz-option>
+                    }
+                }
+            </nz-select>
+        }
+    }
+    @case (FieldType.NUMBER) {
+        @if (filter.operator == CubeOperator.BETWEEN) {
+            @if (filter.value) {
+                <div class="number-range-inputs">
+                    <nz-input-number nzChangeOnWheel [(ngModel)]="filter.value[0]" [nzSize]="size"
+                                     style="width: calc(50% - 4px);"/>
+                    <span class="range-sep">~</span>
+                    <nz-input-number nzChangeOnWheel [(ngModel)]="filter.value[1]" [nzSize]="size"
+                                     style="width: calc(50% - 4px);"/>
+                </div>
+            }
+        } @else {
+            <nz-input-number nzChangeOnWheel [(ngModel)]="filter.value" [nzSize]="size"
+                             style="width: 100%;"></nz-input-number>
+        }
+    }
+    @case (FieldType.DATE_TIME || FieldType.DATE) {
+        @if (filter.operator == CubeOperator.BETWEEN) {
+            <nz-range-picker [ngModel]="filter.value" [nzSize]="size" [nzShowTime]="fieldType()==FieldType.DATE_TIME"
+                             [nzShowNow]="true" style="width: 100%;"/>
+        } @else if (filter.operator == CubeOperator.FEW_DAYS || filter.operator == CubeOperator.FUTURE_DAYS) {
+            <nz-input-number [(ngModel)]="filter.value" [nzSize]="size" style="width: 100%;"></nz-input-number>
+        } @else {
+            <nz-date-picker [ngModel]="filter.value" [nzSize]="size" [nzShowTime]="fieldType()==FieldType.DATE_TIME"
+                            [nzShowNow]="true" style="width: 100%;"/>
+        }
+    }
+}
+

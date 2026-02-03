@@ -21,6 +21,7 @@ export interface EruptField {
 }
 
 export interface Tpl {
+    path: string;
     enable: boolean;
     width: string;
     height: string;
@@ -36,7 +37,8 @@ export enum PageEmbedType {
 
 export enum OpenWay {
     MODAL = "MODAL",
-    DRAWER = "DRAWER"
+    DRAWER = "DRAWER",
+    ROUTER = "ROUTER"
 }
 
 export enum DrawerPlacement {
@@ -234,7 +236,7 @@ export interface MapType {
 export interface VL {
     value: string;
     label: string;
-    color: string;
+    color?: string;
     desc?: string;
     disable?: boolean;
 }

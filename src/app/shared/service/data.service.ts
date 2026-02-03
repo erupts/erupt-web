@@ -1,7 +1,7 @@
 import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
-import {Announcement, LoginModel, NoticeChannel, NoticeMessageDetail, Userinfo} from "../model/user.model";
+import {Announcement, LoginModel, NoticeChannel, NoticeMessageDetail, NoticeScene, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
@@ -13,6 +13,7 @@ import {Checkbox, DrillInput, Page, Row, Tree} from "../../build/erupt/model/eru
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {R, SimplePage} from "@shared/model/api.model";
+import {NoticeStatus} from "@shared/model/notice.model";
 
 @Injectable()
 export class DataService {
@@ -525,11 +526,18 @@ export class DataService {
         return this._http.get<R<NoticeChannel[]>>(RestPath.erupt + "/notice/channels");
     }
 
-    noticeMessages(page: number, size: number, search: string) {
+    noticeScenes() {
+        return this._http.get<R<NoticeScene[]>>(RestPath.erupt + "/notice/scenes");
+    }
+
+
+    noticeMessages(page: number, size: number, search: string, status: NoticeStatus, scene: number) {
         return this._http.get<R<SimplePage<NoticeMessageDetail>>>(RestPath.erupt + "/notice/messages", {
             page,
             size,
-            [search ? 'search' : '']: search
+            [search ? 'search' : '']: search,
+            [status ? 'status' : '']: status,
+            [scene ? 'scene' : '']: scene,
         });
     }
 
@@ -561,6 +569,14 @@ export class DataService {
 
     announcementMarkRead(id: number) {
         return this._http.get<R<void>>(RestPath.erupt + "/announcement/mark-read/" + id);
+    }
+
+    printTemplates() {
+        return this._http.get<R<{ name: string, content: string }[]>>(RestPath.erupt + "/print/templates");
+    }
+
+    printVars() {
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/print/vars");
     }
 
 

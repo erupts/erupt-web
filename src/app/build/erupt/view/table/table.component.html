@@ -52,7 +52,7 @@
                 [nzPopoverContent]="sortPopoverContent"
                 nzPopoverTrigger="click"
                 nzPopoverPlacement="bottomLeft"
-                [style.border-color]="selectedSorts.length?'#09f':null">
+                [style.border-color]="selectedSorts.length?'var(--ant-primary-color-hover)':null">
                 <i nz-icon nzType="swap" nzTheme="outline" style="transform: rotateZ(90deg)"></i> {{ 'global.sort'|translate }}
               </button>
               <ng-template #sortPopoverContent>
@@ -269,7 +269,8 @@
                   @case (VisType.GANTT) {
                     <vis-gantt [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
                       (onEdit)="onEdit($event)"
-                      (onSelectionChange)="selectedRows = $event"
+                      (onSelectionChange)="handleGanttSelectionChange($event)"
+                      [selectionMode]="_reference ? _reference.mode : null"
                       [vis]="vis[selectedVisIndex]"/>
                   }
                   @case (VisType.TPL) {

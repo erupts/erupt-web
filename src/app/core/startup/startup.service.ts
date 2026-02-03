@@ -15,6 +15,9 @@ import {EruptTenantInfoData, TenantDomainInfo} from "../../build/erupt/model/eru
 import {NzMessageService} from "ng-zorro-antd/message";
 
 
+import {NzConfigService} from "ng-zorro-antd/core/config";
+
+
 @Injectable()
 export class StartupService {
     constructor(iconSrv: NzIconService,
@@ -22,6 +25,7 @@ export class StartupService {
                 private titleService: TitleService,
                 private settingSrv: SettingsService,
                 private i18n: I18NService,
+                private nzConfigService: NzConfigService,
                 @Inject(NzMessageService) private msg: NzMessageService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         iconSrv.addIcon(...ICONS_AUTO);
@@ -29,6 +33,9 @@ export class StartupService {
 
     async load(): Promise<any> {
         WindowModel.init();
+        if (WindowModel.theme && Object.keys(WindowModel.theme).length > 0) {
+            this.nzConfigService.set('theme', WindowModel.theme);
+        }
         if (WindowModel.copyright) {
             console.group(WindowModel.title);
             console.log("%c" +
@@ -52,12 +59,6 @@ export class StartupService {
             xhr.send();
             xhr.onreadystatechange = () => {
                 if (xhr.readyState == 4 && xhr.status == 200) {
-                    setTimeout(() => {
-                        if (window['SW']) {
-                            window['SW'].stop();
-                            window['SW'] = null;
-                        }
-                    }, 2000)
                     let eruptAppProp = <EruptAppModel>JSON.parse(xhr.responseText);
                     EruptAppData.put(eruptAppProp);
                     if (!!EruptAppData.get().properties["erupt-tenant"]) {
@@ -78,12 +79,15 @@ export class StartupService {
                                     }
                                     if (tenantDomainInfo.js) {
                                         try {
-                                            new Function(tenantDomainInfo.js)()
+                                            new Function("eruptAppProp",tenantDomainInfo.js)(eruptAppProp)
                                         } catch (e) {
                                             that.msg.error("tenant js err: " + e)
                                         }
                                     }
                                     WindowModel.init();
+                                    if (WindowModel.theme) {
+                                        this.nzConfigService.set('theme', WindowModel.theme);
+                                    }
                                     EruptAppData.put(eruptAppProp);
                                 }
                                 resolve();

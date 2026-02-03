@@ -1,0 +1,34 @@
+<div class="drill-detail-container">
+    <div class="drill-header">
+        <div class="drill-info">
+            <span class="drill-label">下钻维度:</span>
+            <span class="drill-value">{{ params.dimension }}</span>
+            <nz-divider nzType="vertical"></nz-divider>
+            <span class="drill-label">筛选值:</span>
+            <span class="drill-value highlight">{{ params.value }}</span>
+            <nz-divider nzType="vertical"></nz-divider>
+            <span class="drill-label">指标:</span>
+            <span class="drill-value">{{ params.measure }}</span>
+        </div>
+        <div class="drill-actions">
+            <button nz-button nzSize="small" nzType="default" (click)="export()" [disabled]="loading || drillData.length === 0">
+                <span nz-icon nzType="download"></span>
+                导出
+            </button>
+        </div>
+    </div>
+
+    <div class="drill-content">
+        <nz-spin [nzSpinning]="loading">
+            <st #st
+                size="small"
+                [data]="drillData"
+                [columns]="stColumns"
+                [page]="{show: true,front:true, showSize: true,placement:'center', pageSizes: [10, 20, 50, 100]}"
+                [scroll]="{x: '100%'}"
+                [responsive]="true"
+                [widthMode]="{type: 'strict'}">
+            </st>
+        </nz-spin>
+    </div>
+</div>

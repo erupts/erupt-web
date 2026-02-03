@@ -101,6 +101,7 @@ export class HeaderComponent implements OnInit {
                 if (res.data.length > 0) {
                     for (let ann of res.data) {
                         let ref = this.modal.create({
+                            nzDraggable:true,
                             nzWrapClassName: "modal-lg",
                             nzTitle: ann.title,
                             nzBodyStyle: {
@@ -150,6 +151,7 @@ export class HeaderComponent implements OnInit {
 
     openEruptAi() {
         let model = this.modal.create({
+            nzDraggable:true,
             nzWrapClassName: "modal-lg",
             nzMaskClosable: false,
             nzKeyboard: true,
@@ -214,6 +216,7 @@ export class HeaderComponent implements OnInit {
     search() {
         let model = this.modal.create({
             nzWrapClassName: "modal-xs",
+            nzDraggable: true,
             nzMaskClosable: true,
             nzKeyboard: true,
             nzFooter: null,

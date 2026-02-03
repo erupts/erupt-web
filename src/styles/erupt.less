@@ -7,7 +7,7 @@ span.ripple {
     top: 0;
     bottom: 0;
     pointer-events: none;
-    background: @primary-color;
+    background: var(--ant-primary-color);
     opacity: .07;
     width: 20px;
     height: 20px;
@@ -59,4 +59,85 @@ span.ripple {
     height: 100%;
     justify-content: center;
     align-items: center;
+}
+
+// 打印场景的样式优化 - 支持中文显示并隐藏不必要元素
+@media print {
+    // 强制所有元素使用支持中文的字体
+    * {
+        font-family: 'Heiti SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    // 页面设置
+    @page {
+        size: A4 landscape;
+        margin: 10mm;
+    }
+}
+
+.rich-content-html {
+    position: relative;
+
+    table {
+        width: 100%;
+
+        tr {
+            transition: all 0.3s;
+        }
+
+        td, th {
+            padding: 12px 8px;
+            border: 1px solid #e8e8e8;
+        }
+
+        th {
+            background: #fafafa;
+            text-align: center;
+        }
+
+    }
+
+    figure.table {
+        overflow: auto;
+
+        table {
+            width: 100%;
+
+            tr {
+                transition: all 0.3s;
+
+                &:hover {
+                    background: var(--ant-primary-color-hover);
+                }
+            }
+
+            td, th {
+                padding: 12px 8px;
+                border: 1px solid #e8e8e8;
+            }
+
+            th {
+                background: #fafafa;
+                text-align: center;
+            }
+
+        }
+    }
+
+    p {
+        margin-bottom: 0;
+        word-wrap: break-word;
+        word-break: break-all;
+        text-align: justify;
+    }
+
+    img {
+        max-width: 100%;
+        width: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
 }

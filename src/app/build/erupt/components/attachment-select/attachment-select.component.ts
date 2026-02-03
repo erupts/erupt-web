@@ -25,6 +25,7 @@ export class AttachmentSelectComponent {
             window.open(DataService.previewAttachment(path, true));
         } else if (this.view.viewType == ViewType.ATTACHMENT_DIALOG) {
             let ref = this.modal.create({
+                nzDraggable:true,
                 nzWrapClassName: "modal-lg modal-body-nopadding",
                 nzStyle: {top: "30px"},
                 nzKeyboard: true,

@@ -1,0 +1,50 @@
+<nz-card [nzBordered]="false" [nzTitle]="report.title" nzSize="small"
+         style="height: 100%;width: 100%;margin-bottom: 0"
+         [nzBodyStyle]="{height: 'calc(100% - ' + (report.title ? 38 : 0) + 'px)', background: report.ui['background'] || 'transparent'}">
+    <nz-spin [nzSpinning]="querying" style="height: 100%;width: 100%">
+        <div [hidden]="report.type === ReportType.TABLE || report.type === ReportType.KPI" #chartContainer
+             style="height: 100%;width: 100%;overflow: hidden">
+        </div>
+        @if (report.type === ReportType.KPI) {
+            <div style="height: 100%; display: flex; align-items: center; justify-content: center;overflow: hidden">
+                @if (chartData && chartData.length > 0) {
+                    <span [style.font-size]="(report.ui['fontSize'] || 22) + 'px'"
+                          [style.color]="report.ui['color'] || '#000'">
+                        {{ chartData[0][report.cube[CubeKey.yField] + ''] }}
+                    </span>
+                }
+            </div>
+        }
+        @if (report.type === ReportType.TABLE) {
+            <div #tableContainer style="height: 100%; width: 100%; display: flex; flex-direction: column;">
+                <!-- 筛选条件显示区 -->
+                @if (activeFilters.size > 0) {
+                    <div class="filter-tags-container">
+                        <span class="filter-label">当前筛选:</span>
+                        @for (filter of getActiveFiltersArray(); track filter.field) {
+                            <nz-tag [nzColor]="'blue'" (nzOnClose)="clearFilter(filter.field)" nzMode="closeable">
+                                {{ filter.field }}: {{ filter.value }}
+                            </nz-tag>
+                        }
+                        <a class="clear-all-link" (click)="clearAllFilters()">清除全部</a>
+                    </div>
+                }
+                <!-- 表格区域 -->
+                <div style="flex: 1; overflow: hidden;">
+                    <st #st
+                        size="small"
+                        [data]="chartData"
+                        [columns]="stColumns"
+                        [page]="{show: false}"
+                        [virtualScroll]="virtualScroll"
+                        [virtualItemSize]="38"
+                        [scroll]="scrollConfig"
+                        [responsive]="true"
+                        [widthMode]="{type: 'strict'}"
+                        [resizable]="{ disabled: false }">
+                    </st>
+                </div>
+            </div>
+        }
+    </nz-spin>
+</nz-card>

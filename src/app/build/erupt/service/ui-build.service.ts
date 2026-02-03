@@ -15,6 +15,7 @@ import {OpenWay, PageEmbedType, Tpl, View} from "../model/erupt-field.model";
 import {AttachmentSelectComponent} from "../components/attachment-select/attachment-select.component";
 import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {Router} from "@angular/router";
 
 
 @Injectable()
@@ -24,6 +25,7 @@ export class UiBuildService {
         private imageService: NzImageService,
         private i18n: I18NService,
         private dataService: DataService,
+        private router: Router,
         @Inject(NzDrawerService) private drawerService: NzDrawerService,
         @Inject(NzModalService) private modal: NzModalService,
         @Inject(NzMessageService) private msg: NzMessageService) {
@@ -82,19 +84,6 @@ export class UiBuildService {
                     })
                 };
             }
-            if (dataConvert) {
-                switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
-                    case EditType.CHOICE:
-                        obj.format = (item: any) => {
-                            if (item[view.column] != null) {
-                                return view.eruptFieldModel.choiceMap.get(item[view.column] + "")?.label;
-                            } else {
-                                return "";
-                            }
-                        };
-                        break;
-                }
-            }
 
             switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
                 case EditType.TAGS:
@@ -115,9 +104,15 @@ export class UiBuildService {
                 case EditType.CHOICE:
                     obj.format = (item: any) => {
                         if (item[view.column] != null) {
-                            return "<span style='color:" + view.eruptFieldModel.choiceLabelMap.get(item[view.column] + "")?.color + "'>"
-                                + item[view.column]
-                                + "</span>";
+                            if (dataConvert) {
+                                return "<span style='color:" + view.eruptFieldModel.choiceMap.get(item[view.column] + "")?.color + "'>"
+                                    + view.eruptFieldModel.choiceMap.get(item[view.column] + "")?.label
+                                    + "</span>";
+                            } else {
+                                return "<span style='color:" + view.eruptFieldModel.choiceLabelMap.get(item[view.column] + "")?.color + "'>"
+                                    + item[view.column]
+                                    + "</span>";
+                            }
                         } else {
                             return "";
                         }
@@ -228,6 +223,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable: true,
                             nzWrapClassName: "modal-lg modal-body-nopadding",
                             nzStyle: {top: "20px"},
                             nzMaskClosable: false,
@@ -255,6 +251,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable: true,
                             nzWrapClassName: "modal-sm",
                             nzMaskClosable: true,
                             nzKeyboard: true,
@@ -280,6 +277,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable: true,
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "24px"},
                             nzBodyStyle: {padding: "0"},
@@ -312,6 +310,7 @@ export class UiBuildService {
                     obj.click = (item) => {
                         let codeEditType = view.eruptFieldModel.eruptFieldJson.edit.codeEditType;
                         let ref = this.modal.create({
+                            nzDraggable: true,
                             nzWrapClassName: "modal-lg",
                             nzBodyStyle: {padding: "0"},
                             nzMaskClosable: true,
@@ -344,6 +343,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable: true,
                             nzWrapClassName: "modal-lg",
                             nzBodyStyle: {
                                 padding: "0"
@@ -405,6 +405,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable: true,
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "50px"},
                             nzMaskClosable: true,
@@ -431,6 +432,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable: true,
                             nzWrapClassName: "modal-xs",
                             nzMaskClosable: true,
                             nzKeyboard: true,
@@ -457,6 +459,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable: true,
                             nzWrapClassName: "modal-lg modal-body-nopadding",
                             nzStyle: {top: "40px"},
                             nzMaskClosable: true,
@@ -484,6 +487,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable: true,
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "50px", textAlign: 'center'},
                             nzMaskClosable: true,
@@ -548,6 +552,7 @@ export class UiBuildService {
                     };
                     obj.click = (item) => {
                         let ref = this.modal.create({
+                            nzDraggable: true,
                             nzWrapClassName: "modal-lg",
                             nzStyle: {top: "50px"},
                             nzMaskClosable: false,
@@ -594,7 +599,7 @@ export class UiBuildService {
                     let url = this.dataService.getEruptViewTpl(eruptBuildModel.eruptModel.eruptName,
                         view.eruptFieldModel.fieldName,
                         item[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
-                    this.openTpl(view.title, url, view.tpl);
+                    this.openTpl(item, view.title, url, view.tpl);
                 };
             }
             if (layout.pagingType == PagingType.BACKEND) {
@@ -643,6 +648,7 @@ export class UiBuildService {
                 a.remove();
             } else if (viewType == ViewType.ATTACHMENT_DIALOG) {
                 let ref = this.modal.create({
+                    nzDraggable: true,
                     nzWrapClassName: "modal-lg modal-body-nopadding",
                     nzStyle: {top: "30px"},
                     nzKeyboard: true,
@@ -656,6 +662,7 @@ export class UiBuildService {
             }
         } else {
             let ref = this.modal.create({
+                nzDraggable: true,
                 nzWrapClassName: "modal-xs modal-body-nopadding",
                 nzStyle: {top: "30px"},
                 nzKeyboard: true,
@@ -670,10 +677,11 @@ export class UiBuildService {
         }
     }
 
-    openTpl(title: string, url: string, tpl: Tpl) {
+    openTpl(item: any, title: string, url: string, tpl: Tpl) {
         if (!tpl.openWay || tpl.openWay == OpenWay.MODAL) {
             let isIframe = !tpl.embedType || tpl.embedType == PageEmbedType.IFRAME;
             let ref = this.modal.create({
+                nzDraggable: true,
                 nzKeyboard: true,
                 nzTitle: title,
                 nzMaskClosable: false,
@@ -692,7 +700,7 @@ export class UiBuildService {
             });
             ref.getContentComponent().url = url;
             ref.getContentComponent().height = tpl.height;
-        } else {
+        } else if (tpl.openWay == OpenWay.DRAWER) {
             let placement = tpl.drawerPlacement;
             this.drawerService.create({
                 nzClosable: false,
@@ -713,6 +721,12 @@ export class UiBuildService {
                     width: '100%'
                 }
             })
+        } else if (tpl.openWay == OpenWay.ROUTER) {
+            let path = tpl.path;
+            if (path.indexOf("{") !== -1 && path.indexOf("}") !== -1) {
+                path = path.replace(/\{(\w+)\}/g, (match, key) => item[key]);
+            }
+            this.router.navigate([path]);
         }
     }
 }

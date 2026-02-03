@@ -73,7 +73,11 @@ import {
     UnorderedListOutline,
     UserAddOutline,
     UserOutline,
-    WarningTwoTone
+    WarningTwoTone,
+    FileTwoTone,
+    FilterOutline,
+    SortAscendingOutline,
+    SortDescendingOutline,
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -146,5 +150,9 @@ export const ICONS_AUTO = [
     EyeTwoTone,
     EditTwoTone,
     AimOutline,
-    HolderOutline
+    HolderOutline,
+    FileTwoTone,
+    FilterOutline,
+    SortAscendingOutline,
+    SortDescendingOutline,
 ];

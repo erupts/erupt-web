@@ -23,6 +23,7 @@ export interface NoticeChannel extends VL {
 }
 
 export interface NoticeScene {
+    id: number
     code: string
     name: string
 }

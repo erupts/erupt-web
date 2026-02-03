@@ -10,13 +10,14 @@ import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
-import {AddSignType} from "@flow/model/fllw-approval.model";
+import {AddSignType} from "@flow/model/flow-approval.model";
 import {KV} from "../../../erupt/model/util.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {getAvatarColor} from "@flow/util/flow.util";
 import {ActivatedRoute} from "@angular/router";
-import {FormAccessEnum} from "@flow/model/flow.model";
+import {FormAccessEnum, PrintSetting} from "@flow/model/flow.model";
+import {FlowPrintPreviewComponent} from "./print-preview/print-preview.component";
 
 @Component({
     standalone: false,
@@ -458,6 +459,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     openSign() {
         this.modal.create({
+            nzDraggable: true,
             nzTitle: '签名',
             nzContent: SignaturePadComponent,
             nzMaskClosable: false,
@@ -498,6 +500,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     showDiff(history: FlowInstanceDataHistory) {
         let ref = this.modal.create({
+            nzDraggable: true,
             nzTitle: '变更详情',
             nzContent: NzCodeEditorComponent,
             nzBodyStyle: {
@@ -527,6 +530,29 @@ export class FlowApprovalDetailComponent implements OnInit {
         });
     }
 
+    // 打印预览功能
+    print() {
+        const modalRef = this.modal.create({
+            nzDraggable: true,
+            nzTitle: '打印预览',
+            nzContent: FlowPrintPreviewComponent,
+            nzWidth: '700px',
+            nzStyle: {top: "30px"},
+            nzOkText: "打印",
+            nzOnOk: () => {
+                (modalRef.componentInstance as FlowPrintPreviewComponent).print();
+            },
+            nzBodyStyle: {
+                maxHeight: "75vh",
+                padding: '0',
+                overflow: 'auto'
+            }
+        });
+        modalRef.componentInstance.instance = this.selectedInstance;
+        modalRef.componentInstance.tasks = this.instanceTasks;
+        modalRef.componentInstance.eruptBuild = this.eruptBuild;
+    }
+
     protected readonly AddSignType = AddSignType;
 
     protected readonly ApprovalView = ApprovalView;
@@ -539,4 +565,5 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     protected readonly NodeType = NodeType;
 
+    protected readonly PrintSetting = PrintSetting;
 }

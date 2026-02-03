@@ -3,7 +3,7 @@ import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {VL} from "../../../../erupt/model/erupt-field.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
-import {FlowConfig, FlowGroup, FlowPermission, FlowUpmsScope, UpmsScope} from "@flow/model/flow.model";
+import {FlowConfig, FlowGroup, FlowPermission, FlowUpmsScope, PrintSetting, UpmsScope} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {EditType, FormSize} from "../../../../erupt/model/erupt.enum";
@@ -15,6 +15,7 @@ import {DataHandlerService} from "../../../../erupt/service/data-handler.service
 import html2canvas from "html2canvas";
 import {DataService} from "@shared/service/data.service";
 import {NoticeChannel} from "@shared/model/user.model";
+import {PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
 
 @Component({
     standalone: false,
@@ -110,6 +111,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             let ref = this.modal.create({
                 nzTitle: '请选择可见范围',
                 nzWidth: '880px',
+                nzDraggable: true,
                 nzStyle: {top: '30px'},
                 nzBodyStyle: {padding: '0'},
                 nzContent: UpmsSelectComponent,
@@ -306,5 +308,85 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         return upmsScope.scopeValue.toString();
     }
 
+    configPrintTemplate() {
+        let vars: PrintVar[] = []
+        vars.push({value: 'flow.no', label: '流程-流水号'});
+        vars.push({value: 'flow.initiatorUser.name', label: '流程-发起人'});
+        vars.push({value: 'flow.createTime', label: '流程-发起时间'});
+        vars.push({value: 'flow.status', label: '流程-状态'});
+        vars.push({
+            value: 'flow.tasks',
+            label: '流程-流转记录',
+            template: `
+                <table style="width:100%;border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">审批人</th>
+                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">任务状态</th>
+                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">审批意见</th>
+                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">创建时间</th>
+                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">审批时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!--#foreach($task in $flow.tasks)-->
+                        <tr>
+                            <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.assigneeUser.name}</td>
+                            <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.taskStatus}</td>
+                            <td style="border: 1px solid #d9d9d9;padding: 8px;">
+                                $!{task.comment}<!--#if($task.signature)--><br/><img src="$!task.signature" style="border:1px solid #f0f0f0;margin: 4px 0 0;width: 160px;" alt="签名"><!--#end-->
+                            </td>
+                            <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.createTime}</td>
+                            <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.completedAt}</td>
+                        </tr>
+                        <!--#end-->
+                    </tbody>
+                </table>
+            `,
+            vars: [
+                {value: "task.assigneeUser.name", label: "审批人"},
+                {value: "task.taskStatus", label: "任务状态"},
+                {value: "task.comment", label: "审批意见"},
+                {value: "task.createTime", label: "创建时间"},
+                {value: "task.completedAt", label: "审批时间"},
+            ]
+        });
+        if (this.eruptBuild && this.eruptBuild.eruptModel) {
+            this.eruptBuild.eruptModel.eruptFieldModels.forEach(f => {
+                if (f.eruptFieldJson.edit.title) {
+                    vars.push({
+                        value: f.fieldName,
+                        label: f.eruptFieldJson.edit.title
+                    })
+                }
+            })
+        }
+        let ref = this.modal.create({
+            nzTitle: '配置打印模板',
+            nzDraggable: true,
+            nzContent: PrintTemplate,
+            nzWidth: '900px',
+            nzStyle: {top: '30px'},
+            nzMaskClosable: false,
+            nzKeyboard: false,
+            nzOnOk: () => {
+                this.flowConfig.setting.printTemplate = ref.getContentComponent().getContent();
+                this.flowConfig.setting.printPageConfig = ref.getContentComponent().getPageConfig();
+            }
+        })
+        ref.getContentComponent().height = 460;
+        ref.getContentComponent().vars = vars;
+        ref.getContentComponent().value = this.flowConfig.setting.printTemplate;
+        ref.getContentComponent().pageConfig = this.flowConfig.setting.printPageConfig || {
+            paperSize: 'A4',
+            orientation: 'portrait',
+            marginTop: 10,
+            marginRight: 10,
+            marginBottom: 10,
+            marginLeft: 10
+        };
+    }
+
     protected readonly EditType = EditType;
+    protected readonly PrintSetting = PrintSetting;
 }

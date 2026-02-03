@@ -1,5 +1,3 @@
-@import '@delon/theme/theme-default.less';
-
 :host {
     .fold {
         position: absolute;
@@ -7,16 +5,16 @@
         padding: 8px;
         bottom: 0;
         width: 100%;
-        color: @alain-default-aside-nav-text-color;
-        background: @alain-default-aside-bg;
+        color: var(--ant-primary-color);
         text-align: center;
         cursor: pointer;
         transition: .4s all;
         box-shadow: 0 -1px 0 0 #dadfe6;
+        background: #fff;
     }
 
     .fold:hover {
-        color: @primary-color;
+        color: var(--ant-primary-color-hover);
     }
 }
 

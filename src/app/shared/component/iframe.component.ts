@@ -1,5 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 import {IframeHeight} from "@shared/util/window.util";
+import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 @Component({
     standalone: false,
@@ -28,11 +29,16 @@ export class EruptIframeComponent implements OnInit {
 
     spin: boolean = true;
 
-    constructor() {
+    constructor(@Inject(DA_SERVICE_TOKEN) public tokenService: ITokenService,) {
 
     }
 
     ngOnInit() {
+        if (this.url) {
+            if (this.url.indexOf('_token=') === -1) {
+                this.url += (this.url.indexOf("?") === -1 ? "?" : "&") + "_token=" + this.tokenService.get().token;
+            }
+        }
         this.spin = true;
         if (this.height) {
             this.style["height"] = this.height;

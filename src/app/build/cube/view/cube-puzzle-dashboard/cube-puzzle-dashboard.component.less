@@ -1,0 +1,212 @@
+
+.cube-puzzle-container {
+    display: flex;
+    flex-direction: column;
+    //background-image:
+    //    linear-gradient(rgba(226, 232, 240, 0.8) 1px, transparent 1px),
+    //    linear-gradient(90deg, rgba(226, 232, 240, 0.8) 1px, transparent 1px);
+    //background-size: 20px 20px;
+
+    .puzzle-header {
+        height: 50px;
+        padding: 0 12px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #e8e8e8;
+        z-index: 10;
+
+        .header-left {
+            display: flex;
+            align-items: center;
+
+            .dashboard-title {
+                font-size: 18px;
+                font-weight: 600;
+                margin-right: 12px;
+                color: #262626;
+            }
+
+            .dashboard-description-icon {
+                font-size: 16px;
+                color: #8c8c8c;
+                margin-right: 12px;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .gridster-wrapper {
+        flex: 1;
+        overflow: auto;
+        padding-bottom: 8px;
+    }
+
+    .puzzle-filter-row {
+        padding: 8px 12px;
+        background: #fff;
+        border-bottom: 1px solid #e8e8e8;
+        overflow-x: auto;
+
+        .filter-items {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+
+            .filter-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: #f5f5f5;
+                padding: 4px 8px;
+                border-radius: 4px;
+
+                &.cdk-drag-preview {
+                    opacity: 0.8;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+                }
+
+                &.cdk-drag-placeholder {
+                    opacity: 0.3;
+                }
+
+                &.cdk-drag-animating {
+                    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+                }
+
+                .drag-handle {
+                    cursor: move;
+                    display: flex;
+                    align-items: center;
+                    color: #8c8c8c;
+                    padding: 2px;
+
+                    &:hover {
+                        color: #262626;
+                    }
+                }
+
+                .filter-label {
+                    font-size: 13px;
+                    color: #595959;
+                    white-space: nowrap;
+                    font-weight: bold;
+                }
+
+                &.filter-item-hidden {
+                    opacity: 0.45;
+                }
+            }
+        }
+    }
+
+    .filter-add-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background 0.3s;
+        border-radius: 4px;
+
+        &:hover {
+            background: #f0f0f0;
+            color: var(--ant-primary-color);
+        }
+
+        &.active {
+            background: var(--ant-primary-1);
+            color: var(--ant-primary-color);
+            font-weight: bold;
+        }
+    }
+
+    .puzzle-item {
+        height: 100%;
+        position: relative;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+
+        &:hover {
+            .drag-handler, .item-actions {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        .puzzle-content {
+            overflow: auto;
+            height: 100%;
+            position: relative;
+        }
+
+        .item-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            z-index: 100;
+            display: flex;
+            gap: 4px;
+            background: #fff;
+            border: 1px solid #e8e8e8;
+            padding: 2px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+
+            button {
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                border: none;
+            }
+        }
+    }
+}
+
+
+// Gridster styles
+::ng-deep {
+    gridster {
+        background: transparent !important;
+    }
+
+    gridster-item {
+        overflow: visible !important;
+    }
+
+    .gridster-item {
+        transition: transform 0.3s, width 0.3s, height 0.3s !important;
+    }
+
+    // 拖拽时的样式
+    .gridster-item-moving {
+        z-index: 1000 !important;
+        opacity: 0.8;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    // 调整大小时的样式
+    .gridster-item-resizing {
+        z-index: 1000 !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    // 预览样式
+    .gridster-preview {
+        background: rgba(24, 144, 255, 0.1) !important;
+        border: 2px dashed var(--ant-primary-color-hover) !important;
+    }
+
+    // 网格样式
+    .gridster-grid {
+        background: rgba(0, 0, 0, 0.02) !important;
+    }
+
+}

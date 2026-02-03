@@ -30,7 +30,10 @@ export class WindowModel {
 
     public static copyrightTxt: any; //授权文本
 
-    public static theme: any
+    public static theme: {
+        primaryColor?: string,
+        [key: string]: any
+    }
 
     public static r_tools: CustomerTool[];
 

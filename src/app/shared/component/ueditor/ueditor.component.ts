@@ -58,6 +58,7 @@ export type EventTypes =
 
             :host .ueditor-textarea {
                 display: none;
+                height: 800px;
             }
         `,
     ],
@@ -117,6 +118,9 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
     id = `_ueditor-${Math.random().toString(36).substring(2)}`;
 
     @Input() config: any;
+
+    @Input() @InputNumber() height = 360;
+
     private _disabled = false;
     @Input() @InputNumber() delay = 50;
     @Output() readonly onPreReady = new EventEmitter<UEditorComponent>();
@@ -179,7 +183,11 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
 
         this.onPreReady.emit(this);
 
-        const opt = {...this.cog.options, ...this.config};
+        const opt = {
+            ...this.cog.options, ...this.config, ...{
+                initialFrameHeight: this.height,
+            }
+        };
 
         this.zone.runOutsideAngular(() => {
             const ueditor = UE.getEditor(this.id, opt);

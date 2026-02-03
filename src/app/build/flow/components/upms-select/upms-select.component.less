@@ -39,13 +39,13 @@
             position: relative;
 
             &:hover {
-                color: #1890ff;
+                color: var(--ant-primary-color);
                 background-color: rgba(24, 144, 255, 0.04);
             }
 
             &.active {
-                color: #1890ff;
-                border-bottom-color: #1890ff;
+                color: var(--ant-primary-color);
+                border-bottom-color: var(--ant-primary-color);
                 background-color: rgba(24, 144, 255, 0.04);
             }
 
@@ -73,7 +73,7 @@
 
                     &:focus,
                     &:hover {
-                        border-color: #1890ff;
+                        border-color: var(--ant-primary-color);
                         box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
                     }
                 }
@@ -100,7 +100,7 @@
             }
 
             span[nz-icon] {
-                color: #1890ff;
+                color: var(--ant-primary-color);
                 font-size: 14px;
             }
 
@@ -116,7 +116,8 @@
 
         /* 项目列表样式 */
         .item-list {
-            max-height: 320px;
+            height: 400px;
+            overflow: auto;
             border: 1px solid #f0f0f0;
             background: #fff;
         }
@@ -166,7 +167,7 @@
 
             &.selected {
                 background-color: rgba(24, 144, 255, 0.05);
-                border-left: 3px solid #1890ff;
+                border-left: 3px solid var(--ant-primary-color);
                 padding-left: 9px;
             }
 
@@ -186,7 +187,7 @@
 
                 .level {
                     font-size: 11px;
-                    color: #1890ff;
+                    color: var(--ant-primary-color);
                     background: rgba(24, 144, 255, 0.1);
                     padding: 2px 6px;
                     border-radius: 3px;
@@ -588,29 +589,6 @@
         .item-item,
         .custom-tag {
             animation: fadeIn 0.3s ease-out;
-        }
-
-        /* 选中状态优化 */
-        .item-item {
-            nz-checkbox {
-                ::ng-deep .ant-checkbox-wrapper {
-                    .ant-checkbox {
-                        .ant-checkbox-inner {
-                            border-color: #d9d9d9;
-                            border-radius: 3px;
-
-                            &:hover {
-                                border-color: #1890ff;
-                            }
-                        }
-
-                        &.ant-checkbox-checked .ant-checkbox-inner {
-                            background-color: #1890ff;
-                            border-color: #1890ff;
-                        }
-                    }
-                }
-            }
         }
 
         /* 工具提示样式 */
