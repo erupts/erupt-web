@@ -222,7 +222,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
         let parameters: Record<string, any> = {};
         let cf: CubeFilter[] = [];
-        
+
         // 合并外部筛选器和用户点击的维度筛选
         if (this.filters) {
             for (let f of this.filters) {
@@ -239,7 +239,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 }
             }
         }
-        
+
         // 添加用户点击维度产生的筛选条件
         for (let [field, value] of this.activeFilters) {
             cf.push({
@@ -248,7 +248,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 value: value
             });
         }
-        
+
         this.cubeApiService.query({
             cube: this.dashboard.cuber,
             explore: this.dashboard.explore,
@@ -730,7 +730,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             // 否则添加筛选
             this.activeFilters.set(field, value);
         }
-        
+
         // 重新请求后端数据
         this.refresh();
     }
@@ -756,7 +756,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     /**
      * 获取筛选条件数组（用于显示）
      */
-    getActiveFiltersArray(): Array<{field: string, value: any}> {
+    getActiveFiltersArray(): Array<{ field: string, value: any }> {
         return Array.from(this.activeFilters.entries()).map(([field, value]) => ({
             field,
             value

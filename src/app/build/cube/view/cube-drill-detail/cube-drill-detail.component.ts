@@ -33,8 +33,6 @@ export class CubeDrillDetailComponent implements OnInit {
 
     virtualScroll: boolean = false;
 
-    scrollConfig: any = {x: '100%', y: '500px'};
-
     constructor(private cubeApiService: CubeApiService) {
     }
 

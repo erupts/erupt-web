@@ -43,7 +43,7 @@
     .drill-content {
         flex: 1;
         padding: 16px;
-        overflow: hidden;
+        overflow: auto;
 
         ::ng-deep {
             st {
@@ -82,49 +82,5 @@
 
     nz-empty {
         margin-top: 100px;
-    }
-}
-
-// 暗色主题
-[data-theme='dark'] {
-    .drill-detail-container {
-        .drill-header {
-            background: #1f1f1f;
-            border-bottom-color: #434343;
-
-            .drill-info {
-                .drill-label {
-                    color: #999;
-                }
-
-                .drill-value {
-                    color: #e8e8e8;
-
-                    &.highlight {
-                        color: #1890ff;
-                    }
-                }
-            }
-        }
-
-        .drill-content {
-            ::ng-deep {
-                st {
-                    .measure-column {
-                        background: #111d2c !important;
-                    }
-
-                    .ant-table {
-                        .ant-table-thead > tr > th {
-                            background: #1f1f1f;
-                        }
-
-                        .ant-table-tbody > tr > td.measure-column {
-                            background: #111d2c;
-                        }
-                    }
-                }
-            }
-        }
     }
 }
