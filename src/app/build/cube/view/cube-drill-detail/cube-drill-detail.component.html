@@ -24,10 +24,8 @@
                 size="small"
                 [data]="drillData"
                 [columns]="stColumns"
-                [page]="{show: true, showSize: true, pageSizes: [10, 20, 50, 100]}"
-                [virtualScroll]="virtualScroll"
-                [virtualItemSize]="38"
-                [scroll]="scrollConfig"
+                [page]="{show: true,front:true, showSize: true,placement:'center', pageSizes: [10, 20, 50, 100]}"
+                [scroll]="{x: '100%'}"
                 [responsive]="true"
                 [widthMode]="{type: 'strict'}">
             </st>
