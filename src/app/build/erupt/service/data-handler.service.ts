@@ -431,13 +431,13 @@ export class DataHandlerService {
                                     edit.$value = moment(object[field.fieldName], "HH:mm:ss").toDate();
                                     break;
                                 case DateEnum.WEEK:
-                                    edit.$value = moment(object[field.fieldName], "YYYY-ww").toDate();
+                                    edit.$value = moment(object[field.fieldName], "yyyy-ww").toDate();
                                     break;
                                 case DateEnum.MONTH:
-                                    edit.$value = moment(object[field.fieldName], "YYYY-MM").toDate();
+                                    edit.$value = moment(object[field.fieldName], "yyyy-MM").toDate();
                                     break;
                                 case DateEnum.YEAR:
-                                    edit.$value = moment(object[field.fieldName], "YYYY").toDate();
+                                    edit.$value = moment(object[field.fieldName], "yyyy").toDate();
                                     break;
                             }
                         }
