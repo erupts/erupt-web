@@ -25,7 +25,7 @@ export class FlowPrintPreviewComponent implements OnInit {
 
     constructor(private elementRef: ElementRef,
                 protected settingsService: SettingsService,
-                private flowInstanceApiService: FlowInstanceApiService,) {
+                private flowInstanceApiService: FlowInstanceApiService) {
     }
 
     ngOnInit() {
@@ -49,10 +49,10 @@ export class FlowPrintPreviewComponent implements OnInit {
         };
 
         // 构建 @page 样式
-        const pageSize = pageConfig.paperSize === 'Custom' 
-            ? 'auto' 
+        const pageSize = pageConfig.paperSize === 'Custom'
+            ? 'auto'
             : `${pageConfig.paperSize} ${pageConfig.orientation}`;
-        
+
         const margin = `${pageConfig.marginTop}mm ${pageConfig.marginRight}mm ${pageConfig.marginBottom}mm ${pageConfig.marginLeft}mm`;
 
         printJS({
