@@ -2,7 +2,7 @@
     display: block;
 
     ::ng-deep {
-        .erupt-print {
+        .print-preview-container {
             sv-container {
                 width: 100%;
             }
@@ -37,17 +37,31 @@
     }
 }
 
-// 打印时的样式 - 确保和显示时一致
 @media print {
     :host {
-        ::ng-deep {
-            .erupt-print {
-                // 打印时隐藏不需要的元素
-                * {
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
+        display: block;
+    }
+
+    .print-preview-container {
+        .info-table {
+            border: 1px solid #000 !important;
+
+            tr td {
+                border: 1px solid #000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+
+                &.label-cell {
+                    background-color: #f5f5f5 !important;
                 }
             }
+        }
+
+        .print-details-title {
+            border: 1px solid #000 !important;
+            background-color: #f5f5f5 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
     }
 }

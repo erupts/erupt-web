@@ -1,4 +1,4 @@
-<sv-container style="width: 100%" class="erupt-print" layout="vertical" [bordered]="bordered" [col]="col">
+<sv-container style="width: 100%" class="print-preview-container" layout="vertical" [bordered]="bordered" [col]="col">
     @for (field of eruptModel.eruptFieldModels; track field) {
         @if (field.eruptFieldJson.edit && field.eruptFieldJson.edit.show && field.eruptFieldJson.edit.title) {
             @switch (field.eruptFieldJson.edit.type) {
