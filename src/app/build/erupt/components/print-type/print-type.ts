@@ -127,8 +127,10 @@ export class PrintTypeComponent implements OnInit {
     }
 
     print() {
+        const pageSize = "A4 portrait";
+        const margin = "10mm";
         printJS({
-            printable: this.elementRef.nativeElement.querySelector('.erupt-print'),
+            printable: this.elementRef.nativeElement.querySelector('.print-preview-container'),
             type: 'html',
             targetStyles: ['*'],
             style: `
@@ -139,8 +141,8 @@ export class PrintTypeComponent implements OnInit {
                 }
 
                 @page {
-                    size: A4;
-                    margin: 10mm 10mm 10mm 10mm;
+                    size: ${pageSize};
+                    margin: ${margin};
                 }
               `
         });
