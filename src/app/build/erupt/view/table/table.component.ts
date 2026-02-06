@@ -1161,7 +1161,7 @@ export class TableComponent implements OnInit, OnDestroy {
             const modal = this.modal.create({
                 nzTitle: this.i18n.fanyi("print.preview"),
                 nzContent: PrintTypeComponent,
-                nzWidth: 900,
+                nzWidth: 700,
                 nzStyle: {top: '30px'},
                 nzBodyStyle: {
                     maxHeight: "75vh",
