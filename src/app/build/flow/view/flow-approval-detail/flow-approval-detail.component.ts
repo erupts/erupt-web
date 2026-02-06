@@ -18,6 +18,7 @@ import {getAvatarColor} from "@flow/util/flow.util";
 import {ActivatedRoute} from "@angular/router";
 import {FormAccessEnum, PrintSetting} from "@flow/model/flow.model";
 import {FlowPrintPreviewComponent} from "./print-preview/print-preview.component";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -80,6 +81,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                 private message: NzMessageService,
                 private upmsApiService: FlowUpmsApiService,
                 private flowApiService: FlowApiService,
+                public i18n: I18NService,
                 private dataHandlerService: DataHandlerService,
                 private flowInstanceApiService: FlowInstanceApiService,
                 @Inject(NzDrawerService) private drawerService: NzDrawerService,
@@ -534,11 +536,11 @@ export class FlowApprovalDetailComponent implements OnInit {
     print() {
         const modalRef = this.modal.create({
             nzDraggable: true,
-            nzTitle: '打印预览',
+            nzTitle: this.i18n.fanyi("print.preview"),
             nzContent: FlowPrintPreviewComponent,
             nzWidth: '700px',
             nzStyle: {top: "30px"},
-            nzOkText: "打印",
+            nzOkText: this.i18n.fanyi("global.print"),
             nzOnOk: () => {
                 (modalRef.componentInstance as FlowPrintPreviewComponent).print();
             },

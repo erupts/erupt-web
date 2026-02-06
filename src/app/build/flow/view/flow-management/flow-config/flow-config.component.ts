@@ -387,6 +387,28 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         };
     }
 
+    // printView(){
+    //     const modalRef = this.modal.create({
+    //         nzDraggable: true,
+    //         nzTitle: '打印预览',
+    //         nzContent: FlowPrintPreviewComponent,
+    //         nzWidth: '700px',
+    //         nzStyle: {top: "30px"},
+    //         nzOkText: "打印",
+    //         nzOnOk: () => {
+    //             (modalRef.componentInstance as FlowPrintPreviewComponent).print();
+    //         },
+    //         nzBodyStyle: {
+    //             maxHeight: "75vh",
+    //             padding: '0',
+    //             overflow: 'auto'
+    //         }
+    //     });
+    //     modalRef.componentInstance.instance = null;
+    //     modalRef.componentInstance.tasks = null;
+    //     modalRef.componentInstance.eruptBuild = this.eruptBuild;
+    // }
+
     protected readonly EditType = EditType;
     protected readonly PrintSetting = PrintSetting;
 }
