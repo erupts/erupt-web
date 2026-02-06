@@ -5,6 +5,7 @@ import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {I18NService} from "@core";
+import printJS from 'print-js';
 
 @Component({
     standalone: false,
@@ -126,7 +127,22 @@ export class PrintTypeComponent implements OnInit {
     }
 
     print() {
-        // 使用原生打印，确保显示和打印完全一致
-        window.print();
+        printJS({
+            printable: this.elementRef.nativeElement.querySelector('.erupt-print'),
+            type: 'html',
+            targetStyles: ['*'],
+            style: `
+                * {
+                    font-family: 'Heiti SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+
+                @page {
+                    size: A4;
+                    margin: 10mm 10mm 10mm 10mm;
+                }
+              `
+        });
     }
 }
