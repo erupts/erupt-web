@@ -4,7 +4,7 @@
     } @else {
         <div class="print-meta">
             <span>打印人: {{ settingsService.user.name || '-' }}</span>
-            <span>打印时间: {{ currentDate | date:'yyyy-MM-dd HH:mm:ss' }}</span>
+            <span style="float: right">打印时间: {{ currentDate | date:'yyyy-MM-dd HH:mm:ss' }}</span>
         </div>
 
         <div class="print-header">
@@ -49,7 +49,7 @@
                                 {{ task.assigneeUser.name }}
                             </td>
                             <td>
-                                {{ task.taskStatus | translate  }}
+                                {{ task.taskStatus | translate }}
                             </td>
                             <td>
                                 <div>{{ task.comment || '-' }}</div>
@@ -67,8 +67,7 @@
         </div>
         <div class="print-info">
             @if (eruptBuild) {
-                <erupt-edit-type [eruptBuildModel]="eruptBuild" [readonly]="true"
-                                 [mode]="null" size="default"/>
+                <erupt-print-type [eruptBuildModel]="eruptBuild" [bordered]="false"/>
             }
         </div>
     }
