@@ -1,0 +1,51 @@
+:host {
+    ::ng-deep {
+        // 维度列样式 - 可点击筛选
+        .dimension-column, .drillable-column {
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:hover {
+                color: var(--ant-primary-color);
+                text-decoration: underline;
+            }
+
+            a {
+                color: #000 !important;
+            }
+        }
+
+        // 筛选条件显示区域
+        .filter-tags-container {
+            padding: 12px 16px;
+            background: #f5f7fa;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+
+            .filter-label {
+                font-size: 13px;
+                color: #666;
+                font-weight: 500;
+            }
+
+            nz-tag {
+                margin: 0;
+            }
+
+            .clear-all-link {
+                font-size: 12px;
+                color: #1890ff;
+                cursor: pointer;
+                margin-left: 8px;
+
+                &:hover {
+                    color: #40a9ff;
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+}

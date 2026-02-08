@@ -1,0 +1,72 @@
+:host {
+    display: block;
+
+    ::ng-deep {
+        .print-preview-container {
+            sv-container {
+                width: 100%;
+            }
+
+            sv {
+                .sv__label {
+                    font-weight: 500;
+                    color: #000;
+                }
+
+                .sv__detail {
+                    color: #666;
+                    word-break: normal;
+                }
+            }
+
+            .print-combine-section {
+                width: 100%;
+                border: 1px solid #d9d9d9;
+                border-radius: 4px;
+                overflow: hidden;
+
+                .combine-title {
+                    padding: 10px 12px;
+                    font-weight: 600;
+                    color: #333;
+                    background: #f5f5f5;
+                    border-bottom: 1px solid #d9d9d9;
+                }
+
+                .combine-content {
+                    padding: 12px;
+                    background: white;
+                }
+            }
+        }
+    }
+}
+
+@media print {
+    :host {
+        display: block;
+    }
+
+    .print-preview-container {
+        .info-table {
+            border: 1px solid #000 !important;
+
+            tr td {
+                border: 1px solid #000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+
+                &.label-cell {
+                    background-color: #f5f5f5 !important;
+                }
+            }
+        }
+
+        .print-details-title {
+            border: 1px solid #000 !important;
+            background-color: #f5f5f5 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+}
