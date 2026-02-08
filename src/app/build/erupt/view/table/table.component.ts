@@ -1,18 +1,7 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {
-    Alert,
-    Drill,
-    DrillInput,
-    EruptModel,
-    Power,
-    Row,
-    RowOperation,
-    Sort,
-    Vis,
-    VisType
-} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -47,7 +36,7 @@ import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {TableStyle} from "../../model/erupt.vo";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
-import {EruptAppData} from "@shared/model/erupt-app.model";
+import {PrintTypeComponent} from "../../components/print-type/print-type";
 
 
 @Component({
@@ -198,7 +187,6 @@ export class TableComponent implements OnInit, OnDestroy {
                 eruptParent: reference.parentEruptName || ''
             }
         }, (eb: EruptBuildModel) => {
-            this.vis = [];
             let erupt = eb.eruptModel.eruptJson;
             erupt.rowOperation = [];
             erupt.drills = [];
@@ -229,10 +217,6 @@ export class TableComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.refreshTimeInterval && clearInterval(this.refreshTimeInterval);
-    }
-
-    isEruptPrint(): boolean {
-        return EruptAppData.get().properties["erupt-print"];
     }
 
     init(observable: Observable<EruptBuildModel>, req: {
@@ -994,6 +978,27 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
+    // 处理甘特图选择变化
+    handleGanttSelectionChange(selectedRows: any[]) {
+        this.selectedRows = selectedRows;
+
+        // 如果是引用表模式，将选中的数据存储到 $tempValue
+        if (this._reference) {
+            if (selectedRows && selectedRows.length > 0) {
+                // 检查是单选还是多选模式
+                if (this._reference.mode === SelectMode.radio) {
+                    // 单选模式：取第一项
+                    this._reference.eruptField.eruptFieldJson.edit.$tempValue = selectedRows[0];
+                } else {
+                    // 多选模式：保存整个数组
+                    this._reference.eruptField.eruptFieldJson.edit.$tempValue = selectedRows;
+                }
+            } else {
+                this._reference.eruptField.eruptFieldJson.edit.$tempValue = null;
+            }
+        }
+    }
+
     downloadExcelTemplate() {
         this.dataService.downloadExcelTemplate(this.eruptBuildModel.eruptModel.eruptName);
     }
@@ -1141,6 +1146,38 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.tempSelectedField = null;
             }, 0);
         }
+    }
+
+    printSelectedRows() {
+        if (!this.selectedRows || this.selectedRows.length === 0) {
+            this.msg.warning('Select the data you want to print');
+            return;
+        }
+        const row = this.selectedRows[0];
+        const pk = row[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
+        this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, pk).subscribe(data => {
+            const printBuildModel = cloneDeep(this.eruptBuildModel);
+            this.dataHandler.objectToEruptValue(data, printBuildModel);
+            const modal = this.modal.create({
+                nzTitle: this.i18n.fanyi("print.preview"),
+                nzContent: PrintTypeComponent,
+                nzWidth: 700,
+                nzStyle: {top: '30px'},
+                nzBodyStyle: {
+                    maxHeight: "75vh",
+                    overflow: 'auto'
+                },
+                nzMaskClosable: false,
+                nzDraggable: true,
+                nzOkText: this.i18n.fanyi("global.print"),
+                nzOnOk: () => {
+                    modal.getContentComponent().print();
+                    return false; // 不关闭对话框
+                }
+            });
+            const component = modal.getContentComponent();
+            component.eruptBuildModel = printBuildModel;
+        });
     }
 
 }

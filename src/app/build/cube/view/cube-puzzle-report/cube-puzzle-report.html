@@ -16,32 +16,34 @@
             </div>
         }
         @if (report.type === ReportType.TABLE) {
-            <div style="height: 100%; overflow: auto;">
-                <nz-table [nzData]="chartData" [nzFrontPagination]="false"
-                          [nzShowPagination]="false" nzSize="small">
-                    <thead>
-                    <tr>
-                        @for (col of (report.cube[CubeKey.xField] || []); track col) {
-                            <th>{{ col }}</th>
+            <div #tableContainer style="height: 100%; width: 100%; display: flex; flex-direction: column;">
+                <!-- 筛选条件显示区 -->
+                @if (activeFilters.size > 0) {
+                    <div class="filter-tags-container">
+                        <span class="filter-label">当前筛选:</span>
+                        @for (filter of getActiveFiltersArray(); track filter.field) {
+                            <nz-tag [nzColor]="'blue'" (nzOnClose)="clearFilter(filter.field)" nzMode="closeable">
+                                {{ filter.field }}: {{ filter.value }}
+                            </nz-tag>
                         }
-                        @for (col of (report.cube[CubeKey.yField] || []); track col) {
-                            <th>{{ col }}</th>
-                        }
-                    </tr>
-                    </thead>
-                    <tbody>
-                        @for (row of chartData; track $index) {
-                            <tr>
-                                @for (col of (report.cube[CubeKey.xField] || []); track col) {
-                                    <td>{{ row[col] }}</td>
-                                }
-                                @for (col of (report.cube[CubeKey.yField] || []); track col) {
-                                    <td>{{ row[col] }}</td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </nz-table>
+                        <a class="clear-all-link" (click)="clearAllFilters()">清除全部</a>
+                    </div>
+                }
+                <!-- 表格区域 -->
+                <div style="flex: 1; overflow: hidden;">
+                    <st #st
+                        size="small"
+                        [data]="chartData"
+                        [columns]="stColumns"
+                        [page]="{show: false}"
+                        [virtualScroll]="virtualScroll"
+                        [virtualItemSize]="38"
+                        [scroll]="scrollConfig"
+                        [responsive]="true"
+                        [widthMode]="{type: 'strict'}"
+                        [resizable]="{ disabled: false }">
+                    </st>
+                </div>
             </div>
         }
     </nz-spin>

@@ -11,21 +11,30 @@
                 <ngx-gantt-column [width]="editColumnWidth">
                     <ng-template #header>
                         <div style="text-align: center;width: 100%">
-                            <label nz-checkbox
-                                   [nzChecked]="isAllSelected()"
-                                   [nzIndeterminate]="isIndeterminate()"
-                                   (nzCheckedChange)="toggleSelectAll($event)"
-                                   (click)="$event.stopPropagation()">
-                            </label>
+                            @if (selectionMode !== SelectMode.radio) {
+                                <label nz-checkbox
+                                       [nzChecked]="isAllSelected()"
+                                       [nzIndeterminate]="isIndeterminate()"
+                                       (nzCheckedChange)="toggleSelectAll($event)"
+                                       (click)="$event.stopPropagation()">
+                                </label>
+                            }
                         </div>
                     </ng-template>
                     <ng-template #cell let-item="item">
-                        <div style="text-align: center" (click)="toggleSelection(item)">
-                            <label nz-checkbox
-                                   [nzChecked]="isSelected(item)"
-                                   (nzCheckedChange)="toggleSelection(item)"
-                                   (click)="$event.stopPropagation()">
-                            </label>
+                        <div style="text-align: center">
+                            @if (selectionMode === SelectMode.radio) {
+                                <label nz-radio
+                                       [ngModel]="isSelected(item)"
+                                       (click)="onRadioClick(item, $event)">
+                                </label>
+                            } @else {
+                                <label nz-checkbox
+                                       [nzChecked]="isSelected(item)"
+                                       (nzCheckedChange)="toggleSelection(item)"
+                                       (click)="$event.stopPropagation()">
+                                </label>
+                            }
                         </div>
                     </ng-template>
                 </ngx-gantt-column>
