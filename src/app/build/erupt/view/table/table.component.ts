@@ -47,6 +47,7 @@ import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {TableStyle} from "../../model/erupt.vo";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
+import {EruptAppData} from "@shared/model/erupt-app.model";
 
 
 @Component({
@@ -228,6 +229,10 @@ export class TableComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.refreshTimeInterval && clearInterval(this.refreshTimeInterval);
+    }
+
+    isEruptPrint(): boolean {
+        return EruptAppData.get().properties["erupt-print"];
     }
 
     init(observable: Observable<EruptBuildModel>, req: {
