@@ -160,7 +160,15 @@ export class PrintTemplate implements OnInit {
     renderVar(v: PrintVar) {
         let primaryColor = this.primaryColor;
         if (v.template) {
-            return v.template;
+            let processedTemplate = v.template;
+            // 如果有子变量，需要渲染它们
+            if (v.vars && v.vars.length > 0) {
+                v.vars.forEach(subVar => {
+                    const reg = new RegExp(`\\$\!\\{${subVar.value}\\}`, 'g');
+                    processedTemplate = processedTemplate.replace(reg, this.renderVar(subVar));
+                });
+            }
+            return processedTemplate;
         } else {
             return `<span class="mention" data-variable="true" data-id="${v.value}" style="color: ${primaryColor};margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{&nbsp;</span>${v.label}<span style="opacity: 0.5;">&nbsp;}</span></span>`;
         }

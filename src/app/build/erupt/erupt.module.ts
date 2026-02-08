@@ -5,6 +5,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {DataHandlerService} from "./service/data-handler.service";
 import {EditTypeComponent} from "./components/edit-type/edit-type.component";
+import {PrintTypeComponent} from "./components/print-type/print-type";
 import {ViewTypeComponent} from "./components/view-type/view-type.component";
 import {TabTableComponent} from "./components/tab-table/tab-table.component";
 import {TreeSelectComponent} from "./components/tree-select/tree-select.component";
@@ -49,6 +50,7 @@ import {GanttComponent} from "./vis/gantt/gantt.component";
 import {NgxGanttModule} from "@worktile/gantt";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
+import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
 
 @NgModule({
     imports: [
@@ -67,7 +69,9 @@ import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
         NzSegmentedModule,
         NgxGanttModule,
         NzButtonModule,
-        NzTooltipDirective
+        NzTooltipDirective,
+        SVComponent,
+        SVContainerComponent
     ],
     providers: [
         DataHandlerService,
@@ -75,12 +79,14 @@ import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
     ],
     exports: [
         EditTypeComponent,
+        PrintTypeComponent,
         ViewTypeComponent,
         TabTableComponent,
         SmartSearchComponent
     ],
     declarations: [
         EditTypeComponent,
+        PrintTypeComponent,
         TreeSelectComponent,
         CkeditorComponent,
         TabTableComponent,

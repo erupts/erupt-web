@@ -179,6 +179,7 @@ export interface Power {
     delete: boolean;
     edit: boolean;
     query: boolean;
+    print: boolean;
     viewDetails: boolean;
     importable: boolean;
     export: boolean;

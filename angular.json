@@ -82,8 +82,16 @@
                             "ajv",
                             "ajv-formats",
                             "mockjs",
-                            "file-saver",
-                            "extend"
+                            "extend",
+                            "moment",
+                            "print-js",
+                            "lodash",
+                            "vditor",
+                            "html2canvas",
+                            "size-sensor",
+                            "pdfast",
+                            "d3-regression",
+                            "fmin"
                         ],
                         "stylePreprocessorOptions": {
                             "includePaths": [
