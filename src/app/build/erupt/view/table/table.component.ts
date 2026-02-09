@@ -1,7 +1,18 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
+import {
+    Alert,
+    Drill,
+    DrillInput,
+    EruptModel,
+    Power,
+    Row,
+    RowOperation,
+    Sort,
+    Vis,
+    VisType
+} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -37,6 +48,7 @@ import {TableStyle} from "../../model/erupt.vo";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
+import {EruptAppData} from "@shared/model/erupt-app.model";
 
 
 @Component({
@@ -213,6 +225,10 @@ export class TableComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
 
+    }
+
+    isEruptPrint(): boolean {
+        return EruptAppData.get().properties["erupt-print"];
     }
 
     ngOnDestroy(): void {
