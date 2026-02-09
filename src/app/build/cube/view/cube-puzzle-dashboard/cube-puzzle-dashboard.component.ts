@@ -385,7 +385,8 @@ export class CubePuzzleDashboardComponent implements OnInit {
         if (!this.dsl.filters) {
             this.dsl.filters = [];
         }
-        let filter = this.dsl.filters.find(f => f.field === payload.field);
+        let filter = this.dsl.filters.find(f => f.field === payload.field
+            && (f.operator == CubeOperator.EQ || f.operator == CubeOperator.IN));
         if (filter) {
             filter.value = Array.isArray(filter.value) ? [payload.value] : payload.value;
             filter.operator = filter.operator ?? CubeOperator.IN;
