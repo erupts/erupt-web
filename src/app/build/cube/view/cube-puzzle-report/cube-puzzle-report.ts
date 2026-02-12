@@ -71,6 +71,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     private visible: boolean = false;
 
+    private s2: PivotSheet;
+
     // ST 组件配置
     stColumns: STColumn[] = [];
 
@@ -84,7 +86,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     activeFilters: Map<string, any> = new Map(); // 当前激活的筛选条件
 
     constructor(private cubeApiService: CubeApiService,
-                private el: ElementRef,
+                public el: ElementRef,
                 private drawerService: NzDrawerService) {
 
     }
@@ -106,6 +108,21 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         });
         this.observer.observe(this.el.nativeElement);
 
+        this.resizeObserver = new ResizeObserver(() => {
+            if (this.visible) {
+                if (this.report.type === ReportType.TABLE) {
+                    this.updateTableHeight();
+                } else if (this.report.type === ReportType.PIVOT_TABLE) {
+                    if (this.s2) {
+                        this.s2.changeSheetSize(this.pivotContainer.nativeElement.clientWidth, this.pivotContainer.nativeElement.clientHeight);
+                        this.s2.render(false);
+                    }
+                } else if (this.chart) {
+                    this.chart.forceFit();
+                }
+            }
+        });
+        this.resizeObserver.observe(this.el.nativeElement);
     }
 
 
@@ -118,8 +135,11 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             if (containerHeight > 0) {
                 this.scrollConfig = {
                     x: '100%',
-                    y: `${containerHeight - 39}px`
+                    y: `${containerHeight - 40}px`
                 };
+                if (this.st) {
+                    this.st.cd();
+                }
             }
         }
     }
@@ -290,6 +310,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             this.chart.destroy();
             this.chart = null;
         }
+        if (this.s2) {
+            this.s2.destroy();
+            this.s2 = null;
+        }
         if (this.report.type == ReportType.TABLE || this.report.type == ReportType.KPI) {
             return;
         } else if (this.report.type == ReportType.PIVOT_TABLE) {
@@ -302,12 +326,12 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 data: this.chartData,
             };
             const ele = this.pivotContainer.nativeElement;
-            const s2 = new PivotSheet(ele, dataConfig, {
+            this.s2 = new PivotSheet(ele, dataConfig, {
                 width: this.pivotContainer.nativeElement.clientWidth,
                 height: this.pivotContainer.nativeElement.clientHeight
             });
-            s2.setThemeCfg({name: this.report.ui['pivotTheme'] || 'gray'});
-            s2.render();
+            this.s2.setThemeCfg({name: this.report.ui['pivotTheme'] || 'gray'});
+            this.s2.render();
         } else {
             this.chart = this.renderChart(this.chartData)
         }
@@ -807,6 +831,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         if (this.chart) {
             this.chart.destroy();
             this.chart = null;
+        }
+        if (this.s2) {
+            this.s2.destroy();
+            this.s2 = null;
         }
     }
 

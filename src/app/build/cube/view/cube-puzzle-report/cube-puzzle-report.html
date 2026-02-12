@@ -2,10 +2,9 @@
          style="height: 100%;width: 100%;margin-bottom: 0"
          [nzBodyStyle]="{height: 'calc(100% - ' + (report.title ? 38 : 0) + 'px)',padding: 0, background: report.ui['background'] || 'transparent'}">
     <nz-spin [nzSpinning]="querying" style="height: 100%;width: 100%;">
-        <div
-            [hidden]="report.type === ReportType.TABLE || report.type === ReportType.KPI || report.type === ReportType.PIVOT_TABLE"
-            #chartContainer
-            style="height: 100%;width: 100%;overflow: hidden;box-sizing: border-box;padding: 12px">
+        <div #chartContainer
+             [hidden]="report.type === ReportType.TABLE || report.type === ReportType.KPI || report.type === ReportType.PIVOT_TABLE"
+             style="height: 100%;width: 100%;overflow: hidden;box-sizing: border-box;padding: 12px">
         </div>
         <div [hidden]="report.type !== ReportType.PIVOT_TABLE" #pivotContainer
              style="height: 100%;width: 100%;overflow: hidden;box-sizing: border-box;padding: 0">
