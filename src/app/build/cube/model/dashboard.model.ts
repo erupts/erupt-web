@@ -25,6 +25,10 @@ export interface Dashboard {
 export interface DashboardDSL {
     filters?: FilterDSL[];
     reports?: ReportDSL[];
+    backgroundColor?: string;
+    backgroundImage?: string;
+    theme?: 'light' | 'dark';
+    autoRefreshInterval?: number; // 自动刷新间隔（秒），0 表示不自动刷新
 }
 
 export interface FilterDSL {
