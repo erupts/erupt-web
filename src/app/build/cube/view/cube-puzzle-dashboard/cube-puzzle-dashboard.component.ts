@@ -1,48 +1,18 @@
-import {Component, ElementRef, Inject, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, Inject, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
-import {
-    CubeKey,
-    Dashboard,
-    DashboardDSL,
-    FilterControl,
-    FilterDSL,
-    ReportDSL,
-    ReportType
-} from "../../model/dashboard.model";
+import {CubeKey, Dashboard, DashboardDSL, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeMeta} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
-import {
-    Area,
-    Bar,
-    Chord,
-    Column,
-    Funnel,
-    Gauge,
-    Line,
-    Pie,
-    Progress,
-    Radar,
-    RadialBar,
-    RingProgress,
-    Rose,
-    Sankey,
-    Scatter,
-    TinyArea,
-    TinyColumn,
-    TinyLine,
-    Waterfall,
-    WordCloud
-} from '@antv/g2plot';
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubePuzzleFilterConfig} from "../cube-puzzle-filter-config/cube-puzzle-filter-config";
 import {deepCopy} from "@delon/util";
-import {R} from "@shared/model/api.model";
+import {CubeDrillDetailComponent} from "../cube-drill-detail/cube-drill-detail.component";
 
 @Component({
     standalone: false,
@@ -222,6 +192,20 @@ export class CubePuzzleDashboardComponent implements OnInit {
         const reportComponent = this.reports.toArray()[index];
         if (reportComponent) {
             reportComponent.refresh();
+        }
+    }
+
+    fullScreenItem(index: number) {
+        const reportComponent = this.reports.toArray()[index];
+        if (reportComponent) {
+            const el = reportComponent.el.nativeElement;
+            if (el.requestFullscreen) {
+                el.requestFullscreen();
+            } else if (el['webkitRequestFullscreen']) {
+                el['webkitRequestFullscreen']();
+            } else if (el['msRequestFullscreen']) {
+                el['msRequestFullscreen']();
+            }
         }
     }
 
