@@ -57,6 +57,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     @ViewChild('tableContainer', {static: false}) tableContainer: ElementRef;
 
+    @ViewChild('pivotContainer', {static: false}) pivotContainer: ElementRef;
+
     querying: boolean = false;
 
     chartData: Record<string, any>[] = [];
@@ -299,10 +301,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 },
                 data: this.chartData,
             };
-            const ele = this.chartContainer.nativeElement;
+            const ele = this.pivotContainer.nativeElement;
             const s2 = new PivotSheet(ele, dataConfig, {
-                width: this.chartContainer.nativeElement.clientWidth,
-                height: this.chartContainer.nativeElement.clientHeight
+                width: this.pivotContainer.nativeElement.clientWidth,
+                height: this.pivotContainer.nativeElement.clientHeight
             });
             s2.setThemeCfg({name: this.report.ui['pivotTheme'] || 'gray'});
             s2.render();
@@ -318,6 +320,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             data: data,
             ...this.report.cube,
             ...this.report.ui,
+            autoFit: true,
+            margin: 12,
         };
         if (WindowModel.theme.primaryColor) {
             // commonConfig.color = WindowModel.theme.primaryColor
