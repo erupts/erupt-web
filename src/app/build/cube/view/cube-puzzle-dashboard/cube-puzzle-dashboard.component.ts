@@ -1,10 +1,10 @@
-import {Component, Inject, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, ElementRef, Inject, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
-import {CubeKey, Dashboard, DashboardDSL, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {Dashboard, DashboardDSL, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeMeta} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
@@ -12,7 +12,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubePuzzleFilterConfig} from "../cube-puzzle-filter-config/cube-puzzle-filter-config";
 import {deepCopy} from "@delon/util";
-import {CubeDrillDetailComponent} from "../cube-drill-detail/cube-drill-detail.component";
+import {CubePuzzleDashboardConfig} from "../cube-puzzle-dashboard-config/cube-puzzle-dashboard-config";
 
 @Component({
     standalone: false,
@@ -20,7 +20,7 @@ import {CubeDrillDetailComponent} from "../cube-drill-detail/cube-drill-detail.c
     templateUrl: './cube-puzzle-dashboard.component.html',
     styleUrls: ['./cube-puzzle-dashboard.component.less']
 })
-export class CubePuzzleDashboardComponent implements OnInit {
+export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     options: GridsterConfig;
 
@@ -40,18 +40,37 @@ export class CubePuzzleDashboardComponent implements OnInit {
 
     dsl: DashboardDSL;
 
+    isFullscreen = false;
+
+    showFilters = true;
+
+    autoRefreshTimer: any;
+
     @ViewChildren(CubePuzzleReport) reports: QueryList<CubePuzzleReport>;
 
     charts: any[] = [];
 
     constructor(private router: Router, private route: ActivatedRoute,
                 private cubeApiService: CubeApiService,
+                private el: ElementRef,
                 @Inject(NzModalService) private modal: NzModalService
     ) {
 
     }
 
     ngOnInit() {
+        document.addEventListener('fullscreenchange', () => {
+            this.isFullscreen = !!document.fullscreenElement;
+        });
+        document.addEventListener('webkitfullscreenchange', () => {
+            this.isFullscreen = !!document['webkitFullscreenElement'];
+        });
+        document.addEventListener('mozfullscreenchange', () => {
+            this.isFullscreen = !!document['mozFullScreenElement'];
+        });
+        document.addEventListener('msfullscreenchange', () => {
+            this.isFullscreen = !!document['msFullscreenElement'];
+        });
         this.options = {
             gridType: 'verticalFixed',
             compactType: 'none',
@@ -118,6 +137,7 @@ export class CubePuzzleDashboardComponent implements OnInit {
             this.cubeApiService.cubeMetadata(this.dashboard.cuber, this.dashboard.explore).subscribe(res => {
                 this.cubeMeta = res.data;
             })
+            this.initAutoRefresh();
         })
     }
 
@@ -192,6 +212,33 @@ export class CubePuzzleDashboardComponent implements OnInit {
         const reportComponent = this.reports.toArray()[index];
         if (reportComponent) {
             reportComponent.refresh();
+        }
+    }
+
+    toggleFilters() {
+        this.showFilters = !this.showFilters;
+    }
+
+    toggleFullscreen() {
+        const el = this.el.nativeElement;
+        if (!this.isFullscreen) {
+            if (el.requestFullscreen) {
+                el.requestFullscreen();
+            } else if (el['webkitRequestFullscreen']) {
+                el['webkitRequestFullscreen']();
+            } else if (el['msRequestFullscreen']) {
+                el['msRequestFullscreen']();
+            }
+            this.isFullscreen = true;
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document['webkitExitFullscreen']) {
+                document['webkitExitFullscreen']();
+            } else if (document['msExitFullscreen']) {
+                document['msExitFullscreen']();
+            }
+            this.isFullscreen = false;
         }
     }
 
@@ -357,6 +404,51 @@ export class CubePuzzleDashboardComponent implements OnInit {
 
     dropFilter(event: CdkDragDrop<FilterDSL[]>) {
         moveItemInArray(this.dsl.filters, event.previousIndex, event.currentIndex);
+    }
+
+    dashboardSettings() {
+        let ref = this.modal.create({
+            nzTitle: 'Dashboard Settings',
+            nzContent: CubePuzzleDashboardConfig,
+            nzDraggable: true,
+            nzMaskClosable: false,
+            nzWidth: 400,
+            nzOnOk: (instance) => {
+                this.dsl.backgroundColor = instance.dsl.backgroundColor;
+                this.dsl.backgroundImage = instance.dsl.backgroundImage;
+                this.dsl.theme = instance.dsl.theme;
+                this.dsl.autoRefreshInterval = instance.dsl.autoRefreshInterval;
+                // 重新渲染报表以应用新主题
+                for (let report of this.reports) {
+                    report.render();
+                }
+                this.initAutoRefresh();
+            }
+        });
+        ref.getContentComponent().dsl = {
+            backgroundColor: this.dsl.backgroundColor,
+            backgroundImage: this.dsl.backgroundImage,
+            theme: this.dsl.theme || 'light',
+            autoRefreshInterval: this.dsl.autoRefreshInterval || 0
+        };
+    }
+
+    initAutoRefresh() {
+        if (this.autoRefreshTimer) {
+            clearInterval(this.autoRefreshTimer);
+            this.autoRefreshTimer = null;
+        }
+        if (this.dsl?.autoRefreshInterval > 0) {
+            this.autoRefreshTimer = setInterval(() => {
+                this.query();
+            }, this.dsl.autoRefreshInterval * 1000);
+        }
+    }
+
+    ngOnDestroy() {
+        if (this.autoRefreshTimer) {
+            clearInterval(this.autoRefreshTimer);
+        }
     }
 
     /**

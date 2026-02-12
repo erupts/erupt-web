@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {CubeKey, Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
 import {CubeFilter, CubeOperator} from "../../model/cube-query.model";
@@ -43,7 +43,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     @Input() report: ReportDSL;
 
     @Input() dashboard: Dashboard;
-
+    @Input() dsl: DashboardDSL;
     @Input() filters: CubeFilter[] = [];
 
     @Input() cubeMeta: CubeMeta;
@@ -330,7 +330,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 width: this.pivotContainer.nativeElement.clientWidth,
                 height: this.pivotContainer.nativeElement.clientHeight
             });
-            this.s2.setThemeCfg({name: this.report.ui['pivotTheme'] || 'gray'});
+            this.s2.setThemeCfg({name: this.dsl?.theme === 'dark' ? 'dark' : (this.report.ui['pivotTheme'] || 'gray')});
             this.s2.render();
         } else {
             this.chart = this.renderChart(this.chartData)
@@ -346,6 +346,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             ...this.report.ui,
             autoFit: true,
             margin: 12,
+            theme: this.dsl?.theme || 'light'
         };
         if (WindowModel.theme.primaryColor) {
             // commonConfig.color = WindowModel.theme.primaryColor

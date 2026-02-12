@@ -7,6 +7,16 @@
     //    linear-gradient(90deg, rgba(226, 232, 240, 0.8) 1px, transparent 1px);
     //background-size: 20px 20px;
 
+    &:fullscreen {
+        background: #fff;
+        height: 100vh !important;
+        overflow: auto;
+    }
+
+    &.dark-theme:fullscreen {
+        background: #1f1f1f;
+    }
+
     .puzzle-header {
         height: 50px;
         padding: 0 12px;
@@ -16,6 +26,18 @@
         justify-content: space-between;
         border-bottom: 1px solid #e8e8e8;
         z-index: 10;
+        transition: background 0.3s, border-color 0.3s;
+
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+
+            .action-buttons {
+                display: flex;
+                gap: 8px;
+            }
+        }
 
         .header-left {
             display: flex;
@@ -26,6 +48,7 @@
                 font-weight: 600;
                 margin-right: 12px;
                 color: #262626;
+                transition: color 0.3s;
             }
 
             .dashboard-description-icon {
@@ -48,6 +71,7 @@
         background: #fff;
         border-bottom: 1px solid #e8e8e8;
         overflow-x: auto;
+        transition: background 0.3s, border-color 0.3s;
 
         .filter-items {
             display: flex;
@@ -62,6 +86,7 @@
                 background: #f5f5f5;
                 padding: 4px 8px;
                 border-radius: 4px;
+                transition: background 0.3s;
 
                 &.cdk-drag-preview {
                     opacity: 0.8;
@@ -93,11 +118,52 @@
                     color: #595959;
                     white-space: nowrap;
                     font-weight: bold;
+                    transition: color 0.3s;
                 }
 
                 &.filter-item-hidden {
                     opacity: 0.45;
                 }
+            }
+        }
+    }
+
+    &.dark-theme {
+        .puzzle-header {
+            background: #1f1f1f;
+            border-bottom-color: #303030;
+
+            .header-left {
+                .dashboard-title {
+                    color: rgba(255, 255, 255, 0.85);
+                }
+            }
+        }
+
+        .puzzle-filter-row {
+            background: #1f1f1f;
+            border-bottom-color: #303030;
+
+            .filter-item {
+                background: #262626;
+
+                .filter-label {
+                    color: rgba(255, 255, 255, 0.65);
+                }
+            }
+        }
+
+        .gridster-wrapper {
+            background-color: #000;
+        }
+
+        .puzzle-item {
+            background: #141414;
+            color: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+
+            .puzzle-content {
+                background-color: #1f1f1f !important;
             }
         }
     }
