@@ -1,9 +1,14 @@
 <nz-card [nzBordered]="false" [nzTitle]="report.title" nzSize="small"
          style="height: 100%;width: 100%;margin-bottom: 0"
-         [nzBodyStyle]="{height: 'calc(100% - ' + (report.title ? 38 : 0) + 'px)', background: report.ui['background'] || 'transparent'}">
-    <nz-spin [nzSpinning]="querying" style="height: 100%;width: 100%">
-        <div [hidden]="report.type === ReportType.TABLE || report.type === ReportType.KPI" #chartContainer
-             style="height: 100%;width: 100%;overflow: hidden">
+         [nzBodyStyle]="{height: 'calc(100% - ' + (report.title ? 38 : 0) + 'px)',padding: 0, background: report.ui['background'] || 'transparent'}">
+    <nz-spin [nzSpinning]="querying" style="height: 100%;width: 100%;">
+        <div
+            [hidden]="report.type === ReportType.TABLE || report.type === ReportType.KPI || report.type === ReportType.PIVOT_TABLE"
+            #chartContainer
+            style="height: 100%;width: 100%;overflow: hidden;box-sizing: border-box;padding: 12px">
+        </div>
+        <div [hidden]="report.type !== ReportType.PIVOT_TABLE" #pivotContainer
+             style="height: 100%;width: 100%;overflow: hidden;box-sizing: border-box;padding: 0">
         </div>
         @if (report.type === ReportType.KPI) {
             <div style="height: 100%; display: flex; align-items: center; justify-content: center;overflow: hidden">
