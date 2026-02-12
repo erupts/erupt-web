@@ -19,16 +19,26 @@ export interface Dashboard {
     publishTime?: Date | string;  // 发布时间
 }
 
+export enum DashboardTheme {
+    LIGHT = 'light',
+    DARK = 'dark',
+}
+
 /**
  * 仪表板 DSL 定义
  */
 export interface DashboardDSL {
     filters?: FilterDSL[];
     reports?: ReportDSL[];
+    settings?: DashboardSettings;
+}
+
+export interface DashboardSettings {
     backgroundColor?: string;
     backgroundImage?: string;
-    theme?: 'light' | 'dark';
+    theme?: DashboardTheme;
     autoRefreshInterval?: number; // 自动刷新间隔（秒），0 表示不自动刷新
+    gap?: number;                 // 报表间距
 }
 
 export interface FilterDSL {
