@@ -4,7 +4,7 @@ import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
-import {Dashboard, DashboardDSL, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeMeta} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
@@ -134,6 +134,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         this.cubeApiService.dashboardDetail(this.code).subscribe(res => {
             this.dashboard = res.data;
             this.dsl = res.data.draftDsl;
+            this.options.margin = this.dsl?.settings?.gap ?? 12;
             this.cubeApiService.cubeMetadata(this.dashboard.cuber, this.dashboard.explore).subscribe(res => {
                 this.cubeMeta = res.data;
             })
@@ -359,6 +360,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         });
         ref.getContentComponent().dashboard = this.dashboard;
         ref.getContentComponent().cubeMeta = this.cubeMeta;
+        ref.getContentComponent().dsl = this.dsl;
         ref.getContentComponent().filter = {
             field: this.cubeMeta.dimensions?.[0].code,
             operator: CubeOperator.IN
@@ -390,6 +392,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         });
         ref.getContentComponent().dashboard = this.dashboard;
         ref.getContentComponent().cubeMeta = this.cubeMeta;
+        ref.getContentComponent().dsl = this.dsl;
         ref.getContentComponent().filter = deepCopy(this.dsl.filters[index])
     }
 
@@ -414,10 +417,16 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             nzMaskClosable: false,
             nzWidth: 400,
             nzOnOk: (instance) => {
-                this.dsl.backgroundColor = instance.dsl.backgroundColor;
-                this.dsl.backgroundImage = instance.dsl.backgroundImage;
-                this.dsl.theme = instance.dsl.theme;
-                this.dsl.autoRefreshInterval = instance.dsl.autoRefreshInterval;
+                if (!this.dsl.settings) {
+                    this.dsl.settings = {};
+                }
+                this.dsl.settings.backgroundColor = instance.dsl.settings.backgroundColor;
+                this.dsl.settings.backgroundImage = instance.dsl.settings.backgroundImage;
+                this.dsl.settings.theme = instance.dsl.settings.theme;
+                this.dsl.settings.autoRefreshInterval = instance.dsl.settings.autoRefreshInterval;
+                this.dsl.settings.gap = instance.dsl.settings.gap;
+                this.options.margin = this.dsl.settings.gap ?? 12;
+                this.changedOptions();
                 // 重新渲染报表以应用新主题
                 for (let report of this.reports) {
                     report.render();
@@ -426,10 +435,13 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             }
         });
         ref.getContentComponent().dsl = {
-            backgroundColor: this.dsl.backgroundColor,
-            backgroundImage: this.dsl.backgroundImage,
-            theme: this.dsl.theme || 'light',
-            autoRefreshInterval: this.dsl.autoRefreshInterval || 0
+            settings: {
+                backgroundColor: this.dsl.settings?.backgroundColor,
+                backgroundImage: this.dsl.settings?.backgroundImage,
+                theme: this.dsl.settings?.theme || DashboardTheme.LIGHT,
+                autoRefreshInterval: this.dsl.settings?.autoRefreshInterval || 0,
+                gap: this.dsl.settings?.gap ?? 12,
+            }
         };
     }
 
@@ -438,10 +450,10 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             clearInterval(this.autoRefreshTimer);
             this.autoRefreshTimer = null;
         }
-        if (this.dsl?.autoRefreshInterval > 0) {
+        if (this.dsl?.settings?.autoRefreshInterval > 0) {
             this.autoRefreshTimer = setInterval(() => {
                 this.query();
-            }, this.dsl.autoRefreshInterval * 1000);
+            }, this.dsl.settings.autoRefreshInterval * 1000);
         }
     }
 
@@ -478,4 +490,5 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     }
 
     protected readonly ReportType = ReportType;
+    protected readonly DashboardTheme = DashboardTheme;
 }
