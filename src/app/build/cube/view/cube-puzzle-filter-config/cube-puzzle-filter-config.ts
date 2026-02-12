@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {Dashboard, FilterControl, FilterDSL} from "../../model/dashboard.model";
+import {Dashboard, DashboardDSL, FilterControl, FilterDSL} from "../../model/dashboard.model";
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubeMeta, FieldType} from "../../model/cube.model";
 import {CubeApiService} from "../../service/cube-api.service";
@@ -18,6 +18,8 @@ export class CubePuzzleFilterConfig implements OnInit {
     @Input() cubeMeta: CubeMeta;
 
     @Input() dashboard: Dashboard;
+
+    @Input() dsl: DashboardDSL;
 
     @ViewChild("filterControl") filterControl: CubePuzzleFilterControl;
 
@@ -88,7 +90,6 @@ export class CubePuzzleFilterConfig implements OnInit {
         this.filter.defaultValue = null;
     }
 
-    protected readonly FilterControl = FilterControl;
     protected readonly CubeOperator = CubeOperator;
     protected readonly FieldType = FieldType;
 }

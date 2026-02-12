@@ -1,4 +1,4 @@
-<div class="cube-puzzle-container" [class.dark-theme]="dsl?.theme === 'dark'"
+<div class="cube-puzzle-container" [class.dark-theme]="dsl?.settings?.theme === DashboardTheme.DARK"
      [style.height]="isFillRoute ? '100vh' : 'calc(100vh - 50px)'">
     <div class="puzzle-header">
         <div class="header-left">
@@ -20,14 +20,14 @@
                     Filters
                 </button>
                 @if (edit) {
-                    <button nz-button nzType="default" (click)="dashboardSettings()">
-                        <span nz-icon nzType="setting"></span> Settings
+                    <button nz-button nzType="default" (click)="addItem()">
+                        <span nz-icon nzType="plus"></span> Add Report
                     </button>
                     <button nz-button nzType="default" (click)="addFilter()">
                         <span nz-icon nzType="filter"></span> Add Filter
                     </button>
-                    <button nz-button nzType="default" (click)="addItem()">
-                        <span nz-icon nzType="plus"></span> Add Report
+                    <button nz-button nzType="default" (click)="dashboardSettings()">
+                        <span nz-icon nzType="setting"></span> Settings
                     </button>
                 }
             </div>
@@ -45,7 +45,7 @@
             }
         </div>
     </div>
-    @if (cubeMeta && dsl?.filters?.length && showFilters) {
+    @if (cubeMeta && showFilters) {
         <div class="puzzle-filter-row">
             <div class="filter-items" cdkDropList cdkDropListOrientation="horizontal"
                  (cdkDropListDropped)="dropFilter($event)">
@@ -75,18 +75,20 @@
                     }
                 }
                 <div style="margin-left: auto; display: flex; gap: 8px;">
-                    <button nz-button nzSize="small" (click)="reset()">Reset</button>
                     <button nz-button nzSize="small" (click)="toggleFullscreen()" title="Fullscreen">
                         <span nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"></span>
                     </button>
+                    @if (dsl.filters?.length > 0) {
+                        <button nz-button nzSize="small" (click)="reset()">Reset</button>
+                    }
                     <button nz-button nzType="primary" nzSize="small" (click)="query()">查询</button>
                 </div>
             </div>
         </div>
     }
     <div class="gridster-wrapper"
-         [style.background-color]="dsl?.backgroundColor"
-         [style.background-image]="dsl?.backgroundImage ? 'url(' + dsl.backgroundImage + ')' : 'none'"
+         [style.background-color]="dsl?.settings?.backgroundColor"
+         [style.background-image]="dsl?.settings?.backgroundImage ? 'url(' + dsl.settings.backgroundImage + ')' : 'none'"
          style="background-size: cover; background-position: center;">
         @if (!dsl?.reports || dsl.reports.length == 0) {
             <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" style="margin-top: 20%"></nz-empty>
@@ -146,7 +148,8 @@
                                         </button>
                                     </div>
                                 }
-                                <div class="puzzle-content" style="background-color: var(--ant-primary-1)">
+                                <div class="puzzle-content"
+                                     [style.background-color]="dsl?.settings?.theme === DashboardTheme.DARK ? '#141414' : 'var(--ant-primary-1)'">
                                     <cube-puzzle-report [cubeMeta]="cubeMeta" [filters]="dsl.filters" [report]="report"
                                                         [dashboard]="dashboard" [dsl]="dsl"
                                                         (filterLink)="onFilterLink($event)"/>

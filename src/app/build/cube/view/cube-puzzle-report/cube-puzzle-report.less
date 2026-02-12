@@ -1,5 +1,62 @@
 :host {
     ::ng-deep {
+        .dark-theme {
+            background-color: #141414;
+            color: rgba(255, 255, 255, 0.85);
+
+            .ant-card-head {
+                border-bottom: 1px solid #303030;
+                color: rgba(255, 255, 255, 0.85);
+            }
+
+            .kpi-value:not([style*="color"]) {
+                color: rgba(255, 255, 255, 0.85);
+            }
+
+            // 暗黑主题下的 ST 表格适配
+            .ant-table {
+                background: transparent;
+                color: rgba(255, 255, 255, 0.85);
+
+                .ant-table-thead > tr > th {
+                    background: #1d1d1d;
+                    color: rgba(255, 255, 255, 0.85);
+                    border-bottom: 1px solid #303030;
+                }
+
+                .ant-table-tbody > tr > td {
+                    border-bottom: 1px solid #303030;
+                }
+
+                .ant-table-tbody > tr.ant-table-row:hover > td {
+                    background: #262626;
+                }
+            }
+
+            // 暗黑主题下的筛选条件显示区域
+            .filter-tags-container {
+                background: #141414;
+                border-bottom: 1px solid #303030;
+
+                .filter-label {
+                    color: rgba(255, 255, 255, 0.45);
+                }
+            }
+
+            // 暗黑主题下的表格链接
+            .dimension-column, .drillable-column {
+                a {
+                    color: rgba(255, 255, 255, 0.85) !important;
+                }
+                &:hover {
+                    color: var(--ant-primary-color);
+                    a {
+                        color: var(--ant-primary-color) !important;
+                    }
+                }
+            }
+        }
+
         // 维度列样式 - 可点击筛选
         .dimension-column, .drillable-column {
             cursor: pointer;

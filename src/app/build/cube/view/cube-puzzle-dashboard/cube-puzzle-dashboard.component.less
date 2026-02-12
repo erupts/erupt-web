@@ -129,16 +129,6 @@
     }
 
     &.dark-theme {
-        .puzzle-header {
-            background: #1f1f1f;
-            border-bottom-color: #303030;
-
-            .header-left {
-                .dashboard-title {
-                    color: rgba(255, 255, 255, 0.85);
-                }
-            }
-        }
 
         .puzzle-filter-row {
             background: #1f1f1f;
@@ -231,6 +221,45 @@
                 justify-content: center;
                 padding: 0;
                 border: none;
+            }
+        }
+    }
+
+    &.dark-theme {
+        .puzzle-filter-row {
+            background: #1f1f1f;
+            border-bottom: 1px solid #303030;
+
+            .filter-item {
+                background: #303030;
+                color: rgba(255, 255, 255, 0.85);
+
+                .filter-label {
+                    color: rgba(255, 255, 255, 0.65);
+                }
+            }
+        }
+
+        .puzzle-item {
+            background: #1f1f1f;
+            border: 1px solid #303030;
+
+            .item-actions {
+                background: #1f1f1f;
+                border: 1px solid #303030;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+
+                button {
+                    background: transparent;
+                    color: rgba(255, 255, 255, 0.65);
+                    &:hover {
+                        color: rgba(255, 255, 255, 0.85);
+                        background: #303030;
+                    }
+                    &[nzDanger]:hover {
+                        color: #ff4d4f;
+                    }
+                }
             }
         }
     }
