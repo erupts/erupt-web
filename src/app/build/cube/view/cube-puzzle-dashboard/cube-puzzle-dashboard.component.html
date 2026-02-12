@@ -91,6 +91,9 @@
                                                 title="Copy">
                                             <span nz-icon nzType="copy"></span>
                                         </button>
+                                        <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)" title="Fullscreen">
+                                            <span nz-icon nzType="fullscreen"></span>
+                                        </button>
                                         <button nz-button nzType="text" nzSize="small" nzDanger (click)="removeItem($index)"
                                                 title="Remove">
                                             <span nz-icon nzType="delete"></span>
@@ -105,11 +108,14 @@
                                             </button>
                                         }
                                         @if (report.type != ReportType.KPI) {
-                                            <button nz-button nzType="text" nzSize="small" (click)="download($index)">
+                                            <button nz-button nzType="text" nzSize="small" (click)="download($index)" title="Download">
                                                 <span nz-icon nzType="download"></span>
                                             </button>
                                         }
-                                        <button nz-button nzType="text" nzSize="small" (click)="refreshItem($index)">
+                                        <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)" title="Fullscreen">
+                                            <span nz-icon nzType="fullscreen"></span>
+                                        </button>
+                                        <button nz-button nzType="text" nzSize="small" (click)="refreshItem($index)" title="Refresh">
                                             <span nz-icon nzType="redo"></span>
                                         </button>
                                     </div>
