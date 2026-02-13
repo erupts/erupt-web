@@ -1,6 +1,6 @@
 <div class="cube-puzzle-container" [class.dark-theme]="dsl?.settings?.theme === DashboardTheme.DARK"
      [style.height]="isFillRoute ? '100vh' : 'calc(100vh - 50px)'">
-    @if (!viewModel) {
+    @if (editModel) {
         <div class="puzzle-header">
             <div class="header-left">
                 <button nz-button nzType="text" style="margin-right: 10px"
@@ -18,7 +18,7 @@
                 <div class="action-buttons">
                     <button nz-button nzType="default" (click)="toggleFilters()">
                         <span nz-icon [nzType]="showFilters ? 'eye-invisible' : 'eye'"></span>
-                        {{ showFilters ? 'Hide' : 'Show' }} Filters
+                        {{ showFilters ? 'Hide' : 'Show' }} Actions
                     </button>
                     @if (edit) {
                         <button nz-button nzType="default" (click)="addItem()">
@@ -40,6 +40,9 @@
                         <span nz-icon nzType="save"></span> Save
                     </button>
                 } @else {
+                    <button nz-button nzType="primary" nzGhost (click)="publish()" [nzLoading]="publishing">
+                        <span nz-icon nzType="send"></span> Publish
+                    </button>
                     <button nz-button nzType="primary" (click)="startEdit()">
                         <span nz-icon nzType="edit"></span> Edit
                     </button>
@@ -94,7 +97,8 @@
     <div class="gridster-wrapper"
          [style.background-color]="dsl?.settings?.backgroundColor"
          [style.background-image]="dsl?.settings?.backgroundImage ? 'url(' + dsl.settings.backgroundImage + ')' : 'none'"
-         style="background-size: cover; background-position: center;">
+         [style.background-size]="'cover'"
+         [style.background-position]="'center'">
         @if (!dsl?.reports || dsl.reports.length == 0) {
             <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" style="margin-top: 20%"></nz-empty>
         } @else {
@@ -167,3 +171,12 @@
         }
     </div>
 </div>
+
+<ng-template #publishContent>
+    <div style="margin-bottom: 12px">发布后，当前草稿配置将同步到正式视图。</div>
+    <nz-form-item style="margin-bottom: 0">
+        <nz-form-control [nzSpan]="24">
+            <textarea nz-input rows="3" [(ngModel)]="publishDescription" placeholder="修改说明"></textarea>
+        </nz-form-control>
+    </nz-form-item>
+</ng-template>

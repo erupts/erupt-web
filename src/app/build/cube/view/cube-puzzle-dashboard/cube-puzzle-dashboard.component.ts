@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
@@ -23,7 +23,7 @@ import {CubePuzzleDashboardConfig} from "../cube-puzzle-dashboard-config/cube-pu
 })
 export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
-    @Input() viewModel: boolean = false;
+    @Input() editModel: boolean = true;
 
     options: GridsterConfig;
 
@@ -34,6 +34,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     code!: string;
 
     saving: boolean = false;
+
+    publishing: boolean = false;
 
     dashboard: Dashboard;
 
@@ -50,6 +52,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     autoRefreshTimer: any;
 
     @ViewChildren(CubePuzzleReport) reports: QueryList<CubePuzzleReport>;
+    @ViewChild('publishContent', {static: true}) publishContent: TemplateRef<any>;
 
     charts: any[] = [];
 
@@ -137,7 +140,11 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         this.code = this.route.snapshot.paramMap.get('code')!;
         this.cubeApiService.dashboardDetail(this.code).subscribe(res => {
             this.dashboard = res.data;
-            this.dsl = res.data.draftDsl;
+            if (this.editModel) {
+                this.dsl = res.data.draftDsl;
+            } else {
+                this.dsl = res.data.publishDsl || {};
+            }
             this.options.margin = this.dsl?.settings?.gap ?? 12;
             this.cubeApiService.cubeMetadata(this.dashboard.cuber, this.dashboard.explore).subscribe(res => {
                 this.cubeMeta = res.data;
@@ -176,6 +183,28 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         this.options.resizable!.enabled = true;
         this.tempDsl = cloneDeep(this.dsl);
         this.changedOptions();
+    }
+
+    publishDescription: string = "";
+
+    publish() {
+        this.publishDescription = "";
+        this.modal.confirm({
+            nzTitle: '确定要发布吗？',
+            nzContent: this.publishContent,
+            nzOnOk: () => {
+                this.publishing = true;
+                this.cubeApiService.publish(this.dashboard.id, this.publishDescription).subscribe({
+                    next: () => {
+                        this.message.success("发布成功");
+                        this.publishing = false;
+                    },
+                    error: () => {
+                        this.publishing = false;
+                    }
+                });
+            }
+        });
     }
 
     cancelEdit() {

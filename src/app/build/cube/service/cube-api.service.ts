@@ -34,4 +34,10 @@ export class CubeApiService {
         return this._http.get<R<VL[]>>(RestPath.erupt + "/cube/semantic/parameter-items/" + cube + "/" + parameter);
     }
 
+    publish(id: number, description: string) {
+        return this._http.get<R<void>>(RestPath.erupt + "/cube/dashboard/publish-dsl/" + id, {
+            description
+        });
+    }
+
 }
