@@ -1,0 +1,35 @@
+<form nz-form nzLayout="vertical">
+    <nz-form-item>
+        <nz-form-label>背景颜色</nz-form-label>
+        <nz-form-control>
+            <nz-color-picker [(ngModel)]="dsl.settings.backgroundColor" name="backgroundColor"></nz-color-picker>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label>背景图 (URL)</nz-form-label>
+        <nz-form-control>
+            <input nz-input [(ngModel)]="dsl.settings.backgroundImage" name="backgroundImage" placeholder="https://example.com/bg.png"/>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label>主题</nz-form-label>
+        <nz-form-control>
+            <nz-radio-group [(ngModel)]="dsl.settings.theme" name="theme">
+                <label nz-radio [nzValue]="DashboardTheme.LIGHT">明亮</label>
+                <label nz-radio [nzValue]="DashboardTheme.DARK">暗黑</label>
+            </nz-radio-group>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label>自动刷新间隔 (秒, 0表示不刷新)</nz-form-label>
+        <nz-form-control>
+            <nz-input-number [(ngModel)]="dsl.settings.autoRefreshInterval" name="autoRefreshInterval" [nzMin]="0" [nzStep]="10" style="width: 100%"></nz-input-number>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label>报表间距 (px)</nz-form-label>
+        <nz-form-control>
+            <nz-input-number [(ngModel)]="dsl.settings.gap" name="gap" [nzMin]="0" [nzMax]="50" style="width: 100%"></nz-input-number>
+        </nz-form-control>
+    </nz-form-item>
+</form>
