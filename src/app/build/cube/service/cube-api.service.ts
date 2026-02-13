@@ -3,8 +3,8 @@ import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
 import {R} from "@shared/model/api.model";
 import {CubeMeta} from "../model/cube.model";
-import {Dashboard, DashboardDSL} from "../model/dashboard.model";
-import {CubeQuery, CubeQueryResponse} from "../model/cube-query.model";
+import {Dashboard, DashboardDSL, DashboardPublishHistory} from "../model/dashboard.model";
+import {CubeQuery} from "../model/cube-query.model";
 import {VL} from "../../erupt/model/erupt-field.model";
 
 @Injectable()
@@ -37,6 +37,16 @@ export class CubeApiService {
     publish(id: number, description: string) {
         return this._http.get<R<void>>(RestPath.erupt + "/cube/dashboard/publish-dsl/" + id, {
             description
+        });
+    }
+
+    publishHistory(id: number) {
+        return this._http.get<R<DashboardPublishHistory[]>>(RestPath.erupt + "/cube/dashboard/publish-history/" + id);
+    }
+
+    rollback(id: number, historyId: number) {
+        return this._http.get<R<void>>(RestPath.erupt + "/cube/dashboard/rollback-dsl/" + id, {
+            historyId
         });
     }
 

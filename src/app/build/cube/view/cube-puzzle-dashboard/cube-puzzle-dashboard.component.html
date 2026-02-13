@@ -40,6 +40,9 @@
                         <span nz-icon nzType="save"></span> Save
                     </button>
                 } @else {
+                    <button nz-button nzType="default" (click)="showHistory()">
+                        <span nz-icon nzType="history"></span> History
+                    </button>
                     <button nz-button nzType="primary" nzGhost (click)="publish()" [nzLoading]="publishing">
                         <span nz-icon nzType="send"></span> Publish
                     </button>
@@ -179,4 +182,29 @@
             <textarea nz-input rows="3" [(ngModel)]="publishDescription" placeholder="修改说明"></textarea>
         </nz-form-control>
     </nz-form-item>
+</ng-template>
+
+<ng-template #historyContent>
+    <nz-table #historyTable [nzData]="historyList" [nzLoading]="loadingHistory" nzSize="small" [nzPageSize]="10">
+        <thead>
+        <tr>
+            <th>修改说明</th>
+            <th>发布人</th>
+            <th>发布时间</th>
+            <th nzWidth="100px">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (data of historyTable.data; track data.createTime) {
+            <tr>
+                <td>{{ data.description || '无说明' }}</td>
+                <td>{{ data.createUser?.name }}</td>
+                <td>{{ data.createTime }}</td>
+                <td>
+                    <a (click)="rollback(data)">回滚</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </nz-table>
 </ng-template>
