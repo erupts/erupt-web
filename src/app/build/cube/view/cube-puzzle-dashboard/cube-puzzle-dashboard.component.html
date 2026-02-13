@@ -125,7 +125,7 @@
                                         </button>
                                         <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)"
                                                 title="Fullscreen">
-                                            <span nz-icon nzType="fullscreen"></span>
+                                            <span nz-icon [nzType]="isItemFullscreen($index) ? 'fullscreen-exit' : 'fullscreen'"></span>
                                         </button>
                                         <button nz-button nzType="text" nzSize="small" nzDanger
                                                 (click)="removeItem($index)"
@@ -149,7 +149,7 @@
                                         }
                                         <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)"
                                                 title="Fullscreen">
-                                            <span nz-icon nzType="fullscreen"></span>
+                                            <span nz-icon [nzType]="isItemFullscreen($index) ? 'fullscreen-exit' : 'fullscreen'"></span>
                                         </button>
                                         <button nz-button nzType="text" nzSize="small" (click)="refreshItem($index)"
                                                 title="Refresh">

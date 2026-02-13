@@ -276,16 +276,35 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         }
     }
 
+    isItemFullscreen(index: number): boolean {
+        const reportComponent = this.reports?.toArray()[index];
+        if (reportComponent) {
+            const el = reportComponent.el.nativeElement.parentElement.parentElement;
+            return document.fullscreenElement === el;
+        }
+        return false;
+    }
+
     fullScreenItem(index: number) {
         const reportComponent = this.reports.toArray()[index];
         if (reportComponent) {
-            const el = reportComponent.el.nativeElement;
-            if (el.requestFullscreen) {
-                el.requestFullscreen();
-            } else if (el['webkitRequestFullscreen']) {
-                el['webkitRequestFullscreen']();
-            } else if (el['msRequestFullscreen']) {
-                el['msRequestFullscreen']();
+            const el = reportComponent.el.nativeElement.parentElement.parentElement;
+            if (document.fullscreenElement === el) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document['webkitExitFullscreen']) {
+                    document['webkitExitFullscreen']();
+                } else if (document['msExitFullscreen']) {
+                    document['msExitFullscreen']();
+                }
+            } else {
+                if (el.requestFullscreen) {
+                    el.requestFullscreen();
+                } else if (el['webkitRequestFullscreen']) {
+                    el['webkitRequestFullscreen']();
+                } else if (el['msRequestFullscreen']) {
+                    el['msRequestFullscreen']();
+                }
             }
         }
     }
