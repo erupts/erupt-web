@@ -1,12 +1,18 @@
 import {GridsterItem} from "angular-gridster2";
 import {CubeOperator} from "./cube-query.model";
 
+export interface EruptUser {
+    id: number;
+    avatar: string;
+    name: string;
+}
+
 export interface Dashboard {
     id?: number;
     createTime?: Date | string;
     updateTime?: Date | string;
-    createUser?: string;
-    updateUser?: string;
+    createUser?: EruptUser;
+    updateUser?: EruptUser;
     code: string;
     name: string;
     description?: string;
@@ -17,6 +23,15 @@ export interface Dashboard {
     draftDsl?: DashboardDSL;
     publishDsl?: DashboardDSL;
     publishTime?: Date | string;  // 发布时间
+}
+
+export interface DashboardPublishHistory {
+    id: number;
+    dashboardId: number;
+    description?: string;
+    dsl?: DashboardDSL;
+    createTime?: Date | string;
+    createUser?: EruptUser;
 }
 
 export enum DashboardTheme {
@@ -48,12 +63,6 @@ export interface FilterDSL {
     // control?: FilterControl
     defaultValue?: any;
     value?: any;
-}
-
-
-export enum FilterControl {
-    MULTI_SELECT = "MULTI_SELECT",
-    RADIO = "RADIO",
 }
 
 /**

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {Dashboard, DashboardDSL, FilterControl, FilterDSL} from "../../model/dashboard.model";
+import {Dashboard, DashboardDSL, FilterDSL} from "../../model/dashboard.model";
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubeMeta, FieldType} from "../../model/cube.model";
 import {CubeApiService} from "../../service/cube-api.service";

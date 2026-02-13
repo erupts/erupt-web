@@ -78,7 +78,8 @@ import {
     FilterOutline,
     SortAscendingOutline,
     SortDescendingOutline,
-    ShareAltOutline
+    ShareAltOutline,
+    HistoryOutline,
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -156,5 +157,6 @@ export const ICONS_AUTO = [
     FilterOutline,
     SortAscendingOutline,
     SortDescendingOutline,
-    ShareAltOutline
+    ShareAltOutline,
+    HistoryOutline,
 ];

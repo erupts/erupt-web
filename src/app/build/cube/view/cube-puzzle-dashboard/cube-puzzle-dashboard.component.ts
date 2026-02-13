@@ -5,7 +5,7 @@ import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
-import {Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {Dashboard, DashboardDSL, DashboardPublishHistory, DashboardTheme, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeMeta} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
@@ -53,6 +53,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     @ViewChildren(CubePuzzleReport) reports: QueryList<CubePuzzleReport>;
     @ViewChild('publishContent', {static: true}) publishContent: TemplateRef<any>;
+    @ViewChild('historyContent', {static: true}) historyContent: TemplateRef<any>;
 
     charts: any[] = [];
 
@@ -202,6 +203,38 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                     error: () => {
                         this.publishing = false;
                     }
+                });
+            }
+        });
+    }
+
+    historyList: DashboardPublishHistory[] = [];
+    loadingHistory = false;
+
+    showHistory() {
+        this.loadingHistory = true;
+        this.cubeApiService.publishHistory(this.dashboard.id).subscribe(res => {
+            this.historyList = res.data;
+            this.loadingHistory = false;
+        });
+        this.modal.create({
+            nzTitle: '发布历史',
+            nzContent: this.historyContent,
+            nzWidth: 800,
+            nzFooter: null
+        });
+    }
+
+    rollback(history: DashboardPublishHistory) {
+        this.modal.confirm({
+            nzTitle: '确定要回滚到该版本吗？',
+            nzContent: `回滚后，当前的草稿配置将被覆盖为：${history.description || '无说明'} (${history.createTime})`,
+            nzOnOk: () => {
+                this.cubeApiService.rollback(this.dashboard.id, history.id).subscribe(() => {
+                    this.message.success("回滚成功");
+                    this.modal.closeAll();
+                    this.ngOnInit(); // 重新加载数据
+                    this.query();
                 });
             }
         });
