@@ -1,50 +1,52 @@
 <div class="cube-puzzle-container" [class.dark-theme]="dsl?.settings?.theme === DashboardTheme.DARK"
      [style.height]="isFillRoute ? '100vh' : 'calc(100vh - 50px)'">
-    <div class="puzzle-header">
-        <div class="header-left">
-            <button nz-button nzType="text" style="margin-right: 10px" [routerLink]="['/build/table/CubeDashboard']">
-                <nz-icon nzType="arrow-left"></nz-icon>
-            </button>
-            <span class="dashboard-title">{{ dashboard?.name }}</span>
-            @if (dashboard?.description) {
-                <span nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
-                      [nzTooltipTitle]="dashboard?.description"
-                      class="dashboard-description-icon"></span>
-            }
-        </div>
-        <div class="header-center">
-            <div class="action-buttons">
-                <button nz-button nzType="default" (click)="toggleFilters()">
-                    <span nz-icon
-                          [nzType]="showFilters ? 'eye-invisible' : 'eye'"></span> {{ showFilters ? 'Hide' : 'Show' }}
-                    Filters
+    @if (!viewModel) {
+        <div class="puzzle-header">
+            <div class="header-left">
+                <button nz-button nzType="text" style="margin-right: 10px"
+                        [routerLink]="['/build/table/CubeDashboard']">
+                    <nz-icon nzType="arrow-left"></nz-icon>
                 </button>
+                <span class="dashboard-title">{{ dashboard?.name }}</span>
+                @if (dashboard?.description) {
+                    <span nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+                          [nzTooltipTitle]="dashboard?.description"
+                          class="dashboard-description-icon"></span>
+                }
+            </div>
+            <div class="header-center">
+                <div class="action-buttons">
+                    <button nz-button nzType="default" (click)="toggleFilters()">
+                        <span nz-icon [nzType]="showFilters ? 'eye-invisible' : 'eye'"></span>
+                        {{ showFilters ? 'Hide' : 'Show' }} Filters
+                    </button>
+                    @if (edit) {
+                        <button nz-button nzType="default" (click)="addItem()">
+                            <span nz-icon nzType="plus"></span> Add Report
+                        </button>
+                        <button nz-button nzType="default" (click)="addFilter()">
+                            <span nz-icon nzType="filter"></span> Add Filter
+                        </button>
+                        <button nz-button nzType="default" (click)="dashboardSettings()">
+                            <span nz-icon nzType="setting"></span> Settings
+                        </button>
+                    }
+                </div>
+            </div>
+            <div class="header-right">
                 @if (edit) {
-                    <button nz-button nzType="default" (click)="addItem()">
-                        <span nz-icon nzType="plus"></span> Add Report
+                    <button nz-button nzType="default" (click)="cancelEdit()">Cancel</button>
+                    <button nz-button nzType="primary" (click)="saveEdit()" [nzLoading]="saving">
+                        <span nz-icon nzType="save"></span> Save
                     </button>
-                    <button nz-button nzType="default" (click)="addFilter()">
-                        <span nz-icon nzType="filter"></span> Add Filter
-                    </button>
-                    <button nz-button nzType="default" (click)="dashboardSettings()">
-                        <span nz-icon nzType="setting"></span> Settings
+                } @else {
+                    <button nz-button nzType="primary" (click)="startEdit()">
+                        <span nz-icon nzType="edit"></span> Edit
                     </button>
                 }
             </div>
         </div>
-        <div class="header-right">
-            @if (edit) {
-                <button nz-button nzType="default" (click)="cancelEdit()">Cancel</button>
-                <button nz-button nzType="primary" (click)="saveEdit()" [nzLoading]="saving">
-                    <span nz-icon nzType="save"></span> Save
-                </button>
-            } @else {
-                <button nz-button nzType="primary" (click)="startEdit()">
-                    <span nz-icon nzType="edit"></span> Edit
-                </button>
-            }
-        </div>
-    </div>
+    }
     @if (cubeMeta && showFilters) {
         <div class="puzzle-filter-row">
             <div class="filter-items" cdkDropList cdkDropListOrientation="horizontal"
@@ -75,6 +77,9 @@
                     }
                 }
                 <div style="margin-left: auto; display: flex; gap: 8px;">
+                    <button nz-button nzSize="small" (click)="copyLink()" title="Copy Link">
+                        <span nz-icon nzType="link"></span>
+                    </button>
                     <button nz-button nzSize="small" (click)="toggleFullscreen()" title="Fullscreen">
                         <span nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"></span>
                     </button>

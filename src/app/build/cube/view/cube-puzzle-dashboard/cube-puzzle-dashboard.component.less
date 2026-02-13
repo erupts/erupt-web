@@ -1,4 +1,3 @@
-
 .cube-puzzle-container {
     display: flex;
     flex-direction: column;
@@ -6,12 +5,6 @@
     //    linear-gradient(rgba(226, 232, 240, 0.8) 1px, transparent 1px),
     //    linear-gradient(90deg, rgba(226, 232, 240, 0.8) 1px, transparent 1px);
     //background-size: 20px 20px;
-
-    &:fullscreen {
-        background: #fff;
-        height: 100vh !important;
-        overflow: auto;
-    }
 
     &.dark-theme:fullscreen {
         background: #1f1f1f;
@@ -208,7 +201,7 @@
             border: 1px solid #e8e8e8;
             padding: 2px;
             border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             opacity: 0;
             visibility: hidden;
             transition: all 0.2s;
@@ -247,15 +240,17 @@
             .item-actions {
                 background: #1f1f1f;
                 border: 1px solid #303030;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
 
                 button {
                     background: transparent;
                     color: rgba(255, 255, 255, 0.65);
+
                     &:hover {
                         color: rgba(255, 255, 255, 0.85);
                         background: #303030;
                     }
+
                     &[nzDanger]:hover {
                         color: #ff4d4f;
                     }

@@ -1,8 +1,9 @@
-import {Component, ElementRef, Inject, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
+import {NzMessageService} from "ng-zorro-antd/message";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
 import {Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeMeta} from "../../model/cube.model";
@@ -21,6 +22,8 @@ import {CubePuzzleDashboardConfig} from "../cube-puzzle-dashboard-config/cube-pu
     styleUrls: ['./cube-puzzle-dashboard.component.less']
 })
 export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
+
+    @Input() viewModel: boolean = false;
 
     options: GridsterConfig;
 
@@ -53,6 +56,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     constructor(private router: Router, private route: ActivatedRoute,
                 private cubeApiService: CubeApiService,
                 private el: ElementRef,
+                private message: NzMessageService,
                 @Inject(NzModalService) private modal: NzModalService
     ) {
 
@@ -487,6 +491,18 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             });
         }
         this.query();
+    }
+
+    copyLink() {
+        const url = window.location.href;
+        const hashIndex = url.indexOf('#');
+        if (hashIndex !== -1) {
+            const baseUrl = url.substring(0, hashIndex + 1);
+            const newUrl = baseUrl + '/fill/cube/' + this.dashboard?.code;
+            navigator.clipboard.writeText(newUrl).then(() => {
+                this.message.success('复制成功');
+            });
+        }
     }
 
     protected readonly ReportType = ReportType;
