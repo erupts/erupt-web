@@ -1,12 +1,18 @@
 import {GridsterItem} from "angular-gridster2";
 import {CubeOperator} from "./cube-query.model";
 
+export interface EruptUser {
+    id: number;
+    avatar: string;
+    name: string;
+}
+
 export interface Dashboard {
     id?: number;
     createTime?: Date | string;
     updateTime?: Date | string;
-    createUser?: string;
-    updateUser?: string;
+    createUser?: EruptUser;
+    updateUser?: EruptUser;
     code: string;
     name: string;
     description?: string;
@@ -19,12 +25,35 @@ export interface Dashboard {
     publishTime?: Date | string;  // 发布时间
 }
 
+export interface DashboardPublishHistory {
+    id: number;
+    dashboardId: number;
+    description?: string;
+    dsl?: DashboardDSL;
+    createTime?: Date | string;
+    createUser?: EruptUser;
+}
+
+export enum DashboardTheme {
+    LIGHT = 'light',
+    DARK = 'dark',
+}
+
 /**
  * 仪表板 DSL 定义
  */
 export interface DashboardDSL {
     filters?: FilterDSL[];
     reports?: ReportDSL[];
+    settings?: DashboardSettings;
+}
+
+export interface DashboardSettings {
+    backgroundColor?: string;
+    backgroundImage?: string;
+    theme?: DashboardTheme;
+    autoRefreshInterval?: number; // 自动刷新间隔（秒），0 表示不自动刷新
+    gap?: number;                 // 报表间距
 }
 
 export interface FilterDSL {
@@ -34,12 +63,6 @@ export interface FilterDSL {
     // control?: FilterControl
     defaultValue?: any;
     value?: any;
-}
-
-
-export enum FilterControl {
-    MULTI_SELECT = "MULTI_SELECT",
-    RADIO = "RADIO",
 }
 
 /**

@@ -14,22 +14,29 @@ import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 import {CubePuzzleReport} from "./view/cube-puzzle-report/cube-puzzle-report";
 import {CubePuzzleFilterConfig} from "./view/cube-puzzle-filter-config/cube-puzzle-filter-config";
 import {CubePuzzleFilterControl} from "./view/cube-puzzle-filter-control/cube-puzzle-filter-control";
+import {CubePuzzleDashboardConfig} from "./view/cube-puzzle-dashboard-config/cube-puzzle-dashboard-config";
 import {NzEmptyComponent} from "ng-zorro-antd/empty";
 import {NzColorPickerComponent} from "ng-zorro-antd/color-picker";
 import {CubeDrillDetailComponent} from "./view/cube-drill-detail/cube-drill-detail.component";
+import {CubePuzzleDashboardView} from "./view/cube-puzzle-dashboard-view/cube-puzzle-dashboard-view";
 
 
 @NgModule({
     declarations: [
+        CubePuzzleDashboardView,
         CubePuzzleDashboardComponent,
         CubePuzzleFilterConfig,
         CubePuzzleFilterControl,
         CubePuzzleReport,
         CubePuzzleReportConfig,
         CubeDrillDetailComponent,
+        CubePuzzleDashboardConfig,
     ],
     providers: [
         CubeApiService
+    ],
+    exports: [
+        CubePuzzleDashboardComponent
     ],
     imports: [
         SharedModule,
