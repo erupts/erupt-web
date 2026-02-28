@@ -10,6 +10,8 @@ import {
     ArrowLeftOutline,
     ArrowRightOutline,
     BellOutline,
+    BorderInnerOutline,
+    BorderOutline,
     BuildOutline,
     BulbOutline,
     BulbTwoTone,
@@ -32,9 +34,12 @@ import {
     EyeOutline,
     EyeTwoTone,
     FileImageOutline,
+    FileTwoTone,
+    FilterOutline,
     FullscreenExitOutline,
     FullscreenOutline,
     GlobalOutline,
+    HistoryOutline,
     HolderOutline,
     IdcardOutline,
     ImportOutline,
@@ -65,6 +70,9 @@ import {
     SearchOutline,
     SendOutline,
     SettingOutline,
+    ShareAltOutline,
+    SortAscendingOutline,
+    SortDescendingOutline,
     StopOutline,
     SwapOutline,
     SyncOutline,
@@ -73,13 +81,7 @@ import {
     UnorderedListOutline,
     UserAddOutline,
     UserOutline,
-    WarningTwoTone,
-    FileTwoTone,
-    FilterOutline,
-    SortAscendingOutline,
-    SortDescendingOutline,
-    ShareAltOutline,
-    HistoryOutline,
+    WarningTwoTone
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -159,4 +161,6 @@ export const ICONS_AUTO = [
     SortDescendingOutline,
     ShareAltOutline,
     HistoryOutline,
+    BorderInnerOutline,
+    BorderOutline
 ];
