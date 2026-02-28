@@ -4,6 +4,16 @@
     overflow: auto;
     position: relative;
 
+    &.fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1000;
+        background: #f0f2f5;
+    }
+
     .operation {
         position: fixed;
         bottom: 20px;

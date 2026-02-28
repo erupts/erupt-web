@@ -1,4 +1,4 @@
-<div class="flow">
+<div class="flow" [class.fullscreen]="isFullscreen">
   <div class="operation">
     @if (progress) {
       <div style="zoom: .6">
@@ -10,15 +10,18 @@
       </div>
     }
     <div class="operation-zoom">
-      <button nz-button nzSize="small" (click)="doZoom(-1)">
+      <button nz-button nzSize="small" (click)="doZoom(-1)" title="缩小 (Ctrl + -)">
         <span nz-icon nzType="minus"></span>
       </button>
       <span class="zoom-text">{{ (scale * 100) | number:'1.0-0' }}%</span>
-      <button nz-button nzSize="small" (click)="doHit()" title="重置视图">
-        <span nz-icon nzType="reload"></span>
+      <button nz-button nzSize="small" (click)="doHit()" title="自适应视图 (Ctrl + 0)">
+        <span nz-icon nzType="aim"></span>
       </button>
-      <button nz-button nzSize="small" (click)="doZoom(1)">
+      <button nz-button nzSize="small" (click)="doZoom(1)" title="放大 (Ctrl + +)">
         <span nz-icon nzType="plus"></span>
+      </button>
+      <button nz-button nzSize="small" (click)="toggleFullscreen()" [title]="isFullscreen ? '退出全屏' : '全屏'">
+        <span nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"></span>
       </button>
     </div>
   </div>

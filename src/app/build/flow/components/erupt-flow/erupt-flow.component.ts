@@ -38,6 +38,8 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
 
     @Input() progress: Record<string, FlowTurn>
 
+    isFullscreen = false;
+
     @ViewChild('canvasContainer') canvasContainer: ElementRef;
 
     @ViewChildren('node') nodeRefs!: QueryList<ElementRef>;
@@ -160,22 +162,66 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
             // 检查是否点击在特定的交互元素上，如果是则不启动拖拽
             const isInteractiveElement = target.closest('button, input, select, textarea, [contenteditable], .node-input, .node-edit, .node-delete, .insert-btn');
 
-            // 如果点击在交互元素上，不启动拖拽
-            if (isInteractiveElement) {
+            // 如果点击在交互元素上，且不是中键，不启动拖拽
+            if (isInteractiveElement && event.button !== 1) {
                 return;
             }
 
-            this.isDragging = true;
-            this.startX = event.clientX;
-            this.startY = event.clientY;
+            // 支持左键拖拽（在非交互元素上）和中键拖拽（任何地方）
+            if (event.button === 0 || event.button === 1) {
+                this.isDragging = true;
+                this.startX = event.clientX;
+                this.startY = event.clientY;
 
-            // 获取当前滚动位置
-            const scrollContainer = this.getScrollableContainer();
-            if (scrollContainer) {
-                this.startScrollLeft = scrollContainer.scrollLeft;
-                this.startScrollTop = scrollContainer.scrollTop;
+                // 获取当前滚动位置
+                const scrollContainer = this.getScrollableContainer();
+                if (scrollContainer) {
+                    this.startScrollLeft = scrollContainer.scrollLeft;
+                    this.startScrollTop = scrollContainer.scrollTop;
+                }
+                container.style.cursor = 'grabbing';
+                if (event.button === 1) {
+                    event.preventDefault(); // 防止中键点击触发滚动
+                }
             }
-            container.style.cursor = 'grabbing';
+        }
+    }
+
+    /**
+     * 鼠标滚轮事件 - 实现缩放
+     */
+    @HostListener('wheel', ['$event'])
+    onWheel(event: WheelEvent) {
+        // 如果按住 Ctrl 键，则进行缩放
+        if (event.ctrlKey || event.metaKey) {
+            event.preventDefault();
+            const delta = event.deltaY > 0 ? -1 : 1;
+            this.doZoom(delta);
+        }
+    }
+
+    /**
+     * 键盘事件
+     */
+    @HostListener('window:keydown', ['$event'])
+    onKeyDown(event: KeyboardEvent) {
+        const target = event.target as HTMLElement;
+        // 如果正在输入，不触发快捷键
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+            return;
+        }
+
+        if (event.ctrlKey || event.metaKey) {
+            if (event.key === '=' || event.key === '+') {
+                event.preventDefault();
+                this.doZoom(1);
+            } else if (event.key === '-') {
+                event.preventDefault();
+                this.doZoom(-1);
+            } else if (event.key === '0') {
+                event.preventDefault();
+                this.doHit();
+            }
         }
     }
 
@@ -245,23 +291,49 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
     }
 
     /**
-     * 重置功能
+     * 重置并自适应视图
      */
     doHit() {
-        // 重置缩放比例
-        this.scale = 1;
-        this.applyScale();
-
-        // 重置滚动位置
         const scrollContainer = this.getScrollableContainer();
-        if (scrollContainer) {
-            // 水平滚动条居中
-            const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-            scrollContainer.scrollLeft = maxScrollLeft > 0 ? maxScrollLeft / 2 : 0;
+        const processRenderElement = this.getProcessRenderElement();
 
-            // 垂直滚动条回到顶部
-            scrollContainer.scrollTop = 0;
+        if (scrollContainer && processRenderElement) {
+            const containerWidth = scrollContainer.clientWidth - 80; // 留出 40px padding
+            const containerHeight = scrollContainer.clientHeight - 80;
+            const contentWidth = processRenderElement.offsetWidth;
+            const contentHeight = processRenderElement.offsetHeight;
+
+            // 计算缩放比例以适应容器
+            const scaleX = containerWidth / contentWidth;
+            const scaleY = containerHeight / contentHeight;
+            let newScale = Math.min(scaleX, scaleY);
+
+            // 限制缩放比例在合理范围内，且不要超过 1
+            newScale = Math.max(this.minScale, Math.min(1, newScale));
+
+            this.scale = newScale;
+            this.applyScale();
+
+            // 重置滚动位置并居中
+            setTimeout(() => {
+                const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+                scrollContainer.scrollLeft = maxScrollLeft > 0 ? maxScrollLeft / 2 : 0;
+                scrollContainer.scrollTop = 0;
+            }, 0);
+        } else {
+            // 回退到基本重置
+            this.scale = 1;
+            this.applyScale();
         }
+    }
+
+    /**
+     * 切换全屏状态
+     */
+    toggleFullscreen() {
+        this.isFullscreen = !this.isFullscreen;
+        // 全屏切换后，自适应一下视图
+        setTimeout(() => this.doHit(), 300);
     }
 
     protected readonly FlowTurn = FlowTurn;
