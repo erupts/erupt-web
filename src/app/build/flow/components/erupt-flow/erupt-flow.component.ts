@@ -40,6 +40,8 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
 
     isFullscreen = false;
 
+    showGrid = true;
+
     @ViewChild('canvasContainer') canvasContainer: ElementRef;
 
     @ViewChildren('node') nodeRefs!: QueryList<ElementRef>;
@@ -221,6 +223,12 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
             } else if (event.key === '0') {
                 event.preventDefault();
                 this.doHit();
+            } else if (event.key === 's' || event.key === 'S') {
+                // 屏蔽保存快捷键干扰，或者可以绑定为导出
+                // event.preventDefault();
+            } else if (event.key === 'g' || event.key === 'G') {
+                event.preventDefault();
+                this.showGrid = !this.showGrid;
             }
         }
     }
@@ -334,6 +342,14 @@ export class EruptFlowComponent implements OnInit, AfterViewInit {
         this.isFullscreen = !this.isFullscreen;
         // 全屏切换后，自适应一下视图
         setTimeout(() => this.doHit(), 300);
+    }
+
+    /**
+     * 重置缩放
+     */
+    resetZoom() {
+        this.scale = 1;
+        this.applyScale();
     }
 
     protected readonly FlowTurn = FlowTurn;
