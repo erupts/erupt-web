@@ -2,11 +2,13 @@
   <thead>
     <tr>
       <th [nzWidth]="'260px'">表单字段</th>
-      <th style="display: flex;gap: 50px;justify-content:space-evenly">
-        <span>只读</span>
-        <span>编辑</span>
-        <span>必填</span>
-        <span>隐藏</span>
+      <th style="background: #fafafa; border-bottom: 1px solid #f0f0f0;">
+        <div style="display: flex;gap: 50px;justify-content:space-evenly">
+          <span (click)="setAllAccess(FormAccessEnum.READONLY)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部只读">只读</span>
+          <span (click)="setAllAccess(FormAccessEnum.READ_WRITE)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部编辑">编辑</span>
+          <span (click)="setAllAccess(FormAccessEnum.NOT_NULL)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部必填">必填</span>
+          <span (click)="setAllAccess(FormAccessEnum.HIDE)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部隐藏">隐藏</span>
+        </div>
       </th>
     </tr>
   </thead>
