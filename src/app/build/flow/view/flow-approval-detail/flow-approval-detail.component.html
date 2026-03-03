@@ -88,7 +88,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                @for (task of instanceTasks; track task) {
+                                                @for (task of instanceTasks; track task.id) {
                                                     <tr>
                                                         @if (task.nodeId || task.nodeId === null) {
                                                             <td [rowSpan]="task.nodeRowspan || 1">
