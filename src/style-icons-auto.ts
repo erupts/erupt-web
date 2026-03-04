@@ -11,6 +11,7 @@ import {
     ArrowRightOutline,
     BellOutline,
     BorderInnerOutline,
+    BorderOuterOutline,
     BorderOutline,
     BuildOutline,
     BulbOutline,
@@ -81,7 +82,7 @@ import {
     UnorderedListOutline,
     UserAddOutline,
     UserOutline,
-    WarningTwoTone
+    WarningTwoTone,
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -162,5 +163,6 @@ export const ICONS_AUTO = [
     ShareAltOutline,
     HistoryOutline,
     BorderInnerOutline,
-    BorderOutline
+    BorderOutline,
+    BorderOuterOutline
 ];
