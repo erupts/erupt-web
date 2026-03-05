@@ -78,7 +78,7 @@
                                         >
                                             <thead>
                                             <tr>
-                                                <th>节点 ID</th>
+                                                <th>节点</th>
                                                 <th>审批人</th>
                                                 <th>任务类型</th>
                                                 <th>任务状态</th>
@@ -92,7 +92,7 @@
                                                     <tr>
                                                         @if (task.nodeId || task.nodeId === null) {
                                                             <td [rowSpan]="task.nodeRowspan || 1">
-                                                                {{ task.nodeId }}
+                                                                {{ task.nodeName || task.nodeId }}
                                                             </td>
                                                         }
                                                         <td>
@@ -416,12 +416,12 @@
 
 <!-- 抄送弹窗 -->
 <nz-modal [nzDraggable]="true"
-    [(nzVisible)]="ccModalVisible"
-    nzTitle="抄送审批"
-    nzOkText="确定"
-    nzCancelText="取消"
-    (nzOnOk)="submitCc()"
-    (nzOnCancel)="ccModalVisible = false"
+          [(nzVisible)]="ccModalVisible"
+          nzTitle="抄送审批"
+          nzOkText="确定"
+          nzCancelText="取消"
+          (nzOnOk)="submitCc()"
+          (nzOnCancel)="ccModalVisible = false"
 >
     <div *nzModalContent>
         <div class="modal-content">
@@ -461,12 +461,12 @@
 
 <!-- 转交弹窗 -->
 <nz-modal [nzDraggable]="true"
-    [(nzVisible)]="transferModalVisible"
-    nzTitle="转交审批"
-    nzOkText="确定"
-    nzCancelText="取消"
-    (nzOnOk)="submitTransfer()"
-    (nzOnCancel)="transferModalVisible = false"
+          [(nzVisible)]="transferModalVisible"
+          nzTitle="转交审批"
+          nzOkText="确定"
+          nzCancelText="取消"
+          (nzOnOk)="submitTransfer()"
+          (nzOnCancel)="transferModalVisible = false"
 >
     <div *nzModalContent>
         <div class="modal-content">
@@ -505,12 +505,12 @@
 
 <!-- 加签弹窗 -->
 <nz-modal [nzDraggable]="true"
-    [(nzVisible)]="addSignModalVisible"
-    nzTitle="加签审批"
-    nzOkText="确定"
-    nzCancelText="取消"
-    (nzOnOk)="submitAddSign()"
-    (nzOnCancel)="addSignModalVisible = false"
+          [(nzVisible)]="addSignModalVisible"
+          nzTitle="加签审批"
+          nzOkText="确定"
+          nzCancelText="取消"
+          (nzOnOk)="submitAddSign()"
+          (nzOnCancel)="addSignModalVisible = false"
 >
     <div *nzModalContent>
         <div class="modal-content">
@@ -557,13 +557,13 @@
 
 <!-- 退回弹窗 -->
 <nz-modal [nzDraggable]="true"
-    [(nzVisible)]="returnModalVisible"
-    nzTitle="退回审批"
-    nzOkText="确定"
-    nzCancelText="取消"
-    nzOkDanger="true"
-    (nzOnOk)="submitReturn()"
-    (nzOnCancel)="returnModalVisible = false"
+          [(nzVisible)]="returnModalVisible"
+          nzTitle="退回审批"
+          nzOkText="确定"
+          nzCancelText="取消"
+          nzOkDanger="true"
+          (nzOnOk)="submitReturn()"
+          (nzOnCancel)="returnModalVisible = false"
 >
     <div *nzModalContent>
         <div class="modal-content">
@@ -602,12 +602,12 @@
 
 <!-- 重新提交弹窗 -->
 <nz-modal [nzDraggable]="true"
-    [(nzVisible)]="resubmitModalVisible"
-    nzTitle="重新提交"
-    nzOkText="确定"
-    nzCancelText="取消"
-    (nzOnOk)="submitResubmit()"
-    (nzOnCancel)="resubmitModalVisible = false"
+          [(nzVisible)]="resubmitModalVisible"
+          nzTitle="重新提交"
+          nzOkText="确定"
+          nzCancelText="取消"
+          (nzOnOk)="submitResubmit()"
+          (nzOnCancel)="resubmitModalVisible = false"
 >
     <div *nzModalContent>
         <div class="modal-content">

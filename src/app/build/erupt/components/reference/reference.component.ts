@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {NzSizeLDSType} from "ng-zorro-antd/core/types";
 import {TreeSelectComponent} from "../tree-select/tree-select.component";
@@ -27,6 +27,10 @@ export class ReferenceComponent implements OnInit {
 
     @Input() parentEruptName: string
 
+    @Input() ngModel: any;
+
+    @Output() ngModelChange = new EventEmitter<any>();
+
     editType = EditType;
 
     constructor(@Inject(NzModalService) private modal: NzModalService,
@@ -35,6 +39,9 @@ export class ReferenceComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        if (this.ngModel) {
+            this.field.eruptFieldJson.edit.$value = this.ngModel;
+        }
     }
 
     createReferenceModal(field: EruptFieldModel) {
@@ -76,6 +83,7 @@ export class ReferenceComponent implements OnInit {
                 }
                 field.eruptFieldJson.edit.$viewValue = tempVal.label;
                 field.eruptFieldJson.edit.$value = tempVal.id;
+                this.ngModelChange.emit(tempVal.id);
                 field.eruptFieldJson.edit.$tempValue = null;
                 return true;
             }
@@ -122,6 +130,7 @@ export class ReferenceComponent implements OnInit {
                 edit.$value = radioValue[edit.referenceTableType.id];
                 edit.$viewValue = radioValue[edit.referenceTableType.label
                     .replace(".", "_")] || '-----';
+                this.ngModelChange.emit(edit.$value);
                 edit.$tempValue = radioValue;
                 return true;
             }
@@ -142,6 +151,7 @@ export class ReferenceComponent implements OnInit {
         field.eruptFieldJson.edit.$value = null;
         field.eruptFieldJson.edit.$viewValue = null;
         field.eruptFieldJson.edit.$tempValue = null;
+        this.ngModelChange.emit(null);
         for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
             let edit = eruptFieldModel.eruptFieldJson.edit;
             if (edit.type == EditType.REFERENCE_TREE) {
