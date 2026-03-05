@@ -78,6 +78,20 @@
       (select)="select.emit($event)">
     </app-cc-node>
   }
+    @case (nodeType.ASSIGNEE) {
+        <assignee-node
+            [readonly]="readonly"
+            [(modelValue)]="node"
+            [eruptBuild]="eruptBuild"
+            [branch]="branch"
+            [index]="index"
+            [progress]="progress"
+            (modelValueChange)="nodeChange.emit($event)"
+            (insertNode)="insertNodeFun(branch, $event.index, $event.type)"
+            (delete)="deleteNode(branch, $event.index)"
+            (select)="select.emit($event)">
+        </assignee-node>
+    }
   @case (nodeType.GATEWAY_JOIN) {
     <app-gateway-join
       [readonly]="readonly"
