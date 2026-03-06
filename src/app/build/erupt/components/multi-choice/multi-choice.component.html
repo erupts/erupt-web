@@ -3,7 +3,7 @@
   @case (multiChoiceEnum.CHECKBOX) {
     <nz-checkbox-wrapper (nzOnChange)="checkboxChange($event)" style="width:100%">
       <nz-row>
-        @for (vl of eruptField.componentValue; track vl) {
+        @for (vl of eruptField.componentValue; track vl.value) {
           <nz-col nzSpan="4">
             <label nz-checkbox [nzValue]="vl.value" nz-tooltip [nzDisabled]="readonly||vl.disable"
               [style.color]="!vl.disable && vl.color"
@@ -20,7 +20,7 @@
     <nz-select [(ngModel)]="this.eruptField.eruptFieldJson.edit.$value" [nzSize]="size" nzMode="multiple"
       style="width:100%" [nzOptionOverflowSize]="8" [nzMaxMultipleCount]="999"
       class="multi-choice-select">
-      @for (vl of eruptField.componentValue; track vl) {
+      @for (vl of eruptField.componentValue; track vl.value) {
         <nz-option [nzLabel]="vl.label"
           [nzDisabled]="readonly||vl.disable" nzCustomContent
           [nzValue]="isNumeric(vl.value)?parseInt(vl.value):vl.value"

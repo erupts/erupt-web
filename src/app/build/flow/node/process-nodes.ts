@@ -28,9 +28,10 @@ export const Nodes: ANode[] = [
     })(),
     new StartNodeComponent(),
     new ApprovalNodeComponent(),
+    // new AssigneeNodeComponent(),
     new CcNodeComponent(),
     new SubNodeComponent(),
-    new FlexNodeComponent()
+    new FlexNodeComponent(),
 ]
 
 export const NodeMap: Map<NodeType, ANode> = new Map<NodeType, ANode>();

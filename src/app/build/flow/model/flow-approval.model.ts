@@ -27,6 +27,13 @@ export enum ReviewMode {
     /** 组织负责人 */
     ORG_HEAD = 'ORG_HEAD',
 
+    /** 分管领导 */
+    DIVISION_LEADER = 'DIVISION_LEADER',
+
+    SELF_SELECT = 'SELF_SELECT',
+
+    NODE_ASSIGNED = 'NODE_ASSIGNED'
+
 }
 
 export interface ReviewModeValue {
@@ -50,6 +57,11 @@ export enum NobodyStrategy {
     REDIRECT_TO_SPECIFIED_USER = 'REDIRECT_TO_SPECIFIED_USER',
 }
 
+export enum SamePersonApprovalStrategy {
+    SELF_APPROVAL = "SELF_APPROVAL",
+    SKIPPED_APPROVAL = "SKIPPED_APPROVAL"
+}
+
 export class ApproveNode {
 
     reviewUserModes: ReviewModeValue[] = [
@@ -64,6 +76,8 @@ export class ApproveNode {
     approvalStrategy: ApprovalStrategy = ApprovalStrategy.ANY_APPROVE;
 
     nobodyStrategy: NobodyStrategy = NobodyStrategy.REDIRECT_TO_ADMIN;
+
+    samePersonApprovalStrategy: SamePersonApprovalStrategy = SamePersonApprovalStrategy.SELF_APPROVAL;
 
     nobodyRedirectToUser: number;
 
@@ -109,6 +123,19 @@ export class CcNode {
     ];
 
     formAccesses: Record<string, FormAccessEnum> = {};
+
+}
+
+export class AssigneeNode {
+
+    formAccesses: Record<string, FormAccessEnum> = {};
+
+    reviewUserModes: ReviewModeValue[] = [
+        {
+            mode: ReviewMode.SUBMITTER_HIMSELF,
+            modeValue: null
+        },
+    ];
 
 }
 

@@ -7,7 +7,7 @@
         @if (checkAll) {
           <label nz-radio [nzValue]="">{{ 'global.all'|translate }}</label>
         }
-        @for (vl of choiceVL; track vl) {
+        @for (vl of choiceVL; track vl.value) {
           <label nz-radio nz-tooltip [nzTooltipTitle]="vl.desc"
             [style.color]="!vl.disable && vl.color"
             [nzDisabled]="readonly||vl.disable"
@@ -24,7 +24,7 @@
         [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
         [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true">
         @if (!isLoading) {
-          @for (vl of choiceVL; track vl) {
+          @for (vl of choiceVL; track vl.value) {
             <nz-option nzCustomContent
               [nzDisabled]="vl.disable" [nzValue]="vl.value" [nzLabel]="vl.label">
               <div nz-tooltip [nzTooltipPlacement]="'left'" [nzTooltipTitle]="vl.desc"
@@ -53,7 +53,7 @@
     nzMode="multiple"
     [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true">
     @if (!isLoading) {
-      @for (vl of choiceVL; track vl) {
+      @for (vl of choiceVL; track vl.value) {
         <nz-option nzCustomContent
           [nzDisabled]="vl.disable" [nzValue]="vl.value" [nzLabel]="vl.label">
           <div nz-tooltip [nzTooltipPlacement]="'left'" [nzTooltipTitle]="vl.desc"
