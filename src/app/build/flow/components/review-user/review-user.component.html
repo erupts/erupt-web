@@ -82,21 +82,7 @@
         <!-- 空状态提示 -->
         @if (reviewUserMode.modeValue) {
             <div class="permission-scopes">
-                <div>
-                    @for (scope of reviewUserMode.modeValue; track scope) {
-                        {{ scope | json }}
-                        <!--                        <nz-tag-->
-                            <!--                            [nzColor]="getScopeTagColor(scope.scope)"-->
-                            <!--                            nz-tooltip-->
-                            <!--                        >-->
-                            <!--                            <span nz-icon [nzType]="getScopeIcon(scope.scope)" nzTheme="outline"></span>-->
-                            <!--                            <span class="tag-text">{{ getScopeValue(scope) }}</span>-->
-                            <!--                        </nz-tag>-->
-                    }
-                    <button nz-button nzType="default" nzSize="small" (click)="changeViewScope()">
-                        <i nz-icon nzType="plus" nzTheme="outline"></i>
-                    </button>
-                </div>
+                <upms-select-view [(upmsScopes)]="reviewUserMode.modeValue"></upms-select-view>
             </div>
         } @else {
             <div class="permission-scopes empty">

@@ -3,7 +3,7 @@ import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {VL} from "../../../../erupt/model/erupt-field.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
-import {FlowConfig, FlowGroup, FlowPermission, FlowUpmsScope, PrintSetting, UpmsScope} from "@flow/model/flow.model";
+import {FlowConfig, FlowGroup, FlowPermission, PrintSetting} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {EditType, FormSize} from "../../../../erupt/model/erupt.enum";
@@ -250,63 +250,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         });
     }
 
-
     protected readonly FlowPermission = FlowPermission;
-
-    /**
-     * 获取权限范围的标签颜色
-     */
-    getScopeTagColor(scope: string): string {
-        const colorMap: { [key: string]: string } = {
-            'ORG': 'blue',
-            'ROLE': 'green',
-            'USER': 'orange',
-            'POST': 'purple'
-        };
-        return colorMap[scope] || 'default';
-    }
-
-    /**
-     * 获取权限范围的图标
-     */
-    getScopeIcon(scope: string): string {
-        const iconMap: { [key: string]: string } = {
-            'ORG': 'apartment',
-            'ROLE': 'safety-certificate',
-            'USER': 'user',
-            'POST': 'idcard'
-        };
-        return iconMap[scope] || 'question';
-    }
-
-    getScopeValue(upmsScope: FlowUpmsScope): string {
-        if (upmsScope.scope == UpmsScope.USER) {
-            for (let user of this.upmsDataService.upmsData.users) {
-                if (user.key == upmsScope.scopeValue) {
-                    return user.value;
-                }
-            }
-        } else if (upmsScope.scope == UpmsScope.ROLE) {
-            for (let role of this.upmsDataService.upmsData.roles) {
-                if (role.key == upmsScope.scopeValue) {
-                    return role.value;
-                }
-            }
-        } else if (upmsScope.scope == UpmsScope.POST) {
-            for (let post of this.upmsDataService.upmsData.posts) {
-                if (post.key == upmsScope.scopeValue) {
-                    return post.value;
-                }
-            }
-        } else if (upmsScope.scope == UpmsScope.ORG) {
-            for (let org of this.upmsDataService.upmsData.orgs) {
-                if (org.key == upmsScope.scopeValue) {
-                    return org.value;
-                }
-            }
-        }
-        return upmsScope.scopeValue.toString();
-    }
 
     configPrintTemplate() {
         let vars: PrintVar[] = []
@@ -386,28 +330,6 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             marginLeft: 10
         };
     }
-
-    // printView(){
-    //     const modalRef = this.modal.create({
-    //         nzDraggable: true,
-    //         nzTitle: '打印预览',
-    //         nzContent: FlowPrintPreviewComponent,
-    //         nzWidth: '700px',
-    //         nzStyle: {top: "30px"},
-    //         nzOkText: "打印",
-    //         nzOnOk: () => {
-    //             (modalRef.componentInstance as FlowPrintPreviewComponent).print();
-    //         },
-    //         nzBodyStyle: {
-    //             maxHeight: "75vh",
-    //             padding: '0',
-    //             overflow: 'auto'
-    //         }
-    //     });
-    //     modalRef.componentInstance.instance = null;
-    //     modalRef.componentInstance.tasks = null;
-    //     modalRef.componentInstance.eruptBuild = this.eruptBuild;
-    // }
 
     protected readonly EditType = EditType;
     protected readonly PrintSetting = PrintSetting;
