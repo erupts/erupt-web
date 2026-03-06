@@ -44,6 +44,14 @@
             </button>
             <nz-divider style="margin: 12px 0"></nz-divider>
             <div>
+                <h4>审批人与提交人为同一人时</h4>
+                <nz-radio-group [(ngModel)]="approveNode.samePersonApprovalStrategy">
+                    <label nz-radio [nzValue]="SamePersonApprovalStrategy.SELF_APPROVAL">由提交人自己审批</label>
+                    <label nz-radio [nzValue]="SamePersonApprovalStrategy.SKIPPED_APPROVAL">跳过</label>
+                </nz-radio-group>
+            </div>
+            <nz-divider style="margin: 12px 0"></nz-divider>
+            <div>
                 <h4>审批人不存在时</h4>
                 <nz-radio-group [(ngModel)]="approveNode.nobodyStrategy">
                     <label nz-radio [nzValue]="NobodyStrategy.REDIRECT_TO_ADMIN">转交给管理员</label>
