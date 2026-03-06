@@ -14,6 +14,7 @@ export enum NodeType {
 
     SUB = 'SUB',
     CC = 'CC',
+    ASSIGNEE = "ASSIGNEE",
     APPROVAL = 'APPROVAL',
     FlEX = 'FLEX',
 

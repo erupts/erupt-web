@@ -60,6 +60,7 @@ export interface FlowInstanceTask {
     nodeRowspan?: number;
     id: number;
     nodeId: string;
+    nodeName: string;
     assigneeUser: User;
     createTime: string;
     completedAt: string;

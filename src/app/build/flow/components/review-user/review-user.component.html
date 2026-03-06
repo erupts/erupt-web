@@ -1,55 +1,111 @@
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-  <div style="font-weight: 500;">审批人设置</div>
+    <div style="font-weight: 500;">人员设置</div>
 </div>
 <div class="approval-mode">
-  <nz-radio-group [(ngModel)]="reviewUserMode.mode" (ngModelChange)="changeReview()" style="width: 100%">
-    <label nz-radio [nzValue]="ApprovalMode.ORG_HEAD">组织负责人</label>
-    <label nz-radio [nzValue]="ApprovalMode.ROLE">角色</label>
-    <label nz-radio [nzValue]="ApprovalMode.POST">岗位</label>
-    <label nz-radio [nzValue]="ApprovalMode.SPECIFIED_USER">指定人员</label>
-    <label nz-radio [nzValue]="ApprovalMode.SUBMITTER_HIMSELF">提交人本人</label>
-  </nz-radio-group>
+    <nz-radio-group [(ngModel)]="reviewUserMode.mode" (ngModelChange)="changeReview()" style="width: 100%">
+        <label nz-radio [nzValue]="ApprovalMode.ORG_HEAD">组织负责人</label>
+        <label nz-radio [nzValue]="ApprovalMode.DIVISION_LEADER">分管领导</label>
+        <label nz-radio [nzValue]="ApprovalMode.ROLE">角色</label>
+        <label nz-radio [nzValue]="ApprovalMode.POST">岗位</label>
+        <label nz-radio [nzValue]="ApprovalMode.SPECIFIED_USER">指定人员</label>
+        <label nz-radio [nzValue]="ApprovalMode.SELF_SELECT">发起人自选</label>
+        <label nz-radio [nzValue]="ApprovalMode.NODE_ASSIGNED">由其他节点指定</label>
+        <label nz-radio [nzValue]="ApprovalMode.SUBMITTER_HIMSELF">提交人本人</label>
+    </nz-radio-group>
 </div>
 @if (reviewUserMode.mode != ApprovalMode.SUBMITTER_HIMSELF) {
-  <hr style="border: 1px solid #f0f0f0;margin: 8px 0;"/>
+    <hr style="border: 1px solid #f0f0f0;margin: 8px 0;"/>
 }
 @if (reviewUserMode.mode == ApprovalMode.ORG_HEAD) {
-  <div style="display: flex;align-items:center">
-    <div style="margin-right: 12px">提交人的</div>
-    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
-      @for (org of deptHeads; track org) {
-        <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
-      }
-    </nz-select>
-  </div>
+    <div style="display: flex;align-items:center">
+        <div style="margin-right: 12px">提交人的</div>
+        <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
+            @for (i of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
+                <nz-option [nzValue]="i" [nzLabel]="'直属组织负责人' + ( i == 0 ? '': '加 ' + i + ' 级负责人' )"/>
+            }
+        </nz-select>
+    </div>
+}
+@if (reviewUserMode.mode == ApprovalMode.DIVISION_LEADER) {
+    <div style="display: flex;align-items:center">
+        <div style="margin-right: 12px">提交人的</div>
+        <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
+            @for (i of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
+                <nz-option [nzValue]="i" [nzLabel]="'直属分管领导' + ( i == 0 ? '': '加 ' + i + ' 级负责人' )"/>
+            }
+        </nz-select>
+    </div>
 }
 @if (reviewUserMode.mode == ApprovalMode.ROLE) {
-  <div style="display: flex;align-items:center">
-    <div style="margin-right: 12px">角色</div>
-    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
-      @for (org of roles; track org) {
-        <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
-      }
-    </nz-select>
-  </div>
+    <div style="display: flex;align-items:center">
+        <div style="margin-right: 12px">角色</div>
+        <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
+            @for (org of roles; track org) {
+                <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
+            }
+        </nz-select>
+    </div>
 }
 @if (reviewUserMode.mode == ApprovalMode.POST) {
-  <div style="display: flex;align-items:center">
-    <div style="margin-right: 12px">岗位</div>
-    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
-      @for (org of posts; track org) {
-        <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
-      }
-    </nz-select>
-  </div>
+    <div style="display: flex;align-items:center">
+        <div style="margin-right: 12px">岗位</div>
+        <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
+            @for (org of posts; track org) {
+                <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
+            }
+        </nz-select>
+    </div>
 }
 @if (reviewUserMode.mode == ApprovalMode.SPECIFIED_USER) {
-  <div style="display: flex;align-items:center">
-    <div style="margin-right: 12px">指定人员</div>
-    <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
-      @for (org of users; track org) {
-        <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
-      }
-    </nz-select>
-  </div>
+    <div style="display: flex;align-items:center">
+        <div style="margin-right: 12px">指定人员</div>
+        <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
+            @for (org of users; track org) {
+                <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
+            }
+        </nz-select>
+    </div>
+}
+@if (reviewUserMode.mode == ApprovalMode.NODE_ASSIGNED) {
+    <div style="display: flex;align-items:center">
+        <div style="margin-right: 12px">节点选择</div>
+        <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
+            <!--            @for (org of users; track org) {-->
+            <!--                <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>-->
+            <!--            }-->
+        </nz-select>
+    </div>
+}
+@if (reviewUserMode.mode == ApprovalMode.SELF_SELECT) {
+    <div style="display: flex;align-items:center">
+        <div style="margin-right: 12px">人员范围</div>
+        <!-- 空状态提示 -->
+        @if (reviewUserMode.modeValue) {
+            <div class="permission-scopes">
+                <div>
+                    @for (scope of reviewUserMode.modeValue; track scope) {
+                        {{ scope | json }}
+                        <!--                        <nz-tag-->
+                            <!--                            [nzColor]="getScopeTagColor(scope.scope)"-->
+                            <!--                            nz-tooltip-->
+                            <!--                        >-->
+                            <!--                            <span nz-icon [nzType]="getScopeIcon(scope.scope)" nzTheme="outline"></span>-->
+                            <!--                            <span class="tag-text">{{ getScopeValue(scope) }}</span>-->
+                            <!--                        </nz-tag>-->
+                    }
+                    <button nz-button nzType="default" nzSize="small" (click)="changeViewScope()">
+                        <i nz-icon nzType="plus" nzTheme="outline"></i>
+                    </button>
+                </div>
+            </div>
+        } @else {
+            <div class="permission-scopes empty">
+              <span class="empty-text">
+                <button nz-button nzType="default" nzSize="small" (click)="changeViewScope()">
+                  <i nz-icon nzType="plus" nzTheme="outline"></i> 选择可选范围
+                </button>
+              </span>
+            </div>
+        }
+    </div>
 }
