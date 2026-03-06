@@ -9,7 +9,7 @@
         <label nz-radio [nzValue]="ApprovalMode.POST">岗位</label>
         <label nz-radio [nzValue]="ApprovalMode.SPECIFIED_USER">指定人员</label>
         <label nz-radio [nzValue]="ApprovalMode.SELF_SELECT">发起人自选</label>
-        <label nz-radio [nzValue]="ApprovalMode.NODE_ASSIGNED">由其他节点指定</label>
+<!--        <label nz-radio [nzValue]="ApprovalMode.NODE_ASSIGNED">由其他节点指定</label>-->
         <label nz-radio [nzValue]="ApprovalMode.SUBMITTER_HIMSELF">提交人本人</label>
     </nz-radio-group>
 </div>
@@ -79,19 +79,8 @@
 @if (reviewUserMode.mode == ApprovalMode.SELF_SELECT) {
     <div style="display: flex;align-items:center">
         <div style="margin-right: 12px">人员范围</div>
-        <!-- 空状态提示 -->
-        @if (reviewUserMode.modeValue) {
-            <div class="permission-scopes">
-                <upms-select-view [(upmsScopes)]="reviewUserMode.modeValue"></upms-select-view>
-            </div>
-        } @else {
-            <div class="permission-scopes empty">
-              <span class="empty-text">
-                <button nz-button nzType="default" nzSize="small" (click)="changeViewScope()">
-                  <i nz-icon nzType="plus" nzTheme="outline"></i> 选择可选范围
-                </button>
-              </span>
-            </div>
-        }
+        <div class="permission-scopes">
+            <upms-select-view [(upmsScopes)]="reviewUserMode.modeValue"></upms-select-view>
+        </div>
     </div>
 }
