@@ -98,7 +98,7 @@
         </div>
     }
     <div class="gridster-wrapper"
-         [style.background-color]="dsl?.settings?.backgroundColor"
+         [style.background-color]="dsl?.settings?.backgroundColor || 'rgb(255, 255, 255)'"
          [style.background-image]="dsl?.settings?.backgroundImage ? 'url(' + dsl.settings.backgroundImage + ')' : 'none'"
          [style.background-size]="'cover'"
          [style.background-position]="'center'">
