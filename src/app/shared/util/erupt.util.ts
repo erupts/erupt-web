@@ -25,6 +25,8 @@ function joinPath(type: string, value: string): string {
             return "/build/tree/" + menuValue;
         case MenuTypeEnum.bi:
             return "/bi/" + menuValue;
+        case MenuTypeEnum.cube:
+            return "/cube/" + menuValue;
         case MenuTypeEnum.tpl:
             return "/tpl/" + menuValue;
         case MenuTypeEnum.mtpl:
