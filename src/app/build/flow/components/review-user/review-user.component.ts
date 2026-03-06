@@ -2,8 +2,6 @@ import {Component, Inject, Input, OnInit} from '@angular/core';
 import {ReviewMode, ReviewModeValue} from "@flow/model/flow-approval.model";
 import {KV} from "../../../erupt/model/util.model";
 import {UpmsDataService} from "@flow/service/upms-data.service";
-import {FlowPermission} from "@flow/model/flow.model";
-import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
 import {NzModalService} from "ng-zorro-antd/modal";
 
 @Component({
@@ -38,20 +36,4 @@ export class ReviewUserComponent implements OnInit {
         this.reviewUserMode.modeValue = null;
     }
 
-    changeViewScope() {
-        let ref = this.modal.create({
-            nzTitle: '请选择可见范围',
-            nzWidth: '880px',
-            nzDraggable: true,
-            nzStyle: {top: '30px'},
-            nzBodyStyle: {padding: '0'},
-            nzContent: UpmsSelectComponent,
-        })
-        ref.getContentComponent().flowUpmsScopes = this.reviewUserMode.modeValue || [];
-        ref.getContentComponent().flowUpmsScopesChange.subscribe(scopes => {
-            this.reviewUserMode.modeValue = scopes;
-        });
-    }
-
-    protected readonly FlowPermission = FlowPermission;
 }
