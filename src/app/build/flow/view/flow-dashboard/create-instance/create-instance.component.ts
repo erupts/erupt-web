@@ -35,7 +35,6 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
     private resizing = false;
     private startX = 0;
     private startWidth = 0;
-    private animationId: number | null = null;
     private drawerElement: HTMLElement | null = null;
 
     constructor(private msg: NzMessageService,
@@ -54,53 +53,25 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
         this.resizing = true;
         this.startX = event.clientX;
         this.startWidth = parseInt(this.drawerRef.nzWidth as string) || 520;
-
-        // 查找抽屉的容器 DOM 元素
-        if (!this.drawerElement) {
-            let parent = this.el.nativeElement.parentElement;
-            while (parent && !parent.classList.contains('ant-drawer-content-wrapper')) {
-                parent = parent.parentElement;
-            }
-            this.drawerElement = parent;
-        }
+        this.drawerElement = this.drawerElement || this.el.nativeElement.closest('.ant-drawer-content-wrapper');
 
         this.ngZone.runOutsideAngular(() => {
-            document.addEventListener('mousemove', this.onMouseMove);
-            document.addEventListener('mouseup', this.onMouseUp);
+            const moveHandler = (moveEvent: MouseEvent) => {
+                if (!this.resizing) return;
+                const newWidth = Math.max(300, Math.min(window.innerWidth * 0.9, this.startX - moveEvent.clientX + this.startWidth));
+                if (this.drawerElement) this.drawerElement.style.width = `${newWidth}px`;
+            };
+            const upHandler = (upEvent: MouseEvent) => {
+                this.resizing = false;
+                document.removeEventListener('mousemove', moveHandler);
+                document.removeEventListener('mouseup', upHandler);
+                this.ngZone.run(() => this.drawerRef.nzWidth = this.drawerElement?.style.width);
+            };
+            document.addEventListener('mousemove', moveHandler);
+            document.addEventListener('mouseup', upHandler);
         });
         event.preventDefault();
     }
-
-    private onMouseMove = (event: MouseEvent) => {
-        if (!this.resizing) return;
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-        }
-        this.animationId = requestAnimationFrame(() => {
-            const offset = this.startX - event.clientX;
-            const newWidth = Math.max(300, Math.min(window.innerWidth * 0.9, this.startWidth + offset));
-            if (this.drawerElement) {
-                this.drawerElement.style.width = `${newWidth}px`;
-            }
-        });
-    };
-
-    private onMouseUp = (event: MouseEvent) => {
-        this.resizing = false;
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-            this.animationId = null;
-        }
-        document.removeEventListener('mousemove', this.onMouseMove);
-        document.removeEventListener('mouseup', this.onMouseUp);
-
-        // 同步状态到 NzDrawerRef，确保 Angular 知晓最终宽度
-        const offset = this.startX - event.clientX;
-        const finalWidth = Math.max(300, Math.min(window.innerWidth * 0.9, this.startWidth + offset));
-        this.ngZone.run(() => {
-            this.drawerRef.nzWidth = `${finalWidth}px`;
-        });
-    };
 
     ngOnInit() {
         this.loading = true;
@@ -120,11 +91,6 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-        }
-        document.removeEventListener('mousemove', this.onMouseMove);
-        document.removeEventListener('mouseup', this.onMouseUp);
     }
 
     onViewFlow() {
