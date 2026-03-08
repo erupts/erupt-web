@@ -8,6 +8,8 @@ import {VL} from "../../erupt/model/erupt-field.model";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {NodeRule} from "@flow/model/node.model";
+import {EruptUser} from "../../cube/model/dashboard.model";
+import {KV} from "../../erupt/model/util.model";
 
 @Injectable()
 export class FlowApiService {
@@ -101,6 +103,19 @@ export class FlowApiService {
 
     ruleCheck(rule: NodeRule[]): Observable<R<NodeRule[]>> {
         return this._http.post<R<NodeRule[]>>(RestPath.erupt + "/flow/rule-check", rule);
+    }
+
+    selfSelectNodes(flowId: number): Observable<R<KV<string, string>>> {
+        return this._http.get<R<KV<string, string>>>(RestPath.erupt + "/flow/self-select-nodes", {
+            flowId
+        });
+    }
+
+    selfSelectNodeUsers(flowId: number, nodeId: string): Observable<R<EruptUser>> {
+        return this._http.get<R<EruptUser>>(RestPath.erupt + "/flow/self-select-node/users", {
+            flowId,
+            nodeId
+        });
     }
 
 }
