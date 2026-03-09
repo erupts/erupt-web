@@ -22,7 +22,7 @@ export class ReviewUserComponent implements OnInit {
 
     roles: KV<number, string>[] = [];
 
-    constructor(private upmsDataService: UpmsDataService, @Inject(NzModalService) private modal: NzModalService,) {
+    constructor(private upmsDataService: UpmsDataService, @Inject(NzModalService) private modal: NzModalService) {
 
     }
 
@@ -33,7 +33,11 @@ export class ReviewUserComponent implements OnInit {
     }
 
     changeReview() {
-        this.reviewUserMode.modeValue = null;
+        if (this.reviewUserMode.mode == ReviewMode.SELF_SELECT) {
+            this.reviewUserMode.modeValue = [];
+        } else {
+            this.reviewUserMode.modeValue = null;
+        }
     }
 
 }
