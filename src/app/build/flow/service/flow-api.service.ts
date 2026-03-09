@@ -105,14 +105,14 @@ export class FlowApiService {
         return this._http.post<R<NodeRule[]>>(RestPath.erupt + "/flow/rule-check", rule);
     }
 
-    selfSelectNodes(flowId: number): Observable<R<KV<string, string>>> {
-        return this._http.get<R<KV<string, string>>>(RestPath.erupt + "/flow/self-select-nodes", {
+    selfSelectNodes(flowId: number) {
+        return this._http.get<R<KV<string, string>[]>>(RestPath.erupt + "/flow/self-select-nodes", {
             flowId
         });
     }
 
-    selfSelectNodeUsers(flowId: number, nodeId: string): Observable<R<EruptUser>> {
-        return this._http.get<R<EruptUser>>(RestPath.erupt + "/flow/self-select-node/users", {
+    selfSelectNodeUsers(flowId: number, nodeId: string) {
+        return this._http.get<R<EruptUser[]>>(RestPath.erupt + "/flow/self-select-node/users", {
             flowId,
             nodeId
         });
