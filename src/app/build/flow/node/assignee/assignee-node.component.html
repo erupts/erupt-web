@@ -9,7 +9,7 @@
     (saveProp)="onSaveProp()"
     [progress]="progress"
     (delete)="onDelete()">
-    办理人
+    {{ assigneeNode.reviewUserModes[0].mode || name() | translate }}
     <div config>
         <nz-segmented [nzOptions]="[{value:0,label:'设置办理人'},{value:1,label:'表单权限'}]" [(ngModel)]="selectTab" style="margin-bottom: 12px">
 
