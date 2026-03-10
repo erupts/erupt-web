@@ -14,6 +14,8 @@ import {FlowTurn} from "@flow/model/flow-instance.model";
     styleUrls: ['./assignee-node.component.less']
 })
 export class AssigneeNodeComponent extends ANode implements OnInit {
+
+    @Input() flowRule: NodeRule[];
     @Input() readonly = false;
     @Input() eruptBuild: EruptBuildModel;
     @Input() modelValue: NodeRule;

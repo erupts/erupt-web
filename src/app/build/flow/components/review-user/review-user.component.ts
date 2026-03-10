@@ -3,6 +3,7 @@ import {ReviewMode, ReviewModeValue} from "@flow/model/flow-approval.model";
 import {KV} from "../../../erupt/model/util.model";
 import {UpmsDataService} from "@flow/service/upms-data.service";
 import {NzModalService} from "ng-zorro-antd/modal";
+import {NodeRule, NodeType} from "@flow/model/node.model";
 
 @Component({
     standalone: false,
@@ -15,6 +16,9 @@ export class ReviewUserComponent implements OnInit {
     protected readonly ApprovalMode = ReviewMode;
 
     @Input() reviewUserMode: ReviewModeValue;
+
+    @Input() flowRule: NodeRule[];
+    @Input() nodeId: string;
 
     users: KV<number, string>[] = [];
 
@@ -30,6 +34,30 @@ export class ReviewUserComponent implements OnInit {
         this.users = this.upmsDataService.upmsData.users;
         this.posts = this.upmsDataService.upmsData.posts;
         this.roles = this.upmsDataService.upmsData.roles;
+    }
+
+    get assignedNodes(): KV<string, string>[] {
+        let nodes: KV<string, string>[] = [];
+        this.getAssignedNodes(this.flowRule, nodes);
+        return nodes;
+    }
+
+    private getAssignedNodes(rules: NodeRule[], nodes: KV<string, string>[]): boolean {
+        if (!rules) return false;
+        for (let rule of rules) {
+            if (rule.id == this.nodeId) {
+                return true;
+            }
+            if ([NodeType.APPROVAL, NodeType.CC, NodeType.ASSIGNEE].includes(rule.type)) {
+                nodes.push({key: rule.id, value: rule.name});
+            }
+            if (rule.branches) {
+                if (this.getAssignedNodes(rule.branches, nodes)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     changeReview() {

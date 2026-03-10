@@ -19,7 +19,7 @@
                 <nz-card nzTitle="审批人" nzSize="small" style="margin-bottom: 12px">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div style="flex: 1;">
-                            <app-review-user
+                            <app-review-user [flowRule]="flowRule" [nodeId]="modelValue.id"
                                 [reviewUserMode]="reviewUserMode">
                             </app-review-user>
                         </div>

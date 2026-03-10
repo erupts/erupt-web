@@ -9,7 +9,7 @@
         <label nz-radio [nzValue]="ApprovalMode.POST">岗位</label>
         <label nz-radio [nzValue]="ApprovalMode.SPECIFIED_USER">指定人员</label>
         <label nz-radio [nzValue]="ApprovalMode.SELF_SELECT">发起人自选</label>
-<!--        <label nz-radio [nzValue]="ApprovalMode.NODE_ASSIGNED">由其他节点指定</label>-->
+        <label nz-radio [nzValue]="ApprovalMode.NODE_ASSIGNED">由其他节点指定</label>
         <label nz-radio [nzValue]="ApprovalMode.SUBMITTER_HIMSELF">提交人本人</label>
     </nz-radio-group>
 </div>
@@ -70,9 +70,9 @@
     <div style="display: flex;align-items:center">
         <div style="margin-right: 12px">节点选择</div>
         <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
-            <!--            @for (org of users; track org) {-->
-            <!--                <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>-->
-            <!--            }-->
+            @for (node of assignedNodes; track node) {
+                <nz-option [nzValue]="node.key" [nzLabel]="node.value"/>
+            }
         </nz-select>
     </div>
 }
