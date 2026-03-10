@@ -350,6 +350,21 @@
 >
     <div *nzModalContent>
         <div class="modal-content">
+            @for (node of assignedNodes; track node.id) {
+                <div style="margin-bottom: 16px">
+                    <p class="modal-description"><span style="color: #f00">*</span> 选择 [{{ node.name }}] 审批人：</p>
+                    <nz-select style="width: 100%"
+                               [nzMode]="'multiple'"
+                               [nzPlaceHolder]="'请选择审批人'"
+                               [nzShowSearch]="true"
+                               [nzAllowClear]="true"
+                               [(ngModel)]="node.userIds">
+                        @for (user of upmsDataService.upmsData.users; track user.key) {
+                            <nz-option [nzValue]="user.key" [nzLabel]="user.value"></nz-option>
+                        }
+                    </nz-select>
+                </div>
+            }
             @if (nodeInfo?.prop?.requireSignature) {
                 <div style="margin-bottom: 16px">
                     <p class="modal-description"><span style="color: #f00">*</span> 同意签名：</p>

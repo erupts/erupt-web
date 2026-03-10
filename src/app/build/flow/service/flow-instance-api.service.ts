@@ -118,11 +118,12 @@ export class FlowInstanceApiService {
         })
     }
 
-    agree(instanceTaskId: number, comment: string, signature: string, data: any): Observable<R<void>> {
+    agree(instanceTaskId: number, comment: string, signature: string, data: any, nodeAssignments?: Record<string, number[]>): Observable<R<void>> {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/agree", {
             comment,
             signature,
-            data
+            data,
+            nodeAssignments
         }, {
             instanceTaskId,
         })

@@ -1,16 +1,16 @@
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-    <div style="font-weight: 500;">人员设置</div>
+    <div style="font-weight: 500;">{{ 'flow.approval_mode' | translate }}</div>
 </div>
 <div class="approval-mode">
     <nz-radio-group [(ngModel)]="reviewUserMode.mode" (ngModelChange)="changeReview()" style="width: 100%">
-        <label nz-radio [nzValue]="ApprovalMode.ORG_HEAD">组织负责人</label>
-        <label nz-radio [nzValue]="ApprovalMode.DIVISION_LEADER">分管领导</label>
-        <label nz-radio [nzValue]="ApprovalMode.ROLE">角色</label>
-        <label nz-radio [nzValue]="ApprovalMode.POST">岗位</label>
-        <label nz-radio [nzValue]="ApprovalMode.SPECIFIED_USER">指定人员</label>
-        <label nz-radio [nzValue]="ApprovalMode.SELF_SELECT">发起人自选</label>
-        <label nz-radio [nzValue]="ApprovalMode.NODE_ASSIGNED">由其他节点指定</label>
-        <label nz-radio [nzValue]="ApprovalMode.SUBMITTER_HIMSELF">提交人本人</label>
+        <label nz-radio [nzValue]="ApprovalMode.ORG_HEAD">{{ 'ORG_HEAD' | translate }}</label>
+        <label nz-radio [nzValue]="ApprovalMode.DIVISION_LEADER">{{ 'DIVISION_LEADER' | translate }}</label>
+        <label nz-radio [nzValue]="ApprovalMode.ROLE">{{ 'ROLE' | translate }}</label>
+        <label nz-radio [nzValue]="ApprovalMode.POST">{{ 'POST' | translate }}</label>
+        <label nz-radio [nzValue]="ApprovalMode.SPECIFIED_USER">{{ 'SPECIFIED_USER' | translate }}</label>
+        <label nz-radio [nzValue]="ApprovalMode.SELF_SELECT">{{ 'SELF_SELECT' | translate }}</label>
+        <label nz-radio [nzValue]="ApprovalMode.NODE_ASSIGNED">{{ 'NODE_ASSIGNED' | translate }}</label>
+        <label nz-radio [nzValue]="ApprovalMode.SUBMITTER_HIMSELF">{{ 'SUBMITTER_HIMSELF' | translate }}</label>
     </nz-radio-group>
 </div>
 @if (reviewUserMode.mode != ApprovalMode.SUBMITTER_HIMSELF) {
@@ -18,7 +18,7 @@
 }
 @if (reviewUserMode.mode == ApprovalMode.ORG_HEAD) {
     <div style="display: flex;align-items:center">
-        <div style="margin-right: 12px">提交人的</div>
+        <div style="margin-right: 12px">{{ 'flow.submitter_of' | translate }}</div>
         <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
             @for (i of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
                 <nz-option [nzValue]="i" [nzLabel]="'直属组织负责人' + ( i == 0 ? '': '加 ' + i + ' 级负责人' )"/>
@@ -28,7 +28,7 @@
 }
 @if (reviewUserMode.mode == ApprovalMode.DIVISION_LEADER) {
     <div style="display: flex;align-items:center">
-        <div style="margin-right: 12px">提交人的</div>
+        <div style="margin-right: 12px">{{ 'flow.submitter_of' | translate }}</div>
         <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
             @for (i of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
                 <nz-option [nzValue]="i" [nzLabel]="'直属分管领导' + ( i == 0 ? '': '加 ' + i + ' 级负责人' )"/>
@@ -38,7 +38,7 @@
 }
 @if (reviewUserMode.mode == ApprovalMode.ROLE) {
     <div style="display: flex;align-items:center">
-        <div style="margin-right: 12px">角色</div>
+        <div style="margin-right: 12px">{{ 'ROLE' | translate }}</div>
         <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
             @for (org of roles; track org) {
                 <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
@@ -48,7 +48,7 @@
 }
 @if (reviewUserMode.mode == ApprovalMode.POST) {
     <div style="display: flex;align-items:center">
-        <div style="margin-right: 12px">岗位</div>
+        <div style="margin-right: 12px">{{ 'POST' | translate }}</div>
         <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
             @for (org of posts; track org) {
                 <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
@@ -58,7 +58,7 @@
 }
 @if (reviewUserMode.mode == ApprovalMode.SPECIFIED_USER) {
     <div style="display: flex;align-items:center">
-        <div style="margin-right: 12px">指定人员</div>
+        <div style="margin-right: 12px">{{ 'SPECIFIED_USER' | translate }}</div>
         <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
             @for (org of users; track org) {
                 <nz-option [nzValue]="org.key" [nzLabel]="org.value"/>
@@ -68,7 +68,7 @@
 }
 @if (reviewUserMode.mode == ApprovalMode.NODE_ASSIGNED) {
     <div style="display: flex;align-items:center">
-        <div style="margin-right: 12px">节点选择</div>
+        <div style="margin-right: 12px">{{ 'flow.node_select' | translate }}</div>
         <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
             @for (node of assignedNodes; track node) {
                 <nz-option [nzValue]="node.key" [nzLabel]="node.value"/>
@@ -78,7 +78,7 @@
 }
 @if (reviewUserMode.mode == ApprovalMode.SELF_SELECT) {
     <div style="display: flex;align-items:center">
-        <div style="margin-right: 12px">人员范围</div>
+        <div style="margin-right: 12px">{{ 'flow.permission_scopes' | translate }}</div>
         <div class="permission-scopes">
             <upms-select-view [(upmsScopes)]="reviewUserMode.modeValue"></upms-select-view>
         </div>

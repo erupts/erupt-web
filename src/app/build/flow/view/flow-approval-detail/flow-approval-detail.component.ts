@@ -10,7 +10,7 @@ import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
-import {AddSignType} from "@flow/model/flow-approval.model";
+import {AddSignType, ReviewMode} from "@flow/model/flow-approval.model";
 import {KV} from "../../../erupt/model/util.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
@@ -19,6 +19,7 @@ import {ActivatedRoute} from "@angular/router";
 import {FormAccessEnum, PrintSetting} from "@flow/model/flow.model";
 import {FlowPrintPreviewComponent} from "./print-preview/print-preview.component";
 import {I18NService} from "@core";
+import {UpmsDataService} from "@flow/service/upms-data.service";
 
 @Component({
     standalone: false,
@@ -69,6 +70,8 @@ export class FlowApprovalDetailComponent implements OnInit {
     availableUsers: KV<number, string>[] = [];
     availableReturnNodes: KV<string, string>[] = [];
 
+    assignedNodes: { id: string, name: string, userIds: number[] }[] = [];
+
     dataDeleted: boolean = false;
 
     @Input() selectedInstance: FlowInstance;
@@ -84,6 +87,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                 public i18n: I18NService,
                 private dataHandlerService: DataHandlerService,
                 private flowInstanceApiService: FlowInstanceApiService,
+                public upmsDataService: UpmsDataService,
                 @Inject(NzDrawerService) private drawerService: NzDrawerService,
                 private route: ActivatedRoute) {
         const no = this.route.snapshot.paramMap.get('no');
@@ -174,6 +178,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                     this.flowInstanceApiService.taskNodeInfo(res.data.id).subscribe({
                         next: (data) => {
                             this.nodeInfo = data.data;
+                            this.findAssignedNodes(flow.rule, this.nodeInfo.id)
                         }
                     });
                 }
@@ -186,6 +191,28 @@ export class FlowApprovalDetailComponent implements OnInit {
     approve() {
         this.reason = null;
         this.approveModalVisible = true;
+    }
+
+    private findAssignedNodes(rules: NodeRule[], currentNodeId: string) {
+        if (!rules) return;
+        this.assignedNodes = [];
+        for (let rule of rules) {
+            if ([NodeType.APPROVAL, NodeType.CC, NodeType.ASSIGNEE].includes(rule.type) && rule.prop?.reviewUserModes) {
+                for (let mode of rule.prop.reviewUserModes) {
+                    if (mode.mode === ReviewMode.NODE_ASSIGNED && mode.modeValue === currentNodeId) {
+                        this.assignedNodes.push({
+                            id: rule.id,
+                            name: rule.name,
+                            userIds: []
+                        });
+                        break;
+                    }
+                }
+            }
+            if (rule.branches) {
+                this.findAssignedNodes(rule.branches, currentNodeId);
+            }
+        }
     }
 
     // 拒绝审批
@@ -208,12 +235,24 @@ export class FlowApprovalDetailComponent implements OnInit {
             this.message.warning('请填写同意原因');
             return;
         }
+        for (let node of this.assignedNodes) {
+            if (!node.userIds || node.userIds.length === 0) {
+                this.message.warning(`请选择节点 [${node.name}] 的审批人`);
+                return;
+            }
+        }
         this.approveModalVisible = true;
         let data;
         if (Object.keys(this.nodeInfo?.prop?.formAccesses || {}).length) {
             data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
         }
-        this.flowInstanceApiService.agree(this.currTask.id, this.reason, this.approveSignature, data).subscribe(res => {
+
+        const nodeAssignments: Record<string, number[]> = {};
+        this.assignedNodes.forEach(node => {
+            nodeAssignments[node.id] = node.userIds;
+        });
+
+        this.flowInstanceApiService.agree(this.currTask.id, this.reason, this.approveSignature, data, nodeAssignments).subscribe(res => {
             this.approveModalVisible = false;
             this.reason = null;
             this.message.success('审批已同意');
