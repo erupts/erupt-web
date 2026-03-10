@@ -14,6 +14,8 @@ import {FlowTurn} from "@flow/model/flow-instance.model";
     styleUrls: ['./recursive-node.component.less']
 })
 export class RecursiveNodeComponent {
+
+    @Input() flowRule: NodeRule[];
     @Input() readonly = false;
     @Input() node: NodeRule;
     @Input() branch: NodeRule[] = [];
