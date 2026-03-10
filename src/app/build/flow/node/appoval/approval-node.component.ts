@@ -35,6 +35,8 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
 
     @Input() progress: Record<string, FlowTurn>;
 
+    @Input() flowRule: NodeRule[];
+
     approveNode: ApproveNode = new ApproveNode();
 
     selectTab: number = 0;
