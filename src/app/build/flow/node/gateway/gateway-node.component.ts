@@ -255,7 +255,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
 
     getContent(): string {
         if (this.gatewayType === GatewayType.EXCLUSIVE) {
-            return '';
+            return '互斥流程分支';
         } else if (this.gatewayType === GatewayType.PARALLEL) {
             return '并行流程分支';
         } else {
