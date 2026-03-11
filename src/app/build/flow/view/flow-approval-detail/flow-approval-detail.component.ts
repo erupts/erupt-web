@@ -58,6 +58,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     addSignModalVisible: boolean = false;
     returnModalVisible: boolean = false;
     resubmitModalVisible: boolean = false;
+    handleModalVisible: boolean = false;
 
     reason: string;
     approveSignature: string = null;
@@ -186,11 +187,31 @@ export class FlowApprovalDetailComponent implements OnInit {
         }
     }
 
-
     // 同意审批
     approve() {
         this.reason = null;
         this.approveModalVisible = true;
+    }
+
+    // 办理
+    handle() {
+        this.reason = null;
+        this.handleModalVisible = true;
+    }
+
+    // 提交办理
+    submitHandle() {
+        let data;
+        if (Object.keys(this.nodeInfo?.prop?.formAccesses || {}).length) {
+            data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
+        }
+        this.flowInstanceApiService.assignee(this.currTask.id, this.reason, data).subscribe(res => {
+            this.handleModalVisible = false;
+            this.reason = null;
+            this.message.success('办理成功');
+            this.selectedInstance = null;
+            this.loadInstanceDetail(this.selectedInstance, true);
+        })
     }
 
     private findAssignedNodes(rules: NodeRule[], currentNodeId: string) {
