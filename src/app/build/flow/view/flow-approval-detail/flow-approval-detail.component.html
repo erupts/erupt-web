@@ -266,7 +266,12 @@
                                 重新提交
                             </button>
                         }
-                        @if (nodeInfo?.type == NodeType.APPROVAL) {
+                        @if (nodeInfo?.type == NodeType.ASSIGNEE) {
+                            <button nz-button nzSize="default" nzType="primary" nzGhost class="action-button" (click)="handle()">
+                                <span nz-icon nzType="check" nzTheme="outline"></span>
+                                办理
+                            </button>
+                        } @else if (nodeInfo?.type == NodeType.APPROVAL) {
                             <button nz-button nzSize="default" nzType="primary" nzGhost (click)="approve()" class="action-button">
                                 <span nz-icon nzType="check" nzTheme="outline"></span>
                                 同意
@@ -632,6 +637,31 @@
               nz-input
               [(ngModel)]="reason"
               placeholder="提交说明..."
+              [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+              class="reason-textarea"
+          ></textarea>
+            </nz-input-group>
+        </div>
+    </div>
+</nz-modal>
+
+<!-- 办理弹窗 -->
+<nz-modal [nzDraggable]="true"
+          [(nzVisible)]="handleModalVisible"
+          nzTitle="办理"
+          nzOkText="确定"
+          nzCancelText="取消"
+          (nzOnOk)="submitHandle()"
+          (nzOnCancel)="handleModalVisible = false"
+>
+    <div *nzModalContent>
+        <div class="modal-content">
+            <p class="modal-description">办理说明：</p>
+            <nz-input-group>
+          <textarea
+              nz-input
+              [(ngModel)]="reason"
+              placeholder="办理说明..."
               [nzAutosize]="{ minRows: 3, maxRows: 6 }"
               class="reason-textarea"
           ></textarea>
