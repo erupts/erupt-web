@@ -9,6 +9,7 @@ import {StartNodeComponent} from "@flow/node/start/start-node.component";
 import {FlexNodeComponent} from "@flow/node/flex/flex-node.component";
 import {NodeType} from "@flow/model/node.model";
 import {SubNodeComponent} from "@flow/node/sub/sub-node.component";
+import {AssigneeNodeComponent} from "./assignee/assignee-node.component";
 
 export const Nodes: ANode[] = [
     (() => {
@@ -28,7 +29,7 @@ export const Nodes: ANode[] = [
     })(),
     new StartNodeComponent(),
     new ApprovalNodeComponent(),
-    // new AssigneeNodeComponent(),
+    new AssigneeNodeComponent(),
     new CcNodeComponent(),
     new SubNodeComponent(),
     new FlexNodeComponent(),
