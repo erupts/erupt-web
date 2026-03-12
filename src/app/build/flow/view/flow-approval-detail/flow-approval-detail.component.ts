@@ -135,7 +135,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                                     }
                                 }
                             })
-                        }, 30)
+                        }, 50)
                     }
                 })
             }
@@ -492,6 +492,9 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     onTabChange(index: number) {
         this.activeTabIndex = index;
+        if (this.activeTabIndex === 0 && this.selectedInstance) {
+            this.loadInstanceDetail(this.selectedInstance);
+        }
     }
 
 
