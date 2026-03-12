@@ -73,6 +73,12 @@ export class MarkdownService {
             .use(markdownItKatex, { throwOnError: false, errorColor: '#cc0000' });
 
         this.md = md;
+        // // 流程图等 SVG 带明确宽高，避免 useMaxWidth 时高度由浏览器计算导致撑开整页
+        // mermaid.initialize({
+        //     startOnLoad: false,
+        //     flowchart: { useMaxWidth: false },
+        //     sequence: { useMaxWidth: false },
+        // });
     }
 
     render(text: string): string {
