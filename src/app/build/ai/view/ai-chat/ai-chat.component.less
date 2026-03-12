@@ -1,23 +1,22 @@
 /* AI 聊天 - 现代简洁风格，仅本模块加载（代码高亮主题在全局 styles.less 引入） */
 
 /* 无对应全局/ant 变量且多处使用的保留变量 */
-@radius: 12px;
-@radius-sm: 8px;
-@radius-lg: 20px;
+@radius: 8px;
+@radius-sm: 4px;
+@radius-lg: 16px;
 @content-max: 720px;
 
 /* 宿主填满容器，无容器时至少为视口减去顶栏 */
 :host {
     display: block;
     height: 100%;
-    min-height: calc(100vh - 44px);
     box-sizing: border-box;
 }
 
 /* 根布局：填满宿主，并设 min-height 兜底（父链无高度时仍能撑满一屏） */
 .ai-chat-layout {
     height: 100%;
-    min-height: calc(100vh - 44px);
+    //min-height: calc(100vh - 44px);
     box-sizing: border-box;
     display: flex;
     background: #f5f5f5;
@@ -40,7 +39,7 @@
 
 /* ========== 侧边栏：浅色 ========== */
 .sidebar {
-    width: 280px;
+    width: 260px;
     flex-shrink: 0;
     min-height: 0;
     background: #fafafa;
@@ -50,7 +49,7 @@
 }
 
 .sidebar-header {
-    padding: 16px;
+    padding: 12px;
     border-bottom: 1px solid var(--ant-border-color-split, #eee);
 }
 
@@ -66,7 +65,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 4px;
     transition: all 0.2s ease;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 
@@ -172,7 +171,7 @@
 .bubbles {
     flex: 1 1 0;
     overflow: auto;
-    padding: 32px 24px 100px;
+    padding: 12px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -227,14 +226,32 @@
 }
 
 /* 流式消息容器：仅模型消息用 inline-block 使光标紧贴文末 */
-.bubble-wrap.is-model .model-message-body .markdown-body {
+.bubble-wrap.is-model .bubble-content .markdown-body {
     display: inline-block;
     max-width: 100%;
     vertical-align: top;
 }
 
+/* 流式打字揭示动画：每次内容更新时淡入+微动，用 a/b 交替 class 强制重播 */
+.streaming-typing-reveal-a,
+.streaming-typing-reveal-b {
+    animation: streaming-typing-reveal 0.35s ease-out;
+    will-change: opacity, transform;
+}
+
+@keyframes streaming-typing-reveal {
+    0% {
+        opacity: 0.4;
+        transform: translateY(3px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* 流式打字光标 */
-.streaming-cursor {
+.bubble-content .streaming-cursor {
     display: inline-block;
     width: 2px;
     height: 1.1em;
@@ -347,7 +364,7 @@
     }
 
     .agent-select {
-        width: 160px;
+        width: 120px;
     }
 }
 
@@ -358,12 +375,11 @@
 }
 
 .toolbar-icon {
-    width: 32px;
-    height: 32px;
-    padding: 0;
+    padding: 0 6px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 4px;
     color: var(--ant-text-color-secondary, #666);
     border-radius: @radius-sm;
 
@@ -374,6 +390,55 @@
 
     .anticon {
         font-size: 16px;
+    }
+
+    &.toolbar-icon-stop:hover {
+        color: #e53935;
+        background: rgba(229, 57, 53, 0.08);
+    }
+}
+
+/* 快捷提示词下拉列表 */
+.quick-prompts-menu {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    min-width: 200px;
+    max-width: 320px;
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.quick-prompts-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--ant-text-color, #1a1a1a);
+    transition: background 0.15s ease;
+    border: none;
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+
+    &:hover {
+        background: var(--ant-primary-1, #e6f4ff);
+        color: var(--ant-primary-color, #1677ff);
+    }
+
+    .prompt-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 2px;
+    }
+
+    .prompt-preview {
+        display: block;
+        font-size: 12px;
+        color: var(--ant-text-color-secondary, #666);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 
@@ -406,7 +471,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 14px 12px;
+    padding: 8px 14px;
     border-top: 1px solid var(--ant-border-color-split, #f0f0f0);
 }
 
@@ -416,8 +481,6 @@
 }
 
 .btn-send {
-    background: #52c41a !important;
-    border-color: #52c41a !important;
     color: #fff !important;
     padding: 0 20px;
     height: 32px;
@@ -425,8 +488,6 @@
     border-radius: @radius-sm;
 
     &:hover:not([disabled]) {
-        background: #73d13d !important;
-        border-color: #73d13d !important;
         color: #fff !important;
     }
 }
