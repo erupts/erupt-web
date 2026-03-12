@@ -38,6 +38,10 @@ let coreRouter: Routes = [
         pathMatch: "full"
     },
     {
+        path: "ai",
+        loadChildren: () => import("../build/ai/ai.module").then(m => m.AiModule)
+    },
+    {
         path: "tpl/:name",
         pathMatch: "full",
         loadChildren: () => tplLoad.then(m => m.TplModule)
