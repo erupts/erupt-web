@@ -91,7 +91,11 @@
                             "size-sensor",
                             "pdfast",
                             "d3-regression",
-                            "fmin"
+                            "fmin",
+                            "markdown-it",
+                            "highlight.js",
+                            "katex",
+                            "mermaid"
                         ],
                         "stylePreprocessorOptions": {
                             "includePaths": [
