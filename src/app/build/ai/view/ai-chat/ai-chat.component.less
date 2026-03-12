@@ -109,7 +109,7 @@
                 color: var(--ant-text-color, #1a1a1a);
             }
 
-            .conv-delete {
+            .conv-more {
                 opacity: 1;
             }
         }
@@ -123,13 +123,14 @@
             }
         }
 
-        .ant-btn.conv-delete {
+        .ant-btn.conv-more {
             flex-shrink: 0;
             opacity: 0.5;
             color: var(--ant-text-color-secondary, #666);
 
             &:hover {
-                color: #e53935;
+                color: var(--ant-text-color, #1a1a1a);
+                background: rgba(0, 0, 0, 0.06);
             }
         }
 
@@ -468,5 +469,22 @@
 
     &:hover:not([disabled]) {
         color: #fff !important;
+    }
+}
+
+/* 会话操作菜单 */
+.chat-action-menu {
+    min-width: 140px;
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        font-size: 14px;
+
+        .anticon {
+            font-size: 14px;
+        }
     }
 }

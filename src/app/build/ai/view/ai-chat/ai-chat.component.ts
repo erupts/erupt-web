@@ -326,7 +326,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (el) el.scrollTop = el.scrollHeight;
     }
 
-    deleteChat(chatId: number): void {
+    deleteChat(chatId: number, event: Event): void {
+        event.stopPropagation();
         this.modal.confirm({
             nzTitle: '确认删除',
             nzContent: '确定要删除该会话吗？删除后无法恢复。',
@@ -339,6 +340,47 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                         next: () => {
                             this.fetchChats();
                             this.message.success('已删除');
+                            resolve();
+                        },
+                        error: err => reject(err)
+                    });
+                })
+        });
+    }
+
+    renameChat(chatId: number, currentTitle: string, event: Event): void {
+        event.stopPropagation();
+        this.modal.create({
+            nzTitle: '重命名会话',
+            nzContent: `
+                <div style="margin-top: 16px;">
+                    <input 
+                        id="rename-input" 
+                        nz-input 
+                        placeholder="请输入新的会话名称" 
+                        value="${currentTitle}" 
+                        style="width: 100%;"
+                    />
+                </div>
+            `,
+            nzOkText: '确定',
+            nzCancelText: '取消',
+            nzOnOk: () =>
+                new Promise<void>((resolve, reject) => {
+                    const input = document.getElementById('rename-input') as HTMLInputElement;
+                    const newTitle = input?.value?.trim();
+                    if (!newTitle) {
+                        this.message.error('会话名称不能为空');
+                        reject();
+                        return;
+                    }
+                    this.chatApi.renameChat(chatId, newTitle).subscribe({
+                        next: () => {
+                            const chat = this.chats.find(c => c.id === chatId);
+                            if (chat) {
+                                chat.title = newTitle;
+                            }
+                            this.message.success('重命名成功');
                             resolve();
                         },
                         error: err => reject(err)
