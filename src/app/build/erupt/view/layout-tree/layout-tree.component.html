@@ -1,22 +1,23 @@
-<nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;margin-bottom: 0">
-    <input type="text" nz-input placeholder="Search" [(ngModel)]="searchValue">
-</nz-input-group>
-<ng-template #suffixIcon>
-    <i nz-icon nzType="search"></i>
-</ng-template>
-<nz-card [nzBodyStyle]="{padding:'10px',overflow: 'auto'}" [nzLoading]="treeLoading"
-         [ngStyle]="{height: 'calc(100vh - 140px - ' + (settingService.layout['reuse'] ? '40px' : '0px') + ')'}"
-         style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);overflow: auto"
-         [nzBordered]="true">
-    <nz-tree class="tree-container"
-             [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 165px - ' + (settingSrv.layout['reuse']?'40px':'0px') + ')' : null"
-             [nzData]="list"
-             [nzShowLine]="true"
-             [nzSearchValue]="searchValue"
-             [nzBlockNode]="true"
-             [nzSelectedKeys]="selectedKeys"
-             (nzClick)="nodeClickEvent($event)"
-             (nzDblClick)="nzDblClick($event)"
-    >
-    </nz-tree>
-</nz-card>
+<div style="height: 100%;display: flex;flex-direction: column;">
+    <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;margin-bottom: 0">
+        <input type="text" nz-input placeholder="Search" [(ngModel)]="searchValue">
+    </nz-input-group>
+    <ng-template #suffixIcon>
+        <i nz-icon nzType="search"></i>
+    </ng-template>
+    <nz-card [nzBodyStyle]="{padding:'10px',overflow: 'auto'}" [nzLoading]="treeLoading"
+             style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);overflow: auto;flex: 1;margin-bottom: 0"
+             [nzBordered]="true">
+        <nz-tree class="tree-container"
+                 [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 165px - ' + (settingSrv.layout['reuse']?'40px':'0px') + ')' : null"
+                 [nzData]="list"
+                 [nzShowLine]="true"
+                 [nzSearchValue]="searchValue"
+                 [nzBlockNode]="true"
+                 [nzSelectedKeys]="selectedKeys"
+                 (nzClick)="nodeClickEvent($event)"
+                 (nzDblClick)="nzDblClick($event)"
+        >
+        </nz-tree>
+    </nz-card>
+</div>
