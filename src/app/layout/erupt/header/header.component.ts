@@ -166,7 +166,7 @@ export class HeaderComponent implements OnInit {
             },
             nzContent: EruptIframeComponent,
         });
-        model.getContentComponent().url = "ai-chat.html?_token=" + this.tokenService.get().token;
+        model.getContentComponent().url = "#/fill/ai/chat";
         model.getContentComponent().height = "83vh"
     }
 

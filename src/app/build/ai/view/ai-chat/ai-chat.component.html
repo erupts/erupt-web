@@ -1,0 +1,156 @@
+<div class="ai-chat-layout" [class.is-fullscreen]="fullscreen">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <button nz-button nzType="default" (click)="createConversation()" class="new-chat-btn">
+                <span nz-icon nzType="plus"></span> 新建会话
+            </button>
+        </div>
+        <ul
+            #chatListRef
+            class="conversation-list"
+            (scroll)="onChatListScroll()">
+            @if (loadingChats) {
+                <li class="conv-loading">
+                    <nz-spin nzSimple nzSize="small"></nz-spin>
+                </li>
+            }
+            @for (item of chats; track item.id) {
+                <li
+                    [class.active]="selectChat === item.id"
+                    (click)="onSelectChat(item.id)">
+                    <span class="conv-title">{{ item.title }}</span>
+                    <button nz-button nzType="text" nzSize="small" class="conv-delete"
+                            (click)="deleteChat(item.id); $event.stopPropagation()" title="删除">
+                        <span nz-icon nzType="delete"></span>
+                    </button>
+                </li>
+            }
+            @if (loadingMoreChats) {
+                <li class="conv-loading">
+                    <nz-spin nzSimple nzSize="small"></nz-spin>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="main">
+        <article
+            #bubblesRef
+            class="bubbles"
+            (scroll)="onBubbleScroll()">
+            @if (loadingMessages) {
+                <div class="bubbles-loading">
+                    <nz-spin nzSimple></nz-spin>
+                </div>
+            } @else if (messages.length) {
+                @if (loadingMoreMessages) {
+                    <div class="bubbles-load-more">
+                        <nz-spin nzSimple nzSize="small"></nz-spin>
+                        <span>加载更多...</span>
+                    </div>
+                }
+                @for (item of messages; track $index) {
+                    <div class="bubble-wrap" [class.is-model]="item.senderType === 'MODEL'">
+                        @if (item.senderType !== 'MODEL') {
+                            <nz-avatar [nzText]="settingsService.user?.name?.substring(0,1)"
+                                       [nzSrc]="settingsService.user.avatar">
+                            </nz-avatar>
+                        }
+                        <div class="bubble-content">
+                            @if (item.loading) {
+                                <div class="loading-wrap">
+                                    <nz-spin nzSimple></nz-spin>
+                                </div>
+                            }
+                            @if (!item.loading && (item.content || item.contentHtml)) {
+                                <div class="markdown-body"
+                                     [class.streaming-typing-reveal-a]="(item.streamingTick ?? 0) % 2 === 0 && item.senderType === 'MODEL'"
+                                     [class.streaming-typing-reveal-b]="(item.streamingTick ?? 0) % 2 === 1 && item.senderType === 'MODEL'"
+                                     [innerHTML]="getMessageHtml(item) | safeHtml"></div>
+                                @if (item.senderType === 'MODEL' && $index === messages.length - 1 && streaming) {
+                                    <span class="streaming-cursor"></span>
+                                }
+                            }
+                            @if (!item.loading && !item.content && !item.contentHtml && item.senderType === 'MODEL') {
+                                <div class="placeholder">思考中...</div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </article>
+        <div class="sender-wrap">
+            <div class="input-card">
+                <div class="input-toolbar">
+                    <div class="toolbar-left">
+                        @if (agents.length > 0) {
+                            <div>
+                                <span class="toolbar-label">智能体：</span>
+                                <nz-select
+                                    class="agent-select"
+                                    nzVariant="borderless"
+                                    [(ngModel)]="selectAgentId"
+                                    nzPlaceHolder="不指定"
+                                    nzAllowClear
+                                    nzShowSearch
+                                    nzSize="small">
+                                    @for (agent of agents; track agent.id) {
+                                        <nz-option [nzValue]="agent.id" [nzLabel]="agent.name"></nz-option>
+                                    }
+                                </nz-select>
+                            </div>
+                        }
+                    </div>
+                    <div class="toolbar-right">
+                        @if (sending) {
+                            <button nz-button nzType="text" nzSize="small" class="toolbar-icon toolbar-icon-stop"
+                                    title="停止生成" (click)="stopGeneration()">
+                                <span nz-icon nzType="stop" nzTheme="outline"></span>
+                                <span>停止</span>
+                            </button>
+                        }
+                        @if (content?.trim()) {
+                            <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
+                                    title="清空输入"
+                                    (click)="clearInput()">
+                                <span nz-icon nzType="clear" nzTheme="outline"></span>
+                            </button>
+                        }
+                        <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
+                                [title]="fullscreen ? '退出全屏' : '全屏'"
+                                (click)="toggleFullscreen()">
+                            @if (fullscreen) {
+                                <span nz-icon nzType="fullscreen-exit" nzTheme="outline"></span>
+                            } @else {
+                                <span nz-icon nzType="fullscreen" nzTheme="outline"></span>
+                            }
+                        </button>
+                    </div>
+                </div>
+                <div class="input-body">
+                    <textarea
+                        nz-input
+                        [(ngModel)]="content"
+                        (keydown)="onInputKeydown($event)"
+                        [disabled]="sendDisabled"
+                        [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                        placeholder="输入聊天内容..."
+                        rows="2">
+                    </textarea>
+                </div>
+                <div class="input-footer">
+                    <span class="shortcut-hint">↵ 发送 / ⌘ + ↵ 换行</span>
+                    <button
+                        nz-button
+                        nzType="primary"
+                        nzSize="small"
+                        class="btn-send"
+                        [nzLoading]="sending"
+                        [disabled]="sendDisabled || !content?.trim()"
+                        (click)="send(content); content = ''">
+                        发送
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

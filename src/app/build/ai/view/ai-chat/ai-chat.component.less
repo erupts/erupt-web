@@ -1,0 +1,472 @@
+/* AI 聊天 - 现代简洁风格，仅本模块加载（代码高亮主题在全局 styles.less 引入） */
+
+/* 无对应全局/ant 变量且多处使用的保留变量 */
+@radius: 8px;
+@radius-sm: 4px;
+@radius-lg: 16px;
+@content-max: 720px;
+
+/* 宿主填满容器，无容器时至少为视口减去顶栏 */
+:host {
+    height: 100%;
+    overflow: auto;
+}
+
+/* 根布局：填满宿主，并设 min-height 兜底（父链无高度时仍能撑满一屏） */
+.ai-chat-layout {
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    background: #f5f5f5;
+
+    &.is-fullscreen {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        min-height: 100vh;
+
+        .sidebar {
+            display: none;
+        }
+
+        .main {
+            flex: 1;
+        }
+    }
+}
+
+/* ========== 侧边栏：浅色 ========== */
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    min-height: 0;
+    background: #fafafa;
+    border-right: 1px solid var(--ant-border-color-split, #eee);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 12px;
+    border-bottom: 1px solid var(--ant-border-color-split, #eee);
+}
+
+.new-chat-btn {
+    width: 100%;
+    height: 44px;
+    border-radius: @radius-sm;
+    border: 1px dashed var(--ant-border-color-split, #eee);
+    background: #fff !important;
+    color: var(--ant-text-color, #1a1a1a) !important;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    &:hover {
+        border-color: var(--ant-primary-color) !important;
+        color: var(--ant-primary-color) !important;
+        background: var(--ant-primary-1) !important;
+    }
+}
+
+.conversation-list {
+    margin: 0;
+    padding: 12px;
+    list-style: none;
+    flex: 1;
+    overflow-y: auto;
+
+    li {
+        cursor: pointer;
+        padding: 12px 14px;
+        border-radius: @radius-sm;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 14px;
+        color: var(--ant-text-color, #1a1a1a);
+        transition: background 0.15s ease;
+
+        .conv-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--ant-text-color-secondary, #666);
+        }
+
+        &:hover {
+            background: #f0f0f0;
+
+            .conv-title {
+                color: var(--ant-text-color, #1a1a1a);
+            }
+
+            .conv-delete {
+                opacity: 1;
+            }
+        }
+
+        &.active {
+            background: #e8e8e8;
+
+            .conv-title {
+                color: var(--ant-text-color, #1a1a1a);
+                font-weight: 500;
+            }
+        }
+
+        .ant-btn.conv-delete {
+            flex-shrink: 0;
+            opacity: 0.5;
+            color: var(--ant-text-color-secondary, #666);
+
+            &:hover {
+                color: #e53935;
+            }
+        }
+
+        &.conv-loading,
+        &.conv-no-more {
+            cursor: default;
+            justify-content: center;
+            color: var(--ant-text-color-secondary, #666);
+            font-size: 13px;
+
+            &:hover {
+                background: transparent;
+
+                .conv-title {
+                    color: var(--ant-text-color-secondary, #666);
+                }
+            }
+        }
+
+        &.conv-loading {
+            gap: 8px;
+        }
+    }
+}
+
+/* ========== 主区域 ========== */
+.main {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    box-shadow: -2px 0 12px rgba(0, 0, 0, 0.04);
+}
+
+.bubbles {
+    flex: 1 1 0;
+    overflow: auto;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 单条消息行 */
+.bubble-wrap {
+    width: 100%;
+    max-width: @content-max;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 0;
+    box-sizing: border-box;
+
+    &.is-model {
+        flex-direction: row;
+    }
+
+    &:not(.is-model) {
+        flex-direction: row-reverse;
+    }
+}
+
+.bubble-wrap ::ng-deep(.ant-avatar) {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.bubble-wrap.is-model ::ng-deep(.ant-avatar) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.35);
+    font-size: 18px;
+}
+
+.bubble-wrap:not(.is-model) ::ng-deep(.ant-avatar) {
+    background: linear-gradient(135deg, #5c6bc0 0%, #7986cb 100%) !important;
+    box-shadow: 0 2px 8px rgba(92, 107, 192, 0.25);
+}
+
+.bubble-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.loading-wrap {
+    padding: 12px 0;
+}
+
+/* 流式消息容器：仅模型消息用 inline-block 使光标紧贴文末 */
+.bubble-wrap.is-model .model-message-body .markdown-body {
+    display: inline-block;
+    max-width: 100%;
+    vertical-align: top;
+}
+
+/* 流式打字光标 */
+.streaming-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    background: var(--ant-primary-color);
+    animation: streaming-cursor-blink 0.9s step-end infinite;
+}
+
+@keyframes streaming-cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* ========== 用户消息：实心气泡 ========== */
+.bubble-wrap:not(.is-model) .markdown-body {
+    background: var(--ant-primary-color-hover);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: @radius-sm;
+    box-shadow: 0 2px 8px rgba(0, 102, 255, 0.2);
+}
+
+.bubble-wrap:not(.is-model) .markdown-body ::ng-deep(a) {
+    color: rgba(255, 255, 255, 0.95);
+    text-decoration: underline;
+}
+
+.placeholder {
+    color: var(--ant-text-color-secondary, #555);
+    padding: 12px 0;
+    font-size: 14px;
+}
+
+/* 消息区加载中 */
+.bubbles-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 60px 0;
+    color: var(--ant-text-color-secondary, #666);
+    font-size: 14px;
+}
+
+.bubbles-load-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 0;
+    color: var(--ant-text-color-secondary, #666);
+    font-size: 13px;
+}
+
+/* 空状态 */
+.empty-tip {
+    margin-top: 120px;
+    text-align: center;
+
+    ::ng-deep(.ant-empty-description) {
+        color: var(--ant-text-color-secondary, #555);
+        font-size: 15px;
+    }
+}
+
+/* ========== 底部输入区 ========== */
+.sender-wrap {
+    flex-shrink: 0;
+    padding: 20px 24px 28px;
+    background: #ffffff;
+    border-top: 1px solid var(--ant-border-color-split, #eee);
+}
+
+/* 输入卡片：图片样式 - 浅灰边框、圆角、顶部箭头、工具栏、底部快捷键与发送组 */
+.input-card {
+    max-width: @content-max;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid var(--ant-border-color-base, #e0e0e0);
+    border-radius: @radius;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus-within {
+        border-color: var(--ant-primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.12);
+    }
+}
+
+.input-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px 8px;
+    min-height: 40px;
+}
+
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .toolbar-label {
+        font-size: 13px;
+        color: var(--ant-text-color-secondary, #555);
+        flex-shrink: 0;
+    }
+
+    .agent-select {
+        width: 120px;
+    }
+}
+
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.toolbar-icon {
+    padding: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--ant-text-color-secondary, #666);
+    border-radius: @radius-sm;
+
+    &:hover {
+        color: var(--ant-text-color, #1a1a1a);
+        background: rgba(0, 0, 0, 0.04);
+    }
+
+    .anticon {
+        font-size: 16px;
+    }
+
+    &.toolbar-icon-stop:hover {
+        color: #e53935;
+        background: rgba(229, 57, 53, 0.08);
+    }
+}
+
+/* 快捷提示词下拉列表 */
+.quick-prompts-menu {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    min-width: 200px;
+    max-width: 320px;
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.quick-prompts-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--ant-text-color, #1a1a1a);
+    transition: background 0.15s ease;
+    border: none;
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+
+    &:hover {
+        background: var(--ant-primary-1, #e6f4ff);
+        color: var(--ant-primary-color, #1677ff);
+    }
+
+    .prompt-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 2px;
+    }
+
+    .prompt-preview {
+        display: block;
+        font-size: 12px;
+        color: var(--ant-text-color-secondary, #666);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.input-body {
+    padding: 0 14px 8px;
+
+    textarea {
+        width: 100%;
+        resize: none;
+        border: none;
+        background: transparent;
+        font-size: 15px;
+        line-height: 1.5;
+        padding: 6px 0;
+        min-height: 26px;
+        display: block;
+
+        &::placeholder {
+            color: var(--ant-text-color-secondary, #999);
+        }
+
+        &:focus {
+            box-shadow: none;
+            outline: none;
+        }
+    }
+}
+
+.input-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    border-top: 1px solid var(--ant-border-color-split, #f0f0f0);
+}
+
+.shortcut-hint {
+    font-size: 12px;
+    color: var(--ant-text-color-secondary, #999);
+}
+
+.btn-send {
+    color: #fff !important;
+    padding: 0 20px;
+    height: 32px;
+    font-weight: 500;
+    border-radius: @radius-sm;
+
+    &:hover:not([disabled]) {
+        color: #fff !important;
+    }
+}
