@@ -90,38 +90,12 @@ reuse-tab .ant-tabs-tab-arrow-show {
     color: #FF5722;
 }
 
-
 .page-container {
-    height: calc(100vh - @alain-default-header-hg);
+    height: 100%;
 }
-
-erupt-fill .page-container {
-    left: 0;
-    top: 0;
-    height: 100vh !important;
-    margin-top: 0 !important;
-}
-
 
 @media (min-width: 992px) {
     .edit-modal-lg .ant-modal {
         max-width: 935px !important;
     }
-}
-
-
-reuse-tab ~ app-site .page-container,
-reuse-tab ~ app-home .page-container,
-reuse-tab ~ app-tpl .page-container {
-    height: calc(100vh - @alain-default-header-hg - 44.62px);
-}
-
-@media screen and (max-width: 767px) {
-
-    reuse-tab ~ app-site .page-container,
-    reuse-tab ~ app-home .page-container,
-    reuse-tab ~ app-tpl .page-container {
-        top: 40px;
-    }
-
 }
