@@ -51,9 +51,11 @@
                             @if (eruptBuild) {
                                 <div class="section">
                                     @if (!dataDeleted) {
-                                        <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== approvalView"
-                                                         [formAccesses]="nodeInfo?.prop?.formAccesses || {}"
-                                                         [defaultFormAccess]="nodeInfo?.type==NodeType.START ? FormAccessEnum.DEFAULT : FormAccessEnum.READONLY"></erupt-flow-form>
+                                        @if (activeTabIndex === 0) {
+                                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== approvalView"
+                                                             [formAccesses]="nodeInfo?.prop?.formAccesses || {}"
+                                                             [defaultFormAccess]="nodeInfo?.type==NodeType.START ? FormAccessEnum.DEFAULT : FormAccessEnum.READONLY"></erupt-flow-form>
+                                        }
                                     }
                                     @if (dataDeleted) {
                                         <div style="text-align: center;margin: 100px 0;color:#F44336">
