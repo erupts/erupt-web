@@ -19,10 +19,30 @@
                     [class.active]="selectChat === item.id"
                     (click)="onSelectChat(item.id)">
                     <span class="conv-title">{{ item.title }}</span>
-                    <button nz-button nzType="text" nzSize="small" class="conv-delete"
-                            (click)="deleteChat(item.id); $event.stopPropagation()" title="删除">
-                        <span nz-icon nzType="delete"></span>
+                    <button
+                        nz-button
+                        nzType="text"
+                        nzSize="small"
+                        class="conv-more"
+                        nz-dropdown
+                        [nzDropdownMenu]="chatMenu"
+                        nzPlacement="bottomRight"
+                        (click)="$event.stopPropagation()"
+                        title="更多操作">
+                        <span nz-icon nzType="ellipsis" nzTheme="outline"></span>
                     </button>
+                    <nz-dropdown-menu #chatMenu="nzDropdownMenu">
+                        <ul nz-menu class="chat-action-menu">
+                            <li nz-menu-item (click)="renameChat(item.id, item.title, $event)">
+                                <span nz-icon nzType="edit" nzTheme="outline"></span>&nbsp;
+                                <span>重命名</span>
+                            </li>
+                            <li nz-menu-item nzDanger (click)="deleteChat(item.id, $event)">
+                                <span nz-icon nzType="delete" nzTheme="outline"></span>&nbsp;
+                                <span>删除</span>
+                            </li>
+                        </ul>
+                    </nz-dropdown-menu>
                 </li>
             }
             @if (loadingMoreChats) {

@@ -6,7 +6,14 @@ import {EruptAppData} from "@shared/model/erupt-app.model";
 @Component({
     standalone: false,
     templateUrl: './home.component.html',
-    styles: []
+    styles: [
+        `
+            :host {
+                height: 100%;
+                overflow: auto;
+            }
+        `
+    ]
 })
 export class HomeComponent implements OnInit {
 

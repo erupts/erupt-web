@@ -30,7 +30,11 @@ export class ChatApiService {
     }
 
     deleteChat(chatId: number): Observable<R<void>> {
-        return this._http.get<R<void>>(RestPath.erupt + '/ai/chat/delete_chat', {chatId});
+        return this._http.get<R<void>>(RestPath.erupt + '/ai/chat/delete-chat', {chatId});
+    }
+
+    renameChat(chatId: number, title: string): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + '/ai/chat/rename-chat', {chatId, title});
     }
 
     messages(chatId: number, size: number, index: number): Observable<R<ChatMessage[]>> {
