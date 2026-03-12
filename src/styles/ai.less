@@ -1,0 +1,59 @@
+/* AI 聊天全局样式（对 innerHTML 插入的 markdown 内容生效，不受组件封装影响；highlight.js 主题在 styles.less 中引入） */
+
+.markdown-body {
+    max-width: 100%;
+    overflow-x: auto;
+
+    pre.hljs {
+        padding: 8px;
+        margin: 0;
+        background-color: #f8f8f8;
+        border-radius: 4px;
+    }
+
+    code {
+        margin: 0;
+        padding: 0;
+        border: none !important;
+        font-size: 90%;
+        background-color: transparent;
+    }
+
+    .markdown-table-wrap {
+        overflow-x: auto;
+        margin: 1em 0;
+    }
+
+
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+
+    table {
+        width: max-content;
+        min-width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px #d1d5db;
+        border: 1px solid #d1d5db;
+
+        th,
+        td {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+            color: #1a1a1a;
+            border-bottom: 2px solid #d1d5db;
+        }
+
+        tbody tr:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+    }
+}

@@ -2,16 +2,15 @@
     <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
 }
 @if (eruptBuildModel) {
-    <div nz-row [nzGutter]="12">
+    <div nz-row [nzGutter]="12" style="height: 100%">
         @if (linkTree) {
-            <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="4">
+            <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="4" style="height: 100%">
                 <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
             </div>
         }
         <div nz-col [nzXs]="24" [nzMd]="linkTree?16:24" [nzLg]="linkTree?18:24" [nzXl]="linkTree?20:24"
              [hidden]="!showTable"
-             [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?'calc(100vh - 103px - ' + (this.settingSrv.layout['reuse'] ? '40px' : '0px') +' + '+
-                (settingSrv.layout['breadcrumbs']?'0px':'38px')+ ')':'auto'}">
+             [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?'100%':'auto'}">
             <ng-container>
                 <div class="erupt-btn-item">
                     <div>
@@ -32,7 +31,8 @@
                   <i nz-icon nzType="import" nzTheme="outline"></i>
                   &nbsp;{{ 'table.import'|translate }}
                 </button>
-                <button nz-button nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight" style="margin-left: -1px">
+                <button nz-button nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight"
+                        style="margin-left: -1px">
                   <i nz-icon nzType="ellipsis"></i>
                 </button>
               </span>
@@ -53,17 +53,20 @@
                                     nzPopoverTrigger="click"
                                     nzPopoverPlacement="bottomLeft"
                                     [style.border-color]="selectedSorts.length?'var(--ant-primary-color-hover)':null">
-                                <i nz-icon nzType="swap" nzTheme="outline" style="transform: rotateZ(90deg)"></i> {{ 'global.sort'|translate }}
+                                <i nz-icon nzType="swap" nzTheme="outline"
+                                   style="transform: rotateZ(90deg)"></i> {{ 'global.sort'|translate }}
                             </button>
                             <ng-template #sortPopoverContent>
                                 <div style="width: 400px;">
-                                    <div style="border: 1px solid #d9d9d9; border-radius: 4px; padding: 8px; background: #fafafa; max-height: 400px; overflow-y: auto;">
+                                    <div
+                                        style="border: 1px solid #d9d9d9; border-radius: 4px; padding: 8px; background: #fafafa; max-height: 400px; overflow-y: auto;">
                                         <div cdkDropList (cdkDropListDropped)="onSortDrop($event)">
                                             @for (sort of selectedSorts; track sort; let i = $index) {
                                                 <div
                                                     cdkDrag
                                                     style="display: flex; align-items: center; gap: 8px; padding: 8px; margin-bottom: 4px; background: #fff; border: 1px solid #e8e8e8; border-radius: 4px; cursor: move;">
-                                                    <i nz-icon nzType="holder" nzTheme="outline" style="color: #8c8c8c; font-size: 16px; flex-shrink: 0;"></i>
+                                                    <i nz-icon nzType="holder" nzTheme="outline"
+                                                       style="color: #8c8c8c; font-size: 16px; flex-shrink: 0;"></i>
                                                     <nz-select [(ngModel)]="sort.field"
                                                                style="flex: 1; min-width: 120px;"
                                                                nzShowSearch
@@ -77,7 +80,8 @@
                                                             </nz-option>
                                                         }
                                                     </nz-select>
-                                                    <nz-radio-group nzSize="small" [(ngModel)]="sort.direction" style="flex-shrink: 0;">
+                                                    <nz-radio-group nzSize="small" [(ngModel)]="sort.direction"
+                                                                    style="flex-shrink: 0;">
                                                         @if (isNumericOrDateType(sort.field)) {
                                                             <label nz-radio-button [nzValue]="SortType.ASC">
                                                                 0 → 9
@@ -227,7 +231,8 @@
                                     <nz-divider class="hidden-mobile" nzType="vertical"></nz-divider>
                                     <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition"
                                             style="padding: 4px 8px">
-                                        <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
+                                        <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'"
+                                           nzTheme="outline"></i>
                                     </button>
                                     <button class="mb-sm" nz-button (click)="clearCondition()" id="erupt-btn-reset"
                                             [disabled]="dataPage.querying">
@@ -255,7 +260,9 @@
                     @if (vis.length) {
                         <div>
                             @if (visOptions.length > 1) {
-                                <nz-segmented [nzOptions]="visOptions" [ngStyle]="{marginTop: hideCondition? 0: '8px', marginBottom: '8px'}" [(ngModel)]="selectedVisIndex"
+                                <nz-segmented [nzOptions]="visOptions"
+                                              [ngStyle]="{marginTop: hideCondition? 0: '8px', marginBottom: '8px'}"
+                                              [(ngModel)]="selectedVisIndex"
                                               (ngModelChange)="visChange($event)">
                                 </nz-segmented>
                             }
@@ -283,10 +290,12 @@
                                                    [vis]="vis[selectedVisIndex]"/>
                                     }
                                     @case (VisType.TPL) {
-                                        <nz-spin [nzSpinning]="!getVisTplData()" [ngStyle]="{height: vis[selectedVisIndex].tplView.height || ((525 + (clientHeight - 814)) + 'px')}">
+                                        <nz-spin [nzSpinning]="!getVisTplData()"
+                                                 [ngStyle]="{height: vis[selectedVisIndex].tplView.height || ((525 + (clientHeight - 814)) + 'px')}">
                                             @if (getVisTplData()) {
-                                                <erupt-iframe [url]="dataService.getEruptVisTpl(eruptBuildModel.eruptModel.eruptName,vis[selectedVisIndex].code)"
-                                                              height="100%" width="'100%'"/>
+                                                <erupt-iframe
+                                                    [url]="dataService.getEruptVisTpl(eruptBuildModel.eruptModel.eruptName,vis[selectedVisIndex].code)"
+                                                    height="100%" width="'100%'"/>
                                             }
                                         </nz-spin>
                                     }
@@ -301,7 +310,8 @@
                         <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
                     }
                     @if (dataPage.showPagination) {
-                        <nz-pagination style="justify-content: center;margin-top: 12px" nzShowSizeChanger nzShowQuickJumper
+                        <nz-pagination style="justify-content: center;margin-top: 12px" nzShowSizeChanger
+                                       nzShowQuickJumper
                                        [nzPageIndex]="dataPage.pi" [nzShowTotal]="totalTemplate"
                                        [nzPageSize]="dataPage.ps"
                                        [nzTotal]="dataPage.total"
@@ -309,8 +319,8 @@
                                        (nzPageSizeChange)="pageSizeChange($event)"
                                        (nzPageIndexChange)="pageIndexChange($event)"
                         ></nz-pagination>
-                        <ng-template #totalTemplate
-                                     let-total>{{ 'table.totalLeft'|translate }} {{ dataPage.total }} {{ 'table.totalRight'|translate }}
+                        <ng-template
+                            #totalTemplate>{{ 'table.totalLeft'|translate }} {{ dataPage.total }} {{ 'table.totalRight'|translate }}
                         </ng-template>
                     }
                 }
