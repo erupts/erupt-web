@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import footnote from 'markdown-it-footnote';
@@ -13,6 +13,10 @@ import taskLists from 'markdown-it-task-lists';
 import markdownItKatex from 'markdown-it-katex';
 import mermaid from 'mermaid';
 
+/**
+ * 预处理 LaTeX 公式，统一转换为标准格式
+ * 支持: ```latex 代码块、\[...\] 块级公式、\(...\) 行内公式
+ */
 function preprocessLatex(text: string): string {
     text = text.replace(/```latex\s*([\s\S]*?)```/g, (_match, content) => {
         return '\n' + (content as string).trim() + '\n';
@@ -47,14 +51,14 @@ export class MarkdownService {
                 }
                 if (info && hljs.getLanguage(info)) {
                     try {
-                        const { value } = hljs.highlight(str, { language: info });
+                        const {value} = hljs.highlight(str, {language: info});
                         return `<pre class="hljs"><code class="language-${info}">${value}</code></pre>`;
                     } catch {
                         // fallback to auto or plain
                     }
                 }
                 try {
-                    const { value } = hljs.highlightAuto(str);
+                    const {value} = hljs.highlightAuto(str);
                     return `<pre class="hljs"><code>${value}</code></pre>`;
                 } catch {
                     return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
@@ -68,9 +72,9 @@ export class MarkdownService {
             .use(ins)
             .use(abbr)
             .use(deflist)
-            .use(linkAttributes, { attrs: { target: '_blank', rel: 'noopener' } })
+            .use(linkAttributes, {attrs: {target: '_blank', rel: 'noopener'}})
             .use(taskLists)
-            .use(markdownItKatex, { throwOnError: false, errorColor: '#cc0000' });
+            .use(markdownItKatex, {throwOnError: false, errorColor: '#cc0000'});
 
         this.md = md;
         // // 流程图等 SVG 带明确宽高，避免 useMaxWidth 时高度由浏览器计算导致撑开整页
@@ -96,7 +100,7 @@ export class MarkdownService {
         if (nodeList.length === 0) return;
         const nodes = Array.from(nodeList) as HTMLElement[];
         try {
-            mermaid.run({ nodes });
+            mermaid.run({nodes});
         } catch (e) {
             console.warn('mermaid.run error', e);
         }
