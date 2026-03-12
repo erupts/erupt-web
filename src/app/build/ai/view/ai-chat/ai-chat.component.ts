@@ -1,16 +1,19 @@
-import {AfterViewChecked, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {ChatApiService} from '../../service/chat-api.service';
 import {MarkdownService} from '../../service/markdown.service';
-import {Agent, Chat, ChatMessage, UserInfo} from '../../model/chat.model';
+import {Agent, Chat, ChatMessage} from '../../model/chat.model';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {RestPath} from "../../../erupt/model/erupt.enum";
+import {SettingsService} from "@delon/theme";
 
 /** 会话列表每页条数 */
-const CHAT_PAGE_SIZE = 20;
+const CHAT_PAGE_SIZE = 15;
 /** 距底部多少 px 时触发加载更多会话 */
 const CHAT_SCROLL_THRESHOLD = 80;
+/** 消息区视为「在底部」的缓冲 px：仅当用户在此范围内时，流式返回才自动触底 */
+const BUBBLES_BOTTOM_BUFFER_PX = 80;
 
 @Component({
     standalone: false,
@@ -22,7 +25,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     @ViewChild('bubblesRef') bubblesRef!: ElementRef<HTMLDivElement>;
     @ViewChild('chatListRef') chatListRef!: ElementRef<HTMLUListElement>;
 
-    userInfo: UserInfo | null = null;
     chats: Chat[] = [];
     agents: Agent[] = [];
     messages: ChatMessage[] = [];
@@ -48,24 +50,25 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     loadingMessages = false;
     /** 是否全屏模式 */
     fullscreen = false;
+    /** 是否正在流式输出（用于显示文末光标，与 eventSource 同生命周期） */
+    streaming = false;
     private eventSource: EventSource | null = null;
     private llmId = '';
 
     constructor(
+        protected settingsService: SettingsService,
         private chatApi: ChatApiService,
         private markdown: MarkdownService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
         private modal: NzModalService,
-        private message: NzMessageService
+        private message: NzMessageService,
+        private ngZone: NgZone
     ) {
         const params = new URLSearchParams(window.location.search);
         this.llmId = params.get('llm') || '';
     }
 
     ngOnInit(): void {
-        this.chatApi.userInfo().subscribe(res => {
-            this.userInfo = res as UserInfo;
-        });
         this.fetchChats();
         this.chatApi.agents().subscribe(res => {
             this.agents = res.data;
@@ -86,6 +89,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.eventSource.close();
             this.eventSource = null;
         }
+        this.streaming = false;
     }
 
     createConversation(): void {
@@ -239,10 +243,9 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.llmId}`;
             this.closeEventSource();
             this.eventSource = new EventSource(url);
+            this.streaming = true;
 
             this.eventSource.onmessage = (event) => {
-                this.sending = false;
-                this.sendDisabled = true;
                 try {
                     const data = JSON.parse(event.data);
                     this.accumulatedMarkdown += data.text || '';
@@ -250,15 +253,23 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                     this.accumulatedMarkdown += event.data;
                 }
                 const last = this.messages[this.messages.length - 1];
-                if (last?.loading) last.loading = false;
-                setTimeout(() => {
+                const shouldScroll = last ? this.isBubblesNearBottom() : false;
+                const html = this.markdown.render(this.accumulatedMarkdown);
+                // EventSource 在 Zone 外触发，必须在 ngZone.run 里更新状态并触底，界面才会刷新
+                this.ngZone.run(() => {
+                    this.sending = false;
+                    this.sendDisabled = true;
                     if (last) {
-                        last.contentHtml = this.markdown.render(this.accumulatedMarkdown);
+                        if (last.loading) last.loading = false;
+                        last.streamingTick = (last.streamingTick ?? 0) + 1;
+                        last.contentHtml = html;
                         last.content = this.accumulatedMarkdown;
                     }
-                    this.messageToBottom();
-                    setTimeout(() => this.messageToBottom(), 50);
-                }, 10);
+                    if (shouldScroll) {
+                        this.scrollBubblesToBottom();
+                        setTimeout(() => this.scrollBubblesToBottom(), 50);
+                    }
+                });
             };
 
             this.eventSource.onerror = () => {
@@ -302,12 +313,12 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         return div.innerHTML;
     }
 
-    messageToBottom(): void {
+    /** 是否在消息区底部缓冲区内（用户在看最新内容） */
+    private isBubblesNearBottom(): boolean {
         const el = this.bubblesRef?.nativeElement;
-        if (!el) return;
-        if (el.scrollHeight - el.scrollTop - el.clientHeight < el.clientHeight / 3) {
-            el.scrollTop = el.scrollHeight;
-        }
+        if (!el) return false;
+        const {scrollTop, scrollHeight, clientHeight} = el;
+        return scrollTop + clientHeight >= scrollHeight - BUBBLES_BOTTOM_BUFFER_PX;
     }
 
     scrollBubblesToBottom(): void {
@@ -356,13 +367,33 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
     }
 
-    getUserAvatarLabel(item: ChatMessage): string {
-        if (item.senderType === 'MODEL') return '';
-        return this.userInfo?.nickname?.substring(0, 1) || 'U';
-    }
-
     /** 切换全屏：主区域铺满视口并隐藏侧边栏 */
     toggleFullscreen(): void {
         this.fullscreen = !this.fullscreen;
     }
+
+    /** 清空输入框 */
+    clearInput(): void {
+        this.content = '';
+    }
+
+    /** 停止当前流式响应 */
+    stopGeneration(): void {
+        this.closeEventSource();
+        this.sending = false;
+        this.sendDisabled = false;
+        const last = this.messages[this.messages.length - 1];
+        if (last?.loading) {
+            last.loading = false;
+            if (this.accumulatedMarkdown) {
+                last.content = this.accumulatedMarkdown;
+                last.contentHtml = this.markdown.render(this.accumulatedMarkdown);
+            } else {
+                last.content = '(已停止)';
+                last.contentHtml = '<p>(已停止)</p>';
+            }
+        }
+        this.accumulatedMarkdown = '';
+    }
+
 }

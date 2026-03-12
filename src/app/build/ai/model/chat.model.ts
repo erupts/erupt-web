@@ -12,6 +12,8 @@ export interface ChatMessage {
     createTime: string;
     loading: boolean;
     chatId?: number;
+    /** 流式输出每更新一次自增，用于触发打字动画 */
+    streamingTick?: number;
 }
 
 export interface UserInfo {
