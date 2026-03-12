@@ -7,7 +7,15 @@ import {SettingsService} from "@delon/theme";
 @Component({
     standalone: false,
     selector: 'app-tpl',
-    templateUrl: './tpl.component.html'
+    templateUrl: './tpl.component.html',
+    styles: [
+        `
+            :host {
+                height: 100%;
+                overflow: auto;
+            }
+        `
+    ]
 })
 export class TplComponent implements OnInit, OnDestroy {
 

@@ -29,8 +29,6 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     edit = false;
 
-    isFillRoute = false;
-
     code!: string;
 
     saving: boolean = false;
@@ -137,7 +135,6 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             disableWarnings: false,
             scrollToNewItems: false
         };
-        this.checkFillRoute();
         this.code = this.route.snapshot.paramMap.get('code')!;
         this.cubeApiService.dashboardDetail(this.code).subscribe(res => {
             this.dashboard = res.data;
@@ -417,13 +414,6 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().dashboard = this.dashboard;
         ref.getContentComponent().report = cloneDeep(item);
-    }
-
-    private checkFillRoute() {
-        const url = this.router.url;
-        // 检查根路由是否是 fill（路径以 /fill 开头）
-        // 例如: /fill/cube/puzzle/123
-        this.isFillRoute = url.startsWith('/fill/');
     }
 
     addFilter() {

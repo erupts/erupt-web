@@ -8,15 +8,13 @@
 
 /* 宿主填满容器，无容器时至少为视口减去顶栏 */
 :host {
-    display: block;
     height: 100%;
-    box-sizing: border-box;
+    overflow: auto;
 }
 
 /* 根布局：填满宿主，并设 min-height 兜底（父链无高度时仍能撑满一屏） */
 .ai-chat-layout {
     height: 100%;
-    //min-height: calc(100vh - 44px);
     box-sizing: border-box;
     display: flex;
     background: #f5f5f5;
@@ -182,9 +180,9 @@
     width: 100%;
     max-width: @content-max;
     display: flex;
-    gap: 14px;
+    align-items: center;
+    gap: 10px;
     padding: 20px 0;
-    align-items: flex-start;
     box-sizing: border-box;
 
     &.is-model {
@@ -226,32 +224,14 @@
 }
 
 /* 流式消息容器：仅模型消息用 inline-block 使光标紧贴文末 */
-.bubble-wrap.is-model .bubble-content .markdown-body {
+.bubble-wrap.is-model .model-message-body .markdown-body {
     display: inline-block;
     max-width: 100%;
     vertical-align: top;
 }
 
-/* 流式打字揭示动画：每次内容更新时淡入+微动，用 a/b 交替 class 强制重播 */
-.streaming-typing-reveal-a,
-.streaming-typing-reveal-b {
-    animation: streaming-typing-reveal 0.35s ease-out;
-    will-change: opacity, transform;
-}
-
-@keyframes streaming-typing-reveal {
-    0% {
-        opacity: 0.4;
-        transform: translateY(3px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /* 流式打字光标 */
-.bubble-content .streaming-cursor {
+.streaming-cursor {
     display: inline-block;
     width: 2px;
     height: 1.1em;
@@ -270,10 +250,9 @@
 .bubble-wrap:not(.is-model) .markdown-body {
     background: var(--ant-primary-color-hover);
     color: #fff;
-    padding: 12px 18px;
-    border-radius: @radius-lg;
-    border-bottom-right-radius: 6px;
-    box-shadow: 0 2px 12px rgba(0, 102, 255, 0.2);
+    padding: 8px 12px;
+    border-radius: @radius-sm;
+    box-shadow: 0 2px 8px rgba(0, 102, 255, 0.2);
 }
 
 .bubble-wrap:not(.is-model) .markdown-body ::ng-deep(a) {
