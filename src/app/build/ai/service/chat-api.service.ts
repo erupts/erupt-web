@@ -24,9 +24,7 @@ export class ChatApiService {
     }
 
     createChat(title: string): Observable<R<number>> {
-        const formData = new URLSearchParams();
-        formData.append('title', title);
-        return this._http.post<R<number>>(RestPath.erupt + '/ai/chat/create_chat?title=' + title);
+        return this._http.post<R<number>>(RestPath.erupt + '/ai/chat/create-chat?title=' + title);
     }
 
     deleteChat(chatId: number): Observable<R<void>> {
@@ -34,7 +32,7 @@ export class ChatApiService {
     }
 
     renameChat(chatId: number, title: string): Observable<R<void>> {
-        return this._http.post<R<void>>(RestPath.erupt + '/ai/chat/rename-chat', {chatId, title});
+        return this._http.post<R<void>>(RestPath.erupt + '/ai/chat/rename-chat', null, {chatId, title});
     }
 
     messages(chatId: number, size: number, index: number): Observable<R<ChatMessage[]>> {
