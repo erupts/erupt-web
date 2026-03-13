@@ -174,3 +174,13 @@
         </div>
     </div>
 </div>
+
+<ng-template #renameModalTpl>
+    <div style="margin-top:0;">
+        <input nz-input nzSize="large"
+               [(ngModel)]="renameTitle"
+               placeholder="请输入新的会话名称"
+               style="width: 100%;"
+        />
+    </div>
+</ng-template>

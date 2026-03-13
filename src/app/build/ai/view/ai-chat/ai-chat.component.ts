@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {ChatApiService} from '../../service/chat-api.service';
 import {MarkdownService} from '../../service/markdown.service';
@@ -24,6 +24,7 @@ const BUBBLES_BOTTOM_BUFFER_PX = 80;
 export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     @ViewChild('bubblesRef') bubblesRef!: ElementRef<HTMLDivElement>;
     @ViewChild('chatListRef') chatListRef!: ElementRef<HTMLUListElement>;
+    @ViewChild('renameModalTpl') renameModalTpl!: TemplateRef<unknown>;
 
     chats: Chat[] = [];
     agents: Agent[] = [];
@@ -52,6 +53,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     fullscreen = false;
     /** 是否正在流式输出（用于显示文末光标，与 eventSource 同生命周期） */
     streaming = false;
+    /** 重命名弹窗中的输入值 */
+    renameTitle = '';
+    /** 当前重命名操作的会话 id，在 nzOnOk 中使用 */
+    private renameChatId: number | null = null;
     private eventSource: EventSource | null = null;
     private llmId = '';
 
@@ -350,40 +355,39 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     renameChat(chatId: number, currentTitle: string, event: Event): void {
         event.stopPropagation();
+        this.renameTitle = currentTitle;
+        this.renameChatId = chatId;
         this.modal.create({
             nzTitle: '重命名会话',
-            nzContent: `
-                <div style="margin-top: 16px;">
-                    <input 
-                        id="rename-input" 
-                        nz-input 
-                        placeholder="请输入新的会话名称" 
-                        value="${currentTitle}" 
-                        style="width: 100%;"
-                    />
-                </div>
-            `,
+            nzContent: this.renameModalTpl,
             nzOkText: '确定',
             nzCancelText: '取消',
             nzOnOk: () =>
                 new Promise<void>((resolve, reject) => {
-                    const input = document.getElementById('rename-input') as HTMLInputElement;
-                    const newTitle = input?.value?.trim();
+                    const newTitle = this.renameTitle?.trim();
                     if (!newTitle) {
                         this.message.error('会话名称不能为空');
                         reject();
                         return;
                     }
-                    this.chatApi.renameChat(chatId, newTitle).subscribe({
+                    const id = this.renameChatId;
+                    if (id == null) {
+                        reject();
+                        return;
+                    }
+                    this.chatApi.renameChat(id, newTitle).subscribe({
                         next: () => {
-                            const chat = this.chats.find(c => c.id === chatId);
+                            const chat = this.chats.find(c => c.id === id);
                             if (chat) {
                                 chat.title = newTitle;
                             }
                             this.message.success('重命名成功');
+                            this.renameChatId = null;
                             resolve();
                         },
-                        error: err => reject(err)
+                        error: err => {
+                            reject(err);
+                        }
                     });
                 })
         });
