@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
@@ -34,7 +34,8 @@ export class FlexNodeComponent extends ANode implements OnInit {
 
     constructor(private flowApiService?: FlowApiService,
                 private flowDataService?: FlowDataService,
-                private dataHandlerService?: DataHandlerService
+                private dataHandlerService?: DataHandlerService,
+                private cdr?: ChangeDetectorRef,
     ) {
         super();
     }
@@ -84,6 +85,7 @@ export class FlexNodeComponent extends ANode implements OnInit {
                     this.dataHandlerService.objectToEruptValue(this.modelValue.prop, res.data)
                 }
                 this.flexErupt = res.data;
+                this.cdr.detectChanges()
             })
         }
     }
@@ -92,6 +94,7 @@ export class FlexNodeComponent extends ANode implements OnInit {
         this.modelValue.prop = {
             ...this.dataHandlerService.eruptValueToObject(this.flexErupt)
         }
+        this.cdr.detectChanges()
     }
 
     override onDelete() {
