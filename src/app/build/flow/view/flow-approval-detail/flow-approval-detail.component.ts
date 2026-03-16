@@ -205,7 +205,19 @@ export class FlowApprovalDetailComponent implements OnInit {
         if (Object.keys(this.nodeInfo?.prop?.formAccesses || {}).length) {
             data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
         }
-        this.flowInstanceApiService.assignee(this.currTask.id, this.reason, data).subscribe(res => {
+
+        for (let node of this.assignedNodes) {
+            if (!node.userIds || node.userIds.length === 0) {
+                this.message.warning(`请选择节点 [${node.name}] 的审批人`);
+                return;
+            }
+        }
+        const nodeAssignments: Record<string, number[]> = {};
+        this.assignedNodes.forEach(node => {
+            nodeAssignments[node.id] = node.userIds;
+        });
+
+        this.flowInstanceApiService.assignee(this.currTask.id, this.reason, data, nodeAssignments).subscribe(res => {
             this.handleModalVisible = false;
             this.reason = null;
             this.message.success('办理成功');
@@ -218,7 +230,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         if (!rules) return;
         this.assignedNodes = [];
         for (let rule of rules) {
-            if ([NodeType.APPROVAL, NodeType.CC, NodeType.ASSIGNEE].includes(rule.type) && rule.prop?.reviewUserModes) {
+            if ([NodeType.APPROVAL, NodeType.ASSIGNEE].includes(rule.type) && rule.prop?.reviewUserModes) {
                 for (let mode of rule.prop.reviewUserModes) {
                     if (mode.mode === ReviewMode.NODE_ASSIGNED && mode.modeValue === currentNodeId) {
                         this.assignedNodes.push({
