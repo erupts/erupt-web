@@ -60,7 +60,6 @@ export interface FilterDSL {
     field: string;
     hidden?: boolean;
     operator?: CubeOperator;
-    // control?: FilterControl
     defaultValue?: any;
     value?: any;
 }
