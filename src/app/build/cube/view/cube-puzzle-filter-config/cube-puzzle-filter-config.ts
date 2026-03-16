@@ -53,15 +53,15 @@ export class CubePuzzleFilterConfig implements OnInit {
         return FieldType.STRING;
     }
 
-    fieldInDimension() {
+    fieldInParameters() {
         if (this.filter.field) {
-            return this.cubeMeta.dimensions.find(dim => dim.code === this.filter.field);
+            return this.cubeMeta.parameters.find(param => param.code === this.filter.field);
         }
         return false;
     }
 
     changeField(e) {
-        if (this.fieldInDimension()) {
+        if (!this.fieldInParameters()) {
             switch (this.fieldType()) {
                 case FieldType.STRING:
                     this.filter.operator = CubeOperator.EQ;
