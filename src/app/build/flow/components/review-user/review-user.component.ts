@@ -48,7 +48,7 @@ export class ReviewUserComponent implements OnInit {
             if (rule.id == this.nodeId) {
                 return true;
             }
-            if ([NodeType.APPROVAL, NodeType.CC, NodeType.ASSIGNEE].includes(rule.type)) {
+            if ([NodeType.APPROVAL, NodeType.ASSIGNEE].includes(rule.type)) {
                 nodes.push({key: rule.id, value: rule.name});
             }
             if (rule.branches) {
