@@ -118,10 +118,11 @@ export class FlowInstanceApiService {
         })
     }
 
-    assignee(instanceTaskId: number, comment: string, data: any): Observable<R<void>> {
+    assignee(instanceTaskId: number, comment: string, data: any, nodeAssignments: Record<string, number[]>): Observable<R<void>> {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/assignee", {
             comment,
-            data
+            data,
+            nodeAssignments
         }, {
             instanceTaskId,
         })
