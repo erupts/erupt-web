@@ -5,21 +5,26 @@
         } @else if (filter.operator == CubeOperator.NULL || filter.operator == CubeOperator.NOT_NULL) {
             <input nz-input [value]="filter.operator | translate" disabled [nzSize]="size" style="width: 100%;"/>
         } @else {
-            <nz-select [(ngModel)]="filter.value" style="width: 100%;" nzAllowClear [nzSize]="size"
-                       [nzMode]="(filter.operator == CubeOperator.IN || filter.operator == CubeOperator.NOT_IN) ? 'tags' : 'default'"
-                       (nzOpenChange)="openSelect()">
-                @if (isLoading) {
-                    <nz-option nzDisabled nzCustomContent>
-                        <div class="text-center">
-                            <i nz-icon nzType="loading" class="loading-icon"></i>
-                        </div>
-                    </nz-option>
-                } @else {
-                    @for (item of data || []; track item.value) {
-                        <nz-option [nzLabel]="item.value" [nzValue]="item.label"></nz-option>
+            @if (isMeasure()) {
+                <input nz-input [(ngModel)]="filter.value" [nzSize]="size" style="width: 100%;"/>
+            } @else {
+                <nz-select [(ngModel)]="filter.value" style="width: 100%;" nzAllowClear [nzSize]="size"
+                           [nzMode]="(filter.operator == CubeOperator.IN || filter.operator == CubeOperator.NOT_IN) ? 'tags' : 'default'"
+                           (nzOpenChange)="openSelect()">
+                    @if (isLoading) {
+                        <nz-option nzDisabled nzCustomContent>
+                            <div class="text-center">
+                                <i nz-icon nzType="loading" class="loading-icon"></i>
+                            </div>
+                        </nz-option>
+                    } @else {
+                        @for (item of data || []; track item.value) {
+                            <nz-option [nzLabel]="item.value" [nzValue]="item.label"></nz-option>
+                        }
                     }
-                }
-            </nz-select>
+                </nz-select>
+            }
+
         }
     }
     @case (FieldType.NUMBER) {

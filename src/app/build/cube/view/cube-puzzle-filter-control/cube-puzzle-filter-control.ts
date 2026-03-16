@@ -57,6 +57,10 @@ export class CubePuzzleFilterControl implements OnInit {
         this.data = null;
     }
 
+    isMeasure() {
+        return this.cubeMeta.measures.find(it => it.code === this.filter.field);
+    }
+
     openSelect() {
         if (!this.data) {
             this.isLoading = true;
