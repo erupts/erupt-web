@@ -230,7 +230,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         if (!rules) return;
         this.assignedNodes = [];
         for (let rule of rules) {
-            if ([NodeType.APPROVAL, NodeType.ASSIGNEE].includes(rule.type) && rule.prop?.reviewUserModes) {
+            if ([NodeType.APPROVAL, NodeType.ASSIGNEE, NodeType.CC].includes(rule.type) && rule.prop?.reviewUserModes) {
                 for (let mode of rule.prop.reviewUserModes) {
                     if (mode.mode === ReviewMode.NODE_ASSIGNED && mode.modeValue === currentNodeId) {
                         this.assignedNodes.push({
