@@ -49,9 +49,7 @@ export class EruptFlowFormComponent implements OnInit {
                 }
             })
         } else {
-            if (this.initValue) {
-                this.initEruptValue();
-            }
+            this.loading = false;
         }
         if (this.formAccesses) {
             if (this.eruptBuild) {
