@@ -85,6 +85,29 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     // 表格筛选功能
     activeFilters: Map<string, any> = new Map(); // 当前激活的筛选条件
 
+    /**
+     * 根据字段 code 获取字段标题
+     */
+    getFieldTitle(field: string): string {
+        return this.cubeMeta?.fieldTitleMap?.get(field) || field;
+    }
+
+    /**
+     * 根据字段 code 获取字段标题并返回 G2Plot meta 配置
+     */
+    private getFieldMeta(fields: string | string[]): Record<string, any> {
+        const meta = {};
+        const fieldArray = Array.isArray(fields) ? fields : [fields];
+        fieldArray.forEach(f => {
+            if (f) {
+                meta[f] = {
+                    alias: this.getFieldTitle(f)
+                };
+            }
+        });
+        return meta;
+    }
+
     constructor(private cubeApiService: CubeApiService,
                 public el: ElementRef,
                 private drawerService: NzDrawerService) {
@@ -323,6 +346,20 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     columns: this.report.cube[CubeKey.columnsField] as string[],
                     values: this.report.cube[CubeKey.valuesField] as string[],
                 },
+                meta: [
+                    ...Object.entries(this.getFieldMeta(this.report.cube[CubeKey.rowsField])).map(([key, value]) => ({
+                        field: key,
+                        name: value.alias
+                    })),
+                    ...Object.entries(this.getFieldMeta(this.report.cube[CubeKey.columnsField])).map(([key, value]) => ({
+                        field: key,
+                        name: value.alias
+                    })),
+                    ...Object.entries(this.getFieldMeta(this.report.cube[CubeKey.valuesField])).map(([key, value]) => ({
+                        field: key,
+                        name: value.alias
+                    })),
+                ],
                 data: this.chartData,
             };
             const ele = this.pivotContainer.nativeElement;
@@ -346,7 +383,12 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             ...this.report.ui,
             autoFit: true,
             margin: 12,
-            theme: this.dsl?.settings?.theme || DashboardTheme.LIGHT
+            theme: this.dsl?.settings?.theme || DashboardTheme.LIGHT,
+            meta: {
+                ...this.getFieldMeta(this.report.cube[CubeKey.xField]),
+                ...this.getFieldMeta(this.report.cube[CubeKey.yField]),
+                ...this.getFieldMeta(this.report.cube[CubeKey.seriesField]),
+            }
         };
         if (WindowModel.theme.primaryColor) {
             // commonConfig.color = WindowModel.theme.primaryColor
@@ -668,8 +710,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         xFieldsArray.forEach(field => {
             if (field) {
                 this.stColumns.push({
-                    title: field,
-                    index: field,
+                    title: this.getFieldTitle(field),
+                    index: [field],
                     width: 150,
                     type: 'link',
                     className: 'dimension-column',
@@ -712,8 +754,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         yFieldsArray.forEach(field => {
             if (field) {
                 const column: STColumn = {
-                    title: field,
-                    index: field,
+                    title: this.getFieldTitle(field),
+                    index: [field],
                     width: 150,
                     sort: {
                         compare: (a: any, b: any) => {
@@ -806,7 +848,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         };
 
         this.drawerService.create({
-            nzTitle: `下钻分析 - ${field}: ${value}`,
+            nzTitle: `下钻分析 - ${this.getFieldTitle(field)}: ${value}`,
             nzContent: CubeDrillDetailComponent,
             nzContentParams: {
                 params: params

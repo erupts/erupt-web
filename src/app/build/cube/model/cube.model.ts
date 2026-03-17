@@ -6,6 +6,7 @@ export interface CubeMeta {
     dimensions: CubeMetaDimension[];    // 维度列表
     measures: CubeMetaMeasure[];        // 指标列表
     parameters: CubeMetaParameter[];
+    fieldTitleMap?: Map<string, string>;
 }
 
 /**

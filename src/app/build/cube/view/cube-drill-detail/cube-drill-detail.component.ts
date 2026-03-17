@@ -88,7 +88,7 @@ export class CubeDrillDetailComponent implements OnInit {
         this.params.cubeMeta.dimensions.forEach(dim => {
             this.stColumns.push({
                 title: dim.title,
-                index: dim.code,
+                index: [dim.code],
                 width: 150,
                 sort: {
                     compare: (a: any, b: any) => {
@@ -120,8 +120,8 @@ export class CubeDrillDetailComponent implements OnInit {
 
         // 添加指标列（高亮显示）
         this.stColumns.push({
-            title: this.params.measure,
-            index: this.params.measure,
+            title: this.cubeMeta.fieldTitleMap?.get(this.params.measure) || this.params.measure,
+            index: [this.params.measure],
             width: 150,
             className: 'measure-column',
             sort: {
