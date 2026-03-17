@@ -45,8 +45,6 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     isFullscreen = false;
 
-    showFilters = true;
-
     autoRefreshTimer: any;
 
     @ViewChildren(CubePuzzleReport) reports: QueryList<CubePuzzleReport>;
@@ -277,10 +275,6 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         if (reportComponent) {
             reportComponent.refresh();
         }
-    }
-
-    toggleFilters() {
-        this.showFilters = !this.showFilters;
     }
 
     toggleFullscreen() {
