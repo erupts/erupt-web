@@ -16,10 +16,6 @@
             </div>
             <div class="header-center">
                 <div class="action-buttons">
-                    <button nz-button nzType="default" (click)="toggleFilters()">
-                        <span nz-icon [nzType]="showFilters ? 'eye-invisible' : 'eye'"></span>
-                        {{ showFilters ? 'Hide' : 'Show' }} Actions
-                    </button>
                     @if (edit) {
                         <button nz-button nzType="default" (click)="addItem()">
                             <span nz-icon nzType="plus"></span> Add Report
@@ -53,7 +49,7 @@
             </div>
         </div>
     }
-    @if (cubeMeta && showFilters) {
+    @if (cubeMeta) {
         <div class="puzzle-filter-row">
             <div class="filter-items" cdkDropList cdkDropListOrientation="horizontal"
                  (cdkDropListDropped)="dropFilter($event)">
