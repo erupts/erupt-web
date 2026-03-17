@@ -180,7 +180,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                     optional: "   ",
                                     optionalHelp: column.remark
                                 },
-                                index: column.name,
+                                index: [column.name],
                                 className: "text-center",
                                 iif: (item) => {
                                     return item['show'];

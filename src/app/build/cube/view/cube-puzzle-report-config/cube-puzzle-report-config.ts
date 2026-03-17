@@ -35,6 +35,9 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
                 this.report = {...this.report, ...this.nzModalData.config};
             }
         }
+        if (!this.report.cube[CubeKey.sortDirection]) {
+            this.report.cube[CubeKey.sortDirection] = 'ASC';
+        }
         if (!this.report.ui) {
             this.report.ui = {
                 showXAxis: true,
@@ -116,17 +119,12 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     }
 
     changeCube() {
-        const dimensions = this.selectedDimensions;
-        const measures = this.selectedMeasures;
-        const sortField = this.report.cube[CubeKey.sortField] as string;
-        if (sortField) {
-            const isDim = dimensions.some(dim => dim.code === sortField);
-            const isMea = measures.some(mea => mea.code === sortField);
-            if (!isDim && !isMea) {
-                this.report.cube[CubeKey.sortField] = null;
-            }
-        }
         this.puzzleReport.refresh();
+    }
+
+    changeField() {
+        this.report.cube[CubeKey.sortField] = null;
+        this.changeCube();
     }
 
     onConfigChange() {
@@ -164,24 +162,6 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         this.renderChart();
     }
 
-    toggleSort(field: string | string[]) {
-        if (!field) return;
-        const fieldStr = Array.isArray(field) ? field[0] : field;
-        if (this.report.cube[CubeKey.sortField] === fieldStr) {
-            if (this.report.cube[CubeKey.sortDirection] === 'ASC') {
-                this.report.cube[CubeKey.sortDirection] = 'DESC';
-            } else if (this.report.cube[CubeKey.sortDirection] === 'DESC') {
-                this.report.cube[CubeKey.sortField] = null;
-                this.report.cube[CubeKey.sortDirection] = null;
-            } else {
-                this.report.cube[CubeKey.sortDirection] = 'ASC';
-            }
-        } else {
-            this.report.cube[CubeKey.sortField] = fieldStr;
-            this.report.cube[CubeKey.sortDirection] = 'ASC';
-        }
-        this.changeCube();
-    }
 
     protected readonly CubeKey = CubeKey;
     protected readonly ReportType = ReportType;

@@ -29,7 +29,7 @@
                         <span class="filter-label">当前筛选:</span>
                         @for (filter of getActiveFiltersArray(); track filter.field) {
                             <nz-tag [nzColor]="'blue'" (nzOnClose)="clearFilter(filter.field)" nzMode="closeable">
-                                {{ filter.field }}: {{ filter.value }}
+                                {{ getFieldTitle(filter.field) }}: {{ filter.value }}
                             </nz-tag>
                         }
                         <a class="clear-all-link" (click)="clearAllFilters()">清除全部</a>
