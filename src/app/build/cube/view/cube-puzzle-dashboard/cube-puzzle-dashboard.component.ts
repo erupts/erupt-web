@@ -143,7 +143,13 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             }
             this.options.margin = this.dsl?.settings?.gap ?? 12;
             this.cubeApiService.cubeMetadata(this.dashboard.cuber, this.dashboard.explore).subscribe(res => {
-                this.cubeMeta = res.data;
+                const meta = res.data;
+                const fieldTitleMap = new Map<string, string>();
+                meta.dimensions?.forEach(it => fieldTitleMap.set(it.code, it.title));
+                meta.measures?.forEach(it => fieldTitleMap.set(it.code, it.title));
+                meta.parameters?.forEach(it => fieldTitleMap.set(it.code, it.title));
+                meta.fieldTitleMap = fieldTitleMap;
+                this.cubeMeta = meta;
             })
             this.initAutoRefresh();
         })

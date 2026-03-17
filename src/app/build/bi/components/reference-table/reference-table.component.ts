@@ -84,7 +84,7 @@ export class ReferenceTableComponent implements OnInit {
                             columns.push(
                                 {
                                     title: '#',
-                                    index: column.name,
+                                    index: [column.name],
                                     type: this.dimension.type == DimType.REFERENCE_TABLE_MULTI ? 'checkbox' : 'radio',
                                     className: "text-center"
                                 },
@@ -99,7 +99,7 @@ export class ReferenceTableComponent implements OnInit {
                                     text: column.name,
                                     optional: "   "
                                 },
-                                index: column.name,
+                                index: [column.name],
                                 className: "text-center",
                                 filter: {
                                     type: 'keyword',
