@@ -299,10 +299,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             explore: this.dashboard.explore,
             dimensions: dimensions,
             measures: measures,
-            sorts: this.report.cube[CubeKey.sortField] ? [{
-                field: this.report.cube[CubeKey.sortField] as string,
-                direction: this.report.cube[CubeKey.sortDirection] as any || 'ASC'
-            }] : [],
+            sorts: this.report.sorts || [],
             filters: cf,
             parameters: parameters
         }).subscribe({
