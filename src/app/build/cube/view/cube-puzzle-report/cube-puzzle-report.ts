@@ -30,7 +30,7 @@ import {
 import {CubeMeta} from "../../model/cube.model";
 import {STColumn, STComponent} from "@delon/abc/st";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
-import {CubeDrillDetailComponent, DrillDetailParams} from "../cube-drill-detail/cube-drill-detail.component";
+import {CubeDrillDetailComponent} from "../cube-drill-detail/cube-drill-detail.component";
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -777,8 +777,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 if (this.enableDrill && xFieldsArray.length > 0) {
                     column.type = "link";
                     column.click = (record: any) => {
-                        console.log(record)
-                        this.openDrillDrawer(xFieldsArray[0], record[xFieldsArray[0]], field, record);
+                        this.openDrillDrawer(field, record);
                     };
                     column.className = 'drillable-column';
                 }
@@ -834,21 +833,50 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     /**
      * 打开下钻抽屉
      */
-    openDrillDrawer(field: string, value: any, measure: string, record: any): void {
-        const params: DrillDetailParams = {
-            field: field,
-            value: value,
-            dimension: field,
-            measure: measure,
-            dashboard: this.dashboard,
-            cubeMeta: this.cubeMeta
-        };
+    openDrillDrawer(measure: string, record: any): void {
+        const drillFilters: CubeFilter[] = [];
+
+        // 将当前行的所有维度值作为过滤条件带出
+        const xFields = this.report.cube[CubeKey.xField] || [];
+        const xFieldsArray = Array.isArray(xFields) ? xFields : [xFields];
+        for (const f of xFieldsArray) {
+            if (f && record[f] !== undefined && record[f] !== null) {
+                drillFilters.push({
+                    field: f,
+                    operator: CubeOperator.EQ,
+                    value: record[f]
+                });
+            }
+        }
+
+        // 将当前报表已有的筛选条件也带入下钻（包括外部筛选和已激活的维度筛选）
+        if (this.filters) {
+            for (const f of this.filters) {
+                if (f.value != null && this.cubeMeta.parameters.filter(it => it.code === f.field).length === 0) {
+                    drillFilters.push({
+                        field: f.field,
+                        operator: f.operator,
+                        value: f.value
+                    });
+                }
+            }
+        }
+        for (const [f, v] of this.activeFilters) {
+            drillFilters.push({
+                field: f,
+                operator: CubeOperator.EQ,
+                value: v
+            });
+        }
 
         this.drawerService.create({
-            nzTitle: `下钻分析 - ${this.getFieldTitle(field)}: ${value}`,
+            nzTitle: '下钻分析 - ' + this.cubeMeta.fieldTitleMap.get(measure),
             nzContent: CubeDrillDetailComponent,
             nzContentParams: {
-                params: params
+                measure: measure,
+                dashboard: this.dashboard,
+                cubeMeta: this.cubeMeta,
+                filters: drillFilters
             },
             nzWidth: '75%',
             nzClosable: true,
