@@ -471,15 +471,6 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         ref.getContentComponent().filter = deepCopy(this.dsl.filters[index])
     }
 
-    getFieldTitle(code: string) {
-        if (!this.cubeMeta) return code;
-        const dim = this.cubeMeta.dimensions.find(d => d.code === code);
-        if (dim) return dim.title;
-        const mea = this.cubeMeta.measures.find(m => m.code === code);
-        if (mea) return mea.title;
-        return code;
-    }
-
     dropFilter(event: CdkDragDrop<FilterDSL[]>) {
         moveItemInArray(this.dsl.filters, event.previousIndex, event.currentIndex);
     }

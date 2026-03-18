@@ -264,34 +264,36 @@
                             <nz-form-item>
                                 <nz-form-label>排序</nz-form-label>
                                 <nz-form-control>
-                                    <div style="display: flex; gap: 8px;">
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.sortField]" name="sortField"
-                                                   (ngModelChange)="changeCube()" nzShowSearch nzAllowClear
-                                                   style="flex: 1" nzPlaceHolder="排序字段">
-                                            @if (selectedDimensions.length) {
-                                                <nz-option-group nzLabel="维度">
-                                                    @for (dim of selectedDimensions; track dim.code) {
-                                                        <nz-option [nzValue]="dim.code"
-                                                                   [nzLabel]="dim.title"></nz-option>
-                                                    }
-                                                </nz-option-group>
-                                            }
-                                            @if (selectedMeasures.length) {
-                                                <nz-option-group nzLabel="指标">
-                                                    @for (mea of selectedMeasures; track mea.code) {
-                                                        <nz-option [nzValue]="mea.code"
-                                                                   [nzLabel]="mea.title"></nz-option>
-                                                    }
-                                                </nz-option-group>
-                                            }
-                                        </nz-select>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.sortDirection]"
-                                                   name="sortDirection" (ngModelChange)="changeCube()"
-                                                   style="width: 100px;">
-                                            <nz-option nzValue="ASC" nzLabel="升序"></nz-option>
-                                            <nz-option nzValue="DESC" nzLabel="降序"></nz-option>
-                                        </nz-select>
-                                    </div>
+                                    @if (report.sorts && report.sorts[0]) {
+                                        <div style="display: flex; gap: 8px;">
+                                            <nz-select [(ngModel)]="report.sorts[0].field" name="sortField"
+                                                       (ngModelChange)="changeCube()" nzShowSearch nzAllowClear
+                                                       style="flex: 1" nzPlaceHolder="排序字段">
+                                                @if (selectedDimensions.length) {
+                                                    <nz-option-group nzLabel="维度">
+                                                        @for (dim of selectedDimensions; track dim.code) {
+                                                            <nz-option [nzValue]="dim.code"
+                                                                       [nzLabel]="dim.title"></nz-option>
+                                                        }
+                                                    </nz-option-group>
+                                                }
+                                                @if (selectedMeasures.length) {
+                                                    <nz-option-group nzLabel="指标">
+                                                        @for (mea of selectedMeasures; track mea.code) {
+                                                            <nz-option [nzValue]="mea.code"
+                                                                       [nzLabel]="mea.title"></nz-option>
+                                                        }
+                                                    </nz-option-group>
+                                                }
+                                            </nz-select>
+                                            <nz-select [(ngModel)]="report.sorts[0].direction"
+                                                       name="sortDirection" (ngModelChange)="changeCube()"
+                                                       style="width: 100px;">
+                                                <nz-option nzValue="ASC" nzLabel="升序"></nz-option>
+                                                <nz-option nzValue="DESC" nzLabel="降序"></nz-option>
+                                            </nz-select>
+                                        </div>
+                                    }
                                 </nz-form-control>
                             </nz-form-item>
                         </form>
