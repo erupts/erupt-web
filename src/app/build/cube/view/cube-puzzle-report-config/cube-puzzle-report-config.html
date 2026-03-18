@@ -7,250 +7,197 @@
         </div>
         <!-- 右侧配置表单 -->
         <div nz-col [nzSpan]="8">
-            <div style="background: #fff;padding: 0 8px;height: 500px;overflow: auto;">
+            <div style="background: #fff;padding: 0 8px;overflow: auto;height: 500px">
                 <nz-tabs>
                     <nz-tab nzTitle="基础配置">
-                        <form nz-form nzLayout="vertical">
-                            <nz-form-item>
-                                <nz-form-label>标题</nz-form-label>
-                                <nz-form-control>
-                                    <input nz-input [(ngModel)]="report.title" name="title"/>
-                                </nz-form-control>
-                            </nz-form-item>
-                            <nz-form-item>
-                                <nz-form-label>描述</nz-form-label>
-                                <nz-form-control>
+                        <div style="overflow: auto">
+                            <form nz-form nzLayout="vertical">
+                                <nz-form-item>
+                                    <nz-form-label>标题</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input [(ngModel)]="report.title" name="title"/>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <nz-form-item>
+                                    <nz-form-label>描述</nz-form-label>
+                                    <nz-form-control>
                                     <textarea nz-input [(ngModel)]="report.description" name="description"
                                               placeholder="请输入描述信息">
                                     </textarea>
-                                </nz-form-control>
-                            </nz-form-item>
-                            <nz-form-item>
-                                <nz-form-label>图表类型</nz-form-label>
-                                <nz-form-control>
-                                    <nz-select [(ngModel)]="report.type" name="chartType"
-                                               (ngModelChange)="onConfigChange()">
-                                        <nz-option-group nzLabel="基础图表">
-                                            <nz-option [nzValue]="ReportType.LINE" nzLabel="折线图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.AREA" nzLabel="面积图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.COLUMN" nzLabel="柱状图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.BAR" nzLabel="条形图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.PIE" nzLabel="饼图"></nz-option>
-                                        </nz-option-group>
-                                        <nz-option-group nzLabel="进阶图表">
-                                            <nz-option [nzValue]="ReportType.SCATTER" nzLabel="散点图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.BUBBLE" nzLabel="气泡图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.RADAR" nzLabel="雷达图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.FUNNEL" nzLabel="漏斗图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.GAUGE" nzLabel="仪表盘"></nz-option>
-                                            <nz-option [nzValue]="ReportType.WATERFALL" nzLabel="瀑布图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.ROSE" nzLabel="玫瑰图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.RADIAL_BAR" nzLabel="玉玦图"></nz-option>
-                                        </nz-option-group>
-                                        <nz-option-group nzLabel="关系/特殊图表">
-                                            <!--                                            <nz-option [nzValue]="ReportType.SANKEY" nzLabel="桑基图"></nz-option>-->
-                                            <nz-option [nzValue]="ReportType.CHORD" nzLabel="和弦图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.WORD_CLOUD" nzLabel="词云图"></nz-option>
-                                        </nz-option-group>
-                                        <nz-option-group nzLabel="迷你图">
-                                            <nz-option [nzValue]="ReportType.TINY_LINE"
-                                                       nzLabel="迷你折线图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.TINY_AREA"
-                                                       nzLabel="迷你面积图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.TINY_COLUMN"
-                                                       nzLabel="迷你柱状图"></nz-option>
-                                            <nz-option [nzValue]="ReportType.PROGRESS"
-                                                       nzLabel="进度条"></nz-option>
-                                            <nz-option [nzValue]="ReportType.RING_PROGRESS"
-                                                       nzLabel="进度环"></nz-option>
-                                        </nz-option-group>
-                                        <nz-option-group nzLabel="其他">
-                                            <nz-option [nzValue]="ReportType.KPI" nzLabel="KPI"></nz-option>
-                                            <nz-option [nzValue]="ReportType.PIVOT_TABLE" nzLabel="透视表"></nz-option>
-                                            <nz-option [nzValue]="ReportType.TABLE" nzLabel="表格"></nz-option>
-                                        </nz-option-group>
-                                    </nz-select>
-                                </nz-form-control>
-                            </nz-form-item>
-
-                            @if (report.type === ReportType.TABLE) {
-                                <nz-form-item>
-                                    <nz-form-label>维度</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
-                                                   nzMode="multiple"
-                                                   (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                            @for (dim of cubeMeta.dimensions; track dim.code) {
-                                                <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
-                                                </nz-option>
-                                            }
-                                        </nz-select>
                                     </nz-form-control>
                                 </nz-form-item>
                                 <nz-form-item>
-                                    <nz-form-label>指标</nz-form-label>
+                                    <nz-form-label>图表类型</nz-form-label>
                                     <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
-                                                   nzMode="multiple"
-                                                   (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                            @for (mea of cubeMeta.measures; track mea.code) {
-                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
-                                                </nz-option>
-                                            }
-                                        </nz-select>
-                                    </nz-form-control>
-                                </nz-form-item>
-                            } @else if (report.type === ReportType.KPI || report.type === ReportType.PROGRESS || report.type === ReportType.GAUGE || report.type === ReportType.RING_PROGRESS) {
-                                <nz-form-item>
-                                    <nz-form-label>指标</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
-                                                   (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                            @for (mea of cubeMeta.measures; track mea.code) {
-                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
-                                            }
-                                        </nz-select>
-                                    </nz-form-control>
-                                </nz-form-item>
-                            } @else if (report.type === ReportType.PIVOT_TABLE) {
-                                <nz-form-item>
-                                    <nz-form-label>行字段</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.rowsField]" name="rowsField"
-                                                   nzMode="multiple"
-                                                   (ngModelChange)="changeField()" nzShowSearch nzAllowClear
-                                                  nzPlaceHolder="选择行字段">
-                                            @for (dim of cubeMeta.dimensions; track dim.code) {
-                                                <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
-                                                    {{ dim.title }}
-                                                </nz-option>
-                                            }
-                                        </nz-select>
-                                    </nz-form-control>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label>列字段</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.columnsField]" name="columnsField"
-                                                   nzMode="multiple"
-                                                   (ngModelChange)="changeField()" nzShowSearch nzAllowClear
-                                                  nzPlaceHolder="选择列字段">
-                                            @for (dim of cubeMeta.dimensions; track dim.code) {
-                                                <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
-                                                    {{ dim.title }}
-                                                </nz-option>
-                                            }
-                                        </nz-select>
-                                    </nz-form-control>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label>值字段</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.valuesField]" name="valuesField"
-                                                   nzMode="multiple"
-                                                   (ngModelChange)="changeField()" nzShowSearch nzAllowClear
-                                                  nzPlaceHolder="选择值字段">
-                                            @for (mea of cubeMeta.measures; track mea.code) {
-                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
-                                                    {{ mea.title }}
-                                                </nz-option>
-                                            }
-                                        </nz-select>
-                                    </nz-form-control>
-                                </nz-form-item>
-                            } @else if (report.type === ReportType.SANKEY || report.type === ReportType.CHORD) {
-                                <nz-form-item>
-                                    <nz-form-label>来源字段</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.sourceField]" name="sourceField"
-                                                   (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                            @for (dim of cubeMeta.dimensions; track dim.code) {
-                                                <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
-                                            }
-                                        </nz-select>
-                                    </nz-form-control>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label>目标字段</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.targetField]" name="targetField"
-                                                   (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                            @for (dim of cubeMeta.dimensions; track dim.code) {
-                                                <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
-                                            }
-                                        </nz-select>
-                                    </nz-form-control>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label>权重字段</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.weightField]" name="weightField"
-                                                   (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                            @for (mea of cubeMeta.measures; track mea.code) {
-                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
-                                            }
-                                        </nz-select>
-                                    </nz-form-control>
-                                </nz-form-item>
-                            } @else {
-                                <nz-form-item>
-                                    <nz-form-label>维度</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
-                                                   (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                            @for (dim of cubeMeta.dimensions; track dim.code) {
-                                                <nz-option [nzValue]="dim.code"
-                                                           [nzLabel]="dim.title"></nz-option>
-                                            }
-                                        </nz-select>
-                                    </nz-form-control>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label>指标</nz-form-label>
-                                    <nz-form-control>
-                                        <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
-                                                   (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                            @for (mea of cubeMeta.measures; track mea.code) {
-                                                <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
-                                            }
+                                        <nz-select [(ngModel)]="report.type" name="chartType"
+                                                   (ngModelChange)="onConfigChange()">
+                                            <nz-option-group nzLabel="基础图表">
+                                                <nz-option [nzValue]="ReportType.LINE" nzLabel="折线图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.AREA" nzLabel="面积图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.COLUMN" nzLabel="柱状图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.BAR" nzLabel="条形图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.PIE" nzLabel="饼图"></nz-option>
+                                            </nz-option-group>
+                                            <nz-option-group nzLabel="进阶图表">
+                                                <nz-option [nzValue]="ReportType.SCATTER" nzLabel="散点图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.BUBBLE" nzLabel="气泡图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.RADAR" nzLabel="雷达图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.FUNNEL" nzLabel="漏斗图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.GAUGE" nzLabel="仪表盘"></nz-option>
+                                                <nz-option [nzValue]="ReportType.WATERFALL" nzLabel="瀑布图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.ROSE" nzLabel="玫瑰图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.RADIAL_BAR" nzLabel="玉玦图"></nz-option>
+                                            </nz-option-group>
+                                            <nz-option-group nzLabel="关系/特殊图表">
+                                                <!--                                            <nz-option [nzValue]="ReportType.SANKEY" nzLabel="桑基图"></nz-option>-->
+                                                <nz-option [nzValue]="ReportType.CHORD" nzLabel="和弦图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.WORD_CLOUD" nzLabel="词云图"></nz-option>
+                                            </nz-option-group>
+                                            <nz-option-group nzLabel="迷你图">
+                                                <nz-option [nzValue]="ReportType.TINY_LINE"
+                                                           nzLabel="迷你折线图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.TINY_AREA"
+                                                           nzLabel="迷你面积图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.TINY_COLUMN"
+                                                           nzLabel="迷你柱状图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.PROGRESS"
+                                                           nzLabel="进度条"></nz-option>
+                                                <nz-option [nzValue]="ReportType.RING_PROGRESS"
+                                                           nzLabel="进度环"></nz-option>
+                                            </nz-option-group>
+                                            <nz-option-group nzLabel="其他">
+                                                <nz-option [nzValue]="ReportType.KPI" nzLabel="KPI"></nz-option>
+                                                <nz-option [nzValue]="ReportType.PIVOT_TABLE" nzLabel="透视表"></nz-option>
+                                                <nz-option [nzValue]="ReportType.TABLE" nzLabel="表格"></nz-option>
+                                            </nz-option-group>
                                         </nz-select>
                                     </nz-form-control>
                                 </nz-form-item>
 
-                                @if (report.type === ReportType.DUAL_AXES) {
+                                @if (report.type === ReportType.TABLE) {
                                     <nz-form-item>
-                                        <nz-form-label>指标2</nz-form-label>
+                                        <nz-form-label>维度</nz-form-label>
                                         <nz-form-control>
-                                            <nz-select [(ngModel)]="report.cube['yField2']" name="yField2"
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
+                                                       nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                                @for (mea of cubeMeta.measures; track mea.code) {
-                                                    <nz-option [nzValue]="mea.code"
-                                                               [nzLabel]="mea.title"></nz-option>
+                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
+                                                    </nz-option>
                                                 }
                                             </nz-select>
                                         </nz-form-control>
                                     </nz-form-item>
-                                }
-                                @if (report.type === ReportType.BUBBLE) {
                                     <nz-form-item>
-                                        <nz-form-label>尺寸字段</nz-form-label>
+                                        <nz-form-label>指标</nz-form-label>
                                         <nz-form-control>
-                                            <nz-select [(ngModel)]="report.cube[CubeKey.sizeField]" name="sizeField"
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
+                                                       nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
                                                 @for (mea of cubeMeta.measures; track mea.code) {
-                                                    <nz-option [nzValue]="mea.code"
-                                                               [nzLabel]="mea.title"></nz-option>
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
+                                                    </nz-option>
                                                 }
                                             </nz-select>
                                         </nz-form-control>
                                     </nz-form-item>
-                                }
-                                @if (supportSeriesField(report.type)) {
+                                } @else if (report.type === ReportType.KPI || report.type === ReportType.PROGRESS || report.type === ReportType.GAUGE || report.type === ReportType.RING_PROGRESS) {
                                     <nz-form-item>
-                                        <nz-form-label>分组字段</nz-form-label>
+                                        <nz-form-label>指标</nz-form-label>
                                         <nz-form-control>
-                                            <nz-select [(ngModel)]="report.cube[CubeKey.seriesField]"
-                                                       name="seriesField"
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
+                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                } @else if (report.type === ReportType.PIVOT_TABLE) {
+                                    <nz-form-item>
+                                        <nz-form-label>行字段</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.rowsField]" name="rowsField"
+                                                       nzMode="multiple"
+                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear
+                                                       nzPlaceHolder="选择行字段">
+                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
+                                                        {{ dim.title }}
+                                                    </nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label>列字段</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.columnsField]" name="columnsField"
+                                                       nzMode="multiple"
+                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear
+                                                       nzPlaceHolder="选择列字段">
+                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
+                                                        {{ dim.title }}
+                                                    </nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label>值字段</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.valuesField]" name="valuesField"
+                                                       nzMode="multiple"
+                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear
+                                                       nzPlaceHolder="选择值字段">
+                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
+                                                        {{ mea.title }}
+                                                    </nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                } @else if (report.type === ReportType.SANKEY || report.type === ReportType.CHORD) {
+                                    <nz-form-item>
+                                        <nz-form-label>来源字段</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.sourceField]" name="sourceField"
+                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label>目标字段</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.targetField]" name="targetField"
+                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label>权重字段</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.weightField]" name="weightField"
+                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                } @else {
+                                    <nz-form-item>
+                                        <nz-form-label>维度</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
                                                 @for (dim of cubeMeta.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code"
@@ -259,44 +206,111 @@
                                             </nz-select>
                                         </nz-form-control>
                                     </nz-form-item>
-                                }
-                            }
-                            <nz-form-item>
-                                <nz-form-label>排序</nz-form-label>
-                                <nz-form-control>
-                                    @if (report.sorts && report.sorts[0]) {
-                                        <div style="display: flex; gap: 8px;">
-                                            <nz-select [(ngModel)]="report.sorts[0].field" name="sortField"
-                                                       (ngModelChange)="changeCube()" nzShowSearch nzAllowClear
-                                                       style="flex: 1" nzPlaceHolder="排序字段">
-                                                @if (selectedDimensions.length) {
-                                                    <nz-option-group nzLabel="维度">
-                                                        @for (dim of selectedDimensions; track dim.code) {
-                                                            <nz-option [nzValue]="dim.code"
-                                                                       [nzLabel]="dim.title"></nz-option>
-                                                        }
-                                                    </nz-option-group>
-                                                }
-                                                @if (selectedMeasures.length) {
-                                                    <nz-option-group nzLabel="指标">
-                                                        @for (mea of selectedMeasures; track mea.code) {
-                                                            <nz-option [nzValue]="mea.code"
-                                                                       [nzLabel]="mea.title"></nz-option>
-                                                        }
-                                                    </nz-option-group>
+                                    <nz-form-item>
+                                        <nz-form-label>指标</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
+                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
                                                 }
                                             </nz-select>
-                                            <nz-select [(ngModel)]="report.sorts[0].direction"
-                                                       name="sortDirection" (ngModelChange)="changeCube()"
-                                                       style="width: 100px;">
-                                                <nz-option nzValue="ASC" nzLabel="升序"></nz-option>
-                                                <nz-option nzValue="DESC" nzLabel="降序"></nz-option>
-                                            </nz-select>
-                                        </div>
+                                        </nz-form-control>
+                                    </nz-form-item>
+
+                                    @if (report.type === ReportType.DUAL_AXES) {
+                                        <nz-form-item>
+                                            <nz-form-label>指标2</nz-form-label>
+                                            <nz-form-control>
+                                                <nz-select [(ngModel)]="report.cube['yField2']" name="yField2"
+                                                           (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                    @for (mea of cubeMeta.measures; track mea.code) {
+                                                        <nz-option [nzValue]="mea.code"
+                                                                   [nzLabel]="mea.title"></nz-option>
+                                                    }
+                                                </nz-select>
+                                            </nz-form-control>
+                                        </nz-form-item>
                                     }
-                                </nz-form-control>
-                            </nz-form-item>
-                        </form>
+                                    @if (report.type === ReportType.BUBBLE) {
+                                        <nz-form-item>
+                                            <nz-form-label>尺寸字段</nz-form-label>
+                                            <nz-form-control>
+                                                <nz-select [(ngModel)]="report.cube[CubeKey.sizeField]" name="sizeField"
+                                                           (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                    @for (mea of cubeMeta.measures; track mea.code) {
+                                                        <nz-option [nzValue]="mea.code"
+                                                                   [nzLabel]="mea.title"></nz-option>
+                                                    }
+                                                </nz-select>
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    }
+                                    @if (supportSeriesField(report.type)) {
+                                        <nz-form-item>
+                                            <nz-form-label>分组字段</nz-form-label>
+                                            <nz-form-control>
+                                                <nz-select [(ngModel)]="report.cube[CubeKey.seriesField]"
+                                                           name="seriesField"
+                                                           (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                    @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                        <nz-option [nzValue]="dim.code"
+                                                                   [nzLabel]="dim.title"></nz-option>
+                                                    }
+                                                </nz-select>
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    }
+                                }
+                                <nz-form-item>
+                                    <nz-form-label>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                            <span>排序</span>
+                                            <button nz-button nzType="link" nzSize="small" (click)="addSort()">
+                                                <i nz-icon nzType="plus"></i>添加
+                                            </button>
+                                        </div>
+                                    </nz-form-label>
+                                    <nz-form-control>
+                                        @for (sort of report.sorts; track $index) {
+                                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                                <nz-select [(ngModel)]="sort.field" [name]="'sortField' + $index"
+                                                           (ngModelChange)="changeCube()"
+                                                           nzShowSearch nzAllowClear
+                                                           style="flex: 1" nzPlaceHolder="排序字段">
+                                                    @if (selectedDimensions.length) {
+                                                        <nz-option-group nzLabel="维度">
+                                                            @for (dim of selectedDimensions; track dim.code) {
+                                                                <nz-option [nzValue]="dim.code"
+                                                                           [nzLabel]="dim.title"></nz-option>
+                                                            }
+                                                        </nz-option-group>
+                                                    }
+                                                    @if (cubeMeta.measures?.length) {
+                                                        <nz-option-group nzLabel="指标">
+                                                            @for (mea of cubeMeta.measures; track mea.code) {
+                                                                <nz-option [nzValue]="mea.code"
+                                                                           [nzLabel]="mea.title"></nz-option>
+                                                            }
+                                                        </nz-option-group>
+                                                    }
+                                                </nz-select>
+                                                <nz-select [(ngModel)]="sort.direction"
+                                                           [name]="'sortDirection' + $index"
+                                                           (ngModelChange)="changeCube()"
+                                                           style="width: 100px;">
+                                                    <nz-option nzValue="ASC" nzLabel="升序"></nz-option>
+                                                    <nz-option nzValue="DESC" nzLabel="降序"></nz-option>
+                                                </nz-select>
+                                                <button nz-button nzType="text" nzDanger (click)="removeSort($index)">
+                                                    <i nz-icon nzType="delete"></i>
+                                                </button>
+                                            </div>
+                                        }
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </form>
+                        </div>
                     </nz-tab>
                     <nz-tab nzTitle="自定义配置">
                         <form nz-form nzLayout="vertical">

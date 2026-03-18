@@ -39,9 +39,6 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         if (!this.report.sorts) {
             this.report.sorts = [];
         }
-        if (!this.report.sorts[0]) {
-            this.report.sorts[0] = {direction: Direction.ASC};
-        }
         if (!this.report.ui) {
             this.report.ui = {
                 showXAxis: true,
@@ -122,12 +119,71 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         ].includes(type);
     }
 
+    get selectedDimensions(): CubeMetaDimension[] {
+        let codes: string[] = [];
+        if (this.report.type === ReportType.PIVOT_TABLE) {
+            if (this.report.cube[CubeKey.rowsField]) {
+                codes.push(...this.report.cube[CubeKey.rowsField] as string[]);
+            }
+            if (this.report.cube[CubeKey.columnsField]) {
+                codes.push(...this.report.cube[CubeKey.columnsField] as string[]);
+            }
+        } else if (this.report.type === ReportType.SANKEY || this.report.type === ReportType.CHORD) {
+            if (this.report.cube[CubeKey.sourceField]) {
+                codes.push(this.report.cube[CubeKey.sourceField] as string);
+            }
+            if (this.report.cube[CubeKey.targetField]) {
+                codes.push(this.report.cube[CubeKey.targetField] as string);
+            }
+        } else {
+            if (this.report.cube[CubeKey.xField]) {
+                if (Array.isArray(this.report.cube[CubeKey.xField])) {
+                    codes.push(...this.report.cube[CubeKey.xField]);
+                } else {
+                    codes.push(this.report.cube[CubeKey.xField] as string);
+                }
+            }
+            if (this.report.cube[CubeKey.seriesField]) {
+                if (Array.isArray(this.report.cube[CubeKey.seriesField])) {
+                    codes.push(...this.report.cube[CubeKey.seriesField]);
+                } else {
+                    codes.push(this.report.cube[CubeKey.seriesField] as string);
+                }
+            }
+        }
+        return this.cubeMeta.dimensions?.filter(it => codes.includes(it.code)) || [];
+    }
+
+    addSort() {
+        if (!this.report.sorts) {
+            this.report.sorts = [];
+        }
+        this.report.sorts.push({direction: Direction.ASC});
+    }
+
+    removeSort(index: number) {
+        this.report.sorts.splice(index, 1);
+        this.changeCube();
+    }
+
     changeCube() {
         this.puzzleReport.refresh();
     }
 
     changeField() {
-        this.report.sorts = [];
+        if (this.report.sorts) {
+            this.report.sorts.forEach(sort => {
+                if (sort.field) {
+                    const isDimension = this.cubeMeta.dimensions?.some(it => it.code === sort.field);
+                    if (isDimension) {
+                        const isStillSelected = this.selectedDimensions.some(it => it.code === sort.field);
+                        if (!isStillSelected) {
+                            sort.field = null;
+                        }
+                    }
+                }
+            });
+        }
         this.changeCube();
     }
 
@@ -170,45 +226,4 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     protected readonly CubeKey = CubeKey;
     protected readonly ReportType = ReportType;
 
-    get selectedDimensions(): CubeMetaDimension[] {
-        if (!this.cubeMeta || !this.cubeMeta.dimensions) return [];
-        const selectedCodes = new Set<string>();
-        const cube = this.report.cube;
-
-        // Collect all possible dimension selections
-        const fields = [CubeKey.xField, CubeKey.seriesField, CubeKey.sourceField, CubeKey.targetField, CubeKey.rowsField, CubeKey.columnsField];
-        fields.forEach(key => {
-            const val = cube[key];
-            if (val) {
-                if (Array.isArray(val)) {
-                    val.forEach(v => selectedCodes.add(v));
-                } else {
-                    selectedCodes.add(val as string);
-                }
-            }
-        });
-
-        return this.cubeMeta.dimensions.filter(dim => selectedCodes.has(dim.code));
-    }
-
-    get selectedMeasures(): CubeMetaMeasure[] {
-        if (!this.cubeMeta || !this.cubeMeta.measures) return [];
-        const selectedCodes = new Set<string>();
-        const cube = this.report.cube;
-
-        // Collect all possible measure selections
-        const fields = [CubeKey.yField, 'yField2', 'sizeField', CubeKey.weightField, CubeKey.valuesField];
-        fields.forEach(key => {
-            const val = cube[key];
-            if (val) {
-                if (Array.isArray(val)) {
-                    val.forEach(v => selectedCodes.add(v));
-                } else {
-                    selectedCodes.add(val as string);
-                }
-            }
-        });
-
-        return this.cubeMeta.measures.filter(mea => selectedCodes.has(mea.code));
-    }
 }
