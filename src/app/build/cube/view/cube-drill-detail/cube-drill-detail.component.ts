@@ -3,15 +3,7 @@ import {CubeApiService} from "../../service/cube-api.service";
 import {STColumn, STComponent} from "@delon/abc/st";
 import {CubeMeta} from "../../model/cube.model";
 import {Dashboard} from "../../model/dashboard.model";
-
-export interface DrillDetailParams {
-    field: string;           // 下钻字段
-    value: any;             // 下钻值
-    dimension: string;      // 维度名称
-    measure: string;        // 指标名称
-    dashboard: Dashboard;   // 仪表板配置
-    cubeMeta: CubeMeta;    // Cube 元数据
-}
+import {CubeFilter} from "../../model/cube-query.model";
 
 @Component({
     selector: 'cube-drill-detail',
@@ -21,7 +13,10 @@ export interface DrillDetailParams {
 })
 export class CubeDrillDetailComponent implements OnInit {
 
-    @Input() params: DrillDetailParams;
+    @Input() measure: string;        // 下钻指标
+    @Input() dashboard: Dashboard;   // 仪表板配置
+    @Input() cubeMeta: CubeMeta;    // Cube 元数据
+    @Input() filters?: CubeFilter[]; // 过滤器
 
     @ViewChild('st', {static: false}) st: STComponent;
 
@@ -50,20 +45,14 @@ export class CubeDrillDetailComponent implements OnInit {
         const dimensions = this.cubeMeta.dimensions.map(d => d.code);
 
         // 获取当前指标
-        const measures = [this.params.measure];
+        const measures = [this.measure];
 
         this.cubeApiService.query({
-            cube: this.params.dashboard.cuber,
-            explore: this.params.dashboard.explore,
+            cube: this.dashboard.cuber,
+            explore: this.dashboard.explore,
             dimensions: dimensions,
             measures: measures,
-            // filters: [
-            //     {
-            //         field: this.params.field,
-            //         operator: CubeOperator.EQ,
-            //         value: this.params.value
-            //     }
-            // ],
+            filters: this.filters || [],
             parameters: {}
         }).subscribe({
             next: (response) => {
@@ -85,7 +74,7 @@ export class CubeDrillDetailComponent implements OnInit {
         this.stColumns = [];
 
         // 添加维度列
-        this.params.cubeMeta.dimensions.forEach(dim => {
+        this.cubeMeta.dimensions.forEach(dim => {
             this.stColumns.push({
                 title: dim.title,
                 index: [dim.code],
@@ -120,21 +109,21 @@ export class CubeDrillDetailComponent implements OnInit {
 
         // 添加指标列（高亮显示）
         this.stColumns.push({
-            title: this.cubeMeta.fieldTitleMap?.get(this.params.measure) || this.params.measure,
-            index: [this.params.measure],
+            title: this.cubeMeta.fieldTitleMap?.get(this.measure) || this.measure,
+            index: [this.measure],
             width: 150,
             className: 'measure-column',
             sort: {
                 compare: (a: any, b: any) => {
-                    const valA = a[this.params.measure];
-                    const valB = b[this.params.measure];
+                    const valA = a[this.measure];
+                    const valB = b[this.measure];
                     if (valA === null || valA === undefined) return -1;
                     if (valB === null || valB === undefined) return 1;
                     return valA - valB;
                 }
             },
             format: (item: any) => {
-                const val = item[this.params.measure];
+                const val = item[this.measure];
                 if (typeof val === 'number') {
                     return val.toLocaleString();
                 }
@@ -170,12 +159,9 @@ export class CubeDrillDetailComponent implements OnInit {
         let url = URL.createObjectURL(blob);
         let anchor = document.createElement('a');
         anchor.href = url;
-        anchor.download = `drill_${this.params.dimension}_${this.params.value}.csv`;
+        anchor.download = `drill_${this.cubeMeta.fieldTitleMap.get(this.measure)}.csv`;
         anchor.click();
         URL.revokeObjectURL(url);
     }
 
-    get cubeMeta(): CubeMeta {
-        return this.params.cubeMeta;
-    }
 }
