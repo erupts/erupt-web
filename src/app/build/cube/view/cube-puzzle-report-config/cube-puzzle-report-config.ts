@@ -2,6 +2,7 @@ import {AfterViewInit, Component, inject, Input, OnInit, ViewChild} from '@angul
 import {NZ_MODAL_DATA} from 'ng-zorro-antd/modal';
 import {CubeMeta, CubeMetaDimension, CubeMetaMeasure} from "../../model/cube.model";
 import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {Direction} from "../../model/cube-query.model";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
 
 @Component({
@@ -35,8 +36,11 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
                 this.report = {...this.report, ...this.nzModalData.config};
             }
         }
-        if (!this.report.cube[CubeKey.sortDirection]) {
-            this.report.cube[CubeKey.sortDirection] = 'ASC';
+        if (!this.report.sorts) {
+            this.report.sorts = [];
+        }
+        if (!this.report.sorts[0]) {
+            this.report.sorts[0] = {direction: Direction.ASC};
         }
         if (!this.report.ui) {
             this.report.ui = {
@@ -123,7 +127,7 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     }
 
     changeField() {
-        this.report.cube[CubeKey.sortField] = null;
+        this.report.sorts = [];
         this.changeCube();
     }
 

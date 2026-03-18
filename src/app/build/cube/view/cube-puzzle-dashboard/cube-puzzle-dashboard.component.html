@@ -62,7 +62,7 @@
                                 <span nz-icon nzType="holder" nzTheme="outline"></span>
                             </span>
                             }
-                            <span class="filter-label">{{ getFieldTitle(filter.field) }}: </span>
+                            <span class="filter-label">{{ cubeMeta.fieldTitleMap.get(filter.field) }}: </span>
                             <cube-puzzle-filter-control style="width: 180px" size="small" [filter]="filter"
                                                         [cubeMeta]="cubeMeta"
                                                         [dashboard]="dashboard"></cube-puzzle-filter-control>

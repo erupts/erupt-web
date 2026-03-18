@@ -1,5 +1,5 @@
 import {GridsterItem} from "angular-gridster2";
-import {CubeOperator} from "./cube-query.model";
+import {CubeOperator, Sort} from "./cube-query.model";
 
 export interface EruptUser {
     id: number;
@@ -73,6 +73,7 @@ export interface ReportDSL extends GridsterItem {
     description?: string;
     cube?: Partial<Record<CubeKey | string, string[] | string>>
     ui?: Record<string, any>;
+    sorts?: Sort[];
 }
 
 export enum CubeKey {
@@ -88,9 +89,6 @@ export enum CubeKey {
     rowsField = 'rowsField',
     columnsField = 'columnsField',
     valuesField = 'valuesField',
-
-    sortField = 'sortField',
-    sortDirection = 'sortDirection',
 }
 
 /**
