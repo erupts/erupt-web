@@ -293,13 +293,21 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 value: value
             });
         }
+        let sorts = [];
+        if (this.report.sorts) {
+            for (let sort of this.report.sorts) {
+                if (sort.field) {
+                    sorts.push(sort)
+                }
+            }
+        }
 
         this.cubeApiService.query({
             cube: this.dashboard.cuber,
             explore: this.dashboard.explore,
             dimensions: dimensions,
             measures: measures,
-            sorts: this.report.sorts || [],
+            sorts: sorts,
             filters: cf,
             parameters: parameters
         }).subscribe({
