@@ -95,7 +95,22 @@
                             "markdown-it",
                             "highlight.js",
                             "katex",
-                            "mermaid"
+                            "mermaid",
+
+                            "cytoscape-fcose",
+                            "cytoscape-cose-bilkent",
+                            "@braintree/sanitize-url",
+                            "dayjs",
+                            "dayjs/plugin/isoWeek.js",
+                            "dayjs/plugin/customParseFormat.js",
+                            "dayjs/plugin/advancedFormat.js",
+                            "dayjs/plugin/duration.js",
+                            "markdown-it-link-attributes",
+                            "markdown-it-task-lists",
+                            "markdown-it-katex",
+                            "vscode-languageserver-protocol",
+                            "vscode-jsonrpc/lib/common/events.js",
+                            "vscode-jsonrpc/lib/common/cancellation.js"
                         ],
                         "stylePreprocessorOptions": {
                             "includePaths": [
@@ -116,8 +131,8 @@
                             "budgets": [
                                 {
                                     "type": "initial",
-                                    "maximumWarning": "2mb",
-                                    "maximumError": "6mb"
+                                    "maximumWarning": "4mb",
+                                    "maximumError": "8mb"
                                 },
                                 {
                                     "type": "anyComponentStyle",

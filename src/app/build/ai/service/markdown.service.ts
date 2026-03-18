@@ -1,17 +1,4 @@
 import {Injectable} from '@angular/core';
-import MarkdownIt from 'markdown-it';
-import hljs from 'highlight.js';
-import footnote from 'markdown-it-footnote';
-import mark from 'markdown-it-mark';
-import sub from 'markdown-it-sub';
-import sup from 'markdown-it-sup';
-import ins from 'markdown-it-ins';
-import abbr from 'markdown-it-abbr';
-import deflist from 'markdown-it-deflist';
-import linkAttributes from 'markdown-it-link-attributes';
-import taskLists from 'markdown-it-task-lists';
-import markdownItKatex from 'markdown-it-katex';
-import mermaid from 'mermaid';
 
 /**
  * 预处理 LaTeX 公式，统一转换为标准格式
@@ -35,58 +22,92 @@ function preprocessLatex(text: string): string {
  */
 @Injectable()
 export class MarkdownService {
-    private md: MarkdownIt;
+    private md: any;
+    private mermaid: any;
+    private hljs: any;
+    private initPromise: Promise<void> | null = null;
 
-    constructor() {
-        // 使用 'default' 预设以启用 GFM 表格；'commonmark' 不含表格
-        const md = new MarkdownIt('default', {
-            html: true,
-            breaks: true,
-            linkify: true,
-            typographer: true,
-            highlight: (str: string, lang: string) => {
-                const info = (lang || '').trim().split(/\s+/)[0] || '';
-                if (info.toLowerCase() === 'mermaid') {
-                    return `<div class="mermaid">${str}</div>`;
-                }
-                if (info && hljs.getLanguage(info)) {
+    private async init() {
+        if (this.md) return;
+        if (this.initPromise) return this.initPromise;
+
+        this.initPromise = (async () => {
+            const [
+                MarkdownIt,
+                hljs,
+                footnote,
+                mark,
+                sub,
+                sup,
+                ins,
+                abbr,
+                deflist,
+                linkAttributes,
+                taskLists,
+                markdownItKatex,
+                mermaid
+            ] = await Promise.all([
+                import('markdown-it').then(m => m.default),
+                import('highlight.js').then(m => m.default),
+                import('markdown-it-footnote').then(m => m.default),
+                import('markdown-it-mark').then(m => m.default),
+                import('markdown-it-sub').then(m => m.default),
+                import('markdown-it-sup').then(m => m.default),
+                import('markdown-it-ins').then(m => m.default),
+                import('markdown-it-abbr').then(m => m.default),
+                import('markdown-it-deflist').then(m => m.default),
+                import('markdown-it-link-attributes').then(m => m.default),
+                import('markdown-it-task-lists').then(m => m.default),
+                import('markdown-it-katex').then(m => m.default),
+                import('mermaid').then(m => m.default)
+            ]);
+
+            this.hljs = hljs;
+            this.mermaid = mermaid;
+            this.md = new MarkdownIt('default', {
+                html: true,
+                breaks: true,
+                linkify: true,
+                typographer: true,
+                highlight: (str: string, lang: string) => {
+                    const info = (lang || '').trim().split(/\s+/)[0] || '';
+                    if (info.toLowerCase() === 'mermaid') {
+                        return `<div class="mermaid">${str}</div>`;
+                    }
+                    if (info && this.hljs.getLanguage(info)) {
+                        try {
+                            const {value} = this.hljs.highlight(str, {language: info});
+                            return `<pre class="hljs"><code class="language-${info}">${value}</code></pre>`;
+                        } catch {
+                            // fallback to auto or plain
+                        }
+                    }
                     try {
-                        const {value} = hljs.highlight(str, {language: info});
-                        return `<pre class="hljs"><code class="language-${info}">${value}</code></pre>`;
+                        const {value} = this.hljs.highlightAuto(str);
+                        return `<pre class="hljs"><code>${value}</code></pre>`;
                     } catch {
-                        // fallback to auto or plain
+                        return `<pre class="hljs"><code>${this.md.utils.escapeHtml(str)}</code></pre>`;
                     }
                 }
-                try {
-                    const {value} = hljs.highlightAuto(str);
-                    return `<pre class="hljs"><code>${value}</code></pre>`;
-                } catch {
-                    return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
-                }
-            }
-        })
-            .use(footnote)
-            .use(mark)
-            .use(sub)
-            .use(sup)
-            .use(ins)
-            .use(abbr)
-            .use(deflist)
-            .use(linkAttributes, {attrs: {target: '_blank', rel: 'noopener'}})
-            .use(taskLists)
-            .use(markdownItKatex, {throwOnError: false, errorColor: '#cc0000'});
+            })
+                .use(footnote)
+                .use(mark)
+                .use(sub)
+                .use(sup)
+                .use(ins)
+                .use(abbr)
+                .use(deflist)
+                .use(linkAttributes, {attrs: {target: '_blank', rel: 'noopener'}})
+                .use(taskLists)
+                .use(markdownItKatex, {throwOnError: false, errorColor: '#cc0000'});
+        })();
 
-        this.md = md;
-        // // 流程图等 SVG 带明确宽高，避免 useMaxWidth 时高度由浏览器计算导致撑开整页
-        // mermaid.initialize({
-        //     startOnLoad: false,
-        //     flowchart: { useMaxWidth: false },
-        //     sequence: { useMaxWidth: false },
-        // });
+        return this.initPromise;
     }
 
-    render(text: string): string {
+    async render(text: string): Promise<string> {
         if (!text) return '';
+        await this.init();
         let html = this.md.render(preprocessLatex(text));
         // 为表格包一层 div，便于全局样式选择器命中（innerHTML 不受组件封装）
         html = html.replace(/<table(\s|>)/g, '<div class="markdown-table-wrap"><table$1');
@@ -95,12 +116,13 @@ export class MarkdownService {
     }
 
     /** 在容器内查找未渲染的 .mermaid 并执行渲染（应在 DOM 插入后由组件调用） */
-    runMermaid(container: HTMLElement): void {
+    async runMermaid(container: HTMLElement): Promise<void> {
         const nodeList = container.querySelectorAll('.mermaid:not([data-processed])');
         if (nodeList.length === 0) return;
+        await this.init();
         const nodes = Array.from(nodeList) as HTMLElement[];
         try {
-            mermaid.run({nodes});
+            this.mermaid.run({nodes});
         } catch (e) {
             console.warn('mermaid.run error', e);
         }

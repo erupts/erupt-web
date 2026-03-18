@@ -14,6 +14,8 @@ export interface ChatMessage {
     chatId?: number;
     /** 流式输出每更新一次自增，用于触发打字动画 */
     streamingTick?: number;
+    /** 是否正在渲染中（针对异步懒加载 render） */
+    rendering?: boolean;
 }
 
 export interface UserInfo {
