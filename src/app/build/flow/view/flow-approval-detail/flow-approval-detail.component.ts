@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask} from "@flow/model/flow-instance.model";
 import {SignaturePadComponent} from "../../../erupt/components/signature-pad/signature-pad.component";
 import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
@@ -86,6 +86,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                 private upmsApiService: FlowUpmsApiService,
                 private flowApiService: FlowApiService,
                 public i18n: I18NService,
+                private cdr: ChangeDetectorRef,
                 private dataHandlerService: DataHandlerService,
                 private flowInstanceApiService: FlowInstanceApiService,
                 public upmsDataService: UpmsDataService,
@@ -122,20 +123,20 @@ export class FlowApprovalDetailComponent implements OnInit {
                 this.flowApiService.eruptFlowBuild(this.instanceDetail.erupt).subscribe({
                     next: res => {
                         this.eruptBuild = null;
-                        setTimeout(() => {
-                            this.dataHandlerService.initErupt(res.data)
-                            this.eruptBuild = res.data;
-                            this.flowInstanceApiService.eruptData(flow.id).subscribe({
-                                next: res => {
-                                    if (res.success) {
-                                        this.dataHandlerService.objectToEruptValue(res.data, this.eruptBuild);
-                                        this.dataDeleted = false;
-                                    } else {
-                                        this.dataDeleted = true;
-                                    }
+                        this.cdr.detectChanges();
+                        this.flowInstanceApiService.eruptData(flow.id).subscribe({
+                            next: eruptDataRes => {
+                                this.dataHandlerService.initErupt(res.data)
+                                if (eruptDataRes.success) {
+                                    this.dataHandlerService.objectToEruptValue(eruptDataRes.data, res.data);
+                                    this.dataDeleted = false;
+                                } else {
+                                    this.dataDeleted = true;
                                 }
-                            })
-                        }, 50)
+                                this.eruptBuild = res.data;
+                                this.cdr.detectChanges();
+                            }
+                        })
                     }
                 })
             }
