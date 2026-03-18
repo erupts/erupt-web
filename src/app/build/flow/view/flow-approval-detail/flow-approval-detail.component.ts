@@ -1,5 +1,12 @@
 import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
-import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask} from "@flow/model/flow-instance.model";
+import {
+    ApprovalView,
+    FlowInstance,
+    FlowInstanceComment,
+    FlowInstanceDataHistory,
+    FlowInstanceTask,
+    InstanceStatus
+} from "@flow/model/flow-instance.model";
 import {SignaturePadComponent} from "../../../erupt/components/signature-pad/signature-pad.component";
 import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
 import {NzCodeEditorComponent} from "ng-zorro-antd/code-editor";
@@ -644,4 +651,6 @@ export class FlowApprovalDetailComponent implements OnInit {
     protected readonly NodeType = NodeType;
 
     protected readonly PrintSetting = PrintSetting;
+
+    protected readonly InstanceStatus = InstanceStatus;
 }
