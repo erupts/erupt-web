@@ -86,7 +86,12 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     ngAfterViewChecked(): void {
         const el = this.bubblesRef?.nativeElement;
-        if (el) this.markdown.runMermaid(el);
+        if (el) {
+            const nodes = el.querySelectorAll('.mermaid:not([data-processed])');
+            if (nodes.length > 0) {
+                this.markdown.runMermaid(el).then();
+            }
+        }
     }
 
     private closeEventSource(): void {
@@ -259,21 +264,22 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 }
                 const last = this.messages[this.messages.length - 1];
                 const shouldScroll = last ? this.isBubblesNearBottom() : false;
-                const html = this.markdown.render(this.accumulatedMarkdown);
-                // EventSource 在 Zone 外触发，必须在 ngZone.run 里更新状态并触底，界面才会刷新
-                this.ngZone.run(() => {
-                    this.sending = false;
-                    this.sendDisabled = true;
-                    if (last) {
-                        if (last.loading) last.loading = false;
-                        last.streamingTick = (last.streamingTick ?? 0) + 1;
-                        last.contentHtml = html;
-                        last.content = this.accumulatedMarkdown;
-                    }
-                    if (shouldScroll) {
-                        this.scrollBubblesToBottom();
-                        setTimeout(() => this.scrollBubblesToBottom(), 50);
-                    }
+                this.markdown.render(this.accumulatedMarkdown).then(html => {
+                    // EventSource 在 Zone 外触发，必须在 ngZone.run 里更新状态并触底，界面才会刷新
+                    this.ngZone.run(() => {
+                        this.sending = false;
+                        this.sendDisabled = true;
+                        if (last) {
+                            if (last.loading) last.loading = false;
+                            last.streamingTick = (last.streamingTick ?? 0) + 1;
+                            last.contentHtml = html;
+                            last.content = this.accumulatedMarkdown;
+                        }
+                        if (shouldScroll) {
+                            this.scrollBubblesToBottom();
+                            setTimeout(() => this.scrollBubblesToBottom(), 50);
+                        }
+                    });
                 });
             };
 
@@ -309,7 +315,13 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
         if (item.contentHtml) return item.contentHtml;
         if (!item.content) return '';
-        return this.markdown.render(item.content);
+        if (item.rendering) return '';
+        item.rendering = true;
+        this.markdown.render(item.content).then(html => {
+            item.contentHtml = html;
+            item.rendering = false;
+        });
+        return '';
     }
 
     private escapeHtml(s: string): string {
@@ -433,7 +445,9 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             last.loading = false;
             if (this.accumulatedMarkdown) {
                 last.content = this.accumulatedMarkdown;
-                last.contentHtml = this.markdown.render(this.accumulatedMarkdown);
+                this.markdown.render(this.accumulatedMarkdown).then(html => {
+                    last.contentHtml = html;
+                });
             } else {
                 last.content = '(已停止)';
                 last.contentHtml = '<p>(已停止)</p>';
