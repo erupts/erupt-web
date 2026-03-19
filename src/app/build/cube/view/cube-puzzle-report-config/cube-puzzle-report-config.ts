@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, inject, Input, OnInit, ViewChild} from '@angular/core';
 import {NZ_MODAL_DATA} from 'ng-zorro-antd/modal';
-import {CubeMeta, CubeMetaDimension, CubeMetaMeasure} from "../../model/cube.model";
+import {CubeMeta, CubeMetaDimension} from "../../model/cube.model";
 import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {Direction} from "../../model/cube-query.model";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
@@ -48,24 +48,24 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         }
         if (this.report.type === ReportType.TABLE) {
             if (!this.report.cube[CubeKey.xField]) {
-                this.report.cube[CubeKey.xField] = [this.cubeMeta.dimensions?.[0]?.code];
+                this.report.cube[CubeKey.xField] = this.cubeMeta.dimensions?.[0] ? [this.cubeMeta.dimensions[0].code] : [];
             }
             if (!this.report.cube[CubeKey.yField]) {
-                this.report.cube[CubeKey.yField] = [this.cubeMeta.measures?.[0]?.code];
+                this.report.cube[CubeKey.yField] = this.cubeMeta.measures?.[0] ? [this.cubeMeta.measures[0].code] : [];
             }
         } else if (this.report.type === ReportType.PIVOT_TABLE) {
             if (!this.report.cube[CubeKey.rowsField]) {
-                this.report.cube[CubeKey.rowsField] = [this.cubeMeta.dimensions?.[0]?.code];
+                this.report.cube[CubeKey.rowsField] = [];
             }
             if (!this.report.cube[CubeKey.columnsField]) {
                 this.report.cube[CubeKey.columnsField] = [];
             }
             if (!this.report.cube[CubeKey.valuesField]) {
-                this.report.cube[CubeKey.valuesField] = [this.cubeMeta.measures?.[0]?.code];
+                this.report.cube[CubeKey.valuesField] = [];
             }
         } else if (this.report.type === ReportType.KPI) {
             if (!this.report.cube[CubeKey.yField]) {
-                this.report.cube[CubeKey.yField] = this.cubeMeta.measures?.[0]?.code;
+                this.report.cube[CubeKey.yField] = [];
             }
         } else {
             if (!this.report.cube[CubeKey.xField]) {
@@ -188,11 +188,11 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     }
 
     onConfigChange() {
-        if (this.report.type === ReportType.KPI || this.report.type === ReportType.PROGRESS  || this.report.type === ReportType.RING_PROGRESS || this.report.type === ReportType.GAUGE) {
+        if (this.report.type === ReportType.KPI || this.report.type === ReportType.PROGRESS || this.report.type === ReportType.RING_PROGRESS || this.report.type === ReportType.GAUGE) {
             let yField: string | string[];
             if (Array.isArray(this.report.cube[CubeKey.yField])) {
-                yField = this.report.cube[CubeKey.yField][0];
-            }else{
+                yField = this.report.cube[CubeKey.yField]?.[0];
+            } else {
                 yField = this.report.cube[CubeKey.yField] as string;
             }
             this.report.cube = {};
@@ -206,8 +206,10 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
                 this.report.cube[CubeKey.yField] = [this.report.cube[CubeKey.yField] as string];
             }
             this.report.cube[CubeKey.seriesField] = null;
+            this.puzzleReport.refresh();
         } else if (this.report.type == ReportType.PIVOT_TABLE) {
-            this.report.cube = {};
+            this.report.cube = {}
+            this.puzzleReport.refresh();
         } else {
             if (Array.isArray(this.report.cube[CubeKey.xField])) {
                 this.report.cube[CubeKey.xField] = this.report.cube[CubeKey.xField][0];
