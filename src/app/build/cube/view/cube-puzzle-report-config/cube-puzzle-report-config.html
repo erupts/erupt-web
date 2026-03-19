@@ -80,7 +80,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
                                                        nzMode="multiple"
-                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                       (ngModelChange)="changeField()" nzShowSearch>
                                                 @for (dim of cubeMeta.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
                                                     </nz-option>
@@ -93,7 +93,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
                                                        nzMode="multiple"
-                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                       (ngModelChange)="changeField()" nzShowSearch>
                                                 @for (mea of cubeMeta.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
                                                     </nz-option>
@@ -106,7 +106,7 @@
                                         <nz-form-label>指标</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
-                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                       (ngModelChange)="changeField()" nzShowSearch>
                                                 @for (mea of cubeMeta.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
                                                 }
@@ -119,7 +119,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.rowsField]" name="rowsField"
                                                        nzMode="multiple"
-                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear
+                                                       (ngModelChange)="changeField()" nzShowSearch
                                                        nzPlaceHolder="选择行字段">
                                                 @for (dim of cubeMeta.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
@@ -134,7 +134,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.columnsField]" name="columnsField"
                                                        nzMode="multiple"
-                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear
+                                                       (ngModelChange)="changeField()" nzShowSearch
                                                        nzPlaceHolder="选择列字段">
                                                 @for (dim of cubeMeta.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
@@ -149,7 +149,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.valuesField]" name="valuesField"
                                                        nzMode="multiple"
-                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear
+                                                       (ngModelChange)="changeField()" nzShowSearch
                                                        nzPlaceHolder="选择值字段">
                                                 @for (mea of cubeMeta.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
@@ -164,7 +164,7 @@
                                         <nz-form-label>来源字段</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.sourceField]" name="sourceField"
-                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                       (ngModelChange)="changeField()" nzShowSearch>
                                                 @for (dim of cubeMeta.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
                                                 }
@@ -175,7 +175,7 @@
                                         <nz-form-label>目标字段</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.targetField]" name="targetField"
-                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                       (ngModelChange)="changeField()" nzShowSearch>
                                                 @for (dim of cubeMeta.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
                                                 }
@@ -186,7 +186,7 @@
                                         <nz-form-label>权重字段</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.weightField]" name="weightField"
-                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                       (ngModelChange)="changeField()" nzShowSearch>
                                                 @for (mea of cubeMeta.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
                                                 }
@@ -198,7 +198,7 @@
                                         <nz-form-label>维度</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
-                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                       (ngModelChange)="changeField()" nzShowSearch>
                                                 @for (dim of cubeMeta.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code"
                                                                [nzLabel]="dim.title"></nz-option>
@@ -210,7 +210,7 @@
                                         <nz-form-label>指标</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
-                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                       (ngModelChange)="changeField()" nzShowSearch>
                                                 @for (mea of cubeMeta.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
                                                 }
@@ -223,7 +223,7 @@
                                             <nz-form-label>指标2</nz-form-label>
                                             <nz-form-control>
                                                 <nz-select [(ngModel)]="report.cube['yField2']" name="yField2"
-                                                           (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                           (ngModelChange)="changeField()" nzShowSearch>
                                                     @for (mea of cubeMeta.measures; track mea.code) {
                                                         <nz-option [nzValue]="mea.code"
                                                                    [nzLabel]="mea.title"></nz-option>
@@ -237,7 +237,7 @@
                                             <nz-form-label>尺寸字段</nz-form-label>
                                             <nz-form-control>
                                                 <nz-select [(ngModel)]="report.cube[CubeKey.sizeField]" name="sizeField"
-                                                           (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                           (ngModelChange)="changeField()" nzShowSearch>
                                                     @for (mea of cubeMeta.measures; track mea.code) {
                                                         <nz-option [nzValue]="mea.code"
                                                                    [nzLabel]="mea.title"></nz-option>
@@ -252,7 +252,7 @@
                                             <nz-form-control>
                                                 <nz-select [(ngModel)]="report.cube[CubeKey.seriesField]"
                                                            name="seriesField"
-                                                           (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                           (ngModelChange)="changeField()" nzShowSearch>
                                                     @for (dim of cubeMeta.dimensions; track dim.code) {
                                                         <nz-option [nzValue]="dim.code"
                                                                    [nzLabel]="dim.title"></nz-option>
@@ -276,7 +276,7 @@
                                             <div style="display: flex; gap: 8px; margin-bottom: 8px;">
                                                 <nz-select [(ngModel)]="sort.field" [name]="'sortField' + $index"
                                                            (ngModelChange)="changeCube()"
-                                                           nzShowSearch nzAllowClear
+                                                           nzShowSearch
                                                            style="flex: 1" nzPlaceHolder="排序字段">
                                                     @if (selectedDimensions.length) {
                                                         <nz-option-group nzLabel="维度">
@@ -340,7 +340,7 @@
                                     <nz-form-label>主题</nz-form-label>
                                     <nz-form-control>
                                         <nz-select [(ngModel)]="report.ui['pivotTheme']" name="pivotTheme"
-                                                   (ngModelChange)="renderChart()" nzAllowClear>
+                                                   (ngModelChange)="renderChart()">
                                             <nz-option nzValue="gray" nzLabel="Gray"></nz-option>
                                             <nz-option nzValue="dark" nzLabel="Dark"></nz-option>
                                             <nz-option nzValue="colorful" nzLabel="Colorful"></nz-option>
@@ -404,7 +404,7 @@
                                     <nz-form-label>图例位置</nz-form-label>
                                     <nz-form-control>
                                         <nz-select [(ngModel)]="report.ui['legendPosition']" name="legendPosition"
-                                                   (ngModelChange)="onConfigChange()" nzAllowClear>
+                                                   (ngModelChange)="onConfigChange()">
                                             <nz-option nzValue="top" nzLabel="顶部"></nz-option>
                                             <nz-option nzValue="bottom" nzLabel="底部"></nz-option>
                                             <nz-option nzValue="left" nzLabel="左侧"></nz-option>
@@ -450,7 +450,7 @@
                                     <nz-form-label>自定义色板</nz-form-label>
                                     <nz-form-control>
                                         <nz-select [(ngModel)]="report.ui['color']" name="color"
-                                                   (ngModelChange)="onConfigChange()" nzMode="tags" nzAllowClear
+                                                   (ngModelChange)="onConfigChange()" nzMode="tags"
                                                    nzPlaceHolder="输入颜色值并按回车">
                                             <nz-option nzValue="#5B8FF9" nzLabel="蓝色"></nz-option>
                                             <nz-option nzValue="#5AD8A6" nzLabel="绿色"></nz-option>
