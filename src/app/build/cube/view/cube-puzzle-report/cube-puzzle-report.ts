@@ -265,6 +265,15 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
 
         }
+
+        // 所有组件必须选择指标才发起请求
+        if (measures.length === 0) {
+            this.chartData = [];
+            this.querying = false;
+            this.render();
+            return;
+        }
+
         let parameters: Record<string, any> = {};
         let cf: CubeFilter[] = [];
 
