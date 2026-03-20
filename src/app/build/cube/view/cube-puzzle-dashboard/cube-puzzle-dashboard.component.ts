@@ -437,6 +437,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().dsl = this.dsl;
         ref.getContentComponent().filter = {
+            title: null,
             field: this.cubeMeta.dimensions?.[0].code,
             operator: CubeOperator.IN
         }
@@ -546,6 +547,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             filter.operator = filter.operator ?? CubeOperator.IN;
         } else {
             this.dsl.filters.push({
+                title: this.cubeMeta.fieldTitleMap?.get(payload.field),
                 field: payload.field,
                 operator: CubeOperator.IN,
                 hidden: true,
