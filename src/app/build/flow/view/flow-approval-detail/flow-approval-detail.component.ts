@@ -120,66 +120,20 @@ export class FlowApprovalDetailComponent implements OnInit {
         }
     }
 
+    onReloadFlows(){
+        this.selectedInstance = null;
+        this.reloadFlows.emit()
+    }
+
     // 新增方法：加载实例详情
-    loadInstanceDetail(flow: FlowInstance, reloadLoadFlows: boolean = false) {
-        reloadLoadFlows && this.reloadFlows.emit();
+    loadInstanceDetail(flow: FlowInstance) {
         // 加载实例详情
         this.flowInstanceApiService.detail(flow.no).subscribe({
             next: (data) => {
                 this.instanceDetail = data.data;
-                this.flowApiService.eruptFlowBuild(this.instanceDetail.erupt).subscribe({
-                    next: res => {
-                        this.eruptBuild = null;
-                        this.cdr.detectChanges();
-                        this.flowInstanceApiService.eruptData(flow.id).subscribe({
-                            next: eruptDataRes => {
-                                this.dataHandlerService.initErupt(res.data)
-                                if (eruptDataRes.success) {
-                                    this.dataHandlerService.objectToEruptValue(eruptDataRes.data, res.data);
-                                    this.dataDeleted = false;
-                                } else {
-                                    this.dataDeleted = true;
-                                }
-                                this.eruptBuild = res.data;
-                                this.cdr.detectChanges();
-                            }
-                        })
-                    }
-                })
+                this.onTabChange(this.activeTabIndex)
             }
         });
-
-        // 加载任务列表
-        this.flowInstanceApiService.tasks(flow.id).subscribe({
-            next: (data) => {
-                const arr = data.data || [];
-                for (let i = 0; i < arr.length;) {
-                    if (!arr[i].nodeId) {
-                        i++;
-                        continue;
-                    }
-                    let span = 1;
-                    while (i + span < arr.length && arr[i + span].nodeId === arr[i].nodeId) {
-                        span++;
-                    }
-                    if (span > 1) {
-                        arr[i].nodeRowspan = span;
-                        for (let j = 1; j < span; j++) arr[i + j].nodeId = '';
-                    }
-                    i += span;
-                }
-                this.instanceTasks = arr;
-            }
-        });
-
-        // 加载评论列表
-        this.flowInstanceApiService.commentList(flow.id).subscribe({
-            next: (data) => {
-                this.comments = data.data || [];
-            }
-        });
-
-        this.getDataHistories(flow.id);
         if (this.approvalView == ApprovalView.TODO) {
             this.flowInstanceApiService.currTask(flow.id, this.approvalView).subscribe({
                 next: (res) => {
@@ -229,8 +183,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             this.handleModalVisible = false;
             this.reason = null;
             this.message.success('办理成功');
-            this.selectedInstance = null;
-            this.loadInstanceDetail(this.selectedInstance, true);
+            this.onReloadFlows();
         })
     }
 
@@ -297,8 +250,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             this.approveModalVisible = false;
             this.reason = null;
             this.message.success('审批已同意');
-            this.selectedInstance = null;
-            this.loadInstanceDetail(this.selectedInstance, true);
+            this.onReloadFlows();
         })
 
     }
@@ -313,8 +265,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             this.rejectModalVisible = false;
             this.reason = null;
             this.message.success('审批已拒绝');
-            this.selectedInstance = null;
-            this.loadInstanceDetail(this.selectedInstance, true);
+            this.onReloadFlows();
         })
     }
 
@@ -337,7 +288,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             this.message.success('抄送成功');
             // 刷新数据
             if (this.selectedInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstance);
+                this.onReloadFlows();
             }
         })
     }
@@ -357,16 +308,11 @@ export class FlowApprovalDetailComponent implements OnInit {
 
         this.flowInstanceApiService.transfer(this.currTask.id, this.transferUser, this.reason).subscribe(res => {
             this.transferModalVisible = false;
-            // 模拟接口调用
             this.message.success('转交成功');
             this.transferModalVisible = false;
             this.reason = null;
             this.transferUser = null;
-
-            // 刷新数据
-            if (this.selectedInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstance);
-            }
+            this.onReloadFlows();
         })
     }
 
@@ -390,9 +336,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.flowInstanceApiService.addSign(this.currTask.id, this.addSignType, this.addSignUsers, this.reason).subscribe(res => {
             this.message.success('加签成功');
             this.addSignModalVisible = false;
-            if (this.selectedInstance?.id) {
-                this.loadInstanceDetail(this.selectedInstance);
-            }
+            this.onReloadFlows();
         })
 
     }
@@ -415,7 +359,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             this.returnModalVisible = false;
             this.reason = null;
             this.returnNode = null;
-            this.loadInstanceDetail(this.selectedInstance);
+            this.onReloadFlows();
         })
     }
 
@@ -461,8 +405,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             this.resubmitModalVisible = false;
             this.reason = null;
             this.message.success('提交成功');
-            this.selectedInstance = null;
-            this.loadInstanceDetail(this.selectedInstance, true);
+            this.onReloadFlows();
         })
     }
 
@@ -496,7 +439,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.flowInstanceApiService.withdraw(this.selectedInstance.id, '撤回').subscribe({
             next: (data) => {
                 this.message.success('撤回成功');
-                this.loadInstanceDetail(this.selectedInstance);
+                this.onReloadFlows();
             }
         })
     }
@@ -512,8 +455,59 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     onTabChange(index: number) {
         this.activeTabIndex = index;
-        if (this.activeTabIndex === 0 && this.selectedInstance) {
-            this.loadInstanceDetail(this.selectedInstance);
+        if (this.selectedInstance) {
+            if (this.activeTabIndex === 0) {
+                this.flowApiService.eruptFlowBuild(this.instanceDetail.erupt).subscribe({
+                    next: res => {
+                        this.eruptBuild = null;
+                        this.flowInstanceApiService.eruptData(this.selectedInstance.id).subscribe({
+                            next: eruptDataRes => {
+                                this.dataHandlerService.initErupt(res.data)
+                                if (eruptDataRes.success) {
+                                    this.dataHandlerService.objectToEruptValue(eruptDataRes.data, res.data);
+                                    this.dataDeleted = false;
+                                } else {
+                                    this.dataDeleted = true;
+                                }
+                                this.eruptBuild = res.data;
+                                this.cdr.detectChanges();
+                            }
+                        })
+                    }
+                })
+
+            } else if (this.activeTabIndex === 1) {
+                // 加载任务列表
+                this.flowInstanceApiService.tasks(this.selectedInstance.id).subscribe({
+                    next: (data) => {
+                        const arr = data.data || [];
+                        for (let i = 0; i < arr.length;) {
+                            if (!arr[i].nodeId) {
+                                i++;
+                                continue;
+                            }
+                            let span = 1;
+                            while (i + span < arr.length && arr[i + span].nodeId === arr[i].nodeId) {
+                                span++;
+                            }
+                            if (span > 1) {
+                                arr[i].nodeRowspan = span;
+                                for (let j = 1; j < span; j++) arr[i + j].nodeId = '';
+                            }
+                            i += span;
+                        }
+                        this.instanceTasks = arr;
+                    }
+                });
+            } else if (this.activeTabIndex === 2) {
+                this.flowInstanceApiService.commentList(this.selectedInstance.id).subscribe({
+                    next: (data) => {
+                        this.comments = data.data || [];
+                    }
+                });
+            } else if (this.activeTabIndex === 3) {
+                this.getDataHistories(this.selectedInstance.id);
+            }
         }
     }
 
