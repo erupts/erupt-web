@@ -43,7 +43,7 @@
                              style="width: 100%;"></nz-input-number>
         }
     }
-    @case (FieldType.DATE_TIME || FieldType.DATE) {
+    @case (FieldType.DATE || FieldType.DATE_TIME) {
         @if (filter.operator == CubeOperator.BETWEEN) {
             <nz-range-picker [ngModel]="filter.value" [nzSize]="size" [nzShowTime]="fieldType()==FieldType.DATE_TIME"
                              [nzShowNow]="true" style="width: 100%;"/>

@@ -280,7 +280,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         // 合并外部筛选器和用户点击的维度筛选
         if (this.filters) {
             for (let f of this.filters) {
-                if (f.value != null) {
+                if (f.value != null && f.value != "") {
                     if (this.cubeMeta.parameters.filter(it => it.code === f.field).length > 0) {
                         parameters[f.field] = f.value;
                     } else {
