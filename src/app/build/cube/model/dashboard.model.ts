@@ -57,6 +57,7 @@ export interface DashboardSettings {
 }
 
 export interface FilterDSL {
+    title: string;
     field: string;
     hidden?: boolean;
     operator?: CubeOperator;

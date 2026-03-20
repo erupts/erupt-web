@@ -63,7 +63,7 @@
                             <nz-option [nzLabel]="CubeOperator.BETWEEN | translate"
                                        [nzValue]="CubeOperator.BETWEEN"></nz-option>
                         }
-                        @case (FieldType.DATE_TIME || FieldType.DATE) {
+                        @case (FieldType.DATE || FieldType.DATE_TIME) {
                             <nz-option [nzLabel]="CubeOperator.BETWEEN | translate"
                                        [nzValue]="CubeOperator.BETWEEN"></nz-option>
                             <nz-option [nzLabel]="CubeOperator.FEW_DAYS | translate"
@@ -81,6 +81,12 @@
         <div class="filter-config-hidden">
             <div class="filter-config-label">隐藏</div>
             <label nz-checkbox [(ngModel)]="filter.hidden">隐藏</label>
+        </div>
+    </div>
+    <div class="filter-config-row">
+        <div class="filter-config-field">
+            <div class="filter-config-label">Title</div>
+            <input nz-input [(ngModel)]="filter.title" [placeholder]="cubeMeta.fieldTitleMap.get(filter.field)"/>
         </div>
     </div>
     @if (filter.field) {
