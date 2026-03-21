@@ -46,7 +46,6 @@ export class FlowApprovalDetailComponent implements OnInit {
     instanceTasks: FlowInstanceTask[] = [];
 
     nodeInfo: NodeRule | null = null;
-    currTask: FlowInstanceTask = null;
 
     comments: FlowInstanceComment[] = [];
 
@@ -120,7 +119,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         }
     }
 
-    onReloadFlows(){
+    onReloadFlows() {
         this.selectedInstance = null;
         this.reloadFlows.emit()
     }
@@ -131,22 +130,11 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.flowInstanceApiService.detail(flow.no).subscribe({
             next: (data) => {
                 this.instanceDetail = data.data;
+                this.instanceDetail.taskId = this.selectedInstance.taskId;
+                this.nodeInfo = this.selectedInstance.taskNodeInfo;
                 this.onTabChange(this.activeTabIndex)
             }
         });
-        if (this.approvalView == ApprovalView.TODO) {
-            this.flowInstanceApiService.currTask(flow.id, this.approvalView).subscribe({
-                next: (res) => {
-                    this.currTask = res.data;
-                    this.flowInstanceApiService.taskNodeInfo(res.data.id).subscribe({
-                        next: (data) => {
-                            this.nodeInfo = data.data;
-                            this.findAssignedNodes(flow.rule, this.nodeInfo.id)
-                        }
-                    });
-                }
-            });
-        }
     }
 
     // 同意审批
@@ -179,7 +167,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             nodeAssignments[node.id] = node.userIds;
         });
 
-        this.flowInstanceApiService.assignee(this.currTask.id, this.reason, data, nodeAssignments).subscribe(res => {
+        this.flowInstanceApiService.assignee(this.instanceDetail.taskId, this.reason, data, nodeAssignments).subscribe(res => {
             this.handleModalVisible = false;
             this.reason = null;
             this.message.success('办理成功');
@@ -246,7 +234,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             nodeAssignments[node.id] = node.userIds;
         });
 
-        this.flowInstanceApiService.agree(this.currTask.id, this.reason, this.approveSignature, data, nodeAssignments).subscribe(res => {
+        this.flowInstanceApiService.agree(this.instanceDetail.taskId, this.reason, this.approveSignature, data, nodeAssignments).subscribe(res => {
             this.approveModalVisible = false;
             this.reason = null;
             this.message.success('审批已同意');
@@ -261,7 +249,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             this.message.warning('请填写拒绝原因');
             return;
         }
-        this.flowInstanceApiService.refuse(this.currTask.id, this.reason).subscribe(res => {
+        this.flowInstanceApiService.refuse(this.instanceDetail.taskId, this.reason).subscribe(res => {
             this.rejectModalVisible = false;
             this.reason = null;
             this.message.success('审批已拒绝');
@@ -281,7 +269,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             return;
         }
 
-        this.flowInstanceApiService.cc(this.currTask.id, this.ccUsers, this.reason).subscribe(res => {
+        this.flowInstanceApiService.cc(this.instanceDetail.taskId, this.ccUsers, this.reason).subscribe(res => {
             this.reason = null;
             this.ccUsers = [];
             this.ccModalVisible = false;
@@ -306,7 +294,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             return;
         }
 
-        this.flowInstanceApiService.transfer(this.currTask.id, this.transferUser, this.reason).subscribe(res => {
+        this.flowInstanceApiService.transfer(this.instanceDetail.taskId, this.transferUser, this.reason).subscribe(res => {
             this.transferModalVisible = false;
             this.message.success('转交成功');
             this.transferModalVisible = false;
@@ -333,7 +321,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             return;
         }
 
-        this.flowInstanceApiService.addSign(this.currTask.id, this.addSignType, this.addSignUsers, this.reason).subscribe(res => {
+        this.flowInstanceApiService.addSign(this.instanceDetail.taskId, this.addSignType, this.addSignUsers, this.reason).subscribe(res => {
             this.message.success('加签成功');
             this.addSignModalVisible = false;
             this.onReloadFlows();
@@ -354,7 +342,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             return;
         }
 
-        this.flowInstanceApiService.rollback(this.currTask.id, this.returnNode, this.reason).subscribe(res => {
+        this.flowInstanceApiService.rollback(this.instanceDetail.taskId, this.returnNode, this.reason).subscribe(res => {
             this.message.success('退回成功');
             this.returnModalVisible = false;
             this.reason = null;
@@ -385,7 +373,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.returnNode = null;
         this.reason = null;
         this.returnModalVisible = true;
-        this.flowInstanceApiService.availableReturnNodes(this.currTask.id).subscribe({
+        this.flowInstanceApiService.availableReturnNodes(this.instanceDetail.taskId).subscribe({
             next: (data) => {
                 this.availableReturnNodes = data.data || [];
             }
@@ -401,7 +389,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     // 提交重新提交
     submitResubmit() {
         let data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
-        this.flowInstanceApiService.resubmit(this.currTask.id, this.reason, data).subscribe(res => {
+        this.flowInstanceApiService.resubmit(this.instanceDetail.taskId, this.reason, data).subscribe(res => {
             this.resubmitModalVisible = false;
             this.reason = null;
             this.message.success('提交成功');

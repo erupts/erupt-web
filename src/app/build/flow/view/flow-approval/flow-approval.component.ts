@@ -25,6 +25,14 @@ export class FlowApprovalComponent implements OnInit {
 
     selectFlow: number = null;
 
+    page: number = 0;
+
+    size: number = 15;
+
+    hasMore: boolean = true;
+
+    loading: boolean = false;
+
 
     @ViewChild(FlowApprovalDetailComponent) private approvalDetail!: FlowApprovalDetailComponent;
 
@@ -35,13 +43,10 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.page = 0;
         this.loadFlows(ApprovalView.TODO);
     }
 
-
-    uniqFlowInstances = (arr: FlowInstance[]) => [
-        ...new Map(arr.map(item => [item.eruptFlowConfig.id, item])).values()
-    ];
 
     selectInstance(flow: FlowInstance) {
         this.selectedInstance = flow;
@@ -52,31 +57,76 @@ export class FlowApprovalComponent implements OnInit {
     }
 
     onSelectFlow(flow: number) {
+        this.page = 0;
+        this.hasMore = true;
         this.loadFlows(this.selectedView, flow);
     }
 
     loadFlows(view: ApprovalView, flowId: number = null, selectFirst: boolean = true) {
+        if (this.loading) return;
+        this.loading = true;
+        if (this.selectedView != view || this.selectFlow != flowId) {
+            this.page = 0;
+            this.hasMore = true;
+        }
         this.selectedView = view;
         this.selectFlow = flowId;
-        this.selectedInstance = null;
+        if (this.page == 0) {
+            this.selectedInstance = null;
+        }
         this.flowInstanceApiService.list({
             approvalView: this.selectedView,
-            flowId
+            flowId,
+            page: this.page,
+            size: this.size
         }).subscribe({
-            next: (data) => {
-                this.flowInstances = data.data;
-                if (selectFirst) {
+            next: (res) => {
+                if (this.page == 0) {
+                    this.flowInstances = res.data.list;
+                } else {
+                    this.flowInstances = [...this.flowInstances, ...res.data.list];
+                }
+                if (res.data.list.length < this.size) {
+                    this.hasMore = false;
+                }
+                if (selectFirst && this.page == 0) {
                     this.selectedInstance = this.flowInstances[0] || null;
                     this.selectInstance(this.selectedInstance);
                 }
-                if (this.selectedView == ApprovalView.TODO) {
+                if (this.selectedView == ApprovalView.TODO && this.page == 0) {
                     this.todoCount = this.flowInstances.length;
                 }
+                this.loading = false;
+            },
+            error: () => {
+                this.loading = false;
             }
         });
     }
 
+    loadMore() {
+        if (this.hasMore && !this.loading) {
+            this.page++;
+            this.loadFlows(this.selectedView, this.selectFlow, false);
+        }
+    }
+
+    onScroll(event: any) {
+        const element = event.target;
+        if (element.scrollHeight - element.scrollTop <= element.clientHeight + 10) {
+            this.loadMore();
+        }
+    }
+
+    uniqFlowInstances(arr: FlowInstance[]) {
+        return [
+            ...new Map(arr.map(item => [item.eruptFlowConfig.id, item])).values()
+        ];
+    }
+
     reloadFlows() {
+        this.page = 0;
+        this.hasMore = true;
         this.loadFlows(this.selectedView, null, true);
     }
 
