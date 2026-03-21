@@ -100,10 +100,13 @@ export class FlowApprovalDetailComponent implements OnInit {
                 private route: ActivatedRoute) {
         const no = this.route.snapshot.paramMap.get('no');
         if (no) {
-            flowInstanceApiService.detail(no).subscribe({
-                next: (res) => {
-                    this.onSelectFlow(ApprovalView.TODO, res.data);
-                }
+            flowInstanceApiService.list({
+                flowInstanceNo: no,
+                approvalView: ApprovalView.TODO,
+                page: 0,
+                size: 1
+            }).subscribe(res => {
+                this.onSelectFlow(ApprovalView.TODO, res.data.list[0]);
             })
         }
     }
