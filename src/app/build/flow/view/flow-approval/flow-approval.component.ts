@@ -127,7 +127,7 @@ export class FlowApprovalComponent implements OnInit {
     reloadFlows() {
         this.page = 0;
         this.hasMore = true;
-        this.loadFlows(this.selectedView, null, true);
+        this.loadFlows(this.selectedView, this.selectFlow, true);
     }
 
     protected readonly ApprovalView = ApprovalView;
