@@ -31,6 +31,9 @@ export interface FlowInstance {
     finishTime: string;
     createTime: string;
     parent: FlowInstance;
+    // only /flow/instance/list
+    taskId?: number
+    taskNodeInfo?: NodeRule
 }
 
 export enum InstanceStatus {
