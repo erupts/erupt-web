@@ -49,7 +49,7 @@
         </nz-select>
       </div>
 
-      <div class="approval-list">
+      <div class="approval-list" (scroll)="onScroll($event)">
         @for (item of flowInstances; track item) {
           <div
             class="approval-item"
@@ -92,6 +92,11 @@
                 </span>
               </div>
             </div>
+          </div>
+        }
+        @if (loading) {
+          <div style="text-align: center;padding: 12px">
+            <nz-spin nzSimple></nz-spin>
           </div>
         }
       </div>
