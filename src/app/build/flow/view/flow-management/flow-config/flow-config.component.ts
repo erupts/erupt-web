@@ -276,7 +276,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                         <!--#foreach($task in $flow.tasks)-->
                         <tr>
                             <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.assigneeUser.name}</td>
-                            <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.taskStatus}</td>
+                            <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.taskStatusText}</td>
                             <td style="border: 1px solid #d9d9d9;padding: 8px;">
                                 $!{task.comment}<!--#if($task.signature)--><br/><img src="$!task.signature" style="border:1px solid #f0f0f0;margin: 4px 0 0;width: 160px;" alt="签名"><!--#end-->
                             </td>
@@ -289,7 +289,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             `,
             vars: [
                 {value: "task.assigneeUser.name", label: "审批人"},
-                {value: "task.taskStatus", label: "任务状态"},
+                {value: "task.taskStatusText", label: "任务状态"},
                 {value: "task.comment", label: "审批意见"},
                 {value: "task.createTime", label: "创建时间"},
                 {value: "task.completedAt", label: "审批时间"},
