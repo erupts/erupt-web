@@ -4,6 +4,9 @@ import {ApprovalView} from "@flow/model/flow-instance.model";
 export class ApprovalQuery {
     approvalView: ApprovalView;
     flowId?: number;
+    flowInstanceNo?: string;
+    page: number = 0;
+    size: number = 15;
 }
 
 export enum AddSignType {
