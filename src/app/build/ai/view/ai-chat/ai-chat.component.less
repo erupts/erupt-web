@@ -216,16 +216,31 @@
 }
 
 .bubble-content {
-    flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.bubble-wrap.is-model .bubble-content {
+    align-items: flex-start;
+}
+
+.bubble-wrap:not(.is-model) .bubble-content {
+    align-items: flex-end;
 }
 
 .loading-wrap {
     padding: 12px 0;
 }
 
-/* 流式消息容器：仅模型消息用 inline-block 使光标紧贴文末 */
-.bubble-wrap.is-model .model-message-body .markdown-body {
+/* 流式消息容器：模型消息用 inline-block 使光标紧贴文末 */
+.bubble-wrap.is-model .bubble-content .markdown-body {
+    display: inline-block;
+    max-width: 100%;
+    vertical-align: top;
+}
+
+.bubble-wrap:not(.is-model) .bubble-content .markdown-body {
     display: inline-block;
     max-width: 100%;
     vertical-align: top;
@@ -247,8 +262,7 @@
     50% { opacity: 0; }
 }
 
-/* ========== 用户消息：实心气泡 ========== */
-.bubble-wrap:not(.is-model) .markdown-body {
+.bubble-wrap:not(.is-model) .bubble-content .markdown-body {
     background: var(--ant-primary-color-hover);
     color: #fff;
     padding: 8px 12px;
@@ -256,7 +270,7 @@
     box-shadow: 0 2px 8px rgba(0, 102, 255, 0.2);
 }
 
-.bubble-wrap:not(.is-model) .markdown-body ::ng-deep(a) {
+.bubble-wrap:not(.is-model) .bubble-content .markdown-body ::ng-deep(a) {
     color: rgba(255, 255, 255, 0.95);
     text-decoration: underline;
 }
@@ -341,6 +355,11 @@
         font-size: 13px;
         color: var(--ant-text-color-secondary, #555);
         flex-shrink: 0;
+    }
+
+    .agent-wrap, .tool-call-wrap {
+        display: flex;
+        align-items: center;
     }
 
     .agent-select {

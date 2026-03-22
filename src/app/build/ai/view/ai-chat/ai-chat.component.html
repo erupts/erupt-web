@@ -103,7 +103,7 @@
                 <div class="input-toolbar">
                     <div class="toolbar-left">
                         @if (agents.length > 0) {
-                            <div>
+                            <div class="agent-wrap">
                                 <span class="toolbar-label">智能体：</span>
                                 <nz-select
                                     class="agent-select"
@@ -119,6 +119,10 @@
                                 </nz-select>
                             </div>
                         }
+                        <div class="tool-call-wrap">
+                            <span class="toolbar-label">自动工具调用：</span>
+                            <nz-switch nzSize="small" [(ngModel)]="autoToolCall"></nz-switch>
+                        </div>
                     </div>
                     <div class="toolbar-right">
                         @if (sending) {
@@ -151,7 +155,6 @@
                         nz-input
                         [(ngModel)]="content"
                         (keydown)="onInputKeydown($event)"
-                        [disabled]="sendDisabled"
                         [nzAutosize]="{ minRows: 2, maxRows: 6 }"
                         placeholder="输入聊天内容..."
                         rows="2">
@@ -166,7 +169,7 @@
                         class="btn-send"
                         [nzLoading]="sending"
                         [disabled]="sendDisabled || !content?.trim()"
-                        (click)="send(content); content = ''">
+                        (click)="send(content)">
                         发送
                     </button>
                 </div>
