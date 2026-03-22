@@ -318,7 +318,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             measures: measures,
             sorts: sorts,
             filters: cf,
-            parameters: parameters
+            parameters: parameters,
+            limit: 5000
         }).subscribe({
             next: (response) => {
                 this.chartData = response.data;
