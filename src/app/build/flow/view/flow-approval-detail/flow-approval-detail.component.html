@@ -262,7 +262,7 @@
             <div class="fixed-bottom-actions">
                 <div class="action-buttons">
                     @if (instanceDetail.status == InstanceStatus.PENDING) {
-                        @if (ApprovalView.TODO === approvalView && currTask) {
+                        @if (ApprovalView.TODO === approvalView && instanceDetail.taskId) {
                             @if (nodeInfo?.type == NodeType.START) {
                                 <button nz-button nzSize="default" nzType="primary" nzGhost class="action-button" (click)="resubmit()">
                                     <span nz-icon nzType="check" nzTheme="outline"></span>
