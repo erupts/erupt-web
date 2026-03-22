@@ -49,6 +49,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     loadingChats = false;
     /** 是否正在加载消息列表（选中会话后的首屏消息） */
     loadingMessages = false;
+    /** 是否开启自动工具调用 */
+    autoToolCall = true;
     /** 是否全屏模式 */
     fullscreen = false;
     /** 是否正在流式输出（用于显示文末光标，与 eventSource 同生命周期） */
@@ -250,7 +252,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             setTimeout(() => this.scrollBubblesToBottom(), 10);
 
             const token = this.tokenService.get()?.token || '';
-            const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.llmId}`;
+            const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.llmId}&autoToolCall=${this.autoToolCall}`;
             this.closeEventSource();
             this.eventSource = new EventSource(url);
             this.streaming = true;
