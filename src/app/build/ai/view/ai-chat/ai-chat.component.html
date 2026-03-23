@@ -112,6 +112,13 @@
             }
         </article>
         <div class="sender-wrap">
+            @if (selectedAgent?.hints?.length) {
+                <div class="hints-wrap">
+                    @for (hint of selectedAgent?.hints; track hint) {
+                        <span class="hint-tag" (click)="content = hint">{{ hint }}</span>
+                    }
+                </div>
+            }
             <div class="input-card">
                 <div class="input-toolbar">
                     <div class="toolbar-left">
