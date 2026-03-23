@@ -69,7 +69,7 @@ export class CubePuzzleFilterConfig implements OnInit {
                 case FieldType.NUMBER:
                     this.filter.operator = CubeOperator.EQ;
                     break;
-                case FieldType.DATE_TIME:
+                case FieldType.DATE:
                     this.filter.operator = CubeOperator.BETWEEN;
                     break;
             }
