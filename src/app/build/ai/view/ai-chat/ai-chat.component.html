@@ -76,21 +76,34 @@
                             </nz-avatar>
                         }
                         <div class="bubble-content">
+                            @if (item.think) {
+                                <div class="think-content">
+                                    <div class="think-title">
+                                        <span nz-icon nzType="bulb" nzTheme="outline"></span>
+                                        <span>思考过程</span>
+                                    </div>
+                                    <div class="markdown-body think-body">
+                                        {{ item.think }}
+                                    </div>
+                                </div>
+                            }
                             @if (item.loading) {
                                 <div class="loading-wrap">
                                     <nz-spin nzSimple></nz-spin>
                                 </div>
                             }
                             @if (!item.loading && (item.content || item.contentHtml)) {
-                                <div class="markdown-body"
-                                     [class.streaming-typing-reveal-a]="(item.streamingTick ?? 0) % 2 === 0 && item.senderType === 'MODEL'"
-                                     [class.streaming-typing-reveal-b]="(item.streamingTick ?? 0) % 2 === 1 && item.senderType === 'MODEL'"
-                                     [innerHTML]="getMessageHtml(item) | safeHtml"></div>
+                                @if (item.content || item.contentHtml) {
+                                    <div class="markdown-body"
+                                         [class.streaming-typing-reveal-a]="(item.streamingTick ?? 0) % 2 === 0 && item.senderType === 'MODEL'"
+                                         [class.streaming-typing-reveal-b]="(item.streamingTick ?? 0) % 2 === 1 && item.senderType === 'MODEL'"
+                                         [innerHTML]="getMessageHtml(item) | safeHtml"></div>
+                                }
                                 @if (item.senderType === 'MODEL' && $index === messages.length - 1 && streaming) {
                                     <span class="streaming-cursor"></span>
                                 }
                             }
-                            @if (!item.loading && !item.content && !item.contentHtml && item.senderType === 'MODEL') {
+                            @if (!item.loading && !item.content && !item.contentHtml && !item.think && item.senderType === 'MODEL') {
                                 <div class="placeholder">思考中...</div>
                             }
                         </div>
