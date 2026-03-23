@@ -27,6 +27,7 @@ export interface Agent {
     id: number;
     name: string;
     desc: string;
+    hints: string[]
 }
 
 export interface SseMessage {
