@@ -1,8 +1,18 @@
-import {AfterViewChecked, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {
+    AfterViewChecked,
+    Component,
+    ElementRef,
+    Inject,
+    NgZone,
+    OnDestroy,
+    OnInit,
+    TemplateRef,
+    ViewChild
+} from '@angular/core';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {ChatApiService} from '../../service/chat-api.service';
 import {MarkdownService} from '../../service/markdown.service';
-import {Agent, Chat, ChatMessage} from '../../model/chat.model';
+import {Agent, Chat, ChatMessage, SseMessage, SseMessageEvent} from '../../model/chat.model';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {RestPath} from "../../../erupt/model/erupt.enum";
@@ -258,31 +268,41 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.streaming = true;
 
             this.eventSource.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    this.accumulatedMarkdown += data.text || '';
-                } catch {
-                    this.accumulatedMarkdown += event.data;
-                }
-                const last = this.messages[this.messages.length - 1];
-                const shouldScroll = last ? this.isBubblesNearBottom() : false;
-                this.markdown.render(this.accumulatedMarkdown).then(html => {
-                    // EventSource 在 Zone 外触发，必须在 ngZone.run 里更新状态并触底，界面才会刷新
-                    this.ngZone.run(() => {
-                        this.sending = false;
-                        this.sendDisabled = true;
-                        if (last) {
-                            if (last.loading) last.loading = false;
-                            last.streamingTick = (last.streamingTick ?? 0) + 1;
-                            last.contentHtml = html;
-                            last.content = this.accumulatedMarkdown;
-                        }
-                        if (shouldScroll) {
-                            this.scrollBubblesToBottom();
-                            setTimeout(() => this.scrollBubblesToBottom(), 50);
-                        }
+                const data: SseMessage = JSON.parse(event.data);
+                if (data.event == SseMessageEvent.TOKEN) {
+                    this.accumulatedMarkdown += data.data || '';
+                    const last = this.messages[this.messages.length - 1];
+                    const shouldScroll = last ? this.isBubblesNearBottom() : false;
+                    this.markdown.render(this.accumulatedMarkdown).then(html => {
+                        // EventSource 在 Zone 外触发，必须在 ngZone.run 里更新状态并触底，界面才会刷新
+                        this.ngZone.run(() => {
+                            this.sending = false;
+                            this.sendDisabled = true;
+                            if (last) {
+                                if (last.loading) last.loading = false;
+                                last.streamingTick = (last.streamingTick ?? 0) + 1;
+                                last.contentHtml = html;
+                                last.content = this.accumulatedMarkdown;
+                            }
+                            if (shouldScroll) {
+                                this.scrollBubblesToBottom();
+                                setTimeout(() => this.scrollBubblesToBottom(), 50);
+                            }
+                        });
                     });
-                });
+                } else if (data.event == SseMessageEvent.THINK) {
+                    const last = this.messages[this.messages.length - 1];
+                    this.ngZone.run(() => {
+                        last.think = data.data;
+                    });
+                } else if (data.event == SseMessageEvent.DONE) {
+                    this.ngZone.run(() => {
+                        this.closeEventSource();
+                        this.sendDisabled = false;
+                        this.sending = false;
+                        this.accumulatedMarkdown = '';
+                    });
+                }
             };
 
             this.eventSource.onerror = () => {
