@@ -43,14 +43,14 @@
                              style="width: 100%;"></nz-input-number>
         }
     }
-    @case (FieldType.DATE || FieldType.DATE_TIME) {
+    @case (FieldType.DATE) {
         @if (filter.operator == CubeOperator.BETWEEN) {
-            <nz-range-picker [ngModel]="filter.value" [nzSize]="size" [nzShowTime]="fieldType()==FieldType.DATE_TIME"
+            <nz-range-picker [ngModel]="filter.value" [nzSize]="size" [nzShowTime]="true"
                              [nzShowNow]="true" style="width: 100%;"/>
         } @else if (filter.operator == CubeOperator.FEW_DAYS || filter.operator == CubeOperator.FUTURE_DAYS) {
             <nz-input-number [(ngModel)]="filter.value" [nzSize]="size" style="width: 100%;"></nz-input-number>
         } @else {
-            <nz-date-picker [ngModel]="filter.value" [nzSize]="size" [nzShowTime]="fieldType()==FieldType.DATE_TIME"
+            <nz-date-picker [ngModel]="filter.value" [nzSize]="size" [nzShowTime]="true"
                             [nzShowNow]="true" style="width: 100%;"/>
         }
     }
