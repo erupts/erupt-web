@@ -38,6 +38,7 @@ export interface CubeMetaParameter {
     title: string;       // 标题
     description?: string; // 描述
     type: FieldType;
+    hidden: boolean
 }
 
 export enum FieldType {

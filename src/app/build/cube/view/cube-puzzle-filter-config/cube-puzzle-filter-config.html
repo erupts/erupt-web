@@ -26,7 +26,9 @@
                     @if (cubeMeta.parameters.length) {
                         <nz-option-group nzLabel="Parameters">
                             @for (parameter of cubeMeta.parameters; track parameter.code) {
-                                <nz-option [nzLabel]="parameter.title" [nzValue]="parameter.code"></nz-option>
+                                @if (!parameter.hidden) {
+                                    <nz-option [nzLabel]="parameter.title" [nzValue]="parameter.code"></nz-option>
+                                }
                             }
                         </nz-option-group>
                     }
