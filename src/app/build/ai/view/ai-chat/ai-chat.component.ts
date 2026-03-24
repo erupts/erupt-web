@@ -1,14 +1,4 @@
-import {
-    AfterViewChecked,
-    Component,
-    ElementRef,
-    Inject,
-    NgZone,
-    OnDestroy,
-    OnInit,
-    TemplateRef,
-    ViewChild
-} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {ChatApiService} from '../../service/chat-api.service';
 import {MarkdownService} from '../../service/markdown.service';
@@ -71,6 +61,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     private renameChatId: number | null = null;
     private eventSource: EventSource | null = null;
     private llmId = '';
+
+    get selectedAgent(): Agent | undefined {
+        return this.agents.find(a => a.id === this.selectAgentId);
+    }
 
     constructor(
         protected settingsService: SettingsService,
