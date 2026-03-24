@@ -3,7 +3,6 @@
 /* 无对应全局/ant 变量且多处使用的保留变量 */
 @radius: 8px;
 @radius-sm: 4px;
-@radius-lg: 16px;
 @content-max: 720px;
 
 /* 宿主填满容器，无容器时至少为视口减去顶栏 */
@@ -349,9 +348,34 @@
 /* ========== 底部输入区 ========== */
 .sender-wrap {
     flex-shrink: 0;
-    padding: 20px 24px 28px;
+    padding: 16px 22px;
     background: #ffffff;
     border-top: 1px solid var(--ant-border-color-split, #eee);
+
+    .hints-wrap {
+        max-width: @content-max;
+        margin: 0 auto 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        .hint-tag {
+            padding: 4px 12px;
+            background: #f0f0f0;
+            border: 1px solid #e0e0e0;
+            border-radius: @radius-sm;
+            font-size: 13px;
+            color: var(--ant-text-color-secondary, #666);
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:hover {
+                background: var(--ant-primary-1, #e6f4ff);
+                border-color: var(--ant-primary-color);
+                color: var(--ant-primary-color);
+            }
+        }
+    }
 }
 
 /* 输入卡片：图片样式 - 浅灰边框、圆角、顶部箭头、工具栏、底部快捷键与发送组 */
@@ -359,8 +383,8 @@
     max-width: @content-max;
     margin: 0 auto;
     background: #fff;
-    border: 1px solid var(--ant-border-color-base, #e0e0e0);
-    border-radius: @radius;
+    border: 1px solid var(--ant-border-color-base , #e0e0e0);
+    border-radius: @radius-sm;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     transition: border-color 0.2s, box-shadow 0.2s;
 
