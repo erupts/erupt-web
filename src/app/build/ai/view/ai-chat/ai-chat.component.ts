@@ -1,4 +1,5 @@
 import {AfterViewChecked, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {ChatApiService} from '../../service/chat-api.service';
 import {MarkdownService} from '../../service/markdown.service';
@@ -73,10 +74,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
         private modal: NzModalService,
         private message: NzMessageService,
-        private ngZone: NgZone
+        private ngZone: NgZone,
+        private route: ActivatedRoute
     ) {
-        const params = new URLSearchParams(window.location.search);
-        this.llmId = params.get('llm') || '';
+        this.llmId = this.route.snapshot.queryParams['llm'] || '';
     }
 
     ngOnInit(): void {
