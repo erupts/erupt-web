@@ -91,10 +91,11 @@ export class UiBuildService {
                     obj.format = (item: any) => {
                         let value = item[view.column];
                         if (value) {
-                            let result = "";
+                            let result = "<div style='display: flex; flex-wrap: wrap; gap: 5px;'>";
                             for (let ele of value.split(view.eruptFieldModel.eruptFieldJson.edit.tagsType.joinSeparator)) {
                                 result += "<span class='e-tag'>" + ele + "</span>";
                             }
+                            result += "</div>";
                             return result;
                         } else {
                             return value;
