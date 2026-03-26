@@ -15,8 +15,8 @@ export class ChatApiService {
         return this._http.get<UserInfo>(RestPath.erupt + '/userinfo');
     }
 
-    chats(page: number, size: number): Observable<R<SimplePage<Chat>>> {
-        return this._http.get<R<SimplePage<Chat>>>(RestPath.erupt + '/ai/chat/chats', {page, size});
+    chats(index: number, size: number): Observable<R<SimplePage<Chat>>> {
+        return this._http.get<R<SimplePage<Chat>>>(RestPath.erupt + '/ai/chat/chats', {index, size});
     }
 
     agents(): Observable<R<Agent[]>> {
