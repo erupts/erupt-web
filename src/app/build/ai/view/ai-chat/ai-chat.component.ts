@@ -267,7 +267,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 if (data.event == SseMessageEvent.TOKEN) {
                     this.accumulatedMarkdown += data.data || '';
                     const last = this.messages[this.messages.length - 1];
-                    const shouldScroll = last ? this.isBubblesNearBottom() : false;
                     this.markdown.render(this.accumulatedMarkdown).then(html => {
                         // EventSource 在 Zone 外触发，必须在 ngZone.run 里更新状态并触底，界面才会刷新
                         this.ngZone.run(() => {
@@ -278,10 +277,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                                 last.streamingTick = (last.streamingTick ?? 0) + 1;
                                 last.contentHtml = html;
                                 last.content = this.accumulatedMarkdown;
-                            }
-                            if (shouldScroll) {
-                                this.scrollBubblesToBottom();
-                                setTimeout(() => this.scrollBubblesToBottom(), 50);
                             }
                         });
                     });
@@ -297,6 +292,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                         this.sending = false;
                         this.accumulatedMarkdown = '';
                     });
+                }
+                if (this.isBubblesNearBottom()) {
+                    this.scrollBubblesToBottom();
+                    setTimeout(() => this.scrollBubblesToBottom(), 50);
                 }
             };
 
