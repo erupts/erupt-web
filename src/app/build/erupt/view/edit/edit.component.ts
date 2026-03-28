@@ -52,7 +52,10 @@ export class EditComponent implements OnInit {
             this.loading = true;
             this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.id).subscribe(data => {
                 this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
-                this.loading = false;
+                // 防止 @Onchange 在 edit 加载数据时被执行导致 DB 的数据被改变的问题（ADD场景由于初始化数据的问题是必须要执行的）
+                setTimeout(() => {
+                    this.loading = false;
+                }, 50)
             });
         }
     }
