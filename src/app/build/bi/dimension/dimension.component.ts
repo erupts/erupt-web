@@ -34,13 +34,33 @@ export class DimensionComponent implements OnInit {
     }
 
     ngOnInit() {
+        const fmt = (d: moment.Moment, time: string) =>
+            d.format(`YYYY-MM-DD`) + `T${time}`;
         this.dateRanges = <any>{
-            [this.i18n.fanyi("global.today")]: [this.datePipe.transform(new Date(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
-            [this.i18n.fanyi("global.yesterday")]: [this.datePipe.transform(moment().add(-1, 'day').toDate(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(moment().add(-1, 'day').toDate(), "yyyy-MM-dd 23:59:59")],
-            [this.i18n.fanyi("global.date.last_7_day")]: [this.datePipe.transform(moment().add(-7, 'day').toDate(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
-            [this.i18n.fanyi("global.date.last_30_day")]: [this.datePipe.transform(moment().add(-30, 'day').toDate(), "yyyy-MM-dd 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
-            [this.i18n.fanyi("global.date.this_month")]: [this.datePipe.transform(moment().toDate(), "yyyy-MM-01 00:00:00"), this.datePipe.transform(new Date(), "yyyy-MM-dd 23:59:59")],
-            [this.i18n.fanyi("global.date.last_month")]: [this.datePipe.transform(moment().add(-1, 'month').toDate(), "yyyy-MM-01 00:00:00"), this.datePipe.transform(moment().add(-1, 'month').endOf("month").toDate(), "yyyy-MM-dd 23:59:59")]
+            [this.i18n.fanyi("global.today")]: [
+                fmt(moment(), '00:00:00'),
+                fmt(moment(), '23:59:59')
+            ],
+            [this.i18n.fanyi("global.yesterday")]: [
+                fmt(moment().subtract(1, 'day'), '00:00:00'),
+                fmt(moment().subtract(1, 'day'), '23:59:59')
+            ],
+            [this.i18n.fanyi("global.date.last_7_day")]: [
+                fmt(moment().subtract(7, 'day'), '00:00:00'),
+                fmt(moment(), '23:59:59')
+            ],
+            [this.i18n.fanyi("global.date.last_30_day")]: [
+                fmt(moment().subtract(30, 'day'), '00:00:00'),
+                fmt(moment(), '23:59:59')
+            ],
+            [this.i18n.fanyi("global.date.this_month")]: [
+                fmt(moment().startOf('month'), '00:00:00'),
+                fmt(moment(), '23:59:59')
+            ],
+            [this.i18n.fanyi("global.date.last_month")]: [
+                fmt(moment().subtract(1, 'month').startOf('month'), '00:00:00'),
+                fmt(moment().subtract(1, 'month').endOf('month'), '23:59:59')
+            ],
         };
     }
 
