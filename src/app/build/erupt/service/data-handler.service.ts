@@ -147,19 +147,12 @@ export class DataHandlerService {
                             break;
                         case EditType.DATE:
                             if (edit.$value) {
-                                if (edit.dateType.type == DateEnum.DATE) {
-                                    obj[field.fieldName] = [this.datePipe.transform(edit.$value[0], "yyyy-MM-dd 00:00:00"),
-                                        this.datePipe.transform(edit.$value[1], "yyyy-MM-dd 23:59:59")];
-                                } else if (edit.dateType.type == DateEnum.DATE_TIME) {
-                                    obj[field.fieldName] = [this.datePipe.transform(edit.$value[0], "yyyy-MM-dd HH:mm:ss"),
-                                        this.datePipe.transform(edit.$value[1], "yyyy-MM-dd HH:mm:ss")];
-                                }
+                                obj[field.fieldName] = [
+                                    this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'HH:mm:ss.SSS"),
+                                    this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'HH:mm:ss.SSS")
+                                ];
                             }
                             break;
-                        // case EditType.REFERENCE_TREE:
-                        // case EditType.REFERENCE_TABLE:
-                        //     obj[field.fieldName] = edit.$value;
-                        //     break;
                     }
                 }
             }
@@ -174,7 +167,7 @@ export class DataHandlerService {
                 format = "yyyy-MM-dd";
                 break;
             case DateEnum.DATE_TIME:
-                format = "yyyy-MM-dd HH:mm:ss";
+                format = "yyyy-MM-dd'T'HH:mm:ss.SSS";
                 break;
             case DateEnum.MONTH:
                 format = "yyyy-MM";
@@ -425,7 +418,7 @@ export class DataHandlerService {
                             switch (edit.dateType.type) {
                                 case DateEnum.DATE_TIME:
                                 case DateEnum.DATE:
-                                    edit.$value = moment(object[field.fieldName]).toDate();
+                                    edit.$value = object[field.fieldName];
                                     break;
                                 case DateEnum.TIME:
                                     edit.$value = moment(object[field.fieldName], "HH:mm:ss").toDate();

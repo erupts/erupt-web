@@ -53,7 +53,7 @@ import {
     pt_PT as zorroPt,
     ru_RU as zorroRu,
     zh_CN as zorroZhCN,
-    zh_TW as zorroZhTW,
+    zh_TW as zorroZhTW
 } from 'ng-zorro-antd/i18n';
 import {EruptAppData} from "@shared/model/erupt-app.model";
 
