@@ -1,5 +1,5 @@
 import {EruptBuildModel} from "../model/erupt-build.model";
-import {DateEnum, EditType, PagingType, ViewType} from "../model/erupt.enum";
+import {EditType, PagingType, ViewType} from "../model/erupt.enum";
 import {ViewTypeComponent} from "../components/view-type/view-type.component";
 import {MarkdownComponent} from "../components/markdown/markdown.component";
 import {CodeEditorComponent} from "../components/code-editor/code-editor.component";
@@ -68,9 +68,9 @@ export class UiBuildService {
             obj["show"] = view.show;
             if (lineData) {
                 //修复表格显示子类属性时无法正确检索到属性值的缺陷
-                obj.index = view.column.replace(/\./g, "_");
+                obj.index = [view.column.replace(/\./g, "_")];
             } else {
-                obj.index = view.column;
+                obj.index = [view.column];
             }
             if (view.sortable) {
                 obj.sort = {
@@ -135,6 +135,13 @@ export class UiBuildService {
                     break
                 case ViewType.NUMBER:
                     obj.className = "text-right";
+                    obj.format = (item: any) => {
+                        if (item[view.column] != null) {
+                            return (<number>item[view.column]).toLocaleString();
+                        } else {
+                            return "";
+                        }
+                    };
                     break;
                 case ViewType.COLOR:
                     obj.className = "text-center";
@@ -153,8 +160,8 @@ export class UiBuildService {
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             let val = <string>item[view.column];
-                            if (view.eruptFieldModel.eruptFieldJson.edit.dateType.type == DateEnum.DATE && !val.startsWith("<") && !val.endsWith(">")) {
-                                return val.substring(0, 10);
+                            if (!val.startsWith("<") && !val.endsWith(">")) {
+                                return new Date(val).toLocaleDateString();
                             } else {
                                 return val;
                             }
@@ -166,6 +173,14 @@ export class UiBuildService {
                 case ViewType.DATE_TIME:
                     obj.className = "date-col";
                     obj.width = 180;
+                    obj.format = (item: any) => {
+                        if (item[view.column]) {
+                            let val = <string>item[view.column];
+                            return new Date(val).toLocaleString();
+                        } else {
+                            return "";
+                        }
+                    };
                     break;
                 case ViewType.BOOLEAN:
                     obj.className = "text-center";

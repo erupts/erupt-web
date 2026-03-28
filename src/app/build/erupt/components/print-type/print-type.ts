@@ -80,7 +80,7 @@ export class PrintTypeComponent implements OnInit {
                         format = "yyyy-MM-dd";
                         break;
                     case DateEnum.DATE_TIME:
-                        format = "yyyy-MM-dd HH:mm:ss";
+                        format = "yyyy-MM-dd'T'HH:mm:ss.SSS";
                         break;
                     case DateEnum.MONTH:
                         format = "yyyy-MM";
