@@ -27,7 +27,7 @@ import {
     Waterfall,
     WordCloud
 } from "@antv/g2plot";
-import {CubeMeta} from "../../model/cube.model";
+import {CubeMeta, FieldType} from "../../model/cube.model";
 import {STColumn, STComponent} from "@delon/abc/st";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {CubeDrillDetailComponent} from "../cube-drill-detail/cube-drill-detail.component";
@@ -220,6 +220,37 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
     }
 
+    private localizeData(data: Record<string, any>[], forChart: boolean = false): Record<string, any>[] {
+        if (!data || !this.cubeMeta) {
+            return data;
+        }
+        const fieldTypeMap = new Map<string, FieldType>();
+        this.cubeMeta.dimensions?.forEach(d => fieldTypeMap.set(d.code, d.type));
+        this.cubeMeta.measures?.forEach(m => fieldTypeMap.set(m.code, m.type));
+
+        return data.map(row => {
+            const newRow = {...row};
+            for (const key in newRow) {
+                const type = fieldTypeMap.get(key);
+                if (type === FieldType.DATE) {
+                    const val = newRow[key];
+                    if (val) {
+                        const date = new Date(val);
+                        if (!isNaN(date.getTime())) {
+                            newRow[key] = date.toLocaleString();
+                        }
+                    }
+                } else if (type === FieldType.NUMBER) {
+                    const val = newRow[key];
+                    if (typeof val === 'number' && !forChart) {
+                        newRow[key] = val.toLocaleString();
+                    }
+                }
+            }
+            return newRow;
+        });
+    }
+
     refresh(): void {
         if (!this.visible) {
             return;
@@ -322,7 +353,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             limit: 5000
         }).subscribe({
             next: (response) => {
-                this.chartData = response.data;
+                const isChart = this.report.type !== ReportType.TABLE && this.report.type !== ReportType.PIVOT_TABLE && this.report.type !== ReportType.KPI;
+                this.chartData = this.localizeData(response.data, isChart);
                 if (this.report.type == ReportType.TABLE) {
                     this.buildStColumns();
                     // 数据量大于200条时启用虚拟滚动
@@ -786,9 +818,6 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     },
                     format: (item: any) => {
                         const val = item[field];
-                        if (typeof val === 'number') {
-                            return val.toLocaleString();
-                        }
                         return val;
                     },
                 };
