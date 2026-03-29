@@ -60,4 +60,50 @@
         vertical-align: baseline !important;
     }
 
+    /* 流式输出中隐藏未完成的 mermaid 源码块，避免渲染前闪烁源码 */
+    &.is-streaming .mermaid {
+        display: none;
+    }
+
+    /* Mermaid 渲染中的占位提示 */
+    .mermaid:not([data-processed]) {
+        position: relative;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.02);
+        border-radius: 4px;
+        border: 1px dashed #d1d5db;
+        font-size: 13px;
+        margin: 1em 0;
+        visibility: visible !important; /* 强制覆盖某些可能隐藏它的样式 */
+        color: transparent; /* 隐藏原始文本 */
+        text-shadow: none;
+        overflow: hidden;
+        height: 120px;
+
+        &::before {
+            content: "";
+            width: 14px;
+            height: 14px;
+            margin-right: 8px;
+            border: 2px solid var(--ant-text-color-secondary, #666);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: loadingCircle 1s infinite linear;
+            display: inline-block;
+        }
+
+        &::after {
+            content: "渲染中...";
+            color: var(--ant-text-color-secondary, #666);
+        }
+    }
+
+    @keyframes loadingCircle {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 }

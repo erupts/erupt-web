@@ -97,6 +97,7 @@
                                     <div class="markdown-body"
                                          [class.streaming-typing-reveal-a]="(item.streamingTick ?? 0) % 2 === 0 && item.senderType === 'MODEL'"
                                          [class.streaming-typing-reveal-b]="(item.streamingTick ?? 0) % 2 === 1 && item.senderType === 'MODEL'"
+                                         [class.is-streaming]="streaming && $index === messages.length - 1"
                                          [innerHTML]="getMessageHtml(item) | safeHtml"></div>
                                 }
                                 @if (item.senderType === 'MODEL' && $index === messages.length - 1 && streaming) {
