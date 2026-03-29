@@ -8,7 +8,7 @@ import {STColumn} from "@delon/abc/st";
 import {UiBuildService} from "../../service/ui-build.service";
 import {DataService} from "@shared/service/data.service";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {SelectMode} from "../../model/erupt.enum";
+import {EditType, SelectMode} from "../../model/erupt.enum";
 
 @Component({
     standalone: false,
@@ -296,6 +296,14 @@ export class GanttComponent implements OnChanges, OnInit {
             }
             if (ganttView.groupField) {
                 item.group_id = row[ganttView.groupField];
+            }
+            if (row) {
+                Object.keys(row).forEach(key => {
+                    if (this.eruptBuildModel.eruptModel.eruptFieldModelMap
+                        .get(key)?.eruptFieldJson.edit.type == EditType.DATE) {
+                        row[key] = new Date(row[key]).toLocaleString();
+                    }
+                })
             }
             itemMap.set(id, item);
             allItems.push(item);
