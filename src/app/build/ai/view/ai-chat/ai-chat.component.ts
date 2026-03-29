@@ -101,6 +101,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     ngAfterViewChecked(): void {
+        if (this.streaming) return; // 正在流式输出时，跳过自动 Mermaid 渲染，由 DONE 事件触发或等流结束
         const el = this.bubblesRef?.nativeElement;
         if (el) {
             const nodes = el.querySelectorAll('.mermaid:not([data-processed])');
@@ -306,7 +307,12 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                         this.sending = false;
                         this.accumulatedMarkdown = '';
                         this.scrollSubject.next();
-                        setTimeout(() => this.scrollBubblesToBottom(), 50);
+                        setTimeout(() => {
+                            this.scrollBubblesToBottom();
+                            // 确保 DONE 后执行一次 Mermaid 渲染，针对流式输出的最后一条消息
+                            const el = this.bubblesRef?.nativeElement;
+                            if (el) this.markdown.runMermaid(el).then();
+                        }, 50);
                     });
                 }
             };
@@ -317,6 +323,9 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                     this.sendDisabled = false;
                     this.sending = false;
                     this.closeEventSource();
+                    // 发生错误也尝试渲染已获取的内容中可能存在的 mermaid
+                    const el = this.bubblesRef?.nativeElement;
+                    if (el) this.markdown.runMermaid(el).then();
                 }, 100);
             };
 
