@@ -29,6 +29,7 @@ import {SyncVirtualScrollDirective} from "@shared/directive/sync-virtual-scroll.
 import {EnumToArrayPipe} from "@shared/pipe/enum-array.pipe";
 import {KeysPipe} from "@shared/pipe/keys.pipe";
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import {LocalPipe} from "@shared/pipe/local.pipe";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -36,7 +37,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 
 // #region your componets & directives
 const COMPONENTS: any[] = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent];
-const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, SyncVirtualScrollDirective, KeysPipe];
+const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, LocalPipe, SyncVirtualScrollDirective, KeysPipe];
 
 // #endregion
 
