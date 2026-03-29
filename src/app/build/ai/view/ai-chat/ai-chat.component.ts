@@ -1,6 +1,8 @@
 import {AfterViewChecked, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
+import {Subject} from 'rxjs';
+import {throttleTime} from 'rxjs/operators';
 import {ChatApiService} from '../../service/chat-api.service';
 import {MarkdownService} from '../../service/markdown.service';
 import {Agent, Chat, ChatMessage, SseMessage, SseMessageEvent} from '../../model/chat.model';
@@ -62,6 +64,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     private renameChatId: number | null = null;
     private eventSource: EventSource | null = null;
     private llmId = '';
+    private scrollSubject = new Subject<void>();
 
     get selectedAgent(): Agent | undefined {
         return this.agents.find(a => a.id === this.selectAgentId);
@@ -85,10 +88,16 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.chatApi.agents().subscribe(res => {
             this.agents = res.data;
         });
+        this.scrollSubject.pipe(throttleTime(100)).subscribe(() => {
+            if (this.isBubblesNearBottom()) {
+                this.scrollBubblesToBottom();
+            }
+        });
     }
 
     ngOnDestroy(): void {
         this.closeEventSource();
+        this.scrollSubject.complete();
     }
 
     ngAfterViewChecked(): void {
@@ -267,23 +276,28 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 if (data.event == SseMessageEvent.TOKEN) {
                     this.accumulatedMarkdown += data.data || '';
                     const last = this.messages[this.messages.length - 1];
-                    this.markdown.render(this.accumulatedMarkdown).then(html => {
-                        // EventSource 在 Zone 外触发，必须在 ngZone.run 里更新状态并触底，界面才会刷新
-                        this.ngZone.run(() => {
-                            this.sending = false;
-                            this.sendDisabled = true;
-                            if (last) {
-                                if (last.loading) last.loading = false;
-                                last.streamingTick = (last.streamingTick ?? 0) + 1;
-                                last.contentHtml = html;
-                                last.content = this.accumulatedMarkdown;
-                            }
+                    // 仅当 markdown 改变时才执行渲染，避免空消息也触发渲染
+                    if (data.data) {
+                        this.markdown.render(this.accumulatedMarkdown).then(html => {
+                            // EventSource 在 Zone 外触发，必须在 ngZone.run 里更新状态并触底，界面才会刷新
+                            this.ngZone.run(() => {
+                                this.sending = false;
+                                this.sendDisabled = true;
+                                if (last) {
+                                    if (last.loading) last.loading = false;
+                                    last.streamingTick = (last.streamingTick ?? 0) + 1;
+                                    last.contentHtml = html;
+                                    last.content = this.accumulatedMarkdown;
+                                }
+                                this.scrollSubject.next();
+                            });
                         });
-                    });
+                    }
                 } else if (data.event == SseMessageEvent.THINK) {
                     const last = this.messages[this.messages.length - 1];
                     this.ngZone.run(() => {
                         last.think = data.data;
+                        this.scrollSubject.next();
                     });
                 } else if (data.event == SseMessageEvent.DONE) {
                     this.ngZone.run(() => {
@@ -291,11 +305,9 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                         this.sendDisabled = false;
                         this.sending = false;
                         this.accumulatedMarkdown = '';
+                        this.scrollSubject.next();
+                        setTimeout(() => this.scrollBubblesToBottom(), 50);
                     });
-                }
-                if (this.isBubblesNearBottom()) {
-                    this.scrollBubblesToBottom();
-                    setTimeout(() => this.scrollBubblesToBottom(), 50);
                 }
             };
 
@@ -334,8 +346,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (item.rendering) return '';
         item.rendering = true;
         this.markdown.render(item.content).then(html => {
-            item.contentHtml = html;
-            item.rendering = false;
+            this.ngZone.run(() => {
+                item.contentHtml = html;
+                item.rendering = false;
+            });
         });
         return '';
     }
