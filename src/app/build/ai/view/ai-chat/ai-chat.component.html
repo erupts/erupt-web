@@ -177,7 +177,7 @@
                         [(ngModel)]="content"
                         (keydown)="onInputKeydown($event)"
                         [nzAutosize]="{ minRows: 2, maxRows: 6 }"
-                        placeholder="输入聊天内容..."
+                        [placeholder]="selectedAgent?.desc||'输入聊天内容...'"
                         rows="2">
                     </textarea>
                 </div>
