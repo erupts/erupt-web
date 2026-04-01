@@ -917,7 +917,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
 
         this.drawerService.create({
-            nzTitle: '下钻分析 - ' + this.cubeMeta.fieldTitleMap.get(measure),
+            nzTitle: '下钻分析 - ' + this.cubeMeta.fieldTitleMap.get(measure) + ":" + record[measure],
             nzContent: CubeDrillDetailComponent,
             nzContentParams: {
                 measure: measure,
