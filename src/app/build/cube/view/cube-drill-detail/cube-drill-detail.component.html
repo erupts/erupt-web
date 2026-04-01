@@ -11,7 +11,7 @@
     <div class="drill-content">
         <nz-spin [nzSpinning]="loading">
             <st #st
-                size="small"
+                size="small" [resizable]="true"
                 [data]="drillData"
                 [columns]="stColumns"
                 [page]="{show: true,front:true, showSize: true,placement:'center', pageSizes: [10, 20, 50, 100]}"

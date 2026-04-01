@@ -1,12 +1,31 @@
-import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    QueryList,
+    TemplateRef,
+    ViewChild,
+    ViewChildren
+} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
-import {Dashboard, DashboardDSL, DashboardPublishHistory, DashboardTheme, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
-import {CubeMeta} from "../../model/cube.model";
+import {
+    Dashboard,
+    DashboardDSL,
+    DashboardPublishHistory,
+    DashboardTheme,
+    FilterDSL,
+    ReportDSL,
+    ReportType
+} from "../../model/dashboard.model";
+import {BaseField, CubeMeta, FieldType} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
@@ -145,10 +164,21 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             this.cubeApiService.cubeMetadata(this.dashboard.cuber, this.dashboard.explore).subscribe(res => {
                 const meta = res.data;
                 const fieldTitleMap = new Map<string, string>();
-                meta.dimensions?.forEach(it => fieldTitleMap.set(it.code, it.title));
-                meta.measures?.forEach(it => fieldTitleMap.set(it.code, it.title));
-                meta.parameters?.forEach(it => fieldTitleMap.set(it.code, it.title));
+                const fieldMap = new Map<string, BaseField>();
+                meta.dimensions?.forEach(it => {
+                    fieldTitleMap.set(it.code, it.title);
+                    fieldMap.set(it.code, it);
+                });
+                meta.measures?.forEach(it => {
+                    fieldTitleMap.set(it.code, it.title);
+                    fieldMap.set(it.code, it);
+                });
+                meta.parameters?.forEach(it => {
+                    fieldTitleMap.set(it.code, it.title);
+                    fieldMap.set(it.code, it);
+                });
                 meta.fieldTitleMap = fieldTitleMap;
+                meta.fieldMap = fieldMap;
                 this.cubeMeta = meta;
             })
             this.initAutoRefresh();
@@ -439,7 +469,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         ref.getContentComponent().filter = {
             title: null,
             field: this.cubeMeta.dimensions?.[0].code,
-            operator: CubeOperator.IN
+            operator: this.cubeMeta.dimensions?.[0].type == FieldType.DATE ? CubeOperator.BETWEEN : CubeOperator.EQ,
         }
     }
 
