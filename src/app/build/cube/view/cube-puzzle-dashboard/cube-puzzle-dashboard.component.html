@@ -158,9 +158,11 @@
                                 }
                                 <div class="puzzle-content"
                                      [style.background-color]="dsl?.settings?.theme === DashboardTheme.DARK ? '#141414' : 'var(--ant-primary-1)'">
-                                    <cube-puzzle-report [cubeMeta]="cubeMeta" [filters]="dsl.filters" [report]="report"
-                                                        [dashboard]="dashboard" [dsl]="dsl"
-                                                        (filterLink)="onFilterLink($event)"/>
+                                    @if (cubeMeta) {
+                                        <cube-puzzle-report [cubeMeta]="cubeMeta" [filters]="dsl.filters" [report]="report"
+                                                            [dashboard]="dashboard" [dsl]="dsl"
+                                                            (filterLink)="onFilterLink($event)"/>
+                                    }
                                 </div>
                             </div>
                         </gridster-item>
