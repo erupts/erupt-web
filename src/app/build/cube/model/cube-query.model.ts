@@ -60,6 +60,7 @@ export interface CubeQuery {
     dimensions?: string[];
     measures?: string[];
     filters?: CubeFilter[];
+    dimensionFormat?: Record<string, DimensionFormat>;
     parameters?: Record<string, any>;
     sorts?: Sort[];
     groupBy?: boolean; // 默认值为 true
@@ -67,7 +68,13 @@ export interface CubeQuery {
     offset?: number;
 }
 
-export interface CubeQueryResponse {
-    data: Record<string, any>[];
-    total: number;
+export enum DimensionFormat {
+    DAY = "DAY",
+    MONTH = "MONTH",
+    YEAR = "YEAR",
+    // QUARTER = "QUARTER",
+    // WEEK = "WEEK",
+    // HOUR = "HOUR",
+    // MINUTE = "MINUTE",
+    // SECOND = "SECOND",
 }

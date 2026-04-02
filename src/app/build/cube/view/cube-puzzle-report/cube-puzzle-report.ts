@@ -12,7 +12,7 @@ import {
 import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
-import {CubeFilter, CubeOperator} from "../../model/cube-query.model";
+import {CubeFilter, CubeOperator, DimensionFormat} from "../../model/cube-query.model";
 import {WindowModel} from "@shared/model/window.model";
 import {
     Area,
@@ -234,37 +234,6 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
     }
 
-    private localizeData(data: Record<string, any>[], forChart: boolean = false): Record<string, any>[] {
-        if (!data || !this.cubeMeta) {
-            return data;
-        }
-        const fieldTypeMap = new Map<string, FieldType>();
-        this.cubeMeta.dimensions?.forEach(d => fieldTypeMap.set(d.code, d.type));
-        this.cubeMeta.measures?.forEach(m => fieldTypeMap.set(m.code, m.type));
-
-        return data.map(row => {
-            const newRow = {...row};
-            for (const key in newRow) {
-                const type = fieldTypeMap.get(key);
-                if (type === FieldType.DATE) {
-                    const val = newRow[key];
-                    if (val) {
-                        const date = new Date(val);
-                        if (!isNaN(date.getTime())) {
-                            newRow[key] = date.toLocaleString();
-                        }
-                    }
-                } else if (type === FieldType.NUMBER) {
-                    const val = newRow[key];
-                    if (typeof val === 'number' && !forChart) {
-                        newRow[key] = val.toLocaleString();
-                    }
-                }
-            }
-            return newRow;
-        });
-    }
-
     refresh(): void {
         if (!this.visible) {
             return;
@@ -356,6 +325,17 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
         }
 
+        let formats: Record<string, DimensionFormat> = {};
+        for (let dim of this.cubeMeta.dimensions) {
+            dimensions.forEach(field => {
+                if (field == dim.code) {
+                    if (dim.type == FieldType.DATE) {
+                        formats[field] = DimensionFormat.DAY;
+                    }
+                }
+            })
+        }
+
         this.cubeApiService.query({
             cube: this.dashboard.cuber,
             explore: this.dashboard.explore,
@@ -364,11 +344,11 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             sorts: sorts,
             filters: cf,
             parameters: parameters,
+            dimensionFormat: formats,
             limit: 5000
         }).subscribe({
             next: (response) => {
-                const isChart = this.report.type !== ReportType.TABLE && this.report.type !== ReportType.PIVOT_TABLE && this.report.type !== ReportType.KPI;
-                this.chartData = this.localizeData(response.data, isChart);
+                this.chartData = response.data;
                 if (this.report.type == ReportType.TABLE) {
                     this.buildStColumns();
                     // 数据量大于200条时启用虚拟滚动
