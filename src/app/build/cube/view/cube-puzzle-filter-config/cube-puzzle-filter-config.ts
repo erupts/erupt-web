@@ -61,7 +61,10 @@ export class CubePuzzleFilterConfig implements OnInit {
     }
 
     changeField(e) {
-        if (!this.fieldInParameters()) {
+        this.filter.linkage = null;
+        if (this.fieldInParameters()) {
+            this.filter.operator = null;
+        } else {
             switch (this.fieldType()) {
                 case FieldType.STRING:
                     this.filter.operator = CubeOperator.EQ;
@@ -73,8 +76,6 @@ export class CubePuzzleFilterConfig implements OnInit {
                     this.filter.operator = CubeOperator.BETWEEN;
                     break;
             }
-        } else {
-            this.filter.operator = null;
         }
         this.filter.value = null;
         this.filter.defaultValue = null;
@@ -88,6 +89,26 @@ export class CubePuzzleFilterConfig implements OnInit {
             this.filter.value = null;
         }
         this.filter.defaultValue = null;
+    }
+
+    getLinkageFilters() {
+        const map = new Map<string, FilterDSL>();
+        this.dsl.filters.forEach(f => {
+            const isParameter = this.cubeMeta.parameters.find(param => param.code === f.field);
+            if (!map.has(f.field) && f.field !== this.filter.field && !isParameter) {
+                map.set(f.field, f);
+            }
+        });
+        return Array.from(map.values());
+    }
+
+    isDropdownOperator(): boolean {
+        if (this.filter.field) {
+            if ([CubeOperator.EQ, CubeOperator.NEQ, CubeOperator.IN, CubeOperator.NOT_IN].includes(this.filter.operator)) {
+                return null != this.cubeMeta.dimensions.find(it => it.code === this.filter.field && it.type == FieldType.STRING);
+            }
+        }
+        return false;
     }
 
     protected readonly CubeOperator = CubeOperator;
