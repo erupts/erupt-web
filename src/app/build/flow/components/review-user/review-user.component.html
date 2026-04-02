@@ -70,7 +70,7 @@
     <div style="display: flex;align-items:center">
         <div style="margin-right: 12px">{{ 'flow.node_select' | translate }}</div>
         <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch nzAllowClear [nzPlaceHolder]="'flow.node_select' | translate">
-            @for (node of assignedNodes; track node) {
+            @for (node of assignedNodes; track node.key) {
                 <nz-option [nzValue]="node.key" [nzLabel]="node.value"/>
             }
         </nz-select>
