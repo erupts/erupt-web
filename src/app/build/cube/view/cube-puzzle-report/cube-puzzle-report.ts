@@ -1,4 +1,14 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
 import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
@@ -114,6 +124,20 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     }
 
+    @HostListener('window:resize', ['$event'])
+    onResize() {
+        if (this.report.type === ReportType.TABLE) {
+            this.updateTableHeight();
+        } else if (this.report.type === ReportType.PIVOT_TABLE) {
+            if (this.s2) {
+                this.s2.changeSheetSize(this.pivotContainer.nativeElement.clientWidth, this.pivotContainer.nativeElement.clientHeight);
+                this.s2.render(false);
+            }
+        } else if (this.chart) {
+            this.chart.forceFit();
+        }
+    }
+
     ngOnInit(): void {
         this.querying = true;
         this.observer = new IntersectionObserver((entries) => {
@@ -133,21 +157,11 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
         this.resizeObserver = new ResizeObserver(() => {
             if (this.visible) {
-                if (this.report.type === ReportType.TABLE) {
-                    this.updateTableHeight();
-                } else if (this.report.type === ReportType.PIVOT_TABLE) {
-                    if (this.s2) {
-                        this.s2.changeSheetSize(this.pivotContainer.nativeElement.clientWidth, this.pivotContainer.nativeElement.clientHeight);
-                        this.s2.render(false);
-                    }
-                } else if (this.chart) {
-                    this.chart.forceFit();
-                }
+                this.onResize()
             }
         });
         this.resizeObserver.observe(this.el.nativeElement);
     }
-
 
     /**
      * 更新表格高度
