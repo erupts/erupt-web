@@ -63,6 +63,7 @@ export interface FilterDSL {
     operator?: CubeOperator;
     defaultValue?: any;
     value?: any;
+    linkage?: string[]; // 联动
 }
 
 /**

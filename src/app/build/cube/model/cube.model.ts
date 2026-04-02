@@ -11,8 +11,8 @@ export interface CubeMeta {
 }
 
 export interface BaseField {
-    code: string;        // 字段名
-    title: string;       // 标题
+    code: string;         // 字段名
+    title: string;        // 标题
     description?: string; // 描述
     type: FieldType;
     hidden: boolean

@@ -90,12 +90,26 @@
             <div class="filter-config-label">Title</div>
             <input nz-input [(ngModel)]="filter.title" [placeholder]="cubeMeta.fieldTitleMap.get(filter.field)"/>
         </div>
+
     </div>
+    @if (isDropdownOperator()) {
+        <div class="filter-config-row">
+            <div class="filter-config-field">
+                <div class="filter-config-label">联动字段</div>
+                <nz-select [(ngModel)]="filter.linkage" nzMode="multiple" nzPlaceHolder="请选择联动字段"
+                           style="width: 100%;" nzAllowClear>
+                    @for (f of getLinkageFilters(); track f.field) {
+                        <nz-option [nzLabel]="f.title || this.cubeMeta.fieldTitleMap.get(f.field)" [nzValue]="f.field"></nz-option>
+                    }
+                </nz-select>
+            </div>
+        </div>
+    }
     @if (filter.field) {
         <div class="filter-config-row filter-config-default">
             <div class="filter-config-label">Default Value</div>
             <cube-puzzle-filter-control #filterControl [dashboard]="dashboard" [filter]="filter"
-                                        [cubeMeta]="cubeMeta"></cube-puzzle-filter-control>
+                                        [cubeMeta]="cubeMeta" [dsl]="dsl"></cube-puzzle-filter-control>
         </div>
     }
 </div>

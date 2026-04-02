@@ -1,4 +1,8 @@
-<div class="cube-puzzle-container" [class.dark-theme]="dsl?.settings?.theme === DashboardTheme.DARK"
+<div class="cube-puzzle-container"
+     [style.background-image]="dsl?.settings?.backgroundImage ? 'url(' + dsl.settings.backgroundImage + ')' : 'none'"
+     [style.background-color]="dsl?.settings?.backgroundColor || 'rgb(255, 255, 255)'"
+     [style.background-size]="'cover'"
+     [style.background-position]="'center'" [class.dark-theme]="dsl?.settings?.theme === DashboardTheme.DARK"
      [style.height]="'100%'">
     @if (editModel) {
         <div class="puzzle-header">
@@ -64,7 +68,7 @@
                             }
                             <span class="filter-label">{{ filter.title || cubeMeta.fieldTitleMap.get(filter.field) }}: </span>
                             <cube-puzzle-filter-control style="width: 180px" size="small" [filter]="filter"
-                                                        [cubeMeta]="cubeMeta"
+                                                        [cubeMeta]="cubeMeta" [dsl]="dsl"
                                                         [dashboard]="dashboard"></cube-puzzle-filter-control>
                             @if (edit) {
                                 <button nz-button nzType="text" nzSize="small" (click)="editFilter($index)">
@@ -93,11 +97,7 @@
             </div>
         </div>
     }
-    <div class="gridster-wrapper"
-         [style.background-color]="dsl?.settings?.backgroundColor || 'rgb(255, 255, 255)'"
-         [style.background-image]="dsl?.settings?.backgroundImage ? 'url(' + dsl.settings.backgroundImage + ')' : 'none'"
-         [style.background-size]="'cover'"
-         [style.background-position]="'center'">
+    <div class="gridster-wrapper">
         @if (!dsl?.reports || dsl.reports.length == 0) {
             <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" style="margin-top: 20%"></nz-empty>
         } @else {
