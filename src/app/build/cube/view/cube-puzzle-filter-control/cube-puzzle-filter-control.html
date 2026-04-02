@@ -10,7 +10,7 @@
             } @else {
                 <nz-select [(ngModel)]="filter.value" style="width: 100%;" nzAllowClear [nzSize]="size"
                            [nzMode]="(filter.operator == CubeOperator.IN || filter.operator == CubeOperator.NOT_IN) ? 'tags' : 'default'"
-                           (nzOpenChange)="openSelect()">
+                           (nzOpenChange)="openSelect($event)" (ngModelChange)="onValueChange($event)">
                     @if (isLoading) {
                         <nz-option nzDisabled nzCustomContent>
                             <div class="text-center">
@@ -32,25 +32,28 @@
             @if (filter.value) {
                 <div class="number-range-inputs">
                     <nz-input-number nzChangeOnWheel [(ngModel)]="filter.value[0]" [nzSize]="size"
+                                     (ngModelChange)="onValueChange($event)"
                                      style="width: calc(50% - 4px);"/>
                     <span class="range-sep">~</span>
                     <nz-input-number nzChangeOnWheel [(ngModel)]="filter.value[1]" [nzSize]="size"
+                                     (ngModelChange)="onValueChange($event)"
                                      style="width: calc(50% - 4px);"/>
                 </div>
             }
         } @else {
             <nz-input-number nzChangeOnWheel [(ngModel)]="filter.value" [nzSize]="size"
+                             (ngModelChange)="onValueChange($event)"
                              style="width: 100%;"></nz-input-number>
         }
     }
     @case (FieldType.DATE) {
         @if (filter.operator == CubeOperator.BETWEEN) {
-            <nz-range-picker [ngModel]="filter.value" [nzSize]="size" [nzShowTime]="true"
+            <nz-range-picker [ngModel]="filter.value" (ngModelChange)="filter.value = $event; onValueChange($event)" [nzSize]="size" [nzShowTime]="true"
                              [nzShowNow]="true" style="width: 100%;"/>
         } @else if (filter.operator == CubeOperator.FEW_DAYS || filter.operator == CubeOperator.FUTURE_DAYS) {
-            <nz-input-number [(ngModel)]="filter.value" [nzSize]="size" style="width: 100%;"></nz-input-number>
+            <nz-input-number [(ngModel)]="filter.value" (ngModelChange)="onValueChange($event)" [nzSize]="size" style="width: 100%;"></nz-input-number>
         } @else {
-            <nz-date-picker [ngModel]="filter.value" [nzSize]="size" [nzShowTime]="true"
+            <nz-date-picker [ngModel]="filter.value" (ngModelChange)="filter.value = $event; onValueChange($event)" [nzSize]="size" [nzShowTime]="true"
                             [nzShowNow]="true" style="width: 100%;"/>
         }
     }
