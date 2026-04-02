@@ -1,4 +1,5 @@
-<div class="cube-puzzle-container" [style.height]="'100%'">
+<div class="cube-puzzle-container"
+     [style.height]="'100%'" [class.dark-theme]="dsl?.settings?.theme === DashboardTheme.DARK">
     @if (editModel) {
         <div class="puzzle-header">
             <div class="header-left">
@@ -95,7 +96,7 @@
     <div class="gridster-wrapper" [style.background-image]="dsl?.settings?.backgroundImage ? 'url(' + dsl.settings.backgroundImage + ')' : 'none'"
          [style.background-color]="dsl?.settings?.backgroundColor || (dsl?.settings?.theme === DashboardTheme.DARK ? '#1f1f1f' : 'rgb(255, 255, 255)')"
          [style.background-size]="'cover'"
-         [style.background-position]="'center'" [class.dark-theme]="dsl?.settings?.theme === DashboardTheme.DARK"
+         [style.background-position]="'center'"
     >
         @if (!dsl?.reports || dsl.reports.length == 0) {
             <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" style="margin-top: 20%"></nz-empty>
