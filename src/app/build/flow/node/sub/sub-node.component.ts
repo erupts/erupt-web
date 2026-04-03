@@ -8,6 +8,7 @@ import {FlowTurn} from "@flow/model/flow-instance.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlowConfig} from "@flow/model/flow.model";
 import {SubNode} from "@flow/model/flow-approval.model";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -35,8 +36,16 @@ export class SubNodeComponent extends ANode implements OnInit {
 
     subEruptBuild: EruptBuildModel;
 
-    constructor(private flowApi?: FlowApiService) {
+    constructor(private flowApi?: FlowApiService,
+                private i18n?: I18NService) {
         super();
+    }
+
+    getSubFlowName() {
+        if (this.subNode?.subFlowId) {
+            return this.flowConfigs.find(config => config.id === this.subNode.subFlowId)?.name;
+        }
+        return null;
     }
 
     ngOnInit(): void {
