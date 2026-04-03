@@ -143,6 +143,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                 this.instanceDetail.taskId = this.selectedInstance.taskId;
                 this.nodeInfo = this.selectedInstance.taskNodeInfo;
                 this.onTabChange(this.activeTabIndex)
+                this.findAssignedNodes(this.instanceDetail.rule, this.nodeInfo.id);
             }
         });
     }
