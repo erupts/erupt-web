@@ -2,7 +2,11 @@
     <nz-form-item>
         <nz-form-label>背景颜色</nz-form-label>
         <nz-form-control>
-            <nz-color-picker [(ngModel)]="dsl.settings.backgroundColor" name="backgroundColor"></nz-color-picker>
+            <div style="display: flex;align-items: center">
+                <nz-color-picker [(ngModel)]="dsl.settings.backgroundColor" name="backgroundColor"></nz-color-picker>
+                &nbsp;
+                <i nz-icon nzType="close" nzTheme="outline" style="color: #f00;cursor: pointer" (click)="dsl.settings.backgroundColor = null"></i>
+            </div>
         </nz-form-control>
     </nz-form-item>
     <nz-form-item>
