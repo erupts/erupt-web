@@ -47,7 +47,7 @@
   [nzVisible]="showDrawer"
   (nzOnClose)="close()"
   nzPlacement="right"
-  [nzTitle]="model?.name"
+  [nzTitle]="model?.name + ' [ '+model?.id+' ]'"
   [nzBodyStyle]="{padding: '16px'}"
   [nzFooter]="footerTpl"
   [nzWidth]="600"
