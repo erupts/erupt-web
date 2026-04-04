@@ -121,4 +121,5 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
 
     protected readonly ApprovalTimeoutAction = ApprovalTimeoutAction;
     protected readonly SamePersonApprovalStrategy = SamePersonApprovalStrategy;
+    protected readonly NodeType = NodeType;
 }
