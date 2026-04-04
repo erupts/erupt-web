@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FormAccessEnum} from "@flow/model/flow.model";
 import {EditType} from "../../../erupt/model/erupt.enum";
+import {NodeType} from "@flow/model/node.model";
 
 @Component({
     standalone: false,
@@ -13,11 +14,11 @@ export class FormAccessComponent implements OnInit {
 
     @Input() eruptBuild: EruptBuildModel;
 
-    radioValue: string;
-
     @Input() formAccesses: Record<string, FormAccessEnum> = {};
 
     @Input() access: FormAccessEnum = FormAccessEnum.READONLY;
+
+    @Input() nodeType: NodeType;
 
     protected readonly FormAccessEnum = FormAccessEnum;
 
@@ -27,6 +28,12 @@ export class FormAccessComponent implements OnInit {
     setAllAccess(access: FormAccessEnum) {
         for (const field of this.eruptBuild.eruptModel.eruptFieldModels) {
             if (field.eruptFieldJson.edit.title && field.eruptFieldJson.edit.show) {
+                if (this.nodeType != NodeType.START && access == FormAccessEnum.READ_WRITE && field.eruptFieldJson.edit.notNull) {
+                    continue;
+                }
+                if (this.nodeType == NodeType.START && field.eruptFieldJson.edit.notNull && access != FormAccessEnum.NOT_NULL) {
+                    continue
+                }
                 // 如果是“只读”，则不考虑是否 readonly，因为只读是通用的权限
                 if (access === FormAccessEnum.READONLY) {
                     this.formAccesses[field.fieldName] = access;
@@ -49,4 +56,5 @@ export class FormAccessComponent implements OnInit {
     }
 
     protected readonly EditType = EditType;
+    protected readonly NodeType = NodeType;
 }

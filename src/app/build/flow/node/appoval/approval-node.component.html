@@ -92,7 +92,7 @@
             </div>
         }
         @if (selectTab == 1) {
-            <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="approveNode.formAccesses"/>
+            <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="approveNode.formAccesses" [nodeType]="NodeType.APPROVAL"/>
         }
         @if (selectTab == 2) {
             <div class="allow-item">

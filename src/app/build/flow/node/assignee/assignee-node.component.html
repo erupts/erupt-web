@@ -45,7 +45,7 @@
             <nz-divider style="margin: 12px 0"></nz-divider>
         }
         @if (selectTab == 1) {
-            <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="assigneeNode.formAccesses"/>
+            <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="assigneeNode.formAccesses" [nodeType]="NodeType.ASSIGNEE"/>
         }
     </div>
 </erupt-node>
