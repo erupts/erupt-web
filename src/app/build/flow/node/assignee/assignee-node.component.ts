@@ -102,4 +102,5 @@ export class AssigneeNodeComponent extends ANode implements OnInit {
     }
 
     protected readonly ApprovalStrategy = ApprovalStrategy;
+    protected readonly NodeType = NodeType;
 }
