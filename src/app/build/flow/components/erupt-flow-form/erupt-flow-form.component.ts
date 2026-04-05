@@ -16,6 +16,8 @@ export class EruptFlowFormComponent implements OnInit {
 
     loading: boolean = false;
 
+    @Input() loadingEruptData: boolean = false;
+
     @Input() readonly: boolean = false;
 
     @Input() eruptBuild: EruptBuildModel;
