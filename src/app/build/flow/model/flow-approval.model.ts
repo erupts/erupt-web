@@ -157,8 +157,20 @@ export class SubNode {
 
     subFlowId: number;
 
+    turnRule: string;
+
     mappings: Mapping[] = [];
 
     mappingsReverse: Mapping[] = [];
+
+}
+
+export enum SubTurnRule {
+
+    // 子流程结束后进去下一个节点
+    WAIT_COMPLETE = "WAIT_COMPLETE",
+
+    // 子流程发起后进去下一个节点
+    FIRE_AND_FORGET = "FIRE_AND_FORGET"
 
 }
