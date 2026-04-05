@@ -5,7 +5,8 @@ import {
     FlowInstanceComment,
     FlowInstanceDataHistory,
     FlowInstanceTask,
-    InstanceStatus
+    InstanceStatus,
+    TaskType
 } from "@flow/model/flow-instance.model";
 import {SignaturePadComponent} from "../../../erupt/components/signature-pad/signature-pad.component";
 import {EruptFlowComponent} from "@flow/components/erupt-flow/erupt-flow.component";
@@ -111,6 +112,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                     }).subscribe(res => {
                         if (res.data.list.length === 0) return;
                         this.instanceDetail.taskId = res.data.list[0].taskId;
+                        this.instanceDetail.taskType = res.data.list[0].taskType;
                         this.nodeInfo = res.data.list[0].taskNodeInfo;
                     })
                 }
@@ -134,13 +136,15 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.reloadFlows.emit()
     }
 
-    // 新增方法：加载实例详情
+    // 加载实例详情
     loadInstanceDetail(flow: FlowInstance) {
         // 加载实例详情
         this.flowInstanceApiService.detail(flow.no).subscribe({
             next: (data) => {
                 this.instanceDetail = data.data;
                 this.instanceDetail.taskId = this.selectedInstance.taskId;
+                this.instanceDetail.taskType = this.selectedInstance.taskType;
+                this.instanceDetail.taskNodeInfo = this.selectedInstance.taskNodeInfo;
                 this.nodeInfo = this.selectedInstance.taskNodeInfo;
                 this.onTabChange(this.activeTabIndex)
                 this.findAssignedNodes(this.instanceDetail.rule, this.nodeInfo.id);
@@ -646,4 +650,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     protected readonly PrintSetting = PrintSetting;
 
     protected readonly InstanceStatus = InstanceStatus;
+
+    protected readonly TaskType = TaskType;
+
 }

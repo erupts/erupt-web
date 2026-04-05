@@ -7,7 +7,7 @@ import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlowConfig} from "@flow/model/flow.model";
-import {SubNode} from "@flow/model/flow-approval.model";
+import {SamePersonApprovalStrategy, SubNode, SubTurnRule} from "@flow/model/flow-approval.model";
 import {I18NService} from "@core";
 
 @Component({
@@ -58,6 +58,7 @@ export class SubNodeComponent extends ANode implements OnInit {
                 }
             } else {
                 this.subNode = new SubNode();
+                this.subNode.turnRule = SubTurnRule.WAIT_COMPLETE;
             }
         })
     }
@@ -129,4 +130,6 @@ export class SubNodeComponent extends ANode implements OnInit {
         this.subNode.mappingsReverse.push({source: null, target: null});
     }
 
+    protected readonly SamePersonApprovalStrategy = SamePersonApprovalStrategy;
+    protected readonly SubTurnRule = SubTurnRule;
 }
