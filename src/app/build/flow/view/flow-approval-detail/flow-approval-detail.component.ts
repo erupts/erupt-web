@@ -82,6 +82,8 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     dataDeleted: boolean = false;
 
+    loadingEruptData: boolean = false;
+
     @Input() selectedInstance: FlowInstance;
 
     @Input() approvalView: ApprovalView = ApprovalView.TODO;
@@ -463,6 +465,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                 this.flowApiService.eruptFlowBuild(this.instanceDetail.erupt).subscribe({
                     next: res => {
                         this.eruptBuild = null;
+                        this.loadingEruptData = true;
                         this.flowInstanceApiService.eruptData(this.selectedInstance.id).subscribe({
                             next: eruptDataRes => {
                                 this.dataHandlerService.initErupt(res.data)
@@ -473,6 +476,9 @@ export class FlowApprovalDetailComponent implements OnInit {
                                     this.dataDeleted = true;
                                 }
                                 this.eruptBuild = res.data;
+                                setTimeout(() => {
+                                    this.loadingEruptData = false;
+                                }, 100)
                                 this.cdr.detectChanges();
                             }
                         })
