@@ -4,8 +4,9 @@
         <nz-form-control>
             <div style="display: flex;align-items: center">
                 <input nz-input [(ngModel)]="dsl.settings.backgroundColor" type="color" name="backgroundColor" style="width: 100px;margin-right: 8px"/>
-                &nbsp;
-                <i nz-icon nzType="close" nzTheme="outline" style="color: #f00;cursor: pointer" (click)="dsl.settings.backgroundColor = null"></i>
+                @if (dsl.settings.backgroundColor) {
+                    &nbsp;<i nz-icon nzType="close" nzTheme="outline" style="color: #f00;cursor: pointer" (click)="dsl.settings.backgroundColor = null"></i>
+                }
             </div>
         </nz-form-control>
     </nz-form-item>
