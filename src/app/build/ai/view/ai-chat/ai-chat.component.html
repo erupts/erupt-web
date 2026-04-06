@@ -2,7 +2,7 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <button nz-button nzType="default" (click)="createConversation()" class="new-chat-btn">
-                <span nz-icon nzType="plus"></span> 新建会话
+                <span nz-icon nzType="plus"></span> {{ 'ai.chat.new_session' | translate }}
             </button>
         </div>
         <ul
@@ -28,18 +28,18 @@
                         [nzDropdownMenu]="chatMenu"
                         nzPlacement="bottomRight"
                         (click)="$event.stopPropagation()"
-                        title="更多操作">
+                        [title]="'ai.chat.more_actions' | translate">
                         <span nz-icon nzType="ellipsis" nzTheme="outline"></span>
                     </button>
                     <nz-dropdown-menu #chatMenu="nzDropdownMenu">
                         <ul nz-menu class="chat-action-menu">
                             <li nz-menu-item (click)="renameChat(item.id, item.title, $event)">
                                 <span nz-icon nzType="edit" nzTheme="outline"></span>&nbsp;
-                                <span>重命名</span>
+                                <span>{{ 'ai.chat.rename' | translate }}</span>
                             </li>
                             <li nz-menu-item nzDanger (click)="deleteChat(item.id, $event)">
                                 <span nz-icon nzType="delete" nzTheme="outline"></span>&nbsp;
-                                <span>删除</span>
+                                <span>{{ 'ai.chat.delete' | translate }}</span>
                             </li>
                         </ul>
                     </nz-dropdown-menu>
@@ -65,7 +65,7 @@
                 @if (loadingMoreMessages) {
                     <div class="bubbles-load-more">
                         <nz-spin nzSimple nzSize="small"></nz-spin>
-                        <span>加载更多...</span>
+                        <span>{{ 'ai.chat.load_more' | translate }}</span>
                     </div>
                 }
                 @for (item of messages; track $index) {
@@ -80,7 +80,7 @@
                                 <div class="think-content">
                                     <div class="think-title">
                                         <span nz-icon nzType="bulb" nzTheme="outline"></span>
-                                        <span>思考过程</span>
+                                        <span>{{ 'ai.chat.thinking_process' | translate }}</span>
                                     </div>
                                     <div class="markdown-body think-body">
                                         {{ item.think }}
@@ -105,7 +105,7 @@
                                 }
                             }
                             @if (!item.loading && !item.content && !item.contentHtml && !item.think && item.senderType === 'MODEL') {
-                                <div class="placeholder">思考中...</div>
+                                <div class="placeholder">{{ 'ai.chat.thinking' | translate }}</div>
                             }
                         </div>
                     </div>
@@ -125,12 +125,12 @@
                     <div class="toolbar-left">
                         @if (agents.length > 0) {
                             <div class="agent-wrap">
-                                <span class="toolbar-label">智能体：</span>
+                                <span class="toolbar-label">{{ 'ai.chat.agent' | translate }}</span>
                                 <nz-select
                                     class="agent-select"
                                     nzVariant="borderless"
                                     [(ngModel)]="selectAgentId"
-                                    nzPlaceHolder="不指定"
+                                    [nzPlaceHolder]="'ai.chat.agent_unspecified' | translate"
                                     nzAllowClear
                                     nzShowSearch
                                     nzSize="small">
@@ -141,27 +141,28 @@
                             </div>
                         }
                         <div class="tool-call-wrap">
-                            <span class="toolbar-label">自动工具调用：</span>
+                            <span class="toolbar-label">{{ 'ai.chat.auto_tool_call' | translate }}</span>
+                            &nbsp;
                             <nz-switch nzSize="small" [(ngModel)]="autoToolCall"></nz-switch>
                         </div>
                     </div>
                     <div class="toolbar-right">
                         @if (sending) {
                             <button nz-button nzType="text" nzSize="small" class="toolbar-icon toolbar-icon-stop"
-                                    title="停止生成" (click)="stopGeneration()">
+                                    [title]="'ai.chat.stop_generation' | translate" (click)="stopGeneration()">
                                 <span nz-icon nzType="stop" nzTheme="outline"></span>
-                                <span>停止</span>
+                                <span>{{ 'ai.chat.stop' | translate }}</span>
                             </button>
                         }
                         @if (content?.trim()) {
                             <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
-                                    title="清空输入"
+                                    [title]="'ai.chat.clear_input' | translate"
                                     (click)="clearInput()">
                                 <span nz-icon nzType="clear" nzTheme="outline"></span>
                             </button>
                         }
                         <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
-                                [title]="fullscreen ? '退出全屏' : '全屏'"
+                                [title]="fullscreen ? ('ai.chat.exit_fullscreen' | translate) : ('ai.chat.fullscreen' | translate)"
                                 (click)="toggleFullscreen()">
                             @if (fullscreen) {
                                 <span nz-icon nzType="fullscreen-exit" nzTheme="outline"></span>
@@ -177,12 +178,12 @@
                         [(ngModel)]="content"
                         (keydown)="onInputKeydown($event)"
                         [nzAutosize]="{ minRows: 2, maxRows: 6 }"
-                        [placeholder]="selectedAgent?.desc||'输入聊天内容...'"
+                        [placeholder]="selectedAgent?.desc || ('ai.chat.input_placeholder' | translate)"
                         rows="2">
                     </textarea>
                 </div>
                 <div class="input-footer">
-                    <span class="shortcut-hint">↵ 发送 / ⌘ + ↵ 换行</span>
+                    <span class="shortcut-hint">{{ 'ai.chat.shortcut_hint' | translate }}</span>
                     <button
                         nz-button
                         nzType="primary"
@@ -191,7 +192,7 @@
                         [nzLoading]="sending"
                         [disabled]="sendDisabled || !content?.trim()"
                         (click)="send(content)">
-                        发送
+                        {{ 'ai.chat.send' | translate }}
                     </button>
                 </div>
             </div>
@@ -203,7 +204,7 @@
     <div style="margin-top:0;">
         <input nz-input nzSize="large"
                [(ngModel)]="renameTitle"
-               placeholder="请输入新的会话名称"
+               [placeholder]="'ai.chat.rename_placeholder' | translate"
                style="width: 100%;"
         />
     </div>
