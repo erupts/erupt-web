@@ -3,7 +3,7 @@
         <div class="drill-actions">
             <button nz-button nzSize="small" nzType="default" (click)="export()" [disabled]="loading || drillData.length === 0">
                 <span nz-icon nzType="download"></span>
-                导出
+                {{ 'cube.drill.export' | translate }}
             </button>
         </div>
     </div>

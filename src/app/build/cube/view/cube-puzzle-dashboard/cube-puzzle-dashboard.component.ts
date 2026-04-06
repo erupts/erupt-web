@@ -1,30 +1,12 @@
-import {
-    Component,
-    ElementRef,
-    Inject,
-    Input,
-    OnDestroy,
-    OnInit,
-    QueryList,
-    TemplateRef,
-    ViewChild,
-    ViewChildren
-} from '@angular/core';
+import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {I18NService} from '@core';
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
-import {
-    Dashboard,
-    DashboardDSL,
-    DashboardPublishHistory,
-    DashboardTheme,
-    FilterDSL,
-    ReportDSL,
-    ReportType
-} from "../../model/dashboard.model";
+import {Dashboard, DashboardDSL, DashboardPublishHistory, DashboardTheme, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {BaseField, CubeMeta, FieldType} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
@@ -76,7 +58,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 private cubeApiService: CubeApiService,
                 private el: ElementRef,
                 private message: NzMessageService,
-                @Inject(NzModalService) private modal: NzModalService
+                @Inject(NzModalService) private modal: NzModalService,
+                private i18n: I18NService
     ) {
 
     }
@@ -222,13 +205,13 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     publish() {
         this.publishDescription = "";
         this.modal.confirm({
-            nzTitle: '确定要发布吗？',
+            nzTitle: this.i18n.fanyi('cube.dashboard.publish_confirm'),
             nzContent: this.publishContent,
             nzOnOk: () => {
                 this.publishing = true;
                 this.cubeApiService.publish(this.dashboard.id, this.publishDescription).subscribe({
                     next: () => {
-                        this.message.success("发布成功");
+                        this.message.success(this.i18n.fanyi('cube.dashboard.publish_success'));
                         this.publishing = false;
                     },
                     error: () => {
@@ -249,7 +232,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             this.loadingHistory = false;
         });
         this.modal.create({
-            nzTitle: '发布历史',
+            nzTitle: this.i18n.fanyi('cube.dashboard.history_title'),
             nzContent: this.historyContent,
             nzWidth: 800,
             nzFooter: null
@@ -258,11 +241,11 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     rollback(history: DashboardPublishHistory) {
         this.modal.confirm({
-            nzTitle: '确定要回滚到该版本吗？',
-            nzContent: `回滚后，当前的草稿配置将被覆盖为：${history.description || '无说明'} (${history.createTime})`,
+            nzTitle: this.i18n.fanyi('cube.dashboard.rollback_confirm'),
+            nzContent: this.i18n.fanyi('cube.dashboard.rollback_content_prefix') + (history.description || this.i18n.fanyi('cube.dashboard.history.no_desc')) + ` (${history.createTime})`,
             nzOnOk: () => {
                 this.cubeApiService.rollback(this.dashboard.id, history.id).subscribe(() => {
-                    this.message.success("回滚成功");
+                    this.message.success(this.i18n.fanyi('cube.dashboard.rollback_success'));
                     this.modal.closeAll();
                     this.ngOnInit(); // 重新加载数据
                     this.query();
@@ -402,14 +385,14 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             x: 0,
             y: 0,
             type: ReportType.LINE,
-            title: '标题',
+            title: this.i18n.fanyi('cube.report.config.title'),
             cube: {}
         };
     }
 
     copyItem(index: number, item: ReportDSL) {
         this.modal.confirm({
-            nzTitle: '确定要复制吗',
+            nzTitle: this.i18n.fanyi('cube.dashboard.copy_confirm'),
             nzOnOk: () => {
                 let dsl = deepCopy(item);
                 dsl.x = 0;
@@ -594,7 +577,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             const baseUrl = url.substring(0, hashIndex + 1);
             const newUrl = baseUrl + '/fill/cube/' + this.dashboard?.code;
             navigator.clipboard.writeText(newUrl).then(() => {
-                this.message.success('复制成功');
+                this.message.success(this.i18n.fanyi('cube.dashboard.copy_success'));
             });
         }
     }

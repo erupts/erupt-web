@@ -88,7 +88,7 @@
                     @if (dsl.filters?.length > 0) {
                         <button nz-button nzSize="small" (click)="reset()">Reset</button>
                     }
-                    <button nz-button nzType="primary" nzSize="small" (click)="query()">查询</button>
+                    <button nz-button nzType="primary" nzSize="small" (click)="query()">{{ 'cube.dashboard.query' | translate }}</button>
                 </div>
             </div>
         </div>
@@ -174,10 +174,11 @@
 </div>
 
 <ng-template #publishContent>
-    <div style="margin-bottom: 12px">发布后，当前草稿配置将同步到正式视图。</div>
+    <div style="margin-bottom: 12px">{{ 'cube.dashboard.publish_hint' | translate }}</div>
     <nz-form-item style="margin-bottom: 0">
         <nz-form-control [nzSpan]="24">
-            <textarea nz-input rows="3" [(ngModel)]="publishDescription" placeholder="修改说明"></textarea>
+            <textarea nz-input rows="3" [(ngModel)]="publishDescription"
+                      [placeholder]="'cube.dashboard.publish_desc_placeholder' | translate"></textarea>
         </nz-form-control>
     </nz-form-item>
 </ng-template>
@@ -186,20 +187,20 @@
     <nz-table #historyTable [nzData]="historyList" [nzLoading]="loadingHistory" nzSize="small" [nzPageSize]="10">
         <thead>
         <tr>
-            <th>修改说明</th>
-            <th>发布人</th>
-            <th>发布时间</th>
-            <th nzWidth="100px">操作</th>
+            <th>{{ 'cube.dashboard.history.desc' | translate }}</th>
+            <th>{{ 'cube.dashboard.history.publisher' | translate }}</th>
+            <th>{{ 'cube.dashboard.history.publish_time' | translate }}</th>
+            <th nzWidth="100px">{{ 'cube.dashboard.history.action' | translate }}</th>
         </tr>
         </thead>
         <tbody>
         @for (data of historyTable.data; track data.createTime) {
             <tr>
-                <td>{{ data.description || '无说明' }}</td>
+                <td>{{ data.description || ('cube.dashboard.history.no_desc' | translate) }}</td>
                 <td>{{ data.createUser?.name }}</td>
                 <td>{{ data.createTime }}</td>
                 <td>
-                    <a (click)="rollback(data)">回滚</a>
+                    <a (click)="rollback(data)">{{ 'cube.dashboard.history.rollback' | translate }}</a>
                 </td>
             </tr>
         }

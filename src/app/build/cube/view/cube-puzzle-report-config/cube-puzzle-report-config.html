@@ -9,66 +9,66 @@
         <div nz-col [nzSpan]="8">
             <div style="background: #fff;padding: 0 8px;overflow: auto;height: 500px">
                 <nz-tabs>
-                    <nz-tab nzTitle="基础配置">
+                    <nz-tab [nzTitle]="'cube.report.config.basic' | translate">
                         <div style="overflow: auto">
                             <form nz-form nzLayout="vertical">
                                 <nz-form-item>
-                                    <nz-form-label>标题</nz-form-label>
+                                    <nz-form-label>{{ 'cube.report.config.title' | translate }}</nz-form-label>
                                     <nz-form-control>
                                         <input nz-input [(ngModel)]="report.title" name="title"/>
                                     </nz-form-control>
                                 </nz-form-item>
                                 <nz-form-item>
-                                    <nz-form-label>描述</nz-form-label>
+                                    <nz-form-label>{{ 'cube.report.config.desc' | translate }}</nz-form-label>
                                     <nz-form-control>
                                     <textarea nz-input [(ngModel)]="report.description" name="description"
-                                              placeholder="请输入描述信息">
+                                              [placeholder]="'cube.report.config.desc_placeholder' | translate">
                                     </textarea>
                                     </nz-form-control>
                                 </nz-form-item>
                                 <nz-form-item>
-                                    <nz-form-label>图表类型</nz-form-label>
+                                    <nz-form-label>{{ 'cube.report.config.chart_type' | translate }}</nz-form-label>
                                     <nz-form-control>
                                         <nz-select [(ngModel)]="report.type" name="chartType"
                                                    (ngModelChange)="onConfigChange()">
-                                            <nz-option-group nzLabel="基础图表">
-                                                <nz-option [nzValue]="ReportType.LINE" nzLabel="折线图"></nz-option>
-                                                <nz-option [nzValue]="ReportType.AREA" nzLabel="面积图"></nz-option>
-                                                <nz-option [nzValue]="ReportType.COLUMN" nzLabel="柱状图"></nz-option>
-                                                <nz-option [nzValue]="ReportType.BAR" nzLabel="条形图"></nz-option>
-                                                <nz-option [nzValue]="ReportType.PIE" nzLabel="饼图"></nz-option>
+                                            <nz-option-group [nzLabel]="'cube.report.config.basic_charts' | translate">
+                                                <nz-option [nzValue]="ReportType.LINE" [nzLabel]="'cube.report.config.chart.line' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.AREA" [nzLabel]="'cube.report.config.chart.area' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.COLUMN" [nzLabel]="'cube.report.config.chart.column' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.BAR" [nzLabel]="'cube.report.config.chart.bar' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.PIE" [nzLabel]="'cube.report.config.chart.pie' | translate"></nz-option>
                                             </nz-option-group>
-                                            <nz-option-group nzLabel="进阶图表">
-                                                <nz-option [nzValue]="ReportType.SCATTER" nzLabel="散点图"></nz-option>
-                                                <nz-option [nzValue]="ReportType.BUBBLE" nzLabel="气泡图"></nz-option>
-                                                <nz-option [nzValue]="ReportType.RADAR" nzLabel="雷达图"></nz-option>
-                                                <nz-option [nzValue]="ReportType.FUNNEL" nzLabel="漏斗图"></nz-option>
-                                                <nz-option [nzValue]="ReportType.GAUGE" nzLabel="仪表盘"></nz-option>
-                                                <nz-option [nzValue]="ReportType.WATERFALL" nzLabel="瀑布图"></nz-option>
-                                                <nz-option [nzValue]="ReportType.ROSE" nzLabel="玫瑰图"></nz-option>
-                                                <nz-option [nzValue]="ReportType.RADIAL_BAR" nzLabel="玉玦图"></nz-option>
+                                            <nz-option-group [nzLabel]="'cube.report.config.advanced_charts' | translate">
+                                                <nz-option [nzValue]="ReportType.SCATTER" [nzLabel]="'cube.report.config.chart.scatter' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.BUBBLE" [nzLabel]="'cube.report.config.chart.bubble' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.RADAR" [nzLabel]="'cube.report.config.chart.radar' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.FUNNEL" [nzLabel]="'cube.report.config.chart.funnel' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.GAUGE" [nzLabel]="'cube.report.config.chart.gauge' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.WATERFALL" [nzLabel]="'cube.report.config.chart.waterfall' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.ROSE" [nzLabel]="'cube.report.config.chart.rose' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.RADIAL_BAR" [nzLabel]="'cube.report.config.chart.radial_bar' | translate"></nz-option>
                                             </nz-option-group>
-                                            <nz-option-group nzLabel="关系/特殊图表">
+                                            <nz-option-group [nzLabel]="'cube.report.config.relation_charts' | translate">
                                                 <!--                                            <nz-option [nzValue]="ReportType.SANKEY" nzLabel="桑基图"></nz-option>-->
-                                                <nz-option [nzValue]="ReportType.CHORD" nzLabel="和弦图"></nz-option>
-                                                <nz-option [nzValue]="ReportType.WORD_CLOUD" nzLabel="词云图"></nz-option>
+                                                <nz-option [nzValue]="ReportType.CHORD" [nzLabel]="'cube.report.config.chart.chord' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.WORD_CLOUD" [nzLabel]="'cube.report.config.chart.word_cloud' | translate"></nz-option>
                                             </nz-option-group>
-                                            <nz-option-group nzLabel="迷你图">
+                                            <nz-option-group [nzLabel]="'cube.report.config.mini_charts' | translate">
                                                 <nz-option [nzValue]="ReportType.TINY_LINE"
-                                                           nzLabel="迷你折线图"></nz-option>
+                                                           [nzLabel]="'cube.report.config.chart.tiny_line' | translate"></nz-option>
                                                 <nz-option [nzValue]="ReportType.TINY_AREA"
-                                                           nzLabel="迷你面积图"></nz-option>
+                                                           [nzLabel]="'cube.report.config.chart.tiny_area' | translate"></nz-option>
                                                 <nz-option [nzValue]="ReportType.TINY_COLUMN"
-                                                           nzLabel="迷你柱状图"></nz-option>
+                                                           [nzLabel]="'cube.report.config.chart.tiny_column' | translate"></nz-option>
                                                 <nz-option [nzValue]="ReportType.PROGRESS"
-                                                           nzLabel="进度条"></nz-option>
+                                                           [nzLabel]="'cube.report.config.chart.progress' | translate"></nz-option>
                                                 <nz-option [nzValue]="ReportType.RING_PROGRESS"
-                                                           nzLabel="进度环"></nz-option>
+                                                           [nzLabel]="'cube.report.config.chart.ring_progress' | translate"></nz-option>
                                             </nz-option-group>
-                                            <nz-option-group nzLabel="其他">
+                                            <nz-option-group [nzLabel]="'cube.report.config.other_charts' | translate">
                                                 <nz-option [nzValue]="ReportType.KPI" nzLabel="KPI"></nz-option>
-                                                <nz-option [nzValue]="ReportType.PIVOT_TABLE" nzLabel="透视表"></nz-option>
-                                                <nz-option [nzValue]="ReportType.TABLE" nzLabel="表格"></nz-option>
+                                                <nz-option [nzValue]="ReportType.PIVOT_TABLE" [nzLabel]="'cube.report.config.chart.pivot_table' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.TABLE" [nzLabel]="'cube.report.config.chart.table' | translate"></nz-option>
                                             </nz-option-group>
                                         </nz-select>
                                     </nz-form-control>
@@ -76,7 +76,7 @@
 
                                 @if (report.type === ReportType.TABLE) {
                                     <nz-form-item>
-                                        <nz-form-label>维度</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.dimension' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
                                                        nzMode="multiple"
@@ -89,7 +89,7 @@
                                         </nz-form-control>
                                     </nz-form-item>
                                     <nz-form-item>
-                                        <nz-form-label>指标</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.measure' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
                                                        nzMode="multiple"
@@ -103,7 +103,7 @@
                                     </nz-form-item>
                                 } @else if (report.type === ReportType.KPI || report.type === ReportType.PROGRESS || report.type === ReportType.GAUGE || report.type === ReportType.RING_PROGRESS) {
                                     <nz-form-item>
-                                        <nz-form-label>指标</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.measure' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
@@ -115,12 +115,12 @@
                                     </nz-form-item>
                                 } @else if (report.type === ReportType.PIVOT_TABLE) {
                                     <nz-form-item>
-                                        <nz-form-label>行字段</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.row_field' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.rowsField]" name="rowsField"
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear
-                                                       nzPlaceHolder="选择行字段">
+                                                       [nzPlaceHolder]="'cube.report.config.row_field_placeholder' | translate">
                                                 @for (dim of cubeMeta.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
                                                         {{ dim.title }}
@@ -130,12 +130,12 @@
                                         </nz-form-control>
                                     </nz-form-item>
                                     <nz-form-item>
-                                        <nz-form-label>列字段</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.col_field' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.columnsField]" name="columnsField"
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear
-                                                       nzPlaceHolder="选择列字段">
+                                                       [nzPlaceHolder]="'cube.report.config.col_field_placeholder' | translate">
                                                 @for (dim of cubeMeta.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
                                                         {{ dim.title }}
@@ -145,12 +145,12 @@
                                         </nz-form-control>
                                     </nz-form-item>
                                     <nz-form-item>
-                                        <nz-form-label>值字段</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.value_field' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.valuesField]" name="valuesField"
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch
-                                                       nzPlaceHolder="选择值字段">
+                                                       [nzPlaceHolder]="'cube.report.config.value_field_placeholder' | translate">
                                                 @for (mea of cubeMeta.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
                                                         {{ mea.title }}
@@ -161,7 +161,7 @@
                                     </nz-form-item>
                                 } @else if (report.type === ReportType.SANKEY || report.type === ReportType.CHORD) {
                                     <nz-form-item>
-                                        <nz-form-label>来源字段</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.source_field' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.sourceField]" name="sourceField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
@@ -172,7 +172,7 @@
                                         </nz-form-control>
                                     </nz-form-item>
                                     <nz-form-item>
-                                        <nz-form-label>目标字段</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.target_field' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.targetField]" name="targetField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
@@ -183,7 +183,7 @@
                                         </nz-form-control>
                                     </nz-form-item>
                                     <nz-form-item>
-                                        <nz-form-label>权重字段</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.weight_field' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.weightField]" name="weightField"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
@@ -195,7 +195,7 @@
                                     </nz-form-item>
                                 } @else {
                                     <nz-form-item>
-                                        <nz-form-label>维度</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.dimension' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
@@ -207,7 +207,7 @@
                                         </nz-form-control>
                                     </nz-form-item>
                                     <nz-form-item>
-                                        <nz-form-label>指标</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.measure' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
@@ -220,7 +220,7 @@
 
                                     @if (report.type === ReportType.DUAL_AXES) {
                                         <nz-form-item>
-                                            <nz-form-label>指标2</nz-form-label>
+                                            <nz-form-label>{{ 'cube.report.config.measure2' | translate }}</nz-form-label>
                                             <nz-form-control>
                                                 <nz-select [(ngModel)]="report.cube['yField2']" name="yField2"
                                                            (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
@@ -234,7 +234,7 @@
                                     }
                                     @if (report.type === ReportType.BUBBLE) {
                                         <nz-form-item>
-                                            <nz-form-label>尺寸字段</nz-form-label>
+                                            <nz-form-label>{{ 'cube.report.config.size_field' | translate }}</nz-form-label>
                                             <nz-form-control>
                                                 <nz-select [(ngModel)]="report.cube[CubeKey.sizeField]" name="sizeField"
                                                            (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
@@ -248,7 +248,7 @@
                                     }
                                     @if (supportSeriesField(report.type)) {
                                         <nz-form-item>
-                                            <nz-form-label>分组字段</nz-form-label>
+                                            <nz-form-label>{{ 'cube.report.config.series_field' | translate }}</nz-form-label>
                                             <nz-form-control>
                                                 <nz-select [(ngModel)]="report.cube[CubeKey.seriesField]"
                                                            name="seriesField"
@@ -265,9 +265,9 @@
                                 <nz-form-item>
                                     <nz-form-label>
                                         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                            <span>排序</span>
+                                            <span>{{ 'cube.report.config.sort' | translate }}</span>
                                             <button nz-button nzType="link" nzSize="small" (click)="addSort()">
-                                                <i nz-icon nzType="plus"></i>添加
+                                                <i nz-icon nzType="plus"></i>{{ 'cube.report.config.add' | translate }}
                                             </button>
                                         </div>
                                     </nz-form-label>
@@ -277,9 +277,9 @@
                                                 <nz-select [(ngModel)]="sort.field" [name]="'sortField' + $index"
                                                            (ngModelChange)="changeCube()"
                                                            nzShowSearch
-                                                           style="flex: 1" nzPlaceHolder="排序字段">
+                                                           style="flex: 1" [nzPlaceHolder]="'cube.report.config.sort_field_placeholder' | translate">
                                                     @if (selectedDimensions.length) {
-                                                        <nz-option-group nzLabel="维度">
+                                                        <nz-option-group [nzLabel]="'cube.report.config.dimension' | translate">
                                                             @for (dim of selectedDimensions; track dim.code) {
                                                                 <nz-option [nzValue]="dim.code"
                                                                            [nzLabel]="dim.title"></nz-option>
@@ -287,7 +287,7 @@
                                                         </nz-option-group>
                                                     }
                                                     @if (cubeMeta.measures?.length) {
-                                                        <nz-option-group nzLabel="指标">
+                                                        <nz-option-group [nzLabel]="'cube.report.config.measure' | translate">
                                                             @for (mea of cubeMeta.measures; track mea.code) {
                                                                 <nz-option [nzValue]="mea.code"
                                                                            [nzLabel]="mea.title"></nz-option>
@@ -299,8 +299,8 @@
                                                            [name]="'sortDirection' + $index"
                                                            (ngModelChange)="changeCube()"
                                                            style="width: 100px;">
-                                                    <nz-option nzValue="ASC" nzLabel="升序"></nz-option>
-                                                    <nz-option nzValue="DESC" nzLabel="降序"></nz-option>
+                                                    <nz-option nzValue="ASC" [nzLabel]="'cube.report.config.sort.asc' | translate"></nz-option>
+                                                    <nz-option nzValue="DESC" [nzLabel]="'cube.report.config.sort.desc' | translate"></nz-option>
                                                 </nz-select>
                                                 <button nz-button nzType="text" nzDanger (click)="removeSort($index)">
                                                     <i nz-icon nzType="delete"></i>
@@ -312,22 +312,22 @@
                             </form>
                         </div>
                     </nz-tab>
-                    <nz-tab nzTitle="自定义配置">
+                    <nz-tab [nzTitle]="'cube.report.config.custom' | translate">
                         <form nz-form nzLayout="vertical">
                             @if (report.type === ReportType.KPI) {
                                 <nz-form-item>
                                     <nz-form-control>
-                                        <nz-form-label>字体大小</nz-form-label>
+                                        <nz-form-label>{{ 'cube.report.config.font_size' | translate }}</nz-form-label>
                                         <nz-slider [nzMin]="30" [nzMax]="300" [nzStep]="1" name="fontSize"
                                                    [(ngModel)]="report.ui['fontSize']"></nz-slider>
                                     </nz-form-control>
                                     <nz-form-control>
                                         <div style="display: flex;align-items: center;gap:10px">
-                                            <div style="display: flex;align-items: center">文本颜色&nbsp;
+                                            <div style="display: flex;align-items: center">{{ 'cube.report.config.text_color' | translate }}&nbsp;
                                                 <nz-color-picker [(ngModel)]="report.ui['color']"
                                                                  name="color"></nz-color-picker>
                                             </div>
-                                            <div style="display: flex;align-items: center">背景颜色&nbsp;
+                                            <div style="display: flex;align-items: center">{{ 'cube.dashboard.config.bg_color' | translate }}&nbsp;
                                                 <nz-color-picker [(ngModel)]="report.ui['background']"
                                                                  name="background"></nz-color-picker>
                                             </div>
@@ -337,7 +337,7 @@
                             }
                             @if (report.type === ReportType.PIVOT_TABLE) {
                                 <nz-form-item>
-                                    <nz-form-label>主题</nz-form-label>
+                                    <nz-form-label>{{ 'cube.dashboard.config.theme' | translate }}</nz-form-label>
                                     <nz-form-control>
                                         <nz-select [(ngModel)]="report.ui['pivotTheme']" name="pivotTheme"
                                                    (ngModelChange)="renderChart()">
@@ -353,19 +353,19 @@
                                     <nz-form-control>
                                         <label nz-checkbox [(ngModel)]="report.ui['smooth']" name="smooth"
                                                (ngModelChange)="onConfigChange()">
-                                            平滑曲线
+                                            {{ 'cube.report.config.smooth_curve' | translate }}
                                         </label>
                                         @if (report.type === ReportType.LINE) {
                                             <label nz-checkbox [(ngModel)]="report.ui['stepType']" name="stepType"
                                                    (ngModelChange)="onConfigChange()">
-                                                阶梯折线图
+                                                {{ 'cube.report.config.step_line' | translate }}
                                             </label>
                                         }
                                     </nz-form-control>
                                 </nz-form-item>
                             } @else if (report.type === ReportType.PIE) {
                                 <nz-form-item>
-                                    <nz-form-label>内环半径</nz-form-label>
+                                    <nz-form-label>{{ 'cube.report.config.inner_radius' | translate }}</nz-form-label>
                                     <nz-form-control>
                                         <nz-slider [nzMin]="0" [nzMax]="0.9" [nzStep]="0.1"
                                                    [(ngModel)]="report.ui['innerRadius']" name="innerRadius"
@@ -379,12 +379,12 @@
                                         @if (report.type !== ReportType.AREA) {
                                             <label nz-checkbox [(ngModel)]="report.ui['isStack']" name="isStack"
                                                    (ngModelChange)="onConfigChange()">
-                                                堆叠图
+                                                {{ 'cube.report.config.stacked' | translate }}
                                             </label>
                                         }
                                         <label nz-checkbox [(ngModel)]="report.ui['isPercent']" name="isPercent"
                                                (ngModelChange)="onConfigChange()">
-                                            百分比模式
+                                            {{ 'cube.report.config.percentage' | translate }}
                                         </label>
                                     </nz-form-control>
                                 </nz-form-item>
@@ -394,25 +394,25 @@
                                     <nz-form-control>
                                         <label nz-checkbox [(ngModel)]="report.ui['showLabel']" name="showLabel"
                                                (ngModelChange)="onConfigChange()">
-                                            显示数值标签
+                                            {{ 'cube.report.config.show_label' | translate }}
                                         </label>
                                     </nz-form-control>
                                 </nz-form-item>
                             }
                             @if (supportSeriesField(report.type)) {
                                 <nz-form-item>
-                                    <nz-form-label>图例位置</nz-form-label>
+                                    <nz-form-label>{{ 'cube.report.config.legend_position' | translate }}</nz-form-label>
                                     <nz-form-control>
                                         <nz-select [(ngModel)]="report.ui['legendPosition']" name="legendPosition"
                                                    (ngModelChange)="onConfigChange()">
-                                            <nz-option nzValue="top" nzLabel="顶部"></nz-option>
-                                            <nz-option nzValue="bottom" nzLabel="底部"></nz-option>
-                                            <nz-option nzValue="left" nzLabel="左侧"></nz-option>
-                                            <nz-option nzValue="right" nzLabel="右侧"></nz-option>
-                                            <nz-option nzValue="top-left" nzLabel="左上"></nz-option>
-                                            <nz-option nzValue="top-right" nzLabel="右上"></nz-option>
-                                            <nz-option nzValue="bottom-left" nzLabel="左下"></nz-option>
-                                            <nz-option nzValue="bottom-right" nzLabel="右下"></nz-option>
+                                            <nz-option nzValue="top" [nzLabel]="'cube.report.config.legend.top' | translate"></nz-option>
+                                            <nz-option nzValue="bottom" [nzLabel]="'cube.report.config.legend.bottom' | translate"></nz-option>
+                                            <nz-option nzValue="left" [nzLabel]="'cube.report.config.legend.left' | translate"></nz-option>
+                                            <nz-option nzValue="right" [nzLabel]="'cube.report.config.legend.right' | translate"></nz-option>
+                                            <nz-option nzValue="top-left" [nzLabel]="'cube.report.config.legend.top_left' | translate"></nz-option>
+                                            <nz-option nzValue="top-right" [nzLabel]="'cube.report.config.legend.top_right' | translate"></nz-option>
+                                            <nz-option nzValue="bottom-left" [nzLabel]="'cube.report.config.legend.bottom_left' | translate"></nz-option>
+                                            <nz-option nzValue="bottom-right" [nzLabel]="'cube.report.config.legend.bottom_right' | translate"></nz-option>
                                         </nz-select>
                                     </nz-form-control>
                                 </nz-form-item>
@@ -420,48 +420,48 @@
                                     <nz-form-control>
                                         <label nz-checkbox [(ngModel)]="report.ui['showSlider']" name="showSlider"
                                                (ngModelChange)="onConfigChange()">
-                                            缩略轴 (Slider)
+                                            {{ 'cube.report.config.slider' | translate }}
                                         </label>
                                         <label nz-checkbox [(ngModel)]="report.ui['scrollbar']"
                                                name="showScrollbar"
                                                (ngModelChange)="onConfigChange()">
-                                            滚动条 (Scrollbar)
+                                            {{ 'cube.report.config.scrollbar' | translate }}
                                         </label>
                                     </nz-form-control>
                                 </nz-form-item>
                                 <nz-form-item>
-                                    <nz-form-label>辅助配置</nz-form-label>
+                                    <nz-form-label>{{ 'cube.report.config.aux_config' | translate }}</nz-form-label>
                                     <nz-form-control>
                                         <label nz-checkbox [(ngModel)]="report.ui['hideXAxis']" name="hideXAxis"
                                                (ngModelChange)="onConfigChange()">
-                                            隐藏X轴
+                                            {{ 'cube.report.config.hide_x_axis' | translate }}
                                         </label>
                                         <label nz-checkbox [(ngModel)]="report.ui['hideYAxis']" name="hideYAxis"
                                                (ngModelChange)="onConfigChange()">
-                                            隐藏Y轴
+                                            {{ 'cube.report.config.hide_y_axis' | translate }}
                                         </label>
                                         <label nz-checkbox [(ngModel)]="report.ui['hideTooltip']" name="hideTooltip"
                                                (ngModelChange)="onConfigChange()">
-                                            隐藏提示信息
+                                            {{ 'cube.report.config.hide_tooltip' | translate }}
                                         </label>
                                     </nz-form-control>
                                 </nz-form-item>
                                 <nz-form-item>
-                                    <nz-form-label>自定义色板</nz-form-label>
+                                    <nz-form-label>{{ 'cube.report.config.color_palette' | translate }}</nz-form-label>
                                     <nz-form-control>
                                         <nz-select [(ngModel)]="report.ui['color']" name="color"
                                                    (ngModelChange)="onConfigChange()" nzMode="tags"
-                                                   nzPlaceHolder="输入颜色值并按回车">
-                                            <nz-option nzValue="#5B8FF9" nzLabel="蓝色"></nz-option>
-                                            <nz-option nzValue="#5AD8A6" nzLabel="绿色"></nz-option>
-                                            <nz-option nzValue="#5D7092" nzLabel="灰色"></nz-option>
-                                            <nz-option nzValue="#F6BD16" nzLabel="黄色"></nz-option>
-                                            <nz-option nzValue="#E8684A" nzLabel="橙色"></nz-option>
-                                            <nz-option nzValue="#6DC8EC" nzLabel="浅蓝"></nz-option>
-                                            <nz-option nzValue="#9270CA" nzLabel="紫色"></nz-option>
-                                            <nz-option nzValue="#FF9D4D" nzLabel="浅橙"></nz-option>
-                                            <nz-option nzValue="#269A99" nzLabel="青色"></nz-option>
-                                            <nz-option nzValue="#FF99C3" nzLabel="粉色"></nz-option>
+                                                   [nzPlaceHolder]="'cube.report.config.color_placeholder' | translate">
+                                            <nz-option nzValue="#5B8FF9" [nzLabel]="'cube.report.config.color.blue' | translate"></nz-option>
+                                            <nz-option nzValue="#5AD8A6" [nzLabel]="'cube.report.config.color.green' | translate"></nz-option>
+                                            <nz-option nzValue="#5D7092" [nzLabel]="'cube.report.config.color.gray' | translate"></nz-option>
+                                            <nz-option nzValue="#F6BD16" [nzLabel]="'cube.report.config.color.yellow' | translate"></nz-option>
+                                            <nz-option nzValue="#E8684A" [nzLabel]="'cube.report.config.color.orange' | translate"></nz-option>
+                                            <nz-option nzValue="#6DC8EC" [nzLabel]="'cube.report.config.color.light_blue' | translate"></nz-option>
+                                            <nz-option nzValue="#9270CA" [nzLabel]="'cube.report.config.color.purple' | translate"></nz-option>
+                                            <nz-option nzValue="#FF9D4D" [nzLabel]="'cube.report.config.color.light_orange' | translate"></nz-option>
+                                            <nz-option nzValue="#269A99" [nzLabel]="'cube.report.config.color.cyan' | translate"></nz-option>
+                                            <nz-option nzValue="#FF99C3" [nzLabel]="'cube.report.config.color.pink' | translate"></nz-option>
                                         </nz-select>
                                     </nz-form-control>
                                 </nz-form-item>
