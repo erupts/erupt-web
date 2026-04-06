@@ -223,3 +223,123 @@ ai.chat.rename_empty_error,会话名称不能为空,會話名稱不能為空,Ses
 ai.chat.rename_success,重命名成功,重命名成功,Renamed successfully,Renommé avec succès,名前を変更しました,이름 변경 성공,Переименовано успешно,Renombrado con éxito,Erfolgreich umbenannt,Renomeado com sucesso,Berhasil diubah nama,تمت إعادة التسمية بنجاح
 ai.chat.deleted,已删除,已刪除,Deleted,Supprimé,削除しました,삭제되었습니다,Удалено,Eliminado,Gelöscht,Excluído,Dihapus,تم الحذف
 ai.chat.stopped,(已停止),(已停止),(Stopped),(Arrêté),(停止済み),(중지됨),(Остановлено),(Detenido),(Gestoppt),(Parado),(Dihentikan),(توقف)
+
+[cube]
+cube.dashboard.config.bg_color,背景颜色,背景顏色,Background color,Couleur de fond,背景色,배경색,Цвет фона,Color de fondo,Hintergrundfarbe,Cor de fundo,Warna latar,لون الخلفية
+cube.dashboard.config.bg_image,背景图 (URL),背景圖 (URL),Background image (URL),Image de fond (URL),背景画像 (URL),배경 이미지 (URL),Фоновое изображение (URL),Imagen de fondo (URL),Hintergrundbild (URL),Imagem de fundo (URL),Gambar latar (URL),صورة الخلفية (URL)
+cube.dashboard.config.theme,主题,主題,Theme,Thème,テーマ,테마,Тема,Tema,Thema,Tema,Tema,السمة
+cube.dashboard.config.theme_light,明亮,明亮,Light,Clair,ライト,라이트,Светлый,Claro,Hell,Claro,Terang,فاتح
+cube.dashboard.config.theme_dark,暗黑,暗黑,Dark,Sombre,ダーク,다크,Тёмный,Oscuro,Dunkel,Escuro,Gelap,داكن
+cube.dashboard.config.auto_refresh,"自动刷新间隔 (秒, 0=不刷新)","自動刷新間隔 (秒, 0=不刷新)",Auto refresh interval (s),Intervalle de rafraîchissement (s),自動更新間隔 (秒),자동 새로고침 간격 (초),Интервал обновления (с),Intervalo de actualización (s),Aktualisierungsintervall (s),Intervalo de atualização (s),Interval refresh (detik),فترة التحديث (ث)
+cube.dashboard.config.gap,报表间距 (px),報表間距 (px),Report gap (px),Espacement (px),レポート間隔 (px),보고서 간격 (px),Отступ (px),Espacio (px),Abstand (px),Espaço (px),Jarak laporan (px),فجوة التقرير (px)
+cube.dashboard.query,查询,查詢,Query,Requête,クエリ,조회,Запрос,Consulta,Abfrage,Consultar,Kueri,استعلام
+cube.dashboard.publish_hint,发布后，当前草稿配置将同步到正式视图。,發布後，當前草稿配置將同步到正式視圖。,After publishing the draft will sync to the live view.,Après publication la configuration sera synchronisée.,公開後にドラフト設定が本番ビューに同期されます。,게시 후 현재 초안 구성이 정식 뷰에 동기화됩니다.,После публикации черновик будет применён.,Tras publicar la configuración del borrador se sincronizará.,Nach der Veröffentlichung wird der Entwurf synchronisiert.,Após publicar a configuração do rascunho será sincronizada.,Setelah dipublikasikan konfigurasi akan disinkronkan.,بعد النشر سيتم مزامنة مسودة الإعداد مع العرض الرسمي.
+cube.dashboard.publish_desc_placeholder,修改说明,修改說明,Change description,Description des modifications,変更説明,변경 설명,Описание изменения,Descripción del cambio,Änderungsbeschreibung,Descrição da alteração,Deskripsi perubahan,وصف التغيير
+cube.dashboard.history.desc,修改说明,修改說明,Change description,Description,変更説明,변경 설명,Описание,Descripción,Beschreibung,Descrição,Deskripsi,الوصف
+cube.dashboard.history.publisher,发布人,發布人,Publisher,Éditeur,公開者,게시자,Издатель,Editor,Herausgeber,Editor,Penerbit,الناشر
+cube.dashboard.history.publish_time,发布时间,發布時間,Publish time,Date de publication,公開日時,게시 시간,Время публикации,Fecha de publicación,Veröffentlichungszeit,Hora de publicação,Waktu publikasi,وقت النشر
+cube.dashboard.history.action,操作,操作,Action,Action,操作,작업,Действие,Acción,Aktion,Ação,Tindakan,إجراء
+cube.dashboard.history.no_desc,无说明,無說明,No description,Aucune description,説明なし,설명 없음,Без описания,Sin descripción,Keine Beschreibung,Sem descrição,Tanpa deskripsi,بلا وصف
+cube.dashboard.history.rollback,回滚,回滾,Rollback,Revenir,ロールバック,롤백,Откат,Revertir,Zurücksetzen,Reverter,Kembalikan,التراجع
+cube.dashboard.publish_confirm,确定要发布吗？,確定要發布嗎？,Are you sure to publish?,Confirmer la publication ?,公開してよろしいですか？,게시하시겠습니까?,Вы уверены что хотите опубликовать?,¿Seguro que desea publicar?,Möchten Sie wirklich veröffentlichen?,Tem certeza que deseja publicar?,Yakin ingin mempublikasikan?,هل أنت متأكد من النشر؟
+cube.dashboard.publish_success,发布成功,發布成功,Published successfully,Publié avec succès,公開しました,게시 성공,Опубликовано,Publicado con éxito,Erfolgreich veröffentlicht,Publicado com sucesso,Berhasil dipublikasikan,تم النشر بنجاح
+cube.dashboard.history_title,发布历史,發布歷史,Publish history,Historique de publication,公開履歴,게시 기록,История публикаций,Historial de publicaciones,Veröffentlichungsverlauf,Histórico de publicação,Riwayat publikasi,سجل النشر
+cube.dashboard.rollback_confirm,确定要回滚到该版本吗？,確定要回滾到該版本嗎？,Are you sure to rollback to this version?,Confirmer le retour à cette version ?,このバージョンに戻しますか？,이 버전으로 롤백하시겠습니까?,Вы уверены что хотите откатить к этой версии?,¿Seguro que desea revertir a esta versión?,Möchten Sie auf diese Version zurücksetzen?,Tem certeza que deseja reverter para esta versão?,Yakin ingin mengembalikan ke versi ini?,هل أنت متأكد من التراجع إلى هذا الإصدار؟
+cube.dashboard.rollback_content_prefix,回滚后，当前的草稿配置将被覆盖为：,回滾後，當前的草稿配置將被覆蓋為：,After rollback the draft will be overridden by: ,Après retour le brouillon sera remplacé par : ,ロールバック後のドラフト: ,롤백 후 현재 초안이 다음으로 대체됩니다: ,После отката черновик будет перезаписан: ,Tras revertir el borrador será reemplazado por: ,Nach dem Zurücksetzen wird der Entwurf ersetzt durch: ,Após reverter o rascunho será sobrescrito por: ,Setelah rollback konfigurasi akan diganti dengan: ,بعد التراجع سيتم استبدال المسودة بـ:
+cube.dashboard.rollback_success,回滚成功,回滾成功,Rolled back successfully,Retour en arrière réussi,ロールバックしました,롤백 성공,Откат выполнен,Revertido con éxito,Zurückgesetzt,Revertido com sucesso,Berhasil di-rollback,تم التراجع بنجاح
+cube.dashboard.copy_confirm,确定要复制吗,確定要複製嗎,Are you sure to copy?,Confirmer la copie ?,コピーしますか？,복사하시겠습니까?,Вы уверены что хотите скопировать?,¿Seguro que desea copiar?,Möchten Sie wirklich kopieren?,Tem certeza que deseja copiar?,Yakin ingin menyalin?,هل أنت متأكد من النسخ؟
+cube.dashboard.copy_success,复制成功,複製成功,Copied successfully,Copié avec succès,コピーしました,복사 성공,Скопировано,Copiado con éxito,Erfolgreich kopiert,Copiado com sucesso,Berhasil disalin,تم النسخ بنجاح
+cube.report.current_filter,当前筛选:,當前篩選:,Current filters:,Filtres actifs:,現在のフィルター:,현재 필터:,Текущие фильтры:,Filtros actuales:,Aktuelle Filter:,Filtros atuais:,Filter aktif:,المرشحات الحالية:
+cube.report.clear_all,清除全部,清除全部,Clear all,Effacer tout,すべてクリア,전체 삭제,Очистить всё,Borrar todo,Alle löschen,Limpar tudo,Hapus semua,مسح الكل
+cube.report.config.basic,基础配置,基礎配置,Basic config,Configuration de base,基本設定,기본 설정,Базовая настройка,Configuración básica,Grundkonfiguration,Configuração básica,Konfigurasi dasar,الإعداد الأساسي
+cube.report.config.title,标题,標題,Title,Titre,タイトル,제목,Заголовок,Título,Titel,Título,Judul,العنوان
+cube.report.config.desc,描述,描述,Description,Description,説明,설명,Описание,Descripción,Beschreibung,Descrição,Deskripsi,الوصف
+cube.report.config.desc_placeholder,请输入描述信息,請輸入描述信息,Please enter a description,Veuillez entrer une description,説明を入力してください,설명을 입력하세요,Введите описание,Por favor ingrese una descripción,Bitte Beschreibung eingeben,Por favor insira uma descrição,Silakan masukkan deskripsi,يرجى إدخال وصف
+cube.report.config.chart_type,图表类型,圖表類型,Chart type,Type de graphique,グラフタイプ,차트 유형,Тип диаграммы,Tipo de gráfico,Diagrammtyp,Tipo de gráfico,Tipe grafik,نوع المخطط
+cube.report.config.basic_charts,基础图表,基礎圖表,Basic charts,Graphiques de base,基本グラフ,기본 차트,Базовые диаграммы,Gráficos básicos,Grunddiagramme,Gráficos básicos,Grafik dasar,الرسوم البيانية الأساسية
+cube.report.config.chart.line,折线图,折線圖,Line chart,Graphique en lignes,折れ線グラフ,꺾은선형,Линейный график,Gráfico de líneas,Liniendiagramm,Gráfico de linhas,Grafik garis,مخطط خطي
+cube.report.config.chart.area,面积图,面積圖,Area chart,Graphique en aires,面積グラフ,영역 차트,Диаграмма с областями,Gráfico de área,Flächendiagramm,Gráfico de área,Grafik area,مخطط منطقة
+cube.report.config.chart.column,柱状图,柱狀圖,Column chart,Graphique en colonnes,縦棒グラフ,막대형,Гистограмма,Gráfico de columnas,Säulendiagramm,Gráfico de colunas,Grafik kolom,مخطط أعمدة
+cube.report.config.chart.bar,条形图,條形圖,Bar chart,Graphique en barres,横棒グラフ,가로 막대형,Барная диаграмма,Gráfico de barras,Balkendiagramm,Gráfico de barras,Grafik batang,مخطط شريطي
+cube.report.config.chart.pie,饼图,餅圖,Pie chart,Graphique circulaire,円グラフ,원형,Круговая диаграмма,Gráfico circular,Kreisdiagramm,Gráfico de pizza,Grafik pai,مخطط دائري
+cube.report.config.advanced_charts,进阶图表,進階圖表,Advanced charts,Graphiques avancés,高度なグラフ,고급 차트,Расширенные диаграммы,Gráficos avanzados,Erweiterte Diagramme,Gráficos avançados,Grafik lanjutan,الرسوم البيانية المتقدمة
+cube.report.config.chart.scatter,散点图,散點圖,Scatter chart,Nuage de points,散布図,분산형,Точечная диаграмма,Gráfico de dispersión,Streudiagramm,Gráfico de dispersão,Grafik sebar,مخطط مبعثر
+cube.report.config.chart.bubble,气泡图,氣泡圖,Bubble chart,Graphique à bulles,バブルチャート,버블형,Пузырьковая диаграмма,Gráfico de burbuja,Blasendiagramm,Gráfico de bolha,Grafik gelembung,مخطط فقاعي
+cube.report.config.chart.radar,雷达图,雷達圖,Radar chart,Graphique radar,レーダーチャート,방사형,Радарная диаграмма,Gráfico de radar,Netzdiagramm,Gráfico de radar,Grafik radar,مخطط رادار
+cube.report.config.chart.funnel,漏斗图,漏斗圖,Funnel chart,Graphique en entonnoir,ファネルチャート,깔때기형,Воронкообразная диаграмма,Gráfico de embudo,Trichterdiagramm,Gráfico de funil,Grafik corong,مخطط قمعي
+cube.report.config.chart.gauge,仪表盘,儀表盤,Gauge chart,Jauge,ゲージチャート,게이지형,Диаграмма-спидометр,Gráfico de medidor,Tachometerdiagramm,Gráfico de medidor,Grafik pengukur,مقياس
+cube.report.config.chart.waterfall,瀑布图,瀑布圖,Waterfall chart,Graphique en cascade,ウォーターフォールチャート,폭포형,Каскадная диаграмма,Gráfico de cascada,Wasserfalldiagramm,Gráfico cascata,Grafik air terjun,مخطط شلال
+cube.report.config.chart.rose,玫瑰图,玫瑰圖,Rose chart,Graphique en rose,ローズチャート,장미형,Розовая диаграмма,Gráfico de rosa,Rosendiagramm,Gráfico de rosa,Grafik rose,مخطط وردي
+cube.report.config.chart.radial_bar,玉玦图,玉玦圖,Radial bar chart,Graphique radial,放射状棒グラフ,방사형 막대,Радиальная диаграмма,Gráfico de barras radial,Radiales Balkendiagramm,Gráfico de barras radial,Grafik batang radial,مخطط شريطي شعاعي
+cube.report.config.relation_charts,关系/特殊图表,關係/特殊圖表,Relation/Special charts,Graphiques relationnels,リレーション/特殊グラフ,관계/특수 차트,Реляционные диаграммы,Gráficos relacionales,Beziehungsdiagramme,Gráficos relacionais,Grafik relasi,الرسوم البيانية العلائقية
+cube.report.config.chart.chord,和弦图,和弦圖,Chord chart,Graphique en corde,コードチャート,코드형,Аккордовая диаграмма,Gráfico de acorde,Sehnendiagramm,Gráfico de acorde,Grafik chord,مخطط وتري
+cube.report.config.chart.word_cloud,词云图,詞雲圖,Word cloud,Nuage de mots,ワードクラウド,워드 클라우드,Облако слов,Nube de palabras,Wortwolke,Nuvem de palavras,Awan kata,سحابة كلمات
+cube.report.config.mini_charts,迷你图,迷你圖,Sparklines,Mini-graphiques,ミニグラフ,스파크라인,Мини-графики,Mini gráficos,Minidiagramme,Mini gráficos,Grafik mini,رسوم مصغرة
+cube.report.config.chart.tiny_line,迷你折线图,迷你折線圖,Tiny line,Mini ligne,ミニ折れ線グラフ,미니 꺾은선형,Мини-линия,Mini línea,Mini-Linie,Mini linha,Mini garis,خط مصغر
+cube.report.config.chart.tiny_area,迷你面积图,迷你面積圖,Tiny area,Mini aire,ミニ面積グラフ,미니 영역,Мини-площадь,Mini área,Mini-Fläche,Mini área,Mini area,منطقة مصغرة
+cube.report.config.chart.tiny_column,迷你柱状图,迷你柱狀圖,Tiny column,Mini colonne,ミニ縦棒グラフ,미니 막대형,Мини-столбец,Mini columna,Mini-Säule,Mini coluna,Mini kolom,عمود مصغر
+cube.report.config.chart.progress,进度条,進度條,Progress bar,Barre de progression,プログレスバー,진행 막대,Прогресс-бар,Barra de progreso,Fortschrittsbalken,Barra de progresso,Bilah kemajuan,شريط التقدم
+cube.report.config.chart.ring_progress,进度环,進度環,Ring progress,Anneau de progression,プログレスリング,진행 링,Кольцо прогресса,Anillo de progreso,Fortschrittsring,Anel de progresso,Cincin kemajuan,حلقة التقدم
+cube.report.config.other_charts,其他,其他,Others,Autres,その他,기타,Другие,Otros,Andere,Outros,Lainnya,أخرى
+cube.report.config.chart.pivot_table,透视表,透視表,Pivot table,Tableau croisé,ピボットテーブル,피벗 테이블,Сводная таблица,Tabla dinámica,Pivot-Tabelle,Tabela dinâmica,Tabel pivot,جدول محوري
+cube.report.config.chart.table,表格,表格,Table,Tableau,テーブル,테이블,Таблица,Tabla,Tabelle,Tabela,Tabel,جدول
+cube.report.config.dimension,维度,維度,Dimension,Dimension,ディメンション,차원,Измерение,Dimensión,Dimension,Dimensão,Dimensi,البُعد
+cube.report.config.measure,指标,指標,Measure,Mesure,メジャー,지표,Показатель,Medida,Kennzahl,Medida,Ukuran,المقياس
+cube.report.config.row_field,行字段,行字段,Row field,Champ de ligne,行フィールド,행 필드,Поле строки,Campo de fila,Zeilenfeld,Campo de linha,Field baris,حقل الصف
+cube.report.config.row_field_placeholder,选择行字段,選擇行字段,Select row field,Sélectionner le champ de ligne,行フィールドを選択,행 필드 선택,Выберите поле строки,Seleccionar campo de fila,Zeilenfeld auswählen,Selecionar campo de linha,Pilih field baris,اختر حقل الصف
+cube.report.config.col_field,列字段,列字段,Column field,Champ de colonne,列フィールド,열 필드,Поле столбца,Campo de columna,Spaltenfeld,Campo de coluna,Field kolom,حقل العمود
+cube.report.config.col_field_placeholder,选择列字段,選擇列字段,Select column field,Sélectionner le champ de colonne,列フィールドを選択,열 필드 선택,Выберите поле столбца,Seleccionar campo de columna,Spaltenfeld auswählen,Selecionar campo de coluna,Pilih field kolom,اختر حقل العمود
+cube.report.config.value_field,值字段,值字段,Value field,Champ de valeur,値フィールド,값 필드,Поле значения,Campo de valor,Wertefeld,Campo de valor,Field nilai,حقل القيمة
+cube.report.config.value_field_placeholder,选择值字段,選擇值字段,Select value field,Sélectionner le champ de valeur,値フィールドを選択,값 필드 선택,Выберите поле значения,Seleccionar campo de valor,Wertefeld auswählen,Selecionar campo de valor,Pilih field nilai,اختر حقل القيمة
+cube.report.config.source_field,来源字段,來源字段,Source field,Champ source,ソースフィールド,소스 필드,Поле источника,Campo de origen,Quellfeld,Campo de origem,Field sumber,حقل المصدر
+cube.report.config.target_field,目标字段,目標字段,Target field,Champ cible,ターゲットフィールド,대상 필드,Поле назначения,Campo de destino,Zielfeld,Campo de destino,Field target,حقل الهدف
+cube.report.config.weight_field,权重字段,權重字段,Weight field,Champ de poids,重みフィールド,가중치 필드,Поле веса,Campo de peso,Gewichtsfeld,Campo de peso,Field bobot,حقل الوزن
+cube.report.config.measure2,指标2,指標2,Measure 2,Mesure 2,メジャー2,지표2,Показатель 2,Medida 2,Kennzahl 2,Medida 2,Ukuran 2,المقياس 2
+cube.report.config.size_field,尺寸字段,尺寸字段,Size field,Champ de taille,サイズフィールド,크기 필드,Поле размера,Campo de tamaño,Größenfeld,Campo de tamanho,Field ukuran,حقل الحجم
+cube.report.config.series_field,分组字段,分組字段,Group field,Champ de groupe,グループフィールド,그룹 필드,Поле группы,Campo de grupo,Gruppenfeld,Campo de grupo,Field grup,حقل المجموعة
+cube.report.config.sort,排序,排序,Sort,Tri,ソート,정렬,Сортировка,Ordenar,Sortierung,Ordenar,Pengurutan,الترتيب
+cube.report.config.add,添加,添加,Add,Ajouter,追加,추가,Добавить,Agregar,Hinzufügen,Adicionar,Tambahkan,إضافة
+cube.report.config.sort_field_placeholder,排序字段,排序字段,Sort field,Champ de tri,ソートフィールド,정렬 필드,Поле сортировки,Campo de ordenación,Sortierfeld,Campo de ordenação,Field pengurutan,حقل الترتيب
+cube.report.config.sort.asc,升序,升序,Ascending,Croissant,昇順,오름차순,По возрастанию,Ascendente,Aufsteigend,Crescente,Naik,تصاعدي
+cube.report.config.sort.desc,降序,降序,Descending,Décroissant,降順,내림차순,По убыванию,Descendente,Absteigend,Decrescente,Turun,تنازلي
+cube.report.config.custom,自定义配置,自定義配置,Custom config,Configuration personnalisée,カスタム設定,사용자 정의 설정,Пользовательские настройки,Configuración personalizada,Benutzerdefinierte Konfiguration,Configuração personalizada,Konfigurasi kustom,الإعداد المخصص
+cube.report.config.font_size,字体大小,字體大小,Font size,Taille de police,フォントサイズ,글꼴 크기,Размер шрифта,Tamaño de fuente,Schriftgröße,Tamanho da fonte,Ukuran font,حجم الخط
+cube.report.config.text_color,文本颜色,文本顏色,Text color,Couleur du texte,テキスト色,글자 색,Цвет текста,Color de texto,Textfarbe,Cor do texto,Warna teks,لون النص
+cube.report.config.smooth_curve,平滑曲线,平滑曲線,Smooth curve,Courbe lissée,スムーズ曲線,부드러운 곡선,Сглаженная кривая,Curva suavizada,Glatte Kurve,Curva suavizada,Kurva halus,منحنى ناعم
+cube.report.config.step_line,阶梯折线图,階梯折線圖,Step line,Ligne en escalier,ステップ折れ線グラフ,계단형 꺾은선,Ступенчатая линия,Línea escalonada,Treppenliniendiagramm,Linha escalonada,Garis bertahap,خط متدرج
+cube.report.config.inner_radius,内环半径,內環半徑,Inner radius,Rayon intérieur,内径,내부 반지름,Внутренний радиус,Radio interior,Innenradius,Raio interno,Radius dalam,نصف القطر الداخلي
+cube.report.config.stacked,堆叠图,堆疊圖,Stacked,Empilé,積み上げ,누적형,Накопленная,Apilado,Gestapelt,Empilhado,Ditumpuk,مكدّس
+cube.report.config.percentage,百分比模式,百分比模式,Percentage mode,Mode pourcentage,パーセントモード,퍼센트 모드,Режим процентов,Modo porcentaje,Prozentualer Modus,Modo percentual,Mode persentase,وضع النسبة المئوية
+cube.report.config.show_label,显示数值标签,顯示數值標籤,Show value labels,Afficher les étiquettes,数値ラベルを表示,값 레이블 표시,Показать метки значений,Mostrar etiquetas de valor,Wertemarkierungen anzeigen,Mostrar rótulos de valor,Tampilkan label nilai,إظهار تسميات القيم
+cube.report.config.legend_position,图例位置,圖例位置,Legend position,Position de la légende,凡例の位置,범례 위치,Положение легенды,Posición de la leyenda,Position der Legende,Posição da legenda,Posisi legenda,موضع وسيلة الإيضاح
+cube.report.config.legend.top,顶部,頂部,Top,Haut,上部,상단,Вверху,Arriba,Oben,Topo,Atas,أعلى
+cube.report.config.legend.bottom,底部,底部,Bottom,Bas,下部,하단,Внизу,Abajo,Unten,Parte inferior,Bawah,أسفل
+cube.report.config.legend.left,左侧,左側,Left,Gauche,左側,왼쪽,Слева,Izquierda,Links,Esquerda,Kiri,يسار
+cube.report.config.legend.right,右侧,右側,Right,Droite,右側,오른쪽,Справа,Derecha,Rechts,Direita,Kanan,يمين
+cube.report.config.legend.top_left,左上,左上,Top left,Haut gauche,左上,좌상단,Вверху слева,Arriba izquierda,Oben links,Canto superior esquerdo,Kiri atas,أعلى يسار
+cube.report.config.legend.top_right,右上,右上,Top right,Haut droite,右上,우상단,Вверху справа,Arriba derecha,Oben rechts,Canto superior direito,Kanan atas,أعلى يمين
+cube.report.config.legend.bottom_left,左下,左下,Bottom left,Bas gauche,左下,좌하단,Внизу слева,Abajo izquierda,Unten links,Canto inferior esquerdo,Kiri bawah,أسفل يسار
+cube.report.config.legend.bottom_right,右下,右下,Bottom right,Bas droite,右下,우하단,Внизу справа,Abajo derecha,Unten rechts,Canto inferior direito,Kanan bawah,أسفل يمين
+cube.report.config.slider,缩略轴 (Slider),縮略軸 (Slider),Slider,Curseur,スライダー,슬라이더,Слайдер,Control deslizante,Schieberegler,Controle deslizante,Penggeser,شريط تمرير
+cube.report.config.scrollbar,滚动条 (Scrollbar),滾動條 (Scrollbar),Scrollbar,Barre de défilement,スクロールバー,스크롤바,Полоса прокрутки,Barra de desplazamiento,Scrollbalken,Barra de rolagem,Bilah gulir,شريط التمرير
+cube.report.config.aux_config,辅助配置,輔助配置,Auxiliary config,Configuration auxiliaire,補助設定,보조 설정,Вспомогательные настройки,Configuración auxiliar,Hilfskonfiguration,Configuração auxiliar,Konfigurasi tambahan,الإعداد المساعد
+cube.report.config.hide_x_axis,隐藏X轴,隱藏X軸,Hide X axis,Masquer l'axe X,X軸を非表示,X축 숨기기,Скрыть ось X,Ocultar eje X,X-Achse ausblenden,Ocultar eixo X,Sembunyikan sumbu X,إخفاء المحور X
+cube.report.config.hide_y_axis,隐藏Y轴,隱藏Y軸,Hide Y axis,Masquer l'axe Y,Y軸を非表示,Y축 숨기기,Скрыть ось Y,Ocultar eje Y,Y-Achse ausblenden,Ocultar eixo Y,Sembunyikan sumbu Y,إخفاء المحور Y
+cube.report.config.hide_tooltip,隐藏提示信息,隱藏提示信息,Hide tooltip,Masquer l'infobulle,ツールチップを非表示,툴팁 숨기기,Скрыть всплывающую подсказку,Ocultar información emergente,Tooltip ausblenden,Ocultar dica de ferramenta,Sembunyikan tooltip,إخفاء تلميح الأداة
+cube.report.config.color_palette,自定义色板,自定義色板,Custom color palette,Palette de couleurs,カスタムカラーパレット,사용자 색상 팔레트,Пользовательская палитра,Paleta de colores personalizada,Benutzerdefinierte Farbpalette,Paleta de cores personalizada,Palet warna kustom,لوحة الألوان المخصصة
+cube.report.config.color_placeholder,输入颜色值并按回车,輸入顏色值並按回車,Enter color value and press Enter,Entrer une valeur de couleur,色の値を入力しEnterを押してください,색상 값을 입력하고 Enter 키를 누르세요,Введите значение цвета и нажмите Enter,Ingrese el valor del color y presione Enter,Farbwert eingeben und Enter drücken,Insira o valor da cor e pressione Enter,Masukkan nilai warna dan tekan Enter,أدخل قيمة اللون واضغط Enter
+cube.report.config.color.blue,蓝色,藍色,Blue,Bleu,青,파란색,Синий,Azul,Blau,Azul,Biru,أزرق
+cube.report.config.color.green,绿色,綠色,Green,Vert,緑,초록색,Зелёный,Verde,Grün,Verde,Hijau,أخضر
+cube.report.config.color.gray,灰色,灰色,Gray,Gris,グレー,회색,Серый,Gris,Grau,Cinza,Abu-abu,رمادي
+cube.report.config.color.yellow,黄色,黃色,Yellow,Jaune,黄色,노란색,Жёлтый,Amarillo,Gelb,Amarelo,Kuning,أصفر
+cube.report.config.color.orange,橙色,橙色,Orange,Orange,オレンジ,주황색,Оранжевый,Naranja,Orange,Laranja,Oranye,برتقالي
+cube.report.config.color.light_blue,浅蓝,淺藍,Light blue,Bleu clair,ライトブルー,하늘색,Голубой,Azul claro,Hellblau,Azul claro,Biru muda,أزرق فاتح
+cube.report.config.color.purple,紫色,紫色,Purple,Violet,紫,보라색,Фиолетовый,Morado,Lila,Roxo,Ungu,بنفسجي
+cube.report.config.color.light_orange,浅橙,淺橙,Light orange,Orange clair,ライトオレンジ,연주황,Светло-оранжевый,Naranja claro,Hellorange,Laranja claro,Oranye muda,برتقالي فاتح
+cube.report.config.color.cyan,青色,青色,Cyan,Cyan,シアン,청록색,Циан,Cian,Cyan,Ciano,Sian,سماوي
+cube.report.config.color.pink,粉色,粉色,Pink,Rose,ピンク,분홍색,Розовый,Rosa,Pink,Rosa,Merah muda,وردي
+cube.filter.config.hidden,隐藏,隱藏,Hidden,Masquer,非表示,숨김,Скрыть,Ocultar,Ausblenden,Ocultar,Sembunyikan,إخفاء
+cube.filter.config.linkage,联动字段,聯動字段,Linked field,Champ lié,連動フィールド,연동 필드,Связанное поле,Campo vinculado,Verknüpftes Feld,Campo vinculado,Field terkait,الحقل المرتبط
+cube.filter.config.linkage_placeholder,请选择联动字段,請選擇聯動字段,Please select linked field,Sélectionner le champ lié,連動フィールドを選択,연동 필드 선택,Выберите связанное поле,Seleccionar campo vinculado,Verknüpftes Feld auswählen,Selecionar campo vinculado,Pilih field terkait,اختر الحقل المرتبط
+cube.filter.control.select_linkage_first,请先选择联动项: ,請先選擇聯動項: ,Please select linked field first: ,Veuillez d'abord sélectionner le champ lié : ,先に連動フィールドを選択してください: ,연동 항목을 먼저 선택하세요: ,Сначала выберите связанное поле: ,Primero seleccione el campo vinculado: ,Zuerst verknüpftes Feld auswählen: ,Primeiro selecione o campo vinculado: ,Pilih item terkait terlebih dahulu: ,الرجاء تحديد الحقل المرتبط أولاً:
+cube.drill.export,导出,導出,Export,Exporter,エクスポート,내보내기,Экспорт,Exportar,Exportieren,Exportar,Ekspor,تصدير

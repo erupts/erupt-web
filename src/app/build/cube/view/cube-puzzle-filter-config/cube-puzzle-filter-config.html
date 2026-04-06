@@ -81,8 +81,8 @@
             </div>
         }
         <div class="filter-config-hidden">
-            <div class="filter-config-label">隐藏</div>
-            <label nz-checkbox [(ngModel)]="filter.hidden">隐藏</label>
+            <div class="filter-config-label">{{ 'cube.filter.config.hidden' | translate }}</div>
+            <label nz-checkbox [(ngModel)]="filter.hidden">{{ 'cube.filter.config.hidden' | translate }}</label>
         </div>
     </div>
     <div class="filter-config-row">
@@ -95,8 +95,8 @@
     @if (isDropdownOperator()) {
         <div class="filter-config-row">
             <div class="filter-config-field">
-                <div class="filter-config-label">联动字段</div>
-                <nz-select [(ngModel)]="filter.linkage" nzMode="multiple" nzPlaceHolder="请选择联动字段"
+                <div class="filter-config-label">{{ 'cube.filter.config.linkage' | translate }}</div>
+                <nz-select [(ngModel)]="filter.linkage" nzMode="multiple" [nzPlaceHolder]="'cube.filter.config.linkage_placeholder' | translate"
                            style="width: 100%;" nzAllowClear>
                     @for (f of getLinkageFilters(); track f.field) {
                         <nz-option [nzLabel]="f.title || this.cubeMeta.fieldTitleMap.get(f.field)" [nzValue]="f.field"></nz-option>

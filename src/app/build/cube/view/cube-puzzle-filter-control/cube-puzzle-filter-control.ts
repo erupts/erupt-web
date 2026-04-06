@@ -5,6 +5,7 @@ import {CubeOperator} from "../../model/cube-query.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {VL} from "../../../erupt/model/erupt-field.model";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {I18NService} from '@core';
 
 @Component({
     selector: 'cube-puzzle-filter-control',
@@ -28,7 +29,7 @@ export class CubePuzzleFilterControl implements OnInit {
 
     isLoading = false;
 
-    constructor(private cubeApiService: CubeApiService, private message: NzMessageService) {
+    constructor(private cubeApiService: CubeApiService, private message: NzMessageService, private i18n: I18NService) {
     }
 
     ngOnInit(): void {
@@ -75,7 +76,7 @@ export class CubePuzzleFilterControl implements OnInit {
                         const linkageFilter = this.dsl.filters.find(it => it.field === linkageField);
                         if (linkageFilter) {
                             if (linkageFilter.value === null || linkageFilter.value === undefined || (Array.isArray(linkageFilter.value) && linkageFilter.value.length === 0)) {
-                                this.message.warning("请先选择联动项: " + (linkageFilter.title || this.cubeMeta.fieldTitleMap.get(linkageFilter.field)));
+                                this.message.warning(this.i18n.fanyi('cube.filter.control.select_linkage_first') + (linkageFilter.title || this.cubeMeta.fieldTitleMap.get(linkageFilter.field)));
                                 this.isLoading = false;
                                 return;
                             }
