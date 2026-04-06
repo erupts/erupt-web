@@ -10,6 +10,7 @@ import {NzModalService} from 'ng-zorro-antd/modal';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {RestPath} from "../../../erupt/model/erupt.enum";
 import {SettingsService} from "@delon/theme";
+import {I18NService} from '@core';
 
 /** 会话列表每页条数 */
 const CHAT_PAGE_SIZE = 15;
@@ -78,7 +79,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         private modal: NzModalService,
         private message: NzMessageService,
         private ngZone: NgZone,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private i18n: I18NService
     ) {
         this.llmId = this.route.snapshot.queryParams['llm'] || '';
     }
@@ -385,17 +387,17 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     deleteChat(chatId: number, event: Event): void {
         event.stopPropagation();
         this.modal.confirm({
-            nzTitle: '确认删除',
-            nzContent: '确定要删除该会话吗？删除后无法恢复。',
-            nzOkText: '确定',
+            nzTitle: this.i18n.fanyi('ai.chat.delete_confirm_title'),
+            nzContent: this.i18n.fanyi('ai.chat.delete_confirm_content'),
+            nzOkText: this.i18n.fanyi('global.ok'),
             nzOkDanger: true,
-            nzCancelText: '取消',
+            nzCancelText: this.i18n.fanyi('global.cancel'),
             nzOnOk: () =>
                 new Promise<void>((resolve, reject) => {
                     this.chatApi.deleteChat(chatId).subscribe({
                         next: () => {
                             this.fetchChats();
-                            this.message.success('已删除');
+                            this.message.success(this.i18n.fanyi('ai.chat.deleted'));
                             resolve();
                         },
                         error: err => reject(err)
@@ -409,15 +411,15 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.renameTitle = currentTitle;
         this.renameChatId = chatId;
         this.modal.create({
-            nzTitle: '重命名会话',
+            nzTitle: this.i18n.fanyi('ai.chat.rename_modal_title'),
             nzContent: this.renameModalTpl,
-            nzOkText: '确定',
-            nzCancelText: '取消',
+            nzOkText: this.i18n.fanyi('global.ok'),
+            nzCancelText: this.i18n.fanyi('global.cancel'),
             nzOnOk: () =>
                 new Promise<void>((resolve, reject) => {
                     const newTitle = this.renameTitle?.trim();
                     if (!newTitle) {
-                        this.message.error('会话名称不能为空');
+                        this.message.error(this.i18n.fanyi('ai.chat.rename_empty_error'));
                         reject();
                         return;
                     }
@@ -432,7 +434,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                             if (chat) {
                                 chat.title = newTitle;
                             }
-                            this.message.success('重命名成功');
+                            this.message.success(this.i18n.fanyi('ai.chat.rename_success'));
                             this.renameChatId = null;
                             resolve();
                         },
@@ -488,8 +490,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                     last.contentHtml = html;
                 });
             } else {
-                last.content = '(已停止)';
-                last.contentHtml = '<p>(已停止)</p>';
+                last.content = this.i18n.fanyi('ai.chat.stopped');
+                last.contentHtml = `<p>${this.i18n.fanyi('ai.chat.stopped')}</p>`;
             }
         }
         this.accumulatedMarkdown = '';
