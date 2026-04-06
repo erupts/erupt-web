@@ -26,13 +26,13 @@
                 <!-- 筛选条件显示区 -->
                 @if (activeFilters.size > 0) {
                     <div class="filter-tags-container">
-                        <span class="filter-label">当前筛选:</span>
+                        <span class="filter-label">{{ 'cube.report.current_filter' | translate }}</span>
                         @for (filter of getActiveFiltersArray(); track filter.field) {
                             <nz-tag [nzColor]="'blue'" (nzOnClose)="clearFilter(filter.field)" nzMode="closeable">
                                 {{ getFieldTitle(filter.field) }}: {{ filter.value }}
                             </nz-tag>
                         }
-                        <a class="clear-all-link" (click)="clearAllFilters()">清除全部</a>
+                        <a class="clear-all-link" (click)="clearAllFilters()">{{ 'cube.report.clear_all' | translate }}</a>
                     </div>
                 }
                 <!-- 表格区域 -->
