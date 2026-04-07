@@ -362,7 +362,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     addItem() {
         let ref = this.modal.create({
             nzDraggable: true,
-            nzTitle: 'Add Report',
+            nzTitle: this.i18n.fanyi('cube.dashboard.add_report'),
             nzContent: CubePuzzleReportConfig,
             nzWidth: 1000,
             nzMaskClosable: false,
@@ -406,7 +406,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     editItem(index: number, item: ReportDSL) {
         let ref = this.modal.create({
             nzDraggable: true,
-            nzTitle: 'Edit Report',
+            nzTitle: this.i18n.fanyi('cube.dashboard.edit_report'),
             nzContent: CubePuzzleReportConfig,
             nzWidth: 1000,
             nzMaskClosable: false,
@@ -431,7 +431,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     addFilter() {
         let ref = this.modal.create({
-            nzTitle: 'Add Filter',
+            nzTitle: this.i18n.fanyi('cube.dashboard.add_filter'),
             nzContent: CubePuzzleFilterConfig,
             nzDraggable: true,
             nzMaskClosable: false,
@@ -462,7 +462,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     editFilter(index: number) {
         let ref = this.modal.create({
-            nzTitle: 'Add Filter',
+            nzTitle: this.i18n.fanyi('cube.dashboard.edit_filter'),
             nzContent: CubePuzzleFilterConfig,
             nzMaskClosable: false,
             nzDraggable: true,
@@ -491,7 +491,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     dashboardSettings() {
         let ref = this.modal.create({
-            nzTitle: 'Dashboard Settings',
+            nzTitle: this.i18n.fanyi('cube.dashboard.settings'),
             nzContent: CubePuzzleDashboardConfig,
             nzDraggable: true,
             nzMaskClosable: false,

@@ -18,32 +18,32 @@
                 <div class="action-buttons">
                     @if (edit) {
                         <button nz-button nzType="default" (click)="addItem()">
-                            <span nz-icon nzType="plus"></span> Add Report
+                            <span nz-icon nzType="plus"></span> {{ 'cube.dashboard.add_report' | translate }}
                         </button>
                         <button nz-button nzType="default" (click)="addFilter()">
-                            <span nz-icon nzType="filter"></span> Add Filter
+                            <span nz-icon nzType="filter"></span> {{ 'cube.dashboard.add_filter' | translate }}
                         </button>
                         <button nz-button nzType="default" (click)="dashboardSettings()">
-                            <span nz-icon nzType="setting"></span> Settings
+                            <span nz-icon nzType="setting"></span> {{ 'cube.dashboard.settings' | translate }}
                         </button>
                     }
                 </div>
             </div>
             <div class="header-right">
                 @if (edit) {
-                    <button nz-button nzType="default" (click)="cancelEdit()">Cancel</button>
+                    <button nz-button nzType="default" (click)="cancelEdit()">{{ 'global.cancel' | translate }}</button>
                     <button nz-button nzType="primary" (click)="saveEdit()" [nzLoading]="saving">
-                        <span nz-icon nzType="save"></span> Save
+                        <span nz-icon nzType="save"></span> {{ 'global.save' | translate }}
                     </button>
                 } @else {
                     <button nz-button nzType="default" (click)="showHistory()">
-                        <span nz-icon nzType="history"></span> History
+                        <span nz-icon nzType="history"></span> {{ 'cube.dashboard.history' | translate }}
                     </button>
                     <button nz-button nzType="primary" nzGhost (click)="publish()" [nzLoading]="publishing">
-                        <span nz-icon nzType="send"></span> Publish
+                        <span nz-icon nzType="send"></span> {{ 'cube.dashboard.publish' | translate }}
                     </button>
                     <button nz-button nzType="primary" (click)="startEdit()">
-                        <span nz-icon nzType="edit"></span> Edit
+                        <span nz-icon nzType="edit"></span> {{ 'global.editor' | translate }}
                     </button>
                 }
             </div>
@@ -79,14 +79,14 @@
                     }
                 }
                 <div style="margin-left: auto; display: flex; gap: 8px;">
-                    <button nz-button nzSize="small" (click)="copyLink()" title="Copy Link">
+                    <button nz-button nzSize="small" (click)="copyLink()" [title]="'cube.dashboard.copy_link' | translate">
                         <span nz-icon nzType="link"></span>
                     </button>
-                    <button nz-button nzSize="small" (click)="toggleFullscreen()" title="Fullscreen">
+                    <button nz-button nzSize="small" (click)="toggleFullscreen()" [title]="'global.fullscreen' | translate">
                         <span nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"></span>
                     </button>
                     @if (dsl.filters?.length > 0) {
-                        <button nz-button nzSize="small" (click)="reset()">Reset</button>
+                        <button nz-button nzSize="small" (click)="reset()">{{ 'global.reset' | translate }}</button>
                     }
                     <button nz-button nzType="primary" nzSize="small" (click)="query()">{{ 'cube.dashboard.query' | translate }}</button>
                 </div>
@@ -107,7 +107,7 @@
                         <gridster-item [item]="report">
                             <div class="puzzle-item">
                                 @if (edit) {
-                                    <div class="drag-handler item-actions" title="Drag"
+                                    <div class="drag-handler item-actions" [title]="'global.drag' | translate"
                                          style="left: 49%;right: auto;transform: rotateZ(90deg)">
                                         <button nz-button nzType="text" nzSize="small">
                                             <span nz-icon nzType="holder" nzTheme="outline"></span>
@@ -115,20 +115,20 @@
                                     </div>
                                     <div class="item-actions">
                                         <button nz-button nzType="text" nzSize="small" (click)="editItem($index,report)"
-                                                title="Edit">
+                                                [title]="'global.editor' | translate">
                                             <span nz-icon nzType="edit"></span>
                                         </button>
                                         <button nz-button nzType="text" nzSize="small" (click)="copyItem($index,report)"
-                                                title="Copy">
+                                                [title]="'global.copy' | translate">
                                             <span nz-icon nzType="copy"></span>
                                         </button>
                                         <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)"
-                                                title="Fullscreen">
+                                                [title]="'global.fullscreen' | translate">
                                             <span nz-icon [nzType]="isItemFullscreen($index) ? 'fullscreen-exit' : 'fullscreen'"></span>
                                         </button>
                                         <button nz-button nzType="text" nzSize="small" nzDanger
                                                 (click)="removeItem($index)"
-                                                title="Remove">
+                                                [title]="'global.delete' | translate">
                                             <span nz-icon nzType="delete"></span>
                                         </button>
                                     </div>
@@ -142,16 +142,16 @@
                                         }
                                         @if (report.type != ReportType.KPI && report.type != ReportType.PIVOT_TABLE) {
                                             <button nz-button nzType="text" nzSize="small" (click)="download($index)"
-                                                    title="Download">
+                                                    [title]="'global.download' | translate">
                                                 <span nz-icon nzType="download"></span>
                                             </button>
                                         }
                                         <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)"
-                                                title="Fullscreen">
+                                                [title]="'global.fullscreen' | translate">
                                             <span nz-icon [nzType]="isItemFullscreen($index) ? 'fullscreen-exit' : 'fullscreen'"></span>
                                         </button>
                                         <button nz-button nzType="text" nzSize="small" (click)="refreshItem($index)"
-                                                title="Refresh">
+                                                [title]="'global.refresh' | translate">
                                             <span nz-icon nzType="redo"></span>
                                         </button>
                                     </div>
