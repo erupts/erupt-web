@@ -92,6 +92,9 @@ export class CubePuzzleFilterConfig implements OnInit {
     }
 
     getLinkageFilters() {
+        if (!this.dsl.filters) {
+            return [];
+        }
         const map = new Map<string, FilterDSL>();
         this.dsl.filters.forEach(f => {
             const isParameter = this.cubeMeta.parameters.find(param => param.code === f.field);

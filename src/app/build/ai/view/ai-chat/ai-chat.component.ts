@@ -17,7 +17,7 @@ const CHAT_PAGE_SIZE = 15;
 /** 距底部多少 px 时触发加载更多会话 */
 const CHAT_SCROLL_THRESHOLD = 80;
 /** 消息区视为「在底部」的缓冲 px：仅当用户在此范围内时，流式返回才自动触底 */
-const BUBBLES_BOTTOM_BUFFER_PX = 80;
+const BUBBLES_BOTTOM_BUFFER_PX = 120;
 
 @Component({
     standalone: false,
@@ -90,7 +90,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.chatApi.agents().subscribe(res => {
             this.agents = res.data;
         });
-        this.scrollSubject.pipe(throttleTime(100)).subscribe(() => {
+        this.scrollSubject.pipe(throttleTime(50)).subscribe(() => {
             if (this.isBubblesNearBottom()) {
                 this.scrollBubblesToBottom();
             }
@@ -300,7 +300,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                     const last = this.messages[this.messages.length - 1];
                     this.ngZone.run(() => {
                         last.think = data.data;
-                        this.scrollSubject.next();
+                        setTimeout(() => this.scrollSubject.next());
                     });
                 } else if (data.event == SseMessageEvent.DONE) {
                     this.ngZone.run(() => {
