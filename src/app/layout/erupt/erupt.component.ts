@@ -181,7 +181,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                     if (menu.pid == pid) {
                         let option: Menu = {
                             text: menu.name,
-                            key: menu.name,
+                            key: menu.code,
                             i18n: menu.name,
                             linkExact: true,
                             icon: menu.icon || (menu.pid ? null : 'fa fa-list-ul'),
