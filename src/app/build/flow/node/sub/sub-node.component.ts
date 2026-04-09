@@ -7,7 +7,7 @@ import {geneNodeId, insertFlexNodeFun} from "@flow/util/flow.util";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlowConfig} from "@flow/model/flow.model";
-import {SamePersonApprovalStrategy, SubNode, SubTurnRule} from "@flow/model/flow-approval.model";
+import {ReviewMode, SamePersonApprovalStrategy, SubNode, SubTurnRule} from "@flow/model/flow-approval.model";
 import {I18NService} from "@core";
 
 @Component({
@@ -17,6 +17,8 @@ import {I18NService} from "@core";
     styleUrls: ['./sub-node.component.less']
 })
 export class SubNodeComponent extends ANode implements OnInit {
+
+    @Input() flowRule: NodeRule[];
 
     @Input() readonly = false;
     @Input() eruptBuild: EruptBuildModel;
@@ -56,9 +58,14 @@ export class SubNodeComponent extends ANode implements OnInit {
                 if (this.subNode.subFlowId) {
                     this.changeSubFlow(this.subNode.subFlowId, false);
                 }
+                if (!this.subNode.lunchMode) {
+                    this.subNode.lunchMode = {
+                        mode: ReviewMode.SUBMITTER_HIMSELF,
+                        modeValue: null
+                    }
+                }
             } else {
                 this.subNode = new SubNode();
-                this.subNode.turnRule = SubTurnRule.WAIT_COMPLETE;
             }
         })
     }
@@ -130,6 +137,15 @@ export class SubNodeComponent extends ANode implements OnInit {
         this.subNode.mappingsReverse.push({source: null, target: null});
     }
 
+    changeReview() {
+        if (this.subNode.lunchMode.mode == ReviewMode.SELF_SELECT) {
+            this.subNode.lunchMode.modeValue = [];
+        } else {
+            this.subNode.lunchMode.modeValue = null;
+        }
+    }
+
     protected readonly SamePersonApprovalStrategy = SamePersonApprovalStrategy;
     protected readonly SubTurnRule = SubTurnRule;
+    protected readonly ApprovalMode = ReviewMode;
 }

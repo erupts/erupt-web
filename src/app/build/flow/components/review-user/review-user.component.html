@@ -1,6 +1,3 @@
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-    <div style="font-weight: 500;">{{ 'flow.approval_mode' | translate }}</div>
-</div>
 <div class="approval-mode">
     <nz-radio-group [(ngModel)]="reviewUserMode.mode" (ngModelChange)="changeReview()" style="width: 100%">
         <label nz-radio [nzValue]="ApprovalMode.ORG_HEAD">{{ 'ORG_HEAD' | translate }}</label>

@@ -12,6 +12,15 @@
     {{ (getSubFlowName() || 'SUB_FLOW') |translate }}
     @if (subNode) {
         <div config>
+            <nz-card nzTitle="发起人配置" nzSize="small" style="margin-bottom: 12px">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <app-review-user [flowRule]="flowRule" [nodeId]="modelValue.id"
+                                         [reviewUserMode]="subNode.lunchMode">
+                        </app-review-user>
+                    </div>
+                </div>
+            </nz-card>
             <div>
                 <h4>流转规则</h4>
                 <nz-select [(ngModel)]="subNode.turnRule" style="width: 100%">

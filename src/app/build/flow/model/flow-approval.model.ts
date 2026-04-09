@@ -157,9 +157,14 @@ export class SubNode {
 
     subFlowId: number;
 
-    turnRule: string;
+    turnRule: string = SubTurnRule.WAIT_COMPLETE;
 
     mappings: Mapping[] = [];
+
+    lunchMode: ReviewModeValue = {
+        mode: ReviewMode.SUBMITTER_HIMSELF,
+        modeValue: null
+    };
 
     mappingsReverse: Mapping[] = [];
 

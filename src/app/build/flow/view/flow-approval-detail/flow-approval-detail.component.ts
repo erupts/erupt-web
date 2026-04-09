@@ -18,7 +18,7 @@ import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
-import {AddSignType, ReviewMode} from "@flow/model/flow-approval.model";
+import {AddSignType, ReviewMode, SubNode} from "@flow/model/flow-approval.model";
 import {KV} from "../../../erupt/model/util.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
@@ -206,6 +206,16 @@ export class FlowApprovalDetailComponent implements OnInit {
                         });
                         break;
                     }
+                }
+            }
+            if (rule.type == NodeType.SUB) {
+                let prop = <SubNode>rule.prop
+                if (prop.lunchMode?.mode === ReviewMode.NODE_ASSIGNED && prop.lunchMode?.modeValue === currentNodeId) {
+                    this.assignedNodes.push({
+                        id: rule.id,
+                        name: rule.name,
+                        userIds: []
+                    });
                 }
             }
             if (rule.branches) {

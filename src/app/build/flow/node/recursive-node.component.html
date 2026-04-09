@@ -36,6 +36,7 @@
     <!-- 子节点 -->
     @case (nodeType.SUB) {
         <app-sub-node
+            [flowRule]="flowRule"
             [readonly]="readonly"
             [(modelValue)]="node"
             [eruptBuild]="eruptBuild"
