@@ -29,6 +29,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     @ViewChild('bubblesRef') bubblesRef!: ElementRef<HTMLDivElement>;
     @ViewChild('chatListRef') chatListRef!: ElementRef<HTMLUListElement>;
     @ViewChild('renameModalTpl') renameModalTpl!: TemplateRef<unknown>;
+    @ViewChild('textareaRef') textareaRef!: ElementRef<HTMLTextAreaElement>;
 
     chats: Chat[] = [];
     agents: Agent[] = [];
@@ -66,6 +67,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     private eventSource: EventSource | null = null;
     private llmId = '';
     private scrollSubject = new Subject<void>();
+    private speakingMessage: ChatMessage | null = null;
 
     get selectedAgent(): Agent | undefined {
         return this.agents.find(a => a.id === this.selectAgentId);
@@ -100,6 +102,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     ngOnDestroy(): void {
         this.closeEventSource();
         this.scrollSubject.complete();
+        speechSynthesis.cancel();
     }
 
     ngAfterViewChecked(): void {
@@ -267,73 +270,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 loading: true
             } as ChatMessage);
             setTimeout(() => this.scrollBubblesToBottom(), 10);
-
-            const token = this.tokenService.get()?.token || '';
-            const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.llmId}&autoToolCall=${this.autoToolCall}`;
-            this.closeEventSource();
-            this.eventSource = new EventSource(url);
-            this.streaming = true;
-
-            this.eventSource.onmessage = (event) => {
-                const data: SseMessage = JSON.parse(event.data);
-                if (data.event == SseMessageEvent.TOKEN) {
-                    this.accumulatedMarkdown += data.data || '';
-                    const last = this.messages[this.messages.length - 1];
-                    // 仅当 markdown 改变时才执行渲染，避免空消息也触发渲染
-                    if (data.data) {
-                        this.markdown.render(this.accumulatedMarkdown).then(html => {
-                            // EventSource 在 Zone 外触发，必须在 ngZone.run 里更新状态并触底，界面才会刷新
-                            this.ngZone.run(() => {
-                                this.sending = false;
-                                this.sendDisabled = true;
-                                if (last) {
-                                    if (last.loading) last.loading = false;
-                                    last.streamingTick = (last.streamingTick ?? 0) + 1;
-                                    last.contentHtml = html;
-                                    last.content = this.accumulatedMarkdown;
-                                }
-                                this.scrollSubject.next();
-                            });
-                        });
-                    }
-                } else if (data.event == SseMessageEvent.THINK) {
-                    const last = this.messages[this.messages.length - 1];
-                    this.ngZone.run(() => {
-                        last.think = data.data;
-                        setTimeout(() => this.scrollSubject.next());
-                    });
-                } else if (data.event == SseMessageEvent.DONE) {
-                    this.ngZone.run(() => {
-                        this.closeEventSource();
-                        this.sendDisabled = false;
-                        this.sending = false;
-                        this.accumulatedMarkdown = '';
-                        this.scrollSubject.next();
-                        setTimeout(() => {
-                            this.scrollBubblesToBottom();
-                            // 确保 DONE 后执行一次 Mermaid 渲染，针对流式输出的最后一条消息
-                            const el = this.bubblesRef?.nativeElement;
-                            if (el) this.markdown.runMermaid(el).then();
-                        }, 50);
-                    });
-                }
-            };
-
-            this.eventSource.onerror = () => {
-                setTimeout(() => {
-                    this.accumulatedMarkdown = '';
-                    this.sendDisabled = false;
-                    this.sending = false;
-                    this.closeEventSource();
-                    // 发生错误也尝试渲染已获取的内容中可能存在的 mermaid
-                    const el = this.bubblesRef?.nativeElement;
-                    if (el) this.markdown.runMermaid(el).then();
-                }, 100);
-            };
-
-            this.eventSource.onopen = () => {
-                this.sendDisabled = true;
-            };
+            this.openSse(chatId, message);
         };
 
         if (this.selectChat == null) {
@@ -345,6 +282,147 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         } else {
             doStart(this.selectChat);
         }
+    }
+
+    /** 打开 SSE 连接并监听流式事件 */
+    private openSse(chatId: number, message: string): void {
+        const token = this.tokenService.get()?.token || '';
+        const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.llmId}&autoToolCall=${this.autoToolCall}`;
+        this.closeEventSource();
+        this.eventSource = new EventSource(url);
+        this.streaming = true;
+
+        this.eventSource.onmessage = (event) => {
+            const data: SseMessage = JSON.parse(event.data);
+            if (data.event == SseMessageEvent.TOKEN) {
+                this.accumulatedMarkdown += data.data || '';
+                const last = this.messages[this.messages.length - 1];
+                if (data.data) {
+                    this.markdown.render(this.accumulatedMarkdown).then(html => {
+                        this.ngZone.run(() => {
+                            this.sending = false;
+                            this.sendDisabled = true;
+                            if (last) {
+                                if (last.loading) last.loading = false;
+                                last.streamingTick = (last.streamingTick ?? 0) + 1;
+                                last.contentHtml = html;
+                                last.content = this.accumulatedMarkdown;
+                            }
+                            this.scrollSubject.next();
+                        });
+                    });
+                }
+            } else if (data.event == SseMessageEvent.THINK) {
+                const last = this.messages[this.messages.length - 1];
+                this.ngZone.run(() => {
+                    last.think = data.data;
+                    setTimeout(() => this.scrollSubject.next());
+                });
+            } else if (data.event == SseMessageEvent.DONE) {
+                this.ngZone.run(() => {
+                    this.closeEventSource();
+                    this.sendDisabled = false;
+                    this.sending = false;
+                    this.accumulatedMarkdown = '';
+                    this.scrollSubject.next();
+                    setTimeout(() => {
+                        this.scrollBubblesToBottom();
+                        const el = this.bubblesRef?.nativeElement;
+                        if (el) this.markdown.runMermaid(el).then();
+                    }, 50);
+                });
+            }
+        };
+
+        this.eventSource.onerror = () => {
+            setTimeout(() => {
+                this.accumulatedMarkdown = '';
+                this.sendDisabled = false;
+                this.sending = false;
+                this.closeEventSource();
+                const el = this.bubblesRef?.nativeElement;
+                if (el) this.markdown.runMermaid(el).then();
+            }, 100);
+        };
+
+        this.eventSource.onopen = () => {
+            this.sendDisabled = true;
+        };
+    }
+
+    /** 将用户消息填回输入框并截断后续消息，支持回溯编辑 */
+    editResend(item: ChatMessage, index: number): void {
+        this.content = item.content;
+        this.messages = this.messages.slice(0, index);
+        setTimeout(() => this.textareaRef?.nativeElement?.focus(), 50);
+    }
+
+    /** 将模型消息以引用块格式追加到输入框 */
+    quoteToInput(item: ChatMessage): void {
+        const quoted = item.content.split('\n').map(line => `> ${line}`).join('\n');
+        this.content = this.content ? `${this.content}\n\n${quoted}\n\n` : `${quoted}\n\n`;
+        setTimeout(() => this.textareaRef?.nativeElement?.focus(), 50);
+    }
+
+    /** 切换朗读状态（Web Speech API） */
+    toggleSpeak(item: ChatMessage): void {
+        if (item.speaking) {
+            speechSynthesis.cancel();
+            item.speaking = false;
+            this.speakingMessage = null;
+            return;
+        }
+        if (this.speakingMessage) {
+            this.speakingMessage.speaking = false;
+            speechSynthesis.cancel();
+        }
+        const utterance = new SpeechSynthesisUtterance(item.content || '');
+        utterance.onend = () => this.ngZone.run(() => {
+            item.speaking = false;
+            this.speakingMessage = null;
+        });
+        item.speaking = true;
+        this.speakingMessage = item;
+        speechSynthesis.speak(utterance);
+    }
+
+    /** 复制消息内容到剪贴板 */
+    copyMessage(item: ChatMessage): void {
+        navigator.clipboard.writeText(item.content || '').then(() => {
+            item.copied = true;
+            setTimeout(() => item.copied = false, 2000);
+        });
+    }
+
+    /** 切换思考过程折叠状态 */
+    toggleThink(item: ChatMessage): void {
+        item.thinkCollapsed = !item.thinkCollapsed;
+    }
+
+    /** 重新生成指定索引处的模型消息 */
+    regenerate(index: number): void {
+        if (this.sending || this.streaming || this.selectChat == null) return;
+        let userContent = '';
+        for (let i = index - 1; i >= 0; i--) {
+            if (this.messages[i].senderType === 'USER') {
+                userContent = this.messages[i].content;
+                break;
+            }
+        }
+        if (!userContent) return;
+        this.messages = this.messages.slice(0, index);
+        this.messages.push({
+            id: Math.random(),
+            senderType: 'MODEL',
+            content: '',
+            createTime: '',
+            loading: true
+        } as ChatMessage);
+        this.sending = true;
+        this.sendDisabled = true;
+        this.accumulatedMarkdown = '';
+        setTimeout(() => this.scrollBubblesToBottom(), 10);
+        this.openSse(this.selectChat, userContent);
     }
 
     /** 模型消息展示用 HTML：优先 contentHtml（流式已渲染），否则将 content 当 Markdown 渲染 */

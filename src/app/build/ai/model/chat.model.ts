@@ -17,6 +17,10 @@ export interface ChatMessage {
     streamingTick?: number;
     /** 是否正在渲染中（针对异步懒加载 render） */
     rendering?: boolean;
+    /** 消息操作状态 */
+    copied?: boolean;
+    thinkCollapsed?: boolean;
+    speaking?: boolean;
 }
 
 export interface UserInfo {

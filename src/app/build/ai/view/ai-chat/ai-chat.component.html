@@ -78,13 +78,16 @@
                         <div class="bubble-content">
                             @if (item.think) {
                                 <div class="think-content">
-                                    <div class="think-title">
+                                    <div class="think-title" (click)="toggleThink(item)">
                                         <span nz-icon nzType="bulb" nzTheme="outline"></span>
                                         <span>{{ 'ai.chat.thinking_process' | translate }}</span>
+                                        <span class="think-toggle" nz-icon
+                                              [nzType]="item.thinkCollapsed ? 'right' : 'down'"
+                                              nzTheme="outline"></span>
                                     </div>
-                                    <div class="markdown-body think-body">
-                                        {{ item.think }}
-                                    </div>
+                                    @if (!item.thinkCollapsed) {
+                                        <div class="markdown-body think-body">{{ item.think }}</div>
+                                    }
                                 </div>
                             }
                             @if (item.loading) {
@@ -106,6 +109,42 @@
                             }
                             @if (!item.loading && !item.content && !item.contentHtml && !item.think && item.senderType === 'MODEL') {
                                 <div class="placeholder">{{ 'ai.chat.thinking' | translate }}</div>
+                            }
+                            @if (!item.loading) {
+                                <div class="bubble-actions">
+                                    <button nz-button nzType="text" nzSize="small" class="action-btn"
+                                            [title]="(item.copied ? 'ai.chat.copied' : 'ai.chat.copy') | translate"
+                                            (click)="copyMessage(item)">
+                                        <span nz-icon [nzType]="item.copied ? 'check' : 'copy'" nzTheme="outline"></span>
+                                    </button>
+                                    <button nz-button nzType="text" nzSize="small" class="action-btn"
+                                            [class.action-btn-speaking]="item.speaking"
+                                            [title]="(item.speaking ? 'ai.chat.speak_stop' : 'ai.chat.speak') | translate"
+                                            (click)="toggleSpeak(item)">
+                                        <span nz-icon [nzType]="item.speaking ? 'pause-circle' : 'sound'" nzTheme="outline"></span>
+                                    </button>
+                                    @if (item.senderType === 'USER') {
+                                        <button nz-button nzType="text" nzSize="small" class="action-btn"
+                                                [title]="'ai.chat.edit_resend' | translate"
+                                                (click)="editResend(item, $index)">
+                                            <span nz-icon nzType="edit" nzTheme="outline"></span>
+                                        </button>
+                                    }
+                                    @if (item.senderType === 'MODEL') {
+                                        <button nz-button nzType="text" nzSize="small" class="action-btn"
+                                                [title]="'ai.chat.quote' | translate"
+                                                (click)="quoteToInput(item)">
+                                            <span nz-icon nzType="block" nzTheme="outline"></span>
+                                        </button>
+                                        @if ($index === messages.length - 1 && !streaming) {
+                                            <button nz-button nzType="text" nzSize="small" class="action-btn"
+                                                    [title]="'ai.chat.regenerate' | translate"
+                                                    (click)="regenerate($index)">
+                                                <span nz-icon nzType="reload" nzTheme="outline"></span>
+                                            </button>
+                                        }
+                                    }
+                                </div>
                             }
                         </div>
                     </div>
@@ -174,6 +213,7 @@
                 </div>
                 <div class="input-body">
                     <textarea
+                        #textareaRef
                         nz-input
                         [(ngModel)]="content"
                         (keydown)="onInputKeydown($event)"

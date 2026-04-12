@@ -180,9 +180,9 @@
     width: 100%;
     max-width: @content-max;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
-    padding: 20px 0;
+    padding: 6px 0;
     box-sizing: border-box;
 
     &.is-model {
@@ -237,10 +237,22 @@
             font-weight: 500;
             margin-bottom: 6px;
             user-select: none;
+            cursor: pointer;
             color: var(--ant-text-color-secondary, #555);
+            transition: color 0.15s;
+
+            &:hover {
+                color: var(--ant-primary-color);
+            }
 
             .anticon {
                 font-size: 14px;
+            }
+
+            .think-toggle {
+                margin-left: auto;
+                font-size: 11px;
+                opacity: 0.6;
             }
         }
 
@@ -310,6 +322,41 @@
     color: var(--ant-text-color-secondary, #555);
     padding: 12px 0;
     font-size: 14px;
+}
+
+/* 单条消息操作栏：hover 时淡入 */
+.bubble-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 6px;
+    opacity: 0;
+    transition: opacity 0.2s;
+
+    .action-btn {
+        padding: 0 5px;
+        height: 26px;
+        color: var(--ant-text-color-secondary, #888);
+        border-radius: @radius-sm;
+        line-height: 1;
+
+        &:hover {
+            color: var(--ant-text-color, #1a1a1a);
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        .anticon {
+            font-size: 13px;
+        }
+
+        &.action-btn-speaking {
+            color: var(--ant-primary-color) !important;
+        }
+    }
+}
+
+.bubble-wrap:hover .bubble-actions {
+    opacity: 1;
 }
 
 /* 消息区加载中 */

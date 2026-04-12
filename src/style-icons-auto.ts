@@ -10,6 +10,7 @@ import {
     ArrowLeftOutline,
     ArrowRightOutline,
     BellOutline,
+    BlockOutline,
     BorderInnerOutline,
     BorderOuterOutline,
     BorderOutline,
@@ -55,6 +56,7 @@ import {
     MinusSquareOutline,
     MoreOutline,
     NodeIndexOutline,
+    PauseCircleOutline,
     PieChartTwoTone,
     PlusOutline,
     PlusSquareOutline,
@@ -74,6 +76,7 @@ import {
     ShareAltOutline,
     SortAscendingOutline,
     SortDescendingOutline,
+    SoundOutline,
     StopOutline,
     SwapOutline,
     SyncOutline,
@@ -82,7 +85,7 @@ import {
     UnorderedListOutline,
     UserAddOutline,
     UserOutline,
-    WarningTwoTone,
+    WarningTwoTone
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -164,5 +167,8 @@ export const ICONS_AUTO = [
     HistoryOutline,
     BorderInnerOutline,
     BorderOutline,
-    BorderOuterOutline
+    BorderOuterOutline,
+    SoundOutline,
+    BlockOutline,
+    PauseCircleOutline
 ];

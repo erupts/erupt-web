@@ -158,7 +158,7 @@ export class HeaderComponent implements OnInit {
             nzKeyboard: true,
             nzFooter: null,
             nzClosable: true,
-            nzTitle: "AI 交互",
+            nzTitle: "AI Chat",
             nzStyle: {
                 top: '30px',
             },
