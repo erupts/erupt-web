@@ -14,6 +14,15 @@ import {I18NService} from '@core';
 
 /** 会话列表每页条数 */
 const CHAT_PAGE_SIZE = 15;
+
+/** 每个会话正在进行的 SSE 状态缓存 */
+interface ChatSseState {
+    eventSource: EventSource;
+    /** 已累积的 markdown 文本 */
+    accumulatedMarkdown: string;
+    /** 正在流式写入的消息对象引用（始终保持最新内容，切换回来后直接追加到列表） */
+    streamingMsg: ChatMessage;
+}
 /** 距底部多少 px 时触发加载更多会话 */
 const CHAT_SCROLL_THRESHOLD = 80;
 /** 消息区视为「在底部」的缓冲 px：仅当用户在此范围内时，流式返回才自动触底 */
@@ -43,7 +52,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     messagePage = 1;
     loadingMoreMessages = false;
     hasMoreMessages = true;
-    accumulatedMarkdown = '';
     /** 会话列表分页：当前页（从 1 开始） */
     chatPage = 1;
     /** 是否还有更多会话 */
@@ -64,7 +72,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     renameTitle = '';
     /** 当前重命名操作的会话 id，在 nzOnOk 中使用 */
     private renameChatId: number | null = null;
-    private eventSource: EventSource | null = null;
+    /** 各会话正在运行的 SSE 状态，key 为 chatId */
+    private pendingSse = new Map<number, ChatSseState>();
     private llmId = '';
     private scrollSubject = new Subject<void>();
     private speakingMessage: ChatMessage | null = null;
@@ -100,7 +109,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     ngOnDestroy(): void {
-        this.closeEventSource();
+        this.pendingSse.forEach(s => s.eventSource.close());
+        this.pendingSse.clear();
         this.scrollSubject.complete();
         speechSynthesis.cancel();
     }
@@ -114,14 +124,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 this.markdown.runMermaid(el).then();
             }
         }
-    }
-
-    private closeEventSource(): void {
-        if (this.eventSource) {
-            this.eventSource.close();
-            this.eventSource = null;
-        }
-        this.streaming = false;
     }
 
     createConversation(): void {
@@ -202,16 +204,34 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.selectChat = null;
         this.sending = false;
         this.sendDisabled = false;
+        this.streaming = false;
         this.messagePage = 1;
         this.hasMoreMessages = true;
-        this.accumulatedMarkdown = '';
         this.messages = [];
     }
 
     onSelectChat(chatId: number, after?: () => void): void {
-        this.clearStatus();
+        // 重置 UI 状态（不关闭其他 chat 的 SSE）
         this.selectChat = chatId;
-        this.fetchMessages(chatId, true, after);
+        this.sending = false;
+        this.streaming = false;
+        this.sendDisabled = false;
+        this.messagePage = 1;
+        this.hasMoreMessages = true;
+        this.messages = [];
+
+        // 始终从后端拉已持久化消息；拉完后若 SSE 仍在运行则追加流式消息
+        this.fetchMessages(chatId, true, () => {
+            const pending = this.pendingSse.get(chatId);
+            if (pending) {
+                // SSE 未结束：把持续更新中的 streamingMsg 追加到列表末尾
+                this.messages.push(pending.streamingMsg);
+                this.streaming = true;
+                this.sendDisabled = true;
+                this.scrollBubblesToBottom();
+            }
+            after?.();
+        });
     }
 
     fetchMessages(chatId: number, toBottom: boolean, after?: () => void): void {
@@ -284,69 +304,96 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
     }
 
-    /** 打开 SSE 连接并监听流式事件 */
+    /** 打开 SSE 连接并监听流式事件；支持后台运行，切换 chat 后继续缓存 */
     private openSse(chatId: number, message: string): void {
+        // 若该会话已有 SSE（如重新生成），先关掉旧的
+        const existing = this.pendingSse.get(chatId);
+        if (existing) {
+            existing.eventSource.close();
+            this.pendingSse.delete(chatId);
+        }
+
+        const streamingMsg = this.messages[this.messages.length - 1];
+        const state: ChatSseState = {
+            eventSource: null!,
+            accumulatedMarkdown: '',
+            streamingMsg
+        };
+
         const token = this.tokenService.get()?.token || '';
         const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.llmId}&autoToolCall=${this.autoToolCall}`;
-        this.closeEventSource();
-        this.eventSource = new EventSource(url);
+        state.eventSource = new EventSource(url);
+        this.pendingSse.set(chatId, state);
         this.streaming = true;
 
-        this.eventSource.onmessage = (event) => {
+        const isActive = () => this.selectChat === chatId;
+
+        state.eventSource.onmessage = (event) => {
             const data: SseMessage = JSON.parse(event.data);
-            if (data.event == SseMessageEvent.TOKEN) {
-                this.accumulatedMarkdown += data.data || '';
-                const last = this.messages[this.messages.length - 1];
-                if (data.data) {
-                    this.markdown.render(this.accumulatedMarkdown).then(html => {
+
+            if (data.event === SseMessageEvent.TOKEN) {
+                if (!data.data) return;
+                state.accumulatedMarkdown += data.data;
+                this.markdown.render(state.accumulatedMarkdown).then(html => {
+                    // 无论当前在哪个 chat，始终更新 streamingMsg 对象（保持最新内容）
+                    const msg = state.streamingMsg;
+                    if (msg.loading) msg.loading = false;
+                    msg.streamingTick = (msg.streamingTick ?? 0) + 1;
+                    msg.contentHtml = html;
+                    msg.content = state.accumulatedMarkdown;
+                    // 只有当前视图是该会话才走 ngZone 触发 UI 刷新和滚动
+                    if (isActive()) {
                         this.ngZone.run(() => {
                             this.sending = false;
                             this.sendDisabled = true;
-                            if (last) {
-                                if (last.loading) last.loading = false;
-                                last.streamingTick = (last.streamingTick ?? 0) + 1;
-                                last.contentHtml = html;
-                                last.content = this.accumulatedMarkdown;
-                            }
                             this.scrollSubject.next();
                         });
-                    });
-                }
-            } else if (data.event == SseMessageEvent.THINK) {
-                const last = this.messages[this.messages.length - 1];
-                this.ngZone.run(() => {
-                    last.think = data.data;
-                    setTimeout(() => this.scrollSubject.next());
+                    }
                 });
-            } else if (data.event == SseMessageEvent.DONE) {
+
+            } else if (data.event === SseMessageEvent.THINK) {
+                state.streamingMsg.think = data.data;
+                if (isActive()) {
+                    this.ngZone.run(() => setTimeout(() => this.scrollSubject.next()));
+                }
+
+            } else if (data.event === SseMessageEvent.DONE) {
                 this.ngZone.run(() => {
-                    this.closeEventSource();
-                    this.sendDisabled = false;
-                    this.sending = false;
-                    this.accumulatedMarkdown = '';
-                    this.scrollSubject.next();
-                    setTimeout(() => {
-                        this.scrollBubblesToBottom();
-                        const el = this.bubblesRef?.nativeElement;
-                        if (el) this.markdown.runMermaid(el).then();
-                    }, 50);
+                    state.eventSource.close();
+                    this.pendingSse.delete(chatId);
+                    if (isActive()) {
+                        this.streaming = false;
+                        this.sendDisabled = false;
+                        this.sending = false;
+                        this.scrollSubject.next();
+                        setTimeout(() => {
+                            this.scrollBubblesToBottom();
+                            const el = this.bubblesRef?.nativeElement;
+                            if (el) this.markdown.runMermaid(el).then();
+                        }, 50);
+                    }
                 });
             }
         };
 
-        this.eventSource.onerror = () => {
+        state.eventSource.onerror = () => {
             setTimeout(() => {
-                this.accumulatedMarkdown = '';
-                this.sendDisabled = false;
-                this.sending = false;
-                this.closeEventSource();
-                const el = this.bubblesRef?.nativeElement;
-                if (el) this.markdown.runMermaid(el).then();
+                this.ngZone.run(() => {
+                    state.eventSource.close();
+                    this.pendingSse.delete(chatId);
+                    if (isActive()) {
+                        this.streaming = false;
+                        this.sendDisabled = false;
+                        this.sending = false;
+                        const el = this.bubblesRef?.nativeElement;
+                        if (el) this.markdown.runMermaid(el).then();
+                    }
+                });
             }, 100);
         };
 
-        this.eventSource.onopen = () => {
-            this.sendDisabled = true;
+        state.eventSource.onopen = () => {
+            if (isActive()) this.sendDisabled = true;
         };
     }
 
@@ -420,7 +467,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         } as ChatMessage);
         this.sending = true;
         this.sendDisabled = true;
-        this.accumulatedMarkdown = '';
         setTimeout(() => this.scrollBubblesToBottom(), 10);
         this.openSse(this.selectChat, userContent);
     }
@@ -554,25 +600,29 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.content = '';
     }
 
-    /** 停止当前流式响应 */
+    /** 停止当前会话的流式响应 */
     stopGeneration(): void {
-        this.closeEventSource();
+        if (this.selectChat == null) return;
+        const state = this.pendingSse.get(this.selectChat);
+        if (state) {
+            state.eventSource.close();
+            this.pendingSse.delete(this.selectChat);
+        }
+        this.streaming = false;
         this.sending = false;
         this.sendDisabled = false;
         const last = this.messages[this.messages.length - 1];
         if (last?.loading) {
             last.loading = false;
-            if (this.accumulatedMarkdown) {
-                last.content = this.accumulatedMarkdown;
-                this.markdown.render(this.accumulatedMarkdown).then(html => {
-                    last.contentHtml = html;
-                });
+            const md = state?.accumulatedMarkdown || '';
+            if (md) {
+                last.content = md;
+                this.markdown.render(md).then(html => { last.contentHtml = html; });
             } else {
                 last.content = this.i18n.fanyi('ai.chat.stopped');
                 last.contentHtml = `<p>${this.i18n.fanyi('ai.chat.stopped')}</p>`;
             }
         }
-        this.accumulatedMarkdown = '';
     }
 
 }
