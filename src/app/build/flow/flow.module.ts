@@ -47,6 +47,8 @@ import {SubNodeComponent} from '@flow/node/sub/sub-node.component';
 import {NzImageDirective} from "ng-zorro-antd/image";
 import {FlowApprovalDetailComponent} from '@flow/view/flow-approval-detail/flow-approval-detail.component';
 import {FlowPrintPreviewComponent} from '@flow/view/flow-approval-detail/print-preview/print-preview.component';
+import {AssigneeNodeComponent} from "@flow/node/assignee/assignee-node.component";
+import {UpmsSelectViewComponent} from "@flow/components/upms-select-view/upms-select-view.component";
 
 @NgModule({
     declarations: [
@@ -54,6 +56,7 @@ import {FlowPrintPreviewComponent} from '@flow/view/flow-approval-detail/print-p
         StartNodeComponent,
         ApprovalNodeComponent,
         CcNodeComponent,
+        AssigneeNodeComponent,
         GatewayNodeComponent,
         NodeComponent,
         BranchNodeComponent,
@@ -72,6 +75,7 @@ import {FlowPrintPreviewComponent} from '@flow/view/flow-approval-detail/print-p
         GatewayJoinComponent,
         ReviewUserComponent,
         UpmsSelectComponent,
+        UpmsSelectViewComponent,
         SubNodeComponent,
         FlowApprovalDetailComponent,
         FlowPrintPreviewComponent

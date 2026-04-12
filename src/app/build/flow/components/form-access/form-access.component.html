@@ -1,36 +1,48 @@
 <nz-table [nzData]="eruptBuild.eruptModel.eruptFieldModels.length?[{}]:[]" [nzSize]="'small'" nzHideOnSinglePage>
-  <thead>
+    <thead>
     <tr>
-      <th [nzWidth]="'260px'">表单字段</th>
-      <th style="display: flex;gap: 50px;justify-content:space-evenly">
-        <span>只读</span>
-        <span>编辑</span>
-        <span>必填</span>
-        <span>隐藏</span>
-      </th>
+        <th [nzWidth]="'260px'">表单字段</th>
+        <th style="background: #fafafa; border-bottom: 1px solid #f0f0f0;">
+            <div style="display: flex; align-items: center;">
+                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.READONLY)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部只读">只读</span>
+                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.READ_WRITE)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部编辑">编辑</span>
+                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.NOT_NULL)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部必填">必填</span>
+                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.HIDE)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部隐藏">隐藏</span>
+            </div>
+        </th>
     </tr>
-  </thead>
-  <tbody>
-    @for (field of eruptBuild.eruptModel.eruptFieldModels; track field) {
-      @if (field.eruptFieldJson.edit.title && field.eruptFieldJson.edit.show) {
-        <tr>
-          <td>{{ field.eruptFieldJson.edit.title }}</td>
-          <td>
-            <nz-radio-group [(ngModel)]="formAccesses[field.fieldName]" style="width: 100%"
-              [nzDisabled]="field.eruptFieldJson.edit.readOnly.add">
-              <div style="display: flex;gap: 50px;justify-content:space-evenly">
-                <label nz-radio [nzValue]="FormAccessEnum.READONLY"></label>
-                <label nz-radio [nzValue]="FormAccessEnum.READ_WRITE"></label>
-                <label nz-radio [nzValue]="FormAccessEnum.NOT_NULL"
-                                   [nzDisabled]="(field.eruptFieldJson.edit.type == EditType.DIVIDE
-                                    || field.eruptFieldJson.edit.type == EditType.TPL
-                                    || field.eruptFieldJson.edit.type == EditType.EMPTY)"></label>
-                <label nz-radio [nzValue]="FormAccessEnum.HIDE"></label>
-              </div>
-            </nz-radio-group>
-          </td>
-        </tr>
-      }
-    }
-  </tbody>
+    </thead>
+    <tbody>
+        @for (field of eruptBuild.eruptModel.eruptFieldModels; track field) {
+            @if (field.eruptFieldJson.edit.title && field.eruptFieldJson.edit.show) {
+                <tr>
+                    <td>{{ field.eruptFieldJson.edit.title }}</td>
+                    <td>
+                        <nz-radio-group [(ngModel)]="formAccesses[field.fieldName]" style="width: 100%"
+                                        [nzDisabled]="field.eruptFieldJson.edit.readOnly.add">
+                            <div style="display: flex; align-items: center;">
+                                <div style="flex: 1; text-align: center;">
+                                    <label style="margin-right: 0" nz-radio [nzValue]="FormAccessEnum.READONLY" [nzDisabled]="nodeType==NodeType.START && field.eruptFieldJson.edit.notNull"></label>
+                                </div>
+                                <div style="flex: 1; text-align: center;">
+                                    <label style="margin-right: 0" nz-radio [nzValue]="FormAccessEnum.READ_WRITE"
+                                           [nzDisabled]="(field.eruptFieldJson.edit.notNull&&nodeType!=NodeType.START) || (nodeType==NodeType.START && field.eruptFieldJson.edit.notNull)"></label>
+                                </div>
+                                <div style="flex: 1; text-align: center;">
+                                    <label style="margin-right: 0" nz-radio [nzValue]="FormAccessEnum.NOT_NULL"
+                                           [nzDisabled]="field.eruptFieldJson.edit.type == EditType.DIVIDE
+                                            || field.eruptFieldJson.edit.type == EditType.TPL
+                                            || field.eruptFieldJson.edit.type == EditType.EMPTY
+                                    "></label>
+                                </div>
+                                <div style="flex: 1; text-align: center;">
+                                    <label style="margin-right: 0" nz-radio [nzValue]="FormAccessEnum.HIDE" [nzDisabled]="nodeType==NodeType.START && field.eruptFieldJson.edit.notNull"></label>
+                                </div>
+                            </div>
+                        </nz-radio-group>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
 </nz-table>

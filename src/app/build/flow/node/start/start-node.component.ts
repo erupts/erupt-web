@@ -85,4 +85,5 @@ export class StartNodeComponent extends ANode implements OnInit {
     }
 
     protected readonly FormAccessEnum = FormAccessEnum;
+    protected readonly NodeType = NodeType;
 }

@@ -14,7 +14,9 @@ export enum NodeType {
 
     SUB = 'SUB',
     CC = 'CC',
+    ASSIGNEE = "ASSIGNEE",
     APPROVAL = 'APPROVAL',
+
     FlEX = 'FLEX',
 
     GATEWAY_PARALLEL = "GATEWAY_PARALLEL",

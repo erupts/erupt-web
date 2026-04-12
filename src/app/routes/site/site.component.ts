@@ -9,7 +9,14 @@ import {ReuseTabService} from "@delon/abc/reuse-tab";
     standalone: false,
     selector: 'app-site',
     templateUrl: './site.component.html',
-    styles: []
+    styles: [
+        `
+            :host {
+                height: 100%;
+                overflow: auto;
+            }
+        `
+    ]
 })
 export class SiteComponent implements OnInit, OnDestroy {
 

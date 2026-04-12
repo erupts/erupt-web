@@ -9,7 +9,7 @@
     (saveProp)="onSaveProp()"
     [progress]="progress"
     (delete)="onDelete()">
-    抄送人
+    {{ ccNode.reviewUserModes[0].mode || name() | translate }}
     <div config>
         <nz-segmented [nzOptions]="[{value:0,label:'设置抄送人'},{value:1,label:'表单权限'}]" [(ngModel)]="selectTab" style="margin-bottom: 12px">
 
@@ -19,7 +19,7 @@
                 <nz-card nzTitle="抄送人" nzSize="small" style="margin-bottom: 12px">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div style="flex: 1;">
-                            <app-review-user [reviewUserMode]="reviewUserMode">
+                            <app-review-user [reviewUserMode]="reviewUserMode" [flowRule]="flowRule" [nodeId]="modelValue.id">
                             </app-review-user>
                         </div>
                         @if (ccNode.reviewUserModes.length > 1) {
@@ -43,7 +43,7 @@
             </button>
         }
         @if (selectTab == 1) {
-            <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="ccNode.formAccesses"/>
+            <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="ccNode.formAccesses" [nodeType]="NodeType.CC"/>
         }
     </div>
 </erupt-node>

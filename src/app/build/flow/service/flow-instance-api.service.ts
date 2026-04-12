@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
 import {_HttpClient} from "@delon/theme";
 import {Observable} from "rxjs";
-import {R} from "@shared/model/api.model";
+import {R, SimplePage} from "@shared/model/api.model";
 import {RestPath} from "../../erupt/model/erupt.enum";
-import {ApprovalView, FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask, FlowTurn} from "@flow/model/flow-instance.model";
-import {NodeRule} from "@flow/model/node.model";
+import {FlowInstance, FlowInstanceComment, FlowInstanceDataHistory, FlowInstanceTask, FlowTurn} from "@flow/model/flow-instance.model";
 import {FlowConfig} from "@flow/model/flow.model";
 import {AddSignType, ApprovalQuery} from "@flow/model/flow-approval.model";
 import {KV} from "../../erupt/model/util.model";
@@ -34,8 +33,8 @@ export class FlowInstanceApiService {
         });
     }
 
-    list(query: ApprovalQuery): Observable<R<FlowInstance[]>> {
-        return this._http.post<R<FlowInstance[]>>(RestPath.erupt + "/flow/instance/list", query)
+    list(query: ApprovalQuery): Observable<R<SimplePage<FlowInstance>>> {
+        return this._http.post<R<SimplePage<FlowInstance>>>(RestPath.erupt + "/flow/instance/list", query)
     }
 
     detail(no: string): Observable<R<FlowInstance>> {
@@ -54,19 +53,6 @@ export class FlowInstanceApiService {
     tasks(instanceId: number): Observable<R<FlowInstanceTask[]>> {
         return this._http.get<R<FlowInstanceTask[]>>(RestPath.erupt + "/flow/instance/tasks", {
             instanceId
-        })
-    }
-
-    currTask(instanceId: number, approvalView: ApprovalView): Observable<R<FlowInstanceTask>> {
-        return this._http.get<R<FlowInstanceTask>>(RestPath.erupt + "/flow/instance/curr-task", {
-            instanceId,
-            approvalView
-        })
-    }
-
-    taskNodeInfo(taskId: number): Observable<R<NodeRule>> {
-        return this._http.get<R<NodeRule>>(RestPath.erupt + "/flow/instance/task-node-info", {
-            taskId
         })
     }
 
@@ -118,11 +104,22 @@ export class FlowInstanceApiService {
         })
     }
 
-    agree(instanceTaskId: number, comment: string, signature: string, data: any): Observable<R<void>> {
+    assignee(instanceTaskId: number, comment: string, data: any, nodeAssignments: Record<string, number[]>): Observable<R<void>> {
+        return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/assignee", {
+            comment,
+            data,
+            nodeAssignments
+        }, {
+            instanceTaskId,
+        })
+    }
+
+    agree(instanceTaskId: number, comment: string, signature: string, data: any, nodeAssignments?: Record<string, number[]>): Observable<R<void>> {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/agree", {
             comment,
             signature,
-            data
+            data,
+            nodeAssignments
         }, {
             instanceTaskId,
         })

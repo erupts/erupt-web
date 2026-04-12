@@ -1,0 +1,109 @@
+/* AI 聊天全局样式（对 innerHTML 插入的 markdown 内容生效，不受组件封装影响；highlight.js 主题在 styles.less 中引入） */
+
+.markdown-body {
+    max-width: 100%;
+    overflow-x: auto;
+
+    pre.hljs {
+        padding: 8px;
+        margin: 0;
+        background-color: #f8f8f8;
+        border-radius: 4px;
+    }
+
+    code {
+        margin: 0;
+        padding: 0;
+        border: none !important;
+        font-size: 90%;
+        background-color: transparent;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+
+    .markdown-table-wrap {
+        overflow-x: auto;
+        margin: 1em 0;
+    }
+
+    table {
+        width: max-content;
+        min-width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px #d1d5db;
+        border: 1px solid #d1d5db;
+
+        th,
+        td {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+            color: #1a1a1a;
+            border-bottom: 2px solid #d1d5db;
+        }
+
+        tbody tr:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+    }
+
+    /* 修复 KaTeX 上下标显示问题 */
+    .katex .vlist {
+        vertical-align: baseline !important;
+    }
+
+    /* 流式输出中隐藏未完成的 mermaid 源码块，避免渲染前闪烁源码 */
+    &.is-streaming .mermaid {
+        display: none;
+    }
+
+    /* Mermaid 渲染中的占位提示 */
+    .mermaid:not([data-processed]) {
+        position: relative;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.02);
+        border-radius: 4px;
+        border: 1px dashed #d1d5db;
+        font-size: 13px;
+        margin: 1em 0;
+        visibility: visible !important; /* 强制覆盖某些可能隐藏它的样式 */
+        color: transparent; /* 隐藏原始文本 */
+        text-shadow: none;
+        overflow: hidden;
+        height: 120px;
+
+        &::before {
+            content: "";
+            width: 14px;
+            height: 14px;
+            margin-right: 8px;
+            border: 2px solid var(--ant-text-color-secondary, #666);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: loadingCircle 1s infinite linear;
+            display: inline-block;
+        }
+
+        &::after {
+            content: "渲染中...";
+            color: var(--ant-text-color-secondary, #666);
+        }
+    }
+
+    @keyframes loadingCircle {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}

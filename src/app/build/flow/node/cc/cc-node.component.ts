@@ -14,6 +14,8 @@ import {FlowTurn} from "@flow/model/flow-instance.model";
     styleUrls: ['./cc-node.component.less']
 })
 export class CcNodeComponent extends ANode implements OnInit {
+
+    @Input() flowRule: NodeRule[];
     @Input() readonly = false;
     @Input() eruptBuild: EruptBuildModel;
     @Input() modelValue: NodeRule;
@@ -98,4 +100,6 @@ export class CcNodeComponent extends ANode implements OnInit {
     override onSaveProp(): void {
         this.modelValue.prop = this.ccNode;
     }
+
+    protected readonly NodeType = NodeType;
 }

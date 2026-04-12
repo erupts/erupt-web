@@ -1,8 +1,18 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
+import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
-import {CubeFilter, CubeOperator} from "../../model/cube-query.model";
+import {CubeFilter, CubeOperator, DimensionFormat} from "../../model/cube-query.model";
 import {WindowModel} from "@shared/model/window.model";
 import {
     Area,
@@ -27,10 +37,10 @@ import {
     Waterfall,
     WordCloud
 } from "@antv/g2plot";
-import {CubeMeta} from "../../model/cube.model";
+import {CubeMeta, FieldType} from "../../model/cube.model";
 import {STColumn, STComponent} from "@delon/abc/st";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
-import {CubeDrillDetailComponent, DrillDetailParams} from "../cube-drill-detail/cube-drill-detail.component";
+import {CubeDrillDetailComponent} from "../cube-drill-detail/cube-drill-detail.component";
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -43,7 +53,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     @Input() report: ReportDSL;
 
     @Input() dashboard: Dashboard;
-
+    @Input() dsl: DashboardDSL;
     @Input() filters: CubeFilter[] = [];
 
     @Input() cubeMeta: CubeMeta;
@@ -57,6 +67,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     @ViewChild('tableContainer', {static: false}) tableContainer: ElementRef;
 
+    @ViewChild('pivotContainer', {static: false}) pivotContainer: ElementRef;
+
     querying: boolean = false;
 
     chartData: Record<string, any>[] = [];
@@ -68,6 +80,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     private resizeObserver: ResizeObserver;
 
     private visible: boolean = false;
+
+    private s2: PivotSheet;
 
     // ST 组件配置
     stColumns: STColumn[] = [];
@@ -81,10 +95,47 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     // 表格筛选功能
     activeFilters: Map<string, any> = new Map(); // 当前激活的筛选条件
 
+    /**
+     * 根据字段 code 获取字段标题
+     */
+    getFieldTitle(field: string): string {
+        return this.cubeMeta?.fieldTitleMap?.get(field) || field;
+    }
+
+    /**
+     * 根据字段 code 获取字段标题并返回 G2Plot meta 配置
+     */
+    private getFieldMeta(fields: string | string[]): Record<string, any> {
+        const meta = {};
+        const fieldArray = Array.isArray(fields) ? fields : [fields];
+        fieldArray.forEach(f => {
+            if (f) {
+                meta[f] = {
+                    alias: this.getFieldTitle(f)
+                };
+            }
+        });
+        return meta;
+    }
+
     constructor(private cubeApiService: CubeApiService,
-                private el: ElementRef,
+                public el: ElementRef,
                 private drawerService: NzDrawerService) {
 
+    }
+
+    @HostListener('window:resize', ['$event'])
+    onResize() {
+        if (this.report.type === ReportType.TABLE) {
+            this.updateTableHeight();
+        } else if (this.report.type === ReportType.PIVOT_TABLE) {
+            if (this.s2) {
+                this.s2.changeSheetSize(this.pivotContainer.nativeElement.clientWidth, this.pivotContainer.nativeElement.clientHeight);
+                this.s2.render(false);
+            }
+        } else if (this.chart) {
+            this.chart.forceFit();
+        }
     }
 
     ngOnInit(): void {
@@ -104,8 +155,13 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         });
         this.observer.observe(this.el.nativeElement);
 
+        this.resizeObserver = new ResizeObserver(() => {
+            if (this.visible) {
+                this.onResize()
+            }
+        });
+        this.resizeObserver.observe(this.el.nativeElement);
     }
-
 
     /**
      * 更新表格高度
@@ -116,8 +172,11 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             if (containerHeight > 0) {
                 this.scrollConfig = {
                     x: '100%',
-                    y: `${containerHeight - 39}px`
+                    y: `${containerHeight - 40}px`
                 };
+                if (this.st) {
+                    this.st.cd();
+                }
             }
         }
     }
@@ -220,13 +279,22 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
 
         }
+
+        // 所有组件必须选择指标才发起请求
+        if (measures.length === 0) {
+            this.chartData = [];
+            this.querying = false;
+            this.render();
+            return;
+        }
+
         let parameters: Record<string, any> = {};
         let cf: CubeFilter[] = [];
 
         // 合并外部筛选器和用户点击的维度筛选
         if (this.filters) {
             for (let f of this.filters) {
-                if (f.value != null) {
+                if (f.value != null && f.value != "") {
                     if (this.cubeMeta.parameters.filter(it => it.code === f.field).length > 0) {
                         parameters[f.field] = f.value;
                     } else {
@@ -248,18 +316,36 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 value: value
             });
         }
+        let sorts = [];
+        if (this.report.sorts) {
+            for (let sort of this.report.sorts) {
+                if (sort.field) {
+                    sorts.push(sort)
+                }
+            }
+        }
+
+        let formats: Record<string, DimensionFormat> = {};
+        for (let dim of this.cubeMeta.dimensions) {
+            dimensions.forEach(field => {
+                if (field == dim.code) {
+                    if (dim.type == FieldType.DATE) {
+                        formats[field] = DimensionFormat.DAY;
+                    }
+                }
+            })
+        }
 
         this.cubeApiService.query({
             cube: this.dashboard.cuber,
             explore: this.dashboard.explore,
             dimensions: dimensions,
             measures: measures,
-            sorts: this.report.cube[CubeKey.sortField] ? [{
-                field: this.report.cube[CubeKey.sortField] as string,
-                direction: this.report.cube[CubeKey.sortDirection] as any || 'ASC'
-            }] : [],
+            sorts: sorts,
             filters: cf,
-            parameters: parameters
+            parameters: parameters,
+            dimensionFormat: formats,
+            limit: 5000
         }).subscribe({
             next: (response) => {
                 this.chartData = response.data;
@@ -288,6 +374,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             this.chart.destroy();
             this.chart = null;
         }
+        if (this.s2) {
+            this.s2.destroy();
+            this.s2 = null;
+        }
         if (this.report.type == ReportType.TABLE || this.report.type == ReportType.KPI) {
             return;
         } else if (this.report.type == ReportType.PIVOT_TABLE) {
@@ -297,15 +387,29 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     columns: this.report.cube[CubeKey.columnsField] as string[],
                     values: this.report.cube[CubeKey.valuesField] as string[],
                 },
+                meta: [
+                    ...Object.entries(this.getFieldMeta(this.report.cube[CubeKey.rowsField])).map(([key, value]) => ({
+                        field: key,
+                        name: value.alias
+                    })),
+                    ...Object.entries(this.getFieldMeta(this.report.cube[CubeKey.columnsField])).map(([key, value]) => ({
+                        field: key,
+                        name: value.alias
+                    })),
+                    ...Object.entries(this.getFieldMeta(this.report.cube[CubeKey.valuesField])).map(([key, value]) => ({
+                        field: key,
+                        name: value.alias
+                    })),
+                ],
                 data: this.chartData,
             };
-            const ele = this.chartContainer.nativeElement;
-            const s2 = new PivotSheet(ele, dataConfig, {
-                width: this.chartContainer.nativeElement.clientWidth,
-                height: this.chartContainer.nativeElement.clientHeight
+            const ele = this.pivotContainer.nativeElement;
+            this.s2 = new PivotSheet(ele, dataConfig, {
+                width: this.pivotContainer.nativeElement.clientWidth,
+                height: this.pivotContainer.nativeElement.clientHeight
             });
-            s2.setThemeCfg({name: this.report.ui['pivotTheme'] || 'gray'});
-            s2.render();
+            this.s2.setThemeCfg({name: this.dsl?.settings?.theme === DashboardTheme.DARK ? 'dark' : (this.report.ui['pivotTheme'] || 'gray')});
+            this.s2.render();
         } else {
             this.chart = this.renderChart(this.chartData)
         }
@@ -318,6 +422,14 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             data: data,
             ...this.report.cube,
             ...this.report.ui,
+            autoFit: true,
+            margin: 12,
+            theme: this.dsl?.settings?.theme || DashboardTheme.LIGHT,
+            meta: {
+                ...this.getFieldMeta(this.report.cube[CubeKey.xField]),
+                ...this.getFieldMeta(this.report.cube[CubeKey.yField]),
+                ...this.getFieldMeta(this.report.cube[CubeKey.seriesField]),
+            }
         };
         if (WindowModel.theme.primaryColor) {
             // commonConfig.color = WindowModel.theme.primaryColor
@@ -639,8 +751,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         xFieldsArray.forEach(field => {
             if (field) {
                 this.stColumns.push({
-                    title: field,
-                    index: field,
+                    title: this.getFieldTitle(field),
+                    index: [field],
                     width: 150,
                     type: 'link',
                     className: 'dimension-column',
@@ -683,8 +795,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         yFieldsArray.forEach(field => {
             if (field) {
                 const column: STColumn = {
-                    title: field,
-                    index: field,
+                    title: this.getFieldTitle(field),
+                    index: [field],
                     width: 150,
                     sort: {
                         compare: (a: any, b: any) => {
@@ -700,17 +812,13 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     },
                     format: (item: any) => {
                         const val = item[field];
-                        if (typeof val === 'number') {
-                            return val.toLocaleString();
-                        }
                         return val;
                     },
                 };
                 if (this.enableDrill && xFieldsArray.length > 0) {
                     column.type = "link";
                     column.click = (record: any) => {
-                        console.log(record)
-                        this.openDrillDrawer(xFieldsArray[0], record[xFieldsArray[0]], field, record);
+                        this.openDrillDrawer(field, record);
                     };
                     column.className = 'drillable-column';
                 }
@@ -766,21 +874,50 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     /**
      * 打开下钻抽屉
      */
-    openDrillDrawer(field: string, value: any, measure: string, record: any): void {
-        const params: DrillDetailParams = {
-            field: field,
-            value: value,
-            dimension: field,
-            measure: measure,
-            dashboard: this.dashboard,
-            cubeMeta: this.cubeMeta
-        };
+    openDrillDrawer(measure: string, record: any): void {
+        const drillFilters: CubeFilter[] = [];
+
+        // 将当前行的所有维度值作为过滤条件带出
+        const xFields = this.report.cube[CubeKey.xField] || [];
+        const xFieldsArray = Array.isArray(xFields) ? xFields : [xFields];
+        for (const f of xFieldsArray) {
+            if (f && record[f] !== undefined && record[f] !== null) {
+                drillFilters.push({
+                    field: f,
+                    operator: CubeOperator.EQ,
+                    value: record[f]
+                });
+            }
+        }
+
+        // 将当前报表已有的筛选条件也带入下钻（包括外部筛选和已激活的维度筛选）
+        if (this.filters) {
+            for (const f of this.filters) {
+                if (f.value != null && this.cubeMeta.parameters.filter(it => it.code === f.field).length === 0) {
+                    drillFilters.push({
+                        field: f.field,
+                        operator: f.operator,
+                        value: f.value
+                    });
+                }
+            }
+        }
+        for (const [f, v] of this.activeFilters) {
+            drillFilters.push({
+                field: f,
+                operator: CubeOperator.EQ,
+                value: v
+            });
+        }
 
         this.drawerService.create({
-            nzTitle: `下钻分析 - ${field}: ${value}`,
+            nzTitle: '下钻分析 - ' + this.cubeMeta.fieldTitleMap.get(measure) + ": " + record[measure],
             nzContent: CubeDrillDetailComponent,
             nzContentParams: {
-                params: params
+                measure: measure,
+                dashboard: this.dashboard,
+                cubeMeta: this.cubeMeta,
+                filters: drillFilters
             },
             nzWidth: '75%',
             nzClosable: true,
@@ -804,7 +941,13 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             this.chart.destroy();
             this.chart = null;
         }
+        if (this.s2) {
+            this.s2.destroy();
+            this.s2 = null;
+        }
     }
+
+    protected readonly DashboardTheme = DashboardTheme;
 
     protected readonly ReportType = ReportType;
 

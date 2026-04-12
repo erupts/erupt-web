@@ -1,7 +1,18 @@
 import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
+import {
+    Alert,
+    Drill,
+    DrillInput,
+    EruptModel,
+    Power,
+    Row,
+    RowOperation,
+    Sort,
+    Vis,
+    VisType
+} from "../../model/erupt.model";
 
 import {SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -36,6 +47,8 @@ import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {TableStyle} from "../../model/erupt.vo";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
+import {PrintTypeComponent} from "../../components/print-type/print-type";
+import {EruptAppData} from "@shared/model/erupt-app.model";
 
 
 @Component({
@@ -212,6 +225,10 @@ export class TableComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
 
+    }
+
+    isEruptPrint(): boolean {
+        return EruptAppData.get().properties["erupt-print"];
     }
 
     ngOnDestroy(): void {
@@ -1145,6 +1162,38 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.tempSelectedField = null;
             }, 0);
         }
+    }
+
+    printSelectedRows() {
+        if (!this.selectedRows || this.selectedRows.length === 0) {
+            this.msg.warning('Select the data you want to print');
+            return;
+        }
+        const row = this.selectedRows[0];
+        const pk = row[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
+        this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, pk).subscribe(data => {
+            const printBuildModel = cloneDeep(this.eruptBuildModel);
+            this.dataHandler.objectToEruptValue(data, printBuildModel);
+            const modal = this.modal.create({
+                nzTitle: this.i18n.fanyi("print.preview"),
+                nzContent: PrintTypeComponent,
+                nzWidth: 700,
+                nzStyle: {top: '30px'},
+                nzBodyStyle: {
+                    maxHeight: "75vh",
+                    overflow: 'auto'
+                },
+                nzMaskClosable: false,
+                nzDraggable: true,
+                nzOkText: this.i18n.fanyi("global.print"),
+                nzOnOk: () => {
+                    modal.getContentComponent().print();
+                    return false; // 不关闭对话框
+                }
+            });
+            const component = modal.getContentComponent();
+            component.eruptBuildModel = printBuildModel;
+        });
     }
 
 }

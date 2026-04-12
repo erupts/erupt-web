@@ -1,17 +1,9 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {CubeApiService} from "../../service/cube-api.service";
 import {STColumn, STComponent} from "@delon/abc/st";
-import {CubeMeta} from "../../model/cube.model";
+import {CubeMeta, FieldType} from "../../model/cube.model";
 import {Dashboard} from "../../model/dashboard.model";
-
-export interface DrillDetailParams {
-    field: string;           // 下钻字段
-    value: any;             // 下钻值
-    dimension: string;      // 维度名称
-    measure: string;        // 指标名称
-    dashboard: Dashboard;   // 仪表板配置
-    cubeMeta: CubeMeta;    // Cube 元数据
-}
+import {CubeFilter} from "../../model/cube-query.model";
 
 @Component({
     selector: 'cube-drill-detail',
@@ -21,7 +13,10 @@ export interface DrillDetailParams {
 })
 export class CubeDrillDetailComponent implements OnInit {
 
-    @Input() params: DrillDetailParams;
+    @Input() measure: string;        // 下钻指标
+    @Input() dashboard: Dashboard;   // 仪表板配置
+    @Input() cubeMeta: CubeMeta;    // Cube 元数据
+    @Input() filters?: CubeFilter[]; // 过滤器
 
     @ViewChild('st', {static: false}) st: STComponent;
 
@@ -48,23 +43,15 @@ export class CubeDrillDetailComponent implements OnInit {
 
         // 获取所有维度字段
         const dimensions = this.cubeMeta.dimensions.map(d => d.code);
-
-        // 获取当前指标
-        const measures = [this.params.measure];
-
         this.cubeApiService.query({
-            cube: this.params.dashboard.cuber,
-            explore: this.params.dashboard.explore,
+            cube: this.dashboard.cuber,
+            explore: this.dashboard.explore,
             dimensions: dimensions,
-            measures: measures,
-            // filters: [
-            //     {
-            //         field: this.params.field,
-            //         operator: CubeOperator.EQ,
-            //         value: this.params.value
-            //     }
-            // ],
-            parameters: {}
+            measures: [],
+            groupBy: false,
+            filters: this.filters || [],
+            parameters: {},
+            limit: 1000
         }).subscribe({
             next: (response) => {
                 this.drillData = response.data;
@@ -85,10 +72,10 @@ export class CubeDrillDetailComponent implements OnInit {
         this.stColumns = [];
 
         // 添加维度列
-        this.params.cubeMeta.dimensions.forEach(dim => {
+        this.cubeMeta.dimensions.forEach(dim => {
             this.stColumns.push({
                 title: dim.title,
-                index: dim.code,
+                index: [dim.code],
                 width: 150,
                 sort: {
                     compare: (a: any, b: any) => {
@@ -114,32 +101,15 @@ export class CubeDrillDetailComponent implements OnInit {
                         }
                         return true;
                     }
+                },
+                format: (item: any) => {
+                    const val = item[dim.code];
+                    if (dim.type === FieldType.DATE) {
+                        return new Date(val).toLocaleString();
+                    }
+                    return val;
                 }
             });
-        });
-
-        // 添加指标列（高亮显示）
-        this.stColumns.push({
-            title: this.params.measure,
-            index: this.params.measure,
-            width: 150,
-            className: 'measure-column',
-            sort: {
-                compare: (a: any, b: any) => {
-                    const valA = a[this.params.measure];
-                    const valB = b[this.params.measure];
-                    if (valA === null || valA === undefined) return -1;
-                    if (valB === null || valB === undefined) return 1;
-                    return valA - valB;
-                }
-            },
-            format: (item: any) => {
-                const val = item[this.params.measure];
-                if (typeof val === 'number') {
-                    return val.toLocaleString();
-                }
-                return val;
-            }
         });
     }
 
@@ -155,10 +125,11 @@ export class CubeDrillDetailComponent implements OnInit {
             let values = [];
             for (let col of this.stColumns) {
                 let val = row[col.index as string];
+                let field = this.cubeMeta.fieldMap.get(<string>col.index);
                 if (val === null || val === undefined) {
                     val = '';
-                } else if (typeof val === 'string') {
-                    val = '"' + val.replace(/"/g, '""') + '"';
+                } else if (field.type === FieldType.DATE) {
+                    val = val.toLocaleString();
                 }
                 values.push(val);
             }
@@ -170,12 +141,9 @@ export class CubeDrillDetailComponent implements OnInit {
         let url = URL.createObjectURL(blob);
         let anchor = document.createElement('a');
         anchor.href = url;
-        anchor.download = `drill_${this.params.dimension}_${this.params.value}.csv`;
+        anchor.download = `drill_${this.cubeMeta.fieldTitleMap.get(this.measure)}.csv`;
         anchor.click();
         URL.revokeObjectURL(url);
     }
 
-    get cubeMeta(): CubeMeta {
-        return this.params.cubeMeta;
-    }
 }

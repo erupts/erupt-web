@@ -1,0 +1,40 @@
+<form nz-form nzLayout="vertical">
+    <nz-form-item>
+        <nz-form-label>{{ 'cube.dashboard.config.bg_color' | translate }}</nz-form-label>
+        <nz-form-control>
+            <div style="display: flex;align-items: center">
+                <input nz-input [(ngModel)]="dsl.settings.backgroundColor" type="color" name="backgroundColor" style="width: 100px;margin-right: 8px"/>
+                @if (dsl.settings.backgroundColor) {
+                    &nbsp;<i nz-icon nzType="close" nzTheme="outline" style="color: #f00;cursor: pointer" (click)="dsl.settings.backgroundColor = null"></i>
+                }
+            </div>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label>{{ 'cube.dashboard.config.bg_image' | translate }}</nz-form-label>
+        <nz-form-control>
+            <input nz-input [(ngModel)]="dsl.settings.backgroundImage" name="backgroundImage" placeholder="https://example.com/bg.png"/>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label>{{ 'cube.dashboard.config.theme' | translate }}</nz-form-label>
+        <nz-form-control>
+            <nz-radio-group [(ngModel)]="dsl.settings.theme" name="theme">
+                <label nz-radio [nzValue]="DashboardTheme.LIGHT">{{ 'cube.dashboard.config.theme_light' | translate }}</label>
+                <label nz-radio [nzValue]="DashboardTheme.DARK">{{ 'cube.dashboard.config.theme_dark' | translate }}</label>
+            </nz-radio-group>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label>{{ 'cube.dashboard.config.auto_refresh' | translate }}</nz-form-label>
+        <nz-form-control>
+            <nz-input-number [(ngModel)]="dsl.settings.autoRefreshInterval" name="autoRefreshInterval" [nzMin]="0" [nzStep]="10" style="width: 100%"></nz-input-number>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label>{{ 'cube.dashboard.config.gap' | translate }}</nz-form-label>
+        <nz-form-control>
+            <nz-input-number [(ngModel)]="dsl.settings.gap" name="gap" [nzMin]="0" [nzMax]="50" style="width: 100%"></nz-input-number>
+        </nz-form-control>
+    </nz-form-item>
+</form>

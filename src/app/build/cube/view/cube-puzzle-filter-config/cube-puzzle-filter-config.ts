@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {Dashboard, FilterControl, FilterDSL} from "../../model/dashboard.model";
+import {Dashboard, DashboardDSL, FilterDSL} from "../../model/dashboard.model";
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubeMeta, FieldType} from "../../model/cube.model";
 import {CubeApiService} from "../../service/cube-api.service";
@@ -18,6 +18,8 @@ export class CubePuzzleFilterConfig implements OnInit {
     @Input() cubeMeta: CubeMeta;
 
     @Input() dashboard: Dashboard;
+
+    @Input() dsl: DashboardDSL;
 
     @ViewChild("filterControl") filterControl: CubePuzzleFilterControl;
 
@@ -51,15 +53,18 @@ export class CubePuzzleFilterConfig implements OnInit {
         return FieldType.STRING;
     }
 
-    fieldInDimension() {
+    fieldInParameters() {
         if (this.filter.field) {
-            return this.cubeMeta.dimensions.find(dim => dim.code === this.filter.field);
+            return this.cubeMeta.parameters.find(param => param.code === this.filter.field);
         }
         return false;
     }
 
     changeField(e) {
-        if (this.fieldInDimension()) {
+        this.filter.linkage = null;
+        if (this.fieldInParameters()) {
+            this.filter.operator = null;
+        } else {
             switch (this.fieldType()) {
                 case FieldType.STRING:
                     this.filter.operator = CubeOperator.EQ;
@@ -67,12 +72,10 @@ export class CubePuzzleFilterConfig implements OnInit {
                 case FieldType.NUMBER:
                     this.filter.operator = CubeOperator.EQ;
                     break;
-                case FieldType.DATE_TIME:
+                case FieldType.DATE:
                     this.filter.operator = CubeOperator.BETWEEN;
                     break;
             }
-        } else {
-            this.filter.operator = null;
         }
         this.filter.value = null;
         this.filter.defaultValue = null;
@@ -88,7 +91,29 @@ export class CubePuzzleFilterConfig implements OnInit {
         this.filter.defaultValue = null;
     }
 
-    protected readonly FilterControl = FilterControl;
+    getLinkageFilters() {
+        if (!this.dsl.filters) {
+            return [];
+        }
+        const map = new Map<string, FilterDSL>();
+        this.dsl.filters.forEach(f => {
+            const isParameter = this.cubeMeta.parameters.find(param => param.code === f.field);
+            if (!map.has(f.field) && f.field !== this.filter.field && !isParameter) {
+                map.set(f.field, f);
+            }
+        });
+        return Array.from(map.values());
+    }
+
+    isDropdownOperator(): boolean {
+        if (this.filter.field) {
+            if ([CubeOperator.EQ, CubeOperator.NEQ, CubeOperator.IN, CubeOperator.NOT_IN].includes(this.filter.operator)) {
+                return null != this.cubeMeta.dimensions.find(it => it.code === this.filter.field && it.type == FieldType.STRING);
+            }
+        }
+        return false;
+    }
+
     protected readonly CubeOperator = CubeOperator;
     protected readonly FieldType = FieldType;
 }

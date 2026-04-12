@@ -16,6 +16,8 @@ export class EruptFlowFormComponent implements OnInit {
 
     loading: boolean = false;
 
+    @Input() loadingEruptData: boolean = false;
+
     @Input() readonly: boolean = false;
 
     @Input() eruptBuild: EruptBuildModel;
@@ -49,9 +51,7 @@ export class EruptFlowFormComponent implements OnInit {
                 }
             })
         } else {
-            if (this.initValue) {
-                this.initEruptValue();
-            }
+            this.loading = false;
         }
         if (this.formAccesses) {
             if (this.eruptBuild) {

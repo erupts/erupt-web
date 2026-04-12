@@ -25,21 +25,21 @@ export class HandlerService {
                         if (!val[1]){
                             break;
                         }
-                        val[0] = this.datePipe.transform(val[0], "yyyy-MM-dd 00:00:00");
-                        val[1] = this.datePipe.transform(val[1], "yyyy-MM-dd 23:59:59");
+                        val[0] = this.datePipe.transform(val[0], "yyyy-MM-dd'T'00:00:00.SSS");
+                        val[1] = this.datePipe.transform(val[1], "yyyy-MM-dd'T'23:59:59.SSS");
                         break;
                     case DimType.DATETIME_RANGE:
                         if (!val[1]){
                             break;
                         }
-                        val[0] = this.datePipe.transform(val[0], "yyyy-MM-dd HH:mm:ss");
-                        val[1] = this.datePipe.transform(val[1], "yyyy-MM-dd HH:mm:ss");
+                        val[0] = this.datePipe.transform(val[0], "yyyy-MM-dd'T'HH:mm:ss.SSS");
+                        val[1] = this.datePipe.transform(val[1], "yyyy-MM-dd'T'HH:mm:ss.SSS");
                         break;
                     case DimType.DATE:
                         val = this.datePipe.transform(val, "yyyy-MM-dd");
                         break;
                     case DimType.DATETIME:
-                        val = this.datePipe.transform(val, "yyyy-MM-dd HH:mm:ss");
+                        val = this.datePipe.transform(val, "yyyy-MM-dd'T'HH:mm:ss");
                         break;
                     case DimType.TIME:
                         val = this.datePipe.transform(val, "HH:mm:ss");

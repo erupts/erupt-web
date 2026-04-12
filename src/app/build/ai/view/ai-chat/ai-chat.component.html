@@ -1,0 +1,259 @@
+<div class="ai-chat-layout" [class.is-fullscreen]="fullscreen">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <button nz-button nzType="default" (click)="createConversation()" class="new-chat-btn">
+                <span nz-icon nzType="plus"></span> {{ 'ai.chat.new_session' | translate }}
+            </button>
+        </div>
+        <ul
+            #chatListRef
+            class="conversation-list"
+            (scroll)="onChatListScroll()">
+            @if (loadingChats) {
+                <li class="conv-loading">
+                    <nz-spin nzSimple nzSize="small"></nz-spin>
+                </li>
+            }
+            @for (item of chats; track item.id) {
+                <li
+                    [class.active]="selectChat === item.id"
+                    (click)="onSelectChat(item.id)">
+                    <span class="conv-title">{{ item.title }}</span>
+                    <button
+                        nz-button
+                        nzType="text"
+                        nzSize="small"
+                        class="conv-more"
+                        nz-dropdown
+                        [nzDropdownMenu]="chatMenu"
+                        nzPlacement="bottomRight"
+                        (click)="$event.stopPropagation()"
+                        [title]="'ai.chat.more_actions' | translate">
+                        <span nz-icon nzType="ellipsis" nzTheme="outline"></span>
+                    </button>
+                    <nz-dropdown-menu #chatMenu="nzDropdownMenu">
+                        <ul nz-menu class="chat-action-menu">
+                            <li nz-menu-item (click)="renameChat(item.id, item.title, $event)">
+                                <span nz-icon nzType="edit" nzTheme="outline"></span>&nbsp;
+                                <span>{{ 'ai.chat.rename' | translate }}</span>
+                            </li>
+                            <li nz-menu-item nzDanger (click)="deleteChat(item.id, $event)">
+                                <span nz-icon nzType="delete" nzTheme="outline"></span>&nbsp;
+                                <span>{{ 'ai.chat.delete' | translate }}</span>
+                            </li>
+                        </ul>
+                    </nz-dropdown-menu>
+                </li>
+            }
+            @if (loadingMoreChats) {
+                <li class="conv-loading">
+                    <nz-spin nzSimple nzSize="small"></nz-spin>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="main">
+        <article
+            #bubblesRef
+            class="bubbles"
+            (scroll)="onBubbleScroll()">
+            @if (loadingMessages) {
+                <div class="bubbles-loading">
+                    <nz-spin nzSimple></nz-spin>
+                </div>
+            } @else if (messages.length) {
+                @if (loadingMoreMessages) {
+                    <div class="bubbles-load-more">
+                        <nz-spin nzSimple nzSize="small"></nz-spin>
+                        <span>{{ 'ai.chat.load_more' | translate }}</span>
+                    </div>
+                }
+                @for (item of messages; track $index) {
+                    <div class="bubble-wrap" [class.is-model]="item.senderType === 'MODEL'">
+                        @if (item.senderType !== 'MODEL') {
+                            <nz-avatar [nzText]="settingsService.user?.name?.substring(0,1)"
+                                       [nzSrc]="settingsService.user.avatar">
+                            </nz-avatar>
+                        }
+                        <div class="bubble-content">
+                            @if (item.think) {
+                                <div class="think-content">
+                                    <div class="think-title" (click)="toggleThink(item)">
+                                        <span nz-icon nzType="bulb" nzTheme="outline"></span>
+                                        <span>{{ 'ai.chat.thinking_process' | translate }}</span>
+                                        <span class="think-toggle" nz-icon
+                                              [nzType]="item.thinkCollapsed ? 'right' : 'down'"
+                                              nzTheme="outline"></span>
+                                    </div>
+                                    @if (!item.thinkCollapsed) {
+                                        <div class="markdown-body think-body">{{ item.think }}</div>
+                                    }
+                                </div>
+                            }
+                            @if (item.loading) {
+                                <div class="loading-wrap">
+                                    <nz-spin nzSimple></nz-spin>
+                                </div>
+                            }
+                            @if (!item.loading && (item.content || item.contentHtml)) {
+                                @if (item.content || item.contentHtml) {
+                                    <div class="markdown-body"
+                                         [class.streaming-typing-reveal-a]="(item.streamingTick ?? 0) % 2 === 0 && item.senderType === 'MODEL'"
+                                         [class.streaming-typing-reveal-b]="(item.streamingTick ?? 0) % 2 === 1 && item.senderType === 'MODEL'"
+                                         [class.is-streaming]="streaming && $index === messages.length - 1"
+                                         [innerHTML]="getMessageHtml(item) | safeHtml"></div>
+                                }
+                                @if (item.senderType === 'MODEL' && $index === messages.length - 1 && streaming) {
+                                    <span class="streaming-cursor"></span>
+                                }
+                            }
+                            @if (!item.loading && !item.content && !item.contentHtml && !item.think && item.senderType === 'MODEL') {
+                                <div class="placeholder">{{ 'ai.chat.thinking' | translate }}</div>
+                            }
+                            @if (!item.loading) {
+                                <div class="bubble-actions">
+                                    <button nz-button nzType="text" nzSize="small" class="action-btn"
+                                            [title]="(item.copied ? 'ai.chat.copied' : 'ai.chat.copy') | translate"
+                                            (click)="copyMessage(item)">
+                                        <span nz-icon [nzType]="item.copied ? 'check' : 'copy'" nzTheme="outline"></span>
+                                    </button>
+                                    <button nz-button nzType="text" nzSize="small" class="action-btn"
+                                            [class.action-btn-speaking]="item.speaking"
+                                            [title]="(item.speaking ? 'ai.chat.speak_stop' : 'ai.chat.speak') | translate"
+                                            (click)="toggleSpeak(item)">
+                                        <span nz-icon [nzType]="item.speaking ? 'pause-circle' : 'sound'" nzTheme="outline"></span>
+                                    </button>
+                                    @if (item.senderType === 'USER') {
+                                        <button nz-button nzType="text" nzSize="small" class="action-btn"
+                                                [title]="'ai.chat.edit_resend' | translate"
+                                                (click)="editResend(item, $index)">
+                                            <span nz-icon nzType="edit" nzTheme="outline"></span>
+                                        </button>
+                                    }
+                                    @if (item.senderType === 'MODEL') {
+                                        <button nz-button nzType="text" nzSize="small" class="action-btn"
+                                                [title]="'ai.chat.quote' | translate"
+                                                (click)="quoteToInput(item)">
+                                            <span nz-icon nzType="block" nzTheme="outline"></span>
+                                        </button>
+                                        @if ($index === messages.length - 1 && !streaming) {
+                                            <button nz-button nzType="text" nzSize="small" class="action-btn"
+                                                    [title]="'ai.chat.regenerate' | translate"
+                                                    (click)="regenerate($index)">
+                                                <span nz-icon nzType="reload" nzTheme="outline"></span>
+                                            </button>
+                                        }
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            @if (showScrollToBottom) {
+                <div class="scroll-to-bottom">
+                    <button nz-button nzType="default" nzShape="circle"
+                            (click)="scrollBubblesToBottom()">
+                        <span nz-icon nzType="arrow-down" nzTheme="outline"></span>
+                    </button>
+                </div>
+            }
+        </article>
+        <div class="sender-wrap">
+            @if (selectedAgent?.hints?.length) {
+                <div class="hints-wrap">
+                    @for (hint of selectedAgent?.hints; track hint) {
+                        <span class="hint-tag" (click)="content = hint">{{ hint }}</span>
+                    }
+                </div>
+            }
+            <div class="input-card">
+                <div class="input-toolbar">
+                    <div class="toolbar-left">
+                        @if (agents.length > 0) {
+                            <div class="agent-wrap">
+                                <span class="toolbar-label">{{ 'ai.chat.agent' | translate }}</span>
+                                <nz-select
+                                    class="agent-select"
+                                    nzVariant="borderless"
+                                    [(ngModel)]="selectAgentId"
+                                    [nzPlaceHolder]="'ai.chat.agent_unspecified' | translate"
+                                    nzAllowClear
+                                    nzShowSearch
+                                    nzSize="small">
+                                    @for (agent of agents; track agent.id) {
+                                        <nz-option [nzValue]="agent.id" [nzLabel]="agent.name"></nz-option>
+                                    }
+                                </nz-select>
+                            </div>
+                        }
+                        <div class="tool-call-wrap">
+                            <span class="toolbar-label">{{ 'ai.chat.auto_tool_call' | translate }}</span>
+                            &nbsp;
+                            <nz-switch nzSize="small" [(ngModel)]="autoToolCall"></nz-switch>
+                        </div>
+                    </div>
+                    <div class="toolbar-right">
+                        @if (sending) {
+                            <button nz-button nzType="text" nzSize="small" class="toolbar-icon toolbar-icon-stop"
+                                    [title]="'ai.chat.stop_generation' | translate" (click)="stopGeneration()">
+                                <span nz-icon nzType="stop" nzTheme="outline"></span>
+                                <span>{{ 'ai.chat.stop' | translate }}</span>
+                            </button>
+                        }
+                        @if (content?.trim()) {
+                            <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
+                                    [title]="'ai.chat.clear_input' | translate"
+                                    (click)="clearInput()">
+                                <span nz-icon nzType="clear" nzTheme="outline"></span>
+                            </button>
+                        }
+                        <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
+                                [title]="fullscreen ? ('ai.chat.exit_fullscreen' | translate) : ('ai.chat.fullscreen' | translate)"
+                                (click)="toggleFullscreen()">
+                            @if (fullscreen) {
+                                <span nz-icon nzType="fullscreen-exit" nzTheme="outline"></span>
+                            } @else {
+                                <span nz-icon nzType="fullscreen" nzTheme="outline"></span>
+                            }
+                        </button>
+                    </div>
+                </div>
+                <div class="input-body">
+                    <textarea
+                        #textareaRef
+                        nz-input
+                        [(ngModel)]="content"
+                        (keydown)="onInputKeydown($event)"
+                        [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                        [placeholder]="selectedAgent?.desc || ('ai.chat.input_placeholder' | translate)"
+                        rows="2">
+                    </textarea>
+                </div>
+                <div class="input-footer">
+                    <span class="shortcut-hint">{{ 'ai.chat.shortcut_hint' | translate }}</span>
+                    <button
+                        nz-button
+                        nzType="primary"
+                        nzSize="small"
+                        class="btn-send"
+                        [nzLoading]="sending"
+                        [disabled]="sendDisabled || !content?.trim()"
+                        (click)="send(content)">
+                        {{ 'ai.chat.send' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #renameModalTpl>
+    <div style="margin-top:0;">
+        <input nz-input nzSize="large"
+               [(ngModel)]="renameTitle"
+               [placeholder]="'ai.chat.rename_placeholder' | translate"
+               style="width: 100%;"
+        />
+    </div>
+</ng-template>

@@ -1,5 +1,5 @@
 import {Component, Inject, Input, OnInit} from "@angular/core";
-import {SettingsService} from "@delon/theme";
+import {MenuService, SettingsService} from "@delon/theme";
 import screenfull from 'screenfull';
 import {CustomerTool, WindowModel} from "@shared/model/window.model";
 import {Router} from "@angular/router";
@@ -54,7 +54,7 @@ export class HeaderComponent implements OnInit {
     unreadCount: number = 0;
 
     get isEruptAi(): boolean {
-        return EruptAppData.get().properties["erupt-ai"];
+        return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
     }
 
     get isEruptNotice(): boolean {
@@ -73,6 +73,7 @@ export class HeaderComponent implements OnInit {
                 private router: Router,
                 private appViewService: AppViewService,
                 private dataService: DataService,
+                private menuSrv: MenuService,
                 @Inject(NzDrawerService) private drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(NzModalService) private modal: NzModalService,
@@ -101,7 +102,7 @@ export class HeaderComponent implements OnInit {
                 if (res.data.length > 0) {
                     for (let ann of res.data) {
                         let ref = this.modal.create({
-                            nzDraggable:true,
+                            nzDraggable: true,
                             nzWrapClassName: "modal-lg",
                             nzTitle: ann.title,
                             nzBodyStyle: {
@@ -151,13 +152,13 @@ export class HeaderComponent implements OnInit {
 
     openEruptAi() {
         let model = this.modal.create({
-            nzDraggable:true,
+            nzDraggable: true,
             nzWrapClassName: "modal-lg",
             nzMaskClosable: false,
             nzKeyboard: true,
             nzFooter: null,
             nzClosable: true,
-            nzTitle: "AI 交互",
+            nzTitle: "AI Chat",
             nzStyle: {
                 top: '30px',
             },
@@ -166,7 +167,7 @@ export class HeaderComponent implements OnInit {
             },
             nzContent: EruptIframeComponent,
         });
-        model.getContentComponent().url = "ai-chat.html?_token=" + this.tokenService.get().token;
+        model.getContentComponent().url = "#/fill/ai/chat";
         model.getContentComponent().height = "83vh"
     }
 

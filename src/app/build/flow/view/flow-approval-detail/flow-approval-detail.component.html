@@ -37,7 +37,7 @@
                 <div class="submitter-info-large">
                     <div class="submitter-details">
                         <span class="submitter-name-large">{{ selectedInstance?.initiatorUser?.name }}</span>&nbsp;&nbsp;
-                        <span class="submit-time">提交于 {{ selectedInstance?.createTime }}</span>
+                        <span class="submit-time">提交于 {{ selectedInstance?.createTime | local }}</span>
                     </div>
                 </div>
                 <!-- 标签页导航 -->
@@ -51,9 +51,11 @@
                             @if (eruptBuild) {
                                 <div class="section">
                                     @if (!dataDeleted) {
-                                        <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== approvalView"
-                                                         [formAccesses]="nodeInfo?.prop?.formAccesses || {}"
-                                                         [defaultFormAccess]="nodeInfo?.type==NodeType.START ? FormAccessEnum.DEFAULT : FormAccessEnum.READONLY"></erupt-flow-form>
+                                        @if (activeTabIndex === 0) {
+                                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== approvalView"
+                                                             [formAccesses]="nodeInfo?.prop?.formAccesses || {}" [loadingEruptData]="loadingEruptData"
+                                                             [defaultFormAccess]="nodeInfo?.type==NodeType.START ? FormAccessEnum.DEFAULT : FormAccessEnum.READONLY"></erupt-flow-form>
+                                        }
                                     }
                                     @if (dataDeleted) {
                                         <div style="text-align: center;margin: 100px 0;color:#F44336">
@@ -78,7 +80,7 @@
                                         >
                                             <thead>
                                             <tr>
-                                                <th>节点 ID</th>
+                                                <th>流程节点</th>
                                                 <th>审批人</th>
                                                 <th>任务类型</th>
                                                 <th>任务状态</th>
@@ -88,11 +90,11 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                @for (task of instanceTasks; track task) {
+                                                @for (task of instanceTasks; track task.id) {
                                                     <tr>
                                                         @if (task.nodeId || task.nodeId === null) {
                                                             <td [rowSpan]="task.nodeRowspan || 1">
-                                                                {{ task.nodeId }}
+                                                                {{ task.nodeName || task.nodeId }}
                                                             </td>
                                                         }
                                                         <td>
@@ -154,7 +156,7 @@
                             </div>
                         </div>
                     </nz-tab>
-                    <nz-tab [nzTitle]="'评论列表 (' + comments.length + ')'">
+                    <nz-tab [nzTitle]="'评论列表'">
                         <div class="tab-content">
                             <div class="section">
                                 <!-- 添加评论 -->
@@ -259,68 +261,81 @@
         @if (!dataDeleted) {
             <div class="fixed-bottom-actions">
                 <div class="action-buttons">
-                    @if (ApprovalView.TODO === approvalView && currTask) {
-                        @if (nodeInfo?.type == NodeType.START) {
-                            <button nz-button nzSize="default" nzType="primary" nzGhost class="action-button" (click)="resubmit()">
-                                <span nz-icon nzType="check" nzTheme="outline"></span>
-                                重新提交
-                            </button>
-                        }
-                        @if (nodeInfo?.type == NodeType.APPROVAL) {
-                            <button nz-button nzSize="default" nzType="primary" nzGhost (click)="approve()" class="action-button">
-                                <span nz-icon nzType="check" nzTheme="outline"></span>
-                                同意
-                            </button>
-                            <button nz-button nzSize="default" nzDanger (click)="reject()" class="action-button">
-                                <span nz-icon nzType="close" nzTheme="outline"></span>
-                                拒绝
-                            </button>
-                            @if (nodeInfo?.prop?.allowCc) {
-                                <button nz-button nzSize="default" (click)="cc()" class="action-button">
-                                    <span nz-icon nzType="send" nzTheme="outline"></span>
-                                    抄送
-                                </button>
+                    @if (instanceDetail) {
+                        @if (instanceDetail.status == InstanceStatus.PENDING) {
+                            @if (ApprovalView.TODO === approvalView && instanceDetail.taskId) {
+                                @if (nodeInfo?.type == NodeType.START) {
+                                    <button nz-button nzSize="default" nzType="primary" nzGhost class="action-button" (click)="resubmit()">
+                                        <span nz-icon nzType="check" nzTheme="outline"></span>
+                                        @if (instanceDetail?.taskType == TaskType.START) {
+                                            提交
+                                        } @else {
+                                            重新提交
+                                        }
+                                    </button>
+                                }
+                                @if (nodeInfo?.type == NodeType.ASSIGNEE) {
+                                    <button nz-button nzSize="default" nzType="primary" nzGhost class="action-button" (click)="handle()">
+                                        <span nz-icon nzType="check" nzTheme="outline"></span>
+                                        办理
+                                    </button>
+                                } @else if (nodeInfo?.type == NodeType.APPROVAL) {
+                                    <button nz-button nzSize="default" nzType="primary" nzGhost (click)="approve()" class="action-button">
+                                        <span nz-icon nzType="check" nzTheme="outline"></span>
+                                        同意
+                                    </button>
+                                    <button nz-button nzSize="default" nzDanger (click)="reject()" class="action-button">
+                                        <span nz-icon nzType="close" nzTheme="outline"></span>
+                                        拒绝
+                                    </button>
+                                    @if (nodeInfo?.prop?.allowCc) {
+                                        <button nz-button nzSize="default" (click)="cc()" class="action-button">
+                                            <span nz-icon nzType="send" nzTheme="outline"></span>
+                                            抄送
+                                        </button>
+                                    }
+                                    @if (nodeInfo?.prop?.allowTransfer) {
+                                        <button nz-button nzSize="default" (click)="transfer()" class="action-button">
+                                            <span nz-icon nzType="swap" nzTheme="outline"></span>
+                                            转交
+                                        </button>
+                                    }
+                                    @if (nodeInfo?.prop?.allowAddSign) {
+                                        <button nz-button nzSize="default" (click)="addSigner()" class="action-button">
+                                            <span nz-icon nzType="user-add" nzTheme="outline"></span>
+                                            加签
+                                        </button>
+                                    }
+                                    @if (nodeInfo?.prop?.allowReturn) {
+                                        <button nz-button nzSize="default" (click)="return()" class="action-button">
+                                            <span nz-icon nzType="rollback" nzTheme="outline"></span>
+                                            退回
+                                        </button>
+                                    }
+                                    @if (Object.keys(nodeInfo?.prop?.formAccesses || {}).length) {
+                                        <button nz-button nzSize="default" (click)="modify()" class="action-button">
+                                            <span nz-icon nzType="edit" nzTheme="outline"></span>
+                                            修改
+                                        </button>
+                                    }
+                                }
                             }
-                            @if (nodeInfo?.prop?.allowTransfer) {
-                                <button nz-button nzSize="default" (click)="transfer()" class="action-button">
-                                    <span nz-icon nzType="swap" nzTheme="outline"></span>
-                                    转交
-                                </button>
+                            @if (ApprovalView.CREATED === approvalView) {
+                                @if (!selectedInstance.finishTime) {
+                                    <button nz-button nzSize="default" (click)="urge()" class="action-button"
+                                    >
+                                        <span nz-icon nzType="bell" nzTheme="outline"></span>
+                                        催办
+                                    </button>
+                                }
+                                @if (!selectedInstance.finishTime) {
+                                    <button nz-button nzSize="default" (click)="withdraw()" class="action-button"
+                                    >
+                                        <span nz-icon nzType="undo" nzTheme="outline"></span>
+                                        撤销
+                                    </button>
+                                }
                             }
-                            @if (nodeInfo?.prop?.allowAddSign) {
-                                <button nz-button nzSize="default" (click)="addSigner()" class="action-button">
-                                    <span nz-icon nzType="user-add" nzTheme="outline"></span>
-                                    加签
-                                </button>
-                            }
-                            @if (nodeInfo?.prop?.allowReturn) {
-                                <button nz-button nzSize="default" (click)="return()" class="action-button">
-                                    <span nz-icon nzType="rollback" nzTheme="outline"></span>
-                                    退回
-                                </button>
-                            }
-                            @if (Object.keys(nodeInfo?.prop?.formAccesses || {}).length) {
-                                <button nz-button nzSize="default" (click)="modify()" class="action-button">
-                                    <span nz-icon nzType="edit" nzTheme="outline"></span>
-                                    修改
-                                </button>
-                            }
-                        }
-                    }
-                    @if (ApprovalView.CREATED === approvalView) {
-                        @if (!selectedInstance.finishTime) {
-                            <button nz-button nzSize="default" (click)="urge()" class="action-button"
-                            >
-                                <span nz-icon nzType="bell" nzTheme="outline"></span>
-                                催办
-                            </button>
-                        }
-                        @if (!selectedInstance.finishTime) {
-                            <button nz-button nzSize="default" (click)="withdraw()" class="action-button"
-                            >
-                                <span nz-icon nzType="undo" nzTheme="outline"></span>
-                                撤销
-                            </button>
                         }
                     }
                 </div>
@@ -350,6 +365,22 @@
 >
     <div *nzModalContent>
         <div class="modal-content">
+            @for (node of assignedNodes; track node.id) {
+                <div style="margin-bottom: 16px">
+                    <p class="modal-description"><span style="color: #f00">*</span> 选择 [{{ node.name }}] 审批人：</p>
+                    <nz-select style="width: 100%"
+                               [nzMode]="'multiple'"
+                               [nzMaxMultipleCount]="1"
+                               [nzPlaceHolder]="'请选择审批人'"
+                               [nzShowSearch]="true"
+                               [nzAllowClear]="true"
+                               [(ngModel)]="node.userIds">
+                        @for (user of upmsDataService.upmsData.users; track user.key) {
+                            <nz-option [nzValue]="user.key" [nzLabel]="user.value"></nz-option>
+                        }
+                    </nz-select>
+                </div>
+            }
             @if (nodeInfo?.prop?.requireSignature) {
                 <div style="margin-bottom: 16px">
                     <p class="modal-description"><span style="color: #f00">*</span> 同意签名：</p>
@@ -416,12 +447,12 @@
 
 <!-- 抄送弹窗 -->
 <nz-modal [nzDraggable]="true"
-    [(nzVisible)]="ccModalVisible"
-    nzTitle="抄送审批"
-    nzOkText="确定"
-    nzCancelText="取消"
-    (nzOnOk)="submitCc()"
-    (nzOnCancel)="ccModalVisible = false"
+          [(nzVisible)]="ccModalVisible"
+          nzTitle="抄送审批"
+          nzOkText="确定"
+          nzCancelText="取消"
+          (nzOnOk)="submitCc()"
+          (nzOnCancel)="ccModalVisible = false"
 >
     <div *nzModalContent>
         <div class="modal-content">
@@ -461,12 +492,12 @@
 
 <!-- 转交弹窗 -->
 <nz-modal [nzDraggable]="true"
-    [(nzVisible)]="transferModalVisible"
-    nzTitle="转交审批"
-    nzOkText="确定"
-    nzCancelText="取消"
-    (nzOnOk)="submitTransfer()"
-    (nzOnCancel)="transferModalVisible = false"
+          [(nzVisible)]="transferModalVisible"
+          nzTitle="转交审批"
+          nzOkText="确定"
+          nzCancelText="取消"
+          (nzOnOk)="submitTransfer()"
+          (nzOnCancel)="transferModalVisible = false"
 >
     <div *nzModalContent>
         <div class="modal-content">
@@ -505,12 +536,12 @@
 
 <!-- 加签弹窗 -->
 <nz-modal [nzDraggable]="true"
-    [(nzVisible)]="addSignModalVisible"
-    nzTitle="加签审批"
-    nzOkText="确定"
-    nzCancelText="取消"
-    (nzOnOk)="submitAddSign()"
-    (nzOnCancel)="addSignModalVisible = false"
+          [(nzVisible)]="addSignModalVisible"
+          nzTitle="加签审批"
+          nzOkText="确定"
+          nzCancelText="取消"
+          (nzOnOk)="submitAddSign()"
+          (nzOnCancel)="addSignModalVisible = false"
 >
     <div *nzModalContent>
         <div class="modal-content">
@@ -557,13 +588,13 @@
 
 <!-- 退回弹窗 -->
 <nz-modal [nzDraggable]="true"
-    [(nzVisible)]="returnModalVisible"
-    nzTitle="退回审批"
-    nzOkText="确定"
-    nzCancelText="取消"
-    nzOkDanger="true"
-    (nzOnOk)="submitReturn()"
-    (nzOnCancel)="returnModalVisible = false"
+          [(nzVisible)]="returnModalVisible"
+          nzTitle="退回审批"
+          nzOkText="确定"
+          nzCancelText="取消"
+          nzOkDanger="true"
+          (nzOnOk)="submitReturn()"
+          (nzOnCancel)="returnModalVisible = false"
 >
     <div *nzModalContent>
         <div class="modal-content">
@@ -602,12 +633,12 @@
 
 <!-- 重新提交弹窗 -->
 <nz-modal [nzDraggable]="true"
-    [(nzVisible)]="resubmitModalVisible"
-    nzTitle="重新提交"
-    nzOkText="确定"
-    nzCancelText="取消"
-    (nzOnOk)="submitResubmit()"
-    (nzOnCancel)="resubmitModalVisible = false"
+          [(nzVisible)]="resubmitModalVisible"
+          nzTitle="重新提交"
+          nzOkText="确定"
+          nzCancelText="取消"
+          (nzOnOk)="submitResubmit()"
+          (nzOnCancel)="resubmitModalVisible = false"
 >
     <div *nzModalContent>
         <div class="modal-content">
@@ -617,6 +648,47 @@
               nz-input
               [(ngModel)]="reason"
               placeholder="提交说明..."
+              [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+              class="reason-textarea"
+          ></textarea>
+            </nz-input-group>
+        </div>
+    </div>
+</nz-modal>
+
+<!-- 办理弹窗 -->
+<nz-modal [nzDraggable]="true"
+          [(nzVisible)]="handleModalVisible"
+          nzTitle="办理"
+          nzOkText="确定"
+          nzCancelText="取消"
+          (nzOnOk)="submitHandle()"
+          (nzOnCancel)="handleModalVisible = false"
+>
+    <div *nzModalContent>
+        <div class="modal-content">
+            @for (node of assignedNodes; track node.id) {
+                <div style="margin-bottom: 16px">
+                    <p class="modal-description"><span style="color: #f00">*</span> 选择 [{{ node.name }}] 审批人：</p>
+                    <nz-select style="width: 100%"
+                               [nzMode]="'multiple'"
+                               [nzMaxMultipleCount]="1"
+                               [nzPlaceHolder]="'请选择审批人'"
+                               [nzShowSearch]="true"
+                               [nzAllowClear]="true"
+                               [(ngModel)]="node.userIds">
+                        @for (user of upmsDataService.upmsData.users; track user.key) {
+                            <nz-option [nzValue]="user.key" [nzLabel]="user.value"></nz-option>
+                        }
+                    </nz-select>
+                </div>
+            }
+            <p class="modal-description">办理说明：</p>
+            <nz-input-group>
+          <textarea
+              nz-input
+              [(ngModel)]="reason"
+              placeholder="办理说明..."
               [nzAutosize]="{ minRows: 3, maxRows: 6 }"
               class="reason-textarea"
           ></textarea>
