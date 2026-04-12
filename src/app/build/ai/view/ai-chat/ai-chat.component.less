@@ -392,6 +392,34 @@
     }
 }
 
+/* 回到底部按钮：sticky 贴在消息区可视底部 */
+.scroll-to-bottom {
+    position: sticky;
+    bottom: 16px;
+    align-self: center;
+    z-index: 10;
+    animation: fade-in 0.2s ease;
+
+    ::ng-deep(.ant-btn-circle) {
+        width: 36px;
+        height: 36px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        border-color: var(--ant-border-color-base, #e0e0e0);
+        background: #fff;
+        color: var(--ant-text-color-secondary, #666);
+
+        &:hover {
+            color: var(--ant-primary-color);
+            border-color: var(--ant-primary-color);
+        }
+    }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ========== 底部输入区 ========== */
 .sender-wrap {
     flex-shrink: 0;

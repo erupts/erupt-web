@@ -150,6 +150,14 @@
                     </div>
                 }
             }
+            @if (showScrollToBottom) {
+                <div class="scroll-to-bottom">
+                    <button nz-button nzType="default" nzShape="circle"
+                            (click)="scrollBubblesToBottom()">
+                        <span nz-icon nzType="arrow-down" nzTheme="outline"></span>
+                    </button>
+                </div>
+            }
         </article>
         <div class="sender-wrap">
             @if (selectedAgent?.hints?.length) {

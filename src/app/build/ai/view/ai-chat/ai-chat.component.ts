@@ -66,6 +66,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     autoToolCall = true;
     /** 是否全屏模式 */
     fullscreen = false;
+    /** 是否显示「回到底部」按钮 */
+    showScrollToBottom = false;
     /** 是否正在流式输出（用于显示文末光标，与 eventSource 同生命周期） */
     streaming = false;
     /** 重命名弹窗中的输入值 */
@@ -506,6 +508,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     scrollBubblesToBottom(): void {
         const el = this.bubblesRef?.nativeElement;
         if (el) el.scrollTop = el.scrollHeight;
+        this.showScrollToBottom = false;
     }
 
     deleteChat(chatId: number, event: Event): void {
@@ -572,8 +575,9 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     onBubbleScroll(): void {
         const el = this.bubblesRef?.nativeElement;
-        if (!el || this.loadingMoreMessages || !this.hasMoreMessages || this.selectChat == null) return;
-        if (el.scrollTop <= 10) {
+        if (!el) return;
+        this.showScrollToBottom = !this.isBubblesNearBottom();
+        if (!this.loadingMoreMessages && this.hasMoreMessages && this.selectChat != null && el.scrollTop <= 10) {
             this.messagePage += 1;
             this.fetchMessages(this.selectChat, false);
         }
