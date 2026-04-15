@@ -4,7 +4,9 @@
          [nzBodyStyle]="{height: 'calc(100% - ' + (report.title ? 38 : 0) + 'px)',padding: 0, background: report.ui['background'] || 'transparent'}">
     @if (requiredUnfilled) {
         <div class="required-unfilled-placeholder">
-            <span nz-icon nzType="filter" nzTheme="outline" class="placeholder-icon"></span>
+            <div class="placeholder-icon-wrap">
+                <span nz-icon nzType="filter" nzTheme="outline"></span>
+            </div>
             <span class="placeholder-text">{{ 'cube.filter.required_hint' | translate }}</span>
         </div>
     }

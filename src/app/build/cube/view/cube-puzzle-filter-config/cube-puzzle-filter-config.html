@@ -80,21 +80,16 @@
                 </nz-select>
             </div>
         }
-        <div class="filter-config-hidden">
-            <div class="filter-config-label">{{ 'cube.filter.config.hidden' | translate }}</div>
-            <label nz-checkbox [(ngModel)]="filter.hidden">{{ 'cube.filter.config.hidden' | translate }}</label>
-        </div>
-        <div class="filter-config-hidden">
-            <div class="filter-config-label">{{ 'cube.filter.config.not_null' | translate }}</div>
-            <label nz-checkbox [(ngModel)]="filter.notNull">{{ 'cube.filter.config.not_null' | translate }}</label>
-        </div>
     </div>
     <div class="filter-config-row">
         <div class="filter-config-field">
             <div class="filter-config-label">Title</div>
             <input nz-input [(ngModel)]="filter.title" [placeholder]="cubeMeta.fieldTitleMap.get(filter.field)"/>
         </div>
-
+    </div>
+    <div class="filter-config-row" style="gap: 16px;">
+        <label nz-checkbox [(ngModel)]="filter.hidden">{{ 'cube.filter.config.hidden' | translate }}</label>
+        <label nz-checkbox [(ngModel)]="filter.notNull">{{ 'cube.filter.config.not_null' | translate }}</label>
     </div>
     @if (isDropdownOperator()) {
         <div class="filter-config-row">

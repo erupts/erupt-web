@@ -169,6 +169,19 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     }
 
     query() {
+        if (this.dsl?.filters) {
+            for (const filter of this.dsl.filters) {
+                if (filter.notNull && !filter.hidden) {
+                    const v = filter.value;
+                    const empty = v === null || v === undefined || v === ''
+                        || (Array.isArray(v) && v.every(i => i === null || i === undefined));
+                    if (empty) {
+                        const label = filter.title || this.cubeMeta?.fieldTitleMap?.get(filter.field) || filter.field;
+                        this.message.warning(`${label} ${this.i18n.fanyi('cube.filter.config.not_null')}`);
+                    }
+                }
+            }
+        }
         this.changedOptions();
         for (let report of this.reports) {
             report.refresh();
