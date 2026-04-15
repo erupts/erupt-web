@@ -57,6 +57,7 @@ import {
     MoreOutline,
     NodeIndexOutline,
     PauseCircleOutline,
+    PieChartOutline,
     PieChartTwoTone,
     PlusOutline,
     PlusSquareOutline,
@@ -170,5 +171,6 @@ export const ICONS_AUTO = [
     BorderOuterOutline,
     SoundOutline,
     BlockOutline,
-    PauseCircleOutline
+    PauseCircleOutline,
+    PieChartOutline
 ];
