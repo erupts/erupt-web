@@ -60,6 +60,7 @@ export interface FilterDSL {
     title: string;
     field: string;
     hidden?: boolean;
+    notNull?: boolean;  // 排除空值（下拉选项过滤）
     operator?: CubeOperator;
     defaultValue?: any;
     value?: any;

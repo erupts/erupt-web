@@ -61,7 +61,7 @@ export interface CubeQuery {
     measures?: string[];
     filters?: CubeFilter[];
     dimensionFormat?: Record<string, DimensionFormat>;
-    parameters?: Record<string, any>;
+    parameter?: Record<string, any>;
     sorts?: Sort[];
     groupBy?: boolean; // 默认值为 true
     limit?: number;

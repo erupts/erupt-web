@@ -379,6 +379,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         })
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().dashboard = this.dashboard;
+        ref.getContentComponent().dsl = this.dsl;
         ref.getContentComponent().report = {
             cols: 8,
             rows: 4,
@@ -426,6 +427,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         })
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().dashboard = this.dashboard;
+        ref.getContentComponent().dsl = this.dsl;
         ref.getContentComponent().report = cloneDeep(item);
     }
 

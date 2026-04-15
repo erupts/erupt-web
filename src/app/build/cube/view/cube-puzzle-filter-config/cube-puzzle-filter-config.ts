@@ -85,10 +85,11 @@ export class CubePuzzleFilterConfig implements OnInit {
     changeOperator(e) {
         if (this.filter.operator === CubeOperator.BETWEEN) {
             this.filter.value = [null, null];
+            this.filter.defaultValue = [null, null];
         } else {
             this.filter.value = null;
+            this.filter.defaultValue = null;
         }
-        this.filter.defaultValue = null;
     }
 
     getLinkageFilters() {

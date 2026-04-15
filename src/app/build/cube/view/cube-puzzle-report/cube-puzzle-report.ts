@@ -1,15 +1,5 @@
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    HostListener,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    ViewChild
-} from '@angular/core';
-import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
 import {CubeFilter, CubeOperator, DimensionFormat} from "../../model/cube-query.model";
@@ -54,7 +44,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     @Input() dashboard: Dashboard;
     @Input() dsl: DashboardDSL;
-    @Input() filters: CubeFilter[] = [];
+    @Input() filters: FilterDSL[] = [];
 
     @Input() cubeMeta: CubeMeta;
 
@@ -70,6 +60,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     @ViewChild('pivotContainer', {static: false}) pivotContainer: ElementRef;
 
     querying: boolean = false;
+
+    requiredUnfilled: boolean = false;
 
     chartData: Record<string, any>[] = [];
 
@@ -238,6 +230,23 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         if (!this.visible) {
             return;
         }
+        // 必填筛选校验：若有未填写的必填项，不发起查询
+        if (this.filters) {
+            for (const f of this.filters) {
+                if (f.notNull && !f.hidden) {
+                    const v = f.value;
+                    const empty = v === null || v === undefined || v === ''
+                        || (Array.isArray(v) && v.every(i => i === null || i === undefined));
+                    if (empty) {
+                        this.requiredUnfilled = true;
+                        this.chartData = [];
+                        this.querying = false;
+                        return;
+                    }
+                }
+            }
+        }
+        this.requiredUnfilled = false;
         this.querying = true;
         let dimensions = [];
         let measures = [];
@@ -343,7 +352,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             measures: measures,
             sorts: sorts,
             filters: cf,
-            parameters: parameters,
+            parameter: parameters,
             dimensionFormat: formats,
             limit: 5000
         }).subscribe({

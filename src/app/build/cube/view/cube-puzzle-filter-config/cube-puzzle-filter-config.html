@@ -84,6 +84,10 @@
             <div class="filter-config-label">{{ 'cube.filter.config.hidden' | translate }}</div>
             <label nz-checkbox [(ngModel)]="filter.hidden">{{ 'cube.filter.config.hidden' | translate }}</label>
         </div>
+        <div class="filter-config-hidden">
+            <div class="filter-config-label">{{ 'cube.filter.config.not_null' | translate }}</div>
+            <label nz-checkbox [(ngModel)]="filter.notNull">{{ 'cube.filter.config.not_null' | translate }}</label>
+        </div>
     </div>
     <div class="filter-config-row">
         <div class="filter-config-field">
@@ -109,7 +113,7 @@
         <div class="filter-config-row filter-config-default">
             <div class="filter-config-label">Default Value</div>
             <cube-puzzle-filter-control #filterControl [dashboard]="dashboard" [filter]="filter"
-                                        [cubeMeta]="cubeMeta" [dsl]="dsl"></cube-puzzle-filter-control>
+                                        [cubeMeta]="cubeMeta" [dsl]="dsl" [configMode]="true"></cube-puzzle-filter-control>
         </div>
     }
 </div>

@@ -3,7 +3,8 @@
         <!-- 左侧图表预览 -->
         <div nz-col [nzSpan]="16">
             <cube-puzzle-report style="height: 500px;display: block" #puzzleReport [report]="report"
-                                [dashboard]="dashboard" [cubeMeta]="cubeMeta"/>
+                                [dashboard]="dashboard" [cubeMeta]="cubeMeta"
+                                [filters]="dsl?.filters" [dsl]="dsl"/>
         </div>
         <!-- 右侧配置表单 -->
         <div nz-col [nzSpan]="8">
