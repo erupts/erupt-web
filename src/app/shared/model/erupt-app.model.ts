@@ -6,6 +6,8 @@ export interface EruptAppModel {
     version: string;
     loginPagePath: string;
     waterMark: boolean;
+    waterMarkDate: boolean;  // 水印是否显示日期
+    waterMarkContent: string;  // 自定义水印内容
     resetPwd: boolean;
     properties: object;
 }

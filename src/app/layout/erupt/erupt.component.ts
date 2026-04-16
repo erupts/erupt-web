@@ -244,8 +244,19 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         userinfoObservable.subscribe(userinfo => {
             let path = generateMenuPath(userinfo.indexMenuType, userinfo.indexMenuValue);
-            if (EruptAppData.get().waterMark) {
-                this.nickName = userinfo.nickname;
+            const appConfig = EruptAppData.get();
+            if (appConfig.waterMark) {
+                // 水印内容格式：姓名-自定义内容-日期
+                let watermark = userinfo.nickname;
+                if (appConfig.waterMarkContent) {
+                    watermark += '-' + appConfig.waterMarkContent;
+                }
+                if (appConfig.waterMarkDate) {
+                    const now = new Date();
+                    const pad = (n: number) => String(n).padStart(2, '0');
+                    watermark += '-' + now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+                }
+                this.nickName = watermark;
             }
             this.settingsService.setUser({
                 avatar: userinfo.avatar,
