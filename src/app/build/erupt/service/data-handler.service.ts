@@ -147,10 +147,17 @@ export class DataHandlerService {
                             break;
                         case EditType.DATE:
                             if (edit.$value) {
-                                obj[field.fieldName] = [
-                                    this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'HH:mm:ss.SSS"),
-                                    this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'HH:mm:ss.SSS")
-                                ];
+                                if (edit.dateType.type == DateEnum.DATE_TIME) {
+                                    obj[field.fieldName] = [
+                                        this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'HH:mm:ss.SSS"),
+                                        this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'HH:mm:ss.SSS")
+                                    ];
+                                } else {
+                                    obj[field.fieldName] = [
+                                        this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'00:00:00.000"),
+                                        this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'23:59:59.999")
+                                    ];
+                                }
                             }
                             break;
                     }

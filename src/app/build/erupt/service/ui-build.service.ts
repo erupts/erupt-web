@@ -161,7 +161,8 @@ export class UiBuildService {
                         if (item[view.column]) {
                             let val = <string>item[view.column];
                             if (!val.startsWith("<") && !val.endsWith(">")) {
-                                return new Date(val).toLocaleDateString();
+                                const d = new Date(val);
+                                return isNaN(d.getTime()) ? val : d.toLocaleDateString();
                             } else {
                                 return val;
                             }
@@ -176,7 +177,8 @@ export class UiBuildService {
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             let val = <string>item[view.column];
-                            return new Date(val).toLocaleString();
+                            const d = new Date(val);
+                            return isNaN(d.getTime()) ? val : d.toLocaleString();
                         } else {
                             return "";
                         }
