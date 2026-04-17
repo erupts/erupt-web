@@ -118,6 +118,10 @@ export class DataHandlerService {
         return tempNodes;
     }
 
+    countNodes(nodes: Tree[]): number {
+        return nodes.reduce((sum, n) => sum + 1 + this.countNodes(n.children ?? []), 0);
+    }
+
     eruptObjectToCondition(obj: Object): QueryCondition[] {
         let queryCondition: QueryCondition[] = [];
         for (let key in obj) {

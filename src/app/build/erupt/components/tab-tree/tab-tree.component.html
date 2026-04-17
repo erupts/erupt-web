@@ -11,7 +11,7 @@
       <nz-tree style="max-height: 420px;overflow: auto"
         [nzCheckable]="true"
         [nzShowLine]="true"
-        [nzVirtualHeight]="treeData.length > 50 ? '420px' : null"
+        [nzVirtualHeight]="dataLength > 50 ? '420px' : null"
         [nzCheckStrictly]="true"
         [nzData]="treeData"
         (nzCheckboxChange)="checkBoxChange($event)"

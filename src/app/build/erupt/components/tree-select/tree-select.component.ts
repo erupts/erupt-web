@@ -23,6 +23,8 @@ export class TreeSelectComponent implements OnInit {
 
     list: NzTreeNodeOptions[];
 
+    dataLength: number = 0;
+
     searchValue: string;
 
     constructor(private data: DataService, private dataHandler: DataHandlerService) {
@@ -32,6 +34,7 @@ export class TreeSelectComponent implements OnInit {
     ngOnInit() {
         this.data.queryReferenceTreeData(this.eruptModel.eruptName, this.eruptField.fieldName, this.dependVal, this.parentEruptName)
             .subscribe(tree => {
+                this.dataLength = this.dataHandler.countNodes(tree)
                 this.list = this.dataHandler.dataTreeToZorroTree(tree, this.eruptField.eruptFieldJson.edit.referenceTreeType.expandLevel);
             });
     }
