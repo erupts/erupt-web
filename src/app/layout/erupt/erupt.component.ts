@@ -1,4 +1,5 @@
 import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, Optional, Renderer2, ViewChild, ViewContainerRef} from "@angular/core";
+import {IframeManagerService} from "@shared/service/iframe-manager.service";
 import {DOCUMENT} from "@angular/common";
 import {NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router} from "@angular/router";
 
@@ -82,6 +83,9 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild("settingHost", {read: ViewContainerRef, static: false})
     settingHost: ViewContainerRef;
 
+    @ViewChild("iframeHost", {static: true})
+    iframeHost: ElementRef<HTMLElement>;
+
     themes = [];
 
     nickName: string;
@@ -102,6 +106,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private socketService: SocketService,
                 private i18n: I18NService,
                 private utilsService: UtilsService,
+                private iframeManager: IframeManagerService,
                 @Optional()
                 @Inject(ReuseTabService)
                 private reuseTabService: ReuseTabService,
@@ -130,6 +135,12 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (!(evt instanceof NavigationEnd)) {
                 return;
+            }
+            const navUrl = (evt as NavigationEnd).urlAfterRedirects || (evt as NavigationEnd).url;
+            const isManagedRoute = navUrl.startsWith('/site/')
+                || navUrl.startsWith('/tpl/');
+            if (!isManagedRoute) {
+                this.iframeManager.hideAll();
             }
             setTimeout(() => {
                 scroll.scrollToTop();
@@ -163,6 +174,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.iframeManager.setContainer(this.iframeHost.nativeElement);
         if (!!EruptAppData.get().properties["erupt-websocket"]) {
             this.socketService.initWebSocket();
         }

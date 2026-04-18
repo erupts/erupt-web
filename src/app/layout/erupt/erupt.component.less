@@ -19,6 +19,21 @@
         height: calc(100vh - @header-h);
         display: flex;
         flex-direction: column;
+        position: relative;
+    }
+
+    .reuse-tab {
+        margin-left: 0;
+    }
+
+    .erupt-iframe-host {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        visibility: hidden;
+        pointer-events: none;
     }
 
     @media (min-width: 768px) {
@@ -26,10 +41,6 @@
             display: block;
             height: 38px !important;
         }
-    }
-
-    .reuse-tab {
-        margin-left: 0;
     }
 
     .alain-default__fixed .reuse-tab {
