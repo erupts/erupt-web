@@ -98,10 +98,14 @@
                             @if (!item.loading && (item.content || item.contentHtml)) {
                                 @if (item.content || item.contentHtml) {
                                     <div class="markdown-body"
-                                         [class.streaming-typing-reveal-a]="(item.streamingTick ?? 0) % 2 === 0 && item.senderType === 'MODEL'"
-                                         [class.streaming-typing-reveal-b]="(item.streamingTick ?? 0) % 2 === 1 && item.senderType === 'MODEL'"
-                                         [class.is-streaming]="streaming && $index === messages.length - 1"
-                                         [innerHTML]="getMessageHtml(item) | safeHtml"></div>
+                                         [class.is-streaming]="streaming && $index === messages.length - 1">
+                                        @for (seg of (item.frozenSegments ?? []); track $index) {
+                                            <div [innerHTML]="seg | safeHtml"></div>
+                                        }
+                                        <div [class.streaming-typing-reveal-a]="(item.streamingTick ?? 0) % 2 === 0 && item.senderType === 'MODEL'"
+                                             [class.streaming-typing-reveal-b]="(item.streamingTick ?? 0) % 2 === 1 && item.senderType === 'MODEL'"
+                                             [innerHTML]="getMessageHtml(item) | safeHtml"></div>
+                                    </div>
                                 }
                                 @if (item.senderType === 'MODEL' && $index === messages.length - 1 && streaming) {
                                     <span class="streaming-cursor"></span>

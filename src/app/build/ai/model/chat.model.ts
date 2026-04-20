@@ -15,6 +15,8 @@ export interface ChatMessage {
     chatId?: number;
     /** 流式输出每更新一次自增，用于触发打字动画 */
     streamingTick?: number;
+    /** 已完成的代码块冻结 HTML 片段（流式专用，DONE 后清空） */
+    frozenSegments?: string[];
     /** 是否正在渲染中（针对异步懒加载 render） */
     rendering?: boolean;
     /** 消息操作状态 */
