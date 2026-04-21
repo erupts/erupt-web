@@ -267,7 +267,7 @@
                                 @if (nodeInfo?.type == NodeType.START) {
                                     <button nz-button nzSize="default" nzType="primary" nzGhost class="action-button" (click)="resubmit()">
                                         <span nz-icon nzType="check" nzTheme="outline"></span>
-                                        @if (instanceDetail?.taskType == TaskType.START) {
+                                        @if (!instanceDetail?.eruptModelId) {
                                             提交
                                         } @else {
                                             重新提交
@@ -634,7 +634,7 @@
 <!-- 重新提交弹窗 -->
 <nz-modal [nzDraggable]="true"
           [(nzVisible)]="resubmitModalVisible"
-          nzTitle="重新提交"
+          nzTitle="提交"
           nzOkText="确定"
           nzCancelText="取消"
           (nzOnOk)="submitResubmit()"
