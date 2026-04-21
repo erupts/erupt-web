@@ -63,6 +63,12 @@
                 <div class="bubbles-loading">
                     <nz-spin nzSimple></nz-spin>
                 </div>
+            } @else if (!messages.length) {
+                <div class="bubbles-empty">
+                    <span nz-icon nzType="comment" nzTheme="outline" class="bubbles-empty-icon"></span>
+                    <p class="bubbles-empty-title">{{ 'ai.chat.empty_title' | translate }}</p>
+                    <p class="bubbles-empty-hint">{{ 'ai.chat.empty_hint' | translate }}</p>
+                </div>
             } @else if (messages.length) {
                 @if (loadingMoreMessages) {
                     <div class="bubbles-load-more">
