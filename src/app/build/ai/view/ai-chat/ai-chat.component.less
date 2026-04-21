@@ -46,30 +46,53 @@
 }
 
 .sidebar-header {
-    padding: 12px;
+    padding: 10px 14px;
     border-bottom: 1px solid var(--ant-border-color-split, #eee);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.sidebar-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ant-text-color-secondary, #999);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .new-chat-btn {
-    width: 100%;
-    height: 44px;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0 !important;
     border-radius: @radius-sm;
-    border: 1px dashed var(--ant-border-color-split, #eee);
+    border: 1px solid var(--ant-border-color-base, #e0e0e0) !important;
     background: #fff !important;
-    color: var(--ant-text-color, #1a1a1a) !important;
-    font-size: 14px;
-    font-weight: 500;
+    color: var(--ant-text-color-secondary, #888) !important;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
     transition: all 0.2s ease;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    .anticon {
+        font-size: 14px;
+    }
 
     &:hover {
         border-color: var(--ant-primary-color) !important;
         color: var(--ant-primary-color) !important;
-        background: var(--ant-primary-1) !important;
+        background: var(--ant-primary-1, #e6f4ff) !important;
+    }
+
+    &:active {
+        background: var(--ant-primary-2, #bae7ff) !important;
     }
 }
 
@@ -79,19 +102,22 @@
     list-style: none;
     flex: 1;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
 
     li {
         cursor: pointer;
-        padding: 12px 14px;
+        padding: 9px 12px 9px 11px;
         border-radius: @radius-sm;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 10px;
         font-size: 14px;
         color: var(--ant-text-color, #1a1a1a);
-        transition: background 0.15s ease;
+        transition: background 0.15s ease, border-color 0.15s ease;
+        //border-left: 3px solid transparent;
 
         .conv-title {
             flex: 1;
@@ -99,10 +125,11 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             color: var(--ant-text-color-secondary, #666);
+            transition: color 0.15s ease;
         }
 
         &:hover {
-            background: #f0f0f0;
+            background: var(--ant-primary-1, #e8f4ff);
 
             .conv-title {
                 color: var(--ant-text-color, #1a1a1a);
@@ -114,18 +141,24 @@
         }
 
         &.active {
-            background: #e8e8e8;
+            background: var(--ant-primary-1, #e6f4ff);
+            border-left-color: var(--ant-primary-color);
 
             .conv-title {
-                color: var(--ant-text-color, #1a1a1a);
+                color: var(--ant-primary-color);
                 font-weight: 500;
+            }
+
+            .conv-more {
+                opacity: 1 !important;
             }
         }
 
         .ant-btn.conv-more {
             flex-shrink: 0;
-            opacity: 0.5;
+            opacity: 0;
             color: var(--ant-text-color-secondary, #666);
+            transition: opacity 0.15s ease, color 0.15s ease;
 
             &:hover {
                 color: var(--ant-text-color, #1a1a1a);

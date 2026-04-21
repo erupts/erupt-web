@@ -13,7 +13,7 @@ import {SettingsService} from "@delon/theme";
 import {I18NService} from '@core';
 
 /** 会话列表每页条数 */
-const CHAT_PAGE_SIZE = 15;
+const CHAT_PAGE_SIZE = 20;
 
 /** 每个会话正在进行的 SSE 状态缓存 */
 interface ChatSseState {

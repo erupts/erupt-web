@@ -205,6 +205,7 @@ flow.permission_scopes,人员范围,人員範圍,Permission Scopes,Périmètres 
 flow.submitter_of,提交人的,提交人的,Submitter of,Soumetteur de,提出者の,제출자의,Отправитель de,Remitente de,Einreicher von,Remetente de,Penyerah dari,مقدم من
 
 [ai]
+ai.chat.sessions,会话,會話,Chats,Conversations,チャット,대화,Чаты,Conversaciones,Chats,Conversas,Percakapan,المحادثات
 ai.chat.new_session,新建会话,新建會話,New Chat,Nouvelle conversation,新しいチャット,새 대화,Новый чат,Nueva conversación,Neuer Chat,Nova conversa,Percakapan baru,محادثة جديدة
 ai.chat.more_actions,更多操作,更多操作,More actions,Plus d'actions,その他の操作,더 많은 작업,Ещё действия,Más acciones,Weitere Aktionen,Mais ações,Tindakan lainnya,المزيد من الإجراءات
 ai.chat.rename,重命名,重新命名,Rename,Renommer,名前を変更,이름 바꾸기,Переименовать,Renombrar,Umbenennen,Renomear,Ubah nama,إعادة التسمية

@@ -1,8 +1,10 @@
 <div class="ai-chat-layout" [class.is-fullscreen]="fullscreen">
     <div class="sidebar">
         <div class="sidebar-header">
-            <button nz-button nzType="default" (click)="createConversation()" class="new-chat-btn">
-                <span nz-icon nzType="plus"></span> {{ 'ai.chat.new_session' | translate }}
+            <span class="sidebar-title">{{ 'ai.chat.sessions' | translate }}</span>
+            <button nz-button nzType="text" nzSize="small" (click)="createConversation()"
+                    class="new-chat-btn" [title]="'ai.chat.new_session' | translate">
+                <span nz-icon nzType="form" nzTheme="outline"></span>
             </button>
         </div>
         <ul
