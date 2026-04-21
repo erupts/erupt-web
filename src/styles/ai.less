@@ -55,6 +55,37 @@
         }
     }
 
+    /* Diff 视图 */
+    .diff-block {
+        width: 100%;
+        margin: 1em 0;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid #e0e0e0;
+        font-family: monospace;
+        font-size: 13px;
+        line-height: 1.6;
+
+        .diff-line {
+            display: flex;
+            padding: 0 12px;
+            white-space: pre;
+
+            &.diff-del { background: #fff0f0; color: #c00; }
+            &.diff-add { background: #f0fff0; color: #080; }
+            &.diff-ctx { background: #fff; color: #444; }
+        }
+
+        .diff-sign {
+            flex-shrink: 0;
+            width: 16px;
+            user-select: none;
+            opacity: 0.5;
+        }
+
+        .diff-code { flex: 1; overflow-x: auto; }
+    }
+
     /* 修复 KaTeX 上下标显示问题 */
     .katex .vlist {
         vertical-align: baseline !important;

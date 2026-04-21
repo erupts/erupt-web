@@ -1,5 +1,30 @@
 import {Injectable} from '@angular/core';
 
+function escHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/** 将 AI 输出的宽松 diff 渲染为带色彩的 HTML 行，可选语法高亮 */
+function renderDiffHtml(raw: string, hljs?: any, lang?: string): string {
+    const hl = (code: string) => {
+        if (hljs && lang && hljs.getLanguage(lang)) {
+            try { return hljs.highlight(code, {language: lang}).value; } catch { /* fallback */ }
+        }
+        return escHtml(code);
+    };
+    const rows = raw.split('\n').map(line => {
+        if (line.startsWith('- ') || line === '-') {
+            return `<div class="diff-line diff-del"><span class="diff-sign">-</span><span class="diff-code">${hl(line.slice(2))}</span></div>`;
+        } else if (line.startsWith('+ ') || line === '+') {
+            return `<div class="diff-line diff-add"><span class="diff-sign">+</span><span class="diff-code">${hl(line.slice(2))}</span></div>`;
+        } else {
+            const content = line.startsWith('  ') ? line.slice(2) : line;
+            return `<div class="diff-line diff-ctx"><span class="diff-sign"> </span><span class="diff-code">${hl(content)}</span></div>`;
+        }
+    }).join('');
+    return `<div class="diff-block">${rows}</div>`;
+}
+
 /**
  * 预处理 LaTeX 公式，统一转换为标准格式
  * 支持: ```latex 代码块、\[...\] 块级公式、\(...\) 行内公式
@@ -72,11 +97,15 @@ export class MarkdownService {
                 linkify: true,
                 typographer: true,
                 highlight: (str: string, lang: string) => {
-                    const info = (lang || '').trim().split(/\s+/)[0] || '';
-                    if (info.toLowerCase() === 'mermaid') {
+                    const tokens = (lang || '').trim().split(/\s+/);
+                    const info = tokens[0].toLowerCase();
+                    if (info === 'mermaid') {
                         return `<div class="mermaid">${str}</div>`;
                     }
-                    if (info.toLowerCase() === 'echarts') {
+                    if (info === 'diff') {
+                        return renderDiffHtml(str.trimEnd(), this.hljs, tokens[1] || '');
+                    }
+                    if (info === 'echarts') {
                         const encoded = encodeURIComponent(str.trim());
                         return `<div class="echarts-block" data-option="${encoded}" style="height:400px;">` +
                             `<div class="echarts-ph"></div></div>`;
