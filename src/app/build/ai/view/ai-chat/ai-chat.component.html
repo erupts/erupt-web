@@ -1,10 +1,14 @@
 <div class="ai-chat-layout" [class.is-fullscreen]="fullscreen">
-    <div class="sidebar">
+    <div class="sidebar" [class.is-collapsed]="sidebarCollapsed">
         <div class="sidebar-header">
             <span class="sidebar-title">{{ 'ai.chat.sessions' | translate }}</span>
             <button nz-button nzType="text" nzSize="small" (click)="createConversation()"
                     class="new-chat-btn" [title]="'ai.chat.new_session' | translate">
                 <span nz-icon nzType="form" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="text" nzSize="small" class="sidebar-fold-btn"
+                    (click)="toggleSidebar()" [title]="'ai.chat.collapse_sidebar' | translate">
+                <span nz-icon nzType="menu-fold" nzTheme="outline"></span>
             </button>
         </div>
         <ul
@@ -55,6 +59,12 @@
         </ul>
     </div>
     <div class="main">
+        @if (sidebarCollapsed) {
+            <button nz-button nzType="text" nzSize="small" class="sidebar-unfold-btn"
+                    (click)="toggleSidebar()" [title]="'ai.chat.expand_sidebar' | translate">
+                <span nz-icon nzType="menu-unfold" nzTheme="outline"></span>
+            </button>
+        }
         <article
             #bubblesRef
             class="bubbles"

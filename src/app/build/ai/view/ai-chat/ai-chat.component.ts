@@ -68,6 +68,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     autoToolCall = true;
     /** 是否全屏模式 */
     fullscreen = false;
+    /** 侧边栏是否收起 */
+    sidebarCollapsed = localStorage.getItem('ai-chat-sidebar-collapsed') === '1';
     /** 是否显示「回到底部」按钮 */
     showScrollToBottom = false;
     /** 是否正在流式输出（用于显示文末光标，与 eventSource 同生命周期） */
@@ -643,6 +645,11 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     /** 切换全屏：主区域铺满视口并隐藏侧边栏 */
     toggleFullscreen(): void {
         this.fullscreen = !this.fullscreen;
+    }
+
+    toggleSidebar(): void {
+        this.sidebarCollapsed = !this.sidebarCollapsed;
+        localStorage.setItem('ai-chat-sidebar-collapsed', this.sidebarCollapsed ? '1' : '0');
     }
 
     /** 清空输入框 */
