@@ -22,6 +22,7 @@ import {
     ClearOutline,
     CloseCircleFill,
     CloseOutline,
+    CommentOutline,
     CloudOutline,
     CopyOutline,
     CopyrightOutline,
@@ -38,6 +39,7 @@ import {
     FileImageOutline,
     FileTwoTone,
     FilterOutline,
+    FormOutline,
     FullscreenExitOutline,
     FullscreenOutline,
     GlobalOutline,
@@ -57,6 +59,7 @@ import {
     MoreOutline,
     NodeIndexOutline,
     PauseCircleOutline,
+    PieChartOutline,
     PieChartTwoTone,
     PlusOutline,
     PlusSquareOutline,
@@ -104,6 +107,7 @@ export const ICONS_AUTO = [
     SettingOutline,
     FullscreenOutline,
     FullscreenExitOutline,
+    FormOutline,
     QuestionCircleOutline,
     SaveOutline,
     PlusOutline,
@@ -112,6 +116,7 @@ export const ICONS_AUTO = [
     ImportOutline,
     LoadingOutline,
     InboxOutline,
+    CommentOutline,
     CopyOutline,
     PoweroffOutline,
     BulbTwoTone,
@@ -170,5 +175,6 @@ export const ICONS_AUTO = [
     BorderOuterOutline,
     SoundOutline,
     BlockOutline,
-    PauseCircleOutline
+    PauseCircleOutline,
+    PieChartOutline
 ];

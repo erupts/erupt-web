@@ -1,5 +1,30 @@
 import {Injectable} from '@angular/core';
 
+function escHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/** 将 AI 输出的宽松 diff 渲染为带色彩的 HTML 行，可选语法高亮 */
+function renderDiffHtml(raw: string, hljs?: any, lang?: string): string {
+    const hl = (code: string) => {
+        if (hljs && lang && hljs.getLanguage(lang)) {
+            try { return hljs.highlight(code, {language: lang}).value; } catch { /* fallback */ }
+        }
+        return escHtml(code);
+    };
+    const rows = raw.split('\n').map(line => {
+        if (line.startsWith('- ') || line === '-') {
+            return `<div class="diff-line diff-del"><span class="diff-sign">-</span><span class="diff-code">${hl(line.slice(2))}</span></div>`;
+        } else if (line.startsWith('+ ') || line === '+') {
+            return `<div class="diff-line diff-add"><span class="diff-sign">+</span><span class="diff-code">${hl(line.slice(2))}</span></div>`;
+        } else {
+            const content = line.startsWith('  ') ? line.slice(2) : line;
+            return `<div class="diff-line diff-ctx"><span class="diff-sign"> </span><span class="diff-code">${hl(content)}</span></div>`;
+        }
+    }).join('');
+    return `<div class="diff-block">${rows}</div>`;
+}
+
 /**
  * 预处理 LaTeX 公式，统一转换为标准格式
  * 支持: ```latex 代码块、\[...\] 块级公式、\(...\) 行内公式
@@ -45,7 +70,8 @@ export class MarkdownService {
                 linkAttributes,
                 taskLists,
                 markdownItKatex,
-                mermaid
+                mermaid,
+                container
             ] = await Promise.all([
                 import('markdown-it').then(m => m.default),
                 import('highlight.js').then(m => m.default),
@@ -59,7 +85,8 @@ export class MarkdownService {
                 import('markdown-it-link-attributes').then(m => m.default),
                 import('markdown-it-task-lists').then(m => m.default),
                 import('markdown-it-katex').then(m => m.default),
-                import('mermaid').then(m => m.default)
+                import('mermaid').then(m => m.default),
+                import('markdown-it-container').then(m => m.default)
             ]);
 
             this.hljs = hljs;
@@ -70,23 +97,36 @@ export class MarkdownService {
                 linkify: true,
                 typographer: true,
                 highlight: (str: string, lang: string) => {
-                    const info = (lang || '').trim().split(/\s+/)[0] || '';
-                    if (info.toLowerCase() === 'mermaid') {
+                    const tokens = (lang || '').trim().split(/\s+/);
+                    const info = tokens[0].toLowerCase();
+                    if (info === 'mermaid') {
                         return `<div class="mermaid">${str}</div>`;
                     }
+                    if (info === 'diff') {
+                        return renderDiffHtml(str.trimEnd(), this.hljs, tokens[1] || '');
+                    }
+                    if (info === 'echarts') {
+                        const encoded = encodeURIComponent(str.trim());
+                        return `<div class="echarts-block" data-option="${encoded}" style="height:400px;">` +
+                            `<div class="echarts-ph"></div></div>`;
+                    }
+                    const copyBtn = `<button class="code-copy-btn" onclick="const c=this.closest('.code-block-wrap').querySelector('code');navigator.clipboard.writeText(c.textContent||'').then(()=>{this.setAttribute('data-copied','');setTimeout(()=>this.removeAttribute('data-copied'),1500)})">Copy</button>`;
+                    const langLabel = info ? `<span class="code-lang">${this.md.utils.escapeHtml(info)}</span>` : '';
+                    const lineCount = str.replace(/\n$/, '').split('\n').length;
+                    const gutter = `<div class="code-gutter">${Array.from({length: lineCount}, (_, i) => `<span>${i + 1}</span>`).join('')}</div>`;
                     if (info && this.hljs.getLanguage(info)) {
                         try {
                             const {value} = this.hljs.highlight(str, {language: info});
-                            return `<pre class="hljs"><code class="language-${info}">${value}</code></pre>`;
+                            return `<div class="code-block-wrap">${langLabel}${copyBtn}<div class="code-inner">${gutter}<pre class="hljs"><code class="language-${info}">${value}</code></pre></div></div>`;
                         } catch {
-                            // fallback to auto or plain
+                            // fallback
                         }
                     }
                     try {
                         const {value} = this.hljs.highlightAuto(str);
-                        return `<pre class="hljs"><code>${value}</code></pre>`;
+                        return `<div class="code-block-wrap">${langLabel}${copyBtn}<div class="code-inner">${gutter}<pre class="hljs"><code>${value}</code></pre></div></div>`;
                     } catch {
-                        return `<pre class="hljs"><code>${this.md.utils.escapeHtml(str)}</code></pre>`;
+                        return `<div class="code-block-wrap">${langLabel}${copyBtn}<div class="code-inner">${gutter}<pre class="hljs"><code>${this.md.utils.escapeHtml(str)}</code></pre></div></div>`;
                     }
                 }
             })
@@ -100,9 +140,36 @@ export class MarkdownService {
                 .use(linkAttributes, {attrs: {target: '_blank', rel: 'noopener'}})
                 .use(taskLists)
                 .use(markdownItKatex, {throwOnError: false, errorColor: '#cc0000'});
+
+            const calloutTypes: Record<string, { icon: string; label: string }> = {
+                tip: {icon: '💡', label: 'Tip'},
+                info: {icon: 'ℹ️', label: 'Info'},
+                warning: {icon: '⚠️', label: 'Warning'},
+                danger: {icon: '🚨', label: 'Danger'},
+                note: {icon: '📝', label: 'Note'},
+            };
+            for (const [type, meta] of Object.entries(calloutTypes)) {
+                this.md.use(container, type, {
+                    render(tokens: any[], idx: number) {
+                        const token = tokens[idx];
+                        if (token.nesting === 1) {
+                            const customTitle = token.info.trim().slice(type.length).trim();
+                            const title = customTitle || `${meta.icon} ${meta.label}`;
+                            return `<div class="callout callout-${type}"><div class="callout-title">${title}</div><div class="callout-body">\n`;
+                        }
+                        return '</div></div>\n';
+                    }
+                });
+            }
         })();
 
         return this.initPromise;
+    }
+
+    /** 提前触发懒加载，不等结果；组件初始化时调用可消除首次渲染延迟 */
+    warmup(): void {
+        this.init().catch(() => {
+        });
     }
 
     async render(text: string): Promise<string> {
@@ -125,6 +192,24 @@ export class MarkdownService {
             this.mermaid.run({nodes});
         } catch (e) {
             console.warn('mermaid.run error', e);
+        }
+    }
+
+    /** 在容器内查找未渲染的 .echarts-block 并执行渲染（应在 DOM 插入后由组件调用） */
+    async runEcharts(container: HTMLElement): Promise<void> {
+        const nodeList = container.querySelectorAll('.echarts-block:not([data-processed])');
+        if (nodeList.length === 0) return;
+        const echarts = await import('echarts');
+        for (const node of Array.from(nodeList) as HTMLElement[]) {
+            node.setAttribute('data-processed', 'true');
+            node.querySelector('.echarts-ph')?.remove();
+            try {
+                const option = JSON.parse(decodeURIComponent((node as HTMLElement).dataset['option'] || '{}'));
+                const chart = echarts.init(node, null, {width: node.offsetWidth || (node.parentElement?.offsetWidth ?? 600)});
+                chart.setOption(option);
+            } catch (e) {
+                console.warn('echarts render error', e, node);
+            }
         }
     }
 }

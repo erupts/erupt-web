@@ -35,6 +35,13 @@ export interface FlowInstance {
     taskId?: number
     taskNodeInfo?: NodeRule
     taskType?: TaskType
+    source?: InstanceSource
+}
+
+export enum InstanceSource {
+    MANUAL = "MANUAL",
+    SUB_NODE = "SUB_NODE",
+    API = "API"
 }
 
 export enum InstanceStatus {

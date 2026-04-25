@@ -169,6 +169,23 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     }
 
     query() {
+        if (this.dsl?.filters) {
+            for (const filter of this.dsl.filters) {
+                // 若当前值为空但存在默认值，则先应用默认值
+                const isEmpty = (v: any) => v === null || v === undefined || v === ''
+                    || (Array.isArray(v) && v.every(i => i === null || i === undefined));
+                if (isEmpty(filter.value) && !isEmpty(filter.defaultValue)) {
+                    filter.value = filter.defaultValue;
+                }
+                if (filter.notNull && !filter.hidden) {
+                    const v = filter.value;
+                    if (isEmpty(v)) {
+                        const label = filter.title || this.cubeMeta?.fieldTitleMap?.get(filter.field) || filter.field;
+                        this.message.warning(`${label} ${this.i18n.fanyi('cube.filter.config.not_null')}`);
+                    }
+                }
+            }
+        }
         this.changedOptions();
         for (let report of this.reports) {
             report.refresh();
@@ -379,6 +396,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         })
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().dashboard = this.dashboard;
+        ref.getContentComponent().dsl = this.dsl;
         ref.getContentComponent().report = {
             cols: 8,
             rows: 4,
@@ -426,6 +444,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         })
         ref.getContentComponent().cubeMeta = this.cubeMeta;
         ref.getContentComponent().dashboard = this.dashboard;
+        ref.getContentComponent().dsl = this.dsl;
         ref.getContentComponent().report = cloneDeep(item);
     }
 
@@ -468,13 +487,19 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             nzDraggable: true,
             nzWidth: 600,
             nzOnOk: () => {
-                // ref.getContentComponent()
                 let filter = ref.getContentComponent().filter;
                 ref.getContentComponent().clean();
                 if (filter.field) {
                     if (!this.dsl.filters) {
                         this.dsl.filters = [];
                     }
+                }
+                // 同步 defaultValue → value，让过滤器控件立刻回显新默认值
+                // （track $index 导致组件实例不重建，ngOnInit 不会再次执行）
+                const dv = filter.defaultValue;
+                if (dv !== null && dv !== undefined
+                    && !(Array.isArray(dv) && dv.every((i: any) => i === null || i === undefined))) {
+                    filter.value = dv;
                 }
                 this.dsl.filters[index] = filter;
             }

@@ -50,7 +50,7 @@ export class CubeDrillDetailComponent implements OnInit {
             measures: [],
             groupBy: false,
             filters: this.filters || [],
-            parameters: {},
+            parameter: {},
             limit: 1000
         }).subscribe({
             next: (response) => {

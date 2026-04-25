@@ -25,6 +25,8 @@ export class CubePuzzleFilterControl implements OnInit {
 
     @Input() size: "large" | "small" | "default" = "default";
 
+    @Input() configMode = false;
+
     data: VL[] = null;
 
     isLoading = false;
@@ -33,9 +35,38 @@ export class CubePuzzleFilterControl implements OnInit {
     }
 
     ngOnInit(): void {
-        if (!this.filter.value && this.filter.operator == CubeOperator.BETWEEN) {
-            this.filter.value = [null, null];
+        if (this.configMode) {
+            if (!this.filter.defaultValue && this.filter.operator == CubeOperator.BETWEEN) {
+                this.filter.defaultValue = [null, null];
+            }
+        } else {
+            if (this.filter.defaultValue !== null && this.filter.defaultValue !== undefined
+                && (this.filter.value === null || this.filter.value === undefined)) {
+                this.filter.value = this.filter.defaultValue;
+            }
+            if (!this.filter.value && this.filter.operator == CubeOperator.BETWEEN) {
+                this.filter.value = [null, null];
+            }
         }
+    }
+
+    get currentValue(): any {
+        return this.configMode ? this.filter.defaultValue : this.filter.value;
+    }
+
+    set currentValue(v: any) {
+        if (this.configMode) {
+            this.filter.defaultValue = v;
+        } else {
+            this.filter.value = v;
+        }
+    }
+
+    updateValueAt(index: number, val: any) {
+        const arr = (this.currentValue ? [...this.currentValue] : [null, null]);
+        arr[index] = val;
+        this.currentValue = arr;
+        this.onValueChange(val);
     }
 
     fieldType(): FieldType {

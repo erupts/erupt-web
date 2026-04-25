@@ -339,15 +339,17 @@
             [page]="dataPage.page" [size]="'middle'"
         >
             <ng-template #bodyTpl>
-                @for (row of extraRows; track row) {
-                    <tr [ngClass]="row.className">
-                        @for (column of row.columns; track column) {
-                            <td [colSpan]="column.colspan"
-                                [ngClass]="column.className">
-                                {{ column.value }}
-                            </td>
-                        }
-                    </tr>
+                @if (extraRows) {
+                    @for (row of extraRows; track row) {
+                        <tr [ngClass]="row.className">
+                            @for (column of row.columns; track column) {
+                                <td [colSpan]="column.colspan"
+                                    [ngClass]="column.className">
+                                    {{ column.value }}
+                                </td>
+                            }
+                        </tr>
+                    }
                 }
             </ng-template>
         </st>

@@ -18,10 +18,7 @@
                 <div class="action-buttons">
                     @if (edit) {
                         <button nz-button nzType="default" (click)="addItem()">
-                            <span nz-icon nzType="plus"></span> {{ 'cube.dashboard.add_report' | translate }}
-                        </button>
-                        <button nz-button nzType="default" (click)="addFilter()">
-                            <span nz-icon nzType="filter"></span> {{ 'cube.dashboard.add_filter' | translate }}
+                            <span nz-icon nzType="pie-chart"></span> {{ 'cube.dashboard.add_report' | translate }}
                         </button>
                         <button nz-button nzType="default" (click)="dashboardSettings()">
                             <span nz-icon nzType="setting"></span> {{ 'cube.dashboard.settings' | translate }}
@@ -62,7 +59,9 @@
                                 <span nz-icon nzType="holder" nzTheme="outline"></span>
                             </span>
                             }
-                            <span class="filter-label">{{ filter.title || cubeMeta.fieldTitleMap.get(filter.field) }}: </span>
+                            <span class="filter-label">
+                                @if (filter.notNull) {<span style="color: #ff4d4f; margin-right: 4px;">*</span>}{{ filter.title || cubeMeta.fieldTitleMap.get(filter.field) }}:
+                            </span>
                             <cube-puzzle-filter-control style="width: 180px" size="small" [filter]="filter"
                                                         [cubeMeta]="cubeMeta" [dsl]="dsl"
                                                         [dashboard]="dashboard"></cube-puzzle-filter-control>
@@ -77,6 +76,11 @@
                             }
                         </div>
                     }
+                }
+                @if (edit) {
+                    <button nz-button nzSize="small" nzType="dashed" (click)="addFilter()">
+                        <span nz-icon nzType="plus"></span> {{ 'cube.dashboard.add_filter' | translate }}
+                    </button>
                 }
                 <div style="margin-left: auto; display: flex; gap: 8px;">
                     <button nz-button nzSize="small" (click)="copyLink()" [title]="'cube.dashboard.copy_link' | translate">

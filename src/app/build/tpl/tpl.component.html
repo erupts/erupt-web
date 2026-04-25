@@ -1,6 +1,8 @@
 <div class="page-container">
   @if (!micro) {
-    <erupt-iframe [url]="url" [width]="'100%'" [height]="'100%'"></erupt-iframe>
+    @if (!iframeManager.isInitialized()) {
+      <erupt-iframe [url]="url" [width]="'100%'" [height]="'100%'"></erupt-iframe>
+    }
   }
   @if (micro) {
     <erupt-micro-app [url]="url"></erupt-micro-app>

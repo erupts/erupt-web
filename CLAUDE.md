@@ -64,6 +64,16 @@ Hash-based routing. Feature modules are lazy-loaded:
 @env/*     → src/environments/*
 ```
 
+### Icons
+
+This project uses **static icon tree-shaking** via `src/style-icons-auto.ts`. Only icons listed in `ICONS_AUTO` are bundled.
+
+**When using an `nzType` icon in a template**, check if it's already imported in `style-icons-auto.ts`. If not, you must:
+1. Add the named export to the `import` block (e.g., `FormOutline` from `@ant-design/icons-angular/icons`)
+2. Add it to the `ICONS_AUTO` array
+
+Missing icons will silently render as blank at runtime — no build error.
+
 ### Key Libraries
 
 - **ng-zorro-antd** — Ant Design components

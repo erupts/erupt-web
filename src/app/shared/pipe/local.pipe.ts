@@ -13,9 +13,11 @@ export class LocalPipe implements PipeTransform {
             return (<number>value).toLocaleString();
         }
         if (value.length === 10) {
-            return new Date(value).toLocaleDateString();
+            const d = new Date(value);
+            return isNaN(d.getTime()) ? value : d.toLocaleDateString();
         } else {
-            return new Date(value).toLocaleString();
+            const d = new Date(value);
+            return isNaN(d.getTime()) ? value : d.toLocaleString();
         }
     }
 }

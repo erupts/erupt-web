@@ -13,7 +13,7 @@ import {SettingsService} from "@delon/theme";
 import {I18NService} from '@core';
 
 /** 会话列表每页条数 */
-const CHAT_PAGE_SIZE = 15;
+const CHAT_PAGE_SIZE = 20;
 
 /** 每个会话正在进行的 SSE 状态缓存 */
 interface ChatSseState {
@@ -22,11 +22,13 @@ interface ChatSseState {
     accumulatedMarkdown: string;
     /** 正在流式写入的消息对象引用（始终保持最新内容，切换回来后直接追加到列表） */
     streamingMsg: ChatMessage;
+    /** 已冻结的 markdown 末尾位置（accumulated 中最后一个完整代码块结束处） */
+    frozenEndPos: number;
 }
 /** 距底部多少 px 时触发加载更多会话 */
 const CHAT_SCROLL_THRESHOLD = 80;
 /** 消息区视为「在底部」的缓冲 px：仅当用户在此范围内时，流式返回才自动触底 */
-const BUBBLES_BOTTOM_BUFFER_PX = 120;
+const BUBBLES_BOTTOM_BUFFER_PX = 300;
 
 @Component({
     standalone: false,
@@ -66,6 +68,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     autoToolCall = true;
     /** 是否全屏模式 */
     fullscreen = false;
+    /** 侧边栏是否收起 */
+    sidebarCollapsed = localStorage.getItem('ai-chat-sidebar-collapsed') === '1';
     /** 是否显示「回到底部」按钮 */
     showScrollToBottom = false;
     /** 是否正在流式输出（用于显示文末光标，与 eventSource 同生命周期） */
@@ -99,6 +103,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     ngOnInit(): void {
+        this.markdown.warmup();
         this.fetchChats();
         this.chatApi.agents().subscribe(res => {
             this.agents = res.data;
@@ -118,12 +123,16 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     ngAfterViewChecked(): void {
-        if (this.streaming) return; // 正在流式输出时，跳过自动 Mermaid 渲染，由 DONE 事件触发或等流结束
+        if (this.streaming) return;
         const el = this.bubblesRef?.nativeElement;
         if (el) {
             const nodes = el.querySelectorAll('.mermaid:not([data-processed])');
             if (nodes.length > 0) {
                 this.markdown.runMermaid(el).then();
+            }
+            const echartsNodes = el.querySelectorAll('.echarts-block:not([data-processed])');
+            if (echartsNodes.length > 0) {
+                this.markdown.runEcharts(el).then();
             }
         }
     }
@@ -319,7 +328,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         const state: ChatSseState = {
             eventSource: null!,
             accumulatedMarkdown: '',
-            streamingMsg
+            streamingMsg,
+            frozenEndPos: 0
         };
 
         const token = this.tokenService.get()?.token || '';
@@ -336,19 +346,50 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             if (data.event === SseMessageEvent.TOKEN) {
                 if (!data.data) return;
                 state.accumulatedMarkdown += data.data;
-                this.markdown.render(state.accumulatedMarkdown).then(html => {
-                    // 无论当前在哪个 chat，始终更新 streamingMsg 对象（保持最新内容）
+
+                // 找到最后一个完整代码块的末尾位置
+                const codeBlockRe = /```(?:echarts|mermaid)[\s\S]*?```/g;
+                let newFrozenEnd = 0;
+                let m: RegExpExecArray | null;
+                while ((m = codeBlockRe.exec(state.accumulatedMarkdown)) !== null) {
+                    newFrozenEnd = m.index + m[0].length;
+                }
+
+                const hasNewSegment = newFrozenEnd > state.frozenEndPos;
+                const segmentMd = hasNewSegment
+                    ? state.accumulatedMarkdown.slice(state.frozenEndPos, newFrozenEnd) : null;
+                const tailMd = state.accumulatedMarkdown.slice(newFrozenEnd || state.frozenEndPos);
+
+                const tasks: Promise<string>[] = [this.markdown.render(tailMd)];
+                if (segmentMd !== null) tasks.unshift(this.markdown.render(segmentMd));
+
+                Promise.all(tasks).then(([r0, r1]) => {
+                    const segmentHtml = segmentMd !== null ? r0 : null;
+                    const tailHtml = segmentMd !== null ? r1 : r0;
+
                     const msg = state.streamingMsg;
                     if (msg.loading) msg.loading = false;
                     msg.streamingTick = (msg.streamingTick ?? 0) + 1;
-                    msg.contentHtml = html;
+                    msg.contentHtml = tailHtml;
                     msg.content = state.accumulatedMarkdown;
-                    // 只有当前视图是该会话才走 ngZone 触发 UI 刷新和滚动
+                    if (segmentHtml !== null) {
+                        msg.frozenSegments = [...(msg.frozenSegments ?? []), segmentHtml];
+                        state.frozenEndPos = newFrozenEnd;
+                    }
+
                     if (isActive()) {
                         this.ngZone.run(() => {
                             this.sending = false;
                             this.sendDisabled = true;
                             this.scrollSubject.next();
+                            if (segmentHtml !== null) {
+                                setTimeout(() => {
+                                    const el = this.bubblesRef?.nativeElement;
+                                    if (!el) return;
+                                    if (el.querySelector('.mermaid:not([data-processed])')) this.markdown.runMermaid(el).then();
+                                    if (el.querySelector('.echarts-block:not([data-processed])')) this.markdown.runEcharts(el).then();
+                                }, 0);
+                            }
                         });
                     }
                 });
@@ -360,20 +401,26 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 }
 
             } else if (data.event === SseMessageEvent.DONE) {
-                this.ngZone.run(() => {
-                    state.eventSource.close();
-                    this.pendingSse.delete(chatId);
-                    if (isActive()) {
-                        this.streaming = false;
-                        this.sendDisabled = false;
-                        this.sending = false;
-                        this.scrollSubject.next();
-                        setTimeout(() => {
-                            this.scrollBubblesToBottom();
-                            const el = this.bubblesRef?.nativeElement;
-                            if (el) this.markdown.runMermaid(el).then();
-                        }, 50);
-                    }
+                // 流结束：用完整 markdown 重新渲染，清除 frozenSegments 合并为单一 HTML
+                this.markdown.render(state.accumulatedMarkdown).then(fullHtml => {
+                    state.streamingMsg.frozenSegments = undefined;
+                    state.streamingMsg.contentHtml = fullHtml;
+                    this.ngZone.run(() => {
+                        state.eventSource.close();
+                        this.pendingSse.delete(chatId);
+                        if (isActive()) {
+                            this.streaming = false;
+                            this.sendDisabled = false;
+                            this.sending = false;
+                            this.scrollSubject.next();
+                            setTimeout(() => {
+                                this.scrollBubblesToBottom();
+                                const el = this.bubblesRef?.nativeElement;
+                                if (el) this.markdown.runMermaid(el).then();
+                                if (el) this.markdown.runEcharts(el).then();
+                            }, 50);
+                        }
+                    });
                 });
             }
         };
@@ -389,6 +436,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                         this.sending = false;
                         const el = this.bubblesRef?.nativeElement;
                         if (el) this.markdown.runMermaid(el).then();
+                        if (el) this.markdown.runEcharts(el).then();
                     }
                 });
             }, 100);
@@ -480,7 +528,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
         if (item.contentHtml) return item.contentHtml;
         if (!item.content) return '';
-        if (item.rendering) return '';
+        if (item.rendering) return this.escapeHtml(item.content);
         item.rendering = true;
         this.markdown.render(item.content).then(html => {
             this.ngZone.run(() => {
@@ -488,7 +536,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 item.rendering = false;
             });
         });
-        return '';
+        return this.escapeHtml(item.content);
     }
 
     private escapeHtml(s: string): string {
@@ -597,6 +645,11 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     /** 切换全屏：主区域铺满视口并隐藏侧边栏 */
     toggleFullscreen(): void {
         this.fullscreen = !this.fullscreen;
+    }
+
+    toggleSidebar(): void {
+        this.sidebarCollapsed = !this.sidebarCollapsed;
+        localStorage.setItem('ai-chat-sidebar-collapsed', this.sidebarCollapsed ? '1' : '0');
     }
 
     /** 清空输入框 */

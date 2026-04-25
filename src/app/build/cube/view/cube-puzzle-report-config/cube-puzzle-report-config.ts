@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, inject, Input, OnInit, ViewChild} from '@angular/core';
 import {NZ_MODAL_DATA} from 'ng-zorro-antd/modal';
 import {CubeMeta, CubeMetaDimension} from "../../model/cube.model";
-import {CubeKey, Dashboard, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {CubeKey, Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {Direction} from "../../model/cube-query.model";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
 
@@ -20,6 +20,8 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     @Input() report: ReportDSL;
 
     @Input() dashboard: Dashboard;
+
+    @Input() dsl: DashboardDSL;
 
     @ViewChild('puzzleReport') puzzleReport: CubePuzzleReport;
 

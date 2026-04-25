@@ -1,8 +1,9 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostBinding, OnDestroy, OnInit} from '@angular/core';
 import {DataService} from "@shared/service/data.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {SettingsService} from "@delon/theme";
+import {IframeManagerService} from "@shared/service/iframe-manager.service";
 
 @Component({
     standalone: false,
@@ -14,6 +15,9 @@ import {SettingsService} from "@delon/theme";
                 height: 100%;
                 overflow: auto;
             }
+            :host.managed {
+                display: none !important;
+            }
         `
     ]
 })
@@ -23,34 +27,50 @@ export class TplComponent implements OnInit, OnDestroy {
 
     name: string;
 
-    //是否使用微前端嵌入
     micro: boolean = false;
+
+    @HostBinding('class.managed')
+    get managed(): boolean {
+        return this.iframeManager.isInitialized() && !this.micro;
+    }
 
     private router$: Subscription;
 
     constructor(private dataService: DataService,
                 public settingSrv: SettingsService,
                 private router: Router,
-                public route: ActivatedRoute) {
+                public route: ActivatedRoute,
+                protected iframeManager: IframeManagerService) {
     }
 
     ngOnInit() {
         this.router$ = this.route.params.subscribe(() => {
-            let url = this.router.url;
+            const routerUrl = this.router.url;
             let tpl = '/tpl/';
-            let mtpl = '/mtpl/';
-            if (url.startsWith(mtpl)) {
+            const mtpl = '/mtpl/';
+            if (routerUrl.startsWith(mtpl)) {
                 tpl = mtpl;
             }
-            this.name = url.substring(url.indexOf(tpl) + tpl.length);
+            this.name = routerUrl.substring(routerUrl.indexOf(tpl) + tpl.length);
             this.url = this.dataService.getEruptTpl(this.name);
-            this.micro = this.route.snapshot.data['micro']
+            this.micro = this.route.snapshot.data['micro'];
+            if (!this.micro) {
+                this.iframeManager.show(this.url);
+            }
         });
+    }
 
+    _onReuseInit() {
+        if (this.url && !this.micro) {
+            this.iframeManager.show(this.url);
+        }
     }
 
     ngOnDestroy(): void {
         this.router$.unsubscribe();
+        if (this.url && !this.micro) {
+            this.iframeManager.remove(this.url);
+        }
     }
 
 }

@@ -1,8 +1,14 @@
 <div class="ai-chat-layout" [class.is-fullscreen]="fullscreen">
-    <div class="sidebar">
+    <div class="sidebar" [class.is-collapsed]="sidebarCollapsed">
         <div class="sidebar-header">
-            <button nz-button nzType="default" (click)="createConversation()" class="new-chat-btn">
-                <span nz-icon nzType="plus"></span> {{ 'ai.chat.new_session' | translate }}
+            <span class="sidebar-title">{{ 'ai.chat.sessions' | translate }}</span>
+            <button nz-button nzType="text" nzSize="small" (click)="createConversation()"
+                    class="new-chat-btn" [title]="'ai.chat.new_session' | translate">
+                <span nz-icon nzType="form" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="text" nzSize="small" class="sidebar-fold-btn"
+                    (click)="toggleSidebar()" [title]="'ai.chat.collapse_sidebar' | translate">
+                <span nz-icon nzType="menu-fold" nzTheme="outline"></span>
             </button>
         </div>
         <ul
@@ -53,6 +59,12 @@
         </ul>
     </div>
     <div class="main">
+        @if (sidebarCollapsed) {
+            <button nz-button nzType="text" nzSize="small" class="sidebar-unfold-btn"
+                    (click)="toggleSidebar()" [title]="'ai.chat.expand_sidebar' | translate">
+                <span nz-icon nzType="menu-unfold" nzTheme="outline"></span>
+            </button>
+        }
         <article
             #bubblesRef
             class="bubbles"
@@ -60,6 +72,12 @@
             @if (loadingMessages) {
                 <div class="bubbles-loading">
                     <nz-spin nzSimple></nz-spin>
+                </div>
+            } @else if (!messages.length) {
+                <div class="bubbles-empty">
+                    <span nz-icon nzType="comment" nzTheme="outline" class="bubbles-empty-icon"></span>
+                    <p class="bubbles-empty-title">{{ 'ai.chat.empty_title' | translate }}</p>
+                    <p class="bubbles-empty-hint">{{ 'ai.chat.empty_hint' | translate }}</p>
                 </div>
             } @else if (messages.length) {
                 @if (loadingMoreMessages) {
@@ -98,10 +116,14 @@
                             @if (!item.loading && (item.content || item.contentHtml)) {
                                 @if (item.content || item.contentHtml) {
                                     <div class="markdown-body"
-                                         [class.streaming-typing-reveal-a]="(item.streamingTick ?? 0) % 2 === 0 && item.senderType === 'MODEL'"
-                                         [class.streaming-typing-reveal-b]="(item.streamingTick ?? 0) % 2 === 1 && item.senderType === 'MODEL'"
-                                         [class.is-streaming]="streaming && $index === messages.length - 1"
-                                         [innerHTML]="getMessageHtml(item) | safeHtml"></div>
+                                         [class.is-streaming]="streaming && $index === messages.length - 1">
+                                        @for (seg of (item.frozenSegments ?? []); track $index) {
+                                            <div [innerHTML]="seg | safeHtml"></div>
+                                        }
+                                        <div [class.streaming-typing-reveal-a]="(item.streamingTick ?? 0) % 2 === 0 && item.senderType === 'MODEL'"
+                                             [class.streaming-typing-reveal-b]="(item.streamingTick ?? 0) % 2 === 1 && item.senderType === 'MODEL'"
+                                             [innerHTML]="getMessageHtml(item) | safeHtml"></div>
+                                    </div>
                                 }
                                 @if (item.senderType === 'MODEL' && $index === messages.length - 1 && streaming) {
                                     <span class="streaming-cursor"></span>
