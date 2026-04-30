@@ -157,6 +157,7 @@ export class UiBuildService {
                 case ViewType.DATE:
                     obj.className = "date-col";
                     obj.width = 115;
+                    /*
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             let val = <string>item[view.column];
@@ -170,10 +171,13 @@ export class UiBuildService {
                             return "";
                         }
                     };
+
+                     */
                     break;
                 case ViewType.DATE_TIME:
                     obj.className = "date-col";
                     obj.width = 180;
+                    /*
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             let val = <string>item[view.column];
@@ -183,6 +187,8 @@ export class UiBuildService {
                             return "";
                         }
                     };
+
+                     */
                     break;
                 case ViewType.BOOLEAN:
                     obj.className = "text-center";
