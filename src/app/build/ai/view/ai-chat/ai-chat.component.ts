@@ -24,6 +24,8 @@ interface ChatSseState {
     streamingMsg: ChatMessage;
     /** 已冻结的 markdown 末尾位置（accumulated 中最后一个完整代码块结束处） */
     frozenEndPos: number;
+    /** 渲染防抖 timer，避免高频 token 导致页面卡死 */
+    renderTimer: ReturnType<typeof setTimeout> | null;
 }
 /** 距底部多少 px 时触发加载更多会话 */
 const CHAT_SCROLL_THRESHOLD = 80;
@@ -329,7 +331,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             eventSource: null!,
             accumulatedMarkdown: '',
             streamingMsg,
-            frozenEndPos: 0
+            frozenEndPos: 0,
+            renderTimer: null
         };
 
         const token = this.tokenService.get()?.token || '';
@@ -347,52 +350,63 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 if (!data.data) return;
                 state.accumulatedMarkdown += data.data;
 
-                // 找到最后一个完整代码块的末尾位置
-                const codeBlockRe = /```(?:echarts|mermaid)[\s\S]*?```/g;
-                let newFrozenEnd = 0;
-                let m: RegExpExecArray | null;
-                while ((m = codeBlockRe.exec(state.accumulatedMarkdown)) !== null) {
-                    newFrozenEnd = m.index + m[0].length;
+                // 首个 token 立即清除 loading 状态，不等防抖
+                const msg = state.streamingMsg;
+                if (msg.loading) {
+                    msg.loading = false;
+                    if (isActive()) this.ngZone.run(() => {});
                 }
 
-                const hasNewSegment = newFrozenEnd > state.frozenEndPos;
-                const segmentMd = hasNewSegment
-                    ? state.accumulatedMarkdown.slice(state.frozenEndPos, newFrozenEnd) : null;
-                const tailMd = state.accumulatedMarkdown.slice(newFrozenEnd || state.frozenEndPos);
+                // 防抖：高频 token（如大量 \n\n）合并为一次渲染，避免页面卡死
+                if (state.renderTimer !== null) clearTimeout(state.renderTimer);
+                state.renderTimer = setTimeout(() => {
+                    state.renderTimer = null;
 
-                const tasks: Promise<string>[] = [this.markdown.render(tailMd)];
-                if (segmentMd !== null) tasks.unshift(this.markdown.render(segmentMd));
-
-                Promise.all(tasks).then(([r0, r1]) => {
-                    const segmentHtml = segmentMd !== null ? r0 : null;
-                    const tailHtml = segmentMd !== null ? r1 : r0;
-
-                    const msg = state.streamingMsg;
-                    if (msg.loading) msg.loading = false;
-                    msg.streamingTick = (msg.streamingTick ?? 0) + 1;
-                    msg.contentHtml = tailHtml;
-                    msg.content = state.accumulatedMarkdown;
-                    if (segmentHtml !== null) {
-                        msg.frozenSegments = [...(msg.frozenSegments ?? []), segmentHtml];
-                        state.frozenEndPos = newFrozenEnd;
+                    // 找到最后一个完整代码块的末尾位置
+                    const codeBlockRe = /```(?:echarts|mermaid)[\s\S]*?```/g;
+                    let newFrozenEnd = 0;
+                    let m: RegExpExecArray | null;
+                    while ((m = codeBlockRe.exec(state.accumulatedMarkdown)) !== null) {
+                        newFrozenEnd = m.index + m[0].length;
                     }
 
-                    if (isActive()) {
-                        this.ngZone.run(() => {
-                            this.sending = false;
-                            this.sendDisabled = true;
-                            this.scrollSubject.next();
-                            if (segmentHtml !== null) {
-                                setTimeout(() => {
-                                    const el = this.bubblesRef?.nativeElement;
-                                    if (!el) return;
-                                    if (el.querySelector('.mermaid:not([data-processed])')) this.markdown.runMermaid(el).then();
-                                    if (el.querySelector('.echarts-block:not([data-processed])')) this.markdown.runEcharts(el).then();
-                                }, 0);
-                            }
-                        });
-                    }
-                });
+                    const hasNewSegment = newFrozenEnd > state.frozenEndPos;
+                    const segmentMd = hasNewSegment
+                        ? state.accumulatedMarkdown.slice(state.frozenEndPos, newFrozenEnd) : null;
+                    const tailMd = state.accumulatedMarkdown.slice(newFrozenEnd || state.frozenEndPos);
+
+                    const tasks: Promise<string>[] = [this.markdown.render(tailMd)];
+                    if (segmentMd !== null) tasks.unshift(this.markdown.render(segmentMd));
+
+                    Promise.all(tasks).then(([r0, r1]) => {
+                        const segmentHtml = segmentMd !== null ? r0 : null;
+                        const tailHtml = segmentMd !== null ? r1 : r0;
+
+                        msg.streamingTick = (msg.streamingTick ?? 0) + 1;
+                        msg.contentHtml = tailHtml;
+                        msg.content = state.accumulatedMarkdown;
+                        if (segmentHtml !== null) {
+                            msg.frozenSegments = [...(msg.frozenSegments ?? []), segmentHtml];
+                            state.frozenEndPos = newFrozenEnd;
+                        }
+
+                        if (isActive()) {
+                            this.ngZone.run(() => {
+                                this.sending = false;
+                                this.sendDisabled = true;
+                                this.scrollSubject.next();
+                                if (segmentHtml !== null) {
+                                    setTimeout(() => {
+                                        const el = this.bubblesRef?.nativeElement;
+                                        if (!el) return;
+                                        if (el.querySelector('.mermaid:not([data-processed])')) this.markdown.runMermaid(el).then();
+                                        if (el.querySelector('.echarts-block:not([data-processed])')) this.markdown.runEcharts(el).then();
+                                    }, 0);
+                                }
+                            });
+                        }
+                    });
+                }, 30);
 
             } else if (data.event === SseMessageEvent.THINK) {
                 state.streamingMsg.think = data.data;
@@ -401,6 +415,11 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 }
 
             } else if (data.event === SseMessageEvent.DONE) {
+                // 取消待执行的防抖渲染，由下面的完整渲染接管
+                if (state.renderTimer !== null) {
+                    clearTimeout(state.renderTimer);
+                    state.renderTimer = null;
+                }
                 // 流结束：用完整 markdown 重新渲染，清除 frozenSegments 合并为单一 HTML
                 this.markdown.render(state.accumulatedMarkdown).then(fullHtml => {
                     state.streamingMsg.frozenSegments = undefined;
@@ -428,6 +447,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         state.eventSource.onerror = () => {
             setTimeout(() => {
                 this.ngZone.run(() => {
+                    if (state.renderTimer !== null) {
+                        clearTimeout(state.renderTimer);
+                        state.renderTimer = null;
+                    }
                     state.eventSource.close();
                     this.pendingSse.delete(chatId);
                     if (isActive()) {
