@@ -408,8 +408,12 @@
 }
 
 @keyframes streaming-cursor-blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
 }
 
 .bubble-wrap:not(.is-model) .bubble-content .markdown-body {
@@ -523,8 +527,14 @@
 }
 
 @keyframes fade-in {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ========== 底部输入区 ========== */
@@ -565,7 +575,7 @@
     max-width: @content-max;
     margin: 0 auto;
     background: #fff;
-    border: 1px solid var(--ant-border-color-base , #e0e0e0);
+    border: 1px solid var(--ant-border-color-base, #e0e0e0);
     border-radius: @radius-sm;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -808,11 +818,14 @@
             border-color: #2da44e;
             background: #dafbe1;
 
-            &::after { content: ' ✓'; }
+            &::after {
+                content: ' ✓';
+            }
         }
     }
 
     /* 行号 + 代码并排 */
+
     .code-inner {
         display: flex;
         overflow-x: auto;
@@ -820,6 +833,7 @@
     }
 
     .code-gutter {
+        gap: 1px;
         display: flex;
         flex-direction: column;
         padding: 12px 10px 12px 12px;
@@ -833,7 +847,9 @@
         min-width: 36px;
         flex-shrink: 0;
 
-        span { display: block; }
+        span {
+            display: block;
+        }
     }
 
     pre.hljs {
@@ -866,14 +882,55 @@
         padding: 10px 14px;
         font-size: 14px;
 
-        > p:last-child { margin-bottom: 0; }
+        > p:last-child {
+            margin-bottom: 0;
+        }
     }
 
-    &.callout-tip    { border-color: #52c41a; .callout-title { color: #389e0d; background: #f6ffed; } }
-    &.callout-info   { border-color: #1677ff; .callout-title { color: #0958d9; background: #e6f4ff; } }
-    &.callout-warning{ border-color: #faad14; .callout-title { color: #d46b08; background: #fffbe6; } }
-    &.callout-danger { border-color: #ff4d4f; .callout-title { color: #cf1322; background: #fff2f0; } }
-    &.callout-note   { border-color: #722ed1; .callout-title { color: #531dab; background: #f9f0ff; } }
+    &.callout-tip {
+        border-color: #52c41a;
+
+        .callout-title {
+            color: #389e0d;
+            background: #f6ffed;
+        }
+    }
+
+    &.callout-info {
+        border-color: #1677ff;
+
+        .callout-title {
+            color: #0958d9;
+            background: #e6f4ff;
+        }
+    }
+
+    &.callout-warning {
+        border-color: #faad14;
+
+        .callout-title {
+            color: #d46b08;
+            background: #fffbe6;
+        }
+    }
+
+    &.callout-danger {
+        border-color: #ff4d4f;
+
+        .callout-title {
+            color: #cf1322;
+            background: #fff2f0;
+        }
+    }
+
+    &.callout-note {
+        border-color: #722ed1;
+
+        .callout-title {
+            color: #531dab;
+            background: #f9f0ff;
+        }
+    }
 }
 
 /* 图片点击放大 */
@@ -883,7 +940,9 @@
     border-radius: @radius-sm;
     transition: opacity 0.15s;
 
-    &:hover { opacity: 0.88; }
+    &:hover {
+        opacity: 0.88;
+    }
 }
 
 /* 会话操作菜单 */
