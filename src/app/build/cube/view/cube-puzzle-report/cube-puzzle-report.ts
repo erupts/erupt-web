@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType, SubModelDSL} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
 import {CubeFilter, CubeOperator, DimensionFormat} from "../../model/cube-query.model";
@@ -27,7 +27,7 @@ import {
     Waterfall,
     WordCloud
 } from "@antv/g2plot";
-import {CubeMeta, FieldType} from "../../model/cube.model";
+import {BaseField, CubeMeta, FieldType} from "../../model/cube.model";
 import {STColumn, STComponent} from "@delon/abc/st";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {CubeDrillDetailComponent} from "../cube-drill-detail/cube-drill-detail.component";
@@ -87,10 +87,43 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     // 表格筛选功能
     activeFilters: Map<string, any> = new Map(); // 当前激活的筛选条件
 
+    private subMetaCache: { [key: string]: CubeMeta } = {};
+
+    private getSubModelDSL(): SubModelDSL | null {
+        if (!this.report?.subModel || !this.dsl?.subModels) return null;
+        return this.dsl.subModels.find(m => m.id === this.report.subModel) || null;
+    }
+
+    private getCachedSubMeta(subModelDSL: SubModelDSL): CubeMeta | null {
+        return this.subMetaCache[`${subModelDSL.cube}/${subModelDSL.explore}`] || null;
+    }
+
+    private loadAndCacheSubMeta(subModelDSL: SubModelDSL, callback: (meta: CubeMeta) => void) {
+        const key = `${subModelDSL.cube}/${subModelDSL.explore}`;
+        this.cubeApiService.cubeMetadata(subModelDSL.cube, subModelDSL.explore).subscribe(res => {
+            const meta = res.data;
+            const fieldTitleMap = new Map<string, string>();
+            const fieldMap = new Map<string, BaseField>();
+            [...(meta.dimensions || []), ...(meta.measures || []), ...(meta.parameters || [])].forEach(it => {
+                fieldTitleMap.set(it.code, it.title);
+                fieldMap.set(it.code, it);
+            });
+            meta.fieldTitleMap = fieldTitleMap;
+            meta.fieldMap = fieldMap;
+            this.subMetaCache[key] = meta;
+            callback(meta);
+        });
+    }
+
     /**
      * 根据字段 code 获取字段标题
      */
     getFieldTitle(field: string): string {
+        const subModelDSL = this.getSubModelDSL();
+        if (subModelDSL) {
+            const subMeta = this.getCachedSubMeta(subModelDSL);
+            if (subMeta) return subMeta.fieldTitleMap?.get(field) || field;
+        }
         return this.cubeMeta?.fieldTitleMap?.get(field) || field;
     }
 
@@ -247,6 +280,14 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
         }
         this.requiredUnfilled = false;
+
+        // Sub-model: ensure meta is loaded before querying
+        const subModelDSL = this.getSubModelDSL();
+        if (subModelDSL && !this.getCachedSubMeta(subModelDSL)) {
+            this.loadAndCacheSubMeta(subModelDSL, () => this.refresh());
+            return;
+        }
+
         this.querying = true;
         let dimensions = [];
         let measures = [];
@@ -297,34 +338,44 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             return;
         }
 
+        const activeMeta = subModelDSL ? this.getCachedSubMeta(subModelDSL) : this.cubeMeta;
+        const queryCube = subModelDSL ? subModelDSL.cube : this.dashboard.cuber;
+        const queryExplore = subModelDSL ? subModelDSL.explore : this.dashboard.explore;
+
         let parameters: Record<string, any> = {};
         let cf: CubeFilter[] = [];
 
-        // 合并外部筛选器和用户点击的维度筛选
-        if (this.filters) {
-            for (let f of this.filters) {
-                if (f.value != null && f.value != "") {
-                    if (this.cubeMeta.parameters.filter(it => it.code === f.field).length > 0) {
-                        parameters[f.field] = f.value;
+        if (subModelDSL) {
+            // 子模型：通过 fieldMappings 将仪表板过滤值转换为子模型字段过滤
+            for (const mapping of subModelDSL.fieldMappings || []) {
+                const filter = this.filters?.find(f => f.field === mapping.dashboardField);
+                if (filter?.value != null && filter.value !== '') {
+                    const isParam = activeMeta?.parameters?.some(p => p.code === mapping.subField);
+                    if (isParam) {
+                        parameters[mapping.subField] = filter.value;
                     } else {
-                        cf.push({
-                            field: f.field,
-                            operator: f.operator,
-                            value: f.value
-                        });
+                        cf.push({field: mapping.subField, operator: filter.operator, value: filter.value});
                     }
                 }
             }
+        } else {
+            // 主模型：合并外部筛选器和用户点击的维度筛选
+            if (this.filters) {
+                for (let f of this.filters) {
+                    if (f.value != null && f.value != "") {
+                        if (this.cubeMeta.parameters.filter(it => it.code === f.field).length > 0) {
+                            parameters[f.field] = f.value;
+                        } else {
+                            cf.push({field: f.field, operator: f.operator, value: f.value});
+                        }
+                    }
+                }
+            }
+            for (let [field, value] of this.activeFilters) {
+                cf.push({field, operator: CubeOperator.EQ, value});
+            }
         }
 
-        // 添加用户点击维度产生的筛选条件
-        for (let [field, value] of this.activeFilters) {
-            cf.push({
-                field: field,
-                operator: CubeOperator.EQ,
-                value: value
-            });
-        }
         let sorts = [];
         if (this.report.sorts) {
             for (let sort of this.report.sorts) {
@@ -335,19 +386,17 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
 
         let formats: Record<string, DimensionFormat> = {};
-        for (let dim of this.cubeMeta.dimensions) {
+        for (let dim of activeMeta?.dimensions || []) {
             dimensions.forEach(field => {
-                if (field == dim.code) {
-                    if (dim.type == FieldType.DATE) {
-                        formats[field] = DimensionFormat.DAY;
-                    }
+                if (field == dim.code && dim.type == FieldType.DATE) {
+                    formats[field] = DimensionFormat.DAY;
                 }
-            })
+            });
         }
 
         this.cubeApiService.query({
-            cube: this.dashboard.cuber,
-            explore: this.dashboard.explore,
+            cube: queryCube,
+            explore: queryExplore,
             dimensions: dimensions,
             measures: measures,
             sorts: sorts,
@@ -884,49 +933,54 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
      * 打开下钻抽屉
      */
     openDrillDrawer(measure: string, record: any): void {
+        const subModelDSL = this.getSubModelDSL();
+        const activeMeta = subModelDSL ? this.getCachedSubMeta(subModelDSL) : this.cubeMeta;
         const drillFilters: CubeFilter[] = [];
 
-        // 将当前行的所有维度值作为过滤条件带出
+        // 将当前行的所有维度值作为过滤条件带出（字段码已属于有效模型）
         const xFields = this.report.cube[CubeKey.xField] || [];
         const xFieldsArray = Array.isArray(xFields) ? xFields : [xFields];
         for (const f of xFieldsArray) {
             if (f && record[f] !== undefined && record[f] !== null) {
-                drillFilters.push({
-                    field: f,
-                    operator: CubeOperator.EQ,
-                    value: record[f]
-                });
+                drillFilters.push({field: f, operator: CubeOperator.EQ, value: record[f]});
             }
         }
 
-        // 将当前报表已有的筛选条件也带入下钻（包括外部筛选和已激活的维度筛选）
-        if (this.filters) {
-            for (const f of this.filters) {
-                if (f.value != null && this.cubeMeta.parameters.filter(it => it.code === f.field).length === 0) {
-                    drillFilters.push({
-                        field: f.field,
-                        operator: f.operator,
-                        value: f.value
-                    });
+        if (subModelDSL) {
+            // 子模型：通过 fieldMappings 将仪表板过滤值转换为子模型字段
+            for (const mapping of subModelDSL.fieldMappings || []) {
+                const filter = this.filters?.find(f => f.field === mapping.dashboardField);
+                if (filter?.value != null && filter.value !== '') {
+                    const isParam = activeMeta?.parameters?.some(p => p.code === mapping.subField);
+                    if (!isParam) {
+                        drillFilters.push({field: mapping.subField, operator: filter.operator, value: filter.value});
+                    }
                 }
             }
-        }
-        for (const [f, v] of this.activeFilters) {
-            drillFilters.push({
-                field: f,
-                operator: CubeOperator.EQ,
-                value: v
-            });
+        } else {
+            // 主模型：外部筛选和已激活的维度筛选
+            if (this.filters) {
+                for (const f of this.filters) {
+                    if (f.value != null && this.cubeMeta.parameters.filter(it => it.code === f.field).length === 0) {
+                        drillFilters.push({field: f.field, operator: f.operator, value: f.value});
+                    }
+                }
+            }
+            for (const [f, v] of this.activeFilters) {
+                drillFilters.push({field: f, operator: CubeOperator.EQ, value: v});
+            }
         }
 
         this.drawerService.create({
-            nzTitle: '下钻分析 - ' + this.cubeMeta.fieldTitleMap.get(measure) + ": " + record[measure],
+            nzTitle: '下钻分析 - ' + (activeMeta?.fieldTitleMap?.get(measure) || measure) + ': ' + record[measure],
             nzContent: CubeDrillDetailComponent,
             nzContentParams: {
                 measure: measure,
                 dashboard: this.dashboard,
-                cubeMeta: this.cubeMeta,
-                filters: drillFilters
+                cubeMeta: activeMeta || this.cubeMeta,
+                filters: drillFilters,
+                cube: subModelDSL?.cube,
+                explore: subModelDSL?.explore,
             },
             nzWidth: '75%',
             nzClosable: true,

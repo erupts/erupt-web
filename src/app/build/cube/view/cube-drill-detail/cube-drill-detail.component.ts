@@ -17,6 +17,8 @@ export class CubeDrillDetailComponent implements OnInit {
     @Input() dashboard: Dashboard;   // 仪表板配置
     @Input() cubeMeta: CubeMeta;    // Cube 元数据
     @Input() filters?: CubeFilter[]; // 过滤器
+    @Input() cube?: string;          // 覆盖 dashboard.cuber（子模型时使用）
+    @Input() explore?: string;       // 覆盖 dashboard.explore（子模型时使用）
 
     @ViewChild('st', {static: false}) st: STComponent;
 
@@ -44,8 +46,8 @@ export class CubeDrillDetailComponent implements OnInit {
         // 获取所有维度字段
         const dimensions = this.cubeMeta.dimensions.map(d => d.code);
         this.cubeApiService.query({
-            cube: this.dashboard.cuber,
-            explore: this.dashboard.explore,
+            cube: this.cube || this.dashboard.cuber,
+            explore: this.explore || this.dashboard.explore,
             dimensions: dimensions,
             measures: [],
             groupBy: false,

@@ -19,6 +19,7 @@ import {NzEmptyComponent} from "ng-zorro-antd/empty";
 import {NzColorPickerComponent} from "ng-zorro-antd/color-picker";
 import {CubeDrillDetailComponent} from "./view/cube-drill-detail/cube-drill-detail.component";
 import {CubePuzzleDashboardView} from "./view/cube-puzzle-dashboard-view/cube-puzzle-dashboard-view";
+import {CubePuzzleSubModelConfig} from "./view/cube-puzzle-sub-model-config/cube-puzzle-sub-model-config";
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import {CubePuzzleDashboardView} from "./view/cube-puzzle-dashboard-view/cube-pu
         CubePuzzleReportConfig,
         CubeDrillDetailComponent,
         CubePuzzleDashboardConfig,
+        CubePuzzleSubModelConfig,
     ],
     providers: [
         CubeApiService

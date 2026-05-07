@@ -46,6 +46,20 @@ export interface DashboardDSL {
     filters?: FilterDSL[];
     reports?: ReportDSL[];
     settings?: DashboardSettings;
+    subModels?: SubModelDSL[];
+}
+
+export interface SubModelDSL {
+    id: string;
+    alias: string;
+    cube: string;
+    explore: string;
+    fieldMappings?: FieldMapping[];
+}
+
+export interface FieldMapping {
+    dashboardField: string;
+    subField: string;
 }
 
 export interface DashboardSettings {
@@ -74,6 +88,7 @@ export interface ReportDSL extends GridsterItem {
     type?: ReportType;
     title?: string;
     description?: string;
+    subModel?: string;
     cube?: Partial<Record<CubeKey | string, string[] | string>>
     ui?: Record<string, any>;
     sorts?: Sort[];

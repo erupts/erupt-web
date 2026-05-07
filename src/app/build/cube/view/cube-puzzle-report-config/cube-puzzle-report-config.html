@@ -13,6 +13,21 @@
                     <nz-tab [nzTitle]="'cube.report.config.basic' | translate">
                         <div style="overflow: auto">
                             <form nz-form nzLayout="vertical">
+                                @if (dsl?.subModels?.length > 0) {
+                                    <nz-form-item>
+                                        <nz-form-label>{{ 'cube.report.config.data_source' | translate }}</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.subModel" name="subModel" nzAllowClear
+                                                       (ngModelChange)="onSubModelChange($event)"
+                                                       [nzPlaceHolder]="'cube.report.config.main_model' | translate"
+                                                       [nzLoading]="loadingSubMeta">
+                                                @for (sub of dsl.subModels; track sub.id) {
+                                                    <nz-option [nzValue]="sub.id" [nzLabel]="sub.alias"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                }
                                 <nz-form-item>
                                     <nz-form-label>{{ 'cube.report.config.title' | translate }}</nz-form-label>
                                     <nz-form-control>
@@ -82,7 +97,7 @@
                                             <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
                                                     </nz-option>
                                                 }
@@ -95,7 +110,7 @@
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                @for (mea of activeMeta?.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
                                                     </nz-option>
                                                 }
@@ -108,7 +123,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                @for (mea of activeMeta?.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
                                                 }
                                             </nz-select>
@@ -122,7 +137,7 @@
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear
                                                        [nzPlaceHolder]="'cube.report.config.row_field_placeholder' | translate">
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
                                                         {{ dim.title }}
                                                     </nz-option>
@@ -137,7 +152,7 @@
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear
                                                        [nzPlaceHolder]="'cube.report.config.col_field_placeholder' | translate">
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
                                                         {{ dim.title }}
                                                     </nz-option>
@@ -152,7 +167,7 @@
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch
                                                        [nzPlaceHolder]="'cube.report.config.value_field_placeholder' | translate">
-                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                @for (mea of activeMeta?.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
                                                         {{ mea.title }}
                                                     </nz-option>
@@ -166,7 +181,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.sourceField]" name="sourceField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
                                                 }
                                             </nz-select>
@@ -177,7 +192,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.targetField]" name="targetField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
                                                 }
                                             </nz-select>
@@ -188,7 +203,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.weightField]" name="weightField"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                @for (mea of activeMeta?.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
                                                 }
                                             </nz-select>
@@ -200,7 +215,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code"
                                                                [nzLabel]="dim.title"></nz-option>
                                                 }
@@ -212,7 +227,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                @for (mea of activeMeta?.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
                                                 }
                                             </nz-select>
@@ -225,7 +240,7 @@
                                             <nz-form-control>
                                                 <nz-select [(ngModel)]="report.cube['yField2']" name="yField2"
                                                            (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                                    @for (mea of cubeMeta.measures; track mea.code) {
+                                                    @for (mea of activeMeta?.measures; track mea.code) {
                                                         <nz-option [nzValue]="mea.code"
                                                                    [nzLabel]="mea.title"></nz-option>
                                                     }
@@ -239,7 +254,7 @@
                                             <nz-form-control>
                                                 <nz-select [(ngModel)]="report.cube[CubeKey.sizeField]" name="sizeField"
                                                            (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                                    @for (mea of cubeMeta.measures; track mea.code) {
+                                                    @for (mea of activeMeta?.measures; track mea.code) {
                                                         <nz-option [nzValue]="mea.code"
                                                                    [nzLabel]="mea.title"></nz-option>
                                                     }
@@ -254,7 +269,7 @@
                                                 <nz-select [(ngModel)]="report.cube[CubeKey.seriesField]"
                                                            name="seriesField"
                                                            (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                                    @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                    @for (dim of activeMeta?.dimensions; track dim.code) {
                                                         <nz-option [nzValue]="dim.code"
                                                                    [nzLabel]="dim.title"></nz-option>
                                                     }
@@ -287,9 +302,9 @@
                                                             }
                                                         </nz-option-group>
                                                     }
-                                                    @if (cubeMeta.measures?.length) {
+                                                    @if (activeMeta?.measures?.length) {
                                                         <nz-option-group [nzLabel]="'cube.report.config.measure' | translate">
-                                                            @for (mea of cubeMeta.measures; track mea.code) {
+                                                            @for (mea of activeMeta?.measures; track mea.code) {
                                                                 <nz-option [nzValue]="mea.code"
                                                                            [nzLabel]="mea.title"></nz-option>
                                                             }

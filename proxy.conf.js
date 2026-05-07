@@ -22,5 +22,9 @@ module.exports = {
     '/erupt-websocket': {
         ...proxy,
         ws: true
+    },
+    '/erupt-terminal': {
+        ...proxy,
+        ws: true
     }
 };

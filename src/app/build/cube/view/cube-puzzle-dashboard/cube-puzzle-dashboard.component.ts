@@ -15,6 +15,7 @@ import {CubeOperator} from "../../model/cube-query.model";
 import {CubePuzzleFilterConfig} from "../cube-puzzle-filter-config/cube-puzzle-filter-config";
 import {deepCopy} from "@delon/util";
 import {CubePuzzleDashboardConfig} from "../cube-puzzle-dashboard-config/cube-puzzle-dashboard-config";
+import {CubePuzzleSubModelConfig} from "../cube-puzzle-sub-model-config/cube-puzzle-sub-model-config";
 
 @Component({
     standalone: false,
@@ -548,6 +549,19 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 gap: this.dsl.settings?.gap ?? 12,
             }
         };
+    }
+
+    manageSubModels() {
+        let ref = this.modal.create({
+            nzTitle: this.i18n.fanyi('cube.sub_model.manage'),
+            nzContent: CubePuzzleSubModelConfig,
+            nzDraggable: true,
+            nzMaskClosable: false,
+            nzWidth: 700,
+            nzFooter: null
+        });
+        ref.getContentComponent().cubeMeta = this.cubeMeta;
+        ref.getContentComponent().dsl = this.dsl;
     }
 
     initAutoRefresh() {
