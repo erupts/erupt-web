@@ -153,4 +153,5 @@ export enum ReportType {
     TABLE = 'TABLE',
     PIVOT_TABLE = 'PIVOT_TABLE',
     KPI = 'KPI',
+    TEXT = 'TEXT',
 }

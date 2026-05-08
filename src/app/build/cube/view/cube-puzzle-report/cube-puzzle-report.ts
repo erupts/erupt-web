@@ -288,6 +288,11 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
         this.requiredUnfilled = false;
 
+        if (this.report.type === ReportType.TEXT) {
+            this.querying = false;
+            return;
+        }
+
         // Sub-model: ensure meta is loaded before querying
         const subModelDSL = this.getSubModelDSL();
         if (subModelDSL && !this.getCachedSubMeta(subModelDSL)) {
@@ -514,7 +519,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             this.s2.destroy();
             this.s2 = null;
         }
-        if (this.report.type == ReportType.TABLE || this.report.type == ReportType.KPI) {
+        if (this.report.type == ReportType.TABLE || this.report.type == ReportType.KPI || this.report.type == ReportType.TEXT) {
             return;
         } else if (this.report.type == ReportType.PIVOT_TABLE) {
             const dataConfig = {

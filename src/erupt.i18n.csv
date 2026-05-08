@@ -397,6 +397,7 @@ cube.report.config.add_group,添加分组,添加分組,Add Group,Ajouter un grou
 cube.report.config.apply_filters,应用条件,應用條件,Apply Filters,Appliquer les filtres,条件を適用,조건 적용,Применить фильтры,Aplicar filtros,Filter anwenden,Aplicar filtros,Terapkan filter,تطبيق الفلاتر
 cube.report.config.chart.treemap,树图,樹狀圖,Treemap,Carte arborescente,ツリーマップ,트리맵,Древовидная карта,Mapa de árbol,Baumkarte,Mapa de árvore,Treemap,خريطة الشجرة
 cube.report.config.chart.heatmap,热力图,熱力圖,Heatmap,Carte de chaleur,ヒートマップ,히트맵,Тепловая карта,Mapa de calor,Heatmap,Mapa de calor,Peta panas,خريطة الحرارة
+cube.report.config.chart.text,富文本,富文本,Rich Text,Texte enrichi,リッチテキスト,서식 있는 텍스트,Форматированный текст,Texto enriquecido,Rich Text,Texto rico,Teks kaya,نص منسق
 cube.report.config.color_field,颜色字段,顏色字段,Color Field,Champ couleur,カラーフィールド,색상 필드,Поле цвета,Campo de color,Farbfeld,Campo de cor,Bidang warna,حقل اللون
 cube.report.config.x_field,X 轴字段,X 軸字段,X Field,Champ X,X フィールド,X 필드,Поле X,Campo X,X-Feld,Campo X,Bidang X,حقل X
 cube.report.config.y_field,Y 轴字段,Y 軸字段,Y Field,Champ Y,Y フィールド,Y 필드,Поле Y,Campo Y,Y-Feld,Campo Y,Bidang Y,حقل Y

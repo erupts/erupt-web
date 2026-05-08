@@ -11,8 +11,12 @@
         </div>
     }
     <nz-spin [nzSpinning]="querying" [hidden]="requiredUnfilled" style="height: 100%;width: 100%;">
+        @if (report.type === ReportType.TEXT) {
+            <div class="text-report-content" [innerHTML]="report.ui['content'] | safeHtml"
+                 style="height: 100%; overflow: auto; padding: 12px; box-sizing: border-box;"></div>
+        }
         <div #chartContainer
-             [hidden]="report.type === ReportType.TABLE || report.type === ReportType.KPI || report.type === ReportType.PIVOT_TABLE"
+             [hidden]="report.type === ReportType.TABLE || report.type === ReportType.KPI || report.type === ReportType.PIVOT_TABLE || report.type === ReportType.TEXT"
              style="height: 100%;width: 100%;overflow: hidden;box-sizing: border-box;padding: 12px">
         </div>
         <div [hidden]="report.type !== ReportType.PIVOT_TABLE" #pivotContainer

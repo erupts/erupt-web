@@ -147,7 +147,7 @@
                                                   [nzTooltipTitle]="report.description"></span>
                                             </button>
                                         }
-                                        @if (report.type != ReportType.KPI && report.type != ReportType.PIVOT_TABLE) {
+                                        @if (report.type != ReportType.KPI && report.type != ReportType.PIVOT_TABLE && report.type != ReportType.TEXT) {
                                             <button nz-button nzType="text" nzSize="small" (click)="download($index)"
                                                     [title]="'global.download' | translate">
                                                 <span nz-icon nzType="download"></span>

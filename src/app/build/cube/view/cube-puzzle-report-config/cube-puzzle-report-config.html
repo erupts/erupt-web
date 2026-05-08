@@ -1,4 +1,19 @@
 <div class="cube-puzzle-config-container">
+    @if (report.type === ReportType.TEXT) {
+        <form nz-form nzLayout="vertical" style="padding: 8px 12px;">
+            <nz-form-item>
+                <nz-form-label>{{ 'cube.report.config.title' | translate }}</nz-form-label>
+                <nz-form-control>
+                    <input nz-input [(ngModel)]="report.title" name="titleText"/>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item style="margin-bottom: 0;">
+                <nz-form-control>
+                    <ueditor [(ngModel)]="report.ui['content']" name="textContent" [height]="430"></ueditor>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    } @else {
     <div nz-row [nzGutter]="8">
         <!-- 左侧图表预览 -->
         <div nz-col [nzSpan]="16">
@@ -87,6 +102,7 @@
                                                 <nz-option [nzValue]="ReportType.KPI" nzLabel="KPI"></nz-option>
                                                 <nz-option [nzValue]="ReportType.PIVOT_TABLE" [nzLabel]="'cube.report.config.chart.pivot_table' | translate"></nz-option>
                                                 <nz-option [nzValue]="ReportType.TABLE" [nzLabel]="'cube.report.config.chart.table' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.TEXT" [nzLabel]="'cube.report.config.chart.text' | translate"></nz-option>
                                             </nz-option-group>
                                         </nz-select>
                                     </nz-form-control>
@@ -667,4 +683,5 @@
             </div>
         </div>
     </div>
+    } <!-- end @else for non-TEXT types -->
 </div>

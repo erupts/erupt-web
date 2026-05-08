@@ -246,6 +246,11 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     }
 
     onConfigChange() {
+        if (this.report.type === ReportType.TEXT) {
+            this.report.cube = {};
+            this.report.sorts = [];
+            return;
+        }
         if (this.report.type === ReportType.KPI || this.report.type === ReportType.PROGRESS || this.report.type === ReportType.RING_PROGRESS || this.report.type === ReportType.GAUGE) {
             let yField: string | string[];
             if (Array.isArray(this.report.cube[CubeKey.yField])) {
