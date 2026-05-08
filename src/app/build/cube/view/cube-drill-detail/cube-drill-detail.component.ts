@@ -4,6 +4,7 @@ import {STColumn, STComponent} from "@delon/abc/st";
 import {CubeMeta, FieldType} from "../../model/cube.model";
 import {Dashboard} from "../../model/dashboard.model";
 import {CubeFilter} from "../../model/cube-query.model";
+import {finalize} from "rxjs/operators";
 
 @Component({
     selector: 'cube-drill-detail',
@@ -44,7 +45,7 @@ export class CubeDrillDetailComponent implements OnInit {
         this.loading = true;
 
         // 获取所有维度字段
-        const dimensions = this.cubeMeta.dimensions.map(d => d.code);
+        const dimensions = this.cubeMeta?.dimensions?.map(d => d.code) || [];
         this.cubeApiService.query({
             cube: this.cube || this.dashboard.cuber,
             explore: this.explore || this.dashboard.explore,
@@ -54,16 +55,15 @@ export class CubeDrillDetailComponent implements OnInit {
             filters: this.filters || [],
             parameter: {},
             limit: 1000
-        }).subscribe({
+        }).pipe(
+            finalize(() => { this.loading = false; })
+        ).subscribe({
             next: (response) => {
                 this.drillData = response.data;
                 this.buildDrillColumns();
                 this.virtualScroll = this.drillData.length > 200;
-                this.loading = false;
             },
-            error: () => {
-                this.loading = false;
-            }
+            error: () => {}
         });
     }
 

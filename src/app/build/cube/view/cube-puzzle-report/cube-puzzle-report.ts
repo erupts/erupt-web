@@ -34,6 +34,7 @@ import {STColumn, STComponent} from "@delon/abc/st";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {CubeDrillDetailComponent} from "../cube-drill-detail/cube-drill-detail.component";
 import {forkJoin} from "rxjs";
+import {finalize} from "rxjs/operators";
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -446,7 +447,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 forkJoin([
                     this.cubeApiService.query(baseQuery),
                     this.cubeApiService.query({...baseQuery, filters: prevFilters})
-                ]).subscribe({
+                ]).pipe(finalize(() => { this.querying = false; })).subscribe({
                     next: ([curr, prev]) => {
                         this.chartData = [
                             ...curr.data.map(row => ({...row, _period: currentLabel})),
@@ -454,7 +455,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                         ];
                         this.render();
                     },
-                    complete: () => { this.querying = false; }
+                    error: () => {}
                 });
                 return;
             }
@@ -473,14 +474,14 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 forkJoin([
                     this.cubeApiService.query(baseQuery),
                     this.cubeApiService.query({...baseQuery, filters: prevFilters})
-                ]).subscribe({
+                ]).pipe(finalize(() => { this.querying = false; })).subscribe({
                     next: ([curr, prev]) => {
                         this.chartData = curr.data;
                         const yField = this.report.cube[CubeKey.yField] as string;
                         this.kpiCompareValue = prev.data[0] != null ? Number(prev.data[0][yField] ?? null) : null;
                         this.render();
                     },
-                    complete: () => { this.querying = false; }
+                    error: () => {}
                 });
                 return;
             }
