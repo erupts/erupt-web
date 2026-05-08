@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, inject, Input, OnInit, ViewChild} from '@angular/core';
 import {NZ_MODAL_DATA} from 'ng-zorro-antd/modal';
 import {BaseField, CubeMeta, CubeMetaDimension} from "../../model/cube.model";
-import {CubeKey, Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {CubeKey, Dashboard, DashboardDSL, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
 import {CubeOperator, CubeOperatorLogin, Direction} from "../../model/cube-query.model";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
 import {CubeApiService} from "../../service/cube-api.service";
@@ -55,6 +55,9 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         }
         if (!this.report.filterGroups) {
             this.report.filterGroups = [];
+        }
+        if (!this.report.compare) {
+            this.report.compare = {};
         }
         if (this.report.subModel) {
             this.loadSubModelMeta(this.report.subModel, false);
@@ -187,6 +190,9 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
             if (this.report.cube[CubeKey.targetField]) {
                 codes.push(this.report.cube[CubeKey.targetField] as string);
             }
+        } else if (this.report.type === ReportType.HEATMAP) {
+            if (this.report.cube[CubeKey.xField]) codes.push(this.report.cube[CubeKey.xField] as string);
+            if (this.report.cube[CubeKey.yField]) codes.push(this.report.cube[CubeKey.yField] as string);
         } else {
             if (this.report.cube[CubeKey.xField]) {
                 if (Array.isArray(this.report.cube[CubeKey.xField])) {
@@ -262,6 +268,14 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         } else if (this.report.type == ReportType.PIVOT_TABLE) {
             this.report.cube = {}
             this.puzzleReport.refresh();
+        } else if (this.report.type === ReportType.TREEMAP || this.report.type === ReportType.HEATMAP) {
+            if (Array.isArray(this.report.cube[CubeKey.xField])) {
+                this.report.cube[CubeKey.xField] = this.report.cube[CubeKey.xField][0];
+            }
+            if (Array.isArray(this.report.cube[CubeKey.yField])) {
+                this.report.cube[CubeKey.yField] = this.report.cube[CubeKey.yField][0];
+            }
+            this.report.cube[CubeKey.seriesField] = null;
         } else {
             if (Array.isArray(this.report.cube[CubeKey.xField])) {
                 this.report.cube[CubeKey.xField] = this.report.cube[CubeKey.xField][0];
@@ -295,6 +309,10 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
 
     get hasAnyFilter(): boolean {
         return this.report.filterGroups?.length > 0;
+    }
+
+    get compareDateFilters(): FilterDSL[] {
+        return (this.dsl?.filters || []).filter(f => f.operator === CubeOperator.BETWEEN && !f.hidden);
     }
 
     protected readonly CubeKey = CubeKey;

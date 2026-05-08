@@ -81,6 +81,14 @@ export interface FilterDSL {
     linkage?: string[]; // 联动
 }
 
+export interface CompareConfig {
+    enabled?: boolean;
+    type?: 'YOY' | 'MOM';
+    filterField?: string;
+    currentLabel?: string;
+    compareLabel?: string;
+}
+
 /**
  * 报表 DSL 定义
  */
@@ -93,6 +101,7 @@ export interface ReportDSL extends GridsterItem {
     ui?: Record<string, any>;
     sorts?: Sort[];
     filterGroups?: FilterGroup[];
+    compare?: CompareConfig;
 }
 
 export enum CubeKey {
@@ -100,6 +109,7 @@ export enum CubeKey {
     yField = 'yField',
     seriesField = 'seriesField',
     sizeField = "sizeField",
+    colorField = 'colorField',
 
     sourceField = 'sourceField',
     targetField = 'targetField',
@@ -132,6 +142,8 @@ export enum ReportType {
     SANKEY = 'SANKEY',
     CHORD = 'CHORD',
     BUBBLE = 'BUBBLE',
+    TREEMAP = 'TREEMAP',
+    HEATMAP = 'HEATMAP',
 
     TINY_LINE = 'TINY_LINE',
     TINY_AREA = 'TINY_AREA',

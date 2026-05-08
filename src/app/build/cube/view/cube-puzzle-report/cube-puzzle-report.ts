@@ -11,6 +11,7 @@ import {
     Column,
     Funnel,
     Gauge,
+    Heatmap,
     Line,
     Pie,
     Progress,
@@ -24,6 +25,7 @@ import {
     TinyArea,
     TinyColumn,
     TinyLine,
+    Treemap,
     Waterfall,
     WordCloud
 } from "@antv/g2plot";
@@ -31,6 +33,7 @@ import {BaseField, CubeMeta, FieldType} from "../../model/cube.model";
 import {STColumn, STComponent} from "@delon/abc/st";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {CubeDrillDetailComponent} from "../cube-drill-detail/cube-drill-detail.component";
+import {forkJoin} from "rxjs";
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -66,6 +69,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     chartData: Record<string, any>[] = [];
 
     chart: any;
+
+    kpiCompareValue: number | null = null;
+
+    private _compareSeriesOverride: string | null = null;
 
     private observer: IntersectionObserver;
 
@@ -304,6 +311,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             if (this.report.cube[CubeKey.valuesField]) {
                 measures = this.report.cube[CubeKey.valuesField] as string[];
             }
+        } else if (this.report.type === ReportType.HEATMAP) {
+            if (this.report.cube[CubeKey.xField]) dimensions = [this.report.cube[CubeKey.xField] as string];
+            if (this.report.cube[CubeKey.yField]) dimensions.push(this.report.cube[CubeKey.yField] as string);
+            if (this.report.cube[CubeKey.colorField]) measures = [this.report.cube[CubeKey.colorField] as string];
         } else {
             // For other chart types
             if (this.report.cube[CubeKey.xField]) {
@@ -327,7 +338,6 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     dimensions.push(this.report.cube[CubeKey.seriesField]);
                 }
             }
-
         }
 
         // 所有组件必须选择指标才发起请求
@@ -398,7 +408,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             ? this.report.filterGroups
             : undefined;
 
-        this.cubeApiService.query({
+        const baseQuery = {
             cube: queryCube,
             explore: queryExplore,
             dimensions: dimensions,
@@ -409,7 +419,70 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             parameter: parameters,
             dimensionFormat: formats,
             limit: 5000
-        }).subscribe({
+        };
+
+        // 同比/环比：仅主模型且有配置时生效
+        const compare = this.report.compare;
+        const COMPARE_SUPPORTED = [
+            ReportType.LINE, ReportType.AREA, ReportType.COLUMN, ReportType.BAR,
+            ReportType.SCATTER, ReportType.RADAR, ReportType.WATERFALL, ReportType.ROSE, ReportType.RADIAL_BAR
+        ];
+        if (!subModelDSL && compare?.enabled && compare?.filterField && COMPARE_SUPPORTED.includes(this.report.type)) {
+            const dateFilter = cf.find(f => f.field === compare.filterField);
+            if (dateFilter?.operator === CubeOperator.BETWEEN && Array.isArray(dateFilter.value)
+                && dateFilter.value[0] && dateFilter.value[1]) {
+                const shift = compare.type === 'YOY' ? -12 : -1;
+                const prevStart = this.shiftDateByMonths(dateFilter.value[0], shift);
+                const prevEnd = this.shiftDateByMonths(dateFilter.value[1], shift);
+                const prevFilters = cf.map(f => f === dateFilter ? {...f, value: [prevStart, prevEnd]} : f);
+                const currentLabel = compare.currentLabel || '当期';
+                const compareLabel = compare.compareLabel || (compare.type === 'YOY' ? '去年同期' : '上月同期');
+                this._compareSeriesOverride = '_period';
+                forkJoin([
+                    this.cubeApiService.query(baseQuery),
+                    this.cubeApiService.query({...baseQuery, filters: prevFilters})
+                ]).subscribe({
+                    next: ([curr, prev]) => {
+                        this.chartData = [
+                            ...curr.data.map(row => ({...row, _period: currentLabel})),
+                            ...prev.data.map(row => ({...row, _period: compareLabel}))
+                        ];
+                        this.render();
+                    },
+                    complete: () => { this.querying = false; }
+                });
+                return;
+            }
+        }
+        this._compareSeriesOverride = null;
+
+        // KPI 环比/同比：不需要 seriesField，直接存对比期值
+        if (!subModelDSL && compare?.enabled && compare?.filterField && this.report.type === ReportType.KPI) {
+            const dateFilter = cf.find(f => f.field === compare.filterField);
+            if (dateFilter?.operator === CubeOperator.BETWEEN && Array.isArray(dateFilter.value)
+                && dateFilter.value[0] && dateFilter.value[1]) {
+                const shift = compare.type === 'YOY' ? -12 : -1;
+                const prevStart = this.shiftDateByMonths(dateFilter.value[0], shift);
+                const prevEnd = this.shiftDateByMonths(dateFilter.value[1], shift);
+                const prevFilters = cf.map(f => f === dateFilter ? {...f, value: [prevStart, prevEnd]} : f);
+                forkJoin([
+                    this.cubeApiService.query(baseQuery),
+                    this.cubeApiService.query({...baseQuery, filters: prevFilters})
+                ]).subscribe({
+                    next: ([curr, prev]) => {
+                        this.chartData = curr.data;
+                        const yField = this.report.cube[CubeKey.yField] as string;
+                        this.kpiCompareValue = prev.data[0] != null ? Number(prev.data[0][yField] ?? null) : null;
+                        this.render();
+                    },
+                    complete: () => { this.querying = false; }
+                });
+                return;
+            }
+        }
+        this.kpiCompareValue = null;
+
+        this.cubeApiService.query(baseQuery).subscribe({
             next: (response) => {
                 this.chartData = response.data;
                 if (this.report.type == ReportType.TABLE) {
@@ -492,8 +565,12 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 ...this.getFieldMeta(this.report.cube[CubeKey.xField]),
                 ...this.getFieldMeta(this.report.cube[CubeKey.yField]),
                 ...this.getFieldMeta(this.report.cube[CubeKey.seriesField]),
+                ...this.getFieldMeta(this.report.cube[CubeKey.colorField]),
             }
         };
+        if (this._compareSeriesOverride) {
+            commonConfig.seriesField = this._compareSeriesOverride;
+        }
         if (WindowModel.theme.primaryColor) {
             // commonConfig.color = WindowModel.theme.primaryColor
         }
@@ -533,7 +610,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                     stepType: reportDSL.ui["stepType"] ? 'hv' : undefined,
                 });
                 break;
@@ -542,7 +619,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                 });
                 break;
             case ReportType.COLUMN:
@@ -551,7 +628,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     isGroup: !commonConfig['isStack'],
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                 });
                 break;
             case ReportType.BAR:
@@ -560,7 +637,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     isGroup: !commonConfig['isStack'],
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                 });
                 break;
             case ReportType.PIE:
@@ -578,7 +655,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    colorField: reportDSL.cube[CubeKey.seriesField] as string,
+                    colorField: commonConfig.seriesField,
                 });
                 break;
             case ReportType.BUBBLE:
@@ -600,7 +677,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                 });
                 break;
             case ReportType.FUNNEL:
@@ -676,7 +753,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                     radius: 0.9,
                 });
                 break;
@@ -686,6 +763,31 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
                     maxAngle: 270,
+                });
+                break;
+            case ReportType.TREEMAP: {
+                const xF = reportDSL.cube[CubeKey.xField] as string;
+                const yF = reportDSL.cube[CubeKey.yField] as string;
+                chart = new Treemap(chartContainer.nativeElement, {
+                    ...commonConfig,
+                    data: {
+                        name: 'root',
+                        children: data.map(row => ({
+                            name: String(row[xF] ?? ''),
+                            value: Number(row[yF] ?? 0),
+                        }))
+                    },
+                    colorField: 'name',
+                    label: {fields: ['name']},
+                });
+                break;
+            }
+            case ReportType.HEATMAP:
+                chart = new Heatmap(chartContainer.nativeElement, {
+                    ...commonConfig,
+                    xField: reportDSL.cube[CubeKey.xField] as string,
+                    yField: reportDSL.cube[CubeKey.yField] as string,
+                    colorField: reportDSL.cube[CubeKey.colorField] as string,
                 });
                 break;
             case ReportType.SANKEY:
@@ -1013,6 +1115,24 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             this.s2.destroy();
             this.s2 = null;
         }
+    }
+
+    getKpiDelta(): number {
+        if (!this.chartData?.length || this.kpiCompareValue === null) return 0;
+        const curr = Number(this.chartData[0][this.report.cube[CubeKey.yField] as string] ?? 0);
+        return curr - this.kpiCompareValue;
+    }
+
+    getKpiPct(): number {
+        if (this.kpiCompareValue === null || this.kpiCompareValue === 0) return 0;
+        const curr = Number(this.chartData[0][this.report.cube[CubeKey.yField] as string] ?? 0);
+        return (curr - this.kpiCompareValue) / Math.abs(this.kpiCompareValue) * 100;
+    }
+
+    private shiftDateByMonths(date: any, months: number): Date {
+        const d = date instanceof Date ? new Date(date) : new Date(date);
+        d.setMonth(d.getMonth() + months);
+        return d;
     }
 
     protected readonly DashboardTheme = DashboardTheme;

@@ -19,13 +19,19 @@
              style="height: 100%;width: 100%;overflow: hidden;box-sizing: border-box;padding: 0">
         </div>
         @if (report.type === ReportType.KPI) {
-            <div style="height: 100%; display: flex; align-items: center; justify-content: center;overflow: hidden">
+            <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; gap: 6px;">
                 @if (chartData && chartData.length > 0) {
                     <span [style.font-size]="(report.ui['fontSize'] || 22) + 'px'"
                           class="kpi-value"
                           [style.color]="report.ui['color']">
                         {{ chartData[0][report.cube[CubeKey.yField] + ''] }}
                     </span>
+                    @if (kpiCompareValue !== null) {
+                        <div class="kpi-compare" [class.kpi-trend-up]="getKpiDelta() >= 0" [class.kpi-trend-down]="getKpiDelta() < 0">
+                            {{ getKpiDelta() >= 0 ? '↑' : '↓' }}&nbsp;{{ getKpiPct() | number:'1.1-1' }}%
+                            <span class="kpi-compare-vs">vs {{ report.compare?.compareLabel || (report.compare?.type === 'MOM' ? '上月同期' : '去年同期') }}</span>
+                        </div>
+                    }
                 }
             </div>
         }

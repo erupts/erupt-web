@@ -143,6 +143,22 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 this.dsl = res.data.publishDsl || {};
             }
             this.options.margin = this.dsl?.settings?.gap ?? 12;
+            // 从 URL 恢复过滤条件
+            const urlFilters = this.route.snapshot.queryParams['filters'];
+            if (urlFilters) {
+                try {
+                    const filterValues: Record<string, any> = JSON.parse(urlFilters);
+                    for (const f of (this.dsl?.filters || [])) {
+                        if (filterValues[f.field] !== undefined) {
+                            let val = filterValues[f.field];
+                            if (f.operator === CubeOperator.BETWEEN && Array.isArray(val)) {
+                                val = val.map((v: any) => (typeof v === 'string' && v) ? new Date(v) : v);
+                            }
+                            f.value = val;
+                        }
+                    }
+                } catch (e) {}
+            }
             this.cubeApiService.cubeMetadata(this.dashboard.cuber, this.dashboard.explore).subscribe(res => {
                 const meta = res.data;
                 const fieldTitleMap = new Map<string, string>();
@@ -189,6 +205,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         for (let report of this.reports) {
             report.refresh();
         }
+        this.syncFiltersToUrl();
     }
 
     reset() {
@@ -612,11 +629,37 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         const hashIndex = url.indexOf('#');
         if (hashIndex !== -1) {
             const baseUrl = url.substring(0, hashIndex + 1);
-            const newUrl = baseUrl + '/fill/cube/' + this.dashboard?.code;
+            let newUrl = baseUrl + '/fill/cube/' + this.dashboard?.code;
+            const filterValues = this.collectFilterValues();
+            if (Object.keys(filterValues).length > 0) {
+                newUrl += '?filters=' + encodeURIComponent(JSON.stringify(filterValues));
+            }
             navigator.clipboard.writeText(newUrl).then(() => {
                 this.message.success(this.i18n.fanyi('cube.dashboard.copy_success'));
             });
         }
+    }
+
+    private collectFilterValues(): Record<string, any> {
+        const result: Record<string, any> = {};
+        for (const f of (this.dsl?.filters || [])) {
+            if (f.hidden) continue;
+            const v = f.value;
+            if (v === null || v === undefined) continue;
+            const isEmpty = Array.isArray(v) && v.every((i: any) => i === null || i === undefined);
+            if (!isEmpty) result[f.field] = v;
+        }
+        return result;
+    }
+
+    private syncFiltersToUrl() {
+        const filterValues = this.collectFilterValues();
+        const hasValues = Object.keys(filterValues).length > 0;
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: hasValues ? {filters: JSON.stringify(filterValues)} : {},
+            replaceUrl: true,
+        });
     }
 
     protected readonly ReportType = ReportType;
