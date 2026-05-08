@@ -394,6 +394,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             });
         }
 
+        const reportFilterGroup = this.report.filterGroups?.length > 0
+            ? this.report.filterGroups
+            : undefined;
+
         this.cubeApiService.query({
             cube: queryCube,
             explore: queryExplore,
@@ -401,6 +405,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             measures: measures,
             sorts: sorts,
             filters: cf,
+            filterGroups: reportFilterGroup,
             parameter: parameters,
             dimensionFormat: formats,
             limit: 5000

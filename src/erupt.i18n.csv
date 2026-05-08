@@ -389,3 +389,9 @@ cube.sub_model.mappings_hint,用于筛选与联动,用於篩選與聯動,Used fo
 cube.sub_model.main_field,主模型字段,主模型字段,Main model field,Champ du modèle principal,メインモデルフィールド,주 모델 필드,Поле основной модели,Campo del modelo principal,Hauptmodellfeld,Campo do modelo principal,Field model utama,حقل النموذج الرئيسي
 cube.sub_model.sub_field,子模型字段,子模型字段,Sub-model field,Champ du sous-modèle,サブモデルフィールド,서브 모델 필드,Поле подмодели,Campo del submodelo,Untermodellfeld,Campo do submodelo,Field sub-model,حقل النموذج الفرعي
 cube.sub_model.add_mapping,添加映射,添加映射,Add Mapping,Ajouter une correspondance,マッピング追加,매핑 추가,Добавить маппинг,Agregar asignación,Zuordnung hinzufügen,Adicionar mapeamento,Tambah pemetaan,إضافة تعيين
+cube.report.config.preset_filters,预定义条件,預定義條件,Preset Filters,Filtres prédéfinis,プリセット条件,사전 정의 조건,Предустановки,Filtros predefinidos,Vordefinierte Filter,Filtros predefinidos,Filter Prasetel,فلاتر مسبقة
+cube.report.config.filter_logic,筛选逻辑,篩選邏輯,Filter Logic,Logique de filtre,フィルターロジック,필터 로직,Логика фильтра,Lógica de filtro,Filterlogik,Lógica de filtro,Logika Filter,منطق التصفية
+cube.report.config.preset_conditions,筛选条件,篩選條件,Filter Conditions,Conditions de filtre,フィルター条件,필터 조건,Условия фильтра,Condiciones de filtro,Filterbedingungen,Condições de filtro,Kondisi Filter,شروط التصفية
+cube.report.config.filter_value_placeholder,请输入值,請輸入值,Enter value,Saisir une valeur,値を入力,값 입력,Введите значение,Ingrese un valor,Wert eingeben,Insira um valor,Masukkan nilai,أدخل قيمة
+cube.report.config.add_group,添加分组,添加分組,Add Group,Ajouter un groupe,グループ追加,그룹 추가,Добавить группу,Agregar grupo,Gruppe hinzufügen,Adicionar grupo,Tambah grup,إضافة مجموعة
+cube.report.config.apply_filters,应用条件,應用條件,Apply Filters,Appliquer les filtres,条件を適用,조건 적용,Применить фильтры,Aplicar filtros,Filter anwenden,Aplicar filtros,Terapkan filter,تطبيق الفلاتر

@@ -47,6 +47,15 @@ export class CubePuzzleFilterControl implements OnInit {
             if (!this.filter.value && this.filter.operator == CubeOperator.BETWEEN) {
                 this.filter.value = [null, null];
             }
+            // Pre-populate data with current value for echo-back display without API call
+            const val = this.filter.value;
+            if (val !== null && val !== undefined) {
+                if (Array.isArray(val) && val.length > 0) {
+                    this.data = val.map(v => ({label: v, value: v}));
+                } else if (!Array.isArray(val)) {
+                    this.data = [{label: val, value: val}];
+                }
+            }
         }
     }
 

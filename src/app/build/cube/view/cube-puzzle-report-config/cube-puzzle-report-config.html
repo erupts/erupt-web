@@ -328,6 +328,99 @@
                             </form>
                         </div>
                     </nz-tab>
+                    <nz-tab [nzTitle]="'cube.report.config.preset_filters' | translate">
+                        <form nz-form nzLayout="vertical">
+                            <nz-form-item>
+                                <nz-form-label>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                        <span>{{ 'cube.report.config.preset_conditions' | translate }}</span>
+                                        <button nz-button nzType="link" nzSize="small" (click)="addSubGroup()">
+                                            <i nz-icon nzType="plus"></i>{{ 'cube.report.config.add_group' | translate }}
+                                        </button>
+                                    </div>
+                                </nz-form-label>
+                                <nz-form-control>
+                                    @for (group of report.filterGroups; track $index; let gi = $index) {
+                                        <div style="border: 1px solid #d9d9d9; border-radius: 6px; padding: 8px; margin-bottom: 10px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                                <nz-radio-group [(ngModel)]="group.logic" [name]="'groupLogic' + gi"
+                                                                nzButtonStyle="solid" nzSize="small">
+                                                    <label nz-radio-button [nzValue]="CubeOperatorLogin.AND">AND</label>
+                                                    <label nz-radio-button [nzValue]="CubeOperatorLogin.OR">OR</label>
+                                                </nz-radio-group>
+                                                <span style="display: flex; gap: 4px;">
+                                                    <button nz-button nzType="link" nzSize="small" (click)="addGroupCondition(gi)">
+                                                        <i nz-icon nzType="plus"></i>{{ 'cube.report.config.add' | translate }}
+                                                    </button>
+                                                    <button nz-button nzType="text" nzDanger nzSize="small" (click)="removeSubGroup(gi)">
+                                                        <i nz-icon nzType="delete"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                            @for (cond of group.conditions; track $index; let ci = $index) {
+                                                <ng-container *ngTemplateOutlet="conditionRow; context: {
+                                                    cond: cond,
+                                                    fieldName: 'gField' + gi + '_' + ci,
+                                                    opName: 'gOp' + gi + '_' + ci,
+                                                    onRemove: removeGroupCondition.bind(this, gi, ci)
+                                                }"/>
+                                            }
+                                        </div>
+                                    }
+<!--                                    @if (!hasAnyFilter) {-->
+<!--                                        <nz-empty nzNotFoundImage="simple"></nz-empty>-->
+<!--                                    }-->
+                                </nz-form-control>
+                                @if (report.filterGroups?.length) {
+                                    <button nz-button nzType="primary" nzBlock (click)="changeCube()">
+                                        {{ 'cube.report.config.apply_filters' | translate }}
+                                    </button>
+                                }
+                            </nz-form-item>
+                        </form>
+
+                        <!-- 条件行模板 -->
+                        <ng-template #conditionRow let-cond="cond" let-fieldName="fieldName" let-opName="opName" let-onRemove="onRemove">
+                            <div style="margin-bottom: 10px;">
+                                <div style="display: flex; gap: 6px; margin-bottom: 4px; align-items: center;">
+                                    <nz-select [(ngModel)]="cond.field" [name]="fieldName"
+                                               nzShowSearch nzAllowClear
+                                               style="flex: 1"
+                                               [nzPlaceHolder]="'cube.report.config.sort_field_placeholder' | translate">
+                                        @if (activeMeta?.dimensions?.length) {
+                                            <nz-option-group [nzLabel]="'cube.report.config.dimension' | translate">
+                                                @for (dim of activeMeta.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
+                                                }
+                                            </nz-option-group>
+                                        }
+                                        @if (activeMeta?.measures?.length) {
+                                            <nz-option-group [nzLabel]="'cube.report.config.measure' | translate">
+                                                @for (mea of activeMeta.measures; track mea.code) {
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                                }
+                                            </nz-option-group>
+                                        }
+                                    </nz-select>
+                                    <nz-select [(ngModel)]="cond.operator" [name]="opName"
+                                               style="width: 110px;">
+                                        @for (entry of CubeOperatorEntries; track entry[0]) {
+                                            <nz-option [nzValue]="entry[1]" [nzLabel]="entry[0]"></nz-option>
+                                        }
+                                    </nz-select>
+                                    <button nz-button nzType="text" nzDanger (click)="onRemove()">
+                                        <i nz-icon nzType="delete"></i>
+                                    </button>
+                                </div>
+                                @if (cond.field && cond.operator) {
+                                    <cube-puzzle-filter-control [filter]="$any(cond)"
+                                                                [cubeMeta]="activeMeta"
+                                                                [dashboard]="dashboard"
+                                                                [dsl]="dsl"/>
+                                }
+                            </div>
+                        </ng-template>
+                    </nz-tab>
                     <nz-tab [nzTitle]="'cube.report.config.custom' | translate">
                         <form nz-form nzLayout="vertical">
                             @if (report.type === ReportType.KPI) {

@@ -79,8 +79,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             this.isFullscreen = !!document['msFullscreenElement'];
         });
         this.options = {
-            gridType: 'verticalFixed',
-            compactType: 'none',
+            gridType: 'scrollVertical',
+            compactType: 'compactUp',
             margin: 12,
             outerMargin: true,
             outerMarginTop: null,
@@ -102,7 +102,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             defaultItemCols: 1,
             defaultItemRows: 1,
             fixedColWidth: 105,
-            fixedRowHeight: 55,
+            fixedRowHeight: 80,
             keepFixedHeightInMobile: false,
             keepFixedWidthInMobile: false,
             scrollSensitivity: 10,
@@ -116,17 +116,15 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             ignoreMarginInRow: false,
             draggable: {
                 enabled: this.edit,
-                ignoreContent: true,  // 忽略内容区域，只有拖拽手柄可以拖拽
-                ignoreContentClass: 'gridster-item-content',  // 排除内容区域
-                dragHandleClass: 'drag-handler',  // 只有带此类的元素才能拖拽
-                dropOverItems: true,  // 允许拖拽到其他项目上
-                dropOverItemsCallback: null,
+                ignoreContent: true,
+                ignoreContentClass: 'gridster-item-content',
+                dragHandleClass: 'drag-handler',
+                dropOverItems: false,
             },
             resizable: {
                 enabled: this.edit
             },
-            swap: true,  // 启用交换位置功能
-            swapWhileDragging: false,  // 是否在拖拽过程中实时交换（false 表示释放时交换）
+            swap: false,
             pushItems: true,
             disablePushOnDrag: false,
             disablePushOnResize: false,

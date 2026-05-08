@@ -2,7 +2,7 @@ import {AfterViewInit, Component, inject, Input, OnInit, ViewChild} from '@angul
 import {NZ_MODAL_DATA} from 'ng-zorro-antd/modal';
 import {BaseField, CubeMeta, CubeMetaDimension} from "../../model/cube.model";
 import {CubeKey, Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
-import {Direction} from "../../model/cube-query.model";
+import {CubeOperator, CubeOperatorLogin, Direction} from "../../model/cube-query.model";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
 import {CubeApiService} from "../../service/cube-api.service";
 
@@ -52,6 +52,9 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
                 showYAxis: true,
                 showTooltip: true
             };
+        }
+        if (!this.report.filterGroups) {
+            this.report.filterGroups = [];
         }
         if (this.report.subModel) {
             this.loadSubModelMeta(this.report.subModel, false);
@@ -274,7 +277,30 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     }
 
 
+    addSubGroup() {
+        this.report.filterGroups.push({logic: CubeOperatorLogin.AND, conditions: [{}]});
+    }
+
+    removeSubGroup(index: number) {
+        this.report.filterGroups.splice(index, 1);
+    }
+
+    addGroupCondition(groupIndex: number) {
+        this.report.filterGroups[groupIndex].conditions.push({});
+    }
+
+    removeGroupCondition(groupIndex: number, condIndex: number) {
+        this.report.filterGroups[groupIndex].conditions.splice(condIndex, 1);
+    }
+
+    get hasAnyFilter(): boolean {
+        return this.report.filterGroups?.length > 0;
+    }
+
     protected readonly CubeKey = CubeKey;
     protected readonly ReportType = ReportType;
+    protected readonly CubeOperator = CubeOperator;
+    protected readonly CubeOperatorLogin = CubeOperatorLogin;
+    protected readonly CubeOperatorEntries = Object.entries(CubeOperator) as [string, CubeOperator][];
 
 }
