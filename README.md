@@ -27,7 +27,7 @@
     <a href="https://gitee.com/erupt/erupt">码云仓库</a> &nbsp; | &nbsp; 
     <a href="https://www.erupt.xyz" target="_blank"><b>🦅 官方网站</b></a> &nbsp; | &nbsp; 
     <a href="https://www.erupt.xyz/demo" target="_blank">在线体验</a> &nbsp; | &nbsp; 
-    <a href="https://www.yuque.com/erupts" target="_blank"><b>📕 使用文档</b></a>
+    <a href="https://docs.erupt.xyz" target="_blank"><b>📕 使用文档</b></a>
 </p>
 
 ---
