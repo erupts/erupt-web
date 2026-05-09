@@ -27,6 +27,8 @@ export class CubePuzzleFilterControl implements OnInit {
 
     @Input() configMode = false;
 
+    readonly NULL_SENTINEL = '__null__';
+
     data: VL[] = null;
 
     isLoading = false;
@@ -51,24 +53,35 @@ export class CubePuzzleFilterControl implements OnInit {
             const val = this.filter.value;
             if (val !== null && val !== undefined) {
                 if (Array.isArray(val) && val.length > 0) {
-                    this.data = val.map(v => ({label: v, value: v}));
+                    this.data = val.map(v => this.toVL(v));
                 } else if (!Array.isArray(val)) {
-                    this.data = [{label: val, value: val}];
+                    this.data = [this.toVL(val)];
                 }
             }
         }
     }
 
     get currentValue(): any {
-        return this.configMode ? this.filter.defaultValue : this.filter.value;
+        const raw = this.configMode ? this.filter.defaultValue : this.filter.value;
+        if (raw === null && (this.filter.operator === CubeOperator.EQ || this.filter.operator === CubeOperator.NEQ)) {
+            return this.NULL_SENTINEL;
+        }
+        return raw;
     }
 
     set currentValue(v: any) {
+        const store = (raw: any) => raw === this.NULL_SENTINEL ? null : raw;
+        const stored = Array.isArray(v) ? v.map(store) : store(v);
         if (this.configMode) {
-            this.filter.defaultValue = v;
+            this.filter.defaultValue = stored;
         } else {
-            this.filter.value = v;
+            this.filter.value = stored;
         }
+    }
+
+    private toVL(raw: any): VL {
+        const isNull = raw === null || raw === undefined || raw === '';
+        return {label: isNull ? this.NULL_SENTINEL : raw, value: isNull ? null : raw};
     }
 
     updateValueAt(index: number, val: any) {
@@ -144,11 +157,7 @@ export class CubePuzzleFilterControl implements OnInit {
                         limit: 500,
                     }).subscribe({
                         next: res => {
-                            let d: VL[] = [];
-                            for (let datum of res.data) {
-                                d.push({label: datum[this.filter.field], value: datum[this.filter.field]})
-                            }
-                            this.data = d;
+                            this.data = res.data.map(datum => this.toVL(datum[this.filter.field]));
                         },
                         complete: () => this.isLoading = false
                     })

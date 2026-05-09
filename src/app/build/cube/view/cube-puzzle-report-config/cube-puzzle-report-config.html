@@ -656,7 +656,7 @@
                                                        (ngModelChange)="changeCube()" nzAllowClear
                                                        [nzPlaceHolder]="'cube.report.config.compare.filter_placeholder' | translate">
                                                 @for (f of compareDateFilters; track f.field) {
-                                                    <nz-option [nzValue]="f.field" [nzLabel]="f.title || f.field"></nz-option>
+                                                    <nz-option [nzValue]="f.field" [nzLabel]="f.title || cubeMeta?.fieldTitleMap?.get(f.field) || f.field"></nz-option>
                                                 }
                                             </nz-select>
                                         </nz-form-control>

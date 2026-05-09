@@ -19,7 +19,8 @@
                         </nz-option>
                     } @else {
                         @for (item of data || []; track item.value) {
-                            <nz-option [nzLabel]="item.value" [nzValue]="item.label"></nz-option>
+                            <nz-option [nzLabel]="item.value === null? '(空值)' : item.value"
+                                       [nzValue]="item.label"></nz-option>
                         }
                     }
                 </nz-select>

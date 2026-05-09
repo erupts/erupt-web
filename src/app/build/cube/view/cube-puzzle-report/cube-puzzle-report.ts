@@ -378,7 +378,9 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             // 主模型：合并外部筛选器和用户点击的维度筛选
             if (this.filters) {
                 for (let f of this.filters) {
-                    if (f.value != null && f.value != "") {
+                    if (f.value === null && !f.hidden && (f.operator === CubeOperator.EQ || f.operator === CubeOperator.NEQ)) {
+                        cf.push({field: f.field, operator: f.operator === CubeOperator.EQ ? CubeOperator.NULL : CubeOperator.NOT_NULL, value: null});
+                    } else if (f.value != null && f.value != "") {
                         if (this.cubeMeta.parameters.filter(it => it.code === f.field).length > 0) {
                             parameters[f.field] = f.value;
                         } else {
