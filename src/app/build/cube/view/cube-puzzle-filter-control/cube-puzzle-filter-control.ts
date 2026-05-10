@@ -6,6 +6,8 @@ import {CubeApiService} from "../../service/cube-api.service";
 import {VL} from "../../../erupt/model/erupt-field.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {I18NService} from '@core';
+import {PresetRanges} from "ng-zorro-antd/date-picker";
+import moment from 'moment';
 
 @Component({
     selector: 'cube-puzzle-filter-control',
@@ -29,6 +31,8 @@ export class CubePuzzleFilterControl implements OnInit {
 
     readonly NULL_SENTINEL = '__null__';
 
+    dateRanges: PresetRanges = {};
+
     data: VL[] = null;
 
     isLoading = false;
@@ -37,6 +41,15 @@ export class CubePuzzleFilterControl implements OnInit {
     }
 
     ngOnInit(): void {
+        const fmt = (d: moment.Moment, time: string) => d.format('YYYY-MM-DD') + `T${time}`;
+        this.dateRanges = <any>{
+            [this.i18n.fanyi('global.today')]: [fmt(moment(), '00:00:00'), fmt(moment(), '23:59:59')],
+            [this.i18n.fanyi('global.yesterday')]: [fmt(moment().subtract(1, 'day'), '00:00:00'), fmt(moment().subtract(1, 'day'), '23:59:59')],
+            [this.i18n.fanyi('global.date.last_7_day')]: [fmt(moment().subtract(7, 'day'), '00:00:00'), fmt(moment(), '23:59:59')],
+            [this.i18n.fanyi('global.date.last_30_day')]: [fmt(moment().subtract(30, 'day'), '00:00:00'), fmt(moment(), '23:59:59')],
+            [this.i18n.fanyi('global.date.this_month')]: [fmt(moment().startOf('month'), '00:00:00'), fmt(moment(), '23:59:59')],
+            [this.i18n.fanyi('global.date.last_month')]: [fmt(moment().subtract(1, 'month').startOf('month'), '00:00:00'), fmt(moment().subtract(1, 'month').endOf('month'), '23:59:59')],
+        };
         if (this.configMode) {
             if (!this.filter.defaultValue && this.filter.operator == CubeOperator.BETWEEN) {
                 this.filter.defaultValue = [null, null];

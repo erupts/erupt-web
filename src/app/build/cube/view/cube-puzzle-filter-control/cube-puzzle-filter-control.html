@@ -48,7 +48,7 @@
     @case (FieldType.DATE) {
         @if (filter.operator == CubeOperator.BETWEEN) {
             <nz-range-picker [ngModel]="currentValue" (ngModelChange)="currentValue = $event; onValueChange($event)" [nzSize]="size" [nzShowTime]="true"
-                             [nzShowNow]="true" style="width: 100%;"/>
+                             [nzShowNow]="true" [nzRanges]="dateRanges" style="width: 100%;"/>
         } @else if (filter.operator == CubeOperator.FEW_DAYS || filter.operator == CubeOperator.FUTURE_DAYS) {
             <nz-input-number [(ngModel)]="currentValue" (ngModelChange)="onValueChange($event)" [nzSize]="size" style="width: 100%;"></nz-input-number>
         } @else {
