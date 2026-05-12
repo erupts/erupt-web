@@ -52,7 +52,7 @@
                                 <div class="section">
                                     @if (!dataDeleted) {
                                         @if (activeTabIndex === 0) {
-                                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== approvalView"
+                                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== approvalView" [initValue]="false"
                                                              [formAccesses]="nodeInfo?.prop?.formAccesses || {}" [loadingEruptData]="loadingEruptData"
                                                              [defaultFormAccess]="nodeInfo?.type==NodeType.START ? FormAccessEnum.DEFAULT : FormAccessEnum.READONLY"></erupt-flow-form>
                                         }
