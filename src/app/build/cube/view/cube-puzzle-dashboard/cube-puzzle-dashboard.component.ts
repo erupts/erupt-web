@@ -233,7 +233,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 if (filter.operator == CubeOperator.BETWEEN) {
                     filter.value = [null, null];
                 } else {
-                    filter.value = null;
+                    filter.value = undefined;
                 }
             }
         }

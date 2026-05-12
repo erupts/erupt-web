@@ -54,6 +54,11 @@ export class CubePuzzleFilterControl implements OnInit {
             if (!this.filter.defaultValue && this.filter.operator == CubeOperator.BETWEEN) {
                 this.filter.defaultValue = [null, null];
             }
+            const dv = this.filter.defaultValue;
+            if (dv !== null && dv !== undefined && !parseRelativeDefault(dv)
+                && this.fieldType() === FieldType.STRING && !this.isMeasure()) {
+                this.openSelect(true);
+            }
         } else {
             const rd = parseRelativeDefault(this.filter.defaultValue);
             if (rd && this.filter.operator === CubeOperator.BETWEEN) {

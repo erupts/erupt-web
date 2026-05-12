@@ -346,8 +346,9 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
         }
 
-        // 所有组件必须选择指标才发起请求
-        if (measures.length === 0) {
+        // TABLE 可以仅配置维度，其余组件必须有指标才发起请求
+        const noFields = measures.length === 0 && dimensions.length === 0;
+        if (noFields || (measures.length === 0 && this.report.type !== ReportType.TABLE)) {
             this.chartData = [];
             this.querying = false;
             this.render();
