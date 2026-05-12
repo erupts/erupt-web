@@ -76,9 +76,17 @@ export interface FilterDSL {
     hidden?: boolean;
     notNull?: boolean;  // 排除空值（下拉选项过滤）
     operator?: CubeOperator;
+    // Absolute value, or relative-time string "PAST:<days>" / "FUTURE:<days>"
     defaultValue?: any;
     value?: any;
     linkage?: string[]; // 联动
+}
+
+/** Parse "PAST:7" / "FUTURE:14" from defaultValue. Returns null for absolute values. */
+export function parseRelativeDefault(value: any): {type: 'PAST' | 'FUTURE'; days: number} | null {
+    if (typeof value !== 'string') return null;
+    const m = value.match(/^(PAST|FUTURE):(\d+)$/);
+    return m ? {type: m[1] as 'PAST' | 'FUTURE', days: parseInt(m[2], 10)} : null;
 }
 
 export interface CompareConfig {

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Dashboard, DashboardDSL, FilterDSL} from "../../model/dashboard.model";
+import {Dashboard, DashboardDSL, FilterDSL, parseRelativeDefault} from "../../model/dashboard.model";
 import {CubeMeta, FieldType} from "../../model/cube.model";
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubeApiService} from "../../service/cube-api.service";
@@ -55,7 +55,12 @@ export class CubePuzzleFilterControl implements OnInit {
                 this.filter.defaultValue = [null, null];
             }
         } else {
-            if (this.filter.defaultValue !== null && this.filter.defaultValue !== undefined
+            const rd = parseRelativeDefault(this.filter.defaultValue);
+            if (rd && this.filter.operator === CubeOperator.BETWEEN) {
+                if (!this.filter.value || (Array.isArray(this.filter.value) && this.filter.value.every((v: any) => v === null))) {
+                    this.filter.value = this.computeRelativeDateRange(rd);
+                }
+            } else if (this.filter.defaultValue !== null && this.filter.defaultValue !== undefined
                 && (this.filter.value === null || this.filter.value === undefined)) {
                 this.filter.value = this.filter.defaultValue;
             }
@@ -121,6 +126,21 @@ export class CubePuzzleFilterControl implements OnInit {
             }
         }
         return FieldType.STRING;
+    }
+
+    computeRelativeDateRange(rd: {type: 'PAST' | 'FUTURE'; days: number}): [string, string] {
+        const m = moment;
+        if (rd.type === 'PAST') {
+            return [
+                m().subtract(rd.days, 'day').startOf('day').format('YYYY-MM-DDTHH:mm:ss'),
+                m().endOf('day').format('YYYY-MM-DDTHH:mm:ss')
+            ];
+        } else {
+            return [
+                m().startOf('day').format('YYYY-MM-DDTHH:mm:ss'),
+                m().add(rd.days, 'day').endOf('day').format('YYYY-MM-DDTHH:mm:ss')
+            ];
+        }
     }
 
     clean() {

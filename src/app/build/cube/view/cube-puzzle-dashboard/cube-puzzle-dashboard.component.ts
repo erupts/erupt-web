@@ -6,7 +6,16 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {I18NService} from '@core';
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
-import {Dashboard, DashboardDSL, DashboardPublishHistory, DashboardTheme, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {
+    Dashboard,
+    DashboardDSL,
+    DashboardPublishHistory,
+    DashboardTheme,
+    FilterDSL,
+    parseRelativeDefault,
+    ReportDSL,
+    ReportType
+} from "../../model/dashboard.model";
 import {BaseField, CubeMeta, FieldType} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
@@ -189,8 +198,13 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 // 若当前值为空但存在默认值，则先应用默认值
                 const isEmpty = (v: any) => v === null || v === undefined || v === ''
                     || (Array.isArray(v) && v.every(i => i === null || i === undefined));
-                if (isEmpty(filter.value) && !isEmpty(filter.defaultValue)) {
-                    filter.value = filter.defaultValue;
+                if (isEmpty(filter.value)) {
+                    const rd = parseRelativeDefault(filter.defaultValue);
+                    if (rd && filter.operator === CubeOperator.BETWEEN) {
+                        filter.value = this.computeRelativeDateRange(rd);
+                    } else if (!isEmpty(filter.defaultValue)) {
+                        filter.value = filter.defaultValue;
+                    }
                 }
                 if (filter.notNull && !filter.hidden) {
                     const v = filter.value;
@@ -210,7 +224,10 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     reset() {
         for (let filter of this.dsl.filters) {
-            if (filter.defaultValue) {
+            const rd = parseRelativeDefault(filter.defaultValue);
+            if (rd && filter.operator === CubeOperator.BETWEEN) {
+                filter.value = this.computeRelativeDateRange(rd);
+            } else if (filter.defaultValue) {
                 filter.value = filter.defaultValue;
             } else {
                 if (filter.operator == CubeOperator.BETWEEN) {
@@ -222,6 +239,28 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         }
         for (let report of this.reports) {
             report.refresh();
+        }
+    }
+
+    private computeRelativeDateRange(rd: {type: 'PAST' | 'FUTURE'; days: number}): [string, string] {
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const fmt = (d: Date) =>
+            `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        const now = new Date();
+        if (rd.type === 'PAST') {
+            const start = new Date(now);
+            start.setDate(start.getDate() - rd.days);
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(now);
+            end.setHours(23, 59, 59, 0);
+            return [fmt(start), fmt(end)];
+        } else {
+            const start = new Date(now);
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(now);
+            end.setDate(end.getDate() + rd.days);
+            end.setHours(23, 59, 59, 0);
+            return [fmt(start), fmt(end)];
         }
     }
 
@@ -513,9 +552,15 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 // 同步 defaultValue → value，让过滤器控件立刻回显新默认值
                 // （track $index 导致组件实例不重建，ngOnInit 不会再次执行）
                 const dv = filter.defaultValue;
-                if (dv !== null && dv !== undefined
-                    && !(Array.isArray(dv) && dv.every((i: any) => i === null || i === undefined))) {
+                const rd = parseRelativeDefault(dv);
+                const isEmpty = (v: any) => v === null || v === undefined
+                    || (Array.isArray(v) && v.every((i: any) => i === null || i === undefined));
+                if (rd && filter.operator === CubeOperator.BETWEEN) {
+                    filter.value = this.computeRelativeDateRange(rd);
+                } else if (!isEmpty(dv)) {
                     filter.value = dv;
+                } else {
+                    filter.value = filter.operator === CubeOperator.BETWEEN ? [null, null] : null;
                 }
                 this.dsl.filters[index] = filter;
             }
@@ -660,6 +705,26 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             queryParams: hasValues ? {filters: JSON.stringify(filterValues)} : {},
             replaceUrl: true,
         });
+    }
+
+    getFilterWidth(filter: FilterDSL): string {
+        let type = FieldType.STRING;
+        if (this.cubeMeta) {
+            const field = this.cubeMeta.dimensions?.find(d => d.code === filter.field)
+                || this.cubeMeta.measures?.find(m => m.code === filter.field)
+                || this.cubeMeta.parameters?.find(p => p.code === filter.field);
+            if (field) type = field.type;
+        }
+        if (type === FieldType.DATE) {
+            if (filter.operator === CubeOperator.BETWEEN) return '360px';
+            if (filter.operator === CubeOperator.FEW_DAYS || filter.operator === CubeOperator.FUTURE_DAYS) return '140px';
+            return '200px';
+        }
+        if (type === FieldType.NUMBER) {
+            return filter.operator === CubeOperator.BETWEEN ? '240px' : '140px';
+        }
+        if (filter.operator === CubeOperator.NULL || filter.operator === CubeOperator.NOT_NULL) return '120px';
+        return '180px';
     }
 
     protected readonly ReportType = ReportType;
