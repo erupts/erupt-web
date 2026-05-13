@@ -21,6 +21,20 @@ export class CubePuzzleSubModelConfig implements OnInit {
     exploresMap: { [cube: string]: VL[] } = {};
     subMetaMap: { [key: string]: CubeMeta } = {};
 
+    searchKeyword = '';
+
+    get filteredSubModels(): { item: SubModelDSL; origIndex: number }[] {
+        const kw = this.searchKeyword.trim().toLowerCase();
+        return this.subModels
+            .map((item, origIndex) => ({item, origIndex}))
+            .filter(({item}) =>
+                !kw ||
+                item.alias?.toLowerCase().includes(kw) ||
+                this.getCubeLabel(item.cube)?.toLowerCase().includes(kw) ||
+                this.getExploreLabel(item.cube, item.explore)?.toLowerCase().includes(kw)
+            );
+    }
+
     readonly NEW_IDX = -2;
     editingIndex: number = -1;
     editForm: SubModelDSL = null;

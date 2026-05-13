@@ -1,6 +1,13 @@
 <div class="sub-model-config">
     @if (subModels.length > 0) {
-        <nz-table [nzData]="subModels" nzSize="small" [nzShowPagination]="false" [nzBordered]="false">
+        <div class="search-bar">
+            <nz-input-group [nzPrefix]="searchIcon" >
+                <input nz-input [(ngModel)]="searchKeyword"
+                       [placeholder]="'cube.sub_model.search' | translate" style="width: 360px"/>
+            </nz-input-group>
+            <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+        </div>
+        <nz-table [nzData]="filteredSubModels" nzSize="small" [nzShowPagination]="false" [nzBordered]="false">
             <thead>
             <tr>
                 <th>{{ 'cube.sub_model.alias' | translate }}</th>
@@ -11,19 +18,19 @@
             </tr>
             </thead>
             <tbody>
-            @for (item of subModels; track $index; let i = $index) {
-                <tr [class.editing-row]="editingIndex === i">
-                    <td><strong>{{ item.alias }}</strong></td>
-                    <td>{{ getCubeLabel(item.cube) }}</td>
-                    <td>{{ getExploreLabel(item.cube, item.explore) }}</td>
-                    <td>{{ item.fieldMappings?.length || 0 }}</td>
+            @for (entry of filteredSubModels; track entry.origIndex) {
+                <tr [class.editing-row]="editingIndex === entry.origIndex">
+                    <td><strong>{{ entry.item.alias }}</strong></td>
+                    <td>{{ getCubeLabel(entry.item.cube) }}</td>
+                    <td>{{ getExploreLabel(entry.item.cube, entry.item.explore) }}</td>
+                    <td>{{ entry.item.fieldMappings?.length || 0 }}</td>
                     <td>
-                        <button nz-button nzType="text" nzSize="small" (click)="startEdit(i)"
-                                [disabled]="editingIndex !== -1 && editingIndex !== i"
+                        <button nz-button nzType="text" nzSize="small" (click)="startEdit(entry.origIndex)"
+                                [disabled]="editingIndex !== -1 && editingIndex !== entry.origIndex"
                                 [title]="'global.editor' | translate">
                             <span nz-icon nzType="edit"></span>
                         </button>
-                        <button nz-button nzType="text" nzSize="small" nzDanger (click)="remove(i)"
+                        <button nz-button nzType="text" nzSize="small" nzDanger (click)="remove(entry.origIndex)"
                                 [title]="'global.delete' | translate">
                             <span nz-icon nzType="delete"></span>
                         </button>
