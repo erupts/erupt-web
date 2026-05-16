@@ -10,7 +10,7 @@
             <span class="placeholder-text">{{ 'cube.filter.required_hint' | translate }}</span>
         </div>
     }
-    <nz-spin [nzSpinning]="querying" [hidden]="requiredUnfilled" style="height: 100%;width: 100%;">
+    <nz-spin [nzSpinning]="querying" [hidden]="requiredUnfilled" style="height: 100%;width: 100%;overflow: hidden;">
         @if (report.type === ReportType.TEXT) {
             <div class="text-report-content" [innerHTML]="report.ui['content'] | safeHtml"
                  style="height: 100%; overflow: auto; padding: 12px; box-sizing: border-box;"></div>

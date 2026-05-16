@@ -103,9 +103,19 @@ export class CubePuzzleSubModelConfig implements OnInit {
         });
     }
 
+    private generateId(): string {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+            return crypto.randomUUID();
+        }
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+            const r = Math.random() * 16 | 0;
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+    }
+
     addNew() {
         this.editingIndex = this.NEW_IDX;
-        this.editForm = {id: crypto.randomUUID(), alias: '', cube: '', explore: '', fieldMappings: []};
+        this.editForm = {id: this.generateId(), alias: '', cube: '', explore: '', fieldMappings: []};
         this.editSubMeta = null;
     }
 
