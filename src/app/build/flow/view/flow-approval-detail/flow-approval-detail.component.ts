@@ -22,6 +22,8 @@ import {AddSignType, ReviewMode, SubNode} from "@flow/model/flow-approval.model"
 import {KV} from "../../../erupt/model/util.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
+import {EruptUser} from "../../../cube/model/dashboard.model";
+import {forkJoin} from "rxjs";
 import {getAvatarColor} from "@flow/util/flow.util";
 import {ActivatedRoute} from "@angular/router";
 import {FormAccessEnum, PrintSetting} from "@flow/model/flow.model";
@@ -79,6 +81,11 @@ export class FlowApprovalDetailComponent implements OnInit {
     availableReturnNodes: KV<string, string>[] = [];
 
     assignedNodes: { id: string, name: string, userIds: number[] }[] = [];
+
+    selfSelectNodes: KV<string, string>[] = [];
+    nodeUsersOptions: { [key: string]: EruptUser[] } = {};
+    selectedNodeUserIds: { [key: string]: number[] } = {};
+    loadingSelfSelectNodes: boolean = false;
 
     dataDeleted: boolean = false;
 
@@ -364,7 +371,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             return;
         }
 
-        if (!this.reason.trim()) {
+        if (!this.reason?.trim()) {
             this.message.warning('请填写退回说明');
             return;
         }
@@ -407,16 +414,54 @@ export class FlowApprovalDetailComponent implements OnInit {
         })
     }
 
-    // 重新提交
+    // 重新提交 / 提交
     resubmit() {
         this.reason = null;
+        this.selfSelectNodes = [];
+        this.nodeUsersOptions = {};
+        this.selectedNodeUserIds = {};
         this.resubmitModalVisible = true;
+        // 首次提交才需要加载自选节点
+        if (this.instanceDetail?.eruptModelId) return;
+        this.loadingSelfSelectNodes = true;
+        const flowId = this.instanceDetail.eruptFlowConfig.id;
+        this.flowApiService.selfSelectNodes(flowId).subscribe({
+            next: (nodeRes) => {
+                this.selfSelectNodes = nodeRes.data || [];
+                if (this.selfSelectNodes.length === 0) {
+                    this.loadingSelfSelectNodes = false;
+                    return;
+                }
+                forkJoin(this.selfSelectNodes.map(node => this.flowApiService.selfSelectNodeUsers(flowId, node.key)))
+                    .subscribe({
+                        next: (userResults) => {
+                            userResults.forEach((res, i) => {
+                                this.nodeUsersOptions[this.selfSelectNodes[i].key] = res.data;
+                            });
+                        },
+                        complete: () => { this.loadingSelfSelectNodes = false; },
+                        error: () => { this.loadingSelfSelectNodes = false; }
+                    });
+            },
+            error: () => { this.loadingSelfSelectNodes = false; }
+        });
     }
 
-    // 提交重新提交
+    // 提交重新提交 / 提交
     submitResubmit() {
+        for (let node of this.selfSelectNodes) {
+            if (!this.selectedNodeUserIds[node.key] || this.selectedNodeUserIds[node.key].length === 0) {
+                this.message.warning(`请选择节点【${node.value}】的审批用户`);
+                return;
+            }
+        }
+        const selfSelectNodeUsers: Record<string, number[]> = {};
+        for (const key in this.selectedNodeUserIds) {
+            selfSelectNodeUsers[key] = this.selectedNodeUserIds[key];
+        }
         let data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
-        this.flowInstanceApiService.resubmit(this.instanceDetail.taskId, this.reason, data).subscribe(res => {
+        this.flowInstanceApiService.resubmit(this.instanceDetail.taskId, this.reason, data,
+            this.selfSelectNodes.length ? selfSelectNodeUsers : null).subscribe(res => {
             this.resubmitModalVisible = false;
             this.reason = null;
             this.message.success('提交成功');
