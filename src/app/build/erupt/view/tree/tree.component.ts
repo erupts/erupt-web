@@ -106,8 +106,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.addBlock(() => {
             if (id) {
                 let edit = eruptFieldModelMap.get(this.eruptBuildModel.eruptModel.eruptJson.tree.pid.split(".")[0]).eruptFieldJson.edit;
-                edit.$value = id;
-                edit.$viewValue = label;
+                edit.$value = {id, label};
             }
         });
     }

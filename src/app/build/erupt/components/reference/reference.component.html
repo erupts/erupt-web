@@ -6,7 +6,7 @@
            [readOnly]="true"
            [disabled]="readonly"
            [placeholder]="field.eruptFieldJson.edit.placeHolder"
-           [(ngModel)]="field.eruptFieldJson.edit.$viewValue"
+           [ngModel]="getDisplayValue(field)"
            [name]="field.fieldName">
 </nz-input-group>
 <ng-template #refBtn>

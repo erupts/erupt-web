@@ -52,13 +52,28 @@ export class ReferenceComponent implements OnInit {
         }
     }
 
+    private getFieldIdValue(field: EruptFieldModel): any {
+        const edit = field.eruptFieldJson.edit;
+        if (edit.type == EditType.REFERENCE_TREE) return edit.$value?.id;
+        if (edit.type == EditType.REFERENCE_TABLE) return edit.$value?.[edit.referenceTableType.id];
+        return edit.$value;
+    }
+
+    getDisplayValue(field: EruptFieldModel): string {
+        const edit = field.eruptFieldJson.edit;
+        if (!edit.$value) return null;
+        if (edit.type == EditType.REFERENCE_TREE) return edit.$value.label;
+        if (edit.type == EditType.REFERENCE_TABLE) return edit.$value[edit.referenceTableType.label];
+        return null;
+    }
+
     createRefTreeModal(field: EruptFieldModel) {
         let depend = field.eruptFieldJson.edit.referenceTreeType.dependField;
         let dependVal = null;
         if (depend) {
             const dependField: EruptFieldModel = this.eruptModel.eruptFieldModels.find(item=> item.fieldName == depend);
             if (dependField.eruptFieldJson.edit.$value) {
-                dependVal = dependField.eruptFieldJson.edit.$value;
+                dependVal = this.getFieldIdValue(dependField);
             } else {
                 this.msg.warning("请先选择" + dependField.eruptFieldJson.edit.title);
                 return;
@@ -69,7 +84,7 @@ export class ReferenceComponent implements OnInit {
             nzKeyboard: true,
             nzDraggable:true,
             nzStyle: {top: "30px"},
-            nzTitle: field.eruptFieldJson.edit.title + (field.eruptFieldJson.edit.$viewValue ? "【" + field.eruptFieldJson.edit.$viewValue + "】" : ""),
+            nzTitle: field.eruptFieldJson.edit.title + (field.eruptFieldJson.edit.$value?.label ? "【" + field.eruptFieldJson.edit.$value.label + "】" : ""),
             nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzContent: TreeSelectComponent,
             nzOnOk: () => {
@@ -78,11 +93,10 @@ export class ReferenceComponent implements OnInit {
                     this.msg.warning("请选中一条数据");
                     return false;
                 }
-                if (tempVal.id != field.eruptFieldJson.edit.$value) {
+                if (tempVal.id != field.eruptFieldJson.edit.$value?.id) {
                     this.clearReferValue(field);
                 }
-                field.eruptFieldJson.edit.$viewValue = tempVal.label;
-                field.eruptFieldJson.edit.$value = tempVal.id;
+                field.eruptFieldJson.edit.$value = tempVal;
                 this.ngModelChange.emit(tempVal.id);
                 field.eruptFieldJson.edit.$tempValue = null;
                 return true;
@@ -102,7 +116,7 @@ export class ReferenceComponent implements OnInit {
         if (edit.referenceTableType.dependField) {
             const dependField: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(edit.referenceTableType.dependField);
             if (dependField.eruptFieldJson.edit.$value) {
-                dependVal = dependField.eruptFieldJson.edit.$value;
+                dependVal = this.getFieldIdValue(dependField);
             } else {
                 this.msg.warning(this.i18n.fanyi("global.pre_select") + dependField.eruptFieldJson.edit.title);
                 return;
@@ -115,7 +129,7 @@ export class ReferenceComponent implements OnInit {
             nzKeyboard: true,
             nzStyle: {top: "24px"},
             nzBodyStyle: {padding: "16px"},
-            nzTitle: edit.title + (field.eruptFieldJson.edit.$viewValue ? "【" + field.eruptFieldJson.edit.$viewValue + "】" : ""),
+            nzTitle: edit.title + (edit.$value?.[edit.referenceTableType.label] ? "【" + edit.$value[edit.referenceTableType.label] + "】" : ""),
             nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzContent: TableComponent,
             nzOnOk: () => {
@@ -124,13 +138,14 @@ export class ReferenceComponent implements OnInit {
                     this.msg.warning("请选中一条数据");
                     return false;
                 }
-                if (radioValue[edit.referenceTableType.id] != field.eruptFieldJson.edit.$value) {
+                if (radioValue[edit.referenceTableType.id] != edit.$value?.[edit.referenceTableType.id]) {
                     this.clearReferValue(field);
                 }
-                edit.$value = radioValue[edit.referenceTableType.id];
-                edit.$viewValue = radioValue[edit.referenceTableType.label
-                    .replace(".", "_")] || '-----';
-                this.ngModelChange.emit(edit.$value);
+                edit.$value = {
+                    [edit.referenceTableType.id]: radioValue[edit.referenceTableType.id],
+                    [edit.referenceTableType.label]: radioValue[edit.referenceTableType.label.replace(".", "_")] || '-----'
+                };
+                this.ngModelChange.emit(edit.$value[edit.referenceTableType.id]);
                 edit.$tempValue = radioValue;
                 return true;
             }
@@ -149,7 +164,6 @@ export class ReferenceComponent implements OnInit {
 
     clearReferValue(field: EruptFieldModel) {
         field.eruptFieldJson.edit.$value = null;
-        field.eruptFieldJson.edit.$viewValue = null;
         field.eruptFieldJson.edit.$tempValue = null;
         this.ngModelChange.emit(null);
         for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {

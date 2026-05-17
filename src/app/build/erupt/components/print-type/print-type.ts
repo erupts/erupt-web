@@ -96,20 +96,21 @@ export class PrintTypeComponent implements OnInit {
                 }
                 return this.i18n.datePipe.transform(value, format);
             case EditType.CHOICE:
-                return edit.$viewValue || value;
+                return field.choiceMap?.get(String(value))?.label || value;
             case EditType.MULTI_CHOICE:
-                if (Array.isArray(edit.$viewValue)) {
-                    return edit.$viewValue.join(', ');
+                if (Array.isArray(value)) {
+                    return value.map(v => field.choiceMap?.get(String(v))?.label || v).join(', ');
                 }
-                return edit.$viewValue || value;
+                return value;
             case EditType.TAGS:
                 if (Array.isArray(value)) {
                     return value.join(', ');
                 }
                 return value;
-            case EditType.REFERENCE_TABLE:
             case EditType.REFERENCE_TREE:
-                return edit.$viewValue || value;
+                return edit.$value?.label || value;
+            case EditType.REFERENCE_TABLE:
+                return edit.$value?.[edit.referenceTableType.label] || value;
             default:
                 return value;
         }
