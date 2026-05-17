@@ -72,6 +72,8 @@ export class TableComponent implements OnInit, OnDestroy {
 
     extraRows: Row[];
 
+    extraContent: string;
+
     operationMode = OperationMode;
 
     showColCtrl: boolean = false;
@@ -378,6 +380,7 @@ export class TableComponent implements OnInit, OnDestroy {
             this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
             this.alert = page.alert;
+            this.extraContent = page.extraContent;
             if (this.selectedVisIndex) {
                 if (this.vis[this.selectedVisIndex].type == VisType.TPL) {
                     this.setVisTplData(this.dataPage.data);
