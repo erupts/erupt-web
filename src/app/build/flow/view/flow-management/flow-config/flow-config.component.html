@@ -104,6 +104,7 @@
                     <div class="form-item">
                         <label class="form-label required">分组</label>
                         <nz-select [(ngModel)]="flowConfig.flowGroup"
+                                   [nzShowSearch]="true"
                                    placeholder="请选择分组"
                                    class="form-select">
                             @for (option of groupOptions; track option) {
@@ -123,6 +124,7 @@
                         <nz-select [(ngModel)]="flowConfig.erupt"
                                    [disabled]="flowConfig.rule?.length > 2"
                                    (ngModelChange)="changeErupt($event)"
+                                   [nzShowSearch]="true"
                                    class="form-select">
                             @for (option of eruptFlows; track option) {
                                 <nz-option
@@ -133,7 +135,7 @@
                     </div>
                     <div class="form-item">
                         <label class="form-label required">通知渠道</label>
-                        <nz-select nzMode="multiple" class="form-select" [(ngModel)]="flowConfig.channels">
+                        <nz-select nzMode="multiple" class="form-select" [(ngModel)]="flowConfig.channels" [nzShowSearch]="true">
                             @for (channel of noticeChannel; track channel) {
                                 <nz-option
                                     [nzValue]="channel.value"
@@ -217,6 +219,7 @@
                                 <div class="form-input" style="display: block;">
                                     <div style="margin-top: 12px;">
                                         <nz-select class="form-select" nzMode="multiple" nzPlaceHolder="请选择字段"
+                                                   [nzShowSearch]="true"
                                                    [(ngModel)]="flowConfig.setting.subTitleFields">
                                             @for (f of eruptBuild.eruptModel.eruptFieldModels; track f) {
                                                 @if (f.eruptFieldJson.edit.title && (f.eruptFieldJson.edit.type === EditType.INPUT ||

@@ -40,7 +40,7 @@
         <!-- 中间列表区域 -->
         <div class="list-section">
             <div class="list-header" style="padding: 8px">
-                <nz-select [(ngModel)]="selectFlow" (ngModelChange)="onSelectFlow($event)"
+                <nz-select [(ngModel)]="selectFlow" (ngModelChange)="onSelectFlow($event)" [nzShowSearch]="true"
                            style="flex: 1" [nzPlaceHolder]="'流程筛选'" nzBorderless nzAllowClear>
                     @for (flow of uniqFlowInstances(flowInstances); track flow) {
                         <nz-option [nzValue]="flow.eruptFlowConfig.id" [nzLabel]="flow.eruptFlowConfig.name">

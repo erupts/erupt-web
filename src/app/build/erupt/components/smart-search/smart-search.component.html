@@ -291,6 +291,7 @@
                                                                     <nz-select [ngModelOptions]="{standalone: true}"
                                                                                style="width: 70%"
                                                                                nzMode="multiple"
+                                                                               nzShowSearch
                                                                                [nzPlaceHolder]="'请选择'"
                                                                                [(ngModel)]="condition.value">
                                                                         @for (item of upmsData?.posts; track item) {
@@ -302,6 +303,7 @@
                                                                     <nz-select [ngModelOptions]="{standalone: true}"
                                                                                style="width: 70%"
                                                                                nzMode="multiple"
+                                                                               nzShowSearch
                                                                                [nzPlaceHolder]="'请选择'"
                                                                                [(ngModel)]="condition.value">
                                                                         @for (item of upmsData?.roles; track item) {
