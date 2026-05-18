@@ -51,7 +51,13 @@ export class EruptFlowFormComponent implements OnInit {
                 }
             })
         } else {
-            this.loading = false;
+            if (this.initValue) {
+                this.initEruptValue(() => {
+                    this.loading = false;
+                });
+            } else {
+                this.loading = false;
+            }
         }
         if (this.formAccesses) {
             if (this.eruptBuild) {
@@ -105,9 +111,10 @@ export class EruptFlowFormComponent implements OnInit {
         }
     }
 
-    initEruptValue() {
+    initEruptValue(complete?: Function) {
         this.dataService.getInitValue(this.eruptBuild.eruptModel.eruptName).subscribe(data => {
             this.dataHandlerService.objectToEruptValue(data, this.eruptBuild);
+            complete?.();
         })
     }
 

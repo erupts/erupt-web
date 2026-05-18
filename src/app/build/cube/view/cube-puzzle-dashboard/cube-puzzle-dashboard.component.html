@@ -20,6 +20,9 @@
                         <button nz-button nzType="default" (click)="addItem()">
                             <span nz-icon nzType="pie-chart"></span> {{ 'cube.dashboard.add_report' | translate }}
                         </button>
+                        <button nz-button nzType="default" (click)="manageSubModels()">
+                            <span nz-icon nzType="apartment"></span> {{ 'cube.sub_model.manage' | translate }}
+                        </button>
                         <button nz-button nzType="default" (click)="dashboardSettings()">
                             <span nz-icon nzType="setting"></span> {{ 'cube.dashboard.settings' | translate }}
                         </button>
@@ -62,8 +65,8 @@
                             <span class="filter-label">
                                 @if (filter.notNull) {<span style="color: #ff4d4f; margin-right: 4px;">*</span>}{{ filter.title || cubeMeta.fieldTitleMap.get(filter.field) }}:
                             </span>
-                            <cube-puzzle-filter-control style="width: 180px" size="small" [filter]="filter"
-                                                        [cubeMeta]="cubeMeta" [dsl]="dsl"
+                            <cube-puzzle-filter-control [style.width]="getFilterWidth(filter)" size="small"
+                                                        [filter]="filter" [cubeMeta]="cubeMeta" [dsl]="dsl"
                                                         [dashboard]="dashboard"></cube-puzzle-filter-control>
                             @if (edit) {
                                 <button nz-button nzType="text" nzSize="small" (click)="editFilter($index)">
@@ -144,7 +147,7 @@
                                                   [nzTooltipTitle]="report.description"></span>
                                             </button>
                                         }
-                                        @if (report.type != ReportType.KPI && report.type != ReportType.PIVOT_TABLE) {
+                                        @if (report.type != ReportType.KPI && report.type != ReportType.PIVOT_TABLE && report.type != ReportType.TEXT) {
                                             <button nz-button nzType="text" nzSize="small" (click)="download($index)"
                                                     [title]="'global.download' | translate">
                                                 <span nz-icon nzType="download"></span>

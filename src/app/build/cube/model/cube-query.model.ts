@@ -42,6 +42,16 @@ export enum CubeOperator {
     FUTURE_DAYS = "FUTURE_DAYS",
 }
 
+export enum CubeOperatorLogin {
+    AND = "AND",
+    OR = "OR",
+}
+
+export interface FilterGroup {
+    logic: CubeOperatorLogin;
+    conditions: CubeFilter[];
+}
+
 /**
  * 过滤器
  */
@@ -60,6 +70,7 @@ export interface CubeQuery {
     dimensions?: string[];
     measures?: string[];
     filters?: CubeFilter[];
+    filterGroups?: FilterGroup[];
     dimensionFormat?: Record<string, DimensionFormat>;
     parameter?: Record<string, any>;
     sorts?: Sort[];

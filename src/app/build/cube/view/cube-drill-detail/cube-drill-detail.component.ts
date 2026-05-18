@@ -4,6 +4,7 @@ import {STColumn, STComponent} from "@delon/abc/st";
 import {CubeMeta, FieldType} from "../../model/cube.model";
 import {Dashboard} from "../../model/dashboard.model";
 import {CubeFilter} from "../../model/cube-query.model";
+import {finalize} from "rxjs/operators";
 
 @Component({
     selector: 'cube-drill-detail',
@@ -17,6 +18,8 @@ export class CubeDrillDetailComponent implements OnInit {
     @Input() dashboard: Dashboard;   // 仪表板配置
     @Input() cubeMeta: CubeMeta;    // Cube 元数据
     @Input() filters?: CubeFilter[]; // 过滤器
+    @Input() cube?: string;          // 覆盖 dashboard.cuber（子模型时使用）
+    @Input() explore?: string;       // 覆盖 dashboard.explore（子模型时使用）
 
     @ViewChild('st', {static: false}) st: STComponent;
 
@@ -42,26 +45,25 @@ export class CubeDrillDetailComponent implements OnInit {
         this.loading = true;
 
         // 获取所有维度字段
-        const dimensions = this.cubeMeta.dimensions.map(d => d.code);
+        const dimensions = this.cubeMeta?.dimensions?.map(d => d.code) || [];
         this.cubeApiService.query({
-            cube: this.dashboard.cuber,
-            explore: this.dashboard.explore,
+            cube: this.cube || this.dashboard.cuber,
+            explore: this.explore || this.dashboard.explore,
             dimensions: dimensions,
             measures: [],
             groupBy: false,
             filters: this.filters || [],
             parameter: {},
             limit: 1000
-        }).subscribe({
+        }).pipe(
+            finalize(() => { this.loading = false; })
+        ).subscribe({
             next: (response) => {
                 this.drillData = response.data;
                 this.buildDrillColumns();
                 this.virtualScroll = this.drillData.length > 200;
-                this.loading = false;
             },
-            error: () => {
-                this.loading = false;
-            }
+            error: () => {}
         });
     }
 

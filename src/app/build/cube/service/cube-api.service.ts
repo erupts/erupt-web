@@ -18,6 +18,14 @@ export class CubeApiService {
         return this._http.get<R<Dashboard>>(RestPath.erupt + "/cube/dashboard/detail/" + code);
     }
 
+    cubes() {
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/cube/semantic/cubes");
+    }
+
+    explores(cube: string) {
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/cube/semantic/" + cube + "/explores");
+    }
+
     cubeMetadata(cube: string, explore: string) {
         return this._http.get<R<CubeMeta>>(RestPath.erupt + "/cube/semantic/metadata/" + cube + "/" + explore);
     }

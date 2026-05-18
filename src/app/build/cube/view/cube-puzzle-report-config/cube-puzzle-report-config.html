@@ -1,4 +1,19 @@
 <div class="cube-puzzle-config-container">
+    @if (report.type === ReportType.TEXT) {
+        <form nz-form nzLayout="vertical" style="padding: 8px 12px;">
+            <nz-form-item>
+                <nz-form-label>{{ 'cube.report.config.title' | translate }}</nz-form-label>
+                <nz-form-control>
+                    <input nz-input [(ngModel)]="report.title" name="titleText"/>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item style="margin-bottom: 0;">
+                <nz-form-control>
+                    <ueditor [(ngModel)]="report.ui['content']" name="textContent" [height]="430"></ueditor>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    } @else {
     <div nz-row [nzGutter]="8">
         <!-- 左侧图表预览 -->
         <div nz-col [nzSpan]="16">
@@ -13,6 +28,21 @@
                     <nz-tab [nzTitle]="'cube.report.config.basic' | translate">
                         <div style="overflow: auto">
                             <form nz-form nzLayout="vertical">
+                                @if (dsl?.subModels?.length > 0) {
+                                    <nz-form-item>
+                                        <nz-form-label>{{ 'cube.report.config.data_source' | translate }}</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.subModel" name="subModel" nzAllowClear
+                                                       (ngModelChange)="onSubModelChange($event)"
+                                                       [nzPlaceHolder]="'cube.report.config.main_model' | translate"
+                                                       [nzLoading]="loadingSubMeta">
+                                                @for (sub of dsl.subModels; track sub.id) {
+                                                    <nz-option [nzValue]="sub.id" [nzLabel]="sub.alias"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                }
                                 <nz-form-item>
                                     <nz-form-label>{{ 'cube.report.config.title' | translate }}</nz-form-label>
                                     <nz-form-control>
@@ -53,6 +83,8 @@
                                                 <!--                                            <nz-option [nzValue]="ReportType.SANKEY" nzLabel="桑基图"></nz-option>-->
                                                 <nz-option [nzValue]="ReportType.CHORD" [nzLabel]="'cube.report.config.chart.chord' | translate"></nz-option>
                                                 <nz-option [nzValue]="ReportType.WORD_CLOUD" [nzLabel]="'cube.report.config.chart.word_cloud' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.TREEMAP" [nzLabel]="'cube.report.config.chart.treemap' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.HEATMAP" [nzLabel]="'cube.report.config.chart.heatmap' | translate"></nz-option>
                                             </nz-option-group>
                                             <nz-option-group [nzLabel]="'cube.report.config.mini_charts' | translate">
                                                 <nz-option [nzValue]="ReportType.TINY_LINE"
@@ -70,6 +102,7 @@
                                                 <nz-option [nzValue]="ReportType.KPI" nzLabel="KPI"></nz-option>
                                                 <nz-option [nzValue]="ReportType.PIVOT_TABLE" [nzLabel]="'cube.report.config.chart.pivot_table' | translate"></nz-option>
                                                 <nz-option [nzValue]="ReportType.TABLE" [nzLabel]="'cube.report.config.chart.table' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.TEXT" [nzLabel]="'cube.report.config.chart.text' | translate"></nz-option>
                                             </nz-option-group>
                                         </nz-select>
                                     </nz-form-control>
@@ -82,7 +115,7 @@
                                             <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
                                                     </nz-option>
                                                 }
@@ -93,9 +126,9 @@
                                         <nz-form-label>{{ 'cube.report.config.measure' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
-                                                       nzMode="multiple"
+                                                       nzMode="multiple" nzAllowClear
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                @for (mea of activeMeta?.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
                                                     </nz-option>
                                                 }
@@ -108,7 +141,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                @for (mea of activeMeta?.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
                                                 }
                                             </nz-select>
@@ -122,7 +155,7 @@
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear
                                                        [nzPlaceHolder]="'cube.report.config.row_field_placeholder' | translate">
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
                                                         {{ dim.title }}
                                                     </nz-option>
@@ -137,7 +170,7 @@
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear
                                                        [nzPlaceHolder]="'cube.report.config.col_field_placeholder' | translate">
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title">
                                                         {{ dim.title }}
                                                     </nz-option>
@@ -152,10 +185,44 @@
                                                        nzMode="multiple"
                                                        (ngModelChange)="changeField()" nzShowSearch
                                                        [nzPlaceHolder]="'cube.report.config.value_field_placeholder' | translate">
-                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                @for (mea of activeMeta?.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title">
                                                         {{ mea.title }}
                                                     </nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                } @else if (report.type === ReportType.HEATMAP) {
+                                    <nz-form-item>
+                                        <nz-form-label>{{ 'cube.report.config.x_field' | translate }}</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="hmXField"
+                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label>{{ 'cube.report.config.y_field' | translate }}</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="hmYField"
+                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label>{{ 'cube.report.config.color_field' | translate }}</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.cube[CubeKey.colorField]" name="hmColorField"
+                                                       (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
+                                                @for (mea of activeMeta?.measures; track mea.code) {
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
                                                 }
                                             </nz-select>
                                         </nz-form-control>
@@ -166,7 +233,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.sourceField]" name="sourceField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
                                                 }
                                             </nz-select>
@@ -177,7 +244,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.targetField]" name="targetField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
                                                 }
                                             </nz-select>
@@ -188,7 +255,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.weightField]" name="weightField"
                                                        (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                @for (mea of activeMeta?.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
                                                 }
                                             </nz-select>
@@ -200,7 +267,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.xField]" name="xField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                @for (dim of activeMeta?.dimensions; track dim.code) {
                                                     <nz-option [nzValue]="dim.code"
                                                                [nzLabel]="dim.title"></nz-option>
                                                 }
@@ -212,7 +279,7 @@
                                         <nz-form-control>
                                             <nz-select [(ngModel)]="report.cube[CubeKey.yField]" name="yField"
                                                        (ngModelChange)="changeField()" nzShowSearch>
-                                                @for (mea of cubeMeta.measures; track mea.code) {
+                                                @for (mea of activeMeta?.measures; track mea.code) {
                                                     <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
                                                 }
                                             </nz-select>
@@ -225,7 +292,7 @@
                                             <nz-form-control>
                                                 <nz-select [(ngModel)]="report.cube['yField2']" name="yField2"
                                                            (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                                    @for (mea of cubeMeta.measures; track mea.code) {
+                                                    @for (mea of activeMeta?.measures; track mea.code) {
                                                         <nz-option [nzValue]="mea.code"
                                                                    [nzLabel]="mea.title"></nz-option>
                                                     }
@@ -239,7 +306,7 @@
                                             <nz-form-control>
                                                 <nz-select [(ngModel)]="report.cube[CubeKey.sizeField]" name="sizeField"
                                                            (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                                    @for (mea of cubeMeta.measures; track mea.code) {
+                                                    @for (mea of activeMeta?.measures; track mea.code) {
                                                         <nz-option [nzValue]="mea.code"
                                                                    [nzLabel]="mea.title"></nz-option>
                                                     }
@@ -254,7 +321,7 @@
                                                 <nz-select [(ngModel)]="report.cube[CubeKey.seriesField]"
                                                            name="seriesField"
                                                            (ngModelChange)="changeField()" nzShowSearch nzAllowClear>
-                                                    @for (dim of cubeMeta.dimensions; track dim.code) {
+                                                    @for (dim of activeMeta?.dimensions; track dim.code) {
                                                         <nz-option [nzValue]="dim.code"
                                                                    [nzLabel]="dim.title"></nz-option>
                                                     }
@@ -287,9 +354,9 @@
                                                             }
                                                         </nz-option-group>
                                                     }
-                                                    @if (cubeMeta.measures?.length) {
+                                                    @if (activeMeta?.measures?.length) {
                                                         <nz-option-group [nzLabel]="'cube.report.config.measure' | translate">
-                                                            @for (mea of cubeMeta.measures; track mea.code) {
+                                                            @for (mea of activeMeta?.measures; track mea.code) {
                                                                 <nz-option [nzValue]="mea.code"
                                                                            [nzLabel]="mea.title"></nz-option>
                                                             }
@@ -312,6 +379,99 @@
                                 </nz-form-item>
                             </form>
                         </div>
+                    </nz-tab>
+                    <nz-tab [nzTitle]="'cube.report.config.preset_filters' | translate">
+                        <form nz-form nzLayout="vertical">
+                            <nz-form-item>
+                                <nz-form-label>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                        <span>{{ 'cube.report.config.preset_conditions' | translate }}</span>
+                                        <button nz-button nzType="link" nzSize="small" (click)="addSubGroup()">
+                                            <i nz-icon nzType="plus"></i>{{ 'cube.report.config.add_group' | translate }}
+                                        </button>
+                                    </div>
+                                </nz-form-label>
+                                <nz-form-control>
+                                    @for (group of report.filterGroups; track $index; let gi = $index) {
+                                        <div style="border: 1px solid #d9d9d9; border-radius: 6px; padding: 8px; margin-bottom: 10px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                                <nz-radio-group [(ngModel)]="group.logic" [name]="'groupLogic' + gi"
+                                                                nzButtonStyle="solid" nzSize="small">
+                                                    <label nz-radio-button [nzValue]="CubeOperatorLogin.AND">AND</label>
+                                                    <label nz-radio-button [nzValue]="CubeOperatorLogin.OR">OR</label>
+                                                </nz-radio-group>
+                                                <span style="display: flex; gap: 4px;">
+                                                    <button nz-button nzType="link" nzSize="small" (click)="addGroupCondition(gi)">
+                                                        <i nz-icon nzType="plus"></i>{{ 'cube.report.config.add' | translate }}
+                                                    </button>
+                                                    <button nz-button nzType="text" nzDanger nzSize="small" (click)="removeSubGroup(gi)">
+                                                        <i nz-icon nzType="delete"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                            @for (cond of group.conditions; track $index; let ci = $index) {
+                                                <ng-container *ngTemplateOutlet="conditionRow; context: {
+                                                    cond: cond,
+                                                    fieldName: 'gField' + gi + '_' + ci,
+                                                    opName: 'gOp' + gi + '_' + ci,
+                                                    onRemove: removeGroupCondition.bind(this, gi, ci)
+                                                }"/>
+                                            }
+                                        </div>
+                                    }
+<!--                                    @if (!hasAnyFilter) {-->
+<!--                                        <nz-empty nzNotFoundImage="simple"></nz-empty>-->
+<!--                                    }-->
+                                </nz-form-control>
+                                @if (report.filterGroups?.length) {
+                                    <button nz-button nzType="primary" nzBlock (click)="changeCube()">
+                                        {{ 'cube.report.config.apply_filters' | translate }}
+                                    </button>
+                                }
+                            </nz-form-item>
+                        </form>
+
+                        <!-- 条件行模板 -->
+                        <ng-template #conditionRow let-cond="cond" let-fieldName="fieldName" let-opName="opName" let-onRemove="onRemove">
+                            <div style="margin-bottom: 10px;">
+                                <div style="display: flex; gap: 6px; margin-bottom: 4px; align-items: center;">
+                                    <nz-select [(ngModel)]="cond.field" [name]="fieldName"
+                                               nzShowSearch nzAllowClear
+                                               style="flex: 1"
+                                               [nzPlaceHolder]="'cube.report.config.sort_field_placeholder' | translate">
+                                        @if (activeMeta?.dimensions?.length) {
+                                            <nz-option-group [nzLabel]="'cube.report.config.dimension' | translate">
+                                                @for (dim of activeMeta.dimensions; track dim.code) {
+                                                    <nz-option [nzValue]="dim.code" [nzLabel]="dim.title"></nz-option>
+                                                }
+                                            </nz-option-group>
+                                        }
+                                        @if (activeMeta?.measures?.length) {
+                                            <nz-option-group [nzLabel]="'cube.report.config.measure' | translate">
+                                                @for (mea of activeMeta.measures; track mea.code) {
+                                                    <nz-option [nzValue]="mea.code" [nzLabel]="mea.title"></nz-option>
+                                                }
+                                            </nz-option-group>
+                                        }
+                                    </nz-select>
+                                    <nz-select [(ngModel)]="cond.operator" [name]="opName"
+                                               style="width: 110px;">
+                                        @for (entry of CubeOperatorEntries; track entry[0]) {
+                                            <nz-option [nzValue]="entry[1]" [nzLabel]="entry[0]"></nz-option>
+                                        }
+                                    </nz-select>
+                                    <button nz-button nzType="text" nzDanger (click)="onRemove()">
+                                        <i nz-icon nzType="delete"></i>
+                                    </button>
+                                </div>
+                                @if (cond.field && cond.operator) {
+                                    <cube-puzzle-filter-control [filter]="$any(cond)"
+                                                                [cubeMeta]="activeMeta"
+                                                                [dashboard]="dashboard"
+                                                                [dsl]="dsl"/>
+                                }
+                            </div>
+                        </ng-template>
                     </nz-tab>
                     <nz-tab [nzTitle]="'cube.report.config.custom' | translate">
                         <form nz-form nzLayout="vertical">
@@ -467,10 +627,61 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
+                            @if (supportSeriesField(report.type) || report.type === ReportType.KPI) {
+                                <nz-divider></nz-divider>
+                                <nz-form-item>
+                                    <nz-form-label>{{ 'cube.report.config.compare.title' | translate }}</nz-form-label>
+                                    <nz-form-control>
+                                        <label nz-checkbox [(ngModel)]="report.compare.enabled" name="compareEnabled"
+                                               (ngModelChange)="changeCube()">
+                                            {{ 'cube.report.config.compare.enable' | translate }}
+                                        </label>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                @if (report.compare?.enabled) {
+                                    <nz-form-item>
+                                        <nz-form-label>{{ 'cube.report.config.compare.type' | translate }}</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-radio-group [(ngModel)]="report.compare.type" name="compareType"
+                                                            (ngModelChange)="changeCube()">
+                                                <label nz-radio nzValue="YOY">{{ 'cube.report.config.compare.yoy' | translate }}</label>
+                                                <label nz-radio nzValue="MOM">{{ 'cube.report.config.compare.mom' | translate }}</label>
+                                            </nz-radio-group>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label>{{ 'cube.report.config.compare.filter_field' | translate }}</nz-form-label>
+                                        <nz-form-control>
+                                            <nz-select [(ngModel)]="report.compare.filterField" name="compareFilterField"
+                                                       (ngModelChange)="changeCube()" nzAllowClear
+                                                       [nzPlaceHolder]="'cube.report.config.compare.filter_placeholder' | translate">
+                                                @for (f of compareDateFilters; track f.field) {
+                                                    <nz-option [nzValue]="f.field" [nzLabel]="f.title || cubeMeta?.fieldTitleMap?.get(f.field) || f.field"></nz-option>
+                                                }
+                                            </nz-select>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label>{{ 'cube.report.config.compare.current_label' | translate }}</nz-form-label>
+                                        <nz-form-control>
+                                            <input nz-input [(ngModel)]="report.compare.currentLabel" name="compareCurrentLabel"
+                                                   placeholder="当期"/>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                    <nz-form-item>
+                                        <nz-form-label>{{ 'cube.report.config.compare.compare_label' | translate }}</nz-form-label>
+                                        <nz-form-control>
+                                            <input nz-input [(ngModel)]="report.compare.compareLabel" name="compareLabel"
+                                                   [placeholder]="report.compare.type === 'MOM' ? '上月同期' : '去年同期'"/>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                }
+                            }
                         </form>
                     </nz-tab>
                 </nz-tabs>
             </div>
         </div>
     </div>
+    } <!-- end @else for non-TEXT types -->
 </div>

@@ -1,3 +1,20 @@
+.kpi-compare {
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .kpi-compare-vs {
+        font-size: 11px;
+        opacity: 0.6;
+        font-weight: normal;
+    }
+
+    &.kpi-trend-up { color: #52c41a; }
+    &.kpi-trend-down { color: #ff4d4f; }
+}
+
 .required-unfilled-placeholder {
     height: 100%;
     display: flex;
@@ -49,6 +66,11 @@
 
             .kpi-value:not([style*="color"]) {
                 color: rgba(255, 255, 255, 0.85);
+            }
+
+            .kpi-compare {
+                &.kpi-trend-up { color: #73d13d; }
+                &.kpi-trend-down { color: #ff7875; }
             }
 
             // 暗黑主题下的 ST 表格适配

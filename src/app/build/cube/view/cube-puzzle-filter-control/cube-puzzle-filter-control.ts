@@ -1,11 +1,13 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Dashboard, DashboardDSL, FilterDSL} from "../../model/dashboard.model";
+import {Dashboard, DashboardDSL, FilterDSL, parseRelativeDefault} from "../../model/dashboard.model";
 import {CubeMeta, FieldType} from "../../model/cube.model";
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {VL} from "../../../erupt/model/erupt-field.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {I18NService} from '@core';
+import {PresetRanges} from "ng-zorro-antd/date-picker";
+import moment from 'moment';
 
 @Component({
     selector: 'cube-puzzle-filter-control',
@@ -27,6 +29,10 @@ export class CubePuzzleFilterControl implements OnInit {
 
     @Input() configMode = false;
 
+    readonly NULL_SENTINEL = '__null__';
+
+    dateRanges: PresetRanges = {};
+
     data: VL[] = null;
 
     isLoading = false;
@@ -35,31 +41,70 @@ export class CubePuzzleFilterControl implements OnInit {
     }
 
     ngOnInit(): void {
+        const fmt = (d: moment.Moment, time: string) => d.format('YYYY-MM-DD') + `T${time}`;
+        this.dateRanges = <any>{
+            [this.i18n.fanyi('global.today')]: [fmt(moment(), '00:00:00'), fmt(moment(), '23:59:59')],
+            [this.i18n.fanyi('global.yesterday')]: [fmt(moment().subtract(1, 'day'), '00:00:00'), fmt(moment().subtract(1, 'day'), '23:59:59')],
+            [this.i18n.fanyi('global.date.last_7_day')]: [fmt(moment().subtract(7, 'day'), '00:00:00'), fmt(moment(), '23:59:59')],
+            [this.i18n.fanyi('global.date.last_30_day')]: [fmt(moment().subtract(30, 'day'), '00:00:00'), fmt(moment(), '23:59:59')],
+            [this.i18n.fanyi('global.date.this_month')]: [fmt(moment().startOf('month'), '00:00:00'), fmt(moment(), '23:59:59')],
+            [this.i18n.fanyi('global.date.last_month')]: [fmt(moment().subtract(1, 'month').startOf('month'), '00:00:00'), fmt(moment().subtract(1, 'month').endOf('month'), '23:59:59')],
+        };
         if (this.configMode) {
             if (!this.filter.defaultValue && this.filter.operator == CubeOperator.BETWEEN) {
                 this.filter.defaultValue = [null, null];
             }
+            const dv = this.filter.defaultValue;
+            if (dv !== null && dv !== undefined && !parseRelativeDefault(dv)
+                && this.fieldType() === FieldType.STRING && !this.isMeasure()) {
+                this.openSelect(true);
+            }
         } else {
-            if (this.filter.defaultValue !== null && this.filter.defaultValue !== undefined
+            const rd = parseRelativeDefault(this.filter.defaultValue);
+            if (rd && this.filter.operator === CubeOperator.BETWEEN) {
+                if (!this.filter.value || (Array.isArray(this.filter.value) && this.filter.value.every((v: any) => v === null))) {
+                    this.filter.value = this.computeRelativeDateRange(rd);
+                }
+            } else if (this.filter.defaultValue !== null && this.filter.defaultValue !== undefined
                 && (this.filter.value === null || this.filter.value === undefined)) {
                 this.filter.value = this.filter.defaultValue;
             }
             if (!this.filter.value && this.filter.operator == CubeOperator.BETWEEN) {
                 this.filter.value = [null, null];
             }
+            // Pre-populate data with current value for echo-back display without API call
+            const val = this.filter.value;
+            if (val !== null && val !== undefined) {
+                if (Array.isArray(val) && val.length > 0) {
+                    this.data = val.map(v => this.toVL(v));
+                } else if (!Array.isArray(val)) {
+                    this.data = [this.toVL(val)];
+                }
+            }
         }
     }
 
     get currentValue(): any {
-        return this.configMode ? this.filter.defaultValue : this.filter.value;
+        const raw = this.configMode ? this.filter.defaultValue : this.filter.value;
+        if (raw === null && (this.filter.operator === CubeOperator.EQ || this.filter.operator === CubeOperator.NEQ)) {
+            return this.NULL_SENTINEL;
+        }
+        return raw;
     }
 
     set currentValue(v: any) {
+        const store = (raw: any) => raw === this.NULL_SENTINEL ? null : raw;
+        const stored = Array.isArray(v) ? v.map(store) : store(v);
         if (this.configMode) {
-            this.filter.defaultValue = v;
+            this.filter.defaultValue = stored;
         } else {
-            this.filter.value = v;
+            this.filter.value = stored;
         }
+    }
+
+    private toVL(raw: any): VL {
+        const isNull = raw === null || raw === undefined || raw === '';
+        return {label: isNull ? this.NULL_SENTINEL : raw, value: isNull ? null : raw};
     }
 
     updateValueAt(index: number, val: any) {
@@ -86,6 +131,21 @@ export class CubePuzzleFilterControl implements OnInit {
             }
         }
         return FieldType.STRING;
+    }
+
+    computeRelativeDateRange(rd: {type: 'PAST' | 'FUTURE'; days: number}): [string, string] {
+        const m = moment;
+        if (rd.type === 'PAST') {
+            return [
+                m().subtract(rd.days, 'day').startOf('day').format('YYYY-MM-DDTHH:mm:ss'),
+                m().endOf('day').format('YYYY-MM-DDTHH:mm:ss')
+            ];
+        } else {
+            return [
+                m().startOf('day').format('YYYY-MM-DDTHH:mm:ss'),
+                m().add(rd.days, 'day').endOf('day').format('YYYY-MM-DDTHH:mm:ss')
+            ];
+        }
     }
 
     clean() {
@@ -135,11 +195,7 @@ export class CubePuzzleFilterControl implements OnInit {
                         limit: 500,
                     }).subscribe({
                         next: res => {
-                            let d: VL[] = [];
-                            for (let datum of res.data) {
-                                d.push({label: datum[this.filter.field], value: datum[this.filter.field]})
-                            }
-                            this.data = d;
+                            this.data = res.data.map(datum => this.toVL(datum[this.filter.field]));
                         },
                         complete: () => this.isLoading = false
                     })

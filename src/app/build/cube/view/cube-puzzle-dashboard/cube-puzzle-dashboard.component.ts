@@ -6,7 +6,16 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {I18NService} from '@core';
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
-import {Dashboard, DashboardDSL, DashboardPublishHistory, DashboardTheme, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {
+    Dashboard,
+    DashboardDSL,
+    DashboardPublishHistory,
+    DashboardTheme,
+    FilterDSL,
+    parseRelativeDefault,
+    ReportDSL,
+    ReportType
+} from "../../model/dashboard.model";
 import {BaseField, CubeMeta, FieldType} from "../../model/cube.model";
 import {cloneDeep} from "lodash";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
@@ -15,6 +24,7 @@ import {CubeOperator} from "../../model/cube-query.model";
 import {CubePuzzleFilterConfig} from "../cube-puzzle-filter-config/cube-puzzle-filter-config";
 import {deepCopy} from "@delon/util";
 import {CubePuzzleDashboardConfig} from "../cube-puzzle-dashboard-config/cube-puzzle-dashboard-config";
+import {CubePuzzleSubModelConfig} from "../cube-puzzle-sub-model-config/cube-puzzle-sub-model-config";
 
 @Component({
     standalone: false,
@@ -78,8 +88,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             this.isFullscreen = !!document['msFullscreenElement'];
         });
         this.options = {
-            gridType: 'verticalFixed',
-            compactType: 'none',
+            gridType: 'scrollVertical',
+            compactType: 'compactUp',
             margin: 12,
             outerMargin: true,
             outerMarginTop: null,
@@ -101,7 +111,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             defaultItemCols: 1,
             defaultItemRows: 1,
             fixedColWidth: 105,
-            fixedRowHeight: 55,
+            fixedRowHeight: 80,
             keepFixedHeightInMobile: false,
             keepFixedWidthInMobile: false,
             scrollSensitivity: 10,
@@ -115,17 +125,15 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             ignoreMarginInRow: false,
             draggable: {
                 enabled: this.edit,
-                ignoreContent: true,  // 忽略内容区域，只有拖拽手柄可以拖拽
-                ignoreContentClass: 'gridster-item-content',  // 排除内容区域
-                dragHandleClass: 'drag-handler',  // 只有带此类的元素才能拖拽
-                dropOverItems: true,  // 允许拖拽到其他项目上
-                dropOverItemsCallback: null,
+                ignoreContent: true,
+                ignoreContentClass: 'gridster-item-content',
+                dragHandleClass: 'drag-handler',
+                dropOverItems: false,
             },
             resizable: {
                 enabled: this.edit
             },
-            swap: true,  // 启用交换位置功能
-            swapWhileDragging: false,  // 是否在拖拽过程中实时交换（false 表示释放时交换）
+            swap: false,
             pushItems: true,
             disablePushOnDrag: false,
             disablePushOnResize: false,
@@ -144,6 +152,22 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 this.dsl = res.data.publishDsl || {};
             }
             this.options.margin = this.dsl?.settings?.gap ?? 12;
+            // 从 URL 恢复过滤条件
+            const urlFilters = this.route.snapshot.queryParams['filters'];
+            if (urlFilters) {
+                try {
+                    const filterValues: Record<string, any> = JSON.parse(urlFilters);
+                    for (const f of (this.dsl?.filters || [])) {
+                        if (filterValues[f.field] !== undefined) {
+                            let val = filterValues[f.field];
+                            if (f.operator === CubeOperator.BETWEEN && Array.isArray(val)) {
+                                val = val.map((v: any) => (typeof v === 'string' && v) ? new Date(v) : v);
+                            }
+                            f.value = val;
+                        }
+                    }
+                } catch (e) {}
+            }
             this.cubeApiService.cubeMetadata(this.dashboard.cuber, this.dashboard.explore).subscribe(res => {
                 const meta = res.data;
                 const fieldTitleMap = new Map<string, string>();
@@ -174,8 +198,13 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 // 若当前值为空但存在默认值，则先应用默认值
                 const isEmpty = (v: any) => v === null || v === undefined || v === ''
                     || (Array.isArray(v) && v.every(i => i === null || i === undefined));
-                if (isEmpty(filter.value) && !isEmpty(filter.defaultValue)) {
-                    filter.value = filter.defaultValue;
+                if (isEmpty(filter.value)) {
+                    const rd = parseRelativeDefault(filter.defaultValue);
+                    if (rd && filter.operator === CubeOperator.BETWEEN) {
+                        filter.value = this.computeRelativeDateRange(rd);
+                    } else if (!isEmpty(filter.defaultValue)) {
+                        filter.value = filter.defaultValue;
+                    }
                 }
                 if (filter.notNull && !filter.hidden) {
                     const v = filter.value;
@@ -190,22 +219,48 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         for (let report of this.reports) {
             report.refresh();
         }
+        this.syncFiltersToUrl();
     }
 
     reset() {
         for (let filter of this.dsl.filters) {
-            if (filter.defaultValue) {
+            const rd = parseRelativeDefault(filter.defaultValue);
+            if (rd && filter.operator === CubeOperator.BETWEEN) {
+                filter.value = this.computeRelativeDateRange(rd);
+            } else if (filter.defaultValue) {
                 filter.value = filter.defaultValue;
             } else {
                 if (filter.operator == CubeOperator.BETWEEN) {
                     filter.value = [null, null];
                 } else {
-                    filter.value = null;
+                    filter.value = undefined;
                 }
             }
         }
         for (let report of this.reports) {
             report.refresh();
+        }
+    }
+
+    private computeRelativeDateRange(rd: {type: 'PAST' | 'FUTURE'; days: number}): [string, string] {
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const fmt = (d: Date) =>
+            `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        const now = new Date();
+        if (rd.type === 'PAST') {
+            const start = new Date(now);
+            start.setDate(start.getDate() - rd.days);
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(now);
+            end.setHours(23, 59, 59, 0);
+            return [fmt(start), fmt(end)];
+        } else {
+            const start = new Date(now);
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(now);
+            end.setDate(end.getDate() + rd.days);
+            end.setHours(23, 59, 59, 0);
+            return [fmt(start), fmt(end)];
         }
     }
 
@@ -497,9 +552,15 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 // 同步 defaultValue → value，让过滤器控件立刻回显新默认值
                 // （track $index 导致组件实例不重建，ngOnInit 不会再次执行）
                 const dv = filter.defaultValue;
-                if (dv !== null && dv !== undefined
-                    && !(Array.isArray(dv) && dv.every((i: any) => i === null || i === undefined))) {
+                const rd = parseRelativeDefault(dv);
+                const isEmpty = (v: any) => v === null || v === undefined
+                    || (Array.isArray(v) && v.every((i: any) => i === null || i === undefined));
+                if (rd && filter.operator === CubeOperator.BETWEEN) {
+                    filter.value = this.computeRelativeDateRange(rd);
+                } else if (!isEmpty(dv)) {
                     filter.value = dv;
+                } else {
+                    filter.value = filter.operator === CubeOperator.BETWEEN ? [null, null] : null;
                 }
                 this.dsl.filters[index] = filter;
             }
@@ -548,6 +609,19 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 gap: this.dsl.settings?.gap ?? 12,
             }
         };
+    }
+
+    manageSubModels() {
+        let ref = this.modal.create({
+            nzTitle: this.i18n.fanyi('cube.sub_model.manage'),
+            nzContent: CubePuzzleSubModelConfig,
+            nzDraggable: true,
+            nzMaskClosable: false,
+            nzWidth: 700,
+            nzFooter: null
+        });
+        ref.getContentComponent().cubeMeta = this.cubeMeta;
+        ref.getContentComponent().dsl = this.dsl;
     }
 
     initAutoRefresh() {
@@ -600,11 +674,57 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         const hashIndex = url.indexOf('#');
         if (hashIndex !== -1) {
             const baseUrl = url.substring(0, hashIndex + 1);
-            const newUrl = baseUrl + '/fill/cube/' + this.dashboard?.code;
+            let newUrl = baseUrl + '/fill/cube/' + this.dashboard?.code;
+            const filterValues = this.collectFilterValues();
+            if (Object.keys(filterValues).length > 0) {
+                newUrl += '?filters=' + encodeURIComponent(JSON.stringify(filterValues));
+            }
             navigator.clipboard.writeText(newUrl).then(() => {
                 this.message.success(this.i18n.fanyi('cube.dashboard.copy_success'));
             });
         }
+    }
+
+    private collectFilterValues(): Record<string, any> {
+        const result: Record<string, any> = {};
+        for (const f of (this.dsl?.filters || [])) {
+            if (f.hidden) continue;
+            const v = f.value;
+            if (v === null || v === undefined) continue;
+            const isEmpty = Array.isArray(v) && v.every((i: any) => i === null || i === undefined);
+            if (!isEmpty) result[f.field] = v;
+        }
+        return result;
+    }
+
+    private syncFiltersToUrl() {
+        const filterValues = this.collectFilterValues();
+        const hasValues = Object.keys(filterValues).length > 0;
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: hasValues ? {filters: JSON.stringify(filterValues)} : {},
+            replaceUrl: true,
+        });
+    }
+
+    getFilterWidth(filter: FilterDSL): string {
+        let type = FieldType.STRING;
+        if (this.cubeMeta) {
+            const field = this.cubeMeta.dimensions?.find(d => d.code === filter.field)
+                || this.cubeMeta.measures?.find(m => m.code === filter.field)
+                || this.cubeMeta.parameters?.find(p => p.code === filter.field);
+            if (field) type = field.type;
+        }
+        if (type === FieldType.DATE) {
+            if (filter.operator === CubeOperator.BETWEEN) return '360px';
+            if (filter.operator === CubeOperator.FEW_DAYS || filter.operator === CubeOperator.FUTURE_DAYS) return '140px';
+            return '200px';
+        }
+        if (type === FieldType.NUMBER) {
+            return filter.operator === CubeOperator.BETWEEN ? '240px' : '140px';
+        }
+        if (filter.operator === CubeOperator.NULL || filter.operator === CubeOperator.NOT_NULL) return '120px';
+        return '180px';
     }
 
     protected readonly ReportType = ReportType;

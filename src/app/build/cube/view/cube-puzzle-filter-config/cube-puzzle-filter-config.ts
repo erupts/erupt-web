@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {Dashboard, DashboardDSL, FilterDSL} from "../../model/dashboard.model";
+import {Dashboard, DashboardDSL, FilterDSL, parseRelativeDefault} from "../../model/dashboard.model";
 import {CubeOperator} from "../../model/cube-query.model";
 import {CubeMeta, FieldType} from "../../model/cube.model";
 import {CubeApiService} from "../../service/cube-api.service";
@@ -31,7 +31,35 @@ export class CubePuzzleFilterConfig implements OnInit {
     }
 
     clean() {
-        this.filterControl.clean();
+        this.filterControl?.clean();
+    }
+
+    isRelativeDefault(): boolean {
+        return parseRelativeDefault(this.filter.defaultValue) !== null;
+    }
+
+    get relativeType(): 'PAST' | 'FUTURE' {
+        return parseRelativeDefault(this.filter.defaultValue)?.type ?? 'PAST';
+    }
+
+    set relativeType(type: 'PAST' | 'FUTURE') {
+        this.filter.defaultValue = `${type}:${this.relativeDays}`;
+    }
+
+    get relativeDays(): number {
+        return parseRelativeDefault(this.filter.defaultValue)?.days ?? 7;
+    }
+
+    set relativeDays(days: number) {
+        this.filter.defaultValue = `${this.relativeType}:${days}`;
+    }
+
+    onDefaultTypeChange(type: 'absolute' | 'relative') {
+        if (type === 'relative') {
+            this.filter.defaultValue = 'PAST:7';
+        } else {
+            this.filter.defaultValue = [null, null];
+        }
     }
 
     fieldType(): FieldType {
@@ -79,7 +107,7 @@ export class CubePuzzleFilterConfig implements OnInit {
         }
         this.filter.value = null;
         this.filter.defaultValue = null;
-        this.filterControl.clean();
+        this.filterControl?.clean();
     }
 
     changeOperator(e) {

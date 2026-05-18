@@ -123,6 +123,7 @@ export interface Page {
     sort?: Sort[];
     list?: any[];
     alert?: Alert;
+    extraContent?: string;
 }
 
 export interface Sort {

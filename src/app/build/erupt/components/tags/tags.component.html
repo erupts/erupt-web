@@ -1,5 +1,5 @@
 <nz-select [nzAllowClear]='!eruptField.eruptFieldJson.edit.notNull'
-  [nzDisabled]="readonly"
+  [nzDisabled]="readonly" nzShowSearch
   [nzSize]="size" [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
   [name]="eruptField.fieldName" (nzOpenChange)="load($event)"
   [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"

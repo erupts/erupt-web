@@ -11,7 +11,7 @@
                 @for (node of selfSelectNodes; track node.key) {
                     <div style="margin-bottom: 16px;display: flex;align-items: center;">
                         <span style="font-weight: bold;margin-right: 8px;;width: 150px"><span style="color: #ff4d4f">*</span> {{ node.value }}:</span>
-                        <nz-select [(ngModel)]="selectedNodeUserIds[node.key]"
+                        <nz-select [(ngModel)]="selectedNodeUserIds[node.key]" [nzShowSearch]="true"
                                    [nzPlaceHolder]="'请选择' + node.value + '的审批用户'"
                                    nzMode="multiple" [nzMaxMultipleCount]="1" style="width: 100%" [nzLoading]="!nodeUsersOptions[node.key]"
                         >

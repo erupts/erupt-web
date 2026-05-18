@@ -1,9 +1,10 @@
 import {AfterViewInit, Component, inject, Input, OnInit, ViewChild} from '@angular/core';
 import {NZ_MODAL_DATA} from 'ng-zorro-antd/modal';
-import {CubeMeta, CubeMetaDimension} from "../../model/cube.model";
-import {CubeKey, Dashboard, DashboardDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
-import {Direction} from "../../model/cube-query.model";
+import {BaseField, CubeMeta, CubeMetaDimension} from "../../model/cube.model";
+import {CubeKey, Dashboard, DashboardDSL, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {CubeOperator, CubeOperatorLogin, Direction} from "../../model/cube-query.model";
 import {CubePuzzleReport} from "../cube-puzzle-report/cube-puzzle-report";
+import {CubeApiService} from "../../service/cube-api.service";
 
 @Component({
     standalone: false,
@@ -25,8 +26,11 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
 
     @ViewChild('puzzleReport') puzzleReport: CubePuzzleReport;
 
-    constructor() {
+    activeMeta: CubeMeta;
+    loadingSubMeta = false;
+    private subMetaCache: { [key: string]: CubeMeta } = {};
 
+    constructor(private cubeApiService: CubeApiService) {
     }
 
     ngOnInit() {
@@ -38,6 +42,7 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
                 this.report = {...this.report, ...this.nzModalData.config};
             }
         }
+        this.activeMeta = this.cubeMeta;
         if (!this.report.sorts) {
             this.report.sorts = [];
         }
@@ -48,35 +53,83 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
                 showTooltip: true
             };
         }
-        if (this.report.type === ReportType.TABLE) {
-            if (!this.report.cube[CubeKey.xField]) {
-                this.report.cube[CubeKey.xField] = this.cubeMeta.dimensions?.[0] ? [this.cubeMeta.dimensions[0].code] : [];
-            }
-            if (!this.report.cube[CubeKey.yField]) {
-                this.report.cube[CubeKey.yField] = this.cubeMeta.measures?.[0] ? [this.cubeMeta.measures[0].code] : [];
-            }
-        } else if (this.report.type === ReportType.PIVOT_TABLE) {
-            if (!this.report.cube[CubeKey.rowsField]) {
-                this.report.cube[CubeKey.rowsField] = [];
-            }
-            if (!this.report.cube[CubeKey.columnsField]) {
-                this.report.cube[CubeKey.columnsField] = [];
-            }
-            if (!this.report.cube[CubeKey.valuesField]) {
-                this.report.cube[CubeKey.valuesField] = [];
-            }
-        } else if (this.report.type === ReportType.KPI) {
-            if (!this.report.cube[CubeKey.yField]) {
-                this.report.cube[CubeKey.yField] = [];
-            }
+        if (!this.report.filterGroups) {
+            this.report.filterGroups = [];
+        }
+        if (!this.report.compare) {
+            this.report.compare = {};
+        }
+        if (this.report.subModel) {
+            this.loadSubModelMeta(this.report.subModel, false);
         } else {
-            if (!this.report.cube[CubeKey.xField]) {
-                this.report.cube[CubeKey.xField] = this.cubeMeta.dimensions?.[0]?.code;
-            }
-            if (!this.report.cube[CubeKey.yField]) {
-                this.report.cube[CubeKey.yField] = this.cubeMeta.measures?.[0]?.code;
+            if (this.report.type === ReportType.TABLE) {
+                if (!this.report.cube[CubeKey.xField]) {
+                    this.report.cube[CubeKey.xField] = this.cubeMeta.dimensions?.[0] ? [this.cubeMeta.dimensions[0].code] : [];
+                }
+                if (!this.report.cube[CubeKey.yField]) {
+                    this.report.cube[CubeKey.yField] = this.cubeMeta.measures?.[0] ? [this.cubeMeta.measures[0].code] : [];
+                }
+            } else if (this.report.type === ReportType.PIVOT_TABLE) {
+                if (!this.report.cube[CubeKey.rowsField]) {
+                    this.report.cube[CubeKey.rowsField] = [];
+                }
+                if (!this.report.cube[CubeKey.columnsField]) {
+                    this.report.cube[CubeKey.columnsField] = [];
+                }
+                if (!this.report.cube[CubeKey.valuesField]) {
+                    this.report.cube[CubeKey.valuesField] = [];
+                }
+            } else if (this.report.type === ReportType.KPI) {
+                if (!this.report.cube[CubeKey.yField]) {
+                    this.report.cube[CubeKey.yField] = [];
+                }
+            } else {
+                if (!this.report.cube[CubeKey.xField]) {
+                    this.report.cube[CubeKey.xField] = this.cubeMeta.dimensions?.[0]?.code;
+                }
+                if (!this.report.cube[CubeKey.yField]) {
+                    this.report.cube[CubeKey.yField] = this.cubeMeta.measures?.[0]?.code;
+                }
             }
         }
+    }
+
+    onSubModelChange(alias: string) {
+        this.report.cube = {};
+        this.report.sorts = [];
+        if (!alias) {
+            this.activeMeta = this.cubeMeta;
+            this.changeCube();
+            return;
+        }
+        this.loadSubModelMeta(alias, true);
+    }
+
+    private loadSubModelMeta(alias: string, refreshAfterLoad: boolean) {
+        const subModel = this.dsl?.subModels?.find(m => m.id === alias);
+        if (!subModel) return;
+        const key = `${subModel.cube}/${subModel.explore}`;
+        if (this.subMetaCache[key]) {
+            this.activeMeta = this.subMetaCache[key];
+            if (refreshAfterLoad) this.changeCube();
+            return;
+        }
+        this.loadingSubMeta = true;
+        this.cubeApiService.cubeMetadata(subModel.cube, subModel.explore).subscribe(res => {
+            const meta = res.data;
+            const fieldTitleMap = new Map<string, string>();
+            const fieldMap = new Map<string, BaseField>();
+            [...(meta.dimensions || []), ...(meta.measures || []), ...(meta.parameters || [])].forEach(it => {
+                fieldTitleMap.set(it.code, it.title);
+                fieldMap.set(it.code, it);
+            });
+            meta.fieldTitleMap = fieldTitleMap;
+            meta.fieldMap = fieldMap;
+            this.subMetaCache[key] = meta;
+            this.activeMeta = meta;
+            this.loadingSubMeta = false;
+            if (refreshAfterLoad) this.changeCube();
+        });
     }
 
     ngAfterViewInit() {
@@ -137,6 +190,9 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
             if (this.report.cube[CubeKey.targetField]) {
                 codes.push(this.report.cube[CubeKey.targetField] as string);
             }
+        } else if (this.report.type === ReportType.HEATMAP) {
+            if (this.report.cube[CubeKey.xField]) codes.push(this.report.cube[CubeKey.xField] as string);
+            if (this.report.cube[CubeKey.yField]) codes.push(this.report.cube[CubeKey.yField] as string);
         } else {
             if (this.report.cube[CubeKey.xField]) {
                 if (Array.isArray(this.report.cube[CubeKey.xField])) {
@@ -153,7 +209,7 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
                 }
             }
         }
-        return this.cubeMeta.dimensions?.filter(it => codes.includes(it.code)) || [];
+        return this.activeMeta?.dimensions?.filter(it => codes.includes(it.code)) || [];
     }
 
     addSort() {
@@ -176,7 +232,7 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         if (this.report.sorts) {
             this.report.sorts.forEach(sort => {
                 if (sort.field) {
-                    const isDimension = this.cubeMeta.dimensions?.some(it => it.code === sort.field);
+                    const isDimension = this.activeMeta?.dimensions?.some(it => it.code === sort.field);
                     if (isDimension) {
                         const isStillSelected = this.selectedDimensions.some(it => it.code === sort.field);
                         if (!isStillSelected) {
@@ -190,6 +246,11 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     }
 
     onConfigChange() {
+        if (this.report.type === ReportType.TEXT) {
+            this.report.cube = {};
+            this.report.sorts = [];
+            return;
+        }
         if (this.report.type === ReportType.KPI || this.report.type === ReportType.PROGRESS || this.report.type === ReportType.RING_PROGRESS || this.report.type === ReportType.GAUGE) {
             let yField: string | string[];
             if (Array.isArray(this.report.cube[CubeKey.yField])) {
@@ -212,6 +273,14 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
         } else if (this.report.type == ReportType.PIVOT_TABLE) {
             this.report.cube = {}
             this.puzzleReport.refresh();
+        } else if (this.report.type === ReportType.TREEMAP || this.report.type === ReportType.HEATMAP) {
+            if (Array.isArray(this.report.cube[CubeKey.xField])) {
+                this.report.cube[CubeKey.xField] = this.report.cube[CubeKey.xField][0];
+            }
+            if (Array.isArray(this.report.cube[CubeKey.yField])) {
+                this.report.cube[CubeKey.yField] = this.report.cube[CubeKey.yField][0];
+            }
+            this.report.cube[CubeKey.seriesField] = null;
         } else {
             if (Array.isArray(this.report.cube[CubeKey.xField])) {
                 this.report.cube[CubeKey.xField] = this.report.cube[CubeKey.xField][0];
@@ -227,7 +296,34 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     }
 
 
+    addSubGroup() {
+        this.report.filterGroups.push({logic: CubeOperatorLogin.AND, conditions: [{}]});
+    }
+
+    removeSubGroup(index: number) {
+        this.report.filterGroups.splice(index, 1);
+    }
+
+    addGroupCondition(groupIndex: number) {
+        this.report.filterGroups[groupIndex].conditions.push({});
+    }
+
+    removeGroupCondition(groupIndex: number, condIndex: number) {
+        this.report.filterGroups[groupIndex].conditions.splice(condIndex, 1);
+    }
+
+    get hasAnyFilter(): boolean {
+        return this.report.filterGroups?.length > 0;
+    }
+
+    get compareDateFilters(): FilterDSL[] {
+        return (this.dsl?.filters || []).filter(f => f.operator === CubeOperator.BETWEEN && !f.hidden);
+    }
+
     protected readonly CubeKey = CubeKey;
     protected readonly ReportType = ReportType;
+    protected readonly CubeOperator = CubeOperator;
+    protected readonly CubeOperatorLogin = CubeOperatorLogin;
+    protected readonly CubeOperatorEntries = Object.entries(CubeOperator) as [string, CubeOperator][];
 
 }

@@ -1,3 +1,8 @@
+---
+name: i18n
+description: i18n — 新增多语言翻译。当用户需要为 erupt.i18n.csv 添加新的翻译 key 时使用，例如："/i18n global.save 保存"、"帮我加一条翻译"、"新增 i18n key"。
+---
+
 # i18n — 新增多语言翻译
 
 为 `src/erupt.i18n.csv` 添加一条或多条新的多语言条目。

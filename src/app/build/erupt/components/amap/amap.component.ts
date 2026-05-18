@@ -86,28 +86,47 @@ export class AmapComponent implements OnInit {
                 'AMap.MapType',
                 'AMap.Geolocation',
                 'AMap.PlaceSearch',
-                'AMap.AutoComplete'
+                'AMap.AutoComplete',
+                'AMap.Geocoder'
             ], function () {
-                // 在图面添加工具条控件，工具条控件集成了缩放、平移、定位等功能按钮在内的组合控件
                 map.addControl(new AMap.ToolBar());
-                // 在图面添加比例尺控件，展示地图在当前层级和纬度下的比例尺
                 map.addControl(new AMap.Scale());
-                // 在图面添加鹰眼控件，在地图右下角显示地图的缩略图
                 map.addControl(new AMap.HawkEye({isOpen: true}));
-                // 在图面添加类别切换控件，实现默认图层与卫星图、实施交通图层之间切换的控制
                 map.addControl(new AMap.MapType());
-                // 在图面添加定位控件，用来获取和展示用户主机所在的经纬度位置
                 map.addControl(new AMap.Geolocation({}));
                 autoComplete = new AMap.Autocomplete({
                     city: ''
                 });
                 placeSearch = new AMap.PlaceSearch({
-                    pageSize: 12, // 单页显示结果条数
-                    children: 0, //不展示子节点数据
-                    pageIndex: 1, //页码
-                    extensions: 'base' //返回基本地址信息
+                    pageSize: 12,
+                    children: 0,
+                    pageIndex: 1,
+                    extensions: 'base'
                 });
+                let geocoder = new AMap.Geocoder();
 
+                map.on('click', (e) => {
+                    if (!that.pointSelectMode || that.readonly) return;
+                    const lnglat = e.lnglat;
+                    if (that.currentMarker) {
+                        map.remove(that.currentMarker);
+                    }
+                    that.currentMarker = new AMap.Marker({map: map, position: lnglat});
+                    map.setZoomAndCenter(15, lnglat);
+                    geocoder.getAddress(lnglat, (status, result) => {
+                        const lng = lnglat.getLng();
+                        const lat = lnglat.getLat();
+                        let address = `${lng},${lat}`;
+                        if (status === 'complete' && result.info === 'OK') {
+                            address = result.regeocode.formattedAddress;
+                        }
+                        that.value = {lng, lat, name: address, address};
+                        that.viewValue = address;
+                        that.valueChange.emit(JSON.stringify(that.value));
+                        infoWindow.setContent(`<b>${address}</b><br>经度：${lng}<br>纬度：${lat}`);
+                        infoWindow.open(map, lnglat);
+                    });
+                });
             });
             let that = this;
             this.tipInput.nativeElement.oninput = function () {
@@ -137,18 +156,37 @@ export class AmapComponent implements OnInit {
                     if (typeof (this.value) == 'string') {
                         this.value = JSON.parse(this.value);
                     }
-                    if (!this.value["id"]) {
+                    if (this.value["id"]) {
+                        getDetails(this.value["id"]);
+                    } else if (this.value["lng"] != null && this.value["lat"] != null) {
+                        this.valueChange.emit(JSON.stringify(this.value));
+                    } else {
                         this.msg.warning("请选择有效的地址");
-                        return;
                     }
-                    getDetails(this.value["id"]);
                 } else {
                     this.msg.warning("请先选择地址");
                 }
             };
 
+            let infoWindow = new AMap.InfoWindow({
+                autoMove: true,
+                offset: {x: 0, y: -30}
+            });
+
             if (this.value) {
-                getDetails(this.value.id);
+                if (this.value.id) {
+                    getDetails(this.value.id);
+                } else if (this.value.lng != null && this.value.lat != null) {
+                    const lnglat = [this.value.lng, this.value.lat];
+                    if (that.currentMarker) {
+                        map.remove(that.currentMarker);
+                    }
+                    that.currentMarker = new AMap.Marker({map: map, position: lnglat});
+                    map.setZoomAndCenter(15, lnglat);
+                    const label = this.value.name || this.value.address || `${this.value.lng},${this.value.lat}`;
+                    infoWindow.setContent(`<b>${label}</b><br>经度：${this.value.lng}<br>纬度：${this.value.lat}`);
+                    infoWindow.open(map, lnglat);
+                }
             }
 
 
@@ -167,20 +205,17 @@ export class AmapComponent implements OnInit {
             //回调函数
             function placeSearchCallBack(data) {
                 let poiArr = data.poiList.pois;
-                //添加marker
-                let marker = new AMap.Marker({
+                if (that.currentMarker) {
+                    map.remove(that.currentMarker);
+                }
+                that.currentMarker = new AMap.Marker({
                     map: map,
                     position: poiArr[0].location
                 });
-                map.setCenter(marker.getPosition());
+                map.setCenter(that.currentMarker.getPosition());
                 infoWindow.setContent(createContent(poiArr[0]));
-                infoWindow.open(map, marker.getPosition());
+                infoWindow.open(map, that.currentMarker.getPosition());
             }
-
-            let infoWindow = new AMap.InfoWindow({
-                autoMove: true,
-                offset: {x: 0, y: -30}
-            });
 
             function createContent(poi) {  //信息窗体内容
                 let s = [];
@@ -218,7 +253,19 @@ export class AmapComponent implements OnInit {
     clearLocation() {
         this.value = null;
         this.viewValue = null;
+        if (this.currentMarker) {
+            this.map.remove(this.currentMarker);
+            this.currentMarker = null;
+        }
         this.valueChange.emit(null);
+    }
+
+    pointSelectMode: boolean = false;
+
+    currentMarker: any = null;
+
+    togglePointSelect() {
+        this.pointSelectMode = !this.pointSelectMode;
     }
 
     checkType: string;

@@ -257,6 +257,9 @@
                             <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'"/>
                         </nz-card>
                     }
+                    @if (extraContent) {
+                        <div [innerHTML]="extraContent | safeHtml"></div>
+                    }
                     @if (vis.length) {
                         <div>
                             @if (visOptions.length > 1) {
@@ -329,10 +332,10 @@
     </div>
 }
 <ng-template #eruptTable>
-    <div [syncVirtualScroll]="dataPage.data.length >= 100">
+    <div [syncVirtualScroll]="dataPage.data.length >= 100 && !extraRows?.length">
         <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
             [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
-            [virtualScroll]="dataPage.data.length >= 100"
+            [virtualScroll]="dataPage.data.length >= 100 && !extraRows?.length"
             [virtualItemSize]="47"
             [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
             (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"

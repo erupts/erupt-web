@@ -19,7 +19,8 @@
                         </nz-option>
                     } @else {
                         @for (item of data || []; track item.value) {
-                            <nz-option [nzLabel]="item.value" [nzValue]="item.label"></nz-option>
+                            <nz-option [nzLabel]="item.value === null? '(空值)' : item.value"
+                                       [nzValue]="item.label"></nz-option>
                         }
                     }
                 </nz-select>
@@ -47,7 +48,7 @@
     @case (FieldType.DATE) {
         @if (filter.operator == CubeOperator.BETWEEN) {
             <nz-range-picker [ngModel]="currentValue" (ngModelChange)="currentValue = $event; onValueChange($event)" [nzSize]="size" [nzShowTime]="true"
-                             [nzShowNow]="true" style="width: 100%;"/>
+                             [nzShowNow]="true" [nzRanges]="dateRanges" style="width: 100%;"/>
         } @else if (filter.operator == CubeOperator.FEW_DAYS || filter.operator == CubeOperator.FUTURE_DAYS) {
             <nz-input-number [(ngModel)]="currentValue" (ngModelChange)="onValueChange($event)" [nzSize]="size" style="width: 100%;"></nz-input-number>
         } @else {

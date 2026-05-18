@@ -227,19 +227,21 @@ export class DataHandlerService {
                         }
                         break;
                     case EditType.REFERENCE_TREE:
-                        if (edit.$value || edit.$value === 0) {
-                            eruptData[field.fieldName] = {};
-                            eruptData[field.fieldName][edit.referenceTreeType.id] = edit.$value;
-                            eruptData[field.fieldName][edit.referenceTreeType.label] = edit.$viewValue;
+                        if (edit.$value) {
+                            eruptData[field.fieldName] = {
+                                [edit.referenceTreeType.id]: edit.$value.id,
+                                [edit.referenceTreeType.label]: edit.$value.label
+                            };
                         } else {
                             edit.$value = null;
                         }
                         break;
                     case EditType.REFERENCE_TABLE:
-                        if (edit.$value || edit.$value === 0) {
-                            eruptData[field.fieldName] = {};
-                            eruptData[field.fieldName][edit.referenceTableType.id] = edit.$value;
-                            eruptData[field.fieldName][edit.referenceTableType.label] = edit.$viewValue;
+                        if (edit.$value) {
+                            eruptData[field.fieldName] = {
+                                [edit.referenceTableType.id]: edit.$value[edit.referenceTableType.id],
+                                [edit.referenceTableType.label]: edit.$value[edit.referenceTableType.label]
+                            };
                         } else {
                             edit.$value = null;
                         }
@@ -352,12 +354,12 @@ export class DataHandlerService {
             const edit = field.eruptFieldJson.edit;
             switch (edit.type) {
                 case EditType.REFERENCE_TREE:
-                    eruptData[field.fieldName + "_" + edit.referenceTreeType.id] = edit.$value;
-                    eruptData[field.fieldName + "_" + edit.referenceTreeType.label] = edit.$viewValue;
+                    eruptData[field.fieldName + "_" + edit.referenceTreeType.id] = edit.$value?.id;
+                    eruptData[field.fieldName + "_" + edit.referenceTreeType.label] = edit.$value?.label;
                     break;
                 case EditType.REFERENCE_TABLE:
-                    eruptData[field.fieldName + "_" + edit.referenceTableType.id] = edit.$value;
-                    eruptData[field.fieldName + "_" + edit.referenceTableType.label] = edit.$viewValue;
+                    eruptData[field.fieldName + "_" + edit.referenceTableType.id] = edit.$value?.[edit.referenceTableType.id];
+                    eruptData[field.fieldName + "_" + edit.referenceTableType.label] = edit.$value?.[edit.referenceTableType.label];
                     break;
                 default:
                     eruptData[field.fieldName] = edit.$value;
@@ -448,14 +450,18 @@ export class DataHandlerService {
                         break;
                     case EditType.REFERENCE_TREE:
                         if (object[field.fieldName]) {
-                            edit.$value = object[field.fieldName][edit.referenceTreeType.id];
-                            edit.$viewValue = object[field.fieldName][edit.referenceTreeType.label];
+                            edit.$value = {
+                                id: object[field.fieldName][edit.referenceTreeType.id],
+                                label: object[field.fieldName][edit.referenceTreeType.label]
+                            };
                         }
                         break;
                     case EditType.REFERENCE_TABLE:
                         if (object[field.fieldName]) {
-                            edit.$value = object[field.fieldName][edit.referenceTableType.id];
-                            edit.$viewValue = object[field.fieldName][edit.referenceTableType.label];
+                            edit.$value = {
+                                [edit.referenceTableType.id]: object[field.fieldName][edit.referenceTableType.id],
+                                [edit.referenceTableType.label]: object[field.fieldName][edit.referenceTableType.label]
+                            };
                         }
                         break;
                     case EditType.TAB_TREE:

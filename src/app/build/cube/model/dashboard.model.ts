@@ -1,5 +1,5 @@
 import {GridsterItem} from "angular-gridster2";
-import {CubeOperator, Sort} from "./cube-query.model";
+import {CubeOperator, FilterGroup, Sort} from "./cube-query.model";
 
 export interface EruptUser {
     id: number;
@@ -46,6 +46,20 @@ export interface DashboardDSL {
     filters?: FilterDSL[];
     reports?: ReportDSL[];
     settings?: DashboardSettings;
+    subModels?: SubModelDSL[];
+}
+
+export interface SubModelDSL {
+    id: string;
+    alias: string;
+    cube: string;
+    explore: string;
+    fieldMappings?: FieldMapping[];
+}
+
+export interface FieldMapping {
+    dashboardField: string;
+    subField: string;
 }
 
 export interface DashboardSettings {
@@ -62,9 +76,25 @@ export interface FilterDSL {
     hidden?: boolean;
     notNull?: boolean;  // 排除空值（下拉选项过滤）
     operator?: CubeOperator;
+    // Absolute value, or relative-time string "PAST:<days>" / "FUTURE:<days>"
     defaultValue?: any;
     value?: any;
     linkage?: string[]; // 联动
+}
+
+/** Parse "PAST:7" / "FUTURE:14" from defaultValue. Returns null for absolute values. */
+export function parseRelativeDefault(value: any): {type: 'PAST' | 'FUTURE'; days: number} | null {
+    if (typeof value !== 'string') return null;
+    const m = value.match(/^(PAST|FUTURE):(\d+)$/);
+    return m ? {type: m[1] as 'PAST' | 'FUTURE', days: parseInt(m[2], 10)} : null;
+}
+
+export interface CompareConfig {
+    enabled?: boolean;
+    type?: 'YOY' | 'MOM';
+    filterField?: string;
+    currentLabel?: string;
+    compareLabel?: string;
 }
 
 /**
@@ -74,9 +104,12 @@ export interface ReportDSL extends GridsterItem {
     type?: ReportType;
     title?: string;
     description?: string;
+    subModel?: string;
     cube?: Partial<Record<CubeKey | string, string[] | string>>
     ui?: Record<string, any>;
     sorts?: Sort[];
+    filterGroups?: FilterGroup[];
+    compare?: CompareConfig;
 }
 
 export enum CubeKey {
@@ -84,6 +117,7 @@ export enum CubeKey {
     yField = 'yField',
     seriesField = 'seriesField',
     sizeField = "sizeField",
+    colorField = 'colorField',
 
     sourceField = 'sourceField',
     targetField = 'targetField',
@@ -116,6 +150,8 @@ export enum ReportType {
     SANKEY = 'SANKEY',
     CHORD = 'CHORD',
     BUBBLE = 'BUBBLE',
+    TREEMAP = 'TREEMAP',
+    HEATMAP = 'HEATMAP',
 
     TINY_LINE = 'TINY_LINE',
     TINY_AREA = 'TINY_AREA',
@@ -125,4 +161,5 @@ export enum ReportType {
     TABLE = 'TABLE',
     PIVOT_TABLE = 'PIVOT_TABLE',
     KPI = 'KPI',
+    TEXT = 'TEXT',
 }

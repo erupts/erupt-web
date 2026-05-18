@@ -95,10 +95,11 @@ export class FlowInstanceApiService {
         })
     }
 
-    resubmit(instanceTaskId: number, comment: string, data: any): Observable<R<void>> {
+    resubmit(instanceTaskId: number, comment: string, data: any, selfSelectNodeUsers?: Record<string, number[]>): Observable<R<void>> {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/instance/approval/resubmit", {
             comment,
-            data
+            data,
+            selfSelectNodeUsers
         }, {
             instanceTaskId,
         })

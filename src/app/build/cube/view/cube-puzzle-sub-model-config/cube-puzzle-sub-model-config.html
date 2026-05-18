@@ -1,0 +1,157 @@
+<div class="sub-model-config">
+    @if (subModels.length > 0) {
+        <div class="search-bar">
+            <nz-input-group [nzPrefix]="searchIcon" >
+                <input nz-input [(ngModel)]="searchKeyword"
+                       [placeholder]="'cube.sub_model.search' | translate" style="width: 360px"/>
+            </nz-input-group>
+            <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+        </div>
+        <nz-table [nzData]="filteredSubModels" nzSize="small" [nzShowPagination]="false" [nzBordered]="false">
+            <thead>
+            <tr>
+                <th>{{ 'cube.sub_model.alias' | translate }}</th>
+                <th>Cube</th>
+                <th>Explore</th>
+                <th>{{ 'cube.sub_model.mappings' | translate }}</th>
+                <th nzWidth="80px"></th>
+            </tr>
+            </thead>
+            <tbody>
+            @for (entry of filteredSubModels; track entry.origIndex) {
+                <tr [class.editing-row]="editingIndex === entry.origIndex">
+                    <td><strong>{{ entry.item.alias }}</strong></td>
+                    <td>{{ getCubeLabel(entry.item.cube) }}</td>
+                    <td>{{ getExploreLabel(entry.item.cube, entry.item.explore) }}</td>
+                    <td>{{ entry.item.fieldMappings?.length || 0 }}</td>
+                    <td>
+                        <button nz-button nzType="text" nzSize="small" (click)="startEdit(entry.origIndex)"
+                                [disabled]="editingIndex !== -1 && editingIndex !== entry.origIndex"
+                                [title]="'global.editor' | translate">
+                            <span nz-icon nzType="edit"></span>
+                        </button>
+                        <button nz-button nzType="text" nzSize="small" nzDanger (click)="remove(entry.origIndex)"
+                                [title]="'global.delete' | translate">
+                            <span nz-icon nzType="delete"></span>
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </nz-table>
+    } @else if (editingIndex === -1) {
+        <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" style="padding: 20px 0"></nz-empty>
+    }
+
+    @if (editForm !== null) {
+        <nz-card nzSize="small" [nzTitle]="editingIndex === NEW_IDX ? ('cube.sub_model.add' | translate) : ('cube.sub_model.edit' | translate)"
+                 style="margin-top: 12px">
+            <div class="form-row">
+                <div class="form-field">
+                    <div class="form-label">{{ 'cube.sub_model.alias' | translate }}</div>
+                    <input nz-input [(ngModel)]="editForm.alias"
+                           [placeholder]="'cube.sub_model.alias_placeholder' | translate"/>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <div class="form-label">Cube</div>
+                    <nz-select [(ngModel)]="editForm.cube" (ngModelChange)="onCubeChange($event)"
+                               nzShowSearch style="width: 100%">
+                        @for (cube of cubesList; track cube.value) {
+                            <nz-option [nzLabel]="cube.label" [nzValue]="cube.value"></nz-option>
+                        }
+                    </nz-select>
+                </div>
+                <div class="form-field">
+                    <div class="form-label">Explore</div>
+                    <nz-select [(ngModel)]="editForm.explore" (ngModelChange)="onExploreChange()"
+                               nzShowSearch style="width: 100%" [nzLoading]="loadingExplores"
+                               [nzDisabled]="!editForm.cube">
+                        @for (explore of (exploresMap[editForm.cube] || []); track explore.value) {
+                            <nz-option [nzLabel]="explore.label" [nzValue]="explore.value"></nz-option>
+                        }
+                    </nz-select>
+                </div>
+            </div>
+
+            <div class="mappings-section">
+                <div class="mappings-header">
+                    <span>{{ 'cube.sub_model.field_mappings' | translate }}</span>
+                    <span class="mappings-hint">{{ 'cube.sub_model.mappings_hint' | translate }}</span>
+                </div>
+                @for (mapping of editForm.fieldMappings; track $index; let mi = $index) {
+                    <div class="mapping-row">
+                        <nz-select [(ngModel)]="mapping.dashboardField" style="flex: 1" nzShowSearch
+                                   [nzPlaceHolder]="'cube.sub_model.main_field' | translate"
+                                   (ngModelChange)="onDashboardFieldChange(mapping)">
+                            @if (cubeMeta?.dimensions?.length) {
+                                <nz-option-group [nzLabel]="'cube.report.config.dimension' | translate">
+                                    @for (f of cubeMeta.dimensions; track f.code) {
+                                        @if (!f.hidden) {
+                                            <nz-option [nzLabel]="f.title" [nzValue]="f.code"></nz-option>
+                                        }
+                                    }
+                                </nz-option-group>
+                            }
+                            @if (cubeMeta?.parameters?.length) {
+                                <nz-option-group [nzLabel]="'cube.report.config.parameter' | translate">
+                                    @for (f of cubeMeta.parameters; track f.code) {
+                                        @if (!f.hidden) {
+                                            <nz-option [nzLabel]="f.title" [nzValue]="f.code"></nz-option>
+                                        }
+                                    }
+                                </nz-option-group>
+                            }
+                        </nz-select>
+                        <span nz-icon nzType="arrow-right" style="margin: 0 8px; color: var(--ant-color-text-tertiary)"></span>
+                        <nz-select [(ngModel)]="mapping.subField" style="flex: 1" nzShowSearch
+                                   [nzPlaceHolder]="'cube.sub_model.sub_field' | translate"
+                                   [nzLoading]="loadingMeta" [nzDisabled]="!editSubMeta || !mapping.dashboardField">
+                            @if (getCompatibleSubDimensions(mapping.dashboardField)?.length) {
+                                <nz-option-group [nzLabel]="'cube.report.config.dimension' | translate">
+                                    @for (f of getCompatibleSubDimensions(mapping.dashboardField); track f.code) {
+                                        <nz-option [nzLabel]="f.title" [nzValue]="f.code"></nz-option>
+                                    }
+                                </nz-option-group>
+                            }
+                            @if (getCompatibleSubParameters(mapping.dashboardField)?.length) {
+                                <nz-option-group [nzLabel]="'cube.report.config.parameter' | translate">
+                                    @for (f of getCompatibleSubParameters(mapping.dashboardField); track f.code) {
+                                        <nz-option [nzLabel]="f.title" [nzValue]="f.code"></nz-option>
+                                    }
+                                </nz-option-group>
+                            }
+                        </nz-select>
+                        <button nz-button nzType="text" nzDanger nzSize="small" (click)="removeMapping(mi)"
+                                style="margin-left: 4px">
+                            <span nz-icon nzType="close"></span>
+                        </button>
+                    </div>
+                }
+                <button nz-button nzType="dashed" nzSize="small" (click)="addMapping()"
+                        [disabled]="!editSubMeta" style="margin-top: 4px">
+                    <span nz-icon nzType="plus"></span>
+                    {{ 'cube.sub_model.add_mapping' | translate }}
+                </button>
+            </div>
+
+            <div class="form-actions">
+                <button nz-button nzType="default" nzSize="small" (click)="cancelEdit()">
+                    {{ 'global.cancel' | translate }}
+                </button>
+                <button nz-button nzType="primary" nzSize="small" (click)="confirmEdit()"
+                        [disabled]="!editForm.alias?.trim()">
+                    {{ 'global.save' | translate }}
+                </button>
+            </div>
+        </nz-card>
+    }
+
+    @if (editingIndex === -1) {
+        <button nz-button nzType="dashed" nzBlock style="margin-top: 12px" (click)="addNew()">
+            <span nz-icon nzType="plus"></span>
+            {{ 'cube.sub_model.add' | translate }}
+        </button>
+    }
+</div>

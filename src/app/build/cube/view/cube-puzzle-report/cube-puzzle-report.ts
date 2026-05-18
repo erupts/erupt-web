@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType} from "../../model/dashboard.model";
+import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType, SubModelDSL} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
 import {CubeFilter, CubeOperator, DimensionFormat} from "../../model/cube-query.model";
@@ -11,6 +11,7 @@ import {
     Column,
     Funnel,
     Gauge,
+    Heatmap,
     Line,
     Pie,
     Progress,
@@ -24,13 +25,16 @@ import {
     TinyArea,
     TinyColumn,
     TinyLine,
+    Treemap,
     Waterfall,
     WordCloud
 } from "@antv/g2plot";
-import {CubeMeta, FieldType} from "../../model/cube.model";
+import {BaseField, CubeMeta, FieldType} from "../../model/cube.model";
 import {STColumn, STComponent} from "@delon/abc/st";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {CubeDrillDetailComponent} from "../cube-drill-detail/cube-drill-detail.component";
+import {forkJoin} from "rxjs";
+import {finalize} from "rxjs/operators";
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -67,6 +71,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     chart: any;
 
+    kpiCompareValue: number | null = null;
+
+    private _compareSeriesOverride: string | null = null;
+
     private observer: IntersectionObserver;
 
     private resizeObserver: ResizeObserver;
@@ -87,10 +95,43 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     // 表格筛选功能
     activeFilters: Map<string, any> = new Map(); // 当前激活的筛选条件
 
+    private subMetaCache: { [key: string]: CubeMeta } = {};
+
+    private getSubModelDSL(): SubModelDSL | null {
+        if (!this.report?.subModel || !this.dsl?.subModels) return null;
+        return this.dsl.subModels.find(m => m.id === this.report.subModel) || null;
+    }
+
+    private getCachedSubMeta(subModelDSL: SubModelDSL): CubeMeta | null {
+        return this.subMetaCache[`${subModelDSL.cube}/${subModelDSL.explore}`] || null;
+    }
+
+    private loadAndCacheSubMeta(subModelDSL: SubModelDSL, callback: (meta: CubeMeta) => void) {
+        const key = `${subModelDSL.cube}/${subModelDSL.explore}`;
+        this.cubeApiService.cubeMetadata(subModelDSL.cube, subModelDSL.explore).subscribe(res => {
+            const meta = res.data;
+            const fieldTitleMap = new Map<string, string>();
+            const fieldMap = new Map<string, BaseField>();
+            [...(meta.dimensions || []), ...(meta.measures || []), ...(meta.parameters || [])].forEach(it => {
+                fieldTitleMap.set(it.code, it.title);
+                fieldMap.set(it.code, it);
+            });
+            meta.fieldTitleMap = fieldTitleMap;
+            meta.fieldMap = fieldMap;
+            this.subMetaCache[key] = meta;
+            callback(meta);
+        });
+    }
+
     /**
      * 根据字段 code 获取字段标题
      */
     getFieldTitle(field: string): string {
+        const subModelDSL = this.getSubModelDSL();
+        if (subModelDSL) {
+            const subMeta = this.getCachedSubMeta(subModelDSL);
+            if (subMeta) return subMeta.fieldTitleMap?.get(field) || field;
+        }
         return this.cubeMeta?.fieldTitleMap?.get(field) || field;
     }
 
@@ -247,6 +288,19 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
         }
         this.requiredUnfilled = false;
+
+        if (this.report.type === ReportType.TEXT) {
+            this.querying = false;
+            return;
+        }
+
+        // Sub-model: ensure meta is loaded before querying
+        const subModelDSL = this.getSubModelDSL();
+        if (subModelDSL && !this.getCachedSubMeta(subModelDSL)) {
+            this.loadAndCacheSubMeta(subModelDSL, () => this.refresh());
+            return;
+        }
+
         this.querying = true;
         let dimensions = [];
         let measures = [];
@@ -263,6 +317,10 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             if (this.report.cube[CubeKey.valuesField]) {
                 measures = this.report.cube[CubeKey.valuesField] as string[];
             }
+        } else if (this.report.type === ReportType.HEATMAP) {
+            if (this.report.cube[CubeKey.xField]) dimensions = [this.report.cube[CubeKey.xField] as string];
+            if (this.report.cube[CubeKey.yField]) dimensions.push(this.report.cube[CubeKey.yField] as string);
+            if (this.report.cube[CubeKey.colorField]) measures = [this.report.cube[CubeKey.colorField] as string];
         } else {
             // For other chart types
             if (this.report.cube[CubeKey.xField]) {
@@ -286,45 +344,57 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     dimensions.push(this.report.cube[CubeKey.seriesField]);
                 }
             }
-
         }
 
-        // 所有组件必须选择指标才发起请求
-        if (measures.length === 0) {
+        // TABLE 可以仅配置维度，其余组件必须有指标才发起请求
+        const noFields = measures.length === 0 && dimensions.length === 0;
+        if (noFields || (measures.length === 0 && this.report.type !== ReportType.TABLE)) {
             this.chartData = [];
             this.querying = false;
             this.render();
             return;
         }
 
+        const activeMeta = subModelDSL ? this.getCachedSubMeta(subModelDSL) : this.cubeMeta;
+        const queryCube = subModelDSL ? subModelDSL.cube : this.dashboard.cuber;
+        const queryExplore = subModelDSL ? subModelDSL.explore : this.dashboard.explore;
+
         let parameters: Record<string, any> = {};
         let cf: CubeFilter[] = [];
 
-        // 合并外部筛选器和用户点击的维度筛选
-        if (this.filters) {
-            for (let f of this.filters) {
-                if (f.value != null && f.value != "") {
-                    if (this.cubeMeta.parameters.filter(it => it.code === f.field).length > 0) {
-                        parameters[f.field] = f.value;
+        if (subModelDSL) {
+            // 子模型：通过 fieldMappings 将仪表板过滤值转换为子模型字段过滤
+            for (const mapping of subModelDSL.fieldMappings || []) {
+                const filter = this.filters?.find(f => f.field === mapping.dashboardField);
+                if (filter?.value != null && filter.value !== '') {
+                    const isParam = activeMeta?.parameters?.some(p => p.code === mapping.subField);
+                    if (isParam) {
+                        parameters[mapping.subField] = filter.value;
                     } else {
-                        cf.push({
-                            field: f.field,
-                            operator: f.operator,
-                            value: f.value
-                        });
+                        cf.push({field: mapping.subField, operator: filter.operator, value: filter.value});
                     }
                 }
             }
+        } else {
+            // 主模型：合并外部筛选器和用户点击的维度筛选
+            if (this.filters) {
+                for (let f of this.filters) {
+                    if (f.value === null && !f.hidden && (f.operator === CubeOperator.EQ || f.operator === CubeOperator.NEQ)) {
+                        cf.push({field: f.field, operator: f.operator === CubeOperator.EQ ? CubeOperator.NULL : CubeOperator.NOT_NULL, value: null});
+                    } else if (f.value != null && f.value != "") {
+                        if (this.cubeMeta.parameters.filter(it => it.code === f.field).length > 0) {
+                            parameters[f.field] = f.value;
+                        } else {
+                            cf.push({field: f.field, operator: f.operator, value: f.value});
+                        }
+                    }
+                }
+            }
+            for (let [field, value] of this.activeFilters) {
+                cf.push({field, operator: CubeOperator.EQ, value});
+            }
         }
 
-        // 添加用户点击维度产生的筛选条件
-        for (let [field, value] of this.activeFilters) {
-            cf.push({
-                field: field,
-                operator: CubeOperator.EQ,
-                value: value
-            });
-        }
         let sorts = [];
         if (this.report.sorts) {
             for (let sort of this.report.sorts) {
@@ -335,27 +405,93 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
 
         let formats: Record<string, DimensionFormat> = {};
-        for (let dim of this.cubeMeta.dimensions) {
+        for (let dim of activeMeta?.dimensions || []) {
             dimensions.forEach(field => {
-                if (field == dim.code) {
-                    if (dim.type == FieldType.DATE) {
-                        formats[field] = DimensionFormat.DAY;
-                    }
+                if (field == dim.code && dim.type == FieldType.DATE) {
+                    formats[field] = DimensionFormat.DAY;
                 }
-            })
+            });
         }
 
-        this.cubeApiService.query({
-            cube: this.dashboard.cuber,
-            explore: this.dashboard.explore,
+        const reportFilterGroup = this.report.filterGroups?.length > 0
+            ? this.report.filterGroups
+            : undefined;
+
+        const baseQuery = {
+            cube: queryCube,
+            explore: queryExplore,
             dimensions: dimensions,
             measures: measures,
             sorts: sorts,
             filters: cf,
+            filterGroups: reportFilterGroup,
             parameter: parameters,
             dimensionFormat: formats,
             limit: 5000
-        }).subscribe({
+        };
+
+        // 同比/环比：仅主模型且有配置时生效
+        const compare = this.report.compare;
+        const COMPARE_SUPPORTED = [
+            ReportType.LINE, ReportType.AREA, ReportType.COLUMN, ReportType.BAR,
+            ReportType.SCATTER, ReportType.RADAR, ReportType.WATERFALL, ReportType.ROSE, ReportType.RADIAL_BAR
+        ];
+        if (!subModelDSL && compare?.enabled && compare?.filterField && COMPARE_SUPPORTED.includes(this.report.type)) {
+            const dateFilter = cf.find(f => f.field === compare.filterField);
+            if (dateFilter?.operator === CubeOperator.BETWEEN && Array.isArray(dateFilter.value)
+                && dateFilter.value[0] && dateFilter.value[1]) {
+                const shift = compare.type === 'YOY' ? -12 : -1;
+                const prevStart = this.shiftDateByMonths(dateFilter.value[0], shift);
+                const prevEnd = this.shiftDateByMonths(dateFilter.value[1], shift);
+                const prevFilters = cf.map(f => f === dateFilter ? {...f, value: [prevStart, prevEnd]} : f);
+                const currentLabel = compare.currentLabel || '当期';
+                const compareLabel = compare.compareLabel || (compare.type === 'YOY' ? '去年同期' : '上月同期');
+                this._compareSeriesOverride = '_period';
+                forkJoin([
+                    this.cubeApiService.query(baseQuery),
+                    this.cubeApiService.query({...baseQuery, filters: prevFilters})
+                ]).pipe(finalize(() => { this.querying = false; })).subscribe({
+                    next: ([curr, prev]) => {
+                        this.chartData = [
+                            ...curr.data.map(row => ({...row, _period: currentLabel})),
+                            ...prev.data.map(row => ({...row, _period: compareLabel}))
+                        ];
+                        this.render();
+                    },
+                    error: () => {}
+                });
+                return;
+            }
+        }
+        this._compareSeriesOverride = null;
+
+        // KPI 环比/同比：不需要 seriesField，直接存对比期值
+        if (!subModelDSL && compare?.enabled && compare?.filterField && this.report.type === ReportType.KPI) {
+            const dateFilter = cf.find(f => f.field === compare.filterField);
+            if (dateFilter?.operator === CubeOperator.BETWEEN && Array.isArray(dateFilter.value)
+                && dateFilter.value[0] && dateFilter.value[1]) {
+                const shift = compare.type === 'YOY' ? -12 : -1;
+                const prevStart = this.shiftDateByMonths(dateFilter.value[0], shift);
+                const prevEnd = this.shiftDateByMonths(dateFilter.value[1], shift);
+                const prevFilters = cf.map(f => f === dateFilter ? {...f, value: [prevStart, prevEnd]} : f);
+                forkJoin([
+                    this.cubeApiService.query(baseQuery),
+                    this.cubeApiService.query({...baseQuery, filters: prevFilters})
+                ]).pipe(finalize(() => { this.querying = false; })).subscribe({
+                    next: ([curr, prev]) => {
+                        this.chartData = curr.data;
+                        const yField = this.report.cube[CubeKey.yField] as string;
+                        this.kpiCompareValue = prev.data[0] != null ? Number(prev.data[0][yField] ?? null) : null;
+                        this.render();
+                    },
+                    error: () => {}
+                });
+                return;
+            }
+        }
+        this.kpiCompareValue = null;
+
+        this.cubeApiService.query(baseQuery).subscribe({
             next: (response) => {
                 this.chartData = response.data;
                 if (this.report.type == ReportType.TABLE) {
@@ -387,7 +523,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             this.s2.destroy();
             this.s2 = null;
         }
-        if (this.report.type == ReportType.TABLE || this.report.type == ReportType.KPI) {
+        if (this.report.type == ReportType.TABLE || this.report.type == ReportType.KPI || this.report.type == ReportType.TEXT) {
             return;
         } else if (this.report.type == ReportType.PIVOT_TABLE) {
             const dataConfig = {
@@ -438,8 +574,12 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 ...this.getFieldMeta(this.report.cube[CubeKey.xField]),
                 ...this.getFieldMeta(this.report.cube[CubeKey.yField]),
                 ...this.getFieldMeta(this.report.cube[CubeKey.seriesField]),
+                ...this.getFieldMeta(this.report.cube[CubeKey.colorField]),
             }
         };
+        if (this._compareSeriesOverride) {
+            commonConfig.seriesField = this._compareSeriesOverride;
+        }
         if (WindowModel.theme.primaryColor) {
             // commonConfig.color = WindowModel.theme.primaryColor
         }
@@ -479,7 +619,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                     stepType: reportDSL.ui["stepType"] ? 'hv' : undefined,
                 });
                 break;
@@ -488,7 +628,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                 });
                 break;
             case ReportType.COLUMN:
@@ -497,7 +637,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     isGroup: !commonConfig['isStack'],
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                 });
                 break;
             case ReportType.BAR:
@@ -506,7 +646,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     isGroup: !commonConfig['isStack'],
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                 });
                 break;
             case ReportType.PIE:
@@ -524,7 +664,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    colorField: reportDSL.cube[CubeKey.seriesField] as string,
+                    colorField: commonConfig.seriesField,
                 });
                 break;
             case ReportType.BUBBLE:
@@ -546,7 +686,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                 });
                 break;
             case ReportType.FUNNEL:
@@ -622,7 +762,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     ...commonConfig,
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
-                    seriesField: reportDSL.cube[CubeKey.seriesField] as string,
+                    seriesField: commonConfig.seriesField,
                     radius: 0.9,
                 });
                 break;
@@ -632,6 +772,31 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     xField: reportDSL.cube[CubeKey.xField] as string,
                     yField: reportDSL.cube[CubeKey.yField] as string,
                     maxAngle: 270,
+                });
+                break;
+            case ReportType.TREEMAP: {
+                const xF = reportDSL.cube[CubeKey.xField] as string;
+                const yF = reportDSL.cube[CubeKey.yField] as string;
+                chart = new Treemap(chartContainer.nativeElement, {
+                    ...commonConfig,
+                    data: {
+                        name: 'root',
+                        children: data.map(row => ({
+                            name: String(row[xF] ?? ''),
+                            value: Number(row[yF] ?? 0),
+                        }))
+                    },
+                    colorField: 'name',
+                    label: {fields: ['name']},
+                });
+                break;
+            }
+            case ReportType.HEATMAP:
+                chart = new Heatmap(chartContainer.nativeElement, {
+                    ...commonConfig,
+                    xField: reportDSL.cube[CubeKey.xField] as string,
+                    yField: reportDSL.cube[CubeKey.yField] as string,
+                    colorField: reportDSL.cube[CubeKey.colorField] as string,
                 });
                 break;
             case ReportType.SANKEY:
@@ -884,49 +1049,54 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
      * 打开下钻抽屉
      */
     openDrillDrawer(measure: string, record: any): void {
+        const subModelDSL = this.getSubModelDSL();
+        const activeMeta = subModelDSL ? this.getCachedSubMeta(subModelDSL) : this.cubeMeta;
         const drillFilters: CubeFilter[] = [];
 
-        // 将当前行的所有维度值作为过滤条件带出
+        // 将当前行的所有维度值作为过滤条件带出（字段码已属于有效模型）
         const xFields = this.report.cube[CubeKey.xField] || [];
         const xFieldsArray = Array.isArray(xFields) ? xFields : [xFields];
         for (const f of xFieldsArray) {
             if (f && record[f] !== undefined && record[f] !== null) {
-                drillFilters.push({
-                    field: f,
-                    operator: CubeOperator.EQ,
-                    value: record[f]
-                });
+                drillFilters.push({field: f, operator: CubeOperator.EQ, value: record[f]});
             }
         }
 
-        // 将当前报表已有的筛选条件也带入下钻（包括外部筛选和已激活的维度筛选）
-        if (this.filters) {
-            for (const f of this.filters) {
-                if (f.value != null && this.cubeMeta.parameters.filter(it => it.code === f.field).length === 0) {
-                    drillFilters.push({
-                        field: f.field,
-                        operator: f.operator,
-                        value: f.value
-                    });
+        if (subModelDSL) {
+            // 子模型：通过 fieldMappings 将仪表板过滤值转换为子模型字段
+            for (const mapping of subModelDSL.fieldMappings || []) {
+                const filter = this.filters?.find(f => f.field === mapping.dashboardField);
+                if (filter?.value != null && filter.value !== '') {
+                    const isParam = activeMeta?.parameters?.some(p => p.code === mapping.subField);
+                    if (!isParam) {
+                        drillFilters.push({field: mapping.subField, operator: filter.operator, value: filter.value});
+                    }
                 }
             }
-        }
-        for (const [f, v] of this.activeFilters) {
-            drillFilters.push({
-                field: f,
-                operator: CubeOperator.EQ,
-                value: v
-            });
+        } else {
+            // 主模型：外部筛选和已激活的维度筛选
+            if (this.filters) {
+                for (const f of this.filters) {
+                    if (f.value != null && this.cubeMeta.parameters.filter(it => it.code === f.field).length === 0) {
+                        drillFilters.push({field: f.field, operator: f.operator, value: f.value});
+                    }
+                }
+            }
+            for (const [f, v] of this.activeFilters) {
+                drillFilters.push({field: f, operator: CubeOperator.EQ, value: v});
+            }
         }
 
         this.drawerService.create({
-            nzTitle: '下钻分析 - ' + this.cubeMeta.fieldTitleMap.get(measure) + ": " + record[measure],
+            nzTitle: '下钻分析 - ' + (activeMeta?.fieldTitleMap?.get(measure) || measure) + ': ' + record[measure],
             nzContent: CubeDrillDetailComponent,
             nzContentParams: {
                 measure: measure,
                 dashboard: this.dashboard,
-                cubeMeta: this.cubeMeta,
-                filters: drillFilters
+                cubeMeta: activeMeta || this.cubeMeta,
+                filters: drillFilters,
+                cube: subModelDSL?.cube,
+                explore: subModelDSL?.explore,
             },
             nzWidth: '75%',
             nzClosable: true,
@@ -954,6 +1124,24 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             this.s2.destroy();
             this.s2 = null;
         }
+    }
+
+    getKpiDelta(): number {
+        if (!this.chartData?.length || this.kpiCompareValue === null) return 0;
+        const curr = Number(this.chartData[0][this.report.cube[CubeKey.yField] as string] ?? 0);
+        return curr - this.kpiCompareValue;
+    }
+
+    getKpiPct(): number {
+        if (this.kpiCompareValue === null || this.kpiCompareValue === 0) return 0;
+        const curr = Number(this.chartData[0][this.report.cube[CubeKey.yField] as string] ?? 0);
+        return (curr - this.kpiCompareValue) / Math.abs(this.kpiCompareValue) * 100;
+    }
+
+    private shiftDateByMonths(date: any, months: number): Date {
+        const d = date instanceof Date ? new Date(date) : new Date(date);
+        d.setMonth(d.getMonth() + months);
+        return d;
     }
 
     protected readonly DashboardTheme = DashboardTheme;

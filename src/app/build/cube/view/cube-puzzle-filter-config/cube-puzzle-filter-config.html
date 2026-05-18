@@ -105,10 +105,38 @@
         </div>
     }
     @if (filter.field) {
-        <div class="filter-config-row filter-config-default">
-            <div class="filter-config-label">Default Value</div>
-            <cube-puzzle-filter-control #filterControl [dashboard]="dashboard" [filter]="filter"
-                                        [cubeMeta]="cubeMeta" [dsl]="dsl" [configMode]="true"></cube-puzzle-filter-control>
-        </div>
+        @if (fieldType() === FieldType.DATE && filter.operator === CubeOperator.BETWEEN) {
+            <div class="filter-config-row">
+                <div class="filter-config-label">{{ 'cube.filter.config.default_type' | translate }}</div>
+                <nz-radio-group [ngModel]="isRelativeDefault() ? 'relative' : 'absolute'"
+                                (ngModelChange)="onDefaultTypeChange($event)" name="defaultType">
+                    <label nz-radio nzValue="absolute">{{ 'cube.filter.config.relative_absolute' | translate }}</label>
+                    <label nz-radio nzValue="relative">{{ 'cube.filter.config.relative_relative' | translate }}</label>
+                </nz-radio-group>
+            </div>
+            @if (isRelativeDefault()) {
+                <div class="filter-config-row" style="gap: 8px; align-items: center; flex-wrap: wrap;">
+                    <nz-select [(ngModel)]="relativeType" style="width: 120px" name="relativeType">
+                        <nz-option [nzLabel]="'cube.filter.config.relative_past' | translate" nzValue="PAST"></nz-option>
+                        <nz-option [nzLabel]="'cube.filter.config.relative_future' | translate" nzValue="FUTURE"></nz-option>
+                    </nz-select>
+                    <nz-input-number [(ngModel)]="relativeDays" [nzMin]="1" [nzStep]="1"
+                                     style="width: 90px" name="relativeDays"></nz-input-number>
+                    <span>{{ 'cube.filter.config.relative_days' | translate }}</span>
+                </div>
+            } @else {
+                <div class="filter-config-row filter-config-default">
+                    <div class="filter-config-label">Default Value</div>
+                    <cube-puzzle-filter-control #filterControl [dashboard]="dashboard" [filter]="filter"
+                                                [cubeMeta]="cubeMeta" [dsl]="dsl" [configMode]="true"></cube-puzzle-filter-control>
+                </div>
+            }
+        } @else {
+            <div class="filter-config-row filter-config-default">
+                <div class="filter-config-label">Default Value</div>
+                <cube-puzzle-filter-control #filterControl [dashboard]="dashboard" [filter]="filter"
+                                            [cubeMeta]="cubeMeta" [dsl]="dsl" [configMode]="true"></cube-puzzle-filter-control>
+            </div>
+        }
     }
 </div>

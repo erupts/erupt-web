@@ -52,7 +52,7 @@
                                 <div class="section">
                                     @if (!dataDeleted) {
                                         @if (activeTabIndex === 0) {
-                                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== approvalView"
+                                            <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="ApprovalView.TODO !== approvalView" [initValue]="false"
                                                              [formAccesses]="nodeInfo?.prop?.formAccesses || {}" [loadingEruptData]="loadingEruptData"
                                                              [defaultFormAccess]="nodeInfo?.type==NodeType.START ? FormAccessEnum.DEFAULT : FormAccessEnum.READONLY"></erupt-flow-form>
                                         }
@@ -641,18 +641,38 @@
           (nzOnCancel)="resubmitModalVisible = false"
 >
     <div *nzModalContent>
-        <div class="modal-content">
-            <p class="modal-description">提交说明：</p>
-            <nz-input-group>
-          <textarea
-              nz-input
-              [(ngModel)]="reason"
-              placeholder="提交说明..."
-              [nzAutosize]="{ minRows: 3, maxRows: 6 }"
-              class="reason-textarea"
-          ></textarea>
-            </nz-input-group>
-        </div>
+        <nz-spin [nzSpinning]="loadingSelfSelectNodes">
+            <div class="modal-content">
+                @if (!instanceDetail?.eruptModelId) {
+                    @for (node of selfSelectNodes; track node.key) {
+                        <div style="margin-bottom: 16px">
+                            <p class="modal-description"><span style="color: #f00">*</span> 选择 [{{ node.value }}] 审批人：</p>
+                            <nz-select style="width: 100%"
+                                       [nzMode]="'multiple'"
+                                       [nzMaxMultipleCount]="1"
+                                       [nzPlaceHolder]="'请选择审批人'"
+                                       [nzShowSearch]="true"
+                                       [nzAllowClear]="true"
+                                       [(ngModel)]="selectedNodeUserIds[node.key]">
+                                @for (user of nodeUsersOptions[node.key]; track user.id) {
+                                    <nz-option [nzValue]="user.id" [nzLabel]="user.name"></nz-option>
+                                }
+                            </nz-select>
+                        </div>
+                    }
+                }
+                <p class="modal-description">提交说明：</p>
+                <nz-input-group>
+              <textarea
+                  nz-input
+                  [(ngModel)]="reason"
+                  placeholder="提交说明..."
+                  [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+                  class="reason-textarea"
+              ></textarea>
+                </nz-input-group>
+            </div>
+        </nz-spin>
     </div>
 </nz-modal>
 
