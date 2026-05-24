@@ -1,6 +1,7 @@
 import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {SharedModule} from "@shared/shared.module";
+import {NzAffixModule} from "ng-zorro-antd/affix";
 import {HttpClientModule} from "@angular/common/http";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {DataHandlerService} from "./service/data-handler.service";
@@ -19,6 +20,7 @@ import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
 import {TableComponent} from './view/table/table.component';
 import {LayoutTreeComponent} from './view/layout-tree/layout-tree.component';
+import {FormViewComponent} from './view/form-view/form-view.component';
 import {CodeEditorComponent} from './components/code-editor/code-editor.component';
 import {EruptUeditorComponent} from './components/ueditor/erupt-ueditor.component';
 import {TabTreeComponent} from './components/tab-tree/tab-tree.component';
@@ -71,7 +73,8 @@ import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
         NzButtonModule,
         NzTooltipDirective,
         SVComponent,
-        SVContainerComponent
+        SVContainerComponent,
+        NzAffixModule
     ],
     providers: [
         DataHandlerService,
@@ -128,7 +131,8 @@ import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
         MultiChoiceComponent,
         SignaturePadComponent,
         SmartSearchComponent,
-        GanttComponent
+        GanttComponent,
+        FormViewComponent
     ]
 })
 export class EruptModule {

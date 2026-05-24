@@ -579,5 +579,18 @@ export class DataService {
         return this._http.get<R<VL[]>>(RestPath.erupt + "/print/vars");
     }
 
+    getFormViewData(eruptName: string): Observable<any> {
+        return this._http.get<any>(RestPath.formView + "/" + eruptName, null, {
+            observe: "body",
+            headers: {erupt: eruptName}
+        });
+    }
+
+    saveFormViewData(eruptName: string, data: any): Observable<EruptApiModel> {
+        return this._http.post<EruptApiModel>(RestPath.formView + "/" + eruptName, data, null, {
+            observe: "body",
+            headers: {erupt: eruptName}
+        });
+    }
 
 }

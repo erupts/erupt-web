@@ -23,6 +23,8 @@ function joinPath(type: string, value: string): string {
             return "/build/table/" + menuValue;
         case MenuTypeEnum.tree:
             return "/build/tree/" + menuValue;
+        case MenuTypeEnum.form:
+            return "/build/form/" + menuValue;
         case MenuTypeEnum.bi:
             return "/bi/" + menuValue;
         case MenuTypeEnum.cube:

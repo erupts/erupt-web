@@ -14,6 +14,7 @@ export class RestPath {
     public static file: string = RestPath.erupt + "/file";
     public static eruptAttachment: string = WindowModel.domain + "erupt-attachment";
     public static bi: string = RestPath.erupt + "/bi";
+    public static formView: string = RestPath.erupt + "/data/form-view";
 }
 
 export enum EditType {
