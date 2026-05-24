@@ -1,13 +1,3 @@
-@if (eruptBuildModel != null) {
-    <div class="form-view-footer">
-        <button nz-button nzType="primary" [nzLoading]="saving" (click)="save()">
-            {{ 'global.save' | translate }}
-        </button>
-        <button nz-button [disabled]="loading || saving" (click)="reset()" style="margin-left: 8px">
-            {{ 'global.reset' | translate }}
-        </button>
-    </div>
-}
 <div class="form-view-wrap">
     @if (!eruptBuildModel) {
         <div style="padding: 16px">
@@ -23,3 +13,13 @@
         </nz-card>
     }
 </div>
+@if (eruptBuildModel != null) {
+    <div class="form-view-footer">
+        <button nz-button nzType="primary" [nzLoading]="saving" (click)="save()">
+            {{ 'global.save' | translate }}
+        </button>
+        <button nz-button [disabled]="loading || saving" (click)="reset()" style="margin-left: 8px">
+            {{ 'global.reset' | translate }}
+        </button>
+    </div>
+}
