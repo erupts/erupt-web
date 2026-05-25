@@ -212,6 +212,16 @@ export class DataService {
         });
     }
 
+    getCodeEditHints(eruptName: string, fieldName: string, eruptParentName?: string): Observable<string[]> {
+        return this._http.get<string[]>(RestPath.comp + "/code-edit-hints/" + eruptName + "/" + fieldName, null, {
+            observe: "body",
+            headers: {
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
+            }
+        });
+    }
+
     choiceTrigger(eruptName: string, field: string, val: any, eruptParentName?: string): any {
         return this._http.get<any>(RestPath.component + "/choice-trigger/" + eruptName + "/" + field, {
             val: val

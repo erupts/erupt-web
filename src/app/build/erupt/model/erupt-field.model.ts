@@ -135,6 +135,7 @@ interface Search {
 interface CodeEditType {
     language: string;
     height: number;
+    hintHandler?: string;
 }
 
 //Edit Type
@@ -183,6 +184,7 @@ interface ChoiceType {
     dependField: string;
     items: VL[],
     trigger: string;
+
     onVLChange(value, oldValue): void;
 }
 

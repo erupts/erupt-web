@@ -471,7 +471,10 @@
                                     <erupt-code-editor [edit]="field.eruptFieldJson.edit"
                                                        [readonly]="isReadonly(field)"
                                                        [height]="field.eruptFieldJson.edit.codeEditType.height"
-                                                       [language]="field.eruptFieldJson.edit.codeEditType.language">
+                                                       [language]="field.eruptFieldJson.edit.codeEditType.language"
+                                                       [eruptName]="eruptModel.eruptName"
+                                                       [fieldName]="field.fieldName"
+                                                       [parentEruptName]="parentEruptName">
                                     </erupt-code-editor>
                                 </se>
                             </div>

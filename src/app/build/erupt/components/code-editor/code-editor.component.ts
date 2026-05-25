@@ -1,8 +1,9 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Edit} from "../../model/erupt-field.model";
 import {CacheService} from "@delon/cache";
 import {JoinedEditorOptions, NzCodeEditorComponent} from "ng-zorro-antd/code-editor";
 import {NzConfigService} from "ng-zorro-antd/core/config";
+import {DataService} from "@shared/service/data.service";
 
 let codeEditorDarkKey = "code_editor_dark";
 
@@ -12,7 +13,7 @@ let codeEditorDarkKey = "code_editor_dark";
     templateUrl: './code-editor.component.html',
     styleUrls: ["./code-editor.component.less"]
 })
-export class CodeEditorComponent implements OnInit {
+export class CodeEditorComponent implements OnInit, OnDestroy {
 
     /**
      * choice field or value
@@ -25,6 +26,10 @@ export class CodeEditorComponent implements OnInit {
 
     @Input() height: number = 300;
 
+    @Input() eruptName: string;
+
+    @Input() fieldName: string;
+
     @Input() parentEruptName: string;
 
     @ViewChild(NzCodeEditorComponent, {static: false}) editorComponent?: NzCodeEditorComponent;
@@ -35,12 +40,12 @@ export class CodeEditorComponent implements OnInit {
 
     theme: 'vs-dark' | 'vs';
 
-    fullScreen = false;
-
     editorOption: JoinedEditorOptions;
 
-    constructor(private cacheService: CacheService, private nzConfigService: NzConfigService) {
+    private _completionProvider: any;
+    private _hintsCache: string[] | null = null;
 
+    constructor(private cacheService: CacheService, private nzConfigService: NzConfigService, private dataService: DataService) {
     }
 
     ngOnInit() {
@@ -51,26 +56,62 @@ export class CodeEditorComponent implements OnInit {
             theme: this.theme,
             readOnly: this.readonly,
             suggestOnTriggerCharacters: true,
-            automaticLayout: true,  // 自动调整布局
-            minimap: {enabled: true},  // 启用小地图
+            automaticLayout: true,
+            minimap: {enabled: true},
             scrollBeyondLastLine: false
         };
-        // monaco.languages.registerCompletionItemProvider(this.edit.codeEditType.language, {
-        //     provideCompletionItems(model, position) {
-        //         return {
-        //             suggestions: []
-        //         };
-        //     },
-        //     triggerCharacters: ['$'] // 触发提示的字符，可以写多个
-        // });
     }
 
-    codeEditorInit(event) {
+    codeEditorInit(editor: any) {
         this.initComplete = true;
-        // 确保编辑器正确布局
-        setTimeout(() => {
-            this.editorComponent?.layout();
-        }, 100);
+        setTimeout(() => this.editorComponent?.layout(), 100);
+
+        const codeEditType = this.edit?.codeEditType;
+        if (codeEditType) {
+            if (codeEditType.hintHandler) {
+                const monaco = (window as any).monaco;
+                if (!monaco) return;
+                const modelUri = editor.getModel()?.uri?.toString();
+
+                this._completionProvider = monaco.languages.registerCompletionItemProvider(
+                    codeEditType.language || this.language,
+                    {
+                        provideCompletionItems: (model: any, position: any) => {
+                            if (model.uri?.toString() !== modelUri) {
+                                return {suggestions: []};
+                            }
+                            const wordInfo = model.getWordUntilPosition(position);
+                            const buildSuggestions = (hints: string[]) => ({
+                                suggestions: hints.map((h: string) => ({
+                                    label: h,
+                                    kind: monaco.languages.CompletionItemKind.Variable,
+                                    insertText: h,
+                                    range: {
+                                        startLineNumber: position.lineNumber,
+                                        endLineNumber: position.lineNumber,
+                                        startColumn: wordInfo.startColumn,
+                                        endColumn: wordInfo.endColumn
+                                    }
+                                }))
+                            });
+                            if (this._hintsCache) {
+                                return buildSuggestions(this._hintsCache);
+                            }
+                            return this.dataService.getCodeEditHints(
+                                this.eruptName, this.fieldName, this.parentEruptName
+                            ).toPromise().then((hints: string[]) => {
+                                this._hintsCache = hints || [];
+                                return buildSuggestions(this._hintsCache);
+                            });
+                        }
+                    }
+                );
+            }
+        }
+    }
+
+    ngOnDestroy() {
+        this._completionProvider?.dispose();
     }
 
     switchChange(bool: boolean) {
@@ -84,17 +125,7 @@ export class CodeEditorComponent implements OnInit {
                 theme: this.theme
             }
         });
-        // 切换主题后重新布局
-        setTimeout(() => {
-            this.editorComponent?.layout();
-        }, 100);
-    }
-
-    toggleFullScreen(): void {
-        // this.fullScreen = !this.fullScreen;
-        // this.renderer.setStyle(this.document.body, 'overflow-y', this.fullScreen ? 'hidden' : null);
-        // this.editorComponent?.layout();
-        // this.tooltip?.hide();
+        setTimeout(() => this.editorComponent?.layout(), 100);
     }
 
 }

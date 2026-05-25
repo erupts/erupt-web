@@ -1,6 +1,6 @@
 <div class="code-editor-container" [style.height.px]="height">
     <nz-code-editor #codeEditor
-                    [ngStyle]="{height:height+'px', width: '100%'}" 
+                    [ngStyle]="{height:height+'px', width: '100%'}"
                     class="code-editor-style"
                     (nzEditorInitialized)="codeEditorInit($event)"
                     [(ngModel)]="edit.$value"
