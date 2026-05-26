@@ -23,6 +23,9 @@
                             <button nz-button nzType="default" class="mb-sm" (click)="exportExcel()"
                                     id="erupt-btn-export" [nzLoading]="downloading">
                                 <i nz-icon nzType="download" nzTheme="outline"></i>{{ 'table.download'|translate }}
+                                @if (selectedRows.length > 0) {
+                                   &nbsp;<nz-tag nzColor="blue" style="margin-left:6px;margin-right:0;">{{ selectedRows.length }}</nz-tag>
+                                }
                             </button>
                         }
                         @if (eruptBuildModel.eruptModel.eruptJson.power.importable) {

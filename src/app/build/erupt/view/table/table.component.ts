@@ -1021,13 +1021,16 @@ export class TableComponent implements OnInit, OnDestroy {
                 })
             );
         }
-        //导出接口
+        const ids = this.selectedRows.length > 0
+            ? this.selectedRows.map(r => r[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
+            : null;
         this.downloading = true;
         this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition,
             this._drill ? DataService.drillToHeader(this._drill) : {},
             () => {
                 this.downloading = false;
-            }
+            },
+            ids
         );
     }
 

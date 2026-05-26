@@ -504,8 +504,12 @@ export class DataService {
         // DataService.postExcelFile(RestPath.excel + "/template/" + eruptName + "?" + this.createAuthParam(eruptName));
     }
 
-    downloadExcel(eruptName: string, condition: any, header: any, callback: Function) {
-        this._http.post(RestPath.excel + "/export/" + eruptName, condition, null, {
+    downloadExcel(eruptName: string, condition: any, header: any, callback: Function, ids?: any[]) {
+        let url = RestPath.excel + "/export/" + eruptName;
+        if (ids && ids.length > 0) {
+            url += "?" + ids.map(id => "ids=" + id).join("&");
+        }
+        this._http.post(url, condition, null, {
             responseType: "arraybuffer",
             observe: 'events',
             headers: {
@@ -514,7 +518,6 @@ export class DataService {
             }
         }).subscribe((res) => {
             if (res.type !== 4) {
-                // 还没准备好，无需处理
                 return;
             }
             downloadFile(res);
