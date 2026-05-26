@@ -13,7 +13,7 @@
                         <span style="font-weight: bold;margin-right: 8px;;width: 150px"><span style="color: #ff4d4f">*</span> {{ node.value }}:</span>
                         <nz-select [(ngModel)]="selectedNodeUserIds[node.key]" [nzShowSearch]="true"
                                    [nzPlaceHolder]="'请选择' + node.value + '的审批用户'"
-                                   nzMode="multiple" [nzMaxMultipleCount]="1" style="width: 100%" [nzLoading]="!nodeUsersOptions[node.key]"
+                                   nzMode="multiple" style="width: 100%" [nzLoading]="!nodeUsersOptions[node.key]"
                         >
                             @for (user of nodeUsersOptions[node.key]; track user.id) {
                                 <nz-option [nzValue]="user.id" [nzLabel]="user.name"></nz-option>
