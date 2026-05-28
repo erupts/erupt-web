@@ -157,3 +157,9 @@ export enum SortType {
     ASC = "ASC",
     DESC = "DESC",
 }
+
+export enum TableSize {
+    SMALL = "small",
+    MIDDLE = "middle",
+    DEFAULT = "default",
+}

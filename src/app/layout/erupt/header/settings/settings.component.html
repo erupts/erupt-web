@@ -17,6 +17,15 @@
                (ngModelChange)="setLayout('bordered', layout['bordered'])"></nz-switch>
 </div>
 <div class="setting-item">
+    <span>{{'setting.table-size' | translate}}</span>
+    <nz-select [(ngModel)]="layout['tableSize']" nzSize="small" style="width: 80px;"
+               (ngModelChange)="setLayout('tableSize', $event)">
+        <nz-option nzValue="small" [nzLabel]="'global.density.small'|translate"></nz-option>
+        <nz-option nzValue="middle" [nzLabel]="'global.density.middle'|translate"></nz-option>
+        <nz-option nzValue="default" [nzLabel]="'global.density.large'|translate"></nz-option>
+    </nz-select>
+</div>
+<div class="setting-item">
     <span>{{'setting.color-weak' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout.colorWeak"
                (ngModelChange)="toggleColorWeak(layout.colorWeak)"></nz-switch>

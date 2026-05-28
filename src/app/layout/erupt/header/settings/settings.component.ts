@@ -4,6 +4,7 @@ import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
+import {TableSize} from "../../../../build/erupt/model/erupt.enum";
 
 @Component({
     standalone: false,
@@ -22,6 +23,9 @@ export class SettingsComponent implements OnInit {
     }
 
     ngOnInit() {
+        if (!this.settingSrv.layout['tableSize']) {
+            this.settingSrv.setLayout('tableSize', TableSize.MIDDLE);
+        }
     }
 
     setLayout(name: string, value: any) {

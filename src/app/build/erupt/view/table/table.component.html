@@ -224,7 +224,7 @@
                                                 <div nz-col nzSpan="6">
                                                     <label nz-checkbox [(ngModel)]="col['show']"
                                                            style="width: 130px;"
-                                                           (ngModelChange)="st?.resetColumns()">{{ col.title['text'] | nzEllipsis:6:'...' }}</label>
+                                                           (ngModelChange)="saveColumnSettings()">{{ col.title['text'] | nzEllipsis:6:'...' }}</label>
                                                 </div>
                                             }
                                         }
@@ -233,7 +233,9 @@
                                 @if (hasSearchFields) {
                                     <nz-divider class="hidden-mobile" nzType="vertical"></nz-divider>
                                     <button class="mb-sm" nz-button (click)="hideCondition=!hideCondition"
-                                            style="padding: 4px 8px">
+                                            style="padding: 4px 8px"
+                                            [style.border-color]="hasActiveConditions && hideCondition ? 'var(--ant-primary-color-hover)' : null"
+                                            [style.color]="hasActiveConditions && hideCondition ? 'var(--ant-primary-color)' : null">
                                         <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'"
                                            nzTheme="outline"></i>
                                     </button>
@@ -342,7 +344,7 @@
             [virtualItemSize]="47"
             [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
             (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
-            [page]="dataPage.page" [size]="'middle'"
+            [page]="dataPage.page" [size]="settingSrv.layout['tableSize'] || TableSize.MIDDLE"
         >
             <ng-template #bodyTpl>
                 @if (extraRows) {

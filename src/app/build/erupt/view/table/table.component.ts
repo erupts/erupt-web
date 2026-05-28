@@ -18,6 +18,7 @@ import {
     Scene,
     SelectMode,
     SortType,
+    TableSize,
     ViewType
 } from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
@@ -26,6 +27,7 @@ import {Status} from "../../model/erupt-api.model";
 import {EruptFieldModel, View} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {UiBuildService} from "../../service/ui-build.service";
+import {LocalSettingsService} from "../../service/local-settings.service";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ModalButtonOptions, NzModalRef, NzModalService} from "ng-zorro-antd/modal";
@@ -63,7 +65,8 @@ export class TableComponent implements OnInit, OnDestroy {
         private uiBuildService: UiBuildService,
         public i18n: I18NService,
         @Inject(NzDrawerService)
-        private drawerService: NzDrawerService
+        private drawerService: NzDrawerService,
+        private eruptLocalSettings: LocalSettingsService
     ) {
     }
 
@@ -402,17 +405,22 @@ export class TableComponent implements OnInit, OnDestroy {
         const _columns: STColumn[] = [];
         if (this._reference) {
             _columns.push({
-                title: "", type: this._reference.mode, fixed: "left", width: "50px", className: "text-center",
+                title: "",
+                type: this._reference.mode,
+                fixed: "left",
+                resizable: false,
+                width: "50px",
+                className: {"text-center": true},
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
         } else {
             _columns.push({
                 title: "",
-                width: "40px",
+                width: "50px",
                 resizable: false,
                 type: "checkbox",
                 fixed: "left",
-                className: "text-center left-sticky-checkbox",
+                className: {"text-center": true},
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
         }
@@ -689,6 +697,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 resizable: false
             });
         }
+        this.restoreColumnSettings(this.eruptBuildModel.eruptModel.eruptName, _columns);
         this.columns = _columns;
         if (eruptJson.layout.tableWidth) {
             this.tableWidth = eruptJson.layout.tableWidth;
@@ -984,6 +993,13 @@ export class TableComponent implements OnInit, OnDestroy {
             }
             this.query(1, this.dataPage.ps, (event.sort.map as Record<string, SortType>));
         }
+        if (event.type === "resize" && event.resize?.index) {
+            const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+            const saved = this.eruptLocalSettings.getColumns(eruptName);
+            const key = event.resize.index as string;
+            saved[key] = {...(saved[key] || {}), width: event.resize.width};
+            this.eruptLocalSettings.setColumns(eruptName, saved);
+        }
     }
 
     // 处理甘特图选择变化
@@ -1100,6 +1116,35 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
 
+    get hasActiveConditions(): boolean {
+        if (!this.searchErupt) return false;
+        return this.searchErupt.eruptFieldModels.some(f => {
+            const v = f.eruptFieldJson.edit?.$value;
+            return v !== null && v !== undefined && v !== '';
+        });
+    }
+
+    saveColumnSettings() {
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        const columns: Record<string, { show: boolean, width?: number | string }> = {};
+        this.columns.forEach(col => {
+            if (col.index) columns[col.index as string] = {show: col['show'], width: col.width};
+        });
+        this.eruptLocalSettings.setColumns(eruptName, columns);
+        this.st?.resetColumns();
+    }
+
+    private restoreColumnSettings(eruptName: string, columns: STColumn[]) {
+        const saved = this.eruptLocalSettings.getColumns(eruptName);
+        columns.forEach(col => {
+            const cfg = col.index ? saved[col.index as string] : undefined;
+            if (!cfg) return;
+            if (cfg.show !== undefined) col['show'] = cfg.show;
+            if (cfg.width !== undefined) col.width = cfg.width;
+        });
+    }
+
+
     protected readonly SortType = SortType;
 
     // 判断字段是否为数字或时间类型
@@ -1192,5 +1237,6 @@ export class TableComponent implements OnInit, OnDestroy {
         });
     }
 
+    protected readonly TableSize = TableSize;
 }
 
