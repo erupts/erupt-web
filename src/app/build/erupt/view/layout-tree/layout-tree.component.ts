@@ -10,7 +10,7 @@ import {NzFormatEmitEvent, NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
     standalone: false,
     selector: 'layout-tree',
     templateUrl: './layout-tree.component.html',
-    styles: []
+    styleUrls: ['./layout-tree.component.less']
 })
 export class LayoutTreeComponent implements OnInit {
 

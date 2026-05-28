@@ -1,0 +1,111 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.layout-tree-wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.09);
+    user-select: none;
+}
+
+.layout-tree-search {
+    padding: 8px 10px;
+    flex-shrink: 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.layout-tree-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding: 8px 4px;
+
+    ::ng-deep {
+        .ant-tree {
+            font-size: 13px;
+
+            .ant-tree-treenode {
+                padding: 1px 0;
+                align-items: center;
+            }
+
+            .ant-tree-node-content-wrapper {
+                padding: 2px 6px;
+                border-radius: 0 4px 4px 0;
+                line-height: 22px;
+                min-height: 26px;
+                display: flex;
+                align-items: center;
+                transition: background 0.15s;
+
+                &:hover {
+                    background: #f5f5f5;
+                }
+
+                &.ant-tree-node-selected {
+                    background: var(--ant-primary-1, #e6f7ff);
+                    color: var(--ant-primary-color, #1890ff);
+                    font-weight: 500;
+                }
+            }
+
+            // 连接线与项目分隔线风格统一
+            &.ant-tree-show-line {
+                .ant-tree-indent-unit::before {
+                    border-right-color: #e5e5e5;
+                }
+            }
+        }
+    }
+}
+
+[data-theme='dark'] {
+    .layout-tree-wrap {
+        background: #141414;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .layout-tree-search {
+        background: #1f1f1f;
+        border-bottom-color: #303030;
+    }
+
+    .layout-tree-body {
+        &::-webkit-scrollbar-thumb {
+            background: #424242;
+        }
+        &::-webkit-scrollbar-thumb:hover {
+            background: #616161;
+        }
+
+        ::ng-deep {
+            .ant-tree {
+                .ant-tree-node-content-wrapper {
+                    &:hover {
+                        background: #262626;
+                    }
+
+                    &.ant-tree-node-selected {
+                        background: rgba(24, 144, 255, 0.15);
+                        color: var(--ant-primary-color, #1890ff);
+                    }
+                }
+
+                &.ant-tree-show-line {
+                    .ant-tree-indent-unit::before {
+                        border-right-color: #303030;
+                    }
+
+                    // 暗色主题下 switcher 白色背景覆盖
+                    .ant-tree-switcher {
+                        background: #141414;
+                    }
+                }
+            }
+        }
+    }
+}

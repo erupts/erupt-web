@@ -1,23 +1,24 @@
-<div style="height: 100%;display: flex;flex-direction: column;">
-    <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;margin-bottom: 0">
-        <input type="text" nz-input placeholder="Search" [(ngModel)]="searchValue">
-    </nz-input-group>
-    <ng-template #suffixIcon>
-        <i nz-icon nzType="search"></i>
-    </ng-template>
-    <nz-card [nzBodyStyle]="{padding:'10px',overflow: 'auto'}" [nzLoading]="treeLoading"
-             style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);overflow: auto;flex: 1;margin-bottom: 0"
-             [nzBordered]="true">
-        <nz-tree class="tree-container"
-                 [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 165px - ' + (settingSrv.layout['reuse']?'40px':'0px') + ')' : null"
-                 [nzData]="list"
-                 [nzShowLine]="true"
-                 [nzSearchValue]="searchValue"
-                 [nzBlockNode]="true"
-                 [nzSelectedKeys]="selectedKeys"
-                 (nzClick)="nodeClickEvent($event)"
-                 (nzDblClick)="nzDblClick($event)"
-        >
-        </nz-tree>
-    </nz-card>
+<div class="layout-tree-wrap">
+    <div class="layout-tree-search">
+        <nz-input-group [nzSuffix]="suffixIcon" nzSize="small">
+            <input type="text" nz-input [(ngModel)]="searchValue" [placeholder]="'table.query'|translate">
+        </nz-input-group>
+        <ng-template #suffixIcon>
+            <i nz-icon nzType="search"></i>
+        </ng-template>
+    </div>
+    <div class="layout-tree-body">
+        <nz-spin [nzSpinning]="treeLoading" style="min-height: 60px;">
+            <nz-tree class="tree-container"
+                     [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 155px - ' + (settingSrv.layout['reuse']?'40px':'0px') + ')' : null"
+                     [nzData]="list"
+                     [nzShowLine]="true"
+                     [nzSearchValue]="searchValue"
+                     [nzBlockNode]="true"
+                     [nzSelectedKeys]="selectedKeys"
+                     (nzClick)="nodeClickEvent($event)"
+                     (nzDblClick)="nzDblClick($event)">
+            </nz-tree>
+        </nz-spin>
+    </div>
 </div>

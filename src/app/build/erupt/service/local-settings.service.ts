@@ -7,6 +7,7 @@ export interface EruptColumnConfig {
 
 export interface EruptLocalSettings {
     columns?: Record<string, EruptColumnConfig>;
+    treeWidth?: number;
 }
 
 @Injectable({providedIn: "root"})

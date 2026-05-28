@@ -1,16 +1,18 @@
 @if (!eruptBuildModel) {
-    <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
+    <div [style.padding]="!_drill && !_reference ? '16px' : null">
+        <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
+    </div>
 }
 @if (eruptBuildModel) {
-    <div nz-row [nzGutter]="12" style="height: 100%">
+    <div class="table-split-layout" [style.padding]="!linkTree && !_drill && !_reference ? '16px' : null">
         @if (linkTree) {
-            <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="8" [nzLg]="6" [nzXl]="4" style="height: 100%">
+            <div class="tree-panel" [style.width.px]="treeWidth">
                 <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
             </div>
+            <div class="tree-resize-handle" (mousedown)="onResizeDragStart($event)"></div>
         }
-        <div nz-col [nzXs]="24" [nzMd]="linkTree?16:24" [nzLg]="linkTree?18:24" [nzXl]="linkTree?20:24"
-             [hidden]="!showTable"
-             [ngStyle]="{overflowX: 'hidden',overflowY: linkTree?'auto':'hidden',height:linkTree?'100%':'auto'}">
+        <div class="table-panel" [hidden]="!showTable"
+             [ngStyle]="{overflowX:'hidden',overflowY:linkTree?'auto':'hidden',height:linkTree?'100%':'auto',padding:linkTree?'16px':null}">
             <ng-container>
                 <div class="erupt-btn-item">
                     <div>
@@ -212,6 +214,17 @@
                     @if (eruptBuildModel.eruptModel.eruptJson.power.query) {
                         <div class="condition-btn">
                             <div>
+                                <button nz-button nzType="default" style="padding: 4px 8px" class="mb-sm"
+                                        nz-tooltip [nzTooltipTitle]="'global.refresh'|translate"
+                                        [nzLoading]="dataPage.querying" (click)="query()">
+                                    <i nz-icon nzType="reload" nzTheme="outline"></i>
+                                </button>
+<button nz-button nzType="default" style="padding: 4px 8px" class="mb-sm hidden-mobile"
+                                        nz-tooltip [nzTooltipTitle]="'global.fullscreen'|translate"
+                                        (click)="toggleFullscreen()">
+                                    <i nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'" nzTheme="outline"></i>
+                                </button>
+                                <nz-divider nzType="vertical" class="hidden-mobile"></nz-divider>
                                 <button nz-button nzType="default" nz-popover style="padding: 4px 8px"
                                         [(nzPopoverVisible)]="showColCtrl" [nzPopoverContent]="tableColumnCtrl"
                                         nzPopoverTrigger="click" class="mb-sm hidden-mobile" id="table-column-ctrl">
@@ -335,6 +348,9 @@
             </ng-container>
         </div>
     </div>
+    @if (resizing) {
+        <div class="tree-resize-overlay"></div>
+    }
 }
 <ng-template #eruptTable>
     <div [syncVirtualScroll]="dataPage.data.length >= 100 && !extraRows?.length">

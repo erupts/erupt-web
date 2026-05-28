@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
 import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
@@ -66,7 +66,8 @@ export class TableComponent implements OnInit, OnDestroy {
         public i18n: I18NService,
         @Inject(NzDrawerService)
         private drawerService: NzDrawerService,
-        private eruptLocalSettings: LocalSettingsService
+        private eruptLocalSettings: LocalSettingsService,
+        private el: ElementRef
     ) {
     }
 
@@ -156,6 +157,16 @@ export class TableComponent implements OnInit, OnDestroy {
 
     showSortPopover: boolean = false;
 
+    isFullscreen: boolean = false;
+
+    treeWidth: number = 220;
+
+    resizing: boolean = false;
+
+    private fullscreenChange = () => { this.isFullscreen = !!document.fullscreenElement; };
+
+    private _resizeCleanup: (() => void) | null = null;
+
     sortFields: View[] = [];
 
     selectedSorts: { field: View, direction: SortType }[] = [];
@@ -218,7 +229,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-
+        document.addEventListener('fullscreenchange', this.fullscreenChange);
     }
 
     isEruptPrint(): boolean {
@@ -227,7 +238,42 @@ export class TableComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.refreshTimeInterval && clearInterval(this.refreshTimeInterval);
+        document.removeEventListener('fullscreenchange', this.fullscreenChange);
+        this._resizeCleanup?.();
     }
+
+    onResizeDragStart(e: MouseEvent): void {
+        e.preventDefault();
+        const startX = e.clientX;
+        const startWidth = this.treeWidth;
+        this.resizing = true;
+
+        const onMove = (ev: MouseEvent) => {
+            const next = Math.max(120, Math.min(600, startWidth + ev.clientX - startX));
+            this.treeWidth = next;
+        };
+        const onUp = () => {
+            this.resizing = false;
+            this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {treeWidth: this.treeWidth});
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        this._resizeCleanup = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+    }
+
+    toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            this.el.nativeElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
 
     init(observable: Observable<EruptBuildModel>, req: {
         url: string,
@@ -313,6 +359,10 @@ export class TableComponent implements OnInit, OnDestroy {
                 }
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
+                if (this.linkTree) {
+                    const saved = this.eruptLocalSettings.get(eb.eruptModel.eruptName);
+                    if (saved.treeWidth) this.treeWidth = saved.treeWidth;
+                }
                 this.dataHandler.initErupt(eb);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
