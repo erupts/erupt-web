@@ -8,7 +8,6 @@
     display: flex;
     flex-direction: column;
     background: #fff;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.09);
     user-select: none;
 }
 
@@ -57,53 +56,6 @@
             &.ant-tree-show-line {
                 .ant-tree-indent-unit::before {
                     border-right-color: #e5e5e5;
-                }
-            }
-        }
-    }
-}
-
-[data-theme='dark'] {
-    .layout-tree-wrap {
-        background: #141414;
-        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .layout-tree-search {
-        background: #1f1f1f;
-        border-bottom-color: #303030;
-    }
-
-    .layout-tree-body {
-        &::-webkit-scrollbar-thumb {
-            background: #424242;
-        }
-        &::-webkit-scrollbar-thumb:hover {
-            background: #616161;
-        }
-
-        ::ng-deep {
-            .ant-tree {
-                .ant-tree-node-content-wrapper {
-                    &:hover {
-                        background: #262626;
-                    }
-
-                    &.ant-tree-node-selected {
-                        background: rgba(24, 144, 255, 0.15);
-                        color: var(--ant-primary-color, #1890ff);
-                    }
-                }
-
-                &.ant-tree-show-line {
-                    .ant-tree-indent-unit::before {
-                        border-right-color: #303030;
-                    }
-
-                    // 暗色主题下 switcher 白色背景覆盖
-                    .ant-tree-switcher {
-                        background: #141414;
-                    }
                 }
             }
         }
