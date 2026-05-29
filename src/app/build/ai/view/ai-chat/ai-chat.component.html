@@ -169,7 +169,10 @@
                 </div>
             }
         </article>
-        <div class="sender-wrap">
+        <div class="sender-resizer" (mousedown)="onSenderResizerMousedown($event)"></div>
+        <div class="sender-wrap" #senderWrapRef
+             [style.height.px]="senderWrapHeight"
+             [class.has-height]="senderWrapHeight">
             @if (selectedAgent?.hints?.length) {
                 <div class="hints-wrap">
                     @for (hint of selectedAgent?.hints; track hint) {

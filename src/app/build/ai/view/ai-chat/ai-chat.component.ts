@@ -47,6 +47,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     @ViewChild('chatListRef') chatListRef!: ElementRef<HTMLUListElement>;
     @ViewChild('renameModalTpl') renameModalTpl!: TemplateRef<unknown>;
     @ViewChild('textareaRef') textareaRef!: ElementRef<HTMLTextAreaElement>;
+    @ViewChild('senderWrapRef') senderWrapRef!: ElementRef<HTMLDivElement>;
 
     chats: Chat[] = [];
     agents: Agent[] = [];
@@ -74,10 +75,21 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     autoToolCall = true;
     /** 是否全屏模式 */
     fullscreen = false;
+    private static readonly LAYOUT_KEY = 'ai-chat-layout';
+    private static readonly layoutStorage = JSON.parse(localStorage.getItem(AiChatComponent.LAYOUT_KEY) || '{}');
+    private saveLayout(): void {
+        localStorage.setItem(AiChatComponent.LAYOUT_KEY, JSON.stringify({
+            sidebarCollapsed: this.sidebarCollapsed,
+            sidebarWidth: this.sidebarWidth,
+            senderWrapHeight: this.senderWrapHeight
+        }));
+    }
     /** 侧边栏是否收起 */
-    sidebarCollapsed = localStorage.getItem('ai-chat-sidebar-collapsed') === '1';
+    sidebarCollapsed = !!AiChatComponent.layoutStorage.sidebarCollapsed;
     /** 侧边栏宽度（px） */
-    sidebarWidth = Number(localStorage.getItem('ai-chat-sidebar-width') || 220);
+    sidebarWidth: number = AiChatComponent.layoutStorage.sidebarWidth || 220;
+    /** 输入区高度（px），null 表示自动 */
+    senderWrapHeight: number | null = AiChatComponent.layoutStorage.senderWrapHeight || null;
     /** 是否显示「回到底部」按钮 */
     showScrollToBottom = false;
     /** 是否正在流式输出（用于显示文末光标，与 eventSource 同生命周期） */
@@ -708,7 +720,25 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             document.body.style.userSelect = '';
             document.removeEventListener('mousemove', onMove);
             document.removeEventListener('mouseup', onUp);
-            localStorage.setItem('ai-chat-sidebar-width', String(this.sidebarWidth));
+            this.saveLayout();
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
+    onSenderResizerMousedown(e: MouseEvent): void {
+        e.preventDefault();
+        const startY = e.clientY;
+        const startH = this.senderWrapRef.nativeElement.getBoundingClientRect().height;
+        document.body.style.userSelect = 'none';
+        const onMove = (ev: MouseEvent) => {
+            this.senderWrapHeight = Math.min(500, Math.max(160, startH + startY - ev.clientY));
+        };
+        const onUp = () => {
+            document.body.style.userSelect = '';
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            this.saveLayout();
         };
         document.addEventListener('mousemove', onMove);
         document.addEventListener('mouseup', onUp);
@@ -716,7 +746,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     toggleSidebar(): void {
         this.sidebarCollapsed = !this.sidebarCollapsed;
-        localStorage.setItem('ai-chat-sidebar-collapsed', this.sidebarCollapsed ? '1' : '0');
+        this.saveLayout();
     }
 
     /** 清空输入框 */

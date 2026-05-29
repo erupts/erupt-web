@@ -39,8 +39,7 @@
     width: 220px; /* 默认值，运行时由 [style.width.px] 覆盖 */
     flex-shrink: 0;
     min-height: 0;
-    background: #fafafa;
-    border-right: 1px solid var(--ant-border-color-split, #eee);
+    background: #fff;
     display: flex;
     flex-direction: column;
     transition: width 0.22s ease, border-color 0.22s ease;
@@ -233,10 +232,10 @@
 
 /* 侧边栏拖拽手柄 */
 .sidebar-resizer {
-    width: 2px;
+    width: 1px;
     flex-shrink: 0;
     cursor: col-resize;
-    background: transparent;
+    background: var(--ant-border-color-split, #eee);
     transition: background 0.15s;
     position: relative;
     z-index: 1;
@@ -254,7 +253,6 @@
     display: flex;
     flex-direction: column;
     background: #ffffff;
-    box-shadow: -2px 0 12px rgba(0, 0, 0, 0.04);
     position: relative;
 }
 
@@ -354,12 +352,21 @@
     border: 1px solid #ebebeb;
     border-radius: 3px;
     margin-bottom: 1em;
+    margin-right: 4px;
     font-size: 12px;
     font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
     color: #8c8c8c;
     line-height: 1.7;
     vertical-align: middle;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    cursor: default;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        border-color: var(--ant-primary-3, #91caff);
+        color: var(--ant-primary-color, #1677ff);
+        box-shadow: 0 1px 6px rgba(22, 119, 255, 0.12);
+    }
 
     /* 完成态：对勾图标 */
     &::after {
@@ -562,10 +569,48 @@
     }
 }
 
+/* 输入区拖拽手柄 */
+.sender-resizer {
+    height: 2px;
+    flex-shrink: 0;
+    cursor: row-resize;
+    background: transparent;
+    transition: background 0.15s;
+
+    &:hover, &:active {
+        background: var(--ant-primary-color);
+    }
+}
+
 /* ========== 底部输入区 ========== */
 .sender-wrap {
     flex-shrink: 0;
+    overflow: auto;
     padding: 16px 22px;
+
+    &.has-height {
+        display: flex;
+        flex-direction: column;
+
+        .input-card {
+            flex: 1 1 0;
+            min-height: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-body {
+            flex: 1 1 0;
+            min-height: 0;
+            overflow: hidden;
+
+            textarea {
+                height: 100% !important;
+                box-sizing: border-box;
+            }
+        }
+    }
     background: #ffffff;
     border-top: 1px solid var(--ant-border-color-split, #eee);
 
