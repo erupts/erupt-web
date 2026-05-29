@@ -1,5 +1,6 @@
 <div class="ai-chat-layout" [class.is-fullscreen]="fullscreen">
-    <div class="sidebar" [class.is-collapsed]="sidebarCollapsed">
+    <div class="sidebar" [class.is-collapsed]="sidebarCollapsed"
+         [style.width.px]="sidebarCollapsed ? null : sidebarWidth">
         <div class="sidebar-header">
             <span class="sidebar-title">{{ 'ai.chat.sessions' | translate }}</span>
             <button nz-button nzType="text" nzSize="small" (click)="createConversation()"
@@ -58,6 +59,9 @@
             }
         </ul>
     </div>
+    @if (!sidebarCollapsed) {
+        <div class="sidebar-resizer" (mousedown)="onResizerMousedown($event)"></div>
+    }
     <div class="main">
         @if (sidebarCollapsed) {
             <button nz-button nzType="text" nzSize="small" class="sidebar-unfold-btn"
@@ -94,42 +98,26 @@
                             </nz-avatar>
                         }
                         <div class="bubble-content">
-                            @if (item.think) {
-                                <div class="think-content">
-                                    <div class="think-title" (click)="toggleThink(item)">
-                                        <span nz-icon nzType="bulb" nzTheme="outline"></span>
-                                        <span>{{ 'ai.chat.thinking_process' | translate }}</span>
-                                        <span class="think-toggle" nz-icon
-                                              [nzType]="item.thinkCollapsed ? 'right' : 'down'"
-                                              nzTheme="outline"></span>
-                                    </div>
-                                    @if (!item.thinkCollapsed) {
-                                        <div class="markdown-body think-body">{{ item.think }}</div>
-                                    }
-                                </div>
-                            }
                             @if (item.loading) {
                                 <div class="loading-wrap">
                                     <nz-spin nzSimple></nz-spin>
                                 </div>
                             }
-                            @if (!item.loading && (item.content || item.contentHtml)) {
+                            @if (!item.loading && (item.content || item.contentHtml || item.frozenSegments?.length)) {
                                 @if (item.content || item.contentHtml) {
                                     <div class="markdown-body"
                                          [class.is-streaming]="streaming && $index === messages.length - 1">
                                         @for (seg of (item.frozenSegments ?? []); track $index) {
                                             <div [innerHTML]="seg | safeHtml"></div>
                                         }
-                                        <div [class.streaming-typing-reveal-a]="(item.streamingTick ?? 0) % 2 === 0 && item.senderType === 'MODEL'"
-                                             [class.streaming-typing-reveal-b]="(item.streamingTick ?? 0) % 2 === 1 && item.senderType === 'MODEL'"
-                                             [innerHTML]="getMessageHtml(item) | safeHtml"></div>
+                                        <div [innerHTML]="getMessageHtml(item) | safeHtml"></div>
                                     </div>
                                 }
                                 @if (item.senderType === 'MODEL' && $index === messages.length - 1 && streaming) {
                                     <span class="streaming-cursor"></span>
                                 }
                             }
-                            @if (!item.loading && !item.content && !item.contentHtml && !item.think && item.senderType === 'MODEL') {
+                            @if (!item.loading && !item.content && !item.contentHtml && !item.frozenSegments?.length && item.senderType === 'MODEL') {
                                 <div class="placeholder">{{ 'ai.chat.thinking' | translate }}</div>
                             }
                             @if (!item.loading) {

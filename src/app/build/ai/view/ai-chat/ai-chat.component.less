@@ -36,7 +36,7 @@
 
 /* ========== 侧边栏：浅色 ========== */
 .sidebar {
-    width: 260px;
+    width: 220px; /* 默认值，运行时由 [style.width.px] 覆盖 */
     flex-shrink: 0;
     min-height: 0;
     background: #fafafa;
@@ -231,6 +231,21 @@
     }
 }
 
+/* 侧边栏拖拽手柄 */
+.sidebar-resizer {
+    width: 2px;
+    flex-shrink: 0;
+    cursor: col-resize;
+    background: transparent;
+    transition: background 0.15s;
+    position: relative;
+    z-index: 1;
+
+    &:hover, &:active {
+        background: var(--ant-primary-color);
+    }
+}
+
 /* ========== 主区域 ========== */
 .main {
     flex: 1;
@@ -327,47 +342,58 @@
     flex-direction: column;
     width: 100%;
 
-    .think-content {
-        background: #f8f8f8;
-        border-left: 3px solid #ddd;
+}
+
+/* Tool Call 块：内联于消息流，通过 innerHTML 注入，需 ::ng-deep */
+::ng-deep .call-block-inline {
+    display: block;
+    background: #fffbe6;
+    border: 1px solid #ffe58f;
+    border-left: 3px solid #faad14;
+    margin-bottom: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    .call-block-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #d46b08;
+        background: rgba(250, 173, 20, 0.12);
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background-color: #d46b08;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z'/%3E%3C/svg%3E");
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            flex-shrink: 0;
+        }
+
+        &::after {
+            content: 'Tool Call';
+        }
+    }
+
+    .call-body {
         padding: 8px 12px;
-        margin-bottom: 8px;
-        border-radius: @radius-sm;
-        font-size: 13px;
-        color: var(--ant-text-color-secondary, #666);
-        width: 100%;
+        font-size: 12.5px;
+        font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+        color: var(--ant-text-color-secondary, #555);
+        display: block !important;
+        overflow-x: auto;
 
-        .think-title {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 500;
-            user-select: none;
-            cursor: pointer;
-            color: var(--ant-text-color-secondary, #555);
-            transition: color 0.15s;
-
-            &:hover {
-                color: var(--ant-primary-color);
-            }
-
-            .anticon {
-                font-size: 14px;
-            }
-
-            .think-toggle {
-                margin-left: auto;
-                font-size: 11px;
-                opacity: 0.6;
-            }
-        }
-
-        .think-body {
-            margin-top: 6px;
-            font-style: italic;
-            opacity: 0.85;
-            overflow: auto;
-        }
+        p { margin: 2px 0; }
+        pre, code { background: rgba(0,0,0,0.04); border-radius: 3px; }
     }
 }
 
@@ -738,6 +764,7 @@
         color: #fff !important;
     }
 }
+
 
 /* 含图表/流程图时 markdown-body 撑满全宽（inline-block 默认收缩到内容宽） */
 ::ng-deep .markdown-body:has(.echarts-block),

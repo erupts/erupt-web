@@ -18,7 +18,7 @@ const CHAT_PAGE_SIZE = 20;
 /** 每个会话正在进行的 SSE 状态缓存 */
 interface ChatSseState {
     eventSource: EventSource;
-    /** 已累积的 markdown 文本 */
+    /** 当前 token 段已累积的 markdown 文本 */
     accumulatedMarkdown: string;
     /** 正在流式写入的消息对象引用（始终保持最新内容，切换回来后直接追加到列表） */
     streamingMsg: ChatMessage;
@@ -26,6 +26,10 @@ interface ChatSseState {
     frozenEndPos: number;
     /** 渲染防抖 timer，避免高频 token 导致页面卡死 */
     renderTimer: ReturnType<typeof setTimeout> | null;
+    /** 上一个 SSE 事件类型，用于检测 call/token 切换 */
+    lastEventType: 'call' | 'token' | null;
+    /** 上一个 call 名称，相同则去重不渲染新块 */
+    lastCallName: string;
 }
 /** 距底部多少 px 时触发加载更多会话 */
 const CHAT_SCROLL_THRESHOLD = 80;
@@ -72,6 +76,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     fullscreen = false;
     /** 侧边栏是否收起 */
     sidebarCollapsed = localStorage.getItem('ai-chat-sidebar-collapsed') === '1';
+    /** 侧边栏宽度（px） */
+    sidebarWidth = Number(localStorage.getItem('ai-chat-sidebar-width') || 220);
     /** 是否显示「回到底部」按钮 */
     showScrollToBottom = false;
     /** 是否正在流式输出（用于显示文末光标，与 eventSource 同生命周期） */
@@ -332,7 +338,9 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             accumulatedMarkdown: '',
             streamingMsg,
             frozenEndPos: 0,
-            renderTimer: null
+            renderTimer: null,
+            lastEventType: null,
+            lastCallName: ''
         };
 
         const token = this.tokenService.get()?.token || '';
@@ -348,21 +356,20 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
             if (data.event === SseMessageEvent.TOKEN) {
                 if (!data.data) return;
+                const msg = state.streamingMsg;
+
+                state.lastEventType = 'token';
                 state.accumulatedMarkdown += data.data;
 
-                // 首个 token 立即清除 loading 状态，不等防抖
-                const msg = state.streamingMsg;
                 if (msg.loading) {
                     msg.loading = false;
                     if (isActive()) this.ngZone.run(() => {});
                 }
 
-                // 防抖：高频 token（如大量 \n\n）合并为一次渲染，避免页面卡死
                 if (state.renderTimer !== null) clearTimeout(state.renderTimer);
                 state.renderTimer = setTimeout(() => {
                     state.renderTimer = null;
 
-                    // 找到最后一个完整代码块的末尾位置
                     const codeBlockRe = /```(?:echarts|mermaid)[\s\S]*?```/g;
                     let newFrozenEnd = 0;
                     let m: RegExpExecArray | null;
@@ -374,6 +381,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                     const segmentMd = hasNewSegment
                         ? state.accumulatedMarkdown.slice(state.frozenEndPos, newFrozenEnd) : null;
                     const tailMd = state.accumulatedMarkdown.slice(newFrozenEnd || state.frozenEndPos);
+                    // 快照当前值，避免 Promise 回调执行时被 CALL 事件清空
+                    const contentSnapshot = state.accumulatedMarkdown;
 
                     const tasks: Promise<string>[] = [this.markdown.render(tailMd)];
                     if (segmentMd !== null) tasks.unshift(this.markdown.render(segmentMd));
@@ -384,7 +393,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
                         msg.streamingTick = (msg.streamingTick ?? 0) + 1;
                         msg.contentHtml = tailHtml;
-                        msg.content = state.accumulatedMarkdown;
+                        msg.content = contentSnapshot;
                         if (segmentHtml !== null) {
                             msg.frozenSegments = [...(msg.frozenSegments ?? []), segmentHtml];
                             state.frozenEndPos = newFrozenEnd;
@@ -408,22 +417,43 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                     });
                 }, 30);
 
-            } else if (data.event === SseMessageEvent.THINK) {
-                state.streamingMsg.think = data.data;
-                if (isActive()) {
-                    this.ngZone.run(() => setTimeout(() => this.scrollSubject.next()));
+            } else if (data.event === SseMessageEvent.CALL) {
+                if (!data.data) return;
+                const msg = state.streamingMsg;
+                // 相同 call 名去重
+                if (data.data === state.lastCallName) return;
+                state.lastCallName = data.data;
+                state.lastEventType = 'call';
+
+                if (state.renderTimer !== null) { clearTimeout(state.renderTimer); state.renderTimer = null; }
+
+                // 直接注入 call block HTML 到 accumulatedMarkdown，与 token 同流渲染
+                const callHtml = this.callBlockHtml(`<p>${this.escapeHtml(data.data)}</p>`);
+                state.accumulatedMarkdown += '\n\n' + callHtml + '\n\n';
+
+                if (msg.loading) {
+                    msg.loading = false;
+                    if (isActive()) this.ngZone.run(() => {});
                 }
 
+                const contentSnapshot = state.accumulatedMarkdown;
+                const tailMd = state.accumulatedMarkdown.slice(state.frozenEndPos);
+                this.markdown.render(tailMd).then(html => {
+                    msg.contentHtml = html;
+                    msg.content = contentSnapshot;
+                    if (isActive()) this.ngZone.run(() => this.scrollSubject.next());
+                });
+
             } else if (data.event === SseMessageEvent.DONE) {
-                // 取消待执行的防抖渲染，由下面的完整渲染接管
-                if (state.renderTimer !== null) {
-                    clearTimeout(state.renderTimer);
-                    state.renderTimer = null;
-                }
-                // 流结束：用完整 markdown 重新渲染，清除 frozenSegments 合并为单一 HTML
-                this.markdown.render(state.accumulatedMarkdown).then(fullHtml => {
+                if (state.renderTimer !== null) { clearTimeout(state.renderTimer); state.renderTimer = null; }
+                const finalize = async () => {
+                    const tokenHtml = await this.markdown.render(state.accumulatedMarkdown);
+                    const frozen = state.streamingMsg.frozenSegments ?? [];
                     state.streamingMsg.frozenSegments = undefined;
-                    state.streamingMsg.contentHtml = fullHtml;
+                    state.streamingMsg.contentHtml = frozen.join('') + tokenHtml;
+                    state.streamingMsg.content = state.accumulatedMarkdown;
+                };
+                finalize().then(() => {
                     this.ngZone.run(() => {
                         state.eventSource.close();
                         this.pendingSse.delete(chatId);
@@ -447,10 +477,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         state.eventSource.onerror = () => {
             setTimeout(() => {
                 this.ngZone.run(() => {
-                    if (state.renderTimer !== null) {
-                        clearTimeout(state.renderTimer);
-                        state.renderTimer = null;
-                    }
+                    if (state.renderTimer !== null) { clearTimeout(state.renderTimer); state.renderTimer = null; }
                     state.eventSource.close();
                     this.pendingSse.delete(chatId);
                     if (isActive()) {
@@ -514,11 +541,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         });
     }
 
-    /** 切换思考过程折叠状态 */
-    toggleThink(item: ChatMessage): void {
-        item.thinkCollapsed = !item.thinkCollapsed;
-    }
-
     /** 重新生成指定索引处的模型消息 */
     regenerate(index: number): void {
         if (this.sending || this.streaming || this.selectChat == null) return;
@@ -544,22 +566,29 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.openSse(this.selectChat, userContent);
     }
 
-    /** 模型消息展示用 HTML：优先 contentHtml（流式已渲染），否则将 content 当 Markdown 渲染 */
+    /** 模型消息展示用 HTML：优先 contentHtml（流式已渲染），否则异步渲染 content（含历史 think 块） */
     getMessageHtml(item: ChatMessage): string {
-        if (item.senderType === 'USER') {
-            return this.escapeHtml(item.content);
-        }
+        if (item.senderType === 'USER') return this.escapeHtml(item.content);
         if (item.contentHtml) return item.contentHtml;
-        if (!item.content) return '';
-        if (item.rendering) return this.escapeHtml(item.content);
+        if (!item.content && !item.think) return '';
+        if (item.rendering) return this.escapeHtml(item.content || '');
         item.rendering = true;
-        this.markdown.render(item.content).then(html => {
+        const p1 = item.think ? this.markdown.render(item.think) : Promise.resolve('');
+        const p2 = item.content ? this.markdown.render(item.content) : Promise.resolve('');
+        Promise.all([p1, p2]).then(([callHtml, contentHtml]) => {
             this.ngZone.run(() => {
+                let html = '';
+                if (callHtml) html += this.callBlockHtml(callHtml);
+                html += contentHtml;
                 item.contentHtml = html;
                 item.rendering = false;
             });
         });
-        return this.escapeHtml(item.content);
+        return this.escapeHtml(item.content || '');
+    }
+
+    private callBlockHtml(inner: string): string {
+        return `<div class="call-block-inline"><div class="call-block-header"></div><div class="markdown-body call-body">${inner}</div></div>`;
     }
 
     private escapeHtml(s: string): string {
@@ -670,6 +699,24 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.fullscreen = !this.fullscreen;
     }
 
+    onResizerMousedown(e: MouseEvent): void {
+        e.preventDefault();
+        const startX = e.clientX;
+        const startW = this.sidebarWidth;
+        document.body.style.userSelect = 'none';
+        const onMove = (ev: MouseEvent) => {
+            this.sidebarWidth = Math.min(480, Math.max(160, startW + ev.clientX - startX));
+        };
+        const onUp = () => {
+            document.body.style.userSelect = '';
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            localStorage.setItem('ai-chat-sidebar-width', String(this.sidebarWidth));
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
     toggleSidebar(): void {
         this.sidebarCollapsed = !this.sidebarCollapsed;
         localStorage.setItem('ai-chat-sidebar-collapsed', this.sidebarCollapsed ? '1' : '0');
@@ -695,9 +742,13 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (last?.loading) {
             last.loading = false;
             const md = state?.accumulatedMarkdown || '';
-            if (md) {
+            const frozen = last.frozenSegments ?? [];
+            last.frozenSegments = undefined;
+            if (md || frozen.length) {
                 last.content = md;
-                this.markdown.render(md).then(html => { last.contentHtml = html; });
+                (md ? this.markdown.render(md) : Promise.resolve('')).then(tokenHtml => {
+                    last.contentHtml = frozen.join('') + tokenHtml || `<p>${this.i18n.fanyi('ai.chat.stopped')}</p>`;
+                });
             } else {
                 last.content = this.i18n.fanyi('ai.chat.stopped');
                 last.contentHtml = `<p>${this.i18n.fanyi('ai.chat.stopped')}</p>`;
