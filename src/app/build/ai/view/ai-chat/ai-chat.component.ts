@@ -428,8 +428,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 if (state.renderTimer !== null) { clearTimeout(state.renderTimer); state.renderTimer = null; }
 
                 // 直接注入 call block HTML 到 accumulatedMarkdown，与 token 同流渲染
-                const callHtml = this.callBlockHtml(`<p>${this.escapeHtml(data.data)}</p>`);
-                state.accumulatedMarkdown += '\n\n' + callHtml + '\n\n';
+                state.accumulatedMarkdown += '\n\n' + this.callBlockHtml(data.data) + '\n\n';
 
                 if (msg.loading) {
                     msg.loading = false;
@@ -573,12 +572,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (!item.content && !item.think) return '';
         if (item.rendering) return this.escapeHtml(item.content || '');
         item.rendering = true;
-        const p1 = item.think ? this.markdown.render(item.think) : Promise.resolve('');
-        const p2 = item.content ? this.markdown.render(item.content) : Promise.resolve('');
-        Promise.all([p1, p2]).then(([callHtml, contentHtml]) => {
+        const p = item.content ? this.markdown.render(item.content) : Promise.resolve('');
+        p.then(contentHtml => {
             this.ngZone.run(() => {
-                let html = '';
-                if (callHtml) html += this.callBlockHtml(callHtml);
+                let html = item.think ? this.callBlockHtml(item.think) : '';
                 html += contentHtml;
                 item.contentHtml = html;
                 item.rendering = false;
@@ -587,8 +584,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         return this.escapeHtml(item.content || '');
     }
 
-    private callBlockHtml(inner: string): string {
-        return `<div class="call-block-inline"><div class="call-block-header"></div><div class="markdown-body call-body">${inner}</div></div>`;
+    private callBlockHtml(name: string): string {
+        return `<div class="call-block-inline">${this.escapeHtml(name)}</div>`;
     }
 
     private escapeHtml(s: string): string {
