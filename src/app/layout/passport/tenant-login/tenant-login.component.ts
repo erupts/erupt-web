@@ -5,7 +5,6 @@ import {DA_SERVICE_TOKEN, SocialService, TokenService} from "@delon/auth";
 import {DataService} from "@shared/service/data.service";
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
-import {Md5} from "ts-md5";
 import {WindowModel} from "@shared/model/window.model";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
@@ -117,7 +116,7 @@ export class UserTenantLoginComponent implements OnDestroy, OnInit, AfterViewIni
         this.loading = true;
         let pwd = this.password.value;
         if (EruptAppData.get().pwdTransferEncrypt) {
-            pwd = <string>Md5.hashStr(Md5.hashStr(this.password.value) + this.userName.value);
+            pwd = this.data.pwdEncode(this.password.value, 3);
         }
         this.data.tenantLogin(this.tenantCode.value, this.userName.value, pwd, this.verifyCode.value, this.verifyCodeMark).subscribe((result) => {
             if (result.useVerifyCode) this.changeVerifyCode();
