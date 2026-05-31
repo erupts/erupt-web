@@ -12,6 +12,7 @@ import {VL} from "../../build/erupt/model/erupt-field.model";
 import {Checkbox, DrillInput, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
+import {EruptAppData} from "@shared/model/erupt-app.model";
 import {R, SimplePage} from "@shared/model/api.model";
 import {NoticeStatus} from "@shared/model/notice.model";
 
@@ -439,10 +440,11 @@ export class DataService {
     }
 
     tenantChangePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
+        const encode = (p: string) => EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(p, 3) : p;
         return this._http.get(RestPath.erupt + "/tenant/change-pwd", {
-                pwd: this.pwdEncode(pwd, 3),
-                newPwd: this.pwdEncode(newPwd, 3),
-                newPwd2: this.pwdEncode(newPwd2, 3)
+                pwd: encode(pwd),
+                newPwd: encode(newPwd),
+                newPwd2: encode(newPwd2)
             }
         );
     }
@@ -465,10 +467,11 @@ export class DataService {
 
 
     changePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
+        const encode = (p: string) => EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(p, 3) : p;
         return this._http.get(RestPath.erupt + "/change-pwd", {
-                pwd: this.pwdEncode(pwd, 3),
-                newPwd: this.pwdEncode(newPwd, 3),
-                newPwd2: this.pwdEncode(newPwd2, 3)
+                pwd: encode(pwd),
+                newPwd: encode(newPwd),
+                newPwd2: encode(newPwd2)
             }
         );
     }
