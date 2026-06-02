@@ -35,6 +35,7 @@ export interface Vis {
     fieldVisibility: FieldVisibility;
     type: VisType;
     cardView: CardView;
+    boardView: BoardView
     ganttView: GanttView;
     tplView: Tpl
 }
@@ -50,6 +51,10 @@ export enum VisType {
 export enum FieldVisibility {
     INCLUDE = "INCLUDE",
     EXCLUDE = "EXCLUDE"
+}
+
+export interface BoardView {
+    groupField: string;
 }
 
 export interface CardView {

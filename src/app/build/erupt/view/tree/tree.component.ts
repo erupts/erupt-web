@@ -13,6 +13,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {AppViewService} from "@shared/service/app-view.service";
 import {Scene} from "../../model/erupt.enum";
+import {LocalSettingsService} from "../../service/local-settings.service";
 
 @Component({
     standalone: false,
@@ -50,6 +51,10 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     treeScrollTop: number = 0;
 
+    treeWidth: number = 220;
+
+    resizing: boolean = false;
+
     @ViewChild("treeDiv", {static: false})
     treeDiv: ElementRef;
 
@@ -64,7 +69,8 @@ export class TreeComponent implements OnInit, OnDestroy {
                 private appViewService: AppViewService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
-                private dataHandler: DataHandlerService) {
+                private dataHandler: DataHandlerService,
+                private localSettings: LocalSettingsService) {
     }
 
     ngOnInit(): void {
@@ -73,6 +79,8 @@ export class TreeComponent implements OnInit, OnDestroy {
             this.eruptName = params.name;
             this.currentKey = null;
             this.showEdit = false;
+            const saved = this.localSettings.get(this.eruptName);
+            if (saved?.treeWidth) this.treeWidth = saved.treeWidth;
             this.dataService.getEruptBuild(this.eruptName).subscribe(eb => {
                 this.appViewService.setRouterViewDesc(eb.eruptModel.eruptJson.desc);
                 this.dataHandler.initErupt(eb);
@@ -95,6 +103,8 @@ export class TreeComponent implements OnInit, OnDestroy {
             this.loading = false;
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
             callback && callback();
+        }, () => {
+            this.loading = false;
         });
     }
 
@@ -234,6 +244,41 @@ export class TreeComponent implements OnInit, OnDestroy {
         event.event.stopPropagation();
     }
 
+    expandAll(): void {
+        this.setExpanded(this.nodes, true);
+        this.nodes = [...this.nodes];
+    }
+
+    collapseAll(): void {
+        this.setExpanded(this.nodes, false);
+        this.nodes = [...this.nodes];
+    }
+
+private setExpanded(nodes: any[], expanded: boolean): void {
+        for (const n of nodes) {
+            if (!n.isLeaf) n.expanded = expanded;
+            if (n.children?.length) this.setExpanded(n.children, expanded);
+        }
+    }
+
+    onResizeDragStart(e: MouseEvent): void {
+        e.preventDefault();
+        const startX = e.clientX;
+        const startWidth = this.treeWidth;
+        this.resizing = true;
+        const onMove = (ev: MouseEvent) => {
+            this.treeWidth = Math.max(150, Math.min(500, startWidth + ev.clientX - startX));
+        };
+        const onUp = () => {
+            this.resizing = false;
+            this.localSettings.patch(this.eruptName, {treeWidth: this.treeWidth});
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
     ngOnDestroy(): void {
         this.router$.unsubscribe();
     }
@@ -246,6 +291,8 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.behavior = Scene.EDIT;
         this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
+            this.loading = false;
+        }, () => {
             this.loading = false;
         });
     }

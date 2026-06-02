@@ -62,6 +62,27 @@ export class LayoutTreeComponent implements OnInit {
         });
     }
 
+    get hasHierarchy(): boolean {
+        return this.list?.some(n => !n.isLeaf) ?? false;
+    }
+
+    expandAll(): void {
+        this.setExpanded(this.list, true);
+        this.list = [...this.list];
+    }
+
+    collapseAll(): void {
+        this.setExpanded(this.list, false);
+        this.list = [...this.list];
+    }
+
+    private setExpanded(nodes: NzTreeNodeOptions[], expanded: boolean): void {
+        for (const n of nodes) {
+            if (!n.isLeaf) n.expanded = expanded;
+            if (n.children?.length) this.setExpanded(n.children, expanded);
+        }
+    }
+
     nzDblClick(event: NzFormatEmitEvent) {
         event.node.isExpanded = !event.node.isExpanded;
         event.event.stopPropagation();

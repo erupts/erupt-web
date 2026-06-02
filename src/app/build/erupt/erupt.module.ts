@@ -32,6 +32,7 @@ import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
 import {CardComponent} from './vis/card/card.component';
+import {BoardComponent} from './vis/board/board.component';
 import {TagSelectModule} from "@delon/abc/tag-select";
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import {SearchComponent} from './components/search/search.component';
@@ -112,6 +113,7 @@ import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
         ChoiceComponent,
         TagsComponent,
         CardComponent,
+        BoardComponent,
         SearchComponent,
         AutoCompleteComponent,
         ReferenceComponent,

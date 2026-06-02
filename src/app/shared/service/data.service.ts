@@ -189,6 +189,15 @@ export class DataService {
         });
     }
 
+    updateBoardGroup(eruptName: string, visCode: string, pk: any, groupValue: any): Observable<any> {
+        return this._http.post(RestPath.dataModify + "/board/" + eruptName + "/update_group", {
+            visCode, pk, groupValue
+        }, {}, {
+            observe: "body",
+            headers: {erupt: eruptName}
+        });
+    }
+
     updateGanttDate(eruptName: string, visCode: string, pk: any, startDate: string, endDate: string): Observable<any> {
         return this._http.post(RestPath.dataModify + "/gantt/" + eruptName + "/update_date", {
             visCode: visCode, pk,

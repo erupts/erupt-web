@@ -25,6 +25,8 @@ export class EditComponent implements OnInit {
 
     @Input() id: any;
 
+    @Input() size: "large" | "small" | "default" = "large";
+
     @Input() readonly: boolean = false;
 
     @Input() header: object = {};

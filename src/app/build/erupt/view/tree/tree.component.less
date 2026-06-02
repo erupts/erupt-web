@@ -1,20 +1,114 @@
 :host {
+    display: block;
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
 
-    ::ng-deep {
-        .ant-collapse-header {
-            padding: 4px 18px !important;
+    // ── 整体布局 ─────────────────────────────────────────────────
+    .tree-layout {
+        display: flex;
+        height: 100%;
+        background: #fff;
+    }
+
+    // ── 左侧导航面板 ──────────────────────────────────────────────
+    .tree-nav {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .tree-nav-header {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 7px 8px;
+        border-bottom: 1px solid #eaecf0;
+
+    }
+
+    .tree-nav-body {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        padding: 4px 4px 8px;
+
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: #d0d5dd;
+            border-radius: 2px;
+        }
+    }
+
+    // ── 拖拽分隔线 ────────────────────────────────────────────────
+    .tree-resize-handle {
+        flex-shrink: 0;
+        cursor: col-resize;
+        position: relative;
+        z-index: 1;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #eaecf0;
+            transition: background 0.18s;
         }
 
-        .ant-collapse-content-box{
-            padding: 10px !important;
+        &:hover::before, &:active::before {
+            background: var(--ant-primary-color, #1890ff);
+            opacity: 0.7;
         }
+    }
 
-        .layout-tree-view {
-            padding: 10px;
-            background: #fff;
-            border: 1px solid #d9d9d9;
-        }
+    .tree-resize-overlay {
+        position: fixed;
+        inset: 0;
+        cursor: col-resize;
+        z-index: 9999;
+    }
+
+    // ── 右侧详情面板 ──────────────────────────────────────────────
+    .tree-detail {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        overflow: hidden;
+    }
+
+    .tree-detail-header {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        min-height: 39px;
+        background: #fff;
+        border-bottom: 1px solid #eaecf0;
+        flex-wrap: wrap;
+    }
+
+    .tree-detail-body {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        padding: 12px;
+    }
+
+    .tree-empty-hint {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        opacity: 0.45;
     }
 }

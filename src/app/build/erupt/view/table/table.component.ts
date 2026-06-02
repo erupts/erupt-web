@@ -389,7 +389,8 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     visChange(e: number) {
-        this.query();
+        const vis = this.vis[e];
+        this.query(1, vis?.type === VisType.BOARD ? 1000 : this.dataPage.ps);
     }
 
     query(page?: number, size?: number, sort?: Record<string, SortType>) {

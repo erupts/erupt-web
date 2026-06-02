@@ -24,7 +24,7 @@ export class SettingsComponent implements OnInit {
 
     ngOnInit() {
         if (!this.settingSrv.layout['tableSize']) {
-            this.settingSrv.setLayout('tableSize', TableSize.MIDDLE);
+            this.settingSrv.setLayout('tableSize', TableSize.SMALL);
         }
     }
 
