@@ -1,0 +1,16 @@
+<nz-calendar [nzDateCell]="dateCellTpl" [nzMonthCell]="monthCellTpl">
+    <ng-template #dateCellTpl let-date>
+        @for (event of getEventsForDate(date); track getPk(event)) {
+            <div class="cal-event"
+                 [style.background]="getEventColor(event)"
+                 (click)="onEdit.emit(getPk(event)); $event.stopPropagation()">
+                <span [innerHTML]="getEventLabel(event) | safeHtml"></span>
+            </div>
+        }
+    </ng-template>
+    <ng-template #monthCellTpl let-date>
+        @if (getEventsForDate(date).length) {
+            <nz-badge [nzCount]="getEventsForDate(date).length" nzSize="small"/>
+        }
+    </ng-template>
+</nz-calendar>
