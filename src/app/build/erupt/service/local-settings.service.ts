@@ -3,10 +3,12 @@ import {Injectable} from "@angular/core";
 export interface EruptColumnConfig {
     show?: boolean;
     width?: number | string;
+    fixed?: 'left' | 'right';
 }
 
 export interface EruptLocalSettings {
     columns?: Record<string, EruptColumnConfig>;
+    columnOrder?: string[];
     treeWidth?: number;
 }
 

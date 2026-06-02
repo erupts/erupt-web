@@ -196,19 +196,39 @@
                                     nz-popover [(nzPopoverVisible)]="showColCtrl"
                                     [nzPopoverContent]="tableColumnCtrl"
                                     nzPopoverTrigger="click" id="table-column-ctrl"
+                                    nzPopoverOverlayClassName="col-ctrl-popover"
                                     nz-tooltip [nzTooltipTitle]="'table.column.ctrl'|translate">
                                 <i nz-icon nzType="table" nzTheme="outline"></i>
                             </button>
                             <ng-template #tableColumnCtrl>
-                                <div nz-row style="max-width: 520px;">
-                                    @for (col of columns; track col) {
-                                        @if (col.title && col.index) {
-                                            <div nz-col nzSpan="6">
-                                                <label nz-checkbox [(ngModel)]="col['show']" style="width: 130px;"
-                                                       (ngModelChange)="saveColumnSettings()">{{ col.title['text'] | nzEllipsis:6:'...' }}</label>
-                                            </div>
-                                        }
-                                    }
+                                <div style="width: 240px;">
+                                    <div style="max-height: 360px; overflow-y: auto;">
+                                        <div cdkDropList (cdkDropListDropped)="onColumnDrop($event)">
+                                            @for (col of columnListForCtrl; track col) {
+                                                <div cdkDrag
+                                                     style="display: flex; align-items: center; gap: 6px; padding: 5px 4px; border-radius: 4px; cursor: move; user-select: none;"
+                                                     (mouseenter)="$event.currentTarget['style'].background='#f5f5f5'"
+                                                     (mouseleave)="$event.currentTarget['style'].background=''">
+                                                    <i nz-icon nzType="holder" nzTheme="outline"
+                                                       style="color: #bfbfbf; flex-shrink: 0; font-size: 14px;"></i>
+                                                    <label nz-checkbox [(ngModel)]="col['show']"
+                                                           (ngModelChange)="saveColumnSettings()"
+                                                           style="flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; min-width: 0;">
+                                                        {{ col.title['text'] | nzEllipsis:12:'...' }}
+                                                    </label>
+                                                    <button nz-button nzType="text" nzSize="small"
+                                                            [nz-tooltip]="getColumnPinTooltip(col)"
+                                                            (click)="cycleColumnPin(col); $event.stopPropagation()"
+                                                            style="flex-shrink: 0; padding: 0 2px; width: 22px;"
+                                                            [style.color]="col.fixed ? 'var(--ant-primary-color)' : '#d9d9d9'">
+                                                        <i nz-icon nzType="pushpin"
+                                                           [nzTheme]="col.fixed ? 'fill' : 'outline'"
+                                                           [style.transform]="col.fixed === 'right' ? 'scaleX(-1)' : ''"></i>
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                             </ng-template>
                             @if (hasSearchFields) {

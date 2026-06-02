@@ -427,6 +427,11 @@ global.density.middle,适中,適中,Medium,Moyen,中間,중간,Средний,Me
 global.density.large,宽松,寬鬆,Relaxed,Spacieux,ゆったり,넓게,Просторный,Espacioso,Geräumig,Espaçoso,Longgar,مريح
 setting.table-size,表格密度,表格密度,Table Density,Densité du tableau,テーブル密度,테이블 밀도,Плотность таблицы,Densidad de tabla,Tabellendichte,Densidade da tabela,Kepadatan tabel,كثافة الجدول
 table.column.ctrl,列显示,列顯示,Columns,Colonnes,列表示,열 표시,Столбцы,Columnas,Spalten,Colunas,Kolom,الأعمدة
+table.column.all,全选,全選,Select all,Tout sélectionner,全選択,전체 선택,Выбрать все,Seleccionar todo,Alle auswählen,Selecionar tudo,Pilih semua,تحديد الكل
+table.column.reset,重置列设置,重置列設置,Reset columns,Réinitialiser colonnes,列の設定をリセット,열 설정 초기화,Сбросить столбцы,Restablecer columnas,Spalten zurücksetzen,Redefinir colunas,Reset kolom,إعادة تعيين الأعمدة
+table.column.pin.left,固定到左侧,固定到左側,Pin left,Épingler à gauche,左に固定,왼쪽에 고정,Закрепить слева,Fijar a la izquierda,Links fixieren,Fixar à esquerda,Sematkan ke kiri,تثبيت على اليسار
+table.column.pin.right,固定到右侧,固定到右側,Pin right,Épingler à droite,右に固定,오른쪽에 고정,Закрепить справа,Fijar a la derecha,Rechts fixieren,Fixar à direita,Sematkan ke kanan,تثبيت على اليمين
+table.column.unpin,取消固定,取消固定,Unpin,Désépingler,固定解除,고정 해제,Открепить,Desfijar,Fixierung lösen,Soltar coluna,Lepas sematan,إلغاء التثبيت
 ai.chat.wide_mode,展开宽度,展開寬度,Expand Width,Élargir,幅を広げる,너비 확장,Расширить,Expandir ancho,Breite erweitern,Expandir largura,Perluas lebar,توسيع العرض
 ai.chat.narrow_mode,收窄宽度,收窄寬度,Narrow Width,Rétrécir,幅を狭める,너비 축소,Сузить,Reducir ancho,Breite verringern,Reduzir largura,Persempit lebar,تضييق العرض
 ai.chat.yesterday,昨天,昨天,Yesterday,Hier,昨日,어제,Вчера,Ayer,Gestern,Ontem,Kemarin,أمس

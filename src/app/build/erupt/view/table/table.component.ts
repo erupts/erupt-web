@@ -27,7 +27,7 @@ import {Status} from "../../model/erupt-api.model";
 import {EruptFieldModel, View} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {UiBuildService} from "../../service/ui-build.service";
-import {LocalSettingsService} from "../../service/local-settings.service";
+import {EruptColumnConfig, LocalSettingsService} from "../../service/local-settings.service";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ModalButtonOptions, NzModalRef, NzModalService} from "ng-zorro-antd/modal";
@@ -1175,24 +1175,75 @@ export class TableComponent implements OnInit, OnDestroy {
         });
     }
 
+    private colIndexStr(col: STColumn): string {
+        return (Array.isArray(col.index) ? col.index[0] : col.index) as string;
+    }
+
     saveColumnSettings() {
         const eruptName = this.eruptBuildModel.eruptModel.eruptName;
-        const columns: Record<string, { show: boolean, width?: number | string }> = {};
+        const columns: Record<string, EruptColumnConfig> = {};
+        const columnOrder: string[] = [];
         this.columns.forEach(col => {
-            if (col.index) columns[col.index as string] = {show: col['show'], width: col.width};
+            if (!col.index) return;
+            const idx = this.colIndexStr(col);
+            columns[idx] = {show: col['show'], width: col.width, fixed: col.fixed as 'left' | 'right' | undefined};
+            if (col.title) columnOrder.push(idx);
         });
-        this.eruptLocalSettings.setColumns(eruptName, columns);
+        this.eruptLocalSettings.patch(eruptName, {columns, columnOrder});
         this.st?.resetColumns();
     }
 
     private restoreColumnSettings(eruptName: string, columns: STColumn[]) {
-        const saved = this.eruptLocalSettings.getColumns(eruptName);
+        const saved = this.eruptLocalSettings.get(eruptName);
+        const savedCols = saved.columns || {};
         columns.forEach(col => {
-            const cfg = col.index ? saved[col.index as string] : undefined;
+            if (!col.index) return;
+            const cfg = savedCols[this.colIndexStr(col)];
             if (!cfg) return;
             if (cfg.show !== undefined) col['show'] = cfg.show;
             if (cfg.width !== undefined) col.width = cfg.width;
+            col.fixed = cfg.fixed;
         });
+        if (saved.columnOrder?.length) {
+            const orderMap = new Map(saved.columnOrder.map((idx, i) => [idx, i]));
+            const viewCols = columns.filter(col => col.title && col.index);
+            viewCols.sort((a, b) => {
+                const ai = orderMap.get(this.colIndexStr(a)) ?? Infinity;
+                const bi = orderMap.get(this.colIndexStr(b)) ?? Infinity;
+                return ai - bi;
+            });
+            let vi = 0;
+            for (let i = 0; i < columns.length; i++) {
+                if (columns[i].title && columns[i].index) columns[i] = viewCols[vi++];
+            }
+        }
+    }
+
+    get columnListForCtrl(): STColumn[] {
+        return this.columns.filter(col => col.title && col.index);
+    }
+
+    onColumnDrop(event: CdkDragDrop<STColumn[]>) {
+        if (event.previousIndex === event.currentIndex) return;
+        const viewCols = this.columns.filter(col => col.title && col.index);
+        moveItemInArray(viewCols, event.previousIndex, event.currentIndex);
+        let vi = 0;
+        this.columns = this.columns.map(col => (col.title && col.index) ? viewCols[vi++] : col);
+        this.saveColumnSettings();
+    }
+
+    cycleColumnPin(col: STColumn) {
+        if (!col.fixed) col.fixed = 'left';
+        else if (col.fixed === 'left') col.fixed = 'right';
+        else col.fixed = undefined;
+        this.columns = [...this.columns];
+        this.saveColumnSettings();
+    }
+
+    getColumnPinTooltip(col: STColumn): string {
+        if (!col.fixed) return this.i18n.fanyi('table.column.pin.left');
+        if (col.fixed === 'left') return this.i18n.fanyi('table.column.pin.right');
+        return this.i18n.fanyi('table.column.unpin');
     }
 
 

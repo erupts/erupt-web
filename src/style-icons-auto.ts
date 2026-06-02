@@ -68,6 +68,8 @@ import {
     PlusSquareOutline,
     PoweroffOutline,
     PrinterOutline,
+    PushpinFill,
+    PushpinOutline,
     QuestionCircleOutline,
     RedoOutline,
     ReloadOutline,
@@ -182,5 +184,7 @@ export const ICONS_AUTO = [
     BlockOutline,
     PauseCircleOutline,
     PieChartOutline,
-    ColumnWidthOutline
+    ColumnWidthOutline,
+    PushpinOutline,
+    PushpinFill
 ];
