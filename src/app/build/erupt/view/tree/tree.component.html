@@ -88,9 +88,12 @@
             </div>
 
             <div class="tree-detail-body">
-                <div class="tree-empty-hint" [hidden]="showEdit">
-                    <nz-empty nzNotFoundImage="simple" [nzNotFoundFooter]="null"/>
-                </div>
+                @if (!showEdit) {
+                    <div class="tree-empty-hint">
+                        <i nz-icon nzType="arrow-left" nzTheme="outline" style="margin-right:8px;font-size:16px;"></i>
+                        <span>{{ 'tree.select_hint' | translate }}</span>
+                    </div>
+                }
                 <nz-spin [nzSpinning]="loading" nzSize="large" [hidden]="!showEdit">
                     <erupt-edit [eruptBuildModel]="eruptBuildModel" [behavior]="behavior" />
                 </nz-spin>

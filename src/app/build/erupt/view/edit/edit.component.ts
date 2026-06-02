@@ -31,6 +31,8 @@ export class EditComponent implements OnInit {
 
     @Input() header: object = {};
 
+    @Input() prefillData?: object;
+
     @ViewChild("eruptEdit", {static: false}) eruptEditComponent: EditTypeComponent;
 
     constructor(
@@ -45,11 +47,15 @@ export class EditComponent implements OnInit {
     ngOnInit() {
         this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
         if (this.behavior == Scene.ADD) {
-            this.loading = true;
-            this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName, null, this.header).subscribe(data => {
-                this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
-                this.loading = false;
-            });
+            if (this.prefillData) {
+                this.dataHandlerService.objectToEruptValue(this.prefillData, this.eruptBuildModel);
+            } else {
+                this.loading = true;
+                this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName, null, this.header).subscribe(data => {
+                    this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
+                    this.loading = false;
+                });
+            }
         } else {
             this.loading = true;
             this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.id).subscribe(data => {

@@ -23,6 +23,25 @@
                                 <i nz-icon nzType="plus" nzTheme="outline"></i>{{ 'table.add'|translate }}
                             </button>
                         }
+                        @if (eruptBuildModel.eruptModel.eruptJson.power.add && selectedRows.length === 1) {
+                            <button nz-button nzSize="small" (click)="duplicateRow()" id="erupt-btn-copy">
+                                <i nz-icon nzType="copy" nzTheme="outline"></i>{{ 'global.copy'|translate }}
+                            </button>
+                        }
+                        @if (eruptBuildModel.eruptModel.eruptJson.power.delete) {
+                            @if (selectedRows.length > 0) {
+                                <button nz-button nzSize="small" nzDanger [nzLoading]="deleting" id="erupt-btn-delete" (click)="delRows()">
+                                    <i nz-icon nzType="delete" nzTheme="outline"></i>{{ 'table.delete'|translate }}
+                                </button>
+                            }
+                        }
+                        @if (eruptBuildModel.eruptModel.eruptJson.power.print) {
+                            @if (selectedRows.length == 1) {
+                                <button nz-button nzSize="small" id="erupt-btn-print" (click)="printSelectedRows()">
+                                    <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
+                                </button>
+                            }
+                        }
                         @if (eruptBuildModel.eruptModel.eruptJson.power.export) {
                             <nz-badge [nzCount]="selectedRows.length" [nzShowZero]="false" nzSize="small">
                                 <button nz-button nzSize="small" (click)="exportExcel()"
@@ -132,22 +151,8 @@
                                 <i nz-icon nzType="search" nzTheme="outline"></i>{{ 'table.query'|translate }}
                             </button>
                         }
-                        @if (eruptBuildModel.eruptModel.eruptJson.power.delete) {
-                            @if (selectedRows.length > 0) {
-                                <button nz-button nzSize="small" nzDanger [nzLoading]="deleting" id="erupt-btn-delete" (click)="delRows()">
-                                    <i nz-icon nzType="delete" nzTheme="outline"></i>{{ 'table.delete'|translate }}
-                                </button>
-                            }
-                        }
-                        @if (eruptBuildModel.eruptModel.eruptJson.power.print) {
-                            @if (selectedRows.length == 1) {
-                                <button nz-button nzSize="small" id="erupt-btn-print" (click)="printSelectedRows()">
-                                    <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
-                                </button>
-                            }
-                        }
                         @if (eruptBuildModel.eruptModel.eruptJson.rowOperation) {
-                            @for (item of eruptBuildModel.eruptModel.eruptJson.rowOperation; track item) {
+                            @for (item of eruptBuildModel.eruptModel.eruptJson.rowOperation; track item.code) {
                                 @if (item.mode != operationMode.SINGLE && !item.fold) {
                                     <button nz-button nzSize="small" nzType="dashed"
                                             [nz-tooltip]="item.tip" (click)="createOperator(item)">
@@ -181,11 +186,29 @@
                         }
                     </div>
                     <div class="tc-utils">
-                        <button nz-button nzSize="small"
-                                nz-tooltip [nzTooltipTitle]="'global.refresh'|translate"
-                                [nzLoading]="dataPage.querying" (click)="query()">
-                            <i nz-icon nzType="reload" nzTheme="outline"></i>
-                        </button>
+                        <span>
+                            <button nz-button nzSize="small"
+                                    nz-tooltip [nzTooltipTitle]="'global.refresh'|translate"
+                                    [nzLoading]="dataPage.querying" (click)="query()">
+                                <i nz-icon nzType="reload" nzTheme="outline"></i>
+                            </button>
+                            <button nz-button nzSize="small" style="margin-left:-1px"
+                                    nz-dropdown [nzDropdownMenu]="autoRefreshMenu" nzPlacement="bottomRight"
+                                    nz-tooltip [nzTooltipTitle]="'table.auto_refresh'|translate"
+                                    [style.border-color]="autoRefreshSeconds ? 'var(--ant-primary-color-hover)' : null"
+                                    [style.color]="autoRefreshSeconds ? 'var(--ant-primary-color)' : null">
+                                <i nz-icon nzType="history" nzTheme="outline"></i>
+                            </button>
+                        </span>
+                        <nz-dropdown-menu #autoRefreshMenu="nzDropdownMenu">
+                            <ul nz-menu>
+                                <li nz-menu-item [nzSelected]="autoRefreshSeconds === 0" (click)="setAutoRefresh(0)">{{ 'table.auto_refresh.off'|translate }}</li>
+                                <li nz-menu-item [nzSelected]="autoRefreshSeconds === 10" (click)="setAutoRefresh(10)">10s</li>
+                                <li nz-menu-item [nzSelected]="autoRefreshSeconds === 30" (click)="setAutoRefresh(30)">30s</li>
+                                <li nz-menu-item [nzSelected]="autoRefreshSeconds === 60" (click)="setAutoRefresh(60)">1min</li>
+                                <li nz-menu-item [nzSelected]="autoRefreshSeconds === 300" (click)="setAutoRefresh(300)">5min</li>
+                            </ul>
+                        </nz-dropdown-menu>
                         <button nz-button nzSize="small" class="hidden-mobile"
                                 nz-tooltip [nzTooltipTitle]="'global.fullscreen'|translate"
                                 (click)="toggleFullscreen()">
@@ -228,6 +251,12 @@
                                                 </div>
                                             }
                                         </div>
+                                    </div>
+                                    <div style="border-top: 1px solid #f0f0f0; padding: 6px 8px 4px; text-align: right;">
+                                        <a nz-button nzType="link" nzSize="small" style="padding: 0;"
+                                           (click)="resetColumnWidths(); showColCtrl=false">
+                                            {{ 'table.column.reset_width'|translate }}
+                                        </a>
                                     </div>
                                 </div>
                             </ng-template>

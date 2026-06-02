@@ -151,6 +151,8 @@ export class TableComponent implements OnInit, OnDestroy {
 
     refreshTimeInterval: any;
 
+    autoRefreshSeconds: number = 0;
+
     existMultiRowFoldButtons: boolean = false;
 
     tableWidth: string;
@@ -1244,6 +1246,82 @@ export class TableComponent implements OnInit, OnDestroy {
         if (!col.fixed) return this.i18n.fanyi('table.column.pin.left');
         if (col.fixed === 'left') return this.i18n.fanyi('table.column.pin.right');
         return this.i18n.fanyi('table.column.unpin');
+    }
+
+    setAutoRefresh(seconds: number) {
+        this.autoRefreshSeconds = seconds;
+        if (this.refreshTimeInterval) {
+            clearInterval(this.refreshTimeInterval);
+            this.refreshTimeInterval = null;
+        }
+        if (seconds > 0) {
+            this.refreshTimeInterval = setInterval(() => this.query(), seconds * 1000);
+        }
+    }
+
+    duplicateRow() {
+        const selectedRow = this.selectedRows[0];
+        const pkCol = this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+        const id = selectedRow[pkCol];
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        this.dataService.queryEruptDataById(eruptName, id).subscribe(data => {
+            delete data[pkCol];
+            let fullLine = false;
+            const layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
+            if (layout && layout.formSize == FormSize.FULL_LINE) fullLine = true;
+            const modal = this.modal.create({
+                nzDraggable: true,
+                nzStyle: {top: "60px"},
+                nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+                nzWidth: fullLine ? 550 : null,
+                nzMaskClosable: false,
+                nzKeyboard: false,
+                nzTitle: this.i18n.fanyi("global.copy"),
+                nzContent: EditComponent,
+                nzOkText: this.i18n.fanyi("global.add"),
+                nzOnOk: async () => {
+                    if (!this.adding) {
+                        this.adding = true;
+                        setTimeout(() => this.adding = false, 500);
+                        if (modal.getContentComponent().beforeSaveValidate()) {
+                            let header: any = {};
+                            if (this.linkTree) {
+                                const lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
+                                if (lt.dependNode && lt.value) header["link"] = lt.value;
+                            }
+                            if (this._drill) Object.assign(header, DataService.drillToHeader(this._drill));
+                            await this.dataService.addEruptData(
+                                eruptName,
+                                this.dataHandler.eruptValueToObject(this.eruptBuildModel),
+                                header
+                            ).toPromise().then(res => res);
+                            this.msg.success(this.i18n.fanyi("global.add.success"));
+                            this.query();
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            });
+            const editComp = modal.getContentComponent();
+            editComp.eruptBuildModel = this.eruptBuildModel;
+            editComp.behavior = Scene.ADD;
+            editComp.prefillData = data;
+            editComp.header = this._drill ? DataService.drillToHeader(this._drill) : {};
+        });
+    }
+
+    resetColumnWidths() {
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        const saved = this.eruptLocalSettings.get(eruptName);
+        if (saved.columns) {
+            const cleaned: Record<string, EruptColumnConfig> = {};
+            Object.entries(saved.columns).forEach(([k, v]) => {
+                cleaned[k] = {show: v.show, fixed: v.fixed};
+            });
+            this.eruptLocalSettings.patch(eruptName, {columns: cleaned});
+        }
+        this.buildTableConfig();
     }
 
 

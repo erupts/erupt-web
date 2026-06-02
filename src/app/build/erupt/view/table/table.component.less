@@ -87,6 +87,7 @@
         display: flex;
         align-items: center;
         flex-shrink: 0;
+        gap: 8px;
     }
 
     // ── 内容区容器（toolbar 以外）────────────────────────────
@@ -136,6 +137,21 @@
 
     // ── st 表格样式 ───────────────────────────────────────────
     ::ng-deep {
+        // tc-actions and tc-utils use gap for spacing; reset the global auto margin-left
+        // that ng-zorro injects between adjacent ant-btn siblings to avoid double spacing
+        .tc-actions, .tc-utils {
+            .ant-btn:not(.ant-btn-link) + .ant-btn,
+            .ant-btn:not(.ant-btn-link) + nz-popconfirm,
+            nz-popconfirm + .ant-btn,
+            nz-popconfirm + nz-popconfirm,
+            .ant-btn:not(.ant-btn-link) + nz-space-compact,
+            nz-space-compact + .ant-btn,
+            .ant-btn:not(.ant-btn-link) + nz-dropdown,
+            nz-dropdown + .ant-btn {
+                margin-left: 0;
+            }
+        }
+
         .ant-tabs {
             border: 1px solid #e8e8e8;
 
