@@ -3,6 +3,7 @@
 /* 无对应全局/ant 变量且多处使用的保留变量 */
 @radius: 8px;
 @radius-sm: 4px;
+@content-max: 720px;
 
 /* 宿主填满容器，无容器时至少为视口减去顶栏 */
 :host {
@@ -262,6 +263,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    &:not(.is-wide) .bubble-wrap {
+        max-width: @content-max;
+    }
 }
 
 .bubbles-empty {
@@ -613,6 +618,15 @@
     background: #ffffff;
     border-top: 1px solid var(--ant-border-color-split, #eee);
 
+    &:not(.is-wide) .input-card {
+        max-width: @content-max;
+        margin: 0 auto;
+    }
+
+    &:not(.is-wide) .hints-wrap {
+        max-width: @content-max;
+    }
+
     .hints-wrap {
         margin: 0 auto 12px;
         display: flex;
@@ -641,12 +655,15 @@
 /* 输入卡片：图片样式 - 浅灰边框、圆角、顶部箭头、工具栏、底部快捷键与发送组 */
 .input-card {
     background: #fff;
+    border: 1px solid #eee;
+    border-top: none;
+    border-bottom: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 
-    &:focus-within {
-        border-color: var(--ant-primary-color);
-        box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.12);
-    }
+    //&:focus-within {
+    //    border-color: var(--ant-primary-color);
+    //    box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.12);
+    //}
 }
 
 .input-toolbar {

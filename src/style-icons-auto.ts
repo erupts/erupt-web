@@ -21,6 +21,7 @@ import {
     CaretUpOutline,
     ClearOutline,
     CloseCircleFill,
+    ColumnWidthOutline,
     CloseOutline,
     CommentOutline,
     CloudOutline,
@@ -176,5 +177,6 @@ export const ICONS_AUTO = [
     SoundOutline,
     BlockOutline,
     PauseCircleOutline,
-    PieChartOutline
+    PieChartOutline,
+    ColumnWidthOutline
 ];

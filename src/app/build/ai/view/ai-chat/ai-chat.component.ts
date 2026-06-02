@@ -81,9 +81,12 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         localStorage.setItem(AiChatComponent.LAYOUT_KEY, JSON.stringify({
             sidebarCollapsed: this.sidebarCollapsed,
             sidebarWidth: this.sidebarWidth,
-            senderWrapHeight: this.senderWrapHeight
+            senderWrapHeight: this.senderWrapHeight,
+            wideMode: this.wideMode
         }));
     }
+    /** 消息区宽模式（true=全宽展开，false=固定最大宽度） */
+    wideMode = AiChatComponent.layoutStorage.wideMode !== false;
     /** 侧边栏是否收起 */
     sidebarCollapsed = !!AiChatComponent.layoutStorage.sidebarCollapsed;
     /** 侧边栏宽度（px） */
@@ -706,6 +709,12 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     /** 切换全屏：主区域铺满视口并隐藏侧边栏 */
     toggleFullscreen(): void {
         this.fullscreen = !this.fullscreen;
+    }
+
+    /** 切换消息区宽模式 */
+    toggleWideMode(): void {
+        this.wideMode = !this.wideMode;
+        this.saveLayout();
     }
 
     onResizerMousedown(e: MouseEvent): void {
