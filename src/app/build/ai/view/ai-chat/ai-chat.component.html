@@ -12,11 +12,6 @@
                 <span nz-icon nzType="menu-fold" nzTheme="outline"></span>
             </button>
         </div>
-        <div class="sidebar-search">
-            <input nz-input nzSize="small"
-                   [(ngModel)]="chatSearchKeyword"
-                   [placeholder]="'ai.chat.search_sessions' | translate"/>
-        </div>
         <ul
             #chatListRef
             class="conversation-list"
@@ -26,7 +21,7 @@
                     <nz-spin nzSimple nzSize="small"></nz-spin>
                 </li>
             }
-            @for (item of filteredChats; track item.id) {
+            @for (item of chats; track item.id) {
                 <li
                     [class.active]="selectChat === item.id"
                     (click)="onSelectChat(item.id)">
