@@ -12,6 +12,11 @@
                 <span nz-icon nzType="menu-fold" nzTheme="outline"></span>
             </button>
         </div>
+        <div class="sidebar-search">
+            <input nz-input nzSize="small"
+                   [(ngModel)]="chatSearchKeyword"
+                   [placeholder]="'ai.chat.search_sessions' | translate"/>
+        </div>
         <ul
             #chatListRef
             class="conversation-list"
@@ -21,7 +26,7 @@
                     <nz-spin nzSimple nzSize="small"></nz-spin>
                 </li>
             }
-            @for (item of chats; track item.id) {
+            @for (item of filteredChats; track item.id) {
                 <li
                     [class.active]="selectChat === item.id"
                     (click)="onSelectChat(item.id)">
@@ -123,6 +128,7 @@
                             }
                             @if (!item.loading) {
                                 <div class="bubble-actions">
+                                    <span class="bubble-time">{{ formatTime(item.createdAt) }}</span>
                                     <button nz-button nzType="text" nzSize="small" class="action-btn"
                                             [title]="(item.copied ? 'ai.chat.copied' : 'ai.chat.copy') | translate"
                                             (click)="copyMessage(item)">

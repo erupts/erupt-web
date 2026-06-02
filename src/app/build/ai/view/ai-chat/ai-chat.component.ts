@@ -56,6 +56,12 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     /** 选中的智能体 id，用于下拉绑定；发送时用 get selectAgent() 取完整对象 */
     selectAgentId: number | null = null;
     content = '';
+    /** 会话搜索关键词 */
+    chatSearchKeyword = '';
+    /** 输入历史 */
+    private inputHistory: string[] = [];
+    private historyIndex = -1;
+    private historyDraft = '';
     sending = false;
     sendDisabled = false;
     messagePage = 1;
@@ -109,6 +115,11 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     get selectedAgent(): Agent | undefined {
         return this.agents.find(a => a.id === this.selectAgentId);
+    }
+
+    get filteredChats(): Chat[] {
+        const kw = this.chatSearchKeyword?.trim().toLowerCase();
+        return kw ? this.chats.filter(c => c.title?.toLowerCase().includes(kw)) : this.chats;
     }
 
     constructor(
@@ -294,7 +305,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                     content: msg,
                     senderType: 'MODEL',
                     id: 0,
-                    createTime: '',
                     loading: false
                 });
             },
@@ -306,6 +316,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     send(message: string): void {
         if (!message?.trim()) return;
+        this.inputHistory.push(message.trim());
+        this.historyIndex = -1;
         const doStart = (chatId: number) => {
             this.sending = true;
             this.content = '';
@@ -313,14 +325,12 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 id: Math.random(),
                 senderType: 'USER',
                 content: message,
-                createTime: '',
                 loading: false
             } as ChatMessage);
             this.messages.push({
                 id: Math.random(),
                 senderType: 'MODEL',
                 content: '',
-                createTime: '',
                 loading: true
             } as ChatMessage);
             setTimeout(() => this.scrollBubblesToBottom(), 10);
@@ -571,7 +581,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             id: Math.random(),
             senderType: 'MODEL',
             content: '',
-            createTime: '',
             loading: true
         } as ChatMessage);
         this.sending = true;
@@ -597,6 +606,20 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             });
         });
         return this.escapeHtml(item.content || '');
+    }
+
+    /** 格式化消息时间：今天只显示时分，否则显示日期+时分 */
+    formatTime(createTime: string): string {
+        if (!createTime) return this.i18n.fanyi('ai.chat.just_now');
+        const d = new Date(createTime);
+        if (isNaN(d.getTime())) return '';
+        const now = new Date();
+        const time = d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+        if (d.toDateString() === now.toDateString()) return time;
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (d.toDateString() === yesterday.toDateString()) return `${this.i18n.fanyi('ai.chat.yesterday')} ${time}`;
+        return `${d.getMonth() + 1}/${d.getDate()} ${time}`;
     }
 
     private callBlockHtml(name: string): string {
@@ -695,13 +718,33 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
     }
 
-    /** 输入框按键：Enter 发送，Shift+Enter 换行 */
+    /** 输入框按键：Enter 发送，Shift+Enter 换行，上下箭头浏览输入历史 */
     onInputKeydown(e: KeyboardEvent): void {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             if (!this.sendDisabled && this.content?.trim()) {
                 this.send(this.content);
                 this.content = '';
+            }
+            return;
+        }
+        if (!this.inputHistory.length) return;
+        const textarea = e.target as HTMLTextAreaElement;
+        if (e.key === 'ArrowUp' && textarea.selectionStart === 0) {
+            e.preventDefault();
+            if (this.historyIndex === -1) this.historyDraft = this.content;
+            if (this.historyIndex < this.inputHistory.length - 1) {
+                this.historyIndex++;
+                this.content = this.inputHistory[this.inputHistory.length - 1 - this.historyIndex];
+            }
+        } else if (e.key === 'ArrowDown' && textarea.selectionStart === textarea.value.length) {
+            e.preventDefault();
+            if (this.historyIndex > 0) {
+                this.historyIndex--;
+                this.content = this.inputHistory[this.inputHistory.length - 1 - this.historyIndex];
+            } else if (this.historyIndex === 0) {
+                this.historyIndex = -1;
+                this.content = this.historyDraft;
             }
         }
     }

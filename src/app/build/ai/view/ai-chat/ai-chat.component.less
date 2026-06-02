@@ -140,6 +140,14 @@
     }
 }
 
+.sidebar-search {
+    padding: 8px 12px 0;
+
+    input {
+        border-radius: @radius-sm;
+    }
+}
+
 .conversation-list {
     margin: 0;
     padding: 12px;
@@ -478,6 +486,12 @@
     margin-top: 6px;
     opacity: 0;
     transition: opacity 0.2s;
+
+    .bubble-time {
+        font-size: 11px;
+        color: var(--ant-text-color-secondary, #bbb);
+        margin-right: 4px;
+    }
 
     .action-btn {
         padding: 0 5px;

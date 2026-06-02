@@ -11,7 +11,7 @@ export interface ChatMessage {
     think?: string;
     /** 流式结束后可能已为 HTML，避免再次 md.render */
     contentHtml?: string;
-    createTime: string;
+    createdAt?: string;
     loading: boolean;
     chatId?: number;
     /** 流式输出每更新一次自增，用于触发打字动画（非 parts 消息专用） */
