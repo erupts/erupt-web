@@ -37,6 +37,7 @@ export interface Vis {
     cardView: CardView;
     boardView: BoardView
     ganttView: GanttView;
+    calendarView: CalendarView;
     tplView: Tpl
 }
 
@@ -45,6 +46,7 @@ export enum VisType {
     GANTT = "GANTT",
     CARD = "CARD",
     BOARD = "BOARD",
+    CALENDAR = "CALENDAR",
     TPL = "TPL"
 }
 
@@ -55,6 +57,12 @@ export enum FieldVisibility {
 
 export interface BoardView {
     groupField: string;
+}
+
+export interface CalendarView {
+    dateField: string;
+    endDateField: string;
+    colorField: string;
 }
 
 export interface CardView {

@@ -50,7 +50,9 @@ import {SignaturePadComponent} from './components/signature-pad/signature-pad.co
 import {SmartSearchComponent} from './components/smart-search/smart-search.component';
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 import {GanttComponent} from "./vis/gantt/gantt.component";
+import {CalendarComponent} from "./vis/calendar/calendar.component";
 import {NgxGanttModule} from "@worktile/gantt";
+import {NzCalendarModule} from "ng-zorro-antd/calendar";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
@@ -71,6 +73,7 @@ import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
         NzEmptyModule,
         NzSegmentedModule,
         NgxGanttModule,
+        NzCalendarModule,
         NzButtonModule,
         NzTooltipDirective,
         SVComponent,
@@ -134,6 +137,7 @@ import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
         SignaturePadComponent,
         SmartSearchComponent,
         GanttComponent,
+        CalendarComponent,
         FormViewComponent
     ]
 })

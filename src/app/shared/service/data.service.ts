@@ -210,6 +210,15 @@ export class DataService {
         });
     }
 
+    updateCalendarDate(eruptName: string, visCode: string, pk: any, date: string, endDate?: string): Observable<any> {
+        return this._http.post(RestPath.dataModify + "/calendar/" + eruptName + "/update_date", {
+            visCode, pk, date, endDate
+        }, {}, {
+            observe: "body",
+            headers: {erupt: eruptName}
+        });
+    }
+
     findAutoCompleteValue(eruptName: string, field: string, formData: any, val: string, eruptParentName?: string): Observable<string[]> {
         return this._http.post(RestPath.comp + "/auto-complete/" + eruptName + "/" + field, formData, {
             val: val.trim(),

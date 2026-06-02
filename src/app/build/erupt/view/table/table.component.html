@@ -279,6 +279,10 @@
                                     <vis-board [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
                                               (onEdit)="onEdit($event)" [vis]="vis[selectedVisIndex]"/>
                                 }
+                                @case (VisType.CALENDAR) {
+                                    <vis-calendar [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                                  (onEdit)="onEdit($event)" [vis]="vis[selectedVisIndex]"/>
+                                }
                                 @case (VisType.GANTT) {
                                     <vis-gantt [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
                                                (onEdit)="onEdit($event)"
