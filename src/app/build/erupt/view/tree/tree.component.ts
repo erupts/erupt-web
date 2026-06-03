@@ -55,6 +55,8 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     resizing: boolean = false;
 
+    mobileTreeCollapsed: boolean = false;
+
     @ViewChild("treeDiv", {static: false})
     treeDiv: ElementRef;
 
@@ -288,6 +290,9 @@ private setExpanded(nodes: any[], expanded: boolean): void {
         this.loading = true;
         this.showEdit = true;
         this.currentKey = event.node.origin.key;
+        if (window.innerWidth <= 767) {
+            this.mobileTreeCollapsed = true;
+        }
         this.behavior = Scene.EDIT;
         this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);

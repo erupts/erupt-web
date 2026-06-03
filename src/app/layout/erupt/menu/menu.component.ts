@@ -316,11 +316,12 @@ export class MenuComponent implements OnInit, OnDestroy {
             this.favorites = [];
             return;
         }
-        const result: Nav[] = [];
+        const map = new Map<string, Nav>();
         this.menuSrv.visit(this.list, (i: Nav) => {
-            if (keys.includes(i.link || i.text || '')) result.push(i);
+            const key = i.link || i.text || '';
+            if (keys.includes(key)) map.set(key, i);
         });
-        this.favorites = result;
+        this.favorites = keys.map(k => map.get(k)).filter(Boolean);
     }
 
     private saveFavorites(): void {

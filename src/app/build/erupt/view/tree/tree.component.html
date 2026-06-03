@@ -7,7 +7,7 @@
     <div class="tree-layout" [id]="eruptName">
 
         <!-- ── 左侧导航树 ── -->
-        <div class="tree-nav" [style.width.px]="treeWidth">
+        <div class="tree-nav" [style.width.px]="treeWidth" [class.collapsed]="mobileTreeCollapsed">
             <div class="tree-nav-header">
                 <nz-input-group [nzSuffix]="suffixIcon" nzSize="small" style="flex:1;min-width:0;">
                     <input type="text" nz-input placeholder="Search" [(ngModel)]="searchValue">
@@ -15,6 +15,10 @@
                 <ng-template #suffixIcon>
                     <i nz-icon nzType="search" style="font-size:12px;color:#9ca3af;"></i>
                 </ng-template>
+                <button class="tree-mobile-toggle" nz-button nzType="text" nzSize="small"
+                        (click)="mobileTreeCollapsed = !mobileTreeCollapsed">
+                    <i nz-icon [nzType]="mobileTreeCollapsed ? 'caret-down' : 'caret-up'" nzTheme="outline"></i>
+                </button>
                 @if (eruptBuildModel.eruptModel.eruptJson.tree.pid) {
                     <button nz-button nzType="text" nzSize="small"
                             nz-tooltip [nzTooltipTitle]="'tree.expand_all'|translate" (click)="expandAll()">

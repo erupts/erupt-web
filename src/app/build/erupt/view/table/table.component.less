@@ -176,13 +176,62 @@
         }
 
         @media (max-width: 767px) {
-            .tc-toolbar {
+            .table-split-layout {
                 flex-direction: column;
-                align-items: flex-start;
+            }
+
+            .tree-panel {
+                width: 100% !important; // override inline [style.width.px]
+                max-width: none !important;
+                height: auto;
+                max-height: 35vh;
+                border-bottom: 1px solid var(--ant-border-color-split, #eee);
+                overflow: auto;
+            }
+
+            .tree-resize-handle {
+                display: none;
+            }
+
+            .tc-toolbar {
+                padding: 6px 10px;
+                gap: 6px;
+                min-height: 36px;
+            }
+
+            .tc-actions {
+                gap: 6px;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                &::-webkit-scrollbar { display: none; }
+
+                > button, > span, > nz-badge {
+                    flex-shrink: 0;
+                }
             }
 
             .tc-utils {
-                align-self: flex-end;
+                flex-shrink: 0;
+            }
+
+            .tc-inner {
+                padding: 8px;
+            }
+
+            .tc-search {
+                padding: 4px 6px;
+            }
+
+            .tc-pagination {
+                height: 36px;
+
+                nz-pagination {
+                    ::ng-deep .ant-pagination-options {
+                        display: none;
+                    }
+                }
             }
 
             st {

@@ -111,4 +111,67 @@
         height: 100%;
         opacity: 0.45;
     }
+
+    // ── 移动端折叠按钮（仅小屏显示）─────────────────────────────
+    .tree-mobile-toggle {
+        display: none;
+    }
+
+    // ── 移动端适配 ──────────────────────────────────────────────
+    @media (max-width: 767px) {
+        .tree-layout {
+            flex-direction: column;
+        }
+
+        .tree-nav {
+            width: 100% !important; // override inline [style.width.px]
+            max-width: none !important;
+            max-height: none;
+            border-bottom: 1px solid #eaecf0;
+            overflow: hidden;
+            transition: max-height 0.25s ease;
+
+            &.collapsed {
+                max-height: 39px;
+
+                .tree-nav-body {
+                    display: none;
+                }
+            }
+
+            &:not(.collapsed) {
+                max-height: 40vh;
+            }
+        }
+
+        .tree-nav-body {
+            max-height: calc(40vh - 39px);
+        }
+
+        .tree-resize-handle {
+            display: none;
+        }
+
+        .tree-mobile-toggle {
+            display: inline-flex;
+        }
+
+        .tree-detail {
+            flex: 1;
+            min-height: 0;
+        }
+
+        .tree-detail-header {
+            padding: 0 8px;
+            gap: 6px;
+
+            button {
+                font-size: 12px;
+            }
+        }
+
+        .tree-detail-body {
+            padding: 8px;
+        }
+    }
 }
