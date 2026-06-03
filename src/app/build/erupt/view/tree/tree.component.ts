@@ -231,6 +231,8 @@ export class TreeComponent implements OnInit, OnDestroy {
                     }, 0)
                 }
             }
+        }, () => {
+            this.treeLoading = false;
         });
     }
 

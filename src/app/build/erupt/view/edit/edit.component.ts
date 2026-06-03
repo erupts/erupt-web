@@ -54,6 +54,8 @@ export class EditComponent implements OnInit {
                 this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName, null, this.header).subscribe(data => {
                     this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
                     this.loading = false;
+                }, () => {
+                    this.loading = false;
                 });
             }
         } else {

@@ -98,9 +98,11 @@
                         <span>{{ 'tree.select_hint' | translate }}</span>
                     </div>
                 }
-                <nz-spin [nzSpinning]="loading" nzSize="large" [hidden]="!showEdit">
-                    <erupt-edit [eruptBuildModel]="eruptBuildModel" [behavior]="behavior" />
-                </nz-spin>
+                @if (showEdit) {
+                    <nz-spin [nzSpinning]="loading" nzSize="large">
+                        <erupt-edit [eruptBuildModel]="eruptBuildModel" [behavior]="behavior"/>
+                    </nz-spin>
+                }
             </div>
 
         </div>

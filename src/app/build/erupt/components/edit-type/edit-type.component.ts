@@ -13,7 +13,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzUploadFile} from "ng-zorro-antd/upload";
 import {DataHandlerService} from "../../service/data-handler.service";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, skip} from "rxjs";
 import {SignaturePadComponent} from "../signature-pad/signature-pad.component";
 
 @Component({
@@ -114,7 +114,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 this.dynamicByCheck(model);
             }
             if (model.eruptFieldJson.edit.onchange && model.eruptFieldJson.edit.onchange != "OnChange") {
-                model.eruptFieldJson.edit.$valueSubject.subscribe((value) => {
+                model.eruptFieldJson.edit.$valueSubject.pipe(skip(1)).subscribe((value) => {
                     if (!this.loading) {
                         this.dataService.onChange(this.eruptModel.eruptName, model.fieldName, this.dataHandlerService.eruptValueToObject(this.eruptBuildModel)).subscribe(res => {
                             if (res.data.formData) {

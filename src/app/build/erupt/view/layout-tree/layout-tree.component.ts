@@ -59,6 +59,8 @@ export class LayoutTreeComponent implements OnInit {
                 this.selectedKeys = [undefined];
             }
             this.treeLoading = false;
+        }, () => {
+            this.treeLoading = false;
         });
     }
 
