@@ -65,6 +65,24 @@
       </li>
     }
 
+    @if (isEruptAi) {
+      <li>
+        <div class="alain-default__nav-item" (click)="openEruptAi()">
+          <i class="fa fa-magic" aria-hidden="true"></i>
+        </div>
+      </li>
+    }
+
+    @if (isEruptNotice) {
+      <li>
+        <div class="alain-default__nav-item" (click)="openEruptNotice()">
+          <nz-badge nzSize="small" [nzCount]="unreadCount" [nzOffset]="[2, -5]">
+            <i nz-icon nzType="bell"></i>
+          </nz-badge>
+        </div>
+      </li>
+    }
+
     <li class="hidden-mobile" (click)="toggleScreen()">
       <div class="alain-default__nav-item">
         <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'"></i>
@@ -96,22 +114,6 @@
         </ng-container>
       </nz-drawer>
     </li>
-    @if (isEruptAi) {
-      <li>
-        <div class="alain-default__nav-item" (click)="openEruptAi()">
-          <i class="fa fa-magic" aria-hidden="true"></i>
-        </div>
-      </li>
-    }
-    @if (isEruptNotice) {
-      <li>
-        <div class="alain-default__nav-item" (click)="openEruptNotice()">
-          <nz-badge nzSize="small" [nzCount]="unreadCount"  [nzOffset]="[2, -5]">
-            <i nz-icon nzType="bell"></i>
-          </nz-badge>
-        </div>
-      </li>
-    }
 
     <li>
       <header-user></header-user>

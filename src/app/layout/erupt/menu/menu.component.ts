@@ -1,4 +1,5 @@
 import {Direction, Directionality} from '@angular/cdk/bidi';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {DOCUMENT} from '@angular/common';
 import {
     ChangeDetectionStrategy,
@@ -37,6 +38,7 @@ const FLOATINGCLS = 'sidebar-nav__floating';
     standalone: false,
     selector: 'erupt-menu',
     templateUrl: './menu.component.html',
+    styleUrls: ['./menu.component.less'],
     host: {
         '(click)': '_click()',
         '(document:click)': 'closeSubMenu()',
@@ -74,6 +76,11 @@ export class MenuComponent implements OnInit, OnDestroy {
     @Input() maxLevelIcon = 3;
 
     @Output() readonly select = new EventEmitter<Menu>();
+
+    private static readonly MENU_ORDER_KEY = 'erupt_menu_order';
+    private static readonly FAVORITES_KEY = 'erupt_menu_favorites';
+
+    favorites: Nav[] = [];
 
     get collapsed(): boolean {
         return this.settings.layout.collapsed;
@@ -259,6 +266,8 @@ export class MenuComponent implements OnInit, OnDestroy {
             this.fixHide(data);
             this.loading = false;
             this.list = data.filter((w: Nav) => w._hidden !== true);
+            this.restoreMenuOrder();
+            this.loadFavorites();
             cdr.detectChanges();
         });
         router.events.pipe(takeUntil(destroy$)).subscribe(e => {
@@ -298,6 +307,93 @@ export class MenuComponent implements OnInit, OnDestroy {
 
         inFn(ls);
     }
+
+    // #region Favorites
+
+    private loadFavorites(): void {
+        const keys: string[] = JSON.parse(localStorage.getItem(MenuComponent.FAVORITES_KEY) || '[]');
+        if (!keys.length) {
+            this.favorites = [];
+            return;
+        }
+        const result: Nav[] = [];
+        this.menuSrv.visit(this.list, (i: Nav) => {
+            if (keys.includes(i.link || i.text || '')) result.push(i);
+        });
+        this.favorites = result;
+    }
+
+    private saveFavorites(): void {
+        const keys = this.favorites.map(i => i.link || i.text || '');
+        localStorage.setItem(MenuComponent.FAVORITES_KEY, JSON.stringify(keys));
+    }
+
+    isFavorite(item: Nav): boolean {
+        const key = item.link || item.text || '';
+        return this.favorites.some(f => (f.link || f.text || '') === key);
+    }
+
+    toggleFavorite(item: Nav): void {
+        if (this.isFavorite(item)) {
+            this.favorites = this.favorites.filter(f => (f.link || f.text || '') !== (item.link || item.text || ''));
+        } else {
+            this.favorites = [...this.favorites, item];
+        }
+        this.saveFavorites();
+        this.cdr.detectChanges();
+    }
+
+    // #endregion
+
+    // #region Drag & Drop
+
+    drop(event: CdkDragDrop<Nav[]>, siblings: Nav[]): void {
+        moveItemInArray(siblings, event.previousIndex, event.currentIndex);
+        this.saveMenuOrder();
+        this.cdr.detectChanges();
+    }
+
+    private saveMenuOrder(): void {
+        const order: Record<string, number> = {};
+        const collect = (items: Nav[], prefix: string) => {
+            items.forEach((item, idx) => {
+                const key = prefix + (item.text || item.link || idx);
+                order[key] = idx;
+                if (item.children?.length) {
+                    collect(item.children, key + '/');
+                }
+            });
+        };
+        collect(this.list, '');
+        localStorage.setItem(MenuComponent.MENU_ORDER_KEY, JSON.stringify(order));
+    }
+
+    private restoreMenuOrder(): void {
+        const raw = localStorage.getItem(MenuComponent.MENU_ORDER_KEY);
+        if (!raw) return;
+        try {
+            const order: Record<string, number> = JSON.parse(raw);
+            const sort = (items: Nav[], prefix: string) => {
+                items.sort((a, b) => {
+                    const ka = prefix + (a.text || a.link || '');
+                    const kb = prefix + (b.text || b.link || '');
+                    const oa = order[ka] ?? 999;
+                    const ob = order[kb] ?? 999;
+                    return oa - ob;
+                });
+                items.forEach((item, idx) => {
+                    const key = prefix + (item.text || item.link || idx);
+                    if (item.children?.length) {
+                        sort(item.children, key + '/');
+                    }
+                });
+            };
+            sort(this.list, '');
+        } catch {
+        }
+    }
+
+    // #endregion
 
     ngOnDestroy(): void {
         this.destroy$.next();

@@ -1,4 +1,55 @@
-.sidebar-nav__item{
+.sidebar-nav__item {
     position: relative;
     overflow: hidden;
+}
+
+// Drag & Drop
+.sidebar-nav__drag-placeholder {
+    height: 40px;
+    border: 2px dashed var(--ant-primary-color);
+    border-radius: 4px;
+    background: rgba(var(--ant-primary-color-rgb, 24, 144, 255), 0.06);
+}
+
+.cdk-drag-preview .sidebar-nav__item-link {
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
+
+.cdk-drag-animating {
+    transition: transform 200ms ease;
+}
+
+// Pin icon — sits in the 32px right-padding area of .sidebar-nav__item-link
+.sidebar-nav__pin {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s;
+    cursor: pointer;
+    z-index: 1;
+
+    &:hover { color: var(--ant-primary-color); }
+    &--active { color: var(--ant-primary-color); }
+}
+
+// override overflow:hidden on the link so the pin stays visible
+.sidebar-nav__item:hover {
+    overflow: visible;
+
+    > .sidebar-nav__item-link .sidebar-nav__pin {
+        opacity: 1;
+    }
+}
+
+// Pinned favorites section
+.sidebar-nav--pinned {
+    border-bottom: 1px solid var(--ant-border-color-split);
+    padding-bottom: 4px;
+    margin-bottom: 4px;
 }
