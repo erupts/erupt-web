@@ -100,10 +100,12 @@
 
 <!-- Favorites -->
 @if (!collapsed && favorites.length > 0) {
-  <ul class="sidebar-nav sidebar-nav--pinned">
+  <ul class="sidebar-nav sidebar-nav--pinned" cdkDropList (cdkDropListDropped)="dropFavorite($event)">
     @for (f of favorites; track f) {
-      <li class="sidebar-nav__item" [class.sidebar-nav__selected]="f._selected">
+      <li cdkDrag class="sidebar-nav__item sidebar-nav__item--fav" [class.sidebar-nav__selected]="f._selected">
+        <div class="sidebar-nav__drag-placeholder" *cdkDragPlaceholder></div>
         <a class="sidebar-nav__item-link" (click)="to(f)" [href]="'#'+f.link">
+          <i nz-icon nzType="holder" class="sidebar-nav__drag-handle"></i>
           @if (f._needIcon) {
             <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: f.icon }"></ng-template>
           }

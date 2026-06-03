@@ -343,6 +343,12 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
     }
 
+    dropFavorite(event: CdkDragDrop<Nav[]>): void {
+        moveItemInArray(this.favorites, event.previousIndex, event.currentIndex);
+        this.saveFavorites();
+        this.cdr.detectChanges();
+    }
+
     // #endregion
 
     // #region Drag & Drop

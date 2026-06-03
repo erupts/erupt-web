@@ -53,3 +53,22 @@
     padding-bottom: 4px;
     margin-bottom: 4px;
 }
+
+// Drag handle in favorites
+.sidebar-nav__drag-handle {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.25);
+    cursor: grab;
+    margin-right: 4px;
+    flex-shrink: 0;
+    transition: color 0.15s;
+
+    &:hover { color: rgba(0, 0, 0, 0.45); }
+    &:active { cursor: grabbing; }
+}
+
+// Make fav item link flex so handle + icon + text align properly
+.sidebar-nav__item--fav > .sidebar-nav__item-link {
+    display: flex;
+    align-items: center;
+}
