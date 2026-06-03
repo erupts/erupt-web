@@ -210,6 +210,7 @@ export class TabTableComponent implements OnInit {
             nzStyle: {top: "20px"},
             nzDraggable:true,
             nzWrapClassName: "modal-xxl",
+            nzBodyStyle: {padding: "0"},
             nzMaskClosable: false,
             nzKeyboard: false,
             nzTitle: this.i18n.fanyi("global.new"),

@@ -128,7 +128,7 @@ export class ReferenceComponent implements OnInit {
             nzDraggable:true,
             nzKeyboard: true,
             nzStyle: {top: "24px"},
-            nzBodyStyle: {padding: "16px"},
+            nzBodyStyle: {padding: "0"},
             nzTitle: edit.title + (edit.$value?.[edit.referenceTableType.label] ? "【" + edit.$value[edit.referenceTableType.label] + "】" : ""),
             nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzContent: TableComponent,

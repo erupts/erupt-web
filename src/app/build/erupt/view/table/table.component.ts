@@ -585,7 +585,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 nzDraggable: true,
                 nzWrapClassName: "modal-xxl",
                 nzStyle: {top: "30px"},
-                nzBodyStyle: {padding: "18px"},
+                nzBodyStyle: {padding: "0"},
                 nzMaskClosable: false,
                 nzKeyboard: false,
                 nzTitle: drill.title,

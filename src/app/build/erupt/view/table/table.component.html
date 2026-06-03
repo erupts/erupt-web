@@ -1,5 +1,5 @@
 @if (!eruptBuildModel) {
-    <div [style.padding]="!_drill && !_reference ? '16px' : null">
+    <div [style.padding]="'16px'">
         <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
     </div>
 }
@@ -186,20 +186,18 @@
                         }
                     </div>
                     <div class="tc-utils">
-                        <span>
-                            <button nz-button nzSize="small"
-                                    nz-tooltip [nzTooltipTitle]="'global.refresh'|translate"
-                                    [nzLoading]="dataPage.querying" (click)="query()">
-                                <i nz-icon nzType="reload" nzTheme="outline"></i>
-                            </button>
-                            <button nz-button nzSize="small" style="margin-left:-1px"
-                                    nz-dropdown [nzDropdownMenu]="autoRefreshMenu" nzPlacement="bottomRight"
-                                    nz-tooltip [nzTooltipTitle]="'table.auto_refresh'|translate"
-                                    [style.border-color]="autoRefreshSeconds ? 'var(--ant-primary-color-hover)' : null"
-                                    [style.color]="autoRefreshSeconds ? 'var(--ant-primary-color)' : null">
-                                <i nz-icon nzType="history" nzTheme="outline"></i>
-                            </button>
-                        </span>
+                        <button nz-button nzSize="small"
+                                nz-tooltip [nzTooltipTitle]="'global.refresh'|translate"
+                                [nzLoading]="dataPage.querying" (click)="query()">
+                            <i nz-icon nzType="reload" nzTheme="outline"></i>
+                        </button>
+                        <button nz-button nzSize="small" style="margin-left:-1px"
+                                nz-dropdown [nzDropdownMenu]="autoRefreshMenu" nzPlacement="bottomRight"
+                                nz-tooltip [nzTooltipTitle]="'table.auto_refresh'|translate"
+                                [style.border-color]="autoRefreshSeconds ? 'var(--ant-primary-color-hover)' : null"
+                                [style.color]="autoRefreshSeconds ? 'var(--ant-primary-color)' : null">
+                            <i nz-icon nzType="history" nzTheme="outline"></i>
+                        </button>
                         <nz-dropdown-menu #autoRefreshMenu="nzDropdownMenu">
                             <ul nz-menu>
                                 <li nz-menu-item [nzSelected]="autoRefreshSeconds === 0" (click)="setAutoRefresh(0)">{{ 'table.auto_refresh.off'|translate }}</li>
