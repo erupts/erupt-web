@@ -29,11 +29,11 @@
   }
 </ng-template>
 <ng-template #tree let-ls>
-  <div cdkDropList (cdkDropListDropped)="drop($event, ls)">
+  <div cdkDropList [cdkDropListDisabled]="isPad" (cdkDropListDropped)="drop($event, ls)">
     @for (i of ls; track i) {
       @if (i._hidden !== true) {
         <li
-          cdkDrag
+          cdkDrag [cdkDragDisabled]="isPad"
           class="sidebar-nav__item"
           [class.sidebar-nav__selected]="i._selected"
           [class.sidebar-nav__open]="i.open"
@@ -61,7 +61,7 @@
                 }
               }
               <span class="sidebar-nav__item-text" [innerHTML]="i._text" [attr.title]="i.text"></span>
-              @if (!collapsed) {
+              @if (!collapsed && !isPad) {
                 <i nz-icon nzType="pushpin"
                    [nzTheme]="isFavorite(i) ? 'fill' : 'outline'"
                    class="sidebar-nav__pin"
@@ -99,7 +99,7 @@
 </ng-template>
 
 <!-- Favorites -->
-@if (!collapsed && favorites.length > 0) {
+@if (!collapsed && !isPad && favorites.length > 0) {
   <ul class="sidebar-nav sidebar-nav--pinned" cdkDropList (cdkDropListDropped)="dropFavorite($event)">
     @for (f of favorites; track f) {
       <li cdkDrag class="sidebar-nav__item sidebar-nav__item--fav" [class.sidebar-nav__selected]="f._selected">

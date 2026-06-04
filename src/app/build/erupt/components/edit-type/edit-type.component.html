@@ -521,7 +521,7 @@
     </form>
 
     @if (eruptBuildModel.tabErupts) {
-        <nz-tabset [nzType]="'card'" style="margin-top: 5px">
+        <nz-tabs [nzType]="'card'" style="margin-top: 5px">
             @for (item of tabErupts; track item) {
                 @if (eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.show) {
                     <nz-tab [nzTitle]="tabTitle"
@@ -556,6 +556,6 @@
                     }
                 </ng-template>
             }
-        </nz-tabset>
+        </nz-tabs>
     }
 </div>

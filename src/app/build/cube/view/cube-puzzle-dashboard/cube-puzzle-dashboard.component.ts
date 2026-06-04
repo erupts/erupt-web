@@ -1,4 +1,15 @@
-import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    QueryList,
+    TemplateRef,
+    ViewChild,
+    ViewChildren
+} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
@@ -353,12 +364,12 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     }
 
     changedOptions() {
-        this.options.api?.optionsChanged();
+        this.options['api']?.optionsChanged();
     }
 
     removeItem(index: number) {
         this.dsl.reports.splice(index, 1);
-        this.options.api.optionsChanged();
+        this.options['api'].optionsChanged();
     }
 
     refreshItem(index: number) {

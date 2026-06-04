@@ -219,6 +219,9 @@ export class MenuComponent implements OnInit, OnDestroy {
             return;
         }
         this.appViewService.setRouterViewDesc(null)
+        if (this.isPad) {
+            this.openAside(true);
+        }
         this.ngZone.run(() => this.router.navigateByUrl(item.link!));
     }
 
@@ -410,7 +413,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     // #region Under pad
 
-    private get isPad(): boolean {
+    get isPad(): boolean {
         return this.doc.defaultView!.innerWidth < 768;
     }
 

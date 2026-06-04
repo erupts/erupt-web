@@ -92,8 +92,15 @@ export class MultiChoiceComponent implements OnInit, AfterViewChecked {
         return false;
     }
 
-    checkboxChange(e: any[]) {
-        this.eruptField.eruptFieldJson.edit.$value = e;
+    onCheckChange(value: any, checked: boolean) {
+        const values: any[] = this.eruptField.eruptFieldJson.edit.$value || [];
+        if (checked) {
+            if (!this.includes(values, value)) values.push(value);
+        } else {
+            const idx = values.findIndex(v => v == value);
+            if (idx !== -1) values.splice(idx, 1);
+        }
+        this.eruptField.eruptFieldJson.edit.$value = [...values];
     }
 
     getValueColor(value: any): string {

@@ -39,7 +39,7 @@
             </div>
             @if (subEruptBuild) {
                 <div>
-                    <nz-tabset>
+                    <nz-tabs>
                         <nz-tab nzTitle="父流程 → 子流程">
                             @for (mapping of subNode.mappings; track mapping; let i = $index) {
                                 <div style="display: flex;align-items:center;gap: 8px;margin-bottom: 12px">
@@ -100,7 +100,7 @@
                                 <button nz-button nzType="primary" (click)="addMappingForParent()">添加映射</button>
                             </div>
                         </nz-tab>
-                    </nz-tabset>
+                    </nz-tabs>
                 </div>
             }
         </div>

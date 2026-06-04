@@ -17,7 +17,7 @@ No test suite is present in this project.
 
 ## Architecture Overview
 
-This is an **Angular 20 enterprise admin framework** (`erupt-web`) that auto-generates UI/forms from JSON schema definitions provided by a Java backend. The philosophy is "zero frontend code" — UI is driven entirely by schema.
+This is an **Angular 21 enterprise admin framework** (`erupt-web`) that auto-generates UI/forms from JSON schema definitions provided by a Java backend. The philosophy is "zero frontend code" — UI is driven entirely by schema.
 
 ### Backend Integration
 

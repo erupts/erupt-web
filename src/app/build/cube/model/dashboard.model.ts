@@ -1,4 +1,4 @@
-import {GridsterItem} from "angular-gridster2";
+import {GridsterItemConfig} from "angular-gridster2";
 import {CubeOperator, FilterGroup, Sort} from "./cube-query.model";
 
 export interface EruptUser {
@@ -100,7 +100,7 @@ export interface CompareConfig {
 /**
  * 报表 DSL 定义
  */
-export interface ReportDSL extends GridsterItem {
+export interface ReportDSL extends GridsterItemConfig {
     type?: ReportType;
     title?: string;
     description?: string;
