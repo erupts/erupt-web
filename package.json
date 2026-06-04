@@ -29,8 +29,7 @@
         "analyze:view": "source-map-explorer dist/**/*.js",
         "color-less": "ng-alain-plugin-theme -t=colorLess",
         "theme": "ng-alain-plugin-theme -t=themeCss",
-        "icon": "ng g ng-alain:plugin icon",
-        "postinstall": "node scripts/patch-nz-drawer.js"
+        "icon": "ng g ng-alain:plugin icon"
     },
     "dependencies": {
         "@angular/animations": "^21.0.0",

@@ -40,7 +40,6 @@ export class SettingsComponent implements OnInit {
         if (value) {
             this.reuseTabService.mode = 0;
             this.reuseTabService.excludes = [];
-            this.toggleColorWeak(false);
         } else {
             this.reuseTabService.mode = 2;
             this.reuseTabService.excludes = [/\d*/];
@@ -53,7 +52,6 @@ export class SettingsComponent implements OnInit {
         this.settingSrv.setLayout("colorWeak", value)
         if (value) {
             document.documentElement.classList.add("color-weak");
-            this.changeReuse(false);
         } else {
             document.documentElement.classList.remove("color-weak");
         }
