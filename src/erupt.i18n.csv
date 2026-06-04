@@ -442,3 +442,5 @@ ai.chat.yesterday,昨天,昨天,Yesterday,Hier,昨日,어제,Вчера,Ayer,Ges
 ai.chat.just_now,刚刚,剛剛,Just now,À l'instant,たった今,방금,Только что,Ahora mismo,Gerade eben,Agora mesmo,Baru saja,الآن
 global.expand,展开,展開,Expand,Développer,展開,펼치기,Развернуть,Expandir,Erweitern,Expandir,Perluas,توسيع
 global.collapse,收起,收起,Collapse,Réduire,折りたたむ,접기,Свернуть,Contraer,Einklappen,Recolher,Ciutkan,طي
+setting.detail-drawer,抽屉查看详情,抽屜查看詳情,Drawer for Details,Tiroir pour détails,ドロワーで詳細表示,서랍으로 상세보기,Боковая панель,Cajón para detalles,Seitenleiste für Details,Gaveta para detalhes,Drawer untuk detail,درج للتفاصيل
+setting.search-collapsed,默认收起搜索,預設收起搜索,Collapse Search by Default,Recherche réduite par défaut,検索をデフォルトで折りたたむ,기본 검색 접기,Свернуть поиск по умолчанию,Contraer búsqueda por defecto,Suche standardmäßig einklappen,Recolher pesquisa por padrão,Ciutkan pencarian default,طي البحث افتراضيًا

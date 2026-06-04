@@ -26,6 +26,16 @@
     </nz-select>
 </div>
 <div class="setting-item">
+    <span>{{'setting.detail-drawer' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout['drawDraw']"
+               (ngModelChange)="setLayout('drawDraw', layout['drawDraw'])"></nz-switch>
+</div>
+<div class="setting-item">
+    <span>{{'setting.search-collapsed' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout['searchCollapsed']"
+               (ngModelChange)="setLayout('searchCollapsed', layout['searchCollapsed'])"></nz-switch>
+</div>
+<div class="setting-item">
     <span>{{'setting.color-weak' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout.colorWeak"
                (ngModelChange)="toggleColorWeak(layout.colorWeak)"></nz-switch>
@@ -35,7 +45,7 @@
     <nz-switch nzSize="small" [(ngModel)]="layout['colorGray']"
                (ngModelChange)="toggleColorGray(layout['colorGray'])"></nz-switch>
 </div>
-<!--<div class="setting-item">-->
-<!--    <span>{{'setting.clear-cache' | translate}}</span>-->
-<!--    <button nz-button [nzSize]="'small'" (click)="clear()">{{'setting.clear' | translate}}</button>-->
-<!--</div>-->
+<div class="setting-item">
+    <span>{{'setting.clear-cache' | translate}}</span>
+    <button nz-button [nzSize]="'small'" nzDanger (click)="clear()">{{'setting.clear' | translate}}</button>
+</div>

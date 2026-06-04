@@ -49,6 +49,7 @@ export class SettingsComponent implements OnInit {
     }
 
     toggleColorWeak(value: boolean) {
+        if (value) this.toggleColorGray(false);
         this.settingSrv.setLayout("colorWeak", value)
         if (value) {
             document.documentElement.classList.add("color-weak");
@@ -59,6 +60,7 @@ export class SettingsComponent implements OnInit {
     }
 
     toggleColorGray(value: boolean) {
+        if (value) this.toggleColorWeak(false);
         this.settingSrv.setLayout("colorGray", value)
         if (value) {
             document.documentElement.classList.add("color-gray");
@@ -69,11 +71,13 @@ export class SettingsComponent implements OnInit {
 
     clear() {
         this.confirmServ.confirm({
-            // setting.ok
             nzTitle: this.i18n.fanyi("setting.confirm"),
             nzOnOk: () => {
+                const token = localStorage.getItem('_token');
                 localStorage.clear();
+                if (token) localStorage.setItem('_token', token);
                 this.messageServ.success(this.i18n.fanyi("finish"));
+                setTimeout(() => location.reload(), 500);
             }
         });
     }
