@@ -174,8 +174,8 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             true
         );
-        this.doc.body.classList[layout["colorGray"] ? "add" : "remove"]("color-gray");
-        this.doc.body.classList[layout.colorWeak ? "add" : "remove"]("color-weak");
+        this.doc.documentElement.classList[layout["colorGray"] ? "add" : "remove"]("color-gray");
+        this.doc.documentElement.classList[layout.colorWeak ? "add" : "remove"]("color-weak");
     }
 
     ngAfterViewInit(): void {

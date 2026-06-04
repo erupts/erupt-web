@@ -1,3 +1,35 @@
+.search-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin: 0 0 2px;
+
+    &::before,
+    &::after {
+        content: '';
+        flex: 1;
+        border-top: 1px dashed #e8e8e8;
+    }
+
+    &:hover::before,
+    &:hover::after {
+        border-color: var(--ant-primary-color);
+    }
+
+    &:hover .search-toggle-text {
+        color: var(--ant-primary-color);
+    }
+}
+
+.search-toggle-text {
+    padding: 0 12px;
+    font-size: 12px;
+    color: #bfbfbf;
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+
 :host {
     ::ng-deep {
         .erupt-input {
