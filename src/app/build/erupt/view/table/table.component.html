@@ -35,12 +35,16 @@
                                 </button>
                             }
                         }
-                        @if (eruptBuildModel.eruptModel.eruptJson.power.print) {
-                            @if (selectedRows.length == 1) {
-                                <button nz-button nzSize="small" id="erupt-btn-print" (click)="printSelectedRows()">
-                                    <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
-                                </button>
-                            }
+                        @if (selectedRows.length == 1) {
+                            <button nz-button nzSize="small" id="erupt-btn-print"
+                                    [nzLoading]="printLoading" (click)="printSelectedRows()">
+                                <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
+                            </button>
+                        }
+                        @if (hasPrintConfig) {
+                            <button nz-button nzSize="small" (click)="managePrintConfig()">
+                                <i nz-icon nzType="setting" nzTheme="outline"></i>{{ 'print.layout'|translate }}
+                            </button>
                         }
                         @if (eruptBuildModel.eruptModel.eruptJson.power.export) {
                             <nz-badge [nzCount]="selectedRows.length" [nzShowZero]="false" nzSize="small">
@@ -404,5 +408,43 @@
                 {{ 'table.totalLeft'|translate }} {{ dataPage.total }} {{ 'table.totalRight'|translate }}
             </ng-template>
         </div>
+    }
+</ng-template>
+<ng-template #printSelectTpl>
+    <nz-list nzSize="small">
+        <nz-list-item style="cursor:pointer;" (click)="onPrintSelect(null)">
+            <nz-list-item-meta [nzTitle]="'global.print'|translate"/>
+        </nz-list-item>
+        @for (cfg of printSelectData; track cfg.id) {
+            <nz-list-item style="cursor:pointer;" (click)="onPrintSelect(cfg)">
+                <nz-list-item-meta [nzTitle]="cfg.title || 'Untitled'"/>
+            </nz-list-item>
+        }
+    </nz-list>
+</ng-template>
+<ng-template #printConfigListTpl>
+    @if (printConfigListData.length === 0) {
+        <nz-empty nzNotFoundImage="simple"/>
+    } @else {
+        <nz-list nzSize="small">
+            @for (cfg of printConfigListData; track cfg.id) {
+                <nz-list-item>
+                    <nz-list-item-meta [nzTitle]="cfg.title || 'Untitled'"/>
+                    <ul nz-list-item-actions>
+                        <nz-list-item-action>
+                            <a (click)="editPrintConfig(eruptBuildModel.eruptModel.eruptName, cfg)">
+                                <i nz-icon nzType="edit" nzTheme="outline"></i>
+                            </a>
+                        </nz-list-item-action>
+                        <nz-list-item-action>
+                            <a nz-popconfirm [nzPopconfirmTitle]="'table.delete.hint'|translate"
+                               (nzOnConfirm)="deletePrintConfig(cfg)">
+                                <i nz-icon nzType="delete" nzTheme="outline" style="color:#ff4d4f;"></i>
+                            </a>
+                        </nz-list-item-action>
+                    </ul>
+                </nz-list-item>
+            }
+        </nz-list>
     }
 </ng-template>

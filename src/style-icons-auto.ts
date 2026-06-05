@@ -38,6 +38,7 @@ import {
     EyeOutline,
     EyeTwoTone,
     FileImageOutline,
+    FileTextOutline,
     FileTwoTone,
     FilterOutline,
     FormOutline,
@@ -186,5 +187,6 @@ export const ICONS_AUTO = [
     PieChartOutline,
     ColumnWidthOutline,
     PushpinOutline,
-    PushpinFill
+    PushpinFill,
+    FileTextOutline
 ];

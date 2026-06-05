@@ -1,3 +1,8 @@
+@if (showTitle) {
+    <div style="margin-bottom: 10px;">
+        <input nz-input [(ngModel)]="configTitle" [placeholder]="'print.input_title' | translate" style="width: 100%;" />
+    </div>
+}
 <div style="margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
     @if (templates && templates.length > 0) {
         <button nz-button nz-dropdown [nzDropdownMenu]="templateMenu">

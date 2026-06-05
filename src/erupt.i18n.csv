@@ -153,6 +153,9 @@ IN,包含于,包含於,Contains,Contient,含まれる,포함,Содержит,Co
 NOT_IN,不包含于,不包含於,Not contains,Ne contient pas,含まれない,포함하지 않음,Не содержит,No contiene,Enthält nicht,Não contém,Tidak mengandung,لا يحتوي على
 
 print.preview,打印预览,列印預覽,Print Preview,Aperçu avant impression,印刷プレビュー,인쇄 미리보기,Предпросмотр печати,Vista previa de impresión,Druckvorschau,Pré-visualizar impressão,Pratinjau Cetak,معاينة الطباعة
+print.layout,打印排版,列印排版,Print Layout,Mise en page,印刷レイアウト,인쇄 레이아웃,Макет печати,Diseño de impresión,Drucklayout,Layout de impressão,Tata Letak Cetak,تخطيط الطباعة
+print.select_layout,选择打印排版,選擇列印排版,Select Print Layout,Sélectionner la mise en page,印刷レイアウトを選択,인쇄 레이아웃 선택,Выберите макет печати,Seleccionar diseño,Drucklayout auswählen,Selecionar layout,Pilih Tata Letak,اختر تخطيط الطباعة
+print.input_title,请输入排版名称,請輸入排版名稱,Enter layout name,Nom de la mise en page,レイアウト名を入力,레이아웃 이름 입력,Введите название макета,Nombre del diseño,Layoutname eingeben,Nome do layout,Nama tata letak,أدخل اسم التخطيط
 
 [flow]
 VIEW_FLOW,查看流程,檢視流程,View Flow,Voir le flux,フローを見る,플로우 보기,Просмотр потока,Ver flujo,Fluss anzeigen,Ver fluxo,Lihat Aliran,عرض التدفق

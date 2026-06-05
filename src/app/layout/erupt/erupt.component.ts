@@ -195,10 +195,12 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             this.menu = res;
 
             // this.statusService.menus = res;
+            const hiddenMenus: Menu[] = [];
             function generateTree(menus, pid): Menu[] {
                 let result: Menu[] = [];
                 menus.forEach((menu) => {
-                    if (menu.type === MenuTypeEnum.button || menu.type === MenuTypeEnum.api) {
+                    if (menu.type === MenuTypeEnum.api || menu.type === MenuTypeEnum.button) {
+                        hiddenMenus.push({text: menu.name, key: menu.code, hide: true});
                         return;
                     }
                     if (menu.pid == pid) {
@@ -231,12 +233,17 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 text: this.i18n.fanyi("global.home"),
                 link: "/"
             }]);
-            this.menuSrv.add([{
+            const tree = generateTree(res, null);
+            const menuItems: Menu[] = [{
                 group: false,
                 hideInBreadcrumb: true,
                 text: "~",
-                children: generateTree(res, null)
-            }]);
+                children: tree
+            }];
+            if (hiddenMenus.length) {
+                menuItems.push({group: false, hide: true, text: '_hidden', children: hiddenMenus});
+            }
+            this.menuSrv.add(menuItems);
             this.router.navigateByUrl(this.router.url).then();
 
             // 将所有菜单元素增加水波纹效果

@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
 import {
@@ -14,7 +14,7 @@ import {
     VisType
 } from "../../model/erupt.model";
 
-import {SettingsService} from "@delon/theme";
+import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
@@ -51,6 +51,8 @@ import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
 import {EruptAppData} from "@shared/model/erupt-app.model";
+import {PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
+import printJS from 'print-js';
 
 
 @Component({
@@ -78,13 +80,26 @@ export class TableComponent implements OnInit, OnDestroy {
         @Inject(NzDrawerService)
         private drawerService: NzDrawerService,
         private eruptLocalSettings: LocalSettingsService,
-        private el: ElementRef
+        private el: ElementRef,
+        private menuSrv: MenuService
     ) {
         this.hideCondition = !!this.settingSrv.layout['searchCollapsed'];
     }
 
     @ViewChild("st", {static: false})
     st: STComponent;
+
+    @ViewChild("printSelectTpl", {static: true})
+    printSelectTpl: TemplateRef<any>;
+
+    @ViewChild("printConfigListTpl", {static: true})
+    printConfigListTpl: TemplateRef<any>;
+
+    printSelectData: any[] = [];
+
+    printConfigListData: any[] = [];
+
+    private printConfigListRef: NzModalRef;
 
     extraRows: Row[];
 
@@ -177,7 +192,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
     resizing: boolean = false;
 
-    private fullscreenChange = () => { this.isFullscreen = !!document.fullscreenElement; };
+    private fullscreenChange = () => {
+        this.isFullscreen = !!document.fullscreenElement;
+    };
 
     private _resizeCleanup: (() => void) | null = null;
 
@@ -246,8 +263,12 @@ export class TableComponent implements OnInit, OnDestroy {
         document.addEventListener('fullscreenchange', this.fullscreenChange);
     }
 
-    isEruptPrint(): boolean {
+    get isEruptPrint(): boolean {
         return EruptAppData.get().properties["erupt-print"];
+    }
+
+    get hasPrintConfig(): boolean {
+        return this.isEruptPrint && null != this.menuSrv.getItem("PRINT_CONFIG");
     }
 
     ngOnDestroy(): void {
@@ -1397,13 +1418,50 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
+    private _printPk: any;
+    private _printSelectRef: NzModalRef;
+    printLoading: boolean = false;
+
     printSelectedRows() {
-        if (!this.selectedRows || this.selectedRows.length === 0) {
-            this.msg.warning('Select the data you want to print');
-            return;
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        this._printPk = this.selectedRows[0][this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
+        this.printLoading = true;
+        this.dataService.printConfigList(eruptName).subscribe({
+            next: res => {
+                this.printLoading = false;
+                const configs = res.data || [];
+                if (configs.length === 0) {
+                    this.builtinPrint(this._printPk);
+                } else {
+                    this.printSelectData = configs;
+                    this._printSelectRef = this.modal.create({
+                        nzTitle: this.i18n.fanyi("print.select_layout"),
+                        nzContent: this.printSelectTpl,
+                        nzDraggable: true,
+                        nzWidth: 400,
+                        nzBodyStyle: {padding: '0'},
+                        nzFooter: null
+                    });
+                }
+            },
+            error: () => {
+                this.printLoading = false;
+                this.builtinPrint(this._printPk);
+            }
+        });
+    }
+
+    onPrintSelect(cfg: any) {
+        this._printSelectRef?.close();
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        if (!cfg) {
+            this.builtinPrint(this._printPk);
+        } else {
+            this.doTemplatePrint(eruptName, this._printPk, cfg);
         }
-        const row = this.selectedRows[0];
-        const pk = row[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
+    }
+
+    private builtinPrint(pk: any) {
         this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, pk).subscribe(data => {
             const printBuildModel = cloneDeep(this.eruptBuildModel);
             this.dataHandler.objectToEruptValue(data, printBuildModel);
@@ -1412,21 +1470,116 @@ export class TableComponent implements OnInit, OnDestroy {
                 nzContent: PrintTypeComponent,
                 nzWidth: 700,
                 nzStyle: {top: '30px'},
-                nzBodyStyle: {
-                    maxHeight: "75vh",
-                    overflow: 'auto'
-                },
+                nzBodyStyle: {maxHeight: '75vh', overflow: 'auto'},
                 nzMaskClosable: false,
                 nzDraggable: true,
                 nzOkText: this.i18n.fanyi("global.print"),
                 nzOnOk: () => {
                     modal.getContentComponent().print();
-                    return false; // 不关闭对话框
+                    return false;
                 }
             });
-            const component = modal.getContentComponent();
-            component.eruptBuildModel = printBuildModel;
+            modal.getContentComponent().eruptBuildModel = printBuildModel;
         });
+    }
+
+    private doTemplatePrint(eruptName: string, pk: any, config: { content: string, pageConfig: any }) {
+        this.dataService.renderPrint(eruptName, pk, config.content).subscribe(res => {
+            const pc = config.pageConfig || {};
+            const pageSize = (!pc.paperSize || pc.paperSize === 'Custom') ? 'auto' : `${pc.paperSize} ${pc.orientation || 'portrait'}`;
+            const margin = `${pc.marginTop || 10}mm ${pc.marginRight || 10}mm ${pc.marginBottom || 10}mm ${pc.marginLeft || 10}mm`;
+            printJS({
+                printable: res.data,
+                type: 'raw-html',
+                style: `* { font-family: 'Heiti SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } @page { size: ${pageSize}; margin: ${margin}; }`
+            });
+        });
+    }
+
+    // ── 配置：模板列表 CRUD ──
+    managePrintConfig() {
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        this.dataService.printConfigList(eruptName).subscribe(res => {
+            this.showPrintConfigList(eruptName, res.data || []);
+        });
+    }
+
+    private showPrintConfigList(eruptName: string, configs: any[]) {
+        this.printConfigListData = configs;
+        this.printConfigListRef = this.modal.create({
+            nzTitle: this.i18n.fanyi("print.layout"),
+            nzContent: this.printConfigListTpl,
+            nzDraggable: true,
+            nzBodyStyle: {
+                padding: '0'
+            },
+            nzWidth: 420,
+            nzFooter: [{
+                label: this.i18n.fanyi("table.add"),
+                type: 'primary',
+                onClick: () => {
+                    this.printConfigListRef.close();
+                    this.editPrintConfig(this.eruptBuildModel.eruptModel.eruptName,
+                        {erupt: this.eruptBuildModel.eruptModel.eruptName, title: '', content: '', pageConfig: null});
+                }
+            }]
+        });
+    }
+
+    deletePrintConfig(cfg: any) {
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        this.dataService.printConfigDelete(eruptName, cfg.id).subscribe(() => {
+            this.msg.success(this.i18n.fanyi("global.delete.success"));
+            this.printConfigListData = this.printConfigListData.filter(c => c.id !== cfg.id);
+        });
+    }
+
+    editPrintConfig(eruptName: string, cfg: any) {
+        this.printConfigListRef?.close();
+        const vars: PrintVar[] = [];
+        this.eruptBuildModel.eruptModel.eruptFieldModels.forEach(f => {
+            if (f.eruptFieldJson.edit.title) {
+                vars.push({value: f.fieldName, label: f.eruptFieldJson.edit.title});
+            }
+        });
+        const isNew = !cfg.id;
+        const ref = this.modal.create({
+            nzTitle: isNew ? this.i18n.fanyi("global.new") : cfg.title,
+            nzDraggable: true,
+            nzContent: PrintTemplate,
+            nzWidth: '900px',
+            nzStyle: {top: '30px'},
+            nzMaskClosable: false,
+            nzKeyboard: false,
+            nzOnOk: () => {
+                const comp = ref.getContentComponent();
+                const title = comp.getTitle()?.trim();
+                if (!title) {
+                    this.msg.warning(this.i18n.fanyi("print.input_title"));
+                    return false as any;
+                }
+                const content = comp.getContent();
+                const pageConfig = comp.getPageConfig();
+                const data = {erupt: eruptName, title, content, pageConfig};
+                const api = isNew
+                    ? this.dataService.printConfigAdd(eruptName, data)
+                    : this.dataService.printConfigUpdate(eruptName, {...data, id: cfg.id});
+                api.subscribe(() => {
+                    this.msg.success(this.i18n.fanyi(isNew ? "global.add.success" : "global.update.success"));
+                    this.managePrintConfig();
+                });
+            }
+        });
+        const comp = ref.getContentComponent();
+        comp.height = 460;
+        comp.vars = vars;
+        comp.value = cfg.content || '';
+        comp.showTitle = true;
+        comp.configTitle = cfg.title || '';
+        comp.pageConfig = cfg.pageConfig || {
+            paperSize: 'A4', orientation: 'portrait',
+            marginTop: 10, marginRight: 10, marginBottom: 10, marginLeft: 10
+        };
     }
 
     protected readonly TableSize = TableSize;

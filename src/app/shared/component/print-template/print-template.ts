@@ -40,6 +40,10 @@ export class PrintTemplate implements OnInit {
 
     @Input() pageConfig: PrintPageConfig;
 
+    @Input() showTitle: boolean = false;
+
+    @Input() configTitle: string = '';
+
     @ViewChild('ue') ue: UEditorComponent;
 
     public loading: boolean = true;
@@ -102,6 +106,10 @@ export class PrintTemplate implements OnInit {
 
     getContent(): string {
         return this.ue.Instance.getContent();
+    }
+
+    getTitle(): string {
+        return this.configTitle;
     }
 
     getPageConfig(): PrintPageConfig {

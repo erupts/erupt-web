@@ -613,6 +613,35 @@ export class DataService {
         return this._http.get<R<VL[]>>(RestPath.erupt + "/print/vars");
     }
 
+    printConfigList(eruptName: string) {
+        return this._http.get<R<{ id: number, erupt: string, title: string, content: string, pageConfig: any }[]>>(
+            RestPath.erupt + "/print/config/" + eruptName + "/list", null, {
+                observe: "body", headers: {erupt: eruptName}
+            });
+    }
+
+    printConfigAdd(eruptName: string, config: any) {
+        return this._http.post<R<void>>(
+            RestPath.erupt + "/print/config/" + eruptName + "/add", config);
+    }
+
+    printConfigUpdate(eruptName: string, config: any) {
+        return this._http.post<R<void>>(
+            RestPath.erupt + "/print/config/" + eruptName + "/update", config);
+    }
+
+    printConfigDelete(eruptName: string, id: number) {
+        return this._http.post<R<void>>(
+            RestPath.erupt + "/print/config/" + eruptName + "/delete?id=" + id, null);
+    }
+
+    renderPrint(eruptName: string, id: any, content: string) {
+        return this._http.post<R<string>>(
+            RestPath.erupt + "/print/" + eruptName + "/" + id, content, null, {
+                observe: "body", headers: {erupt: eruptName}
+            });
+    }
+
     getFormViewData(eruptName: string): Observable<any> {
         return this._http.get<any>(RestPath.formView + "/" + eruptName, null, {
             observe: "body",
