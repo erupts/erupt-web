@@ -1,7 +1,7 @@
 <form nz-form [nzLayout]="'horizontal'">
   <div nz-row [nzGutter]="16">
     @for (field of searchEruptModel.eruptFieldModels; track field.fieldName) {
-      @if (field.eruptFieldJson.edit&&field.eruptFieldJson.edit.search.value) {
+      @if (field.eruptFieldJson.edit&&field.eruptFieldJson.edit.search.value && isVisible(field)) {
         <ng-template #inputTpl>
           <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl"
             [nzXXl]="col.xxl">
@@ -243,4 +243,11 @@
       }
     }
   </div>
+  @if (showToggle) {
+    <div class="search-toggle" (click)="collapsed = !collapsed">
+      <span class="search-toggle-text">
+        <i nz-icon [nzType]="collapsed ? 'down' : 'up'" nzTheme="outline"></i>
+      </span>
+    </div>
+  }
 </form>

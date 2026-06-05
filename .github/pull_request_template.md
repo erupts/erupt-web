@@ -1,10 +1,10 @@
-#### 说明
+#### Notes
 
-1. 请确认你提交的PR是到 'develop' 分支，否则我会手动修改代码并关闭PR。
-2. 请确认没有更改代码风格（如tab缩进）
-3. 新特性添加请确认注释完备，如有必要，请在src/test/java下添加Junit测试用例
+1. Please ensure your PR targets the `develop` branch — otherwise it will be manually handled and closed.
+2. Please ensure no code style changes (e.g., tab indentation).
+3. For new features, please include adequate comments and, if necessary, add JUnit test cases under `src/test/java`.
 
-### 修改描述(包括说明bug修复或者添加新特性)
+### Description (bug fix or new feature)
 
-1. [bug修复] balabala……
-2. [新特性]  balabala……
+1. [Bug Fix] ...
+2. [New Feature] ...

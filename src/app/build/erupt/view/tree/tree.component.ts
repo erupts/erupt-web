@@ -47,7 +47,7 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     private router$: Subscription;
 
-    private currentKey: string;
+    currentKey: string;
 
     treeScrollTop: number = 0;
 
@@ -237,6 +237,7 @@ export class TreeComponent implements OnInit, OnDestroy {
     }
 
     private rollTreePoint() {
+        if (!this.treeDiv) return;
         let st = this.treeDiv.nativeElement.scrollTop;
         setTimeout(() => {
             this.treeScrollTop = st;
@@ -290,12 +291,12 @@ private setExpanded(nodes: any[], expanded: boolean): void {
     nodeClickEvent(event: NzFormatEmitEvent): void {
         this.selectLeaf = true;
         this.loading = true;
-        this.showEdit = true;
         this.currentKey = event.node.origin.key;
         if (window.innerWidth <= 767) {
             this.mobileTreeCollapsed = true;
         }
         this.behavior = Scene.EDIT;
+        this.showEdit = true;
         this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
             this.loading = false;

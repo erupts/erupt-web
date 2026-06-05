@@ -38,8 +38,26 @@ export class SearchComponent implements OnInit, DoCheck {
 
     choiceEnum = ChoiceEnum;
 
+    collapsed = true;
+
+    readonly VISIBLE_COUNT = 4;
 
     constructor(private differs: KeyValueDiffers,) {
+    }
+
+    get searchFields() {
+        return this.searchEruptModel.eruptFieldModels.filter(
+            f => f.eruptFieldJson.edit && f.eruptFieldJson.edit.search.value
+        );
+    }
+
+    get showToggle(): boolean {
+        return this.searchFields.length > this.VISIBLE_COUNT;
+    }
+
+    isVisible(field: any): boolean {
+        if (!this.collapsed) return true;
+        return this.searchFields.indexOf(field) < this.VISIBLE_COUNT;
     }
 
     ngDoCheck(): void {

@@ -44,8 +44,15 @@ export class ChoiceComponent implements OnInit {
     }
 
 
-    checkedChange(event) {
-        this.dim.$value = event;
+    onCheckChange(id: any, checked: boolean) {
+        const values: any[] = this.dim.$value || [];
+        if (checked) {
+            if (values.indexOf(id) === -1) values.push(id);
+        } else {
+            const idx = values.indexOf(id);
+            if (idx !== -1) values.splice(idx, 1);
+        }
+        this.dim.$value = [...values];
     }
 
     checkedChangeAll($event) {

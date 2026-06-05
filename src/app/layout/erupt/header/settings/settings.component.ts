@@ -40,7 +40,6 @@ export class SettingsComponent implements OnInit {
         if (value) {
             this.reuseTabService.mode = 0;
             this.reuseTabService.excludes = [];
-            this.toggleColorWeak(false);
         } else {
             this.reuseTabService.mode = 2;
             this.reuseTabService.excludes = [/\d*/];
@@ -49,31 +48,34 @@ export class SettingsComponent implements OnInit {
     }
 
     toggleColorWeak(value: boolean) {
+        if (value) this.toggleColorGray(false);
         this.settingSrv.setLayout("colorWeak", value)
         if (value) {
-            document.body.classList.add("color-weak");
-            this.changeReuse(false);
+            document.documentElement.classList.add("color-weak");
         } else {
-            document.body.classList.remove("color-weak");
+            document.documentElement.classList.remove("color-weak");
         }
     }
 
     toggleColorGray(value: boolean) {
+        if (value) this.toggleColorWeak(false);
         this.settingSrv.setLayout("colorGray", value)
         if (value) {
-            document.body.classList.add("color-gray");
+            document.documentElement.classList.add("color-gray");
         } else {
-            document.body.classList.remove("color-gray");
+            document.documentElement.classList.remove("color-gray");
         }
     }
 
     clear() {
         this.confirmServ.confirm({
-            // setting.ok
             nzTitle: this.i18n.fanyi("setting.confirm"),
             nzOnOk: () => {
+                const token = localStorage.getItem('_token');
                 localStorage.clear();
+                if (token) localStorage.setItem('_token', token);
                 this.messageServ.success(this.i18n.fanyi("finish"));
+                setTimeout(() => location.reload(), 500);
             }
         });
     }

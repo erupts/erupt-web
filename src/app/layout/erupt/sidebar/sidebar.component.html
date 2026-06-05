@@ -6,3 +6,9 @@
         </div>
     </div>
 </div>
+@if (!settings.layout.collapsed) {
+    <div class="sidebar-resize-handle" (mousedown)="onResizeStart($event)"></div>
+}
+@if (resizing) {
+    <div class="sidebar-resize-overlay"></div>
+}

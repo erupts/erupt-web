@@ -100,7 +100,7 @@
                 }
                 @if (showEdit) {
                     <nz-spin [nzSpinning]="loading" nzSize="large">
-                        <erupt-edit [eruptBuildModel]="eruptBuildModel" [behavior]="behavior"/>
+                        <erupt-edit [eruptBuildModel]="eruptBuildModel" [behavior]="behavior" [id]="currentKey"/>
                     </nz-spin>
                 }
             </div>

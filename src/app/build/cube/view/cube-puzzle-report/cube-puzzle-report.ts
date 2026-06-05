@@ -1,5 +1,24 @@
-import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType, SubModelDSL} from "../../model/dashboard.model";
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
+import {
+    CubeKey,
+    Dashboard,
+    DashboardDSL,
+    DashboardTheme,
+    FilterDSL,
+    ReportDSL,
+    ReportType,
+    SubModelDSL
+} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
 import {CubeFilter, CubeOperator, DimensionFormat} from "../../model/cube-query.model";
@@ -157,7 +176,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     }
 
-    @HostListener('window:resize', ['$event'])
+    @HostListener('window:resize')
     onResize() {
         if (this.report.type === ReportType.TABLE) {
             this.updateTableHeight();

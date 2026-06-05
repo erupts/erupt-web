@@ -13,12 +13,12 @@
     @case (dimType.REFERENCE_CHECKBOX) {
       <label nz-checkbox [(nzChecked)]="dim.$viewValue"
       (nzCheckedChange)="checkedChangeAll($event)">{{'global.check_all'|translate}}</label>
-      <nz-checkbox-wrapper (nzOnChange)="checkedChange($event)">
+      <div>
         @for (i of data; track i) {
           <label nz-checkbox [nzChecked]="dim.$viewValue"
-          [nzValue]="i.id">{{i.title}}</label>
+          (nzCheckedChange)="onCheckChange(i.id, $event)">{{i.title}}</label>
         }
-      </nz-checkbox-wrapper>
+      </div>
     }
   }
 </nz-spin>

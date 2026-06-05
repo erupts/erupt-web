@@ -7,15 +7,22 @@
 @alain-default-header-hg: 44px !important;
 @router-animation-enabled: true;
 
-body.color-weak{
-    background: #121212;
+// Override @delon/theme's .color-weak (filter: invert) — applying filter on
+// <body> creates a new stacking context that breaks position:fixed children.
+// Moving the filter to <html> keeps fixed headers working correctly.
+html.color-weak {
+    filter: invert(80%);
 }
 
-body.color-gray{
+html.color-gray {
     filter: grayscale(100%);
     -webkit-filter: grayscale(100%);
     transition: filter 0.5s;
-    background: #fff;
+}
+
+// Neutralize @delon/theme's body-level .color-weak so it doesn't double-apply
+body.color-weak {
+    filter: none;
 }
 
 

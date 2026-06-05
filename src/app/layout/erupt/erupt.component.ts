@@ -1,4 +1,15 @@
-import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, Optional, Renderer2, ViewChild, ViewContainerRef} from "@angular/core";
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Inject,
+    OnDestroy,
+    OnInit,
+    Optional,
+    Renderer2,
+    ViewChild,
+    ViewContainerRef
+} from "@angular/core";
 import {IframeManagerService} from "@shared/service/iframe-manager.service";
 import {DOCUMENT} from "@angular/common";
 import {NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router} from "@angular/router";
@@ -88,7 +99,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
 
     themes = [];
 
-    nickName: string;
+    nickName: string | null = null;
 
     constructor(iconSrv: NzIconService,
                 private router: Router,
@@ -163,8 +174,8 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             true
         );
-        this.doc.body.classList[layout["colorGray"] ? "add" : "remove"]("color-gray");
-        this.doc.body.classList[layout.colorWeak ? "add" : "remove"]("color-weak");
+        this.doc.documentElement.classList[layout["colorGray"] ? "add" : "remove"]("color-gray");
+        this.doc.documentElement.classList[layout.colorWeak ? "add" : "remove"]("color-weak");
     }
 
     ngAfterViewInit(): void {

@@ -2,7 +2,7 @@
   <!-- 左侧面板：选择 -->
   <div class="left-panel">
     <!-- 使用 ng-zorro 的标签页 -->
-    <nz-tabset
+    <nz-tabs
       [(nzSelectedIndex)]="activeTab"
       (nzSelectedIndexChange)="onTabChange($event)"
       [nzTabPosition]="'top'"
@@ -58,7 +58,7 @@
           </div>
         </nz-tab>
       }
-    </nz-tabset>
+    </nz-tabs>
   </div>
 
   <!-- 右侧面板：已选项目 -->

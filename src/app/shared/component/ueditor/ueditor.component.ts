@@ -8,6 +8,7 @@ import {
     Inject,
     Input,
     NgZone,
+    numberAttribute,
     OnChanges,
     OnDestroy,
     OnInit,
@@ -17,7 +18,6 @@ import {
 } from '@angular/core';
 import {DOCUMENT} from '@angular/common';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {InputNumber} from '@ng-util/util/convert';
 import {UEditorConfig} from './ueditor.config';
 import {NuLazyService} from '@ng-util/lazy';
 
@@ -119,10 +119,10 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
 
     @Input() config: any;
 
-    @Input() @InputNumber() height = 360;
+    @Input({transform: numberAttribute}) height = 360;
 
     private _disabled = false;
-    @Input() @InputNumber() delay = 50;
+    @Input({transform: numberAttribute}) delay = 50;
     @Output() readonly onPreReady = new EventEmitter<UEditorComponent>();
     @Output() readonly onReady = new EventEmitter<UEditorComponent>();
     @Output() readonly onDestroy = new EventEmitter();

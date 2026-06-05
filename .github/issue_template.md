@@ -1,5 +1,7 @@
-### 版本情况
-erupt-web 版本： 1.X.X （请确保最新尝试是否还有问题）
+### Version
 
-### 问题描述（包括截图）
-xxx
+erupt-web version: 1.X.X (please verify the issue still exists on the latest version)
+
+### Problem Description (including screenshots)
+
+...

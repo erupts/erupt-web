@@ -1,4 +1,30 @@
 :host {
+    .sidebar-resize-handle {
+        position: absolute;
+        top: 0;
+        right: -3px;
+        width: 6px;
+        height: 100%;
+        cursor: col-resize;
+        z-index: 20;
+        transition: background 0.2s;
+
+        &:hover, &:active {
+            background: var(--ant-primary-color);
+            opacity: 0.3;
+        }
+    }
+
+    .sidebar-resize-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 9999;
+        cursor: col-resize;
+    }
+
     .fold {
         position: absolute;
         z-index: 0;
@@ -25,7 +51,7 @@
         }
 
         .sidebar-nav__item-icon {
-            font-size: 18px !important;
+            font-size: 15px !important;
         }
     }
 }

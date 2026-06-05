@@ -1,8 +1,15 @@
 /* eslint-disable import/order */
 /* eslint-disable import/no-duplicates */
 // #region Http Interceptors
-import {HTTP_INTERCEPTORS, HttpClientModule, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {APP_INITIALIZER, Injectable, NgModule} from '@angular/core';
+import {
+    HTTP_INTERCEPTORS,
+    HttpClientModule,
+    HttpEvent,
+    HttpHandler,
+    HttpInterceptor,
+    HttpRequest
+} from '@angular/common/http';
+import {APP_INITIALIZER, Injectable, NgModule, provideZoneChangeDetection} from '@angular/core';
 import {Observable} from 'rxjs';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -77,7 +84,7 @@ const APP_INIT_PROVIDES = [
         BidiModule,
         AppRoutingModule
     ],
-    providers: [...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, AppViewService, provideNzConfig(ngZorroConfig)],
+    providers: [provideZoneChangeDetection({eventCoalescing: true}), ...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, AppViewService, provideNzConfig(ngZorroConfig)],
     bootstrap: [AppComponent]
 })
 export class AppModule {
