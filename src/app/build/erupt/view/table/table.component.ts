@@ -1,18 +1,7 @@
 import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {
-    Alert,
-    Drill,
-    DrillInput,
-    EruptModel,
-    Power,
-    Row,
-    RowOperation,
-    Sort,
-    Vis,
-    VisType
-} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -188,7 +177,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     isFullscreen: boolean = false;
 
-    treeWidth: number = 220;
+    treeWidth: number = 235;
 
     resizing: boolean = false;
 

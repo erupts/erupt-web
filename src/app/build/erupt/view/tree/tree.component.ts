@@ -14,6 +14,8 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {AppViewService} from "@shared/service/app-view.service";
 import {Scene} from "../../model/erupt.enum";
 import {LocalSettingsService} from "../../service/local-settings.service";
+import {PrintTypeComponent} from "../../components/print-type/print-type";
+import {cloneDeep} from "lodash";
 
 @Component({
     standalone: false,
@@ -49,11 +51,17 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     currentKey: string;
 
+    selectedKeys: any[] = [];
+
     treeScrollTop: number = 0;
 
-    treeWidth: number = 220;
+    printLoading: boolean = false;
+
+    treeWidth: number = 235;
 
     resizing: boolean = false;
+
+    sortAsc: boolean | null = null;
 
     mobileTreeCollapsed: boolean = false;
 
@@ -215,7 +223,84 @@ export class TreeComponent implements OnInit, OnDestroy {
         }
     }
 
+    toggleSort(): void {
+        if (this.sortAsc === null) this.sortAsc = true;
+        else if (this.sortAsc === true) this.sortAsc = false;
+        else { this.fetchTreeData(); return; }
+        this.nodes = this.sortNodes([...this.nodes], this.sortAsc);
+    }
+
+    locateNode(): void {
+        this.expandPathTo(this.nodes, this.currentKey);
+        this.nodes = [...this.nodes];
+        this.selectedKeys = [...this.selectedKeys];
+        setTimeout(() => {
+            const container = this.treeDiv?.nativeElement;
+            if (!container) return;
+            const selected = container.querySelector('.ant-tree-node-selected');
+            if (selected) {
+                selected.scrollIntoView({behavior: 'smooth', block: 'center'});
+                return;
+            }
+            const viewport = container.querySelector('.cdk-virtual-scroll-viewport');
+            if (!viewport) return;
+            const idx = this.flattenVisible(this.nodes).findIndex((n: any) => n.key === this.currentKey);
+            if (idx >= 0) viewport.scrollTop = Math.max(0, idx * 28 - viewport.clientHeight / 2);
+        }, 100);
+    }
+
+    private expandPathTo(nodes: any[], key: string): boolean {
+        for (const n of nodes) {
+            if (n.key === key) return true;
+            if (n.children?.length && this.expandPathTo(n.children, key)) {
+                n.expanded = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private flattenVisible(nodes: any[]): any[] {
+        const result: any[] = [];
+        for (const n of nodes) {
+            result.push(n);
+            if (n.expanded && n.children?.length) result.push(...this.flattenVisible(n.children));
+        }
+        return result;
+    }
+
+    private sortNodes(nodes: any[], asc: boolean): any[] {
+        nodes.sort((a, b) => asc
+            ? String(a.title).localeCompare(String(b.title))
+            : String(b.title).localeCompare(String(a.title)));
+        nodes.forEach(n => { if (n.children?.length) n.children = this.sortNodes([...n.children], asc); });
+        return nodes;
+    }
+
+    printNode() {
+        this.printLoading = true;
+        this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
+            this.printLoading = false;
+            const printBuildModel = cloneDeep(this.eruptBuildModel);
+            this.dataHandler.objectToEruptValue(data, printBuildModel);
+            const modal = this.modal.create({
+                nzTitle: this.i18n.fanyi('print.preview'),
+                nzContent: PrintTypeComponent,
+                nzWidth: 700,
+                nzStyle: {top: '30px'},
+                nzBodyStyle: {maxHeight: '75vh', overflow: 'auto'},
+                nzMaskClosable: false,
+                nzDraggable: true,
+                nzOkText: this.i18n.fanyi('global.print'),
+                nzOnOk: () => { modal.getContentComponent().print(); return false; }
+            });
+            modal.getContentComponent().eruptBuildModel = printBuildModel;
+        }, () => { this.printLoading = false; });
+    }
+
     fetchTreeData() {
+        this.sortAsc = null;
+        this.selectedKeys = [];
         this.treeLoading = true;
         this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
             this.treeLoading = false;
@@ -292,6 +377,7 @@ private setExpanded(nodes: any[], expanded: boolean): void {
         this.selectLeaf = true;
         this.loading = true;
         this.currentKey = event.node.origin.key;
+        this.selectedKeys = [this.currentKey];
         if (window.innerWidth <= 767) {
             this.mobileTreeCollapsed = true;
         }

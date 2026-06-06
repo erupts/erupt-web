@@ -22,10 +22,16 @@
 
     .tree-nav-header {
         flex-shrink: 0;
+        padding: 7px 8px;
+        border-bottom: 1px solid #eaecf0;
+    }
+
+    .tree-nav-actions {
+        flex-shrink: 0;
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 7px 8px;
+        gap: 2px;
+        padding: 3px 4px;
         border-bottom: 1px solid #eaecf0;
     }
 
@@ -92,7 +98,7 @@
         flex-shrink: 0;
         display: flex;
         align-items: center;
-        gap: 8px;
+        //gap: 8px;
         padding: 7px 12px;
         background: #fff;
         border-bottom: 1px solid #eaecf0;
@@ -141,7 +147,7 @@
             transition: max-height 0.25s ease;
 
             &.collapsed {
-                max-height: 39px;
+                max-height: 78px;
 
                 .tree-nav-body {
                     display: none;

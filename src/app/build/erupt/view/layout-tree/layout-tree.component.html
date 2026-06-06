@@ -1,26 +1,64 @@
 <div class="layout-tree-wrap">
     <div class="layout-tree-search">
-        <nz-input-group [nzSuffix]="suffixIcon" nzSize="small" style="flex:1;min-width:0;">
+        <nz-input-group [nzSuffix]="suffixIcon" nzSize="small">
             <input type="text" nz-input [(ngModel)]="searchValue" [placeholder]="'table.query'|translate">
         </nz-input-group>
         <ng-template #suffixIcon>
             <i nz-icon nzType="search"></i>
         </ng-template>
-        @if (hasHierarchy) {
-            <button nz-button nzType="text" nzSize="small"
-                    nz-tooltip [nzTooltipTitle]="'tree.expand_all'|translate" (click)="expandAll()">
-                <i nz-icon nzType="node-expand" nzTheme="outline"></i>
-            </button>
-            <button nz-button nzType="text" nzSize="small"
-                    nz-tooltip [nzTooltipTitle]="'tree.collapse_all'|translate" (click)="collapseAll()">
-                <i nz-icon nzType="node-collapse" nzTheme="outline"></i>
-            </button>
-        }
     </div>
-    <div class="layout-tree-body">
+    <div class="layout-tree-actions">
+            <button nz-button nzType="text" nzSize="small" [nzLoading]="treeLoading"
+                    nz-tooltip [nzTooltipTitle]="'global.refresh'|translate" (click)="loadTreeData()">
+                @if (!treeLoading) {<i nz-icon nzType="reload" nzTheme="outline"></i>}
+            </button>
+            <button nz-button nzType="text" nzSize="small"
+                    [style.color]="sortAsc !== null ? 'var(--ant-primary-color)' : ''"
+                    nz-tooltip [nzTooltipTitle]="(sortAsc === null ? 'tree.sort_asc' : sortAsc ? 'tree.sort_desc' : 'tree.sort_cancel')|translate"
+                    (click)="toggleSort()">
+                <i nz-icon [nzType]="sortAsc === false ? 'sort-descending' : 'sort-ascending'" nzTheme="outline"></i>
+            </button>
+            @if (selectedKey) {
+                <button nz-button nzType="text" nzSize="small"
+                        nz-tooltip [nzTooltipTitle]="'tree.locate'|translate" (click)="locateNode()">
+                    <i nz-icon nzType="aim" nzTheme="outline"></i>
+                </button>
+            }
+            @if (hasHierarchy) {
+                <button nz-button nzType="text" nzSize="small"
+                        nz-tooltip [nzTooltipTitle]="'tree.expand_all'|translate" (click)="expandAll()">
+                    <i nz-icon nzType="node-expand" nzTheme="outline"></i>
+                </button>
+                <button nz-button nzType="text" nzSize="small"
+                        nz-tooltip [nzTooltipTitle]="'tree.collapse_all'|translate" (click)="collapseAll()">
+                    <i nz-icon nzType="node-collapse" nzTheme="outline"></i>
+                </button>
+            }
+            @if (canAdd) {
+                <button nz-button nzType="text" nzSize="small"
+                        nz-tooltip [nzTooltipTitle]="'table.add'|translate" (click)="addNode()">
+                    <i nz-icon nzType="plus" nzTheme="outline"></i>
+                </button>
+            }
+            @if (canEdit) {
+                <button nz-button nzType="text" nzSize="small"
+                        [disabled]="!selectedKey"
+                        nz-tooltip [nzTooltipTitle]="'global.editor'|translate" (click)="editNode()">
+                    <i nz-icon nzType="form" nzTheme="outline"></i>
+                </button>
+            }
+            @if (canDelete) {
+                <button nz-button nzType="text" nzSize="small" nzDanger
+                        [disabled]="!selectedKey"
+                        nz-tooltip [nzTooltipTitle]="'table.delete'|translate" (click)="deleteNode()">
+                    <i nz-icon nzType="delete" nzTheme="outline"></i>
+                </button>
+            }
+    </div>
+    <div class="layout-tree-body" #treeBody>
         <nz-spin [nzSpinning]="treeLoading" style="min-height: 60px;">
             <nz-tree class="tree-container"
-                     [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 100px - ' + (settingSrv.layout['reuse']?'40px':'0px') + ')' : null"
+                     [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 140px - ' + (settingSrv.layout['reuse']?'40px':'0px') + ')' : null"
                      [nzData]="list"
                      [nzShowLine]="true"
                      [nzSearchValue]="searchValue"

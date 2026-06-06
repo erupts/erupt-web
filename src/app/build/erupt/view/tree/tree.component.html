@@ -9,7 +9,7 @@
         <!-- ── 左侧导航树 ── -->
         <div class="tree-nav" [style.width.px]="treeWidth" [class.collapsed]="mobileTreeCollapsed">
             <div class="tree-nav-header">
-                <nz-input-group [nzSuffix]="suffixIcon" nzSize="small" style="flex:1;min-width:0;">
+                <nz-input-group [nzSuffix]="suffixIcon" nzSize="small">
                     <input type="text" nz-input [placeholder]="'tree.search'|translate" [(ngModel)]="searchValue">
                 </nz-input-group>
                 <ng-template #suffixIcon>
@@ -19,6 +19,24 @@
                         (click)="mobileTreeCollapsed = !mobileTreeCollapsed">
                     <i nz-icon [nzType]="mobileTreeCollapsed ? 'caret-down' : 'caret-up'" nzTheme="outline"></i>
                 </button>
+            </div>
+            <div class="tree-nav-actions">
+                <button nz-button nzType="text" nzSize="small" [nzLoading]="treeLoading"
+                        nz-tooltip [nzTooltipTitle]="'global.refresh'|translate" (click)="fetchTreeData()">
+                    @if (!treeLoading) {<i nz-icon nzType="reload" nzTheme="outline"></i>}
+                </button>
+                <button nz-button nzType="text" nzSize="small"
+                        [style.color]="sortAsc !== null ? 'var(--ant-primary-color)' : ''"
+                        nz-tooltip [nzTooltipTitle]="(sortAsc === null ? 'tree.sort_asc' : sortAsc ? 'tree.sort_desc' : 'tree.sort_cancel')|translate"
+                        (click)="toggleSort()">
+                    <i nz-icon [nzType]="sortAsc === false ? 'sort-descending' : 'sort-ascending'" nzTheme="outline"></i>
+                </button>
+                @if (currentKey) {
+                    <button nz-button nzType="text" nzSize="small"
+                            nz-tooltip [nzTooltipTitle]="'tree.locate'|translate" (click)="locateNode()">
+                        <i nz-icon nzType="aim" nzTheme="outline"></i>
+                    </button>
+                }
                 @if (eruptBuildModel.eruptModel.eruptJson.tree.pid) {
                     <button nz-button nzType="text" nzSize="small"
                             nz-tooltip [nzTooltipTitle]="'tree.expand_all'|translate" (click)="expandAll()">
@@ -36,20 +54,28 @@
                         <i nz-icon nzType="plus" nzTheme="outline"></i>
                     </button>
                 }
+                @if (currentKey && eruptBuildModel.eruptModel.eruptJson.power.add && eruptBuildModel.eruptModel.eruptJson.tree.pid) {
+                    <button nz-button nzType="text" nzSize="small"
+                            nz-tooltip [nzTooltipTitle]="'tree.add_children'|translate"
+                            (click)="addSub()" id="erupt-btn-add-sub-nav">
+                        <i nz-icon nzType="arrow-down" nzTheme="outline"></i>
+                    </button>
+                }
             </div>
 
             <div class="tree-nav-body" [scrollTop]="treeScrollTop" #treeDiv>
-                <nz-skeleton [nzLoading]="treeLoading && nodes.length == 0" [nzActive]="true" style="padding: 2px">
+                <nz-spin [nzSpinning]="treeLoading" style="min-height: 120px;">
                     <nz-tree #tree
-                             [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 100px - ' + (settingSrv.layout['reuse'] ? '40px' : '0px') + ')' : null"
+                             [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 140px - ' + (settingSrv.layout['reuse'] ? '40px' : '0px') + ')' : null"
                              [nzShowLine]="true"
                              [nzData]="nodes"
+                             [nzSelectedKeys]="selectedKeys"
                              [nzSearchValue]="searchValue"
                              [nzBlockNode]="true"
                              (nzClick)="nodeClickEvent($event)"
                              (nzDblClick)="nzDblClick($event)">
                     </nz-tree>
-                </nz-skeleton>
+                </nz-spin>
             </div>
 
         </div>
@@ -79,6 +105,12 @@
                         <button nz-button nzSize="small" nzType="dashed" (click)="addSub()" [disabled]="loading"
                                 id="erupt-btn-add_sub">
                             <i nz-icon nzType="arrow-down" nzTheme="outline"></i>{{ 'tree.add_children'|translate }}
+                        </button>
+                    }
+                    @if (eruptBuildModel.eruptModel.eruptJson.power.print) {
+                        <button nz-button nzSize="small" [nzLoading]="printLoading" (click)="printNode()"
+                                id="erupt-btn-print">
+                            <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
                         </button>
                     }
                 }
