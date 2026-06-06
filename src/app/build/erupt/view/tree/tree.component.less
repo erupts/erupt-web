@@ -24,10 +24,9 @@
         flex-shrink: 0;
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 8px;
         padding: 7px 8px;
         border-bottom: 1px solid #eaecf0;
-
     }
 
     .tree-nav-body {
@@ -43,14 +42,17 @@
             background: #d0d5dd;
             border-radius: 2px;
         }
+
     }
 
     // ── 拖拽分隔线 ────────────────────────────────────────────────
     .tree-resize-handle {
+        width: 3px;
         flex-shrink: 0;
         cursor: col-resize;
         position: relative;
         z-index: 1;
+        background: transparent;
 
         &::before {
             content: '';
@@ -82,7 +84,7 @@
         min-width: 0;
         display: flex;
         flex-direction: column;
-        background: #fff;
+        background: #f5f7fa;
         overflow: hidden;
     }
 
@@ -90,8 +92,8 @@
         flex-shrink: 0;
         display: flex;
         align-items: center;
-        padding: 0 12px;
-        min-height: 39px;
+        gap: 8px;
+        padding: 7px 12px;
         background: #fff;
         border-bottom: 1px solid #eaecf0;
         flex-wrap: wrap;
@@ -102,6 +104,13 @@
         min-height: 0;
         overflow: auto;
         padding: 12px;
+    }
+
+    .tree-form-card {
+        background: #fff;
+        border: 1px solid #eaecf0;
+        border-radius: 4px;
+        padding: 12px 12px 4px;
     }
 
     .tree-empty-hint {
@@ -162,7 +171,7 @@
         }
 
         .tree-detail-header {
-            padding: 0 8px;
+            padding: 6px 8px;
             gap: 6px;
 
             button {

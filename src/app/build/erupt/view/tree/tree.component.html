@@ -10,7 +10,7 @@
         <div class="tree-nav" [style.width.px]="treeWidth" [class.collapsed]="mobileTreeCollapsed">
             <div class="tree-nav-header">
                 <nz-input-group [nzSuffix]="suffixIcon" nzSize="small" style="flex:1;min-width:0;">
-                    <input type="text" nz-input placeholder="Search" [(ngModel)]="searchValue">
+                    <input type="text" nz-input [placeholder]="'tree.search'|translate" [(ngModel)]="searchValue">
                 </nz-input-group>
                 <ng-template #suffixIcon>
                     <i nz-icon nzType="search" style="font-size:12px;color:#9ca3af;"></i>
@@ -60,10 +60,11 @@
         <!-- ── 右侧详情区 ── -->
         <div class="tree-detail">
 
+            @if (showEdit) {
             <div class="tree-detail-header">
                 @if (selectLeaf) {
                     @if (eruptBuildModel.eruptModel.eruptJson.power.edit) {
-                        <button nz-button nzSize="small" (click)="update()" [disabled]="loading"
+                        <button nz-button nzType="primary" nzSize="small" (click)="update()" [disabled]="loading"
                                 id="erupt-btn-save">
                             <i nz-icon nzType="save" nzTheme="outline"></i>{{ 'tree.update'|translate }}
                         </button>
@@ -83,13 +84,14 @@
                 }
                 @if (!selectLeaf && showEdit) {
                     @if (eruptBuildModel.eruptModel.eruptJson.power.add) {
-                        <button nz-button nzSize="small" (click)="add()" [disabled]="loading"
+                        <button nz-button nzType="primary" nzSize="small" (click)="add()" [disabled]="loading"
                                 id="erupt-btn-add-new">
-                            <i nz-icon nzType="save" nzTheme="outline"></i>{{ 'tree.add'|translate }}
+                            <i nz-icon nzType="plus" nzTheme="outline"></i>{{ 'tree.add'|translate }}
                         </button>
                     }
                 }
             </div>
+            }
 
             <div class="tree-detail-body">
                 @if (!showEdit) {
@@ -100,7 +102,9 @@
                 }
                 @if (showEdit) {
                     <nz-spin [nzSpinning]="loading" nzSize="large">
-                        <erupt-edit [eruptBuildModel]="eruptBuildModel" [behavior]="behavior" [id]="currentKey"/>
+                        <div class="tree-form-card">
+                            <erupt-edit [eruptBuildModel]="eruptBuildModel" [behavior]="behavior" [id]="currentKey"/>
+                        </div>
                     </nz-spin>
                 }
             </div>

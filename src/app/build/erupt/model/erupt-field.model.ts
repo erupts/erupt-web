@@ -5,11 +5,11 @@ import {Subject} from "rxjs";
 
 export interface EruptFieldModel {
     fieldName: string;
+    fieldReturnName: string;
     eruptFieldJson: EruptField;
     choiceMap?: Map<String, VL>;
     choiceLabelMap?: Map<String, VL>;
     componentValue?: any;
-
     value?: any;
 }
 
