@@ -413,7 +413,7 @@
 <ng-template #printSelectTpl>
     <nz-list nzSize="small">
         <nz-list-item style="cursor:pointer;" (click)="onPrintSelect(null)">
-            <nz-list-item-meta [nzTitle]="'global.print'|translate"/>
+            <nz-list-item-meta [nzTitle]="'print.default'|translate"/>
         </nz-list-item>
         @for (cfg of printSelectData; track cfg.id) {
             <nz-list-item style="cursor:pointer;" (click)="onPrintSelect(cfg)">
