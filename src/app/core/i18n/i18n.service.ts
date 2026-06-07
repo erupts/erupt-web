@@ -1,4 +1,4 @@
-// 请参考：https://ng-alain.com/docs/i18n
+// See: https://ng-alain.com/docs/i18n
 import {Platform} from '@angular/cdk/platform';
 import {DatePipe, registerLocaleData} from '@angular/common';
 import ngEn from '@angular/common/locales/en';
@@ -95,7 +95,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         date: dfDe,
         ng: ngDe,
         zorro: zorroDe,
-        delon: delonEnUS, // 若无 delon.de_DE 可保留英文
+        delon: delonEnUS, // Fall back to English if delon.de_DE is unavailable
         columnWidthZoom: 1.5,
         color: '#6D4C41'
     },
@@ -165,7 +165,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         date: dfPt,
         ng: ngPt,
         zorro: zorroPt,
-        delon: delonEnUS, // 暂无 delon.pt_PT
+        delon: delonEnUS, // No delon.pt_PT available yet
         columnWidthZoom: 1.5,
         color: '#43A047'
     },
@@ -174,7 +174,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         text: 'Bahasa Indonesia',
         date: dfId,
         ng: ngId,
-        zorro: zorroEnUS, // fallback，zorro 无 id-ID
+        zorro: zorroEnUS, // fallback — zorro has no id-ID locale
         delon: delonEnUS,
         columnWidthZoom: 1.5,
         color: '#D81B60'
@@ -184,7 +184,7 @@ const LANGS: { [key: string]: LangConfigData } = {
         text: 'العربية',
         date: dfAr,
         ng: ngAr,
-        zorro: zorroAr, // 使用 ar_EG 替代
+        zorro: zorroAr, // Using ar_EG as a substitute
         delon: delonEnUS,
         columnWidthZoom: 1.2,
         color: '#009688'
