@@ -30,6 +30,23 @@
     transition: color 0.2s;
 }
 
+.op-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    flex-shrink: 0;
+    border: 1px solid #d9d9d9;
+    background: #fafafa;
+    color: rgba(0, 0, 0, 0.25);
+    font-size: 12px;
+}
+
+.null-op-disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
 :host {
     ::ng-deep {
         .erupt-input {

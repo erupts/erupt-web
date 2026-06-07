@@ -1,4 +1,5 @@
 import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, MultiChoiceEnum, PickerMode, TabEnum, ViewType} from "./erupt.enum";
+import {QueryExpression} from "./erupt.vo";
 import {KeyValueDiffer} from "@angular/core";
 import {Subject} from "rxjs";
 
@@ -109,7 +110,7 @@ export interface Edit {
     $beforeValue?: any;
     $l_val?: any;
     $r_val?: any;
-    $operator?: string;
+    $operator?: QueryExpression;
 }
 
 interface Readonly {

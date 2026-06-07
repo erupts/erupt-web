@@ -54,6 +54,7 @@ import {CalendarComponent} from "./vis/calendar/calendar.component";
 import {NgxGanttModule} from "@worktile/gantt";
 import {NzCalendarModule} from "ng-zorro-antd/calendar";
 import {NzButtonModule} from "ng-zorro-antd/button";
+import {NzSpaceModule} from "ng-zorro-antd/space";
 import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
 
@@ -75,6 +76,7 @@ import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
         NgxGanttModule,
         NzCalendarModule,
         NzButtonModule,
+        NzSpaceModule,
         NzTooltipDirective,
         SVComponent,
         SVContainerComponent,

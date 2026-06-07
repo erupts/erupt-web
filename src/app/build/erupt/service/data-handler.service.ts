@@ -7,7 +7,7 @@ import {EruptBuildModel} from "../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {DatePipe} from "@angular/common";
 import moment from 'moment';
-import {QueryCondition} from "../model/erupt.vo";
+import {QueryCondition, QueryExpression} from "../model/erupt.vo";
 import {isNotNull} from "@shared/util/erupt.util";
 import {NzUploadFile} from "ng-zorro-antd/upload";
 import {NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
@@ -139,46 +139,101 @@ export class DataHandlerService {
 
     buildSearchConditions(eruptModel: EruptModel): QueryCondition[] {
         const conditions: QueryCondition[] = [];
-        const obj = this.searchEruptToObject({eruptModel});
-        for (const key in obj) {
-            const field = eruptModel.eruptFieldModels.find(f => f.fieldName === key);
-            const operator = field?.eruptFieldJson.edit?.$operator || undefined;
-            let val = obj[key];
-            if (typeof val === 'string') val = val.trim();
-            conditions.push({key, value: val, operator});
-        }
         for (const field of eruptModel.eruptFieldModels) {
             const edit = field.eruptFieldJson.edit;
             if (!edit?.search?.value) continue;
-            const op = edit.$operator;
-            if (op === 'NULL' || op === 'NOT_NULL') {
-                if (!(field.fieldName in obj)) {
-                    conditions.push({key: field.fieldName, value: null, operator: op});
-                }
-            } else if (op === 'RANGE' && edit.type === EditType.NUMBER && !edit.search.vague) {
-                // non-vague NUMBER with RANGE operator: use $l_val/$r_val
-                if (edit.$l_val != null && edit.$r_val != null) {
-                    const idx = conditions.findIndex(c => c.key === field.fieldName);
-                    if (idx >= 0) conditions.splice(idx, 1);
-                    conditions.push({key: field.fieldName, value: [edit.$l_val, edit.$r_val], operator: 'RANGE'});
-                }
+            const expression = edit.$operator ?? undefined;
+            if (expression === QueryExpression.NULL || expression === QueryExpression.NOT_NULL) {
+                conditions.push({key: field.fieldName, value: null, expression});
+                continue;
             }
+            if (expression === QueryExpression.RANGE && edit.type === EditType.NUMBER) {
+                if (edit.$l_val != null || edit.$r_val != null) {
+                    conditions.push({key: field.fieldName, value: [edit.$l_val ?? null, edit.$r_val ?? null], expression});
+                }
+                continue;
+            }
+            if (expression === QueryExpression.IN) {
+                if (edit.$value?.length) {
+                    conditions.push({key: field.fieldName, value: edit.$value, expression});
+                }
+                continue;
+            }
+            let value: any;
+            switch (edit.type) {
+                case EditType.INPUT:
+                    if (edit.$value) {
+                        const inputType = edit.inputType;
+                        value = (inputType?.prefixValue ?? '') + edit.$value + (inputType?.suffixValue ?? '');
+                    }
+                    break;
+                case EditType.DATE:
+                    if (edit.$value) {
+                        if (Array.isArray(edit.$value) && edit.$value[0]) {
+                            value = edit.dateType.type === DateEnum.DATE_TIME ? [
+                                this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'HH:mm:ss.SSS"),
+                                this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'HH:mm:ss.SSS")
+                            ] : [
+                                this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'00:00:00.000"),
+                                this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'23:59:59.999")
+                            ];
+                        } else if (!Array.isArray(edit.$value)) {
+                            value = this.dateFormat(edit.$value, edit);
+                        }
+                    }
+                    break;
+                case EditType.REFERENCE_TABLE:
+                    if (edit.$value) {
+                        value = {
+                            [edit.referenceTableType.id]: edit.$value[edit.referenceTableType.id],
+                            [edit.referenceTableType.label]: edit.$value[edit.referenceTableType.label]
+                        };
+                    }
+                    break;
+                case EditType.REFERENCE_TREE:
+                    if (edit.$value) {
+                        value = {
+                            [edit.referenceTreeType.id]: edit.$value.id,
+                            [edit.referenceTreeType.label]: edit.$value.label
+                        };
+                    }
+                    break;
+                case EditType.TAGS:
+                    if (edit.$value?.length) {
+                        value = (<string[]>edit.$value).join(edit.tagsType.joinSeparator);
+                    }
+                    break;
+                default:
+                    if (edit.$value != null) {
+                        value = edit.$value;
+                    }
+                    break;
+            }
+            if (value == null) continue;
+            if (typeof value === 'string') {
+                value = value.trim();
+                if (!value) continue;
+            }
+            conditions.push({key: field.fieldName, value, expression});
         }
         return conditions;
     }
 
-    private getDefaultSearchOperator(type: EditType, vague?: boolean): string | null {
+    private getDefaultSearchOperator(type: EditType): QueryExpression | null {
         switch (type) {
             case EditType.INPUT:
             case EditType.TEXTAREA:
             case EditType.HTML_EDITOR:
             case EditType.CODE_EDITOR:
-                return 'EQ';
+            case EditType.AUTO_COMPLETE:
+                return QueryExpression.EQ;
             case EditType.NUMBER:
-                return vague ? 'RANGE' : 'EQ';
             case EditType.REFERENCE_TABLE:
             case EditType.REFERENCE_TREE:
-                return 'EQ';
+            case EditType.CHOICE:
+                return QueryExpression.EQ;
+            case EditType.DATE:
+                return QueryExpression.RANGE;
             default:
                 return null;
         }
@@ -189,7 +244,7 @@ export class DataHandlerService {
             const edit = field.eruptFieldJson.edit;
             if (!edit || !edit.search?.value) continue;
             if (!edit.$operator) {
-                edit.$operator = this.getDefaultSearchOperator(edit.type, edit.search.vague);
+                edit.$operator = this.getDefaultSearchOperator(edit.type);
             }
         }
     }
@@ -198,7 +253,7 @@ export class DataHandlerService {
         for (const field of eruptModel.eruptFieldModels) {
             const edit = field.eruptFieldJson.edit;
             if (!edit || !edit.search?.value) continue;
-            edit.$operator = this.getDefaultSearchOperator(edit.type, edit.search.vague);
+            edit.$operator = this.getDefaultSearchOperator(edit.type);
         }
     }
 
