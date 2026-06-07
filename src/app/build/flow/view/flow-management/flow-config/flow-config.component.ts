@@ -35,12 +35,12 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     iconPickVisible: boolean = false;
 
-    // 当前步骤
+    // Current step
     currentStep = 1;
 
     eruptFlows: VL[] = [];
 
-    // 分组选项
+    // Group options
     groupOptions: FlowGroup[] = [];
 
     noticeChannel: NoticeChannel[];
@@ -60,19 +60,19 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        // 初始化默认配置
+        // Initialize default configuration
         this.flowConfig = new FlowConfig();
 
-        // 加载分组选项
+        // Load group options
         this.flowApiService.groupList().subscribe(res => {
             this.groupOptions = res.data;
 
-            // 如果是编辑模式，在分组选项加载完成后获取配置数据
+            // In edit mode, fetch config data after group options have loaded
             if (this.flowId) {
                 this.flowApiService.configGet(this.flowId).subscribe(configRes => {
                     if (configRes.success && configRes.data) {
                         this.flowConfig = configRes.data;
-                        // 确保flowGroup对象引用匹配
+                        // Ensure the flowGroup object reference matches
                         this.matchFlowGroupReference();
                         if (this.flowConfig.erupt) {
                             this.changeErupt(this.flowConfig.erupt)
@@ -94,8 +94,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        // 视图初始化完成后的逻辑
-        // 可以在这里进行一些需要访问视图子组件的操作
+        // Logic to run after the view has been initialized
+        // Operations that require access to view child components can be performed here
     }
 
     changeErupt(erupt: string) {
@@ -126,11 +126,11 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     }
 
     /**
-     * 匹配flowGroup对象引用，确保回显正确
+     * Match the flowGroup object reference to ensure correct display binding.
      */
     private matchFlowGroupReference(): void {
         if (this.flowConfig.flowGroup && this.groupOptions.length > 0) {
-            // 根据ID找到匹配的分组对象
+            // Find the matching group object by ID
             const matchedGroup = this.groupOptions.find(group => group.id === this.flowConfig.flowGroup.id);
             if (matchedGroup) {
                 this.flowConfig.flowGroup = matchedGroup;
@@ -138,18 +138,18 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         }
     }
 
-    // 监听点击事件，关闭图标选择器
+    // Listen for click events to close the icon picker
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {
-        // Popover会自动处理点击外部关闭
+        // The Popover handles closing on outside click automatically
     }
 
-    // 切换步骤
+    // Switch step
     switchStep(step: number): void {
         this.currentStep = step;
     }
 
-    // 处理图标颜色配置变化
+    // Handle icon color config changes
     onIconColorConfigChange(config: IconColorConfig): void {
         this.flowConfig.icon = config.icon;
         this.flowConfig.color = config.color;
@@ -160,12 +160,12 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         this.iconPickVisible = value;
     }
 
-    // 预览
+    // Preview
     preview(): void {
-        console.log('预览审批流程');
+        console.log('Preview approval flow');
     }
 
-    // 发布
+    // Publish
     publish(): void {
         if (!this.flowConfig.name) {
             this.msg.warning('请输入流程名称');

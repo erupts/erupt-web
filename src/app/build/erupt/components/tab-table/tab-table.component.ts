@@ -254,7 +254,7 @@ export class TabTableComponent implements OnInit {
                     }
                 }
                 edit.$value.push(...edit.$tempValue);
-                edit.$value = [...new Set(edit.$value)]; //去重
+                edit.$value = [...new Set(edit.$value)]; //deduplicate
                 return true;
             }
         });

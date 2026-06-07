@@ -11,7 +11,7 @@ export function reloadNodeId(node: any): void {
         if (node.id) {
             node.id = geneNodeId();
         }
-        // 递归处理子节点
+        // Recursively process child nodes
         if (node.branch && Array.isArray(node.branch)) {
             node.branch.forEach((child: any) => reloadNodeId(child));
         }

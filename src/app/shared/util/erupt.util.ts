@@ -1,7 +1,7 @@
 /**
- * 根据菜单类型生成相应的请求路径
- * @param menuType  菜单类型
- * @param menuValue 菜单值
+ * Generate the corresponding request path based on menu type
+ * @param menuType  menu type
+ * @param menuValue menu value
  */
 import {HttpEvent} from "@angular/common/http";
 import {MenuTypeEnum} from "../model/erupt-menu";
@@ -15,7 +15,7 @@ export function generateMenuPath(type: string, value: string) {
     }
 }
 
-//关联路径
+//associated path
 function joinPath(type: string, value: string): string {
     let menuValue = value || '';
     switch (type) {

@@ -6,7 +6,7 @@
 @if (eruptBuildModel) {
     <div class="tree-layout" [id]="eruptName">
 
-        <!-- ── 左侧导航树 ── -->
+        <!-- ── Left navigation tree ── -->
         <div class="tree-nav" [style.width.px]="treeWidth" [class.collapsed]="mobileTreeCollapsed">
             <div class="tree-nav-header">
                 <nz-input-group [nzSuffix]="suffixIcon" nzSize="small">
@@ -80,10 +80,10 @@
 
         </div>
 
-        <!-- ── 拖拽分隔线 ── -->
+        <!-- ── Drag resize handle ── -->
         <div class="tree-resize-handle" (mousedown)="onResizeDragStart($event)"></div>
 
-        <!-- ── 右侧详情区 ── -->
+        <!-- ── Right detail area ── -->
         <div class="tree-detail">
 
             @if (showEdit) {

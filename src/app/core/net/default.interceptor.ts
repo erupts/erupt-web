@@ -51,17 +51,17 @@ export class DefaultInterceptor implements HttpInterceptor {
 
     private handleData(event: HttpResponse<any> | HttpErrorResponse): Observable<any> {
         // this.checkStatus(event)
-        // 业务处理：一些通用操作
+        // Business logic: some common operations
         switch (event.status) {
             case 200:
-                // 业务层级错误处理，以下是假定restful有一套统一输出格式（指不管成功与否都有相应的数据格式）情况下进行处理
-                // 例如响应内容：
-                //  错误内容：{ success: false, message: '非法参数' }
-                //  正确内容：{ success: true, data: {  } }
-                // 则以下代码片断可直接适用
+                // Business-level error handling, assuming the REST API has a unified response format
+                // (i.e., both success and error responses share the same data shape). For example:
+                //  Error:   { success: false, message: 'invalid parameter' }
+                //  Success: { success: true, data: {  } }
+                // The code snippet below can be used directly in that case
                 if (event instanceof HttpResponse) {
                     const body: any = event.body;
-                    //如果返回对象为EruptApi
+                    // If the response body is an EruptApi object
                     if ("status" in body && "message" in body && "promptWay" in body) {
                         let eruptApiBody = <EruptApiModel>body;
                         if (eruptApiBody.message) {
@@ -148,7 +148,7 @@ export class DefaultInterceptor implements HttpInterceptor {
                     }
                 }
                 return of(event);
-            case 401: // 未登录
+            case 401: // Not logged in
                 if (this.router.url !== "/passport/login") {
                     this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
                 }
@@ -227,12 +227,12 @@ export class DefaultInterceptor implements HttpInterceptor {
         | HttpProgressEvent
         | HttpResponse<any>
         | HttpUserEvent<any>> {
-        // 统一加上服务端前缀
+        // Uniformly prepend the server-side base URL prefix
         let url = req.url;
         if (!url.startsWith("https://") && !url.startsWith("http://") && !url.startsWith("//")) {
             url = environment.api.baseUrl + url;
         }
-        // 对话框的方式出现登录页
+        // Show the login page in a dialog
         // if (this.whiteApi.indexOf(url.split("erupt-api/")[1]) == -1) {
         //     let token = this.tokenService.get();
         //     if (token) {
@@ -244,7 +244,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         //                 nzKeyboard: false,
         //                 nzClosable: true,
         //                 nzFooter: null,
-        //                 nzTitle: "登录",
+        //                 nzTitle: "Login",
         //                 nzContent: UserLoginComponent,
         //                 nzData: {
         //                     modelFun: () => {
@@ -265,18 +265,18 @@ export class DefaultInterceptor implements HttpInterceptor {
         });
         return next.handle(newReq).pipe(
             mergeMap((event: any) => {
-                // 允许统一对请求错误处理，这是因为一个请求若是业务上错误的情况下其HTTP请求的状态是200的情况下需要
+                // Allow unified request error handling — needed when a business error returns HTTP 200
                 if (event instanceof HttpResponse && event.status === 200)
                     return this.handleData(event);
-                // 若一切都正常，则后续操作
+                // If everything is fine, proceed with subsequent operations
                 return of(event);
             }),
             catchError((err: HttpErrorResponse) => {
-                // 如果是业务错误（EruptApiModel），直接抛出
+                // If it is a business error (EruptApiModel), throw it directly
                 if (err && typeof err === 'object' && 'status' in err && 'message' in err && 'promptWay' in err) {
                     return throwError(() => err);
                 }
-                // 其他HTTP错误，调用handleData处理
+                // For other HTTP errors, delegate to handleData
                 return this.handleData(err);
             })
         );

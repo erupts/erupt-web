@@ -146,7 +146,7 @@ export class TreeComponent implements OnInit, OnDestroy {
     }
 
     update() {
-        //校验菜单和合法性
+        //validate menu and data integrity
         if (this.validateParentIdValue()) {
             this.loading = true;
             this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName,
@@ -162,7 +162,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         }
     }
 
-    //校验上级菜单值得合法性
+    //validate the parent menu value's integrity
     validateParentIdValue(): boolean {
         let eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
         let eruptFieldMap = this.eruptBuildModel.eruptModel.eruptFieldModelMap;

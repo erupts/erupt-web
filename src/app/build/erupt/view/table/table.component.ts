@@ -161,7 +161,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     visOptions: any[] = [];
 
-    adding: boolean = false; //新增行为防抖
+    adding: boolean = false; //debounce for add action
 
     header: object;
 
@@ -401,6 +401,7 @@ export class TableComponent implements OnInit, OnDestroy {
                         }
                     }
                 }
+                this.dataHandler.initSearchOperators(this.searchErupt);
                 if (dt) {
                     this.showTable = !dt.dependNode;
                     if (dt.dependNode) {
@@ -422,11 +423,7 @@ export class TableComponent implements OnInit, OnDestroy {
             return;
         }
         let query = {};
-        query["condition"] = this.dataHandler.eruptObjectToCondition(
-            this.dataHandler.searchEruptToObject({
-                eruptModel: this.searchErupt
-            })
-        );
+        query["condition"] = this.dataHandler.buildSearchConditions(this.searchErupt);
         let linkTree = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
         if (linkTree && linkTree.field) {
             query["linkTreeVal"] = linkTree.value;
@@ -524,7 +521,7 @@ export class TableComponent implements OnInit, OnDestroy {
                         id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
                     };
                     if (this.settingSrv.layout['drawDraw']) {
-                        //抽屉方式打开详情
+                        //open details in drawer mode
                         this.drawerService.create({
                             nzTitle: this.i18n.fanyi("global.view"),
                             nzWidth: "75%",
@@ -835,9 +832,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
 
     /**
-     * 自定义功能触发
-     * @param rowOperation 行按钮对象
-     * @param data 数据（单个执行时使用）
+     * Trigger a custom row operation
+     * @param rowOperation row operation button object
+     * @param data data (used when executing a single row action)
      */
     createOperator(rowOperation: RowOperation, data?: object) {
         const eruptModel = this.eruptBuildModel.eruptModel;
@@ -903,7 +900,7 @@ export class TableComponent implements OnInit, OnDestroy {
                     }
                 });
             } else {
-                // 兼容旧版本, 无callHint配置的情况
+                // backward compatibility for older versions without callHint configuration
                 if (null == ro.callHint) {
                     ro.callHint = this.i18n.fanyi("table.hint.operation");
                 }
@@ -937,7 +934,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    //新增
+    //add new record
     addData() {
         let fullLine = false;
         let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
@@ -993,7 +990,7 @@ export class TableComponent implements OnInit, OnDestroy {
         this.query(1, size);
     }
 
-    //批量删除
+    //batch delete
     delRows() {
         if (!this.selectedRows || this.selectedRows.length === 0) {
             this.msg.warning(this.i18n.fanyi("table.select_delete_item"));
@@ -1035,11 +1032,12 @@ export class TableComponent implements OnInit, OnDestroy {
 
     clearCondition() {
         this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt});
+        this.dataHandler.resetSearchOperators(this.searchErupt);
         this.selectedSorts = [];
         this.query(1);
     }
 
-    // table checkBox 触发事件
+    // table checkbox change event
     tableDataChange(event: STChange) {
         if (this._reference) {
             if (this._reference.mode == SelectMode.radio) {
@@ -1077,19 +1075,19 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    // 处理甘特图选择变化
+    // handle Gantt chart selection change
     handleGanttSelectionChange(selectedRows: any[]) {
         this.selectedRows = selectedRows;
 
-        // 如果是引用表模式，将选中的数据存储到 $tempValue
+        // if in reference table mode, store the selected data into $tempValue
         if (this._reference) {
             if (selectedRows && selectedRows.length > 0) {
-                // 检查是单选还是多选模式
+                // check whether it is single-select or multi-select mode
                 if (this._reference.mode === SelectMode.radio) {
-                    // 单选模式：取第一项
+                    // single-select mode: take the first item
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = selectedRows[0];
                 } else {
-                    // 多选模式：保存整个数组
+                    // multi-select mode: save the entire array
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = selectedRows;
                 }
             } else {
@@ -1102,15 +1100,11 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataService.downloadExcelTemplate(this.eruptBuildModel.eruptModel.eruptName);
     }
 
-    // excel导出
+    // export to Excel
     exportExcel() {
         let condition = null;
         if (this.searchErupt && this.searchErupt.eruptFieldModels.length > 0) {
-            condition = this.dataHandler.eruptObjectToCondition(
-                this.dataHandler.searchEruptToObject({
-                    eruptModel: this.searchErupt
-                })
-            );
+            condition = this.dataHandler.buildSearchConditions(this.searchErupt);
         }
         const ids = this.selectedRows.length > 0
             ? this.selectedRows.map(r => r[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
@@ -1142,7 +1136,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    // excel导入
+    // import from Excel
     importableExcel() {
         let model = this.modal.create({
             nzDraggable: true,
@@ -1162,7 +1156,7 @@ export class TableComponent implements OnInit, OnDestroy {
         model.getContentComponent().drillInput = this._drill;
     }
 
-    //提供自定义表达式可调用函数
+    //provides callable functions for custom expressions
     execExpr(expr: string) {
         let ev = {
             codeModal: (lang: string, code: any) => {
@@ -1349,19 +1343,19 @@ export class TableComponent implements OnInit, OnDestroy {
 
     protected readonly SortType = SortType;
 
-    // 判断字段是否为数字或时间类型
+    // determine whether a field is a numeric or date type
     isNumericOrDateType(field: View): boolean {
         return field.viewType === ViewType.NUMBER ||
             field.viewType === ViewType.DATE ||
             field.viewType === ViewType.DATE_TIME;
     }
 
-    // 获取可选的字段列表（排除已选择的）
+    // get the list of available fields (excluding already selected ones)
     getAvailableFields(): View[] {
         return this.sortFields.filter(f => !this.selectedSorts.some(s => s.field.column === f.column));
     }
 
-    // 添加排序字段
+    // add a sort field
     addSortField(field: View) {
         if (!this.selectedSorts.some(s => s.field.column === field.column)) {
             this.selectedSorts.push({
@@ -1371,17 +1365,17 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    // 移除排序字段
+    // remove a sort field
     removeSortField(index: number) {
         this.selectedSorts.splice(index, 1);
     }
 
-    // 拖拽排序
+    // drag-and-drop sort
     onSortDrop(event: CdkDragDrop<Array<{ field: View, direction: SortType }>>) {
         moveItemInArray(this.selectedSorts, event.previousIndex, event.currentIndex);
     }
 
-    // 应用排序
+    // apply sort
     applySort() {
         if (this.selectedSorts.length === 0) {
             this.dataPage.sort = null;
@@ -1396,11 +1390,11 @@ export class TableComponent implements OnInit, OnDestroy {
         this.query(1, this.dataPage.ps, this.dataPage.sort);
     }
 
-    // 字段选择变化处理
+    // handle field selection change
     onFieldSelectChange(field: View) {
         if (field) {
             this.addSortField(field);
-            // 清空选择，以便可以再次选择同一个字段
+            // clear the selection so the same field can be selected again
             setTimeout(() => {
                 this.tempSelectedField = null;
             }, 0);
@@ -1485,7 +1479,7 @@ export class TableComponent implements OnInit, OnDestroy {
         });
     }
 
-    // ── 配置：模板列表 CRUD ──
+    // ── Config: template list CRUD ──
     managePrintConfig() {
         const eruptName = this.eruptBuildModel.eruptModel.eruptName;
         this.dataService.printConfigList(eruptName).subscribe(res => {

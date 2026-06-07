@@ -34,14 +34,14 @@ export class FormAccessComponent implements OnInit {
                 if (this.nodeType == NodeType.START && field.eruptFieldJson.edit.notNull && access != FormAccessEnum.NOT_NULL) {
                     continue
                 }
-                // 如果是“只读”，则不考虑是否 readonly，因为只读是通用的权限
+                // If access is “read-only”, ignore whether the field is readonly, since read-only is a universal permission
                 if (access === FormAccessEnum.READONLY) {
                     this.formAccesses[field.fieldName] = access;
                 } else if (!field.eruptFieldJson.edit.readOnly.add) {
-                    // 对于其他权限，如编辑、必填、隐藏，需要根据 readOnly.add 的情况来判断
-                    // 只有非 readOnly.add 的字段可以修改为非只读权限
+                    // For other permissions such as edit, required, and hidden, check the readOnly.add flag
+                    // Only fields that are not readOnly.add can be changed to non-read-only permissions
                     if (access === FormAccessEnum.NOT_NULL) {
-                        // 必填权限还需要考虑字段类型
+                        // The required permission also needs to consider the field type
                         if (!(field.eruptFieldJson.edit.type == EditType.DIVIDE
                             || field.eruptFieldJson.edit.type == EditType.TPL
                             || field.eruptFieldJson.edit.type == EditType.EMPTY)) {

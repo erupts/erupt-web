@@ -33,12 +33,12 @@ export class UiBuildService {
 
 
     /**
-     * 将view数据转换为alain table组件配置信息
+     * Convert view data into alain table component configuration
      * @param eruptBuildModel ebm
      * @param lineData
-     *     true   数据形式为一整行txt
-     *     false  数据形式为：带有层级的json
-     * @param dataConvert 是否需要数据转换,如bool转换，choice转换
+     *     true   data is in flat single-row text form
+     *     false  data is in hierarchical JSON form
+     * @param dataConvert whether data conversion is needed, e.g. bool conversion, choice conversion
      */
     viewToAlainTableConfig(eruptBuildModel: EruptBuildModel, lineData: boolean, dataConvert?: boolean): STColumn[] {
         let cols: STColumn[] = [];
@@ -67,7 +67,7 @@ export class UiBuildService {
             };
             obj["show"] = view.show;
             if (lineData) {
-                //修复表格显示子类属性时无法正确检索到属性值的缺陷
+                //fix defect where sub-class property values could not be correctly retrieved when displayed in the table
                 obj.index = [view.column.replace(/\./g, "_")];
             } else {
                 obj.index = [view.column];
@@ -122,7 +122,7 @@ export class UiBuildService {
             }
 
             obj.width = titleWidth;
-            //展示类型
+            //display type
             switch (view.viewType) {
                 case ViewType.TEXT:
                     obj.width = null;

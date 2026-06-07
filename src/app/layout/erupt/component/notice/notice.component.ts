@@ -10,7 +10,7 @@ import {I18NService} from "@core";
 import {AnnouncementDetailComponent} from "../announcement-detail/announcement-detail.component";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 
-// 导出枚举以便在模板中使用
+// export enum for use in templates
 export {NoticeStatus};
 
 @Component({
@@ -32,8 +32,8 @@ export class NoticeComponent implements OnInit, OnDestroy {
     pageIndex = 1;
     pageSize = 10;
     total = 0;
-    searchKeyword: string = ''; // 搜索关键字
-    onlyUnread: boolean = true; // 仅显示未读
+    searchKeyword: string = ''; // search keyword
+    onlyUnread: boolean = true; // show only unread
 
     scene: number;
     scenes: NoticeScene[] = [];
@@ -68,18 +68,18 @@ export class NoticeComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    // 选择渠道（通过索引）
+    // select channel (by index)
     onChannelChange(index: number): void {
         this.selectedChannelIndex = index;
         this.pageIndex = 1;
-        this.searchKeyword = ''; // 切换渠道时清空搜索
+        this.searchKeyword = ''; // clear search when switching channels
         this.loadMessages();
     }
 
-    // 搜索
+    // search
     onSearch(keyword: string): void {
         this.searchKeyword = keyword;
-        this.pageIndex = 1; // 搜索时重置到第一页
+        this.pageIndex = 1; // reset to first page when searching
         this.loadMessages();
     }
 
@@ -95,11 +95,11 @@ export class NoticeComponent implements OnInit, OnDestroy {
         this.loadMessages();
     }
 
-    // 加载消息列表
+    // load message list
     loadMessages(): void {
         this.loadingMessages = true;
         if (this.selectedChannelIndex === 0) {
-            // 加载通知消息
+            // load notice messages
             this.dataService.noticeMessages(this.pageIndex, this.pageSize, this.searchKeyword || null, this.onlyUnread ? NoticeStatus.UNREAD : null, this.scene)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
@@ -117,7 +117,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
                     }
                 });
         } else if (this.selectedChannelIndex === 1) {
-            // 加载公告
+            // load announcements
             this.dataService.announcement(this.pageIndex, this.pageSize, this.searchKeyword || null)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
@@ -137,13 +137,13 @@ export class NoticeComponent implements OnInit, OnDestroy {
         }
     }
 
-    // 分页变化
+    // pagination change
     onPageIndexChange(pageIndex: number): void {
         this.pageIndex = pageIndex;
         this.loadMessages();
     }
 
-    // 查看消息详情
+    // view message detail
     viewMessageDetail(message: NoticeMessageDetail): void {
         message.status = NoticeStatus.READ;
         const messageId = (message as any).id || (message.noticeLog as any)?.id;
@@ -173,12 +173,12 @@ export class NoticeComponent implements OnInit, OnDestroy {
         ref.componentInstance.announcement = announcement;
     }
 
-    // 关闭抽屉
+    // close drawer
     close(): void {
         this.drawerRef.close();
     }
 
-    // 打开 URL 链接
+    // open URL link
     openUrl(url: string, title: string): void {
         this.drawerService.create({
             nzTitle: null,
@@ -197,7 +197,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
         });
     }
 
-    // 全部已读
+    // mark all as read
     markAllAsRead(): void {
         this.modal.confirm({
             nzTitle: this.i18nService.fanyi('notice.confirm.title'),
@@ -208,7 +208,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
                         .pipe(takeUntil(this.destroy$))
                         .subscribe({
                             next: () => {
-                                // 将当前页面所有未读消息标记为已读
+                                // mark all unread messages on the current page as read
                                 this.notices.forEach((msg: NoticeMessageDetail) => {
                                     msg.status = NoticeStatus.READ;
                                 });

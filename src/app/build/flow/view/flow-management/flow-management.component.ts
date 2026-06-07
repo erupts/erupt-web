@@ -9,7 +9,7 @@ import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {FlowConfigComponent} from "@flow/view/flow-management/flow-config/flow-config.component";
 import {FlowDataService} from "@flow/service/flow-data.service";
 
-// 扩展 FlowGroup 接口，添加 count 属性
+// Extend the FlowGroup interface to add a count property
 interface FlowGroupWithCount extends FlowGroup {
     count: number;
 }
@@ -23,18 +23,18 @@ interface FlowGroupWithCount extends FlowGroup {
 export class FlowManagementComponent implements OnInit, OnDestroy {
 
     searchValue = '';
-    flowConfigs: FlowConfig[] = []; // 流程配置列表
+    flowConfigs: FlowConfig[] = []; // Flow configuration list
     categories: string[] = [];
     selectedCategory: number = null;
 
-    // 排序相关
+    // Sorting-related
     categoryItems: FlowGroupWithCount[] = [];
 
-    // 加载状态
+    // Loading states
     loading = false;
-    configLoading = false; // 流程配置加载状态
+    configLoading = false; // Flow config loading state
 
-    // 模态框相关属性
+    // Modal-related properties
     isCreateModalVisible = false;
     isEditModalVisible = false;
     createGroupName = '';
@@ -63,7 +63,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         this.loadFlowConfigs();
     }
 
-    // 加载分组数据
+    // Load group data
     loadGroups(): void {
         this.loading = true;
         this.flowApiService.groupList().subscribe(response => {
@@ -74,23 +74,23 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                 count: this.getConfigsByCategory(group.id).length
             }));
 
-            // 按sort排序
+            // Sort by sort field
             this.categoryItems.sort((a, b) => a.sort - b.sort);
 
-            // 更新categories数组
+            // Update categories array
             this.categories = this.categoryItems.map(item => item.name);
             this.loading = false;
         });
     }
 
-    // 加载流程配置数据
+    // Load flow configuration data
     loadFlowConfigs(): void {
         this.configLoading = true;
         this.flowApiService.configList().subscribe({
             next: (response: R<FlowConfig[]>) => {
                 if (response.success) {
                     this.flowConfigs = response.data;
-                    // 更新分组计数
+                    // Update group counts
                     this.updateCategoryCounts();
                 }
                 this.configLoading = false;
@@ -101,14 +101,14 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         });
     }
 
-    // 更新分组计数 - 基于流程配置数据
+    // Update group counts based on flow configuration data
     updateCategoryCounts(): void {
         this.categoryItems.forEach(item => {
             item.count = this.getConfigsByCategory(item.id).length;
         });
     }
 
-    // 根据分组获取流程配置
+    // Get flow configurations by group
     getConfigsByCategory(category: number): FlowConfig[] {
         return this.flowConfigs.filter(config => config.flowGroup?.id === category);
     }
@@ -117,16 +117,16 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         this.selectedCategory = category;
     }
 
-    // 获取当前显示的流程配置列表
+    // Get the currently displayed flow configuration list
     getCurrentConfigs(): FlowConfig[] {
         let configs = this.flowConfigs;
 
-        // 按分类筛选
+        // Filter by category
         if (this.selectedCategory) {
             configs = this.getConfigsByCategory(this.selectedCategory);
         }
 
-        // 按搜索关键词筛选
+        // Filter by search keyword
         if (this.searchValue.trim()) {
             const searchTerm = this.searchValue.toLowerCase().trim();
             configs = configs.filter(config =>
@@ -139,17 +139,17 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
     }
 
     onSearch(): void {
-        // 搜索功能已集成到 getCurrentConfigs 方法中
-        console.log('搜索:', this.searchValue);
+        // Search functionality is integrated into the getCurrentConfigs method
+        console.log('Search:', this.searchValue);
     }
 
-    // 创建分组
+    // Create a group
     onCreateGroup(): void {
         this.createGroupName = '';
         this.isCreateModalVisible = true;
     }
 
-    // 确认创建分组
+    // Confirm group creation
     handleCreateGroup(): void {
         if (this.createGroupName && this.createGroupName.trim()) {
             this.addGroup(this.createGroupName.trim());
@@ -158,13 +158,13 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         }
     }
 
-    // 取消创建分组
+    // Cancel group creation
     handleCreateCancel(): void {
         this.isCreateModalVisible = false;
         this.createGroupName = '';
     }
 
-    // 添加分组
+    // Add a group
     addGroup(name: string): void {
         this.flowApiService.groupAdd(name).subscribe({
             next: (response: R<void>) => {
@@ -172,7 +172,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                     this.message.success('分组创建成功');
                     this.isCreateModalVisible = false;
                     this.createGroupName = '';
-                    this.loadGroups(); // 重新加载分组列表
+                    this.loadGroups(); // Reload the group list
                 } else {
                     this.message.error(response.message || '创建分组失败');
                 }
@@ -184,14 +184,14 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         });
     }
 
-    // 编辑分组
+    // Edit a group
     onEditGroup(item: FlowGroupWithCount): void {
         this.editingGroup = item;
         this.editGroupName = item.name;
         this.isEditModalVisible = true;
     }
 
-    // 确认编辑分组
+    // Confirm group edit
     handleEditGroup(): void {
         if (this.editGroupName && this.editGroupName.trim() && this.editingGroup?.id) {
             this.editGroup(this.editingGroup.id, this.editGroupName.trim());
@@ -200,14 +200,14 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         }
     }
 
-    // 取消编辑分组
+    // Cancel group edit
     handleEditCancel(): void {
         this.isEditModalVisible = false;
         this.editGroupName = '';
         this.editingGroup = null;
     }
 
-    // 编辑分组
+    // Edit a group
     editGroup(id: number, name: string): void {
         this.flowApiService.groupEdit(id, name).subscribe({
             next: (response: R<void>) => {
@@ -216,7 +216,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                     this.isEditModalVisible = false;
                     this.editGroupName = '';
                     this.editingGroup = null;
-                    this.loadGroups(); // 重新加载分组列表
+                    this.loadGroups(); // Reload the group list
                 } else {
                     this.message.error(response.message || '编辑分组失败');
                 }
@@ -228,7 +228,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         });
     }
 
-    // 删除分组
+    // Delete a group
     onDeleteGroup(item: FlowGroupWithCount): void {
         if (!item.id) return;
 
@@ -248,23 +248,23 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         });
     }
 
-    // 拖拽排序
+    // Drag-and-drop sorting
     onDrop(event: CdkDragDrop<FlowGroupWithCount[]>): void {
         moveItemInArray(this.categoryItems, event.previousIndex, event.currentIndex);
 
-        // 更新sort
+        // Update sort values
         this.categoryItems.forEach((item, index) => {
             item.sort = index;
         });
 
-        // 更新categories数组
+        // Update categories array
         this.categories = this.categoryItems.map(item => item.name);
 
-        // 调用排序API
+        // Call the sort API
         this.sortGroups();
     }
 
-    // 排序分组
+    // Sort groups
     sortGroups(): void {
         const ids = this.categoryItems.map(item => item.id).filter(id => id !== undefined) as number[];
         if (ids.length === 0) return;
@@ -272,7 +272,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         this.flowApiService.groupSort(ids).subscribe({
             next: (response: R<void>) => {
                 if (response.success) {
-                    console.log('分组排序成功');
+                    console.log('Group sort successful');
                 } else {
                     this.message.error(response.message || '分组排序失败');
                 }
@@ -284,25 +284,25 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         });
     }
 
-    // 流程拖拽排序
+    // Flow drag-and-drop sorting
     onFlowDrop(event: CdkDragDrop<FlowConfig[]>): void {
-        // 只有在选中了分组时才允许排序
+        // Only allow sorting when a group is selected
         if (this.selectedCategory === null) {
             this.message.warning('请先选择分组后再进行排序');
             return;
         }
 
-        // 获取当前分组的所有流程配置（用于验证）
+        // Get all flow configs in the current group (for validation)
         const currentConfigs = this.getConfigsByCategory(this.selectedCategory);
 
-        // 如果当前显示的配置数量与分组配置数量不一致（可能被搜索过滤），则不允许排序
+        // If the displayed config count differs from the group config count (possibly filtered by search), disallow sorting
         const displayedConfigs = this.getCurrentConfigs();
         if (currentConfigs.length !== displayedConfigs.length) {
             this.message.warning('搜索状态下无法排序，请先清除搜索条件');
             return;
         }
 
-        // 找到当前分组配置在原始数组中的索引范围
+        // Find the index range of the current group's configs in the original array
         const groupConfigIndices: number[] = [];
         this.flowConfigs.forEach((config, index) => {
             if (config.flowGroup?.id === this.selectedCategory) {
@@ -310,30 +310,30 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
             }
         });
 
-        // 如果索引数量不匹配，重新加载数据
+        // If index count does not match, reload data
         if (groupConfigIndices.length !== currentConfigs.length) {
             this.loadFlowConfigs();
             return;
         }
 
-        // 计算在原始数组中的实际索引
+        // Calculate the actual indices in the original array
         const fromIndex = groupConfigIndices[event.previousIndex];
         const toIndex = groupConfigIndices[event.currentIndex];
 
-        // 更新原始数组顺序
+        // Update the order in the original array
         moveItemInArray(this.flowConfigs, fromIndex, toIndex);
 
-        // 调用排序API
+        // Call the sort API
         this.sortFlows();
     }
 
-    // 排序流程
+    // Sort flows
     sortFlows(): void {
         if (!this.selectedCategory) {
             return;
         }
 
-        // 获取当前分组的所有流程配置（按新的顺序）
+        // Get all flow configs in the current group (in the new order)
         const currentConfigs = this.getConfigsByCategory(this.selectedCategory);
         const ids = currentConfigs.map(config => config.id).filter(id => id !== undefined) as number[];
 
@@ -369,7 +369,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                 padding: '0px'
             }
         });
-        // 使用轮询方式等待组件实例可用
+        // Poll until the component instance is available
         const checkComponent = () => {
             const componentInstance = this.configDrawerRef.getContentComponent();
             if (componentInstance) {
@@ -378,7 +378,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                     this.loadFlowConfigs();
                 });
             } else {
-                // 如果组件实例还未可用，继续等待
+                // If the component instance is not yet available, keep waiting
                 setTimeout(checkComponent, 50);
             }
         };
@@ -405,7 +405,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                     next: (response: R<void>) => {
                         if (response.success) {
                             this.message.success('流程配置复制成功');
-                            this.loadFlowConfigs(); // 重新加载流程配置列表
+                            this.loadFlowConfigs(); // Reload the flow configuration list
                         } else {
                             this.message.error(response.message || '复制流程配置失败');
                         }
@@ -425,25 +425,25 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
             return;
         }
 
-        // 保存原始状态，用于失败时恢复
+        // Save the original state for rollback on failure
         const originalEnable = config.enable;
         const targetEnable = !config.enable;
 
         this.flowApiService.configSwitchEnable(config.id).subscribe({
             next: (response: R<void>) => {
                 if (response.success) {
-                    // 更新本地状态
+                    // Update local state
                     config.enable = targetEnable;
                     const action = targetEnable ? '启用' : '停用';
                     this.message.success(`${config.name}${action}成功`);
                 } else {
-                    // 恢复原始状态
+                    // Restore original state
                     config.enable = originalEnable;
                     this.message.error(response.message || `${targetEnable ? '启用' : '停用'}流程配置失败`);
                 }
             },
             error: (error) => {
-                // 恢复原始状态
+                // Restore original state
                 config.enable = originalEnable;
                 console.error('切换流程配置状态失败:', error);
                 this.message.error('切换流程配置状态失败');
@@ -468,7 +468,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                     next: (response: R<void>) => {
                         if (response.success) {
                             this.message.success('流程配置删除成功');
-                            this.loadFlowConfigs(); // 重新加载流程配置列表
+                            this.loadFlowConfigs(); // Reload the flow configuration list
                         } else {
                             this.message.error(response.message || '删除流程配置失败');
                         }

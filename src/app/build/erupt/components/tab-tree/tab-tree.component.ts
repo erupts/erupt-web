@@ -78,7 +78,7 @@ export class TabTreeComponent implements OnInit {
         return array;
     }
 
-    //递归获取所有选中的值
+    //recursively retrieve all checked values
     findChecks(treeNodes: NzTreeNode[], result: any[] = []) {
         treeNodes.forEach(node => {
             result.push(node.origin.key);

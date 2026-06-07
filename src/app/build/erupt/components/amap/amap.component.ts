@@ -190,7 +190,7 @@ export class AmapComponent implements OnInit {
             }
 
 
-            //详情查询
+            //detail query
             function getDetails(id) {
                 placeSearch.getDetails(id, (status, result) => {
                     if (status === 'complete' && result.info === 'OK') {
@@ -202,7 +202,7 @@ export class AmapComponent implements OnInit {
                 });
             }
 
-            //回调函数
+            //callback function
             function placeSearchCallBack(data) {
                 let poiArr = data.poiList.pois;
                 if (that.currentMarker) {
@@ -217,7 +217,7 @@ export class AmapComponent implements OnInit {
                 infoWindow.open(map, that.currentMarker.getPosition());
             }
 
-            function createContent(poi) {  //信息窗体内容
+            function createContent(poi) {  //info window content
                 let s = [];
                 s.push("<b>名称：" + poi.name + "</b>");
                 s.push("地址：" + poi.address);
@@ -273,7 +273,7 @@ export class AmapComponent implements OnInit {
     overlays: any[];
 
     draw(type) {
-        //监听draw事件可获取画好的覆盖物
+        //listen for the draw event to retrieve the drawn overlay
         this.overlays = [];
         this.mouseTool.on('draw', (e) => {
             this.overlays.push(e.obj);
@@ -286,14 +286,14 @@ export class AmapComponent implements OnInit {
             switch (type) {
                 case 'marker': {
                     this.mouseTool.marker({
-                        //同Marker的Option设置
+                        //same as Marker options
                     });
                     break;
                 }
                 case 'polyline': {
                     this.mouseTool.polyline({
                         strokeColor: strokeColor
-                        //同Polyline的Option设置
+                        //same as Polyline options
                     });
                     break;
                 }
@@ -301,7 +301,7 @@ export class AmapComponent implements OnInit {
                     this.mouseTool.polygon({
                         fillColor: fillColor,
                         strokeColor: strokeColor
-                        //同Polygon的Option设置
+                        //same as Polygon options
                     });
                     break;
                 }
@@ -309,7 +309,7 @@ export class AmapComponent implements OnInit {
                     this.mouseTool.rectangle({
                         fillColor: fillColor,
                         strokeColor: strokeColor
-                        //同Polygon的Option设置
+                        //same as Polygon options
                     });
                     break;
                 }
@@ -317,7 +317,7 @@ export class AmapComponent implements OnInit {
                     this.mouseTool.circle({
                         fillColor: fillColor,
                         strokeColor: strokeColor
-                        //同Circle的Option设置
+                        //same as Circle options
                     });
                     break;
                 }
@@ -330,7 +330,7 @@ export class AmapComponent implements OnInit {
     }
 
     closeDraw() {
-        this.mouseTool.close(true); //关闭，并清除覆盖物
+        this.mouseTool.close(true); //close and clear overlays
         this.checkType = '';
     }
 

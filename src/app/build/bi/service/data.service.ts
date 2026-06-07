@@ -17,7 +17,7 @@ export class BiDataService {
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
     }
 
-    //BI结构
+    // BI structure
     getBiBuild(code: string): Observable<Bi> {
         return this._http.get<any>(RestPath.bi + "/" + code, null, {
             observe: "body",
@@ -27,7 +27,7 @@ export class BiDataService {
         });
     }
 
-    //BI数据
+    // BI data
     getBiData(code: string, index: number, size: number, sort: string, direction: string, query: any): Observable<BiData> {
         let params = {
             index,
@@ -56,7 +56,7 @@ export class BiDataService {
         });
     }
 
-    //图表
+    // chart
     getBiChart(code: string, chartId: number, query: any): Observable<ChartApi> {
         return this._http.post(RestPath.bi + "/" + code + "/chart/" + chartId, query, null, {
             headers: {
@@ -65,7 +65,7 @@ export class BiDataService {
         });
     }
 
-    //维度参照
+    // dimension reference
     getBiReference(code: string, id: number, query: any): Observable<Reference[]> {
         return this._http.post(RestPath.bi + "/" + code + "/reference/" + id, query || {}, null, {
             headers: {
@@ -74,7 +74,7 @@ export class BiDataService {
         });
     }
 
-    //参照表格
+    // reference table
     getBiReferenceTable(code: string, id: number): Observable<BiData> {
         return this._http.post(RestPath.bi + "/" + code + "/reference-table/" + id, {}, null, {
             headers: {
@@ -83,7 +83,7 @@ export class BiDataService {
         });
     }
 
-    //导出excel
+    // export excel
     exportExcel_bak(id: number, code: string, query: any) {
         DataService.postExcelFile(RestPath.bi + "/" + code + "/excel/" + id, {
             condition: encodeURIComponent(JSON.stringify(query)),
@@ -101,7 +101,7 @@ export class BiDataService {
             }
         }).subscribe((res) => {
             if (res.type !== 4) {
-                // 还没准备好，无需处理
+                // not ready yet, no action needed
                 return;
             }
             downloadFile(res);
@@ -120,7 +120,7 @@ export class BiDataService {
             }
         }).subscribe((res) => {
             if (res.type !== 4) {
-                // 还没准备好，无需处理
+                // not ready yet, no action needed
                 return;
             }
             downloadFile(res);
@@ -131,7 +131,7 @@ export class BiDataService {
     }
 
 
-    //加载自定义图表
+    // load custom chart
     getChartTpl(id: number, code: string, query: any): string {
         return RestPath.bi + "/" + code + "/custom-chart/" + id + "?_token=" + this.tokenService.get().token +
             "&_t=" + new Date().getTime() +

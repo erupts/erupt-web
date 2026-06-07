@@ -109,6 +109,7 @@ export interface Edit {
     $beforeValue?: any;
     $l_val?: any;
     $r_val?: any;
+    $operator?: string;
 }
 
 interface Readonly {

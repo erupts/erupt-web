@@ -95,8 +95,8 @@ export interface DrillInput {
 }
 
 export enum CoverEffect {
-    FIT = "FIT", //适应
-    CLIP = "CLIP", //剪裁
+    FIT = "FIT", //fit
+    CLIP = "CLIP", //clip
 }
 
 interface Layout {

@@ -123,7 +123,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
         } else if (this.gatewayType === GatewayType.PARALLEL) {
             return "#718dff";
         } else {
-            return "#FF9800"; // 包容节点使用橙色
+            return "#FF9800"; // Inclusive node uses orange
         }
     }
 
@@ -239,7 +239,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
         } else if (this.gatewayType === GatewayType.PARALLEL) {
             return "apartment";
         } else {
-            return "fork"; // 包容节点使用fork图标
+            return "fork"; // Inclusive node uses the fork icon
         }
     }
 

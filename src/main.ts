@@ -6,7 +6,7 @@ import {environment} from '@env/environment';
 if (environment.production) {
     enableProdMode();
 }
-// Angular 17: preserveWhitespaces 选项已移除
+// Angular 17: the preserveWhitespaces option has been removed
 platformBrowserDynamic().bootstrapModule(AppModule, {
     defaultEncapsulation: ViewEncapsulation.Emulated
 }).then(res => {
@@ -21,24 +21,24 @@ platformBrowserDynamic().bootstrapModule(AppModule, {
     removePreloader();
 });
 
-// 手动实现 preloaderFinished 功能
+// Manually implement the preloaderFinished functionality
 function removePreloader(): void {
     const body = document.querySelector('body');
     const preloader = document.querySelector('.preloader');
     if (preloader && body) {
-        // 停止 SiriWave 动画
+        // Stop the SiriWave animation
         const win = window as any;
         if (win.SW) {
             win.SW.stop();
             win.SW = null;
         }
-        // 添加隐藏类以触发过渡动画
+        // Add the hidden class to trigger the transition animation
         preloader.addEventListener('transitionend', () => {
             preloader.className = 'preloader-hidden';
             body.style.overflow = '';
         });
         preloader.className += ' preloader-hidden-add preloader-hidden-add-active';
-        // 如果过渡动画没有触发，直接隐藏
+        // If the transition animation did not fire, hide directly
         setTimeout(() => {
             preloader.className = 'preloader-hidden';
             body.style.overflow = '';

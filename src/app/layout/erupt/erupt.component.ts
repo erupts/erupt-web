@@ -140,7 +140,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             if (evt instanceof NavigationError || evt instanceof NavigationCancel) {
                 this.isFetching = false;
                 if (evt instanceof NavigationError) {
-                    _message.error(`无法加载${evt.url}路由，请刷新页面或清理缓存后重试！`, {nzDuration: 1000 * 3});
+                    _message.error(`Unable to load route ${evt.url}, please refresh the page or clear the cache and try again!`, {nzDuration: 1000 * 3});
                 }
                 return;
             }
@@ -246,7 +246,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             this.menuSrv.add(menuItems);
             this.router.navigateByUrl(this.router.url).then();
 
-            // 将所有菜单元素增加水波纹效果
+            // add ripple effect to all menu elements
             let menuEle = this.el.nativeElement.getElementsByClassName("sidebar-nav__item");
             for (let i = 0; i < menuEle.length; i++) {
                 let ele = menuEle.item(i);
@@ -276,7 +276,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             let path = generateMenuPath(userinfo.indexMenuType, userinfo.indexMenuValue);
             const appConfig = EruptAppData.get();
             if (appConfig.waterMark) {
-                // 水印内容格式：姓名-自定义内容-日期
+                // watermark content format: name-custom content-date
                 let watermark = userinfo.nickname;
                 if (appConfig.waterMarkContent) {
                     watermark += '-' + appConfig.waterMarkContent;

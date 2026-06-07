@@ -40,7 +40,7 @@ export class AssigneeNodeComponent extends ANode implements OnInit {
     }
 
     deleteReviewUser(index: number) {
-        // 确保最少保留一个审批人
+        // Ensure at least one approver is retained
         if (this.assigneeNode.reviewUserModes.length > 1) {
             this.assigneeNode.reviewUserModes.splice(index, 1);
         }

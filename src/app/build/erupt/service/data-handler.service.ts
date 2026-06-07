@@ -82,10 +82,10 @@ export class DataHandlerService {
                     }
                     break;
             }
-            //生成columns
+            //generate columns
             field.eruptFieldJson.views.forEach(view => {
                 if (view.column) {
-                    //修复表格显示子类属性时无法正确检索到属性值的缺陷
+                    //fix defect where sub-class property values could not be correctly retrieved when displayed in the table
                     view.column = field.fieldName + "_" + view.column.replace(/\./g, "_");
                 } else {
                     view.column = field.fieldName;
@@ -135,6 +135,71 @@ export class DataHandlerService {
             });
         }
         return queryCondition;
+    }
+
+    buildSearchConditions(eruptModel: EruptModel): QueryCondition[] {
+        const conditions: QueryCondition[] = [];
+        const obj = this.searchEruptToObject({eruptModel});
+        for (const key in obj) {
+            const field = eruptModel.eruptFieldModels.find(f => f.fieldName === key);
+            const operator = field?.eruptFieldJson.edit?.$operator || undefined;
+            let val = obj[key];
+            if (typeof val === 'string') val = val.trim();
+            conditions.push({key, value: val, operator});
+        }
+        for (const field of eruptModel.eruptFieldModels) {
+            const edit = field.eruptFieldJson.edit;
+            if (!edit?.search?.value) continue;
+            const op = edit.$operator;
+            if (op === 'NULL' || op === 'NOT_NULL') {
+                if (!(field.fieldName in obj)) {
+                    conditions.push({key: field.fieldName, value: null, operator: op});
+                }
+            } else if (op === 'RANGE' && edit.type === EditType.NUMBER && !edit.search.vague) {
+                // non-vague NUMBER with RANGE operator: use $l_val/$r_val
+                if (edit.$l_val != null && edit.$r_val != null) {
+                    const idx = conditions.findIndex(c => c.key === field.fieldName);
+                    if (idx >= 0) conditions.splice(idx, 1);
+                    conditions.push({key: field.fieldName, value: [edit.$l_val, edit.$r_val], operator: 'RANGE'});
+                }
+            }
+        }
+        return conditions;
+    }
+
+    private getDefaultSearchOperator(type: EditType, vague?: boolean): string | null {
+        switch (type) {
+            case EditType.INPUT:
+            case EditType.TEXTAREA:
+            case EditType.HTML_EDITOR:
+            case EditType.CODE_EDITOR:
+                return 'EQ';
+            case EditType.NUMBER:
+                return vague ? 'RANGE' : 'EQ';
+            case EditType.REFERENCE_TABLE:
+            case EditType.REFERENCE_TREE:
+                return 'EQ';
+            default:
+                return null;
+        }
+    }
+
+    initSearchOperators(eruptModel: EruptModel): void {
+        for (const field of eruptModel.eruptFieldModels) {
+            const edit = field.eruptFieldJson.edit;
+            if (!edit || !edit.search?.value) continue;
+            if (!edit.$operator) {
+                edit.$operator = this.getDefaultSearchOperator(edit.type, edit.search.vague);
+            }
+        }
+    }
+
+    resetSearchOperators(eruptModel: EruptModel): void {
+        for (const field of eruptModel.eruptFieldModels) {
+            const edit = field.eruptFieldJson.edit;
+            if (!edit || !edit.search?.value) continue;
+            edit.$operator = this.getDefaultSearchOperator(edit.type, edit.search.vague);
+        }
     }
 
     searchEruptToObject(eruptBuildModel: EruptBuildModel): object {
@@ -196,7 +261,7 @@ export class DataHandlerService {
         return this.datePipe.transform(date, format);
     }
 
-    //将eruptModel中的内容拼接成后台需要的json格式
+    //serialize the eruptModel content into the JSON format required by the backend
     eruptValueToObject(eruptBuildModel: EruptBuildModel): object {
         const eruptData: any = {};
         eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
@@ -393,7 +458,7 @@ export class DataHandlerService {
     }
 
 
-    //将后台数据转化成前端可视格式
+    //convert backend data into a frontend-displayable format
     objectToEruptValue(object: any, eruptBuild: EruptBuildModel) {
         this.emptyEruptValue(eruptBuild);
         for (let field of eruptBuild.eruptModel.eruptFieldModels) {
@@ -402,7 +467,7 @@ export class DataHandlerService {
                 switch (edit.type) {
                     case EditType.INPUT:
                         const inputType = edit.inputType;
-                        //处理前缀和后缀的数据
+                        //handle prefix and suffix data
                         if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
                             if (object[field.fieldName]) {
                                 let str = <string>object[field.fieldName];

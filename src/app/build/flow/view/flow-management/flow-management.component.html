@@ -1,5 +1,5 @@
 <div class="flow-management-container">
-  <!-- 头部搜索和操作区域 -->
+  <!-- Header search and action area -->
   <div class="header-section">
     <div class="search-area">
       <nz-input-group [nzSuffix]="searchIcon">
@@ -23,9 +23,9 @@
     </div>
   </div>
 
-  <!-- 左右结构内容区域 -->
+  <!-- Left-right split content area -->
   <div class="content-layout">
-    <!-- 左侧分类列表 -->
+    <!-- Left category list -->
     <div class="category-sidebar">
       <div class="sidebar-header">
         <div class="header-title">
@@ -46,7 +46,7 @@
 
       <div class="category-list" cdkDropList (cdkDropListDropped)="onDrop($event)">
         <nz-spin [nzSpinning]="false">
-          <!-- 全部选项 -->
+          <!-- All option -->
           <div
             class="category-item"
             [class.active]="selectedCategory === null"
@@ -56,7 +56,7 @@
             <span class="category-count">({{ flowConfigs.length }})</span>
           </div>
 
-          <!-- 可拖拽的分类列表 -->
+          <!-- Draggable category list -->
           @for (item of categoryItems; track item; let i = $index) {
             <div
               class="category-item draggable-item"
@@ -103,15 +103,15 @@
       </div>
     </div>
 
-    <!-- 右侧应用列表 -->
+    <!-- Right application list -->
     <div class="app-content">
       <div class="app-list" cdkDropList (cdkDropListDropped)="onFlowDrop($event)">
-        <!-- 加载状态 -->
+        <!-- Loading state -->
         <nz-spin [nzSpinning]="configLoading" nzSize="large" style="height: 100%">
           @for (config of getCurrentConfigs(); track config) {
             <div cdkDrag>
               <div class="app-item">
-                <!-- 应用信息 -->
+                <!-- Application info -->
                 <div class="app-info">
                   <div class="app-icon" [style.background-color]="config.color || '#1890ff'">
                     <span [class]="config.icon || 'fa fa-dot-circle-o'"></span>
@@ -128,7 +128,7 @@
                     <div class="app-description">{{ config.remark || '' }}</div>
                   </div>
                 </div>
-                <!-- 操作按钮 -->
+                <!-- Action buttons -->
                 <div class="action-icons">
                   <button nz-button nzType="text" nzSize="small" cdkDragHandle (click)="$event.stopPropagation()">
                     <span>⋮⋮</span>
@@ -150,7 +150,7 @@
               </div>
             </div>
           }
-          <!-- 空状态 -->
+          <!-- Empty state -->
           @if (!configLoading && getCurrentConfigs().length === 0) {
             <div class="empty-state">
               <nz-empty style="margin-top: 20%"

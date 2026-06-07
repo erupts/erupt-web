@@ -1,5 +1,5 @@
 export class GlobalKeys {
-    //登录回退路径
+    //login fallback path
     public static loginBackPath: string = "loginBackPath";
 
     public static getAppToken: string = "getAppToken";

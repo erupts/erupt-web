@@ -1,7 +1,7 @@
 <div class="flow-dashboard">
-  <!-- 主要内容区域 -->
+  <!-- Main content area -->
   <div class="main-content">
-    <!-- 左侧分类导航 -->
+    <!-- Left category navigation -->
     <div class="category-sidebar">
       <div class="category-header">
         <h3>流程分类</h3>
@@ -31,9 +31,9 @@
       </div>
     </div>
 
-    <!-- 右侧流程内容 -->
+    <!-- Right flow content -->
     <div class="content-area">
-      <!-- 搜索框 -->
+      <!-- Search box -->
       @if (!loading) {
         <div class="search-container">
           <nz-input-group nzPrefixIcon="search" nzSize="default">
@@ -48,7 +48,7 @@
         </div>
       }
 
-      <!-- 加载状态 -->
+      <!-- Loading state -->
       @if (loading) {
         <div class="loading-container">
           <nz-spin nzSize="large">
@@ -57,10 +57,10 @@
         </div>
       }
 
-      <!-- 流程内容 -->
+      <!-- Flow content -->
       @if (!loading) {
         <div class="flow-groups">
-          <!-- 空状态 -->
+          <!-- Empty state -->
           @if (filteredFlowGroups.length === 0) {
             <div class="empty-state">
               <i nz-icon nzType="inbox" nzTheme="outline"></i>
@@ -82,7 +82,7 @@
               }
             </div>
           }
-          <!-- 流程分组 -->
+          <!-- Flow groups -->
           @for (group of filteredFlowGroups; track group) {
             <div class="group-section">
               <h3 class="group-title">

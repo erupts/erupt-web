@@ -4,7 +4,7 @@ function escHtml(s: string): string {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-/** 将 AI 输出的宽松 diff 渲染为带色彩的 HTML 行，可选语法高亮 */
+/** Render the loose diff output from AI into colored HTML lines, with optional syntax highlighting */
 function renderDiffHtml(raw: string, hljs?: any, lang?: string): string {
     const hl = (code: string) => {
         if (hljs && lang && hljs.getLanguage(lang)) {
@@ -26,8 +26,8 @@ function renderDiffHtml(raw: string, hljs?: any, lang?: string): string {
 }
 
 /**
- * 预处理 LaTeX 公式，统一转换为标准格式
- * 支持: ```latex 代码块、\[...\] 块级公式、\(...\) 行内公式
+ * Pre-process LaTeX formulas, converting them to a standard format uniformly.
+ * Supports: ```latex code blocks, \[...\] block-level formulas, \(...\) inline formulas
  */
 function preprocessLatex(text: string): string {
     text = text.replace(/```latex\s*([\s\S]*?)```/g, (_match, content) => {
@@ -43,7 +43,8 @@ function preprocessLatex(text: string): string {
 }
 
 /**
- * 仅由 AiModule 提供，不 providedIn root，便于 markdown/katex/mermaid 等随 AI 懒加载 chunk 加载。
+ * Provided only by AiModule, not providedIn root, so that markdown/katex/mermaid etc.
+ * are loaded together with the AI lazy-loaded chunk.
  */
 @Injectable()
 export class MarkdownService {
@@ -166,7 +167,7 @@ export class MarkdownService {
         return this.initPromise;
     }
 
-    /** 提前触发懒加载，不等结果；组件初始化时调用可消除首次渲染延迟 */
+    /** Trigger lazy loading in advance without waiting for the result; call during component initialization to eliminate first-render delay */
     warmup(): void {
         this.init().catch(() => {
         });
@@ -176,13 +177,13 @@ export class MarkdownService {
         if (!text) return '';
         await this.init();
         let html = this.md.render(preprocessLatex(text));
-        // 为表格包一层 div，便于全局样式选择器命中（innerHTML 不受组件封装）
+        // wrap tables in a div so global style selectors can match (innerHTML is not scoped by component encapsulation)
         html = html.replace(/<table(\s|>)/g, '<div class="markdown-table-wrap"><table$1');
         html = html.replace(/<\/table>/g, '</table></div>');
         return html;
     }
 
-    /** 在容器内查找未渲染的 .mermaid 并执行渲染（应在 DOM 插入后由组件调用） */
+    /** Find unrendered .mermaid elements in the container and render them (should be called by the component after DOM insertion) */
     async runMermaid(container: HTMLElement): Promise<void> {
         const nodeList = container.querySelectorAll('.mermaid:not([data-processed])');
         if (nodeList.length === 0) return;
@@ -195,7 +196,7 @@ export class MarkdownService {
         }
     }
 
-    /** 在容器内查找未渲染的 .echarts-block 并执行渲染（应在 DOM 插入后由组件调用） */
+    /** Find unrendered .echarts-block elements in the container and render them (should be called by the component after DOM insertion) */
     async runEcharts(container: HTMLElement): Promise<void> {
         const nodeList = container.querySelectorAll('.echarts-block:not([data-processed])');
         if (nodeList.length === 0) return;

@@ -22,10 +22,10 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() readonly: boolean;
 
-    // 新增配置项输入，允许外部传入配置覆盖默认配置
+    // new config input, allows external config to override defaults
     @Input() editorConfig: any = {};
 
-    // 编辑器模式
+    // editor mode
     @Input() editorMode: 'wysiwyg' | 'ir' | 'sv' = 'wysiwyg';
 
 
@@ -39,7 +39,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private vditor: Vditor;
 
-    // 默认工具栏配置
+    // default toolbar configuration
     private defaultToolbar = [
         'emoji',
         'headings',
@@ -82,7 +82,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        // 延迟初始化，确保 DOM 已渲染
+        // delay initialization to ensure the DOM has rendered
         setTimeout(() => {
             this.lazy.loadScript(`${this.cdnPath}/dist/index.min.js`).then(() => {
                 this.initVditor();
@@ -95,12 +95,12 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * 初始化Vditor编辑器
-     * 使用合并后的配置初始化编辑器
+     * Initialize the Vditor editor
+     * Uses the merged configuration to initialize the editor
      */
     private initVditor() {
         try {
-            // 检查 vditorContainer 是否存在
+            // check if vditorContainer exists
             if (!this.vditorContainer) {
                 console.error('vditorContainer is undefined');
                 this.loading = false;
@@ -108,7 +108,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
                 return;
             }
 
-            // 获取上传URL，与原CKEditor保持一致
+            // get the upload URL, consistent with the original CKEditor
             const uploadUrl = RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
                 this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token;
             ;
@@ -117,7 +117,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
                 minHeight: 60,
                 mode: this.editorMode,
                 cache: {
-                    enable: false // 禁用缓存，避免不同实例间的缓存冲突
+                    enable: false // disable caching to avoid conflicts between different instances
                 },
                 upload: {
                     url: uploadUrl,
@@ -156,10 +156,10 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * 格式化文件名
-     * 将文件名格式化逻辑抽离为单独方法
-     * @param name 原始文件名
-     * @returns 格式化后的文件名
+     * Format a filename
+     * Extracts filename formatting logic into a separate method
+     * @param name original filename
+     * @returns formatted filename
      */
     private formatFilename(name: string): string {
         return name.replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, '')
@@ -168,14 +168,14 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * 处理上传成功回调
-     * 将上传成功处理逻辑抽离为单独方法
-     * @param _ 未使用参数
-     * @param res 上传响应数据
+     * Handle upload success callback
+     * Extracts upload success handling logic into a separate method
+     * @param _ unused parameter
+     * @param res upload response data
      */
     private handleUploadSuccess(_, res) {
         try {
-            // 解析响应数据
+            // parse the response data
             const response = JSON.parse(res);
             console.log('上传成功回调:', response);
 
@@ -189,9 +189,9 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 
             if (imageUrl) {
-                // 获取文件名
+                // get the filename
                 const fileName = response.fileName || '图片';
-                // 使用 insertValue 方法插入图片
+                // use insertValue to insert the image
                 this.vditor.insertValue(`![${fileName}](${imageUrl})`);
             }
         } catch (e) {

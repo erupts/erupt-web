@@ -63,14 +63,14 @@ export class ReferenceComponent implements OnInit {
                 if (this.multiple) {
                     this.data = [{
                         key: null,
-                        title: '全部',
+                        title: 'All',
                         expanded: true,
                         children: this.data,
                         all: true,
                     }];
                 }
 
-                //选中回显
+                // restore selected values
                 if (this.dimension.$value) {
                     switch (this.dimension.type) {
                         case DimType.REFERENCE:
@@ -152,7 +152,7 @@ export class ReferenceComponent implements OnInit {
         }
     }
 
-    //递归获取所有选中的值
+    // recursively get all selected values
     findAllNode(treeNodes: NzTreeNode[], result: any[] = []) {
         treeNodes.forEach(node => {
             if (node.children) {

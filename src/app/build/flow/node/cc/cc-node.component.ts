@@ -40,7 +40,7 @@ export class CcNodeComponent extends ANode implements OnInit {
     }
 
     deleteReviewUser(index: number) {
-        // 确保最少保留一个审批人
+        // Ensure at least one approver is retained
         if (this.ccNode.reviewUserModes.length > 1) {
             this.ccNode.reviewUserModes.splice(index, 1);
         }

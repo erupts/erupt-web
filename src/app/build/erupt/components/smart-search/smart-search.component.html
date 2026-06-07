@@ -9,22 +9,22 @@
             </button>
         </div>
     </div>
-    <!-- 条件构建器 -->
+    <!-- Condition builder -->
     <form nz-form class="condition-builder">
         <div class="condition-panel">
-            <!-- 条件组列表 -->
+            <!-- Condition group list -->
             <div class="condition-groups">
                 @for (group of search; track group; let groupIndex = $index) {
                     <div
                         class="condition-group-wrapper"
                     >
-                        <!-- 或标识 -->
+                        <!-- OR separator -->
                         @if (groupIndex > 0) {
                             <div class="or-divider">
                                 <span class="or-text">或</span>
                             </div>
                         }
-                        <!-- 条件组卡片 -->
+                        <!-- Condition group card -->
                         <nz-card
                             [nzTitle]="cardTitle"
                             [nzExtra]="cardExtra"
@@ -43,13 +43,13 @@
                                     </button>
                                 }
                             </ng-template>
-                            <!-- 条件项列表 -->
+                            <!-- Condition item list -->
                             <div class="conditions-list">
                                 @for (condition of group; track condition; let conditionIndex = $index) {
                                     <div
                                         class="condition-item"
                                     >
-                                        <!-- 逻辑操作符标签 -->
+                                        <!-- Logical operator label -->
                                         @if (conditionIndex > 0) {
                                             <div class="logic-label">
                                                 <span class="logic-text">且</span>
@@ -64,9 +64,9 @@
                                                 </button>
                                             </div>
                                         }
-                                        <!-- 条件内容 -->
+                                        <!-- Condition content -->
                                         <div class="condition-content">
-                                            <!-- 字段选择 -->
+                                            <!-- Field selector -->
                                             <nz-form-item>
                                                 <nz-select [(ngModel)]="condition.field"
                                                            (ngModelChange)="onFieldChange(condition)"
@@ -83,7 +83,7 @@
                                                     }
                                                 </nz-select>
                                             </nz-form-item>
-                                            <!-- 操作符选择 -->
+                                            <!-- Operator selector -->
                                             <nz-form-item>
                                                 <nz-select [(ngModel)]="condition.operator"
                                                            (ngModelChange)="onOperatorChange(condition)"
@@ -149,11 +149,11 @@
                                                     }
                                                 </nz-select>
                                             </nz-form-item>
-                                            <!-- 值输入-->
+                                            <!-- Value input-->
                                             @if (condition.operator) {
                                                 <div class="value-row">
                                                     <nz-form-item class="value-input-container">
-                                                        <!-- 数字 -->
+                                                        <!-- Number -->
                                                         @if (condition.operatorType === OperatorType.NUMBER) {
                                                             @if (condition.operator === OperatorNumberType.EQ ||
                                                             condition.operator === OperatorNumberType.NEQ ||
@@ -179,7 +179,7 @@
                                                                 </div>
                                                             }
                                                         }
-                                                        <!-- 文本 -->
+                                                        <!-- Text -->
                                                         @if (condition.operatorType === OperatorType.STRING) {
                                                             @if (condition.operator === OperatorStringType.EQ ||
                                                             condition.operator === OperatorStringType.NEQ ||
@@ -200,7 +200,7 @@
                                                                 </nz-select>
                                                             }
                                                         }
-                                                        <!-- 时间 -->
+                                                        <!-- Date/Time -->
                                                         @if (condition.operatorType === OperatorType.DATE) {
                                                             @if ((
                                                                 condition.operator === OperatorDateType.GT ||
@@ -220,7 +220,7 @@
                                                                 </nz-input-number>
                                                             }
                                                         }
-                                                        <!-- 布尔值 -->
+                                                        <!-- Boolean -->
                                                         @if (condition.operatorType === OperatorType.BOOLEAN) {
                                                             <nz-select [ngModelOptions]="{standalone: true}"
                                                                        style="width: 100%"
@@ -232,7 +232,7 @@
                                                                            [nzLabel]="eruptModel.eruptFieldModelMap.get(condition.field).eruptFieldJson.edit.boolType.falseText"></nz-option>
                                                             </nz-select>
                                                         }
-                                                        <!-- 选择 -->
+                                                        <!-- Choice -->
                                                         @if (condition.operatorType === OperatorType.CHOICE) {
                                                             @if (condition.operator === OperatorReferenceType.EQ || condition.operator === OperatorReferenceType.NEQ) {
                                                                 <nz-select [ngModelOptions]="{standalone: true}"
@@ -319,7 +319,7 @@
                                         </div>
                                     </div>
                                 }
-                                <!-- 添加条件按钮 -->
+                                <!-- Add condition button -->
                                 <button
                                     nz-button
                                     nzType="dashed"
@@ -336,7 +336,7 @@
                 }
             </div>
 
-            <!-- 添加条件组按钮 -->
+            <!-- Add condition group button -->
             <div class="add-group-section">
                 <button nz-button nzType="dashed"
                         (click)="addConditionGroup()" nzBlock>

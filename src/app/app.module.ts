@@ -35,8 +35,8 @@ const ngZorroConfig: NzConfig = {
     theme: WindowModel.theme
 };
 
-// Angular 17: SimpleInterceptor 已改为函数式拦截器 authSimpleInterceptor
-// 创建包装类以兼容现有的类拦截器方式
+// Angular 17: SimpleInterceptor has been changed to the functional interceptor authSimpleInterceptor
+// Create a wrapper class to remain compatible with the existing class-based interceptor approach
 @Injectable()
 class AuthSimpleInterceptorWrapper implements HttpInterceptor {
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

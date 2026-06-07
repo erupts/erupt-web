@@ -103,18 +103,18 @@ export class StartupService {
                 }
             };
         });
-        //注入全局方法：token
+        // Inject global method: token
         window[GlobalKeys.getAppToken] = () => {
             return this.tokenService.get();
         };
         if (WindowModel.eruptEvent) {
             WindowModel.eruptEvent.startup && WindowModel.eruptEvent.startup();
         }
-        //路由复用
+        // Route reuse
         this.settingSrv.layout['reuse'] = !!this.settingSrv.layout['reuse'];
-        //表格边框
+        // Table border
         this.settingSrv.layout['bordered'] = false !== this.settingSrv.layout['bordered'];
-        //面包靴导航
+        // Breadcrumb navigation
         this.settingSrv.layout['breadcrumbs'] = false !== this.settingSrv.layout['breadcrumbs'];
 
         if (this.settingSrv.layout['reuse']) {
@@ -125,12 +125,12 @@ export class StartupService {
             this.reuseTabService.excludes = [/\d*/];
         }
         return new Promise((resolve) => {
-            // 应用信息：包括站点名、描述、年份
+            // Application info: includes site name, description, and year
             this.settingSrv.setApp({
                 name: WindowModel.title,
                 description: WindowModel.desc
             });
-            // 设置页面标题的后缀
+            // Set the page title suffix
             if (WindowModel.title){
                 this.titleService.suffix = WindowModel.title;
             }

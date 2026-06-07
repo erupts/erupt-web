@@ -40,7 +40,7 @@
                         <span class="submit-time">提交于 {{ selectedInstance?.createTime | local }}</span>
                     </div>
                 </div>
-                <!-- 标签页导航 -->
+                <!-- Tab navigation -->
                 <nz-tabs
                     class="detail-tabs"
                     (nzSelectedIndexChange)="onTabChange($event)"
@@ -159,7 +159,7 @@
                     <nz-tab [nzTitle]="'评论列表'">
                         <div class="tab-content">
                             <div class="section">
-                                <!-- 添加评论 -->
+                                <!-- Add comment -->
                                 <div class="comment-form">
                                     <nz-input-group [nzSuffix]="commentSuffix">
                                         <input nz-input placeholder="请输入评论内容..."
@@ -179,7 +179,7 @@
                                         </button>
                                     </ng-template>
                                 </div>
-                                <!-- 评论列表 -->
+                                <!-- Comment list -->
                                 @if (comments.length > 0) {
                                     <div class="comments-list">
                                         @for (comment of comments; track comment) {
@@ -257,7 +257,7 @@
                 </nz-tabs>
             </div>
         }
-        <!-- 固定在右侧底部的功能按钮 -->
+        <!-- Action buttons fixed at the bottom right -->
         @if (!dataDeleted) {
             <div class="fixed-bottom-actions">
                 <div class="action-buttons">
@@ -351,9 +351,9 @@
     </div>
 }
 
-<!-- 空状态模板 -->
+<!-- Empty state template -->
 
-<!-- 同意弹窗 -->
+<!-- Approve modal -->
 <nz-modal
     [nzDraggable]="true"
     [(nzVisible)]="approveModalVisible"
@@ -418,7 +418,7 @@
     </div>
 </nz-modal>
 
-<!-- 拒绝弹窗 -->
+<!-- Reject modal -->
 <nz-modal
     [nzDraggable]="true"
     [(nzVisible)]="rejectModalVisible"
@@ -445,7 +445,7 @@
     </div>
 </nz-modal>
 
-<!-- 抄送弹窗 -->
+<!-- CC modal -->
 <nz-modal [nzDraggable]="true"
           [(nzVisible)]="ccModalVisible"
           nzTitle="抄送审批"
@@ -490,7 +490,7 @@
     </div>
 </nz-modal>
 
-<!-- 转交弹窗 -->
+<!-- Transfer modal -->
 <nz-modal [nzDraggable]="true"
           [(nzVisible)]="transferModalVisible"
           nzTitle="转交审批"
@@ -534,7 +534,7 @@
     </div>
 </nz-modal>
 
-<!-- 加签弹窗 -->
+<!-- Add signer modal -->
 <nz-modal [nzDraggable]="true"
           [(nzVisible)]="addSignModalVisible"
           nzTitle="加签审批"
@@ -586,7 +586,7 @@
     </div>
 </nz-modal>
 
-<!-- 退回弹窗 -->
+<!-- Return modal -->
 <nz-modal [nzDraggable]="true"
           [(nzVisible)]="returnModalVisible"
           nzTitle="退回审批"
@@ -631,7 +631,7 @@
     </div>
 </nz-modal>
 
-<!-- 重新提交弹窗 -->
+<!-- Resubmit modal -->
 <nz-modal [nzDraggable]="true"
           [(nzVisible)]="resubmitModalVisible"
           nzTitle="提交"
@@ -676,7 +676,7 @@
     </div>
 </nz-modal>
 
-<!-- 办理弹窗 -->
+<!-- Handle modal -->
 <nz-modal [nzDraggable]="true"
           [(nzVisible)]="handleModalVisible"
           nzTitle="办理"

@@ -15,7 +15,7 @@
              [ngStyle]="{overflowX:'hidden',overflowY:linkTree?'auto':'hidden',height:linkTree?'100%':'auto'}">
             <div class="tc-container">
 
-                <!-- ── 工具栏 ── -->
+                <!-- ── Toolbar ── -->
                 <div class="tc-toolbar">
                     <div class="tc-actions">
                         @if (eruptBuildModel.eruptModel.eruptJson.power.add) {
@@ -280,7 +280,7 @@
                 </div>
 
                 <div class="tc-inner">
-                <!-- ── 搜索条件区 ── -->
+                <!-- ── Search conditions area ── -->
                 @if (eruptBuildModel.eruptModel.eruptJson.power.query) {
                     @if (alert) {
                         <div class="tc-alert">
@@ -301,7 +301,7 @@
                         <div class="tc-extra" [innerHTML]="extraContent | safeHtml"></div>
                     }
 
-                    <!-- ── 数据区 ── -->
+                    <!-- ── Data area ── -->
                     <div class="tc-body">
                         @if (vis.length) {
                             @if (visOptions.length > 1) {

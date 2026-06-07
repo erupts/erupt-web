@@ -29,6 +29,6 @@ export enum NodeType {
 
 export enum BranchType {
     PARALLEL_CONDITION = "PARALLEL_CONDITION",
-    CONDITION = "CONDITION", //条件分支
-    ELSE = "ELSE"    //兜底分支
+    CONDITION = "CONDITION", // Conditional branch
+    ELSE = "ELSE"    // Fallback branch
 }

@@ -36,9 +36,9 @@ export class FlowPrintPreviewComponent implements OnInit {
         }
     }
 
-    // 打印方法 - 只打印当前组件的内容
+    // Print method - prints only the current component's content
     print() {
-        // 获取页面配置
+        // Get page configuration
         const pageConfig = this.instance.eruptFlowConfig.setting.printPageConfig || {
             paperSize: 'A4',
             orientation: 'portrait',
@@ -48,7 +48,7 @@ export class FlowPrintPreviewComponent implements OnInit {
             marginLeft: 10
         };
 
-        // 构建 @page 样式
+        // Build the @page style
         const pageSize = pageConfig.paperSize === 'Custom'
             ? 'auto'
             : `${pageConfig.paperSize} ${pageConfig.orientation}`;

@@ -275,7 +275,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         return accept.map(it => '.' + it)
     }
 
-    //根据后端数据填充字段表单
+    //fill form fields from backend data
     fillForm(data: any) {
         for (let key in data) {
             if (this.eruptModel.eruptFieldModelMap.get(key)) {

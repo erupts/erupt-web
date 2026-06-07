@@ -24,11 +24,11 @@ export class WindowModel {
 
     public static logoText: string;
 
-    public static registerPage: string; //注册页面地址
+    public static registerPage: string; //registration page URL
 
     public static copyright: boolean;
 
-    public static copyrightTxt: any; //授权文本
+    public static copyrightTxt: any; //license text
 
     public static theme: {
         primaryColor?: string,
@@ -52,9 +52,9 @@ export class WindowModel {
         WindowModel.logoFoldPath = WindowModel.config["logoFoldPath"] || WindowModel.logoPath;
         WindowModel.loginLogoPath = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
         WindowModel.logoText = WindowModel.config["logoText"] || "";
-        WindowModel.registerPage = WindowModel.config["registerPage"] || undefined; //注册页面地址
+        WindowModel.registerPage = WindowModel.config["registerPage"] || undefined; //registration page URL
         WindowModel.copyright = WindowModel.config["copyright"];
-        WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //授权文本
+        WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //license text
         WindowModel.upload = WindowModel.config["upload"] || false;
         WindowModel.theme = WindowModel.config["theme"] || {}
     }

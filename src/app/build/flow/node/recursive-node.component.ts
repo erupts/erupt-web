@@ -35,10 +35,10 @@ export class RecursiveNodeComponent {
     gatewayType = GatewayType;
 
     /**
-     * 插入节点
-     * @param branch 该节点要插入的支路（节点数组）
-     * @param i 插入哪个元素后面的索引，实际插入位置为i+1
-     * @param type 要插入的节点类型
+     * Insert a node
+     * @param branch The branch (node array) into which the node will be inserted
+     * @param i The index after which the node is inserted; the actual insertion position is i+1
+     * @param type The type of node to insert
      */
     insertNodeFun(branch: any[], i: number, type: NodeType) {
         const newNode = NodeMap[type].create();
@@ -57,9 +57,9 @@ export class RecursiveNodeComponent {
     }
 
     /**
-     * 删除某个元素
-     * @param branch 要删除的元素所在支路
-     * @param i 删除的元素在该支路内索引位置
+     * Delete an element
+     * @param branch The branch containing the element to delete
+     * @param i The index of the element within that branch
      */
     deleteNode(branch: any[], i: number) {
         console.log(branch[i].type)
@@ -70,7 +70,7 @@ export class RecursiveNodeComponent {
         }
     }
 
-    // 添加网关分支
+    // Add a gateway branch
     addBranch() {
         let hasElse: boolean = false;
         for (let branch of this.node.branches) {
@@ -87,22 +87,22 @@ export class RecursiveNodeComponent {
         return JSON.parse(JSON.stringify(obj));
     }
 
-    // 复制一个分支
+    // Copy a branch
     copyBranch(i: number) {
-        // 复制条件
+        // Copy the condition
         const cd = this.deepCopy(this.node.branches[i]);
         cd.name = cd.name + '-copy';
-        // 复制整个分支
+        // Copy the entire branch
         const bh = this.deepCopy(this.node.branches[i]);
-        // 重载节点id
+        // Reload node IDs
         reloadNodeId(cd);
         reloadNodeId(bh);
-        // 插入到新位置
+        // Insert at new position
         // this.node.props.branch.splice(i + 1, 0, cd);
         this.node.branches.splice(i + 1, 0, bh);
     }
 
-    // 删除网关分支
+    // Delete a gateway branch
     deleteBranch(i: number) {
         if (this.node.branches.length <= 2) {
             this.deleteNode(this.branch, this.index);
@@ -111,17 +111,17 @@ export class RecursiveNodeComponent {
         }
     }
 
-    // 左移分支
+    // Move branch left
     moveL(i: number) {
         this.exchange(this.node.branches, i, i - 1);
     }
 
-    // 右移分支
+    // Move branch right
     moveR(i: number) {
         this.exchange(this.node.branches, i, i + 1);
     }
 
-    // 交换数组俩元素位置
+    // Swap the positions of two elements in an array
     exchange(arr: any[], si: number, ti: number) {
         const temp = arr[si];
         arr[si] = arr[ti];

@@ -18,25 +18,25 @@ export class RestPath {
 }
 
 export enum EditType {
-    INPUT = "INPUT",                           //输入框
+    INPUT = "INPUT",                           //input field
     NUMBER = "NUMBER",
     COLOR = "COLOR",
-    TEXTAREA = "TEXTAREA",                     //大文本域
-    CHOICE = "CHOICE",                         //单个选择
-    MULTI_CHOICE = "MULTI_CHOICE",             //多选
-    TAGS = "TAGS",                             //标签选择
-    DATE = "DATE",                             //日期
-    COMBINE = "COMBINE",                       //表格合并
-    REFERENCE_TABLE = "REFERENCE_TABLE",       //引用
-    REFERENCE_TREE = "REFERENCE_TREE",         //引用
-    BOOLEAN = "BOOLEAN",                       //布尔
-    ATTACHMENT = "ATTACHMENT",                 //附件
-    AUTO_COMPLETE = "AUTO_COMPLETE",           //自动完成
+    TEXTAREA = "TEXTAREA",                     //large text area
+    CHOICE = "CHOICE",                         //single selection
+    MULTI_CHOICE = "MULTI_CHOICE",             //multiple selection
+    TAGS = "TAGS",                             //tag selection
+    DATE = "DATE",                             //date
+    COMBINE = "COMBINE",                       //table merge
+    REFERENCE_TABLE = "REFERENCE_TABLE",       //reference
+    REFERENCE_TREE = "REFERENCE_TREE",         //reference
+    BOOLEAN = "BOOLEAN",                       //boolean
+    ATTACHMENT = "ATTACHMENT",                 //attachment
+    AUTO_COMPLETE = "AUTO_COMPLETE",           //auto complete
     TAB_TREE = "TAB_TREE",
     TAB_TABLE_ADD = "TAB_TABLE_ADD",
     TAB_TABLE_REFER = "TAB_TABLE_REFER",
-    DIVIDE = "DIVIDE",                         //分割线
-    SLIDER = "SLIDER",                         //数字滑块
+    DIVIDE = "DIVIDE",                         //divider
+    SLIDER = "SLIDER",                         //numeric slider
     RATE = "RATE",
     CHECKBOX = "CHECKBOX",
     EMPTY = "EMPTY",
@@ -102,8 +102,8 @@ export enum DateEnum {
 
 export enum PickerMode {
     ALL = "ALL",
-    FUTURE = "FUTURE",  //仅可选择未来时间
-    HISTORY = "HISTORY"  //仅可选择历史时间
+    FUTURE = "FUTURE",  //only future dates are selectable
+    HISTORY = "HISTORY"  //only past dates are selectable
 }
 
 export enum AttachmentEnum {
@@ -145,11 +145,11 @@ export enum FormSize {
 }
 
 export enum PagingType {
-    //后端分页
+    //backend pagination
     BACKEND = "BACKEND",
-    //前端分页
+    //frontend pagination
     FRONT = "FRONT",
-    //不分页
+    //no pagination
     NONE = "NONE"
 }
 

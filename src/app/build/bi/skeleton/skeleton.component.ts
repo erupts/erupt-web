@@ -333,7 +333,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
         })
     }
 
-    //导出报表数据
+    // export report data
     exportBiData() {
         let param = this.handlerService.buildDimParam(this.bi);
         if (!param) {

@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 
-// ng-zorro模块
+// ng-zorro modules
 import {NzIconModule} from 'ng-zorro-antd/icon';
 import {NzCardModule} from 'ng-zorro-antd/card';
 import {SharedModule} from "@shared/shared.module";

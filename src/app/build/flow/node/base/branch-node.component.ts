@@ -45,7 +45,7 @@ export class BranchNodeComponent implements AfterViewInit {
     enableEdit = false;
 
     ngAfterViewInit() {
-        // 组件初始化后的处理
+        // Post-initialization logic
     }
 
     onEnableEdit() {

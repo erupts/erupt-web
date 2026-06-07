@@ -163,7 +163,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 this.dsl = res.data.publishDsl || {};
             }
             this.options.margin = this.dsl?.settings?.gap ?? 12;
-            // 从 URL 恢复过滤条件
+            // restore filter conditions from URL
             const urlFilters = this.route.snapshot.queryParams['filters'];
             if (urlFilters) {
                 try {
@@ -206,7 +206,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     query() {
         if (this.dsl?.filters) {
             for (const filter of this.dsl.filters) {
-                // 若当前值为空但存在默认值，则先应用默认值
+                // if the current value is empty but a default value exists, apply the default first
                 const isEmpty = (v: any) => v === null || v === undefined || v === ''
                     || (Array.isArray(v) && v.every(i => i === null || i === undefined));
                 if (isEmpty(filter.value)) {
@@ -330,7 +330,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 this.cubeApiService.rollback(this.dashboard.id, history.id).subscribe(() => {
                     this.message.success(this.i18n.fanyi('cube.dashboard.rollback_success'));
                     this.modal.closeAll();
-                    this.ngOnInit(); // 重新加载数据
+                    this.ngOnInit(); // reload data
                     this.query();
                 });
             }
@@ -560,8 +560,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                         this.dsl.filters = [];
                     }
                 }
-                // 同步 defaultValue → value，让过滤器控件立刻回显新默认值
-                // （track $index 导致组件实例不重建，ngOnInit 不会再次执行）
+                // sync defaultValue → value so the filter control immediately reflects the new default
+                // (track $index prevents component instance recreation, so ngOnInit won't run again)
                 const dv = filter.defaultValue;
                 const rd = parseRelativeDefault(dv);
                 const isEmpty = (v: any) => v === null || v === undefined
@@ -604,7 +604,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 this.dsl.settings.gap = instance.dsl.settings.gap;
                 this.options.margin = this.dsl.settings.gap ?? 12;
                 this.changedOptions();
-                // 重新渲染报表以应用新主题
+                // re-render reports to apply the new theme
                 for (let report of this.reports) {
                     report.render();
                 }
@@ -654,7 +654,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 图表联动筛选：点击图表 X 轴对应元素时，将对应维度值写入筛选并刷新
+     * Chart linkage filter: when a chart element corresponding to the X axis is clicked,
+     * write the dimension value into the filter and refresh
      */
     onFilterLink(payload: { field: string; value: any }) {
         if (!this.dsl || !payload?.field) {

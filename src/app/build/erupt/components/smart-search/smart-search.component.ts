@@ -132,19 +132,19 @@ export class SmartSearchComponent implements OnInit {
         }
     }
 
-    // 添加条件组（基于 search）
+    // add a condition group (based on search)
     addConditionGroup(): void {
         this.search.push([this.createEmptyCondition()]);
     }
 
-    // 删除条件组（基于 search）
+    // remove a condition group (based on search)
     removeConditionGroup(groupIndex: number): void {
         if (groupIndex >= 0 && groupIndex < this.search.length) {
             this.search.splice(groupIndex, 1);
         }
     }
 
-    // 添加条件（基于 search）
+    // add a condition (based on search)
     addCondition(groupIndex: number): void {
         if (!this.search[groupIndex]) {
             this.search[groupIndex] = [];
@@ -152,14 +152,14 @@ export class SmartSearchComponent implements OnInit {
         this.search[groupIndex].push(this.createEmptyCondition());
     }
 
-    // 删除条件（基于 search）
+    // remove a condition (based on search)
     removeCondition(groupIndex: number, conditionIndex: number): void {
         if (this.search[groupIndex]) {
             this.search[groupIndex].splice(conditionIndex, 1);
         }
     }
 
-    // 重置
+    // reset
     resetForm(): void {
         this.search = [[this.createEmptyCondition()]];
     }

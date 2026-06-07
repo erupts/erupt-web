@@ -73,7 +73,7 @@ export class HandlerService {
                     }
                 }
             }
-            //赋值
+            // assign value
             if (Array.isArray(val) && val.length == 0) {
                 param[dimension.code] = null;
             } else {

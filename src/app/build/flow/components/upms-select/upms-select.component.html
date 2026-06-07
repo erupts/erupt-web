@@ -1,7 +1,7 @@
 <div class="upms-select-container">
-  <!-- 左侧面板：选择 -->
+  <!-- Left panel: selection -->
   <div class="left-panel">
-    <!-- 使用 ng-zorro 的标签页 -->
+    <!-- Using ng-zorro tabs -->
     <nz-tabs
       [(nzSelectedIndex)]="activeTab"
       (nzSelectedIndexChange)="onTabChange($event)"
@@ -17,7 +17,7 @@
             <span nz-icon [nzType]="tab.icon" nzTheme="outline"></span>
             <span class="tab-label">{{ tab.key | translate }}</span>
           </ng-template>
-          <!-- 搜索框 -->
+          <!-- Search box -->
           <div class="search-container">
             <nz-input-group nzSize="default">
               <input
@@ -28,7 +28,7 @@
                 />
             </nz-input-group>
           </div>
-          <!-- 项目列表 -->
+          <!-- Item list -->
           <div class="item-list">
             <div class="item-list-header">
               <span class="item-count">{{ getListTitle(tab.key) }}</span>
@@ -61,7 +61,7 @@
     </nz-tabs>
   </div>
 
-  <!-- 右侧面板：已选项目 -->
+  <!-- Right panel: selected items -->
   <div class="right-panel">
     <div class="selected-header">
       <div class="header-info">

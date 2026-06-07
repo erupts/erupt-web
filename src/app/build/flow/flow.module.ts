@@ -3,12 +3,12 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 
-// ng-zorro模块
+// ng-zorro modules
 import {NzTypographyComponent} from 'ng-zorro-antd/typography';
 import {NzTooltipDirective} from 'ng-zorro-antd/tooltip';
 import {NzEmptyComponent} from 'ng-zorro-antd/empty';
 
-// 自定义组件
+// Custom components
 import {EruptFlowComponent} from './components/erupt-flow/erupt-flow.component';
 import {StartNodeComponent} from '@flow/node/start/start-node.component';
 import {ApprovalNodeComponent} from '@flow/node/appoval/approval-node.component';
@@ -19,7 +19,7 @@ import {InsertBtnComponent} from '@flow/node/base/insert-btn.component';
 
 import {NodeComponent} from '@flow/node/base/node.component';
 
-// 图标
+// Icons
 import {CommonModule} from "@angular/common";
 import {FlowRoutingModule} from "./flow-routing.module";
 import {RecursiveNodeComponent} from "@flow/node/recursive-node.component";

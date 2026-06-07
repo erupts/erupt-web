@@ -8,10 +8,10 @@ import {environment} from '@env/environment';
 import {GANTT_GLOBAL_CONFIG, GANTT_I18N_LOCALE_TOKEN, zhHansLocale} from '@worktile/gantt';
 // #region reuse-tab
 /**
- * 若需要[路由复用](https://ng-alain.com/components/reuse-tab)需要：
- * 1、在 `shared-delon.module.ts` 导入 `ReuseTabModule` 模块
- * 2、注册 `"RouteReuseStrategy`
- * 3、在 `src/app/layout/erupt/erupt.component.html` 修改：
+ * To enable [route reuse](https://ng-alain.com/components/reuse-tab), you need to:
+ * 1. Import the `ReuseTabModule` module in `shared-delon.module.ts`
+ * 2. Register `RouteReuseStrategy`
+ * 3. Update `src/app/layout/erupt/erupt.component.html` as follows:
  *  ```html
  *  <section class="alain-default__content">
  *    <reuse-tab #reuseTab></reuse-tab>
@@ -40,7 +40,7 @@ const alainConfig: AlainConfig = {
 const alainModules: any[] = [AlainThemeModule.forRoot(), DelonACLModule, ReuseTabModule];
 const alainProvides: any[] = [{provide: ALAIN_CONFIG, useValue: alainConfig}];
 
-// 显式提供 ReuseTabService
+// Explicitly provide ReuseTabService
 alainProvides.push(ReuseTabService);
 alainProvides.push({
     provide: RouteReuseStrategy,

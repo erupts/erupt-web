@@ -293,15 +293,15 @@ export class LayoutTreeComponent implements OnInit {
     getSubKeys(options: NzTreeNodeOptions[], key: string): string[] {
         const find = (nodes: NzTreeNodeOptions[]): NzTreeNodeOptions | null => {
             for (const n of nodes) {
-                if (n.key === key) return n;                 // 命中
-                const child = find(n.children ?? []);        // 去子树里找
+                if (n.key === key) return n;                 // found
+                const child = find(n.children ?? []);        // search in subtree
                 if (child) return child;
             }
             return null;
         };
         const target = find(options);
         if (!target) return [];
-        /* 2. 从目标节点开始 DFS，只收它子树的 key */
+        /* 2. start DFS from the target node, collecting only the keys in its subtree */
         const keys: string[] = [];
         const dfs = (n: NzTreeNodeOptions) => {
             keys.push(n.key);

@@ -3,7 +3,7 @@
   @if (error) {
     <nz-alert [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
   }
-  <!--账号-->
+  <!--Account-->
   <nz-form-item>
     <nz-form-control [nzErrorTip]="accountTip">
       <nz-input-group nzSize="large" nzPrefixIcon="user">
@@ -16,7 +16,7 @@
       </ng-template>
     </nz-form-control>
   </nz-form-item>
-  <!--密码-->
+  <!--Password-->
   <nz-form-item>
     <nz-form-control [nzErrorTip]="pwdTip">
       <nz-input-group nzSize="large" nzPrefixIcon="lock" [nzAddOnAfter]="controlPwd">
@@ -36,7 +36,7 @@
       </ng-template>
     </nz-form-control>
   </nz-form-item>
-  <!--图形验证码-->
+  <!--Graphic verification code-->
   @if (useVerifyCode) {
     <nz-form-item>
       <nz-form-control>

@@ -43,7 +43,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     dataHistories: FlowInstanceDataHistory[] = [];
 
-    // 新增属性存储接口返回的数据
+    // Newly added property to store data returned from the API
     instanceDetail: FlowInstance = null;
 
     instanceTasks: FlowInstanceTask[] = [];
@@ -52,14 +52,14 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     comments: FlowInstanceComment[] = [];
 
-    // 评论相关
+    // Comment-related
     newComment: string = '';
     isSubmittingComment: boolean = false;
 
     eruptBuild: EruptBuildModel
 
 
-    // 弹窗相关属性
+    // Modal-related properties
     approveModalVisible: boolean = false;
     rejectModalVisible: boolean = false;
     ccModalVisible: boolean = false;
@@ -145,9 +145,9 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.reloadFlows.emit()
     }
 
-    // 加载实例详情
+    // Load instance detail
     loadInstanceDetail(flow: FlowInstance) {
-        // 加载实例详情
+        // Load instance detail
         this.flowInstanceApiService.detail(flow.no).subscribe({
             next: (data) => {
                 this.instanceDetail = data.data;
@@ -161,19 +161,19 @@ export class FlowApprovalDetailComponent implements OnInit {
         });
     }
 
-    // 同意审批
+    // Approve
     approve() {
         this.reason = null;
         this.approveModalVisible = true;
     }
 
-    // 办理
+    // Handle task
     handle() {
         this.reason = null;
         this.handleModalVisible = true;
     }
 
-    // 提交办理
+    // Submit task handling
     submitHandle() {
         let data;
         if (Object.keys(this.nodeInfo?.prop?.formAccesses || {}).length) {
@@ -231,13 +231,13 @@ export class FlowApprovalDetailComponent implements OnInit {
         }
     }
 
-    // 拒绝审批
+    // Reject approval
     reject() {
         this.reason = null;
         this.rejectModalVisible = true;
     }
 
-    // 抄送审批
+    // CC approval
     cc() {
         this.reason = null;
         this.ccUsers = [];
@@ -245,7 +245,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.ccModalVisible = true;
     }
 
-    // 提交同意
+    // Submit approval
     submitApprove() {
         if (this.nodeInfo?.prop?.requireApprovalNote && !this.reason?.trim()) {
             this.message.warning('请填写同意原因');
@@ -277,7 +277,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     }
 
-    // 提交拒绝
+    // Submit rejection
     submitReject() {
         if (!this.reason?.trim()) {
             this.message.warning('请填写拒绝原因');
@@ -291,7 +291,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         })
     }
 
-    // 提交抄送
+    // Submit CC
     submitCc() {
         if (this.ccUsers.length === 0) {
             this.message.warning('请选择抄送人员');
@@ -308,7 +308,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             this.ccUsers = [];
             this.ccModalVisible = false;
             this.message.success('抄送成功');
-            // 刷新数据
+            // Refresh data
             if (this.selectedInstance?.id) {
                 this.onReloadFlows();
             }
@@ -316,7 +316,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     }
 
 
-    // 提交转交
+    // Submit transfer
     submitTransfer() {
         if (!this.transferUser) {
             this.message.warning('请选择转交人员');
@@ -338,7 +338,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         })
     }
 
-    // 提交加签
+    // Submit countersign
     submitAddSign() {
         if (!this.addSignType) {
             this.message.warning('请选择加签类型');
@@ -364,7 +364,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     }
 
 
-    // 提交退回
+    // Submit return
     submitReturn() {
         if (!this.returnNode) {
             this.message.warning('请选择退回节点');
@@ -385,7 +385,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         })
     }
 
-    // 转交审批
+    // Transfer approval
     transfer() {
         this.transferUser = null;
         this.reason = null;
@@ -393,7 +393,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.transferModalVisible = true;
     }
 
-    // 加签审批
+    // Add countersigner
     addSigner() {
         this.addSignUsers = [];
         this.reason = null;
@@ -402,7 +402,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.addSignModalVisible = true;
     }
 
-    // 退回审批
+    // Return approval
     return() {
         this.returnNode = null;
         this.reason = null;
@@ -414,14 +414,14 @@ export class FlowApprovalDetailComponent implements OnInit {
         })
     }
 
-    // 重新提交 / 提交
+    // Resubmit / Submit
     resubmit() {
         this.reason = null;
         this.selfSelectNodes = [];
         this.nodeUsersOptions = {};
         this.selectedNodeUserIds = {};
         this.resubmitModalVisible = true;
-        // 首次提交才需要加载自选节点
+        // Self-select nodes only need to be loaded on first submission
         if (this.instanceDetail?.eruptModelId) return;
         this.loadingSelfSelectNodes = true;
         const flowId = this.instanceDetail.eruptFlowConfig.id;
@@ -447,7 +447,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         });
     }
 
-    // 提交重新提交 / 提交
+    // Submit resubmit / Submit
     submitResubmit() {
         for (let node of this.selfSelectNodes) {
             if (!this.selectedNodeUserIds[node.key] || this.selectedNodeUserIds[node.key].length === 0) {
@@ -541,7 +541,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                 })
 
             } else if (this.activeTabIndex === 1) {
-                // 加载任务列表
+                // Load task list
                 this.flowInstanceApiService.tasks(this.selectedInstance.id).subscribe({
                     next: (data) => {
                         const arr = data.data || [];
@@ -576,7 +576,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     }
 
 
-    // 新增方法：提交评论
+    // New method: submit a comment
     submitComment() {
         if (!this.newComment.trim() || !this.selectedInstance?.id) {
             return;
@@ -587,7 +587,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             next: () => {
                 this.message.success('评论提交成功');
                 this.newComment = '';
-                // 重新加载评论列表
+                // Reload comment list
                 if (this.selectedInstance?.id) {
                     this.flowInstanceApiService.commentList(Number(this.selectedInstance.id)).subscribe(data => {
                         this.comments = data.data || [];
@@ -618,7 +618,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         });
     }
 
-    // 新增方法：查看流程图
+    // New method: view the flow diagram
     viewFlow() {
         let ref = this.drawerService.create({
             nzTitle: '查看流程',
@@ -673,7 +673,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         });
     }
 
-    // 打印预览功能
+    // Print preview feature
     print() {
         const modalRef = this.modal.create({
             nzDraggable: true,

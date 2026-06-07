@@ -24,7 +24,7 @@ export class GanttComponent implements OnChanges, OnInit {
 
     @Input() vis: Vis;
 
-    @Input() selectionMode: SelectMode | null = null; // 选择模式，null 表示使用默认多选
+    @Input() selectionMode: SelectMode | null = null; // selection mode, null means default multi-select
 
     @Output() onEdit = new EventEmitter<any>();
 
@@ -42,9 +42,9 @@ export class GanttComponent implements OnChanges, OnInit {
 
     groups: GanttGroup[] = [];
 
-    editColumnWidth: number = 0; // 编辑列宽度，根据树层级动态计算
+    editColumnWidth: number = 0; // edit column width, dynamically calculated based on tree depth
 
-    selectedItemIds: Set<string> = new Set<string>(); // 存储选中的项目ID
+    selectedItemIds: Set<string> = new Set<string>(); // stores the IDs of selected items
 
     protected readonly GanttViewType = GanttViewType;
 
@@ -78,26 +78,26 @@ export class GanttComponent implements OnChanges, OnInit {
     }
 
     /**
-     * 切换项目的选中状态
-     * @param item 甘特图项目
+     * Toggle the selected state of an item
+     * @param item Gantt chart item
      */
     toggleSelection(item: GanttItem, event?: Event): void {
         const itemId = item.id;
 
-        // 如果是单选模式
+        // if in single-select mode
         if (this.selectionMode === SelectMode.radio) {
             if (this.selectedItemIds.has(itemId)) {
                 this.selectedItemIds.delete(itemId);
             } else {
-                // 清除所有选中项，只选中当前项
+                // clear all selected items and select only the current item
                 this.selectedItemIds.clear();
                 this.selectedItemIds.add(itemId);
             }
         } else {
-            // 多选模式
+            // multi-select mode
             if (this.selectedItemIds.has(itemId)) {
                 this.selectedItemIds.delete(itemId);
-                // 取消选中时，同时取消选中所有子节点
+                // when deselecting, also deselect all child nodes
                 this.unselectChildren(item);
             } else {
                 this.selectedItemIds.add(itemId);
@@ -107,9 +107,9 @@ export class GanttComponent implements OnChanges, OnInit {
     }
 
     /**
-     * 处理单选框点击事件
-     * @param item 甘特图项目
-     * @param event 点击事件
+     * Handle radio button click event
+     * @param item Gantt chart item
+     * @param event click event
      */
     onRadioClick(item: GanttItem, event: Event): void {
         event.stopPropagation();
@@ -118,8 +118,8 @@ export class GanttComponent implements OnChanges, OnInit {
     }
 
     /**
-     * 取消选中所有子节点
-     * @param item 父节点
+     * Deselect all child nodes
+     * @param item parent node
      */
     private unselectChildren(item: GanttItem): void {
         if (item.children && item.children.length > 0) {
@@ -131,17 +131,17 @@ export class GanttComponent implements OnChanges, OnInit {
     }
 
     /**
-     * 检查项目是否被选中
-     * @param item 甘特图项目
-     * @returns 是否选中
+     * Check whether an item is selected
+     * @param item Gantt chart item
+     * @returns whether the item is selected
      */
     isSelected(item: GanttItem): boolean {
         return this.selectedItemIds.has(item.id);
     }
 
     /**
-     * 检查所有项目（包括子节点）是否都被选中
-     * @returns 是否全部选中
+     * Check whether all items (including child nodes) are selected
+     * @returns whether all items are selected
      */
     isAllSelected(): boolean {
         const checkAllSelected = (items: GanttItem[]): boolean => {
@@ -157,8 +157,8 @@ export class GanttComponent implements OnChanges, OnInit {
     }
 
     /**
-     * 检查是否有部分项目被选中（用于显示半选状态）
-     * @returns 是否有部分选中
+     * Check whether some items are partially selected (used to display the indeterminate state)
+     * @returns whether there is a partial selection
      */
     isIndeterminate(): boolean {
         const hasSelected = (items: GanttItem[]): boolean => {
@@ -174,8 +174,8 @@ export class GanttComponent implements OnChanges, OnInit {
     }
 
     /**
-     * 全选/取消全选
-     * @param checked 是否选中
+     * Select all / deselect all
+     * @param checked whether to select
      */
     toggleSelectAll(checked: boolean): void {
         if (this.selectionMode === SelectMode.radio) {
@@ -198,7 +198,7 @@ export class GanttComponent implements OnChanges, OnInit {
     }
 
     /**
-     * 收集所有选中的行数据并发送给上级组件
+     * Collect all selected row data and emit to the parent component
      */
     private emitSelectionChange(): void {
         const selectedRows: any[] = [];
@@ -219,7 +219,7 @@ export class GanttComponent implements OnChanges, OnInit {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['data']) {
             this.convertDataToGanttItems();
-            // 数据变化时清空选中状态
+            // clear selection state when data changes
             this.selectedItemIds.clear();
             this.emitSelectionChange();
         }
@@ -332,7 +332,7 @@ export class GanttComponent implements OnChanges, OnInit {
                 }
             });
             this.items = rootItems;
-            // 计算树的最大深度并更新列宽度
+            // calculate the maximum tree depth and update the column width
             const maxDepth = this.calculateMaxDepth(rootItems);
             this.editColumnWidth = (90 + maxDepth * 20);
         } else {
@@ -342,10 +342,10 @@ export class GanttComponent implements OnChanges, OnInit {
     }
 
     /**
-     * 计算树的最大深度
-     * @param items 甘特图项目数组
-     * @param currentDepth 当前深度（从1开始）
-     * @returns 最大深度
+     * Calculate the maximum tree depth
+     * @param items array of Gantt chart items
+     * @param currentDepth current depth (starting from 1)
+     * @returns maximum depth
      */
     private calculateMaxDepth(items: GanttItem[], currentDepth: number = 1): number {
         if (!items || items.length === 0) {

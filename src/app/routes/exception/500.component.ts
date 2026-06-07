@@ -10,7 +10,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
             <div> {{ message }}</div>
             <!--            <button nz-button nzType="primary" style="margin-top: 16px">-->
             <!--                <i nz-icon nzType="reload"></i>-->
-            <!--                重新加载-->
+            <!--                Reload-->
             <!--            </button>-->
         </exception>
     `

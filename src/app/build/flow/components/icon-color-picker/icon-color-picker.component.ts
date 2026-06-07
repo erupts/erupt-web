@@ -19,10 +19,10 @@ export class IconColorPickerComponent implements OnInit {
 
     @Output() configChange: EventEmitter<IconColorConfig> = new EventEmitter<IconColorConfig>();
 
-    // 预览选择的图标（在确认前不会应用到实际选择）
+    // Preview of the selected icon (not applied to the actual selection until confirmed)
     previewIcon: string = 'fa fa-user';
 
-    // 预览颜色（用于图标选择器中的预览）
+    // Preview color (used for the preview in the icon picker)
     previewColor: string = '#1890ff';
 
     bgColors: string[] = [
@@ -86,25 +86,25 @@ export class IconColorPickerComponent implements OnInit {
         this.initPreview();
     }
 
-    // 初始化预览
+    // Initialize preview
     initPreview(): void {
         this.previewIcon = this.selectedIcon;
         this.previewColor = this.selectedColor;
     }
 
-    // 选择图标（预览）
+    // Select icon (preview)
     selectIcon(icon: string, event: Event): void {
         event.stopPropagation();
         this.previewIcon = icon;
     }
 
-    // 选择颜色（预览）
+    // Select color (preview)
     selectColor(color: string, event: Event): void {
         event.stopPropagation();
         this.previewColor = color;
     }
 
-    // 确认选择
+    // Confirm selection
     confirmSelection(): void {
         const config: IconColorConfig = {
             icon: this.previewIcon,
@@ -113,18 +113,18 @@ export class IconColorPickerComponent implements OnInit {
         this.configChange.emit(config);
     }
 
-    // 取消选择
+    // Cancel selection
     cancelSelection(): void {
         this.previewIcon = this.selectedIcon;
         this.previewColor = this.selectedColor;
     }
 
-    // 获取图标选项样式
+    // Get icon option style
     getIconOptionStyle(color: string): string {
         return `background-color: ${color}`;
     }
 
-    // 获取预览图标样式
+    // Get preview icon style
     getPreviewIconStyle(): string {
         return `background-color: ${this.previewColor}`;
     }

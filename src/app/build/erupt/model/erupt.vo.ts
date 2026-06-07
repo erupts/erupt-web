@@ -5,6 +5,7 @@ export class TableStyle {
 export interface QueryCondition {
     key: string;
     value: any;
+    operator?: string;
 }
 
 export enum Expression {

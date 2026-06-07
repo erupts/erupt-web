@@ -1,5 +1,5 @@
 /**
- * 排序方向
+ * Sort direction
  */
 export enum Direction {
     ASC = "ASC",
@@ -7,7 +7,7 @@ export enum Direction {
 }
 
 /**
- * 排序对象
+ * Sort object
  */
 export interface Sort {
     field?: string;
@@ -15,7 +15,7 @@ export interface Sort {
 }
 
 /**
- * 查询操作符
+ * Query operator
  */
 export enum CubeOperator {
     EQ = "EQ",
@@ -53,7 +53,7 @@ export interface FilterGroup {
 }
 
 /**
- * 过滤器
+ * Filter
  */
 export interface CubeFilter {
     field?: string;
@@ -62,7 +62,7 @@ export interface CubeFilter {
 }
 
 /**
- * 立方体查询对象
+ * Cube query object
  */
 export interface CubeQuery {
     cube: string;
@@ -74,7 +74,7 @@ export interface CubeQuery {
     dimensionFormat?: Record<string, DimensionFormat>;
     parameter?: Record<string, any>;
     sorts?: Sort[];
-    groupBy?: boolean; // 默认值为 true
+    groupBy?: boolean; // default value is true
     limit?: number;
     offset?: number;
 }

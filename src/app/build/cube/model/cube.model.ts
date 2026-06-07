@@ -2,31 +2,31 @@ export interface CubeMeta {
     code: string;
     title: string;
     description?: string;
-    tags: string[];                     // 标签列表
-    dimensions: CubeMetaDimension[];    // 维度列表
-    measures: CubeMetaMeasure[];        // 指标列表
+    tags: string[];                     // tag list
+    dimensions: CubeMetaDimension[];    // dimension list
+    measures: CubeMetaMeasure[];        // measure list
     parameters: CubeMetaParameter[];
     fieldTitleMap?: Map<string, string>;
     fieldMap?: Map<string, BaseField>;
 }
 
 export interface BaseField {
-    code: string;         // 字段名
-    title: string;        // 标题
-    description?: string; // 描述
+    code: string;         // field name
+    title: string;        // title
+    description?: string; // description
     type: FieldType;
     hidden: boolean
 }
 
 /**
- * 维度元数据接口
+ * Dimension metadata interface
  */
 export interface CubeMetaDimension extends BaseField {
     tags: string[];
 }
 
 /**
- * 指标元数据接口
+ * Measure metadata interface
  */
 export interface CubeMetaMeasure extends BaseField {
     tags: string[];

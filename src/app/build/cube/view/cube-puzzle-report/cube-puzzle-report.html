@@ -41,7 +41,7 @@
         }
         @if (report.type === ReportType.TABLE) {
             <div #tableContainer style="height: 100%; width: 100%; display: flex; flex-direction: column;">
-                <!-- 筛选条件显示区 -->
+                <!-- Active filter display area -->
                 @if (activeFilters.size > 0) {
                     <div class="filter-tags-container">
                         <span class="filter-label">{{ 'cube.report.current_filter' | translate }}</span>
@@ -53,7 +53,7 @@
                         <a class="clear-all-link" (click)="clearAllFilters()">{{ 'cube.report.clear_all' | translate }}</a>
                     </div>
                 }
-                <!-- 表格区域 -->
+                <!-- Table area -->
                 <div style="flex: 1; overflow: hidden;">
                     <st #st
                         size="small"

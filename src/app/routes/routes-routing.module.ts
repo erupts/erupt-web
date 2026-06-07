@@ -125,14 +125,14 @@ const routes: Routes = [
             {path: "tenant", component: UserTenantLoginComponent, data: {title: "Login"}},
         ]
     },
-    // 全屏布局
+    // Full-screen layout
     {
         path: "fill",
         component: FillComponent,
         children: coreRouter
     },
-    // 单页不包裹Layout
-    // {path: "lock", component: UserLockComponent, data: {title: "锁屏", titleI18n: "lock"}},
+    // Single page without layout wrapper
+    // {path: "lock", component: UserLockComponent, data: {title: "Lock Screen", titleI18n: "lock"}},
     {path: "403", component: Exception403Component, data: {title: "403"}},
     {path: "404", component: Exception404Component, data: {title: "404"}},
     {path: "500", component: Exception500Component, data: {title: "500"}},

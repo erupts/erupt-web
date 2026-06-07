@@ -14,12 +14,12 @@ import {finalize} from "rxjs/operators";
 })
 export class CubeDrillDetailComponent implements OnInit {
 
-    @Input() measure: string;        // 下钻指标
-    @Input() dashboard: Dashboard;   // 仪表板配置
-    @Input() cubeMeta: CubeMeta;    // Cube 元数据
-    @Input() filters?: CubeFilter[]; // 过滤器
-    @Input() cube?: string;          // 覆盖 dashboard.cuber（子模型时使用）
-    @Input() explore?: string;       // 覆盖 dashboard.explore（子模型时使用）
+    @Input() measure: string;        // drill-down measure
+    @Input() dashboard: Dashboard;   // dashboard configuration
+    @Input() cubeMeta: CubeMeta;    // cube metadata
+    @Input() filters?: CubeFilter[]; // filters
+    @Input() cube?: string;          // overrides dashboard.cuber (used with sub-models)
+    @Input() explore?: string;       // overrides dashboard.explore (used with sub-models)
 
     @ViewChild('st', {static: false}) st: STComponent;
 
@@ -39,12 +39,12 @@ export class CubeDrillDetailComponent implements OnInit {
     }
 
     /**
-     * 加载下钻数据
+     * Load drill-down data
      */
     loadDrillData(): void {
         this.loading = true;
 
-        // 获取所有维度字段
+        // get all dimension fields
         const dimensions = this.cubeMeta?.dimensions?.map(d => d.code) || [];
         this.cubeApiService.query({
             cube: this.cube || this.dashboard.cuber,
@@ -68,12 +68,12 @@ export class CubeDrillDetailComponent implements OnInit {
     }
 
     /**
-     * 构建下钻表格列
+     * Build drill-down table columns
      */
     buildDrillColumns(): void {
         this.stColumns = [];
 
-        // 添加维度列
+        // add dimension columns
         this.cubeMeta.dimensions.forEach(dim => {
             this.stColumns.push({
                 title: dim.title,
@@ -116,7 +116,7 @@ export class CubeDrillDetailComponent implements OnInit {
     }
 
     /**
-     * 导出数据
+     * Export data
      */
     export(): void {
         let csv = [];
