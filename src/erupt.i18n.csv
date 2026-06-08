@@ -466,3 +466,5 @@ query.op.in,属于,屬於,In,Dans,含まれる,포함됨,Входит в,En,Enth
 query.op.null,为空,為空,Is null,Est vide,空である,비어있음,Пусто,Es nulo,Ist leer,É nulo,Kosong,فارغ
 query.op.not_null,非空,非空,Not null,Non vide,空でない,비어있지않음,Не пусто,No es nulo,Nicht leer,Não é nulo,Tidak kosong,غير فارغ
 query.op.not_in,不属于,不屬於,Not in,Non inclus,含まない,포함하지 않음,Не входит,No pertenece,Nicht enthalten,Não pertence,Tidak termasuk,لا ينتمي
+login.remember_account,记住账号,記住帳號,Remember account,Se souvenir du compte,アカウントを記憶,계정 기억,Запомнить аккаунт,Recordar cuenta,Konto merken,Lembrar conta,Ingat akun,تذكر الحساب
+login.caps_lock,大写锁定已开启,大寫鎖定已開啟,Caps Lock is on,Verrouillage majuscule activé,Caps Lockがオンです,Caps Lock 켜짐,Caps Lock включён,Bloqueo de mayúsculas activado,Feststelltaste ist aktiv,Caps Lock ativado,Caps Lock aktif,مفتاح الأحرف الكبيرة مفعّل

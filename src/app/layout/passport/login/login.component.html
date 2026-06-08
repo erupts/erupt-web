@@ -1,5 +1,6 @@
 <h3 style="margin-bottom: 26px;text-align: center">{{'login.account_pwd_login'|translate}}</h3>
-<form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
+<form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form"
+  [class.login-shake]="shaking">
   @if (error) {
     <nz-alert [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
   }
@@ -7,7 +8,8 @@
   <nz-form-item>
     <nz-form-control [nzErrorTip]="accountTip">
       <nz-input-group nzSize="large" nzPrefixIcon="user">
-        <input nz-input formControlName="userName" [placeholder]="'login.account'|translate">
+        <input #userInput nz-input formControlName="userName" [placeholder]="'login.account'|translate"
+          [disabled]="loading" (keydown.enter)="focusPwd(); $event.preventDefault()">
       </nz-input-group>
       <ng-template #accountTip>
         @if (userName.dirty && userName.errors) {
@@ -20,14 +22,16 @@
   <nz-form-item>
     <nz-form-control [nzErrorTip]="pwdTip">
       <nz-input-group nzSize="large" nzPrefixIcon="lock" [nzAddOnAfter]="controlPwd">
-        <input nz-input [type]="passwordType" formControlName="password"
-          [placeholder]="'login.pwd'|translate">
+        <input #pwdInput nz-input [type]="passwordType" formControlName="password"
+          [placeholder]="'login.pwd'|translate" [disabled]="loading"
+          (keyup)="capsLock = $event.getModifierState('CapsLock')">
       </nz-input-group>
+      @if (capsLock) {
+        <nz-alert nzType="warning" [nzMessage]="'login.caps_lock'|translate" nzBanner style="margin-top:4px"></nz-alert>
+      }
       <ng-template #controlPwd>
-        <i class="fa fa-eye-slash point" [hidden]="passwordType=='text'"
-        (click)="passwordType='text'"></i>
-        <i class="fa fa-eye point" [hidden]="passwordType=='password'"
-        (click)="passwordType='password'"></i>
+        <i nz-icon class="point" [nzType]="passwordType === 'password' ? 'eye-invisible' : 'eye'"
+          nzTheme="outline" (click)="passwordType = passwordType === 'password' ? 'text' : 'password'"></i>
       </ng-template>
       <ng-template #pwdTip>
         @if (password.dirty && password.errors) {
@@ -42,7 +46,8 @@
       <nz-form-control>
         <nz-input-group nzSize="large">
           <input nz-input type="text" [maxLength]="10" formControlName="verifyCode"
-            [placeholder]="'login.validate_code'|translate">
+            [placeholder]="'login.validate_code'|translate" [disabled]="loading"
+            (keydown.enter)="submit()">
           <img [src]="verifyCodeUrl" [alt]="'login.validate_code'|translate" (click)="changeVerifyCode()"
             style="position: absolute;z-index: 9;right: 1px;top: 1px;">
         </nz-input-group>
@@ -52,14 +57,17 @@
 
   <nz-form-item>
     <nz-col [nzSpan]="12" class="text-left">
-      @if (registerPage) {
-        <a class="forgot" [href]="registerPage">{{ 'login.register'|translate }}</a>
-      }
+      <label nz-checkbox formControlName="rememberAccount">{{ 'login.remember_account'|translate }}</label>
     </nz-col>
     <nz-col [nzSpan]="12" class="text-right">
       <a class="forgot" (click)="forgot()">{{ 'login.forget_pwd'|translate }}</a>
     </nz-col>
   </nz-form-item>
+  @if (registerPage) {
+    <nz-form-item style="margin-bottom:8px">
+      <a class="forgot" [href]="registerPage">{{ 'login.register'|translate }}</a>
+    </nz-form-item>
+  }
 
   <nz-form-item style="margin-bottom: 0">
     <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="loading"
