@@ -437,21 +437,16 @@ export class DataService {
 
     //login
     login(account: string, pwd: string, verifyCode?: any, verifyCodeMark?: any): Observable<LoginModel> {
-        return this._http.get(RestPath.erupt + "/login", {
-                account: account,
-                pwd: pwd,
-                verifyCode: verifyCode,
+        return this._http.post(RestPath.erupt + "/login", {
+                account, pwd, verifyCode,
                 verifyCodeMark: verifyCodeMark || null
             }
         );
     }
 
     tenantLogin(tenantCode: string, account: string, pwd: string, verifyCode?: any, verifyCodeMark?: any): Observable<LoginModel> {
-        return this._http.get(RestPath.erupt + "/tenant/login", {
-                tenantCode: tenantCode,
-                account: account,
-                pwd: pwd,
-                verifyCode: verifyCode,
+        return this._http.post(RestPath.erupt + "/tenant/login", {
+                tenantCode, account, pwd, verifyCode,
                 verifyCodeMark: verifyCodeMark || null
             }
         );
@@ -459,7 +454,7 @@ export class DataService {
 
     tenantChangePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
         const encode = (p: string) => EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(p, 3) : p;
-        return this._http.get(RestPath.erupt + "/tenant/change-pwd", {
+        return this._http.post(RestPath.erupt + "/tenant/change-pwd", {
                 pwd: encode(pwd),
                 newPwd: encode(newPwd),
                 newPwd2: encode(newPwd2)
@@ -486,7 +481,7 @@ export class DataService {
 
     changePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
         const encode = (p: string) => EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(p, 3) : p;
-        return this._http.get(RestPath.erupt + "/change-pwd", {
+        return this._http.post(RestPath.erupt + "/change-pwd", {
                 pwd: encode(pwd),
                 newPwd: encode(newPwd),
                 newPwd2: encode(newPwd2)
