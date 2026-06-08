@@ -453,8 +453,8 @@ global.expand,展开,展開,Expand,Développer,展開,펼치기,Разверну
 global.collapse,收起,收起,Collapse,Réduire,折りたたむ,접기,Свернуть,Contraer,Einklappen,Recolher,Ciutkan,طي
 setting.detail-drawer,抽屉查看详情,抽屜查看詳情,Drawer for Details,Tiroir pour détails,ドロワーで詳細表示,서랍으로 상세보기,Боковая панель,Cajón para detalles,Seitenleiste für Details,Gaveta para detalhes,Drawer untuk detail,درج للتفاصيل
 setting.search-collapsed,默认收起搜索,預設收起搜索,Collapse Search by Default,Recherche réduite par défaut,検索をデフォルトで折りたたむ,기본 검색 접기,Свернуть поиск по умолчанию,Contraer búsqueda por defecto,Suche standardmäßig einklappen,Recolher pesquisa por padrão,Ciutkan pencarian default,طي البحث افتراضيًا
-query.op.like,相似,相似,Like,Similaire,含む,포함,Содержит,Similar,Ähnlich,Similar,Mengandung,يحتوي
-query.op.not_like,不相似,不相似,Not like,Non similaire,含まない,미포함,Не содержит,No similar,Nicht ähnlich,Não similar,Tidak mengandung,لا يحتوي
+query.op.like,包含,包含,Contains,Contient,含む,포함,Содержит,Contiene,Enthält,Contém,Mengandung,يحتوي
+query.op.not_like,不包含,不包含,Not contains,Ne contient pas,含まない,미포함,Не содержит,No contiene,Enthält nicht,Não contém,Tidak mengandung,لا يحتوي
 query.op.eq,等于,等於,Equal,Égal,等しい,같음,Равно,Igual,Gleich,Igual,Sama dengan,يساوي
 query.op.neq,不等于,不等於,Not equal,Non égal,等しくない,다름,Не равно,No igual,Ungleich,Diferente,Tidak sama,لا يساوي
 query.op.gt,大于,大於,Greater than,Supérieur,より大きい,초과,Больше,Mayor que,Größer als,Maior que,Lebih besar,أكبر من
@@ -465,3 +465,4 @@ query.op.range,范围,範圍,Range,Plage,範囲,범위,Диапазон,Rango,Be
 query.op.in,属于,屬於,In,Dans,含まれる,포함됨,Входит в,En,Enthalten,Pertence,Termasuk,ينتمي إلى
 query.op.null,为空,為空,Is null,Est vide,空である,비어있음,Пусто,Es nulo,Ist leer,É nulo,Kosong,فارغ
 query.op.not_null,非空,非空,Not null,Non vide,空でない,비어있지않음,Не пусто,No es nulo,Nicht leer,Não é nulo,Tidak kosong,غير فارغ
+query.op.not_in,不属于,不屬於,Not in,Non inclus,含まない,포함하지 않음,Не входит,No pertenece,Nicht enthalten,Não pertence,Tidak termasuk,لا ينتمي

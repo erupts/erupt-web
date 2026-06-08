@@ -1,4 +1,14 @@
-import {Component, DoCheck, EventEmitter, Input, KeyValueDiffers, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import {
+    Component,
+    DoCheck,
+    EventEmitter,
+    Input,
+    KeyValueDiffers,
+    OnInit,
+    Output,
+    QueryList,
+    ViewChildren
+} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {ChoiceEnum, EditType} from "../../model/erupt.enum";
 import {colRules} from "@shared/model/util.model";
@@ -97,9 +107,10 @@ export class SearchComponent implements OnInit, DoCheck {
                 return [
                     {abbr: '=',  label: `= ${this.t('query.op.eq')}`,        value: QueryExpression.EQ},
                     {abbr: '≠',  label: `≠ ${this.t('query.op.neq')}`,       value: QueryExpression.NEQ},
-                    {abbr: '∋',  label: `∋ ${this.t('query.op.like')}`,      value: QueryExpression.LIKE},
-                    {abbr: '∌',  label: `∌ ${this.t('query.op.not_like')}`,  value: QueryExpression.NOT_LIKE},
+                    {abbr: '≈',  label: `≈ ${this.t('query.op.like')}`,      value: QueryExpression.LIKE},
+                    {abbr: '≉',  label: `≉ ${this.t('query.op.not_like')}`,  value: QueryExpression.NOT_LIKE},
                     {abbr: '∈',  label: `∈ ${this.t('query.op.in')}`,        value: QueryExpression.IN},
+                    {abbr: '∉',  label: `∉ ${this.t('query.op.not_in')}`,   value: QueryExpression.NOT_IN},
                     {abbr: '∅',  label: `∅ ${this.t('query.op.null')}`,      value: QueryExpression.NULL},
                     {abbr: '!∅', label: `!∅ ${this.t('query.op.not_null')}`, value: QueryExpression.NOT_NULL},
                 ];
@@ -111,14 +122,15 @@ export class SearchComponent implements OnInit, DoCheck {
                     {abbr: '≥',  label: `≥ ${this.t('query.op.gte')}`,        value: QueryExpression.GTE},
                     {abbr: '<',  label: `< ${this.t('query.op.lt')}`,         value: QueryExpression.LT},
                     {abbr: '≤',  label: `≤ ${this.t('query.op.lte')}`,        value: QueryExpression.LTE},
-                    {abbr: '↔',  label: `↔ ${this.t('query.op.range')}`,      value: QueryExpression.RANGE},
+                    {abbr: '~',  label: `~ ${this.t('query.op.range')}`,      value: QueryExpression.RANGE},
                     {abbr: '∈',  label: `∈ ${this.t('query.op.in')}`,         value: QueryExpression.IN},
+                    {abbr: '∉',  label: `∉ ${this.t('query.op.not_in')}`,     value: QueryExpression.NOT_IN},
                     {abbr: '∅',  label: `∅ ${this.t('query.op.null')}`,       value: QueryExpression.NULL},
                     {abbr: '!∅', label: `!∅ ${this.t('query.op.not_null')}`,  value: QueryExpression.NOT_NULL},
                 ];
             case EditType.DATE:
                 return [
-                    {abbr: '↔',  label: `↔ ${this.t('query.op.range')}`,      value: QueryExpression.RANGE},
+                    {abbr: '~',  label: `~ ${this.t('query.op.range')}`,      value: QueryExpression.RANGE},
                     {abbr: '=',  label: `= ${this.t('query.op.eq')}`,         value: QueryExpression.EQ},
                     {abbr: '>',  label: `> ${this.t('query.op.gt')}`,         value: QueryExpression.GT},
                     {abbr: '≥',  label: `≥ ${this.t('query.op.gte')}`,        value: QueryExpression.GTE},
@@ -171,7 +183,8 @@ export class SearchComponent implements OnInit, DoCheck {
     }
 
     isTagsInputOp(field: EruptFieldModel): boolean {
-        return field.eruptFieldJson.edit?.$operator === QueryExpression.IN;
+        const op = field.eruptFieldJson.edit?.$operator;
+        return op === QueryExpression.IN || op === QueryExpression.NOT_IN;
     }
 
     onOperatorChange(field: EruptFieldModel): void {

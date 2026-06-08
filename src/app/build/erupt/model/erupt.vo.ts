@@ -9,6 +9,7 @@ export enum QueryExpression {
     NOT_LIKE = 'NOT_LIKE',
     RANGE = 'RANGE',
     IN = 'IN',
+    NOT_IN = 'NOT_IN',
     NULL = 'NULL',
     NOT_NULL = 'NOT_NULL',
     GT = 'GT',

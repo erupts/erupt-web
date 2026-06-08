@@ -153,7 +153,7 @@ export class DataHandlerService {
                 }
                 continue;
             }
-            if (expression === QueryExpression.IN) {
+            if (expression === QueryExpression.IN || expression === QueryExpression.NOT_IN) {
                 if (edit.$value?.length) {
                     conditions.push({key: field.fieldName, value: edit.$value, expression});
                 }
