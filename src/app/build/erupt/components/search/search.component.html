@@ -231,7 +231,7 @@
     }
   </div>
   @if (showToggle) {
-    <div class="search-toggle" (click)="collapsed = !collapsed">
+    <div class="search-toggle" (click)="toggleCollapsed()">
       <span class="search-toggle-text">
         <i nz-icon [nzType]="collapsed ? 'down' : 'up'" nzTheme="outline"></i>
       </span>

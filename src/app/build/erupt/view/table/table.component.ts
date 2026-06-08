@@ -175,6 +175,8 @@ export class TableComponent implements OnInit, OnDestroy {
 
     showSortPopover: boolean = false;
 
+    searchFieldsCollapsed: boolean = true;
+
     isFullscreen: boolean = false;
 
     treeWidth: number = 235;
@@ -383,10 +385,8 @@ export class TableComponent implements OnInit, OnDestroy {
                 }
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
-                if (this.linkTree) {
-                    const saved = this.eruptLocalSettings.get(eb.eruptModel.eruptName);
-                    if (saved.treeWidth) this.treeWidth = saved.treeWidth;
-                }
+                const savedSettings = this.eruptLocalSettings.get(eb.eruptModel.eruptName);
+                if (this.linkTree && savedSettings.treeWidth) this.treeWidth = savedSettings.treeWidth;
                 this.dataHandler.initErupt(eb);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
@@ -402,6 +402,26 @@ export class TableComponent implements OnInit, OnDestroy {
                     }
                 }
                 this.dataHandler.initSearchOperators(this.searchErupt);
+                if (!this.vis.length) {
+                    this.hideCondition = savedSettings.searchCollapsed !== undefined
+                        ? savedSettings.searchCollapsed
+                        : !!this.settingSrv.layout['searchCollapsed'];
+                }
+                if (savedSettings.searchOperators) {
+                    for (const field of this.searchErupt.eruptFieldModels) {
+                        const edit = field.eruptFieldJson.edit;
+                        if (!edit?.search?.value) continue;
+                        const op = savedSettings.searchOperators[field.fieldName];
+                        if (op !== undefined) edit.$operator = op as any;
+                    }
+                }
+                if (savedSettings.pageSize && this.dataPage.showPagination) {
+                    this.dataPage.ps = savedSettings.pageSize;
+                }
+                if (savedSettings.visIndex !== undefined && savedSettings.visIndex < this.vis.length) {
+                    this.selectedVisIndex = savedSettings.visIndex;
+                }
+                this.searchFieldsCollapsed = savedSettings.searchFieldsCollapsed ?? true;
                 if (dt) {
                     this.showTable = !dt.dependNode;
                     if (dt.dependNode) {
@@ -414,8 +434,14 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     visChange(e: number) {
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {visIndex: e});
         const vis = this.vis[e];
         this.query(1, vis?.type === VisType.BOARD ? 1000 : this.dataPage.ps);
+    }
+
+    toggleCondition() {
+        this.hideCondition = !this.hideCondition;
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {searchCollapsed: this.hideCondition});
     }
 
     query(page?: number, size?: number, sort?: Record<string, SortType>) {
@@ -987,7 +1013,24 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     pageSizeChange(size) {
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {pageSize: size});
         this.query(1, size);
+    }
+
+    onSearchFieldsCollapsedChange(collapsed: boolean) {
+        this.searchFieldsCollapsed = collapsed;
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {searchFieldsCollapsed: collapsed});
+    }
+
+    saveSearchOperators() {
+        if (!this.searchErupt || !this.eruptBuildModel) return;
+        const ops: Record<string, string> = {};
+        for (const field of this.searchErupt.eruptFieldModels) {
+            const edit = field.eruptFieldJson.edit;
+            if (!edit?.search?.value || edit.$operator == null) continue;
+            ops[field.fieldName] = edit.$operator;
+        }
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {searchOperators: ops});
     }
 
     //batch delete

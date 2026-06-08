@@ -10,6 +10,11 @@ export interface EruptLocalSettings {
     columns?: Record<string, EruptColumnConfig>;
     columnOrder?: string[];
     treeWidth?: number;
+    searchCollapsed?: boolean;
+    searchOperators?: Record<string, string>;
+    searchFieldsCollapsed?: boolean;
+    pageSize?: number;
+    visIndex?: number;
 }
 
 @Injectable({providedIn: "root"})

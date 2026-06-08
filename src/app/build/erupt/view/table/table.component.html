@@ -264,7 +264,7 @@
                             </ng-template>
                             @if (hasSearchFields) {
                                 <button class="hidden-mobile" nz-button nzSize="small"
-                                        (click)="hideCondition=!hideCondition"
+                                        (click)="toggleCondition()"
                                         [style.border-color]="hasActiveConditions && hideCondition ? 'var(--ant-primary-color)' : null"
                                         [style.color]="hasActiveConditions && hideCondition ? 'var(--ant-primary-color)' : null">
                                     <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
@@ -294,7 +294,10 @@
                     }
                     @if (hasSearchFields) {
                         <div class="tc-search" [hidden]="hideCondition">
-                            <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'"/>
+                            <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'"
+                                          [collapsed]="searchFieldsCollapsed"
+                                          (collapsedChange)="onSearchFieldsCollapsedChange($event)"
+                                          (operatorChange)="saveSearchOperators()"/>
                         </div>
                     }
                     @if (extraContent) {

@@ -1,14 +1,4 @@
-import {
-    Component,
-    DoCheck,
-    EventEmitter,
-    Input,
-    KeyValueDiffers,
-    OnInit,
-    Output,
-    QueryList,
-    ViewChildren
-} from '@angular/core';
+import {Component, DoCheck, EventEmitter, Input, KeyValueDiffers, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {ChoiceEnum, EditType} from "../../model/erupt.enum";
 import {colRules} from "@shared/model/util.model";
@@ -40,7 +30,11 @@ export class SearchComponent implements OnInit, DoCheck {
 
     choiceEnum = ChoiceEnum;
 
-    collapsed = true;
+    @Input() collapsed: boolean = true;
+
+    @Output() collapsedChange = new EventEmitter<boolean>();
+
+    @Output() operatorChange = new EventEmitter<void>();
 
     readonly VISIBLE_COUNT = 4;
 
@@ -187,10 +181,16 @@ export class SearchComponent implements OnInit, DoCheck {
         return op === QueryExpression.IN || op === QueryExpression.NOT_IN;
     }
 
+    toggleCollapsed(): void {
+        this.collapsed = !this.collapsed;
+        this.collapsedChange.emit(this.collapsed);
+    }
+
     onOperatorChange(field: EruptFieldModel): void {
         field.eruptFieldJson.edit.$value = null;
         field.eruptFieldJson.edit.$l_val = null;
         field.eruptFieldJson.edit.$r_val = null;
+        this.operatorChange.emit();
     }
 
 }
