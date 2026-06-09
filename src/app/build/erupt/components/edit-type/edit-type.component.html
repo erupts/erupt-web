@@ -24,6 +24,9 @@
                                    [placeholder]="field.eruptFieldJson.edit.placeHolder"
                                    [disabled]="isReadonly(field)">
                         </nz-input-wrapper>
+                        @if (field.eruptFieldJson.edit.inputType.length > 0) {
+                            <span class="field-char-count">{{ (field.eruptFieldJson.edit.$value || '').length }}/{{ field.eruptFieldJson.edit.inputType.length }}</span>
+                        }
 
                     }
                     @if (field.eruptFieldJson.edit.inputType.prefix.length > 0 ||
@@ -87,7 +90,7 @@
                     </erupt-multi-choice>
                 </se>
             </ng-template>
-            @if (field.eruptFieldJson.edit && field.eruptFieldJson.edit.show && field.eruptFieldJson.edit.title) {
+            @if (field.eruptFieldJson.edit && field.eruptFieldJson.edit.show && field.eruptFieldJson.edit.title && !isDivideCollapsed(field)) {
                 @switch (field.eruptFieldJson.edit.type) {
                     @case (editType.INPUT) {
                         @if (field.eruptFieldJson.edit.inputType.fullSpan) {
@@ -157,6 +160,9 @@
                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
                           [disabled]="isReadonly(field)"
                 ></textarea>
+                                @if (field.eruptFieldJson.edit.inputType?.length > 0) {
+                                    <span class="field-char-count">{{ (field.eruptFieldJson.edit.$value || '').length }}/{{ field.eruptFieldJson.edit.inputType.length }}</span>
+                                }
                             </se>
                         </div>
                     }
@@ -353,11 +359,12 @@
                                         <nz-upload nzListType="picture-card"
                                                    [nzAccept]="['.bmp','.jpg','.jpeg','.png','.gif','.webp','.heic','.avif','.svg']"
                                                    [nzDisabled]="isReadonly(field)"
-                                                   [nzMultiple]="false"
+                                                   [nzMultiple]="field.eruptFieldJson.edit.attachmentType.maxLimit !== 1"
                                                    [(nzFileList)]="field.eruptFieldJson.edit.$viewValue"
                                                    [nzLimit]="field.eruptFieldJson.edit.attachmentType.maxLimit"
                                                    (nzChange)="upLoadNzChange($event,field)"
                                                    [nzPreview]="previewImageHandler"
+                                                   [nzFileListRender]="imageListTpl"
                                                    [nzShowButton]="field.eruptFieldJson.edit.$viewValue&&field.eruptFieldJson.edit.$viewValue.length!=field.eruptFieldJson.edit.attachmentType.maxLimit|| field.eruptFieldJson.edit.attachmentType.maxLimit==0"
                                                    [nzHeaders]="{token:tokenService.get().token,erupt:eruptModel.eruptName,eruptParent:parentEruptName||''}"
                                                    [nzAction]="dataService.upload+this.eruptModel.eruptName+'/'+field.fieldName">
@@ -365,6 +372,35 @@
                                                 <i nz-icon nzType="plus"></i>
                                             </p>
                                         </nz-upload>
+                                        <ng-template #imageListTpl let-fileList>
+                                            <div cdkDropList cdkDropListOrientation="horizontal" class="attachment-drag-list"
+                                                 (cdkDropListDropped)="onAttachmentDrop($event, field)">
+                                                @for (file of fileList; track file.uid) {
+                                                    <div cdkDrag class="picture-card-item"
+                                                         [class.uploading]="file.status === 'uploading'">
+                                                        <div class="picture-card-image">
+                                                            @if (file.status === 'uploading') {
+                                                                <i nz-icon nzType="loading"></i>
+                                                            } @else {
+                                                                <img [src]="file.thumbUrl || file.url" [alt]="file.name"/>
+                                                            }
+                                                        </div>
+                                                        <div class="picture-card-actions">
+                                                            <i nz-icon nzType="eye" nzTheme="outline" (click)="previewImageHandler(file)"></i>
+                                                            @if (!isReadonly(field)) {
+                                                                <i nz-icon nzType="delete" nzTheme="outline" (click)="removeFile(file, field)"></i>
+                                                            }
+                                                        </div>
+                                                        <div *cdkDragPlaceholder class="attachment-drag-placeholder"></div>
+                                                        <div *cdkDragPreview
+                                                             style="width:104px;height:104px;padding:8px;border:1px solid #1890ff;border-radius:2px;background:#fff;box-shadow:0 5px 15px rgba(0,0,0,.2);overflow:hidden;cursor:grabbing;">
+                                                            <img [src]="file.thumbUrl || file.url" [alt]="file.name"
+                                                                 style="width:100%;height:100%;object-fit:contain;"/>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </ng-template>
                                     }
                                     @case (attachmentEnum.BASE) {
                                         @if (field.eruptFieldJson.edit.$viewValue) {
@@ -510,7 +546,13 @@
                     }
                     @case (editType.DIVIDE) {
                         <div nz-col [nzSpan]="24" style="margin-bottom: 0">
-                            <nz-divider [nzDashed]="false" [nzText]="field.eruptFieldJson.edit.title"></nz-divider>
+                            <nz-divider [nzDashed]="false" [nzText]="divideTpl" (click)="toggleDivideGroup(field.fieldName)" class="divide-toggle"></nz-divider>
+                            <ng-template #divideTpl>
+                                <span class="divide-toggle-label">
+                                    {{ field.eruptFieldJson.edit.title }}
+                                    <i nz-icon [nzType]="divideCollapsed[field.fieldName] ? 'down' : 'up'" nzTheme="outline" style="font-size:12px;margin-left:4px;color:#9ca3af;"></i>
+                                </span>
+                            </ng-template>
                         </div>
                     }
                     @default {
