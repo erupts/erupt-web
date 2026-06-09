@@ -89,7 +89,7 @@
                     </erupt-multi-choice>
                 </se>
             </ng-template>
-            @if (field.eruptFieldJson.edit && field.eruptFieldJson.edit.show && field.eruptFieldJson.edit.title && !isDivideCollapsed(field)) {
+            @if (field.eruptFieldJson.edit && field.eruptFieldJson.edit.show && field.eruptFieldJson.edit.title && !isDivideCollapsed(field) && !divideGroupedFieldSet.has(field.fieldName)) {
                 @switch (field.eruptFieldJson.edit.type) {
                     @case (editType.INPUT) {
                         @if (field.eruptFieldJson.edit.inputType.fullSpan) {
@@ -103,6 +103,23 @@
                                 <ng-container [ngTemplateOutlet]="inputSe"></ng-container>
                             </div>
                         }
+                    }
+                    @case (editType.PASSWORD) {
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                             [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
+                            <se [label]="field.eruptFieldJson.edit.title"
+                                [required]="field.eruptFieldJson.edit.notNull"
+                                [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <nz-input-password class="erupt-input">
+                                    <input nz-input [nzSize]="size" autocomplete="new-password"
+                                           [maxLength]="field.eruptFieldJson.edit.inputType?.length || 9999"
+                                           [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                           [name]="field.fieldName"
+                                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                           [disabled]="isReadonly(field)">
+                                </nz-input-password>
+                            </se>
+                        </div>
                     }
                     <!-- number-->
                     @case (editType.NUMBER) {
@@ -545,15 +562,31 @@
                         }
                     }
                     @case (editType.DIVIDE) {
-                        <div nz-col [nzSpan]="24" style="margin-bottom: 0">
-                            <nz-divider [nzDashed]="false" [nzText]="divideTpl" (click)="toggleDivideGroup(field.fieldName)" class="divide-toggle"></nz-divider>
-                            <ng-template #divideTpl>
-                                <span class="divide-toggle-label">
-                                    {{ field.eruptFieldJson.edit.title }}
-                                    <i nz-icon [nzType]="divideCollapsed[field.fieldName] ? 'down' : 'up'" nzTheme="outline" style="font-size:12px;margin-left:4px;color:#9ca3af;"></i>
-                                </span>
-                            </ng-template>
-                        </div>
+                        @if (divideGroupFields.has(field.fieldName)) {
+                            <div nz-col [nzSpan]="24" style="margin-top: 8px">
+                                <nz-collapse [nzExpandIconPosition]="'end'">
+                                    <nz-collapse-panel [nzActive]="!divideCollapsed[field.fieldName]"
+                                                       [nzHeader]="field.eruptFieldJson.edit.title"
+                                                       (nzActiveChange)="divideCollapsed[field.fieldName] = !$event">
+                                        <erupt-edit-type
+                                            [eruptBuildModel]="getDivideGroupBuildModel(field.fieldName)"
+                                            [mode]="mode"
+                                            [parentEruptName]="parentEruptName"
+                                            [readonly]="readonly"></erupt-edit-type>
+                                    </nz-collapse-panel>
+                                </nz-collapse>
+                            </div>
+                        } @else {
+                            <div nz-col [nzSpan]="24" style="margin-bottom: 0">
+                                <nz-divider [nzDashed]="false" [nzText]="divideTpl" (click)="toggleDivideGroup(field.fieldName)" class="divide-toggle"></nz-divider>
+                                <ng-template #divideTpl>
+                                    <span class="divide-toggle-label">
+                                        {{ field.eruptFieldJson.edit.title }}
+                                        <i nz-icon [nzType]="divideCollapsed[field.fieldName] ? 'down' : 'up'" nzTheme="outline" style="font-size:12px;margin-left:4px;color:#9ca3af;"></i>
+                                    </span>
+                                </ng-template>
+                            </div>
+                        }
                     }
                     @default {
                     }

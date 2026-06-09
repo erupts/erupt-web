@@ -167,6 +167,9 @@ export class DataHandlerService {
                         value = (inputType?.prefixValue ?? '') + edit.$value + (inputType?.suffixValue ?? '');
                     }
                     break;
+                case EditType.PASSWORD:
+                    value = edit.$value;
+                    break;
                 case EditType.DATE:
                     if (edit.$value) {
                         if (Array.isArray(edit.$value) && edit.$value[0]) {
@@ -222,6 +225,7 @@ export class DataHandlerService {
     private getDefaultSearchOperator(type: EditType): QueryExpression | null {
         switch (type) {
             case EditType.INPUT:
+            case EditType.PASSWORD:
             case EditType.TEXTAREA:
             case EditType.HTML_EDITOR:
             case EditType.CODE_EDITOR:
@@ -331,6 +335,11 @@ export class DataHandlerService {
                             } else {
                                 eruptData[field.fieldName] = edit.$value;
                             }
+                        }
+                        break;
+                    case EditType.PASSWORD:
+                        if (edit.$value) {
+                            eruptData[field.fieldName] = edit.$value;
                         }
                         break;
                     case EditType.CHOICE:
@@ -545,6 +554,9 @@ export class DataHandlerService {
                         } else {
                             edit.$value = object[field.fieldName];
                         }
+                        break;
+                    case EditType.PASSWORD:
+                        edit.$value = object[field.fieldName];
                         break;
                     case EditType.DATE:
                         if (object[field.fieldName]) {

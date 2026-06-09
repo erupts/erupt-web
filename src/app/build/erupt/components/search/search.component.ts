@@ -1,4 +1,14 @@
-import {Component, DoCheck, EventEmitter, Input, KeyValueDiffers, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import {
+    Component,
+    DoCheck,
+    EventEmitter,
+    Input,
+    KeyValueDiffers,
+    OnInit,
+    Output,
+    QueryList,
+    ViewChildren
+} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {ChoiceEnum, EditType} from "../../model/erupt.enum";
 import {colRules} from "@shared/model/util.model";
@@ -94,6 +104,7 @@ export class SearchComponent implements OnInit, DoCheck {
         if (!edit) return [];
         switch (edit.type) {
             case EditType.INPUT:
+            case EditType.PASSWORD:
             case EditType.TEXTAREA:
             case EditType.HTML_EDITOR:
             case EditType.CODE_EDITOR:
@@ -158,7 +169,7 @@ export class SearchComponent implements OnInit, DoCheck {
 
     getDisplayType(field: EruptFieldModel): EditType {
         const type = field.eruptFieldJson.edit.type;
-        if (type === EditType.TEXTAREA || type === EditType.HTML_EDITOR || type === EditType.CODE_EDITOR) {
+        if (type === EditType.TEXTAREA || type === EditType.HTML_EDITOR || type === EditType.CODE_EDITOR || type === EditType.PASSWORD) {
             return EditType.INPUT;
         }
         if (type === EditType.REFERENCE_TREE) {
