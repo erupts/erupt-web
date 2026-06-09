@@ -101,6 +101,12 @@
                             <i nz-icon nzType="delete" nzTheme="outline"></i>{{ 'tree.delete'|translate }}
                         </button>
                     }
+                    @if (eruptBuildModel.eruptModel.eruptJson.power.add && eruptBuildModel.eruptModel.eruptJson.power.copy) {
+                        <button nz-button nzSize="small" (click)="copyNode()" [disabled]="loading"
+                                id="erupt-btn-copy">
+                            <i nz-icon nzType="copy" nzTheme="outline"></i>{{ 'global.copy'|translate }}
+                        </button>
+                    }
                     @if (eruptBuildModel.eruptModel.eruptJson.power.add && eruptBuildModel.eruptModel.eruptJson.tree.pid) {
                         <button nz-button nzSize="small" nzType="dashed" (click)="addSub()" [disabled]="loading"
                                 id="erupt-btn-add_sub">

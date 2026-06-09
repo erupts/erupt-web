@@ -197,6 +197,7 @@ export interface Power {
     viewDetails: boolean;
     importable: boolean;
     export: boolean;
+    copy: boolean;
 }
 
 export interface Row {

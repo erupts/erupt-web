@@ -12,7 +12,8 @@ import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd/core/tree";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {AppViewService} from "@shared/service/app-view.service";
-import {Scene} from "../../model/erupt.enum";
+import {FormSize, Scene} from "../../model/erupt.enum";
+import {EditComponent} from "../edit/edit.component";
 import {LocalSettingsService} from "../../service/local-settings.service";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
 import {cloneDeep} from "lodash";
@@ -190,6 +191,48 @@ export class TreeComponent implements OnInit, OnDestroy {
             }
         }
         return true;
+    }
+
+    copyNode() {
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
+        this.loading = true;
+        this.dataService.queryEruptDataById(eruptName, this.currentKey).subscribe(data => {
+            this.loading = false;
+            delete data[eruptJson.primaryKeyCol];
+            let fullLine = false;
+            const layout = eruptJson.layout;
+            if (layout && layout.formSize == FormSize.FULL_LINE) fullLine = true;
+            const modal = this.modal.create({
+                nzDraggable: true,
+                nzStyle: {top: "60px"},
+                nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+                nzWidth: fullLine ? 550 : null,
+                nzMaskClosable: false,
+                nzKeyboard: false,
+                nzTitle: this.i18n.fanyi("global.copy"),
+                nzContent: EditComponent,
+                nzOkText: this.i18n.fanyi("global.add"),
+                nzOnOk: async () => {
+                    if (modal.getContentComponent().beforeSaveValidate()) {
+                        await this.dataService.addEruptData(
+                            eruptName,
+                            this.dataHandler.eruptValueToObject(this.eruptBuildModel)
+                        ).toPromise().then(res => res);
+                        this.msg.success(this.i18n.fanyi("global.add.success"));
+                        this.fetchTreeData();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            const editComp = modal.getContentComponent();
+            editComp.eruptBuildModel = this.eruptBuildModel;
+            editComp.behavior = Scene.ADD;
+            editComp.prefillData = data;
+        }, () => {
+            this.loading = false;
+        });
     }
 
     del() {
