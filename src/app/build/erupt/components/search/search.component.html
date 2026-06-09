@@ -51,14 +51,16 @@
                       [(ngModel)]="field.eruptFieldJson.edit.$l_val" [name]="field.fieldName"
                       [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
                       [nzMin]="field.eruptFieldJson.edit.numberType.min"
-                      [nzMax]="field.eruptFieldJson.edit.numberType.max" [nzStep]="1"></nz-input-number>
+                      [nzMax]="field.eruptFieldJson.edit.numberType.max" [nzStep]="1"
+                      (keydown)="enterEvent($event)"></nz-input-number>
                     <input disabled nz-input placeholder="~"
                       style="width:30px;pointer-events:none;text-align:center"/>
                     <nz-input-number [nzSize]="size" style="flex:1"
                       [(ngModel)]="field.eruptFieldJson.edit.$r_val" [name]="field.fieldName"
                       [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
                       [nzMin]="field.eruptFieldJson.edit.numberType.min"
-                      [nzMax]="field.eruptFieldJson.edit.numberType.max" [nzStep]="1"></nz-input-number>
+                      [nzMax]="field.eruptFieldJson.edit.numberType.max" [nzStep]="1"
+                      (keydown)="enterEvent($event)"></nz-input-number>
                   </nz-space-compact>
                 } @else {
                   <nz-space-compact [nzBlock]="true" class="erupt-input">

@@ -19,6 +19,7 @@ export class RestPath {
 
 export enum EditType {
     INPUT = "INPUT",                           //input field
+    PASSWORD = "PASSWORD",
     NUMBER = "NUMBER",
     COLOR = "COLOR",
     TEXTAREA = "TEXTAREA",                     //large text area

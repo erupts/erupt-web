@@ -162,6 +162,13 @@ export class ReferenceComponent implements OnInit {
         };
     }
 
+    onInputKeydown(event: KeyboardEvent, field: EruptFieldModel) {
+        if (event.key === 'Enter' && !this.readonly) {
+            this.createReferenceModal(field);
+        }
+        event.preventDefault();
+    }
+
     clearReferValue(field: EruptFieldModel) {
         field.eruptFieldJson.edit.$value = null;
         field.eruptFieldJson.edit.$tempValue = null;

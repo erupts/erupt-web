@@ -25,9 +25,24 @@
             border: 1px solid rgb(217 217 217);
             width: 100% !important;
             display: block !important;
-            
+
             .monaco-editor {
                 min-height: 100px;
+            }
+        }
+
+        .code-editor-fullscreen {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            height: 100vh !important;
+            background: #fff;
+
+            nz-code-editor {
+                height: 100vh !important;
             }
         }
     }

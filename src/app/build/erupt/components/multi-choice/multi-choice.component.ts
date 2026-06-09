@@ -103,6 +103,30 @@ export class MultiChoiceComponent implements OnInit, AfterViewChecked {
         this.eruptField.eruptFieldJson.edit.$value = [...values];
     }
 
+    isAllChecked(): boolean {
+        const items = this.eruptField.componentValue;
+        const values = this.eruptField.eruptFieldJson.edit.$value;
+        if (!items?.length || !values?.length) return false;
+        return items.filter(v => !v.disable).every(v => this.includes(values, v.value));
+    }
+
+    isIndeterminate(): boolean {
+        const items = this.eruptField.componentValue;
+        const values = this.eruptField.eruptFieldJson.edit.$value;
+        if (!items?.length || !values?.length) return false;
+        return !this.isAllChecked() && items.some(v => this.includes(values, v.value));
+    }
+
+    toggleAll(checked: boolean) {
+        if (checked) {
+            this.eruptField.eruptFieldJson.edit.$value = this.eruptField.componentValue
+                .filter(v => !v.disable)
+                .map(v => this.isNumeric(v.value) ? parseInt(v.value) : v.value);
+        } else {
+            this.eruptField.eruptFieldJson.edit.$value = [];
+        }
+    }
+
     getValueColor(value: any): string {
         const item = this.eruptField.componentValue?.find(vl => {
             const vlValue = this.isNumeric(vl.value) ? parseInt(vl.value) : vl.value;

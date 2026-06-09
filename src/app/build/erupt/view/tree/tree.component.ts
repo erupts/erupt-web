@@ -262,7 +262,7 @@ export class TreeComponent implements OnInit, OnDestroy {
                 }
             });
         } else {
-            this.msg.error("存在叶节点不允许直接删除");
+            this.msg.error(this.i18n.fanyi("tree.delete_has_children"));
         }
     }
 
@@ -343,13 +343,18 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     fetchTreeData() {
         this.sortAsc = null;
-        this.selectedKeys = [];
         this.treeLoading = true;
         this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
             this.treeLoading = false;
             if (tree) {
                 this.dataLength = this.dataHandler.countNodes(tree);
                 this.nodes = this.dataHandler.dataTreeToZorroTree(tree, this.eruptBuildModel.eruptModel.eruptJson.tree.expandLevel);
+                if (this.currentKey) {
+                    this.selectedKeys = [this.currentKey];
+                    setTimeout(() => this.locateNode(), 200);
+                } else {
+                    this.selectedKeys = [];
+                }
                 this.rollTreePoint();
                 if (this.searchValue) {
                     let temp = this.searchValue;

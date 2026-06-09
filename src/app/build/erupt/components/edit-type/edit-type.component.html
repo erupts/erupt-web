@@ -25,9 +25,8 @@
                                    [disabled]="isReadonly(field)">
                         </nz-input-wrapper>
                         @if (field.eruptFieldJson.edit.inputType.length > 0) {
-                            <span class="field-char-count">{{ (field.eruptFieldJson.edit.$value || '').length }}/{{ field.eruptFieldJson.edit.inputType.length }}</span>
+                            <div class="field-char-count">{{ (field.eruptFieldJson.edit.$value || '').length }}/{{ field.eruptFieldJson.edit.inputType.length }}</div>
                         }
-
                     }
                     @if (field.eruptFieldJson.edit.inputType.prefix.length > 0 ||
                     field.eruptFieldJson.edit.inputType.suffix.length > 0) {
@@ -154,15 +153,16 @@
                             <se [label]="field.eruptFieldJson.edit.title"
                                 [required]="field.eruptFieldJson.edit.notNull"
                                 [optionalHelp]="field.eruptFieldJson.edit.desc">
+                                <nz-textarea-count
+                                    [nzMaxCharacterCount]="field.eruptFieldJson.edit.inputType?.length > 0 ? field.eruptFieldJson.edit.inputType.length : null">
                 <textarea nz-input class="erupt-input" [name]="field.fieldName"
                           [nzAutosize]="{ minRows: 3, maxRows: 20 }"
                           [(ngModel)]="field.eruptFieldJson.edit.$value"
+                          [maxlength]="field.eruptFieldJson.edit.inputType?.length > 0 ? field.eruptFieldJson.edit.inputType.length : null"
                           [placeholder]="field.eruptFieldJson.edit.placeHolder"
                           [disabled]="isReadonly(field)"
                 ></textarea>
-                                @if (field.eruptFieldJson.edit.inputType?.length > 0) {
-                                    <span class="field-char-count">{{ (field.eruptFieldJson.edit.$value || '').length }}/{{ field.eruptFieldJson.edit.inputType.length }}</span>
-                                }
+                                </nz-textarea-count>
                             </se>
                         </div>
                     }

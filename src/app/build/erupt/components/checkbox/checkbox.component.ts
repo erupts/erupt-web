@@ -52,4 +52,22 @@ export class CheckboxComponent implements OnInit {
         this.eruptFieldModel.eruptFieldJson.edit.$value = [...values];
     }
 
+    isAllChecked(): boolean {
+        if (!this.checkbox?.length || !this.edit?.$value) return false;
+        return this.checkbox.every(c => this.edit.$value.indexOf(c.id) !== -1);
+    }
+
+    isIndeterminate(): boolean {
+        if (!this.checkbox?.length || !this.edit?.$value?.length) return false;
+        return !this.isAllChecked() && this.checkbox.some(c => this.edit.$value.indexOf(c.id) !== -1);
+    }
+
+    toggleAll(checked: boolean) {
+        if (checked) {
+            this.eruptFieldModel.eruptFieldJson.edit.$value = this.checkbox.map(c => c.id);
+        } else {
+            this.eruptFieldModel.eruptFieldJson.edit.$value = [];
+        }
+    }
+
 }

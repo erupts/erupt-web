@@ -36,6 +36,8 @@ export class CodeEditorComponent implements OnInit, OnDestroy {
 
     initComplete: boolean = false;
 
+    fullscreen = false;
+
     dark = false;
 
     theme: 'vs-dark' | 'vs';
@@ -125,6 +127,17 @@ export class CodeEditorComponent implements OnInit, OnDestroy {
                 theme: this.theme
             }
         });
+        setTimeout(() => this.editorComponent?.layout(), 100);
+    }
+
+    copyCode() {
+        if (this.edit.$value) {
+            navigator.clipboard.writeText(this.edit.$value);
+        }
+    }
+
+    toggleFullscreen() {
+        this.fullscreen = !this.fullscreen;
         setTimeout(() => this.editorComponent?.layout(), 100);
     }
 

@@ -9,9 +9,11 @@
         }
         @for (vl of choiceVL; track vl.value) {
           <label nz-radio nz-tooltip [nzTooltipTitle]="vl.desc"
-            [style.color]="!vl.disable && vl.color"
             [nzDisabled]="readonly||vl.disable"
-          [nzValue]="vl.value">{{ vl.label }}</label>
+            [nzValue]="vl.value">
+            @if (vl.color) {<span class="choice-color-dot" [style.background]="vl.color"></span>}
+            <span [style.color]="!vl.disable && vl.color">{{ vl.label }}</span>
+          </label>
         }
       </nz-radio-group>
     }
@@ -28,7 +30,10 @@
             <nz-option nzCustomContent
               [nzDisabled]="vl.disable" [nzValue]="vl.value" [nzLabel]="vl.label">
               <div nz-tooltip [nzTooltipPlacement]="'left'" [nzTooltipTitle]="vl.desc"
-              [style.color]="!vl.disable && vl.color">{{ vl.label }}</div>
+                [style.color]="!vl.disable && vl.color">
+                @if (vl.color) {<span class="choice-color-dot" [style.background]="vl.color"></span>}
+                {{ vl.label }}
+              </div>
             </nz-option>
           }
         }
@@ -57,7 +62,10 @@
         <nz-option nzCustomContent
           [nzDisabled]="vl.disable" [nzValue]="vl.value" [nzLabel]="vl.label">
           <div nz-tooltip [nzTooltipPlacement]="'left'" [nzTooltipTitle]="vl.desc"
-          [style.color]="vl.color">{{ vl.label }}</div>
+            [style.color]="vl.color">
+            @if (vl.color) {<span class="choice-color-dot" [style.background]="vl.color"></span>}
+            {{ vl.label }}
+          </div>
         </nz-option>
       }
     }

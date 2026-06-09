@@ -2,6 +2,12 @@
 @switch (eruptField.eruptFieldJson.edit.multiChoiceType.type) {
   @case (multiChoiceEnum.CHECKBOX) {
     <div style="width:100%">
+      @if (eruptField.componentValue?.length && !readonly) {
+        <label nz-checkbox style="margin-bottom:8px;"
+          [nzChecked]="isAllChecked()"
+          [nzIndeterminate]="isIndeterminate()"
+          (nzCheckedChange)="toggleAll($event)">{{ 'global.select_all'|translate }}</label>
+      }
       <nz-row>
         @for (vl of eruptField.componentValue; track vl.value) {
           <nz-col nzSpan="4">
