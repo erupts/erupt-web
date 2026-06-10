@@ -1,7 +1,18 @@
 import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
+import {
+    Alert,
+    Drill,
+    DrillInput,
+    EruptModel,
+    Power,
+    Row,
+    RowOperation,
+    Sort,
+    Vis,
+    VisType
+} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -436,7 +447,13 @@ export class TableComponent implements OnInit, OnDestroy {
     visChange(e: number) {
         this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {visIndex: e});
         const vis = this.vis[e];
-        this.query(1, vis?.type === VisType.BOARD ? 1000 : this.dataPage.ps);
+        if (vis?.type === VisType.BOARD) {
+            const savedPs = this.dataPage.ps;
+            this.query(1, 1000);
+            this.dataPage.ps = savedPs;
+        } else {
+            this.query(1);
+        }
     }
 
     toggleCondition() {
