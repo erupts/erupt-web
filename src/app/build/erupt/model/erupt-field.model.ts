@@ -109,7 +109,7 @@ export interface Edit {
     sliderType?: SliderType;
     codeEditType?: CodeEditType;
     mapType?: MapType;
-    divideType?: DivideType;
+    groupType?: GroupType;
     $tabTreeViewData?: any;
 
     $valueDiff?: KeyValueDiffer<any, any>;
@@ -248,8 +248,9 @@ export interface MapType {
     drawMaxLayer: number;
 }
 
-interface DivideType {
+interface GroupType {
     fields: string[];
+    collapsed: boolean;
 }
 
 export interface VL {

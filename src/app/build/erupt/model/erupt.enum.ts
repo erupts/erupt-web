@@ -47,6 +47,7 @@ export enum EditType {
     MAP = "MAP",
     CODE_EDITOR = "CODE_EDITOR",
     SIGNATURE = "SIGNATURE",
+    GROUP = "GROUP",
 }
 
 export enum Scene {
