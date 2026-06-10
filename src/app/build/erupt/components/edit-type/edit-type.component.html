@@ -137,7 +137,8 @@
             <se [label]="field.eruptFieldJson.edit.title"
                 [required]="field.eruptFieldJson.edit.notNull"
                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                <erupt-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
+                <erupt-choice [eruptModel]="eruptModel" [eruptBuildModel]="eruptBuildModel"
+                              [eruptField]="field" [size]="size"
                               [eruptParentName]="parentEruptName" [editType]="this"
                               [readonly]="isReadonly(field)">
                 </erupt-choice>
@@ -148,7 +149,8 @@
             <se [label]="field.eruptFieldJson.edit.title"
                 [required]="field.eruptFieldJson.edit.notNull"
                 [optionalHelp]="field.eruptFieldJson.edit.desc">
-                <erupt-multi-choice [eruptModel]="eruptModel" [eruptField]="field" [size]="size"
+                <erupt-multi-choice [eruptModel]="eruptModel" [eruptBuildModel]="eruptBuildModel"
+                                    [eruptField]="field" [size]="size"
                                     [eruptParentName]="parentEruptName"
                                     [readonly]="isReadonly(field)">
                 </erupt-multi-choice>
@@ -287,19 +289,10 @@
                         <se [label]="field.eruptFieldJson.edit.title"
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
-                            <nz-select [nzAllowClear]='!field.eruptFieldJson.edit.notNull'
-                                       [nzDisabled]="isReadonly(field)"
-                                       [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                       [name]="field.fieldName"
-                                       [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                                       [nzTokenSeparators]="[field.eruptFieldJson.edit.tagsType.joinSeparator]"
-                                       [nzMaxMultipleCount]="field.eruptFieldJson.edit.tagsType.maxTagCount"
-                                       [nzMode]="field.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'">
-                                @for (item of field.componentValue; track item) {
-                                    <nz-option [nzLabel]="item"
-                                               [nzValue]="item"></nz-option>
-                                }
-                            </nz-select>
+                            <erupt-tags [eruptModel]="eruptModel" [eruptBuildModel]="eruptBuildModel"
+                                        [eruptField]="field" [size]="size"
+                                        [eruptParentName]="parentEruptName"
+                                        [readonly]="isReadonly(field)"></erupt-tags>
                         </se>
                     </div>
                 }
@@ -501,7 +494,7 @@
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
                             <erupt-auto-complete [size]="size" [field]="field" [parentEruptName]="parentEruptName"
-                                                 [eruptModel]="eruptModel"></erupt-auto-complete>
+                                                 [eruptModel]="eruptModel" [eruptBuildModel]="eruptBuildModel"></erupt-auto-complete>
                         </se>
                     </div>
                 }

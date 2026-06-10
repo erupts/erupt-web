@@ -71,7 +71,7 @@ export class LayoutTreeComponent implements OnInit {
     private fetchTreeBuildModel() {
         const cfgField = this.eruptModel.eruptJson.linkTree?.field;
         const fieldModel = this.eruptModel.eruptFieldModelMap?.get(cfgField);
-        this.data.getEruptBuildByField(this.eruptModel.eruptName, fieldModel.fieldReturnName).subscribe(eb => {
+        this.data.getEruptBuildByField(this.eruptModel.eruptName, fieldModel.fieldName).subscribe(eb => {
             this.treeBuildModel = eb;
         });
     }

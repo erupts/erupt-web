@@ -3,6 +3,8 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 import {NzSizeLDSType} from "ng-zorro-antd/core/types";
 import {EruptModel} from "../../model/erupt.model";
+import {EruptBuildModel} from "../../model/erupt-build.model";
+import {DataHandlerService} from "../../service/data-handler.service";
 
 @Component({
     standalone: false,
@@ -16,28 +18,26 @@ export class AutoCompleteComponent implements OnInit {
 
     @Input() eruptModel: EruptModel
 
+    @Input() eruptBuildModel: EruptBuildModel
+
     @Input() size: NzSizeLDSType = "large";
 
     @Input() parentEruptName: string
 
-    constructor(public dataService: DataService,) {
+    constructor(public dataService: DataService,
+                private dataHandlerService: DataHandlerService) {
     }
 
     ngOnInit(): void {
     }
 
-    getFromData(): any {
-        let result = {};
-        for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
-            result[eruptFieldModel.fieldName] = eruptFieldModel.eruptFieldJson.edit.$value;
-        }
-        return result;
-    }
-
     onAutoCompleteInput(event, fieldModel: EruptFieldModel) {
         let edit = fieldModel.eruptFieldJson.edit;
         if (edit.$value && edit.autoCompleteType.triggerLength <= edit.$value.toString().trim().length) {
-            this.dataService.findAutoCompleteValue(this.eruptModel.eruptName, fieldModel.fieldName, this.getFromData(), edit.$value, this.parentEruptName).subscribe(res => {
+            const data = this.eruptBuildModel
+                ? this.dataHandlerService.eruptValueToObject(this.eruptBuildModel)
+                : {};
+            this.dataService.findAutoCompleteValue(this.eruptModel.eruptName, fieldModel.fieldName, data, edit.$value, this.parentEruptName).subscribe(res => {
                 edit.autoCompleteType.items = res;
             });
         } else {

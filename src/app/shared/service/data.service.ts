@@ -219,8 +219,8 @@ export class DataService {
         });
     }
 
-    findAutoCompleteValue(eruptName: string, field: string, formData: any, val: string, eruptParentName?: string): Observable<string[]> {
-        return this._http.post(RestPath.comp + "/auto-complete/" + eruptName + "/" + field, formData, {
+    findAutoCompleteValue(eruptName: string, field: string, data: any, val: string, eruptParentName?: string): Observable<string[]> {
+        return this._http.post(RestPath.comp + "/auto-complete/" + eruptName + "/" + field, data, {
             val: val.trim(),
         }, {
             observe: "body",
@@ -273,8 +273,8 @@ export class DataService {
         });
     }
 
-    findTagsItem(eruptName: string, field: string, eruptParentName?: string): Observable<string[]> {
-        return this._http.get<string[]>(RestPath.component + "/tags-item/" + eruptName + "/" + field, null, {
+    findTagsItem(eruptName: string, field: string, formData: { [key: string]: any }, eruptParentName?: string): Observable<string[]> {
+        return this._http.post<string[]>(RestPath.component + "/tags-item/" + eruptName + "/" + field, formData, null, {
             observe: "body",
             headers: {
                 erupt: eruptName,

@@ -1,14 +1,4 @@
-import {
-    AttachmentEnum,
-    ChoiceEnum,
-    DateEnum,
-    EditType,
-    HtmlEditTypeEnum,
-    MultiChoiceEnum,
-    PickerMode,
-    TabEnum,
-    ViewType
-} from "./erupt.enum";
+import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, MultiChoiceEnum, PickerMode, TabEnum, ViewType} from "./erupt.enum";
 import {QueryExpression} from "./erupt.vo";
 import {KeyValueDiffer} from "@angular/core";
 import {Subject} from "rxjs";
@@ -193,10 +183,10 @@ interface BoolType {
 
 interface ChoiceType {
     type: ChoiceEnum;
-    anewFetch: boolean;
     dependField: string;
     items: VL[],
     trigger: string;
+    fetchHandler: string[];
 
     onVLChange(value, oldValue): void;
 }
@@ -210,6 +200,7 @@ interface TagsType {
     allowExtension: boolean;
     joinSeparator: string;
     maxTagCount: number;
+    fetchHandler: string[];
 }
 
 

@@ -97,7 +97,7 @@
               @case (choiceEnum.RADIO) {
                 <div nz-col [nzXs]="24">
                   <erupt-search-se [field]="field">
-                    <erupt-choice [eruptModel]="searchEruptModel" [eruptField]="field" [size]="size"/>
+                    <erupt-choice [eruptModel]="searchEruptModel" [eruptBuildModel]="{eruptModel: searchEruptModel}" [eruptField]="field" [size]="size"/>
                   </erupt-search-se>
                 </div>
               }
@@ -114,7 +114,7 @@
                         }
                       </nz-select>
                       <div style="flex:1;min-width:0" [class.null-op-disabled]="isNullOp(field)">
-                        <erupt-choice [eruptModel]="searchEruptModel" [eruptField]="field" [size]="size"/>
+                        <erupt-choice [eruptModel]="searchEruptModel" [eruptBuildModel]="{eruptModel: searchEruptModel}" [eruptField]="field" [size]="size"/>
                       </div>
                     </nz-space-compact>
                   </erupt-search-se>
@@ -125,15 +125,9 @@
           @case (editType.TAGS) {
             <div nz-col [nzSpan]="24">
               <erupt-search-se [field]="field">
-                <nz-select [nzAllowClear]="!field.eruptFieldJson.edit.notNull" style="width:100%"
-                  [nzSize]="size" [(ngModel)]="field.eruptFieldJson.edit.$value"
-                  [name]="field.fieldName" [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                  [nzTokenSeparators]="[field.eruptFieldJson.edit.tagsType.joinSeparator]"
-                  [nzMode]="field.eruptFieldJson.edit.tagsType.allowExtension ? 'tags' : 'multiple'">
-                  @for (item of field.componentValue; track item) {
-                    <nz-option [nzLabel]="item" [nzValue]="item"/>
-                  }
-                </nz-select>
+                <erupt-tags [eruptModel]="searchEruptModel" [eruptBuildModel]="{eruptModel: searchEruptModel}"
+                            [eruptField]="field" [size]="size"
+                            [eruptParentName]="null" [readonly]="false"></erupt-tags>
               </erupt-search-se>
             </div>
           }
@@ -222,7 +216,8 @@
                     }
                   </nz-select>
                   <div style="flex:1;min-width:0" [class.null-op-disabled]="isNullOp(field)">
-                    <erupt-auto-complete [size]="size" [field]="field" [eruptModel]="searchEruptModel"/>
+                    <erupt-auto-complete [size]="size" [field]="field" [eruptModel]="searchEruptModel"
+                                        [eruptBuildModel]="{eruptModel: searchEruptModel}"/>
                   </div>
                 </nz-space-compact>
               </erupt-search-se>

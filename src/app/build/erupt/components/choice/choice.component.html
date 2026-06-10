@@ -19,12 +19,13 @@
     }
     @case (choiceEnum.SELECT) {
       <nz-select class="erupt-input"
-        (nzOpenChange)="load($event)" [nzLoading]="isLoading"
+        [nzLoading]="isLoading"
         [nzDisabled]="readonly" nzAllowClear
         [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
         (ngModelChange)="valueChange($event)"
         [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
-        [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true">
+        [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true"
+        [nzDropdownRender]="eruptField.eruptFieldJson.edit.choiceType.fetchHandler?.length > 0 ? choiceRefreshFooter : null">
         @if (!isLoading) {
           @for (vl of choiceVL; track vl.value) {
             <nz-option nzCustomContent
@@ -50,13 +51,14 @@
 }
 @if (vagueSearch) {
   <nz-select class="erupt-input"
-    (nzOpenChange)="load($event)" [nzLoading]="isLoading"
+    [nzLoading]="isLoading"
     [nzDisabled]="readonly" nzAllowClear
     [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
     (ngModelChange)="valueChange($event)"
     [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
     nzMode="multiple"
-    [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true">
+    [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true"
+    [nzDropdownRender]="eruptField.eruptFieldJson.edit.choiceType.fetchHandler?.length > 0 ? choiceRefreshFooter : null">
     @if (!isLoading) {
       @for (vl of choiceVL; track vl.value) {
         <nz-option nzCustomContent
@@ -78,3 +80,12 @@
     }
   </nz-select>
 }
+
+<ng-template #choiceRefreshFooter>
+  <div style="padding:4px 8px;border-top:1px solid #f0f0f0;text-align:right">
+    <button nz-button nzType="link" nzSize="small" [disabled]="isLoading" (click)="refresh()">
+      <i nz-icon nzType="reload" nzTheme="outline"></i>
+      {{ 'global.refresh' | translate }}
+    </button>
+  </div>
+</ng-template>
