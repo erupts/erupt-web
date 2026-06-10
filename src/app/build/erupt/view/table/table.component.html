@@ -384,6 +384,19 @@
                                 <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
                             }
                         </div>
+                        @if (dataPage.showPagination && dataPage?.total > 0 && vis[selectedVisIndex]?.type !== VisType.BOARD) {
+                            <div class="tc-pagination">
+                                <nz-pagination nzShowSizeChanger nzShowQuickJumper
+                                               [nzPageIndex]="dataPage.pi" [nzShowTotal]="totalTemplate"
+                                               [nzPageSize]="dataPage.ps" [nzTotal]="dataPage.total"
+                                               [nzPageSizeOptions]="dataPage.pageSizes" [nzSize]="'small'"
+                                               (nzPageSizeChange)="pageSizeChange($event)"
+                                               (nzPageIndexChange)="pageIndexChange($event)"/>
+                                <ng-template #totalTemplate>
+                                    {{ 'table.totalLeft'|translate }} {{ dataPage.total }} {{ 'table.totalRight'|translate }}
+                                </ng-template>
+                            </div>
+                        }
                     }
                 </div>
 
@@ -420,19 +433,6 @@
             </ng-template>
         </st>
     </div>
-    @if (dataPage.showPagination && dataPage?.total > 0) {
-        <div class="tc-pagination">
-            <nz-pagination nzShowSizeChanger nzShowQuickJumper
-                           [nzPageIndex]="dataPage.pi" [nzShowTotal]="totalTemplate"
-                           [nzPageSize]="dataPage.ps" [nzTotal]="dataPage.total"
-                           [nzPageSizeOptions]="dataPage.pageSizes" [nzSize]="'small'"
-                           (nzPageSizeChange)="pageSizeChange($event)"
-                           (nzPageIndexChange)="pageIndexChange($event)"/>
-            <ng-template #totalTemplate>
-                {{ 'table.totalLeft'|translate }} {{ dataPage.total }} {{ 'table.totalRight'|translate }}
-            </ng-template>
-        </div>
-    }
 </ng-template>
 <ng-template #printSelectTpl>
     <nz-list nzSize="small">
