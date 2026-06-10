@@ -83,6 +83,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     divideGroupedFieldSet: Set<string> = new Set();
 
+    // field name -> group name
+    private fieldToGroupMap: Map<string, string> = new Map();
+
     tabErupts: {
         key: string,
         value: EruptBuildModel
@@ -105,28 +108,29 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         if (layout && layout.formSize == FormSize.FULL_LINE) {
             this.col = colRules[1];
         }
-        // Build divide group map
+        // Build divide group map: DIVIDE-to-DIVIDE implicit grouping
         const fieldModelMap = this.eruptModel.eruptFieldModelMap;
         let currentDivide: string = null;
         for (let model of this.eruptModel.eruptFieldModels) {
             if (model.eruptFieldJson.edit?.type === EditType.DIVIDE) {
-                const fields = model.eruptFieldJson.edit.divideType?.fields;
+                currentDivide = model.fieldName;
+            } else if (model.eruptFieldJson.edit?.type === EditType.GROUP) {
+                // GROUP: explicit field list panel
+                const fields = model.eruptFieldJson.edit.groupType?.fields;
                 if (fields?.length) {
-                    // Explicit field list: panel mode
                     const grouped: EruptFieldModel[] = [];
                     for (let fn of fields) {
                         const fm = fieldModelMap.get(fn);
                         if (fm) {
                             grouped.push(fm);
-                            this.divideGroupMap.set(fn, model.fieldName);
                             this.divideGroupedFieldSet.add(fn);
+                            this.fieldToGroupMap.set(fn, model.fieldName);
                         }
                     }
                     this.divideGroupFields.set(model.fieldName, grouped);
-                    currentDivide = null;
-                } else {
-                    // No fields specified: divider mode, all until next DIVIDE
-                    currentDivide = model.fieldName;
+                    if (model.eruptFieldJson.edit.groupType?.collapsed) {
+                        this.divideCollapsed[model.fieldName] = true;
+                    }
                 }
             } else if (currentDivide && model.eruptFieldJson.edit?.show && model.eruptFieldJson.edit?.title) {
                 this.divideGroupMap.set(model.fieldName, currentDivide);
@@ -272,23 +276,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         return group ? !!this.divideCollapsed[group] : false;
     }
 
-    private divideGroupBuildModelCache: Map<string, any> = new Map();
-
-    getDivideGroupBuildModel(divideFieldName: string): any {
-        if (this.divideGroupBuildModelCache.has(divideFieldName)) {
-            return this.divideGroupBuildModelCache.get(divideFieldName);
-        }
-        const fields = this.divideGroupFields.get(divideFieldName);
-        const model = {
-            eruptModel: {
-                ...this.eruptModel,
-                eruptFieldModels: fields
-            },
-            tabErupts: null,
-            combineErupts: this.eruptBuildModel.combineErupts
-        };
-        this.divideGroupBuildModelCache.set(divideFieldName, model);
-        return model;
+    isGroupCollapsed(field: EruptFieldModel): boolean {
+        const group = this.fieldToGroupMap.get(field.fieldName);
+        return group ? !!this.divideCollapsed[group] : false;
     }
 
     ngOnDestroy(): void {
