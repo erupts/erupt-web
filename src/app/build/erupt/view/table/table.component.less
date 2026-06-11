@@ -17,6 +17,12 @@
         flex-shrink: 0;
         min-width: 120px;
         max-width: 600px;
+
+        &.tree-panel-collapsed {
+            width: 0 !important;
+            min-width: 0;
+            overflow: hidden;
+        }
     }
 
     .tree-resize-handle {
@@ -182,10 +188,18 @@
             .tree-panel {
                 width: 100% !important; // override inline [style.width.px]
                 max-width: none !important;
+                min-width: unset;
                 height: auto;
                 max-height: 35vh;
                 border-bottom: 1px solid var(--ant-border-color-split, #eee);
                 overflow: auto;
+
+                &.tree-panel-collapsed {
+                    max-height: none;
+                    width: 0 !important;
+                    height: 0;
+                    border-bottom: none;
+                }
             }
 
             .tree-resize-handle {
@@ -215,8 +229,14 @@
                 flex-shrink: 0;
             }
 
+            .tc-container {
+                height: auto;
+                overflow: visible;
+            }
+
             .tc-inner {
                 padding: 8px;
+                overflow: visible;
             }
 
             .tc-search {
@@ -239,10 +259,6 @@
                 }
 
                 tr {
-                    td {
-                        text-align: right !important;
-                    }
-
                     .text-col {
                         max-width: initial !important;
                     }

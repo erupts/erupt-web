@@ -1,18 +1,7 @@
 import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {
-    Alert,
-    Drill,
-    DrillInput,
-    EruptModel,
-    Power,
-    Row,
-    RowOperation,
-    Sort,
-    Vis,
-    VisType
-} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -115,6 +104,13 @@ export class TableComponent implements OnInit, OnDestroy {
 
     clientHeight: number = document.body.clientHeight;
 
+    get tableScrollY(): string {
+        if (this.clientWidth > 768) {
+            return (this.clientHeight > 814 ? 525 + (this.clientHeight - 814) : 525) + 'px';
+        }
+        return Math.max(200, this.clientHeight - 290) + 'px';
+    }
+
     hideCondition: boolean = false;
 
     alert: Alert;
@@ -191,6 +187,8 @@ export class TableComponent implements OnInit, OnDestroy {
     isFullscreen: boolean = false;
 
     treeWidth: number = 235;
+
+    treeCollapsed: boolean = false;
 
     resizing: boolean = false;
 
@@ -303,6 +301,11 @@ export class TableComponent implements OnInit, OnDestroy {
         };
     }
 
+    toggleTreeCollapsed() {
+        this.treeCollapsed = !this.treeCollapsed;
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {treeCollapsed: this.treeCollapsed});
+    }
+
     toggleFullscreen() {
         if (!document.fullscreenElement) {
             this.el.nativeElement.requestFullscreen();
@@ -398,6 +401,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.linkTree = !!dt;
                 const savedSettings = this.eruptLocalSettings.get(eb.eruptModel.eruptName);
                 if (this.linkTree && savedSettings.treeWidth) this.treeWidth = savedSettings.treeWidth;
+                if (this.linkTree && savedSettings.treeCollapsed !== undefined) this.treeCollapsed = savedSettings.treeCollapsed;
                 this.dataHandler.initErupt(eb);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;

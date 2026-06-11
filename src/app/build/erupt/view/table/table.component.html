@@ -6,8 +6,10 @@
 @if (eruptBuildModel) {
     <div class="table-split-layout">
         @if (linkTree) {
-            <div class="tree-panel" [style.width.px]="treeWidth">
-                <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"></layout-tree>
+            <div class="tree-panel" [class.tree-panel-collapsed]="treeCollapsed"
+                 [style.width.px]="treeCollapsed ? null : treeWidth">
+                <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"
+                             [showCollapseBtn]="true" (collapseTree)="toggleTreeCollapsed()"></layout-tree>
             </div>
             <div class="tree-resize-handle" (mousedown)="onResizeDragStart($event)"></div>
         }
@@ -17,6 +19,13 @@
 
                 <!-- ── Toolbar ── -->
                 <div class="tc-toolbar">
+                    @if (linkTree && treeCollapsed) {
+                        <button nz-button nzType="text" nzSize="small"
+                                nz-tooltip [nzTooltipTitle]="'global.expand'|translate"
+                                (click)="toggleTreeCollapsed()">
+                            <i nz-icon nzType="menu-unfold" nzTheme="outline"></i>
+                        </button>
+                    }
                     <div class="tc-actions">
                         @if (eruptBuildModel.eruptModel.eruptJson.power.add) {
                             <button nz-button nzType="primary" nzSize="small" (click)="addData()" id="erupt-btn-add">
@@ -413,7 +422,7 @@
             [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
             [virtualScroll]="dataPage.data.length >= 100 && !extraRows?.length"
             [virtualItemSize]="47"
-            [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
+            [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: tableScrollY}"
             (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
             [page]="dataPage.page" [size]="settingSrv.layout['tableSize'] || TableSize.SMALL"
         >

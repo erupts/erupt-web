@@ -10,6 +10,7 @@ export interface EruptLocalSettings {
     columns?: Record<string, EruptColumnConfig>;
     columnOrder?: string[];
     treeWidth?: number;
+    treeCollapsed?: boolean;
     searchCollapsed?: boolean;
     searchOperators?: Record<string, string>;
     searchFieldsCollapsed?: boolean;

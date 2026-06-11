@@ -31,7 +31,11 @@ export class LayoutTreeComponent implements OnInit {
 
     @Input() eruptModel: EruptModel;
 
+    @Input() showCollapseBtn: boolean = false;
+
     @Output() trigger: EventEmitter<string[]> = new EventEmitter();
+
+    @Output() collapseTree = new EventEmitter<void>();
 
     searchValue: string;
 

@@ -6,6 +6,13 @@
         <ng-template #suffixIcon>
             <i nz-icon nzType="search"></i>
         </ng-template>
+        @if (showCollapseBtn) {
+            <button nz-button nzType="text" nzSize="small"
+                    nz-tooltip [nzTooltipTitle]="'global.collapse'|translate"
+                    (click)="collapseTree.emit()">
+                <i nz-icon nzType="menu-fold" nzTheme="outline"></i>
+            </button>
+        }
     </div>
     <div class="layout-tree-actions">
             <button nz-button nzType="text" nzSize="small" [nzLoading]="treeLoading"

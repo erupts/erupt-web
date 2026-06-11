@@ -188,5 +188,16 @@
         .tree-detail-body {
             padding: 8px;
         }
+
+        .tree-empty-hint {
+            flex-direction: column;
+            gap: 8px;
+
+            ::ng-deep .anticon-arrow-left {
+                transform: rotate(90deg); // ← rotated 90° CW = ↑ (points to tree above)
+                font-size: 20px;
+                margin-right: 0 !important;
+            }
+        }
     }
 }

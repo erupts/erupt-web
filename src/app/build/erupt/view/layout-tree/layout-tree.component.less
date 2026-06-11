@@ -12,9 +12,17 @@
 }
 
 .layout-tree-search {
-    padding: 7px 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 4px 7px 8px;
     flex-shrink: 0;
     border-bottom: 1px solid var(--ant-border-color-split);
+
+    nz-input-group {
+        flex: 1;
+        min-width: 0;
+    }
 }
 
 .layout-tree-actions {
