@@ -14,7 +14,7 @@
             <div class="tree-resize-handle" (mousedown)="onResizeDragStart($event)"></div>
         }
         <div class="table-panel" [hidden]="!showTable"
-             [ngStyle]="{overflowX:'hidden',overflowY:linkTree?'auto':'hidden',height:linkTree?'100%':'auto'}">
+             [ngStyle]="{overflowX:'hidden',overflowY:(linkTree||showAiPanel)?'auto':'hidden',height:(linkTree||showAiPanel)?'100%':'auto'}">
             <div class="tc-container">
 
                 <!-- ── Toolbar ── -->
@@ -209,6 +209,15 @@
                         }
                     </div>
                     <div class="tc-utils">
+                        @if (isAiEnabled) {
+                            <button nz-button nzSize="small"
+                                    nz-tooltip [nzTooltipTitle]="'AI'|translate"
+                                    [style.border-color]="showAiPanel ? 'var(--ant-primary-color-hover)' : null"
+                                    [style.color]="showAiPanel ? 'var(--ant-primary-color)' : null"
+                                    (click)="toggleAiPanel()">
+                                <i nz-icon nzType="comment" nzTheme="outline"></i>
+                            </button>
+                        }
                         <button nz-button nzSize="small"
                                 nz-tooltip [nzTooltipTitle]="'global.refresh'|translate"
                                 [nzLoading]="dataPage.querying" (click)="query()">
@@ -411,8 +420,22 @@
 
             </div>
         </div>
+        @if (showAiPanel) {
+            <div class="ai-resize-handle" (mousedown)="onAiResizeDragStart($event)"></div>
+            <div class="ai-panel" [style.width.px]="aiPanelWidth">
+                <div class="ai-panel-header">
+                    <span>AI</span>
+                    <button nz-button nzType="text" nzSize="small" (click)="toggleAiPanel()">
+                        <i nz-icon nzType="close" nzTheme="outline"></i>
+                    </button>
+                </div>
+                <div class="ai-panel-body">
+                    <app-ai-chat [collapseSidebar]="true"></app-ai-chat>
+                </div>
+            </div>
+        }
     </div>
-    @if (resizing) {
+    @if (resizing || aiResizing) {
         <div class="tree-resize-overlay"></div>
     }
 }

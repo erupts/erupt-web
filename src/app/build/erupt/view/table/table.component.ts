@@ -192,6 +192,14 @@ export class TableComponent implements OnInit, OnDestroy {
 
     resizing: boolean = false;
 
+    showAiPanel: boolean = false;
+
+    aiPanelWidth: number = 420;
+
+    aiResizing: boolean = false;
+
+    private _aiResizeCleanup: (() => void) | null = null;
+
     private fullscreenChange = () => {
         this.isFullscreen = !!document.fullscreenElement;
     };
@@ -275,6 +283,7 @@ export class TableComponent implements OnInit, OnDestroy {
         this.refreshTimeInterval && clearInterval(this.refreshTimeInterval);
         document.removeEventListener('fullscreenchange', this.fullscreenChange);
         this._resizeCleanup?.();
+        this._aiResizeCleanup?.();
     }
 
     onResizeDragStart(e: MouseEvent): void {
@@ -304,6 +313,35 @@ export class TableComponent implements OnInit, OnDestroy {
     toggleTreeCollapsed() {
         this.treeCollapsed = !this.treeCollapsed;
         this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {treeCollapsed: this.treeCollapsed});
+    }
+
+    get isAiEnabled(): boolean {
+        return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
+    }
+
+    toggleAiPanel() {
+        this.showAiPanel = !this.showAiPanel;
+    }
+
+    onAiResizeDragStart(e: MouseEvent): void {
+        e.preventDefault();
+        const startX = e.clientX;
+        const startWidth = this.aiPanelWidth;
+        this.aiResizing = true;
+        const onMove = (ev: MouseEvent) => {
+            this.aiPanelWidth = Math.max(280, Math.min(800, startWidth + startX - ev.clientX));
+        };
+        const onUp = () => {
+            this.aiResizing = false;
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        this._aiResizeCleanup = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
     }
 
     toggleFullscreen() {

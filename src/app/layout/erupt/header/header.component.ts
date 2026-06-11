@@ -10,7 +10,6 @@ import {AppViewService} from "@shared/service/app-view.service";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
-import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NoticeComponent} from "../component/notice/notice.component";
@@ -52,6 +51,8 @@ export class HeaderComponent implements OnInit {
     tenantDomainInfo = EruptTenantInfoData.get();
 
     unreadCount: number = 0;
+
+    aiLoading: boolean = false;
 
     get isEruptAi(): boolean {
         return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
@@ -150,8 +151,12 @@ export class HeaderComponent implements OnInit {
         }
     }
 
-    openEruptAi() {
-        let model = this.modal.create({
+    async openEruptAi() {
+        if (this.aiLoading) return;
+        this.aiLoading = true;
+        const { AiChatComponent } = await import('../../../build/ai/view/ai-chat/ai-chat.component');
+        this.aiLoading = false;
+        this.modal.create({
             nzDraggable: true,
             nzWrapClassName: "modal-lg",
             nzMaskClosable: false,
@@ -163,12 +168,12 @@ export class HeaderComponent implements OnInit {
                 top: '30px',
             },
             nzBodyStyle: {
-                padding: "0"
+                padding: "0",
+                height: "83vh",
+                overflow: "hidden"
             },
-            nzContent: EruptIframeComponent,
+            nzContent: AiChatComponent,
         });
-        model.getContentComponent().url = "#/fill/ai/chat";
-        model.getContentComponent().height = "83vh"
     }
 
     openEruptNotice() {

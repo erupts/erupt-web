@@ -68,7 +68,11 @@
     @if (isEruptAi) {
       <li>
         <div class="alain-default__nav-item" (click)="openEruptAi()">
-          <i class="fa fa-magic" aria-hidden="true"></i>
+          @if (aiLoading) {
+            <i nz-icon nzType="loading" nzTheme="outline"></i>
+          } @else {
+            <i class="fa fa-magic" aria-hidden="true"></i>
+          }
         </div>
       </li>
     }

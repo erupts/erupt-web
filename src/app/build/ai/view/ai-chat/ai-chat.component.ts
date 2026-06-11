@@ -1,4 +1,5 @@
-import {AfterViewChecked, Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, Inject, Input, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {SharedModule} from '@shared/shared.module';
 import {ActivatedRoute} from '@angular/router';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {Subject} from 'rxjs';
@@ -37,12 +38,16 @@ const CHAT_SCROLL_THRESHOLD = 80;
 const BUBBLES_BOTTOM_BUFFER_PX = 300;
 
 @Component({
-    standalone: false,
+    standalone: true,
     selector: 'app-ai-chat',
     templateUrl: './ai-chat.component.html',
-    styleUrls: ['./ai-chat.component.less']
+    styleUrls: ['./ai-chat.component.less'],
+    imports: [SharedModule],
+    providers: [ChatApiService, MarkdownService]
 })
 export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
+    @Input() collapseSidebar = false;
+
     @ViewChild('bubblesRef') bubblesRef!: ElementRef<HTMLDivElement>;
     @ViewChild('chatListRef') chatListRef!: ElementRef<HTMLUListElement>;
     @ViewChild('renameModalTpl') renameModalTpl!: TemplateRef<unknown>;
@@ -137,6 +142,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     ngOnInit(): void {
+        if (this.collapseSidebar) this.sidebarCollapsed = true;
         this.markdown.warmup();
         this.fetchChats();
         this.chatApi.agents().subscribe(res => {

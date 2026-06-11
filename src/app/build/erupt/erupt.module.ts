@@ -57,6 +57,7 @@ import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzSpaceModule} from "ng-zorro-antd/space";
 import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
+import {AiChatComponent} from "../ai/view/ai-chat/ai-chat.component";
 
 @NgModule({
     imports: [
@@ -80,7 +81,8 @@ import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
         NzTooltipDirective,
         SVComponent,
         SVContainerComponent,
-        NzAffixModule
+        NzAffixModule,
+        AiChatComponent
     ],
     providers: [
         DataHandlerService,
