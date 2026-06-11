@@ -1,4 +1,5 @@
 import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import {Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
 import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
@@ -70,7 +71,8 @@ export class TableComponent implements OnInit, OnDestroy {
         private drawerService: NzDrawerService,
         private eruptLocalSettings: LocalSettingsService,
         private el: ElementRef,
-        private menuSrv: MenuService
+        private menuSrv: MenuService,
+        private router: Router
     ) {
         this.hideCondition = !!this.settingSrv.layout['searchCollapsed'];
     }
@@ -195,6 +197,8 @@ export class TableComponent implements OnInit, OnDestroy {
     showAiPanel: boolean = false;
 
     aiPanelWidth: number = 420;
+
+    aiContext: string = '';
 
     aiResizing: boolean = false;
 
@@ -321,6 +325,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     toggleAiPanel() {
         this.showAiPanel = !this.showAiPanel;
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {aiPanelOpen: this.showAiPanel});
     }
 
     onAiResizeDragStart(e: MouseEvent): void {
@@ -335,6 +340,7 @@ export class TableComponent implements OnInit, OnDestroy {
             this.aiResizing = false;
             document.removeEventListener('mousemove', onMove);
             document.removeEventListener('mouseup', onUp);
+            this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {aiPanelWidth: this.aiPanelWidth});
         };
         document.addEventListener('mousemove', onMove);
         document.addEventListener('mouseup', onUp);
@@ -440,9 +446,22 @@ export class TableComponent implements OnInit, OnDestroy {
                 const savedSettings = this.eruptLocalSettings.get(eb.eruptModel.eruptName);
                 if (this.linkTree && savedSettings.treeWidth) this.treeWidth = savedSettings.treeWidth;
                 if (this.linkTree && savedSettings.treeCollapsed !== undefined) this.treeCollapsed = savedSettings.treeCollapsed;
+                if (savedSettings.aiPanelOpen) this.showAiPanel = true;
+                if (savedSettings.aiPanelWidth) this.aiPanelWidth = savedSettings.aiPanelWidth;
                 this.dataHandler.initErupt(eb);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
+                const _menuPath = this.menuSrv.getPathByUrl(this.router.url.split('?')[0]);
+                const _menuName = _menuPath.length ? _menuPath[_menuPath.length - 1].text : null;
+                const _m = eb.eruptModel;
+                const _displayName = _menuName || _m.eruptName;
+                const _lines: string[] = [
+                    `The user is currently viewing the data management module "${_displayName}".`,
+                    `Technical model name: ${_m.eruptName}.`
+                ];
+                if (_m.eruptJson.desc) _lines.push(`Module description: ${_m.eruptJson.desc}`);
+                _lines.push(`Always refer to this module as "${_displayName}" in your responses, never use the technical model name directly.`);
+                this.aiContext = _lines.join('\n');
                 this.buildTableConfig();
                 this.searchErupt = <EruptModel>cloneDeep(this.eruptBuildModel.eruptModel);
                 for (let fieldModel of this.searchErupt.eruptFieldModels) {

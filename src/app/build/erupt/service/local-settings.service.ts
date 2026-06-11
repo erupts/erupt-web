@@ -11,6 +11,8 @@ export interface EruptLocalSettings {
     columnOrder?: string[];
     treeWidth?: number;
     treeCollapsed?: boolean;
+    aiPanelOpen?: boolean;
+    aiPanelWidth?: number;
     searchCollapsed?: boolean;
     searchOperators?: Record<string, string>;
     searchFieldsCollapsed?: boolean;

@@ -48,6 +48,10 @@ const BUBBLES_BOTTOM_BUFFER_PX = 300;
 export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     @Input() collapseSidebar = false;
 
+    @Input() embedded = false;
+
+    @Input() context = '';
+
     @ViewChild('bubblesRef') bubblesRef!: ElementRef<HTMLDivElement>;
     @ViewChild('chatListRef') chatListRef!: ElementRef<HTMLUListElement>;
     @ViewChild('renameModalTpl') renameModalTpl!: TemplateRef<unknown>;
@@ -143,6 +147,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     ngOnInit(): void {
         if (this.collapseSidebar) this.sidebarCollapsed = true;
+        if (this.embedded) this.wideMode = false;
         this.markdown.warmup();
         this.fetchChats();
         this.chatApi.agents().subscribe(res => {
@@ -375,7 +380,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         };
 
         const token = this.tokenService.get()?.token || '';
-        const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.llmId}&autoToolCall=${this.autoToolCall}`;
+        const contextParam = this.context ? `&contextPrompt=${encodeURIComponent(this.context)}` : '';
+        const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.llmId}&autoToolCall=${this.autoToolCall}${contextParam}`;
         state.eventSource = new EventSource(url);
         this.pendingSse.set(chatId, state);
         this.streaming = true;
