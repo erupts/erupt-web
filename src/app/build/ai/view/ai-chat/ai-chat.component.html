@@ -185,13 +185,6 @@
             <div class="input-card">
                 <div class="input-toolbar">
                     <div class="toolbar-left">
-                        @if (embedded) {
-                            <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
-                                    [title]="'ai.chat.new_session' | translate"
-                                    (click)="createConversation()">
-                                <span nz-icon nzType="form" nzTheme="outline"></span>
-                            </button>
-                        }
                         @if (agents.length > 0) {
                             <div class="agent-wrap">
                                 <span class="toolbar-label">{{ 'ai.chat.agent' | translate }}</span>
