@@ -183,7 +183,7 @@
                 </div>
             }
             <div class="input-card">
-                @if (agents.length > 0 || !embedded || sending || content?.trim()) {
+                @if (agents.length > 0 || !embedded) {
                 <div class="input-toolbar">
                     <div class="toolbar-left">
                         @if (agents.length > 0) {
@@ -211,7 +211,22 @@
                             </div>
                         }
                     </div>
-                    <div class="toolbar-right">
+                </div>
+                }
+                <div class="input-body">
+                    <textarea
+                        #textareaRef
+                        nz-input
+                        [(ngModel)]="content"
+                        (keydown)="onInputKeydown($event)"
+                        [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                        [placeholder]="selectedAgent?.desc || ('ai.chat.input_placeholder' | translate)"
+                        rows="2">
+                    </textarea>
+                </div>
+                <div class="input-footer">
+                    <span class="shortcut-hint">{{ 'ai.chat.shortcut_hint' | translate }}</span>
+                    <div class="footer-actions">
                         @if (sending) {
                             <button nz-button nzType="text" nzSize="small" class="toolbar-icon toolbar-icon-stop"
                                     [title]="'ai.chat.stop_generation' | translate" (click)="stopGeneration()">
@@ -230,10 +245,8 @@
                             <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
                                     [title]="(wideMode ? 'ai.chat.narrow_mode' : 'ai.chat.wide_mode') | translate"
                                     (click)="toggleWideMode()">
-                                <span nz-icon [nzType]="wideMode ? 'column-width' : 'column-width'" nzTheme="outline"></span>
+                                <span nz-icon nzType="column-width" nzTheme="outline"></span>
                             </button>
-                        }
-                        @if (!embedded) {
                             <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
                                     [title]="fullscreen ? ('ai.chat.exit_fullscreen' | translate) : ('ai.chat.fullscreen' | translate)"
                                     (click)="toggleFullscreen()">
@@ -244,32 +257,17 @@
                                 }
                             </button>
                         }
+                        <button
+                            nz-button
+                            nzType="primary"
+                            nzSize="small"
+                            class="btn-send"
+                            [nzLoading]="sending"
+                            [disabled]="sendDisabled || !content?.trim()"
+                            (click)="send(content)">
+                            {{ 'ai.chat.send' | translate }}
+                        </button>
                     </div>
-                </div>
-                }
-                <div class="input-body">
-                    <textarea
-                        #textareaRef
-                        nz-input
-                        [(ngModel)]="content"
-                        (keydown)="onInputKeydown($event)"
-                        [nzAutosize]="{ minRows: 2, maxRows: 6 }"
-                        [placeholder]="selectedAgent?.desc || ('ai.chat.input_placeholder' | translate)"
-                        rows="2">
-                    </textarea>
-                </div>
-                <div class="input-footer">
-                    <span class="shortcut-hint">{{ 'ai.chat.shortcut_hint' | translate }}</span>
-                    <button
-                        nz-button
-                        nzType="primary"
-                        nzSize="small"
-                        class="btn-send"
-                        [nzLoading]="sending"
-                        [disabled]="sendDisabled || !content?.trim()"
-                        (click)="send(content)">
-                        {{ 'ai.chat.send' | translate }}
-                    </button>
                 </div>
             </div>
         </div>
