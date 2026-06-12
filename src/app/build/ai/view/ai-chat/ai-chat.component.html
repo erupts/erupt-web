@@ -183,6 +183,7 @@
                 </div>
             }
             <div class="input-card">
+                @if (agents.length > 0 || !embedded || sending || content?.trim()) {
                 <div class="input-toolbar">
                     <div class="toolbar-left">
                         @if (agents.length > 0) {
@@ -245,6 +246,7 @@
                         }
                     </div>
                 </div>
+                }
                 <div class="input-body">
                     <textarea
                         #textareaRef

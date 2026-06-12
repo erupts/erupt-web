@@ -1,0 +1,469 @@
+:host {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.designer-wrap {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    background: #f0f2f5;
+}
+
+// ---------------- 工具栏（风格对齐 cube-puzzle-dashboard 头部） ----------------
+.designer-toolbar {
+    height: 50px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+    z-index: 10;
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .toolbar-back {
+            margin-right: -2px;
+        }
+
+        .toolbar-logo {
+            font-size: 22px;
+            color: var(--ant-primary-color, #1890ff);
+        }
+
+        .toolbar-name {
+            padding: 0 4px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #262626;
+        }
+
+        .toolbar-dirty {
+            font-size: 11px;
+            color: #faad14;
+        }
+    }
+
+    .header-center {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .toolbar-count {
+            font-size: 12px;
+            color: rgba(0, 0, 0, .4);
+            margin-right: 8px;
+        }
+    }
+}
+
+// ---------------- 三栏布局 ----------------
+.designer-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+// 左侧组件面板
+.designer-palette {
+    width: 232px;
+    flex-shrink: 0;
+    background: #fff;
+    border-right: 1px solid #f0f0f0;
+    overflow-y: auto;
+    padding: 12px;
+
+    .palette-search {
+        margin-bottom: 12px;
+    }
+
+    .palette-group {
+        margin-bottom: 16px;
+
+        .palette-group-title {
+            font-size: 12px;
+            color: rgba(0, 0, 0, .45);
+            margin-bottom: 8px;
+        }
+
+        .palette-items {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .palette-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            font-size: 12px;
+            background: #fafafa;
+            border: 1px solid #f0f0f0;
+            border-radius: 4px;
+            cursor: grab;
+            user-select: none;
+            transition: all .2s;
+            white-space: nowrap;
+            overflow: hidden;
+
+            [nz-icon] {
+                color: rgba(0, 0, 0, .45);
+            }
+
+            &:hover {
+                color: var(--ant-primary-color, #1890ff);
+                border-color: var(--ant-primary-color, #1890ff);
+
+                [nz-icon] {
+                    color: var(--ant-primary-color, #1890ff);
+                }
+            }
+        }
+    }
+}
+
+// 中间画布
+.designer-canvas-wrap {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding: 16px;
+    background-image: linear-gradient(rgba(226, 232, 240, .8) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(226, 232, 240, .8) 1px, transparent 1px);
+    background-size: 20px 20px;
+
+    .designer-canvas {
+        max-width: 720px;
+        min-height: calc(100% - 2px);
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 6px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, .03), 0 1px 6px -1px rgba(0, 0, 0, .02), 0 2px 4px 0 rgba(0, 0, 0, .02);
+        padding: 8px;
+        // 对齐表单尺寸：DEFAULT 下非整行字段两列排布
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        gap: 4px;
+    }
+
+    // 从组件面板拖入时的插入占位
+    .palette-item.cdk-drag-placeholder {
+        width: 100%;
+        height: 40px;
+        border: 1px dashed var(--ant-primary-color, #1890ff);
+        background: var(--ant-primary-1, #e6f7ff);
+        border-radius: 4px;
+        opacity: 1;
+
+        * {
+            display: none;
+        }
+    }
+
+    .canvas-empty {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 280px;
+        color: rgba(0, 0, 0, .25);
+        border: 1px dashed #d9d9d9;
+        border-radius: 4px;
+
+        .canvas-empty-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+    }
+
+    .canvas-field {
+        position: relative;
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        cursor: move;
+        transition: border-color .2s, background .2s;
+
+        // 表单尺寸 DEFAULT 下的非整行字段
+        &.field-half {
+            width: calc(50% - 2px);
+        }
+
+        .field-label {
+            font-size: 13px;
+            margin-bottom: 4px;
+            color: rgba(0, 0, 0, .85);
+
+            .required {
+                color: #ff4d4f;
+                margin-right: 2px;
+            }
+        }
+
+        .field-control {
+            pointer-events: none;
+        }
+
+        .field-type-badge {
+            position: absolute;
+            right: 8px;
+            bottom: 4px;
+            font-size: 10px;
+            color: rgba(0, 0, 0, .25);
+            opacity: 0;
+            transition: opacity .2s;
+        }
+
+        // 悬浮操作按钮组，同 puzzle-item 的 item-actions
+        .field-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            z-index: 10;
+            display: flex;
+            gap: 4px;
+            background: #fff;
+            border: 1px solid #e8e8e8;
+            padding: 2px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+            opacity: 0;
+            visibility: hidden;
+            transition: all .2s;
+
+            button {
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                border: none;
+            }
+        }
+
+        &:hover {
+            border-color: #d9d9d9;
+
+            .field-actions {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .field-type-badge {
+                opacity: 1;
+            }
+        }
+
+        &.selected {
+            border-color: var(--ant-primary-color, #1890ff);
+            background: var(--ant-primary-1, #e6f7ff);
+            box-shadow: inset 3px 0 0 var(--ant-primary-color, #1890ff);
+
+            .field-actions {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .field-type-badge {
+                opacity: 1;
+            }
+        }
+    }
+
+    .mock-block {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 64px;
+        color: rgba(0, 0, 0, .25);
+        background: #fafafa;
+        border: 1px dashed #d9d9d9;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .mock-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        font-size: 12px;
+        color: rgba(0, 0, 0, .45);
+        background: #fafafa;
+        border: 1px solid #f0f0f0;
+        border-left: 3px solid var(--ant-primary-color, #1890ff);
+        border-radius: 4px;
+    }
+
+    .mock-color-block {
+        width: 32px;
+        height: 22px;
+        border-radius: 3px;
+        border: 1px solid #d9d9d9;
+        background: linear-gradient(135deg, #1890ff 0%, #722ed1 100%);
+    }
+}
+
+// 字段属性与表单配置共用的属性表单样式（表单配置渲染在 drawer overlay 中，需全局生效）
+.prop-form-rules() {
+    .prop-item {
+        margin-bottom: 12px;
+
+        > label {
+            display: block;
+            font-size: 12px;
+            color: rgba(0, 0, 0, .65);
+            margin-bottom: 4px;
+        }
+    }
+
+    .prop-switches {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 16px;
+        margin-bottom: 12px;
+    }
+
+    .prop-switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        > label {
+            font-size: 12px;
+            color: rgba(0, 0, 0, .65);
+        }
+    }
+}
+
+// 右侧属性面板
+.designer-props {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-left: 1px solid #f0f0f0;
+
+    .props-header {
+        flex-shrink: 0;
+        padding: 10px 16px;
+        font-weight: 600;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .props-body {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 12px 16px;
+    }
+
+    .props-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 48px 0;
+        color: rgba(0, 0, 0, .25);
+
+        .props-empty-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+    }
+
+    .props-form {
+        padding-bottom: 16px;
+    }
+
+    .prop-form-rules();
+
+    .vl-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+
+        .vl-remove {
+            color: rgba(0, 0, 0, .45);
+            cursor: pointer;
+            flex-shrink: 0;
+
+            &:hover {
+                color: #ff4d4f;
+            }
+        }
+    }
+}
+
+// 拖拽预览与弹窗内容渲染在 overlay（组件外），需穿透
+::ng-deep {
+    .designer-form-config {
+        .prop-form-rules();
+    }
+
+    .cdk-drag-preview {
+        &.palette-item, &.canvas-field {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+            border-radius: 4px;
+            background: #fff;
+            padding: 7px 10px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+    }
+
+    .cdk-drag-placeholder {
+        opacity: .4;
+    }
+
+    .designer-code {
+        max-height: 60vh;
+        overflow: auto;
+        background: #f6f8fa;
+        border-radius: 4px;
+        padding: 16px;
+        font-size: 12.5px;
+        line-height: 1.7;
+        margin: 0;
+
+        code {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+    }
+}
+
+.cdk-drop-list-dragging .canvas-field:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

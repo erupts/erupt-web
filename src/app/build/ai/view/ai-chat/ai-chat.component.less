@@ -788,6 +788,11 @@
 .input-body {
     padding: 0 14px 8px;
 
+    /* 工具栏未渲染时（如嵌入态且无智能体），补回顶部间距 */
+    &:first-child {
+        padding-top: 8px;
+    }
+
     textarea {
         width: 100%;
         resize: none;

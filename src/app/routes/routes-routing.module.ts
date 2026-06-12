@@ -29,6 +29,10 @@ let coreRouter: Routes = [
         loadChildren: () => import( "../build/cube/cube.module").then(m => m.CubeModule)
     },
     {
+        path: "designer",
+        loadChildren: () => import( "../build/designer/designer.module").then(m => m.DesignerModule)
+    },
+    {
         path: "build",
         loadChildren: () => import('../build/erupt/erupt.module').then(m => m.EruptModule),
     },
