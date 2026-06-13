@@ -13,24 +13,12 @@
                 <span class="toolbar-dirty">{{ 'designer.unsaved' | translate }}</span>
             }
         </div>
-        <div class="header-center">
-            <div class="action-buttons">
-                <button nz-button (click)="clear()">
-                    <span nz-icon nzType="clear"></span>
-                    {{ 'designer.clear' | translate }}
-                </button>
-                <button nz-button [nzLoading]="previewLoading" (click)="preview()">
-                    <span nz-icon nzType="eye"></span>
-                    {{ 'designer.preview' | translate }}
-                </button>
-            </div>
-        </div>
         <div class="header-right">
             <span class="toolbar-count">{{ form.fields.length }} {{ 'designer.fields' | translate }}</span>
-            <button nz-button nzType="text" [nzLoading]="codeLoading" (click)="generateCode()"
-                    [title]="'designer.generate_code' | translate">
-                <span nz-icon nzType="code"></span>
+            <button nz-button nzType="text" (click)="clear()" [title]="'designer.clear' | translate">
+                <span nz-icon nzType="clear"></span>
             </button>
+            <nz-divider nzType="vertical"></nz-divider>
             <button nz-button (click)="formConfigVisible = true">
                 <span nz-icon nzType="setting"></span>
                 {{ 'designer.tab.form' | translate }}
@@ -41,7 +29,17 @@
                     {{ 'designer.vis.title' | translate }}
                 </button>
             </nz-badge>
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button [nzLoading]="previewLoading" (click)="preview()">
+                <span nz-icon nzType="eye"></span>
+                {{ 'designer.preview' | translate }}
+            </button>
+            <button nz-button nzType="text" [nzLoading]="codeLoading" (click)="generateCode()"
+                    [title]="'designer.generate_code' | translate">
+                <span nz-icon nzType="code"></span>
+            </button>
             @if (boundClassName) {
+                <nz-divider nzType="vertical"></nz-divider>
                 <button nz-button nzType="primary" [nzLoading]="publishing" (click)="publish()">
                     <span nz-icon nzType="cloud-upload"></span>
                     {{ 'designer.publish' | translate }}
