@@ -45,9 +45,13 @@ export class DesignerService {
         return this._http.post<R<void>>(this.path + "/publish/" + className, this.pruneKey(form), null, {observe: "body"});
     }
 
-    // 去除仅前端使用的 key 属性
+    // 去除仅前端使用的 key 属性（字段与多视图）
     private pruneKey(form: DesignerForm): DesignerForm {
-        return {...form, fields: form.fields.map(f => ({...f, key: undefined}))};
+        return {
+            ...form,
+            erupt: {...form.erupt, vis: form.erupt.vis?.map(v => ({...v, key: undefined}))},
+            fields: form.fields.map(f => ({...f, key: undefined}))
+        };
     }
 
 }

@@ -27,6 +27,44 @@ export interface DesignerErupt {
     orderBy?: string;
     power?: DesignerPower;
     layout?: DesignerLayout;
+    vis?: DesignerVis[];    // 多视图配置，镜像 @Erupt.vis() / @Vis
+}
+
+// 多视图类型，值与后端 Vis.Type 枚举常量名一致
+export enum VisType {
+    TABLE = "TABLE",
+    CARD = "CARD",
+    BOARD = "BOARD",
+    GANTT = "GANTT",
+    CALENDAR = "CALENDAR",
+    TPL = "TPL"
+}
+
+// 字段可见性，值与后端 Vis.FieldVisibility 一致
+export enum FieldVisibility {
+    INCLUDE = "INCLUDE",
+    EXCLUDE = "EXCLUDE"
+}
+
+// 卡片封面效果，值与后端 CardView.CoverEffect 一致
+export enum CoverEffect {
+    FIT = "FIT",
+    CLIP = "CLIP"
+}
+
+// 镜像 @Vis：仅前端 key 字段不上送
+export interface DesignerVis {
+    key?: string;           // 仅前端使用的唯一标识
+    code?: string;
+    title: string;
+    desc?: string;
+    type?: VisType;
+    fieldVisibility?: FieldVisibility;
+    fields?: string[];
+    boardView?: { groupField?: string };
+    cardView?: { coverField?: string; coverEffect?: CoverEffect };
+    ganttView?: { startDateField?: string; endDateField?: string; groupField?: string; pidField?: string; progressField?: string; colorField?: string };
+    calendarView?: { dateField?: string; endDateField?: string; colorField?: string };
 }
 
 export interface DesignerLayout {

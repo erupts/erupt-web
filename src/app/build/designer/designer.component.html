@@ -86,7 +86,7 @@
                 }
                 @for (field of form.fields; track field.key) {
                     <div class="canvas-field" cdkDrag [class.selected]="selected === field"
-                         [class.field-half]="!fullLine(field)"
+                         [class.field-third]="!fullLine(field)"
                          (click)="select(field, $event)">
                         @if (field.edit.type === editType.DIVIDE) {
                             <nz-divider [nzText]="field.edit.title" nzOrientation="left"
@@ -632,6 +632,162 @@
                                (ngModelChange)="saveDraft()"></nz-switch>
                 </div>
             </div>
+
+            <!-- 多视图（镜像 @Erupt.vis / @Vis），默认表格视图之外的额外视图 -->
+            <nz-divider [nzText]="'designer.vis.title' | translate" nzOrientation="left" nzPlain></nz-divider>
+            <div class="vis-hint">{{ 'designer.vis.hint' | translate }}</div>
+            @for (vis of form.erupt.vis; track vis.key; let i = $index) {
+                <div class="vis-card">
+                    <div class="vis-card-header">
+                        <span nz-icon [nzType]="visIcon(vis.type)" class="vis-card-icon"></span>
+                        <input nz-input nzSize="small" [(ngModel)]="vis.title"
+                               [placeholder]="'designer.vis.title_placeholder' | translate"/>
+                        <span nz-icon nzType="delete" class="vis-remove" (click)="removeVis(i)"></span>
+                    </div>
+                    <div class="prop-item">
+                        <label>{{ 'designer.vis.type' | translate }}</label>
+                        <nz-select [(ngModel)]="vis.type" style="width: 100%" nzSize="small"
+                                   (ngModelChange)="visTypeChange(vis)">
+                            <nz-option [nzValue]="visType.TABLE" nzLabel="TABLE"></nz-option>
+                            <nz-option [nzValue]="visType.CARD" nzLabel="CARD"></nz-option>
+                            <nz-option [nzValue]="visType.BOARD" nzLabel="BOARD"></nz-option>
+                            <nz-option [nzValue]="visType.GANTT" nzLabel="GANTT"></nz-option>
+                            <nz-option [nzValue]="visType.CALENDAR" nzLabel="CALENDAR"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="prop-item">
+                        <label>{{ 'designer.vis.code' | translate }}</label>
+                        <input nz-input nzSize="small" [(ngModel)]="vis.code"
+                               [placeholder]="'designer.vis.code_placeholder' | translate"/>
+                    </div>
+                    <div class="prop-item">
+                        <label>{{ 'designer.field_desc' | translate }}</label>
+                        <input nz-input nzSize="small" [(ngModel)]="vis.desc"/>
+                    </div>
+                    <div class="prop-item">
+                        <label>{{ 'designer.vis.field_visibility' | translate }}</label>
+                        <nz-radio-group [(ngModel)]="vis.fieldVisibility" (ngModelChange)="saveDraft()" nzSize="small">
+                            <label nz-radio-button [nzValue]="fieldVisibility.EXCLUDE">{{ 'designer.vis.exclude' | translate }}</label>
+                            <label nz-radio-button [nzValue]="fieldVisibility.INCLUDE">{{ 'designer.vis.include' | translate }}</label>
+                        </nz-radio-group>
+                    </div>
+                    <div class="prop-item">
+                        <label>{{ 'designer.vis.fields' | translate }}</label>
+                        <nz-select nzMode="multiple" style="width: 100%" nzSize="small"
+                                   [(ngModel)]="vis.fields" (ngModelChange)="saveDraft()"
+                                   [nzPlaceHolder]="'designer.vis.fields_placeholder' | translate">
+                            @for (f of visFieldOptions(); track f.name) {
+                                <nz-option [nzValue]="f.name" [nzLabel]="f.label"></nz-option>
+                            }
+                        </nz-select>
+                    </div>
+
+                    <!-- 看板：分组字段 -->
+                    @if (vis.type === visType.BOARD) {
+                        <div class="prop-item">
+                            <label>{{ 'designer.vis.group_field' | translate }}</label>
+                            <nz-select [(ngModel)]="vis.boardView!.groupField" style="width: 100%" nzSize="small"
+                                       nzAllowClear (ngModelChange)="saveDraft()">
+                                @for (f of visFieldOptions(); track f.name) {
+                                    <nz-option [nzValue]="f.name" [nzLabel]="f.label"></nz-option>
+                                }
+                            </nz-select>
+                        </div>
+                    }
+                    <!-- 卡片：封面字段 + 封面效果 -->
+                    @if (vis.type === visType.CARD) {
+                        <div class="prop-item">
+                            <label>{{ 'designer.vis.cover_field' | translate }}</label>
+                            <nz-select [(ngModel)]="vis.cardView!.coverField" style="width: 100%" nzSize="small"
+                                       nzAllowClear (ngModelChange)="saveDraft()">
+                                @for (f of visFieldOptions(); track f.name) {
+                                    <nz-option [nzValue]="f.name" [nzLabel]="f.label"></nz-option>
+                                }
+                            </nz-select>
+                        </div>
+                        <div class="prop-item">
+                            <label>{{ 'designer.vis.cover_effect' | translate }}</label>
+                            <nz-radio-group [(ngModel)]="vis.cardView!.coverEffect" (ngModelChange)="saveDraft()" nzSize="small">
+                                <label nz-radio-button [nzValue]="coverEffect.CLIP">CLIP</label>
+                                <label nz-radio-button [nzValue]="coverEffect.FIT">FIT</label>
+                            </nz-radio-group>
+                        </div>
+                    }
+                    <!-- 甘特：起止/分组/父级/进度/颜色字段 -->
+                    @if (vis.type === visType.GANTT) {
+                        <div class="prop-item">
+                            <label>{{ 'designer.vis.start_date_field' | translate }}</label>
+                            <nz-select [(ngModel)]="vis.ganttView!.startDateField" style="width: 100%" nzSize="small"
+                                       nzAllowClear (ngModelChange)="saveDraft()">
+                                @for (f of visFieldOptions(); track f.name) {
+                                    <nz-option [nzValue]="f.name" [nzLabel]="f.label"></nz-option>
+                                }
+                            </nz-select>
+                        </div>
+                        <div class="prop-item">
+                            <label>{{ 'designer.vis.end_date_field' | translate }}</label>
+                            <nz-select [(ngModel)]="vis.ganttView!.endDateField" style="width: 100%" nzSize="small"
+                                       nzAllowClear (ngModelChange)="saveDraft()">
+                                @for (f of visFieldOptions(); track f.name) {
+                                    <nz-option [nzValue]="f.name" [nzLabel]="f.label"></nz-option>
+                                }
+                            </nz-select>
+                        </div>
+                        <div class="prop-item">
+                            <label>{{ 'designer.vis.group_field' | translate }}</label>
+                            <nz-select [(ngModel)]="vis.ganttView!.groupField" style="width: 100%" nzSize="small"
+                                       nzAllowClear (ngModelChange)="saveDraft()">
+                                @for (f of visFieldOptions(); track f.name) {
+                                    <nz-option [nzValue]="f.name" [nzLabel]="f.label"></nz-option>
+                                }
+                            </nz-select>
+                        </div>
+                        <div class="prop-item">
+                            <label>{{ 'designer.vis.progress_field' | translate }}</label>
+                            <nz-select [(ngModel)]="vis.ganttView!.progressField" style="width: 100%" nzSize="small"
+                                       nzAllowClear (ngModelChange)="saveDraft()">
+                                @for (f of visFieldOptions(); track f.name) {
+                                    <nz-option [nzValue]="f.name" [nzLabel]="f.label"></nz-option>
+                                }
+                            </nz-select>
+                        </div>
+                    }
+                    <!-- 日历：日期/结束日期/颜色字段 -->
+                    @if (vis.type === visType.CALENDAR) {
+                        <div class="prop-item">
+                            <label>{{ 'designer.vis.date_field' | translate }}</label>
+                            <nz-select [(ngModel)]="vis.calendarView!.dateField" style="width: 100%" nzSize="small"
+                                       nzAllowClear (ngModelChange)="saveDraft()">
+                                @for (f of visFieldOptions(); track f.name) {
+                                    <nz-option [nzValue]="f.name" [nzLabel]="f.label"></nz-option>
+                                }
+                            </nz-select>
+                        </div>
+                        <div class="prop-item">
+                            <label>{{ 'designer.vis.end_date_field' | translate }}</label>
+                            <nz-select [(ngModel)]="vis.calendarView!.endDateField" style="width: 100%" nzSize="small"
+                                       nzAllowClear (ngModelChange)="saveDraft()">
+                                @for (f of visFieldOptions(); track f.name) {
+                                    <nz-option [nzValue]="f.name" [nzLabel]="f.label"></nz-option>
+                                }
+                            </nz-select>
+                        </div>
+                        <div class="prop-item">
+                            <label>{{ 'designer.vis.color_field' | translate }}</label>
+                            <nz-select [(ngModel)]="vis.calendarView!.colorField" style="width: 100%" nzSize="small"
+                                       nzAllowClear (ngModelChange)="saveDraft()">
+                                @for (f of visFieldOptions(); track f.name) {
+                                    <nz-option [nzValue]="f.name" [nzLabel]="f.label"></nz-option>
+                                }
+                            </nz-select>
+                        </div>
+                    }
+                </div>
+            }
+            <button nz-button nzType="dashed" nzBlock nzSize="small" (click)="addVis()">
+                <span nz-icon nzType="plus"></span>
+                {{ 'designer.vis.add' | translate }}
+            </button>
         </div>
     </ng-container>
 </nz-drawer>

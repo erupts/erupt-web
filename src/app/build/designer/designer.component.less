@@ -208,9 +208,9 @@
         cursor: move;
         transition: border-color .2s, background .2s;
 
-        // 表单尺寸 DEFAULT 下的非整行字段
-        &.field-half {
-            width: calc(50% - 2px);
+        // 表单尺寸 DEFAULT 下的非整行字段：对齐真实渲染的 colRules[3]，每行三列（gap 4px → 两处间隙共 8px）
+        &.field-third {
+            width: calc((100% - 8px) / 3);
         }
 
         .field-label {
@@ -426,6 +426,54 @@
 ::ng-deep {
     .designer-form-config {
         .prop-form-rules();
+
+        .vis-hint {
+            font-size: 12px;
+            color: rgba(0, 0, 0, .45);
+            margin-bottom: 10px;
+        }
+
+        .vis-card {
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            background: #fafafa;
+            border: 1px solid #f0f0f0;
+            border-radius: 6px;
+
+            .vis-card-header {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 10px;
+
+                .vis-card-icon {
+                    color: var(--ant-primary-color, #1890ff);
+                    font-size: 15px;
+                    flex-shrink: 0;
+                }
+
+                input {
+                    flex: 1;
+                    font-weight: 600;
+                }
+
+                .vis-remove {
+                    flex-shrink: 0;
+                    color: rgba(0, 0, 0, .45);
+                    cursor: pointer;
+                    padding: 2px;
+
+                    &:hover {
+                        color: #ff4d4f;
+                    }
+                }
+            }
+
+            // 卡片内最后一项去掉多余下边距
+            .prop-item:last-child {
+                margin-bottom: 0;
+            }
+        }
     }
 
     .cdk-drag-preview {

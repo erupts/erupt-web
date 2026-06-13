@@ -3,6 +3,8 @@ import {CommonModule} from "@angular/common";
 import {NzIconService} from "ng-zorro-antd/icon";
 import {NzRateModule} from "ng-zorro-antd/rate";
 import {
+    AppstoreOutline,
+    BarChartOutline,
     BgColorsOutline,
     CalendarOutline,
     CheckCircleOutline,
@@ -18,6 +20,7 @@ import {
     HighlightOutline,
     LayoutOutline,
     LineOutline,
+    ProjectOutline,
     ReadOutline,
     SelectOutline,
     SlidersOutline,
@@ -50,10 +53,10 @@ export class DesignerModule {
 
     // 懒加载模块内自注册设计器所需图标，不增加首屏体积
     constructor(iconService: NzIconService) {
-        iconService.addIcon(BgColorsOutline, CalendarOutline, CheckCircleOutline, CheckSquareOutline,
-            CloudUploadOutline, CodeOutline, DownCircleOutline, DragOutline, EditOutline, EnvironmentOutline,
-            FieldNumberOutline, FontSizeOutline, HighlightOutline, LayoutOutline, LineOutline, ReadOutline,
-            SelectOutline, SlidersOutline, StarOutline, TagsOutline, UploadOutline);
+        iconService.addIcon(AppstoreOutline, BarChartOutline, BgColorsOutline, CalendarOutline, CheckCircleOutline,
+            CheckSquareOutline, CloudUploadOutline, CodeOutline, DownCircleOutline, DragOutline, EditOutline,
+            EnvironmentOutline, FieldNumberOutline, FontSizeOutline, HighlightOutline, LayoutOutline, LineOutline,
+            ProjectOutline, ReadOutline, SelectOutline, SlidersOutline, StarOutline, TagsOutline, UploadOutline);
     }
 
 }

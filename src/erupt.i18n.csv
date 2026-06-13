@@ -583,3 +583,24 @@ designer.page_size,每页条数,每頁條數,Page Size,Taille de page,1ページ
 designer.table_left_fixed,左侧固定列数,左側固定列數,Left Fixed Columns,Colonnes fixes à gauche,左固定列数,왼쪽 고정 열 수,Закреплённые слева столбцы,Columnas fijas izquierda,Links fixierte Spalten,Colunas fixas à esquerda,Kolom Tetap Kiri,أعمدة ثابتة يسارًا
 designer.table_right_fixed,右侧固定列数,右側固定列數,Right Fixed Columns,Colonnes fixes à droite,右固定列数,오른쪽 고정 열 수,Закреплённые справа столбцы,Columnas fijas derecha,Rechts fixierte Spalten,Colunas fixas à direita,Kolom Tetap Kanan,أعمدة ثابتة يمينًا
 designer.power_print,打印,列印,Print,Imprimer,印刷,인쇄,Печать,Imprimir,Drucken,Imprimir,Cetak,طباعة
+designer.vis.title,多视图,多視圖,Views,Vues,複数ビュー,다중 뷰,Представления,Vistas,Ansichten,Visualizações,Tampilan,العروض
+designer.vis.hint,在默认表格外配置卡片/看板/甘特/日历等视图,在預設表格外配置卡片/看板/甘特/日曆等視圖,Add card / board / gantt / calendar views beyond the default table,Ajoutez des vues carte / tableau / gantt / calendrier en plus du tableau par défaut,デフォルトのテーブル以外にカード/ボード/ガント/カレンダービューを追加,기본 테이블 외에 카드/보드/간트/캘린더 뷰 추가,Добавьте представления карточек/доски/гантта/календаря помимо таблицы,Añade vistas de tarjeta / tablero / gantt / calendario además de la tabla,Karten-/Board-/Gantt-/Kalenderansichten zusätzlich zur Tabelle,Adicione visualizações de cartão / quadro / gantt / calendário além da tabela,Tambahkan tampilan kartu / papan / gantt / kalender selain tabel,أضف عروض البطاقة/اللوحة/جانت/التقويم إلى جانب الجدول
+designer.vis.add,添加视图,添加視圖,Add View,Ajouter une vue,ビューを追加,뷰 추가,Добавить представление,Añadir vista,Ansicht hinzufügen,Adicionar visualização,Tambah tampilan,إضافة عرض
+designer.vis.default_title,新视图,新視圖,New View,Nouvelle vue,新しいビュー,새 뷰,Новое представление,Nueva vista,Neue Ansicht,Nova visualização,Tampilan baru,عرض جديد
+designer.vis.title_placeholder,视图名称,視圖名稱,View name,Nom de la vue,ビュー名,뷰 이름,Название представления,Nombre de la vista,Ansichtsname,Nome da visualização,Nama tampilan,اسم العرض
+designer.vis.type,视图类型,視圖類型,View Type,Type de vue,ビュータイプ,뷰 유형,Тип представления,Tipo de vista,Ansichtstyp,Tipo de visualização,Jenis tampilan,نوع العرض
+designer.vis.code,视图编码,視圖編碼,View Code,Code de vue,ビューコード,뷰 코드,Код представления,Código de vista,Ansichtscode,Código da visualização,Kode tampilan,رمز العرض
+designer.vis.code_placeholder,选填唯一标识,選填唯一標識,Optional unique key,Clé unique facultative,任意の一意キー,선택적 고유 키,Необязательный уникальный ключ,Clave única opcional,Optionaler eindeutiger Schlüssel,Chave única opcional,Kunci unik opsional,مفتاح فريد اختياري
+designer.vis.field_visibility,字段范围,字段範圍,Field Scope,Portée des champs,フィールド範囲,필드 범위,Область полей,Ámbito de campos,Feldbereich,Escopo de campos,Cakupan bidang,نطاق الحقول
+designer.vis.include,包含,包含,Include,Inclure,含める,포함,Включить,Incluir,Einschließen,Incluir,Sertakan,تضمين
+designer.vis.exclude,排除,排除,Exclude,Exclure,除外,제외,Исключить,Excluir,Ausschließen,Excluir,Kecualikan,استبعاد
+designer.vis.fields,字段列表,字段列表,Fields,Champs,フィールド,필드,Поля,Campos,Felder,Campos,Bidang,الحقول
+designer.vis.fields_placeholder,选择字段,選擇字段,Select fields,Sélectionner des champs,フィールドを選択,필드 선택,Выберите поля,Seleccionar campos,Felder auswählen,Selecionar campos,Pilih bidang,اختر الحقول
+designer.vis.group_field,分组字段,分組字段,Group Field,Champ de groupe,グループフィールド,그룹 필드,Поле группировки,Campo de grupo,Gruppierungsfeld,Campo de agrupamento,Bidang grup,حقل التجميع
+designer.vis.cover_field,封面字段,封面字段,Cover Field,Champ de couverture,カバーフィールド,커버 필드,Поле обложки,Campo de portada,Coverfeld,Campo de capa,Bidang sampul,حقل الغلاف
+designer.vis.cover_effect,封面效果,封面效果,Cover Effect,Effet de couverture,カバー効果,커버 효과,Эффект обложки,Efecto de portada,Cover-Effekt,Efeito de capa,Efek sampul,تأثير الغلاف
+designer.vis.start_date_field,开始日期字段,開始日期字段,Start Date Field,Champ date de début,開始日フィールド,시작일 필드,Поле даты начала,Campo fecha de inicio,Startdatumsfeld,Campo data de início,Bidang tanggal mulai,حقل تاريخ البدء
+designer.vis.end_date_field,结束日期字段,結束日期字段,End Date Field,Champ date de fin,終了日フィールド,종료일 필드,Поле даты окончания,Campo fecha de fin,Enddatumsfeld,Campo data de término,Bidang tanggal selesai,حقل تاريخ الانتهاء
+designer.vis.progress_field,进度字段,進度字段,Progress Field,Champ de progression,進捗フィールド,진행률 필드,Поле прогресса,Campo de progreso,Fortschrittsfeld,Campo de progresso,Bidang progres,حقل التقدم
+designer.vis.date_field,日期字段,日期字段,Date Field,Champ de date,日付フィールド,날짜 필드,Поле даты,Campo de fecha,Datumsfeld,Campo de data,Bidang tanggal,حقل التاريخ
+designer.vis.color_field,颜色字段,顏色字段,Color Field,Champ de couleur,色フィールド,색상 필드,Поле цвета,Campo de color,Farbfeld,Campo de cor,Bidang warna,حقل اللون

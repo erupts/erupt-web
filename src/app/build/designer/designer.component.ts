@@ -19,7 +19,17 @@ import {
 import {EruptBuildModel} from "../erupt/model/erupt-build.model";
 import {DataHandlerService} from "../erupt/service/data-handler.service";
 import {DesignerService} from "./service/designer.service";
-import {DesignerField, DesignerForm, PALETTE_GROUPS, PaletteGroup, PaletteItem} from "./model/designer.model";
+import {
+    CoverEffect,
+    DesignerField,
+    DesignerForm,
+    DesignerVis,
+    FieldVisibility,
+    PALETTE_GROUPS,
+    PaletteGroup,
+    PaletteItem,
+    VisType
+} from "./model/designer.model";
 
 const DRAFT_KEY = "erupt-designer-draft";
 
@@ -40,6 +50,9 @@ export class DesignerComponent implements OnInit, OnDestroy {
     readonly Scene = Scene;
     readonly formSize = FormSize;
     readonly pagingType = PagingType;
+    readonly visType = VisType;
+    readonly fieldVisibility = FieldVisibility;
+    readonly coverEffect = CoverEffect;
 
     form: DesignerForm = this.emptyForm();
 
@@ -147,7 +160,8 @@ export class DesignerComponent implements OnInit, OnDestroy {
             erupt: {
                 name: "",
                 power: {add: true, edit: true, delete: true, query: true, viewDetails: true, export: false, importable: false, print: true},
-                layout: {formSize: FormSize.DEFAULT, pagingType: PagingType.BACKEND, pageSize: 10, tableLeftFixed: 0, tableRightFixed: 0}
+                layout: {formSize: FormSize.DEFAULT, pagingType: PagingType.BACKEND, pageSize: 10, tableLeftFixed: 0, tableRightFixed: 0},
+                vis: []
             },
             fields: []
         };
@@ -158,6 +172,11 @@ export class DesignerComponent implements OnInit, OnDestroy {
         let empty = this.emptyForm();
         form.erupt.power = {...empty.erupt.power, ...form.erupt.power};
         form.erupt.layout = {...empty.erupt.layout, ...form.erupt.layout};
+        form.erupt.vis = (form.erupt.vis || []).map(v => {
+            v.key = v.key || this.nextVisKey();
+            this.initVisSub(v);
+            return v;
+        });
         return form;
     }
 
@@ -290,6 +309,77 @@ export class DesignerComponent implements OnInit, OnDestroy {
     removeVl(vl: { value: string; label: string }[], index: number): void {
         vl.splice(index, 1);
         this.saveDraft();
+    }
+
+    // ---------------- 多视图（vis）----------------
+
+    private nextVisKey(): string {
+        return "vis" + (++this.keySeq) + "_" + Date.now();
+    }
+
+    // 可供视图选择的字段：表单中的全部字段（按字段名）
+    visFieldOptions(): { name: string; label: string }[] {
+        return this.form.fields
+            .filter(f => f.edit.type !== this.editType.DIVIDE && f.edit.type !== this.editType.GROUP)
+            .map(f => ({name: f.fieldName, label: f.edit.title + " (" + f.fieldName + ")"}));
+    }
+
+    addVis(): void {
+        let vis: DesignerVis = {
+            key: this.nextVisKey(),
+            title: this.i18n.fanyi("designer.vis.default_title"),
+            type: VisType.TABLE,
+            fieldVisibility: FieldVisibility.EXCLUDE,
+            fields: []
+        };
+        this.form.erupt.vis = this.form.erupt.vis || [];
+        this.form.erupt.vis.push(vis);
+        this.saveDraft();
+    }
+
+    removeVis(index: number): void {
+        this.form.erupt.vis!.splice(index, 1);
+        this.saveDraft();
+    }
+
+    // 视图类型对应的图标
+    visIcon(type: VisType | undefined): string {
+        switch (type) {
+            case VisType.CARD:
+                return "appstore";
+            case VisType.BOARD:
+                return "project";
+            case VisType.GANTT:
+                return "bar-chart";
+            case VisType.CALENDAR:
+                return "calendar";
+            default:
+                return "table";
+        }
+    }
+
+    // 切换视图类型时，按需初始化该类型专属的子配置对象
+    visTypeChange(vis: DesignerVis): void {
+        this.initVisSub(vis);
+        this.saveDraft();
+    }
+
+    // 确保该视图类型专属的子配置对象存在，避免模板 !. 绑定空指针
+    private initVisSub(vis: DesignerVis): void {
+        switch (vis.type) {
+            case VisType.BOARD:
+                vis.boardView = vis.boardView || {};
+                break;
+            case VisType.CARD:
+                vis.cardView = vis.cardView || {coverEffect: CoverEffect.CLIP};
+                break;
+            case VisType.GANTT:
+                vis.ganttView = vis.ganttView || {};
+                break;
+            case VisType.CALENDAR:
+                vis.calendarView = vis.calendarView || {};
+                break;
+        }
     }
 
     // ---------------- 预览 / 代码 ----------------
