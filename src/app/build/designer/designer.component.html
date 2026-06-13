@@ -23,18 +23,24 @@
                     <span nz-icon nzType="eye"></span>
                     {{ 'designer.preview' | translate }}
                 </button>
-                <button nz-button [nzLoading]="codeLoading" (click)="generateCode()">
-                    <span nz-icon nzType="code"></span>
-                    {{ 'designer.generate_code' | translate }}
-                </button>
             </div>
         </div>
         <div class="header-right">
             <span class="toolbar-count">{{ form.fields.length }} {{ 'designer.fields' | translate }}</span>
+            <button nz-button nzType="text" [nzLoading]="codeLoading" (click)="generateCode()"
+                    [title]="'designer.generate_code' | translate">
+                <span nz-icon nzType="code"></span>
+            </button>
             <button nz-button (click)="formConfigVisible = true">
                 <span nz-icon nzType="setting"></span>
                 {{ 'designer.tab.form' | translate }}
             </button>
+            <nz-badge [nzCount]="form.erupt.vis?.length || 0" nzSize="small">
+                <button nz-button (click)="visConfigVisible = true">
+                    <span nz-icon nzType="appstore"></span>
+                    {{ 'designer.vis.title' | translate }}
+                </button>
+            </nz-badge>
             @if (boundClassName) {
                 <button nz-button nzType="primary" [nzLoading]="publishing" (click)="publish()">
                     <span nz-icon nzType="cloud-upload"></span>
@@ -154,15 +160,18 @@
                                         </div>
                                     }
                                     @case (editType.REFERENCE_TABLE) {
-                                        <input nz-input disabled [placeholder]="'designer.type.reference_table' | translate"/>
+                                        <input nz-input disabled
+                                               [placeholder]="'designer.type.reference_table' | translate"/>
                                     }
                                     @case (editType.REFERENCE_TREE) {
                                         <nz-select nzDisabled style="width: 100%"
                                                    [nzPlaceHolder]="'designer.type.reference_tree' | translate"></nz-select>
                                     }
                                     @case (editType.CHECKBOX) {
-                                        <label nz-checkbox nzDisabled>{{ 'designer.option_label' | translate }} A</label>
-                                        <label nz-checkbox nzDisabled>{{ 'designer.option_label' | translate }} B</label>
+                                        <label nz-checkbox nzDisabled>{{ 'designer.option_label' | translate }}
+                                            A</label>
+                                        <label nz-checkbox nzDisabled>{{ 'designer.option_label' | translate }}
+                                            B</label>
                                     }
                                     @case (editType.ATTACHMENT) {
                                         <button nz-button nzType="dashed" disabled>
@@ -209,7 +218,8 @@
                     <div class="props-form" (change)="saveDraft()">
                         <div class="prop-item">
                             <label>{{ 'designer.field_name' | translate }}</label>
-                            <input nz-input [(ngModel)]="selected.fieldName"/>
+                            <input nz-input [(ngModel)]="selected.fieldName"
+                                   (focus)="renameFrom = selected.fieldName" (blur)="commitRename(selected)"/>
                         </div>
                         <div class="prop-item">
                             <label>{{ 'designer.field_title' | translate }}</label>
@@ -225,14 +235,14 @@
                                 <label>{{ 'designer.field_desc' | translate }}</label>
                                 <input nz-input [(ngModel)]="selected.edit.desc"/>
                             </div>
-                            @if (selected.linkErupt !== undefined) {
+                            @if (needLink(selected.edit.type)) {
                                 <div class="prop-item">
                                     <label>{{ 'designer.link_erupt' | translate }}</label>
                                     <nz-select [(ngModel)]="selected.linkErupt" style="width: 100%"
                                                nzShowSearch nzAllowClear (ngModelChange)="saveDraft()"
                                                [nzPlaceHolder]="'designer.link_erupt_hint' | translate">
-                                        @for (name of eruptNames; track name) {
-                                            <nz-option [nzValue]="name" [nzLabel]="name"></nz-option>
+                                        @for (e of eruptOptions; track e.key) {
+                                            <nz-option [nzValue]="e.key" [nzLabel]="e.value"></nz-option>
                                         }
                                     </nz-select>
                                 </div>
@@ -248,13 +258,6 @@
                                     <nz-switch nzSize="small" [(ngModel)]="selected.edit.search!.value"
                                                (ngModelChange)="saveDraft()"></nz-switch>
                                 </div>
-                                @if (selected.edit.search?.value) {
-                                    <div class="prop-switch">
-                                        <label>{{ 'designer.vague' | translate }}</label>
-                                        <nz-switch nzSize="small" [(ngModel)]="selected.edit.search!.vague"
-                                                   (ngModelChange)="saveDraft()"></nz-switch>
-                                    </div>
-                                }
                                 @if (selected.view) {
                                     <div class="prop-switch">
                                         <label>{{ 'designer.sortable' | translate }}</label>
@@ -267,13 +270,6 @@
                             <!-- 类型专属配置 -->
                             @switch (selected.edit.type) {
                                 @case (editType.INPUT) {
-                                    <nz-divider [nzText]="'designer.type_config' | translate"
-                                                nzOrientation="left" nzPlain></nz-divider>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.length' | translate }}</label>
-                                        <nz-input-number [(ngModel)]="selected.edit.inputType!.length"
-                                                         style="width: 100%"></nz-input-number>
-                                    </div>
                                     <div class="prop-switch">
                                         <label>{{ 'designer.full_span' | translate }}</label>
                                         <nz-switch nzSize="small" [(ngModel)]="selected.edit.inputType!.fullSpan"
@@ -342,15 +338,6 @@
                                             <nz-option [nzValue]="dateEnum.YEAR" nzLabel="YEAR"></nz-option>
                                         </nz-select>
                                     </div>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.picker_mode' | translate }}</label>
-                                        <nz-select [(ngModel)]="selected.edit.dateType!.pickerMode"
-                                                   style="width: 100%" (ngModelChange)="saveDraft()">
-                                            <nz-option [nzValue]="pickerMode.ALL" nzLabel="ALL"></nz-option>
-                                            <nz-option [nzValue]="pickerMode.FUTURE" nzLabel="FUTURE"></nz-option>
-                                            <nz-option [nzValue]="pickerMode.HISTORY" nzLabel="HISTORY"></nz-option>
-                                        </nz-select>
-                                    </div>
                                 }
                                 @case (editType.BOOLEAN) {
                                     <nz-divider [nzText]="'designer.type_config' | translate"
@@ -376,13 +363,13 @@
                                         </nz-radio-group>
                                     </div>
                                     <ng-container
-                                            *ngTemplateOutlet="vlEditor; context: {$implicit: selected.edit.choiceType!.vl}"></ng-container>
+                                        *ngTemplateOutlet="vlEditor; context: {$implicit: selected.edit.choiceType!.vl}"></ng-container>
                                 }
                                 @case (editType.MULTI_CHOICE) {
                                     <nz-divider [nzText]="'designer.options' | translate"
                                                 nzOrientation="left" nzPlain></nz-divider>
                                     <ng-container
-                                            *ngTemplateOutlet="vlEditor; context: {$implicit: selected.edit.multiChoiceType!.vl}"></ng-container>
+                                        *ngTemplateOutlet="vlEditor; context: {$implicit: selected.edit.multiChoiceType!.vl}"></ng-container>
                                 }
                                 @case (editType.TAGS) {
                                     <nz-divider [nzText]="'designer.type_config' | translate"
@@ -391,11 +378,6 @@
                                         <label>{{ 'designer.tags_list' | translate }}</label>
                                         <nz-select [(ngModel)]="selected.edit.tagsType!.tags" nzMode="tags"
                                                    style="width: 100%" (ngModelChange)="saveDraft()"></nz-select>
-                                    </div>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.join_separator' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.tagsType!.joinSeparator"
-                                               placeholder="|"/>
                                     </div>
                                 }
                                 @case (editType.ATTACHMENT) {
@@ -437,53 +419,6 @@
                                         <label>{{ 'designer.height' | translate }}</label>
                                         <nz-input-number [(ngModel)]="selected.edit.codeEditType!.height"
                                                          style="width: 100%"></nz-input-number>
-                                    </div>
-                                }
-                                @case (editType.REFERENCE_TABLE) {
-                                    <nz-divider [nzText]="'designer.type_config' | translate"
-                                                nzOrientation="left" nzPlain></nz-divider>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.ref_id' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.id"
-                                               placeholder="id"/>
-                                    </div>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.ref_label' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.label"
-                                               placeholder="name"/>
-                                    </div>
-                                }
-                                @case (editType.REFERENCE_TREE) {
-                                    <nz-divider [nzText]="'designer.type_config' | translate"
-                                                nzOrientation="left" nzPlain></nz-divider>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.ref_id' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.id"
-                                               placeholder="id"/>
-                                    </div>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.ref_label' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.label"
-                                               placeholder="name"/>
-                                    </div>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.ref_pid' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.pid"
-                                               placeholder="parent.id"/>
-                                    </div>
-                                }
-                                @case (editType.TAB_TABLE_REFER) {
-                                    <nz-divider [nzText]="'designer.type_config' | translate"
-                                                nzOrientation="left" nzPlain></nz-divider>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.ref_id' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.id"
-                                               placeholder="id"/>
-                                    </div>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.ref_label' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.label"
-                                               placeholder="name"/>
                                     </div>
                                 }
                                 @case (editType.GROUP) {
@@ -532,29 +467,24 @@
                        [disabled]="!!boundClassName"/>
             </div>
             <div class="prop-item">
-                <label>{{ 'designer.table_name' | translate }}</label>
-                <input nz-input [(ngModel)]="form.tableName" placeholder="t_goods"/>
-            </div>
-            <div class="prop-item">
-                <label>{{ 'designer.package' | translate }}</label>
-                <input nz-input [(ngModel)]="form.pkg"/>
-            </div>
-            <div class="prop-item">
-                <label>{{ 'designer.extends' | translate }}</label>
-                <nz-select [(ngModel)]="form.extendsModel" style="width: 100%"
-                           (ngModelChange)="saveDraft()">
-                    <nz-option nzValue="BaseModel" nzLabel="BaseModel"></nz-option>
-                    <nz-option nzValue="MetaModel" nzLabel="MetaModel"></nz-option>
-                    <nz-option nzValue="" [nzLabel]="'designer.extends_none' | translate"></nz-option>
-                </nz-select>
-            </div>
-            <div class="prop-item">
                 <label>{{ 'designer.field_desc' | translate }}</label>
                 <input nz-input [(ngModel)]="form.erupt.desc"/>
             </div>
             <div class="prop-item">
                 <label>{{ 'designer.order_by' | translate }}</label>
-                <input nz-input [(ngModel)]="form.erupt.orderBy" placeholder="id desc"/>
+                <div style="display: flex; gap: 8px;">
+                    <nz-select [(ngModel)]="orderByField" style="flex: 1" nzAllowClear nzShowSearch
+                               [nzPlaceHolder]="'designer.order_by_placeholder' | translate">
+                        <nz-option nzValue="id" nzLabel="id"></nz-option>
+                        @for (f of visFieldOptions(); track f.name) {
+                            <nz-option [nzValue]="f.name" [nzLabel]="f.label"></nz-option>
+                        }
+                    </nz-select>
+                    <nz-select [(ngModel)]="orderByDir" style="width: 96px">
+                        <nz-option nzValue="asc" [nzLabel]="'designer.order_asc' | translate"></nz-option>
+                        <nz-option nzValue="desc" [nzLabel]="'designer.order_desc' | translate"></nz-option>
+                    </nz-select>
+                </div>
             </div>
             <nz-divider [nzText]="'designer.layout' | translate" nzOrientation="left" nzPlain></nz-divider>
             <div class="prop-item">
@@ -566,27 +496,8 @@
                 </nz-radio-group>
             </div>
             <div class="prop-item">
-                <label>{{ 'designer.paging_type' | translate }}</label>
-                <nz-select [(ngModel)]="form.erupt.layout!.pagingType" style="width: 100%"
-                           (ngModelChange)="saveDraft()">
-                    <nz-option [nzValue]="pagingType.BACKEND" nzLabel="BACKEND"></nz-option>
-                    <nz-option [nzValue]="pagingType.FRONT" nzLabel="FRONT"></nz-option>
-                    <nz-option [nzValue]="pagingType.NONE" nzLabel="NONE"></nz-option>
-                </nz-select>
-            </div>
-            <div class="prop-item">
                 <label>{{ 'designer.page_size' | translate }}</label>
                 <nz-input-number [(ngModel)]="form.erupt.layout!.pageSize" [nzMin]="1"
-                                 style="width: 100%"></nz-input-number>
-            </div>
-            <div class="prop-item">
-                <label>{{ 'designer.table_left_fixed' | translate }}</label>
-                <nz-input-number [(ngModel)]="form.erupt.layout!.tableLeftFixed" [nzMin]="0"
-                                 style="width: 100%"></nz-input-number>
-            </div>
-            <div class="prop-item">
-                <label>{{ 'designer.table_right_fixed' | translate }}</label>
-                <nz-input-number [(ngModel)]="form.erupt.layout!.tableRightFixed" [nzMin]="0"
                                  style="width: 100%"></nz-input-number>
             </div>
             <nz-divider [nzText]="'designer.power' | translate" nzOrientation="left" nzPlain></nz-divider>
@@ -632,9 +543,15 @@
                                (ngModelChange)="saveDraft()"></nz-switch>
                 </div>
             </div>
+        </div>
+    </ng-container>
+</nz-drawer>
 
-            <!-- 多视图（镜像 @Erupt.vis / @Vis），默认表格视图之外的额外视图 -->
-            <nz-divider [nzText]="'designer.vis.title' | translate" nzOrientation="left" nzPlain></nz-divider>
+<!-- 多视图配置：工具栏按钮单独打开 -->
+<nz-drawer [(nzVisible)]="visConfigVisible" [nzWidth]="380" nzPlacement="right"
+           [nzTitle]="'designer.vis.title' | translate" (nzOnClose)="visConfigVisible = false">
+    <ng-container *nzDrawerContent>
+        <div class="designer-form-config" (change)="saveDraft()">
             <div class="vis-hint">{{ 'designer.vis.hint' | translate }}</div>
             @for (vis of form.erupt.vis; track vis.key; let i = $index) {
                 <div class="vis-card">
@@ -656,19 +573,16 @@
                         </nz-select>
                     </div>
                     <div class="prop-item">
-                        <label>{{ 'designer.vis.code' | translate }}</label>
-                        <input nz-input nzSize="small" [(ngModel)]="vis.code"
-                               [placeholder]="'designer.vis.code_placeholder' | translate"/>
-                    </div>
-                    <div class="prop-item">
                         <label>{{ 'designer.field_desc' | translate }}</label>
                         <input nz-input nzSize="small" [(ngModel)]="vis.desc"/>
                     </div>
                     <div class="prop-item">
                         <label>{{ 'designer.vis.field_visibility' | translate }}</label>
                         <nz-radio-group [(ngModel)]="vis.fieldVisibility" (ngModelChange)="saveDraft()" nzSize="small">
-                            <label nz-radio-button [nzValue]="fieldVisibility.EXCLUDE">{{ 'designer.vis.exclude' | translate }}</label>
-                            <label nz-radio-button [nzValue]="fieldVisibility.INCLUDE">{{ 'designer.vis.include' | translate }}</label>
+                            <label nz-radio-button
+                                   [nzValue]="fieldVisibility.EXCLUDE">{{ 'designer.vis.exclude' | translate }}</label>
+                            <label nz-radio-button
+                                   [nzValue]="fieldVisibility.INCLUDE">{{ 'designer.vis.include' | translate }}</label>
                         </nz-radio-group>
                     </div>
                     <div class="prop-item">
@@ -707,7 +621,8 @@
                         </div>
                         <div class="prop-item">
                             <label>{{ 'designer.vis.cover_effect' | translate }}</label>
-                            <nz-radio-group [(ngModel)]="vis.cardView!.coverEffect" (ngModelChange)="saveDraft()" nzSize="small">
+                            <nz-radio-group [(ngModel)]="vis.cardView!.coverEffect" (ngModelChange)="saveDraft()"
+                                            nzSize="small">
                                 <label nz-radio-button [nzValue]="coverEffect.CLIP">CLIP</label>
                                 <label nz-radio-button [nzValue]="coverEffect.FIT">FIT</label>
                             </nz-radio-group>
@@ -818,17 +733,8 @@
     </ng-container>
 </nz-drawer>
 
-<!-- 注解代码导出 -->
-<nz-modal [(nzVisible)]="codeVisible" [nzTitle]="(form.className || 'Model') + '.java'" [nzWidth]="860"
-          [nzFooter]="codeFooter" (nzOnCancel)="codeVisible = false">
-    <ng-container *nzModalContent>
-        <pre class="designer-code"><code>{{ code }}</code></pre>
-    </ng-container>
-    <ng-template #codeFooter>
-        <button nz-button (click)="codeVisible = false">{{ 'global.close' | translate }}</button>
-        <button nz-button nzType="primary" (click)="copyCode()">
-            <span nz-icon nzType="copy"></span>
-            {{ 'global.copy' | translate }}
-        </button>
-    </ng-template>
-</nz-modal>
+<!-- 注解代码导出：通过 NzModalService 以服务方式打开（generateCode） -->
+<ng-template #codeModalTpl>
+    <nz-code-editor class="designer-code" [ngModel]="code"
+                    [nzEditorOption]="codeEditorOption"></nz-code-editor>
+</ng-template>

@@ -16,7 +16,6 @@ export interface DesignerForm {
     pkg: string;
     className: string;
     tableName: string;
-    extendsModel: string;
     erupt: DesignerErupt;
     fields: DesignerField[];
 }

@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit} from "@angular/core";
+import {Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {Location} from "@angular/common";
 import {Subscription} from "rxjs";
@@ -6,17 +6,9 @@ import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {I18NService} from "@core";
-import {
-    AttachmentEnum,
-    ChoiceEnum,
-    DateEnum,
-    EditType,
-    FormSize,
-    PagingType,
-    PickerMode,
-    Scene
-} from "../erupt/model/erupt.enum";
+import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, Scene} from "../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../erupt/model/erupt-build.model";
+import {KV} from "../erupt/model/util.model";
 import {DataHandlerService} from "../erupt/service/data-handler.service";
 import {DesignerService} from "./service/designer.service";
 import {
@@ -44,12 +36,10 @@ export class DesignerComponent implements OnInit, OnDestroy {
     readonly paletteGroups: PaletteGroup[] = PALETTE_GROUPS;
     readonly editType = EditType;
     readonly dateEnum = DateEnum;
-    readonly pickerMode = PickerMode;
     readonly choiceEnum = ChoiceEnum;
     readonly attachmentEnum = AttachmentEnum;
     readonly Scene = Scene;
     readonly formSize = FormSize;
-    readonly pagingType = PagingType;
     readonly visType = VisType;
     readonly fieldVisibility = FieldVisibility;
     readonly coverEffect = CoverEffect;
@@ -58,18 +48,26 @@ export class DesignerComponent implements OnInit, OnDestroy {
 
     selected: DesignerField | null = null;
 
+    // 字段名编辑前的原值，失焦时据此同步所有引用（模板绑定，不能为 private）
+    renameFrom: string | null = null;
+
     // 表单（类级）配置抽屉
     formConfigVisible: boolean = false;
+
+    // 多视图配置抽屉
+    visConfigVisible: boolean = false;
 
     // 实时预览（伪装注解 → 真实 erupt 渲染管线）
     previewVisible: boolean = false;
     previewLoading: boolean = false;
     previewBuild: EruptBuildModel | null = null;
 
-    // 注解代码导出
-    codeVisible: boolean = false;
+    // 注解代码导出（nz-code-editor / Monaco 只读展示，经 NzModalService 打开）
     codeLoading: boolean = false;
     code: string | null = null;
+    readonly codeEditorOption = {language: "java", readOnly: true, minimap: {enabled: false}, automaticLayout: true, scrollBeyondLastLine: false};
+
+    @ViewChild("codeModalTpl") codeModalTpl!: TemplateRef<unknown>;
 
     // 由"表单设计"列表行按钮进入时绑定的模型类名（后端持久化模式）
     boundClassName: string | null = null;
@@ -82,8 +80,8 @@ export class DesignerComponent implements OnInit, OnDestroy {
     // 组件面板搜索
     paletteKeyword: string = "";
 
-    // 已注册的 Erupt 模型名，引用类字段的关联模型选项
-    eruptNames: string[] = [];
+    // 已注册的 Erupt 模型，引用类字段的关联模型选项（key=类名，value=功能名称）
+    eruptOptions: KV<string, string>[] = [];
 
     private keySeq: number = 0;
 
@@ -99,7 +97,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.designerService.erupts().subscribe(res => this.eruptNames = res.data || []);
+        this.designerService.erupts().subscribe(res => this.eruptOptions = res.data || []);
         this.router$ = this.route.params.subscribe(params => {
             this.boundClassName = params["className"] || null;
             this.selected = null;
@@ -135,7 +133,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
 
     // 发布：保存设计并注册运行时模型，免重启生效
     publish(): void {
-        if (!this.boundClassName || !this.validate()) return;
+        if (!this.boundClassName || !this.validate(true)) return;
         this.publishing = true;
         this.designerService.publish(this.boundClassName, this.form).subscribe({
             next: res => {
@@ -156,7 +154,6 @@ export class DesignerComponent implements OnInit, OnDestroy {
             pkg: "com.example.model",
             className: "",
             tableName: "",
-            extendsModel: "BaseModel",
             erupt: {
                 name: "",
                 power: {add: true, edit: true, delete: true, query: true, viewDetails: true, export: false, importable: false, print: true},
@@ -268,8 +265,51 @@ export class DesignerComponent implements OnInit, OnDestroy {
     removeField(field: DesignerField, event: MouseEvent): void {
         event.stopPropagation();
         this.form.fields.splice(this.form.fields.indexOf(field), 1);
+        this.remapFieldRefs(field.fieldName, null);   // 删除后清理所有引用
         if (this.selected === field) this.selected = null;
         this.saveDraft();
+    }
+
+    // 字段名失焦：将原名在分组/多视图/排序中的所有引用同步为新名
+    commitRename(field: DesignerField): void {
+        let old = this.renameFrom;
+        this.renameFrom = null;
+        if (old == null || old === field.fieldName) return;
+        this.remapFieldRefs(old, field.fieldName);
+        this.saveDraft();
+    }
+
+    // 字段名引用迁移：newName 为 null 表示删除引用，否则改写为新名
+    private remapFieldRefs(oldName: string, newName: string | null): void {
+        if (!oldName) return;
+        let mapArr = (arr?: string[]) => !arr ? arr
+            : newName === null ? arr.filter(n => n !== oldName) : arr.map(n => n === oldName ? newName : n);
+        let mapVal = (v?: string) => v === oldName ? (newName ?? undefined) : v;
+        // 分组字段
+        for (let f of this.form.fields) {
+            if (f.edit.groupType?.fields) f.edit.groupType.fields = mapArr(f.edit.groupType.fields);
+        }
+        // 默认排序
+        if (this.orderByField === oldName) this.setOrderBy(newName ?? "", this.orderByDir);
+        // 多视图各类字段引用
+        for (let v of this.form.erupt.vis || []) {
+            v.fields = mapArr(v.fields);
+            if (v.boardView) v.boardView.groupField = mapVal(v.boardView.groupField);
+            if (v.cardView) v.cardView.coverField = mapVal(v.cardView.coverField);
+            if (v.ganttView) {
+                v.ganttView.startDateField = mapVal(v.ganttView.startDateField);
+                v.ganttView.endDateField = mapVal(v.ganttView.endDateField);
+                v.ganttView.groupField = mapVal(v.ganttView.groupField);
+                v.ganttView.pidField = mapVal(v.ganttView.pidField);
+                v.ganttView.progressField = mapVal(v.ganttView.progressField);
+                v.ganttView.colorField = mapVal(v.ganttView.colorField);
+            }
+            if (v.calendarView) {
+                v.calendarView.dateField = mapVal(v.calendarView.dateField);
+                v.calendarView.endDateField = mapVal(v.calendarView.endDateField);
+                v.calendarView.colorField = mapVal(v.calendarView.colorField);
+            }
+        }
     }
 
     // 标题与列标题联动
@@ -322,6 +362,28 @@ export class DesignerComponent implements OnInit, OnDestroy {
         return this.form.fields
             .filter(f => f.edit.type !== this.editType.DIVIDE && f.edit.type !== this.editType.GROUP)
             .map(f => ({name: f.fieldName, label: f.edit.title + " (" + f.fieldName + ")"}));
+    }
+
+    // 默认排序：从 orderBy 表达式（如 "createTime desc"）派生字段与方向，避免让用户手写表达式
+    get orderByField(): string {
+        return (this.form.erupt.orderBy || "").trim().split(/\s+/)[0] || "";
+    }
+
+    set orderByField(field: string) {
+        this.setOrderBy(field, this.orderByDir);
+    }
+
+    get orderByDir(): "asc" | "desc" {
+        return (this.form.erupt.orderBy || "").trim().split(/\s+/)[1]?.toLowerCase() === "desc" ? "desc" : "asc";
+    }
+
+    set orderByDir(dir: "asc" | "desc") {
+        this.setOrderBy(this.orderByField, dir);
+    }
+
+    private setOrderBy(field: string, dir: "asc" | "desc"): void {
+        this.form.erupt.orderBy = field ? field + " " + dir : "";
+        this.saveDraft();
     }
 
     addVis(): void {
@@ -407,12 +469,27 @@ export class DesignerComponent implements OnInit, OnDestroy {
                 this.codeLoading = false;
                 if (res.success) {
                     this.code = res.data;
-                    this.codeVisible = true;
+                    this.openCodeModal();
                 } else {
                     this.msg.error(res.message);
                 }
             },
             error: () => this.codeLoading = false
+        });
+    }
+
+    // 以服务方式打开代码弹窗（Monaco 只读 + 复制/关闭）
+    private openCodeModal(): void {
+        let ref = this.modal.create({
+            nzTitle: (this.form.className || "Model") + ".java",
+            nzContent: this.codeModalTpl,
+            nzWidth: 860,
+            nzStyle: {top: "30px"},
+            nzBodyStyle: {padding: "0"},
+            nzFooter: [
+                {label: this.i18n.fanyi("global.copy"), onClick: () => this.copyCode()},
+                {label: this.i18n.fanyi("global.close"), type: "primary", onClick: () => ref.destroy()}
+            ]
         });
     }
 
@@ -436,6 +513,16 @@ export class DesignerComponent implements OnInit, OnDestroy {
         return DesignerComponent.FULL_LINE_TYPES.has(field.edit.type);
     }
 
+    // 仅引用类组件需要"关联模型"配置
+    private static readonly LINK_TYPES = new Set<EditType>([
+        EditType.REFERENCE_TABLE, EditType.REFERENCE_TREE, EditType.CHECKBOX,
+        EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE, EditType.COMBINE
+    ]);
+
+    needLink(type: EditType): boolean {
+        return DesignerComponent.LINK_TYPES.has(type);
+    }
+
     // 无法用真实控件 mock 的类型，展示占位块图标
     mockIcon(type: EditType): string {
         for (let group of this.paletteGroups) {
@@ -446,7 +533,8 @@ export class DesignerComponent implements OnInit, OnDestroy {
         return "appstore";
     }
 
-    private validate(): boolean {
+    // checkVis：仅发布时校验多视图完整性（生成代码/预览无需被未配全的视图卡住）
+    private validate(checkVis: boolean = false): boolean {
         if (this.form.fields.length === 0) {
             this.msg.warning(this.i18n.fanyi("designer.empty_canvas"));
             return false;
@@ -457,12 +545,49 @@ export class DesignerComponent implements OnInit, OnDestroy {
         if (!this.form.erupt.name) {
             this.form.erupt.name = this.form.className;
         }
+        let seen = new Set<string>();
         for (let field of this.form.fields) {
             if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(field.fieldName)) {
                 this.msg.warning(this.i18n.fanyi("designer.field_name_invalid") + ": " + field.fieldName);
                 this.select(field);
                 return false;
             }
+            if (seen.has(field.fieldName)) {
+                this.msg.warning(this.i18n.fanyi("designer.field_name_duplicate") + ": " + field.fieldName);
+                this.select(field);
+                return false;
+            }
+            seen.add(field.fieldName);
+            if (this.needLink(field.edit.type) && !field.linkErupt) {
+                this.msg.warning(this.i18n.fanyi("designer.link_erupt_required") + ": " + field.edit.title);
+                this.select(field);
+                return false;
+            }
+        }
+        if (checkVis) {
+            for (let vis of this.form.erupt.vis || []) {
+                if (!this.validateVis(vis)) return false;
+            }
+        }
+        return true;
+    }
+
+    // 多视图基本校验：缺少关键字段时给出提示并打开多视图抽屉
+    private validateVis(vis: DesignerVis): boolean {
+        let fail = (key: string) => {
+            this.msg.warning(this.i18n.fanyi(key) + (vis.title ? ": " + vis.title : ""));
+            this.visConfigVisible = true;
+            return false;
+        };
+        if (!vis.title) return fail("designer.vis.title_required");
+        if (vis.type === VisType.GANTT && (!vis.ganttView?.startDateField || !vis.ganttView?.endDateField)) {
+            return fail("designer.vis.gantt_date_required");
+        }
+        if (vis.type === VisType.BOARD && !vis.boardView?.groupField) {
+            return fail("designer.vis.board_group_required");
+        }
+        if (vis.type === VisType.CALENDAR && !vis.calendarView?.dateField) {
+            return fail("designer.vis.calendar_date_required");
         }
         return true;
     }

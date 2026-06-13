@@ -3,6 +3,7 @@ import {Observable} from "rxjs";
 import {_HttpClient} from "@delon/theme";
 import {RestPath} from "../../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
+import {KV} from "../../erupt/model/util.model";
 import {DesignerForm} from "../model/designer.model";
 
 export interface R<T> {
@@ -29,9 +30,9 @@ export class DesignerService {
         return this._http.post<R<string>>(this.path + "/java-code", this.pruneKey(form), null, {observe: "body"});
     }
 
-    // 已注册的 Erupt 模型名，供引用类字段选择关联模型
-    erupts(): Observable<R<string[]>> {
-        return this._http.get<R<string[]>>(this.path + "/erupts", null, {observe: "body"});
+    // 已注册的 Erupt 模型，供引用类字段选择关联模型（key=类名，value=功能名称）
+    erupts(): Observable<R<KV<string, string>[]>> {
+        return this._http.get<R<KV<string, string>[]>>(this.path + "/erupts", null, {observe: "body"});
     }
 
     // 加载持久化的设计配置

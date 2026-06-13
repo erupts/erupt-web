@@ -1,5 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from "@angular/common";
+import {NzBadgeModule} from "ng-zorro-antd/badge";
+import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import {NzIconService} from "ng-zorro-antd/icon";
 import {NzRateModule} from "ng-zorro-antd/rate";
 import {
@@ -46,6 +48,8 @@ import {DesignerService} from "./service/designer.service";
         SharedModule,
         EruptModule,
         NzRateModule,
+        NzBadgeModule,
+        NzCodeEditorModule,
         DesignerRoutingModule
     ]
 })
