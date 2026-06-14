@@ -138,7 +138,7 @@ interface Search {
 interface CodeEditType {
     language: string;
     height: number;
-    hintHandler?: string;
+    hintHandler?: string[];
 }
 
 //Edit Type

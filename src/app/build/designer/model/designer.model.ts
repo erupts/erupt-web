@@ -1,12 +1,4 @@
-import {
-    AttachmentEnum,
-    ChoiceEnum,
-    DateEnum,
-    EditType,
-    FormSize,
-    PagingType,
-    PickerMode
-} from "../../erupt/model/erupt.enum";
+import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, PickerMode} from "../../erupt/model/erupt.enum";
 
 /**
  * 设计器数据结构：镜像后端 @Erupt / @EruptField / @Edit / @View 注解结构（原始成员名），
@@ -178,7 +170,7 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
             {type: EditType.CHECKBOX, label: "designer.type.checkbox", icon: "check-square", needLink: true, edit: {checkboxType: {}}},
             {type: EditType.TAB_TABLE_ADD, label: "designer.type.tab_table_add", icon: "unordered-list", needLink: true},
             {type: EditType.TAB_TABLE_REFER, label: "designer.type.tab_table_refer", icon: "link", needLink: true, edit: {referenceTableType: {}}},
-            {type: EditType.TAB_TREE, label: "designer.type.tab_tree", icon: "node-expand", needLink: true},
+            {type: EditType.TAB_TREE, label: "designer.type.tab_tree", icon: "node-expand", needLink: true, edit: {referenceTreeType: {}}},
             {type: EditType.COMBINE, label: "designer.type.combine", icon: "swap", needLink: true}
         ]
     },
