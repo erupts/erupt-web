@@ -95,9 +95,15 @@ export interface RedisInfo {
     clientNum: string;
     totalMem: string;
     usedMem: string;
+    usedMemPeak: string;
+    fragRatio: string;
     keyNum: number;
+    evictedKeys: number;
+    ops: string;
+    hitRate: string;
     isCluster: boolean;
     isAOF: boolean;
+    rdbStatus: string;
     redisCmdStat: RedisCmdStat[];
 }
 

@@ -54,6 +54,44 @@
                 </div>
             </div>
 
+            <!-- 健康指标 -->
+            <div nz-row [nzGutter]="16">
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.ops||'0'"
+                                      [nzTitle]="'monitor.redis.ops' | translate"
+                                      [nzSuffix]="' ops/s'"
+                                      [nzPrefix]="iconOps"></nz-statistic>
+                        <ng-template #iconOps><i nz-icon nzType="rocket" class="stat-icon cyan"></i></ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.hitRate||'-'"
+                                      [nzTitle]="'monitor.redis.hit_rate' | translate"
+                                      [nzSuffix]="redis.hitRate ? ' %' : ''"
+                                      [nzPrefix]="iconHit"></nz-statistic>
+                        <ng-template #iconHit><i nz-icon nzType="check-circle" class="stat-icon gold"></i></ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.evictedKeys ?? 0"
+                                      [nzTitle]="'monitor.redis.evicted_keys' | translate"
+                                      [nzPrefix]="iconEvict"></nz-statistic>
+                        <ng-template #iconEvict><i nz-icon nzType="close-circle" class="stat-icon red"></i></ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.usedMemPeak||'-'"
+                                      [nzTitle]="'monitor.redis.used_mem_peak' | translate"
+                                      [nzPrefix]="iconPeak"></nz-statistic>
+                        <ng-template #iconPeak><i nz-icon nzType="rise" class="stat-icon teal"></i></ng-template>
+                    </nz-card>
+                </div>
+            </div>
+
             <!-- Redis 信息 + 命令统计 -->
             <div nz-row [nzGutter]="16" class="equal-cards">
                 <div nz-col [nzXs]="24" [nzMd]="12">
@@ -79,6 +117,14 @@
                             </nz-descriptions-item>
                             <nz-descriptions-item
                                 [nzTitle]="'monitor.server.used_mem' | translate">{{ redis.usedMem }}
+                            </nz-descriptions-item>
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.frag_ratio' | translate">
+                                <nz-tag [nzColor]="fragRatioColor()">{{ redis.fragRatio || '-' }}</nz-tag>
+                            </nz-descriptions-item>
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.rdb_status' | translate">
+                                <nz-tag [nzColor]="redis.rdbStatus === 'ok' ? 'green' : redis.rdbStatus ? 'red' : 'default'">
+                                    {{ redis.rdbStatus || '-' }}
+                                </nz-tag>
                             </nz-descriptions-item>
                         </nz-descriptions>
                     </nz-card>

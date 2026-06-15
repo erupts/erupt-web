@@ -89,6 +89,14 @@ export class RedisComponent implements AfterViewInit, OnDestroy {
         }
     }
 
+    fragRatioColor(): string {
+        const v = parseFloat(this.redis.fragRatio);
+        if (isNaN(v)) return 'default';
+        if (v > 2) return 'red';
+        if (v >= 1.5) return 'orange';
+        return 'green';
+    }
+
     clearCmdSelection(): void {
         this.selectedCmd = null;
         this.commandPie?.dispatchAction({type: 'unselect', seriesIndex: 0});

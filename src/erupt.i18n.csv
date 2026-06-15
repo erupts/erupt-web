@@ -719,4 +719,10 @@ monitor.redis.cmd_detail,命令详情,命令詳情,Command Detail,Détail comman
 monitor.redis.cmd_name,命令,命令,Command,Commande,コマンド,명령,Команда,Comando,Befehl,Comando,Perintah,الأمر
 monitor.redis.cmd_calls,调用次数,調用次數,Calls,Appels,呼び出し回数,호출 횟수,Вызовов,Llamadas,Aufrufe,Chamadas,Panggilan,عدد الاستدعاءات
 monitor.redis.cmd_percent,占比,佔比,Percent,Pourcentage,割合,비율,Доля,Porcentaje,Anteil,Percentagem,Persentase,النسبة المئوية
+monitor.redis.ops,当前 QPS,當前 QPS,Current QPS,QPS actuel,現在の QPS,현재 QPS,Текущий QPS,QPS actual,Aktueller QPS,QPS atual,QPS Saat Ini,QPS الحالي
+monitor.redis.hit_rate,缓存命中率,快取命中率,Hit Rate,Taux de succès,キャッシュヒット率,캐시 적중률,Доля попаданий,Tasa de aciertos,Cache-Trefferquote,Taxa de acertos,Tingkat Hit Cache,معدل الإصابة
+monitor.redis.evicted_keys,驱逐 Key 数,驅逐 Key 數,Evicted Keys,Clés expulsées,追い出しキー数,제거된 키 수,Вытесненных ключей,Claves expulsadas,Verdrängte Keys,Chaves expulsas,Key Terbuang,المفاتيح المُزالة
+monitor.redis.used_mem_peak,内存峰值,記憶體峰值,Peak Memory,Mémoire de pointe,ピークメモリ,메모리 최대치,Пик памяти,Memoria pico,Speicher-Peak,Pico de memória,Memori Puncak,ذروة الذاكرة
+monitor.redis.frag_ratio,内存碎片率,記憶體碎片率,Frag. Ratio,Fragmentation mémoire,メモリ断片化率,메모리 단편화율,Фрагментация памяти,Fragmentación,Fragmentierungsrate,Fragmentação,Rasio Fragmentasi,نسبة التجزؤ
+monitor.redis.rdb_status,RDB 备份状态,RDB 備份狀態,RDB Status,Statut RDB,RDB バックアップ状態,RDB 백업 상태,Статус RDB,Estado RDB,RDB-Status,Estado RDB,Status RDB,حالة RDB
 monitor.diagnosis.ds_trend,活跃趋势,活躍趨勢,Active Trend,Tendance active,アクティブ推移,활성 추이,Динамика активных,Tendencia activa,Aktiv-Trend,Tendência ativa,Tren aktif,اتجاه النشاط
