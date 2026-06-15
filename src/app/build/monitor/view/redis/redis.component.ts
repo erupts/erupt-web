@@ -15,7 +15,9 @@ export class RedisComponent implements AfterViewInit, OnDestroy {
     loading: boolean = true;
     refreshing: boolean = false;
     autoRefresh: boolean = true;
+    isFullscreen: boolean = false;
     lastUpdate: string = '';
+    selectedCmd: { name: string; value: string; percent: string } | null = null;
 
     redis: RedisInfo = {redisCmdStat: []} as any;
 
@@ -32,6 +34,10 @@ export class RedisComponent implements AfterViewInit, OnDestroy {
         this.commandPie?.resize();
         this.keyLine?.resize();
     };
+    private onFullscreen = () => {
+        this.zone.run(() => { this.isFullscreen = !!document.fullscreenElement; });
+        setTimeout(() => { this.commandPie?.resize(); this.keyLine?.resize(); }, 200);
+    };
     private onVisible = () => {
         if (document.hidden) {
             this.stopTimer();
@@ -43,7 +49,8 @@ export class RedisComponent implements AfterViewInit, OnDestroy {
     constructor(private monitorService: MonitorService,
                 private modal: NzModalService,
                 private i18n: I18NService,
-                private zone: NgZone) {
+                private zone: NgZone,
+                private el: ElementRef) {
     }
 
     async ngAfterViewInit(): Promise<void> {
@@ -57,12 +64,14 @@ export class RedisComponent implements AfterViewInit, OnDestroy {
             this.startTimer();
         }
         document.addEventListener('visibilitychange', this.onVisible);
+        document.addEventListener('fullscreenchange', this.onFullscreen);
     }
 
     ngOnDestroy(): void {
         this.stopTimer();
         window.removeEventListener('resize', this.resize);
         document.removeEventListener('visibilitychange', this.onVisible);
+        document.removeEventListener('fullscreenchange', this.onFullscreen);
         this.commandPie?.dispose();
         this.keyLine?.dispose();
     }
@@ -70,6 +79,19 @@ export class RedisComponent implements AfterViewInit, OnDestroy {
     refresh(): void {
         this.refreshing = true;
         this.load();
+    }
+
+    toggleFullscreen(): void {
+        if (!document.fullscreenElement) {
+            this.el.nativeElement.requestFullscreen().catch(() => {});
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    clearCmdSelection(): void {
+        this.selectedCmd = null;
+        this.commandPie?.dispatchAction({type: 'unselect', seriesIndex: 0});
     }
 
     toggleAuto(on: boolean): void {
@@ -125,11 +147,21 @@ export class RedisComponent implements AfterViewInit, OnDestroy {
                 itemStyle: {borderColor: '#fff', borderWidth: 2, borderRadius: 4},
                 label: {show: false},
                 data: [],
+                selectedMode: 'single',
                 emphasis: {
                     label: {show: true, fontSize: 14, fontWeight: 'bold'},
                     itemStyle: {shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.3)'}
                 }
             }]
+        });
+        this.commandPie.on('click', (params: any) => {
+            this.zone.run(() => {
+                this.selectedCmd = {
+                    name: params.name,
+                    value: params.value,
+                    percent: (params.percent || 0).toFixed(1)
+                };
+            });
         });
 
         this.keyLine = echarts.init(this.keyLineRef.nativeElement);

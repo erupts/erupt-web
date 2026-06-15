@@ -1,11 +1,14 @@
 <nz-spin [nzSpinning]="loading" [nzTip]="'monitor.loading' | translate">
-    <div class="monitor">
+    <div class="monitor" >
         <div class="monitor-toolbar">
             <div class="title"><i nz-icon nzType="desktop"></i>{{'monitor.server.server_info' | translate}}</div>
             <div class="actions">
                 <span class="last-update" *ngIf="lastUpdate">{{'monitor.last_update' | translate}}: {{lastUpdate}}</span>
                 <span style="font-size:12px;color:rgba(0,0,0,.45)">{{'monitor.auto_refresh' | translate}}</span>
                 <nz-switch nzSize="small" [ngModel]="autoRefresh" (ngModelChange)="toggleAuto($event)"></nz-switch>
+                <button nz-button nzSize="small" (click)="toggleFullscreen()" nz-tooltip [nzTooltipTitle]="(isFullscreen ? 'monitor.fullscreen_exit' : 'monitor.fullscreen') | translate">
+                    <i nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"></i>
+                </button>
                 <button nz-button nzType="primary" nzSize="small" (click)="refresh()" [nzLoading]="refreshing">
                     <i nz-icon nzType="reload"></i>{{'monitor.refresh' | translate}}
                 </button>
@@ -77,12 +80,12 @@
         </nz-card>
 
         <!-- 应用 + 服务器信息 -->
-        <div nz-row [nzGutter]="16">
+        <div nz-row [nzGutter]="16" class="equal-cards">
             <div nz-col [nzXs]="24" [nzMd]="12">
                 <nz-card [nzBordered]="false" [nzTitle]="appTitle" [nzExtra]="eruptVersion">
                     <ng-template #appTitle><i nz-icon nzType="rocket"></i>{{'monitor.server.app_info' | translate}}</ng-template>
                     <ng-template #eruptVersion><nz-tag nzColor="blue">v{{platform.eruptVersion}}</nz-tag></ng-template>
-                    <nz-descriptions nzBordered [nzColumn]="1" nzSize="small">
+                    <nz-descriptions nzBordered [nzColumn]="1" nzSize="small" class="desc-fixed">
                         <nz-descriptions-item [nzTitle]="'monitor.server.erupt_count' | translate">{{platform.eruptCount}}</nz-descriptions-item>
                         <nz-descriptions-item [nzTitle]="'monitor.server.erupt_modules' | translate">{{platform.eruptModules?.length}}</nz-descriptions-item>
                         <nz-descriptions-item [nzTitle]="'monitor.server.session_strategy' | translate">{{platform.sessionStrategy}}</nz-descriptions-item>
@@ -95,7 +98,7 @@
             <div nz-col [nzXs]="24" [nzMd]="12">
                 <nz-card [nzBordered]="false" [nzTitle]="sysTitle">
                     <ng-template #sysTitle><i nz-icon nzType="cloud"></i>{{'monitor.server.server_info' | translate}}</ng-template>
-                    <nz-descriptions nzBordered [nzColumn]="1" nzSize="small">
+                    <nz-descriptions nzBordered [nzColumn]="1" nzSize="small" class="desc-fixed">
                         <nz-descriptions-item [nzTitle]="'monitor.server.host_name' | translate">{{server.sys.hostName}}</nz-descriptions-item>
                         <nz-descriptions-item [nzTitle]="'monitor.server.os' | translate">{{server.sys.name}}</nz-descriptions-item>
                         <nz-descriptions-item [nzTitle]="'monitor.server.server_time' | translate">{{server.sys.date}}</nz-descriptions-item>
@@ -108,7 +111,7 @@
         <!-- JVM 详情 -->
         <nz-card [nzBordered]="false" [nzTitle]="jvmInfoTitle">
             <ng-template #jvmInfoTitle><i nz-icon nzType="thunderbolt"></i>{{'monitor.server.jvm_info' | translate}}</ng-template>
-            <nz-descriptions nzBordered [nzColumn]="2" nzSize="small">
+            <nz-descriptions nzBordered [nzColumn]="2" nzSize="small" class="desc-fixed">
                 <nz-descriptions-item [nzTitle]="'monitor.server.java_name' | translate">{{server.jvm.name}}</nz-descriptions-item>
                 <nz-descriptions-item [nzTitle]="'monitor.server.java_version' | translate">{{server.jvm.version}}</nz-descriptions-item>
                 <nz-descriptions-item [nzTitle]="'monitor.server.startup_time' | translate">{{server.startupDate}}</nz-descriptions-item>

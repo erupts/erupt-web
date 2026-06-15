@@ -1,3 +1,27 @@
+.cmd-detail {
+    margin-top: 12px;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+
+    .cmd-detail-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: #fafafa;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 13px;
+        font-weight: 500;
+
+        a {
+            color: rgba(0, 0, 0, 0.45);
+            cursor: pointer;
+            &:hover { color: rgba(0, 0, 0, 0.75); }
+        }
+    }
+}
+
 /* 同一行的卡片等高 */
 .equal-cards {
     align-items: stretch;

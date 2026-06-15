@@ -713,3 +713,10 @@ monitor.diagnosis.http_reset,清零,清零,Reset,Réinitialiser,リセット,초
 monitor.diagnosis.http_sort_avg,按耗时,按耗時,By Avg,Par moy,耗時順,평균순,По времени,Por prom,Nach Zeit,Por méd,Per waktu,حسب الوقت
 monitor.diagnosis.http_sort_count,按请求数,按請求數,By Count,Par req,リクエスト順,요청순,По запросам,Por sol,Nach Anfr,Por req,Per req,حسب الطلبات
 monitor.diagnosis.http_sort_error,按错误数,按錯誤數,By Errors,Par erreurs,エラー順,오류순,По ошибкам,Por err,Nach Fehl,Por err,Per err,حسب الأخطاء
+monitor.fullscreen,大屏模式,大屏模式,Big Screen,Grand écran,大画面モード,대형 화면,Полноэкранный режим,Pantalla grande,Großbildschirm,Ecrã grande,Mode layar besar,وضع الشاشة الكبيرة
+monitor.fullscreen_exit,退出大屏,退出大屏,Exit Big Screen,Quitter le grand écran,大画面を終了,대형 화면 종료,Выйти из полноэкранного режима,Salir de pantalla grande,Großbildschirm beenden,Sair do ecrã grande,Keluar layar besar,الخروج من الشاشة الكبيرة
+monitor.redis.cmd_detail,命令详情,命令詳情,Command Detail,Détail commande,コマンド詳細,명령 상세,Детали команды,Detalle de comando,Befehlsdetails,Detalhe do comando,Detail perintah,تفاصيل الأمر
+monitor.redis.cmd_name,命令,命令,Command,Commande,コマンド,명령,Команда,Comando,Befehl,Comando,Perintah,الأمر
+monitor.redis.cmd_calls,调用次数,調用次數,Calls,Appels,呼び出し回数,호출 횟수,Вызовов,Llamadas,Aufrufe,Chamadas,Panggilan,عدد الاستدعاءات
+monitor.redis.cmd_percent,占比,佔比,Percent,Pourcentage,割合,비율,Доля,Porcentaje,Anteil,Percentagem,Persentase,النسبة المئوية
+monitor.diagnosis.ds_trend,活跃趋势,活躍趨勢,Active Trend,Tendance active,アクティブ推移,활성 추이,Динамика активных,Tendencia activa,Aktiv-Trend,Tendência ativa,Tren aktif,اتجاه النشاط

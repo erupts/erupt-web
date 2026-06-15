@@ -14,6 +14,7 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
     loading: boolean = true;
     refreshing: boolean = false;
     autoRefresh: boolean = true;
+    isFullscreen: boolean = false;
     dumping: boolean = false;
     resetting: boolean = false;
     lastUpdate: string = '';
@@ -22,6 +23,7 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
     jvm: JvmDiagnosis = {gc: [], memoryPools: [], classLoading: {} as any, threads: {states: {}} as any} as JvmDiagnosis;
     pools: DataSourcePool[] = [];
     httpStats: HttpStat[] = [];
+    poolHistory: { [name: string]: number[] } = {};
 
     @ViewChild('poolChart', {static: false}) poolRef: ElementRef<HTMLDivElement>;
     @ViewChild('threadChart', {static: false}) threadRef: ElementRef<HTMLDivElement>;
@@ -33,6 +35,10 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
         this.poolChart?.resize();
         this.threadChart?.resize();
     };
+    private onFullscreen = () => {
+        this.zone.run(() => { this.isFullscreen = !!document.fullscreenElement; });
+        setTimeout(() => { this.poolChart?.resize(); this.threadChart?.resize(); }, 200);
+    };
     private onVisible = () => {
         if (document.hidden) {
             this.stopTimer();
@@ -43,7 +49,8 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
 
     constructor(private monitorService: MonitorService,
                 private i18n: I18NService,
-                private zone: NgZone) {
+                private zone: NgZone,
+                private el: ElementRef) {
     }
 
     async ngAfterViewInit(): Promise<void> {
@@ -57,12 +64,14 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
             this.startTimer();
         }
         document.addEventListener('visibilitychange', this.onVisible);
+        document.addEventListener('fullscreenchange', this.onFullscreen);
     }
 
     ngOnDestroy(): void {
         this.stopTimer();
         window.removeEventListener('resize', this.resize);
         document.removeEventListener('visibilitychange', this.onVisible);
+        document.removeEventListener('fullscreenchange', this.onFullscreen);
         this.poolChart?.dispose();
         this.threadChart?.dispose();
     }
@@ -70,6 +79,14 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
     refresh(): void {
         this.refreshing = true;
         this.load();
+    }
+
+    toggleFullscreen(): void {
+        if (!document.fullscreenElement) {
+            this.el.nativeElement.requestFullscreen().catch(() => {});
+        } else {
+            document.exitFullscreen();
+        }
     }
 
     toggleAuto(on: boolean): void {
@@ -108,6 +125,18 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
         return pool.max > 0 ? Math.round(pool.active * 100 / pool.max) : 0;
     }
 
+    sparklinePath(name: string): string {
+        const data = this.poolHistory[name] || [];
+        if (data.length < 2) return '';
+        const w = 80, h = 28;
+        const max = Math.max(...data, 1);
+        return data.map((v, i) => {
+            const x = (i / (data.length - 1)) * w;
+            const y = h - (v / max) * h;
+            return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+        }).join(' ');
+    }
+
     private startTimer(): void {
         this.stopTimer();
         this.timer = setInterval(() => this.load(), 5000);
@@ -133,7 +162,14 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
             }
         });
         this.monitorService.datasource().subscribe({
-            next: data => this.pools = data || [],
+            next: data => {
+                this.pools = data || [];
+                this.pools.forEach(p => {
+                    const hist = this.poolHistory[p.name] || (this.poolHistory[p.name] = []);
+                    hist.push(p.active);
+                    if (hist.length > 20) hist.shift();
+                });
+            },
             error: () => this.pools = []
         });
         this.loadHttpStats();

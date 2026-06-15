@@ -14,6 +14,7 @@ export class ServerComponent implements AfterViewInit, OnDestroy {
     loading: boolean = true;
     refreshing: boolean = false;
     autoRefresh: boolean = true;
+    isFullscreen: boolean = false;
     lastUpdate: string = '';
 
     server: Server = {
@@ -37,6 +38,10 @@ export class ServerComponent implements AfterViewInit, OnDestroy {
         this.trendChart?.resize();
         this.ioChartIns?.resize();
     };
+    private onFullscreen = () => {
+        this.zone.run(() => { this.isFullscreen = !!document.fullscreenElement; });
+        setTimeout(() => { this.trendChart?.resize(); this.ioChartIns?.resize(); }, 200);
+    };
     private onVisible = () => {
         if (document.hidden) {
             this.stopTimer();
@@ -47,7 +52,8 @@ export class ServerComponent implements AfterViewInit, OnDestroy {
 
     constructor(private monitorService: MonitorService,
                 private i18n: I18NService,
-                private zone: NgZone) {
+                private zone: NgZone,
+                private el: ElementRef) {
     }
 
     async ngAfterViewInit(): Promise<void> {
@@ -63,12 +69,14 @@ export class ServerComponent implements AfterViewInit, OnDestroy {
             this.startTimer();
         }
         document.addEventListener('visibilitychange', this.onVisible);
+        document.addEventListener('fullscreenchange', this.onFullscreen);
     }
 
     ngOnDestroy(): void {
         this.stopTimer();
         window.removeEventListener('resize', this.resize);
         document.removeEventListener('visibilitychange', this.onVisible);
+        document.removeEventListener('fullscreenchange', this.onFullscreen);
         this.trendChart?.dispose();
         this.ioChartIns?.dispose();
     }
@@ -76,6 +84,14 @@ export class ServerComponent implements AfterViewInit, OnDestroy {
     refresh(): void {
         this.refreshing = true;
         this.load();
+    }
+
+    toggleFullscreen(): void {
+        if (!document.fullscreenElement) {
+            this.el.nativeElement.requestFullscreen().catch(() => {});
+        } else {
+            document.exitFullscreen();
+        }
     }
 
     toggleAuto(on: boolean): void {

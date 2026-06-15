@@ -1,5 +1,5 @@
 <nz-spin [nzSpinning]="loading" [nzTip]="'monitor.loading' | translate">
-    <div class="monitor">
+    <div class="monitor" >
         <div class="monitor-toolbar">
             <div class="title"><i nz-icon nzType="experiment"></i>{{'monitor.diagnosis.title' | translate}}</div>
             <div class="actions">
@@ -8,6 +8,9 @@
                 <nz-switch nzSize="small" [ngModel]="autoRefresh" (ngModelChange)="toggleAuto($event)"></nz-switch>
                 <button nz-button nzSize="small" (click)="threadDump()" [nzLoading]="dumping">
                     <i nz-icon nzType="download"></i>{{'monitor.diagnosis.thread_dump' | translate}}
+                </button>
+                <button nz-button nzSize="small" (click)="toggleFullscreen()" nz-tooltip [nzTooltipTitle]="(isFullscreen ? 'monitor.fullscreen_exit' : 'monitor.fullscreen') | translate">
+                    <i nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"></i>
                 </button>
                 <button nz-button nzType="primary" nzSize="small" (click)="refresh()" [nzLoading]="refreshing">
                     <i nz-icon nzType="reload"></i>{{'monitor.refresh' | translate}}
@@ -109,6 +112,7 @@
                     <th>{{'monitor.diagnosis.ds_waiting' | translate}}</th>
                     <th>{{'monitor.diagnosis.ds_max' | translate}}</th>
                     <th style="width:200px">{{'monitor.diagnosis.ds_active_ratio' | translate}}</th>
+                    <th style="width:100px">{{'monitor.diagnosis.ds_trend' | translate}}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -122,6 +126,12 @@
                     <td>
                         <nz-progress [nzPercent]="poolUsage(d)" nzSize="small" [nzStrokeColor]="usageColor(poolUsage(d))"></nz-progress>
                     </td>
+                    <td>
+                        <svg width="80" height="28" *ngIf="(poolHistory[d.name]?.length || 0) > 1; else noTrend">
+                            <path [attr.d]="sparklinePath(d.name)" fill="none" stroke="#1890ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <ng-template #noTrend><span style="color:rgba(0,0,0,.25)">--</span></ng-template>
+                    </td>
                 </tr>
                 </tbody>
             </nz-table>
@@ -130,13 +140,14 @@
         <nz-card [nzBordered]="false" [nzTitle]="httpTitle">
             <ng-template #httpTitle>
                 <i nz-icon nzType="api"></i>{{'monitor.diagnosis.http_stats' | translate}}
-                <nz-space-compact style="margin-left:12px">
+                <nz-space-compact style="margin-left:12px" nzSize="small">
                     <button nz-button nzSize="small" [nzType]="httpSortBy==='avg'?'primary':'default'" (click)="sortHttp('avg')">{{'monitor.diagnosis.http_sort_avg' | translate}}</button>
                     <button nz-button nzSize="small" [nzType]="httpSortBy==='count'?'primary':'default'" (click)="sortHttp('count')">{{'monitor.diagnosis.http_sort_count' | translate}}</button>
                     <button nz-button nzSize="small" [nzType]="httpSortBy==='error'?'primary':'default'" (click)="sortHttp('error')">{{'monitor.diagnosis.http_sort_error' | translate}}</button>
                 </nz-space-compact>
+                <nz-divider nzType="vertical"></nz-divider>
                 <button nz-button nzSize="small" nzDanger style="margin-left:8px" [nzLoading]="resetting" (click)="resetHttpStats()">
-                    <i nz-icon nzType="delete"></i>{{'monitor.diagnosis.http_reset' | translate}}
+                    {{'monitor.diagnosis.http_reset' | translate}}
                 </button>
             </ng-template>
             <nz-table #httpTable [nzData]="httpStats" [nzShowPagination]="false" nzSize="small" [nzBordered]="true">

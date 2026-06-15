@@ -10,9 +10,15 @@
     height: 100%;
 }
 
+
+
 :host ::ng-deep .ant-spin-nested-loading,
 :host ::ng-deep .ant-spin-nested-loading > .ant-spin-container {
     height: 100%;
+}
+
+:host ::ng-deep nz-card .ant-card-body{
+    padding: 16px;
 }
 
 .monitor {
@@ -79,11 +85,13 @@
 .monitor-body nz-card {
     margin-bottom: 16px;
     border: 1px solid #f0f0f0;
-    border-radius: 4px;
-    transition: border-color 0.2s;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
 
     &:hover {
-        border-color: #d9d9d9;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.09);
+        transform: translateY(-2px);
     }
 
     ::ng-deep .ant-card-head {
@@ -153,6 +161,10 @@
     &.chart-line {
         height: 260px;
     }
+}
+
+.desc-fixed ::ng-deep .ant-descriptions-item-label {
+    width: 110px;
 }
 
 .text-danger {

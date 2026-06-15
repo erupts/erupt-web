@@ -6,6 +6,17 @@
     }
 }
 
+.disk-usage {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    nz-progress {
+        flex: 1;
+        max-width: 120px;
+    }
+}
+
 .ellipsis {
     display: inline-block;
     max-width: 100%;
@@ -23,13 +34,3 @@
     color: rgba(0, 0, 0, 0.65);
 }
 
-.disk-usage {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    nz-progress {
-        flex: 1;
-        max-width: 120px;
-    }
-}
