@@ -1,0 +1,161 @@
+:host {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    background: #f5f7fa;
+}
+
+:host > nz-spin {
+    display: block;
+    height: 100%;
+}
+
+:host ::ng-deep .ant-spin-nested-loading,
+:host ::ng-deep .ant-spin-nested-loading > .ant-spin-container {
+    height: 100%;
+}
+
+.monitor {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* ---- toolbar (flat, pinned) ---- */
+.monitor-toolbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 15px;
+    background: #fff;
+    border-bottom: 1px solid var(--ant-border-color-split, #eee);
+
+    .title {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.85);
+
+        i {
+            margin-right: 8px;
+            color: var(--ant-primary-color, #1890ff);
+        }
+    }
+
+    .actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .last-update {
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.45);
+        }
+    }
+}
+
+/* ---- scrollable body ---- */
+.monitor-body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 16px;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #d0d5dd;
+        border-radius: 3px;
+    }
+}
+
+/* ---- cards (flat) ---- */
+.monitor-body nz-card {
+    margin-bottom: 16px;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    transition: border-color 0.2s;
+
+    &:hover {
+        border-color: #d9d9d9;
+    }
+
+    ::ng-deep .ant-card-head {
+        min-height: 40px;
+        padding: 0 16px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    ::ng-deep .ant-card-head-title {
+        padding: 9px 0;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+
+        i {
+            margin-right: 8px;
+            color: var(--ant-primary-color, #1890ff);
+        }
+    }
+}
+
+/* ---- overview cards (circular usage) ---- */
+.overview-card ::ng-deep .ant-card-body {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+}
+
+.overview-meta {
+    flex: 1;
+    min-width: 0;
+
+    .label {
+        font-size: 13px;
+        color: rgba(0, 0, 0, 0.45);
+        margin-bottom: 4px;
+    }
+
+    .line {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        padding: 3px 0;
+        color: rgba(0, 0, 0, 0.65);
+
+        b {
+            color: rgba(0, 0, 0, 0.85);
+            font-weight: 500;
+        }
+    }
+}
+
+/* ---- charts ---- */
+.chart {
+    width: 100%;
+
+    &.chart-trend {
+        height: 280px;
+    }
+
+    &.chart-pie {
+        height: 320px;
+    }
+
+    &.chart-line {
+        height: 260px;
+    }
+}
+
+.text-danger {
+    color: #ff4d4f;
+    font-weight: 600;
+}

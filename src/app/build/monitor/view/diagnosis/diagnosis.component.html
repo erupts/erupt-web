@@ -1,0 +1,131 @@
+<nz-spin [nzSpinning]="loading" [nzTip]="'monitor.loading' | translate">
+    <div class="monitor">
+        <div class="monitor-toolbar">
+            <div class="title"><i nz-icon nzType="experiment"></i>{{'monitor.diagnosis.title' | translate}}</div>
+            <div class="actions">
+                <span class="last-update" *ngIf="lastUpdate">{{'monitor.last_update' | translate}}: {{lastUpdate}}</span>
+                <span style="font-size:12px;color:rgba(0,0,0,.45)">{{'monitor.auto_refresh' | translate}}</span>
+                <nz-switch nzSize="small" [ngModel]="autoRefresh" (ngModelChange)="toggleAuto($event)"></nz-switch>
+                <button nz-button nzSize="small" (click)="threadDump()" [nzLoading]="dumping">
+                    <i nz-icon nzType="download"></i>{{'monitor.diagnosis.thread_dump' | translate}}
+                </button>
+                <button nz-button nzType="primary" nzSize="small" (click)="refresh()" [nzLoading]="refreshing">
+                    <i nz-icon nzType="reload"></i>{{'monitor.refresh' | translate}}
+                </button>
+            </div>
+        </div>
+
+        <div class="monitor-body">
+        <!-- 死锁告警 -->
+        <nz-alert *ngIf="jvm.threads?.deadlock" nzType="error" nzShowIcon class="deadlock-alert"
+                  [nzMessage]="'monitor.diagnosis.deadlock' | translate"
+                  [nzDescription]="(('monitor.diagnosis.deadlock_desc' | translate)) + ' (' + jvm.threads.deadlock + ')'"></nz-alert>
+
+        <!-- 线程 / 类加载 概览 -->
+        <div nz-row [nzGutter]="16">
+            <div nz-col [nzXs]="24" [nzMd]="12">
+                <nz-card [nzBordered]="false" [nzTitle]="threadTitle">
+                    <ng-template #threadTitle><i nz-icon nzType="partition"></i>{{'monitor.diagnosis.threads' | translate}}</ng-template>
+                    <div nz-row [nzGutter]="16" class="stat-row">
+                        <div nz-col [nzSpan]="6"><nz-statistic [nzValue]="jvm.threads?.live ?? '-'" [nzTitle]="'monitor.diagnosis.thread_live' | translate"></nz-statistic></div>
+                        <div nz-col [nzSpan]="6"><nz-statistic [nzValue]="jvm.threads?.daemon ?? '-'" [nzTitle]="'monitor.diagnosis.thread_daemon' | translate"></nz-statistic></div>
+                        <div nz-col [nzSpan]="6"><nz-statistic [nzValue]="jvm.threads?.peak ?? '-'" [nzTitle]="'monitor.diagnosis.thread_peak' | translate"></nz-statistic></div>
+                        <div nz-col [nzSpan]="6"><nz-statistic [nzValue]="jvm.threads?.totalStarted ?? '-'" [nzTitle]="'monitor.diagnosis.thread_started' | translate"></nz-statistic></div>
+                    </div>
+                    <div #threadChart class="chart chart-pie"></div>
+                </nz-card>
+            </div>
+            <div nz-col [nzXs]="24" [nzMd]="12">
+                <nz-card [nzBordered]="false" [nzTitle]="classTitle">
+                    <ng-template #classTitle><i nz-icon nzType="build"></i>{{'monitor.diagnosis.class_loading' | translate}}</ng-template>
+                    <div nz-row [nzGutter]="16" class="stat-row">
+                        <div nz-col [nzSpan]="8"><nz-statistic [nzValue]="jvm.classLoading?.loaded ?? '-'" [nzTitle]="'monitor.diagnosis.class_loaded' | translate"></nz-statistic></div>
+                        <div nz-col [nzSpan]="8"><nz-statistic [nzValue]="jvm.classLoading?.total ?? '-'" [nzTitle]="'monitor.diagnosis.class_total' | translate"></nz-statistic></div>
+                        <div nz-col [nzSpan]="8"><nz-statistic [nzValue]="jvm.classLoading?.unloaded ?? '-'" [nzTitle]="'monitor.diagnosis.class_unloaded' | translate"></nz-statistic></div>
+                    </div>
+
+                    <!-- GC 回收 -->
+                    <nz-table #gcTable [nzData]="jvm.gc" [nzShowPagination]="false" nzSize="small" [nzBordered]="true" class="gc-table">
+                        <thead>
+                        <tr>
+                            <th>{{'monitor.diagnosis.gc_name' | translate}}</th>
+                            <th>{{'monitor.diagnosis.gc_count' | translate}}</th>
+                            <th>{{'monitor.diagnosis.gc_time' | translate}}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let g of gcTable.data">
+                            <td>{{g.name}}</td>
+                            <td>{{g.count}}</td>
+                            <td>{{g.time}} ms</td>
+                        </tr>
+                        </tbody>
+                    </nz-table>
+                </nz-card>
+            </div>
+        </div>
+
+        <!-- 内存池 -->
+        <nz-card [nzBordered]="false" [nzTitle]="poolTitle">
+            <ng-template #poolTitle><i nz-icon nzType="database"></i>{{'monitor.diagnosis.memory_pools' | translate}}</ng-template>
+            <div #poolChart class="chart chart-line"></div>
+            <nz-table #poolTable [nzData]="jvm.memoryPools" [nzShowPagination]="false" nzSize="small" [nzBordered]="true">
+                <thead>
+                <tr>
+                    <th>{{'monitor.diagnosis.pool_name' | translate}}</th>
+                    <th>{{'monitor.diagnosis.pool_type' | translate}}</th>
+                    <th>{{'monitor.diagnosis.used' | translate}}</th>
+                    <th>{{'monitor.diagnosis.committed' | translate}}</th>
+                    <th>{{'monitor.diagnosis.max' | translate}}</th>
+                    <th style="width:200px">{{'monitor.server.usage' | translate}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let p of poolTable.data">
+                    <td>{{p.name}}</td>
+                    <td><nz-tag [nzColor]="p.type === 'HEAP' ? 'blue' : 'default'">{{p.type}}</nz-tag></td>
+                    <td>{{p.usedText}}</td>
+                    <td>{{p.committedText}}</td>
+                    <td>{{p.maxText}}</td>
+                    <td>
+                        <nz-progress [nzPercent]="+(p.usage || '0').replace('%','')" nzSize="small"
+                                     [nzStrokeColor]="usageColor((p.usage || '0').replace('%',''))"></nz-progress>
+                    </td>
+                </tr>
+                </tbody>
+            </nz-table>
+        </nz-card>
+
+        <!-- 数据库连接池 -->
+        <nz-card *ngIf="pools.length" [nzBordered]="false" [nzTitle]="dsTitle">
+            <ng-template #dsTitle><i nz-icon nzType="deployment-unit"></i>{{'monitor.diagnosis.datasource' | translate}}</ng-template>
+            <nz-table #dsTable [nzData]="pools" [nzShowPagination]="false" nzSize="small" [nzBordered]="true">
+                <thead>
+                <tr>
+                    <th>{{'monitor.diagnosis.ds_name' | translate}}</th>
+                    <th>{{'monitor.diagnosis.ds_active' | translate}}</th>
+                    <th>{{'monitor.diagnosis.ds_idle' | translate}}</th>
+                    <th>{{'monitor.diagnosis.ds_total' | translate}}</th>
+                    <th>{{'monitor.diagnosis.ds_waiting' | translate}}</th>
+                    <th>{{'monitor.diagnosis.ds_max' | translate}}</th>
+                    <th style="width:200px">{{'monitor.diagnosis.ds_active_ratio' | translate}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let d of dsTable.data">
+                    <td>{{d.name}}</td>
+                    <td>{{d.active}}</td>
+                    <td>{{d.idle}}</td>
+                    <td>{{d.total}}</td>
+                    <td><span [class.text-danger]="d.waiting > 0">{{d.waiting}}</span></td>
+                    <td>{{d.max}}</td>
+                    <td>
+                        <nz-progress [nzPercent]="poolUsage(d)" nzSize="small" [nzStrokeColor]="usageColor(poolUsage(d))"></nz-progress>
+                    </td>
+                </tr>
+                </tbody>
+            </nz-table>
+        </nz-card>
+        </div>
+    </div>
+</nz-spin>

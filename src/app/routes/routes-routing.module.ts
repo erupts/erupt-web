@@ -46,6 +46,10 @@ let coreRouter: Routes = [
         loadChildren: () => import("../build/ai/ai.module").then(m => m.AiModule)
     },
     {
+        path: "monitor",
+        loadChildren: () => import("../build/monitor/monitor.module").then(m => m.MonitorModule)
+    },
+    {
         path: "tpl/:name",
         pathMatch: "full",
         loadChildren: () => tplLoad.then(m => m.TplModule)

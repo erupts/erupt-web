@@ -1,0 +1,101 @@
+<nz-spin [nzSpinning]="loading" [nzTip]="'monitor.loading' | translate">
+    <div class="monitor">
+        <div class="monitor-toolbar">
+            <div class="title"><i nz-icon nzType="database"></i>{{ 'monitor.redis.info' | translate }}</div>
+            <div class="actions">
+                <span class="last-update" *ngIf="lastUpdate">{{ 'monitor.last_update' | translate }}
+                    : {{ lastUpdate }}</span>
+                <span style="font-size:12px;color:rgba(0,0,0,.45)">{{ 'monitor.auto_refresh' | translate }}</span>
+                <nz-switch nzSize="small" [ngModel]="autoRefresh" (ngModelChange)="toggleAuto($event)"></nz-switch>
+                <button nz-button nzType="primary" nzSize="small" (click)="refresh()" [nzLoading]="refreshing">
+                    <i nz-icon nzType="reload"></i>{{ 'monitor.refresh' | translate }}
+                </button>
+            </div>
+        </div>
+
+        <div class="monitor-body">
+            <!-- 关键指标 -->
+            <div nz-row [nzGutter]="16">
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.clientNum||'-'"
+                                      [nzTitle]="'monitor.redis.client_num' | translate"
+                                      [nzPrefix]="iconApi"></nz-statistic>
+                        <ng-template #iconApi><i nz-icon nzType="api" class="stat-icon blue"></i></ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.keyNum||'-'"
+                                      [nzTitle]="'monitor.redis.key_count_series' | translate"
+                                      [nzPrefix]="iconKey"></nz-statistic>
+                        <ng-template #iconKey><i nz-icon nzType="database" class="stat-icon green"></i></ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.usedMem || '-'" [nzTitle]="'monitor.server.used_mem' | translate"
+                                      [nzPrefix]="iconMem"></nz-statistic>
+                        <ng-template #iconMem><i nz-icon nzType="thunderbolt" class="stat-icon orange"></i>
+                        </ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.day || '0'" [nzTitle]="'monitor.redis.run_days' | translate"
+                                      [nzSuffix]="'monitor.redis.days_unit' | translate"
+                                      [nzPrefix]="iconDay"></nz-statistic>
+                        <ng-template #iconDay><i nz-icon nzType="clock-circle" class="stat-icon purple"></i>
+                        </ng-template>
+                    </nz-card>
+                </div>
+            </div>
+
+            <!-- Redis 信息 + 命令统计 -->
+            <div nz-row [nzGutter]="16" class="equal-cards">
+                <div nz-col [nzXs]="24" [nzMd]="12">
+                    <nz-card [nzBordered]="false" [nzTitle]="redisTitle">
+                        <ng-template #redisTitle><i nz-icon nzType="database"></i>{{ 'monitor.redis.info' | translate }}
+                        </ng-template>
+                        <nz-descriptions nzBordered [nzColumn]="1" nzSize="small">
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.version' | translate">{{ redis.version }}
+                            </nz-descriptions-item>
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.port' | translate">{{ redis.port }}
+                            </nz-descriptions-item>
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.is_cluster' | translate">
+                                <nz-tag
+                                    [nzColor]="redis.isCluster ? 'green' : 'default'">{{ (redis.isCluster ? 'Y' : 'N') | translate }}
+                                </nz-tag>
+                            </nz-descriptions-item>
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.persistence' | translate">
+                                <nz-tag [nzColor]="redis.isAOF ? 'blue' : 'orange'">{{ redis.isAOF ? 'AOF' : 'RDB' }}
+                                </nz-tag>
+                            </nz-descriptions-item>
+                            <nz-descriptions-item
+                                [nzTitle]="'monitor.server.total_mem' | translate">{{ redis.totalMem }}
+                            </nz-descriptions-item>
+                            <nz-descriptions-item
+                                [nzTitle]="'monitor.server.used_mem' | translate">{{ redis.usedMem }}
+                            </nz-descriptions-item>
+                        </nz-descriptions>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzMd]="12">
+                    <nz-card [nzBordered]="false" [nzTitle]="cmdTitle">
+                        <ng-template #cmdTitle><i nz-icon
+                                                  nzType="pie-chart"></i>{{ 'monitor.redis.command_stat' | translate }}
+                        </ng-template>
+                        <div #commandPie class="chart chart-pie"></div>
+                    </nz-card>
+                </div>
+            </div>
+
+            <!-- Key 数量趋势 -->
+            <nz-card [nzBordered]="false" [nzTitle]="keyTitle">
+                <ng-template #keyTitle><i nz-icon nzType="fund"></i>{{ 'monitor.redis.key_trend' | translate }}
+                </ng-template>
+                <div #keyLine class="chart chart-line"></div>
+            </nz-card>
+        </div>
+    </div>
+</nz-spin>

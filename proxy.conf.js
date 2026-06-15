@@ -14,8 +14,6 @@ const proxy = {
 
 module.exports = {
     '/erupt-api': proxy,
-    '/element': proxy,
-    '/monitor': proxy,
     '/magic': proxy,
     '/log': proxy,
     '/erupt-attachment': proxy,

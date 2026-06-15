@@ -1,0 +1,186 @@
+<nz-spin [nzSpinning]="loading" [nzTip]="'monitor.loading' | translate">
+    <div class="monitor">
+        <div class="monitor-toolbar">
+            <div class="title"><i nz-icon nzType="desktop"></i>{{'monitor.server.server_info' | translate}}</div>
+            <div class="actions">
+                <span class="last-update" *ngIf="lastUpdate">{{'monitor.last_update' | translate}}: {{lastUpdate}}</span>
+                <span style="font-size:12px;color:rgba(0,0,0,.45)">{{'monitor.auto_refresh' | translate}}</span>
+                <nz-switch nzSize="small" [ngModel]="autoRefresh" (ngModelChange)="toggleAuto($event)"></nz-switch>
+                <button nz-button nzType="primary" nzSize="small" (click)="refresh()" [nzLoading]="refreshing">
+                    <i nz-icon nzType="reload"></i>{{'monitor.refresh' | translate}}
+                </button>
+            </div>
+        </div>
+
+        <div class="monitor-body">
+        <!-- 概览：CPU / 内存 / JVM 使用率 -->
+        <div nz-row [nzGutter]="16">
+            <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="8">
+                <nz-card [nzBordered]="false" class="overview-card" [nzTitle]="cpuTitle">
+                    <ng-template #cpuTitle><i nz-icon nzType="desktop"></i>{{'monitor.server.cpu_usage' | translate}}</ng-template>
+                    <nz-progress nzType="circle" [nzWidth]="96" [nzPercent]="+server.cpu.usage || 0" [nzStrokeColor]="usageColor(server.cpu.usage)"></nz-progress>
+                    <div class="overview-meta">
+                        <div class="line"><span>{{'monitor.server.cpu_num' | translate}}</span><b>{{server.cpu.cpuNum}}</b></div>
+                        <div class="line"><span>{{'monitor.server.cpu_freq' | translate}}</span><b>{{server.cpu.freq}}</b></div>
+                        <div class="line"><span>{{'monitor.server.sys_user' | translate}}</span><b>{{server.cpu.sys}} / {{server.cpu.user}}</b></div>
+                    </div>
+                </nz-card>
+            </div>
+            <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="8">
+                <nz-card [nzBordered]="false" class="overview-card" [nzTitle]="memTitle">
+                    <ng-template #memTitle><i nz-icon nzType="database"></i>{{'monitor.server.mem_usage' | translate}}</ng-template>
+                    <nz-progress nzType="circle" [nzWidth]="96" [nzPercent]="+server.mem.usage || 0" [nzStrokeColor]="usageColor(server.mem.usage)"></nz-progress>
+                    <div class="overview-meta">
+                        <div class="line"><span>{{'monitor.server.total_mem' | translate}}</span><b>{{server.mem.total}}</b></div>
+                        <div class="line"><span>{{'monitor.server.used_mem' | translate}}</span><b>{{server.mem.used}}</b></div>
+                        <div class="line"><span>{{'monitor.server.free_mem' | translate}}</span><b>{{server.mem.free}}</b></div>
+                    </div>
+                </nz-card>
+            </div>
+            <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="8">
+                <nz-card [nzBordered]="false" class="overview-card" [nzTitle]="jvmTitle">
+                    <ng-template #jvmTitle><i nz-icon nzType="thunderbolt"></i>{{'monitor.server.jvm_usage' | translate}}</ng-template>
+                    <nz-progress nzType="circle" [nzWidth]="96" [nzPercent]="+server.jvm.usage || 0" [nzStrokeColor]="usageColor(server.jvm.usage)"></nz-progress>
+                    <div class="overview-meta">
+                        <div class="line"><span>{{'monitor.server.total_mem' | translate}}</span><b>{{server.jvm.total}}</b></div>
+                        <div class="line"><span>{{'monitor.server.used_mem' | translate}}</span><b>{{server.jvm.used}}</b></div>
+                        <div class="line"><span>{{'monitor.server.free_mem' | translate}}</span><b>{{server.jvm.free}}</b></div>
+                    </div>
+                </nz-card>
+            </div>
+        </div>
+
+        <!-- 使用率趋势 -->
+        <nz-card [nzBordered]="false" [nzTitle]="trendTitle">
+            <ng-template #trendTitle><i nz-icon nzType="fund"></i>{{'monitor.server.usage_trend' | translate}}</ng-template>
+            <div #trend class="chart chart-trend"></div>
+        </nz-card>
+
+        <!-- 网络 / 磁盘 IO 实时速率 -->
+        <nz-card [nzBordered]="false" [nzTitle]="ioTitle">
+            <ng-template #ioTitle><i nz-icon nzType="swap"></i>{{'monitor.server.io_rate' | translate}}</ng-template>
+            <div nz-row [nzGutter]="16" class="io-stats">
+                <div nz-col [nzXs]="12" [nzSm]="6">
+                    <nz-statistic [nzValue]="server.io?.netRecvText || '-'" [nzTitle]="'monitor.server.net_recv' | translate" [nzValueStyle]="{color:'#1890ff','font-size':'20px'}"></nz-statistic>
+                </div>
+                <div nz-col [nzXs]="12" [nzSm]="6">
+                    <nz-statistic [nzValue]="server.io?.netSentText || '-'" [nzTitle]="'monitor.server.net_sent' | translate" [nzValueStyle]="{color:'#52c41a','font-size':'20px'}"></nz-statistic>
+                </div>
+                <div nz-col [nzXs]="12" [nzSm]="6">
+                    <nz-statistic [nzValue]="server.io?.diskReadText || '-'" [nzTitle]="'monitor.server.disk_read' | translate" [nzValueStyle]="{color:'#faad14','font-size':'20px'}"></nz-statistic>
+                </div>
+                <div nz-col [nzXs]="12" [nzSm]="6">
+                    <nz-statistic [nzValue]="server.io?.diskWriteText || '-'" [nzTitle]="'monitor.server.disk_write' | translate" [nzValueStyle]="{color:'#ff4d4f','font-size':'20px'}"></nz-statistic>
+                </div>
+            </div>
+            <div #ioChart class="chart chart-line"></div>
+        </nz-card>
+
+        <!-- 应用 + 服务器信息 -->
+        <div nz-row [nzGutter]="16">
+            <div nz-col [nzXs]="24" [nzMd]="12">
+                <nz-card [nzBordered]="false" [nzTitle]="appTitle" [nzExtra]="eruptVersion">
+                    <ng-template #appTitle><i nz-icon nzType="rocket"></i>{{'monitor.server.app_info' | translate}}</ng-template>
+                    <ng-template #eruptVersion><nz-tag nzColor="blue">v{{platform.eruptVersion}}</nz-tag></ng-template>
+                    <nz-descriptions nzBordered [nzColumn]="1" nzSize="small">
+                        <nz-descriptions-item [nzTitle]="'monitor.server.erupt_count' | translate">{{platform.eruptCount}}</nz-descriptions-item>
+                        <nz-descriptions-item [nzTitle]="'monitor.server.erupt_modules' | translate">{{platform.eruptModules?.length}}</nz-descriptions-item>
+                        <nz-descriptions-item [nzTitle]="'monitor.server.session_strategy' | translate">{{platform.sessionStrategy}}</nz-descriptions-item>
+                        <nz-descriptions-item [nzTitle]="'monitor.server.upload_path' | translate">
+                            <span class="ellipsis" nz-tooltip [nzTooltipTitle]="platform.uploadPath">{{platform.uploadPath}}</span>
+                        </nz-descriptions-item>
+                    </nz-descriptions>
+                </nz-card>
+            </div>
+            <div nz-col [nzXs]="24" [nzMd]="12">
+                <nz-card [nzBordered]="false" [nzTitle]="sysTitle">
+                    <ng-template #sysTitle><i nz-icon nzType="cloud"></i>{{'monitor.server.server_info' | translate}}</ng-template>
+                    <nz-descriptions nzBordered [nzColumn]="1" nzSize="small">
+                        <nz-descriptions-item [nzTitle]="'monitor.server.host_name' | translate">{{server.sys.hostName}}</nz-descriptions-item>
+                        <nz-descriptions-item [nzTitle]="'monitor.server.os' | translate">{{server.sys.name}}</nz-descriptions-item>
+                        <nz-descriptions-item [nzTitle]="'monitor.server.server_time' | translate">{{server.sys.date}}</nz-descriptions-item>
+                        <nz-descriptions-item [nzTitle]="'monitor.server.arch' | translate">{{server.sys.arch}}</nz-descriptions-item>
+                    </nz-descriptions>
+                </nz-card>
+            </div>
+        </div>
+
+        <!-- JVM 详情 -->
+        <nz-card [nzBordered]="false" [nzTitle]="jvmInfoTitle">
+            <ng-template #jvmInfoTitle><i nz-icon nzType="thunderbolt"></i>{{'monitor.server.jvm_info' | translate}}</ng-template>
+            <nz-descriptions nzBordered [nzColumn]="2" nzSize="small">
+                <nz-descriptions-item [nzTitle]="'monitor.server.java_name' | translate">{{server.jvm.name}}</nz-descriptions-item>
+                <nz-descriptions-item [nzTitle]="'monitor.server.java_version' | translate">{{server.jvm.version}}</nz-descriptions-item>
+                <nz-descriptions-item [nzTitle]="'monitor.server.startup_time' | translate">{{server.startupDate}}</nz-descriptions-item>
+                <nz-descriptions-item [nzTitle]="'monitor.server.run_time' | translate">{{server.runDay}}</nz-descriptions-item>
+                <nz-descriptions-item [nzTitle]="'monitor.server.thread_count' | translate">{{server.jvm.threadCount}}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="PID">{{server.jvm.pid}}</nz-descriptions-item>
+                <nz-descriptions-item [nzTitle]="'monitor.server.install_path' | translate" [nzSpan]="2">{{server.jvm.home}}</nz-descriptions-item>
+                <nz-descriptions-item [nzTitle]="'monitor.server.project_path' | translate" [nzSpan]="2">{{server.jvm.path}}</nz-descriptions-item>
+                <nz-descriptions-item [nzTitle]="'monitor.server.input_args' | translate" [nzSpan]="2">
+                    <p class="input-args">{{server.jvm.inputArgs}}</p>
+                </nz-descriptions-item>
+            </nz-descriptions>
+        </nz-card>
+
+        <!-- GPU -->
+        <nz-card *ngIf="server.gpus?.length" [nzBordered]="false" [nzTitle]="gpuTitle">
+            <ng-template #gpuTitle><i nz-icon nzType="api"></i>{{'monitor.server.gpu_info' | translate}}</ng-template>
+            <nz-table #gpuTable [nzData]="server.gpus" [nzShowPagination]="false" nzSize="small" [nzBordered]="true">
+                <thead>
+                <tr>
+                    <th>{{'monitor.server.device_id' | translate}}</th>
+                    <th>{{'monitor.server.name' | translate}}</th>
+                    <th>{{'monitor.server.vendor' | translate}}</th>
+                    <th>{{'monitor.server.memory_size' | translate}}</th>
+                    <th>{{'monitor.server.version_info' | translate}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let gpu of gpuTable.data">
+                    <td>{{gpu.deviceId}}</td>
+                    <td>{{gpu.name}}</td>
+                    <td>{{gpu.vendor}}</td>
+                    <td>{{gpu.memorySize}}G</td>
+                    <td>{{gpu.versionInfo}}</td>
+                </tr>
+                </tbody>
+            </nz-table>
+        </nz-card>
+
+        <!-- 磁盘 -->
+        <nz-card [nzBordered]="false" [nzTitle]="diskTitle">
+            <ng-template #diskTitle><i nz-icon nzType="hdd"></i>{{'monitor.server.disk_info' | translate}}</ng-template>
+            <nz-table #diskTable [nzData]="server.sysFiles" [nzShowPagination]="false" nzSize="small" [nzBordered]="true">
+                <thead>
+                <tr>
+                    <th>{{'monitor.server.disk_path' | translate}}</th>
+                    <th>{{'monitor.server.disk_type' | translate}}</th>
+                    <th>{{'monitor.server.file_type' | translate}}</th>
+                    <th>{{'monitor.server.total_size' | translate}}</th>
+                    <th>{{'monitor.server.free_size' | translate}}</th>
+                    <th>{{'monitor.server.used_size' | translate}}</th>
+                    <th style="width:200px">{{'monitor.server.usage' | translate}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let sysFile of diskTable.data">
+                    <td>{{sysFile.dirName}}</td>
+                    <td>{{sysFile.sysTypeName}}</td>
+                    <td>{{sysFile.typeName}}</td>
+                    <td>{{sysFile.total}}</td>
+                    <td>{{sysFile.free}}</td>
+                    <td>{{sysFile.used}}</td>
+                    <td>
+                        <div class="disk-usage">
+                            <nz-progress [nzPercent]="+(sysFile.usage || '0').replace('%','')" nzSize="small"
+                                         [nzStrokeColor]="usageColor((sysFile.usage || '0').replace('%',''))"></nz-progress>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </nz-table>
+        </nz-card>
+        </div>
+    </div>
+</nz-spin>

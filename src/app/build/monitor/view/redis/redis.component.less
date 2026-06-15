@@ -1,0 +1,52 @@
+/* 同一行的卡片等高 */
+.equal-cards {
+    align-items: stretch;
+
+    [nz-col] {
+        display: flex;
+    }
+
+    nz-card {
+        width: 100%;
+    }
+}
+
+.stat-card {
+    ::ng-deep .ant-statistic-title {
+        font-size: 13px;
+        color: rgba(0, 0, 0, 0.45);
+    }
+
+    ::ng-deep .ant-statistic-content {
+        display: flex;
+        align-items: center;
+        font-size: 24px;
+    }
+
+    .stat-icon {
+        font-size: 22px;
+        margin-right: 10px;
+        padding: 8px;
+        border-radius: 8px;
+
+        &.blue {
+            color: #1890ff;
+            background: rgba(24, 144, 255, 0.1);
+        }
+
+        &.green {
+            color: #52c41a;
+            background: rgba(82, 196, 26, 0.1);
+        }
+
+        &.orange {
+            color: #fa8c16;
+            background: rgba(250, 140, 22, 0.1);
+        }
+
+        &.purple {
+            color: #722ed1;
+            background: rgba(114, 46, 209, 0.1);
+        }
+    }
+}
