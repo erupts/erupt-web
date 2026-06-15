@@ -57,7 +57,7 @@ export class ServerComponent implements AfterViewInit, OnDestroy {
             this.initIoChart(echarts);
             window.addEventListener('resize', this.resize);
         });
-        this.load(false);
+        this.load();
         this.monitorService.platform().subscribe(res => this.platform = res);
         if (this.autoRefresh) {
             this.startTimer();
@@ -75,7 +75,7 @@ export class ServerComponent implements AfterViewInit, OnDestroy {
 
     refresh(): void {
         this.refreshing = true;
-        this.load(true);
+        this.load();
     }
 
     toggleAuto(on: boolean): void {
@@ -90,7 +90,7 @@ export class ServerComponent implements AfterViewInit, OnDestroy {
 
     private startTimer(): void {
         this.stopTimer();
-        this.timer = setInterval(() => this.load(true), 5000);
+        this.timer = setInterval(() => this.load(), 5000);
     }
 
     private stopTimer(): void {
@@ -98,8 +98,8 @@ export class ServerComponent implements AfterViewInit, OnDestroy {
         this.timer = null;
     }
 
-    private load(waitCpu: boolean): void {
-        this.monitorService.serverInfo(waitCpu).subscribe({
+    private load(): void {
+        this.monitorService.serverInfo().subscribe({
             next: data => {
                 data.cpu.usage = this.parseUsage(data.cpu.usage);
                 data.mem.usage = this.parseUsage(data.mem.usage);

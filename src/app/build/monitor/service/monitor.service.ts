@@ -13,8 +13,8 @@ export class MonitorService {
     constructor(private _http: _HttpClient) {
     }
 
-    serverInfo(waitCpu: boolean): Observable<Server> {
-        return this._http.get<Server>(MonitorService.path + '/server/info', {waitCpu});
+    serverInfo(): Observable<Server> {
+        return this._http.get<Server>(MonitorService.path + '/server/info');
     }
 
     platform(): Observable<Platform> {
