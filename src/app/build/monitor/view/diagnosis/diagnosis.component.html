@@ -126,6 +126,40 @@
                 </tbody>
             </nz-table>
         </nz-card>
+        <!-- HTTP 请求统计 -->
+        <nz-card [nzBordered]="false" [nzTitle]="httpTitle">
+            <ng-template #httpTitle>
+                <i nz-icon nzType="api"></i>{{'monitor.diagnosis.http_stats' | translate}}
+                <nz-space-compact style="margin-left:12px">
+                    <button nz-button nzSize="small" [nzType]="httpSortBy==='avg'?'primary':'default'" (click)="sortHttp('avg')">{{'monitor.diagnosis.http_sort_avg' | translate}}</button>
+                    <button nz-button nzSize="small" [nzType]="httpSortBy==='count'?'primary':'default'" (click)="sortHttp('count')">{{'monitor.diagnosis.http_sort_count' | translate}}</button>
+                    <button nz-button nzSize="small" [nzType]="httpSortBy==='error'?'primary':'default'" (click)="sortHttp('error')">{{'monitor.diagnosis.http_sort_error' | translate}}</button>
+                </nz-space-compact>
+                <button nz-button nzSize="small" nzDanger style="margin-left:8px" [nzLoading]="resetting" (click)="resetHttpStats()">
+                    <i nz-icon nzType="delete"></i>{{'monitor.diagnosis.http_reset' | translate}}
+                </button>
+            </ng-template>
+            <nz-table #httpTable [nzData]="httpStats" [nzShowPagination]="false" nzSize="small" [nzBordered]="true">
+                <thead>
+                <tr>
+                    <th>{{'monitor.diagnosis.http_uri' | translate}}</th>
+                    <th style="width:100px">{{'monitor.diagnosis.http_count' | translate}}</th>
+                    <th style="width:110px">{{'monitor.diagnosis.http_avg' | translate}}</th>
+                    <th style="width:110px">{{'monitor.diagnosis.http_max' | translate}}</th>
+                    <th style="width:100px">{{'monitor.diagnosis.http_error' | translate}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let s of httpTable.data">
+                    <td><code>{{s.uri}}</code></td>
+                    <td>{{s.count}}</td>
+                    <td [style.color]="s.avgMs > 1000 ? '#ff4d4f' : s.avgMs > 300 ? '#faad14' : ''">{{s.avgMs}} ms</td>
+                    <td>{{s.maxMs}} ms</td>
+                    <td><span [class.text-danger]="s.errorCount > 0">{{s.errorCount}}</span><span style="color:rgba(0,0,0,.35)"> ({{errorRate(s)}})</span></td>
+                </tr>
+                </tbody>
+            </nz-table>
+        </nz-card>
         </div>
     </div>
 </nz-spin>

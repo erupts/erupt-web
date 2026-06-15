@@ -3,7 +3,7 @@ import {_HttpClient} from '@delon/theme';
 import {Observable} from 'rxjs';
 import {downloadFile} from '@shared/util/erupt.util';
 import {RestPath} from '../../erupt/model/erupt.enum';
-import {DataSourcePool, JvmDiagnosis, Platform, RedisInfo, Server} from '../model/monitor.model';
+import {DataSourcePool, HttpStat, JvmDiagnosis, Platform, RedisInfo, Server} from '../model/monitor.model';
 
 @Injectable()
 export class MonitorService {
@@ -27,6 +27,14 @@ export class MonitorService {
 
     jvmDiagnosis(): Observable<JvmDiagnosis> {
         return this._http.get<JvmDiagnosis>(MonitorService.path + '/diagnosis/jvm');
+    }
+
+    httpStats(sortBy: string = 'avg'): Observable<HttpStat[]> {
+        return this._http.get<HttpStat[]>(MonitorService.path + '/diagnosis/http-stats', {sortBy});
+    }
+
+    resetHttpStats(): Observable<void> {
+        return this._http.delete<void>(MonitorService.path + '/diagnosis/http-stats');
     }
 
     datasource(): Observable<DataSourcePool[]> {

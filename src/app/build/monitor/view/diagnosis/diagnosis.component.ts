@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild} from '@angular/core';
 import {I18NService} from '@core';
 import {MonitorService} from '../../service/monitor.service';
-import {DataSourcePool, JvmDiagnosis} from '../../model/monitor.model';
+import {DataSourcePool, HttpStat, JvmDiagnosis} from '../../model/monitor.model';
 
 @Component({
     standalone: false,
@@ -15,10 +15,13 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
     refreshing: boolean = false;
     autoRefresh: boolean = true;
     dumping: boolean = false;
+    resetting: boolean = false;
     lastUpdate: string = '';
+    httpSortBy: string = 'avg';
 
     jvm: JvmDiagnosis = {gc: [], memoryPools: [], classLoading: {} as any, threads: {states: {}} as any} as JvmDiagnosis;
     pools: DataSourcePool[] = [];
+    httpStats: HttpStat[] = [];
 
     @ViewChild('poolChart', {static: false}) poolRef: ElementRef<HTMLDivElement>;
     @ViewChild('threadChart', {static: false}) threadRef: ElementRef<HTMLDivElement>;
@@ -79,6 +82,23 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
         this.monitorService.threadDump(() => this.dumping = false);
     }
 
+    resetHttpStats(): void {
+        this.resetting = true;
+        this.monitorService.resetHttpStats().subscribe({
+            next: () => { this.httpStats = []; this.resetting = false; },
+            error: () => this.resetting = false
+        });
+    }
+
+    sortHttp(sortBy: string): void {
+        this.httpSortBy = sortBy;
+        this.loadHttpStats();
+    }
+
+    errorRate(stat: HttpStat): string {
+        return stat.count > 0 ? ((stat.errorCount / stat.count) * 100).toFixed(1) + '%' : '0%';
+    }
+
     usageColor(usage: number | string): string {
         const p = +usage || 0;
         return p >= 90 ? '#ff4d4f' : p >= 70 ? '#faad14' : '#52c41a';
@@ -115,6 +135,14 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
         this.monitorService.datasource().subscribe({
             next: data => this.pools = data || [],
             error: () => this.pools = []
+        });
+        this.loadHttpStats();
+    }
+
+    private loadHttpStats(): void {
+        this.monitorService.httpStats(this.httpSortBy).subscribe({
+            next: data => this.httpStats = data || [],
+            error: () => this.httpStats = []
         });
     }
 

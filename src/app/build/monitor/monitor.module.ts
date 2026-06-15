@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {NzDescriptionsModule} from 'ng-zorro-antd/descriptions';
+import {NzSpaceModule} from 'ng-zorro-antd/space';
 import {SharedModule} from '@shared/shared.module';
 import {MonitorRoutingModule} from './monitor-routing.module';
 import {MonitorService} from './service/monitor.service';
@@ -14,6 +15,7 @@ import {DiagnosisComponent} from "./view/diagnosis/diagnosis.component";
         CommonModule,
         SharedModule,
         NzDescriptionsModule,
+        NzSpaceModule,
         MonitorRoutingModule
     ],
     providers: [MonitorService]

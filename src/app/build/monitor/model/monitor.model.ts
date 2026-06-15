@@ -141,6 +141,14 @@ export interface JvmDiagnosis {
     threads: ThreadStat;
 }
 
+export interface HttpStat {
+    uri: string;
+    count: number;
+    avgMs: number;
+    maxMs: number;
+    errorCount: number;
+}
+
 export interface DataSourcePool {
     name: string;
     jdbcUrl: string;
