@@ -35,7 +35,7 @@ export class TagsComponent implements OnInit {
     }
 
     load(open) {
-        if (open && !this.eruptField.componentValue?.length) {
+        if (open && this.eruptField.eruptFieldJson.edit.tagsType.fetchHandler?.length) {
             this.fetchOptions();
         }
     }

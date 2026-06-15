@@ -156,7 +156,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
             tableName: "",
             erupt: {
                 name: "",
-                power: {add: true, edit: true, delete: true, query: true, viewDetails: true, export: false, importable: false, print: true},
+                power: {add: true, edit: true, delete: true, query: true, viewDetails: true, export: true, importable: true, print: true},
                 layout: {formSize: FormSize.DEFAULT, pagingType: PagingType.BACKEND, pageSize: 10, tableLeftFixed: 0, tableRightFixed: 0},
                 vis: []
             },
@@ -225,7 +225,21 @@ export class DesignerComponent implements OnInit, OnDestroy {
 
     select(field: DesignerField, event?: MouseEvent): void {
         event && event.stopPropagation();
+        this.ensureRefTypeConfig(field);
         this.selected = field;
+    }
+
+    private ensureRefTypeConfig(field: DesignerField): void {
+        const e = field.edit;
+        if (e.type === EditType.REFERENCE_TABLE || e.type === EditType.TAB_TABLE_REFER) {
+            e.referenceTableType = e.referenceTableType || {};
+        }
+        if (e.type === EditType.REFERENCE_TREE || e.type === EditType.TAB_TREE) {
+            e.referenceTreeType = e.referenceTreeType || {};
+        }
+        if (e.type === EditType.CHECKBOX) {
+            e.checkboxType = e.checkboxType || {};
+        }
     }
 
     deselect(): void {

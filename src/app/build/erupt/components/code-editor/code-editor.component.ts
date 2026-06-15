@@ -70,7 +70,7 @@ export class CodeEditorComponent implements OnInit, OnDestroy {
 
         const codeEditType = this.edit?.codeEditType;
         if (codeEditType) {
-            if (codeEditType.hintHandler) {
+            if (codeEditType.hintHandler && codeEditType.hintHandler.length) {
                 const monaco = (window as any).monaco;
                 if (!monaco) return;
                 const modelUri = editor.getModel()?.uri?.toString();

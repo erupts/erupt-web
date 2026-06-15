@@ -378,17 +378,89 @@
                                                    style="width: 100%" (ngModelChange)="saveDraft()"></nz-select>
                                     </div>
                                 }
+                                @case (editType.REFERENCE_TABLE) {
+                                    <nz-divider [nzText]="'designer.ref_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_id' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.id"
+                                               (ngModelChange)="saveDraft()" placeholder="id"/>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_label' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.label"
+                                               (ngModelChange)="saveDraft()" placeholder="name"/>
+                                    </div>
+                                }
+                                @case (editType.TAB_TABLE_REFER) {
+                                    <nz-divider [nzText]="'designer.ref_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_id' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.id"
+                                               (ngModelChange)="saveDraft()" placeholder="id"/>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_label' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.label"
+                                               (ngModelChange)="saveDraft()" placeholder="name"/>
+                                    </div>
+                                }
+                                @case (editType.REFERENCE_TREE) {
+                                    <nz-divider [nzText]="'designer.ref_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_id' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.id"
+                                               (ngModelChange)="saveDraft()" placeholder="id"/>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_label' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.label"
+                                               (ngModelChange)="saveDraft()" placeholder="name"/>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_pid' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.pid"
+                                               (ngModelChange)="saveDraft()" placeholder="pid"/>
+                                    </div>
+                                }
+                                @case (editType.TAB_TREE) {
+                                    <nz-divider [nzText]="'designer.ref_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_id' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.id"
+                                               (ngModelChange)="saveDraft()" placeholder="id"/>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_label' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.label"
+                                               (ngModelChange)="saveDraft()" placeholder="name"/>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_pid' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.pid"
+                                               (ngModelChange)="saveDraft()" placeholder="pid"/>
+                                    </div>
+                                }
+                                @case (editType.CHECKBOX) {
+                                    <nz-divider [nzText]="'designer.ref_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_id' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.checkboxType!.id"
+                                               (ngModelChange)="saveDraft()" placeholder="id"/>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.ref_label' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.checkboxType!.label"
+                                               (ngModelChange)="saveDraft()" placeholder="name"/>
+                                    </div>
+                                }
                                 @case (editType.ATTACHMENT) {
                                     <nz-divider [nzText]="'designer.type_config' | translate"
                                                 nzOrientation="left" nzPlain></nz-divider>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.attachment_type' | translate }}</label>
-                                        <nz-radio-group [(ngModel)]="selected.edit.attachmentType!.type"
-                                                        (ngModelChange)="saveDraft()" nzSize="small">
-                                            <label nz-radio-button [nzValue]="attachmentEnum.BASE">BASE</label>
-                                            <label nz-radio-button [nzValue]="attachmentEnum.IMAGE">IMAGE</label>
-                                        </nz-radio-group>
-                                    </div>
                                     <div class="prop-item">
                                         <label>{{ 'designer.max_limit' | translate }}</label>
                                         <nz-input-number [(ngModel)]="selected.edit.attachmentType!.maxLimit"
@@ -399,12 +471,14 @@
                                         <nz-input-number [(ngModel)]="selected.edit.attachmentType!.size"
                                                          style="width: 100%"></nz-input-number>
                                     </div>
-                                    <div class="prop-item">
-                                        <label>{{ 'designer.file_types' | translate }}</label>
-                                        <nz-select [(ngModel)]="selected.edit.attachmentType!.fileTypes"
-                                                   nzMode="tags" style="width: 100%"
-                                                   (ngModelChange)="saveDraft()"></nz-select>
-                                    </div>
+                                    @if (selected.edit.attachmentType!.type !== attachmentEnum.IMAGE) {
+                                        <div class="prop-item">
+                                            <label>{{ 'designer.file_types' | translate }}</label>
+                                            <nz-select [(ngModel)]="selected.edit.attachmentType!.fileTypes"
+                                                       nzMode="tags" style="width: 100%"
+                                                       (ngModelChange)="saveDraft()"></nz-select>
+                                        </div>
+                                    }
                                 }
                                 @case (editType.CODE_EDITOR) {
                                     <nz-divider [nzText]="'designer.type_config' | translate"

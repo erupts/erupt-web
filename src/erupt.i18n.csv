@@ -598,6 +598,10 @@ designer.vis.end_date_field,结束日期字段,結束日期字段,End Date Field
 designer.vis.progress_field,进度字段,進度字段,Progress Field,Champ de progression,進捗フィールド,진행률 필드,Поле прогресса,Campo de progreso,Fortschrittsfeld,Campo de progresso,Bidang progres,حقل التقدم
 designer.vis.date_field,日期字段,日期字段,Date Field,Champ de date,日付フィールド,날짜 필드,Поле даты,Campo de fecha,Datumsfeld,Campo de data,Bidang tanggal,حقل التاريخ
 designer.vis.color_field,颜色字段,顏色字段,Color Field,Champ de couleur,色フィールド,색상 필드,Поле цвета,Campo de color,Farbfeld,Campo de cor,Bidang warna,حقل اللون
+designer.ref_config,关联配置,關聯配置,Ref Config,Config de référence,関連設定,관련 설정,Настройка связи,Config de referencia,Verknüpfungseinstellungen,Config de referência,Konfigurasi referensi,إعداد الارتباط
+designer.ref_id,主键字段,主鍵字段,ID Field,Champ ID,主キーフィールド,기본키 필드,Поле первичного ключа,Campo ID,ID-Feld,Campo de chave,Field kunci utama,حقل المفتاح الأساسي
+designer.ref_label,显示字段,顯示字段,Label Field,Champ d'affichage,表示フィールド,표시 필드,Поле отображения,Campo de etiqueta,Anzeigefeld,Campo de exibição,Field label,حقل العرض
+designer.ref_pid,父节点字段,父節點字段,Parent ID Field,Champ ID parent,親ノードフィールド,부모 노드 필드,Поле родительского узла,Campo ID padre,Eltern-ID-Feld,Campo de nó pai,Field node induk,حقل العقدة الأب
 [monitor]
 monitor.loading,加载中...,加載中...,Loading...,Chargement...,読み込み中...,로딩 중...,Загрузка...,Cargando...,Lädt...,Carregando...,Memuat...,جارٍ التحميل...
 monitor.tip,提示,提示,Tip,Astuce,ヒント,알림,Подсказка,Aviso,Hinweis,Aviso,Petunjuk,تنبيه
