@@ -2,7 +2,18 @@ import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, Vi
 import {Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
+import {
+    Alert,
+    Drill,
+    DrillInput,
+    EruptModel,
+    Page,
+    Power,
+    Row,
+    RowOperation,
+    Vis,
+    VisType
+} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -522,39 +533,39 @@ export class TableComponent implements OnInit, OnDestroy {
         this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {searchCollapsed: this.hideCondition});
     }
 
+    private buildQueryBody(): Page {
+        const body: any = {
+            condition: this.dataHandler.buildSearchConditions(this.searchErupt),
+            pageIndex: this.dataPage.pi,
+            pageSize: this.dataPage.ps,
+            vis: this.vis[this.selectedVisIndex]?.code,
+            sort: null
+        };
+        const linkTree = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
+        if (linkTree && linkTree.field) {
+            body.linkTreeVal = linkTree.value;
+        }
+        if (this.dataPage.sort) {
+            body.sort = Object.entries(this.dataPage.sort).map(([field, dir]) => ({
+                field,
+                direction: (dir as string).toUpperCase() as SortType
+            }));
+        }
+        return body;
+    }
+
     query(page?: number, size?: number, sort?: Record<string, SortType>) {
         if (!this.eruptBuildModel.power.query) {
             return;
         }
-        let query = {};
-        query["condition"] = this.dataHandler.buildSearchConditions(this.searchErupt);
-        let linkTree = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
-        if (linkTree && linkTree.field) {
-            query["linkTreeVal"] = linkTree.value;
-        }
         this.dataPage.pi = page || this.dataPage.pi;
         this.dataPage.ps = size || this.dataPage.ps;
         this.dataPage.sort = sort || this.dataPage.sort;
-        let orderBy: Sort[] = null;
-        if (this.dataPage.sort) {
-            orderBy = [];
-            for (let key in this.dataPage.sort) {
-                orderBy.push({
-                    field: key,
-                    direction: this.dataPage.sort[key].toUpperCase() as SortType
-                })
-            }
-        }
         this.selectedRows = [];
         this.dataPage.querying = true;
         this.setVisTplData(null)
-        this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url, {
-            pageIndex: this.dataPage.pi,
-            pageSize: this.dataPage.ps,
-            vis: this.vis[this.selectedVisIndex]?.code,
-            sort: orderBy,
-            ...query
-        }, this.header).subscribe(page => {
+        this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url,
+            this.buildQueryBody(), this.header).subscribe(page => {
             this.dataPage.querying = false;
             this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
@@ -566,7 +577,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 }
             }
         })
-        this.extraRowFun(query);
+        this.extraRowFun(this.buildQueryBody());
     }
 
     setVisTplData(data: any[]) {
@@ -1223,19 +1234,13 @@ export class TableComponent implements OnInit, OnDestroy {
 
     // export to Excel
     exportExcel() {
-        let condition = null;
-        if (this.searchErupt && this.searchErupt.eruptFieldModels.length > 0) {
-            condition = this.dataHandler.buildSearchConditions(this.searchErupt);
-        }
         const ids = this.selectedRows.length > 0
             ? this.selectedRows.map(r => r[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
             : null;
         this.downloading = true;
-        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition,
+        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, this.buildQueryBody(),
             this._drill ? DataService.drillToHeader(this._drill) : {},
-            () => {
-                this.downloading = false;
-            },
+            () => { this.downloading = false; },
             ids
         );
     }
