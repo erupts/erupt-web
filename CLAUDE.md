@@ -15,6 +15,10 @@ yarn run theme        # Regenerate theme CSS
 
 No test suite is present in this project.
 
+## Code Style
+
+- All code comments must be written in **English**.
+
 ## Architecture Overview
 
 This is an **Angular 21 enterprise admin framework** (`erupt-web`) that auto-generates UI/forms from JSON schema definitions provided by a Java backend. The philosophy is "zero frontend code" — UI is driven entirely by schema.
