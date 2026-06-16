@@ -1,12 +1,46 @@
 :host {
     .alain-default__nav {
+        gap: 2px;
+        align-items: center;
+
+        > li {
+            display: flex;
+            align-items: center;
+        }
+
         .alain-default__nav-item {
-            transition: all 300ms;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            transition: background 180ms ease, transform 120ms ease;
+            cursor: pointer;
 
             &:hover {
-                background: rgba(82, 82, 82, 0.1);
+                background: rgba(0, 0, 0, 0.06);
+            }
+
+            &:active {
+                background: rgba(0, 0, 0, 0.11);
+                transform: scale(0.92);
+            }
+
+            &.r_tool_item {
+                width: auto;
+                padding: 0 10px;
+            }
+
+            .spin {
+                animation: spin 0.5s linear;
             }
         }
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
     }
 
     ::ng-deep {
@@ -24,19 +58,15 @@
             box-sizing: border-box;
             vertical-align: top;
             height: 44px;
-            padding: 4px 0
-        }
-
-        .alain-default__header {
-            box-shadow: none !important;
+            padding: 5px 0;
         }
 
         .alain-default__header-logo {
             min-width: ~"var(--sidebar-width, 200px)";
             text-align: center;
             width: auto;
-            padding: 0 5px;
-            border-right: 1px solid rgb(229 229 229);
+            padding: 0 8px;
+            border-right: 1px solid rgba(0, 0, 0, 0.07);
         }
 
         .header-logo-text {
@@ -70,7 +100,7 @@
             display: none;
         }
 
-        .alain-default__aside{
+        .alain-default__aside {
             width: 48px;
         }
 

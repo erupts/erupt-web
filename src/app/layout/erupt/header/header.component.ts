@@ -15,6 +15,7 @@ import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NoticeComponent} from "../component/notice/notice.component";
 import {NzNotificationService} from "ng-zorro-antd/notification";
 import {AnnouncementDetailComponent} from "../component/announcement-detail/announcement-detail.component";
+import {ReuseTabService} from "@delon/abc/reuse-tab";
 
 @Component({
     standalone: false,
@@ -70,6 +71,8 @@ export class HeaderComponent implements OnInit {
         this.drawerVisible = false;
     }
 
+    refreshing: boolean = false;
+
     constructor(public settings: SettingsService,
                 private router: Router,
                 private appViewService: AppViewService,
@@ -78,7 +81,8 @@ export class HeaderComponent implements OnInit {
                 @Inject(NzDrawerService) private drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(NzModalService) private modal: NzModalService,
-                @Inject(NzNotificationService) private notification: NzNotificationService) {
+                @Inject(NzNotificationService) private notification: NzNotificationService,
+                @Inject(ReuseTabService) private reuseTabSrv: ReuseTabService) {
         if (this.tenantDomainInfo) {
             if (this.tenantDomainInfo.logo) {
                 this.logoPath = DataService.previewAttachment(this.tenantDomainInfo.logo)
@@ -212,6 +216,20 @@ export class HeaderComponent implements OnInit {
 
     customToolsFun(event: Event, tool: CustomerTool) {
         tool.click && tool.click(event);
+    }
+
+    refreshPage() {
+        const url = this.router.url;
+        this.refreshing = true;
+        this.reuseTabSrv.close(url, true);
+        // shouldReuseRoute returns true for same-URL navigation so the component won't
+        // be recreated. Go through '/' first (different routeConfig) with skipLocationChange
+        // so the address bar never changes, then navigate to target URL for a clean reload.
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+            this.router.navigateByUrl(url).then(() => {
+                setTimeout(() => this.refreshing = false, 300);
+            });
+        });
     }
 
     toIndex() {
