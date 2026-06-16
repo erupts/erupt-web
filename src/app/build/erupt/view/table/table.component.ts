@@ -68,7 +68,6 @@ export class TableComponent implements OnInit, OnDestroy {
 
     constructor(
         public settingSrv: SettingsService,
-        private dataHandlerService: DataHandlerService,
         @Inject(NzMessageService)
         private msg: NzMessageService,
         @Inject(NzModalService)
@@ -155,7 +154,6 @@ export class TableComponent implements OnInit, OnDestroy {
         sort: Record<string, SortType>;
         total: number;
         data: any[];
-        multiSort?: string[]
         page: STPage;
         url: string
     } = {
@@ -167,7 +165,6 @@ export class TableComponent implements OnInit, OnDestroy {
         total: 0,
         data: [],
         sort: null,
-        multiSort: [],
         page: {
             show: false,
             toTop: false
@@ -1009,7 +1006,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 modal.getContentComponent().parentEruptName = this.eruptBuildModel.eruptModel.eruptName;
                 this.dataService.operatorFormValue(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids).subscribe(data => {
                     if (data) {
-                        this.dataHandlerService.objectToEruptValue(data, {
+                        this.dataHandler.objectToEruptValue(data, {
                             eruptModel: operationErupt
                         });
                     }

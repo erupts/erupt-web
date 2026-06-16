@@ -89,7 +89,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
             }).catch(error => {
                 this.loading = false;
                 this.editorError = true;
-                console.error('加载Vditor脚本失败:', error);
+                console.error('Failed to load Vditor script:', error);
             });
         }, 100);
     }
@@ -102,7 +102,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
             // check if vditorContainer exists
             if (!this.vditorContainer) {
-                console.error('vditorContainer is undefined');
+                console.error('vditorContainer is not available');
                 this.loading = false;
                 this.editorError = true;
                 return;
@@ -125,7 +125,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
                     filename: this.formatFilename,
                     success: this.handleUploadSuccess.bind(this),
                     error: () => {
-                        console.error('上传图片失败');
+                        console.error('Image upload failed');
                     }
                 },
                 input: (value) => {
@@ -151,51 +151,34 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch (error) {
             this.loading = false;
             this.editorError = true;
-            console.error('初始化Vditor失败:', error);
+            console.error('Failed to initialize Vditor:', error);
         }
     }
 
-    /**
-     * Format a filename
-     * Extracts filename formatting logic into a separate method
-     * @param name original filename
-     * @returns formatted filename
-     */
     private formatFilename(name: string): string {
         return name.replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, '')
             .replace(/[\?\\/:|<>\*\[\]\(\)\$%\{\}@~]/g, '')
             .replace('/\\s/g', '');
     }
 
-    /**
-     * Handle upload success callback
-     * Extracts upload success handling logic into a separate method
-     * @param _ unused parameter
-     * @param res upload response data
-     */
     private handleUploadSuccess(_, res) {
         try {
-            // parse the response data
             const response = JSON.parse(res);
-            console.log('上传成功回调:', response);
-
             let imageUrl = '';
 
             if (response.data) {
                 imageUrl = response.data;
             } else {
-                console.warn('未能识别的上传响应格式:', response);
+                console.warn('Unrecognized upload response format:', response);
                 return;
             }
 
             if (imageUrl) {
-                // get the filename
-                const fileName = response.fileName || '图片';
-                // use insertValue to insert the image
+                const fileName = response.fileName || 'image';
                 this.vditor.insertValue(`![${fileName}](${imageUrl})`);
             }
         } catch (e) {
-            console.error('处理上传响应失败', e);
+            console.error('Failed to handle upload response', e);
         }
     }
 
