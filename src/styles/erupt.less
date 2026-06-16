@@ -68,16 +68,16 @@ span.ripple {
     align-items: center;
 }
 
-// 打印场景的样式优化 - 支持中文显示并隐藏不必要元素
+// Print layout optimization - supports CJK font rendering and hides unnecessary elements
 @media print {
-    // 强制所有元素使用支持中文的字体
+    // Force all elements to use a CJK-compatible font
     * {
         font-family: 'Heiti SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
-    // 页面设置
+    // Page settings
     @page {
         size: A4 landscape;
         margin: 10mm;

@@ -14,7 +14,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0; // 防止头部被压缩
+            flex-shrink: 0; // prevent header from shrinking
 
             .header-left {
                 .item-id {
@@ -31,8 +31,8 @@
 
         .detail-content {
             flex: 1;
-            overflow-y: auto; // 只有内容区域可以滚动
-            // 为底部固定按钮留出空间
+            overflow-y: auto; // only the content area is scrollable
+            // leave space for the fixed bottom buttons
             padding: 16px 16px 70px;
 
             .content-header {
@@ -188,7 +188,7 @@
             }
         }
 
-        // 固定在右侧底部的功能按钮
+        // action buttons fixed at the bottom
         .fixed-bottom-actions {
             position: absolute;
             bottom: 0;
@@ -213,7 +213,7 @@
             }
         }
 
-        // 评论表单样式
+        // comment form styles
         .comment-form {
             margin-bottom: 0;
             padding: 16px;
@@ -233,7 +233,7 @@
             }
         }
 
-        // 评论列表样式
+        // comment list styles
         .comments-list {
             .comment-item {
                 &:hover {
@@ -295,7 +295,7 @@
 }
 
 
-// 弹窗样式
+// modal styles
 ::ng-deep .ant-modal {
     .modal-content {
         .modal-description {
@@ -342,14 +342,14 @@
     transform: scale(1) translateX(-50%);
 }
 
-// 弹窗按钮样式优化
+// modal button style refinements
 ::ng-deep .ant-modal-footer {
     .ant-btn {
         min-width: 80px;
     }
 }
 
-// 移动端弹窗优化
+// mobile modal optimizations
 @media (max-width: 768px) {
     ::ng-deep .ant-modal {
         width: 90% !important;

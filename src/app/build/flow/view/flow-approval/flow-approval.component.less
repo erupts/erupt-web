@@ -8,18 +8,18 @@
             display: flex;
             background-color: #f5f5f5;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            overflow: hidden; // 防止整体滚动
+            overflow: hidden; // prevent overall scrolling
 
-            // 左侧导航栏
+            // left sidebar navigation
             .sidebar {
                 width: 180px;
-                height: 100%; // 固定高度
+                height: 100%; // fixed height
                 background: white;
                 border-right: 1px solid #e5e5e5;
                 display: flex;
                 flex-direction: column;
                 transition: all 0.3s ease;
-                flex-shrink: 0; // 防止被压缩
+                flex-shrink: 0; // prevent shrinking
 
                 &.collapsed {
                     width: 80px;
@@ -45,7 +45,7 @@
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    flex-shrink: 0; // 防止头部被压缩
+                    flex-shrink: 0; // prevent header from shrinking
 
                     .search-section {
                         display: flex;
@@ -67,7 +67,7 @@
                         border: none;
                         background: transparent;
 
-                        // 菜单项样式
+                        // menu item styles
                         .ant-menu-item {
                             height: 48px;
                             line-height: 48px;
@@ -99,7 +99,7 @@
                             }
                         }
 
-                        // 子菜单样式
+                        // submenu styles
                         .ant-menu-submenu {
                             .ant-menu-submenu-title {
                                 height: 48px;
@@ -149,7 +149,7 @@
                 .sidebar-footer {
                     padding: 16px;
                     border-top: 1px solid #e5e5e5;
-                    flex-shrink: 0; // 防止底部被压缩
+                    flex-shrink: 0; // prevent footer from shrinking
 
                     .collapse-text {
                         margin-left: 8px;
@@ -159,22 +159,22 @@
                 }
             }
 
-            // 主内容区域
+            // main content area
             .main-content {
                 flex: 1;
-                height: 100%; // 固定高度
+                height: 100%; // fixed height
                 display: flex;
                 overflow: hidden;
 
-                // 中间列表区域 - 调窄宽度
+                // middle list area - narrowed width
                 .list-section {
                     width: 260px;
-                    height: 100%; // 固定高度
+                    height: 100%; // fixed height
                     background: white;
                     border-right: 1px solid #e5e5e5;
                     display: flex;
                     flex-direction: column;
-                    flex-shrink: 0; // 防止被压缩
+                    flex-shrink: 0; // prevent shrinking
 
                     .list-header {
                         padding: 8px 0;
@@ -182,10 +182,10 @@
                         display: flex;
                         align-items: center;
                         gap: 12px;
-                        flex-shrink: 0; // 防止头部被压缩
+                        flex-shrink: 0; // prevent header from shrinking
                     }
 
-                    // 复制图标样式
+                    // copy icon styles
                     .copy-icon {
                         margin-left: 6px;
                         font-size: 14px;
@@ -299,21 +299,21 @@
                 }
             }
 
-            // 右侧详情区域
+            // right detail area
             .detail-section {
                 flex: 1;
-                height: 100%; // 固定高度
+                height: 100%; // fixed height
                 background: white;
                 display: flex;
                 flex-direction: column;
                 overflow-y: auto;
-                position: relative; // 为固定底部按钮定位
+                position: relative; // relative positioning for fixed bottom button
             }
         }
     }
 
 
-    // 节点信息样式
+    // node info styles
     .node-info {
         .node-item {
             display: flex;

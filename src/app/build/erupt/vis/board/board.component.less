@@ -3,7 +3,7 @@
     user-select: none;
 }
 
-// ── 看板横向滚动容器 ────────────────────────────────────────
+// ── Board horizontal scroll container ────────────────────────────────────────
 .board-wrap {
     display: flex;
     gap: 10px;
@@ -23,7 +23,7 @@
     }
 }
 
-// ── 列 ─────────────────────────────────────────────────────
+// ── Column ─────────────────────────────────────────────────────
 .board-col {
     flex-shrink: 0;
     width: 268px;
@@ -35,7 +35,7 @@
     overflow: hidden;
 }
 
-// ── 列头 ───────────────────────────────────────────────────
+// ── Column header ───────────────────────────────────────────────────
 .board-col-header {
     display: flex;
     align-items: center;
@@ -79,7 +79,7 @@
     text-align: center;
 }
 
-// ── 列主体 ─────────────────────────────────────────────────
+// ── Column body ─────────────────────────────────────────────────
 .board-col-body {
     padding: 8px 7px;
     overflow-y: auto;
@@ -97,7 +97,7 @@
     }
 }
 
-// ── 卡片 ───────────────────────────────────────────────────
+// ── Card ───────────────────────────────────────────────────
 .board-card {
     background: #ffffff;
     padding: 11px 13px 10px;
@@ -106,7 +106,7 @@
     position: relative;
     transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
 
-    // 左侧彩条
+    // Left color stripe
     &::before {
         content: '';
         position: absolute;
@@ -135,7 +135,7 @@
     }
 }
 
-// 卡片标题
+// Card title
 .board-card-title {
     margin: 0 0 6px 8px;
     font-size: 13px;
@@ -149,7 +149,7 @@
     }
 }
 
-// 元数据行
+// Metadata row
 .board-meta-row {
     display: flex;
     align-items: baseline;
@@ -181,7 +181,7 @@
     min-width: 0;
 }
 
-// ── 空状态 ─────────────────────────────────────────────────
+// ── Empty state ─────────────────────────────────────────────────
 .board-empty {
     display: flex;
     align-items: center;
@@ -190,9 +190,9 @@
     opacity: 0.35;
 }
 
-// ── CDK 拖拽样式 ───────────────────────────────────────────
+// ── CDK drag-and-drop styles ───────────────────────────────────────────
 ::ng-deep {
-    // 拖拽中的预览卡片（跟随鼠标）
+    // Drag preview card (follows the cursor)
     .cdk-drag-preview {
         border-radius: 8px;
         border: 1px solid #cdd3db;
@@ -202,7 +202,7 @@
         transform: rotate(1.5deg);
     }
 
-    // 原位占位符
+    // In-place placeholder
     .cdk-drag-placeholder {
         background: color-mix(in srgb, var(--col-color, #94a3b8) 8%, #f8f9fb);
         border: 1.5px dashed color-mix(in srgb, var(--col-color, #94a3b8) 55%, transparent);
@@ -214,7 +214,7 @@
         }
     }
 
-    // 拖拽动画
+    // Drag animation
     .cdk-drag-animating {
         transition: transform 220ms cubic-bezier(0.25, 0.8, 0.25, 1);
     }
@@ -223,7 +223,7 @@
         transition: transform 220ms cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
-    // 可放置区高亮
+    // Drop zone highlight
     .cdk-drop-list-receiving {
         background: color-mix(in srgb, var(--col-color, #94a3b8) 6%, #f8f9fb) !important;
         outline: 2px dashed color-mix(in srgb, var(--col-color, #94a3b8) 40%, transparent);

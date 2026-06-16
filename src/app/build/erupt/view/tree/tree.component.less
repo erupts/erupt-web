@@ -3,14 +3,14 @@
     height: 100%;
     overflow: hidden;
 
-    // ── 整体布局 ─────────────────────────────────────────────────
+    // ── Overall layout ─────────────────────────────────────────────────
     .tree-layout {
         display: flex;
         height: 100%;
         background: #fff;
     }
 
-    // ── 左侧导航面板 ──────────────────────────────────────────────
+    // ── Left navigation panel ──────────────────────────────────────────────
     .tree-nav {
         flex-shrink: 0;
         display: flex;
@@ -51,7 +51,7 @@
 
     }
 
-    // ── 拖拽分隔线 ────────────────────────────────────────────────
+    // ── Drag resize divider ────────────────────────────────────────────────
     .tree-resize-handle {
         width: 1px;
         flex-shrink: 0;
@@ -84,7 +84,7 @@
         z-index: 9999;
     }
 
-    // ── 右侧详情面板 ──────────────────────────────────────────────
+    // ── Right detail panel ──────────────────────────────────────────────
     .tree-detail {
         flex: 1;
         min-width: 0;
@@ -127,12 +127,12 @@
         opacity: 0.45;
     }
 
-    // ── 移动端折叠按钮（仅小屏显示）─────────────────────────────
+    // ── Mobile collapse toggle button (small screens only) ─────────────────────────────
     .tree-mobile-toggle {
         display: none;
     }
 
-    // ── 移动端适配 ──────────────────────────────────────────────
+    // ── Mobile responsive adaptation ──────────────────────────────────────────────
     @media (max-width: 767px) {
         .tree-layout {
             flex-direction: column;

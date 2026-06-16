@@ -1,4 +1,4 @@
-/* AI 聊天全局样式（对 innerHTML 插入的 markdown 内容生效，不受组件封装影响；highlight.js 主题在 styles.less 中引入） */
+/* AI Chat global styles (applies to markdown content injected via innerHTML, unaffected by component encapsulation; highlight.js theme is imported in styles.less) */
 
 .markdown-body {
     max-width: 100%;
@@ -55,7 +55,7 @@
         }
     }
 
-    /* Diff 视图 */
+    /* Diff view */
     .diff-block {
         width: 100%;
         margin: 1em 0;
@@ -86,17 +86,17 @@
         .diff-code { flex: 1; overflow-x: auto; }
     }
 
-    /* 修复 KaTeX 上下标显示问题 */
+    /* Fix KaTeX superscript/subscript rendering issue */
     .katex .vlist {
         vertical-align: baseline !important;
     }
 
-    /* 流式输出中隐藏未完成的 mermaid 源码块，避免渲染前闪烁源码 */
+    /* Hide incomplete mermaid source blocks during streaming to prevent flashing raw source before rendering */
     &.is-streaming .mermaid {
         display: none;
     }
 
-    /* Mermaid 渲染中的占位 */
+    /* Mermaid rendering placeholder */
     .mermaid:not([data-processed]) {
         display: block !important;
         visibility: visible !important;

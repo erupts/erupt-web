@@ -14,7 +14,7 @@
     background: #f0f2f5;
 }
 
-// ---------------- 工具栏（风格对齐 cube-puzzle-dashboard 头部） ----------------
+// ---------------- Toolbar (style aligned with the cube-puzzle-dashboard header) ----------------
 .designer-toolbar {
     height: 50px;
     flex-shrink: 0;
@@ -63,7 +63,7 @@
             color: rgba(0, 0, 0, .4);
         }
 
-        // 分组竖线，缩小默认间距让分组更紧凑
+        // Group divider line — reduce default margin to make groups more compact
         nz-divider {
             height: 18px;
             margin: 0 2px;
@@ -71,14 +71,14 @@
     }
 }
 
-// ---------------- 三栏布局 ----------------
+// ---------------- Three-column layout ----------------
 .designer-body {
     display: flex;
     flex: 1;
     min-height: 0;
 }
 
-// 左侧组件面板
+// Left component palette
 .designer-palette {
     width: 232px;
     flex-shrink: 0;
@@ -137,7 +137,7 @@
     }
 }
 
-// 中间画布
+// Center canvas
 .designer-canvas-wrap {
     flex: 1;
     min-width: 0;
@@ -155,14 +155,14 @@
         border-radius: 6px;
         box-shadow: 0 1px 2px rgba(0, 0, 0, .03), 0 1px 6px -1px rgba(0, 0, 0, .02), 0 2px 4px 0 rgba(0, 0, 0, .02);
         padding: 8px;
-        // 对齐表单尺寸：DEFAULT 下非整行字段两列排布
+        // Align form size: non-full-row fields render in two columns under DEFAULT size
         display: flex;
         flex-wrap: wrap;
         align-content: flex-start;
         gap: 4px;
     }
 
-    // 从组件面板拖入时的插入占位
+    // Drop placeholder shown when dragging in from the component palette
     .palette-item.cdk-drag-placeholder {
         width: 100%;
         height: 40px;
@@ -202,7 +202,7 @@
         cursor: move;
         transition: border-color .2s, background .2s;
 
-        // 表单尺寸 DEFAULT 下的非整行字段：对齐真实渲染的 colRules[3]，每行三列（gap 4px → 两处间隙共 8px）
+        // Non-full-row fields under DEFAULT form size: aligned to real-render colRules[3], three columns per row (gap 4px → two gaps total 8px)
         &.field-third {
             width: calc((100% - 8px) / 3);
         }
@@ -232,7 +232,7 @@
             transition: opacity .2s;
         }
 
-        // 悬浮操作按钮组，同 puzzle-item 的 item-actions
+        // Hover action button group, same as item-actions in puzzle-item
         .field-actions {
             position: absolute;
             top: 5px;
@@ -324,7 +324,7 @@
     }
 }
 
-// 字段属性与表单配置共用的属性表单样式（表单配置渲染在 drawer overlay 中，需全局生效）
+// Shared property form styles for field properties and form config (form config renders in a drawer overlay, must apply globally)
 .prop-form-rules() {
     .prop-item {
         margin-bottom: 12px;
@@ -356,7 +356,7 @@
     }
 }
 
-// 右侧属性面板
+// Right properties panel
 .designer-props {
     width: 300px;
     flex-shrink: 0;
@@ -416,7 +416,7 @@
     }
 }
 
-// 拖拽预览与弹窗内容渲染在 overlay（组件外），需穿透
+// Drag preview and modal content render in an overlay (outside the component) — deep penetration required
 ::ng-deep {
     .designer-form-config {
         .prop-form-rules();
@@ -463,7 +463,7 @@
                 }
             }
 
-            // 卡片内最后一项去掉多余下边距
+            // Remove excess bottom margin from the last item inside a card
             .prop-item:last-child {
                 margin-bottom: 0;
             }

@@ -1,17 +1,17 @@
-/* AI 聊天 - 现代简洁风格，仅本模块加载（代码高亮主题在全局 styles.less 引入） */
+/* AI Chat - modern minimal style, loaded by this module only (syntax highlight theme is imported in global styles.less) */
 
-/* 无对应全局/ant 变量且多处使用的保留变量 */
+/* Local variables with no corresponding global/ant design tokens, used in multiple places */
 @radius: 8px;
 @radius-sm: 4px;
 @content-max: 720px;
 
-/* 宿主填满容器，无容器时至少为视口减去顶栏 */
+/* Host fills its container; when no container height is set, falls back to viewport minus the top bar */
 :host {
     height: 100%;
     overflow: auto;
 }
 
-/* 根布局：填满宿主，并设 min-height 兜底（父链无高度时仍能撑满一屏） */
+/* Root layout: fills the host and sets a min-height fallback (ensures full-screen height even when ancestors have no height) */
 .ai-chat-layout {
     height: 100%;
     box-sizing: border-box;
@@ -34,9 +34,9 @@
     }
 }
 
-/* ========== 侧边栏：浅色 ========== */
+/* ========== Sidebar: light theme ========== */
 .sidebar {
-    width: 220px; /* 默认值，运行时由 [style.width.px] 覆盖 */
+    width: 220px; /* Default value; overridden at runtime via [style.width.px] */
     flex-shrink: 0;
     min-height: 0;
     background: #fafafa;
@@ -238,7 +238,7 @@
     }
 }
 
-/* 侧边栏拖拽手柄 */
+/* Sidebar drag handle */
 .sidebar-resizer {
     width: 1px;
     flex-shrink: 0;
@@ -253,7 +253,7 @@
     }
 }
 
-/* ========== 主区域 ========== */
+/* ========== Main area ========== */
 .main {
     flex: 1;
     min-width: 0;
@@ -307,7 +307,7 @@
     }
 }
 
-/* 单条消息行 */
+/* Single message row */
 .bubble-wrap {
     width: 100%;
     display: flex;
@@ -353,7 +353,7 @@
 
 }
 
-/* Tool Call 块：通过 innerHTML 注入，需 ::ng-deep */
+/* Tool Call block: injected via innerHTML, requires ::ng-deep */
 ::ng-deep .call-block-inline {
     display: inline-flex;
     align-items: center;
@@ -379,7 +379,7 @@
         box-shadow: 0 1px 6px rgba(22, 119, 255, 0.12);
     }
 
-    /* 完成态：对勾图标 */
+    /* Completed state: checkmark icon */
     &::after {
         content: '';
         display: inline-block;
@@ -393,13 +393,13 @@
     }
 }
 
-/* 调用中：streaming 且后面无兄弟（= 当前正在运行的 call） */
+/* In-progress: streaming with no following sibling (= the currently running call) */
 ::ng-deep .markdown-body.is-streaming .call-block-inline:not(:has(~ *)) {
     border-color: var(--ant-primary-3, #91caff);
     color: var(--ant-primary-color, #1677ff);
     box-shadow: 0 1px 6px rgba(22, 119, 255, 0.1);
 
-    /* 旋转 spinner */
+    /* Rotating spinner */
     &::after {
         background: none;
         mask-image: none;
@@ -426,7 +426,7 @@
     padding: 12px 0;
 }
 
-/* 流式消息容器：模型消息用 inline-block 使光标紧贴文末 */
+/* Streaming message container: model messages use inline-block so the cursor sits right after the last character */
 .bubble-wrap.is-model .bubble-content .markdown-body {
     display: inline-block;
     max-width: 100%;
@@ -439,7 +439,7 @@
     vertical-align: top;
 }
 
-/* 流式打字光标 */
+/* Streaming typing cursor */
 .streaming-cursor {
     display: inline-block;
     width: 2px;
@@ -478,7 +478,7 @@
     font-size: 14px;
 }
 
-/* 单条消息操作栏：hover 时淡入 */
+/* Per-message action bar: fades in on hover */
 .bubble-actions {
     display: flex;
     align-items: center;
@@ -519,7 +519,7 @@
     opacity: 1;
 }
 
-/* 消息区加载中 */
+/* Message area loading state */
 .bubbles-loading {
     display: flex;
     flex-direction: column;
@@ -541,7 +541,7 @@
     font-size: 13px;
 }
 
-/* 空状态 */
+/* Empty state */
 .empty-tip {
     margin-top: 120px;
     text-align: center;
@@ -552,7 +552,7 @@
     }
 }
 
-/* 回到底部按钮：sticky 贴在消息区可视底部 */
+/* Scroll-to-bottom button: sticky at the visible bottom of the message area */
 .scroll-to-bottom {
     position: sticky;
     bottom: 16px;
@@ -586,7 +586,7 @@
     }
 }
 
-/* 输入区拖拽手柄 */
+/* Input area drag handle */
 .sender-resizer {
     height: 2px;
     flex-shrink: 0;
@@ -599,7 +599,7 @@
     }
 }
 
-/* ========== 底部输入区 ========== */
+/* ========== Bottom input area ========== */
 .sender-wrap {
     flex-shrink: 0;
     overflow: auto;
@@ -668,7 +668,7 @@
     }
 }
 
-/* 输入卡片：图片样式 - 浅灰边框、圆角、顶部箭头、工具栏、底部快捷键与发送组 */
+/* Input card: appearance - light grey border, rounded corners, top arrow, toolbar, bottom shortcut hints and send group */
 .input-card {
     background: #fff;
     border: 1px solid #eee;
@@ -711,7 +711,7 @@
     }
 }
 
-// 发送按钮旁的操作按钮组（停止/清空/宽屏/全屏 + 发送）
+// Action button group next to the send button (stop / clear / wide / fullscreen + send)
 .footer-actions {
     display: flex;
     align-items: center;
@@ -746,7 +746,7 @@
     }
 }
 
-/* 快捷提示词下拉列表 */
+/* Quick prompt dropdown list */
 .quick-prompts-menu {
     list-style: none;
     margin: 0;
@@ -793,7 +793,7 @@
 .input-body {
     padding: 0 14px 8px;
 
-    /* 工具栏未渲染时（如嵌入态且无智能体），补回顶部间距 */
+    /* When the toolbar is not rendered (e.g. embedded mode with no agent), restore the top padding */
     &:first-child {
         padding-top: 8px;
     }
@@ -846,20 +846,20 @@
 }
 
 
-/* 含图表/流程图时 markdown-body 撑满全宽（inline-block 默认收缩到内容宽） */
+/* When the markdown-body contains charts or diagrams, expand it to full width (inline-block shrinks to content width by default) */
 ::ng-deep .markdown-body:has(.echarts-block),
 ::ng-deep .markdown-body:has(.mermaid) {
     display: block;
     width: 100%;
 }
 
-/* ECharts 容器全宽 */
+/* ECharts container full width */
 ::ng-deep .echarts-block {
     display: block;
     width: 100%;
 }
 
-/* 图表占位 */
+/* Chart placeholder */
 ::ng-deep .echarts-ph {
     width: 100%;
     height: 100%;
@@ -876,7 +876,7 @@
     }
 }
 
-/* 代码块：顶栏（语言标签 + 复制按钮）+ 行号槽 + 代码区 */
+/* Code block: header bar (language label + copy button) + line number gutter + code area */
 ::ng-deep .code-block-wrap {
     position: relative;
     margin: 8px 0;
@@ -931,7 +931,7 @@
         }
     }
 
-    /* 行号 + 代码并排 */
+    /* Line numbers and code side by side */
 
     .code-inner {
         display: flex;
@@ -970,7 +970,7 @@
     }
 }
 
-/* Callout 块 */
+/* Callout block */
 ::ng-deep .callout {
     margin: 10px 0;
     border-radius: @radius;
@@ -1040,7 +1040,7 @@
     }
 }
 
-/* 图片点击放大 */
+/* Click image to zoom in */
 ::ng-deep .md-img {
     cursor: zoom-in;
     max-width: 100%;
@@ -1052,7 +1052,7 @@
     }
 }
 
-/* 会话操作菜单 */
+/* Conversation action menu */
 .chat-action-menu {
     min-width: 140px;
 

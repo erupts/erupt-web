@@ -5,7 +5,7 @@
     overflow: auto;
     box-sizing: border-box;
 
-    // ── 左右分栏布局 ──────────────────────────────────────────
+    // ── Left-right split layout ──────────────────────────────────────────
     .table-split-layout {
         display: flex;
         height: 100%;
@@ -102,13 +102,13 @@
         box-sizing: border-box;
     }
 
-    // ── 全屏 ──────────────────────────────────────────────────
+    // ── Fullscreen ──────────────────────────────────────────────────
     &:fullscreen,
     &:-webkit-full-screen {
         overflow: auto;
     }
 
-    // ── 表格容器卡片 ──────────────────────────────────────────
+    // ── Table container card ──────────────────────────────────────────
     .tc-container {
         display: flex;
         flex-direction: column;
@@ -116,7 +116,7 @@
         overflow: hidden;
     }
 
-    // ── 工具栏 ────────────────────────────────────────────────
+    // ── Toolbar ────────────────────────────────────────────────
     .tc-toolbar {
         display: flex;
         align-items: center;
@@ -143,13 +143,13 @@
         gap: 8px;
     }
 
-    // ── 内容区容器（toolbar 以外）────────────────────────────
+    // ── Content area container (outside the toolbar) ────────────────────────────
     .tc-inner {
         overflow: auto;
         padding: 12px;
     }
 
-    // ── 搜索条件区 ────────────────────────────────────────────
+    // ── Search filter area ────────────────────────────────────────────
     .tc-search {
         padding: 6px 8px;
         background: #fff;
@@ -166,7 +166,7 @@
         flex-shrink: 0;
     }
 
-    // ── 数据主体区 ────────────────────────────────────────────
+    // ── Data body area ────────────────────────────────────────────
     .tc-body {
         overflow: hidden;
     }
@@ -175,7 +175,7 @@
         padding: 8px 0;
     }
 
-    // ── 分页栏 ────────────────────────────────────────────────
+    // ── Pagination bar ────────────────────────────────────────────────
     .tc-pagination {
         height: 39px;
         display: flex;
@@ -188,7 +188,7 @@
         flex-shrink: 0;
     }
 
-    // ── st 表格样式 ───────────────────────────────────────────
+    // ── st table styles ───────────────────────────────────────────
     ::ng-deep {
         // tc-actions and tc-utils use gap for spacing; reset the global auto margin-left
         // that ng-zorro injects between adjacent ant-btn siblings to avoid double spacing

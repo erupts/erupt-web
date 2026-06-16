@@ -24,7 +24,7 @@
         position: relative;
     }
 
-    // ── 多页签：高度统一为 38px ───────────────────────────────────
+    // ── Multi-tab: unified height of 38px ────────────────────────
     .reuse-tab {
         margin-top: 0 !important;
         flex-shrink: 0;
@@ -45,7 +45,7 @@
         }
     }
 
-    // ── Fixed 模式：覆盖框架硬编码的 left，改用 CSS 变量 ──────────
+    // ── Fixed mode: override the framework's hard-coded left, use CSS variable instead ──
     .alain-default__fixed .reuse-tab {
         position: fixed;
         z-index: 101;
@@ -55,7 +55,7 @@
         margin-left: 0;
     }
 
-    // Fixed 模式下 router-outlet 占位符高度跟随 tab 高度
+    // In Fixed mode, the router-outlet placeholder height follows the tab height
     @media (min-width: 768px) {
         .alain-default__fixed .reuse-tab + router-outlet {
             display: block;
@@ -63,19 +63,19 @@
         }
     }
 
-    // 折叠侧边栏：left 改为 48px
+    // Collapsed sidebar: set left to 48px
     .alain-default__collapsed .reuse-tab {
         left: 48px;
         margin-left: 0;
     }
 
-    // ── 去除 ant-tabs 默认底部 border（避免与自定义 border 叠加产生阴影感）
+    // ── Remove ant-tabs default bottom border (prevents double-border shadow effect with custom border)
     .reuse-tab .ant-tabs-top > .ant-tabs-nav::before,
     .reuse-tab .ant-tabs-top > div > .ant-tabs-nav::before {
         border-bottom: none;
     }
 
-    // ── Card 样式优化 ─────────────────────────────────────────────
+    // ── Card style refinements ────────────────────────────────────
     .reuse-tab__card {
         padding-top: 0;
         padding-left: 0;
@@ -126,7 +126,7 @@
         }
     }
 
-    // ── 多 tab 滚动箭头颜色 ────────────────────────────────────────
+    // ── Multi-tab scroll arrow color ──────────────────────────────
     reuse-tab .ant-tabs-tab-arrow-show {
         color: var(--ant-primary-color, #1677ff);
     }
