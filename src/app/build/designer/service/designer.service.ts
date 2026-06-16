@@ -20,33 +20,33 @@ export class DesignerService {
     constructor(private _http: _HttpClient) {
     }
 
-    // 设计 JSON → 伪装注解 EruptModel（标准 EruptBuildModel，走真实渲染管线）
+    // Convert design JSON to a disguised EruptModel (standard EruptBuildModel through real render pipeline)
     preview(form: DesignerForm): Observable<EruptBuildModel> {
         return this._http.post<EruptBuildModel>(this.path + "/preview", this.pruneKey(form), null, {observe: "body"});
     }
 
-    // 导出 @Erupt 注解实体类源码，引导进入注解开发
+    // Export @Erupt annotated entity source code for annotation-based development
     javaCode(form: DesignerForm): Observable<R<string>> {
         return this._http.post<R<string>>(this.path + "/java-code", this.pruneKey(form), null, {observe: "body"});
     }
 
-    // 已注册的 Erupt 模型，供引用类字段选择关联模型（key=类名，value=功能名称）
+    // Registered Erupt models for reference-type field linking (key=class name, value=feature name)
     erupts(): Observable<R<KV<string, string>[]>> {
         return this._http.get<R<KV<string, string>[]>>(this.path + "/erupts", null, {observe: "body"});
     }
 
-    // 加载持久化的设计配置
+    // Load persisted design config
     getConfig(className: string): Observable<R<{ className: string; name: string; config: string }>> {
         return this._http.get<R<{ className: string; name: string; config: string }>>(
             this.path + "/config/" + className, null, {observe: "body"});
     }
 
-    // 发布：保存设计并注册运行时 Erupt 模型，免重启生效
+    // Publish: save design and register runtime Erupt model without restart
     publish(className: string, form: DesignerForm): Observable<R<void>> {
         return this._http.post<R<void>>(this.path + "/publish/" + className, this.pruneKey(form), null, {observe: "body"});
     }
 
-    // 去除仅前端使用的 key 属性（字段与多视图）
+    // Strip frontend-only key fields from fields and vis entries before sending
     private pruneKey(form: DesignerForm): DesignerForm {
         return {
             ...form,

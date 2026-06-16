@@ -55,7 +55,7 @@ import {DesignerService} from "./service/designer.service";
 })
 export class DesignerModule {
 
-    // 懒加载模块内自注册设计器所需图标，不增加首屏体积
+    // Self-register designer icons inside the lazy module to avoid bloating the initial bundle
     constructor(iconService: NzIconService) {
         iconService.addIcon(AppstoreOutline, BarChartOutline, BgColorsOutline, CalendarOutline, CheckCircleOutline,
             CheckSquareOutline, CloudUploadOutline, CodeOutline, DownCircleOutline, DragOutline, EditOutline,

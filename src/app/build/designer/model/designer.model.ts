@@ -1,4 +1,12 @@
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, PickerMode} from "../../erupt/model/erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    DateEnum,
+    EditType,
+    FormSize,
+    PagingType,
+    PickerMode
+} from "../../erupt/model/erupt.enum";
 
 /**
  * 设计器数据结构：镜像后端 @Erupt / @EruptField / @Edit / @View 注解结构（原始成员名），
@@ -18,10 +26,10 @@ export interface DesignerErupt {
     orderBy?: string;
     power?: DesignerPower;
     layout?: DesignerLayout;
-    vis?: DesignerVis[];    // 多视图配置，镜像 @Erupt.vis() / @Vis
+    vis?: DesignerVis[];    // multi-view config, mirrors @Erupt.vis() / @Vis
 }
 
-// 多视图类型，值与后端 Vis.Type 枚举常量名一致
+// multi-view type; values match backend Vis.Type enum constant names
 export enum VisType {
     TABLE = "TABLE",
     CARD = "CARD",
@@ -31,21 +39,21 @@ export enum VisType {
     TPL = "TPL"
 }
 
-// 字段可见性，值与后端 Vis.FieldVisibility 一致
+// field visibility; values match backend Vis.FieldVisibility enum
 export enum FieldVisibility {
     INCLUDE = "INCLUDE",
     EXCLUDE = "EXCLUDE"
 }
 
-// 卡片封面效果，值与后端 CardView.CoverEffect 一致
+// card cover effect; values match backend CardView.CoverEffect enum
 export enum CoverEffect {
     FIT = "FIT",
     CLIP = "CLIP"
 }
 
-// 镜像 @Vis：仅前端 key 字段不上送
+// mirrors @Vis: frontend-only key field is stripped before sending
 export interface DesignerVis {
-    key?: string;           // 仅前端使用的唯一标识
+    key?: string;           // frontend-only unique identifier
     code?: string;
     title: string;
     desc?: string;
@@ -78,9 +86,9 @@ export interface DesignerPower {
 }
 
 export interface DesignerField {
-    key: string;            // 仅前端使用的唯一标识
+    key: string;            // frontend-only unique identifier
     fieldName: string;
-    linkErupt?: string;     // 引用类字段关联的 @Erupt 类名
+    linkErupt?: string;     // linked @Erupt class name for reference-type fields
     view?: DesignerView;
     edit: DesignerEdit;
 }
@@ -130,8 +138,8 @@ export interface PaletteItem {
     label: string;          // i18n key
     icon: string;           // nz-icon type
     edit?: Partial<DesignerEdit>;
-    needLink?: boolean;     // 是否需要关联 @Erupt 类
-    noView?: boolean;       // 不生成表格列（如分割线）
+    needLink?: boolean;     // whether this type requires a linked @Erupt class
+    noView?: boolean;       // no table column generated (e.g. divider)
 }
 
 export interface PaletteGroup {

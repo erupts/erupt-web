@@ -48,39 +48,39 @@ export class DesignerComponent implements OnInit, OnDestroy {
 
     selected: DesignerField | null = null;
 
-    // 字段名编辑前的原值，失焦时据此同步所有引用（模板绑定，不能为 private）
+    // field name before editing; used on blur to sync all references (template binding, cannot be private)
     renameFrom: string | null = null;
 
-    // 表单（类级）配置抽屉
+    // form (class-level) config drawer
     formConfigVisible: boolean = false;
 
-    // 多视图配置抽屉
+    // multi-view config drawer
     visConfigVisible: boolean = false;
 
-    // 实时预览（伪装注解 → 真实 erupt 渲染管线）
+    // live preview (disguised annotation → real erupt render pipeline)
     previewVisible: boolean = false;
     previewLoading: boolean = false;
     previewBuild: EruptBuildModel | null = null;
 
-    // 注解代码导出（nz-code-editor / Monaco 只读展示，经 NzModalService 打开）
+    // annotation code export (nz-code-editor / Monaco read-only, opened via NzModalService)
     codeLoading: boolean = false;
     code: string | null = null;
     readonly codeEditorOption = {language: "java", readOnly: true, minimap: {enabled: false}, automaticLayout: true, scrollBeyondLastLine: false};
 
     @ViewChild("codeModalTpl") codeModalTpl!: TemplateRef<unknown>;
 
-    // 由"表单设计"列表行按钮进入时绑定的模型类名（后端持久化模式）
+    // class name bound when entering from a form-design list row action (backend persistence mode)
     boundClassName: string | null = null;
 
     publishing: boolean = false;
 
-    // 有未发布的修改
+    // has unpublished changes
     dirty: boolean = false;
 
-    // 组件面板搜索
+    // palette panel search keyword
     paletteKeyword: string = "";
 
-    // 已注册的 Erupt 模型，引用类字段的关联模型选项（key=类名，value=功能名称）
+    // registered Erupt models for reference-type field linking options (key=class name, value=feature name)
     eruptOptions: KV<string, string>[] = [];
 
     private keySeq: number = 0;
@@ -131,7 +131,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         this.router$ && this.router$.unsubscribe();
     }
 
-    // 发布：保存设计并注册运行时模型，免重启生效
+    // Publish: save design and register runtime model without restart
     publish(): void {
         if (!this.boundClassName || !this.validate(true)) return;
         this.publishing = true;
@@ -164,7 +164,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         };
     }
 
-    // 历史配置可能缺少后增的配置节点，补齐默认值避免模板绑定空指针
+    // Old configs may lack newer nodes; backfill defaults to avoid template null binding
     private normalize(form: DesignerForm): DesignerForm {
         let empty = this.emptyForm();
         form.erupt.power = {...empty.erupt.power, ...form.erupt.power};
@@ -177,7 +177,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         return form;
     }
 
-    // ---------------- 画布 ----------------
+    // ---------------- Canvas ----------------
 
     drop(event: CdkDragDrop<DesignerField[] | PaletteItem[]>): void {
         if (event.previousContainer === event.container) {
@@ -250,7 +250,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         this.location.back();
     }
 
-    // Delete 键删除选中字段（输入框聚焦时不生效）
+    // Delete key removes selected field (no-op when an input is focused)
     @HostListener("document:keydown.delete", ["$event"])
     onDeleteKey(event: Event): void {
         let tag = (<HTMLElement>event.target).tagName;
@@ -279,12 +279,12 @@ export class DesignerComponent implements OnInit, OnDestroy {
     removeField(field: DesignerField, event: MouseEvent): void {
         event.stopPropagation();
         this.form.fields.splice(this.form.fields.indexOf(field), 1);
-        this.remapFieldRefs(field.fieldName, null);   // 删除后清理所有引用
+        this.remapFieldRefs(field.fieldName, null);   // clean up all references after removal
         if (this.selected === field) this.selected = null;
         this.saveDraft();
     }
 
-    // 字段名失焦：将原名在分组/多视图/排序中的所有引用同步为新名
+    // field name blur: sync all references (groups, vis, sort) from old name to new name
     commitRename(field: DesignerField): void {
         let old = this.renameFrom;
         this.renameFrom = null;
@@ -293,19 +293,19 @@ export class DesignerComponent implements OnInit, OnDestroy {
         this.saveDraft();
     }
 
-    // 字段名引用迁移：newName 为 null 表示删除引用，否则改写为新名
+    // field name ref migration: null newName means delete refs, otherwise rewrite to new name
     private remapFieldRefs(oldName: string, newName: string | null): void {
         if (!oldName) return;
         let mapArr = (arr?: string[]) => !arr ? arr
             : newName === null ? arr.filter(n => n !== oldName) : arr.map(n => n === oldName ? newName : n);
         let mapVal = (v?: string) => v === oldName ? (newName ?? undefined) : v;
-        // 分组字段
+        // group fields
         for (let f of this.form.fields) {
             if (f.edit.groupType?.fields) f.edit.groupType.fields = mapArr(f.edit.groupType.fields);
         }
-        // 默认排序
+        // default sort
         if (this.orderByField === oldName) this.setOrderBy(newName ?? "", this.orderByDir);
-        // 多视图各类字段引用
+        // field references across all vis types
         for (let v of this.form.erupt.vis || []) {
             v.fields = mapArr(v.fields);
             if (v.boardView) v.boardView.groupField = mapVal(v.boardView.groupField);
@@ -326,7 +326,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         }
     }
 
-    // 标题与列标题联动
+    // sync view column title with edit title
     titleChange(field: DesignerField): void {
         if (field.view) field.view.title = field.edit.title;
         this.saveDraft();
@@ -334,7 +334,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
 
     saveDraft(): void {
         this.dirty = true;
-        // 后端持久化模式下以「发布」为准，本地草稿仅用于演练模式
+        // in backend persistence mode, publish is the source of truth; local draft is only for sandbox mode
         if (!this.boundClassName) {
             localStorage.setItem(DRAFT_KEY, JSON.stringify(this.form));
         }
@@ -353,7 +353,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         });
     }
 
-    // ---------------- 选项编辑 ----------------
+    // ---------------- Option Editing ----------------
 
     addVl(vl: { value: string; label: string }[]): void {
         vl.push({value: String(vl.length + 1), label: ""});
@@ -365,20 +365,20 @@ export class DesignerComponent implements OnInit, OnDestroy {
         this.saveDraft();
     }
 
-    // ---------------- 多视图（vis）----------------
+    // ---------------- Multi-view (vis) ----------------
 
     private nextVisKey(): string {
         return "vis" + (++this.keySeq) + "_" + Date.now();
     }
 
-    // 可供视图选择的字段：表单中的全部字段（按字段名）
+    // fields available for vis selection: all form fields (by field name)
     visFieldOptions(): { name: string; label: string }[] {
         return this.form.fields
             .filter(f => f.edit.type !== this.editType.DIVIDE && f.edit.type !== this.editType.GROUP)
             .map(f => ({name: f.fieldName, label: f.edit.title + " (" + f.fieldName + ")"}));
     }
 
-    // 默认排序：从 orderBy 表达式（如 "createTime desc"）派生字段与方向，避免让用户手写表达式
+    // default sort: derive field and direction from the orderBy expression (e.g. "createTime desc") to avoid manual entry
     get orderByField(): string {
         return (this.form.erupt.orderBy || "").trim().split(/\s+/)[0] || "";
     }
@@ -418,7 +418,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         this.saveDraft();
     }
 
-    // 视图类型对应的图标
+    // icon for each vis type
     visIcon(type: VisType | undefined): string {
         switch (type) {
             case VisType.CARD:
@@ -434,13 +434,13 @@ export class DesignerComponent implements OnInit, OnDestroy {
         }
     }
 
-    // 切换视图类型时，按需初始化该类型专属的子配置对象
+    // initialize the type-specific sub-config when vis type changes
     visTypeChange(vis: DesignerVis): void {
         this.initVisSub(vis);
         this.saveDraft();
     }
 
-    // 确保该视图类型专属的子配置对象存在，避免模板 !. 绑定空指针
+    // ensure the type-specific sub-config exists to avoid template null binding
     private initVisSub(vis: DesignerVis): void {
         switch (vis.type) {
             case VisType.BOARD:
@@ -458,7 +458,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         }
     }
 
-    // ---------------- 预览 / 代码 ----------------
+    // ---------------- Preview / Code ----------------
 
     preview(): void {
         if (!this.validate()) return;
@@ -492,7 +492,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         });
     }
 
-    // 以服务方式打开代码弹窗（Monaco 只读 + 复制/关闭）
+    // Open code modal as a service (Monaco read-only + copy/close actions)
     private openCodeModal(): void {
         let ref = this.modal.create({
             nzTitle: (this.form.className || "Model") + ".java",
@@ -513,21 +513,21 @@ export class DesignerComponent implements OnInit, OnDestroy {
         }
     }
 
-    // 与 edit-type 渲染规则对齐：这些类型始终整行展示
+    // aligned with edit-type render rules: these types are always full-width
     private static readonly FULL_LINE_TYPES = new Set<EditType>([
         EditType.DIVIDE, EditType.GROUP, EditType.COMBINE, EditType.TEXTAREA, EditType.MARKDOWN,
         EditType.TAGS, EditType.CHECKBOX, EditType.ATTACHMENT, EditType.HTML_EDITOR, EditType.MAP,
         EditType.CODE_EDITOR, EditType.SIGNATURE, EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE
     ]);
 
-    // 画布字段是否整行：表单尺寸为 FULL_LINE、类型天然整行、或 INPUT 配置了 fullSpan
+    // whether a canvas field occupies a full row: FULL_LINE form size, naturally full-width types, or INPUT with fullSpan
     fullLine(field: DesignerField): boolean {
         if (this.form.erupt.layout?.formSize === FormSize.FULL_LINE) return true;
         if (field.edit.inputType?.fullSpan) return true;
         return DesignerComponent.FULL_LINE_TYPES.has(field.edit.type);
     }
 
-    // 仅引用类组件需要"关联模型"配置
+    // only reference-type components require a linked model config
     private static readonly LINK_TYPES = new Set<EditType>([
         EditType.REFERENCE_TABLE, EditType.REFERENCE_TREE, EditType.CHECKBOX,
         EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE, EditType.COMBINE
@@ -537,7 +537,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         return DesignerComponent.LINK_TYPES.has(type);
     }
 
-    // 无法用真实控件 mock 的类型，展示占位块图标
+    // types that can't be mocked with real controls — show a placeholder icon
     mockIcon(type: EditType): string {
         for (let group of this.paletteGroups) {
             for (let item of group.items) {
@@ -547,7 +547,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         return "appstore";
     }
 
-    // checkVis：仅发布时校验多视图完整性（生成代码/预览无需被未配全的视图卡住）
+    // checkVis: validate multi-view completeness only on publish (code gen/preview should not be blocked by incomplete vis)
     private validate(checkVis: boolean = false): boolean {
         if (this.form.fields.length === 0) {
             this.msg.warning(this.i18n.fanyi("designer.empty_canvas"));
@@ -586,7 +586,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         return true;
     }
 
-    // 多视图基本校验：缺少关键字段时给出提示并打开多视图抽屉
+    // basic vis validation: show warning and open vis drawer when required fields are missing
     private validateVis(vis: DesignerVis): boolean {
         let fail = (key: string) => {
             this.msg.warning(this.i18n.fanyi(key) + (vis.title ? ": " + vis.title : ""));
