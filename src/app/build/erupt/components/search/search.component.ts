@@ -119,6 +119,8 @@ export class SearchComponent implements OnInit, DoCheck {
                     {abbr: '∅',  label: `∅ ${this.t('query.op.null')}`,      value: QueryExpression.NULL},
                     {abbr: '!∅', label: `!∅ ${this.t('query.op.not_null')}`, value: QueryExpression.NOT_NULL},
                 ];
+            case EditType.SLIDER:
+            case EditType.RATE:
             case EditType.NUMBER:
                 return [
                     {abbr: '=',  label: `= ${this.t('query.op.eq')}`,         value: QueryExpression.EQ},
@@ -175,6 +177,9 @@ export class SearchComponent implements OnInit, DoCheck {
         if (type === EditType.REFERENCE_TREE) {
             return EditType.REFERENCE_TABLE;
         }
+        if (type === EditType.SLIDER || type === EditType.RATE) {
+            return EditType.NUMBER;
+        }
         return type;
     }
 
@@ -185,6 +190,16 @@ export class SearchComponent implements OnInit, DoCheck {
 
     isRangeOp(field: EruptFieldModel): boolean {
         return field.eruptFieldJson.edit?.$operator === QueryExpression.RANGE;
+    }
+
+    numMin(field: EruptFieldModel): number {
+        const e = field.eruptFieldJson.edit;
+        return e.numberType?.min ?? e.sliderType?.min ?? 0;
+    }
+
+    numMax(field: EruptFieldModel): number {
+        const e = field.eruptFieldJson.edit;
+        return e.numberType?.max ?? e.sliderType?.max ?? e.rateType?.count;
     }
 
     isTagsInputOp(field: EruptFieldModel): boolean {

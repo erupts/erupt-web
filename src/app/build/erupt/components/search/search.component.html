@@ -50,16 +50,16 @@
                     <nz-input-number [nzSize]="size" style="flex:1"
                       [(ngModel)]="field.eruptFieldJson.edit.$l_val" [name]="field.fieldName"
                       [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                      [nzMin]="field.eruptFieldJson.edit.numberType.min"
-                      [nzMax]="field.eruptFieldJson.edit.numberType.max" [nzStep]="1"
+                      [nzMin]="numMin(field)"
+                      [nzMax]="numMax(field)" [nzStep]="1"
                       (keydown)="enterEvent($event)"></nz-input-number>
                     <input disabled nz-input placeholder="~"
                       style="width:30px;pointer-events:none;text-align:center"/>
                     <nz-input-number [nzSize]="size" style="flex:1"
                       [(ngModel)]="field.eruptFieldJson.edit.$r_val" [name]="field.fieldName"
                       [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
-                      [nzMin]="field.eruptFieldJson.edit.numberType.min"
-                      [nzMax]="field.eruptFieldJson.edit.numberType.max" [nzStep]="1"
+                      [nzMin]="numMin(field)"
+                      [nzMax]="numMax(field)" [nzStep]="1"
                       (keydown)="enterEvent($event)"></nz-input-number>
                   </nz-space-compact>
                 } @else {
@@ -77,8 +77,8 @@
                         [(ngModel)]="field.eruptFieldJson.edit.$value"
                         [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder" [name]="field.fieldName"
                         (keydown)="enterEvent($event)"
-                        [nzMin]="field.eruptFieldJson.edit.numberType.min"
-                        [nzMax]="field.eruptFieldJson.edit.numberType.max" [nzStep]="1"
+                        [nzMin]="numMin(field)"
+                        [nzMax]="numMax(field)" [nzStep]="1"
                         [nzDisabled]="isNullOp(field)"></nz-input-number>
                     } @else {
                       <nz-select nzMode="tags" style="flex:1"
@@ -128,29 +128,6 @@
                 <erupt-tags [eruptModel]="searchEruptModel" [eruptBuildModel]="{eruptModel: searchEruptModel}"
                             [eruptField]="field" [size]="size"
                             [eruptParentName]="null" [readonly]="false"></erupt-tags>
-              </erupt-search-se>
-            </div>
-          }
-          @case (editType.SLIDER) {
-            <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
-              <erupt-search-se [field]="field">
-                <nz-slider class="erupt-input"
-                  [(ngModel)]="field.eruptFieldJson.edit.$value"
-                  [nzMarks]="field.eruptFieldJson.edit.sliderType.marks"
-                  [nzDots]="field.eruptFieldJson.edit.sliderType.dots"
-                  [nzStep]="field.eruptFieldJson.edit.sliderType.dots ? null : field.eruptFieldJson.edit.sliderType.step"
-                  [name]="field.fieldName"
-                  [nzMax]="field.eruptFieldJson.edit.sliderType.max"
-                  [nzMin]="field.eruptFieldJson.edit.sliderType.min"/>
-              </erupt-search-se>
-            </div>
-          }
-          @case (editType.RATE) {
-            <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
-              <erupt-search-se [field]="field">
-                <nz-slider class="erupt-input"
-                  [name]="field.fieldName" [(ngModel)]="field.eruptFieldJson.edit.$value"
-                  [nzMax]="field.eruptFieldJson.edit.rateType.count" [nzMin]="0"/>
               </erupt-search-se>
             </div>
           }
