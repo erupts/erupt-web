@@ -1,117 +1,88 @@
-<div class="flow-dashboard">
-  <!-- Main content area -->
-  <div class="main-content">
-    <!-- Left category navigation -->
-    <div class="category-sidebar">
-      <div class="category-header">
-        <h3>流程分类</h3>
-        <button
-          nz-button
-          nzType="text"
-          nzSize="small"
-          (click)="refreshData()"
-          [nzLoading]="loading">
-          <i nz-icon nzType="reload"></i>
-        </button>
-      </div>
-      <div class="category-list">
-        @for (category of categories; track category) {
-          <div
-            class="category-item"
-            [class.active]="selectedCategory === category.key"
-            (click)="onCategorySelect(category.key)">
-            <span class="category-name">{{ category.name }}</span>
-            @if (category.key) {
-              <span class="category-count">
-                ({{ getCategoryFlowCount(category.key) }})
-              </span>
+<div class="flow-dashboard-container">
+    <!-- Left sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-title">流程分类</span>
+            <button nz-button nzType="text" nzSize="small" (click)="refreshData()"
+                    [nzLoading]="loading" nz-tooltip="刷新">
+                <span nz-icon nzType="reload"></span>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            @for (category of categories; track category) {
+                <div class="menu-item" [class.active]="selectedCategory === category.key"
+                     (click)="onCategorySelect(category.key)">
+                    <span nz-icon [nzType]="category.key ? 'folder' : 'appstore'" nzTheme="outline"></span>
+                    <span class="menu-label">{{ category.name }}</span>
+                    @if (category.key) {
+                        <nz-badge [nzCount]="getCategoryFlowCount(category.key)"
+                                  [nzShowZero]="false" class="menu-badge"></nz-badge>
+                    }
+                </div>
             }
-          </div>
-        }
-      </div>
+        </div>
     </div>
 
-    <!-- Right flow content -->
-    <div class="content-area">
-      <!-- Search box -->
-      @if (!loading) {
-        <div class="search-container">
-          <nz-input-group nzPrefixIcon="search" nzSize="default">
-            <input
-              type="text"
-              nz-input
-              style="width: 200px"
-              [(ngModel)]="searchKeyword"
-              (ngModelChange)="onSearchChange()"
-              placeholder="搜索流程名称...">
-          </nz-input-group>
-        </div>
-      }
-
-      <!-- Loading state -->
-      @if (loading) {
-        <div class="loading-container">
-          <nz-spin nzSize="large">
-            <div class="loading-text">加载中...</div>
-          </nz-spin>
-        </div>
-      }
-
-      <!-- Flow content -->
-      @if (!loading) {
-        <div class="flow-groups">
-          <!-- Empty state -->
-          @if (filteredFlowGroups.length === 0) {
-            <div class="empty-state">
-              <i nz-icon nzType="inbox" nzTheme="outline"></i>
-              @if (!searchKeyword) {
-                <p>暂无流程数据</p>
-              }
-              @if (searchKeyword) {
-                <p>未找到匹配的流程</p>
-              }
-              @if (!searchKeyword) {
-                <button nz-button nzType="primary" (click)="refreshData()">
-                  刷新数据
-                </button>
-              }
-              @if (searchKeyword) {
-                <button nz-button nzType="default" (click)="searchKeyword = ''; onSearchChange()">
-                  清除搜索
-                </button>
-              }
+    <!-- Main content -->
+    <div class="main-content">
+        <div class="list-header">
+            <div class="stat-item">
+                <span class="stat-num">{{ flowConfigs.length }}</span>
+                <span class="stat-label">可用流程</span>
             </div>
-          }
-          <!-- Flow groups -->
-          @for (group of filteredFlowGroups; track group) {
-            <div class="group-section">
-              <h3 class="group-title">
-                {{ group.title }}
-                <span class="group-count">({{ group.flows.length }})</span>
-              </h3>
-              <div class="flow-grid">
-                @for (flow of group.flows; track flow) {
-                  @if (flow.enable) {
-                    <div class="flow-item"
-                      (click)="launchFlow(flow)"
-                      [ngClass]="{'flow-disabled': !flow.enable}">
-                      <div class="flow-icon" [style]="{background:flow.color}">
-                        <span [classList]="flow.icon"></span>
-                      </div>
-                      <div class="flow-info">
-                        <div class="flow-name">{{ flow.name }}</div>
-                        @if (flow.remark) {
-                          <div class="flow-desc">{{ flow.remark }}</div>
-                        }
-                      </div>
+            <div class="stat-item">
+                <span class="stat-num">{{ categories.length - 1 }}</span>
+                <span class="stat-label">分类</span>
+            </div>
+            <div style="flex:1"></div>
+            <nz-input-group [nzSuffix]="searchSfx" nzBorderless style="width:200px">
+                <input nz-input [(ngModel)]="searchKeyword" (ngModelChange)="onSearchChange()"
+                       placeholder="搜索流程名称..."/>
+            </nz-input-group>
+            <ng-template #searchSfx><span nz-icon nzType="search" style="color:#bfbfbf"></span></ng-template>
+        </div>
+
+        <div class="flow-content">
+            @if (loading) {
+                <div style="padding:24px">
+                    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 4 }"></nz-skeleton>
+                </div>
+            }
+            @if (!loading) {
+                @if (filteredFlowGroups.length === 0) {
+                    <div style="text-align:center; padding: 64px 0;">
+                        <nz-empty [nzNotFoundImage]="'simple'">
+                            <ng-template #nzNotFoundContent>
+                                <span style="color:#8c8c8c">{{ searchKeyword ? '未找到匹配的流程' : '暂无流程数据' }}</span>
+                            </ng-template>
+                        </nz-empty>
                     </div>
-                  }
                 }
-              </div>
-            </div>
-          }
+                @for (group of filteredFlowGroups; track group) {
+                    <div class="flow-group">
+                        <div class="group-title">{{ group.title }}
+                            <span class="group-count">{{ group.flows.length }}</span>
+                        </div>
+                        <div class="flow-grid">
+                            @for (flow of group.flows; track flow) {
+                                @if (flow.enable) {
+                                    <div class="flow-item" (click)="launchFlow(flow)">
+                                        <div class="flow-icon" [style.background-color]="flow.color || '#1890ff'">
+                                            <span [class]="flow.icon || 'fa fa-dot-circle-o'"></span>
+                                        </div>
+                                        <div class="flow-body">
+                                            <div class="flow-name">{{ flow.name }}</div>
+                                            @if (flow.remark) {
+                                                <div class="flow-desc">{{ flow.remark }}</div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+            }
         </div>
-      }
     </div>
-  </div>
 </div>

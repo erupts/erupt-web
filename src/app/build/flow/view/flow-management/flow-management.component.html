@@ -1,202 +1,126 @@
 <div class="flow-management-container">
-  <!-- Header search and action area -->
-  <div class="header-section">
-    <div class="search-area">
-      <nz-input-group [nzSuffix]="searchIcon">
-        <input
-          nz-input
-          placeholder="搜索"
-          [(ngModel)]="searchValue"
-          (ngModelChange)="onSearch()"
-          />
-      </nz-input-group>
-      <ng-template #searchIcon>
-        <span nz-icon nzType="search"></span>
-      </ng-template>
-    </div>
-
-    <div class="action-buttons">
-      <button nz-button nzType="primary" (click)="onCreateApproval()">
-        <span nz-icon nzType="plus"></span>
-        创建流程
-      </button>
-    </div>
-  </div>
-
-  <!-- Left-right split content area -->
-  <div class="content-layout">
-    <!-- Left category list -->
-    <div class="category-sidebar">
-      <div class="sidebar-header">
-        <div class="header-title">
-          <h3>流程分类</h3>
+    <!-- Left sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-title">流程分类</span>
+            <button nz-button nzType="text" nzSize="small" (click)="onCreateGroup()" nz-tooltip="新建分组">
+                <span nz-icon nzType="plus"></span>
+            </button>
         </div>
-        <div class="header-actions">
-          <button
-            nz-button
-            nzType="text"
-            nzSize="small"
-            (click)="onCreateGroup()"
-            nz-tooltip="新建分组"
-            >
-            <span nz-icon nzType="plus"></span>
-          </button>
-        </div>
-      </div>
-
-      <div class="category-list" cdkDropList (cdkDropListDropped)="onDrop($event)">
-        <nz-spin [nzSpinning]="false">
-          <!-- All option -->
-          <div
-            class="category-item"
-            [class.active]="selectedCategory === null"
-            (click)="selectCategory(null)"
-            >
-            <span class="category-name">全部</span>
-            <span class="category-count">({{ flowConfigs.length }})</span>
-          </div>
-
-          <!-- Draggable category list -->
-          @for (item of categoryItems; track item; let i = $index) {
-            <div
-              class="category-item draggable-item"
-              cdkDrag
-              (click)="selectCategory(item.id)"
-              [class.active]="selectedCategory === item.id"
-              >
-              <div class="category-content">
-                <span class="category-name">{{ item.name }}</span>
-                <span class="category-count">({{ item.count }})</span>
-              </div>
-              <div class="category-actions">
-                <button
-                  nz-button
-                  nzType="text"
-                  nzSize="small"
-                  (click)="onEditGroup(item); $event.stopPropagation()"
-                  nz-tooltip="编辑分组"
-                  >
-                  <span nz-icon nzType="edit"></span>
-                </button>
-                <button
-                  nz-button
-                  nzType="text"
-                  nzSize="small"
-                  (click)="onDeleteGroup(item); $event.stopPropagation()"
-                  nz-tooltip="删除分组"
-                  >
-                  <span nz-icon nzType="delete"></span>
-                </button>
-                <button
-                  nz-button
-                  nzType="text"
-                  nzSize="small"
-                  cdkDragHandle
-                  (click)="$event.stopPropagation()"
-                  >
-                  <span>⋮⋮</span>
-                </button>
-              </div>
+        <div class="sidebar-menu" cdkDropList (cdkDropListDropped)="onDrop($event)">
+            <div class="menu-item" [class.active]="selectedCategory === null" (click)="selectCategory(null)">
+                <span nz-icon nzType="appstore" nzTheme="outline"></span>
+                <span class="menu-label">全部</span>
+                <nz-badge [nzCount]="flowConfigs.length" [nzShowZero]="false" class="menu-badge"></nz-badge>
             </div>
-          }
-        </nz-spin>
-      </div>
-    </div>
-
-    <!-- Right application list -->
-    <div class="app-content">
-      <div class="app-list" cdkDropList (cdkDropListDropped)="onFlowDrop($event)">
-        <!-- Loading state -->
-        <nz-spin [nzSpinning]="configLoading" nzSize="large" style="height: 100%">
-          @for (config of getCurrentConfigs(); track config) {
-            <div cdkDrag>
-              <div class="app-item">
-                <!-- Application info -->
-                <div class="app-info">
-                  <div class="app-icon" [style.background-color]="config.color || '#1890ff'">
-                    <span [class]="config.icon || 'fa fa-dot-circle-o'"></span>
-                  </div>
-                  <div class="app-details">
-                    <div class="app-name">
-                      {{ config.name }}
-                      @if (!config.enable) {
-                        <nz-tag nzColor="red">
-                          已停用
-                        </nz-tag>
-                      }
+            @for (item of categoryItems; track item) {
+                <div class="menu-item draggable" cdkDrag [class.active]="selectedCategory === item.id"
+                     (click)="selectCategory(item.id)">
+                    <span nz-icon nzType="folder" nzTheme="outline"></span>
+                    <span class="menu-label">{{ item.name }}</span>
+                    <nz-badge [nzCount]="item.count" [nzShowZero]="false" class="menu-badge"></nz-badge>
+                    <div class="menu-item-actions">
+                        <span nz-icon nzType="edit" nzTheme="outline"
+                              (click)="onEditGroup(item); $event.stopPropagation()"></span>
+                        <span nz-icon nzType="delete" nzTheme="outline"
+                              (click)="onDeleteGroup(item); $event.stopPropagation()"></span>
+                        <span nz-icon nzType="holder" nzTheme="outline" cdkDragHandle
+                              (click)="$event.stopPropagation()"></span>
                     </div>
-                    <div class="app-description">{{ config.remark || '' }}</div>
-                  </div>
                 </div>
-                <!-- Action buttons -->
-                <div class="action-icons">
-                  <button nz-button nzType="text" nzSize="small" cdkDragHandle (click)="$event.stopPropagation()">
-                    <span>⋮⋮</span>
-                  </button>
-                  <button nz-button nzType="text" nzSize="small" (click)="onEdit(config)" nz-tooltip="编辑">
-                    <span nz-icon nzType="edit"></span>
-                  </button>
-                  <button nz-button nzType="text" nzSize="small" (click)="onDuplicate(config)" nz-tooltip="复制">
-                    <span nz-icon nzType="copy"></span>
-                  </button>
-                  <button nz-button nzType="text" nzSize="small" (click)="onToggleVisibility(config)" [nz-tooltip]="config.enable ? '停用' : '启用'">
-                    <span nz-icon [nzType]="config.enable ? 'stop' : 'check'" [style.color]="config.enable ? '' : '#52c41a'"
-                    ></span>
-                  </button>
-                  <button nz-button nzType="text" nzSize="small" (click)="onDelete(config)" nz-tooltip="删除">
-                    <span nz-icon nzType="delete"></span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          }
-          <!-- Empty state -->
-          @if (!configLoading && getCurrentConfigs().length === 0) {
-            <div class="empty-state">
-              <nz-empty style="margin-top: 20%"
-                [nzNotFoundImage]="'simple'"
-              ></nz-empty>
-            </div>
-          }
-        </nz-spin>
-      </div>
+            }
+        </div>
     </div>
-  </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <div class="list-header">
+            <div class="stat-item">
+                <span class="stat-num">{{ getCurrentConfigs().length }}</span>
+                <span class="stat-label">共</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num enabled">{{ getEnabledCount() }}</span>
+                <span class="stat-label">启用</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num disabled">{{ getCurrentConfigs().length - getEnabledCount() }}</span>
+                <span class="stat-label">停用</span>
+            </div>
+            <div style="flex:1"></div>
+            <nz-input-group [nzSuffix]="searchSfx" nzBorderless style="width:200px">
+                <input nz-input [(ngModel)]="searchValue" (ngModelChange)="onSearch()" placeholder="搜索流程..."/>
+            </nz-input-group>
+            <ng-template #searchSfx><span nz-icon nzType="search" style="color:#bfbfbf"></span></ng-template>
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button nzType="primary" nzSize="small" (click)="onCreateApproval()">
+                <span nz-icon nzType="plus"></span>创建流程
+            </button>
+        </div>
+
+        <div class="flow-list" cdkDropList (cdkDropListDropped)="onFlowDrop($event)">
+            <nz-spin [nzSpinning]="configLoading">
+                @for (config of getCurrentConfigs(); track config) {
+                    <div class="flow-item" cdkDrag [style.--item-color]="config.color || '#1890ff'">
+                        <div class="flow-icon" [style.background-color]="config.color || '#1890ff'">
+                            <span [class]="config.icon || 'fa fa-dot-circle-o'"></span>
+                        </div>
+                        <div class="flow-info">
+                            <div class="flow-name">
+                                {{ config.name }}
+                                @if (!config.enable) {
+                                    <nz-tag nzColor="orange">已停用</nz-tag>
+                                }
+                                @if (selectedCategory === null && config.flowGroup?.name) {
+                                    <nz-tag>{{ config.flowGroup.name }}</nz-tag>
+                                }
+                            </div>
+                            @if (config.remark) {
+                                <div class="flow-desc">{{ config.remark }}</div>
+                            }
+                        </div>
+                        <div class="flow-actions">
+                            <span nz-icon nzType="holder" nzTheme="outline" class="drag-handle"
+                                  cdkDragHandle (click)="$event.stopPropagation()"></span>
+                            <button nz-button nzType="text" nzSize="small" nz-tooltip="编辑" (click)="onEdit(config)">
+                                <span nz-icon nzType="edit" nzTheme="outline"></span>
+                            </button>
+                            <button nz-button nzType="text" nzSize="small" nz-tooltip="复制" (click)="onDuplicate(config)">
+                                <span nz-icon nzType="copy" nzTheme="outline"></span>
+                            </button>
+                            <button nz-button nzType="text" nzSize="small" [nz-tooltip]="config.enable ? '停用' : '启用'"
+                                    (click)="onToggleVisibility(config)">
+                                <span nz-icon [nzType]="config.enable ? 'stop' : 'check-circle'" nzTheme="outline"
+                                      [style.color]="config.enable ? '' : '#52c41a'"></span>
+                            </button>
+                            <button nz-button nzType="text" nzSize="small" nz-tooltip="删除" (click)="onDelete(config)">
+                                <span nz-icon nzType="delete" nzTheme="outline" style="color:#ff4d4f"></span>
+                            </button>
+                        </div>
+                    </div>
+                }
+                @if (!configLoading && getCurrentConfigs().length === 0) {
+                    <div style="text-align:center; padding: 64px 0;">
+                        <nz-empty [nzNotFoundImage]="'simple'"></nz-empty>
+                    </div>
+                }
+            </nz-spin>
+        </div>
+    </div>
 </div>
-<nz-modal
-  [(nzVisible)]="isCreateModalVisible"
-  nzTitle="新建分组"
-  (nzOnCancel)="handleCreateCancel()"
-  (nzOnOk)="handleCreateGroup()"
-  >
-  <ng-container *nzModalContent>
-    <div>
-      <input
-        nz-input
-        [(ngModel)]="createGroupName"
-        placeholder="请输入分组名称"
-        style="width: 100%;"
-        (keyup.enter)="handleCreateGroup()"
-        />
-    </div>
-  </ng-container>
+
+<nz-modal [(nzVisible)]="isCreateModalVisible" nzTitle="新建分组"
+          (nzOnCancel)="handleCreateCancel()" (nzOnOk)="handleCreateGroup()">
+    <ng-container *nzModalContent>
+        <input nz-input [(ngModel)]="createGroupName" placeholder="请输入分组名称"
+               style="width:100%;" (keyup.enter)="handleCreateGroup()"/>
+    </ng-container>
 </nz-modal>
 
-<nz-modal
-  [(nzVisible)]="isEditModalVisible"
-  nzTitle="编辑分组"
-  (nzOnCancel)="handleEditCancel()"
-  (nzOnOk)="handleEditGroup()"
-  >
-  <ng-container *nzModalContent>
-    <div>
-      <input
-        nz-input
-        [(ngModel)]="editGroupName"
-        placeholder="请输入分组名称"
-        style="width: 100%;"
-        (keyup.enter)="handleEditGroup()"
-        />
-    </div>
-  </ng-container>
+<nz-modal [(nzVisible)]="isEditModalVisible" nzTitle="编辑分组"
+          (nzOnCancel)="handleEditCancel()" (nzOnOk)="handleEditGroup()">
+    <ng-container *nzModalContent>
+        <input nz-input [(ngModel)]="editGroupName" placeholder="请输入分组名称"
+               style="width:100%;" (keyup.enter)="handleEditGroup()"/>
+    </ng-container>
 </nz-modal>

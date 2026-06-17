@@ -138,6 +138,10 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         return configs;
     }
 
+    getEnabledCount(): number {
+        return this.getCurrentConfigs().filter(c => c.enable).length;
+    }
+
     onSearch(): void {
         // Search functionality is integrated into the getCurrentConfigs method
         console.log('Search:', this.searchValue);
