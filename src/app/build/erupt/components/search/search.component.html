@@ -93,34 +93,23 @@
             </div>
           }
           @case (editType.CHOICE) {
-            @switch (field.eruptFieldJson.edit.choiceType.type) {
-              @case (choiceEnum.RADIO) {
-                <div nz-col [nzXs]="24">
-                  <erupt-search-se [field]="field">
+            <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
+              <erupt-search-se [field]="field">
+                <nz-space-compact [nzBlock]="true" class="erupt-input">
+                  <nz-select [(ngModel)]="field.eruptFieldJson.edit.$operator"
+                    [ngModelOptions]="{standalone: true}"
+                    [nzSize]="size" [nzDropdownMatchSelectWidth]="false" style="width:40px"
+                    [nzShowArrow]="false" (ngModelChange)="onOperatorChange(field)">
+                    @for (op of getOperatorOptions(field); track op.value) {
+                      <nz-option [nzValue]="op.value" [nzLabel]="op.abbr" [nzCustomContent]="true">{{ op.label }}</nz-option>
+                    }
+                  </nz-select>
+                  <div style="flex:1;min-width:0" [class.null-op-disabled]="isNullOp(field)">
                     <erupt-choice [eruptModel]="searchEruptModel" [eruptBuildModel]="{eruptModel: searchEruptModel}" [eruptField]="field" [size]="size"/>
-                  </erupt-search-se>
-                </div>
-              }
-              @default {
-                <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
-                  <erupt-search-se [field]="field">
-                    <nz-space-compact [nzBlock]="true" class="erupt-input">
-                      <nz-select [(ngModel)]="field.eruptFieldJson.edit.$operator"
-                        [ngModelOptions]="{standalone: true}"
-                        [nzSize]="size" [nzDropdownMatchSelectWidth]="false" style="width:40px"
-                        [nzShowArrow]="false" (ngModelChange)="onOperatorChange(field)">
-                        @for (op of getOperatorOptions(field); track op.value) {
-                          <nz-option [nzValue]="op.value" [nzLabel]="op.abbr" [nzCustomContent]="true">{{ op.label }}</nz-option>
-                        }
-                      </nz-select>
-                      <div style="flex:1;min-width:0" [class.null-op-disabled]="isNullOp(field)">
-                        <erupt-choice [eruptModel]="searchEruptModel" [eruptBuildModel]="{eruptModel: searchEruptModel}" [eruptField]="field" [size]="size"/>
-                      </div>
-                    </nz-space-compact>
-                  </erupt-search-se>
-                </div>
-              }
-            }
+                  </div>
+                </nz-space-compact>
+              </erupt-search-se>
+            </div>
           }
           @case (editType.TAGS) {
             <div nz-col [nzSpan]="24">

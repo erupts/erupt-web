@@ -10,7 +10,7 @@ import {
     ViewChildren
 } from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
-import {ChoiceEnum, EditType} from "../../model/erupt.enum";
+import {EditType} from "../../model/erupt.enum";
 import {colRules} from "@shared/model/util.model";
 import {ChoiceComponent} from "../choice/choice.component";
 import {BehaviorSubject} from "rxjs";
@@ -38,9 +38,7 @@ export class SearchComponent implements OnInit, DoCheck {
 
     col = colRules[4];
 
-    choiceEnum = ChoiceEnum;
-
-    @Input() collapsed: boolean = true;
+@Input() collapsed: boolean = true;
 
     @Output() collapsedChange = new EventEmitter<boolean>();
 
@@ -155,9 +153,6 @@ export class SearchComponent implements OnInit, DoCheck {
                     {abbr: '!∅', label: `!∅ ${this.t('query.op.not_null')}`,  value: QueryExpression.NOT_NULL},
                 ];
             case EditType.CHOICE:
-                if (edit.choiceType?.type === ChoiceEnum.RADIO) {
-                    return [];
-                }
                 return [
                     {abbr: '=',  label: `= ${this.t('query.op.eq')}`,         value: QueryExpression.EQ},
                     {abbr: '≠',  label: `≠ ${this.t('query.op.neq')}`,        value: QueryExpression.NEQ},
