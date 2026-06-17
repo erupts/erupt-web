@@ -11,49 +11,51 @@
             overflow: hidden;
 
             .sidebar {
-                width: 200px;
+                width: 196px;
                 height: 100%;
-                background: white;
-                border-right: 1px solid #e8e8e8;
+                background: #f7f8fa;
+                border-right: 1px solid #e4e6eb;
                 display: flex;
                 flex-direction: column;
                 flex-shrink: 0;
 
                 .sidebar-header {
                     height: 48px;
-                    padding: 0 16px;
-                    border-bottom: 1px solid #e8e8e8;
+                    padding: 0 14px;
+                    border-bottom: 1px solid #e4e6eb;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
                     flex-shrink: 0;
 
                     .sidebar-title {
-                        font-size: 13px;
+                        font-size: 12px;
                         font-weight: 600;
-                        color: #1a1a1a;
+                        color: #595959;
+                        letter-spacing: 0.04em;
+                        text-transform: uppercase;
                     }
                 }
 
                 .sidebar-menu {
                     flex: 1;
                     overflow-y: auto;
-                    padding: 4px 8px;
+                    padding: 6px 8px;
                 }
 
                 .menu-item {
                     position: relative;
                     display: flex;
                     align-items: center;
-                    height: 34px;
+                    height: 32px;
                     padding: 0 10px;
                     gap: 8px;
                     cursor: pointer;
-                    transition: background 0.15s;
+                    transition: background 0.12s;
                     border-radius: 4px;
 
                     &:hover {
-                        background: #f5f5f5;
+                        background: #eef0f4;
 
                         .menu-item-actions {
                             opacity: 1;
@@ -70,8 +72,8 @@
                             content: '';
                             position: absolute;
                             left: 0;
-                            top: 7px;
-                            bottom: 7px;
+                            top: 6px;
+                            bottom: 6px;
                             width: 2px;
                             background: var(--ant-primary-color, #1890ff);
                             border-radius: 1px;
@@ -110,11 +112,11 @@
                         gap: 2px;
                         opacity: 0;
                         pointer-events: none;
-                        transition: opacity 0.15s;
+                        transition: opacity 0.12s;
                         background: white;
                         padding: 2px 4px;
                         border-radius: 3px;
-                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 
                         [nz-icon] {
                             font-size: 12px;
@@ -148,16 +150,12 @@
 
                 .list-header {
                     height: 48px;
-                    padding: 0 16px;
-                    border-bottom: 1px solid #e8e8e8;
+                    padding: 0 20px;
+                    border-bottom: 1px solid #f0f0f0;
                     display: flex;
                     align-items: center;
                     gap: 16px;
                     flex-shrink: 0;
-
-                    .ant-input-affix-wrapper-borderless {
-                        background: transparent;
-                    }
 
                     nz-divider {
                         height: 16px;
@@ -189,6 +187,13 @@
                             color: #8c8c8c;
                         }
                     }
+
+                    .ant-input-affix-wrapper-borderless {
+                        background: #f5f5f5;
+                        border-radius: 4px;
+                        padding: 0 10px;
+                        height: 30px;
+                    }
                 }
 
                 .flow-list {
@@ -203,11 +208,11 @@
                 .flow-item {
                     display: flex;
                     align-items: center;
-                    padding: 11px 16px;
+                    padding: 12px 20px;
                     gap: 12px;
                     cursor: default;
-                    transition: background 0.15s;
-                    border-bottom: 1px solid #f0f0f0;
+                    transition: background 0.12s;
+                    border-bottom: 1px solid #f4f4f4;
 
                     &:last-child {
                         border-bottom: none;
@@ -222,15 +227,15 @@
                     }
 
                     .flow-icon {
-                        width: 38px;
-                        height: 38px;
+                        width: 36px;
+                        height: 36px;
                         border-radius: 6px;
                         flex-shrink: 0;
                         display: flex;
                         align-items: center;
                         justify-content: center;
                         color: white;
-                        font-size: 15px;
+                        font-size: 14px;
                     }
 
                     .flow-info {
@@ -244,17 +249,19 @@
                             display: flex;
                             align-items: center;
                             gap: 6px;
-                            margin-bottom: 2px;
+                            line-height: 1.4;
 
                             nz-tag {
                                 font-size: 11px;
                                 margin: 0;
+                                border-radius: 2px;
                             }
                         }
 
                         .flow-desc {
                             font-size: 12px;
                             color: #8c8c8c;
+                            margin-top: 1px;
                             overflow: hidden;
                             text-overflow: ellipsis;
                             white-space: nowrap;
@@ -264,10 +271,9 @@
                     .flow-actions {
                         display: flex;
                         align-items: center;
-                        gap: 0;
                         flex-shrink: 0;
                         opacity: 0;
-                        transition: opacity 0.15s;
+                        transition: opacity 0.12s;
 
                         .drag-handle {
                             font-size: 14px;
@@ -295,7 +301,7 @@
 
         .flow-item.cdk-drag-preview {
             background: white;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
         .flow-item.cdk-drag-placeholder,
@@ -306,6 +312,67 @@
         .flow-list.cdk-drop-list-dragging .flow-item:not(.cdk-drag-placeholder),
         .sidebar-menu.cdk-drop-list-dragging .menu-item:not(.cdk-drag-placeholder) {
             transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+        }
+    }
+
+    .mobile-menu-btn {
+        display: none;
+        flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+        ::ng-deep {
+            .flow-management-container {
+                .sidebar-backdrop {
+                    display: none;
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0, 0, 0, 0.35);
+                    z-index: 199;
+                }
+
+                &.sidebar-open {
+                    .sidebar {
+                        transform: translateX(0);
+                        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+                    }
+
+                    .sidebar-backdrop {
+                        display: block;
+                    }
+                }
+
+                .sidebar {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    height: 100%;
+                    z-index: 200;
+                    transform: translateX(-100%);
+                    transition: transform 0.25s ease;
+                }
+
+                .main-content {
+                    width: 100%;
+
+                    .list-header {
+                        padding: 0 12px;
+                        gap: 8px;
+
+                        .stat-item {
+                            display: none;
+                        }
+                    }
+
+                    .flow-item {
+                        padding: 10px 12px;
+                    }
+                }
+            }
+        }
+
+        .mobile-menu-btn {
+            display: flex;
         }
     }
 }

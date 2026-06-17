@@ -1,4 +1,6 @@
-<div class="flow-dashboard-container">
+<div class="flow-dashboard-container" [class.sidebar-open]="sidebarOpen">
+    <div class="sidebar-backdrop" (click)="sidebarOpen = false"></div>
+
     <!-- Left sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -26,6 +28,9 @@
     <!-- Main content -->
     <div class="main-content">
         <div class="list-header">
+            <button class="mobile-menu-btn" nz-button nzType="text" (click)="toggleSidebar()">
+                <span nz-icon [nzType]="sidebarOpen ? 'menu-fold' : 'menu-unfold'"></span>
+            </button>
             <div class="stat-item">
                 <span class="stat-num">{{ flowConfigs.length }}</span>
                 <span class="stat-label">可用流程</span>

@@ -32,6 +32,9 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
 
     // Loading states
     loading = false;
+
+    // Mobile sidebar state
+    sidebarOpen = false;
     configLoading = false; // Flow config loading state
 
     // Modal-related properties
@@ -115,6 +118,11 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
 
     selectCategory(category: number): void {
         this.selectedCategory = category;
+        this.sidebarOpen = false;
+    }
+
+    toggleSidebar(): void {
+        this.sidebarOpen = !this.sidebarOpen;
     }
 
     // Get the currently displayed flow configuration list

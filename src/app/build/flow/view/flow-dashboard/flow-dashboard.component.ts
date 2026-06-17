@@ -48,6 +48,9 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     // Loading state
     loading = false;
 
+    // Mobile sidebar state
+    sidebarOpen = false;
+
     // Cached flow group data
     private flowGroupsCache: FlowGroupWithFlows[] = [];
     private categoryFlowGroupsCache: Map<string, FlowGroupWithFlows[]> = new Map();
@@ -174,6 +177,11 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     onCategorySelect(categoryKey: string): void {
         this.selectedCategory = categoryKey;
         this.updateFilteredFlowGroups();
+        this.sidebarOpen = false;
+    }
+
+    toggleSidebar(): void {
+        this.sidebarOpen = !this.sidebarOpen;
     }
 
     /**

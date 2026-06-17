@@ -1,4 +1,6 @@
-<div class="flow-management-container">
+<div class="flow-management-container" [class.sidebar-open]="sidebarOpen">
+    <div class="sidebar-backdrop" (click)="sidebarOpen = false"></div>
+
     <!-- Left sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -35,6 +37,9 @@
     <!-- Main content -->
     <div class="main-content">
         <div class="list-header">
+            <button class="mobile-menu-btn" nz-button nzType="text" (click)="toggleSidebar()">
+                <span nz-icon [nzType]="sidebarOpen ? 'menu-fold' : 'menu-unfold'"></span>
+            </button>
             <div class="stat-item">
                 <span class="stat-num">{{ getCurrentConfigs().length }}</span>
                 <span class="stat-label">共</span>
@@ -53,7 +58,7 @@
             </nz-input-group>
             <ng-template #searchSfx><span nz-icon nzType="search" style="color:#bfbfbf"></span></ng-template>
             <nz-divider nzType="vertical"></nz-divider>
-            <button nz-button nzType="primary" nzSize="small" (click)="onCreateApproval()">
+            <button nz-button nzType="primary" (click)="onCreateApproval()">
                 <span nz-icon nzType="plus"></span>创建流程
             </button>
         </div>

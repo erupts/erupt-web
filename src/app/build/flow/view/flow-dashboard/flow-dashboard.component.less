@@ -11,49 +11,51 @@
             overflow: hidden;
 
             .sidebar {
-                width: 200px;
+                width: 196px;
                 height: 100%;
-                background: white;
-                border-right: 1px solid #e8e8e8;
+                background: #f7f8fa;
+                border-right: 1px solid #e4e6eb;
                 display: flex;
                 flex-direction: column;
                 flex-shrink: 0;
 
                 .sidebar-header {
                     height: 48px;
-                    padding: 0 16px;
-                    border-bottom: 1px solid #e8e8e8;
+                    padding: 0 14px;
+                    border-bottom: 1px solid #e4e6eb;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
                     flex-shrink: 0;
 
                     .sidebar-title {
-                        font-size: 13px;
+                        font-size: 12px;
                         font-weight: 600;
-                        color: #1a1a1a;
+                        color: #595959;
+                        letter-spacing: 0.04em;
+                        text-transform: uppercase;
                     }
                 }
 
                 .sidebar-menu {
                     flex: 1;
                     overflow-y: auto;
-                    padding: 4px 8px;
+                    padding: 6px 8px;
                 }
 
                 .menu-item {
                     position: relative;
                     display: flex;
                     align-items: center;
-                    height: 34px;
+                    height: 32px;
                     padding: 0 10px;
                     gap: 8px;
                     cursor: pointer;
-                    transition: background 0.15s;
+                    transition: background 0.12s;
                     border-radius: 4px;
 
                     &:hover {
-                        background: #f5f5f5;
+                        background: #eef0f4;
                     }
 
                     &.active {
@@ -65,8 +67,8 @@
                             content: '';
                             position: absolute;
                             left: 0;
-                            top: 7px;
-                            bottom: 7px;
+                            top: 6px;
+                            bottom: 6px;
                             width: 2px;
                             background: var(--ant-primary-color, #1890ff);
                             border-radius: 1px;
@@ -109,16 +111,12 @@
 
                 .list-header {
                     height: 48px;
-                    padding: 0 16px;
-                    border-bottom: 1px solid #e8e8e8;
+                    padding: 0 20px;
+                    border-bottom: 1px solid #f0f0f0;
                     display: flex;
                     align-items: center;
                     gap: 16px;
                     flex-shrink: 0;
-
-                    .ant-input-affix-wrapper-borderless {
-                        background: transparent;
-                    }
 
                     .stat-item {
                         display: flex;
@@ -137,12 +135,19 @@
                             color: #8c8c8c;
                         }
                     }
+
+                    .ant-input-affix-wrapper-borderless {
+                        background: #f5f5f5;
+                        border-radius: 4px;
+                        padding: 0 10px;
+                        height: 30px;
+                    }
                 }
 
                 .flow-content {
                     flex: 1;
                     overflow-y: auto;
-                    padding: 18px 20px;
+                    padding: 20px;
                     background: #f5f7fa;
                 }
 
@@ -154,15 +159,22 @@
                     }
 
                     .group-title {
-                        font-size: 12px;
+                        font-size: 11px;
                         font-weight: 600;
                         color: #8c8c8c;
                         text-transform: uppercase;
-                        letter-spacing: 0.05em;
+                        letter-spacing: 0.07em;
                         margin-bottom: 10px;
                         display: flex;
                         align-items: center;
-                        gap: 6px;
+                        gap: 8px;
+
+                        &::after {
+                            content: '';
+                            flex: 1;
+                            height: 1px;
+                            background: #e8eaed;
+                        }
 
                         .group-count {
                             font-size: 11px;
@@ -174,7 +186,7 @@
 
                     .flow-grid {
                         display: grid;
-                        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+                        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                         gap: 8px;
                     }
                 }
@@ -187,25 +199,26 @@
                     padding: 10px 12px;
                     border-radius: 4px;
                     cursor: pointer;
-                    transition: background 0.15s;
+                    transition: all 0.12s;
                     background: white;
-                    border: 1px solid #ebebeb;
+                    border: 1px solid #e8eaed;
 
                     &:hover {
                         border-color: var(--ant-primary-color, #1890ff);
                         background: var(--ant-primary-1, #e6f7ff);
+                        box-shadow: 0 1px 4px rgba(24, 144, 255, 0.12);
                     }
 
                     .flow-icon {
                         width: 36px;
                         height: 36px;
-                        border-radius: 8px;
+                        border-radius: 6px;
                         flex-shrink: 0;
                         display: flex;
                         align-items: center;
                         justify-content: center;
                         color: white;
-                        font-size: 15px;
+                        font-size: 14px;
                     }
 
                     .flow-body {
@@ -217,7 +230,7 @@
                         font-size: 13px;
                         font-weight: 500;
                         color: #262626;
-                        line-height: 1.3;
+                        line-height: 1.35;
                         overflow: hidden;
                         text-overflow: ellipsis;
                         white-space: nowrap;
@@ -225,14 +238,76 @@
 
                     .flow-desc {
                         font-size: 11px;
-                        color: #bfbfbf;
-                        margin-top: 2px;
+                        color: #b0b0b0;
+                        margin-top: 1px;
                         overflow: hidden;
                         text-overflow: ellipsis;
                         white-space: nowrap;
                     }
                 }
             }
+        }
+    }
+
+    .mobile-menu-btn {
+        display: none;
+        flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+        ::ng-deep {
+            .flow-dashboard-container {
+                .sidebar-backdrop {
+                    display: none;
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0, 0, 0, 0.35);
+                    z-index: 199;
+                }
+
+                &.sidebar-open {
+                    .sidebar {
+                        transform: translateX(0);
+                        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+                    }
+
+                    .sidebar-backdrop {
+                        display: block;
+                    }
+                }
+
+                .sidebar {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    height: 100%;
+                    z-index: 200;
+                    transform: translateX(-100%);
+                    transition: transform 0.25s ease;
+                }
+
+                .main-content {
+                    width: 100%;
+
+                    .list-header {
+                        padding: 0 12px;
+                        gap: 8px;
+                    }
+
+                    .flow-content {
+                        padding: 12px;
+                    }
+
+                    .flow-group .flow-grid {
+                        grid-template-columns: 1fr 1fr;
+                        gap: 6px;
+                    }
+                }
+            }
+        }
+
+        .mobile-menu-btn {
+            display: flex;
         }
     }
 }
