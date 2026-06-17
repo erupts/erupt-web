@@ -83,6 +83,9 @@ export class DesignerComponent implements OnInit, OnDestroy {
     // registered Erupt models for reference-type field linking options (key=class name, value=feature name)
     eruptOptions: KV<string, string>[] = [];
 
+    // field kv (key=fieldName, value=title) of the currently selected reference field's linked erupt
+    linkedEruptFields: KV<string, string>[] = [];
+
     private keySeq: number = 0;
 
     private router$: Subscription;
@@ -227,6 +230,43 @@ export class DesignerComponent implements OnInit, OnDestroy {
         event && event.stopPropagation();
         this.ensureRefTypeConfig(field);
         this.selected = field;
+        if (this.needLink(field.edit.type)) {
+            this.loadLinkedFields(field.linkErupt);
+        } else {
+            this.linkedEruptFields = [];
+        }
+    }
+
+    loadLinkedFields(eruptName: string | null | undefined): void {
+        if (!eruptName) {
+            this.linkedEruptFields = [];
+            return;
+        }
+        this.designerService.eruptFields(eruptName).subscribe({
+            next: res => this.linkedEruptFields = res.data || [],
+            error: () => (this.linkedEruptFields = [])
+        });
+    }
+
+    onLinkEruptChange(eruptName: string | null): void {
+        this.saveDraft();
+        this.loadLinkedFields(eruptName);
+        if (this.selected) {
+            const e = this.selected.edit;
+            if (e.referenceTableType) {
+                e.referenceTableType.id = "id";
+                e.referenceTableType.label = undefined;
+            }
+            if (e.referenceTreeType) {
+                e.referenceTreeType.id = "id";
+                e.referenceTreeType.label = undefined;
+                e.referenceTreeType.pid = undefined;
+            }
+            if (e.checkboxType) {
+                e.checkboxType.id = "id";
+                e.checkboxType.label = undefined;
+            }
+        }
     }
 
     private ensureRefTypeConfig(field: DesignerField): void {
@@ -527,6 +567,11 @@ export class DesignerComponent implements OnInit, OnDestroy {
         return DesignerComponent.FULL_LINE_TYPES.has(field.edit.type);
     }
 
+    // whether a palette item type is naturally full-width (used to style the drag placeholder)
+    paletteItemFullLine(type: EditType): boolean {
+        return DesignerComponent.FULL_LINE_TYPES.has(type);
+    }
+
     // only reference-type components require a linked model config
     private static readonly LINK_TYPES = new Set<EditType>([
         EditType.REFERENCE_TABLE, EditType.REFERENCE_TREE, EditType.CHECKBOX,
@@ -561,6 +606,11 @@ export class DesignerComponent implements OnInit, OnDestroy {
         }
         let seen = new Set<string>();
         for (let field of this.form.fields) {
+            if (!field.edit.title) {
+                this.msg.warning(this.i18n.fanyi("designer.field_title_required") + ": " + field.fieldName);
+                this.select(field);
+                return false;
+            }
             if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(field.fieldName)) {
                 this.msg.warning(this.i18n.fanyi("designer.field_name_invalid") + ": " + field.fieldName);
                 this.select(field);
@@ -574,6 +624,17 @@ export class DesignerComponent implements OnInit, OnDestroy {
             seen.add(field.fieldName);
             if (this.needLink(field.edit.type) && !field.linkErupt) {
                 this.msg.warning(this.i18n.fanyi("designer.link_erupt_required") + ": " + field.edit.title);
+                this.select(field);
+                return false;
+            }
+            const e = field.edit;
+            const missingRefField = (e.type === EditType.REFERENCE_TABLE || e.type === EditType.TAB_TABLE_REFER)
+                && (!e.referenceTableType?.id || !e.referenceTableType?.label)
+                || (e.type === EditType.REFERENCE_TREE || e.type === EditType.TAB_TREE)
+                && (!e.referenceTreeType?.id || !e.referenceTreeType?.label)
+                || e.type === EditType.CHECKBOX && (!e.checkboxType?.id || !e.checkboxType?.label);
+            if (missingRefField) {
+                this.msg.warning(this.i18n.fanyi("designer.ref_field_required") + ": " + field.edit.title);
                 this.select(field);
                 return false;
             }

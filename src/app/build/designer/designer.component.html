@@ -66,7 +66,7 @@
                              [cdkDropListConnectedTo]="['designer-canvas']"
                              [cdkDropListSortingDisabled]="true">
                             @for (item of paletteItems(group); track item.label) {
-                                <div class="palette-item" cdkDrag [cdkDragData]="item" (click)="addFromPalette(item)">
+                                <div class="palette-item" [class.palette-item-third]="!paletteItemFullLine(item.type)" cdkDrag [cdkDragData]="item" (click)="addFromPalette(item)">
                                     <span nz-icon [nzType]="item.icon"></span>
                                     <span class="palette-item-label">{{ item.label | translate }}</span>
                                 </div>
@@ -80,6 +80,7 @@
         <!-- 画布 -->
         <div class="designer-canvas-wrap" (click)="deselect()">
             <div class="designer-canvas" id="designer-canvas" cdkDropList
+                 [class.canvas-default-mode]="form.erupt.layout?.formSize !== formSize.FULL_LINE"
                  [cdkDropListOrientation]="form.erupt.layout?.formSize === formSize.FULL_LINE ? 'vertical' : 'mixed'"
                  [cdkDropListData]="form.fields" (cdkDropListDropped)="drop($event)">
                 @if (form.fields.length === 0) {
@@ -215,12 +216,12 @@
                 } @else {
                     <div class="props-form" (change)="saveDraft()">
                         <div class="prop-item">
-                            <label>{{ 'designer.field_name' | translate }}</label>
+                            <label><span style="color:#ff4d4f">*</span> {{ 'designer.field_name' | translate }}</label>
                             <input nz-input [(ngModel)]="selected.fieldName"
                                    (focus)="renameFrom = selected.fieldName" (blur)="commitRename(selected)"/>
                         </div>
                         <div class="prop-item">
-                            <label>{{ 'designer.field_title' | translate }}</label>
+                            <label><span style="color:#ff4d4f">*</span> {{ 'designer.field_title' | translate }}</label>
                             <input nz-input [(ngModel)]="selected.edit.title"
                                    (ngModelChange)="titleChange(selected)"/>
                         </div>
@@ -235,9 +236,9 @@
                             </div>
                             @if (needLink(selected.edit.type)) {
                                 <div class="prop-item">
-                                    <label>{{ 'designer.link_erupt' | translate }}</label>
+                                    <label><span style="color:#ff4d4f">*</span> {{ 'designer.link_erupt' | translate }}</label>
                                     <nz-select [(ngModel)]="selected.linkErupt" style="width: 100%"
-                                               nzShowSearch nzAllowClear (ngModelChange)="saveDraft()"
+                                               nzShowSearch nzAllowClear (ngModelChange)="onLinkEruptChange($event)"
                                                [nzPlaceHolder]="'designer.link_erupt_hint' | translate">
                                         @for (e of eruptOptions; track e.key) {
                                             <nz-option [nzValue]="e.key" [nzLabel]="e.value"></nz-option>
@@ -382,80 +383,140 @@
                                     <nz-divider [nzText]="'designer.ref_config' | translate"
                                                 nzOrientation="left" nzPlain></nz-divider>
                                     <div class="prop-item">
-                                        <label>{{ 'designer.ref_id' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.id"
-                                               (ngModelChange)="saveDraft()" placeholder="id"/>
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_id' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.referenceTableType!.id"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'id'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                     <div class="prop-item">
-                                        <label>{{ 'designer.ref_label' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.label"
-                                               (ngModelChange)="saveDraft()" placeholder="name"/>
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_label' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.referenceTableType!.label"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'name'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                 }
                                 @case (editType.TAB_TABLE_REFER) {
                                     <nz-divider [nzText]="'designer.ref_config' | translate"
                                                 nzOrientation="left" nzPlain></nz-divider>
                                     <div class="prop-item">
-                                        <label>{{ 'designer.ref_id' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.id"
-                                               (ngModelChange)="saveDraft()" placeholder="id"/>
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_id' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.referenceTableType!.id"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'id'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                     <div class="prop-item">
-                                        <label>{{ 'designer.ref_label' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTableType!.label"
-                                               (ngModelChange)="saveDraft()" placeholder="name"/>
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_label' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.referenceTableType!.label"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'name'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                 }
                                 @case (editType.REFERENCE_TREE) {
                                     <nz-divider [nzText]="'designer.ref_config' | translate"
                                                 nzOrientation="left" nzPlain></nz-divider>
                                     <div class="prop-item">
-                                        <label>{{ 'designer.ref_id' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.id"
-                                               (ngModelChange)="saveDraft()" placeholder="id"/>
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_id' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.referenceTreeType!.id"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'id'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                     <div class="prop-item">
-                                        <label>{{ 'designer.ref_label' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.label"
-                                               (ngModelChange)="saveDraft()" placeholder="name"/>
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_label' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.referenceTreeType!.label"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'name'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                     <div class="prop-item">
                                         <label>{{ 'designer.ref_pid' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.pid"
-                                               (ngModelChange)="saveDraft()" placeholder="pid"/>
+                                        <nz-select [(ngModel)]="selected.edit.referenceTreeType!.pid"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'pid'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                 }
                                 @case (editType.TAB_TREE) {
                                     <nz-divider [nzText]="'designer.ref_config' | translate"
                                                 nzOrientation="left" nzPlain></nz-divider>
                                     <div class="prop-item">
-                                        <label>{{ 'designer.ref_id' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.id"
-                                               (ngModelChange)="saveDraft()" placeholder="id"/>
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_id' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.referenceTreeType!.id"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'id'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                     <div class="prop-item">
-                                        <label>{{ 'designer.ref_label' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.label"
-                                               (ngModelChange)="saveDraft()" placeholder="name"/>
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_label' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.referenceTreeType!.label"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'name'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                     <div class="prop-item">
                                         <label>{{ 'designer.ref_pid' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.referenceTreeType!.pid"
-                                               (ngModelChange)="saveDraft()" placeholder="pid"/>
+                                        <nz-select [(ngModel)]="selected.edit.referenceTreeType!.pid"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'pid'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                 }
                                 @case (editType.CHECKBOX) {
                                     <nz-divider [nzText]="'designer.ref_config' | translate"
                                                 nzOrientation="left" nzPlain></nz-divider>
                                     <div class="prop-item">
-                                        <label>{{ 'designer.ref_id' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.checkboxType!.id"
-                                               (ngModelChange)="saveDraft()" placeholder="id"/>
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_id' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.checkboxType!.id"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'id'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                     <div class="prop-item">
-                                        <label>{{ 'designer.ref_label' | translate }}</label>
-                                        <input nz-input [(ngModel)]="selected.edit.checkboxType!.label"
-                                               (ngModelChange)="saveDraft()" placeholder="name"/>
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_label' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.checkboxType!.label"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'name'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                 }
                                 @case (editType.ATTACHMENT) {

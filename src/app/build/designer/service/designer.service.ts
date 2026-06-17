@@ -46,6 +46,11 @@ export class DesignerService {
         return this._http.post<R<void>>(this.path + "/publish/" + className, this.pruneKey(form), null, {observe: "body"});
     }
 
+    // Get field kv (key=fieldName, value=title) of a registered Erupt class for reference-type dropdown options
+    eruptFields(eruptName: string): Observable<R<KV<string, string>[]>> {
+        return this._http.get<R<KV<string, string>[]>>(this.path + "/erupt-fields/" + eruptName, null, {observe: "body"});
+    }
+
     // Strip frontend-only key fields from fields and vis entries before sending
     private pruneKey(form: DesignerForm): DesignerForm {
         return {

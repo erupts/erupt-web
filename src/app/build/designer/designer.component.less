@@ -176,6 +176,11 @@
         }
     }
 
+    // Third-width placeholder for non-full-line types when canvas is in DEFAULT (multi-column) mode
+    .designer-canvas.canvas-default-mode .palette-item.palette-item-third.cdk-drag-placeholder {
+        width: calc((100% - 8px) / 3);
+    }
+
     .canvas-empty {
         width: 100%;
         display: flex;
@@ -480,6 +485,9 @@
             display: flex;
             align-items: center;
             gap: 6px;
+        }
+        &.palette-item {
+            height: 75px;
         }
     }
 
