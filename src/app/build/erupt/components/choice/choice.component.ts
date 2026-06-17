@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {ChoiceEnum} from "../../model/erupt.enum";
 import {EruptFieldModel, VL} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
-import {ChoiceEnum} from "../../model/erupt.enum";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {I18NService} from "@core";
 import {EditTypeComponent} from "../edit-type/edit-type.component";
@@ -39,6 +39,8 @@ export class ChoiceComponent implements OnInit {
     isLoading = false;
 
     choiceEnum = ChoiceEnum;
+
+    @Input() selectMode: boolean = false;
 
     choiceVL: VL[] = [];
 

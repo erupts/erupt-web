@@ -1,8 +1,5 @@
 @if (isFetching) {
-    <div class="alain-default__progress-bar erupt-global__progress"></div>
-}
-@if (isFetching) {
-    <div class="erupt-global__progress"></div>
+    <div class="erupt-progress-bar"></div>
 }
 <nz-watermark [nzContent]="nickName" [nzZIndex]="999999" style="position: static" [nzFont]="{fontSize:13}">
     <layout-header class="erupt-header" [ngClass]="settings.layout['fixed']?'erupt-header_fixed':''"
