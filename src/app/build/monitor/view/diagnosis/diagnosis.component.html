@@ -47,6 +47,25 @@
                         <div nz-col [nzSpan]="8"><nz-statistic [nzValue]="jvm.classLoading?.unloaded ?? '-'" [nzTitle]="'monitor.diagnosis.class_unloaded' | translate"></nz-statistic></div>
                     </div>
 
+                    <!-- JIT 编译 -->
+                    <nz-divider nzDashed style="margin:12px 0"></nz-divider>
+                    <div nz-row [nzGutter]="16" class="stat-row">
+                        <div nz-col [nzSpan]="12">
+                            <nz-statistic
+                                [nzValue]="jvm.compilation?.name ?? '-'"
+                                [nzTitle]="'monitor.diagnosis.jit_compiler' | translate"
+                                [nzValueStyle]="{'font-size':'13px','font-weight':'500','line-height':'1.5'}">
+                            </nz-statistic>
+                        </div>
+                        <div nz-col [nzSpan]="12">
+                            <nz-statistic
+                                [nzValue]="compileTimeText(jvm.compilation)"
+                                [nzTitle]="'monitor.diagnosis.jit_time' | translate">
+                            </nz-statistic>
+                        </div>
+                    </div>
+                    <nz-divider nzDashed style="margin:12px 0"></nz-divider>
+
                     <!-- GC 回收 -->
                     <nz-table #gcTable [nzData]="jvm.gc" [nzShowPagination]="false" nzSize="small" [nzBordered]="true" class="gc-table">
                         <thead>

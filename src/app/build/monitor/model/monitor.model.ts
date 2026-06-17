@@ -131,6 +131,12 @@ export interface ClassLoad {
     unloaded: number;
 }
 
+export interface Compilation {
+    name: string;
+    totalTimeMs: number;
+    supported: boolean;
+}
+
 export interface ThreadStat {
     live: number;
     daemon: number;
@@ -145,6 +151,7 @@ export interface JvmDiagnosis {
     memoryPools: MemoryPool[];
     classLoading: ClassLoad;
     threads: ThreadStat;
+    compilation?: Compilation;
 }
 
 export interface HttpStat {

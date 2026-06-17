@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, NgZone, OnDestroy, ViewChild} from '@angular/core';
 import {I18NService} from '@core';
 import {MonitorService} from '../../service/monitor.service';
-import {DataSourcePool, HttpStat, JvmDiagnosis} from '../../model/monitor.model';
+import {Compilation, DataSourcePool, HttpStat, JvmDiagnosis} from '../../model/monitor.model';
 
 @Component({
     standalone: false,
@@ -110,6 +110,16 @@ export class DiagnosisComponent implements AfterViewInit, OnDestroy {
     sortHttp(sortBy: string): void {
         this.httpSortBy = sortBy;
         this.loadHttpStats();
+    }
+
+    compileTimeText(c: Compilation | undefined): string {
+        if (!c?.supported || !c.totalTimeMs) return '0 ms';
+        const ms = c.totalTimeMs;
+        if (ms < 1000) return ms + ' ms';
+        if (ms < 60000) return (ms / 1000).toFixed(1) + ' s';
+        const m = Math.floor(ms / 60000);
+        const s = Math.floor((ms % 60000) / 1000);
+        return `${m}m ${s}s`;
     }
 
     errorRate(stat: HttpStat): string {
