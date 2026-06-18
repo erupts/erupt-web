@@ -34,8 +34,6 @@
                             "src/assets",
                             "src/erupt",
                             "src/manifest.json",
-                            "src/pre.css",
-                            "src/pre.js",
                             "src/app.css",
                             "src/app.js",
                             "src/app.module.js",
