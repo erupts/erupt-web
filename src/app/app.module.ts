@@ -16,7 +16,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {authSimpleInterceptor} from '@delon/auth';
 
 import {DefaultInterceptor, I18NService, StartupService} from '@core';
-import {ALAIN_I18N_TOKEN} from '@delon/theme';
 // register angular
 import {BidiModule} from '@angular/cdk/bidi';
 import {AppComponent} from './app.component';
@@ -85,7 +84,7 @@ const APP_INIT_PROVIDES = [
         BidiModule,
         AppRoutingModule
     ],
-    providers: [provideZoneChangeDetection({eventCoalescing: true}), ...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, AppViewService, provideNzConfig(ngZorroConfig), {provide: ALAIN_I18N_TOKEN, useExisting: I18NService}],
+    providers: [provideZoneChangeDetection({eventCoalescing: true}), ...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, AppViewService, provideNzConfig(ngZorroConfig)],
     bootstrap: [AppComponent]
 })
 export class AppModule {
