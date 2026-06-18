@@ -66,20 +66,6 @@ export class ChoiceComponent implements OnInit {
         }
     }
 
-    valueChange(val: any) {
-        if (this.eruptField.eruptFieldJson.edit.choiceType.trigger) {
-            if (this.editType) {
-                this.isLoading = true;
-                this.dataService.choiceTrigger(this.eruptModel.eruptName, this.eruptField.fieldName, val, this.eruptParentName).subscribe(data => {
-                    if (data) {
-                        this.editType.fillForm(data);
-                    }
-                    this.isLoading = false;
-                })
-            }
-        }
-    }
-
     getFormData(): object {
         return this.eruptBuildModel
             ? this.dataHandlerService.eruptValueToObject(this.eruptBuildModel)

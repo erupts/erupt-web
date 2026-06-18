@@ -1,6 +1,6 @@
 @if (!selectMode && eruptField.eruptFieldJson.edit.choiceType.type === choiceEnum.RADIO) {
     <nz-radio-group [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
-                    [name]="eruptField.fieldName" (ngModelChange)="valueChange($event)"
+                    [name]="eruptField.fieldName"
                     class="erupt-input stander-line-height">
         @if (checkAll) {
             <label nz-radio [nzValue]="">{{ 'global.all'|translate }}</label>
@@ -19,7 +19,6 @@
                [nzLoading]="isLoading"
                [nzDisabled]="readonly" nzAllowClear
                [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
-               (ngModelChange)="valueChange($event)"
                [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
                [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true"
                [nzDropdownRender]="eruptField.eruptFieldJson.edit.choiceType.fetchHandler?.length > 0 ? choiceRefreshFooter : null">
