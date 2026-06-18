@@ -1,12 +1,4 @@
-import {
-    AttachmentEnum,
-    ChoiceEnum,
-    DateEnum,
-    EditType,
-    FormSize,
-    PagingType,
-    PickerMode
-} from "../../erupt/model/erupt.enum";
+import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, PickerMode} from "../../erupt/model/erupt.enum";
 import {I18NService} from "@core";
 
 /**
@@ -63,7 +55,14 @@ export interface DesignerVis {
     fields?: string[];
     boardView?: { groupField?: string };
     cardView?: { coverField?: string; coverEffect?: CoverEffect };
-    ganttView?: { startDateField?: string; endDateField?: string; groupField?: string; pidField?: string; progressField?: string; colorField?: string };
+    ganttView?: {
+        startDateField?: string;
+        endDateField?: string;
+        groupField?: string;
+        pidField?: string;
+        progressField?: string;
+        colorField?: string
+    };
     calendarView?: { dateField?: string; endDateField?: string; colorField?: string };
 }
 
@@ -110,7 +109,7 @@ export interface DesignerEdit {
     show?: boolean;
     placeHolder?: string;
     type: EditType;
-    search?: { value?: boolean; vague?: boolean };
+    search?: { value?: boolean; };
     readonly?: { add?: boolean; edit?: boolean };
     inputType?: { length?: number; fullSpan?: boolean; regex?: string };
     numberType?: { min?: number; max?: number };
@@ -158,7 +157,17 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
             {type: EditType.TEXTAREA, label: "designer.type.textarea", icon: "file-text"},
             {type: EditType.NUMBER, label: "designer.type.number", icon: "field-number", edit: {numberType: {}}},
             {type: EditType.PASSWORD, label: "designer.type.password", icon: "lock"},
-            {type: EditType.BOOLEAN, label: "designer.type.boolean", icon: "check-circle", edit: {boolType: {trueText: I18NService.instance?.fanyi('designer.bool.true'), falseText: I18NService.instance?.fanyi('designer.bool.false')}}},
+            {
+                type: EditType.BOOLEAN,
+                label: "designer.type.boolean",
+                icon: "check-circle",
+                edit: {
+                    boolType: {
+                        trueText: I18NService.instance?.fanyi('designer.bool.true'),
+                        falseText: I18NService.instance?.fanyi('designer.bool.false')
+                    }
+                }
+            },
             {type: EditType.DATE, label: "designer.type.date", icon: "calendar", edit: {dateType: {type: DateEnum.DATE}}},
             {type: EditType.SLIDER, label: "designer.type.slider", icon: "sliders", edit: {sliderType: {min: 0, max: 100, step: 1}}},
             {type: EditType.RATE, label: "designer.type.rate", icon: "star", edit: {rateType: {count: 5}}},
@@ -168,16 +177,51 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
     {
         title: "designer.group.choice",
         items: [
-            {type: EditType.CHOICE, label: "designer.type.choice", icon: "down-circle", edit: {choiceType: {type: ChoiceEnum.SELECT, vl: [{value: "1", label: I18NService.instance?.fanyi('designer.option.one')}, {value: "2", label: I18NService.instance?.fanyi('designer.option.two')}]}}},
-            {type: EditType.MULTI_CHOICE, label: "designer.type.multi_choice", icon: "check-square", edit: {multiChoiceType: {vl: [{value: "1", label: I18NService.instance?.fanyi('designer.option.one')}, {value: "2", label: I18NService.instance?.fanyi('designer.option.two')}]}}},
+            {
+                type: EditType.CHOICE,
+                label: "designer.type.choice",
+                icon: "down-circle",
+                edit: {
+                    choiceType: {
+                        type: ChoiceEnum.SELECT,
+                        vl: [{value: "1", label: I18NService.instance?.fanyi('designer.option.one')}, {
+                            value: "2",
+                            label: I18NService.instance?.fanyi('designer.option.two')
+                        }]
+                    }
+                }
+            },
+            {
+                type: EditType.MULTI_CHOICE,
+                label: "designer.type.multi_choice",
+                icon: "check-square",
+                edit: {
+                    multiChoiceType: {
+                        vl: [{value: "1", label: I18NService.instance?.fanyi('designer.option.one')}, {
+                            value: "2",
+                            label: I18NService.instance?.fanyi('designer.option.two')
+                        }]
+                    }
+                }
+            },
             {type: EditType.TAGS, label: "designer.type.tags", icon: "tags", edit: {tagsType: {tags: []}}}
         ]
     },
     {
         title: "designer.group.advanced",
         items: [
-            {type: EditType.ATTACHMENT, label: "designer.type.attachment", icon: "upload", edit: {attachmentType: {type: AttachmentEnum.BASE, maxLimit: 1}}},
-            {type: EditType.ATTACHMENT, label: "designer.type.image", icon: "file-image", edit: {attachmentType: {type: AttachmentEnum.IMAGE, maxLimit: 1, fileTypes: ["png", "jpg", "jpeg", "gif", "webp"]}}},
+            {
+                type: EditType.ATTACHMENT,
+                label: "designer.type.attachment",
+                icon: "upload",
+                edit: {attachmentType: {type: AttachmentEnum.BASE, maxLimit: 1}}
+            },
+            {
+                type: EditType.ATTACHMENT,
+                label: "designer.type.image",
+                icon: "file-image",
+                edit: {attachmentType: {type: AttachmentEnum.IMAGE, maxLimit: 1, fileTypes: ["png", "jpg", "jpeg", "gif", "webp"]}}
+            },
             {type: EditType.HTML_EDITOR, label: "designer.type.html_editor", icon: "font-size"},
             {type: EditType.MARKDOWN, label: "designer.type.markdown", icon: "read"},
             {type: EditType.CODE_EDITOR, label: "designer.type.code_editor", icon: "code", edit: {codeEditType: {language: "json", height: 300}}},
@@ -195,13 +239,67 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
     {
         title: "designer.group.reference",
         items: [
-            {type: EditType.REFERENCE_TABLE, label: "designer.type.reference_table", icon: "table", needLink: true, edit: {referenceTableType: {}}, disabled: true, disabledTip: "designer.reference.disabled_tip"},
-            {type: EditType.REFERENCE_TREE, label: "designer.type.reference_tree", icon: "apartment", needLink: true, edit: {referenceTreeType: {}}, disabled: true, disabledTip: "designer.reference.disabled_tip"},
-            {type: EditType.CHECKBOX, label: "designer.type.checkbox", icon: "check-square", needLink: true, edit: {checkboxType: {}}, disabled: true, disabledTip: "designer.reference.disabled_tip"},
-            {type: EditType.TAB_TABLE_ADD, label: "designer.type.tab_table_add", icon: "unordered-list", needLink: true, disabled: true, disabledTip: "designer.reference.disabled_tip"},
-            {type: EditType.TAB_TABLE_REFER, label: "designer.type.tab_table_refer", icon: "link", needLink: true, edit: {referenceTableType: {}}, disabled: true, disabledTip: "designer.reference.disabled_tip"},
-            {type: EditType.TAB_TREE, label: "designer.type.tab_tree", icon: "node-expand", needLink: true, edit: {referenceTreeType: {}}, disabled: true, disabledTip: "designer.reference.disabled_tip"},
-            {type: EditType.COMBINE, label: "designer.type.combine", icon: "swap", needLink: true, disabled: true, disabledTip: "designer.reference.disabled_tip"}
+            {
+                type: EditType.REFERENCE_TABLE,
+                label: "designer.type.reference_table",
+                icon: "table",
+                needLink: true,
+                edit: {referenceTableType: {}},
+                disabled: true,
+                disabledTip: "designer.reference.disabled_tip"
+            },
+            {
+                type: EditType.REFERENCE_TREE,
+                label: "designer.type.reference_tree",
+                icon: "apartment",
+                needLink: true,
+                edit: {referenceTreeType: {}},
+                disabled: true,
+                disabledTip: "designer.reference.disabled_tip"
+            },
+            {
+                type: EditType.CHECKBOX,
+                label: "designer.type.checkbox",
+                icon: "check-square",
+                needLink: true,
+                edit: {checkboxType: {}},
+                disabled: true,
+                disabledTip: "designer.reference.disabled_tip"
+            },
+            {
+                type: EditType.TAB_TABLE_ADD,
+                label: "designer.type.tab_table_add",
+                icon: "unordered-list",
+                needLink: true,
+                disabled: true,
+                disabledTip: "designer.reference.disabled_tip"
+            },
+            {
+                type: EditType.TAB_TABLE_REFER,
+                label: "designer.type.tab_table_refer",
+                icon: "link",
+                needLink: true,
+                edit: {referenceTableType: {}},
+                disabled: true,
+                disabledTip: "designer.reference.disabled_tip"
+            },
+            {
+                type: EditType.TAB_TREE,
+                label: "designer.type.tab_tree",
+                icon: "node-expand",
+                needLink: true,
+                edit: {referenceTreeType: {}},
+                disabled: true,
+                disabledTip: "designer.reference.disabled_tip"
+            },
+            {
+                type: EditType.COMBINE,
+                label: "designer.type.combine",
+                icon: "swap",
+                needLink: true,
+                disabled: true,
+                disabledTip: "designer.reference.disabled_tip"
+            }
         ]
     },
 ];

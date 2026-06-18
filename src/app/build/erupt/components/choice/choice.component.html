@@ -1,81 +1,48 @@
-@if (!vagueSearch) {
-  @if (!selectMode && eruptField.eruptFieldJson.edit.choiceType.type === choiceEnum.RADIO) {
+@if (!selectMode && eruptField.eruptFieldJson.edit.choiceType.type === choiceEnum.RADIO) {
     <nz-radio-group [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
-      [name]="eruptField.fieldName" (ngModelChange)="valueChange($event)"
-      class="erupt-input stander-line-height">
-      @if (checkAll) {
-        <label nz-radio [nzValue]="">{{ 'global.all'|translate }}</label>
-      }
-      @for (vl of choiceVL; track vl.value) {
-        <label nz-radio nz-tooltip [nzTooltipTitle]="vl.desc"
-          [nzDisabled]="readonly||vl.disable"
-          [nzValue]="vl.value">
-          @if (vl.color) {<span class="choice-color-dot" [style.background]="vl.color"></span>}
-          <span [style.color]="!vl.disable && vl.color">{{ vl.label }}</span>
-        </label>
-      }
-    </nz-radio-group>
-  } @else {
-    <nz-select class="erupt-input"
-      [nzLoading]="isLoading"
-      [nzDisabled]="readonly" nzAllowClear
-      [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
-      (ngModelChange)="valueChange($event)"
-      [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
-      [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true"
-      [nzDropdownRender]="eruptField.eruptFieldJson.edit.choiceType.fetchHandler?.length > 0 ? choiceRefreshFooter : null">
-      @if (!isLoading) {
-        @for (vl of choiceVL; track vl.value) {
-          <nz-option nzCustomContent
-            [nzDisabled]="vl.disable" [nzValue]="vl.value" [nzLabel]="vl.label">
-            <div nz-tooltip [nzTooltipPlacement]="'left'" [nzTooltipTitle]="vl.desc"
-              [style.color]="!vl.disable && vl.color">
-              @if (vl.color) {<span class="choice-color-dot" [style.background]="vl.color"></span>}
-              {{ vl.label }}
-            </div>
-          </nz-option>
+                    [name]="eruptField.fieldName" (ngModelChange)="valueChange($event)"
+                    class="erupt-input stander-line-height">
+        @if (checkAll) {
+            <label nz-radio [nzValue]="">{{ 'global.all'|translate }}</label>
         }
-      }
-      @if (isLoading) {
-        <nz-option nzDisabled nzCustomContent>
-          <div class="text-center">
-            <i nz-icon nzType="loading" class="loading-icon"></i>
-          </div>
-        </nz-option>
-      }
+        @for (vl of choiceVL; track vl.value) {
+            <label nz-radio nz-tooltip [nzTooltipTitle]="vl.desc"
+                   [nzDisabled]="readonly||vl.disable"
+                   [nzValue]="vl.value">
+                @if (vl.color) {<span class="choice-color-dot" [style.background]="vl.color"></span>}
+                <span [style.color]="!vl.disable && vl.color">{{ vl.label }}</span>
+            </label>
+        }
+    </nz-radio-group>
+} @else {
+    <nz-select class="erupt-input"
+               [nzLoading]="isLoading"
+               [nzDisabled]="readonly" nzAllowClear
+               [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
+               (ngModelChange)="valueChange($event)"
+               [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
+               [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true"
+               [nzDropdownRender]="eruptField.eruptFieldJson.edit.choiceType.fetchHandler?.length > 0 ? choiceRefreshFooter : null">
+        @if (!isLoading) {
+            @for (vl of choiceVL; track vl.value) {
+                <nz-option nzCustomContent
+                           [nzDisabled]="vl.disable" [nzValue]="vl.value" [nzLabel]="vl.label">
+                    <div nz-tooltip [nzTooltipPlacement]="'left'" [nzTooltipTitle]="vl.desc"
+                         [style.color]="!vl.disable && vl.color">
+                        @if (vl.color) {<span class="choice-color-dot" [style.background]="vl.color"></span>}
+                        {{ vl.label }}
+                    </div>
+                </nz-option>
+            }
+        }
+        @if (isLoading) {
+            <nz-option nzDisabled nzCustomContent>
+                <div class="text-center">
+                    <i nz-icon nzType="loading" class="loading-icon"></i>
+                </div>
+            </nz-option>
+        }
     </nz-select>
-  }
-}
-@if (vagueSearch) {
-  <nz-select class="erupt-input"
-    [nzLoading]="isLoading"
-    [nzDisabled]="readonly" nzAllowClear
-    [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
-    (ngModelChange)="valueChange($event)"
-    [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
-    nzMode="multiple"
-    [name]="eruptField.fieldName" [nzSize]="size" [nzShowSearch]="true"
-    [nzDropdownRender]="eruptField.eruptFieldJson.edit.choiceType.fetchHandler?.length > 0 ? choiceRefreshFooter : null">
-    @if (!isLoading) {
-      @for (vl of choiceVL; track vl.value) {
-        <nz-option nzCustomContent
-          [nzDisabled]="vl.disable" [nzValue]="vl.value" [nzLabel]="vl.label">
-          <div nz-tooltip [nzTooltipPlacement]="'left'" [nzTooltipTitle]="vl.desc"
-            [style.color]="vl.color">
-            @if (vl.color) {<span class="choice-color-dot" [style.background]="vl.color"></span>}
-            {{ vl.label }}
-          </div>
-        </nz-option>
-      }
-    }
-    @if (isLoading) {
-      <nz-option nzDisabled nzCustomContent>
-        <div class="text-center">
-          <i nz-icon nzType="loading" class="loading-icon"></i>
-        </div>
-      </nz-option>
-    }
-  </nz-select>
 }
 
 <ng-template #choiceRefreshFooter>

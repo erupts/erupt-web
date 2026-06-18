@@ -123,7 +123,7 @@ export class UiBuildService {
 
             obj.width = titleWidth;
             //display type
-            switch (view.viewType) {
+            switch (view.type) {
                 case ViewType.TEXT:
                     obj.width = null;
                     obj.className = "text-col";
@@ -650,7 +650,7 @@ export class UiBuildService {
     }
 
     attachmentView(view: View, path: string) {
-        let viewType = view.viewType;
+        let viewType = view.type;
         let $paths: string[];
         if (view.eruptFieldModel.eruptFieldJson.edit.type === EditType.ATTACHMENT) {
             const attachmentType = view.eruptFieldModel.eruptFieldJson.edit.attachmentType;

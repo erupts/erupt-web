@@ -261,40 +261,6 @@ export class DataHandlerService {
         }
     }
 
-    searchEruptToObject(eruptBuildModel: EruptBuildModel): object {
-        const obj = this.eruptValueToObject(eruptBuildModel);
-        eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
-            const edit = field.eruptFieldJson.edit;
-            if (edit.search.value) {
-                if (edit.search.vague) {
-                    switch (edit.type) {
-                        case EditType.NUMBER:
-                            if ((edit.$l_val || edit.$l_val === 0) && (edit.$r_val || edit.$r_val === 0)) {
-                                obj[field.fieldName] = [edit.$l_val, edit.$r_val];
-                            }
-                            break;
-                        case EditType.DATE:
-                            if (edit.$value) {
-                                if (edit.dateType.type == DateEnum.DATE_TIME) {
-                                    obj[field.fieldName] = [
-                                        this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'HH:mm:ss.SSS"),
-                                        this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'HH:mm:ss.SSS")
-                                    ];
-                                } else {
-                                    obj[field.fieldName] = [
-                                        this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'00:00:00.000"),
-                                        this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'23:59:59.999")
-                                    ];
-                                }
-                            }
-                            break;
-                    }
-                }
-            }
-        });
-        return obj;
-    }
-
     dateFormat(date, edit: Edit): string {
         let format = null;
         switch (edit.dateType.type) {

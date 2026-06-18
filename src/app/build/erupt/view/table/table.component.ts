@@ -2,18 +2,7 @@ import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, Vi
 import {Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {
-    Alert,
-    Drill,
-    DrillInput,
-    EruptModel,
-    Page,
-    Power,
-    Row,
-    RowOperation,
-    Vis,
-    VisType
-} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Page, Power, Row, RowOperation, Vis, VisType} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -1468,9 +1457,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
     // determine whether a field is a numeric or date type
     isNumericOrDateType(field: View): boolean {
-        return field.viewType === ViewType.NUMBER ||
-            field.viewType === ViewType.DATE ||
-            field.viewType === ViewType.DATE_TIME;
+        return field.type === ViewType.NUMBER ||
+            field.type === ViewType.DATE ||
+            field.type === ViewType.DATE_TIME;
     }
 
     // get the list of available fields (excluding already selected ones)

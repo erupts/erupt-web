@@ -28,8 +28,6 @@ export class ChoiceComponent implements OnInit {
 
     @Input() eruptParentName: string;
 
-    @Input() vagueSearch: boolean = false;
-
     @Input() readonly: boolean = false;
 
     @Input() checkAll: boolean = false;

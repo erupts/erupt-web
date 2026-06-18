@@ -63,7 +63,7 @@ export interface View {
     width: string;
     desc: string;
     show: boolean;
-    viewType: ViewType;
+    type: ViewType;
     template: string;
     sortable: boolean;
     tpl: Tpl;
@@ -131,7 +131,6 @@ interface RateType {
 
 interface Search {
     value: boolean;
-    vague: boolean;
     notNull: boolean;
 }
 
