@@ -99,7 +99,7 @@ export class StartupService {
                 } else if (xhr.status !== 200) {
                     setTimeout(() => {
                         location.href = location.href.split("#")[0];
-                    }, 3000);
+                    }, 5000);
                 }
             };
         });
