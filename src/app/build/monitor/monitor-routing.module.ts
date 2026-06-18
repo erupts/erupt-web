@@ -5,9 +5,9 @@ import {RedisComponent} from './view/redis/redis.component';
 import {DiagnosisComponent} from './view/diagnosis/diagnosis.component';
 
 const routes: Routes = [
-    {path: 'server', component: ServerComponent, data: {title: '服务监控'}},
-    {path: 'redis', component: RedisComponent, data: {title: 'Redis 监控'}},
-    {path: 'diagnosis', component: DiagnosisComponent, data: {title: '诊断监控'}},
+    {path: 'server', component: ServerComponent},
+    {path: 'redis', component: RedisComponent},
+    {path: 'diagnosis', component: DiagnosisComponent},
     {path: '', redirectTo: 'server', pathMatch: 'full'}
 ];
 

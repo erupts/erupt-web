@@ -17,7 +17,7 @@ let tplLoad = import( "../build/tpl/tpl.module");
 
 // layout
 let coreRouter: Routes = [
-    {path: "", component: HomeComponent, data: {title: "首页"}},
+    {path: "", component: HomeComponent, data: {title: "Home"}},
     {path: "exception", loadChildren: () => import( "./exception/exception.module").then(m => m.ExceptionModule)},
     {path: "site/:url", component: SiteComponent},
     {

@@ -7,6 +7,7 @@ import {
     PagingType,
     PickerMode
 } from "../../erupt/model/erupt.enum";
+import {I18NService} from "@core";
 
 /**
  * 设计器数据结构：镜像后端 @Erupt / @EruptField / @Edit / @View 注解结构（原始成员名），
@@ -157,7 +158,7 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
             {type: EditType.TEXTAREA, label: "designer.type.textarea", icon: "file-text"},
             {type: EditType.NUMBER, label: "designer.type.number", icon: "field-number", edit: {numberType: {}}},
             {type: EditType.PASSWORD, label: "designer.type.password", icon: "lock"},
-            {type: EditType.BOOLEAN, label: "designer.type.boolean", icon: "check-circle", edit: {boolType: {trueText: "是", falseText: "否"}}},
+            {type: EditType.BOOLEAN, label: "designer.type.boolean", icon: "check-circle", edit: {boolType: {trueText: I18NService.instance?.fanyi('designer.bool.true'), falseText: I18NService.instance?.fanyi('designer.bool.false')}}},
             {type: EditType.DATE, label: "designer.type.date", icon: "calendar", edit: {dateType: {type: DateEnum.DATE}}},
             {type: EditType.SLIDER, label: "designer.type.slider", icon: "sliders", edit: {sliderType: {min: 0, max: 100, step: 1}}},
             {type: EditType.RATE, label: "designer.type.rate", icon: "star", edit: {rateType: {count: 5}}},
@@ -167,8 +168,8 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
     {
         title: "designer.group.choice",
         items: [
-            {type: EditType.CHOICE, label: "designer.type.choice", icon: "down-circle", edit: {choiceType: {type: ChoiceEnum.SELECT, vl: [{value: "1", label: "选项一"}, {value: "2", label: "选项二"}]}}},
-            {type: EditType.MULTI_CHOICE, label: "designer.type.multi_choice", icon: "check-square", edit: {multiChoiceType: {vl: [{value: "1", label: "选项一"}, {value: "2", label: "选项二"}]}}},
+            {type: EditType.CHOICE, label: "designer.type.choice", icon: "down-circle", edit: {choiceType: {type: ChoiceEnum.SELECT, vl: [{value: "1", label: I18NService.instance?.fanyi('designer.option.one')}, {value: "2", label: I18NService.instance?.fanyi('designer.option.two')}]}}},
+            {type: EditType.MULTI_CHOICE, label: "designer.type.multi_choice", icon: "check-square", edit: {multiChoiceType: {vl: [{value: "1", label: I18NService.instance?.fanyi('designer.option.one')}, {value: "2", label: I18NService.instance?.fanyi('designer.option.two')}]}}},
             {type: EditType.TAGS, label: "designer.type.tags", icon: "tags", edit: {tagsType: {tags: []}}}
         ]
     },
