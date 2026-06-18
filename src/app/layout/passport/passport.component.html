@@ -1,36 +1,48 @@
-<div style="position: absolute;right: 5%;top: 5%;z-index: 999">
-  <i18n-choice style="font-size: 1.3em;color: #000"></i18n-choice>
-</div>
-<div class="container">
-  <div class="wrap">
-    <div class="top">
-      <div class="head">
-        @if (logoPath) {
-          <img class="logo" [src]="logoPath" alt="logo">
-        }
-        <span class="title">{{title}}</span>
-      </div>
-      <div class="desc">
-        @if (desc) {
-          <span>{{desc}}</span>
-        }
-      </div>
+<div class="lp-page">
+
+  <!-- 和 admin 完全相同的顶栏 -->
+  <header class="lp-header">
+    <div class="lp-header-brand">
+      @if (logoPath) {
+        <img class="lp-header-logo" [src]="logoPath" alt="logo">
+      }
+      @if (!logoPath) {
+        <svg class="lp-header-icon" viewBox="0 0 36 36" fill="none">
+          <rect width="15" height="15" rx="3" fill="currentColor"/>
+          <rect x="21" width="15" height="15" rx="3" fill="currentColor" opacity="0.45"/>
+          <rect y="21" width="15" height="15" rx="3" fill="currentColor" opacity="0.45"/>
+          <rect x="21" y="21" width="15" height="15" rx="3" fill="currentColor" opacity="0.15"/>
+        </svg>
+      }
+      <span class="lp-header-title">{{title}}</span>
     </div>
-    <div style="display: flex; justify-content: center;">
-      <div class="pass-form">
+  </header>
+
+  <!-- 多语言悬浮在右上角 -->
+  <div class="lp-lang">
+    <i18n-choice></i18n-choice>
+  </div>
+
+  <!-- 内容区 -->
+  <main class="lp-content">
+    <div class="lp-card">
+      <!-- 和 tc-toolbar 同款的卡片头 -->
+      <div class="lp-card-head">
         <router-outlet></router-outlet>
       </div>
     </div>
+
     @if (copyright) {
-      <global-footer>
+      <p class="lp-copyright">
         @if (copyrightTxt) {
-          <p [innerHTML]="copyrightTxt"></p>
+          <span [innerHTML]="copyrightTxt"></span>
         }
         @if (!copyrightTxt) {
-          <i nz-icon nzType="copyright" nzTheme="outline"></i> 2018 - {{nowYear}}
-          <a href="https://www.erupt.xyz" target="_blank">Erupt Engine</a>&nbsp; All rights reserved.
+          &copy; 2018 – {{nowYear}}&nbsp;
+          <a href="https://www.erupt.xyz" target="_blank">Erupt Engine</a>
         }
-      </global-footer>
+      </p>
     }
-  </div>
+  </main>
+
 </div>
