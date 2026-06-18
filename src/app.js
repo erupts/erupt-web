@@ -20,7 +20,7 @@ window.eruptSiteConfig = {
         render: () => {
             return `<a href="https://start.erupt.xyz" target="_blank" style="
                 display: inline-flex; align-items: center; gap: 5px;
-                margin: 0 6px;
+                margin: 0;
                 padding: 3px 10px;
                 border-radius: 4px;
                 border: 1px solid #3f51b5;
