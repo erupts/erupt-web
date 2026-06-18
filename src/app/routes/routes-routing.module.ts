@@ -140,7 +140,6 @@ const routes: Routes = [
         children: coreRouter
     },
     // Single page without layout wrapper
-    // {path: "lock", component: UserLockComponent, data: {title: "Lock Screen", titleI18n: "lock"}},
     {path: "403", component: Exception403Component, data: {title: "403"}},
     {path: "404", component: Exception404Component, data: {title: "404"}},
     {path: "500", component: Exception500Component, data: {title: "500"}},
