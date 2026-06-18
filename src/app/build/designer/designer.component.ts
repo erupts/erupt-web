@@ -196,6 +196,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
     }
 
     addFromPalette(item: PaletteItem): void {
+        if (item.disabled) return;
         let field = this.createField(item);
         this.form.fields.push(field);
         this.select(field);

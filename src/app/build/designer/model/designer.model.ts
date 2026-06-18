@@ -1,4 +1,12 @@
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, PickerMode} from "../../erupt/model/erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    DateEnum,
+    EditType,
+    FormSize,
+    PagingType,
+    PickerMode
+} from "../../erupt/model/erupt.enum";
 
 /**
  * 设计器数据结构：镜像后端 @Erupt / @EruptField / @Edit / @View 注解结构（原始成员名），
@@ -132,6 +140,8 @@ export interface PaletteItem {
     edit?: Partial<DesignerEdit>;
     needLink?: boolean;     // whether this type requires a linked @Erupt class
     noView?: boolean;       // no table column generated (e.g. divider)
+    disabled?: boolean;
+    disabledTip?: string;
 }
 
 export interface PaletteGroup {
@@ -163,18 +173,6 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
         ]
     },
     {
-        title: "designer.group.reference",
-        items: [
-            {type: EditType.REFERENCE_TABLE, label: "designer.type.reference_table", icon: "table", needLink: true, edit: {referenceTableType: {}}},
-            // {type: EditType.REFERENCE_TREE, label: "designer.type.reference_tree", icon: "apartment", needLink: true, edit: {referenceTreeType: {}}},
-            // {type: EditType.CHECKBOX, label: "designer.type.checkbox", icon: "check-square", needLink: true, edit: {checkboxType: {}}},
-            // {type: EditType.TAB_TABLE_ADD, label: "designer.type.tab_table_add", icon: "unordered-list", needLink: true},
-            // {type: EditType.TAB_TABLE_REFER, label: "designer.type.tab_table_refer", icon: "link", needLink: true, edit: {referenceTableType: {}}},
-            // {type: EditType.TAB_TREE, label: "designer.type.tab_tree", icon: "node-expand", needLink: true, edit: {referenceTreeType: {}}},
-            // {type: EditType.COMBINE, label: "designer.type.combine", icon: "swap", needLink: true}
-        ]
-    },
-    {
         title: "designer.group.advanced",
         items: [
             {type: EditType.ATTACHMENT, label: "designer.type.attachment", icon: "upload", edit: {attachmentType: {type: AttachmentEnum.BASE, maxLimit: 1}}},
@@ -192,5 +190,17 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
             {type: EditType.DIVIDE, label: "designer.type.divide", icon: "line", noView: true},
             {type: EditType.GROUP, label: "designer.type.group", icon: "block", noView: true, edit: {groupType: {fields: [], collapsed: false}}}
         ]
-    }
+    },
+    {
+        title: "designer.group.reference",
+        items: [
+            {type: EditType.REFERENCE_TABLE, label: "designer.type.reference_table", icon: "table", needLink: true, edit: {referenceTableType: {}}, disabled: true, disabledTip: "designer.reference.disabled_tip"},
+            {type: EditType.REFERENCE_TREE, label: "designer.type.reference_tree", icon: "apartment", needLink: true, edit: {referenceTreeType: {}}, disabled: true, disabledTip: "designer.reference.disabled_tip"},
+            {type: EditType.CHECKBOX, label: "designer.type.checkbox", icon: "check-square", needLink: true, edit: {checkboxType: {}}, disabled: true, disabledTip: "designer.reference.disabled_tip"},
+            {type: EditType.TAB_TABLE_ADD, label: "designer.type.tab_table_add", icon: "unordered-list", needLink: true, disabled: true, disabledTip: "designer.reference.disabled_tip"},
+            {type: EditType.TAB_TABLE_REFER, label: "designer.type.tab_table_refer", icon: "link", needLink: true, edit: {referenceTableType: {}}, disabled: true, disabledTip: "designer.reference.disabled_tip"},
+            {type: EditType.TAB_TREE, label: "designer.type.tab_tree", icon: "node-expand", needLink: true, edit: {referenceTreeType: {}}, disabled: true, disabledTip: "designer.reference.disabled_tip"},
+            {type: EditType.COMBINE, label: "designer.type.combine", icon: "swap", needLink: true, disabled: true, disabledTip: "designer.reference.disabled_tip"}
+        ]
+    },
 ];
