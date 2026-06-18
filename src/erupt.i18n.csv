@@ -731,3 +731,54 @@ monitor.diagnosis.jit_time,编译总耗时,編譯總耗時,Compile Time,Temps de
 designer.ref_field_required,请配置主键字段和显示字段,請配置主鍵字段和顯示字段,Please configure ID field and label field,Veuillez configurer le champ ID et le champ étiquette,主キーフィールドと表示フィールドを設定してください,기본키 필드와 표시 필드를 설정해 주세요,Укажите поле первичного ключа и поле отображения,Configure el campo ID y el campo etiqueta,Bitte ID-Feld und Anzeigefeld konfigurieren,Configure o campo de chave e o campo de exibição,Harap konfigurasikan field kunci dan field label,يرجى تكوين حقل المفتاح وحقل العرض
 designer.field_title_required,标题不能为空,標題不能為空,Title is required,Le titre est requis,タイトルは必須です,제목은 필수입니다,Заголовок обязателен,El título es obligatorio,Titel ist erforderlich,O título é obrigatório,Judul wajib diisi,العنوان مطلوب
 designer.reference.disabled_tip,关联类型请使用注解方式建模,關聯類型請使用注解方式建模,Use annotation-based modeling for reference types,Utilisez la modélisation par annotation pour les types référence,参照型はアノテーション方式でモデリングしてください,참조 유형은 어노테이션 방식으로 모델링하세요,Используйте аннотации для моделирования ссылочных типов,Use el modelado por anotación para tipos de referencia,Verwenden Sie annotationsbasierte Modellierung für Referenztypen,Use modelagem baseada em anotações para tipos de referência,Gunakan pemodelan berbasis anotasi untuk tipe referensi,استخدم نمذجة الشرح للأنواع المرجعية
+tenant.enterprise_id,企业ID,企業ID,Enterprise ID,"ID d'entreprise",企業ID,기업 ID,ID организации,ID de empresa,Unternehmens-ID,ID da empresa,ID Perusahaan,معرّف المؤسسة
+tenant.platform_login,平台登录,平台登入,Platform Login,Connexion plateforme,プラットフォームログイン,플랫폼 로그인,Вход в платформу,Inicio de sesión,Plattform-Anmeldung,Login da plataforma,Login Platform,تسجيل دخول المنصة
+global.clear_cache,清除本地缓存,清除本地快取,Clear Local Cache,Vider le cache local,ローカルキャッシュをクリア,로컬 캐시 지우기,Очистить локальный кэш,Limpiar caché local,Lokalen Cache leeren,Limpar cache local,Hapus Cache Lokal,مسح الذاكرة المحلية
+print.select_template,选择模板,選擇模板,Select Template,Sélectionner un modèle,テンプレートを選択,템플릿 선택,Выбрать шаблон,Seleccionar plantilla,Vorlage auswählen,Selecionar modelo,Pilih Template,اختيار قالب
+print.insert_global_var,插入全局变量,插入全域變數,Insert Global Variable,Insérer une variable globale,グローバル変数を挿入,전역 변수 삽입,Вставить глобальную переменную,Insertar variable global,Globale Variable einfügen,Inserir variável global,Sisipkan Variabel Global,إدراج متغير عام
+print.insert_var,插入变量,插入變數,Insert Variable,Insérer une variable,変数を挿入,변수 삽입,Вставить переменную,Insertar variable,Variable einfügen,Inserir variável,Sisipkan Variabel,إدراج متغير
+print.page_setup,页面设置,頁面設定,Page Setup,Mise en page,ページ設定,페이지 설정,Настройка страницы,Configuración de página,Seiteneinrichtung,Configuração de página,Pengaturan Halaman,إعداد الصفحة
+print.paper_size,纸张大小,紙張大小,Paper Size,Taille du papier,用紙サイズ,용지 크기,Размер бумаги,Tamaño de papel,Papiergröße,Tamanho do papel,Ukuran Kertas,حجم الورق
+print.paper_orientation,纸张方向,紙張方向,Paper Orientation,Orientation du papier,用紙の向き,용지 방향,Ориентация бумаги,Orientación del papel,Papierausrichtung,Orientação do papel,Orientasi Kertas,اتجاه الورق
+print.margin_top,上边距 (mm),上邊距 (mm),Top Margin (mm),Marge supérieure (mm),上余白 (mm),상단 여백 (mm),Верхнее поле (мм),Margen superior (mm),Oberer Rand (mm),Margem superior (mm),Margin Atas (mm),الهامش العلوي (مم)
+print.margin_right,右边距 (mm),右邊距 (mm),Right Margin (mm),Marge droite (mm),右余白 (mm),오른쪽 여백 (mm),Правое поле (мм),Margen derecho (mm),Rechter Rand (mm),Margem direita (mm),Margin Kanan (mm),الهامش الأيمن (مم)
+print.margin_bottom,下边距 (mm),下邊距 (mm),Bottom Margin (mm),Marge inférieure (mm),下余白 (mm),하단 여백 (mm),Нижнее поле (мм),Margen inferior (mm),Unterer Rand (mm),Margem inferior (mm),Margin Bawah (mm),الهامش السفلي (مم)
+print.margin_left,左边距 (mm),左邊距 (mm),Left Margin (mm),Marge gauche (mm),左余白 (mm),왼쪽 여백 (mm),Левое поле (мм),Margen izquierdo (mm),Linker Rand (mm),Margem esquerda (mm),Margin Kiri (mm),الهامش الأيسر (مم)
+print.portrait,纵向,縱向,Portrait,Portrait,縦向き,세로,Книжная,Vertical,Hochformat,Retrato,Potret,طولي
+print.landscape,横向,橫向,Landscape,Paysage,横向き,가로,Альбомная,Horizontal,Querformat,Paisagem,Lanskap,أفقي
+cube.filter.null_value,(空值),(空值),(Empty),(Vide),(空),(비어 있음),(Пусто),(Vacío),(Leer),(Vazio),(Kosong),(فارغ)
+cube.report.compare.mom_period,上月同期,上月同期,Same Period Last Month,Même période mois précédent,先月同期,전월 동기,Тот же период прошлого месяца,Mismo período mes anterior,Gleicher Zeitraum Vormonat,Mesmo período mês anterior,Periode Bulan Lalu,نفس الفترة الشهر الماضي
+cube.report.compare.yoy_period,去年同期,去年同期,Same Period Last Year,Même période année précédente,昨年同期,전년 동기,Тот же период прошлого года,Mismo período año anterior,Gleicher Zeitraum Vorjahr,Mesmo período ano anterior,Periode Tahun Lalu,نفس الفترة العام الماضي
+cube.report.compare.current_period,当期,當期,Current Period,Période actuelle,当期,당기,Текущий период,Período actual,Aktueller Zeitraum,Período atual,Periode Saat Ini,الفترة الحالية
+smart_search.title,当满足以下条件时进入当前分支,當滿足以下條件時進入當前分支,Enter branch when conditions are met,Entrer dans la branche si les conditions sont remplies,条件を満たすとき現在のブランチに進む,조건 충족 시 현재 분기로 이동,Перейти к ветке при выполнении условий,Ingresar a la rama cuando se cumplan las condiciones,Zweig betreten wenn Bedingungen erfüllt sind,Entrar no ramo quando as condições forem atendidas,Masuk cabang saat kondisi terpenuhi,الدخول إلى الفرع عند استيفاء الشروط
+smart_search.reset,重置,重置,Reset,Réinitialiser,リセット,초기화,Сбросить,Restablecer,Zurücksetzen,Redefinir,Reset,إعادة تعيين
+smart_search.or,或,或,Or,Ou,または,또는,Или,O,Oder,Ou,Atau,أو
+smart_search.condition_group,条件组,條件組,Condition Group,Groupe de conditions,条件グループ,조건 그룹,Группа условий,Grupo de condiciones,Bedingungsgruppe,Grupo de condições,Grup Kondisi,مجموعة الشروط
+smart_search.and,且,且,And,Et,かつ,그리고,И,Y,Und,E,Dan,و
+smart_search.select_field,请选择字段,請選擇字段,Select Field,Sélectionner un champ,フィールドを選択,필드 선택,Выбрать поле,Seleccionar campo,Feld auswählen,Selecionar campo,Pilih Bidang,اختر حقلاً
+smart_search.submitter,提交人,提交人,Submitter,Soumissionnaire,提出者,제출자,Отправитель,Remitente,Einreicher,Enviado por,Pengirim,المُقدِّم
+smart_search.min_value,最小值,最小值,Min Value,Valeur min,最小値,최솟값,Мин. значение,Valor mínimo,Mindestwert,Valor mínimo,Nilai Minimum,أدنى قيمة
+smart_search.range_to,至,至,To,À,〜,~,до,A,Bis,A,Hingga,إلى
+smart_search.max_value,最大值,最大值,Max Value,Valeur max,最大値,최댓값,Макс. значение,Valor máximo,Maximalwert,Valor máximo,Nilai Maksimum,أقصى قيمة
+smart_search.input_value,请输入,請輸入,Enter value,Saisir une valeur,値を入力,값 입력,Введите значение,Ingrese un valor,Wert eingeben,Inserir valor,Masukkan Nilai,أدخل قيمة
+smart_search.select_value,请选择,請選擇,Please select,Veuillez sélectionner,選択してください,선택하세요,Выберите,Seleccione,Bitte auswählen,Por favor selecione,Silakan pilih,يرجى الاختيار
+smart_search.add_condition,添加条件,新增條件,Add Condition,Ajouter une condition,条件を追加,조건 추가,Добавить условие,Agregar condición,Bedingung hinzufügen,Adicionar condição,Tambah Kondisi,إضافة شرط
+smart_search.add_group,添加条件组,新增條件組,Add Condition Group,Ajouter un groupe de conditions,条件グループを追加,조건 그룹 추가,Добавить группу условий,Agregar grupo de condiciones,Bedingungsgruppe hinzufügen,Adicionar grupo de condições,Tambah Grup Kondisi,إضافة مجموعة شروط
+smart_search.select_operator,请选择运算符,請選擇運算符,Select Operator,Sélectionner un opérateur,演算子を選択,연산자 선택,Выбрать оператор,Seleccionar operador,Operator auswählen,Selecionar operador,Pilih Operator,اختر عامل
+smart_search.input_value_required,请输入值,請輸入值,Please enter a value,Veuillez saisir une valeur,値を入力してください,값을 입력하세요,Введите значение,Por favor ingrese un valor,Bitte einen Wert eingeben,Por favor insira um valor,Silakan masukkan nilai,يرجى إدخال قيمة
+edit_type.uploading,附件上传中请稍后,附件上傳中請稍後,Uploading attachment please wait,Téléchargement de la pièce jointe en cours,添付ファイルをアップロード中,첨부 파일 업로드 중,Загрузка вложения,Cargando archivo adjunto,Anhang wird hochgeladen,Enviando anexo,Mengunggah lampiran,جارٍ تحميل المرفق
+edit_type.upload_failed,上传失败,上傳失敗,Upload failed,Échec du téléchargement,アップロード失敗,업로드 실패,Ошибка загрузки,Error al subir,Upload fehlgeschlagen,Falha no envio,Gagal diunggah,فشل التحميل
+edit_type.signature,签名,簽名,Signature,Signature,署名,서명,Подпись,Firma,Unterschrift,Assinatura,Tanda Tangan,توقيع
+amap.close_point_select,关闭点选,關閉點選,Disable Point Select,Désactiver la sélection,点選を無効化,점 선택 비활성화,Отключить выбор точки,Desactivar selección,Punktauswahl deaktivieren,Desativar seleção,Nonaktifkan Pemilihan,تعطيل التحديد
+amap.point_select,点击地图选点,點擊地圖選點,Click Map to Select,Cliquer sur la carte,地図をクリックして選択,지도 클릭으로 선택,Клик на карте для выбора,Clic en mapa para seleccionar,Auf Karte klicken,Clique no mapa,Klik Peta untuk Memilih,انقر على الخريطة
+amap.select_valid_address,请选择有效的地址,請選擇有效的地址,Please select a valid address,Sélectionner une adresse valide,有効な住所を選択してください,유효한 주소를 선택하세요,Выберите действительный адрес,Seleccione una dirección válida,Bitte eine gültige Adresse wählen,Selecione um endereço válido,Pilih alamat yang valid,اختر عنوانًا صحيحًا
+amap.select_address_first,请先选择地址,請先選擇地址,Please select an address first,Veuillez sélectionner une adresse,先に住所を選択してください,먼저 주소를 선택하세요,Сначала выберите адрес,Primero seleccione una dirección,Bitte zuerst Adresse wählen,Por favor selecione um endereço,Pilih alamat terlebih dahulu,الرجاء اختيار عنوان أولاً
+amap.location_not_found,找不到该位置信息,找不到該位置資訊,Location not found,Lieu introuvable,位置が見つかりません,위치를 찾을 수 없습니다,Место не найдено,Ubicación no encontrada,Ort nicht gefunden,Localização não encontrada,Lokasi tidak ditemukan,تعذر العثور على الموقع
+amap.info.name,名称：,名稱：,Name:,Nom :,名前：,이름:,Название:,Nombre:,Name:,Nome:,Nama:,الاسم:
+amap.info.address,地址：,地址：,Address:,Adresse :,住所：,주소:,Адрес:,Dirección:,Adresse:,Endereço:,Alamat:,العنوان:
+amap.info.phone,电话：,電話：,Phone:,Téléphone :,電話：,전화:,Телефон:,Teléfono:,Telefon:,Telefone:,Telepon:,الهاتف:
+amap.info.type,类型：,類型：,Type:,Type :,種類：,유형:,Тип:,Tipo:,Typ:,Tipo:,Tipe:,النوع:
+amap.info.lng,经度：,經度：,Lng:,Long. :,経度：,경도:,Долгота:,Longitud:,Länge:,Longitude:,Bujur:,خط الطول:
+amap.info.lat,纬度：,緯度：,Lat:,Lat. :,緯度：,위도:,Широта:,Latitud:,Breite:,Latitude:,Lintang:,خط العرض:
+excel.import_success,导入成功,匯入成功,Import successful,Importation réussie,インポート成功,가져오기 성공,Импорт выполнен,Importación exitosa,Import erfolgreich,Importação bem-sucedida,Impor berhasil,تم الاستيراد بنجاح
+gantt.scroll_to_today,定位到今天,定位到今天,Scroll to Today,"Aller à aujourd'hui",今日に移動,오늘로 이동,Перейти к сегодняшнему дню,Ir a hoy,Zum heutigen Tag,Ir para hoje,Gulir ke Hari Ini,الانتقال إلى اليوم

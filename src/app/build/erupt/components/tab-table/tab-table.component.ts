@@ -201,7 +201,7 @@ export class TabTableComponent implements OnInit {
             if (dependField.eruptFieldJson.edit.$value) {
                 dependVal = dependField.eruptFieldJson.edit.$value;
             } else {
-                this.msg.warning("请先选择" + dependField.eruptFieldJson.edit.title);
+                this.msg.warning(this.i18n.fanyi("global.pre_select") + dependField.eruptFieldJson.edit.title);
                 return;
             }
         }

@@ -67,8 +67,8 @@ export class PrintTemplate implements OnInit {
 
     // paper orientation options
     orientationOptions = [
-        {label: '纵向', value: 'portrait'},
-        {label: '横向', value: 'landscape'}
+        {label: 'print.portrait', value: 'portrait'},
+        {label: 'print.landscape', value: 'landscape'}
     ];
 
     // configuration panel visibility state

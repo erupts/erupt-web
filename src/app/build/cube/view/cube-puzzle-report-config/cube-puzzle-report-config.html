@@ -665,14 +665,14 @@
                                         <nz-form-label>{{ 'cube.report.config.compare.current_label' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <input nz-input [(ngModel)]="report.compare.currentLabel" name="compareCurrentLabel"
-                                                   placeholder="当期"/>
+                                                   [placeholder]="'cube.report.compare.current_period' | translate"/>
                                         </nz-form-control>
                                     </nz-form-item>
                                     <nz-form-item>
                                         <nz-form-label>{{ 'cube.report.config.compare.compare_label' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <input nz-input [(ngModel)]="report.compare.compareLabel" name="compareLabel"
-                                                   [placeholder]="report.compare.type === 'MOM' ? '上月同期' : '去年同期'"/>
+                                                   [placeholder]="report.compare.type === 'MOM' ? ('cube.report.compare.mom_period' | translate) : ('cube.report.compare.yoy_period' | translate)"/>
                                         </nz-form-control>
                                     </nz-form-item>
                                 }

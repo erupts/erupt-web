@@ -288,7 +288,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     eruptEditValidate(): boolean {
         for (let key in this.uploadFilesStatus) {
             if (!this.uploadFilesStatus[key]) {
-                this.msg.warning("附件上传中请稍后");
+                this.msg.warning(this.i18n.fanyi("edit_type.uploading"));
                 return false;
             }
         }
@@ -313,7 +313,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             }
         } else if (status === "error") {
             this.uploadFilesStatus[file.uid] = true;
-            this.msg.error(`${file.name} 上传失败`);
+            this.msg.error(`${file.name} ${this.i18n.fanyi("edit_type.upload_failed")}`);
         }
     }
 
@@ -369,13 +369,13 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     openSign(edit: Edit) {
         this.modal.create({
-            nzTitle: '签名',
+            nzTitle: this.i18n.fanyi("edit_type.signature"),
             nzDraggable: true,
             nzContent: SignaturePadComponent,
             nzMaskClosable: false,
             nzWidth: '50%',
-            nzOkText: '保存',
-            nzCancelText: '取消',
+            nzOkText: this.i18n.fanyi("global.save"),
+            nzCancelText: this.i18n.fanyi("global.cancel"),
             nzOnOk: (sign: SignaturePadComponent) => {
                 edit.$value = sign.getSign();
             },

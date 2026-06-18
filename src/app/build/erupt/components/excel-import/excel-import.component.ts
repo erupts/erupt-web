@@ -6,6 +6,7 @@ import {EruptApiModel, Status} from "../../model/erupt-api.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzUploadChangeParam} from "ng-zorro-antd/upload";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -31,7 +32,8 @@ export class ExcelImportComponent implements OnInit {
                 @Inject(NzModalService)
                 private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService,
-                @Inject(DA_SERVICE_TOKEN) public tokenService: TokenService) {
+                @Inject(DA_SERVICE_TOKEN) public tokenService: TokenService,
+                private i18n: I18NService) {
 
     }
 
@@ -55,7 +57,7 @@ export class ExcelImportComponent implements OnInit {
                 this.fileList = [];
             } else {
                 this.upload = true;
-                this.msg.success("导入成功");
+                this.msg.success(this.i18n.fanyi("excel.import_success"));
             }
         } else if (file.status === "error") {
             this.errorText = file.error.error.message;

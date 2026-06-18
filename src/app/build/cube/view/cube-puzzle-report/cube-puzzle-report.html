@@ -33,7 +33,7 @@
                     @if (kpiCompareValue !== null) {
                         <div class="kpi-compare" [class.kpi-trend-up]="getKpiDelta() >= 0" [class.kpi-trend-down]="getKpiDelta() < 0">
                             {{ getKpiDelta() >= 0 ? '↑' : '↓' }}&nbsp;{{ getKpiPct() | number:'1.1-1' }}%
-                            <span class="kpi-compare-vs">vs {{ report.compare?.compareLabel || (report.compare?.type === 'MOM' ? '上月同期' : '去年同期') }}</span>
+                            <span class="kpi-compare-vs">vs {{ report.compare?.compareLabel || (report.compare?.type === 'MOM' ? ('cube.report.compare.mom_period' | translate) : ('cube.report.compare.yoy_period' | translate)) }}</span>
                         </div>
                     }
                 }

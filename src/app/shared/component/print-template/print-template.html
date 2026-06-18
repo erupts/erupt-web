@@ -6,7 +6,7 @@
 <div style="margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
     @if (templates && templates.length > 0) {
         <button nz-button nz-dropdown [nzDropdownMenu]="templateMenu">
-            选择模板 <span nz-icon nzType="down"></span>
+            {{ 'print.select_template' | translate }} <span nz-icon nzType="down"></span>
         </button>
         <nz-dropdown-menu #templateMenu="nzDropdownMenu">
             <ul nz-menu style="max-height: 300px;overflow-y: auto">
@@ -18,7 +18,7 @@
     }
     @if (globalVars && globalVars.length > 0) {
         <button nz-button nz-dropdown [nzDropdownMenu]="globalVarMenu" style="margin-left: 0">
-            插入全局变量 <span nz-icon nzType="down"></span>
+            {{ 'print.insert_global_var' | translate }} <span nz-icon nzType="down"></span>
         </button>
         <nz-dropdown-menu #globalVarMenu="nzDropdownMenu">
             <ul nz-menu style="max-height: 300px;overflow-y: auto">
@@ -30,7 +30,7 @@
     }
     @if (vars && vars.length > 0) {
         <button nz-button nz-dropdown [nzDropdownMenu]="varMenu" style="margin-left: 0">
-            插入变量 <span nz-icon nzType="down"></span>
+            {{ 'print.insert_var' | translate }} <span nz-icon nzType="down"></span>
         </button>
         <nz-dropdown-menu #varMenu="nzDropdownMenu">
             <ul nz-menu style="max-height: 300px;overflow-y: auto">
@@ -42,14 +42,14 @@
     }
     <button nz-button (click)="togglePageConfig()">
         <span nz-icon nzType="setting"></span>
-        页面设置
+        {{ 'print.page_setup' | translate }}
     </button>
 </div>
 @if (showPageConfig) {
     <div class="page-config-panel">
         <div class="config-grid">
             <div class="config-item">
-                <label>纸张大小</label>
+                <label>{{ 'print.paper_size' | translate }}</label>
                 <nz-select [(ngModel)]="pageConfig.paperSize">
                     @for (option of paperSizeOptions; track option.value) {
                         <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
@@ -57,29 +57,29 @@
                 </nz-select>
             </div>
             <div class="config-item">
-                <label>纸张方向</label>
+                <label>{{ 'print.paper_orientation' | translate }}</label>
                 <nz-select [(ngModel)]="pageConfig.orientation">
                     @for (option of orientationOptions; track option.value) {
-                        <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+                        <nz-option [nzValue]="option.value" [nzLabel]="option.label | translate"></nz-option>
                     }
                 </nz-select>
             </div>
             <div class="config-item"></div>
             <div class="config-item"></div>
             <div class="config-item">
-                <label>上边距 (mm)</label>
+                <label>{{ 'print.margin_top' | translate }}</label>
                 <nz-input-number [(ngModel)]="pageConfig.marginTop" [nzMin]="0" [nzMax]="50" [nzStep]="1"></nz-input-number>
             </div>
             <div class="config-item">
-                <label>右边距 (mm)</label>
+                <label>{{ 'print.margin_right' | translate }}</label>
                 <nz-input-number [(ngModel)]="pageConfig.marginRight" [nzMin]="0" [nzMax]="50" [nzStep]="1"></nz-input-number>
             </div>
             <div class="config-item">
-                <label>下边距 (mm)</label>
+                <label>{{ 'print.margin_bottom' | translate }}</label>
                 <nz-input-number [(ngModel)]="pageConfig.marginBottom" [nzMin]="0" [nzMax]="50" [nzStep]="1"></nz-input-number>
             </div>
             <div class="config-item">
-                <label>左边距 (mm)</label>
+                <label>{{ 'print.margin_left' | translate }}</label>
                 <nz-input-number [(ngModel)]="pageConfig.marginLeft" [nzMin]="0" [nzMax]="50" [nzStep]="1"></nz-input-number>
             </div>
         </div>

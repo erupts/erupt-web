@@ -12,6 +12,7 @@ import {
 } from "../../model/erupt-search.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {UpmsData, UpmsScope} from "../../model/upms.model";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -55,7 +56,8 @@ export class SmartSearchComponent implements OnInit {
         [EditType.REFERENCE_TREE]: OperatorType.REFERENCE,
     };
 
-    constructor(@Inject(NzMessageService) private msg: NzMessageService,) {
+    constructor(@Inject(NzMessageService) private msg: NzMessageService,
+                private i18n: I18NService) {
     }
 
 
@@ -63,16 +65,16 @@ export class SmartSearchComponent implements OnInit {
         for (let group of this.search) {
             for (let sh of group) {
                 if (!sh.field) {
-                    this.msg.error('请选择字段');
+                    this.msg.error(this.i18n.fanyi('smart_search.select_field'));
                     return false;
                 }
                 if (!sh.operator) {
-                    this.msg.error('请选择运算符');
+                    this.msg.error(this.i18n.fanyi('smart_search.select_operator'));
                     return false;
                 }
                 if (sh.operator != OperatorDateType.NOT_NULL && sh.operator != OperatorDateType.NULL) {
                     if (sh.value == null) {
-                        this.msg.error('请输入值');
+                        this.msg.error(this.i18n.fanyi('smart_search.input_value_required'));
                         return false;
                     }
                 }
