@@ -16,7 +16,7 @@
         </button>
         @if (bi.refreshTime > 0) {
           <button nz-button nzSize="small" (click)="toggleAutoRefresh()"
-                  nz-tooltip [nzTooltipTitle]="autoRefreshPaused ? '恢复自动刷新' : '暂停自动刷新'">
+                  nz-tooltip [nzTooltipTitle]="autoRefreshPaused ? ('bi.auto_refresh_resume' | translate) : ('bi.auto_refresh_pause' | translate)">
             <i nz-icon [nzType]="autoRefreshPaused ? 'play-circle' : 'pause-circle'" nzTheme="outline"></i>
             @if (!autoRefreshPaused) { {{ countdown }}s }
           </button>
@@ -35,7 +35,7 @@
           </button>
         }
         <button nz-button nzSize="small" (click)="toggleFullscreen()"
-                nz-tooltip [nzTooltipTitle]="isFullscreen ? '退出全屏' : '全屏'">
+                nz-tooltip [nzTooltipTitle]="isFullscreen ? ('bi.exit_fullscreen' | translate) : ('global.fullscreen' | translate)">
           <i nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'" nzTheme="outline"></i>
         </button>
       </div>
@@ -64,7 +64,7 @@
       @if (bi.table) {
         @if (haveNotNull) {
           <div class="bi-empty-hint">
-            <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开启查询操作'">
+            <nz-result [nzIcon]="icon" [nzTitle]="'bi.query_hint' | translate">
               <div nz-result-extra>
                 <button nz-button nzType="primary" nzSize="small" [nzLoading]="querying" [nzGhost]="true"
                         (click)="query({ pageIndex: 1, pageSize: biTable.size })">
@@ -87,7 +87,7 @@
               <div class="bi-table-toolbar">
                 <button nz-button nzSize="small" [nzLoading]="querying"
                         (click)="query({ pageIndex: biTable.index, pageSize: biTable.size })"
-                        nz-tooltip nzTooltipTitle="刷新">
+                        nz-tooltip [nzTooltipTitle]="'global.refresh' | translate">
                   <i nz-icon nzType="reload" nzTheme="outline"></i>
                 </button>
                 @if (columns && columns.length > 0) {

@@ -751,7 +751,6 @@ cube.report.compare.mom_period,上月同期,上月同期,Same Period Last Month,
 cube.report.compare.yoy_period,去年同期,去年同期,Same Period Last Year,Même période année précédente,昨年同期,전년 동기,Тот же период прошлого года,Mismo período año anterior,Gleicher Zeitraum Vorjahr,Mesmo período ano anterior,Periode Tahun Lalu,نفس الفترة العام الماضي
 cube.report.compare.current_period,当期,當期,Current Period,Période actuelle,当期,당기,Текущий период,Período actual,Aktueller Zeitraum,Período atual,Periode Saat Ini,الفترة الحالية
 smart_search.title,当满足以下条件时进入当前分支,當滿足以下條件時進入當前分支,Enter branch when conditions are met,Entrer dans la branche si les conditions sont remplies,条件を満たすとき現在のブランチに進む,조건 충족 시 현재 분기로 이동,Перейти к ветке при выполнении условий,Ingresar a la rama cuando se cumplan las condiciones,Zweig betreten wenn Bedingungen erfüllt sind,Entrar no ramo quando as condições forem atendidas,Masuk cabang saat kondisi terpenuhi,الدخول إلى الفرع عند استيفاء الشروط
-smart_search.reset,重置,重置,Reset,Réinitialiser,リセット,초기화,Сбросить,Restablecer,Zurücksetzen,Redefinir,Reset,إعادة تعيين
 smart_search.or,或,或,Or,Ou,または,또는,Или,O,Oder,Ou,Atau,أو
 smart_search.condition_group,条件组,條件組,Condition Group,Groupe de conditions,条件グループ,조건 그룹,Группа условий,Grupo de condiciones,Bedingungsgruppe,Grupo de condições,Grup Kondisi,مجموعة الشروط
 smart_search.and,且,且,And,Et,かつ,그리고,И,Y,Und,E,Dan,و
@@ -782,3 +781,8 @@ amap.info.lng,经度：,經度：,Lng:,Long. :,経度：,경도:,Долгота:
 amap.info.lat,纬度：,緯度：,Lat:,Lat. :,緯度：,위도:,Широта:,Latitud:,Breite:,Latitude:,Lintang:,خط العرض:
 excel.import_success,导入成功,匯入成功,Import successful,Importation réussie,インポート成功,가져오기 성공,Импорт выполнен,Importación exitosa,Import erfolgreich,Importação bem-sucedida,Impor berhasil,تم الاستيراد بنجاح
 gantt.scroll_to_today,定位到今天,定位到今天,Scroll to Today,"Aller à aujourd'hui",今日に移動,오늘로 이동,Перейти к сегодняшнему дню,Ir a hoy,Zum heutigen Tag,Ir para hoje,Gulir ke Hari Ini,الانتقال إلى اليوم
+bi.auto_refresh_resume,恢复自动刷新,恢復自動刷新,Resume Auto Refresh,Reprendre le rafraîchissement,自動更新を再開,자동 새로고침 재개,Возобновить автообновление,Reanudar actualización,Auto-Aktualisierung fortsetzen,Retomar atualização,Lanjutkan Refresh Otomatis,استئناف التحديث التلقائي
+bi.auto_refresh_pause,暂停自动刷新,暫停自動刷新,Pause Auto Refresh,Mettre en pause le rafraîchissement,自動更新を一時停止,자동 새로고침 일시 정지,Приостановить автообновление,Pausar actualización,Auto-Aktualisierung pausieren,Pausar atualização,Jeda Refresh Otomatis,إيقاف التحديث التلقائي مؤقتًا
+bi.exit_fullscreen,退出全屏,退出全螢幕,Exit Fullscreen,Quitter le plein écran,全画面を終了,전체 화면 종료,Выйти из полноэкранного режима,Salir de pantalla completa,Vollbild beenden,Sair da tela cheia,Keluar Layar Penuh,الخروج من ملء الشاشة
+bi.query_hint,输入查询条件，开启查询操作,輸入查詢條件，開啟查詢操作,Enter conditions to start querying,Saisir des conditions pour interroger,クエリ条件を入力してクエリを開始,조회 조건을 입력하여 조회를 시작하세요,Введите условия для запроса,Ingrese condiciones para iniciar la consulta,Abfragebedingungen eingeben,Insira condições para iniciar a consulta,Masukkan kondisi untuk memulai kueri,أدخل الشروط لبدء الاستعلام
+bi.required,必填,必填,Required,Obligatoire,必須,필수,Обязательно,Obligatorio,Pflichtfeld,Obrigatório,Wajib diisi,مطلوب
