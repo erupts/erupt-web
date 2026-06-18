@@ -4,15 +4,15 @@
     <!-- Left sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <span class="sidebar-title">流程分类</span>
-            <button nz-button nzType="text" nzSize="small" (click)="onCreateGroup()" nz-tooltip="新建分组">
+            <span class="sidebar-title">{{ 'flow.management.category' | translate }}</span>
+            <button nz-button nzType="text" nzSize="small" (click)="onCreateGroup()" [nz-tooltip]="'flow.management.new_group' | translate">
                 <span nz-icon nzType="plus"></span>
             </button>
         </div>
         <div class="sidebar-menu" cdkDropList (cdkDropListDropped)="onDrop($event)">
             <div class="menu-item" [class.active]="selectedCategory === null" (click)="selectCategory(null)">
                 <span nz-icon nzType="appstore" nzTheme="outline"></span>
-                <span class="menu-label">全部</span>
+                <span class="menu-label">{{ 'global.all' | translate }}</span>
                 <nz-badge [nzCount]="flowConfigs.length" [nzShowZero]="false" class="menu-badge"></nz-badge>
             </div>
             @for (item of categoryItems; track item) {
@@ -42,24 +42,24 @@
             </button>
             <div class="stat-item">
                 <span class="stat-num">{{ getCurrentConfigs().length }}</span>
-                <span class="stat-label">共</span>
+                <span class="stat-label">{{ 'flow.management.count' | translate }}</span>
             </div>
             <div class="stat-item">
                 <span class="stat-num enabled">{{ getEnabledCount() }}</span>
-                <span class="stat-label">启用</span>
+                <span class="stat-label">{{ 'flow.management.enable' | translate }}</span>
             </div>
             <div class="stat-item">
                 <span class="stat-num disabled">{{ getCurrentConfigs().length - getEnabledCount() }}</span>
-                <span class="stat-label">停用</span>
+                <span class="stat-label">{{ 'flow.management.disable' | translate }}</span>
             </div>
             <div style="flex:1"></div>
             <nz-input-group [nzSuffix]="searchSfx" nzBorderless style="width:200px">
-                <input nz-input [(ngModel)]="searchValue" (ngModelChange)="onSearch()" placeholder="搜索流程..."/>
+                <input nz-input [(ngModel)]="searchValue" (ngModelChange)="onSearch()" [placeholder]="'flow.placeholder.search_flow' | translate"/>
             </nz-input-group>
             <ng-template #searchSfx><span nz-icon nzType="search" style="color:#bfbfbf"></span></ng-template>
             <nz-divider nzType="vertical"></nz-divider>
             <button nz-button nzType="primary" (click)="onCreateApproval()">
-                <span nz-icon nzType="plus"></span>创建流程
+                <span nz-icon nzType="plus"></span>{{ 'flow.management.create' | translate }}
             </button>
         </div>
 
@@ -74,7 +74,7 @@
                             <div class="flow-name">
                                 {{ config.name }}
                                 @if (!config.enable) {
-                                    <nz-tag nzColor="orange">已停用</nz-tag>
+                                    <nz-tag nzColor="orange">{{ 'flow.management.disabled' | translate }}</nz-tag>
                                 }
                                 @if (selectedCategory === null && config.flowGroup?.name) {
                                     <nz-tag>{{ config.flowGroup.name }}</nz-tag>
@@ -87,18 +87,18 @@
                         <div class="flow-actions">
                             <span nz-icon nzType="holder" nzTheme="outline" class="drag-handle"
                                   cdkDragHandle (click)="$event.stopPropagation()"></span>
-                            <button nz-button nzType="text" nzSize="small" nz-tooltip="编辑" (click)="onEdit(config)">
+                            <button nz-button nzType="text" nzSize="small" [nz-tooltip]="'global.editor' | translate" (click)="onEdit(config)">
                                 <span nz-icon nzType="edit" nzTheme="outline"></span>
                             </button>
-                            <button nz-button nzType="text" nzSize="small" nz-tooltip="复制" (click)="onDuplicate(config)">
+                            <button nz-button nzType="text" nzSize="small" [nz-tooltip]="'global.copy' | translate" (click)="onDuplicate(config)">
                                 <span nz-icon nzType="copy" nzTheme="outline"></span>
                             </button>
-                            <button nz-button nzType="text" nzSize="small" [nz-tooltip]="config.enable ? '停用' : '启用'"
+                            <button nz-button nzType="text" nzSize="small" [nz-tooltip]="config.enable ? ('flow.management.disable' | translate) : ('flow.management.enable' | translate)"
                                     (click)="onToggleVisibility(config)">
                                 <span nz-icon [nzType]="config.enable ? 'stop' : 'check-circle'" nzTheme="outline"
                                       [style.color]="config.enable ? '' : '#52c41a'"></span>
                             </button>
-                            <button nz-button nzType="text" nzSize="small" nz-tooltip="删除" (click)="onDelete(config)">
+                            <button nz-button nzType="text" nzSize="small" [nz-tooltip]="'global.delete' | translate" (click)="onDelete(config)">
                                 <span nz-icon nzType="delete" nzTheme="outline" style="color:#ff4d4f"></span>
                             </button>
                         </div>
@@ -114,18 +114,18 @@
     </div>
 </div>
 
-<nz-modal [(nzVisible)]="isCreateModalVisible" nzTitle="新建分组"
+<nz-modal [(nzVisible)]="isCreateModalVisible" [nzTitle]="'flow.management.new_group' | translate"
           (nzOnCancel)="handleCreateCancel()" (nzOnOk)="handleCreateGroup()">
     <ng-container *nzModalContent>
-        <input nz-input [(ngModel)]="createGroupName" placeholder="请输入分组名称"
+        <input nz-input [(ngModel)]="createGroupName" [placeholder]="'flow.placeholder.group_name' | translate"
                style="width:100%;" (keyup.enter)="handleCreateGroup()"/>
     </ng-container>
 </nz-modal>
 
-<nz-modal [(nzVisible)]="isEditModalVisible" nzTitle="编辑分组"
+<nz-modal [(nzVisible)]="isEditModalVisible" [nzTitle]="'flow.management.edit_group' | translate"
           (nzOnCancel)="handleEditCancel()" (nzOnOk)="handleEditGroup()">
     <ng-container *nzModalContent>
-        <input nz-input [(ngModel)]="editGroupName" placeholder="请输入分组名称"
+        <input nz-input [(ngModel)]="editGroupName" [placeholder]="'flow.placeholder.group_name' | translate"
                style="width:100%;" (keyup.enter)="handleEditGroup()"/>
     </ng-container>
 </nz-modal>

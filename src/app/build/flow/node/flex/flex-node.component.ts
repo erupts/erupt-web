@@ -8,6 +8,7 @@ import {FlowApiService} from "@flow/service/flow-api.service";
 import {FlowDataService} from "@flow/service/flow-data.service";
 import {FormSize} from "../../../erupt/model/erupt.enum";
 import {DataHandlerService} from "../../../erupt/service/data-handler.service";
+import {I18NService} from "@core";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 
 @Component({
@@ -109,7 +110,7 @@ export class FlexNodeComponent extends ANode implements OnInit {
     }
 
     override name(): string {
-        return "Flex";
+        return I18NService.instance?.fanyi('flow.node.flex_label');
     }
 
 

@@ -4,9 +4,9 @@
     <!-- Left sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <span class="sidebar-title">流程分类</span>
+            <span class="sidebar-title">{{ 'flow.management.category' | translate }}</span>
             <button nz-button nzType="text" nzSize="small" (click)="refreshData()"
-                    [nzLoading]="loading" nz-tooltip="刷新">
+                    [nzLoading]="loading" [nz-tooltip]="'global.refresh' | translate">
                 <span nz-icon nzType="reload"></span>
             </button>
         </div>
@@ -33,16 +33,16 @@
             </button>
             <div class="stat-item">
                 <span class="stat-num">{{ flowConfigs.length }}</span>
-                <span class="stat-label">可用流程</span>
+                <span class="stat-label">{{ 'flow.dashboard.available_flows' | translate }}</span>
             </div>
             <div class="stat-item">
                 <span class="stat-num">{{ categories.length - 1 }}</span>
-                <span class="stat-label">分类</span>
+                <span class="stat-label">{{ 'flow.dashboard.category_count' | translate }}</span>
             </div>
             <div style="flex:1"></div>
             <nz-input-group [nzSuffix]="searchSfx" nzBorderless style="width:200px">
                 <input nz-input [(ngModel)]="searchKeyword" (ngModelChange)="onSearchChange()"
-                       placeholder="搜索流程名称..."/>
+                       [placeholder]="'flow.placeholder.search_flow_name' | translate"/>
             </nz-input-group>
             <ng-template #searchSfx><span nz-icon nzType="search" style="color:#bfbfbf"></span></ng-template>
         </div>
@@ -58,7 +58,7 @@
                     <div style="text-align:center; padding: 64px 0;">
                         <nz-empty [nzNotFoundImage]="'simple'">
                             <ng-template #nzNotFoundContent>
-                                <span style="color:#8c8c8c">{{ searchKeyword ? '未找到匹配的流程' : '暂无流程数据' }}</span>
+                                <span style="color:#8c8c8c">{{ searchKeyword ? ('flow.dashboard.no_matching_flow' | translate) : ('flow.dashboard.no_flow_data' | translate) }}</span>
                             </ng-template>
                         </nz-empty>
                     </div>

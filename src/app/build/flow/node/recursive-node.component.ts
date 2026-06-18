@@ -62,7 +62,6 @@ export class RecursiveNodeComponent {
      * @param i The index of the element within that branch
      */
     deleteNode(branch: any[], i: number) {
-        console.log(branch[i].type)
         if (branch[i].type === NodeType.GATEWAY_PARALLEL || branch[i].type === NodeType.GATEWAY_INCLUSIVE) {
             branch.splice(i, 2);
         } else {

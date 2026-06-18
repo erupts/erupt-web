@@ -41,7 +41,7 @@
         <div class="list-section">
             <div class="list-header" style="padding: 8px">
                 <nz-select [(ngModel)]="selectFlow" (ngModelChange)="onSelectFlow($event)" [nzShowSearch]="true"
-                           style="flex: 1" [nzPlaceHolder]="'流程筛选'" nzBorderless nzAllowClear>
+                           style="flex: 1" [nzPlaceHolder]="'flow.placeholder.filter_flow' | translate" nzBorderless nzAllowClear>
                     @for (flow of uniqFlowInstances(flowInstances); track flow) {
                         <nz-option [nzValue]="flow.eruptFlowConfig.id" [nzLabel]="flow.eruptFlowConfig.name">
                         </nz-option>

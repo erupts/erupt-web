@@ -4,6 +4,7 @@ import {KV} from "../../../erupt/model/util.model";
 import {UpmsDataService} from "@flow/service/upms-data.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NodeRule, NodeType} from "@flow/model/node.model";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -26,8 +27,20 @@ export class ReviewUserComponent implements OnInit {
 
     roles: KV<number, string>[] = [];
 
-    constructor(private upmsDataService: UpmsDataService, @Inject(NzModalService) private modal: NzModalService) {
+    constructor(private upmsDataService: UpmsDataService, @Inject(NzModalService) private modal: NzModalService, private i18n: I18NService) {
 
+    }
+
+    getOrgHeadLabel(i: number): string {
+        const base = this.i18n.fanyi('flow.review_user.org_head_label');
+        if (i === 0) return base;
+        return `${base}${this.i18n.fanyi('flow.review_user.level_prefix')}${i}${this.i18n.fanyi('flow.review_user.level_suffix')}`;
+    }
+
+    getDivisionLeaderLabel(i: number): string {
+        const base = this.i18n.fanyi('flow.review_user.division_leader_label');
+        if (i === 0) return base;
+        return `${base}${this.i18n.fanyi('flow.review_user.level_prefix')}${i}${this.i18n.fanyi('flow.review_user.level_suffix')}`;
     }
 
     ngOnInit(): void {

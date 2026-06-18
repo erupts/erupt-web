@@ -16,25 +16,25 @@
                      [class.active]="currentStep === 1"
                      (click)="switchStep(1)">
                     <span class="step-number">1</span>
-                    <span class="step-text">基础信息</span>
+                    <span class="step-text">{{ 'flow.config.step.basic' | translate }}</span>
                 </div>
                 <div class="step-item"
                      [class.active]="currentStep === 2"
                      (click)="switchStep(2)">
                     <span class="step-number">2</span>
-                    <span class="step-text">表单预览</span>
+                    <span class="step-text">{{ 'flow.config.step.form_preview' | translate }}</span>
                 </div>
                 <div class="step-item"
                      [class.active]="currentStep === 3"
                      (click)="switchStep(3)">
                     <span class="step-number">3</span>
-                    <span class="step-text">流程设计</span>
+                    <span class="step-text">{{ 'flow.config.step.design' | translate }}</span>
                 </div>
                 <div class="step-item"
                      [class.active]="currentStep === 4"
                      (click)="switchStep(4)">
                     <span class="step-number">4</span>
-                    <span class="step-text">更多设置</span>
+                    <span class="step-text">{{ 'flow.config.step.settings' | translate }}</span>
                 </div>
             </div>
         </div>
@@ -42,16 +42,16 @@
         <div class="header-right">
             @if (currentStep === 3 && this.flowConfig?.rule) {
                 <button nz-button (click)="shot()" [nzLoading]="shotLoading">
-                    导出流程图
+                    {{ 'flow.config.export_flow' | translate }}
                 </button>
             }
             @if (this.flowConfig?.rule) {
                 <button nz-button (click)="copyConfig()">
-                    复制配置
+                    {{ 'flow.config.copy_config' | translate }}
                 </button>
             }
             <button nz-button nzType="primary" class="publish-btn" (click)="publish()">
-                发布
+                {{ 'flow.config.publish' | translate }}
             </button>
         </div>
     </div>
@@ -64,7 +64,7 @@
                 <div class="flow-form">
                     <!-- Icon -->
                     <div class="form-item">
-                        <label class="form-label required">图标</label>
+                        <label class="form-label required">{{ 'flow.config.label.icon' | translate }}</label>
                         <div class="icon-section">
                             <div class="icon-display">
                                 <div class="icon-circle" [style]="{background: flowConfig.color}">
@@ -77,7 +77,7 @@
                                     (nzPopoverVisibleChange)="iconPickVisibleChange($event)"
                                     nzPopoverTrigger="click"
                                     nzPopoverPlacement="topRight">
-                                修改
+                                {{ 'flow.action.modify' | translate }}
                             </button>
                         </div>
                         <!-- Icon picker content -->
@@ -94,18 +94,18 @@
                     <!--                </div>-->
                     <!-- Name -->
                     <div class="form-item">
-                        <label class="form-label required">名称</label>
+                        <label class="form-label required">{{ 'flow.config.label.name' | translate }}</label>
                         <nz-input-group [nzAddOnAfter]="flowConfig.code">
-                            <input nz-input placeholder="请输入名称" class="form-input" [(ngModel)]="flowConfig.name"
+                            <input nz-input [placeholder]="'flow.config.placeholder.name' | translate" class="form-input" [(ngModel)]="flowConfig.name"
                                    name="name"/>
                         </nz-input-group>
                     </div>
                     <!-- Group -->
                     <div class="form-item">
-                        <label class="form-label required">分组</label>
+                        <label class="form-label required">{{ 'flow.config.label.group' | translate }}</label>
                         <nz-select [(ngModel)]="flowConfig.flowGroup"
                                    [nzShowSearch]="true"
-                                   placeholder="请选择分组"
+                                   [nzPlaceHolder]="'flow.config.placeholder.group' | translate"
                                    class="form-select">
                             @for (option of groupOptions; track option) {
                                 <nz-option
@@ -115,12 +115,12 @@
                         </nz-select>
                         <ng-template #groupErrorTpl let-control>
                             @if (control.hasError('required')) {
-                                <span>分组为空,请选择</span>
+                                <span>{{ 'flow.config.error.group_required' | translate }}</span>
                             }
                         </ng-template>
                     </div>
                     <div class="form-item">
-                        <label class="form-label required">数据模型</label>
+                        <label class="form-label required">{{ 'flow.config.label.data_model' | translate }}</label>
                         <nz-select [(ngModel)]="flowConfig.erupt"
                                    [disabled]="flowConfig.rule?.length > 2"
                                    (ngModelChange)="changeErupt($event)"
@@ -134,7 +134,7 @@
                         </nz-select>
                     </div>
                     <div class="form-item">
-                        <label class="form-label required">通知渠道</label>
+                        <label class="form-label required">{{ 'flow.config.label.notify_channel' | translate }}</label>
                         <nz-select nzMode="multiple" class="form-select" [(ngModel)]="flowConfig.channels" [nzShowSearch]="true">
                             @for (channel of noticeChannel; track channel) {
                                 <nz-option
@@ -144,24 +144,24 @@
                         </nz-select>
                     </div>
                     <div class="form-item">
-                        <label class="form-label">说明</label>
+                        <label class="form-label">{{ 'flow.config.label.description' | translate }}</label>
                         <textarea nz-input
                                   [(ngModel)]="flowConfig.remark"
-                                  placeholder="说明"
+                                  [placeholder]="'flow.config.placeholder.remark' | translate"
                                   [nzAutosize]="{ minRows: 3, maxRows: 5 }"
                                   class="form-textarea"></textarea>
                     </div>
                     <!-- Submit permission -->
                     <div class="form-item">
-                        <label class="form-label required">谁可以提交该审批</label>
-                        <nz-select placeholder="请选择提交权限"
+                        <label class="form-label required">{{ 'flow.config.label.who_can_submit' | translate }}</label>
+                        <nz-select [nzPlaceHolder]="'flow.config.placeholder.permission' | translate"
                                    [(ngModel)]="flowConfig.permission"
                                    (ngModelChange)="changeSubmitPermission($event)"
                                    class="form-select">
-                            <nz-option [nzValue]="FlowPermission.ALL" [nzLabel]="'全员'"></nz-option>
-                            <nz-option [nzValue]="FlowPermission.MANAGER" [nzLabel]="'组织负责人'"></nz-option>
-                            <nz-option [nzValue]="FlowPermission.SPECIFIC" [nzLabel]="'指定人员'"></nz-option>
-                            <nz-option [nzValue]="FlowPermission.NO" [nzLabel]="'均不可提交'"></nz-option>
+                            <nz-option [nzValue]="FlowPermission.ALL" [nzLabel]="'flow.permission.everyone' | translate"></nz-option>
+                            <nz-option [nzValue]="FlowPermission.MANAGER" [nzLabel]="'flow.permission.org_manager' | translate"></nz-option>
+                            <nz-option [nzValue]="FlowPermission.SPECIFIC" [nzLabel]="'flow.permission.specific_person' | translate"></nz-option>
+                            <nz-option [nzValue]="FlowPermission.NO" [nzLabel]="'flow.permission.no_one' | translate"></nz-option>
                         </nz-select>
                         <!-- Selected permission scope tags -->
                         @if (flowConfig.permission === FlowPermission.SPECIFIC) {
@@ -175,7 +175,7 @@
         }
         <ng-template #notFoundErupt>
             @if (!flowConfig.erupt) {
-                <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="'请选择数据模型'">
+                <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="'flow.config.placeholder.data_model' | translate">
                 </nz-empty>
             }
         </ng-template>
@@ -209,16 +209,16 @@
             <div class="form-section">
                 <div class="flow-form">
                     @if (!flowConfig.erupt) {
-                        <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="'请选择数据模型'">
+                        <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="'flow.config.placeholder.data_model' | translate">
                         </nz-empty>
                     }
                     @if (flowConfig.erupt) {
                         @if (eruptBuild) {
                             <div class="form-item">
-                                <label class="form-label">审批子标题字段设置</label>
+                                <label class="form-label">{{ 'flow.config.label.subtitle_field' | translate }}</label>
                                 <div class="form-input" style="display: block;">
                                     <div style="margin-top: 12px;">
-                                        <nz-select class="form-select" nzMode="multiple" nzPlaceHolder="请选择字段"
+                                        <nz-select class="form-select" nzMode="multiple" [nzPlaceHolder]="'flow.config.placeholder.field' | translate"
                                                    [nzShowSearch]="true"
                                                    [(ngModel)]="flowConfig.setting.subTitleFields">
                                             @for (f of eruptBuild.eruptModel.eruptFieldModels; track f) {
@@ -235,16 +235,16 @@
                                 </div>
                             </div>
                             <div class="form-item">
-                                <label class="form-label">打印设置</label>
+                                <label class="form-label">{{ 'flow.config.label.print_setting' | translate }}</label>
                                 <div class="form-input" style="display: block;">
                                     <div style="margin-top: 12px;">
                                         <nz-radio-group [(ngModel)]="flowConfig.setting.printSetting">
-                                            <label nz-radio [nzValue]="PrintSetting.CLOSE">关闭</label>
-                                            <label nz-radio [nzValue]="PrintSetting.DEFAULT">系统默认模板</label>
+                                            <label nz-radio [nzValue]="PrintSetting.CLOSE">{{ 'flow.print_setting.disabled' | translate }}</label>
+                                            <label nz-radio [nzValue]="PrintSetting.DEFAULT">{{ 'flow.print_setting.default' | translate }}</label>
                                             <label nz-radio [nzValue]="PrintSetting.CUSTOM">
-                                                自定义配置
+                                                {{ 'flow.print_setting.custom' | translate }}
                                                 @if (flowConfig.setting.printSetting === PrintSetting.CUSTOM) {
-                                                    <button nz-button nzType="link" nzSize="small" nz-tooltip (click)="configPrintTemplate()">配置模板</button>
+                                                    <button nz-button nzType="link" nzSize="small" nz-tooltip (click)="configPrintTemplate()">{{ 'flow.config.config_template' | translate }}</button>
                                                 }
                                             </label>
 <!--                                            @if (flowConfig.setting.printSetting === PrintSetting.CUSTOM || flowConfig.setting.printSetting === PrintSetting.DEFAULT) {-->

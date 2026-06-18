@@ -1,5 +1,4 @@
 // See: https://ng-alain.com/docs/i18n
-import {Platform} from '@angular/cdk/platform';
 import {DatePipe, registerLocaleData} from '@angular/common';
 import ngEn from '@angular/common/locales/en';
 import ngZh from '@angular/common/locales/zh';
@@ -199,6 +198,8 @@ for (let key in LANGS) {
 @Injectable()
 export class I18NService implements OnInit {
 
+    static instance: I18NService;
+
     currentLang: string;
 
     langMapping: { [key: string]: string };
@@ -217,9 +218,9 @@ export class I18NService implements OnInit {
     constructor(
         private settings: SettingsService,
         private nzI18nService: NzI18nService,
-        private delonLocaleService: DelonLocaleService,
-        private platform: Platform
+        private delonLocaleService: DelonLocaleService
     ) {
+        I18NService.instance = this;
     }
 
     ngOnInit(): void {

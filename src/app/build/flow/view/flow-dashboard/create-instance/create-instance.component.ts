@@ -1,4 +1,15 @@
-import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output} from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    Input,
+    NgZone,
+    OnDestroy,
+    OnInit,
+    Output
+} from '@angular/core';
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {FormSize} from "../../../../erupt/model/erupt.enum";
 import {FlowApiService} from "@flow/service/flow-api.service";
@@ -12,6 +23,7 @@ import {StartNode} from "@flow/model/flow-approval.model";
 import {KV} from "../../../../erupt/model/util.model";
 import {EruptUser} from "../../../../cube/model/dashboard.model";
 import {forkJoin} from "rxjs";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -55,7 +67,8 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
                 private el: ElementRef,
                 private ngZone: NgZone,
                 private flowApiService: FlowApiService,
-                private flowInstanceApiService: FlowInstanceApiService) {
+                private flowInstanceApiService: FlowInstanceApiService,
+                private i18n: I18NService) {
 
     }
 
@@ -135,7 +148,7 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
 
     onViewFlow() {
         this.drawerService.create({
-            nzTitle: '查看流程',
+            nzTitle: this.i18n.fanyi('flow.action.view_flow'),
             nzContent: EruptFlowComponent,
             nzContentParams: {
                 eruptBuild: this.eruptBuild,
@@ -155,7 +168,7 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
     onSubmit(): void {
         for (let node of this.selfSelectNodes) {
             if (!this.selectedNodeUserIds[node.key] || this.selectedNodeUserIds[node.key].length == 0) {
-                this.msg.warning("请选择节点【" + node.value + "】的审批用户");
+                this.msg.warning(this.i18n.fanyi('flow.warning.select_approver_prefix') + node.value + this.i18n.fanyi('flow.warning.select_approver_suffix'));
                 return;
             }
         }
@@ -169,7 +182,7 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
             selfSelectNodeUsers: selfSelectNodeUsers
         }).subscribe(res => {
             if (res.success) {
-                this.msg.success("发起成功");
+                this.msg.success(this.i18n.fanyi('flow.success.start_approval'));
                 this.close.emit();
                 if (this.onClose) {
                     this.onClose();

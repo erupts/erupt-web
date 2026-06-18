@@ -7,12 +7,12 @@
     @if (eruptBuild) {
         <div style="padding: 16px;height:calc(100vh - 108px);overflow: auto">
             @if (selfSelectNodes.length > 0) {
-                <nz-alert nzType="info" nzMessage="请在发起流程前选择对应节点的审批用户" nzShowIcon style="margin-bottom: 16px"></nz-alert>
+                <nz-alert nzType="info" [nzMessage]="'flow.instance.select_approver_tip' | translate" nzShowIcon style="margin-bottom: 16px"></nz-alert>
                 @for (node of selfSelectNodes; track node.key) {
                     <div style="margin-bottom: 16px;display: flex;align-items: center;">
                         <span style="font-weight: bold;margin-right: 8px;;width: 150px"><span style="color: #ff4d4f">*</span> {{ node.value }}:</span>
                         <nz-select [(ngModel)]="selectedNodeUserIds[node.key]" [nzShowSearch]="true"
-                                   [nzPlaceHolder]="'请选择' + node.value + '的审批用户'"
+                                   [nzPlaceHolder]="('flow.instance.select_approver_prefix' | translate) + node.value + ('flow.instance.select_approver_suffix' | translate)"
                                    nzMode="multiple" style="width: 100%" [nzLoading]="!nodeUsersOptions[node.key]"
                         >
                             @for (user of nodeUsersOptions[node.key]; track user.id) {
@@ -27,9 +27,9 @@
             </erupt-flow-form>
         </div>
         <div style="text-align: right;position: sticky;bottom: 0;padding: 10px 16px;border-top:1px solid rgba(0,0,0,.06);z-index:999">
-            <button nz-button nzType="default" (click)="onCancel()">取消</button>
-            <button nz-button nzType="default" (click)="onViewFlow()" style="margin-left: 8px;">查看流程</button>
-            <button nz-button nzType="primary" (click)="onSubmit()" style="margin-left: 8px;">发起审批</button>
+            <button nz-button nzType="default" (click)="onCancel()">{{ 'global.cancel' | translate }}</button>
+            <button nz-button nzType="default" (click)="onViewFlow()" style="margin-left: 8px;">{{ 'flow.action.view_flow' | translate }}</button>
+            <button nz-button nzType="primary" (click)="onSubmit()" style="margin-left: 8px;">{{ 'flow.action.launch' | translate }}</button>
         </div>
     }
 </nz-spin>

@@ -3,8 +3,8 @@
         <div class="rich-content-html" [innerHTML]="(printContent || instance.eruptFlowConfig.setting.printTemplate)|safeHtml"></div>
     } @else {
         <div class="print-meta">
-            <span>打印人: {{ settingsService.user.name || '-' }}</span>
-            <span style="float: right">打印时间: {{ currentDate | date:'yyyy-MM-dd HH:mm:ss' }}</span>
+            <span>{{ 'flow.print.by' | translate }} {{ settingsService.user.name || '-' }}</span>
+            <span style="float: right">{{ 'flow.print.time' | translate }} {{ currentDate | date:'yyyy-MM-dd HH:mm:ss' }}</span>
         </div>
 
         <div class="print-header">
@@ -14,33 +14,33 @@
         <div class="print-info-table">
             <table class="info-table">
                 <tr>
-                    <td class="label-cell">申请人</td>
+                    <td class="label-cell">{{ 'flow.print.applicant' | translate }}</td>
                     <td class="value-cell">{{ instance?.initiatorUser?.name || '-' }}</td>
-                    <td class="label-cell">申请日期</td>
+                    <td class="label-cell">{{ 'flow.print.apply_date' | translate }}</td>
                     <td class="value-cell">{{ instance?.createTime }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">流程编号</td>
+                    <td class="label-cell">{{ 'flow.print.flow_no' | translate }}</td>
                     <td class="value-cell">{{ instance?.no }}</td>
-                    <td class="label-cell">审批状态</td>
+                    <td class="label-cell">{{ 'flow.print.status' | translate }}</td>
                     <td class="value-cell">{{ this.instance.status | translate }}</td>
                 </tr>
                 @if (tasks.length) {
                     <tr>
-                        <td class="label-cell" colspan="4" style="text-align: center">审批记录</td>
+                        <td class="label-cell" colspan="4" style="text-align: center">{{ 'flow.tab.approval_records' | translate }}</td>
                     </tr>
                     <tr>
                         <td class="label-cell">
-                            审批人
+                            {{ 'flow.node.approver_label' | translate }}
                         </td>
                         <td class="label-cell">
-                            任务状态
+                            {{ 'flow.table.task_status' | translate }}
                         </td>
                         <td class="label-cell">
-                            审批意见
+                            {{ 'flow.table.opinion' | translate }}
                         </td>
                         <td class="label-cell">
-                            审批时间
+                            {{ 'flow.table.time' | translate }}
                         </td>
                     </tr>
                     @for (task of tasks; track task.id) {

@@ -169,12 +169,12 @@
                                                                 <div style="display: flex; align-items: center; gap: 12px;width: 100%">
                                                                     <nz-input-number style="flex: 1;" [ngModelOptions]="{standalone: true}"
                                                                                      [(ngModel)]="condition.value[0]"
-                                                                                     [placeholder]="'smart_search.min_value' | translate">
+                                                                                     [nzPlaceHolder]="'smart_search.min_value' | translate">
                                                                     </nz-input-number>
                                                                     <span class="range-separator">{{ 'smart_search.range_to' | translate }}</span>
                                                                     <nz-input-number style="flex: 1" [ngModelOptions]="{standalone: true}"
                                                                                      [(ngModel)]="condition.value[1]"
-                                                                                     [placeholder]="'smart_search.max_value' | translate">
+                                                                                     [nzPlaceHolder]="'smart_search.max_value' | translate">
                                                                     </nz-input-number>
                                                                 </div>
                                                             }

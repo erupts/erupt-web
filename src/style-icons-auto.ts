@@ -7,6 +7,7 @@ import {
     AimOutline,
     ApartmentOutline,
     ApiOutline,
+    AppstoreOutline,
     ArrowDownOutline,
     ArrowLeftOutline,
     ArrowRightOutline,
@@ -48,6 +49,7 @@ import {
     FileTextOutline,
     FileTwoTone,
     FilterOutline,
+    FolderOutline,
     FormOutline,
     FullscreenExitOutline,
     FullscreenOutline,
@@ -212,5 +214,7 @@ export const ICONS_AUTO = [
     FundOutline,
     HddOutline,
     PlayCircleOutline,
-    ThunderboltOutline
+    ThunderboltOutline,
+    FolderOutline,
+    AppstoreOutline
 ];

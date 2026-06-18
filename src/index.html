@@ -16,25 +16,23 @@
 </head>
 <body>
 <div class="preloader">
-    <div class="cs-loader">
-        <div class="cs-loader-inner" id="preload"></div>
+    <div class="pl-orb pl-orb-1"></div>
+    <div class="pl-orb pl-orb-2"></div>
+    <div class="pl-orb pl-orb-3"></div>
+    <div class="pl-orb pl-orb-4"></div>
+    <div class="pl-content">
+        <div class="pl-spinner">
+            <div class="pl-ring pl-ring-1"></div>
+            <div class="pl-ring pl-ring-2"></div>
+            <div class="pl-ring pl-ring-3"></div>
+            <div class="pl-dot"></div>
+        </div>
+        <div class="pl-brand" id="preload-brand">Loading</div>
+        <div class="pl-dots"><span></span><span></span><span></span></div>
     </div>
-    <div id="preloader-tip">
-        Stuck? Press Ctrl + Shift + R to reload.
-    </div>
+    <div id="preloader-tip">Stuck? Press Ctrl + Shift + R to reload.</div>
 </div>
 <script type="text/javascript" src="pre.js"></script>
-<script>
-    var SW = new SiriWave({
-        width: innerWidth < 512 ? innerWidth : 512,
-        height: 200,
-        wave: innerWidth < 512 ? 2 : new Date().getMinutes() % 5 + 3,
-        container: document.getElementById("preload")
-    });
-    SW.set(0.4, 0.2);
-    SW.start();
-    window.SW = SW;
-</script>
 <!--[if lte IE 11]>
 <style>
     .preloader {

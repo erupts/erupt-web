@@ -11,6 +11,7 @@ import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {UpmsSelectComponent} from "@flow/components/upms-select/upms-select.component";
 import {UpmsDataService} from "@flow/service/upms-data.service";
+import {I18NService} from "@core";
 import {DataHandlerService} from "../../../../erupt/service/data-handler.service";
 import html2canvas from "html2canvas";
 import {DataService} from "@shared/service/data.service";
@@ -55,7 +56,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                 private dataHandlerService: DataHandlerService,
                 private msg: NzMessageService,
                 private dataService: DataService,
-                private upmsDataService: UpmsDataService) {
+                private upmsDataService: UpmsDataService,
+                private i18n: I18NService) {
 
     }
 
@@ -109,7 +111,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     changeSubmitPermission(permission: FlowPermission) {
         if (permission == FlowPermission.SPECIFIC) {
             let ref = this.modal.create({
-                nzTitle: '请选择可见范围',
+                nzTitle: this.i18n.fanyi('flow.modal.select_visible_scope'),
                 nzWidth: '880px',
                 nzDraggable: true,
                 nzStyle: {top: '30px'},
@@ -168,23 +170,23 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     // Publish
     publish(): void {
         if (!this.flowConfig.name) {
-            this.msg.warning('请输入流程名称');
+            this.msg.warning(this.i18n.fanyi('flow.warning.flow_name_required'));
             return;
         }
         if (!this.flowConfig.erupt) {
-            this.msg.warning('请选择关联表');
+            this.msg.warning(this.i18n.fanyi('flow.warning.select_data_model'));
             return;
         }
         if (!this.flowConfig.flowGroup) {
-            this.msg.warning('请选择分组');
+            this.msg.warning(this.i18n.fanyi('flow.warning.select_group'));
             return;
         }
         if (!this.flowConfig.permission) {
-            this.msg.warning('请选择提交权限');
+            this.msg.warning(this.i18n.fanyi('flow.warning.select_submit_permission'));
             return;
         }
         if (!this.flowConfig.channels || this.flowConfig.channels.length === 0) {
-            this.msg.warning('请选择通知渠道');
+            this.msg.warning(this.i18n.fanyi('flow.warning.select_notify_channel'));
             return;
         }
         this.flowApiService.ruleCheck(this.flowConfig.rule).subscribe(res => {
@@ -192,20 +194,20 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                 if (this.flowId) {
                     this.flowApiService.configUpdate(this.flowConfig).subscribe(res => {
                         if (res.success) {
-                            this.msg.success('发布成功');
+                            this.msg.success(this.i18n.fanyi('flow.success.publish'));
                             this.closeConfig.emit();
                         }
                     })
                 } else {
                     this.flowApiService.configCreate(this.flowConfig).subscribe(res => {
                         if (res.success) {
-                            this.msg.success('发布成功');
+                            this.msg.success(this.i18n.fanyi('flow.success.publish'));
                             this.closeConfig.emit();
                         }
                     })
                 }
             } else {
-                this.msg.error('规则校验失败请检查');
+                this.msg.error(this.i18n.fanyi('flow.error.rule_validation_failed'));
                 if (res.data) {
                     this.flowConfig.rule = res.data;
                 }
@@ -216,7 +218,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     copyConfig() {
         if (this.flowConfig.rule) {
             navigator.clipboard.writeText(JSON.stringify(this.flowConfig.rule, null, 2)).then(() => {
-                this.msg.success('已复制到剪贴板');
+                this.msg.success(this.i18n.fanyi('flow.success.copied'));
             });
         }
     }
@@ -239,10 +241,10 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     close(): void {
         this.modal.confirm({
-            nzTitle: '提示',
-            nzContent: '是否放弃当前编辑？',
-            nzOkText: '确定',
-            nzCancelText: '取消',
+            nzTitle: this.i18n.fanyi('flow.modal.prompt_title'),
+            nzContent: this.i18n.fanyi('flow.modal.confirm_exit'),
+            nzOkText: this.i18n.fanyi('global.ok'),
+            nzCancelText: this.i18n.fanyi('global.cancel'),
             nzOnOk: () => {
                 this.modal.closeAll();
                 this.closeConfig.emit();
@@ -254,22 +256,22 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     configPrintTemplate() {
         let vars: PrintVar[] = []
-        vars.push({value: 'flow.no', label: '流程-流水号'});
-        vars.push({value: 'flow.initiatorUser.name', label: '流程-发起人'});
-        vars.push({value: 'flow.createTime', label: '流程-发起时间'});
-        vars.push({value: 'flow.status', label: '流程-状态'});
+        vars.push({value: 'flow.no', label: this.i18n.fanyi('flow.print_var.no')});
+        vars.push({value: 'flow.initiatorUser.name', label: this.i18n.fanyi('flow.print_var.initiator')});
+        vars.push({value: 'flow.createTime', label: this.i18n.fanyi('flow.print_var.start_time')});
+        vars.push({value: 'flow.status', label: this.i18n.fanyi('flow.print_var.status')});
         vars.push({
             value: 'flow.tasks',
-            label: '流程-流转记录',
+            label: this.i18n.fanyi('flow.print_var.flow_log'),
             template: `
                 <table style="width:100%;border-collapse: collapse;">
                     <thead>
                         <tr>
-                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">审批人</th>
-                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">任务状态</th>
-                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">审批意见</th>
-                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">创建时间</th>
-                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">审批时间</th>
+                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">${this.i18n.fanyi('flow.print_var.task_approver')}</th>
+                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">${this.i18n.fanyi('flow.print_var.task_status')}</th>
+                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">${this.i18n.fanyi('flow.print_var.task_comment')}</th>
+                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">${this.i18n.fanyi('flow.print_var.task_create_time')}</th>
+                            <th style="border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;">${this.i18n.fanyi('flow.print_var.task_complete_time')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -278,7 +280,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                             <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.assigneeUser.name}</td>
                             <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.taskStatusText}</td>
                             <td style="border: 1px solid #d9d9d9;padding: 8px;">
-                                $!{task.comment}<!--#if($task.signature)--><br/><img src="$!task.signature" style="border:1px solid #f0f0f0;margin: 4px 0 0;width: 160px;" alt="签名"><!--#end-->
+                                $!{task.comment}<!--#if($task.signature)--><br/><img src="$!task.signature" style="border:1px solid #f0f0f0;margin: 4px 0 0;width: 160px;" alt="${this.i18n.fanyi('flow.modal.signature')}"><!--#end-->
                             </td>
                             <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.createTime}</td>
                             <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.completedAt}</td>
@@ -288,11 +290,11 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                 </table>
             `,
             vars: [
-                {value: "task.assigneeUser.name", label: "审批人"},
-                {value: "task.taskStatusText", label: "任务状态"},
-                {value: "task.comment", label: "审批意见"},
-                {value: "task.createTime", label: "创建时间"},
-                {value: "task.completedAt", label: "审批时间"},
+                {value: "task.assigneeUser.name", label: this.i18n.fanyi('flow.print_var.task_approver')},
+                {value: "task.taskStatusText", label: this.i18n.fanyi('flow.print_var.task_status')},
+                {value: "task.comment", label: this.i18n.fanyi('flow.print_var.task_comment')},
+                {value: "task.createTime", label: this.i18n.fanyi('flow.print_var.task_create_time')},
+                {value: "task.completedAt", label: this.i18n.fanyi('flow.print_var.task_complete_time')},
             ]
         });
         if (this.eruptBuild && this.eruptBuild.eruptModel) {
@@ -306,7 +308,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             })
         }
         let ref = this.modal.create({
-            nzTitle: '配置打印模板',
+            nzTitle: this.i18n.fanyi('flow.modal.print_config_title'),
             nzDraggable: true,
             nzContent: PrintTemplate,
             nzWidth: '900px',

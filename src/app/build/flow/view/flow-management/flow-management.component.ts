@@ -8,6 +8,7 @@ import {R} from '@shared/model/api.model';
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {FlowConfigComponent} from "@flow/view/flow-management/flow-config/flow-config.component";
 import {FlowDataService} from "@flow/service/flow-data.service";
+import {I18NService} from "@core";
 
 // Extend the FlowGroup interface to add a count property
 interface FlowGroupWithCount extends FlowGroup {
@@ -52,6 +53,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         private modal: NzModalService,
         private flowDataService: FlowDataService,
         @Inject(NzDrawerService) private drawerService: NzDrawerService,
+        private i18n: I18NService,
     ) {
     }
 
@@ -166,7 +168,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         if (this.createGroupName && this.createGroupName.trim()) {
             this.addGroup(this.createGroupName.trim());
         } else {
-            this.message.warning('请输入分组名称');
+            this.message.warning(this.i18n.fanyi('flow.placeholder.group_name'));
         }
     }
 
@@ -181,17 +183,17 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         this.flowApiService.groupAdd(name).subscribe({
             next: (response: R<void>) => {
                 if (response.success) {
-                    this.message.success('分组创建成功');
+                    this.message.success(this.i18n.fanyi('flow.success.group_created'));
                     this.isCreateModalVisible = false;
                     this.createGroupName = '';
                     this.loadGroups(); // Reload the group list
                 } else {
-                    this.message.error(response.message || '创建分组失败');
+                    this.message.error(response.message || this.i18n.fanyi('flow.error.group_create_failed'));
                 }
             },
             error: (error) => {
                 console.error('创建分组失败:', error);
-                this.message.error('创建分组失败');
+                this.message.error(this.i18n.fanyi('flow.error.group_create_failed'));
             }
         });
     }
@@ -208,7 +210,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         if (this.editGroupName && this.editGroupName.trim() && this.editingGroup?.id) {
             this.editGroup(this.editingGroup.id, this.editGroupName.trim());
         } else {
-            this.message.warning('请输入分组名称');
+            this.message.warning(this.i18n.fanyi('flow.placeholder.group_name'));
         }
     }
 
@@ -224,18 +226,18 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         this.flowApiService.groupEdit(id, name).subscribe({
             next: (response: R<void>) => {
                 if (response.success) {
-                    this.message.success('分组编辑成功');
+                    this.message.success(this.i18n.fanyi('flow.success.group_edited'));
                     this.isEditModalVisible = false;
                     this.editGroupName = '';
                     this.editingGroup = null;
                     this.loadGroups(); // Reload the group list
                 } else {
-                    this.message.error(response.message || '编辑分组失败');
+                    this.message.error(response.message || this.i18n.fanyi('flow.error.group_edit_failed'));
                 }
             },
             error: (error) => {
                 console.error('编辑分组失败:', error);
-                this.message.error('编辑分组失败');
+                this.message.error(this.i18n.fanyi('flow.error.group_edit_failed'));
             }
         });
     }
@@ -245,14 +247,14 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         if (!item.id) return;
 
         this.modal.confirm({
-            nzTitle: '确认删除',
-            nzContent: `确定要删除分组"${item.name}"吗？`,
-            nzOkText: '确定',
-            nzCancelText: '取消',
+            nzTitle: this.i18n.fanyi('flow.modal.confirm_delete'),
+            nzContent: `${this.i18n.fanyi('flow.management.confirm_delete_group_prefix')}${item.name}${this.i18n.fanyi('flow.management.confirm_delete_group_suffix')}`,
+            nzOkText: this.i18n.fanyi('global.ok'),
+            nzCancelText: this.i18n.fanyi('global.cancel'),
             nzOnOk: () => {
                 this.flowApiService.groupDelete(item.id).subscribe({
                     next: (response: R<void>) => {
-                        this.message.success('分组删除成功');
+                        this.message.success(this.i18n.fanyi('flow.success.group_deleted'));
                         this.loadGroups();
                     }
                 });
@@ -286,12 +288,12 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                 if (response.success) {
                     console.log('Group sort successful');
                 } else {
-                    this.message.error(response.message || '分组排序失败');
+                    this.message.error(response.message || this.i18n.fanyi('flow.error.group_sort_failed'));
                 }
             },
             error: (error) => {
                 console.error('分组排序失败:', error);
-                this.message.error('分组排序失败');
+                this.message.error(this.i18n.fanyi('flow.error.group_sort_failed'));
             }
         });
     }
@@ -300,7 +302,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
     onFlowDrop(event: CdkDragDrop<FlowConfig[]>): void {
         // Only allow sorting when a group is selected
         if (this.selectedCategory === null) {
-            this.message.warning('请先选择分组后再进行排序');
+            this.message.warning(this.i18n.fanyi('flow.warning.select_category_for_sort'));
             return;
         }
 
@@ -310,7 +312,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         // If the displayed config count differs from the group config count (possibly filtered by search), disallow sorting
         const displayedConfigs = this.getCurrentConfigs();
         if (currentConfigs.length !== displayedConfigs.length) {
-            this.message.warning('搜索状态下无法排序，请先清除搜索条件');
+            this.message.warning(this.i18n.fanyi('flow.warning.search_sort_disabled'));
             return;
         }
 
@@ -403,28 +405,28 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
 
     onDuplicate(config: FlowConfig): void {
         if (!config.id) {
-            this.message.warning('配置ID不存在');
+            this.message.warning(this.i18n.fanyi('flow.error.config_id_not_found'));
             return;
         }
 
         this.modal.confirm({
-            nzTitle: '确认复制',
-            nzContent: `确定要复制流程配置"${config.name}"吗？`,
-            nzOkText: '确定',
-            nzCancelText: '取消',
+            nzTitle: this.i18n.fanyi('flow.modal.confirm_copy'),
+            nzContent: `${this.i18n.fanyi('flow.config.confirm_copy_prefix')}${config.name}${this.i18n.fanyi('flow.config.confirm_copy_suffix')}`,
+            nzOkText: this.i18n.fanyi('global.ok'),
+            nzCancelText: this.i18n.fanyi('global.cancel'),
             nzOnOk: () => {
                 this.flowApiService.configCopy(config.id).subscribe({
                     next: (response: R<void>) => {
                         if (response.success) {
-                            this.message.success('流程配置复制成功');
+                            this.message.success(this.i18n.fanyi('flow.success.config_copied'));
                             this.loadFlowConfigs(); // Reload the flow configuration list
                         } else {
-                            this.message.error(response.message || '复制流程配置失败');
+                            this.message.error(response.message || this.i18n.fanyi('flow.error.config_copy_failed'));
                         }
                     },
                     error: (error) => {
                         console.error('复制流程配置失败:', error);
-                        this.message.error('复制流程配置失败');
+                        this.message.error(this.i18n.fanyi('flow.error.config_copy_failed'));
                     }
                 });
             }
@@ -433,7 +435,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
 
     onToggleVisibility(config: FlowConfig): void {
         if (!config.id) {
-            this.message.warning('配置ID不存在');
+            this.message.warning(this.i18n.fanyi('flow.error.config_id_not_found'));
             return;
         }
 
@@ -446,48 +448,48 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                 if (response.success) {
                     // Update local state
                     config.enable = targetEnable;
-                    const action = targetEnable ? '启用' : '停用';
-                    this.message.success(`${config.name}${action}成功`);
+                    const action = targetEnable ? this.i18n.fanyi('flow.management.enable') : this.i18n.fanyi('flow.management.disable');
+                    this.message.success(config.name + (targetEnable ? this.i18n.fanyi('flow.success.config_enabled_suffix') : this.i18n.fanyi('flow.success.config_disabled_suffix')));
                 } else {
                     // Restore original state
                     config.enable = originalEnable;
-                    this.message.error(response.message || `${targetEnable ? '启用' : '停用'}流程配置失败`);
+                    this.message.error(response.message || this.i18n.fanyi('flow.error.config_toggle_failed'));
                 }
             },
             error: (error) => {
                 // Restore original state
                 config.enable = originalEnable;
                 console.error('切换流程配置状态失败:', error);
-                this.message.error('切换流程配置状态失败');
+                this.message.error(this.i18n.fanyi('flow.error.config_toggle_failed'));
             }
         });
     }
 
     onDelete(config: FlowConfig): void {
         if (!config.id) {
-            this.message.warning('配置ID不存在');
+            this.message.warning(this.i18n.fanyi('flow.error.config_id_not_found'));
             return;
         }
 
         this.modal.confirm({
-            nzTitle: '确认删除',
-            nzContent: `确定要删除流程配置"${config.name}"吗？此操作不可恢复。`,
-            nzOkText: '确定',
-            nzCancelText: '取消',
+            nzTitle: this.i18n.fanyi('flow.modal.confirm_delete'),
+            nzContent: `${this.i18n.fanyi('flow.config.confirm_delete_prefix')}${config.name}${this.i18n.fanyi('flow.config.confirm_delete_suffix')}`,
+            nzOkText: this.i18n.fanyi('global.ok'),
+            nzCancelText: this.i18n.fanyi('global.cancel'),
             nzOkDanger: true,
             nzOnOk: () => {
                 this.flowApiService.configDelete(config.id).subscribe({
                     next: (response: R<void>) => {
                         if (response.success) {
-                            this.message.success('流程配置删除成功');
+                            this.message.success(this.i18n.fanyi('flow.success.config_deleted'));
                             this.loadFlowConfigs(); // Reload the flow configuration list
                         } else {
-                            this.message.error(response.message || '删除流程配置失败');
+                            this.message.error(response.message || this.i18n.fanyi('flow.error.config_delete_failed'));
                         }
                     },
                     error: (error) => {
                         console.error('删除流程配置失败:', error);
-                        this.message.error('删除流程配置失败');
+                        this.message.error(this.i18n.fanyi('flow.error.config_delete_failed'));
                     }
                 });
             }

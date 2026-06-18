@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ANode} from "@flow/node/abstract-node";
+import {I18NService} from "@core";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {geneNodeId} from "@flow/util/flow.util";
@@ -41,7 +42,7 @@ export class EndNodeComponent extends ANode {
     }
 
     override name(): string {
-        return "END";
+        return I18NService.instance?.fanyi('flow.node.end_label');
     }
 
     override create(): any {

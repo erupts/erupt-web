@@ -7,6 +7,7 @@ import {Subject} from 'rxjs';
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {CreateInstanceComponent} from "@flow/view/flow-dashboard/create-instance/create-instance.component";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
+import {I18NService} from "@core";
 
 interface Category {
     key: string;
@@ -29,9 +30,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
     // Category data - dynamically loaded from the API
-    categories: Category[] = [
-        {key: '', name: '全部'}
-    ];
+    categories: Category[] = [];
 
     // Flow group data
     flowGroups: FlowGroup[] = [];
@@ -60,7 +59,8 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
 
     constructor(private flowApiService: FlowApiService,
                 private instanceApiService: FlowInstanceApiService,
-                private drawerService: NzDrawerService) {
+                private drawerService: NzDrawerService,
+                private i18n: I18NService) {
     }
 
     ngOnInit(): void {
@@ -141,7 +141,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
      */
     private generateCategories(): void {
         // Keep the "All" category
-        this.categories = [{key: '', name: '全部'}];
+        this.categories = [{key: '', name: this.i18n.fanyi('global.all')}];
 
         // Generate categories from flow groups
         this.flowGroups.forEach(group => {
@@ -220,7 +220,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
         const groupMap = new Map<string, FlowConfig[]>();
 
         flows.forEach(flow => {
-            const groupName = flow.flowGroup?.name || '其他';
+            const groupName = flow.flowGroup?.name || this.i18n.fanyi('flow.dashboard.others');
             if (!groupMap.has(groupName)) {
                 groupMap.set(groupName, []);
             }

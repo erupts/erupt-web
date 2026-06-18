@@ -40,7 +40,6 @@ export class NodeComponent implements AfterViewInit {
     enableEdit = false;
 
     constructor() {
-
     }
 
 

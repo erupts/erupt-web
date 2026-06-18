@@ -10,7 +10,7 @@
     [headerColor]="color()"
     [progress]="progress"
     [hasConfig]="true">
-    流程从本节点开始
+    {{ 'flow.node.start_intro' | translate }}
     <div config>
         <app-form-access [eruptBuild]="eruptBuild" [formAccesses]="startNode.formAccesses"
                          [access]="FormAccessEnum.READ_WRITE" [nodeType]="NodeType.START"/>

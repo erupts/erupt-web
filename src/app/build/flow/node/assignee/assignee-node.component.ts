@@ -6,6 +6,7 @@ import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {ApprovalStrategy, AssigneeNode, CcNode, ReviewMode} from "@flow/model/flow-approval.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -80,8 +81,19 @@ export class AssigneeNodeComponent extends ANode implements OnInit {
         return "#b85c38";
     }
 
+    constructor(private i18n?: I18NService) {
+        super();
+    }
+
+    get assigneeTabOptions() {
+        return [
+            {value: 0, label: this.i18n.fanyi('flow.node.tab.set_assignee')},
+            {value: 1, label: this.i18n.fanyi('flow.node.tab.form_access')},
+        ];
+    }
+
     override name(): string {
-        return "办理人";
+        return I18NService.instance?.fanyi('flow.node.assignee_label');
     }
 
     override create(): NodeRule {

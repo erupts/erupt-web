@@ -175,7 +175,7 @@ export class UpmsSelectComponent implements OnInit {
         if (!tab) return '';
 
         const count = this.getFilteredItems(tabKey).length;
-        return `共 ${count} 个${this.i18n.fanyi(tab.key)}`;
+        return `${this.i18n.fanyi('flow.upms.count_prefix')} ${count} ${this.i18n.fanyi('flow.upms.count_unit')}${this.i18n.fanyi(tab.key)}`;
     }
 
     // Get empty state hint text
@@ -183,17 +183,24 @@ export class UpmsSelectComponent implements OnInit {
         const tab = this.tabs.find(t => t.key === tabKey);
         if (!tab) return '';
 
-        return `未找到匹配的${this.i18n.fanyi(tab.key)}`;
+        return `${this.i18n.fanyi('flow.upms.no_match_prefix')}${this.i18n.fanyi(tab.key)}`;
     }
 
     // Get empty selection state hint text
     getEmptySelectedText(): string {
-        return '暂无已选项目';
+        return this.i18n.fanyi('flow.upms.no_selected');
     }
 
     // Get empty selection state hint detail
     getEmptySelectedTip(): string {
-        return '请在左侧选择需要分配的项目';
+        return this.i18n.fanyi('flow.upms.select_hint');
+    }
+
+    // Get search placeholder for a given tab
+    getSearchPlaceholder(tabKey: UpmsScope): string {
+        const tab = this.tabs.find(t => t.key === tabKey);
+        if (!tab) return '';
+        return `${this.i18n.fanyi('flow.upms.search_prefix')}${this.i18n.fanyi(tab.key)}${this.i18n.fanyi('flow.upms.search_suffix')}`;
     }
 
     // Get item icon
@@ -216,15 +223,15 @@ export class UpmsSelectComponent implements OnInit {
     getItemLabel(type: UpmsScope): string {
         switch (type) {
             case UpmsScope.ORG:
-                return '组织架构';
+                return this.i18n.fanyi('flow.upms.org_label');
             case UpmsScope.ROLE:
-                return '角色';
+                return this.i18n.fanyi('ROLE');
             case UpmsScope.USER:
-                return '用户';
+                return this.i18n.fanyi('USER');
             case UpmsScope.POST:
-                return '岗位';
+                return this.i18n.fanyi('POST');
             default:
-                return '未知';
+                return this.i18n.fanyi('flow.upms.unknown');
         }
     }
 
