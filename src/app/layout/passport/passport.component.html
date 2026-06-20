@@ -1,6 +1,8 @@
 <div class="lp-page">
 
-  <!-- 和 admin 完全相同的顶栏 -->
+  <!-- 背景装饰层 -->
+  <div class="lp-deco" aria-hidden="true"></div>
+
   <header class="lp-header">
     <div class="lp-header-brand">
       @if (logoPath) {
@@ -16,17 +18,23 @@
       }
       <span class="lp-header-title">{{title}}</span>
     </div>
+
+    <nav class="lp-header-nav">
+      @if (copyright) {
+        <a class="lp-nav-btn" href="https://github.com/erupts/erupt" target="_blank"
+           nz-tooltip nzTooltipTitle="GitHub" nzTooltipPlacement="bottom">
+          <i nz-icon nzType="github" nzTheme="outline"></i>
+        </a>
+        <div class="lp-nav-divider"></div>
+      }
+      <div class="lp-nav-lang">
+        <i18n-choice></i18n-choice>
+      </div>
+    </nav>
   </header>
 
-  <!-- 多语言悬浮在右上角 -->
-  <div class="lp-lang">
-    <i18n-choice></i18n-choice>
-  </div>
-
-  <!-- 内容区 -->
   <main class="lp-content">
     <div class="lp-card">
-      <!-- 和 tc-toolbar 同款的卡片头 -->
       <div class="lp-card-head">
         <router-outlet></router-outlet>
       </div>

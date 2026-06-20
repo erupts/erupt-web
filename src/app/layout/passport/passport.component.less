@@ -7,26 +7,64 @@
     ::ng-deep {
 
         .lp-page {
+            position: relative;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             min-height: 100dvh;
-            // 细点阵底纹：赋予背景层次感而不喧宾夺主
             background-color: #f2f4f8;
             background-image: radial-gradient(rgba(63, 81, 181, 0.06) 1px, transparent 1px);
             background-size: 22px 22px;
         }
 
+        // ── 背景装饰层 ────────────────────────────────────────────────
+        .lp-deco {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            color: var(--ant-primary-color, #3f51b5);
+
+            // 右下角模糊光晕
+            &::before {
+                content: '';
+                position: absolute;
+                right: -80px;
+                bottom: -80px;
+                width: 480px;
+                height: 480px;
+                border-radius: 50%;
+                background: var(--ant-primary-color, #3f51b5);
+                opacity: 0.07;
+                filter: blur(80px);
+            }
+
+            // 左下角模糊光晕
+            &::after {
+                content: '';
+                position: absolute;
+                left: -60px;
+                bottom: -60px;
+                width: 360px;
+                height: 360px;
+                border-radius: 50%;
+                background: var(--ant-primary-color, #3f51b5);
+                opacity: 0.05;
+                filter: blur(60px);
+            }
+        }
+
         // ── 顶栏 ─────────────────────────────────────────────────────
         .lp-header {
-            height: 44px;
+            position: relative;
+            z-index: 2;
+            height: 52px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             padding: 0 20px;
             background: #fff;
-            // 用阴影替代实线边框，过渡更柔和
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.07);
         }
 
         .lp-header-brand {
@@ -52,47 +90,98 @@
             font-weight: 600;
             letter-spacing: 2px;
             color: rgba(0, 0, 0, 0.85);
-            line-height: 44px;
+            line-height: 52px;
         }
 
-        // ── 多语言悬浮右上角 ──────────────────────────────────────────
-        .lp-lang {
-            position: fixed;
-            top: 8px;
-            right: 16px;
-            z-index: 100;
+        // ── 顶栏右侧导航 ──────────────────────────────────────────────
+        .lp-header-nav {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .lp-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 7px;
+            font-size: 16px;
+            color: rgba(0, 0, 0, 0.50);
+            text-decoration: none;
+            transition: color 0.18s, background 0.18s;
+
+            &:hover {
+                color: rgba(0, 0, 0, 0.80);
+                background: rgba(0, 0, 0, 0.06);
+            }
+        }
+
+        .lp-nav-divider {
+            width: 1px;
+            height: 18px;
+            background: rgba(0, 0, 0, 0.10);
+            margin: 0 6px;
+        }
+
+        .lp-nav-lang {
+            display: inline-flex;
+            align-items: center;
+
+            i18n-choice {
+                flex: none;
+            }
+
+            i[nz-icon] {
+                font-size: 16px;
+                color: rgba(0, 0, 0, 0.50);
+                cursor: pointer;
+                padding: 9px;
+                border-radius: 7px;
+                transition: color 0.18s, background 0.18s;
+
+                &:hover {
+                    color: rgba(0, 0, 0, 0.80);
+                    background: rgba(0, 0, 0, 0.06);
+                }
+            }
         }
 
         // ── 内容区 ────────────────────────────────────────────────────
         .lp-content {
+            position: relative;
+            z-index: 1;
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 40px 16px 64px;
+            background-image: url('/assets/passport/passport-bg.svg');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
         }
 
         // ── 卡片 ──────────────────────────────────────────────────────
         .lp-card {
             width: 100%;
-            max-width: 410px;
+            max-width: 360px;
             background: #fff;
-            border-radius: 0;
+            border-radius: 6px;
             border-top: 3px solid var(--ant-primary-color, #3f51b5);
-            // 三层叠加：微距质感 + 中距扩散 + 远距氛围
             box-shadow:
                 0 1px 3px rgba(0, 0, 0, 0.05),
-                0 4px 14px rgba(0, 0, 0, 0.07),
-                0 16px 40px rgba(0, 0, 0, 0.05);
+                0 4px 16px rgba(0, 0, 0, 0.08),
+                0 20px 48px rgba(0, 0, 0, 0.06);
             overflow: hidden;
-            // 弹性入场动画
             animation: lpCardIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
 
         @keyframes lpCardIn {
-            from { opacity: 0; transform: translateY(16px) scale(0.99); }
-            to   { opacity: 1; transform: translateY(0)   scale(1);    }
+            from { opacity: 0; transform: translateY(18px) scale(0.985); }
+            to   { opacity: 1; transform: translateY(0)    scale(1);     }
         }
 
         // ── 版权 ──────────────────────────────────────────────────────
