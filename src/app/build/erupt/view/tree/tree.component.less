@@ -22,8 +22,16 @@
 
     .tree-nav-header {
         flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
         padding: 7px 8px;
         border-bottom: 1px solid var(--ant-border-color-split);
+
+        nz-input-group {
+            flex: 1;
+            min-width: 0;
+        }
     }
 
     .tree-nav-actions {
@@ -130,6 +138,11 @@
     // ── Mobile collapse toggle button (small screens only) ─────────────────────────────
     .tree-mobile-toggle {
         display: none;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 0 4px !important;
+        line-height: 1 !important;
     }
 
     // ── Mobile responsive adaptation ──────────────────────────────────────────────
