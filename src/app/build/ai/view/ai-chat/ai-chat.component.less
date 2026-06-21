@@ -400,6 +400,7 @@
     box-shadow: 0 1px 6px rgba(22, 119, 255, 0.1);
 
     /* Rotating spinner */
+
     &::after {
         background: none;
         mask-image: none;
@@ -411,7 +412,9 @@
 }
 
 @keyframes call-spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .bubble-wrap.is-model .bubble-content {
@@ -616,6 +619,8 @@
             width: 100%;
             display: flex;
             flex-direction: column;
+            border-left: none;
+            border-right: none;
         }
 
         .input-body {
@@ -629,6 +634,7 @@
             }
         }
     }
+
     background: #ffffff;
     border-top: 1px solid var(--ant-border-color-split, #eee);
 
@@ -794,6 +800,7 @@
     padding: 0 14px 8px;
 
     /* When the toolbar is not rendered (e.g. embedded mode with no agent), restore the top padding */
+
     &:first-child {
         padding-top: 8px;
     }
