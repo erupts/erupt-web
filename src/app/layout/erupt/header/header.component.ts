@@ -1,5 +1,6 @@
-import {Component, Inject, Input, OnInit} from "@angular/core";
-import {MenuService, SettingsService} from "@delon/theme";
+import {Component, Inject, Input, NgZone, OnDestroy, OnInit} from "@angular/core";
+import {Menu, MenuService, SettingsService} from "@delon/theme";
+import {Subject, takeUntil} from "rxjs";
 import screenfull from 'screenfull';
 import {CustomerTool, WindowModel} from "@shared/model/window.model";
 import {Router} from "@angular/router";
@@ -25,9 +26,36 @@ import {ReuseTabService} from "@delon/abc/reuse-tab";
         "./header.component.less"
     ]
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
     @Input() menu: MenuVo[];
+
+    private destroy$ = new Subject<void>();
+
+    splitTopItems: Menu[] = [];
+
+    get splitMenu(): boolean {
+        return !!this.settings.layout['splitMenu'];
+    }
+
+    isActiveSplitItem(item: Menu): boolean {
+        const key = this.settings.layout['splitMenuKey'];
+        return !!key && (item.key === key || item.text === key);
+    }
+
+    selectSplitItem(item: Menu): void {
+        this.settings.setLayout('splitMenuKey', item.key || item.text);
+        if (!item.children?.length) {
+            if (item.externalLink) {
+                item.target === '_blank'
+                    ? window.open(item.externalLink)
+                    : (window.location.href = item.externalLink);
+            } else if (item.link) {
+                this.appViewService.setRouterViewDesc(null);
+                this.ngZone.run(() => this.router.navigateByUrl(item.link!));
+            }
+        }
+    }
 
     searchToggleStatus: boolean;
 
@@ -75,6 +103,7 @@ export class HeaderComponent implements OnInit {
 
     constructor(public settings: SettingsService,
                 private router: Router,
+                private ngZone: NgZone,
                 private appViewService: AppViewService,
                 private dataService: DataService,
                 private menuSrv: MenuService,
@@ -91,6 +120,9 @@ export class HeaderComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.menuSrv.change.pipe(takeUntil(this.destroy$)).subscribe(data => {
+            this.splitTopItems = data.flatMap(g => (g.children || []).filter(i => !i['_hidden']));
+        });
         this.r_tools.forEach(tool => {
             tool.load && tool.load();
         });
@@ -251,6 +283,11 @@ export class HeaderComponent implements OnInit {
             nzContent: HeaderSearchComponent
         });
         model.getContentComponent().menu = this.menu
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
 }

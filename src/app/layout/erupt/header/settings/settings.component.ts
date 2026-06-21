@@ -32,6 +32,16 @@ export class SettingsComponent implements OnInit {
         this.settingSrv.setLayout(name, value);
     }
 
+    toggleSplitMenu(value: boolean) {
+        if (value) this.settingSrv.setLayout('breadcrumbs', false);
+        this.settingSrv.setLayout('splitMenu', value);
+    }
+
+    toggleBreadcrumbs(value: boolean) {
+        if (value) this.settingSrv.setLayout('splitMenu', false);
+        this.settingSrv.setLayout('breadcrumbs', value);
+    }
+
     get layout() {
         return this.settingSrv.layout;
     }

@@ -60,6 +60,11 @@
                   </span>
                 }
               }
+              @if (!i._needIcon && collapsed) {
+                <span nz-tooltip nzTooltipPlacement="right" [nzTooltipTitle]="i.text">
+                  <i class="sidebar-nav__item-icon" nz-icon nzType="appstore" nzTheme="outline"></i>
+                </span>
+              }
               <span class="sidebar-nav__item-text" [innerHTML]="i._text" [attr.title]="i.text"></span>
               @if (!collapsed && !isPad) {
                 <i nz-icon nzType="pushpin"
@@ -77,7 +82,12 @@
               (mouseenter)="showSubMenu($event, i)"
               class="sidebar-nav__item-link"
               >
-              <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
+              @if (i.icon) {
+                <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: i.icon }"></ng-template>
+              }
+              @if (!i.icon && collapsed) {
+                <i class="sidebar-nav__item-icon" nz-icon nzType="appstore" nzTheme="outline"></i>
+              }
               <span class="sidebar-nav__item-text" [innerHTML]="i._text" [attr.title]="i.text"></span>
               <i class="sidebar-nav__sub-arrow"></i>
             </a>
@@ -98,7 +108,7 @@
   </div>
 </ng-template>
 
-<!-- Favorites -->
+<!-- Favorites (shown in both modes) -->
 @if (!collapsed && !isPad && favorites.length > 0) {
   <ul class="sidebar-nav sidebar-nav--pinned" cdkDropList (cdkDropListDropped)="dropFavorite($event)">
     @for (f of favorites; track f) {
@@ -119,18 +129,35 @@
   </ul>
 }
 
-<ul class="sidebar-nav">
-  @if (loading) {
-    <nz-skeleton [nzParagraph]="{ rows: 12 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>
-  }
-  @if (!loading) {
-    @for (group of list; track group) {
-      @if (group.group) {
-        <li class="sidebar-nav__item sidebar-nav__group-title">
-          <span [innerHTML]="group._text"></span>
-        </li>
+<!-- ── Split menu mode: show only selected category's children ── -->
+@if (splitMenu) {
+  @if (selectedTopItem?.children?.length) {
+    <ul class="sidebar-nav">
+      @if (loading) {
+        <nz-skeleton [nzParagraph]="{ rows: 8 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>
       }
-      <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: group.children }"></ng-template>
-    }
+      @if (!loading) {
+        <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: selectedTopItem.children }"></ng-template>
+      }
+    </ul>
   }
-</ul>
+}
+
+<!-- ── Normal menu mode ── -->
+@if (!splitMenu) {
+  <ul class="sidebar-nav">
+    @if (loading) {
+      <nz-skeleton [nzParagraph]="{ rows: 12 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>
+    }
+    @if (!loading) {
+      @for (group of list; track group) {
+        @if (group.group) {
+          <li class="sidebar-nav__item sidebar-nav__group-title">
+            <span [innerHTML]="group._text"></span>
+          </li>
+        }
+        <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: group.children }"></ng-template>
+      }
+    }
+  </ul>
+}

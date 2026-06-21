@@ -82,8 +82,44 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     favorites: Nav[] = [];
 
+    splitTopItems: Nav[] = [];
+
+    get selectedTopItem(): Nav | null {
+        const key = this.settings.layout['splitMenuKey'];
+        if (!this.splitTopItems.length) return null;
+        if (key) {
+            const found = this.splitTopItems.find(i => (i.key === key || i.text === key) && !i['_hidden']);
+            if (found) return found;
+        }
+        return this.splitTopItems[0] ?? null;
+    }
+
     get collapsed(): boolean {
         return this.settings.layout.collapsed;
+    }
+
+    get splitMenu(): boolean {
+        return !!this.settings.layout['splitMenu'];
+    }
+
+    private computeSplitItems(): void {
+        this.splitTopItems = this.list.flatMap(g =>
+            (g.children as Nav[] || []).filter((i: Nav) => !i['_hidden'])
+        );
+    }
+
+    private autoSelectTopItem(): void {
+        if (!this.splitMenu || !this.splitTopItems.length) return;
+        const active = this.splitTopItems.find(i => i['_open'] || i['_selected']);
+        if (active) {
+            const key = active.key || active.text;
+            if (this.settings.layout['splitMenuKey'] !== key) {
+                this.settings.setLayout('splitMenuKey', key);
+            }
+        } else if (!this.settings.layout['splitMenuKey']) {
+            const first = this.splitTopItems[0];
+            if (first) this.settings.setLayout('splitMenuKey', first.key || first.text);
+        }
     }
 
     constructor(
@@ -271,6 +307,8 @@ export class MenuComponent implements OnInit, OnDestroy {
             this.list = data.filter((w: Nav) => w._hidden !== true);
             this.restoreMenuOrder();
             this.loadFavorites();
+            this.computeSplitItems();
+            this.autoSelectTopItem();
             cdr.detectChanges();
         });
         router.events.pipe(takeUntil(destroy$)).subscribe(e => {
@@ -283,9 +321,12 @@ export class MenuComponent implements OnInit, OnDestroy {
         settings.notify
             .pipe(
                 takeUntil(destroy$),
-                filter(t => t.type === 'layout' && t.name === 'collapsed')
+                filter(t => t.type === 'layout' && (t.name === 'collapsed' || t.name === 'splitMenu' || t.name === 'splitMenuKey'))
             )
-            .subscribe(() => this.clearFloating());
+            .subscribe(() => {
+                this.clearFloating();
+                cdr.detectChanges();
+            });
         this.underPad();
 
         this.dir = this.directionality.value;

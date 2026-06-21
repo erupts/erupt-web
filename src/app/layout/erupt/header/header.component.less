@@ -1,4 +1,29 @@
 :host {
+    // ── Split menu category tabs in header ────────────────────────────────
+    .split-nav-item {
+        display: flex;
+        align-items: center;
+        height: 30px;
+        padding: 0 12px;
+        border-radius: 4px;
+        font-size: 13px;
+        color: rgba(0, 0, 0, 0.65);
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background 0.18s, color 0.18s;
+
+        &:hover {
+            color: var(--ant-primary-color);
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        &--active {
+            color: var(--ant-primary-color);
+            background: var(--ant-primary-1, #e6f4ff);
+            font-weight: 500;
+        }
+    }
+
     .alain-default__nav {
         gap: 2px;
         align-items: center;
@@ -30,6 +55,9 @@
             &.r_tool_item {
                 width: auto;
                 padding: 0 10px;
+                cursor: default;
+                &:hover { background: none; }
+                &:active { background: none; transform: none; }
             }
 
             .spin {
@@ -44,6 +72,20 @@
     }
 
     ::ng-deep {
+        .split-nav-wrap {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            height: 44px;
+            padding: 0 4px;
+            gap: 2px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+            &::-webkit-scrollbar { display: none; }
+        }
+
         .header-logo {
             padding: 0 12px;
         }
@@ -65,7 +107,7 @@
             min-width: ~"var(--sidebar-width, 200px)";
             text-align: center;
             width: auto;
-            padding: 0 8px;
+            padding: 0 5px;
             border-right: 1px solid rgba(0, 0, 0, 0.07);
         }
 

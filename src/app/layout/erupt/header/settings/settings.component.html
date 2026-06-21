@@ -3,13 +3,18 @@
     <nz-switch nzSize="small" [(ngModel)]="layout['fixed']" (ngModelChange)="setLayout('fixed', layout['fixed'])"></nz-switch>
 </div>
 <div class="setting-item">
+    <span>{{'setting.split-menu' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout['splitMenu']"
+               (ngModelChange)="toggleSplitMenu(layout['splitMenu'])"></nz-switch>
+</div>
+<div class="setting-item">
     <span>{{'setting.tab-reuse' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout['reuse']" (ngModelChange)="changeReuse(layout['reuse'])"></nz-switch>
 </div>
 <div class="setting-item">
     <span>{{'setting.nav' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout['breadcrumbs']"
-               (ngModelChange)="setLayout('breadcrumbs',layout['breadcrumbs'])"></nz-switch>
+               (ngModelChange)="toggleBreadcrumbs(layout['breadcrumbs'])"></nz-switch>
 </div>
 <div class="setting-item">
     <span>{{'setting.table-border' | translate}}</span>
@@ -30,11 +35,7 @@
     <nz-switch nzSize="small" [(ngModel)]="layout['drawDraw']"
                (ngModelChange)="setLayout('drawDraw', layout['drawDraw'])"></nz-switch>
 </div>
-<div class="setting-item">
-    <span>{{'setting.search-collapsed' | translate}}</span>
-    <nz-switch nzSize="small" [(ngModel)]="layout['searchCollapsed']"
-               (ngModelChange)="setLayout('searchCollapsed', layout['searchCollapsed'])"></nz-switch>
-</div>
+
 <div class="setting-item">
     <span>{{'setting.color-weak' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout.colorWeak"

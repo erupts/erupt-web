@@ -3,10 +3,10 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 3px;
     z-index: 99999;
-    overflow: hidden;
-    background: rgba(22, 119, 255, 0.12);
+    overflow: visible;
+    background: rgba(22, 119, 255, 0.18);
 
     &::after {
         content: '';
@@ -15,11 +15,15 @@
         width: 45%;
         background: linear-gradient(90deg,
             transparent,
-            var(--ant-primary-color, #1677ff) 40%,
-            #69b1ff 60%,
+            var(--ant-primary-color, #1677ff) 35%,
+            #93caff 58%,
             transparent
         );
-        animation: erupt-progress-slide 1.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        // 双层光晕：近距紧实 + 远距氛围
+        box-shadow:
+            0 0 6px 2px var(--ant-primary-color, #1677ff),
+            0 0 18px 5px var(--ant-primary-color, #1677ff);
+        animation: erupt-progress-slide 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
 }
 

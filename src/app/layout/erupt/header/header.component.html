@@ -12,20 +12,18 @@
   </a>
 </div>
 
-<div class="alain-default__nav-wrap">
-  <ul class="alain-default__nav">
+<div class="alain-default__nav-wrap" style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;">
+  <ul class="alain-default__nav" style="flex-shrink:0;" [style.margin-right]="(splitMenu && splitTopItems.length) ? '0' : null">
     <!-- mobile sidebar toggle -->
     <li class="hidden-pc">
       <div class="alain-default__nav-item" (click)="toggleCollapsedSidebar()">
         <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
       </div>
     </li>
-    @if (settings.layout['breadcrumbs']) {
-      <div class="hidden-mobile">
-        <div style="padding:0 10px 0 18px">
-          <erupt-nav></erupt-nav>
-        </div>
-      </div>
+    @if (!splitMenu && settings.layout['breadcrumbs']) {
+      <li class="hidden-mobile" style="padding:0 10px 0 18px;">
+        <erupt-nav></erupt-nav>
+      </li>
     }
     @if (desc) {
       <li>
@@ -37,7 +35,21 @@
     }
   </ul>
 
-  <ul class="alain-default__nav">
+  @if (splitMenu && splitTopItems.length) {
+    <div class="split-nav-wrap hidden-mobile"
+         style="min-width:0;display:flex;align-items:center;height:44px;padding:0 4px;gap:2px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;">
+      @for (item of splitTopItems; track item) {
+        <a class="split-nav-item" [class.split-nav-item--active]="isActiveSplitItem(item)"
+           (click)="selectSplitItem(item)">
+          {{ item.text }}
+        </a>
+      }
+    </div>
+  } @else {
+    <span></span>
+  }
+
+  <ul class="alain-default__nav" style="flex-shrink:0;">
     @for (r of r_tools; track r) {
       <li (click)="customToolsFun($event,r)" [ngClass]="r.mobileHidden?'hidden-mobile':''">
         <div class="alain-default__nav-item r_tool_item" [title]="r.text||''">
