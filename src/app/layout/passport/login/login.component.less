@@ -115,6 +115,23 @@
             &:hover { opacity: 0.75; }
         }
 
+        .lf-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 16px;
+            color: rgba(0, 0, 0, 0.22);
+            font-size: 12px;
+
+            &::before,
+            &::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: rgba(0, 0, 0, 0.09);
+            }
+        }
+
         .point {
             cursor: pointer;
             color: rgba(0, 0, 0, 0.35);

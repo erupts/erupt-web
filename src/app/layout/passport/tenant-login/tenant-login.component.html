@@ -85,9 +85,9 @@
       </button>
     </nz-form-item>
     @if (!tenantDomainInfo && tenantLogin) {
-      <p style="text-align:center;margin:14px 0 0">
+      <div class="lf-divider">
         <a class="lf-link" (click)="toLogin()">{{ 'tenant.platform_login' | translate }}</a>
-      </p>
+      </div>
     }
   </form>
 </div>
