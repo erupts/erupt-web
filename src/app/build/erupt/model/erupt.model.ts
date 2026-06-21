@@ -109,6 +109,7 @@ interface Layout {
     refreshTime: number;
     tableWidth: string;
     tableOperatorWidth: string;
+    collapseActionButton: boolean;
 }
 
 

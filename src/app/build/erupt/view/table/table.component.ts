@@ -605,53 +605,56 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         _columns.push(...viewCols);
         const tableOperators: STColumnButton[] = [];
+        const collapseAction = this.eruptBuildModel.eruptModel.eruptJson.layout?.collapseActionButton;
+        const collapsedStd: STColumnButton[] = [];
         if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
             let fullLine = false;
             let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
             if (layout && layout.formSize == FormSize.FULL_LINE) {
                 fullLine = true;
             }
-            tableOperators.push({
-                icon: "eye",
-                tooltip: this.i18n.fanyi("global.view"),
-                click: (record: any, modal: any) => {
-                    let params = {
-                        readonly: true,
-                        eruptBuildModel: this.eruptBuildModel,
-                        behavior: Scene.EDIT,
-                        id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
-                    };
-                    if (this.settingSrv.layout['drawDraw']) {
-                        //open details in drawer mode
-                        this.drawerService.create({
-                            nzTitle: this.i18n.fanyi("global.view"),
-                            nzWidth: "75%",
-                            nzContent: EditComponent,
-                            nzContentParams: params
-                        });
-                    } else {
-                        let ref = this.modal.create({
-                            nzDraggable: true,
-                            nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-                            nzWidth: fullLine ? 550 : null,
-                            nzStyle: {top: "60px"},
-                            nzMaskClosable: true,
-                            nzKeyboard: true,
-                            nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
-                            nzOkText: null,
-                            nzTitle: this.i18n.fanyi("global.view"),
-                            nzContent: EditComponent
-                        });
-                        Object.assign(ref.getContentComponent(), params)
-                    }
-                },
-                iif: (item) => {
-                    if (item[TableStyle.power]) {
-                        return (<Power>item[TableStyle.power]).viewDetails !== false
-                    }
-                    return true;
+            const _viewClick = (record: any, modal: any) => {
+                let params = {
+                    readonly: true,
+                    eruptBuildModel: this.eruptBuildModel,
+                    behavior: Scene.EDIT,
+                    id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
+                };
+                if (this.settingSrv.layout['drawDraw']) {
+                    //open details in drawer mode
+                    this.drawerService.create({
+                        nzTitle: this.i18n.fanyi("global.view"),
+                        nzWidth: "75%",
+                        nzContent: EditComponent,
+                        nzContentParams: params
+                    });
+                } else {
+                    let ref = this.modal.create({
+                        nzDraggable: true,
+                        nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+                        nzWidth: fullLine ? 550 : null,
+                        nzStyle: {top: "60px"},
+                        nzMaskClosable: true,
+                        nzKeyboard: true,
+                        nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
+                        nzOkText: null,
+                        nzTitle: this.i18n.fanyi("global.view"),
+                        nzContent: EditComponent
+                    });
+                    Object.assign(ref.getContentComponent(), params)
                 }
-            });
+            };
+            const _viewIif = (item) => {
+                if (item[TableStyle.power]) {
+                    return (<Power>item[TableStyle.power]).viewDetails !== false
+                }
+                return true;
+            };
+            if (collapseAction) {
+                collapsedStd.push({ text: this.i18n.fanyi("global.view"), click: _viewClick, iif: _viewIif });
+            } else {
+                tableOperators.push({ icon: "eye", tooltip: this.i18n.fanyi("global.view"), click: _viewClick, iif: _viewIif });
+            }
         }
         let tableButtons: STColumnButton[] = []
         let editButtons: ModalButtonOptions[] = [];
@@ -757,51 +760,54 @@ export class TableComponent implements OnInit, OnDestroy {
             if (layout && layout.formSize == FormSize.FULL_LINE) {
                 fullLine = true;
             }
-            tableOperators.push({
-                icon: "edit",
-                tooltip: this.i18n.fanyi("global.editor"),
-                click: (record: any) => {
-                    this.onEdit(record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol], fullLine, getEditButtons(record));
-                },
-                iif: (item) => {
-                    if (item[TableStyle.power]) {
-                        return (<Power>item[TableStyle.power]).edit !== false
-                    }
-                    return true;
+            const _editClick = (record: any) => {
+                this.onEdit(record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol], fullLine, getEditButtons(record));
+            };
+            const _editIif = (item) => {
+                if (item[TableStyle.power]) {
+                    return (<Power>item[TableStyle.power]).edit !== false
                 }
-            });
+                return true;
+            };
+            if (collapseAction) {
+                collapsedStd.push({ text: this.i18n.fanyi("global.editor"), click: _editClick, iif: _editIif });
+            } else {
+                tableOperators.push({ icon: "edit", tooltip: this.i18n.fanyi("global.editor"), click: _editClick, iif: _editIif });
+            }
         }
         if (this.eruptBuildModel.eruptModel.eruptJson.power.delete) {
-            tableOperators.push({
-                icon: {
-                    type: "delete",
-                    theme: "twotone",
-                    twoToneColor: "#f00"
-                },
-                tooltip: this.i18n.fanyi("global.delete"),
-                pop: this.i18n.fanyi("table.delete.hint"),
-                type: "del",
-                click: (record) => {
-                    this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                        record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
-                        .subscribe(result => {
-                            if (result.status === Status.SUCCESS) {
-                                if (this.dataPage.data.length <= 1) {
-                                    this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
-                                } else {
-                                    this.query(this.dataPage.pi);
-                                }
-                                this.msg.success(this.i18n.fanyi('global.delete.success'));
+            const _delClick = (record) => {
+                this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                    record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
+                    .subscribe(result => {
+                        if (result.status === Status.SUCCESS) {
+                            if (this.dataPage.data.length <= 1) {
+                                this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
+                            } else {
+                                this.query(this.dataPage.pi);
                             }
-                        });
-                },
-                iif: (item) => {
-                    if (item[TableStyle.power]) {
-                        return (<Power>item[TableStyle.power]).delete !== false
-                    }
-                    return true;
+                            this.msg.success(this.i18n.fanyi('global.delete.success'));
+                        }
+                    });
+            };
+            const _delIif = (item) => {
+                if (item[TableStyle.power]) {
+                    return (<Power>item[TableStyle.power]).delete !== false
                 }
-            });
+                return true;
+            };
+            if (collapseAction) {
+                collapsedStd.push({ text: this.i18n.fanyi("global.delete"), pop: this.i18n.fanyi("table.delete.hint"), type: "del", click: _delClick, iif: _delIif });
+            } else {
+                tableOperators.push({
+                    icon: { type: "delete", theme: "twotone", twoToneColor: "#f00" },
+                    tooltip: this.i18n.fanyi("global.delete"),
+                    pop: this.i18n.fanyi("table.delete.hint"),
+                    type: "del",
+                    click: _delClick,
+                    iif: _delIif
+                });
+            }
         }
         tableOperators.push(...tableButtons);
         if (this.eruptBuildModel.eruptModel.tags?.["EruptFlow"]) {
@@ -833,8 +839,9 @@ export class TableComponent implements OnInit, OnDestroy {
                 }
             });
         }
+        if (collapsedStd.length > 0) isFoldButtons = true;
         if (isFoldButtons) {
-            let children: STColumnButton[] = [];
+            let children: STColumnButton[] = [...collapsedStd];
             eruptJson.rowOperation.forEach(ro => {
                 if (ro.mode !== OperationMode.BUTTON && ro.mode !== OperationMode.MULTI_ONLY) {
                     ro.fold && children.push({
