@@ -5,6 +5,11 @@
             <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}" style="font-size: 1.2em"></i>
         </div>
     </div>
+    @if (loading) {
+        <div class="aside-loading-overlay">
+            <nz-spin nzSimple/>
+        </div>
+    }
 </div>
 @if (!settings.layout.collapsed) {
     <div class="sidebar-resize-handle" (mousedown)="onResizeStart($event)"></div>

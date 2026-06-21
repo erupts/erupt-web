@@ -1,5 +1,6 @@
-import {Component, OnInit} from "@angular/core";
-import {SettingsService} from "@delon/theme";
+import {Component, OnDestroy, OnInit} from "@angular/core";
+import {MenuService, SettingsService} from "@delon/theme";
+import {skip, Subject, takeUntil} from "rxjs";
 
 const SIDEBAR_WIDTH_KEY = 'erupt_sidebar_width';
 const DEFAULT_WIDTH = 200;
@@ -12,13 +13,15 @@ const MAX_WIDTH = 400;
     templateUrl: "./sidebar.component.html",
     styleUrls: ["./sidebar.component.less"]
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
 
     resizing = false;
+    loading = true;
 
     private sidebarWidth = DEFAULT_WIDTH;
+    private destroy$ = new Subject<void>();
 
-    constructor(public settings: SettingsService) {
+    constructor(public settings: SettingsService, private menuSrv: MenuService) {
     }
 
     ngOnInit(): void {
@@ -27,6 +30,12 @@ export class SidebarComponent implements OnInit {
             this.sidebarWidth = saved;
             this.applyWidth(saved);
         }
+        this.menuSrv.change.pipe(
+            skip(1),
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
+            setTimeout(() => this.loading = false);
+        });
     }
 
     toggleCollapsedSidebar() {
@@ -58,6 +67,11 @@ export class SidebarComponent implements OnInit {
 
     private applyWidth(width: number) {
         document.documentElement.style.setProperty('--sidebar-width', width + 'px');
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
 }

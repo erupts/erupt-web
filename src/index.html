@@ -206,7 +206,7 @@
         if (!window.eruptWebSuccess) {
             location.reload(true)
         }
-    }, 1000 * 12);
+    }, 1000 * 20);
     (function (date) {
         var __t__ = '' + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes();
         document.write(
@@ -215,7 +215,7 @@
             "<script type=\"module\" src=\"app.module.js?_=" + __t__ + "\" ><\/script>"
         );
         var _preloaderEl = document.querySelector(".preloader");
-        _preloaderEl.style.background = "#1890ff";
+        _preloaderEl.style.background = "#1677ff";
         var _brandEl = document.getElementById("preload-brand");
         var _colorCheckTimer = setInterval(function () {
             if (window.eruptSiteConfig !== undefined) {

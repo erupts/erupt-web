@@ -6,7 +6,7 @@
     height: 3px;
     z-index: 99999;
     overflow: visible;
-    background: rgba(22, 119, 255, 0.18);
+    background: var(--ant-primary-1, rgba(22, 119, 255, 0.18));
 
     &::after {
         content: '';
@@ -16,7 +16,7 @@
         background: linear-gradient(90deg,
             transparent,
             var(--ant-primary-color, #1677ff) 35%,
-            #93caff 58%,
+            var(--ant-primary-3, #93caff) 58%,
             transparent
         );
         // 双层光晕：近距紧实 + 远距氛围
