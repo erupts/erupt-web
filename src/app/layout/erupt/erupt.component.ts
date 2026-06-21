@@ -1,18 +1,7 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    Inject,
-    OnDestroy,
-    OnInit,
-    Optional,
-    Renderer2,
-    ViewChild,
-    ViewContainerRef
-} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, Optional, Renderer2, ViewChild, ViewContainerRef} from "@angular/core";
 import {IframeManagerService} from "@shared/service/iframe-manager.service";
 import {DOCUMENT} from "@angular/common";
-import {NavigationCancel, NavigationEnd, NavigationError, RouteConfigLoadStart, Router} from "@angular/router";
+import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router} from "@angular/router";
 
 import {Observable, Subscription} from "rxjs";
 import {ScrollService, updateHostClass} from "@delon/util";
@@ -124,20 +113,22 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 @Inject(DOCUMENT) private doc: any) {
         iconSrv.addIcon(...ICONS);
         let initReuseTab = false;
+        let fetchTimer: ReturnType<typeof setTimeout> | null = null;
         // this.themes = [
         //     {key: 'default', text: this.i18n.fanyi("theme.default")},
         //     {key: 'dark', text: this.i18n.fanyi("theme.dark")},
         //     {key: 'compact', text: this.i18n.fanyi("theme.compact")},
         // ]
         router.events.subscribe(evt => {
-            if (!this.isFetching && evt instanceof RouteConfigLoadStart) {
-                this.isFetching = true;
+            if (evt instanceof NavigationStart) {
+                fetchTimer = setTimeout(() => { this.isFetching = true; }, 300);
             }
             if (!initReuseTab) {
                 this.reuseTabService.clear();
                 initReuseTab = true;
             }
             if (evt instanceof NavigationError || evt instanceof NavigationCancel) {
+                clearTimeout(fetchTimer);
                 this.isFetching = false;
                 if (evt instanceof NavigationError) {
                     _message.error(`Unable to load route ${evt.url}, please refresh the page or clear the cache and try again!`, {nzDuration: 1000 * 3});
@@ -153,10 +144,11 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!isManagedRoute) {
                 this.iframeManager.hideAll();
             }
+            clearTimeout(fetchTimer);
             setTimeout(() => {
                 scroll.scrollToTop();
                 this.isFetching = false;
-            }, 1000);
+            }, 200);
         });
     }
 

@@ -2,34 +2,43 @@
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    height: 3px;
+    width: 100%;
+    height: 2px;
     z-index: 99999;
-    overflow: visible;
-    background: var(--ant-primary-1, rgba(22, 119, 255, 0.18));
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: var(--ant-primary-color, #1677ff);
+        animation: erupt-bar-1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+    }
 
     &::after {
         content: '';
-        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
         height: 100%;
-        width: 45%;
-        background: linear-gradient(90deg,
-            transparent,
-            var(--ant-primary-color, #1677ff) 35%,
-            var(--ant-primary-3, #93caff) 58%,
-            transparent
-        );
-        // 双层光晕：近距紧实 + 远距氛围
-        box-shadow:
-            0 0 6px 2px var(--ant-primary-color, #1677ff),
-            0 0 18px 5px var(--ant-primary-color, #1677ff);
-        animation: erupt-progress-slide 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        background: var(--ant-primary-color, #1677ff);
+        animation: erupt-bar-2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+        animation-delay: 1.15s;
     }
 }
 
-@keyframes erupt-progress-slide {
-    0%   { transform: translateX(-120%); }
-    100% { transform: translateX(320%); }
+@keyframes erupt-bar-1 {
+    0%   { left: -35%; width: 35%; }
+    60%  { left: 100%; width: 100%; }
+    100% { left: 100%; width: 100%; }
+}
+
+@keyframes erupt-bar-2 {
+    0%   { left: -200%; width: 35%; }
+    60%  { left: 107%; width: 60%; }
+    100% { left: 107%; width: 60%; }
 }
 
 ::ng-deep {
