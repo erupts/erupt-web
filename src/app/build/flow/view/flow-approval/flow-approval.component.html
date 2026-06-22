@@ -1,37 +1,31 @@
 <div class="flow-approval-container">
     <!-- Left sidebar navigation -->
     <div class="sidebar">
-        <div class="navigation-menu">
-            <ul nz-menu
-                nzMode="inline"
-                class="approval-menu">
-
-                <!-- To-do -->
-                <li nz-menu-item (click)="loadFlows(ApprovalView.TODO)" [nzSelected]="ApprovalView.TODO === selectedView">
-                    <div style="display: flex;align-items: center">
-                        <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
-                        <span class="menu-title">{{ 'FLOW_TODO' | translate }}</span>
-                        <nz-badge style="margin-left:auto" [nzCount]="todoCount" class="menu-badge"></nz-badge>
-                    </div>
-                </li>
-                <!-- Done -->
-                <li nz-menu-item (click)="loadFlows(ApprovalView.DONE)" [nzSelected]="ApprovalView.DONE === selectedView">
-                    <span nz-icon nzType="check-circle" nzTheme="outline"></span>
-                    <span class="menu-title">{{ 'FLOW_DONE' | translate }}</span>
-                </li>
-
-                <!-- CC'd to me -->
-                <li nz-menu-item (click)="loadFlows(ApprovalView.CC)" [nzSelected]="ApprovalView.CC === selectedView">
-                    <span nz-icon nzType="copy" nzTheme="outline"></span>
-                    <span class="menu-title">{{ 'CC' | translate }}</span>
-                </li>
-
-                <!-- Initiated -->
-                <li nz-menu-item (click)="loadFlows(ApprovalView.CREATED)" [nzSelected]="ApprovalView.CREATED === selectedView">
-                    <span nz-icon nzType="rocket" nzTheme="outline"></span>
-                    <span class="menu-title">{{ 'CREATED' | translate }}</span>
-                </li>
-            </ul>
+        <div class="sidebar-header">
+            <span class="sidebar-title">{{ 'APPROVAL' | translate }}</span>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item" [class.active]="ApprovalView.TODO === selectedView"
+                 (click)="loadFlows(ApprovalView.TODO)">
+                <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+                <span class="menu-label">{{ 'FLOW_TODO' | translate }}</span>
+                <nz-badge [nzCount]="todoCount" [nzShowZero]="false" class="menu-badge"></nz-badge>
+            </div>
+            <div class="menu-item" [class.active]="ApprovalView.DONE === selectedView"
+                 (click)="loadFlows(ApprovalView.DONE)">
+                <span nz-icon nzType="check-circle" nzTheme="outline"></span>
+                <span class="menu-label">{{ 'FLOW_DONE' | translate }}</span>
+            </div>
+            <div class="menu-item" [class.active]="ApprovalView.CC === selectedView"
+                 (click)="loadFlows(ApprovalView.CC)">
+                <span nz-icon nzType="copy" nzTheme="outline"></span>
+                <span class="menu-label">{{ 'CC' | translate }}</span>
+            </div>
+            <div class="menu-item" [class.active]="ApprovalView.CREATED === selectedView"
+                 (click)="loadFlows(ApprovalView.CREATED)">
+                <span nz-icon nzType="rocket" nzTheme="outline"></span>
+                <span class="menu-label">{{ 'CREATED' | translate }}</span>
+            </div>
         </div>
     </div>
 
@@ -39,47 +33,39 @@
     <div class="main-content">
         <!-- Center list area -->
         <div class="list-section">
-            <div class="list-header" style="padding: 8px">
+            <div class="list-header">
                 <nz-select [(ngModel)]="selectFlow" (ngModelChange)="onSelectFlow($event)" [nzShowSearch]="true"
-                           style="flex: 1" [nzPlaceHolder]="'flow.placeholder.filter_flow' | translate" nzBorderless nzAllowClear>
+                           style="flex: 1" [nzPlaceHolder]="'flow.placeholder.filter_flow' | translate" nzBorderless
+                           nzAllowClear>
                     @for (flow of uniqFlowInstances(flowInstances); track flow) {
                         <nz-option [nzValue]="flow.eruptFlowConfig.id" [nzLabel]="flow.eruptFlowConfig.name">
                         </nz-option>
                     }
                 </nz-select>
-                <button nz-button nzType="text" (click)="reloadFlows()" [nzLoading]="loading">
+                <button nz-button nzType="text" nzSize="small" (click)="reloadFlows()" [nzLoading]="loading">
                     <span nz-icon nzType="reload"></span>
                 </button>
             </div>
 
             <div class="approval-list" (scroll)="onScroll($event)">
                 @for (item of flowInstances; track item) {
-                    <div
-                        class="approval-item"
-                        [class.active]="item?.id === selectedInstance?.id"
-                        (click)="selectInstance(item);"
-                    >
+                    <div class="approval-item" [class.active]="item?.id === selectedInstance?.id"
+                         (click)="selectInstance(item)">
                         <div class="item-header">
-                            <h3 class="item-title">
-                                <p style="margin-bottom: 0">{{ item?.eruptFlowConfig?.name }}</p>
-                            </h3>
-                            <div>
+                            <span class="item-title">{{ item?.eruptFlowConfig?.name }}</span>
+                            <div class="item-tags">
                                 @if (item?.parent) {
-                                    <nz-tag nzColor="orange" style="margin-right: 6px">
-                                        {{ 'SUB_FLOW'|translate }}
-                                    </nz-tag>
+                                    <nz-tag nzColor="orange">{{ 'SUB_FLOW' | translate }}</nz-tag>
                                 }
-                                <nz-tag style="margin-right: 0">
-                                    {{ item?.status | translate }}
-                                </nz-tag>
+                                <nz-tag>{{ item?.status | translate }}</nz-tag>
                             </div>
                         </div>
                         @if (item?.eruptFlowConfig?.setting?.subTitleFields?.length && item?.data) {
-                            <p style="margin-bottom: 8px;">
+                            <div class="item-subtitle">
                                 @for (field of item?.eruptFlowConfig?.setting?.subTitleFields; track field) {
-                                    <p style="margin-bottom: 0.25em">{{ JSON.parse(item?.data)?.[field] }}</p>
+                                    <p>{{ JSON.parse(item?.data)?.[field] }}</p>
                                 }
-                            </p>
+                            </div>
                         }
                         <div class="item-footer">
                             <div class="submitter-info">
@@ -89,16 +75,12 @@
                                            nzSize="small"></nz-avatar>
                                 <span class="submitter-name">{{ item?.initiatorUser?.name }}</span>
                             </div>
-                            <div class="time-info">
-                                <span class="process-time">
-                                  {{ item?.createTime | local }}
-                                </span>
-                            </div>
+                            <span class="process-time">{{ item?.createTime | local }}</span>
                         </div>
                     </div>
                 }
                 @if (loading) {
-                    <div style="text-align: center;padding: 12px">
+                    <div class="loading-indicator">
                         <nz-spin nzSimple></nz-spin>
                     </div>
                 }

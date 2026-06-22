@@ -159,11 +159,14 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
         // Cache all flow groups
         this.flowGroupsCache = this.groupFlows(this.flowConfigs);
 
-        // Cache the flow groups for each category
-        this.categories.forEach(category => {
-            if (category.key) {
-                const categoryFlows = this.flowConfigs.filter(config => config.flowGroup?.name === category.key);
-                this.categoryFlowGroupsCache.set(category.key, this.groupFlows(categoryFlows));
+        // Cache the flow groups for each category and filter out empty ones
+        this.categoryFlowGroupsCache.clear();
+        this.categories = [{key: '', name: this.i18n.fanyi('global.all')}];
+        this.flowGroups.forEach(group => {
+            const categoryFlows = this.flowConfigs.filter(config => config.flowGroup?.name === group.name);
+            if (categoryFlows.length > 0) {
+                this.categories.push({key: group.name, name: group.name});
+                this.categoryFlowGroupsCache.set(group.name, this.groupFlows(categoryFlows));
             }
         });
 
