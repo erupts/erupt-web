@@ -1,7 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {SettingsService} from "@delon/theme";
 import {Router} from "@angular/router";
 import {EruptAppData} from "@shared/model/erupt-app.model";
+import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -22,7 +24,9 @@ export class HomeComponent implements OnInit {
     spin: boolean = true;
 
     constructor(private settingsService: SettingsService,
-                private router: Router) {
+                private router: Router,
+                @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
+                private i18n: I18NService) {
 
     }
 
@@ -31,7 +35,9 @@ export class HomeComponent implements OnInit {
         if (path) {
             this.router.navigateByUrl(path).then();
         } else {
-            this.url = "home.html?v=" + EruptAppData.get().hash;
+            let url = "home.html?v=" + EruptAppData.get().hash;
+            url += "&_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang;
+            this.url = url;
         }
         setTimeout(() => {
             this.spin = false;
