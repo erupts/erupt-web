@@ -50,6 +50,10 @@ let coreRouter: Routes = [
         loadChildren: () => import("../build/monitor/monitor.module").then(m => m.MonitorModule)
     },
     {
+        path: "terminal",
+        loadChildren: () => import("../build/terminal/terminal.module").then(m => m.TerminalModule)
+    },
+    {
         path: "tpl/:name",
         pathMatch: "full",
         loadChildren: () => tplLoad.then(m => m.TplModule)
