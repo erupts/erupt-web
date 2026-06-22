@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {Terminal} from '@xterm/xterm';
 import {FitAddon} from '@xterm/addon-fit';
@@ -42,7 +42,8 @@ const TERM_THEME = {
     standalone: false,
     selector: 'app-terminal',
     templateUrl: './terminal.component.html',
-    styleUrls: ['./terminal.component.less']
+    styleUrls: ['./terminal.component.less'],
+    encapsulation: ViewEncapsulation.None
 })
 export class TerminalComponent implements OnInit, OnDestroy {
 

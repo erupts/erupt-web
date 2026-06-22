@@ -70,6 +70,8 @@
                                      [class.palette-item-third]="!paletteItemFullLine(item.type)"
                                      [class.palette-item-disabled]="item.disabled"
                                      cdkDrag [cdkDragDisabled]="item.disabled" [cdkDragData]="item"
+                                     (cdkDragStarted)="paletteDragging = true"
+                                     (cdkDragEnded)="paletteDragging = false"
                                      nz-tooltip [nzTooltipTitle]="item.disabled ? (item.disabledTip | translate) : null"
                                      (click)="addFromPalette(item)">
                                     <span nz-icon [nzType]="item.icon"></span>
@@ -88,10 +90,30 @@
                  [class.canvas-default-mode]="form.erupt.layout?.formSize !== formSize.FULL_LINE"
                  [cdkDropListOrientation]="form.erupt.layout?.formSize === formSize.FULL_LINE ? 'vertical' : 'mixed'"
                  [cdkDropListData]="form.fields" (cdkDropListDropped)="drop($event)">
-                @if (form.fields.length === 0) {
+                @if (form.fields.length === 0 && !paletteDragging) {
                     <div class="canvas-empty">
-                        <span nz-icon nzType="drag" class="canvas-empty-icon"></span>
-                        <p>{{ 'designer.empty_canvas' | translate }}</p>
+                        <div class="canvas-empty-ghost">
+                            <div class="ghost-row ghost-row--full">
+                                <div class="ghost-label"></div>
+                                <div class="ghost-input"></div>
+                            </div>
+                            <div class="ghost-row ghost-row--half">
+                                <div class="ghost-label"></div>
+                                <div class="ghost-input"></div>
+                            </div>
+                            <div class="ghost-row ghost-row--half">
+                                <div class="ghost-label"></div>
+                                <div class="ghost-input"></div>
+                            </div>
+                            <div class="ghost-row ghost-row--full">
+                                <div class="ghost-label"></div>
+                                <div class="ghost-input ghost-input--textarea"></div>
+                            </div>
+                        </div>
+                        <div class="canvas-empty-hint">
+                            <span nz-icon nzType="drag"></span>
+                            {{ 'designer.empty_canvas' | translate }}
+                        </div>
                     </div>
                 }
                 @for (field of form.fields; track field.key) {

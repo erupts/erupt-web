@@ -80,6 +80,8 @@ export class DesignerComponent implements OnInit, OnDestroy {
     // palette panel search keyword
     paletteKeyword: string = "";
 
+    paletteDragging: boolean = false;
+
     // registered Erupt models for reference-type field linking options (key=class name, value=feature name)
     eruptOptions: KV<string, string>[] = [];
 

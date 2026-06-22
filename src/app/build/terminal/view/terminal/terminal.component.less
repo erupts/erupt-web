@@ -1,20 +1,7 @@
-:host {
+app-terminal {
+    display: block;
     height: 100%;
-    overflow: auto;
-}
-
-@font-face {
-    font-family: 'JetBrains Mono';
-    src: url('assets/font/JetBrainsMono-Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'JetBrains Mono';
-    src: url('assets/font/JetBrainsMono-Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
+    overflow: hidden;
 }
 
 .terminal-shell {
@@ -37,9 +24,7 @@
     overflow-y: hidden;
     scrollbar-width: none;
 
-    &::-webkit-scrollbar {
-        display: none;
-    }
+    &::-webkit-scrollbar { display: none; }
 }
 
 .tab-bar-tabs {
@@ -50,9 +35,7 @@
     overflow-y: hidden;
     scrollbar-width: none;
 
-    &::-webkit-scrollbar {
-        display: none;
-    }
+    &::-webkit-scrollbar { display: none; }
 }
 
 .tab {
@@ -70,25 +53,11 @@
     transition: background .12s, color .12s;
     user-select: none;
 
-    &:hover {
-        background: #1b2027;
-        color: #abb2bf;
-    }
-
-    &.active {
-        background: #1b2027;
-        color: #abb2bf;
-    }
-
-    .tab-close {
-        color: transparent;
-        transition: background .1s, color .1s;
-    }
+    &:hover { background: #1b2027; color: #abb2bf; }
+    &.active { background: #1b2027; color: #abb2bf; }
 
     &:hover .tab-close,
-    &.active .tab-close {
-        color: #5c6370;
-    }
+    &.active .tab-close { color: #5c6370; }
 }
 
 .tab-dot {
@@ -100,9 +69,7 @@
     opacity: 0;
     transition: opacity .2s;
 
-    &.visible {
-        opacity: 1;
-    }
+    &.visible { opacity: 1; }
 }
 
 .tab-close {
@@ -113,13 +80,12 @@
     align-items: center;
     justify-content: center;
     font-size: 11px;
+    color: transparent;
     flex-shrink: 0;
     line-height: 1;
+    transition: background .1s, color .1s;
 
-    &:hover {
-        background: #e06c75 !important;
-        color: #fff !important;
-    }
+    &:hover { background: #e06c75 !important; color: #fff !important; }
 }
 
 .btn-add-tab {
@@ -137,10 +103,7 @@
     transition: background .12s, color .12s;
     user-select: none;
 
-    &:hover {
-        background: #2a3340;
-        color: #fff;
-    }
+    &:hover { background: #2a3340; color: #fff; }
 }
 
 .terminals {
@@ -150,21 +113,14 @@
     overflow: hidden;
 }
 
-::ng-deep .term-wrap {
+.term-wrap {
     position: absolute;
     inset: 0;
     padding: 8px 12px;
     display: none;
 
-    &.active {
-        display: block;
-    }
+    &.active { display: block; }
 
-    .xterm {
-        height: 100%;
-    }
-
-    .xterm-viewport {
-        overflow-y: auto !important;
-    }
+    .xterm { height: 100%; }
+    .xterm-viewport { overflow-y: auto !important; }
 }
