@@ -92,7 +92,14 @@ export class UiBuildService {
                         let value = item[view.column];
                         if (value) {
                             let result = "<div style='display: flex; flex-wrap: wrap; gap: 5px;'>";
-                            for (let ele of value.split(view.eruptFieldModel.eruptFieldJson.edit.tagsType.joinSeparator)) {
+                            const sep = view.eruptFieldModel.eruptFieldJson.edit.tagsType.joinSeparator;
+                            let tags: string[];
+                            if (sep === '[]') {
+                                try { tags = JSON.parse(value); } catch { tags = [value]; }
+                            } else {
+                                tags = value.split(sep);
+                            }
+                            for (let ele of tags) {
                                 result += "<span class='e-tag'>" + ele + "</span>";
                             }
                             result += "</div>";

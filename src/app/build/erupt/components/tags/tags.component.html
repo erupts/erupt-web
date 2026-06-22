@@ -3,7 +3,7 @@
   [nzSize]="size" [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
   [name]="eruptField.fieldName" (nzOpenChange)="load($event)"
   [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
-  [nzTokenSeparators]="[eruptField.eruptFieldJson.edit.tagsType.joinSeparator]"
+  [nzTokenSeparators]="tokenSeparators"
   [nzMode]="eruptField.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'"
   [nzDropdownRender]="eruptField.eruptFieldJson.edit.tagsType.fetchHandler?.length > 0 ? dropdownFooter : null"
   style="width:100%">

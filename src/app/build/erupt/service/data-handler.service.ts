@@ -203,7 +203,9 @@ export class DataHandlerService {
                     break;
                 case EditType.TAGS:
                     if (edit.$value?.length) {
-                        value = (<string[]>edit.$value).join(edit.tagsType.joinSeparator);
+                        value = edit.tagsType.joinSeparator === '[]'
+                            ? JSON.stringify(edit.$value)
+                            : (<string[]>edit.$value).join(edit.tagsType.joinSeparator);
                     }
                     break;
                 default:
@@ -315,7 +317,9 @@ export class DataHandlerService {
                         break;
                     case EditType.TAGS:
                         if (edit.$value || edit.$value === 0) {
-                            let val = (<string[]>edit.$value).join(edit.tagsType.joinSeparator);
+                            let val = edit.tagsType.joinSeparator === '[]'
+                                ? JSON.stringify(edit.$value)
+                                : (<string[]>edit.$value).join(edit.tagsType.joinSeparator);
                             if (val) {
                                 eruptData[field.fieldName] = val;
                             }
@@ -593,7 +597,16 @@ export class DataHandlerService {
                         break;
                     case EditType.TAGS:
                         if (object[field.fieldName]) {
-                            edit.$value = String(object[field.fieldName]).split(edit.tagsType.joinSeparator);
+                            const raw = String(object[field.fieldName]);
+                            if (edit.tagsType.joinSeparator === '[]') {
+                                try {
+                                    edit.$value = JSON.parse(raw);
+                                } catch {
+                                    edit.$value = raw ? [raw] : [];
+                                }
+                            } else {
+                                edit.$value = raw.split(edit.tagsType.joinSeparator);
+                            }
                         } else {
                             edit.$value = [];
                         }

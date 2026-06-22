@@ -27,6 +27,11 @@ export class TagsComponent implements OnInit {
 
     isLoading = false;
 
+    get tokenSeparators(): string[] {
+        const sep = this.eruptField.eruptFieldJson.edit.tagsType.joinSeparator;
+        return sep === '[]' ? [] : [sep];
+    }
+
     constructor(private dataService: DataService,
                 private dataHandlerService: DataHandlerService) {
     }
