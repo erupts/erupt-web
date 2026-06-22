@@ -2,7 +2,18 @@ import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, Vi
 import {Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Page, Power, Row, RowOperation, Vis, VisType} from "../../model/erupt.model";
+import {
+    Alert,
+    Drill,
+    DrillInput,
+    EruptModel,
+    Page,
+    Power,
+    Row,
+    RowOperation,
+    Vis,
+    VisType
+} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -636,10 +647,21 @@ export class TableComponent implements OnInit, OnDestroy {
                         nzStyle: {top: "60px"},
                         nzMaskClosable: true,
                         nzKeyboard: true,
-                        nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
-                        nzOkText: null,
                         nzTitle: this.i18n.fanyi("global.view"),
-                        nzContent: EditComponent
+                        nzContent: EditComponent,
+                        nzFooter: [
+                            ...getEditButtons(record),
+                            {
+                                label: this.i18n.fanyi("global.refresh"),
+                                icon: "reload",
+                                onClick: () => ref.getContentComponent().reload()
+                            },
+                            {
+                                label: this.i18n.fanyi("global.close"),
+                                icon: "close",
+                                onClick: () => ref.close()
+                            }
+                        ]
                     });
                     Object.assign(ref.getContentComponent(), params)
                 }
@@ -746,12 +768,24 @@ export class TableComponent implements OnInit, OnDestroy {
             })
         }
 
-        let getEditButtons = (record): ModalButtonOptions[] => {
+        let getEditButtons = (record: any): ModalButtonOptions[] => {
             for (let editButton of editButtons) {
                 editButton['id'] = record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
                 editButton['data'] = record
             }
-            return editButtons;
+            const roButtons: ModalButtonOptions[] = this.eruptBuildModel.eruptModel.eruptJson.rowOperation
+                .filter(ro => ro.mode !== OperationMode.BUTTON && ro.mode !== OperationMode.MULTI_ONLY)
+                .map(ro => {
+                    const enabled = exprEval(ro.ifExpr, record);
+                    return {
+                        label: ro.title,
+                        type: 'dashed' as const,
+                        show: enabled || ro.ifExprBehavior === OperationIfExprBehavior.DISABLE,
+                        disabled: !enabled && ro.ifExprBehavior === OperationIfExprBehavior.DISABLE,
+                        onClick: (comp: any) => that.createOperator(ro, {[eruptJson.primaryKeyCol]: comp.id})
+                    };
+                });
+            return [...roButtons, ...editButtons];
         }
 
         if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
@@ -892,6 +926,18 @@ export class TableComponent implements OnInit, OnDestroy {
             id: pk,
             behavior: Scene.EDIT
         }
+        const doSave = async (): Promise<boolean> => {
+            let validateResult = model.getContentComponent().beforeSaveValidate();
+            if (!validateResult) return false;
+            let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
+            let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise();
+            if (res.status === Status.SUCCESS) {
+                this.msg.success(this.i18n.fanyi("global.update.success"));
+                this.query();
+                return true;
+            }
+            return false;
+        };
         const model = this.modal.create({
             nzDraggable: true,
             nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
@@ -900,40 +946,31 @@ export class TableComponent implements OnInit, OnDestroy {
             nzMaskClosable: false,
             nzKeyboard: false,
             nzTitle: this.i18n.fanyi("global.editor"),
-            nzOkText: this.i18n.fanyi("global.update"),
             nzContent: EditComponent,
             nzFooter: [
                 {
                     label: this.i18n.fanyi("global.cancel"),
-                    onClick: () => {
-                        model.close();
-                    }
+                    onClick: () => model.close()
+                },
+                {
+                    label: this.i18n.fanyi("global.refresh"),
+                    icon: "reload",
+                    onClick: () => model.getContentComponent().reload()
                 },
                 ...buttons,
                 {
-                    label: this.i18n.fanyi("global.update"),
+                    label: this.i18n.fanyi("global.save_only"),
+                    icon: "save",
+                    onClick: async () => { await doSave(); }
+                },
+                {
+                    label: this.i18n.fanyi("global.save_close"),
                     type: "primary",
-                    onClick: () => {
-                        return model.triggerOk();
-                    }
+                    icon: "check",
+                    onClick: () => model.triggerOk()
                 },
             ],
-            nzOnOk: async () => {
-                let validateResult = model.getContentComponent().beforeSaveValidate();
-                if (validateResult) {
-                    let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
-                    let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
-                    if (res.status === Status.SUCCESS) {
-                        this.msg.success(this.i18n.fanyi("global.update.success"));
-                        this.query();
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            }
+            nzOnOk: async () => doSave()
         });
         Object.assign(model.getContentComponent(), params)
     }

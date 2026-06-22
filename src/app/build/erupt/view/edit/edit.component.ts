@@ -70,6 +70,10 @@ export class EditComponent implements OnInit {
         }
     }
 
+    reload(): void {
+        this.ngOnInit();
+    }
+
     beforeSaveValidate(): boolean {
         if (this.loading) {
             this.msg.warning(this.i18n.fanyi('global.update.loading.hint'));
