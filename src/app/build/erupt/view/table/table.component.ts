@@ -653,12 +653,10 @@ export class TableComponent implements OnInit, OnDestroy {
                             ...getEditButtons(record),
                             {
                                 label: this.i18n.fanyi("global.refresh"),
-                                icon: "reload",
                                 onClick: () => ref.getContentComponent().reload()
                             },
                             {
                                 label: this.i18n.fanyi("global.close"),
-                                icon: "close",
                                 onClick: () => ref.close()
                             }
                         ]
@@ -954,19 +952,16 @@ export class TableComponent implements OnInit, OnDestroy {
                 },
                 {
                     label: this.i18n.fanyi("global.refresh"),
-                    icon: "reload",
                     onClick: () => model.getContentComponent().reload()
                 },
                 ...buttons,
                 {
                     label: this.i18n.fanyi("global.save_only"),
-                    icon: "save",
                     onClick: async () => { await doSave(); }
                 },
                 {
                     label: this.i18n.fanyi("global.save_close"),
                     type: "primary",
-                    icon: "check",
                     onClick: () => model.triggerOk()
                 },
             ],
