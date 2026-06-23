@@ -568,10 +568,8 @@ export class TableComponent implements OnInit, OnDestroy {
             this.dataPage.total = page.total;
             this.alert = page.alert;
             this.extraContent = page.extraContent;
-            if (this.selectedVisIndex) {
-                if (this.vis[this.selectedVisIndex].type == VisType.TPL) {
-                    this.setVisTplData(this.dataPage.data);
-                }
+            if (this.vis[this.selectedVisIndex]?.type == VisType.TPL) {
+                this.setVisTplData(this.dataPage.data);
             }
         })
         this.extraRowFun(this.buildQueryBody());
@@ -671,9 +669,14 @@ export class TableComponent implements OnInit, OnDestroy {
                 return true;
             };
             if (collapseAction) {
-                collapsedStd.push({ text: this.i18n.fanyi("global.view"), click: _viewClick, iif: _viewIif });
+                collapsedStd.push({text: this.i18n.fanyi("global.view"), click: _viewClick, iif: _viewIif});
             } else {
-                tableOperators.push({ icon: "eye", tooltip: this.i18n.fanyi("global.view"), click: _viewClick, iif: _viewIif });
+                tableOperators.push({
+                    icon: "eye",
+                    tooltip: this.i18n.fanyi("global.view"),
+                    click: _viewClick,
+                    iif: _viewIif
+                });
             }
         }
         let tableButtons: STColumnButton[] = []
@@ -802,9 +805,14 @@ export class TableComponent implements OnInit, OnDestroy {
                 return true;
             };
             if (collapseAction) {
-                collapsedStd.push({ text: this.i18n.fanyi("global.editor"), click: _editClick, iif: _editIif });
+                collapsedStd.push({text: this.i18n.fanyi("global.editor"), click: _editClick, iif: _editIif});
             } else {
-                tableOperators.push({ icon: "edit", tooltip: this.i18n.fanyi("global.editor"), click: _editClick, iif: _editIif });
+                tableOperators.push({
+                    icon: "edit",
+                    tooltip: this.i18n.fanyi("global.editor"),
+                    click: _editClick,
+                    iif: _editIif
+                });
             }
         }
         if (this.eruptBuildModel.eruptModel.eruptJson.power.delete) {
@@ -829,10 +837,16 @@ export class TableComponent implements OnInit, OnDestroy {
                 return true;
             };
             if (collapseAction) {
-                collapsedStd.push({ text: this.i18n.fanyi("global.delete"), pop: this.i18n.fanyi("table.delete.hint"), type: "del", click: _delClick, iif: _delIif });
+                collapsedStd.push({
+                    text: this.i18n.fanyi("global.delete"),
+                    pop: this.i18n.fanyi("table.delete.hint"),
+                    type: "del",
+                    click: _delClick,
+                    iif: _delIif
+                });
             } else {
                 tableOperators.push({
-                    icon: { type: "delete", theme: "twotone", twoToneColor: "#f00" },
+                    icon: {type: "delete", theme: "twotone", twoToneColor: "#f00"},
                     tooltip: this.i18n.fanyi("global.delete"),
                     pop: this.i18n.fanyi("table.delete.hint"),
                     type: "del",
@@ -957,7 +971,9 @@ export class TableComponent implements OnInit, OnDestroy {
                 ...buttons,
                 {
                     label: this.i18n.fanyi("global.save_only"),
-                    onClick: async () => { await doSave(); }
+                    onClick: async () => {
+                        await doSave();
+                    }
                 },
                 {
                     label: this.i18n.fanyi("global.save_close"),
@@ -1265,7 +1281,9 @@ export class TableComponent implements OnInit, OnDestroy {
         this.downloading = true;
         this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, this.buildQueryBody(),
             this._drill ? DataService.drillToHeader(this._drill) : {},
-            () => { this.downloading = false; },
+            () => {
+                this.downloading = false;
+            },
             ids
         );
     }
