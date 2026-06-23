@@ -398,11 +398,11 @@
                                     }
                                 }
                             }
-                            @if (!vis.length) {
+                            @if (!vis.length && eruptBuildModel.eruptModel.eruptJson.visRawTable !== false) {
                                 <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
                             }
                         </div>
-                        @if (dataPage.showPagination && dataPage?.total > 0 && vis[selectedVisIndex]?.type !== VisType.BOARD) {
+                        @if (dataPage.showPagination && dataPage?.total > 0 && vis[selectedVisIndex]?.type !== VisType.BOARD && (vis.length || eruptBuildModel.eruptModel.eruptJson.visRawTable !== false)) {
                             <div class="tc-pagination">
                                 <nz-pagination nzShowSizeChanger nzShowQuickJumper
                                                [nzPageIndex]="dataPage.pi" [nzShowTotal]="totalTemplate"

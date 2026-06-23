@@ -555,6 +555,9 @@ export class TableComponent implements OnInit, OnDestroy {
         if (!this.eruptBuildModel.power.query) {
             return;
         }
+        if (!this.vis.length && this.eruptBuildModel.eruptModel.eruptJson.visRawTable === false) {
+            return;
+        }
         this.dataPage.pi = page || this.dataPage.pi;
         this.dataPage.ps = size || this.dataPage.ps;
         this.dataPage.sort = sort || this.dataPage.sort;
