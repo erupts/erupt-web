@@ -1281,8 +1281,9 @@ export class TableComponent implements OnInit, OnDestroy {
         this.downloading = true;
         this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, this.buildQueryBody(),
             this._drill ? DataService.drillToHeader(this._drill) : {},
-            () => {
+            (err?) => {
                 this.downloading = false;
+                if (err?.message) this.msg.warning(err.message);
             },
             ids
         );

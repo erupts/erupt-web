@@ -1,5 +1,6 @@
 import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
+import {HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Announcement, LoginModel, NoticeChannel, NoticeMessageDetail, NoticeScene, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
@@ -492,20 +493,19 @@ export class DataService {
         this._http.get(RestPath.excel + "/template/" + eruptName, null, {
             responseType: "arraybuffer",
             observe: 'events',
-            headers: {
-                erupt: eruptName
-            }
-        }).subscribe((res) => {
-            if (res.type !== 4) {
-                // not ready yet, no action needed
-                return;
-            }
-            downloadFile(res);
-            callback();
-        }, () => {
-            callback();
+            headers: {erupt: eruptName}
+        }).subscribe({
+            next: (res) => {
+                if (res.type !== 4) return;
+                const response = res as HttpResponse<ArrayBuffer>;
+                if (downloadFile(res)) {
+                    callback?.();
+                } else {
+                    callback?.(DataService.parseArrayBufferError(response.body));
+                }
+            },
+            error: () => callback?.()
         });
-        // DataService.postExcelFile(RestPath.excel + "/template/" + eruptName + "?" + this.createAuthParam(eruptName));
     }
 
     downloadExcel(eruptName: string, body: any, header: any, callback: Function, ids?: any[]) {
@@ -516,19 +516,32 @@ export class DataService {
         this._http.post(url, body, null, {
             responseType: "arraybuffer",
             observe: 'events',
-            headers: {
-                erupt: eruptName,
-                ...header
-            }
-        }).subscribe((res) => {
-            if (res.type !== 4) {
-                return;
-            }
-            downloadFile(res);
-            callback();
-        }, () => {
-            callback();
+            headers: {erupt: eruptName, ...header}
+        }).subscribe({
+            next: (res) => {
+                if (res.type !== 4) return;
+                const response = res as HttpResponse<ArrayBuffer>;
+                if (downloadFile(res)) {
+                    callback();
+                } else {
+                    callback(DataService.parseArrayBufferError(response.body));
+                }
+            },
+            error: () => callback()
         });
+    }
+
+    private static parseArrayBufferError(body: ArrayBuffer | null | any): EruptApiModel | null {
+        if (!body) return null;
+        try {
+            // _HttpClient may have already deserialized the JSON body
+            if (body instanceof ArrayBuffer) {
+                return JSON.parse(new TextDecoder().decode(body));
+            }
+            return body as EruptApiModel;
+        } catch (e) {
+            return null;
+        }
     }
 
     createAuthParam(eruptName: string): string {

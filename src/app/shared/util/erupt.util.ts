@@ -52,17 +52,23 @@ function joinPath(type: string, value: string): string {
 }
 
 
-export function downloadFile(res: HttpEvent<any>) {
+export function downloadFile(res: HttpEvent<any>): boolean {
+    // @ts-ignore
+    const disposition: string = res.headers?.get('Content-Disposition');
+    if (!disposition) return false;
+    // @ts-ignore
+    const filename = disposition.split(';')[1]?.split('=')?.[1];
+    if (!filename) return false;
     // @ts-ignore
     let url = window.URL.createObjectURL(new Blob([res.body]));
     let link = document.createElement("a");
     link.style.display = "none";
     link.href = url;
-    // @ts-ignore
-    link.setAttribute("download", decodeURIComponent(res.headers.get('Content-Disposition').split(';')[1].split('=')[1]));
+    link.setAttribute("download", decodeURIComponent(filename));
     document.body.appendChild(link);
     link.click();
     link.remove();
+    return true;
 }
 
 
