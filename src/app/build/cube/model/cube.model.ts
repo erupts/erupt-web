@@ -30,6 +30,7 @@ export interface CubeMetaDimension extends BaseField {
  */
 export interface CubeMetaMeasure extends BaseField {
     tags: string[];
+    drillFields?: string[];  // if specified, only these dimension codes are used for drill-down
 }
 
 export interface CubeMetaParameter extends BaseField {

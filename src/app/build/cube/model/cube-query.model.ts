@@ -77,6 +77,7 @@ export interface CubeQuery {
     groupBy?: boolean; // default value is true
     limit?: number;
     offset?: number;
+    drillMeasure?: string; // identifies the source measure so the backend can apply drillFilter
 }
 
 export enum DimensionFormat {
