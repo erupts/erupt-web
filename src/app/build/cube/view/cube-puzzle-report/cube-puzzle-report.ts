@@ -185,8 +185,6 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 this.s2.changeSheetSize(this.pivotContainer.nativeElement.clientWidth, this.pivotContainer.nativeElement.clientHeight);
                 this.s2.render(false);
             }
-        } else if (this.chart) {
-            this.chart.forceFit();
         }
     }
 

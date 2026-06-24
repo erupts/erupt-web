@@ -1,4 +1,15 @@
-import {AfterViewChecked, Component, ElementRef, Inject, Input, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {
+    AfterViewChecked,
+    Component,
+    ElementRef,
+    Inject,
+    Input,
+    NgZone,
+    OnDestroy,
+    OnInit,
+    TemplateRef,
+    ViewChild
+} from '@angular/core';
 import {SharedModule} from '@shared/shared.module';
 import {ActivatedRoute} from '@angular/router';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
@@ -39,7 +50,7 @@ const BUBBLES_BOTTOM_BUFFER_PX = 300;
 
 @Component({
     standalone: true,
-    selector: 'app-ai-chat',
+    selector: 'erupt-ai-chat',
     templateUrl: './ai-chat.component.html',
     styleUrls: ['./ai-chat.component.less'],
     imports: [SharedModule],

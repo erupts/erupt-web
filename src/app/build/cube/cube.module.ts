@@ -7,6 +7,7 @@ import {SharedModule} from "@shared/shared.module";
 import {CommonModule} from "@angular/common";
 import {CubeRoutingModule} from "./cube-routing.module";
 import {CubePuzzleDashboardComponent} from './view/cube-puzzle-dashboard/cube-puzzle-dashboard.component';
+import {AiChatComponent} from "../ai/view/ai-chat/ai-chat.component";
 import {CubePuzzleReportConfig} from './view/cube-puzzle-report-config/cube-puzzle-report-config';
 import {Gridster, GridsterItem} from "angular-gridster2";
 import {CubeApiService} from "./service/cube-api.service";
@@ -50,7 +51,8 @@ import {CubePuzzleSubModelConfig} from "./view/cube-puzzle-sub-model-config/cube
         NzIconModule,
         NzTooltipDirective,
         NzEmptyComponent,
-        NzColorPickerComponent
+        NzColorPickerComponent,
+        AiChatComponent
     ]
 })
 export class CubeModule {
