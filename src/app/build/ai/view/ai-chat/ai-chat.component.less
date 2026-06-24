@@ -116,10 +116,10 @@
     }
 }
 
-.sidebar-unfold-btn {
+.sidebar-unfold-btn,
+.sidebar-new-chat-btn {
     position: absolute;
     top: 10px;
-    left: 10px;
     z-index: 5;
     width: 28px;
     height: 28px;
@@ -138,6 +138,15 @@
         color: var(--ant-primary-color) !important;
         background: var(--ant-primary-1, #e6f4ff) !important;
     }
+}
+
+.sidebar-unfold-btn {
+    left: 10px;
+}
+
+.sidebar-new-chat-btn {
+    left: 10px;
+    margin-left: 36px !important;
 }
 
 .sidebar-search {
@@ -677,9 +686,9 @@
 /* Input card: appearance - light grey border, rounded corners, top arrow, toolbar, bottom shortcut hints and send group */
 .input-card {
     background: #fff;
-    border: 1px solid #eee;
-    border-top: none;
-    border-bottom: none;
+    //border: 1px solid #eee;
+    //border-top: none;
+    //border-bottom: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 
     //&:focus-within {

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {SettingsService} from "@delon/theme";
+import {RTLService, SettingsService} from "@delon/theme";
 import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
@@ -19,7 +19,8 @@ export class SettingsComponent implements OnInit {
                 private confirmServ: NzModalService,
                 private messageServ: NzMessageService,
                 private i18n: I18NService,
-                private reuseTabService: ReuseTabService) {
+                private reuseTabService: ReuseTabService,
+                public rtl: RTLService) {
     }
 
     ngOnInit() {

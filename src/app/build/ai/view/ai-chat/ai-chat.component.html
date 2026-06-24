@@ -68,6 +68,10 @@
                     (click)="toggleSidebar()" [title]="'ai.chat.expand_sidebar' | translate">
                 <span nz-icon nzType="menu-unfold" nzTheme="outline"></span>
             </button>
+            <button nz-button nzType="text" nzSize="small" class="sidebar-new-chat-btn"
+                    (click)="createConversation()" [title]="'ai.chat.new_session' | translate">
+                <span nz-icon nzType="form" nzTheme="outline"></span>
+            </button>
         }
         <article
             #bubblesRef

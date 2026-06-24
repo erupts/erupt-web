@@ -47,6 +47,10 @@
                (ngModelChange)="toggleColorGray(layout['colorGray'])"></nz-switch>
 </div>
 <div class="setting-item">
+    <span>RTL</span>
+    <nz-switch nzSize="small" [ngModel]="rtl.dir === 'rtl'" (ngModelChange)="rtl.toggle()"></nz-switch>
+</div>
+<div class="setting-item">
     <span>{{'setting.clear-cache' | translate}}</span>
     <button nz-button [nzSize]="'small'" nzDanger (click)="clear()">{{'setting.clear' | translate}}</button>
 </div>
