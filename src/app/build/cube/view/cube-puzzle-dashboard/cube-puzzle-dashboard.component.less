@@ -131,6 +131,14 @@
         }
     }
 
+    // AI chat opens in a drawer on phones — never render the inline side panel
+    @media (max-width: 768px) {
+        .ai-panel,
+        .ai-resize-handle {
+            display: none !important;
+        }
+    }
+
     .puzzle-filter-row {
         padding: 7px 12px;
         background: #fff;

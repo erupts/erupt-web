@@ -38,6 +38,8 @@ import {CubePuzzleFilterConfig} from "../cube-puzzle-filter-config/cube-puzzle-f
 import {deepCopy} from "@delon/util";
 import {CubePuzzleDashboardConfig} from "../cube-puzzle-dashboard-config/cube-puzzle-dashboard-config";
 import {CubePuzzleSubModelConfig} from "../cube-puzzle-sub-model-config/cube-puzzle-sub-model-config";
+import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
+import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
 
 @Component({
     standalone: false,
@@ -94,6 +96,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 private el: ElementRef,
                 private message: NzMessageService,
                 @Inject(NzModalService) private modal: NzModalService,
+                private drawerService: NzDrawerService,
                 private i18n: I18NService,
                 private menuSrv: MenuService
     ) {
@@ -177,7 +180,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         if (savedAi) {
             try {
                 const s = JSON.parse(savedAi);
-                if (s.open) this.showAiPanel = true;
+                // On phones the AI chat opens in a drawer, so never restore the inline side panel.
+                if (s.open && window.innerWidth > 768) this.showAiPanel = true;
                 if (s.width) this.aiPanelWidth = s.width;
             } catch {}
         }
@@ -683,10 +687,31 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
     }
 
+    private aiDrawerRef: NzDrawerRef | null = null;
+
     toggleAiPanel() {
+        // On phones the inline side panel is too narrow — open the AI chat in a drawer instead.
+        if (window.innerWidth <= 768) {
+            this.openAiDrawer();
+            return;
+        }
         this.showAiPanel = !this.showAiPanel;
         localStorage.setItem(`cube-ai-panel-${this.code}`, JSON.stringify({open: this.showAiPanel, width: this.aiPanelWidth}));
         setTimeout(() => this.changedOptions(), 0);
+    }
+
+    private openAiDrawer() {
+        if (this.aiDrawerRef) {
+            return;
+        }
+        this.aiDrawerRef = this.drawerService.create<AiChatComponent>({
+            nzContent: AiChatComponent,
+            nzContentParams: {collapseSidebar: true, embedded: true, context: this.aiContext},
+            nzTitle: this.i18n.fanyi('AI'),
+            nzWidth: '100%',
+            nzBodyStyle: {padding: '0', height: '100%'}
+        });
+        this.aiDrawerRef.afterClose.subscribe(() => this.aiDrawerRef = null);
     }
 
     onAiResizeDragStart(e: MouseEvent) {
