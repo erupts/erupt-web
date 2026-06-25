@@ -3,6 +3,231 @@
     overflow: auto;
 }
 
+@keyframes sk-shimmer {
+    0%   { background-position: 100% 50%; }
+    100% { background-position: 0%   50%; }
+}
+
+.cube-skeleton {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+
+    .sk-bar {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+        background-size: 400% 100%;
+        animation: sk-shimmer 1.4s ease infinite;
+        border-radius: 3px;
+        flex-shrink: 0;
+    }
+
+    // ── filter row ────────────────────────────────────────────────
+    .sk-filter-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 12px;
+        background: #fff;
+        border-bottom: 1px solid #e8e8e8;
+        flex-shrink: 0;
+    }
+
+    .sk-filter-pill {
+        height: 26px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+        background-size: 400% 100%;
+        animation: sk-shimmer 1.4s ease infinite;
+    }
+
+    // ── grid canvas ───────────────────────────────────────────────
+    .sk-grid {
+        flex: 1;
+        padding: 12px;
+        background: #f5f7fa;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow: hidden;
+    }
+
+    .sk-card {
+        background: #fff;
+        border-radius: 6px;
+        padding: 14px 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-height: 0;
+    }
+
+    // ── row1: KPI cards ───────────────────────────────────────────
+    .sk-row1 {
+        display: flex;
+        gap: 12px;
+        flex-shrink: 0;
+        .sk-card { flex: 1; }
+    }
+
+    .sk-kpi-card {
+        gap: 10px;
+    }
+
+    .sk-kpi-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .sk-kpi-label  { height: 12px; width: 55%; }
+    .sk-kpi-icon   { width: 22px; height: 22px; border-radius: 4px; }
+    .sk-kpi-value  { height: 30px; border-radius: 4px; }
+    .sk-kpi-trend  { height: 11px; width: 40%; }
+
+    // ── row2: bar + pie ───────────────────────────────────────────
+    .sk-row2 {
+        display: flex;
+        gap: 12px;
+        flex: 3;
+        min-height: 0;
+        .sk-card-wide { flex: 2; }
+        .sk-card:not(.sk-card-wide) { flex: 1; }
+    }
+
+    .sk-chart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+        margin-bottom: 12px;
+    }
+
+    .sk-legend-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .sk-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .sk-legend-dot   { width: 8px; height: 8px; border-radius: 50%; }
+    .sk-legend-label { height: 11px; border-radius: 3px; }
+
+    .sk-bar-chart {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        align-items: flex-end;
+        gap: 5px;
+        border-left: 1px solid #efefef;
+        border-bottom: 1px solid #efefef;
+        padding: 0 4px;
+
+        .sk-bar-col {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+            background-size: 400% 100%;
+            animation: sk-shimmer 1.4s ease infinite;
+            flex: 1;
+            min-width: 0;
+            border-radius: 3px 3px 0 0;
+        }
+    }
+
+    .sk-xaxis {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 6px;
+        flex-shrink: 0;
+        .sk-xaxis-label { height: 10px; width: 28px; }
+    }
+
+    .sk-pie-chart {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        overflow: hidden;
+    }
+
+    .sk-pie-circle {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+        background-size: 400% 100%;
+        animation: sk-shimmer 1.4s ease infinite;
+    }
+
+    .sk-pie-legend {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+    }
+
+    // ── row3: area chart ──────────────────────────────────────────
+    .sk-row3 {
+        flex: 2;
+        min-height: 0;
+        display: flex;
+        .sk-card-full { flex: 1; }
+    }
+
+    .sk-area-chart {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        gap: 8px;
+        overflow: hidden;
+    }
+
+    .sk-yaxis {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 4px 0 20px;
+        flex-shrink: 0;
+        .sk-yaxis-label { width: 28px; height: 11px; }
+    }
+
+    .sk-area-body {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sk-area-wave {
+        flex: 1;
+        min-height: 0;
+        border-left: 1px solid #efefef;
+        border-bottom: 1px solid #efefef;
+        background:
+            linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+        background-size: 400% 100%;
+        animation: sk-shimmer 1.4s ease infinite;
+        border-radius: 2px 2px 0 0;
+    }
+
+    .sk-xaxis-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 6px;
+        flex-shrink: 0;
+        .sk-xaxis-label { height: 10px; width: 24px; }
+    }
+}
+
 .cube-puzzle-container {
     display: flex;
     flex-direction: column;

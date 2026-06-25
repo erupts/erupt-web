@@ -51,6 +51,109 @@
     }
     <div class="cube-main-row">
         <div class="cube-content">
+            @if (!cubeMeta) {
+                <div class="cube-skeleton">
+                    <!-- filter row -->
+                    <div class="sk-filter-row">
+                        @for (w of ['96px','128px','104px','116px']; track w) {
+                            <div class="sk-filter-pill" [style.width]="w"></div>
+                        }
+                        <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+                            @for (i of [1,2,3]; track i) {
+                                <div class="sk-bar" style="width:26px;height:26px;border-radius:4px"></div>
+                            }
+                            <div class="sk-bar" style="width:60px;height:26px;border-radius:4px"></div>
+                        </div>
+                    </div>
+                    <!-- grid -->
+                    <div class="sk-grid">
+                        <!-- row1: 4 KPI cards -->
+                        <div class="sk-row1">
+                            @for (item of [{v:'42%'},{v:'55%'},{v:'38%'},{v:'50%'}]; track item) {
+                                <div class="sk-card sk-kpi-card">
+                                    <div class="sk-kpi-top">
+                                        <div class="sk-bar sk-kpi-label"></div>
+                                        <div class="sk-bar sk-kpi-icon"></div>
+                                    </div>
+                                    <div class="sk-bar sk-kpi-value" [style.width]="item.v"></div>
+                                    <div class="sk-bar sk-kpi-trend"></div>
+                                </div>
+                            }
+                        </div>
+                        <!-- row2: bar chart (wide) + pie chart -->
+                        <div class="sk-row2">
+                            <div class="sk-card sk-card-wide">
+                                <div class="sk-chart-header">
+                                    <div class="sk-bar" style="width:28%;height:13px;border-radius:3px"></div>
+                                    <div class="sk-legend-row">
+                                        @for (w of ['48px','40px','52px']; track w) {
+                                            <div class="sk-legend-item">
+                                                <div class="sk-bar sk-legend-dot"></div>
+                                                <div class="sk-bar sk-legend-label" [style.width]="w"></div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="sk-bar-chart">
+                                    @for (h of ['50%','72%','42%','88%','58%','66%','38%','78%','54%','62%']; track h) {
+                                        <div class="sk-bar-col" [style.height]="h"></div>
+                                    }
+                                </div>
+                                <div class="sk-xaxis">
+                                    @for (i of [1,2,3,4,5]; track i) {
+                                        <div class="sk-bar sk-xaxis-label"></div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="sk-card">
+                                <div class="sk-bar" style="width:48%;height:13px;border-radius:3px"></div>
+                                <div class="sk-pie-chart">
+                                    <div class="sk-pie-circle"></div>
+                                    <div class="sk-pie-legend">
+                                        @for (w of ['65%','50%','72%','45%','58%']; track w) {
+                                            <div class="sk-legend-item">
+                                                <div class="sk-bar sk-legend-dot"></div>
+                                                <div class="sk-bar sk-legend-label" [style.width]="w"></div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- row3: full-width area chart -->
+                        <div class="sk-row3">
+                            <div class="sk-card sk-card-full">
+                                <div class="sk-chart-header">
+                                    <div class="sk-bar" style="width:18%;height:13px;border-radius:3px"></div>
+                                    <div class="sk-legend-row">
+                                        @for (w of ['44px','48px']; track w) {
+                                            <div class="sk-legend-item">
+                                                <div class="sk-bar sk-legend-dot"></div>
+                                                <div class="sk-bar sk-legend-label" [style.width]="w"></div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="sk-area-chart">
+                                    <div class="sk-yaxis">
+                                        @for (i of [1,2,3,4,5]; track i) {
+                                            <div class="sk-bar sk-yaxis-label"></div>
+                                        }
+                                    </div>
+                                    <div class="sk-area-body">
+                                        <div class="sk-area-wave"></div>
+                                        <div class="sk-xaxis sk-xaxis-row">
+                                            @for (i of [1,2,3,4,5,6,7]; track i) {
+                                                <div class="sk-bar sk-xaxis-label"></div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
             @if (cubeMeta) {
                 <div class="puzzle-filter-row">
                     <div class="filter-items" cdkDropList cdkDropListOrientation="horizontal"
@@ -111,6 +214,7 @@
                     </div>
                 </div>
             }
+            @if (cubeMeta) {
             <div class="gridster-wrapper" [style.background-image]="dsl?.settings?.backgroundImage ? 'url(' + dsl.settings.backgroundImage + ')' : 'none'"
                  [style.background-color]="dsl?.settings?.backgroundColor || (dsl?.settings?.theme === DashboardTheme.DARK ? '#1f1f1f' : 'transparent')"
                  [style.background-size]="'cover'"
@@ -189,6 +293,7 @@
                     </gridster>
                 }
             </div>
+            }
         </div>
         @if (showAiPanel) {
             <div class="ai-resize-handle" (mousedown)="onAiResizeDragStart($event)"></div>
