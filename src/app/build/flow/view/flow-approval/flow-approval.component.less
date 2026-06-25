@@ -118,47 +118,80 @@
 
                     .list-header {
                         height: 48px;
-                        padding: 0 8px 0 12px;
+                        padding: 0 10px;
                         border-bottom: 1px solid var(--ant-border-color-split, #eee);
                         display: flex;
                         align-items: center;
-                        gap: 4px;
+                        gap: 6px;
                         flex-shrink: 0;
+
+                        // Make the borderless filter look like a filled search field
+                        nz-select {
+                            flex: 1;
+                            min-width: 0;
+
+                            .ant-select-selector {
+                                background: #f5f7fa !important;
+                                border-radius: 6px !important;
+                                height: 32px !important;
+                                border-color: transparent !important;
+                                box-shadow: none !important;
+                            }
+
+                            .ant-select-selection-placeholder {
+                                line-height: 30px !important;
+                            }
+                        }
+
+                        // Compact, square reload button aligned with the field
+                        > button {
+                            flex-shrink: 0;
+                            width: 32px;
+                            height: 32px;
+                            padding: 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 6px;
+                            color: #8c8c8c;
+
+                            &:hover {
+                                color: var(--ant-primary-color, #1890ff);
+                                background: #f5f7fa;
+                            }
+                        }
                     }
                 }
 
                 .approval-list {
                     flex: 1;
                     overflow-y: auto;
+                    padding: 8px;
+                    background: #fff;
 
+                    // Bordered cards with hover lift, on a white canvas
                     .approval-item {
-                        position: relative;
-                        padding: 12px 14px;
+                        padding: 10px 12px;
+                        margin-bottom: 8px;
                         cursor: pointer;
-                        transition: background 0.15s;
-                        border-bottom: 1px solid var(--ant-border-color-split, #f4f4f4);
+                        transition: all 0.15s;
+                        background: #fff;
+                        border: 1px solid var(--ant-border-color-split, #eee);
+                        border-radius: 6px;
 
                         &:last-child {
-                            border-bottom: none;
+                            margin-bottom: 0;
                         }
 
                         &:hover {
-                            background: #fafafa;
+                            border-color: var(--ant-primary-color, #1890ff);
+                            box-shadow: 0 1px 6px rgba(24, 144, 255, 0.12);
                         }
 
-                        // Primary left accent bar marks the selected instance
+                        // Selected instance: primary border + tint
                         &.active {
+                            border-color: var(--ant-primary-color, #1890ff);
                             background: var(--ant-primary-1, #e6f7ff);
-
-                            &::before {
-                                content: '';
-                                position: absolute;
-                                left: 0;
-                                top: 0;
-                                bottom: 0;
-                                width: 2px;
-                                background: var(--ant-primary-color, #1890ff);
-                            }
 
                             .item-header .item-title {
                                 color: var(--ant-primary-color, #1890ff);

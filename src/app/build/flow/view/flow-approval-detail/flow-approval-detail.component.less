@@ -9,8 +9,10 @@
         height: 100%;
 
         .detail-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid #e5e5e5;
+            height: 48px; // align with sidebar-header / list-header
+            box-sizing: border-box;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--ant-border-color-split, #eee);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -311,7 +313,7 @@
     @media (max-width: 768px) {
         .approval-detail {
             .detail-header {
-                padding: 10px 12px;
+                padding: 0 12px;
             }
 
             .detail-content {
