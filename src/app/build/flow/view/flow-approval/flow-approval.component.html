@@ -48,41 +48,60 @@
             </div>
 
             <div class="approval-list" (scroll)="onScroll($event)">
-                @for (item of flowInstances; track item) {
-                    <div class="approval-item" [class.active]="item?.id === selectedInstance?.id"
-                         (click)="onInstanceClick(item)">
-                        <div class="item-header">
-                            <span class="item-title">{{ item?.eruptFlowConfig?.name }}</span>
-                            <div class="item-tags">
-                                @if (item?.parent) {
-                                    <nz-tag nzColor="orange">{{ 'SUB_FLOW' | translate }}</nz-tag>
-                                }
-                                <nz-tag>{{ item?.status | translate }}</nz-tag>
+                @if (loading && flowInstances.length === 0) {
+                    @for (i of [1,2,3,4,5,6]; track i) {
+                        <div class="approval-item skeleton-approval-item">
+                            <div class="item-header">
+                                <div class="sk-bar" style="width:60%;height:13px"></div>
+                                <div class="sk-bar" style="width:36px;height:18px;border-radius:3px;flex-shrink:0"></div>
+                            </div>
+                            <div class="item-footer">
+                                <div class="submitter-info">
+                                    <div class="sk-bar" style="width:20px;height:20px;border-radius:50%;flex-shrink:0"></div>
+                                    <div class="sk-bar" style="width:48px;height:11px"></div>
+                                </div>
+                                <div class="sk-bar" style="width:52px;height:11px"></div>
                             </div>
                         </div>
-                        @if (item?.eruptFlowConfig?.setting?.subTitleFields?.length && item?.data) {
-                            <div class="item-subtitle">
-                                @for (field of item?.eruptFlowConfig?.setting?.subTitleFields; track field) {
-                                    <p>{{ JSON.parse(item?.data)?.[field] }}</p>
-                                }
-                            </div>
-                        }
-                        <div class="item-footer">
-                            <div class="submitter-info">
-                                <nz-avatar [nzText]="item?.initiatorUser?.name.substring(0,1)"
-                                           [ngStyle]="{backgroundColor: getAvatarColor(item?.initiatorUser.name?.substring(0,1))}"
-                                           [nzSrc]="item?.initiatorUser?.avatar"
-                                           nzSize="small"></nz-avatar>
-                                <span class="submitter-name">{{ item?.initiatorUser?.name }}</span>
-                            </div>
-                            <span class="process-time">{{ item?.createTime | local }}</span>
-                        </div>
-                    </div>
+                    }
                 }
-                @if (loading) {
-                    <div class="loading-indicator">
-                        <nz-spin nzSimple></nz-spin>
-                    </div>
+                @if (!loading || flowInstances.length > 0) {
+                    @for (item of flowInstances; track item) {
+                        <div class="approval-item" [class.active]="item?.id === selectedInstance?.id"
+                             (click)="onInstanceClick(item)">
+                            <div class="item-header">
+                                <span class="item-title">{{ item?.eruptFlowConfig?.name }}</span>
+                                <div class="item-tags">
+                                    @if (item?.parent) {
+                                        <nz-tag nzColor="orange">{{ 'SUB_FLOW' | translate }}</nz-tag>
+                                    }
+                                    <nz-tag>{{ item?.status | translate }}</nz-tag>
+                                </div>
+                            </div>
+                            @if (item?.eruptFlowConfig?.setting?.subTitleFields?.length && item?.data) {
+                                <div class="item-subtitle">
+                                    @for (field of item?.eruptFlowConfig?.setting?.subTitleFields; track field) {
+                                        <p>{{ JSON.parse(item?.data)?.[field] }}</p>
+                                    }
+                                </div>
+                            }
+                            <div class="item-footer">
+                                <div class="submitter-info">
+                                    <nz-avatar [nzText]="item?.initiatorUser?.name.substring(0,1)"
+                                               [ngStyle]="{backgroundColor: getAvatarColor(item?.initiatorUser.name?.substring(0,1))}"
+                                               [nzSrc]="item?.initiatorUser?.avatar"
+                                               nzSize="small"></nz-avatar>
+                                    <span class="submitter-name">{{ item?.initiatorUser?.name }}</span>
+                                </div>
+                                <span class="process-time">{{ item?.createTime | local }}</span>
+                            </div>
+                        </div>
+                    }
+                    @if (loading) {
+                        <div class="loading-indicator">
+                            <nz-spin nzSimple></nz-spin>
+                        </div>
+                    }
                 }
             </div>
         </div>

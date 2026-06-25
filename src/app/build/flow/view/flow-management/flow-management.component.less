@@ -210,18 +210,32 @@
                     padding: 14px;
                     background: #f5f7fa;
 
-                    // White panel wrapping the list, like a table card on the canvas
-                    nz-spin {
-                        display: block;
+                    .flow-list-card {
                         background: #fff;
                         border: 1px solid var(--ant-border-color-split, #eee);
                         border-radius: 6px;
                         overflow: hidden;
                         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
                     }
+                }
 
-                    .ant-spin-container {
-                        height: 100%;
+                .flow-item.skeleton-item {
+                    cursor: default;
+                    pointer-events: none;
+
+                    nz-skeleton-element {
+                        flex-shrink: 0;
+                        .ant-skeleton-avatar {
+                            width: 36px;
+                            height: 36px;
+                            border-radius: 8px;
+                        }
+                    }
+
+                    .flow-info .ant-skeleton {
+                        margin: 0;
+                        .ant-skeleton-title { margin: 0 0 6px; }
+                        .ant-skeleton-paragraph { margin: 0; li { margin: 0; } }
                     }
                 }
 

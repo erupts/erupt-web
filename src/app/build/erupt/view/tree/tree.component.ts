@@ -97,6 +97,7 @@ export class TreeComponent implements OnInit, OnDestroy {
                 this.dataHandler.initErupt(eb);
                 this.eruptBuildModel = eb;
                 this.fetchTreeData();
+                this.addBlock();
             });
         });
     }
@@ -106,7 +107,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.showEdit = true;
         this.loading = true;
         this.selectLeaf = false;
-        if (this.tree.getSelectedNodeList()[0]) {
+        if (this.tree?.getSelectedNodeList()?.[0]) {
             this.tree.getSelectedNodeList()[0].isSelected = false;
         }
         this.behavior = Scene.ADD;

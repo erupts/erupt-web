@@ -197,6 +197,30 @@
                     }
                 }
 
+                .skeleton-group {
+                    pointer-events: none;
+
+                    .group-title {
+                        .ant-skeleton { margin: 0; .ant-skeleton-title { margin: 0; height: 12px; } }
+                    }
+
+                    .skeleton-item {
+                        cursor: default;
+
+                        nz-skeleton-element .ant-skeleton-avatar {
+                            width: 36px;
+                            height: 36px;
+                            border-radius: 6px;
+                        }
+
+                        .flow-body .ant-skeleton {
+                            margin: 0;
+                            .ant-skeleton-title { margin: 0 0 5px; height: 12px; }
+                            .ant-skeleton-paragraph { margin: 0; li { margin: 0; height: 10px; } }
+                        }
+                    }
+                }
+
                 .flow-item {
                     display: flex;
                     flex-direction: row;

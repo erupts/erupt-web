@@ -63,8 +63,19 @@
             </button>
         </div>
 
-        <div class="flow-list" cdkDropList (cdkDropListDropped)="onFlowDrop($event)">
-            <nz-spin [nzSpinning]="configLoading">
+        <div class="flow-list">
+          <div class="flow-list-card" cdkDropList (cdkDropListDropped)="onFlowDrop($event)">
+            @if (configLoading) {
+                @for (i of [1,2,3,4,5]; track i) {
+                    <div class="flow-item skeleton-item">
+                        <nz-skeleton-element nzType="avatar" [nzActive]="true" nzShape="square" nzSize="default"></nz-skeleton-element>
+                        <div class="flow-info">
+                            <nz-skeleton [nzActive]="true" [nzTitle]="{ width: '40%' }" [nzParagraph]="{ rows: 1, width: '60%' }" [nzAvatar]="false"></nz-skeleton>
+                        </div>
+                    </div>
+                }
+            }
+            @if (!configLoading) {
                 @for (config of getCurrentConfigs(); track config) {
                     <div class="flow-item" cdkDrag [style.--item-color]="config.color || '#1890ff'">
                         <div class="flow-icon" [style.background-color]="config.color || '#1890ff'">
@@ -104,12 +115,13 @@
                         </div>
                     </div>
                 }
-                @if (!configLoading && getCurrentConfigs().length === 0) {
+                @if (getCurrentConfigs().length === 0) {
                     <div style="text-align:center; padding: 64px 0;">
                         <nz-empty [nzNotFoundImage]="'simple'"></nz-empty>
                     </div>
                 }
-            </nz-spin>
+            }
+          </div>
         </div>
     </div>
 </div>

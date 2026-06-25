@@ -1,6 +1,50 @@
 @if (!eruptBuildModel) {
-    <div style="padding: 16px;">
-        <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
+    <div class="tree-skeleton">
+        <!-- left nav -->
+        <div class="sk-nav">
+            <div class="sk-nav-header">
+                <div class="sk-bar" style="flex:1;height:24px;border-radius:4px"></div>
+                <div class="sk-bar" style="width:24px;height:24px;border-radius:4px;flex-shrink:0"></div>
+            </div>
+            <div class="sk-nav-actions">
+                @for (i of [1,2,3,4]; track i) {
+                    <div class="sk-bar" style="width:24px;height:24px;border-radius:4px"></div>
+                }
+            </div>
+            <div class="sk-nav-body">
+                @for (item of [{w:'75%',pl:'0'},{w:'60%',pl:'16px'},{w:'68%',pl:'16px'},{w:'55%',pl:'32px'},{w:'70%',pl:'16px'},{w:'62%',pl:'0'},{w:'50%',pl:'16px'},{w:'65%',pl:'16px'},{w:'58%',pl:'32px'},{w:'72%',pl:'0'},{w:'48%',pl:'16px'}]; track item) {
+                    <div class="sk-tree-row" [style.padding-left]="item.pl">
+                        <div class="sk-bar sk-tree-arrow"></div>
+                        <div class="sk-bar sk-tree-icon"></div>
+                        <div class="sk-bar sk-tree-label" [style.width]="item.w"></div>
+                    </div>
+                }
+            </div>
+        </div>
+        <!-- right detail -->
+        <div class="sk-detail">
+            <div class="sk-detail-header">
+                @for (w of ['72px','64px','60px']; track w) {
+                    <div class="sk-bar" [style.width]="w" style="height:24px;border-radius:4px"></div>
+                }
+            </div>
+            <div class="sk-detail-body">
+                <div class="sk-form-card">
+                    @for (row of [1,2,3,4,5,6]; track row) {
+                        <div class="sk-form-row">
+                            <div class="sk-form-field">
+                                <div class="sk-bar sk-label"></div>
+                                <div class="sk-bar sk-input"></div>
+                            </div>
+                            <div class="sk-form-field">
+                                <div class="sk-bar sk-label"></div>
+                                <div class="sk-bar sk-input"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 }
 @if (eruptBuildModel) {

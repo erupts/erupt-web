@@ -49,13 +49,27 @@
 
         <div class="flow-content">
             @if (loading) {
-                <div style="padding:24px">
-                    <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 4 }"></nz-skeleton>
-                </div>
+                @for (g of [1,2]; track g) {
+                    <div class="flow-group skeleton-group">
+                        <div class="group-title">
+                            <nz-skeleton [nzActive]="true" [nzTitle]="{ width: '80px' }" [nzParagraph]="false" [nzAvatar]="false"></nz-skeleton>
+                        </div>
+                        <div class="flow-grid">
+                            @for (i of [1,2,3,4]; track i) {
+                                <div class="flow-item skeleton-item">
+                                    <nz-skeleton-element nzType="avatar" [nzActive]="true" nzShape="square" nzSize="default"></nz-skeleton-element>
+                                    <div class="flow-body">
+                                        <nz-skeleton [nzActive]="true" [nzTitle]="{ width: '70%' }" [nzParagraph]="{ rows: 1, width: '50%' }" [nzAvatar]="false"></nz-skeleton>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
             }
             @if (!loading) {
                 @if (filteredFlowGroups.length === 0) {
-                    <div style="text-align:center; padding: 64px 0;">
+                    <div style="text-align:center; padding: 64px 0; background:#fff; border-radius:6px;">
                         <nz-empty [nzNotFoundImage]="'simple'">
                             <ng-template #nzNotFoundContent>
                                 <span style="color:#8c8c8c">{{ searchKeyword ? ('flow.dashboard.no_matching_flow' | translate) : ('flow.dashboard.no_flow_data' | translate) }}</span>

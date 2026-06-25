@@ -1,6 +1,82 @@
 @if (!eruptBuildModel) {
-    <div [style.padding]="'16px'">
-        <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
+    <div class="table-skeleton">
+        <div class="sk-toolbar">
+            @for (w of ['64px','52px','68px']; track w) {
+                <div class="sk-bar" [style.width]="w" style="height:22px"></div>
+            }
+            <div style="flex:1"></div>
+            @for (i of [1,2,3]; track i) {
+                <div class="sk-bar" style="width:22px;height:22px"></div>
+            }
+        </div>
+        <div class="sk-body">
+            <div class="sk-table">
+                <div class="sk-thead">
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:60%;height:12px"></div></div>
+                    <div class="sk-col" style="flex:3"><div class="sk-bar" style="width:50%;height:12px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:65%;height:12px"></div></div>
+                    <div class="sk-col" style="flex:2.5"><div class="sk-bar" style="width:55%;height:12px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:70%;height:12px"></div></div>
+                    <div class="sk-col" style="flex:1.5"><div class="sk-bar" style="width:50%;height:12px"></div></div>
+                </div>
+                <div class="sk-row">
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:80%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:3"><div class="sk-bar" style="width:60%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:75%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2.5"><div class="sk-bar" style="width:55%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:70%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:1.5"><div class="sk-bar" style="width:45%;height:13px"></div></div>
+                </div>
+                <div class="sk-row">
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:65%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:3"><div class="sk-bar" style="width:85%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:50%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2.5"><div class="sk-bar" style="width:80%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:60%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:1.5"><div class="sk-bar" style="width:55%;height:13px"></div></div>
+                </div>
+                <div class="sk-row">
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:90%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:3"><div class="sk-bar" style="width:45%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:70%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2.5"><div class="sk-bar" style="width:65%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:80%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:1.5"><div class="sk-bar" style="width:35%;height:13px"></div></div>
+                </div>
+                <div class="sk-row">
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:70%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:3"><div class="sk-bar" style="width:75%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:55%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2.5"><div class="sk-bar" style="width:90%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:45%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:1.5"><div class="sk-bar" style="width:60%;height:13px"></div></div>
+                </div>
+                <div class="sk-row">
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:55%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:3"><div class="sk-bar" style="width:65%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:85%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2.5"><div class="sk-bar" style="width:50%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:75%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:1.5"><div class="sk-bar" style="width:50%;height:13px"></div></div>
+                </div>
+                <div class="sk-row">
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:85%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:3"><div class="sk-bar" style="width:50%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:65%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2.5"><div class="sk-bar" style="width:70%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:55%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:1.5"><div class="sk-bar" style="width:45%;height:13px"></div></div>
+                </div>
+                <div class="sk-row">
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:60%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:3"><div class="sk-bar" style="width:80%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:40%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2.5"><div class="sk-bar" style="width:75%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:2"><div class="sk-bar" style="width:85%;height:13px"></div></div>
+                    <div class="sk-col" style="flex:1.5"><div class="sk-bar" style="width:55%;height:13px"></div></div>
+                </div>
+            </div>
+        </div>
     </div>
 }
 @if (eruptBuildModel) {
