@@ -1,4 +1,4 @@
-<div (mousedown)="onMouseDown($event)"
+<div class="drawer-resize-handle" (mousedown)="onMouseDown($event)"
      style="position: absolute; left: 0; top: 0; bottom: 0; width: 5px; cursor: ew-resize; z-index: 1000; transition: background 0.3s;"
      onmouseover="this.style.background='rgba(24, 144, 255, 0.2)'"
      onmouseout="this.style.background='transparent'">
@@ -9,8 +9,8 @@
             @if (selfSelectNodes.length > 0) {
                 <nz-alert nzType="info" [nzMessage]="'flow.instance.select_approver_tip' | translate" nzShowIcon style="margin-bottom: 16px"></nz-alert>
                 @for (node of selfSelectNodes; track node.key) {
-                    <div style="margin-bottom: 16px;display: flex;align-items: center;">
-                        <span style="font-weight: bold;margin-right: 8px;;width: 150px"><span style="color: #ff4d4f">*</span> {{ node.value }}:</span>
+                    <div class="self-select-row" style="margin-bottom: 16px;display: flex;align-items: center;">
+                        <span class="self-select-label" style="font-weight: bold;margin-right: 8px;;width: 150px"><span style="color: #ff4d4f">*</span> {{ node.value }}:</span>
                         <nz-select [(ngModel)]="selectedNodeUserIds[node.key]" [nzShowSearch]="true"
                                    [nzPlaceHolder]="('flow.instance.select_approver_prefix' | translate) + node.value + ('flow.instance.select_approver_suffix' | translate)"
                                    nzMode="multiple" style="width: 100%" [nzLoading]="!nodeUsersOptions[node.key]"

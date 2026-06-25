@@ -6,7 +6,7 @@
         .flow-approval-container {
             height: 100%;
             display: flex;
-            background-color: #f5f5f5;
+            background-color: #f5f7fa;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             overflow: hidden;
 
@@ -108,10 +108,10 @@
                 overflow: hidden;
 
                 .list-section {
-                    width: 260px;
+                    width: 280px;
                     height: 100%;
                     background: white;
-                    border-right: 1px solid #e4e6eb;
+                    border-right: 1px solid var(--ant-border-color-split, #eee);
                     display: flex;
                     flex-direction: column;
                     flex-shrink: 0;
@@ -119,7 +119,7 @@
                     .list-header {
                         height: 48px;
                         padding: 0 8px 0 12px;
-                        border-bottom: 1px solid #f0f0f0;
+                        border-bottom: 1px solid var(--ant-border-color-split, #eee);
                         display: flex;
                         align-items: center;
                         gap: 4px;
@@ -132,10 +132,11 @@
                     overflow-y: auto;
 
                     .approval-item {
-                        padding: 12px;
+                        position: relative;
+                        padding: 12px 14px;
                         cursor: pointer;
-                        transition: background 0.12s;
-                        border-bottom: 1px solid #f4f4f4;
+                        transition: background 0.15s;
+                        border-bottom: 1px solid var(--ant-border-color-split, #f4f4f4);
 
                         &:last-child {
                             border-bottom: none;
@@ -145,8 +146,23 @@
                             background: #fafafa;
                         }
 
+                        // Primary left accent bar marks the selected instance
                         &.active {
                             background: var(--ant-primary-1, #e6f7ff);
+
+                            &::before {
+                                content: '';
+                                position: absolute;
+                                left: 0;
+                                top: 0;
+                                bottom: 0;
+                                width: 2px;
+                                background: var(--ant-primary-color, #1890ff);
+                            }
+
+                            .item-header .item-title {
+                                color: var(--ant-primary-color, #1890ff);
+                            }
                         }
 
                         .item-header {
@@ -231,6 +247,98 @@
                     flex-direction: column;
                     overflow-y: auto;
                     position: relative;
+                }
+
+                // Mobile-only back bar; hidden on desktop
+                .mobile-detail-bar {
+                    display: none;
+                }
+            }
+        }
+
+        // ── Mobile (phones) ──────────────────────────────────────────
+        @media (max-width: 768px) {
+            .flow-approval-container {
+                flex-direction: column;
+
+                // Views become a horizontal tab strip on top
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    flex-shrink: 0;
+                    border-right: none;
+                    border-bottom: 1px solid var(--ant-border-color-split, #eee);
+
+                    .sidebar-header {
+                        display: none;
+                    }
+
+                    .sidebar-menu {
+                        display: flex;
+                        gap: 4px;
+                        padding: 6px 8px;
+                        overflow-x: auto;
+                        -webkit-overflow-scrolling: touch;
+                        scrollbar-width: none;
+
+                        &::-webkit-scrollbar { display: none; }
+
+                        .menu-item {
+                            flex-shrink: 0;
+                            height: 30px;
+
+                            .menu-label {
+                                flex: none;
+                            }
+                        }
+                    }
+                }
+
+                .main-content {
+                    flex-direction: column;
+                    flex: 1;
+                    min-height: 0;
+                    position: relative;
+
+                    // List takes the full width
+                    .list-section {
+                        width: 100%;
+                        flex: 1;
+                        min-height: 0;
+                        border-right: none;
+                    }
+
+                    // Detail is hidden until an item is tapped
+                    .detail-section {
+                        display: none;
+                    }
+                }
+
+                // When an item is open, swap the list for the detail view
+                &.mobile-detail-open {
+                    .sidebar {
+                        display: none;
+                    }
+
+                    .main-content .list-section {
+                        display: none;
+                    }
+
+                    .main-content .mobile-detail-bar {
+                        display: flex;
+                        align-items: center;
+                        height: 44px;
+                        padding: 0 8px;
+                        background: #fff;
+                        border-bottom: 1px solid var(--ant-border-color-split, #eee);
+                        flex-shrink: 0;
+                    }
+
+                    .main-content .detail-section {
+                        display: flex;
+                        flex: 1;
+                        min-height: 0;
+                    }
                 }
             }
         }

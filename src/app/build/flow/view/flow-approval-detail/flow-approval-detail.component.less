@@ -34,33 +34,43 @@
             overflow-y: auto; // only the content area is scrollable
             // leave space for the fixed bottom buttons
             padding: 16px 16px 70px;
+            background: #f5f7fa; // gray canvas; inner blocks become white cards
+
+            // Header "hero" card grouping the title, status and submitter info
+            .detail-hero {
+                background: #fff;
+                border: 1px solid var(--ant-border-color-split, #eee);
+                border-radius: 6px;
+                padding: 14px 16px;
+                margin-bottom: 12px;
+            }
 
             .content-header {
                 display: flex;
                 align-items: center;
-                gap: 12px;
-                margin-bottom: 12px;
+                gap: 10px;
+                margin-bottom: 10px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid var(--ant-border-color-split, #eee);
 
                 .content-title {
                     margin: 0;
-                    font-size: 25px;
+                    min-width: 0;
+                    flex: 0 1 auto;
+                    font-size: 18px;
                     font-weight: 600;
-                    color: #333;
-                }
-
-                .status-tag-large {
-
+                    color: #262626;
+                    line-height: 1.4;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
             }
 
             .submitter-info-large {
                 display: flex;
                 align-items: center;
-                gap: 12px;
-                margin-bottom: 12px;
-                padding: 12px;
-                background-color: #fafafa;
-                border-radius: 4px;
+                gap: 8px;
 
                 .avatar-large {
                     width: 48px;
@@ -76,29 +86,33 @@
 
                 .submitter-details {
                     display: flex;
-                    align-items: flex-end;
-                    justify-content: center;
-                    gap: 4px;
+                    align-items: center;
+                    gap: 10px;
 
                     .submitter-name-large {
-                        font-size: 16px;
+                        font-size: 13px;
                         font-weight: 600;
-                        color: #333;
+                        color: #262626;
                     }
 
                     .submitter-dept {
-                        font-size: 14px;
-                        color: #666;
+                        font-size: 13px;
+                        color: #8c8c8c;
                     }
 
                     .submit-time {
-                        font-size: 13px;
-                        color: #999;
+                        font-size: 12px;
+                        color: #8c8c8c;
                     }
                 }
             }
 
             .detail-tabs {
+                background: #fff;
+                border: 1px solid var(--ant-border-color-split, #eee);
+                border-radius: 6px;
+                padding: 8px 16px 16px;
+
                 ::ng-deep .ant-tabs-nav {
                     margin-bottom: 16px;
                 }
@@ -288,6 +302,42 @@
                     color: #333;
                     line-height: 1.5;
                     padding-left: 32px;
+                }
+            }
+        }
+    }
+
+    // ── Mobile (phones) ──────────────────────────────────────────
+    @media (max-width: 768px) {
+        .approval-detail {
+            .detail-header {
+                padding: 10px 12px;
+            }
+
+            .detail-content {
+                padding: 12px 12px 70px;
+
+                .content-header .content-title {
+                    font-size: 16px;
+                }
+            }
+
+            .detail-tabs {
+                padding: 4px 10px 12px;
+
+                // Let wide approval/data tables scroll horizontally instead of overflowing
+                .records-table,
+                .expense-table {
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+            }
+
+            .fixed-bottom-actions {
+                padding: 0 12px;
+
+                .action-buttons .action-button {
+                    margin: 8px 4px;
                 }
             }
         }

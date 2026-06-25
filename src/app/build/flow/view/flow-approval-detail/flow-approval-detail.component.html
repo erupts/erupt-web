@@ -25,19 +25,22 @@
         </div>
         @if (selectedInstance) {
             <div class="detail-content">
-                <div class="content-header">
-                    <h1 class="content-title">{{ selectedInstance?.eruptFlowConfig?.name }}</h1>
-                    <nz-tag>
-                        {{ selectedInstance?.status | translate }}
-                    </nz-tag>
-                    <button nz-button (click)="viewFlow()" style="margin-left: auto">
-                        {{ 'flow.action.view_flow_diagram' | translate }}
-                    </button>
-                </div>
-                <div class="submitter-info-large">
-                    <div class="submitter-details">
-                        <span class="submitter-name-large">{{ selectedInstance?.initiatorUser?.name }}</span>&nbsp;&nbsp;
-                        <span class="submit-time">{{ 'flow.label.submitted_at' | translate }} {{ selectedInstance?.createTime | local }}</span>
+                <div class="detail-hero">
+                    <div class="content-header">
+                        <h1 class="content-title">{{ selectedInstance?.eruptFlowConfig?.name }}</h1>
+                        <nz-tag>
+                            {{ selectedInstance?.status | translate }}
+                        </nz-tag>
+                        <button nz-button nzType="default" nzSize="small" (click)="viewFlow()" style="margin-left: auto">
+                            <span nz-icon nzType="apartment" nzTheme="outline"></span>
+                            {{ 'flow.action.view_flow_diagram' | translate }}
+                        </button>
+                    </div>
+                    <div class="submitter-info-large">
+                        <div class="submitter-details">
+                            <span class="submitter-name-large">{{ selectedInstance?.initiatorUser?.name }}</span>
+                            <span class="submit-time">{{ 'flow.label.submitted_at' | translate }} {{ selectedInstance?.createTime | local }}</span>
+                        </div>
                     </div>
                 </div>
                 <!-- Tab navigation -->

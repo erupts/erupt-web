@@ -33,6 +33,9 @@ export class FlowApprovalComponent implements OnInit {
 
     loading: boolean = false;
 
+    // Mobile master-detail: when true the detail view overlays the list (phones only)
+    mobileDetailOpen: boolean = false;
+
 
     @ViewChild(FlowApprovalDetailComponent) private approvalDetail!: FlowApprovalDetailComponent;
 

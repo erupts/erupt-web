@@ -241,6 +241,8 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
      */
     launchFlow(flow: FlowConfig): void {
         if (flow.enable) {
+            // On phones, the fixed 520px drawer overflows the viewport — go full width.
+            const isMobile = window.innerWidth <= 768;
             const drawer = this.drawerService.create({
                 nzTitle: flow.name,
                 nzContent: CreateInstanceComponent,
@@ -249,7 +251,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
                     flow: flow,
                     onClose: () => drawer.close()
                 },
-                nzWidth: '520px',
+                nzWidth: isMobile ? '100%' : '520px',
                 nzBodyStyle: {
                     padding: '0'
                 },

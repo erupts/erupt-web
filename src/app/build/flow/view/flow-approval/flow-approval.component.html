@@ -1,4 +1,4 @@
-<div class="flow-approval-container">
+<div class="flow-approval-container" [class.mobile-detail-open]="mobileDetailOpen">
     <!-- Left sidebar navigation -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -50,7 +50,7 @@
             <div class="approval-list" (scroll)="onScroll($event)">
                 @for (item of flowInstances; track item) {
                     <div class="approval-item" [class.active]="item?.id === selectedInstance?.id"
-                         (click)="selectInstance(item)">
+                         (click)="selectInstance(item); mobileDetailOpen = true">
                         <div class="item-header">
                             <span class="item-title">{{ item?.eruptFlowConfig?.name }}</span>
                             <div class="item-tags">
@@ -85,6 +85,12 @@
                     </div>
                 }
             </div>
+        </div>
+        <!-- Mobile-only back bar shown above the detail when an item is opened -->
+        <div class="mobile-detail-bar">
+            <button nz-button nzType="text" (click)="mobileDetailOpen = false">
+                <span nz-icon nzType="arrow-left"></span>{{ 'global.back' | translate }}
+            </button>
         </div>
         <flow-approval-detail (reloadFlows)="reloadFlows()" class="detail-section"/>
     </div>
