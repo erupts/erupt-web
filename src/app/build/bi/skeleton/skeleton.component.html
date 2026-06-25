@@ -51,7 +51,7 @@
 
       <!-- ── Charts ── -->
       @if (bi.charts.length > 0) {
-        <div class="bi-charts" nz-row [nzGutter]="[12, 12]">
+        <div class="bi-charts" nz-row [nzGutter]="12">
           @for (chart of bi.charts; track chart) {
             <div nz-col [nzMd]="chart.grid" [nzXs]="24">
               <bi-chart #biChart [chart]="chart" [bi]="bi"></bi-chart>
