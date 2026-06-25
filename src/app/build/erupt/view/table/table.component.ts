@@ -46,7 +46,8 @@ import {ModalButtonOptions, NzModalRef, NzModalService} from "ng-zorro-antd/moda
 import {STChange, STColumn, STColumnButton, STComponent, STPage} from "@delon/abc/st";
 import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
-import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
+import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
 import {TableStyle} from "../../model/erupt.vo";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
@@ -331,9 +332,30 @@ export class TableComponent implements OnInit, OnDestroy {
         return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
     }
 
+    private aiDrawerRef: NzDrawerRef | null = null;
+
     toggleAiPanel() {
+        // On phones the inline side panel is too narrow — open the AI chat in a drawer instead.
+        if (window.innerWidth <= 768) {
+            this.openAiDrawer();
+            return;
+        }
         this.showAiPanel = !this.showAiPanel;
         this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {aiPanelOpen: this.showAiPanel});
+    }
+
+    private openAiDrawer() {
+        if (this.aiDrawerRef) {
+            return;
+        }
+        this.aiDrawerRef = this.drawerService.create<AiChatComponent>({
+            nzContent: AiChatComponent,
+            nzContentParams: {collapseSidebar: true, embedded: true, context: this.aiContext},
+            nzTitle: this.i18n.fanyi('AI'),
+            nzWidth: '100%',
+            nzBodyStyle: {padding: '0', height: '100%'}
+        });
+        this.aiDrawerRef.afterClose.subscribe(() => this.aiDrawerRef = null);
     }
 
     onAiResizeDragStart(e: MouseEvent): void {
@@ -454,7 +476,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 const savedSettings = this.eruptLocalSettings.get(eb.eruptModel.eruptName);
                 if (this.linkTree && savedSettings.treeWidth) this.treeWidth = savedSettings.treeWidth;
                 if (this.linkTree && savedSettings.treeCollapsed !== undefined) this.treeCollapsed = savedSettings.treeCollapsed;
-                if (savedSettings.aiPanelOpen) this.showAiPanel = true;
+                if (savedSettings.aiPanelOpen && window.innerWidth > 768) this.showAiPanel = true;
                 if (savedSettings.aiPanelWidth) this.aiPanelWidth = savedSettings.aiPanelWidth;
                 this.dataHandler.initErupt(eb);
                 callback && callback(eb);

@@ -233,6 +233,12 @@
                 flex-direction: column;
             }
 
+            // AI chat opens in a drawer on phones — never render the inline side panel
+            .ai-panel,
+            .ai-resize-handle {
+                display: none !important;
+            }
+
             .tree-panel {
                 width: 100% !important; // override inline [style.width.px]
                 max-width: none !important;
