@@ -281,11 +281,6 @@
                     overflow-y: auto;
                     position: relative;
                 }
-
-                // Mobile-only back bar; hidden on desktop
-                .mobile-detail-bar {
-                    display: none;
-                }
             }
         }
 
@@ -328,12 +323,10 @@
                 }
 
                 .main-content {
-                    flex-direction: column;
                     flex: 1;
                     min-height: 0;
-                    position: relative;
 
-                    // List takes the full width
+                    // List takes the full width; detail opens in a drawer instead
                     .list-section {
                         width: 100%;
                         flex: 1;
@@ -341,36 +334,8 @@
                         border-right: none;
                     }
 
-                    // Detail is hidden until an item is tapped
                     .detail-section {
                         display: none;
-                    }
-                }
-
-                // When an item is open, swap the list for the detail view
-                &.mobile-detail-open {
-                    .sidebar {
-                        display: none;
-                    }
-
-                    .main-content .list-section {
-                        display: none;
-                    }
-
-                    .main-content .mobile-detail-bar {
-                        display: flex;
-                        align-items: center;
-                        height: 44px;
-                        padding: 0 8px;
-                        background: #fff;
-                        border-bottom: 1px solid var(--ant-border-color-split, #eee);
-                        flex-shrink: 0;
-                    }
-
-                    .main-content .detail-section {
-                        display: flex;
-                        flex: 1;
-                        min-height: 0;
                     }
                 }
             }
