@@ -11,14 +11,14 @@ interface TabData {
     searchText: string;
 }
 
-// 扩展的FlowUpmsScope，包含显示信息
+// Extended FlowUpmsScope with display information
 interface FlowUpmsScopeDisplay extends FlowUpmsScope {
     displayName: string;
     icon: string;
     label: string;
 }
 
-// 分组显示数据
+// Grouped display data
 interface GroupedDisplayData {
     scope: UpmsScope;
     icon: string;
@@ -76,7 +76,7 @@ export class UpmsSelectComponent implements OnInit {
     }
 
     private loadData() {
-        // 加载用户数据
+        // Load user data
         this.tabs.find(tab => tab.key === UpmsScope.USER)!.items = this.upmsDataService.upmsData.users;
         this.tabs.find(tab => tab.key === UpmsScope.POST)!.items = this.upmsDataService.upmsData.posts;
         this.tabs.find(tab => tab.key === UpmsScope.ROLE)!.items = this.upmsDataService.upmsData.roles;
@@ -96,20 +96,20 @@ export class UpmsSelectComponent implements OnInit {
     }
 
     onItemToggle(tabKey: UpmsScope, item: KV<number, string>) {
-        // 检查项目是否已经在 flowUpmsScopes 中
+        // Check whether the item is already in flowUpmsScopes
         const isSelected = this.flowUpmsScopes.some(s =>
             s.scope === tabKey && s.scopeValue === item.key
         );
 
         if (!isSelected) {
-            // 添加到 flowUpmsScopes
+            // Add to flowUpmsScopes
             const scopeItem: FlowUpmsScope = {
                 scope: tabKey,
                 scopeValue: item.key
             };
             this.flowUpmsScopes.push(scopeItem);
         } else {
-            // 从 flowUpmsScopes 移除
+            // Remove from flowUpmsScopes
             const scopeIndex = this.flowUpmsScopes.findIndex(s =>
                 s.scope === tabKey && s.scopeValue === item.key
             );
@@ -122,7 +122,7 @@ export class UpmsSelectComponent implements OnInit {
     }
 
     onItemRemove(scope: FlowUpmsScope) {
-        // 从 flowUpmsScopes 移除
+        // Remove from flowUpmsScopes
         const scopeIndex = this.flowUpmsScopes.findIndex(s =>
             s.scope === scope.scope && s.scopeValue === scope.scopeValue
         );
@@ -136,10 +136,10 @@ export class UpmsSelectComponent implements OnInit {
 
     onClearAll(tabKey?: UpmsScope) {
         if (tabKey) {
-            // 清空指定类型的项目
+            // Clear items of the specified type
             this.flowUpmsScopes = this.flowUpmsScopes.filter(s => s.scope !== tabKey);
         } else {
-            // 清空所有项目
+            // Clear all items
             this.flowUpmsScopes = [];
         }
 
@@ -151,7 +151,7 @@ export class UpmsSelectComponent implements OnInit {
         this.flowUpmsScopesChange.emit(this.flowUpmsScopes);
     }
 
-    // 获取过滤后的项目列表
+    // Get the filtered item list
     getFilteredItems(tabKey: UpmsScope): KV<number, string>[] {
         const tab = this.tabs.find(t => t.key === tabKey);
         if (!tab) return [];
@@ -164,39 +164,46 @@ export class UpmsSelectComponent implements OnInit {
         );
     }
 
-    // 获取当前标签页
+    // Get the current tab
     get currentTab(): TabData {
         return this.tabs[this.activeTab];
     }
 
-    // 获取列表标题
+    // Get list title
     getListTitle(tabKey: UpmsScope): string {
         const tab = this.tabs.find(t => t.key === tabKey);
         if (!tab) return '';
 
         const count = this.getFilteredItems(tabKey).length;
-        return `共 ${count} 个${this.i18n.fanyi(tab.key)}`;
+        return `${this.i18n.fanyi('flow.upms.count_prefix')} ${count} ${this.i18n.fanyi('flow.upms.count_unit')}${this.i18n.fanyi(tab.key)}`;
     }
 
-    // 获取空状态提示
+    // Get empty state hint text
     getEmptyStateText(tabKey: UpmsScope): string {
         const tab = this.tabs.find(t => t.key === tabKey);
         if (!tab) return '';
 
-        return `未找到匹配的${this.i18n.fanyi(tab.key)}`;
+        return `${this.i18n.fanyi('flow.upms.no_match_prefix')}${this.i18n.fanyi(tab.key)}`;
     }
 
-    // 获取空选择状态提示
+    // Get empty selection state hint text
     getEmptySelectedText(): string {
-        return '暂无已选项目';
+        return this.i18n.fanyi('flow.upms.no_selected');
     }
 
-    // 获取空选择状态提示详情
+    // Get empty selection state hint detail
     getEmptySelectedTip(): string {
-        return '请在左侧选择需要分配的项目';
+        return this.i18n.fanyi('flow.upms.select_hint');
     }
 
-    // 获取项目图标
+    // Get search placeholder for a given tab
+    getSearchPlaceholder(tabKey: UpmsScope): string {
+        const tab = this.tabs.find(t => t.key === tabKey);
+        if (!tab) return '';
+        return `${this.i18n.fanyi('flow.upms.search_prefix')}${this.i18n.fanyi(tab.key)}${this.i18n.fanyi('flow.upms.search_suffix')}`;
+    }
+
+    // Get item icon
     getItemIcon(type: UpmsScope): string {
         switch (type) {
             case UpmsScope.ORG:
@@ -212,23 +219,23 @@ export class UpmsSelectComponent implements OnInit {
         }
     }
 
-    // 获取项目标签
+    // Get item label
     getItemLabel(type: UpmsScope): string {
         switch (type) {
             case UpmsScope.ORG:
-                return '组织架构';
+                return this.i18n.fanyi('flow.upms.org_label');
             case UpmsScope.ROLE:
-                return '角色';
+                return this.i18n.fanyi('ROLE');
             case UpmsScope.USER:
-                return '用户';
+                return this.i18n.fanyi('USER');
             case UpmsScope.POST:
-                return '岗位';
+                return this.i18n.fanyi('POST');
             default:
-                return '未知';
+                return this.i18n.fanyi('flow.upms.unknown');
         }
     }
 
-    // 获取标签颜色
+    // Get tag color
     getTagColor(type: UpmsScope): string {
         switch (type) {
             case UpmsScope.ORG:
@@ -244,7 +251,7 @@ export class UpmsSelectComponent implements OnInit {
         }
     }
 
-    // 获取项目显示名称
+    // Get item display name
     getItemDisplayName(scope: FlowUpmsScope): string {
         const tab = this.tabs.find(t => t.key === scope.scope);
         if (!tab) return '';
@@ -253,16 +260,16 @@ export class UpmsSelectComponent implements OnInit {
         return item ? item.value : '';
     }
 
-    // 检查项目是否被选中
+    // Check whether an item is selected
     isItemSelected(tabKey: UpmsScope, itemKey: number): boolean {
         return this.flowUpmsScopes.some(s =>
             s.scope === tabKey && s.scopeValue === itemKey
         );
     }
 
-    // 获取排序后的显示数据
+    // Get sorted display data
     getSortedDisplayData(): FlowUpmsScopeDisplay[] {
-        // 定义排序优先级
+        // Define sort priority
         const sortOrder = {
             [UpmsScope.ORG]: 1,
             [UpmsScope.ROLE]: 2,
@@ -278,20 +285,20 @@ export class UpmsSelectComponent implements OnInit {
                 label: this.getItemLabel(scope.scope)
             }))
             .sort((a, b) => {
-                // 首先按类型排序
+                // Sort by type first
                 const typeOrder = sortOrder[a.scope] - sortOrder[b.scope];
                 if (typeOrder !== 0) return typeOrder;
 
-                // 然后按名称排序
+                // Then sort by name
                 return a.displayName.localeCompare(b.displayName);
             });
     }
 
-    // 获取分组后的显示数据
+    // Get grouped display data
     getGroupedDisplayData(): GroupedDisplayData[] {
         const groupedData: GroupedDisplayData[] = [];
 
-        // 为每个类型创建分组
+        // Create a group for each type
         this.tabs.forEach(tab => {
             const items = this.flowUpmsScopes
                 .filter(scope => scope.scope === tab.key)
@@ -315,17 +322,17 @@ export class UpmsSelectComponent implements OnInit {
         return groupedData;
     }
 
-    // 跟踪函数，用于优化 ngFor 性能
+    // Track function for optimizing ngFor performance
     trackByKey(index: number, item: KV<number, string>): number {
         return item.key;
     }
 
-    // 跟踪函数，用于优化 flowUpmsScopes 的 ngFor 性能
+    // Track function for optimizing flowUpmsScopes ngFor performance
     trackByScope(index: number, item: FlowUpmsScope): string {
         return `${item.scope}-${item.scopeValue}`;
     }
 
-    // 跟踪函数，用于优化分组的 ngFor 性能
+    // Track function for optimizing grouped ngFor performance
     trackByGroup(index: number, item: GroupedDisplayData): UpmsScope {
         return item.scope;
     }

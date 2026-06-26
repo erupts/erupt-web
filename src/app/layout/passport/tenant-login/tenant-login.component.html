@@ -1,83 +1,93 @@
-<h3 style="margin-bottom: 26px;text-align: center">{{ (tenantDomainInfo ? 'login.account_pwd_login' : 'tenant.login')|translate }}</h3>
-<form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
-  @if (error) {
-    <nz-alert [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
-  }
-  <nz-form-item [hidden]="tenantDomainInfo">
-    <nz-form-control>
-      <nz-input-group nzSize="large" nzPrefixIcon="apartment">
-        <input nz-input formControlName="tenantCode" [placeholder]="'企业ID'">
-      </nz-input-group>
-    </nz-form-control>
-  </nz-form-item>
-  <!--账号-->
-  <nz-form-item>
-    <nz-form-control [nzErrorTip]="accountTip">
-      <nz-input-group nzSize="large" nzPrefixIcon="user">
-        <input nz-input formControlName="userName" [placeholder]="'login.account'|translate">
-      </nz-input-group>
-      <ng-template #accountTip>
-        @if (userName.dirty && userName.errors) {
-          {{ 'login.validate.account'|translate }}
-        }
-      </ng-template>
-    </nz-form-control>
-  </nz-form-item>
-  <!--密码-->
-  <nz-form-item>
-    <nz-form-control [nzErrorTip]="pwdTip">
-      <nz-input-group nzSize="large" nzPrefixIcon="lock" [nzAddOnAfter]="controlPwd">
-        <input nz-input [type]="passwordType" formControlName="password"
-          [placeholder]="'login.pwd'|translate">
-      </nz-input-group>
-      <ng-template #controlPwd>
-        <i class="fa fa-eye-slash point" [hidden]="passwordType=='text'"
-        (click)="passwordType='text'"></i>
-        <i class="fa fa-eye point" [hidden]="passwordType=='password'"
-        (click)="passwordType='password'"></i>
-      </ng-template>
-      <ng-template #pwdTip>
-        @if (password.dirty && password.errors) {
-          {{ 'login.validate.pwd'|translate }}
-        }
-      </ng-template>
-    </nz-form-control>
-  </nz-form-item>
-  <!--图形验证码-->
-  @if (useVerifyCode) {
-    <nz-form-item>
+<div class="lf-toolbar">
+  <div class="lf-toolbar-icon">
+    <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+    </svg>
+  </div>
+  <div class="lf-toolbar-info">
+    <div class="lf-toolbar-title">{{ (tenantDomainInfo ? 'login.account_pwd_login' : 'tenant.login')|translate }}</div>
+    <div class="lf-toolbar-subtitle">{{'login.subtitle'|translate}}</div>
+  </div>
+</div>
+
+<div class="lf-body">
+  <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
+    @if (error) {
+      <nz-alert [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true"
+        style="margin-bottom:16px"></nz-alert>
+    }
+    <nz-form-item [hidden]="tenantDomainInfo">
       <nz-form-control>
-        <nz-input-group nzSize="large">
-          <input nz-input type="text" [maxLength]="10" formControlName="verifyCode"
-            [placeholder]="'login.validate_code'|translate">
-          <img [src]="verifyCodeUrl" [alt]="'login.validate_code'|translate" (click)="changeVerifyCode()"
-            style="position: absolute;z-index: 9;right: 1px;top: 1px;">
+        <nz-input-group nzSize="large" nzPrefixIcon="apartment">
+          <input nz-input formControlName="tenantCode"
+            [placeholder]="'tenant.enterprise_id' | translate">
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
-  }
-
-  <nz-form-item>
-    <nz-col [nzSpan]="12" class="text-left">
-      @if (registerPage) {
-        <a class="forgot" [href]="registerPage">{{ 'login.register'|translate }}</a>
-      }
-    </nz-col>
-    <nz-col [nzSpan]="12" class="text-right">
-      <a class="forgot" (click)="forgot()">{{ 'login.forget_pwd'|translate }}</a>
-    </nz-col>
-  </nz-form-item>
-
-  <nz-form-item style="margin-bottom: 0">
-    <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="loading"
-      style="display:block;width: 100%;">{{ 'login.button'|translate }}
-    </button>
-  </nz-form-item>
-  @if (!tenantDomainInfo) {
-    <p style="text-align: center;margin-top: 16px;">
-      @if (tenantLogin) {
-        <a (click)="toLogin()">{{ '平台登录' }}</a>
-      }
-    </p>
-  }
-</form>
+    <nz-form-item>
+      <nz-form-control [nzErrorTip]="accountTip">
+        <nz-input-group nzSize="large" nzPrefixIcon="user">
+          <input nz-input formControlName="userName" [placeholder]="'login.account'|translate">
+        </nz-input-group>
+        <ng-template #accountTip>
+          @if (userName.dirty && userName.errors) {
+            {{ 'login.validate.account'|translate }}
+          }
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control [nzErrorTip]="pwdTip">
+        <nz-input-group nzSize="large" nzPrefixIcon="lock" [nzAddOnAfter]="controlPwd">
+          <input nz-input [type]="passwordType" formControlName="password"
+            [placeholder]="'login.pwd'|translate">
+        </nz-input-group>
+        <ng-template #controlPwd>
+          <i class="fa fa-eye-slash point" [hidden]="passwordType=='text'"
+            (click)="passwordType='text'"></i>
+          <i class="fa fa-eye point" [hidden]="passwordType=='password'"
+            (click)="passwordType='password'"></i>
+        </ng-template>
+        <ng-template #pwdTip>
+          @if (password.dirty && password.errors) {
+            {{ 'login.validate.pwd'|translate }}
+          }
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    @if (useVerifyCode) {
+      <nz-form-item>
+        <nz-form-control>
+          <nz-input-group nzSize="large">
+            <input nz-input type="text" [maxLength]="10" formControlName="verifyCode"
+              [placeholder]="'login.validate_code'|translate">
+            <img [src]="verifyCodeUrl" [alt]="'login.validate_code'|translate"
+              (click)="changeVerifyCode()"
+              style="position:absolute;z-index:9;right:1px;top:1px;">
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    }
+    <nz-form-item>
+      <nz-col [nzSpan]="12" class="text-left">
+        @if (registerPage) {
+          <a class="lf-link" [href]="registerPage">{{ 'login.register'|translate }}</a>
+        }
+      </nz-col>
+      <nz-col [nzSpan]="12" class="text-right">
+        <a class="lf-link" (click)="forgot()">{{ 'login.forget_pwd'|translate }}</a>
+      </nz-col>
+    </nz-form-item>
+    <nz-form-item style="margin-bottom:0">
+      <button nz-button type="submit" nzType="primary" nzSize="large"
+        [nzLoading]="loading" style="display:block;width:100%">
+        {{ 'login.button'|translate }}
+      </button>
+    </nz-form-item>
+    @if (!tenantDomainInfo && tenantLogin) {
+      <div class="lf-divider">
+        <a class="lf-link" (click)="toLogin()">{{ 'tenant.platform_login' | translate }}</a>
+      </div>
+    }
+  </form>
+</div>

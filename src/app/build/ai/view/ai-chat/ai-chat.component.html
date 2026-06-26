@@ -1,5 +1,6 @@
 <div class="ai-chat-layout" [class.is-fullscreen]="fullscreen">
-    <div class="sidebar" [class.is-collapsed]="sidebarCollapsed">
+    <div class="sidebar" [class.is-collapsed]="sidebarCollapsed"
+         [style.width.px]="sidebarCollapsed ? null : sidebarWidth">
         <div class="sidebar-header">
             <span class="sidebar-title">{{ 'ai.chat.sessions' | translate }}</span>
             <button nz-button nzType="text" nzSize="small" (click)="createConversation()"
@@ -58,16 +59,24 @@
             }
         </ul>
     </div>
+    @if (!sidebarCollapsed) {
+        <div class="sidebar-resizer" (mousedown)="onResizerMousedown($event)"></div>
+    }
     <div class="main">
         @if (sidebarCollapsed) {
             <button nz-button nzType="text" nzSize="small" class="sidebar-unfold-btn"
                     (click)="toggleSidebar()" [title]="'ai.chat.expand_sidebar' | translate">
                 <span nz-icon nzType="menu-unfold" nzTheme="outline"></span>
             </button>
+            <button nz-button nzType="text" nzSize="small" class="sidebar-new-chat-btn"
+                    (click)="createConversation()" [title]="'ai.chat.new_session' | translate">
+                <span nz-icon nzType="form" nzTheme="outline"></span>
+            </button>
         }
         <article
             #bubblesRef
             class="bubbles"
+            [class.is-wide]="wideMode"
             (scroll)="onBubbleScroll()">
             @if (loadingMessages) {
                 <div class="bubbles-loading">
@@ -94,46 +103,31 @@
                             </nz-avatar>
                         }
                         <div class="bubble-content">
-                            @if (item.think) {
-                                <div class="think-content">
-                                    <div class="think-title" (click)="toggleThink(item)">
-                                        <span nz-icon nzType="bulb" nzTheme="outline"></span>
-                                        <span>{{ 'ai.chat.thinking_process' | translate }}</span>
-                                        <span class="think-toggle" nz-icon
-                                              [nzType]="item.thinkCollapsed ? 'right' : 'down'"
-                                              nzTheme="outline"></span>
-                                    </div>
-                                    @if (!item.thinkCollapsed) {
-                                        <div class="markdown-body think-body">{{ item.think }}</div>
-                                    }
-                                </div>
-                            }
                             @if (item.loading) {
                                 <div class="loading-wrap">
                                     <nz-spin nzSimple></nz-spin>
                                 </div>
                             }
-                            @if (!item.loading && (item.content || item.contentHtml)) {
+                            @if (!item.loading && (item.content || item.contentHtml || item.frozenSegments?.length)) {
                                 @if (item.content || item.contentHtml) {
                                     <div class="markdown-body"
                                          [class.is-streaming]="streaming && $index === messages.length - 1">
                                         @for (seg of (item.frozenSegments ?? []); track $index) {
                                             <div [innerHTML]="seg | safeHtml"></div>
                                         }
-                                        <div [class.streaming-typing-reveal-a]="(item.streamingTick ?? 0) % 2 === 0 && item.senderType === 'MODEL'"
-                                             [class.streaming-typing-reveal-b]="(item.streamingTick ?? 0) % 2 === 1 && item.senderType === 'MODEL'"
-                                             [innerHTML]="getMessageHtml(item) | safeHtml"></div>
+                                        <div [innerHTML]="getMessageHtml(item) | safeHtml"></div>
                                     </div>
                                 }
                                 @if (item.senderType === 'MODEL' && $index === messages.length - 1 && streaming) {
                                     <span class="streaming-cursor"></span>
                                 }
                             }
-                            @if (!item.loading && !item.content && !item.contentHtml && !item.think && item.senderType === 'MODEL') {
+                            @if (!item.loading && !item.content && !item.contentHtml && !item.frozenSegments?.length && item.senderType === 'MODEL') {
                                 <div class="placeholder">{{ 'ai.chat.thinking' | translate }}</div>
                             }
                             @if (!item.loading) {
                                 <div class="bubble-actions">
+                                    <span class="bubble-time">{{ formatTime(item.createdAt) }}</span>
                                     <button nz-button nzType="text" nzSize="small" class="action-btn"
                                             [title]="(item.copied ? 'ai.chat.copied' : 'ai.chat.copy') | translate"
                                             (click)="copyMessage(item)">
@@ -181,7 +175,10 @@
                 </div>
             }
         </article>
-        <div class="sender-wrap">
+        <div class="sender-resizer" (mousedown)="onSenderResizerMousedown($event)"></div>
+        <div class="sender-wrap" [class.is-wide]="wideMode" #senderWrapRef
+             [style.height.px]="senderWrapHeight"
+             [class.has-height]="senderWrapHeight">
             @if (selectedAgent?.hints?.length) {
                 <div class="hints-wrap">
                     @for (hint of selectedAgent?.hints; track hint) {
@@ -190,6 +187,7 @@
                 </div>
             }
             <div class="input-card">
+                @if (agents.length > 0 || !embedded) {
                 <div class="input-toolbar">
                     <div class="toolbar-left">
                         @if (agents.length > 0) {
@@ -209,13 +207,30 @@
                                 </nz-select>
                             </div>
                         }
-                        <div class="tool-call-wrap">
-                            <span class="toolbar-label">{{ 'ai.chat.auto_tool_call' | translate }}</span>
-                            &nbsp;
-                            <nz-switch nzSize="small" [(ngModel)]="autoToolCall"></nz-switch>
-                        </div>
+                        @if (!embedded) {
+                            <div class="tool-call-wrap">
+                                <span class="toolbar-label">{{ 'ai.chat.auto_tool_call' | translate }}</span>
+                                &nbsp;
+                                <nz-switch nzSize="small" [(ngModel)]="autoToolCall"></nz-switch>
+                            </div>
+                        }
                     </div>
-                    <div class="toolbar-right">
+                </div>
+                }
+                <div class="input-body">
+                    <textarea
+                        #textareaRef
+                        nz-input
+                        [(ngModel)]="content"
+                        (keydown)="onInputKeydown($event)"
+                        [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                        [placeholder]="selectedAgent?.desc || ('ai.chat.input_placeholder' | translate)"
+                        rows="2">
+                    </textarea>
+                </div>
+                <div class="input-footer">
+                    <span class="shortcut-hint">{{ 'ai.chat.shortcut_hint' | translate }}</span>
+                    <div class="footer-actions">
                         @if (sending) {
                             <button nz-button nzType="text" nzSize="small" class="toolbar-icon toolbar-icon-stop"
                                     [title]="'ai.chat.stop_generation' | translate" (click)="stopGeneration()">
@@ -230,40 +245,33 @@
                                 <span nz-icon nzType="clear" nzTheme="outline"></span>
                             </button>
                         }
-                        <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
-                                [title]="fullscreen ? ('ai.chat.exit_fullscreen' | translate) : ('ai.chat.fullscreen' | translate)"
-                                (click)="toggleFullscreen()">
-                            @if (fullscreen) {
-                                <span nz-icon nzType="fullscreen-exit" nzTheme="outline"></span>
-                            } @else {
-                                <span nz-icon nzType="fullscreen" nzTheme="outline"></span>
-                            }
+                        @if (!embedded) {
+                            <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
+                                    [title]="(wideMode ? 'ai.chat.narrow_mode' : 'ai.chat.wide_mode') | translate"
+                                    (click)="toggleWideMode()">
+                                <span nz-icon nzType="column-width" nzTheme="outline"></span>
+                            </button>
+                            <button nz-button nzType="text" nzSize="small" class="toolbar-icon"
+                                    [title]="fullscreen ? ('ai.chat.exit_fullscreen' | translate) : ('ai.chat.fullscreen' | translate)"
+                                    (click)="toggleFullscreen()">
+                                @if (fullscreen) {
+                                    <span nz-icon nzType="fullscreen-exit" nzTheme="outline"></span>
+                                } @else {
+                                    <span nz-icon nzType="fullscreen" nzTheme="outline"></span>
+                                }
+                            </button>
+                        }
+                        <button
+                            nz-button
+                            nzType="primary"
+                            nzSize="small"
+                            class="btn-send"
+                            [nzLoading]="sending"
+                            [disabled]="sendDisabled || !content?.trim()"
+                            (click)="send(content)">
+                            {{ 'ai.chat.send' | translate }}
                         </button>
                     </div>
-                </div>
-                <div class="input-body">
-                    <textarea
-                        #textareaRef
-                        nz-input
-                        [(ngModel)]="content"
-                        (keydown)="onInputKeydown($event)"
-                        [nzAutosize]="{ minRows: 2, maxRows: 6 }"
-                        [placeholder]="selectedAgent?.desc || ('ai.chat.input_placeholder' | translate)"
-                        rows="2">
-                    </textarea>
-                </div>
-                <div class="input-footer">
-                    <span class="shortcut-hint">{{ 'ai.chat.shortcut_hint' | translate }}</span>
-                    <button
-                        nz-button
-                        nzType="primary"
-                        nzSize="small"
-                        class="btn-send"
-                        [nzLoading]="sending"
-                        [disabled]="sendDisabled || !content?.trim()"
-                        (click)="send(content)">
-                        {{ 'ai.chat.send' | translate }}
-                    </button>
                 </div>
             </div>
         </div>

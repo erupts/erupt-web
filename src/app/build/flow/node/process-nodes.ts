@@ -1,5 +1,5 @@
 /**
- * 需要创建新的节点，统一在本ts内进行配置
+ * When creating new node types, register them here in this file.
  */
 import {ANode} from "@flow/node/abstract-node";
 import {ApprovalNodeComponent} from "@flow/node/appoval/approval-node.component";

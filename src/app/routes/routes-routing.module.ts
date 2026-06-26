@@ -17,7 +17,7 @@ let tplLoad = import( "../build/tpl/tpl.module");
 
 // layout
 let coreRouter: Routes = [
-    {path: "", component: HomeComponent, data: {title: "首页"}},
+    {path: "", component: HomeComponent, data: {title: "Home"}},
     {path: "exception", loadChildren: () => import( "./exception/exception.module").then(m => m.ExceptionModule)},
     {path: "site/:url", component: SiteComponent},
     {
@@ -27,6 +27,10 @@ let coreRouter: Routes = [
     {
         path: "cube",
         loadChildren: () => import( "../build/cube/cube.module").then(m => m.CubeModule)
+    },
+    {
+        path: "designer",
+        loadChildren: () => import( "../build/designer/designer.module").then(m => m.DesignerModule)
     },
     {
         path: "build",
@@ -40,6 +44,14 @@ let coreRouter: Routes = [
     {
         path: "ai",
         loadChildren: () => import("../build/ai/ai.module").then(m => m.AiModule)
+    },
+    {
+        path: "monitor",
+        loadChildren: () => import("../build/monitor/monitor.module").then(m => m.MonitorModule)
+    },
+    {
+        path: "terminal",
+        loadChildren: () => import("../build/terminal/terminal.module").then(m => m.TerminalModule)
     },
     {
         path: "tpl/:name",
@@ -125,14 +137,13 @@ const routes: Routes = [
             {path: "tenant", component: UserTenantLoginComponent, data: {title: "Login"}},
         ]
     },
-    // 全屏布局
+    // Full-screen layout
     {
         path: "fill",
         component: FillComponent,
         children: coreRouter
     },
-    // 单页不包裹Layout
-    // {path: "lock", component: UserLockComponent, data: {title: "锁屏", titleI18n: "lock"}},
+    // Single page without layout wrapper
     {path: "403", component: Exception403Component, data: {title: "403"}},
     {path: "404", component: Exception404Component, data: {title: "404"}},
     {path: "500", component: Exception500Component, data: {title: "500"}},

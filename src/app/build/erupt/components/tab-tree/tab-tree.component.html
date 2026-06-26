@@ -1,10 +1,13 @@
 <div>
   <nz-spin [nzSpinning]="loading">
     <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm">
-      <input type="text" nz-input placeholder="Search"
+      <input type="text" nz-input [placeholder]="'tree.search'|translate"
         [(ngModel)]="eruptFieldModel.eruptFieldJson.edit.$tempValue">
     </nz-input-group>
     <ng-template #suffixIcon>
+      @if (eruptFieldModel.eruptFieldJson.edit.$value?.length) {
+        <span style="font-size:12px;color:#9ca3af;margin-right:4px;">{{ eruptFieldModel.eruptFieldJson.edit.$value.length }}</span>
+      }
       <i nz-icon nzType="search"></i>
     </ng-template>
     @if (treeData) {

@@ -1,8 +1,15 @@
 /* eslint-disable import/order */
 /* eslint-disable import/no-duplicates */
 // #region Http Interceptors
-import {HTTP_INTERCEPTORS, HttpClientModule, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {APP_INITIALIZER, Injectable, NgModule} from '@angular/core';
+import {
+    HTTP_INTERCEPTORS,
+    HttpClientModule,
+    HttpEvent,
+    HttpHandler,
+    HttpInterceptor,
+    HttpRequest
+} from '@angular/common/http';
+import {APP_INITIALIZER, Injectable, NgModule, provideZoneChangeDetection} from '@angular/core';
 import {Observable} from 'rxjs';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -28,8 +35,8 @@ const ngZorroConfig: NzConfig = {
     theme: WindowModel.theme
 };
 
-// Angular 17: SimpleInterceptor 已改为函数式拦截器 authSimpleInterceptor
-// 创建包装类以兼容现有的类拦截器方式
+// Angular 17: SimpleInterceptor has been changed to the functional interceptor authSimpleInterceptor
+// Create a wrapper class to remain compatible with the existing class-based interceptor approach
 @Injectable()
 class AuthSimpleInterceptorWrapper implements HttpInterceptor {
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -77,7 +84,7 @@ const APP_INIT_PROVIDES = [
         BidiModule,
         AppRoutingModule
     ],
-    providers: [...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, AppViewService, provideNzConfig(ngZorroConfig)],
+    providers: [provideZoneChangeDetection({eventCoalescing: true}), ...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, AppViewService, provideNzConfig(ngZorroConfig)],
     bootstrap: [AppComponent]
 })
 export class AppModule {

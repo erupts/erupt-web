@@ -18,7 +18,7 @@
         <div style="margin-right: 12px">{{ 'flow.submitter_of' | translate }}</div>
         <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
             @for (i of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
-                <nz-option [nzValue]="i" [nzLabel]="'直属组织负责人' + ( i == 0 ? '': '加 ' + i + ' 级负责人' )"/>
+                <nz-option [nzValue]="i" [nzLabel]="getOrgHeadLabel(i)"/>
             }
         </nz-select>
     </div>
@@ -28,7 +28,7 @@
         <div style="margin-right: 12px">{{ 'flow.submitter_of' | translate }}</div>
         <nz-select style="flex: 1" [(ngModel)]="reviewUserMode.modeValue" nzShowSearch>
             @for (i of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
-                <nz-option [nzValue]="i" [nzLabel]="'直属分管领导' + ( i == 0 ? '': '加 ' + i + ' 级负责人' )"/>
+                <nz-option [nzValue]="i" [nzLabel]="getDivisionLeaderLabel(i)"/>
             }
         </nz-select>
     </div>

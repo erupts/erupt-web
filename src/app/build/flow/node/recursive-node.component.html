@@ -1,6 +1,6 @@
-<!-- 递归渲染节点 -->
+<!-- Recursively render nodes -->
 @switch (node.type) {
-    <!-- 开始节点 -->
+    <!-- Start node -->
     @case (nodeType.START) {
         <app-start-node
             [readonly]="readonly"
@@ -33,7 +33,7 @@
             (select)="select.emit($event)">
         </erupt-flex-node>
     }
-    <!-- 子节点 -->
+    <!-- Sub node -->
     @case (nodeType.SUB) {
         <app-sub-node
             [flowRule]="flowRule"
@@ -49,7 +49,7 @@
             (select)="select.emit($event)">
         </app-sub-node>
     }
-    <!-- 审批节点 -->
+    <!-- Approval node -->
     @case (nodeType.APPROVAL) {
         <app-approval-node
             [flowRule]="flowRule"
@@ -65,7 +65,7 @@
             (select)="select.emit($event)">
         </app-approval-node>
     }
-    <!-- 抄送节点 -->
+    <!-- CC node -->
     @case (nodeType.CC) {
         <app-cc-node
             [flowRule]="flowRule"
@@ -111,7 +111,7 @@
         >
         </app-gateway-join>
     }
-    <!-- 并行节点、排他节点和包容节点 - 递归渲染 -->
+    <!-- Parallel, exclusive, and inclusive gateway nodes - recursive rendering -->
     @default {
         <div class="p-gateway">
             <div class="p-branch">
@@ -119,10 +119,10 @@
                     <button nz-button nzType="default" nzShape="round"
                             (click)="addBranch()"
                             class="p-gateway-add">
-                        添加分支
+                        {{ 'flow.action.add_branch' | translate }}
                     </button>
                 }
-                <!-- 分支遍历 -->
+                <!-- Iterate over branches -->
                 @for (branch of node.branches; track branch; let i = $index) {
                     <div
                         [class]="'p-branch-item' + (i === 0 ? ' p-branch-item-l' : '') + (i === node.branches.length - 1 ? ' p-branch-item-r' : '')">
@@ -144,7 +144,7 @@
                                               (moveR)="moveR(i)"
                                               (select)="selectFun($event, i)">
                             </app-gateway-node>
-                            <!-- 递归渲染分支内的节点 -->
+                            <!-- Recursively render nodes within the branch -->
                             @for (childNode of branch.branches; track childNode; let bi = $index) {
                                 <app-recursive-node
                                     [flowRule]="flowRule"

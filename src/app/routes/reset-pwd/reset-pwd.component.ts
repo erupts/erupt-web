@@ -120,6 +120,8 @@ export class ResetPwdComponent {
             } else {
                 this.error = api.message;
             }
+        }, () => {
+            this.loading = false;
         });
     }
 

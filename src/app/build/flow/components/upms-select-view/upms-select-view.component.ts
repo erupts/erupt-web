@@ -24,7 +24,7 @@ export class UpmsSelectViewComponent {
 
 
     /**
-     * 获取权限范围的标签颜色
+     * Get the tag color for the permission scope
      */
     getScopeTagColor(scope: string): string {
         const colorMap: { [key: string]: string } = {
@@ -37,7 +37,7 @@ export class UpmsSelectViewComponent {
     }
 
     /**
-     * 获取权限范围的图标
+     * Get the icon for the permission scope
      */
     getScopeIcon(scope: string): string {
         const iconMap: { [key: string]: string } = {
@@ -79,7 +79,7 @@ export class UpmsSelectViewComponent {
     }
 
     removeScope(event: MouseEvent, scope: FlowUpmsScope) {
-        event.stopPropagation(); // 阻止点击 tag 的事件冒泡
+        event.stopPropagation(); // Prevent click event bubbling on the tag
         this.upmsScopes = this.upmsScopes.filter(s => s !== scope);
         this.upmsScopesChange.emit(this.upmsScopes);
     }
@@ -87,7 +87,7 @@ export class UpmsSelectViewComponent {
     changeSubmitPermission(permission: FlowPermission) {
         if (permission == FlowPermission.SPECIFIC) {
             let ref = this.modal.create({
-                nzTitle: '请选择可见范围',
+                nzTitle: 'Please select the visible scope',
                 nzWidth: '880px',
                 nzDraggable: true,
                 nzStyle: {top: '30px'},

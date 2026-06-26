@@ -14,6 +14,7 @@ import {
 } from "@flow/model/flow-approval.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
 import {UpmsDataService} from "@flow/service/upms-data.service";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -41,7 +42,7 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
 
     selectTab: number = 0;
 
-    constructor(protected upmsDataService?: UpmsDataService) {
+    constructor(protected upmsDataService?: UpmsDataService, protected i18n?: I18NService) {
         super();
     }
 
@@ -60,7 +61,7 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
     }
 
     deleteReviewUser(index: number) {
-        // 确保最少保留一个审批人
+        // Ensure at least one approver is retained
         if (this.approveNode.reviewUserModes.length > 1) {
             this.approveNode.reviewUserModes.splice(index, 1);
         }
@@ -70,8 +71,16 @@ export class ApprovalNodeComponent extends ANode implements OnInit {
         return NodeType.APPROVAL;
     }
 
+    get approvalTabOptions() {
+        return [
+            {value: 0, label: this.i18n.fanyi('flow.node.tab.set_approver')},
+            {value: 1, label: this.i18n.fanyi('flow.node.tab.form_access')},
+            {value: 2, label: this.i18n.fanyi('flow.node.tab.operation')},
+        ];
+    }
+
     override name(): string {
-        return "审批人";
+        return I18NService.instance?.fanyi('flow.node.approver_label');
     }
 
     override color(): string {

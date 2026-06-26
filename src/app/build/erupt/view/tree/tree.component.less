@@ -1,30 +1,331 @@
 :host {
+    display: block;
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
 
-    ::ng-deep {
-        .ant-collapse-header {
-            padding: 4px 18px !important;
+    // ── Skeleton ────────────────────────────────────────────────────────
+    .tree-skeleton {
+        display: flex;
+        height: 100%;
+        background: #fff;
+
+        @keyframes sk-shimmer {
+            0%   { background-position: 100% 50%; }
+            100% { background-position: 0%   50%; }
         }
 
-        .ant-collapse-content-box{
-            padding: 10px !important;
+        .sk-bar {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+            background-size: 400% 100%;
+            animation: sk-shimmer 1.4s ease infinite;
+            border-radius: 4px;
         }
 
-        .layout-tree-view {
-            padding: 10px;
+        // left nav panel
+        .sk-nav {
+            width: 235px;
+            flex-shrink: 0;
+            border-right: 1px solid #eaecf0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sk-nav-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 8px;
+            border-bottom: 1px solid #eaecf0;
+        }
+
+        .sk-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 8px;
+            border-bottom: 1px solid #eaecf0;
+        }
+
+        .sk-nav-body {
+            flex: 1;
+            padding: 8px 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+        }
+
+        .sk-tree-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 4px;
+        }
+
+        .sk-tree-arrow { width: 12px; height: 12px; flex-shrink: 0; border-radius: 2px; }
+        .sk-tree-icon  { width: 14px; height: 14px; flex-shrink: 0; border-radius: 2px; }
+        .sk-tree-label { height: 13px; border-radius: 3px; }
+
+        // right detail panel
+        .sk-detail {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            background: #f5f7fa;
+        }
+
+        .sk-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
             background: #fff;
-            border: 1px solid #d9d9d9;
+            border-bottom: 1px solid #eaecf0;
+            flex-shrink: 0;
+        }
+
+        .sk-detail-body {
+            flex: 1;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .sk-form-card {
+            background: #fff;
+            border: 1px solid #eaecf0;
+            border-radius: 4px;
+            padding: 16px 12px 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .sk-form-row {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .sk-form-field {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sk-label { width: 40%; height: 13px; border-radius: 3px; }
+        .sk-input  { width: 100%; height: 30px; border-radius: 4px; }
+    }
+
+    // ── Overall layout ─────────────────────────────────────────────────
+    .tree-layout {
+        display: flex;
+        height: 100%;
+        background: #fff;
+    }
+
+    // ── Left navigation panel ──────────────────────────────────────────────
+    .tree-nav {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .tree-nav-header {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 7px 8px;
+        border-bottom: 1px solid var(--ant-border-color-split);
+
+        nz-input-group {
+            flex: 1;
+            min-width: 0;
         }
     }
-}
 
-[data-theme='dark'] {
-    :host {
-        ::ng-deep {
-            .layout-tree-view {
-                background: #141414;
-                border: 1px solid #434343;
+    .tree-nav-actions {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 3px 4px;
+        border-bottom: 1px solid var(--ant-border-color-split);
+    }
+
+    .tree-nav-body {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        padding: 4px 4px 8px;
+
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: #d0d5dd;
+            border-radius: 2px;
+        }
+
+    }
+
+    // ── Drag resize divider ────────────────────────────────────────────────
+    .tree-resize-handle {
+        width: 1px;
+        flex-shrink: 0;
+        cursor: col-resize;
+        position: relative;
+        z-index: 1;
+        background: transparent;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #eaecf0;
+            transition: background 0.18s;
+        }
+
+        &:hover::before, &:active::before {
+            background: var(--ant-primary-color, #1890ff);
+            opacity: 0.7;
+        }
+    }
+
+    .tree-resize-overlay {
+        position: fixed;
+        inset: 0;
+        cursor: col-resize;
+        z-index: 9999;
+    }
+
+    // ── Right detail panel ──────────────────────────────────────────────
+    .tree-detail {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: #f5f7fa;
+        overflow: hidden;
+    }
+
+    .tree-detail-header {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        //gap: 8px;
+        padding: 7px 12px;
+        background: #fff;
+        border-bottom: 1px solid #eaecf0;
+        flex-wrap: wrap;
+    }
+
+    .tree-detail-body {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        padding: 12px;
+    }
+
+    .tree-form-card {
+        background: #fff;
+        border: 1px solid #eaecf0;
+        border-radius: 4px;
+        padding: 12px 12px 4px;
+    }
+
+    .tree-empty-hint {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        opacity: 0.45;
+    }
+
+    // ── Mobile collapse toggle button (small screens only) ─────────────────────────────
+    .tree-mobile-toggle {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 0 4px !important;
+        line-height: 1 !important;
+    }
+
+    // ── Mobile responsive adaptation ──────────────────────────────────────────────
+    @media (max-width: 767px) {
+        .tree-layout {
+            flex-direction: column;
+        }
+
+        .tree-nav {
+            width: 100% !important; // override inline [style.width.px]
+            max-width: none !important;
+            max-height: none;
+            border-bottom: 1px solid #eaecf0;
+            overflow: hidden;
+            transition: max-height 0.25s ease;
+
+            &.collapsed {
+                max-height: 78px;
+
+                .tree-nav-body {
+                    display: none;
+                }
+            }
+
+            &:not(.collapsed) {
+                max-height: 40vh;
+            }
+        }
+
+        .tree-nav-body {
+            max-height: calc(40vh - 39px);
+        }
+
+        .tree-resize-handle {
+            display: none;
+        }
+
+        .tree-mobile-toggle {
+            display: inline-flex;
+        }
+
+        .tree-detail {
+            flex: 1;
+            min-height: 0;
+        }
+
+        .tree-detail-header {
+            padding: 6px 8px;
+            gap: 6px;
+
+            button {
+                font-size: 12px;
+            }
+        }
+
+        .tree-detail-body {
+            padding: 8px;
+        }
+
+        .tree-empty-hint {
+            flex-direction: column;
+            gap: 8px;
+
+            ::ng-deep .anticon-arrow-left {
+                transform: rotate(90deg); // ← rotated 90° CW = ↑ (points to tree above)
+                font-size: 20px;
+                margin-right: 0 !important;
             }
         }
     }

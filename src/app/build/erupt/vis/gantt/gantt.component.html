@@ -93,7 +93,7 @@
     <button nz-button nzType="primary" nzShape="circle" nzSize="large"
             class="scroll-to-today-btn"
             (click)="scrollToToday()"
-            nz-tooltip nzTooltipTitle="定位到今天">
+            nz-tooltip [nzTooltipTitle]="'gantt.scroll_to_today' | translate">
         <i nz-icon nzType="calendar" nzTheme="outline"></i>
     </button>
 </div>

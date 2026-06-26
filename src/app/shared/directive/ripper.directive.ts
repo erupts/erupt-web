@@ -16,7 +16,7 @@ export class RipperDirective {
     @Input() lifecycle: number = 1000;
 
     @HostListener('click', ['$event'])
-    private onClick(e: any) {
+    onClick(e: any) {
         let ele = e.currentTarget;
         ele.style.position = "relative";
         ele.style.overflow = "hidden";

@@ -1,135 +1,162 @@
-<div style="padding: 16px">
-  @if (!bi) {
+@if (!bi) {
+  <div style="padding: 16px">
     <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
-  }
-  <div [id]="name">
-    @if (bi) {
-      <div style="display: flex;margin-bottom: 4px">
-        <ng-container>
-                    <button nz-button class="mb-sm" [nzLoading]="querying" (click)="query({
-                            pageIndex: 1,
-                            pageSize: biTable.size
-                        },true);">
-            <i nz-icon nzType="search" nzTheme="outline"></i>{{ 'table.query'|translate }}
-          </button>
-        </ng-container>
-        @if (bi.table&&bi.export) {
-          <button nz-button class="mb-sm" (click)="exportBiData()" [nzLoading]="downloading"
-            [disabled]="!biTable.data||biTable.data.length<=0">
-            <i nz-icon nzType="download" nzTheme="outline"></i>{{ 'table.download'|translate }}
+  </div>
+}
+
+@if (bi) {
+  <div class="bi-container" [id]="name">
+
+    <!-- ── Toolbar ── -->
+    <div class="bi-toolbar">
+      <div class="bi-actions">
+        <button nz-button nzSize="small" nzType="primary" [nzLoading]="querying"
+                (click)="query({ pageIndex: 1, pageSize: biTable.size }, true)">
+          <i nz-icon nzType="search" nzTheme="outline"></i>{{ 'table.query'|translate }}
+        </button>
+        @if (bi.refreshTime > 0) {
+          <button nz-button nzSize="small" (click)="toggleAutoRefresh()"
+                  nz-tooltip [nzTooltipTitle]="autoRefreshPaused ? ('bi.auto_refresh_resume' | translate) : ('bi.auto_refresh_pause' | translate)">
+            <i nz-icon [nzType]="autoRefreshPaused ? 'play-circle' : 'pause-circle'" nzTheme="outline"></i>
+            @if (!autoRefreshPaused) { {{ countdown }}s }
           </button>
         }
-        <div style="margin-left: auto">
+      </div>
+      <div class="bi-utils">
+        @if (bi.dimensions.length > 0) {
+          <button nz-button nzSize="small" class="hidden-mobile"
+                  (click)="toggleCondition()"
+                  [style.border-color]="!hideCondition ? 'var(--ant-primary-color-hover)' : null"
+                  [style.color]="!hideCondition ? 'var(--ant-primary-color)' : null">
+            <i nz-icon [nzType]="hideCondition ? 'caret-down' : 'caret-up'" nzTheme="outline"></i>
+          </button>
+          <button nz-button nzSize="small" (click)="clearCondition()" [disabled]="querying">
+            {{ 'table.reset'|translate }}
+          </button>
+        }
+        <button nz-button nzSize="small" (click)="toggleFullscreen()"
+                nz-tooltip [nzTooltipTitle]="isFullscreen ? ('bi.exit_fullscreen' | translate) : ('global.fullscreen' | translate)">
+          <i nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'" nzTheme="outline"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="bi-inner">
+      <!-- ── Dimensions / search filter ── -->
+      @if (bi.dimensions.length > 0) {
+        <div class="bi-search" [hidden]="hideCondition">
+          <bi-dimension [bi]="bi" (search)="query({ pageIndex: 1, pageSize: biTable.size }, true)"></bi-dimension>
+        </div>
+      }
+
+      <!-- ── Charts ── -->
+      @if (bi.charts.length > 0) {
+        <div class="bi-charts" nz-row [nzGutter]="12">
+          @for (chart of bi.charts; track chart) {
+            <div nz-col [nzMd]="chart.grid" [nzXs]="24">
+              <bi-chart #biChart [chart]="chart" [bi]="bi"></bi-chart>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ── Table area ── -->
+      @if (bi.table) {
+        @if (haveNotNull) {
+          <div class="bi-empty-hint">
+            <nz-result [nzIcon]="icon" [nzTitle]="'bi.query_hint' | translate">
+              <div nz-result-extra>
+                <button nz-button nzType="primary" nzSize="small" [nzLoading]="querying" [nzGhost]="true"
+                        (click)="query({ pageIndex: 1, pageSize: biTable.size })">
+                  <i nz-icon nzType="search" nzTheme="outline"></i>{{ 'table.query'|translate }}
+                </button>
+              </div>
+            </nz-result>
+            <ng-template #icon><i nz-icon nzType="rocket" nzTheme="twotone"></i></ng-template>
+          </div>
+        }
+        @if (!haveNotNull) {
+          @if (columns.length <= 0) {
+            <div style="background:#fff; padding: 32px;">
+              <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null"></nz-empty>
+            </div>
+          }
           @if (columns && columns.length > 0) {
-            <button nz-button nzType="default" nz-popover
-              [nzPopoverContent]="tableColumnCtrl" style="padding: 4px 8px"
-              nzPopoverTrigger="click" class="mb-sm hidden-mobile">
-              <i nz-icon nzType="table" nzTheme="outline"></i>
-            </button>
-            @if (bi.dimensions.length > 0) {
-              <nz-divider nzType="vertical"></nz-divider>
-            }
-            <ng-template #tableColumnCtrl>
-              <div nz-row style="max-width: 520px;">
-                @for (col of st.columns; track col) {
-                  @if (col.title&&col.index) {
-                    <div nz-col nzSpan="6" style="min-width: 130px;">
-                      <label nz-checkbox [(ngModel)]="col['show']" style="width: 130px;"
-                      (ngModelChange)="st.resetColumns()">{{ col.title["text"] }}</label>
+            <div class="bi-body">
+              <!-- Table-level toolbar: column control + download belong to the table -->
+              <div class="bi-table-toolbar">
+                <button nz-button nzSize="small" [nzLoading]="querying"
+                        (click)="query({ pageIndex: biTable.index, pageSize: biTable.size })"
+                        nz-tooltip [nzTooltipTitle]="'global.refresh' | translate">
+                  <i nz-icon nzType="reload" nzTheme="outline"></i>
+                </button>
+                @if (columns && columns.length > 0) {
+                  <button nz-button nzSize="small" nz-popover
+                          [nzPopoverContent]="tableColumnCtrl"
+                          nzPopoverTrigger="click" class="hidden-mobile"
+                          nzPopoverOverlayClassName="col-ctrl-popover"
+                          nz-tooltip [nzTooltipTitle]="'table.column.ctrl'|translate">
+                    <i nz-icon nzType="table" nzTheme="outline"></i>
+                  </button>
+                  <ng-template #tableColumnCtrl>
+                    <div style="width: 200px; max-height: 320px; overflow-y: auto;">
+                      @for (col of st.columns; track col) {
+                        @if (col.title && col.index) {
+                          <div style="padding:6px 12px;border-bottom:1px solid #f5f5f5;">
+                            <label nz-checkbox [(ngModel)]="col['show']"
+                                   (ngModelChange)="st.resetColumns()">
+                              {{ col.title["text"] }}
+                            </label>
+                          </div>
+                        }
+                      }
                     </div>
-                  }
+                  </ng-template>
+                }
+                @if (bi.export) {
+                  <button nz-button nzSize="small" (click)="exportBiData()" [nzLoading]="downloading"
+                          [disabled]="!biTable.data || biTable.data.length <= 0">
+                    <i nz-icon nzType="download" nzTheme="outline"></i>{{ 'table.download'|translate }}
+                  </button>
                 }
               </div>
-            </ng-template>
-          }
-          @if (bi.dimensions.length > 0) {
-            @if (!hideCondition) {
-              <button nz-button class="mb-sm" (click)="clearCondition()"
-                [disabled]="querying">
-                <i nz-icon nzType="sync" nzTheme="outline"></i>{{ 'table.reset'|translate }}
-              </button>
-            }
-            <button nz-button class="mb-sm" (click)="hideCondition=!hideCondition" style="padding: 4px 8px">
-              <i nz-icon [nzType]="hideCondition?'caret-down':'caret-up'" nzTheme="outline"></i>
-            </button>
-          }
-        </div>
-      </div>
-      @if (bi.dimensions.length>0) {
-        <nz-card [nzHoverable]="true" style="margin-bottom: 12px"
-          [hidden]="hideCondition" nzSize="small">
-                <bi-dimension [bi]="bi" (search)="query({
-                            pageIndex: 1,
-                            pageSize: biTable.size
-                        },true)"></bi-dimension>
-        </nz-card>
-      }
-      @if (bi.charts.length>0) {
-        <div nz-row nzGutter="12">
-          <ng-container>
-            @for (chart of bi.charts; track chart) {
-              <div nz-col [nzMd]="chart.grid" [nzXs]="24">
-                <bi-chart #biChart [chart]="chart" [bi]="bi"></bi-chart>
+              <div [syncVirtualScroll]="biTable.data.length >= 100">
+                <st #st [columns]="columns"
+                    [virtualScroll]="biTable.data.length >= 100"
+                    [virtualItemSize]="39"
+                    [data]="biTable.data"
+                    (change)="biTableChange($event)"
+                    [loading]="querying"
+                    [ps]="biTable.size"
+                    [page]="biTable.page"
+                    [scroll]="{x: clientWidth > 768 ? scrollX : '0px', y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
+                    [bordered]="settingSrv.layout['bordered']"
+                    [resizable]="true"
+                    [size]="settingSrv.layout['tableSize'] || 'small'">
+                </st>
               </div>
-            }
-          </ng-container>
-        </div>
-      }
-      @if (haveNotNull&&this.bi.table) {
-        <nz-card [nzHoverable]="true" [nzBordered]="true">
-          <nz-result [nzIcon]="icon" [nzTitle]="'输入查询条件，开启查询操作'">
-            <div nz-result-extra>
-              <button nz-button nzType="primary" class="mb-sm" [nzLoading]="querying"
-                (click)="query({pageIndex: 1,pageSize: biTable.size})"
-                [nzGhost]="true">
-                <i nz-icon nzType="search" nzTheme="outline"></i>{{ 'table.query'|translate }}
-              </button>
+              @if (biTable.pageType == pageType.backend) {
+                <div class="bi-pagination">
+                  <nz-pagination nzShowSizeChanger nzShowQuickJumper
+                                 [nzPageIndex]="biTable.index"
+                                 [nzPageSize]="biTable.size"
+                                 [nzTotal]="biTable.total"
+                                 [nzPageSizeOptions]="biTable.page.pageSizes"
+                                 [nzSize]="'small'"
+                                 [nzShowTotal]="totalTemplate"
+                                 (nzPageSizeChange)="pageSizeChange($event)"
+                                 (nzPageIndexChange)="pageIndexChange($event)">
+                  </nz-pagination>
+                  <ng-template #totalTemplate let-total>
+                    {{'table.totalLeft'|translate}} {{ biTable.total }} {{'table.totalRight'|translate}}
+                  </ng-template>
+                </div>
+              }
             </div>
-          </nz-result>
-          <ng-template #icon>
-            <i nz-icon nzType="rocket" nzTheme="twotone"></i>
-          </ng-template>
-        </nz-card>
-      }
-      @if (!haveNotNull) {
-        @if (bi.table) {
-          @if (columns.length <= 0) {
-            <nz-card>
-              <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null"></nz-empty>
-            </nz-card>
-          }
-          @if (columns && columns.length > 0) {
-            <div [syncVirtualScroll]="biTable.data.length >= 100">
-              <st #st [columns]="columns"
-                [virtualScroll]="biTable.data.length >= 100"
-                [virtualItemSize]="39"
-                [data]="biTable.data"
-                (change)="biTableChange($event)"
-                [loading]="querying"
-                [ps]="biTable.size"
-                [page]="biTable.page"
-                [scroll]="{x: (clientWidth > 768 ? columns.length * 200 : 0) + 'px',y: (clientHeight > 814 ? 525 + (clientHeight - 814) : 525) + 'px'}"
-                [bordered]="settingSrv.layout['bordered']" [resizable]="true"
-                [size]="'small'" style="margin-bottom: 12px">
-              </st>
-            </div>
-            @if (biTable.pageType == pageType.backend) {
-              <nz-pagination style="justify-content: center" nzShowSizeChanger nzShowQuickJumper
-                [nzPageIndex]="biTable.index"
-                [nzPageSize]="biTable.size"
-                [nzTotal]="biTable.total"
-                [nzPageSizeOptions]="biTable.page.pageSizes"
-                [nzSize]="'small'"
-                [nzShowTotal]="totalTemplate"
-                (nzPageSizeChange)="pageSizeChange($event)"
-                (nzPageIndexChange)="pageIndexChange($event)"
-              ></nz-pagination>
-              <ng-template #totalTemplate let-total>{{'table.totalLeft'|translate}} {{ biTable.total }} {{'table.totalRight'|translate}}</ng-template>
-            }
           }
         }
       }
-    }
-  </div>
-</div>
+    </div>
 
+  </div>
+}

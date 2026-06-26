@@ -2,8 +2,10 @@
     <input nz-input [nzSize]="size"
            autocomplete="off"
            [required]="field.eruptFieldJson.edit.notNull"
-           (click)="createReferenceModal(field)"
-           [readOnly]="true"
+           (click)="!readonly && createReferenceModal(field)"
+           (keydown)="onInputKeydown($event, field)"
+           readonly
+           [style.cursor]="readonly ? 'not-allowed' : 'pointer'"
            [disabled]="readonly"
            [placeholder]="field.eruptFieldJson.edit.placeHolder"
            [ngModel]="getDisplayValue(field)"

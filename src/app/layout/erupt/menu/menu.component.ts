@@ -1,4 +1,5 @@
 import {Direction, Directionality} from '@angular/cdk/bidi';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {DOCUMENT} from '@angular/common';
 import {
     ChangeDetectionStrategy,
@@ -37,6 +38,7 @@ const FLOATINGCLS = 'sidebar-nav__floating';
     standalone: false,
     selector: 'erupt-menu',
     templateUrl: './menu.component.html',
+    styleUrls: ['./menu.component.less'],
     host: {
         '(click)': '_click()',
         '(document:click)': 'closeSubMenu()',
@@ -75,8 +77,49 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     @Output() readonly select = new EventEmitter<Menu>();
 
+    private static readonly MENU_ORDER_KEY = 'erupt_menu_order';
+    private static readonly FAVORITES_KEY = 'erupt_menu_favorites';
+
+    favorites: Nav[] = [];
+
+    splitTopItems: Nav[] = [];
+
+    get selectedTopItem(): Nav | null {
+        const key = this.settings.layout['splitMenuKey'];
+        if (!this.splitTopItems.length) return null;
+        if (key) {
+            const found = this.splitTopItems.find(i => (i.key === key || i.text === key) && !i['_hidden']);
+            if (found) return found;
+        }
+        return this.splitTopItems[0] ?? null;
+    }
+
     get collapsed(): boolean {
         return this.settings.layout.collapsed;
+    }
+
+    get splitMenu(): boolean {
+        return !!this.settings.layout['splitMenu'];
+    }
+
+    private computeSplitItems(): void {
+        this.splitTopItems = this.list.flatMap(g =>
+            (g.children as Nav[] || []).filter((i: Nav) => !i['_hidden'])
+        );
+    }
+
+    private autoSelectTopItem(): void {
+        if (!this.splitMenu || !this.splitTopItems.length) return;
+        const active = this.splitTopItems.find(i => i['_open'] || i['_selected']);
+        if (active) {
+            const key = active.key || active.text;
+            if (this.settings.layout['splitMenuKey'] !== key) {
+                this.settings.setLayout('splitMenuKey', key);
+            }
+        } else if (!this.settings.layout['splitMenuKey']) {
+            const first = this.splitTopItems[0];
+            if (first) this.settings.setLayout('splitMenuKey', first.key || first.text);
+        }
     }
 
     constructor(
@@ -212,6 +255,9 @@ export class MenuComponent implements OnInit, OnDestroy {
             return;
         }
         this.appViewService.setRouterViewDesc(null)
+        if (this.isPad) {
+            this.openAside(true);
+        }
         this.ngZone.run(() => this.router.navigateByUrl(item.link!));
     }
 
@@ -259,6 +305,10 @@ export class MenuComponent implements OnInit, OnDestroy {
             this.fixHide(data);
             this.loading = false;
             this.list = data.filter((w: Nav) => w._hidden !== true);
+            this.restoreMenuOrder();
+            this.loadFavorites();
+            this.computeSplitItems();
+            this.autoSelectTopItem();
             cdr.detectChanges();
         });
         router.events.pipe(takeUntil(destroy$)).subscribe(e => {
@@ -271,9 +321,12 @@ export class MenuComponent implements OnInit, OnDestroy {
         settings.notify
             .pipe(
                 takeUntil(destroy$),
-                filter(t => t.type === 'layout' && t.name === 'collapsed')
+                filter(t => t.type === 'layout' && (t.name === 'collapsed' || t.name === 'splitMenu' || t.name === 'splitMenuKey'))
             )
-            .subscribe(() => this.clearFloating());
+            .subscribe(() => {
+                this.clearFloating();
+                cdr.detectChanges();
+            });
         this.underPad();
 
         this.dir = this.directionality.value;
@@ -299,6 +352,100 @@ export class MenuComponent implements OnInit, OnDestroy {
         inFn(ls);
     }
 
+    // #region Favorites
+
+    private loadFavorites(): void {
+        const keys: string[] = JSON.parse(localStorage.getItem(MenuComponent.FAVORITES_KEY) || '[]');
+        if (!keys.length) {
+            this.favorites = [];
+            return;
+        }
+        const map = new Map<string, Nav>();
+        this.menuSrv.visit(this.list, (i: Nav) => {
+            const key = i.link || i.text || '';
+            if (keys.includes(key)) map.set(key, i);
+        });
+        this.favorites = keys.map(k => map.get(k)).filter(Boolean);
+    }
+
+    private saveFavorites(): void {
+        const keys = this.favorites.map(i => i.link || i.text || '');
+        localStorage.setItem(MenuComponent.FAVORITES_KEY, JSON.stringify(keys));
+    }
+
+    isFavorite(item: Nav): boolean {
+        const key = item.link || item.text || '';
+        return this.favorites.some(f => (f.link || f.text || '') === key);
+    }
+
+    toggleFavorite(item: Nav): void {
+        if (this.isFavorite(item)) {
+            this.favorites = this.favorites.filter(f => (f.link || f.text || '') !== (item.link || item.text || ''));
+        } else {
+            this.favorites = [...this.favorites, item];
+        }
+        this.saveFavorites();
+        this.cdr.detectChanges();
+    }
+
+    dropFavorite(event: CdkDragDrop<Nav[]>): void {
+        moveItemInArray(this.favorites, event.previousIndex, event.currentIndex);
+        this.saveFavorites();
+        this.cdr.detectChanges();
+    }
+
+    // #endregion
+
+    // #region Drag & Drop
+
+    drop(event: CdkDragDrop<Nav[]>, siblings: Nav[]): void {
+        moveItemInArray(siblings, event.previousIndex, event.currentIndex);
+        this.saveMenuOrder();
+        this.cdr.detectChanges();
+    }
+
+    private saveMenuOrder(): void {
+        const order: Record<string, number> = {};
+        const collect = (items: Nav[], prefix: string) => {
+            items.forEach((item, idx) => {
+                const key = prefix + (item.text || item.link || idx);
+                order[key] = idx;
+                if (item.children?.length) {
+                    collect(item.children, key + '/');
+                }
+            });
+        };
+        collect(this.list, '');
+        localStorage.setItem(MenuComponent.MENU_ORDER_KEY, JSON.stringify(order));
+    }
+
+    private restoreMenuOrder(): void {
+        const raw = localStorage.getItem(MenuComponent.MENU_ORDER_KEY);
+        if (!raw) return;
+        try {
+            const order: Record<string, number> = JSON.parse(raw);
+            const sort = (items: Nav[], prefix: string) => {
+                items.sort((a, b) => {
+                    const ka = prefix + (a.text || a.link || '');
+                    const kb = prefix + (b.text || b.link || '');
+                    const oa = order[ka] ?? 999;
+                    const ob = order[kb] ?? 999;
+                    return oa - ob;
+                });
+                items.forEach((item, idx) => {
+                    const key = prefix + (item.text || item.link || idx);
+                    if (item.children?.length) {
+                        sort(item.children, key + '/');
+                    }
+                });
+            };
+            sort(this.list, '');
+        } catch {
+        }
+    }
+
+    // #endregion
+
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
@@ -307,7 +454,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     // #region Under pad
 
-    private get isPad(): boolean {
+    get isPad(): boolean {
         return this.doc.defaultView!.innerWidth < 768;
     }
 

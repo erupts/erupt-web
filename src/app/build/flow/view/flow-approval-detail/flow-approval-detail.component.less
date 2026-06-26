@@ -9,12 +9,14 @@
         height: 100%;
 
         .detail-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid #e5e5e5;
+            height: 48px; // align with sidebar-header / list-header
+            box-sizing: border-box;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--ant-border-color-split, #eee);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0; // 防止头部被压缩
+            flex-shrink: 0; // prevent header from shrinking
 
             .header-left {
                 .item-id {
@@ -31,36 +33,46 @@
 
         .detail-content {
             flex: 1;
-            overflow-y: auto; // 只有内容区域可以滚动
-            // 为底部固定按钮留出空间
+            overflow-y: auto; // only the content area is scrollable
+            // leave space for the fixed bottom buttons
             padding: 16px 16px 70px;
+            background: #f5f7fa; // gray canvas; inner blocks become white cards
+
+            // Header "hero" card grouping the title, status and submitter info
+            .detail-hero {
+                background: #fff;
+                border: 1px solid var(--ant-border-color-split, #eee);
+                border-radius: 6px;
+                padding: 14px 16px;
+                margin-bottom: 12px;
+            }
 
             .content-header {
                 display: flex;
                 align-items: center;
-                gap: 12px;
-                margin-bottom: 12px;
+                gap: 10px;
+                margin-bottom: 10px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid var(--ant-border-color-split, #eee);
 
                 .content-title {
                     margin: 0;
-                    font-size: 25px;
+                    min-width: 0;
+                    flex: 0 1 auto;
+                    font-size: 18px;
                     font-weight: 600;
-                    color: #333;
-                }
-
-                .status-tag-large {
-
+                    color: #262626;
+                    line-height: 1.4;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
             }
 
             .submitter-info-large {
                 display: flex;
                 align-items: center;
-                gap: 12px;
-                margin-bottom: 12px;
-                padding: 12px;
-                background-color: #fafafa;
-                border-radius: 4px;
+                gap: 8px;
 
                 .avatar-large {
                     width: 48px;
@@ -76,29 +88,33 @@
 
                 .submitter-details {
                     display: flex;
-                    align-items: flex-end;
-                    justify-content: center;
-                    gap: 4px;
+                    align-items: center;
+                    gap: 10px;
 
                     .submitter-name-large {
-                        font-size: 16px;
+                        font-size: 13px;
                         font-weight: 600;
-                        color: #333;
+                        color: #262626;
                     }
 
                     .submitter-dept {
-                        font-size: 14px;
-                        color: #666;
+                        font-size: 13px;
+                        color: #8c8c8c;
                     }
 
                     .submit-time {
-                        font-size: 13px;
-                        color: #999;
+                        font-size: 12px;
+                        color: #8c8c8c;
                     }
                 }
             }
 
             .detail-tabs {
+                background: #fff;
+                border: 1px solid var(--ant-border-color-split, #eee);
+                border-radius: 6px;
+                padding: 8px 16px 16px;
+
                 ::ng-deep .ant-tabs-nav {
                     margin-bottom: 16px;
                 }
@@ -188,7 +204,7 @@
             }
         }
 
-        // 固定在右侧底部的功能按钮
+        // action buttons fixed at the bottom
         .fixed-bottom-actions {
             position: absolute;
             bottom: 0;
@@ -213,7 +229,7 @@
             }
         }
 
-        // 评论表单样式
+        // comment form styles
         .comment-form {
             margin-bottom: 0;
             padding: 16px;
@@ -233,7 +249,7 @@
             }
         }
 
-        // 评论列表样式
+        // comment list styles
         .comments-list {
             .comment-item {
                 &:hover {
@@ -292,10 +308,46 @@
             }
         }
     }
+
+    // ── Mobile (phones) ──────────────────────────────────────────
+    @media (max-width: 768px) {
+        .approval-detail {
+            .detail-header {
+                padding: 0 12px;
+            }
+
+            .detail-content {
+                padding: 12px 12px 70px;
+
+                .content-header .content-title {
+                    font-size: 16px;
+                }
+            }
+
+            .detail-tabs {
+                padding: 4px 10px 12px;
+
+                // Let wide approval/data tables scroll horizontally instead of overflowing
+                .records-table,
+                .expense-table {
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+            }
+
+            .fixed-bottom-actions {
+                padding: 0 12px;
+
+                .action-buttons .action-button {
+                    margin: 8px 4px;
+                }
+            }
+        }
+    }
 }
 
 
-// 弹窗样式
+// modal styles
 ::ng-deep .ant-modal {
     .modal-content {
         .modal-description {
@@ -342,14 +394,14 @@
     transform: scale(1) translateX(-50%);
 }
 
-// 弹窗按钮样式优化
+// modal button style refinements
 ::ng-deep .ant-modal-footer {
     .ant-btn {
         min-width: 80px;
     }
 }
 
-// 移动端弹窗优化
+// mobile modal optimizations
 @media (max-width: 768px) {
     ::ng-deep .ant-modal {
         width: 90% !important;

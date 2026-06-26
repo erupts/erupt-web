@@ -1,5 +1,6 @@
 import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
+import {HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Announcement, LoginModel, NoticeChannel, NoticeMessageDetail, NoticeScene, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
@@ -12,6 +13,7 @@ import {VL} from "../../build/erupt/model/erupt-field.model";
 import {Checkbox, DrillInput, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
+import {EruptAppData} from "@shared/model/erupt-app.model";
 import {R, SimplePage} from "@shared/model/api.model";
 import {NoticeStatus} from "@shared/model/notice.model";
 
@@ -34,7 +36,7 @@ export class DataService {
         DataService.tokenService = this.tokenService;
     }
 
-    static postExcelFile(url: string, params?: any) { //params是post请求需要的参数，url是请求url地址
+    static postExcelFile(url: string, params?: any) { //params are the parameters required for the POST request, url is the request URL
         let form = document.createElement("form");
         form.style.display = "none";
         form.action = url;
@@ -53,7 +55,7 @@ export class DataService {
         form.remove();
     }
 
-    //获取验证码
+    //get verification code URL
     static getVerifyCodeUrl(mark: any): string {
         return RestPath.erupt + "/code-img?mark=" + mark;
     }
@@ -89,7 +91,7 @@ export class DataService {
         }
     }
 
-    //获取结构
+    //get schema
     getEruptBuild(eruptName: string, eruptParentName?: string): Observable<EruptBuildModel> {
         return this._http.get<EruptBuildModel>(RestPath.build + "/" + eruptName, null, {
             observe: "body",
@@ -100,7 +102,7 @@ export class DataService {
         });
     }
 
-    //自定义行
+    //custom rows
     extraRow(eruptName: string, condition?: object): Observable<Row[]> {
         return this._http.post(RestPath.data + "/extra-row/" + eruptName, condition, null, {
             observe: 'body',
@@ -144,7 +146,7 @@ export class DataService {
             "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
     }
 
-    //分页数据对象
+    //paginated data object
     queryEruptTableData(eruptName: string, url: string, page: Page, header?: object): Observable<Page> {
         return this._http.post(url, page, null, {
             observe: "body",
@@ -156,7 +158,7 @@ export class DataService {
     }
 
 
-    //tree数据结构
+    //tree data structure
     queryEruptTreeData(eruptName: string): Observable<Tree[]> {
         return this._http.get<Tree[]>(RestPath.data + "/tree/" + eruptName, null, {
             observe: "body",
@@ -166,7 +168,7 @@ export class DataService {
         });
     }
 
-    //根据id获取数据
+    //get data by id
     queryEruptDataById(eruptName: string, id: any): Observable<any> {
         return this._http.get<any>(RestPath.data + "/" + eruptName + "/" + id, null, {
             observe: "body",
@@ -176,7 +178,7 @@ export class DataService {
         });
     }
 
-    //获取初始化数据
+    //get initialization data
     getInitValue(eruptName: string, eruptParentName?: string, header?: object): Observable<any> {
         return this._http.get<any>(RestPath.data + "/init-value/" + eruptName, null, {
             observe: "body",
@@ -185,6 +187,15 @@ export class DataService {
                 eruptParent: eruptParentName || '',
                 ...header
             }
+        });
+    }
+
+    updateBoardGroup(eruptName: string, visCode: string, pk: any, groupValue: any): Observable<any> {
+        return this._http.post(RestPath.dataModify + "/board/" + eruptName + "/update_group", {
+            visCode, pk, groupValue
+        }, {}, {
+            observe: "body",
+            headers: {erupt: eruptName}
         });
     }
 
@@ -200,8 +211,17 @@ export class DataService {
         });
     }
 
-    findAutoCompleteValue(eruptName: string, field: string, formData: any, val: string, eruptParentName?: string): Observable<string[]> {
-        return this._http.post(RestPath.comp + "/auto-complete/" + eruptName + "/" + field, formData, {
+    updateCalendarDate(eruptName: string, visCode: string, pk: any, date: string, endDate?: string): Observable<any> {
+        return this._http.post(RestPath.dataModify + "/calendar/" + eruptName + "/update_date", {
+            visCode, pk, date, endDate
+        }, {}, {
+            observe: "body",
+            headers: {erupt: eruptName}
+        });
+    }
+
+    findAutoCompleteValue(eruptName: string, field: string, data: any, val: string, eruptParentName?: string): Observable<string[]> {
+        return this._http.post(RestPath.comp + "/auto-complete/" + eruptName + "/" + field, data, {
             val: val.trim(),
         }, {
             observe: "body",
@@ -212,10 +232,8 @@ export class DataService {
         });
     }
 
-    choiceTrigger(eruptName: string, field: string, val: any, eruptParentName?: string): any {
-        return this._http.get<any>(RestPath.component + "/choice-trigger/" + eruptName + "/" + field, {
-            val: val
-        }, {
+    getCodeEditHints(eruptName: string, fieldName: string, eruptParentName?: string): Observable<string[]> {
+        return this._http.get<string[]>(RestPath.comp + "/code-edit-hints/" + eruptName + "/" + fieldName, null, {
             observe: "body",
             headers: {
                 erupt: eruptName,
@@ -244,8 +262,8 @@ export class DataService {
         });
     }
 
-    findTagsItem(eruptName: string, field: string, eruptParentName?: string): Observable<string[]> {
-        return this._http.get<string[]>(RestPath.component + "/tags-item/" + eruptName + "/" + field, null, {
+    findTagsItem(eruptName: string, field: string, formData: { [key: string]: any }, eruptParentName?: string): Observable<string[]> {
+        return this._http.post<string[]>(RestPath.component + "/tags-item/" + eruptName + "/" + field, formData, null, {
             observe: "body",
             headers: {
                 erupt: eruptName,
@@ -273,7 +291,7 @@ export class DataService {
         });
     }
 
-    //自定义按钮表单初始值
+    //custom button form initial values
     operatorFormValue(eruptName: string, operatorCode: string, ids: any): Observable<any> {
         return this._http.post(RestPath.data + "/" + eruptName + "/operator/" + operatorCode + "/form-value", null, {
             ids: ids
@@ -286,7 +304,7 @@ export class DataService {
     }
 
 
-    //执行自定义operator方法
+    //execute custom operator method
     execOperatorFun(eruptName: string, operatorCode: string, ids: any, param: object): Observable<EruptApiModel> {
         return this._http.post(RestPath.data + "/" + eruptName + "/operator/" + operatorCode, {
             ids: ids,
@@ -308,7 +326,7 @@ export class DataService {
         });
     }
 
-    //获取reference-tree数据
+    //get reference-tree data
     queryReferenceTreeData(eruptName: string, refName: string, dependVal?: any, eruptParent?: string): Observable<Tree[]> {
         let param = {};
         if (dependVal) {
@@ -338,7 +356,7 @@ export class DataService {
         });
     }
 
-    //增加数据
+    //add data
     addEruptData(eruptName: string, data: any, headers?: object): Observable<any> {
         return this._http.post<any>(RestPath.dataModify + "/" + eruptName, data, null, {
             observe: null,
@@ -349,7 +367,7 @@ export class DataService {
         });
     }
 
-    //修改数据
+    //update data
     updateEruptData(eruptName: string, data: object): Observable<any> {
         return this._http.post<EruptApiModel>(RestPath.dataModify + "/" + eruptName + "/update", data, null, {
             observe: null,
@@ -359,12 +377,12 @@ export class DataService {
         });
     }
 
-    //删除数据
+    //delete data
     deleteEruptData(eruptName: string, id): Observable<EruptApiModel> {
         return this.deleteEruptDataList(eruptName, [id]);
     }
 
-    //批量删除数据
+    //batch delete data
     deleteEruptDataList(eruptName: string, ids: any[]): Observable<EruptApiModel> {
         return this._http.post(RestPath.dataModify + "/" + eruptName + "/delete", ids, null, {
             headers: {
@@ -406,33 +424,29 @@ export class DataService {
         });
     }
 
-    //登录
+    //login
     login(account: string, pwd: string, verifyCode?: any, verifyCodeMark?: any): Observable<LoginModel> {
-        return this._http.get(RestPath.erupt + "/login", {
-                account: account,
-                pwd: pwd,
-                verifyCode: verifyCode,
+        return this._http.post(RestPath.erupt + "/login", {
+                account, pwd, verifyCode,
                 verifyCodeMark: verifyCodeMark || null
             }
         );
     }
 
     tenantLogin(tenantCode: string, account: string, pwd: string, verifyCode?: any, verifyCodeMark?: any): Observable<LoginModel> {
-        return this._http.get(RestPath.erupt + "/tenant/login", {
-                tenantCode: tenantCode,
-                account: account,
-                pwd: pwd,
-                verifyCode: verifyCode,
+        return this._http.post(RestPath.erupt + "/tenant/login", {
+                tenantCode, account, pwd, verifyCode,
                 verifyCodeMark: verifyCodeMark || null
             }
         );
     }
 
     tenantChangePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
-        return this._http.get(RestPath.erupt + "/tenant/change-pwd", {
-                pwd: this.pwdEncode(pwd, 3),
-                newPwd: this.pwdEncode(newPwd, 3),
-                newPwd2: this.pwdEncode(newPwd2, 3)
+        const encode = (p: string) => EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(p, 3) : p;
+        return this._http.post(RestPath.erupt + "/tenant/change-pwd", {
+                pwd: encode(pwd),
+                newPwd: encode(newPwd),
+                newPwd2: encode(newPwd2)
             }
         );
     }
@@ -455,15 +469,16 @@ export class DataService {
 
 
     changePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
-        return this._http.get(RestPath.erupt + "/change-pwd", {
-                pwd: this.pwdEncode(pwd, 3),
-                newPwd: this.pwdEncode(newPwd, 3),
-                newPwd2: this.pwdEncode(newPwd2, 3)
+        const encode = (p: string) => EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(p, 3) : p;
+        return this._http.post(RestPath.erupt + "/change-pwd", {
+                pwd: encode(pwd),
+                newPwd: encode(newPwd),
+                newPwd2: encode(newPwd2)
             }
         );
     }
 
-    //获取菜单
+    //get menu
     getMenu(): Observable<MenuVo[]> {
         return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", null, {
             observe: "body"
@@ -478,40 +493,55 @@ export class DataService {
         this._http.get(RestPath.excel + "/template/" + eruptName, null, {
             responseType: "arraybuffer",
             observe: 'events',
-            headers: {
-                erupt: eruptName
-            }
-        }).subscribe((res) => {
-            if (res.type !== 4) {
-                // 还没准备好，无需处理
-                return;
-            }
-            downloadFile(res);
-            callback();
-        }, () => {
-            callback();
+            headers: {erupt: eruptName}
+        }).subscribe({
+            next: (res) => {
+                if (res.type !== 4) return;
+                const response = res as HttpResponse<ArrayBuffer>;
+                if (downloadFile(res)) {
+                    callback?.();
+                } else {
+                    callback?.(DataService.parseArrayBufferError(response.body));
+                }
+            },
+            error: () => callback?.()
         });
-        // DataService.postExcelFile(RestPath.excel + "/template/" + eruptName + "?" + this.createAuthParam(eruptName));
     }
 
-    downloadExcel(eruptName: string, condition: any, header: any, callback: Function) {
-        this._http.post(RestPath.excel + "/export/" + eruptName, condition, null, {
+    downloadExcel(eruptName: string, body: any, header: any, callback: Function, ids?: any[]) {
+        let url = RestPath.excel + "/export/" + eruptName;
+        if (ids && ids.length > 0) {
+            url += "?" + ids.map(id => "ids=" + id).join("&");
+        }
+        this._http.post(url, body, null, {
             responseType: "arraybuffer",
             observe: 'events',
-            headers: {
-                erupt: eruptName,
-                ...header
-            }
-        }).subscribe((res) => {
-            if (res.type !== 4) {
-                // 还没准备好，无需处理
-                return;
-            }
-            downloadFile(res);
-            callback();
-        }, () => {
-            callback();
+            headers: {erupt: eruptName, ...header}
+        }).subscribe({
+            next: (res) => {
+                if (res.type !== 4) return;
+                const response = res as HttpResponse<ArrayBuffer>;
+                if (downloadFile(res)) {
+                    callback();
+                } else {
+                    callback(DataService.parseArrayBufferError(response.body));
+                }
+            },
+            error: () => callback()
         });
+    }
+
+    private static parseArrayBufferError(body: ArrayBuffer | null | any): EruptApiModel | null {
+        if (!body) return null;
+        try {
+            // _HttpClient may have already deserialized the JSON body
+            if (body instanceof ArrayBuffer) {
+                return JSON.parse(new TextDecoder().decode(body));
+            }
+            return body as EruptApiModel;
+        } catch (e) {
+            return null;
+        }
     }
 
     createAuthParam(eruptName: string): string {
@@ -579,5 +609,47 @@ export class DataService {
         return this._http.get<R<VL[]>>(RestPath.erupt + "/print/vars");
     }
 
+    printConfigList(eruptName: string) {
+        return this._http.get<R<{ id: number, erupt: string, title: string, content: string, pageConfig: any }[]>>(
+            RestPath.erupt + "/print/config/" + eruptName + "/list", null, {
+                observe: "body", headers: {erupt: eruptName}
+            });
+    }
+
+    printConfigAdd(eruptName: string, config: any) {
+        return this._http.post<R<void>>(
+            RestPath.erupt + "/print/config/" + eruptName + "/add", config);
+    }
+
+    printConfigUpdate(eruptName: string, config: any) {
+        return this._http.post<R<void>>(
+            RestPath.erupt + "/print/config/" + eruptName + "/update", config);
+    }
+
+    printConfigDelete(eruptName: string, id: number) {
+        return this._http.post<R<void>>(
+            RestPath.erupt + "/print/config/" + eruptName + "/delete?id=" + id, null);
+    }
+
+    renderPrint(eruptName: string, id: any, content: string) {
+        return this._http.post<R<string>>(
+            RestPath.erupt + "/print/" + eruptName + "/" + id, content, null, {
+                observe: "body", headers: {erupt: eruptName}
+            });
+    }
+
+    getFormViewData(eruptName: string): Observable<any> {
+        return this._http.get<any>(RestPath.formView + "/" + eruptName, null, {
+            observe: "body",
+            headers: {erupt: eruptName}
+        });
+    }
+
+    saveFormViewData(eruptName: string, data: any): Observable<EruptApiModel> {
+        return this._http.post<EruptApiModel>(RestPath.formView + "/" + eruptName, data, null, {
+            observe: "body",
+            headers: {erupt: eruptName}
+        });
+    }
 
 }

@@ -1,16 +1,189 @@
 :host {
+    display: block;
     height: 100%;
     overflow: auto;
+    background: #f5f7fa;
+    box-sizing: border-box;
 
-    ::ng-deep {
-    .ant-table {
-      transition: 0.3s all;
-      border-radius: 0;
+    .bi-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
 
-      &:hover {
-        border-color: rgba(0, 0, 0, 0.09);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
-      }
+        &:fullscreen {
+            background: #f5f7fa;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+        }
     }
-  }
+
+    // ── Toolbar ────────────────────────────────────────────────────────
+    .bi-toolbar {
+        display: flex;
+        align-items: center;
+        padding: 7px 15px;
+        border-bottom: 1px solid var(--ant-border-color-split, #eee);
+        background: #fff;
+        flex-shrink: 0;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .bi-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        flex: 1;
+        gap: 8px;
+    }
+
+    .bi-utils {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        gap: 8px;
+    }
+
+    // ── Scrollable content area ────────────────────────────────────────
+    .bi-inner {
+        overflow: auto;
+        padding: 12px;
+        flex: 1;
+        min-height: 0;
+    }
+
+    // ── Search / dimensions filter ─────────────────────────────────────
+    .bi-search {
+        padding: 6px 8px;
+        background: #fff;
+        border: 1px solid #f0f0f0;
+        margin-bottom: 12px;
+    }
+
+    // ── Charts grid ───────────────────────────────────────────────────
+    .bi-charts {
+        margin-bottom: 4px;
+    }
+
+    // ── Empty hint card ───────────────────────────────────────────────
+    .bi-empty-hint {
+        background: #fff;
+        border: 1px solid #f0f0f0;
+    }
+
+    // ── Table-level toolbar (column ctrl + download) ──────────────────
+    .bi-table-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 6px 8px;
+        background: #fff;
+        border: 1px solid #f0f0f0;
+        border-bottom: none;
+
+        ::ng-deep .ant-btn + .ant-btn {
+            margin-left: 0;
+        }
+    }
+
+    // ── Table body ────────────────────────────────────────────────────
+    .bi-body {
+        overflow: hidden;
+    }
+
+    // ── Pagination ────────────────────────────────────────────────────
+    .bi-pagination {
+        height: 39px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #f0f0f0;
+        border-top: none;
+        background: #fff;
+        flex-shrink: 0;
+    }
+
+    // ── Reset ng-zorro auto margin between adjacent buttons ───────────
+    ::ng-deep {
+        .bi-actions, .bi-utils {
+            .ant-btn + .ant-btn {
+                margin-left: 0;
+            }
+        }
+
+        .ant-table {
+            transition: 0.3s all;
+            border-radius: 0;
+
+            &:hover {
+                border-color: rgba(0, 0, 0, 0.09);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+            }
+        }
+    }
+
+    @media (max-width: 767px) {
+        .bi-toolbar {
+            padding: 6px 10px;
+            gap: 6px;
+        }
+
+        .bi-actions {
+            gap: 6px;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            &::-webkit-scrollbar { display: none; }
+        }
+
+        .bi-inner {
+            padding: 8px;
+        }
+
+        .bi-search {
+            padding: 4px 6px;
+        }
+
+        .bi-pagination {
+            height: 36px;
+        }
+    }
+}
+
+::ng-deep .col-ctrl-popover {
+    .ant-popover-inner-content {
+        padding: 0;
+    }
+
+    .col-ctrl-title {
+        padding: 8px 12px 7px;
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.65);
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .col-ctrl-list {
+        padding: 4px 0;
+        min-width: 160px;
+        max-height: 320px;
+        overflow-y: auto;
+
+        label.ant-checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            padding: 5px 12px;
+            margin: 0;
+            cursor: pointer;
+            transition: background 0.15s;
+
+            &:hover {
+                background: #f5f7fa;
+            }
+        }
+    }
 }

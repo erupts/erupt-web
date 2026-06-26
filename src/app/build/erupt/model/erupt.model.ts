@@ -35,7 +35,9 @@ export interface Vis {
     fieldVisibility: FieldVisibility;
     type: VisType;
     cardView: CardView;
+    boardView: BoardView
     ganttView: GanttView;
+    calendarView: CalendarView;
     tplView: Tpl
 }
 
@@ -44,12 +46,23 @@ export enum VisType {
     GANTT = "GANTT",
     CARD = "CARD",
     BOARD = "BOARD",
+    CALENDAR = "CALENDAR",
     TPL = "TPL"
 }
 
 export enum FieldVisibility {
     INCLUDE = "INCLUDE",
     EXCLUDE = "EXCLUDE"
+}
+
+export interface BoardView {
+    groupField: string;
+}
+
+export interface CalendarView {
+    dateField: string;
+    endDateField: string;
+    colorField: string;
 }
 
 export interface CardView {
@@ -82,8 +95,8 @@ export interface DrillInput {
 }
 
 export enum CoverEffect {
-    FIT = "FIT", //适应
-    CLIP = "CLIP", //剪裁
+    FIT = "FIT", //fit
+    CLIP = "CLIP", //clip
 }
 
 interface Layout {
@@ -96,6 +109,7 @@ interface Layout {
     refreshTime: number;
     tableWidth: string;
     tableOperatorWidth: string;
+    collapseActionButton: boolean;
 }
 
 
@@ -184,6 +198,7 @@ export interface Power {
     viewDetails: boolean;
     importable: boolean;
     export: boolean;
+    copy: boolean;
 }
 
 export interface Row {

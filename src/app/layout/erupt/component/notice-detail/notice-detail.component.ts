@@ -33,7 +33,7 @@ export class NoticeDetailComponent implements OnInit {
             });
     }
 
-    // 打开 URL 链接
+    // open URL link
     openUrlDrawer(url: string, title: string): void {
         this.drawerService.create({
             nzTitle: null,

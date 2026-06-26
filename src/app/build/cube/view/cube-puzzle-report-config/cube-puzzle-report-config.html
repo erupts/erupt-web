@@ -15,13 +15,13 @@
         </form>
     } @else {
     <div nz-row [nzGutter]="8">
-        <!-- 左侧图表预览 -->
+        <!-- Left chart preview -->
         <div nz-col [nzSpan]="16">
             <cube-puzzle-report style="height: 500px;display: block" #puzzleReport [report]="report"
                                 [dashboard]="dashboard" [cubeMeta]="cubeMeta"
                                 [filters]="dsl?.filters" [dsl]="dsl"/>
         </div>
-        <!-- 右侧配置表单 -->
+        <!-- Right configuration form -->
         <div nz-col [nzSpan]="8">
             <div style="background: #fff;padding: 0 8px;overflow: auto;height: 500px">
                 <nz-tabs>
@@ -80,7 +80,7 @@
                                                 <nz-option [nzValue]="ReportType.RADIAL_BAR" [nzLabel]="'cube.report.config.chart.radial_bar' | translate"></nz-option>
                                             </nz-option-group>
                                             <nz-option-group [nzLabel]="'cube.report.config.relation_charts' | translate">
-                                                <!--                                            <nz-option [nzValue]="ReportType.SANKEY" nzLabel="桑基图"></nz-option>-->
+                                                <!--                                            <nz-option [nzValue]="ReportType.SANKEY" nzLabel="Sankey chart"></nz-option>-->
                                                 <nz-option [nzValue]="ReportType.CHORD" [nzLabel]="'cube.report.config.chart.chord' | translate"></nz-option>
                                                 <nz-option [nzValue]="ReportType.WORD_CLOUD" [nzLabel]="'cube.report.config.chart.word_cloud' | translate"></nz-option>
                                                 <nz-option [nzValue]="ReportType.TREEMAP" [nzLabel]="'cube.report.config.chart.treemap' | translate"></nz-option>
@@ -431,7 +431,7 @@
                             </nz-form-item>
                         </form>
 
-                        <!-- 条件行模板 -->
+                        <!-- Condition row template -->
                         <ng-template #conditionRow let-cond="cond" let-fieldName="fieldName" let-opName="opName" let-onRemove="onRemove">
                             <div style="margin-bottom: 10px;">
                                 <div style="display: flex; gap: 6px; margin-bottom: 4px; align-items: center;">
@@ -665,14 +665,14 @@
                                         <nz-form-label>{{ 'cube.report.config.compare.current_label' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <input nz-input [(ngModel)]="report.compare.currentLabel" name="compareCurrentLabel"
-                                                   placeholder="当期"/>
+                                                   [placeholder]="'cube.report.compare.current_period' | translate"/>
                                         </nz-form-control>
                                     </nz-form-item>
                                     <nz-form-item>
                                         <nz-form-label>{{ 'cube.report.config.compare.compare_label' | translate }}</nz-form-label>
                                         <nz-form-control>
                                             <input nz-input [(ngModel)]="report.compare.compareLabel" name="compareLabel"
-                                                   [placeholder]="report.compare.type === 'MOM' ? '上月同期' : '去年同期'"/>
+                                                   [placeholder]="report.compare.type === 'MOM' ? ('cube.report.compare.mom_period' | translate) : ('cube.report.compare.yoy_period' | translate)"/>
                                         </nz-form-control>
                                     </nz-form-item>
                                 }

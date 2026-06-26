@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import {Component, HostListener} from '@angular/core';
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 
@@ -7,7 +7,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
   selector: 'header-storage',
   template: `
   <i nz-icon nzType="tool"></i>
-  清除本地缓存
+  {{ 'global.clear_cache' | translate }}
   `
 })
 export class HeaderStorageComponent {

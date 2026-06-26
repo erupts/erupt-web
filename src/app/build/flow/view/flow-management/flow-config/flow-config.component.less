@@ -8,7 +8,7 @@
             background-color: #f5f5f5;
         }
 
-        // 顶部导航栏
+        // Top navigation bar
         .header {
             display: flex;
             align-items: center;
@@ -139,7 +139,7 @@
             }
         }
 
-        // 主要内容区域
+        // Main content area
         .main-content {
             flex: 1;
             overflow-y: auto;
@@ -147,7 +147,7 @@
             .step-placeholder {
                 height: 100%;
 
-                // 确保隐藏时完全不可见且不占用空间
+                // Ensure completely invisible and takes no space when hidden
                 &[hidden] {
                     display: none !important;
                 }
@@ -168,7 +168,7 @@
                 display: flex;
                 flex-direction: column;
 
-                // 添加手机顶部刘海
+                // Add phone top notch
                 &::before {
                     content: '';
                     position: absolute;
@@ -183,7 +183,7 @@
                     pointer-events: none;
                 }
 
-                // 添加手机底部Home指示器
+                // Add phone bottom home indicator
                 &::after {
                     content: '';
                     position: absolute;
@@ -209,7 +209,7 @@
                     position: relative;
                     overflow: auto;
 
-                    // 添加屏幕光泽效果
+                    // Add screen gloss effect
                     &::before {
                         content: '';
                         position: absolute;
@@ -314,7 +314,7 @@
                             width: 100%;
                         }
 
-                        // 权限范围标签样式
+                        // Permission scope tag styles
                         .permission-scopes {
                             margin-top: 12px;
                             padding: 8px;
@@ -437,7 +437,7 @@
                         }
                     }
 
-                    // 操作按钮
+                    // Action buttons
                     .action-buttons {
                         display: flex;
                         justify-content: flex-end;
@@ -468,7 +468,7 @@
         }
 
 
-        // 响应式设计
+        // Responsive design
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;

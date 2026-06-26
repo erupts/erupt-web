@@ -2,6 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {Bi, DimType} from "../model/bi.model";
 import {DatePipe} from "@angular/common";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {I18NService} from "@core";
 
 @Injectable({
     providedIn: 'root'
@@ -9,7 +10,8 @@ import {NzMessageService} from "ng-zorro-antd/message";
 export class HandlerService {
 
     constructor(@Inject(NzMessageService)
-                private msg: NzMessageService) {
+                private msg: NzMessageService,
+                private i18n: I18NService) {
     }
 
     private datePipe: DatePipe = new DatePipe("zh-cn");
@@ -57,7 +59,7 @@ export class HandlerService {
             }
             if (dimension.notNull && !dimension.$value) {
                 if (tip) {
-                    this.msg.error(dimension.title + "必填");
+                    this.msg.error(dimension.title + " " + this.i18n.fanyi("bi.required"));
                 }
                 if (!skipNotNull) {
                     return null;
@@ -66,14 +68,14 @@ export class HandlerService {
             if (dimension.notNull && Array.isArray(dimension.$value)) {
                 if (!dimension.$value[0] && !dimension.$value[1]) {
                     if (tip) {
-                        this.msg.error(dimension.title + "必填");
+                        this.msg.error(dimension.title + " " + this.i18n.fanyi("bi.required"));
                     }
                     if (!skipNotNull) {
                         return null;
                     }
                 }
             }
-            //赋值
+            // assign value
             if (Array.isArray(val) && val.length == 0) {
                 param[dimension.code] = null;
             } else {

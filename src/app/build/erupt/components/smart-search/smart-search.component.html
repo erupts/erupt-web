@@ -2,29 +2,29 @@
     <div class="header-section">
         <div class="title-area">
             <h3 class="main-title">
-                当满足以下条件时进入当前分支
+                {{ 'smart_search.title' | translate }}
             </h3>
             <button nz-button nzType="default" (click)="resetForm()" style="margin-left: auto">
-                重置
+                {{ 'global.reset' | translate }}
             </button>
         </div>
     </div>
-    <!-- 条件构建器 -->
+    <!-- Condition builder -->
     <form nz-form class="condition-builder">
         <div class="condition-panel">
-            <!-- 条件组列表 -->
+            <!-- Condition group list -->
             <div class="condition-groups">
                 @for (group of search; track group; let groupIndex = $index) {
                     <div
                         class="condition-group-wrapper"
                     >
-                        <!-- 或标识 -->
+                        <!-- OR separator -->
                         @if (groupIndex > 0) {
                             <div class="or-divider">
-                                <span class="or-text">或</span>
+                                <span class="or-text">{{ 'smart_search.or' | translate }}</span>
                             </div>
                         }
-                        <!-- 条件组卡片 -->
+                        <!-- Condition group card -->
                         <nz-card
                             [nzTitle]="cardTitle"
                             [nzExtra]="cardExtra"
@@ -32,7 +32,7 @@
                             [nzSize]="'small'"
                         >
                             <ng-template #cardTitle>
-                                <span class="card-title-text">条件组 {{ groupIndex + 1 }}</span>
+                                <span class="card-title-text">{{ 'smart_search.condition_group' | translate }} {{ groupIndex + 1 }}</span>
                             </ng-template>
                             <ng-template #cardExtra>
                                 @if (!requiredHasCondition || search.length > 1) {
@@ -43,16 +43,16 @@
                                     </button>
                                 }
                             </ng-template>
-                            <!-- 条件项列表 -->
+                            <!-- Condition item list -->
                             <div class="conditions-list">
                                 @for (condition of group; track condition; let conditionIndex = $index) {
                                     <div
                                         class="condition-item"
                                     >
-                                        <!-- 逻辑操作符标签 -->
+                                        <!-- Logical operator label -->
                                         @if (conditionIndex > 0) {
                                             <div class="logic-label">
-                                                <span class="logic-text">且</span>
+                                                <span class="logic-text">{{ 'smart_search.and' | translate }}</span>
                                                 <button
                                                     nz-button
                                                     nzType="text"
@@ -64,17 +64,17 @@
                                                 </button>
                                             </div>
                                         }
-                                        <!-- 条件内容 -->
+                                        <!-- Condition content -->
                                         <div class="condition-content">
-                                            <!-- 字段选择 -->
+                                            <!-- Field selector -->
                                             <nz-form-item>
                                                 <nz-select [(ngModel)]="condition.field"
                                                            (ngModelChange)="onFieldChange(condition)"
                                                            [ngModelOptions]="{standalone: true}"
-                                                           nzPlaceHolder="请选择字段" nzShowSearch
+                                                           [nzPlaceHolder]="'smart_search.select_field' | translate" nzShowSearch
                                                            class="field-select">
                                                     @if (upmsData) {
-                                                        <nz-option [nzValue]="SUBMITTER" [nzLabel]="'提交人'"></nz-option>
+                                                        <nz-option [nzValue]="SUBMITTER" [nzLabel]="'smart_search.submitter' | translate"></nz-option>
                                                     }
                                                     @for (field of eruptModel.eruptFieldModels; track field) {
                                                         @if (searchTypeMapping[field.eruptFieldJson.edit.type] && field.eruptFieldJson.edit?.title) {
@@ -83,7 +83,7 @@
                                                     }
                                                 </nz-select>
                                             </nz-form-item>
-                                            <!-- 操作符选择 -->
+                                            <!-- Operator selector -->
                                             <nz-form-item>
                                                 <nz-select [(ngModel)]="condition.operator"
                                                            (ngModelChange)="onOperatorChange(condition)"
@@ -149,11 +149,11 @@
                                                     }
                                                 </nz-select>
                                             </nz-form-item>
-                                            <!-- 值输入-->
+                                            <!-- Value input-->
                                             @if (condition.operator) {
                                                 <div class="value-row">
                                                     <nz-form-item class="value-input-container">
-                                                        <!-- 数字 -->
+                                                        <!-- Number -->
                                                         @if (condition.operatorType === OperatorType.NUMBER) {
                                                             @if (condition.operator === OperatorNumberType.EQ ||
                                                             condition.operator === OperatorNumberType.NEQ ||
@@ -169,17 +169,17 @@
                                                                 <div style="display: flex; align-items: center; gap: 12px;width: 100%">
                                                                     <nz-input-number style="flex: 1;" [ngModelOptions]="{standalone: true}"
                                                                                      [(ngModel)]="condition.value[0]"
-                                                                                     placeholder="最小值">
+                                                                                     [nzPlaceHolder]="'smart_search.min_value' | translate">
                                                                     </nz-input-number>
-                                                                    <span class="range-separator">至</span>
+                                                                    <span class="range-separator">{{ 'smart_search.range_to' | translate }}</span>
                                                                     <nz-input-number style="flex: 1" [ngModelOptions]="{standalone: true}"
                                                                                      [(ngModel)]="condition.value[1]"
-                                                                                     placeholder="最大值">
+                                                                                     [nzPlaceHolder]="'smart_search.max_value' | translate">
                                                                     </nz-input-number>
                                                                 </div>
                                                             }
                                                         }
-                                                        <!-- 文本 -->
+                                                        <!-- Text -->
                                                         @if (condition.operatorType === OperatorType.STRING) {
                                                             @if (condition.operator === OperatorStringType.EQ ||
                                                             condition.operator === OperatorStringType.NEQ ||
@@ -187,7 +187,7 @@
                                                             condition.operator === OperatorStringType.LIKE ||
                                                             condition.operator === OperatorStringType.START_WITH ||
                                                             condition.operator === OperatorStringType.END_WITH) {
-                                                                <input nz-input type="text" placeholder="请输入" [ngModelOptions]="{standalone: true}"
+                                                                <input nz-input type="text" [placeholder]="'smart_search.input_value' | translate" [ngModelOptions]="{standalone: true}"
                                                                        [(ngModel)]="condition.value">
                                                             }
                                                             @if (condition.operator === OperatorStringType.IN ||
@@ -195,12 +195,12 @@
                                                                 <nz-select [ngModelOptions]="{standalone: true}"
                                                                            style="width: 100%"
                                                                            nzMode="tags"
-                                                                           [nzPlaceHolder]="'请选择'"
+                                                                           [nzPlaceHolder]="'smart_search.select_value' | translate"
                                                                            [(ngModel)]="condition.value" [nzOptions]="[]">
                                                                 </nz-select>
                                                             }
                                                         }
-                                                        <!-- 时间 -->
+                                                        <!-- Date/Time -->
                                                         @if (condition.operatorType === OperatorType.DATE) {
                                                             @if ((
                                                                 condition.operator === OperatorDateType.GT ||
@@ -220,11 +220,11 @@
                                                                 </nz-input-number>
                                                             }
                                                         }
-                                                        <!-- 布尔值 -->
+                                                        <!-- Boolean -->
                                                         @if (condition.operatorType === OperatorType.BOOLEAN) {
                                                             <nz-select [ngModelOptions]="{standalone: true}"
                                                                        style="width: 100%"
-                                                                       [nzPlaceHolder]="'请选择'"
+                                                                       [nzPlaceHolder]="'smart_search.select_value' | translate"
                                                                        [(ngModel)]="condition.value">
                                                                 <nz-option [nzValue]="true"
                                                                            [nzLabel]="eruptModel.eruptFieldModelMap.get(condition.field).eruptFieldJson.edit.boolType.trueText"></nz-option>
@@ -232,13 +232,13 @@
                                                                            [nzLabel]="eruptModel.eruptFieldModelMap.get(condition.field).eruptFieldJson.edit.boolType.falseText"></nz-option>
                                                             </nz-select>
                                                         }
-                                                        <!-- 选择 -->
+                                                        <!-- Choice -->
                                                         @if (condition.operatorType === OperatorType.CHOICE) {
                                                             @if (condition.operator === OperatorReferenceType.EQ || condition.operator === OperatorReferenceType.NEQ) {
                                                                 <nz-select [ngModelOptions]="{standalone: true}"
                                                                            style="width: 100%"
                                                                            nzMode="multiple"
-                                                                           [nzPlaceHolder]="'请选择'"
+                                                                           [nzPlaceHolder]="'smart_search.select_value' | translate"
                                                                            [(ngModel)]="condition.value">
                                                                     @for (item of eruptModel.eruptFieldModelMap.get(condition.field).componentValue; track item) {
                                                                         <nz-option
@@ -259,7 +259,7 @@
                                                             <div style="gap: 12px;display: flex;width: 100%">
                                                                 <nz-select [ngModelOptions]="{standalone: true}"
                                                                            style="width: 30%"
-                                                                           [nzPlaceHolder]="'请选择'"
+                                                                           [nzPlaceHolder]="'smart_search.select_value' | translate"
                                                                            [(ngModel)]="condition.upmsScope">
                                                                     @for (item of UpmsScope | enumToArray; track item) {
                                                                         <nz-option [nzValue]="item" [nzLabel]="item | translate"></nz-option>
@@ -269,7 +269,7 @@
                                                                     <nz-select [ngModelOptions]="{standalone: true}"
                                                                                style="width: 70%"
                                                                                nzMode="multiple"
-                                                                               [nzPlaceHolder]="'请选择'"
+                                                                               [nzPlaceHolder]="'smart_search.select_value' | translate"
                                                                                [(ngModel)]="condition.value">
                                                                         @for (item of upmsData?.users; track item) {
                                                                             <nz-option [nzValue]="item.key" [nzLabel]="item.value"></nz-option>
@@ -280,7 +280,7 @@
                                                                     <nz-select [ngModelOptions]="{standalone: true}"
                                                                                style="width: 70%"
                                                                                nzMode="multiple"
-                                                                               [nzPlaceHolder]="'请选择'"
+                                                                               [nzPlaceHolder]="'smart_search.select_value' | translate"
                                                                                [(ngModel)]="condition.value">
                                                                         @for (item of upmsData?.orgs; track item) {
                                                                             <nz-option [nzValue]="item.key" [nzLabel]="item.value"></nz-option>
@@ -292,7 +292,7 @@
                                                                                style="width: 70%"
                                                                                nzMode="multiple"
                                                                                nzShowSearch
-                                                                               [nzPlaceHolder]="'请选择'"
+                                                                               [nzPlaceHolder]="'smart_search.select_value' | translate"
                                                                                [(ngModel)]="condition.value">
                                                                         @for (item of upmsData?.posts; track item) {
                                                                             <nz-option [nzValue]="item.key" [nzLabel]="item.value"></nz-option>
@@ -304,7 +304,7 @@
                                                                                style="width: 70%"
                                                                                nzMode="multiple"
                                                                                nzShowSearch
-                                                                               [nzPlaceHolder]="'请选择'"
+                                                                               [nzPlaceHolder]="'smart_search.select_value' | translate"
                                                                                [(ngModel)]="condition.value">
                                                                         @for (item of upmsData?.roles; track item) {
                                                                             <nz-option [nzValue]="item.key" [nzLabel]="item.value"></nz-option>
@@ -319,7 +319,7 @@
                                         </div>
                                     </div>
                                 }
-                                <!-- 添加条件按钮 -->
+                                <!-- Add condition button -->
                                 <button
                                     nz-button
                                     nzType="dashed"
@@ -328,7 +328,7 @@
                                     class="add-condition-btn"
                                 >
                                     <i nz-icon nzType="plus"></i>
-                                    添加条件
+                                    {{ 'smart_search.add_condition' | translate }}
                                 </button>
                             </div>
                         </nz-card>
@@ -336,12 +336,12 @@
                 }
             </div>
 
-            <!-- 添加条件组按钮 -->
+            <!-- Add condition group button -->
             <div class="add-group-section">
                 <button nz-button nzType="dashed"
                         (click)="addConditionGroup()" nzBlock>
                     <i nz-icon nzType="plus"></i>
-                    添加条件组
+                    {{ 'smart_search.add_group' | translate }}
                 </button>
             </div>
         </div>

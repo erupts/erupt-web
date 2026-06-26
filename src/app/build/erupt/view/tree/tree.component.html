@@ -1,85 +1,200 @@
-<div style="padding: 16px;height: 100%;">
-    @if (eruptBuildModel) {
-        <div nz-row [nzGutter]="12" [id]="eruptName" style="height: 100%;">
-            <div nz-col [nzXs]="24" [nzSm]="8" [nzMd]="8" [nzLg]="6"
-                 style="height: 100%;display: flex;flex-direction: column;">
-                @if (eruptBuildModel.eruptModel.eruptJson.power.add) {
-                    <button nz-button nzType="dashed" style="display:block;width: 100%;" (click)="addBlock()" class="mb-sm">
-                        <i nz-icon nzType="plus" theme="outline"></i> {{ 'tree.add_button'|translate }}
-                    </button>
-                }
-                <nz-input-group [nzSuffix]="suffixIcon" class="mb-sm" style="width: 100%;">
-                    <input type="text" nz-input placeholder="Search" [(ngModel)]="searchValue">
-                </nz-input-group>
-                <ng-template #suffixIcon>
-                    <i nz-icon nzType="search"></i>
-                </ng-template>
-                <div style="flex:1;overflow: auto" class="layout-tree-view" [scrollTop]="treeScrollTop" #treeDiv>
-                    <nz-skeleton [nzLoading]="treeLoading&&this.nodes.length==0" [nzActive]="true">
-                        <nz-tree #tree class="tree-container"
-                                 [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 200px - ' + (settingSrv.layout['reuse']?'40px':'0px') + ')' : null"
-                                 [nzShowLine]="true"
-                                 [nzData]="nodes"
-                                 [nzSearchValue]="searchValue"
-                                 [nzBlockNode]="true"
-                                 (nzClick)="nodeClickEvent($event)"
-                                 (nzDblClick)="nzDblClick($event)">
-                        </nz-tree>
-                    </nz-skeleton>
-                </div>
+@if (!eruptBuildModel) {
+    <div class="tree-skeleton">
+        <!-- left nav -->
+        <div class="sk-nav">
+            <div class="sk-nav-header">
+                <div class="sk-bar" style="flex:1;height:24px;border-radius:4px"></div>
+                <div class="sk-bar" style="width:24px;height:24px;border-radius:4px;flex-shrink:0"></div>
             </div>
-            <div nz-col [nzXs]="24" [nzSm]="16" [nzMd]="16" [nzLg]="18"
-                 style="height: 100%;display: flex;flex-direction: column;">
-                <ng-container>
-                    <div nz-row class="mb-sm">
-                        <div nz-col [nzXs]="24">
-                            @if (selectLeaf) {
-                                @if (eruptBuildModel.eruptModel.eruptJson.power.edit) {
-                                    <button nz-button (click)="update()" [disabled]="loading" id="erupt-btn-save"
-                                    >
-                                        <i nz-icon nzType="save" theme="outline"></i>{{ 'tree.update'|translate }}
-                                    </button>
-                                }
-                                @if (eruptBuildModel.eruptModel.eruptJson.power.delete) {
-                                    <button nz-button nzType="default" nzDanger style="background: #fff !important;"
-                                            [nzGhost]="true"
-                                            (click)="del()" [disabled]="loading" id="erupt-btn-delete"
-                                    >
-                                        <i nz-icon nzType="delete" theme="outline"></i>{{ 'tree.delete'|translate }}
-                                    </button>
-                                }
-                                @if (eruptBuildModel.eruptModel.eruptJson.power.add && eruptBuildModel.eruptModel.eruptJson.tree.pid) {
-                                    <button nz-button nzType="dashed" (click)="addSub()" [disabled]="loading"
-                                            id="erupt-btn-add_sub"
-                                    >
-                                        <i nz-icon nzType="arrow-down"
-                                           nzTheme="outline"></i>{{ 'tree.add_children'|translate }}
-                                    </button>
-                                }
-                            }
-                            @if (!selectLeaf) {
-                                @if (eruptBuildModel.eruptModel.eruptJson.power.add) {
-                                    <button nz-button (click)="add()" [disabled]="loading" id="erupt-btn-add-new"
-                                    >
-                                        <i nz-icon nzType="save" theme="outline"></i>{{ 'tree.add'|translate }}
-                                    </button>
-                                }
-                            }
-                        </div>
+            <div class="sk-nav-actions">
+                @for (i of [1,2,3,4]; track i) {
+                    <div class="sk-bar" style="width:24px;height:24px;border-radius:4px"></div>
+                }
+            </div>
+            <div class="sk-nav-body">
+                @for (item of [{w:'75%',pl:'0'},{w:'60%',pl:'16px'},{w:'68%',pl:'16px'},{w:'55%',pl:'32px'},{w:'70%',pl:'16px'},{w:'62%',pl:'0'},{w:'50%',pl:'16px'},{w:'65%',pl:'16px'},{w:'58%',pl:'32px'},{w:'72%',pl:'0'},{w:'48%',pl:'16px'}]; track item) {
+                    <div class="sk-tree-row" [style.padding-left]="item.pl">
+                        <div class="sk-bar sk-tree-arrow"></div>
+                        <div class="sk-bar sk-tree-icon"></div>
+                        <div class="sk-bar sk-tree-label" [style.width]="item.w"></div>
                     </div>
-                    <div [ngStyle]="{overflow: 'auto',overflowX:'hidden'}" style="width: 100%;height:100%;">
-                        <nz-collapse nzAccordion nzExpandIconPosition="end">
-                            <nz-collapse-panel [nzActive]="true" [nzHeader]="'tree.base'|translate" [nzShowArrow]="false">
-                                <nz-spin [nzSpinning]="loading" nzSize="large">
-                                    <erupt-edit [eruptBuildModel]="eruptBuildModel" [behavior]="behavior">
-                                    </erupt-edit>
-                                </nz-spin>
-                            </nz-collapse-panel>
-                        </nz-collapse>
-                    </div>
-                </ng-container>
+                }
             </div>
         </div>
-    }
+        <!-- right detail -->
+        <div class="sk-detail">
+            <div class="sk-detail-header">
+                @for (w of ['72px','64px','60px']; track w) {
+                    <div class="sk-bar" [style.width]="w" style="height:24px;border-radius:4px"></div>
+                }
+            </div>
+            <div class="sk-detail-body">
+                <div class="sk-form-card">
+                    @for (row of [1,2,3,4,5,6]; track row) {
+                        <div class="sk-form-row">
+                            <div class="sk-form-field">
+                                <div class="sk-bar sk-label"></div>
+                                <div class="sk-bar sk-input"></div>
+                            </div>
+                            <div class="sk-form-field">
+                                <div class="sk-bar sk-label"></div>
+                                <div class="sk-bar sk-input"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (eruptBuildModel) {
+    <div class="tree-layout" [id]="eruptName">
 
-</div>
+        <!-- ── Left navigation tree ── -->
+        <div class="tree-nav" [style.width.px]="treeWidth" [class.collapsed]="mobileTreeCollapsed">
+            <div class="tree-nav-header">
+                <nz-input-group [nzSuffix]="suffixIcon" nzSize="small">
+                    <input type="text" nz-input [placeholder]="'tree.search'|translate" [(ngModel)]="searchValue">
+                </nz-input-group>
+                <ng-template #suffixIcon>
+                    <i nz-icon nzType="search" style="font-size:12px;color:#9ca3af;"></i>
+                </ng-template>
+                <button class="tree-mobile-toggle" nz-button nzType="text" nzSize="small"
+                        (click)="mobileTreeCollapsed = !mobileTreeCollapsed">
+                    <i nz-icon [nzType]="mobileTreeCollapsed ? 'caret-down' : 'caret-up'" nzTheme="outline"></i>
+                </button>
+            </div>
+            <div class="tree-nav-actions">
+                <button nz-button nzType="text" nzSize="small" [nzLoading]="treeLoading"
+                        nz-tooltip [nzTooltipTitle]="'global.refresh'|translate" (click)="fetchTreeData()">
+                    @if (!treeLoading) {<i nz-icon nzType="reload" nzTheme="outline"></i>}
+                </button>
+                <button nz-button nzType="text" nzSize="small"
+                        [style.color]="sortAsc !== null ? 'var(--ant-primary-color)' : ''"
+                        nz-tooltip [nzTooltipTitle]="(sortAsc === null ? 'tree.sort_asc' : sortAsc ? 'tree.sort_desc' : 'tree.sort_cancel')|translate"
+                        (click)="toggleSort()">
+                    <i nz-icon [nzType]="sortAsc === false ? 'sort-descending' : 'sort-ascending'" nzTheme="outline"></i>
+                </button>
+                @if (currentKey) {
+                    <button nz-button nzType="text" nzSize="small"
+                            nz-tooltip [nzTooltipTitle]="'tree.locate'|translate" (click)="locateNode()">
+                        <i nz-icon nzType="aim" nzTheme="outline"></i>
+                    </button>
+                }
+                @if (eruptBuildModel.eruptModel.eruptJson.tree.pid) {
+                    <button nz-button nzType="text" nzSize="small"
+                            nz-tooltip [nzTooltipTitle]="'tree.expand_all'|translate" (click)="expandAll()">
+                        <i nz-icon nzType="node-expand" nzTheme="outline"></i>
+                    </button>
+                    <button nz-button nzType="text" nzSize="small"
+                            nz-tooltip [nzTooltipTitle]="'tree.collapse_all'|translate" (click)="collapseAll()">
+                        <i nz-icon nzType="node-collapse" nzTheme="outline"></i>
+                    </button>
+                }
+                @if (eruptBuildModel.eruptModel.eruptJson.power.add) {
+                    <button nz-button nzType="text" nzSize="small"
+                            nz-tooltip [nzTooltipTitle]="'tree.add_button'|translate"
+                            (click)="addBlock()" id="erupt-btn-add">
+                        <i nz-icon nzType="plus" nzTheme="outline"></i>
+                    </button>
+                }
+                @if (currentKey && eruptBuildModel.eruptModel.eruptJson.power.add && eruptBuildModel.eruptModel.eruptJson.tree.pid) {
+                    <button nz-button nzType="text" nzSize="small"
+                            nz-tooltip [nzTooltipTitle]="'tree.add_children'|translate"
+                            (click)="addSub()" id="erupt-btn-add-sub-nav">
+                        <i nz-icon nzType="arrow-down" nzTheme="outline"></i>
+                    </button>
+                }
+            </div>
+
+            <div class="tree-nav-body" [scrollTop]="treeScrollTop" #treeDiv>
+                <nz-spin [nzSpinning]="treeLoading" style="min-height: 120px;">
+                    <nz-tree #tree
+                             [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 140px - ' + (settingSrv.layout['reuse'] ? '40px' : '0px') + ')' : null"
+                             [nzShowLine]="true"
+                             [nzData]="nodes"
+                             [nzSelectedKeys]="selectedKeys"
+                             [nzSearchValue]="searchValue"
+                             [nzBlockNode]="true"
+                             (nzClick)="nodeClickEvent($event)"
+                             (nzDblClick)="nzDblClick($event)">
+                    </nz-tree>
+                </nz-spin>
+            </div>
+
+        </div>
+
+        <!-- ── Drag resize handle ── -->
+        <div class="tree-resize-handle" (mousedown)="onResizeDragStart($event)"></div>
+
+        <!-- ── Right detail area ── -->
+        <div class="tree-detail">
+
+            @if (showEdit) {
+            <div class="tree-detail-header">
+                @if (selectLeaf) {
+                    @if (eruptBuildModel.eruptModel.eruptJson.power.edit) {
+                        <button nz-button nzType="primary" nzSize="small" (click)="update()" [disabled]="loading"
+                                id="erupt-btn-save">
+                            <i nz-icon nzType="save" nzTheme="outline"></i>{{ 'tree.update'|translate }}
+                        </button>
+                    }
+                    @if (eruptBuildModel.eruptModel.eruptJson.power.delete) {
+                        <button nz-button nzSize="small" nzDanger (click)="del()" [disabled]="loading"
+                                id="erupt-btn-delete">
+                            <i nz-icon nzType="delete" nzTheme="outline"></i>{{ 'tree.delete'|translate }}
+                        </button>
+                    }
+                    @if (eruptBuildModel.eruptModel.eruptJson.power.add && eruptBuildModel.eruptModel.eruptJson.power.copy) {
+                        <button nz-button nzSize="small" (click)="copyNode()" [disabled]="loading"
+                                id="erupt-btn-copy">
+                            <i nz-icon nzType="copy" nzTheme="outline"></i>{{ 'global.copy'|translate }}
+                        </button>
+                    }
+                    @if (eruptBuildModel.eruptModel.eruptJson.power.add && eruptBuildModel.eruptModel.eruptJson.tree.pid) {
+                        <button nz-button nzSize="small" nzType="dashed" (click)="addSub()" [disabled]="loading"
+                                id="erupt-btn-add_sub">
+                            <i nz-icon nzType="arrow-down" nzTheme="outline"></i>{{ 'tree.add_children'|translate }}
+                        </button>
+                    }
+                    @if (eruptBuildModel.eruptModel.eruptJson.power.print) {
+                        <button nz-button nzSize="small" [nzLoading]="printLoading" (click)="printNode()"
+                                id="erupt-btn-print">
+                            <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
+                        </button>
+                    }
+                }
+                @if (!selectLeaf && showEdit) {
+                    @if (eruptBuildModel.eruptModel.eruptJson.power.add) {
+                        <button nz-button nzType="primary" nzSize="small" (click)="add()" [disabled]="loading"
+                                id="erupt-btn-add-new">
+                            <i nz-icon nzType="plus" nzTheme="outline"></i>{{ 'tree.add'|translate }}
+                        </button>
+                    }
+                }
+            </div>
+            }
+
+            <div class="tree-detail-body">
+                @if (!showEdit) {
+                    <div class="tree-empty-hint">
+                        <i nz-icon nzType="arrow-left" nzTheme="outline" style="margin-right:8px;font-size:16px;"></i>
+                        <span>{{ 'tree.select_hint' | translate }}</span>
+                    </div>
+                }
+                @if (showEdit) {
+                    <nz-spin [nzSpinning]="loading" nzSize="large">
+                        <div class="tree-form-card">
+                            <erupt-edit [eruptBuildModel]="eruptBuildModel" [behavior]="behavior" [id]="currentKey"/>
+                        </div>
+                    </nz-spin>
+                }
+            </div>
+
+        </div>
+
+    </div>
+    @if (resizing) {
+        <div class="tree-resize-overlay"></div>
+    }
+}

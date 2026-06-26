@@ -3,11 +3,12 @@
   [nzSize]="size" [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
   [name]="eruptField.fieldName" (nzOpenChange)="load($event)"
   [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
-  [nzTokenSeparators]="[eruptField.eruptFieldJson.edit.tagsType.joinSeparator]"
-  [nzMode]="eruptField.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'">
+  [nzTokenSeparators]="tokenSeparators"
+  [nzMode]="eruptField.eruptFieldJson.edit.tagsType.allowExtension?'tags':'multiple'"
+  [nzDropdownRender]="eruptField.eruptFieldJson.edit.tagsType.fetchHandler?.length > 0 ? dropdownFooter : null"
+  style="width:100%">
   @for (item of this.eruptField.componentValue; track item) {
-    <nz-option [nzLabel]="item"
-    [nzValue]="item"></nz-option>
+    <nz-option [nzLabel]="item" [nzValue]="item"></nz-option>
   }
   @if (isLoading) {
     <nz-option nzDisabled nzCustomContent>
@@ -17,3 +18,12 @@
     </nz-option>
   }
 </nz-select>
+
+<ng-template #dropdownFooter>
+  <div style="padding:4px 8px;border-top:1px solid #f0f0f0;text-align:right">
+    <button nz-button nzType="link" nzSize="small" [disabled]="isLoading" (click)="refresh()">
+      <i nz-icon nzType="reload" nzTheme="outline"></i>
+      {{ 'global.refresh' | translate }}
+    </button>
+  </div>
+</ng-template>

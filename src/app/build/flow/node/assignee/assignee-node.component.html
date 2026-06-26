@@ -11,12 +11,12 @@
     (delete)="onDelete()">
     {{ assigneeNode.reviewUserModes[0].mode || name() | translate }}
     <div config>
-        <nz-segmented [nzOptions]="[{value:0,label:'设置办理人'},{value:1,label:'表单权限'}]" [(ngModel)]="selectTab" style="margin-bottom: 12px">
+        <nz-segmented [nzOptions]="assigneeTabOptions" [(ngModel)]="selectTab" style="margin-bottom: 12px">
 
         </nz-segmented>
         @if (selectTab == 0) {
             @for (reviewUserMode of assigneeNode.reviewUserModes; track reviewUserMode; let i = $index) {
-                <nz-card nzTitle="办理人" nzSize="small" style="margin-bottom: 12px">
+                <nz-card [nzTitle]="'flow.node.assignee_label' | translate" nzSize="small" style="margin-bottom: 12px">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div style="flex: 1;">
                             <app-review-user [flowRule]="flowRule" [nodeId]="modelValue.id"
@@ -39,7 +39,7 @@
             }
             <button nz-button style="margin-bottom: 12px" (click)="addReviewUsers()">
                 <span nz-icon nzType="plus" nzTheme="outline"></span>
-                添加办理人
+                {{ 'flow.node.add_assignee' | translate }}
             </button>
 
             <nz-divider style="margin: 12px 0"></nz-divider>

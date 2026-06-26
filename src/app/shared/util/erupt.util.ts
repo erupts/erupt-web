@@ -1,7 +1,7 @@
 /**
- * 根据菜单类型生成相应的请求路径
- * @param menuType  菜单类型
- * @param menuValue 菜单值
+ * Generate the corresponding request path based on menu type
+ * @param menuType  menu type
+ * @param menuValue menu value
  */
 import {HttpEvent} from "@angular/common/http";
 import {MenuTypeEnum} from "../model/erupt-menu";
@@ -15,7 +15,7 @@ export function generateMenuPath(type: string, value: string) {
     }
 }
 
-//关联路径
+//associated path
 function joinPath(type: string, value: string): string {
     let menuValue = value || '';
     switch (type) {
@@ -23,6 +23,8 @@ function joinPath(type: string, value: string): string {
             return "/build/table/" + menuValue;
         case MenuTypeEnum.tree:
             return "/build/tree/" + menuValue;
+        case MenuTypeEnum.form:
+            return "/build/form/" + menuValue;
         case MenuTypeEnum.bi:
             return "/bi/" + menuValue;
         case MenuTypeEnum.cube:
@@ -50,17 +52,23 @@ function joinPath(type: string, value: string): string {
 }
 
 
-export function downloadFile(res: HttpEvent<any>) {
+export function downloadFile(res: HttpEvent<any>): boolean {
+    // @ts-ignore
+    const disposition: string = res.headers?.get('Content-Disposition');
+    if (!disposition) return false;
+    // @ts-ignore
+    const filename = disposition.split(';')[1]?.split('=')?.[1];
+    if (!filename) return false;
     // @ts-ignore
     let url = window.URL.createObjectURL(new Blob([res.body]));
     let link = document.createElement("a");
     link.style.display = "none";
     link.href = url;
-    // @ts-ignore
-    link.setAttribute("download", decodeURIComponent(res.headers.get('Content-Disposition').split(';')[1].split('=')[1]));
+    link.setAttribute("download", decodeURIComponent(filename));
     document.body.appendChild(link);
     link.click();
     link.remove();
+    return true;
 }
 
 

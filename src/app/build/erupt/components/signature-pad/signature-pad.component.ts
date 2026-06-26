@@ -19,9 +19,9 @@ export class SignaturePadComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         const canvas = this.canvas.nativeElement;
-        // 高清屏比例
+        // high-DPI screen ratio
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        // 把物理像素设成 CSS 像素 * ratio，防止拉伸
+        // set physical pixels to CSS pixels * ratio to prevent stretching
         canvas.width = canvas.offsetWidth * ratio;
         canvas.height = canvas.offsetHeight * ratio;
         const ctx = canvas.getContext('2d');

@@ -75,7 +75,7 @@ export class ReferenceComponent implements OnInit {
             if (dependField.eruptFieldJson.edit.$value) {
                 dependVal = this.getFieldIdValue(dependField);
             } else {
-                this.msg.warning("请先选择" + dependField.eruptFieldJson.edit.title);
+                this.msg.warning(this.i18n.fanyi("global.pre_select") + dependField.eruptFieldJson.edit.title);
                 return;
             }
         }
@@ -90,7 +90,7 @@ export class ReferenceComponent implements OnInit {
             nzOnOk: () => {
                 const tempVal = field.eruptFieldJson.edit.$tempValue;
                 if (!tempVal) {
-                    this.msg.warning("请选中一条数据");
+                    this.msg.warning(this.i18n.fanyi("global.select.one"));
                     return false;
                 }
                 if (tempVal.id != field.eruptFieldJson.edit.$value?.id) {
@@ -128,14 +128,14 @@ export class ReferenceComponent implements OnInit {
             nzDraggable:true,
             nzKeyboard: true,
             nzStyle: {top: "24px"},
-            nzBodyStyle: {padding: "16px"},
+            nzBodyStyle: {padding: "0"},
             nzTitle: edit.title + (edit.$value?.[edit.referenceTableType.label] ? "【" + edit.$value[edit.referenceTableType.label] + "】" : ""),
             nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzContent: TableComponent,
             nzOnOk: () => {
                 let radioValue = edit.$tempValue;
                 if (!radioValue) {
-                    this.msg.warning("请选中一条数据");
+                    this.msg.warning(this.i18n.fanyi("global.select.one"));
                     return false;
                 }
                 if (radioValue[edit.referenceTableType.id] != edit.$value?.[edit.referenceTableType.id]) {
@@ -160,6 +160,13 @@ export class ReferenceComponent implements OnInit {
             parentEruptName: this.parentEruptName,
             tabRef: false
         };
+    }
+
+    onInputKeydown(event: KeyboardEvent, field: EruptFieldModel) {
+        if (event.key === 'Enter' && !this.readonly) {
+            this.createReferenceModal(field);
+        }
+        event.preventDefault();
     }
 
     clearReferValue(field: EruptFieldModel) {

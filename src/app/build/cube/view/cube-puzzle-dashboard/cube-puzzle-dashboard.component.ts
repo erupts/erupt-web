@@ -1,10 +1,23 @@
-import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    QueryList,
+    TemplateRef,
+    ViewChild,
+    ViewChildren
+} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {I18NService} from '@core';
+import {MenuService} from "@delon/theme";
+import {EruptAppData} from "@shared/model/erupt-app.model";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
 import {
     Dashboard,
@@ -25,6 +38,8 @@ import {CubePuzzleFilterConfig} from "../cube-puzzle-filter-config/cube-puzzle-f
 import {deepCopy} from "@delon/util";
 import {CubePuzzleDashboardConfig} from "../cube-puzzle-dashboard-config/cube-puzzle-dashboard-config";
 import {CubePuzzleSubModelConfig} from "../cube-puzzle-sub-model-config/cube-puzzle-sub-model-config";
+import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
+import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
 
 @Component({
     standalone: false,
@@ -58,18 +73,32 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     autoRefreshTimer: any;
 
+    showAiPanel: boolean = false;
+
+    aiPanelWidth: number = 420;
+
+    aiContext: string = '';
+
+    aiResizing: boolean = false;
+
+    private _aiResizeCleanup: (() => void) | null = null;
+
     @ViewChildren(CubePuzzleReport) reports: QueryList<CubePuzzleReport>;
     @ViewChild('publishContent', {static: true}) publishContent: TemplateRef<any>;
     @ViewChild('historyContent', {static: true}) historyContent: TemplateRef<any>;
 
     charts: any[] = [];
 
+    private gridsterApi: any;
+
     constructor(private router: Router, private route: ActivatedRoute,
                 private cubeApiService: CubeApiService,
                 private el: ElementRef,
                 private message: NzMessageService,
                 @Inject(NzModalService) private modal: NzModalService,
-                private i18n: I18NService
+                private drawerService: NzDrawerService,
+                private i18n: I18NService,
+                private menuSrv: MenuService
     ) {
 
     }
@@ -141,9 +170,21 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             displayGrid: 'onDrag&Resize',
             disableWindowResize: false,
             disableWarnings: false,
-            scrollToNewItems: false
+            scrollToNewItems: false,
+            initCallback: (_gridster: any, api: any) => {
+                this.gridsterApi = api;
+            }
         };
         this.code = this.route.snapshot.paramMap.get('code')!;
+        const savedAi = localStorage.getItem(`cube-ai-panel-${this.code}`);
+        if (savedAi) {
+            try {
+                const s = JSON.parse(savedAi);
+                // On phones the AI chat opens in a drawer, so never restore the inline side panel.
+                if (s.open && window.innerWidth > 768) this.showAiPanel = true;
+                if (s.width) this.aiPanelWidth = s.width;
+            } catch {}
+        }
         this.cubeApiService.dashboardDetail(this.code).subscribe(res => {
             this.dashboard = res.data;
             if (this.editModel) {
@@ -151,8 +192,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             } else {
                 this.dsl = res.data.publishDsl || {};
             }
-            this.options.margin = this.dsl?.settings?.gap ?? 12;
-            // 从 URL 恢复过滤条件
+            this.options = {...this.options, margin: this.dsl?.settings?.gap ?? 12};
+            // restore filter conditions from URL
             const urlFilters = this.route.snapshot.queryParams['filters'];
             if (urlFilters) {
                 try {
@@ -187,6 +228,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 meta.fieldTitleMap = fieldTitleMap;
                 meta.fieldMap = fieldMap;
                 this.cubeMeta = meta;
+                this.buildAiContext();
             })
             this.initAutoRefresh();
         })
@@ -195,7 +237,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     query() {
         if (this.dsl?.filters) {
             for (const filter of this.dsl.filters) {
-                // 若当前值为空但存在默认值，则先应用默认值
+                // if the current value is empty but a default value exists, apply the default first
                 const isEmpty = (v: any) => v === null || v === undefined || v === ''
                     || (Array.isArray(v) && v.every(i => i === null || i === undefined));
                 if (isEmpty(filter.value)) {
@@ -266,10 +308,12 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     startEdit() {
         this.edit = true;
-        this.options.draggable!.enabled = true;
-        this.options.resizable!.enabled = true;
+        this.options = {
+            ...this.options,
+            draggable: {...this.options.draggable, enabled: true},
+            resizable: {...this.options.resizable, enabled: true}
+        };
         this.tempDsl = cloneDeep(this.dsl);
-        this.changedOptions();
     }
 
     publishDescription: string = "";
@@ -319,7 +363,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 this.cubeApiService.rollback(this.dashboard.id, history.id).subscribe(() => {
                     this.message.success(this.i18n.fanyi('cube.dashboard.rollback_success'));
                     this.modal.closeAll();
-                    this.ngOnInit(); // 重新加载数据
+                    this.ngOnInit(); // reload data
                     this.query();
                 });
             }
@@ -328,20 +372,24 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 
     cancelEdit() {
         this.edit = false;
-        this.options.draggable!.enabled = false;
-        this.options.resizable!.enabled = false;
+        this.options = {
+            ...this.options,
+            draggable: {...this.options.draggable, enabled: false},
+            resizable: {...this.options.resizable, enabled: false}
+        };
         this.dsl = this.tempDsl;
         this.tempDsl = null;
-        this.changedOptions();
     }
 
     saveEdit() {
         this.saving = true;
         this.cubeApiService.updateDsl(this.dashboard.id, this.dsl).subscribe(res => {
             this.tempDsl = null;
-            this.options.draggable!.enabled = false;
-            this.options.resizable!.enabled = false;
-            this.changedOptions();
+            this.options = {
+                ...this.options,
+                draggable: {...this.options.draggable, enabled: false},
+                resizable: {...this.options.resizable, enabled: false}
+            };
             this.edit = false;
         }, () => {
         }, () => {
@@ -353,12 +401,12 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     }
 
     changedOptions() {
-        this.options.api?.optionsChanged();
+        this.gridsterApi?.calculateLayout();
     }
 
     removeItem(index: number) {
         this.dsl.reports.splice(index, 1);
-        this.options.api.optionsChanged();
+        this.gridsterApi?.calculateLayout();
     }
 
     refreshItem(index: number) {
@@ -549,8 +597,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                         this.dsl.filters = [];
                     }
                 }
-                // 同步 defaultValue → value，让过滤器控件立刻回显新默认值
-                // （track $index 导致组件实例不重建，ngOnInit 不会再次执行）
+                // sync defaultValue → value so the filter control immediately reflects the new default
+                // (track $index prevents component instance recreation, so ngOnInit won't run again)
                 const dv = filter.defaultValue;
                 const rd = parseRelativeDefault(dv);
                 const isEmpty = (v: any) => v === null || v === undefined
@@ -591,9 +639,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 this.dsl.settings.theme = instance.dsl.settings.theme;
                 this.dsl.settings.autoRefreshInterval = instance.dsl.settings.autoRefreshInterval;
                 this.dsl.settings.gap = instance.dsl.settings.gap;
-                this.options.margin = this.dsl.settings.gap ?? 12;
-                this.changedOptions();
-                // 重新渲染报表以应用新主题
+                this.options = {...this.options, margin: this.dsl.settings.gap ?? 12};
+                // re-render reports to apply the new theme
                 for (let report of this.reports) {
                     report.render();
                 }
@@ -636,14 +683,88 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         }
     }
 
+    get isAiEnabled(): boolean {
+        return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
+    }
+
+    private aiDrawerRef: NzDrawerRef | null = null;
+
+    toggleAiPanel() {
+        // On phones the inline side panel is too narrow — open the AI chat in a drawer instead.
+        if (window.innerWidth <= 768) {
+            this.openAiDrawer();
+            return;
+        }
+        this.showAiPanel = !this.showAiPanel;
+        localStorage.setItem(`cube-ai-panel-${this.code}`, JSON.stringify({open: this.showAiPanel, width: this.aiPanelWidth}));
+        setTimeout(() => this.changedOptions(), 0);
+    }
+
+    private openAiDrawer() {
+        if (this.aiDrawerRef) {
+            return;
+        }
+        this.aiDrawerRef = this.drawerService.create<AiChatComponent>({
+            nzContent: AiChatComponent,
+            nzContentParams: {collapseSidebar: true, embedded: true, context: this.aiContext},
+            nzTitle: this.i18n.fanyi('AI'),
+            nzWidth: '100%',
+            nzBodyStyle: {padding: '0', height: '100%'}
+        });
+        this.aiDrawerRef.afterClose.subscribe(() => this.aiDrawerRef = null);
+    }
+
+    onAiResizeDragStart(e: MouseEvent) {
+        e.preventDefault();
+        const startX = e.clientX;
+        const startWidth = this.aiPanelWidth;
+        this.aiResizing = true;
+        const onMove = (ev: MouseEvent) => {
+            this.aiPanelWidth = Math.max(280, Math.min(800, startWidth + startX - ev.clientX));
+        };
+        const onUp = () => {
+            this.aiResizing = false;
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            localStorage.setItem(`cube-ai-panel-${this.code}`, JSON.stringify({open: this.showAiPanel, width: this.aiPanelWidth}));
+            this.changedOptions();
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        this._aiResizeCleanup = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+    }
+
+    private buildAiContext() {
+        const lines: string[] = [
+            `The user is viewing a data analytics dashboard named "${this.dashboard.name}".`
+        ];
+        if (this.dashboard.description) {
+            lines.push(`Dashboard description: ${this.dashboard.description}`);
+        }
+        lines.push(`Main data model: cube "${this.dashboard.cuber}", explore "${this.dashboard.explore}".`);
+        const subModels = this.dsl?.subModels;
+        if (subModels?.length) {
+            lines.push(`Associated models:`);
+            subModels.forEach(sm => lines.push(`  - ${sm.alias}: cube "${sm.cube}", explore "${sm.explore}"`));
+        }
+        this.aiContext = lines.join('\n');
+    }
+
     ngOnDestroy() {
         if (this.autoRefreshTimer) {
             clearInterval(this.autoRefreshTimer);
         }
+        if (this._aiResizeCleanup) {
+            this._aiResizeCleanup();
+        }
     }
 
     /**
-     * 图表联动筛选：点击图表 X 轴对应元素时，将对应维度值写入筛选并刷新
+     * Chart linkage filter: when a chart element corresponding to the X axis is clicked,
+     * write the dimension value into the filter and refresh
      */
     onFilterLink(payload: { field: string; value: any }) {
         if (!this.dsl || !payload?.field) {

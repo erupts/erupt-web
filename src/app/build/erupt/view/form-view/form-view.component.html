@@ -1,0 +1,25 @@
+<div class="form-view-wrap">
+    @if (!eruptBuildModel) {
+        <div style="padding: 16px">
+            <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 10 }"></nz-skeleton>
+        </div>
+    }
+    @if (eruptBuildModel != null) {
+        <nz-card [nzBordered]="false" [nzBodyStyle]="{padding:'16px'}">
+            <nz-spin [nzSpinning]="loading">
+                <erupt-edit-type #eruptEdit [loading]="loading" [eruptBuildModel]="eruptBuildModel"
+                                 [mode]="Scene.EDIT"></erupt-edit-type>
+            </nz-spin>
+        </nz-card>
+    }
+</div>
+@if (eruptBuildModel != null) {
+    <div class="form-view-footer">
+        <button nz-button nzType="primary" [nzLoading]="saving" (click)="save()">
+            {{ 'global.save' | translate }}
+        </button>
+        <button nz-button [disabled]="loading || saving" (click)="reset()" style="margin-left: 8px">
+            {{ 'global.reset' | translate }}
+        </button>
+    </div>
+}

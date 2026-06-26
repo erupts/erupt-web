@@ -79,7 +79,7 @@ export class ReferenceTableComponent implements OnInit {
                     let columns = [];
                     let i = 0;
                     for (let column of res.columns) {
-                        // let titleWidth = column.name.length * 14 + 22;
+                        // let titleWidth = column.name.length * 14 + 22; // commented out
                         if (i == 0) {
                             columns.push(
                                 {
@@ -103,7 +103,7 @@ export class ReferenceTableComponent implements OnInit {
                                 className: "text-center",
                                 filter: {
                                     type: 'keyword',
-                                    placeholder: '输入后按回车搜索',
+                                    placeholder: 'Type and press Enter to search',
                                     fn: (filter, record) => {
                                         if (filter.value) {
                                             let val = record[column.name];

@@ -1,0 +1,81 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.layout-tree-wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    user-select: none;
+}
+
+.layout-tree-search {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 4px 7px 8px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--ant-border-color-split);
+
+    nz-input-group {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+.layout-tree-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px 4px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--ant-border-color-split);
+}
+
+.layout-tree-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding: 8px 4px;
+    min-height: 360px;
+
+    ::ng-deep {
+        .ant-tree {
+            font-size: 13px;
+
+            .ant-tree-treenode {
+                padding: 1px 0;
+                align-items: center;
+            }
+
+            .ant-tree-node-content-wrapper {
+                padding: 2px 6px;
+                border-radius: 0 4px 4px 0;
+                line-height: 22px;
+                min-height: 26px;
+                display: flex;
+                align-items: center;
+                transition: background 0.15s;
+
+                &:hover {
+                    background: #f5f5f5;
+                }
+
+                &.ant-tree-node-selected {
+                    background: var(--ant-primary-1, #e6f7ff);
+                    color: var(--ant-primary-color, #1890ff);
+                    font-weight: 500;
+                }
+            }
+
+            // Unify connector line and item separator line style
+            &.ant-tree-show-line {
+                .ant-tree-indent-unit::before {
+                    border-right-color: #e5e5e5;
+                }
+            }
+        }
+    }
+}

@@ -9,6 +9,7 @@ import {SmartSearchComponent} from "../../../erupt/components/smart-search/smart
 import {FlowTurn} from "@flow/model/flow-instance.model";
 import {UpmsData} from "../../../erupt/model/upms.model";
 import {UpmsDataService} from "@flow/service/upms-data.service";
+import {I18NService} from "@core";
 
 export enum GatewayType {
     EXCLUSIVE = 'EXCLUSIVE',
@@ -61,7 +62,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
 
     showDrawer: boolean = false;
 
-    constructor(private upmsDataService?: UpmsDataService) {
+    constructor(private upmsDataService?: UpmsDataService, private i18n?: I18NService) {
         super();
         this.upmsData = this.upmsDataService?.upmsData;
     }
@@ -123,17 +124,17 @@ export class GatewayNodeComponent extends ANode implements OnInit {
         } else if (this.gatewayType === GatewayType.PARALLEL) {
             return "#718dff";
         } else {
-            return "#FF9800"; // 包容节点使用橙色
+            return "#FF9800"; // Inclusive node uses orange
         }
     }
 
     override name(): string {
         if (this.gatewayType === GatewayType.EXCLUSIVE) {
-            return "互斥分支";
+            return I18NService.instance?.fanyi('flow.gateway.exclusive');
         } else if (this.gatewayType === GatewayType.PARALLEL) {
-            return "并行分支";
+            return I18NService.instance?.fanyi('flow.gateway.parallel');
         } else {
-            return "包容分支";
+            return I18NService.instance?.fanyi('flow.gateway.inclusive');
         }
     }
 
@@ -148,7 +149,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
                     {
                         id: geneNodeId(),
                         type: NodeType.GATEWAY_BRANCH,
-                        name: '默认条件',
+                        name: I18NService.instance?.fanyi('flow.gateway.default_cond'),
                         prop: {
                             type: BranchType.ELSE,
                             conditions: []
@@ -177,7 +178,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
                     {
                         id: geneNodeId(),
                         type: NodeType.GATEWAY_BRANCH,
-                        name: '默认条件（包容）',
+                        name: I18NService.instance?.fanyi('flow.gateway.default_cond_inclusive'),
                         prop: {
                             type: BranchType.ELSE,
                             conditions: []
@@ -201,7 +202,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
             return {
                 id: geneNodeId(),
                 type: NodeType.GATEWAY_BRANCH,
-                name: '互斥条件' + (i + 1),
+                name: I18NService.instance?.fanyi('flow.gateway.exclusive_cond_prefix') + (i + 1),
                 prop: {
                     type: BranchType.CONDITION,
                     conditions: []
@@ -212,7 +213,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
             return {
                 id: geneNodeId(),
                 type: NodeType.GATEWAY_BRANCH,
-                name: '并行路径' + (i + 1),
+                name: I18NService.instance?.fanyi('flow.gateway.parallel_path_prefix') + (i + 1),
                 prop: {
                     type: BranchType.PARALLEL_CONDITION,
                     conditions: []
@@ -223,7 +224,7 @@ export class GatewayNodeComponent extends ANode implements OnInit {
             return {
                 id: geneNodeId(),
                 type: NodeType.GATEWAY_BRANCH,
-                name: '包容条件' + (i + 1),
+                name: I18NService.instance?.fanyi('flow.gateway.inclusive_cond_prefix') + (i + 1),
                 prop: {
                     type: BranchType.CONDITION,
                     conditions: []
@@ -239,27 +240,27 @@ export class GatewayNodeComponent extends ANode implements OnInit {
         } else if (this.gatewayType === GatewayType.PARALLEL) {
             return "apartment";
         } else {
-            return "fork"; // 包容节点使用fork图标
+            return "fork"; // Inclusive node uses the fork icon
         }
     }
 
     getDescription(): string {
         if (this.gatewayType === GatewayType.EXCLUSIVE) {
-            return '优先级 ' + (this.index + 1);
+            return I18NService.instance?.fanyi('flow.gateway.priority_prefix') + ' ' + (this.index + 1);
         } else if (this.gatewayType === GatewayType.PARALLEL) {
-            return '并行执行';
+            return I18NService.instance?.fanyi('flow.gateway.parallel_exec');
         } else {
-            return '包容执行';
+            return I18NService.instance?.fanyi('flow.gateway.inclusive_exec');
         }
     }
 
     getContent(): string {
         if (this.gatewayType === GatewayType.EXCLUSIVE) {
-            return '互斥流程分支';
+            return I18NService.instance?.fanyi('flow.gateway.exclusive_branch');
         } else if (this.gatewayType === GatewayType.PARALLEL) {
-            return '并行流程分支';
+            return I18NService.instance?.fanyi('flow.gateway.parallel_branch');
         } else {
-            return '包容流程分支';
+            return I18NService.instance?.fanyi('flow.gateway.inclusive_branch');
         }
     }
 

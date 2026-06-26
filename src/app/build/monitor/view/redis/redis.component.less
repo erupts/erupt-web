@@ -1,0 +1,96 @@
+.cmd-detail {
+    margin-top: 12px;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+
+    .cmd-detail-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: #fafafa;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 13px;
+        font-weight: 500;
+
+        a {
+            color: rgba(0, 0, 0, 0.45);
+            cursor: pointer;
+            &:hover { color: rgba(0, 0, 0, 0.75); }
+        }
+    }
+}
+
+/* Equal height for cards in the same row */
+.equal-cards {
+    align-items: stretch;
+
+    [nz-col] {
+        display: flex;
+    }
+
+    nz-card {
+        width: 100%;
+    }
+}
+
+.stat-card {
+    ::ng-deep .ant-statistic-title {
+        font-size: 13px;
+        color: rgba(0, 0, 0, 0.45);
+    }
+
+    ::ng-deep .ant-statistic-content {
+        display: flex;
+        align-items: center;
+        font-size: 24px;
+    }
+
+    .stat-icon {
+        font-size: 22px;
+        margin-right: 10px;
+        padding: 8px;
+        border-radius: 8px;
+
+        &.blue {
+            color: #1890ff;
+            background: rgba(24, 144, 255, 0.1);
+        }
+
+        &.green {
+            color: #52c41a;
+            background: rgba(82, 196, 26, 0.1);
+        }
+
+        &.orange {
+            color: #fa8c16;
+            background: rgba(250, 140, 22, 0.1);
+        }
+
+        &.purple {
+            color: #722ed1;
+            background: rgba(114, 46, 209, 0.1);
+        }
+
+        &.cyan {
+            color: #13c2c2;
+            background: rgba(19, 194, 194, 0.1);
+        }
+
+        &.gold {
+            color: #faad14;
+            background: rgba(250, 173, 20, 0.1);
+        }
+
+        &.red {
+            color: #f5222d;
+            background: rgba(245, 34, 45, 0.1);
+        }
+
+        &.teal {
+            color: #08979c;
+            background: rgba(8, 151, 156, 0.1);
+        }
+    }
+}

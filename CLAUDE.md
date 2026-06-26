@@ -15,13 +15,19 @@ yarn run theme        # Regenerate theme CSS
 
 No test suite is present in this project.
 
+## Code Style
+
+- All code comments must be written in **English**.
+
 ## Architecture Overview
 
-This is an **Angular 20 enterprise admin framework** (`erupt-web`) that auto-generates UI/forms from JSON schema definitions provided by a Java backend. The philosophy is "zero frontend code" — UI is driven entirely by schema.
+This is an **Angular 21 enterprise admin framework** (`erupt-web`) that auto-generates UI/forms from JSON schema definitions provided by a Java backend. The philosophy is "zero frontend code" — UI is driven entirely by schema.
 
 ### Backend Integration
 
 The Angular app communicates with an Erupt Java backend. In development, `proxy.conf.js` proxies all `/erupt-api`, `/erupt-attachment`, `/erupt-websocket`, and other backend paths to `http://localhost:9999`. The production build outputs to the Java project's `src/main/resources/public` directory (configured in `angular.json`).
+
+**Backend source location:** the core Erupt Java backend lives in the sibling directory `../erupt` (i.e. `/Users/yp.li/code/erupt`). Key modules there: `erupt-annotation` (the `@Erupt`/`@EruptField`/`@Edit`/`@View`/`@Vis` annotation definitions that drive every schema), `erupt-core` (model registry, build pipeline), `erupt-web` build output target, and `erupt-designer` (the form-designer backend powering `src/app/build/designer/`). Feature modules `cube` and `flow` have their own backends in separate sibling dirs — see their local `CLAUDE.md` files. When the frontend mirrors an annotation structure (e.g. the designer's `DesignerForm`), the source of truth is `../erupt/erupt-annotation`.
 
 ### Module Structure
 

@@ -1,5 +1,24 @@
-import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType, SubModelDSL} from "../../model/dashboard.model";
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
+import {
+    CubeKey,
+    Dashboard,
+    DashboardDSL,
+    DashboardTheme,
+    FilterDSL,
+    ReportDSL,
+    ReportType,
+    SubModelDSL
+} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
 import {CubeFilter, CubeOperator, DimensionFormat} from "../../model/cube-query.model";
@@ -52,7 +71,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     @Input() cubeMeta: CubeMeta;
 
-    /** 点击图表元素（如 X 轴对应柱子/点）时触发联动筛选 */
+    /** Triggered when a chart element (e.g., the bar/point corresponding to the X axis) is clicked to activate linkage filtering */
     @Output() filterLink = new EventEmitter<{ field: string; value: any }>();
 
     @ViewChild('chartContainer', {static: false}) chartContainer: ElementRef;
@@ -83,17 +102,17 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     private s2: PivotSheet;
 
-    // ST 组件配置
+    // ST component configuration
     stColumns: STColumn[] = [];
 
     virtualScroll: boolean = false;
 
     scrollConfig: any = {x: '100%'};
 
-    enableDrill: boolean = true; // 是否启用下钻功能
+    enableDrill: boolean = true; // whether drill-down is enabled
 
-    // 表格筛选功能
-    activeFilters: Map<string, any> = new Map(); // 当前激活的筛选条件
+    // table filtering
+    activeFilters: Map<string, any> = new Map(); // currently active filter conditions
 
     private subMetaCache: { [key: string]: CubeMeta } = {};
 
@@ -124,7 +143,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     }
 
     /**
-     * 根据字段 code 获取字段标题
+     * Get field title by field code
      */
     getFieldTitle(field: string): string {
         const subModelDSL = this.getSubModelDSL();
@@ -136,7 +155,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     }
 
     /**
-     * 根据字段 code 获取字段标题并返回 G2Plot meta 配置
+     * Get field title by field code and return G2Plot meta configuration
      */
     private getFieldMeta(fields: string | string[]): Record<string, any> {
         const meta = {};
@@ -157,7 +176,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     }
 
-    @HostListener('window:resize', ['$event'])
+    @HostListener('window:resize')
     onResize() {
         if (this.report.type === ReportType.TABLE) {
             this.updateTableHeight();
@@ -166,8 +185,6 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 this.s2.changeSheetSize(this.pivotContainer.nativeElement.clientWidth, this.pivotContainer.nativeElement.clientHeight);
                 this.s2.render(false);
             }
-        } else if (this.chart) {
-            this.chart.forceFit();
         }
     }
 
@@ -197,7 +214,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     }
 
     /**
-     * 更新表格高度
+     * Update table height
      */
     private updateTableHeight(): void {
         if (this.tableContainer && this.tableContainer.nativeElement) {
@@ -271,7 +288,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         if (!this.visible) {
             return;
         }
-        // 必填筛选校验：若有未填写的必填项，不发起查询
+        // required filter validation: if any required fields are unfilled, do not send the query
         if (this.filters) {
             for (const f of this.filters) {
                 if (f.notNull && !f.hidden) {
@@ -346,7 +363,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
         }
 
-        // TABLE 可以仅配置维度，其余组件必须有指标才发起请求
+        // TABLE can be configured with dimensions only; other component types require at least one measure before sending a request
         const noFields = measures.length === 0 && dimensions.length === 0;
         if (noFields || (measures.length === 0 && this.report.type !== ReportType.TABLE)) {
             this.chartData = [];
@@ -363,7 +380,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         let cf: CubeFilter[] = [];
 
         if (subModelDSL) {
-            // 子模型：通过 fieldMappings 将仪表板过滤值转换为子模型字段过滤
+            // sub-model: convert dashboard filter values to sub-model field filters via fieldMappings
             for (const mapping of subModelDSL.fieldMappings || []) {
                 const filter = this.filters?.find(f => f.field === mapping.dashboardField);
                 if (filter?.value != null && filter.value !== '') {
@@ -376,7 +393,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 }
             }
         } else {
-            // 主模型：合并外部筛选器和用户点击的维度筛选
+            // main model: merge external filters and dimension filters from user clicks
             if (this.filters) {
                 for (let f of this.filters) {
                     if (f.value === null && !f.hidden && (f.operator === CubeOperator.EQ || f.operator === CubeOperator.NEQ)) {
@@ -430,7 +447,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             limit: 5000
         };
 
-        // 同比/环比：仅主模型且有配置时生效
+        // Year-over-year / month-over-month: only applies to the main model when configured
         const compare = this.report.compare;
         const COMPARE_SUPPORTED = [
             ReportType.LINE, ReportType.AREA, ReportType.COLUMN, ReportType.BAR,
@@ -444,8 +461,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 const prevStart = this.shiftDateByMonths(dateFilter.value[0], shift);
                 const prevEnd = this.shiftDateByMonths(dateFilter.value[1], shift);
                 const prevFilters = cf.map(f => f === dateFilter ? {...f, value: [prevStart, prevEnd]} : f);
-                const currentLabel = compare.currentLabel || '当期';
-                const compareLabel = compare.compareLabel || (compare.type === 'YOY' ? '去年同期' : '上月同期');
+                const currentLabel = compare.currentLabel || 'Current period';
+                const compareLabel = compare.compareLabel || (compare.type === 'YOY' ? 'Same period last year' : 'Same period last month');
                 this._compareSeriesOverride = '_period';
                 forkJoin([
                     this.cubeApiService.query(baseQuery),
@@ -465,7 +482,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
         this._compareSeriesOverride = null;
 
-        // KPI 环比/同比：不需要 seriesField，直接存对比期值
+        // KPI period-over-period / year-over-year: no seriesField needed, store the comparison period value directly
         if (!subModelDSL && compare?.enabled && compare?.filterField && this.report.type === ReportType.KPI) {
             const dateFilter = cf.find(f => f.field === compare.filterField);
             if (dateFilter?.operator === CubeOperator.BETWEEN && Array.isArray(dateFilter.value)
@@ -496,9 +513,9 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 this.chartData = response.data;
                 if (this.report.type == ReportType.TABLE) {
                     this.buildStColumns();
-                    // 数据量大于200条时启用虚拟滚动
+                    // enable virtual scrolling when data exceeds 200 rows
                     this.virtualScroll = this.chartData.length > 200;
-                    // 延迟更新表格高度，确保 DOM 已渲染
+                    // delay table height update to ensure the DOM has rendered
                     setTimeout(() => {
                         this.updateTableHeight();
                     }, 100);
@@ -859,7 +876,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     }
 
     /**
-     * 为带维度（如 xField）的 G2 Plot 图表绑定点击联动：点击图表元素或 X 轴对应数据时触发筛选联动
+     * Bind click linkage for G2 Plot charts that have a dimension (e.g. xField):
+     * triggers filter linkage when a chart element or its corresponding X-axis data is clicked
      */
     private bindFilterLinkIfNeeded(chart: any): void {
         if (!chart?.chart) {
@@ -881,7 +899,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
         };
         g2Chart.on('element:click', handler);
-        // 点击 X 轴标签时也触发联动（G2 中轴标签属于 component）
+        // also trigger linkage when an X-axis label is clicked (axis labels are components in G2)
         g2Chart.on('component:click', (ev: any) => {
             const target = ev.target?.get?.('type') ?? ev.target?.cfg?.name;
             if (target === 'axis-label' || (ev.target?.cfg?.component?.options?.type === 'axis')) {
@@ -893,7 +911,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         });
     }
 
-    /** 当前报表用于联动筛选的维度字段（X 轴或分类轴），无则返回 null */
+    /** The dimension field used for linkage filtering in the current report (X axis or category axis); returns null if none */
     private getLinkageDimensionField(): string | null {
         if (!this.report?.cube) {
             return null;
@@ -911,7 +929,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     }
 
     /**
-     * 构建 ST 组件列配置
+     * Build ST component column configuration
      */
     buildStColumns(): void {
         this.stColumns = [];
@@ -921,7 +939,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         const xFieldsArray = Array.isArray(xFields) ? xFields : [xFields];
         const yFieldsArray = Array.isArray(yFields) ? yFields : [yFields];
 
-        // 添加维度列（X轴字段）- 支持点击筛选
+        // add dimension columns (X-axis fields) - supports click filtering
         xFieldsArray.forEach(field => {
             if (field) {
                 this.stColumns.push({
@@ -965,7 +983,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
         });
 
-        // 添加指标列（Y轴字段）- 支持下钻
+        // add measure columns (Y-axis fields) - supports drill-down
         yFieldsArray.forEach(field => {
             if (field) {
                 const column: STColumn = {
@@ -1002,41 +1020,41 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     }
 
     /**
-     * 切换维度筛选
+     * Toggle dimension filter
      */
     toggleDimensionFilter(field: string, value: any): void {
         if (this.activeFilters.has(field) && this.activeFilters.get(field) === value) {
-            // 如果已经筛选该值，则取消筛选
+            // if the value is already filtered, remove the filter
             this.activeFilters.delete(field);
         } else {
-            // 否则添加筛选
+            // otherwise add the filter
             this.activeFilters.set(field, value);
         }
 
-        // 重新请求后端数据
+        // re-request data from backend
         this.refresh();
     }
 
     /**
-     * 清除所有筛选
+     * Clear all filters
      */
     clearAllFilters(): void {
         this.activeFilters.clear();
-        // 重新请求后端数据
+        // re-request data from backend
         this.refresh();
     }
 
     /**
-     * 清除单个筛选
+     * Clear a single filter
      */
     clearFilter(field: string): void {
         this.activeFilters.delete(field);
-        // 重新请求后端数据
+        // re-request data from backend
         this.refresh();
     }
 
     /**
-     * 获取筛选条件数组（用于显示）
+     * Get active filters as an array (for display)
      */
     getActiveFiltersArray(): Array<{ field: string, value: any }> {
         return Array.from(this.activeFilters.entries()).map(([field, value]) => ({
@@ -1046,14 +1064,14 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     }
 
     /**
-     * 打开下钻抽屉
+     * Open drill-down drawer
      */
     openDrillDrawer(measure: string, record: any): void {
         const subModelDSL = this.getSubModelDSL();
         const activeMeta = subModelDSL ? this.getCachedSubMeta(subModelDSL) : this.cubeMeta;
         const drillFilters: CubeFilter[] = [];
 
-        // 将当前行的所有维度值作为过滤条件带出（字段码已属于有效模型）
+        // carry all dimension values from the current row as filter conditions (field codes already belong to the active model)
         const xFields = this.report.cube[CubeKey.xField] || [];
         const xFieldsArray = Array.isArray(xFields) ? xFields : [xFields];
         for (const f of xFieldsArray) {
@@ -1063,7 +1081,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
 
         if (subModelDSL) {
-            // 子模型：通过 fieldMappings 将仪表板过滤值转换为子模型字段
+            // sub-model: convert dashboard filter values to sub-model fields via fieldMappings
             for (const mapping of subModelDSL.fieldMappings || []) {
                 const filter = this.filters?.find(f => f.field === mapping.dashboardField);
                 if (filter?.value != null && filter.value !== '') {
@@ -1074,7 +1092,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 }
             }
         } else {
-            // 主模型：外部筛选和已激活的维度筛选
+            // main model: external filters and active dimension filters
             if (this.filters) {
                 for (const f of this.filters) {
                     if (f.value != null && this.cubeMeta.parameters.filter(it => it.code === f.field).length === 0) {
@@ -1088,7 +1106,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
 
         this.drawerService.create({
-            nzTitle: '下钻分析 - ' + (activeMeta?.fieldTitleMap?.get(measure) || measure) + ': ' + record[measure],
+            nzTitle: 'Drill-down Analysis - ' + (activeMeta?.fieldTitleMap?.get(measure) || measure) + ': ' + record[measure],
             nzContent: CubeDrillDetailComponent,
             nzContentParams: {
                 measure: measure,

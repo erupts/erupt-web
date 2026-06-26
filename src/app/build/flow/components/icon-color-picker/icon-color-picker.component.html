@@ -1,5 +1,5 @@
 <div class="icon-selector-content">
-  <!-- 预览区域 -->
+  <!-- Preview area -->
   <div class="preview-section">
     <div class="preview-display">
       <div class="preview-icon" [style]="getPreviewIconStyle()">
@@ -8,11 +8,11 @@
     </div>
   </div>
 
-  <!-- 选择区域 -->
+  <!-- Selection area -->
   <div class="selection-section">
-    <!-- 颜色选择 -->
+    <!-- Color selection -->
     <div class="color-section">
-      <h4>选择颜色</h4>
+      <h4>{{ 'flow.icon.select_color' | translate }}</h4>
       <div class="color-grid">
         @for (color of bgColors; track color) {
           <div class="color-item"
@@ -24,9 +24,9 @@
       </div>
     </div>
 
-    <!-- 图标选择 -->
+    <!-- Icon selection -->
     <div class="icon-section">
-      <h4>选择图标</h4>
+      <h4>{{ 'flow.icon.select_icon' | translate }}</h4>
       <div class="icon-grid">
         @for (icon of icons; track icon) {
           <div class="icon-item"
@@ -41,14 +41,14 @@
     </div>
   </div>
 
-  <!-- 操作按钮 -->
+  <!-- Action buttons -->
   <div class="action-buttons">
     <div class="buttons">
       <button nz-button nzType="default" (click)="cancelSelection()">
-        取消
+        {{ 'global.cancel' | translate }}
       </button>
       <button nz-button nzType="primary" (click)="confirmSelection()">
-        确认选择
+        {{ 'flow.icon.confirm_select' | translate }}
       </button>
     </div>
   </div>

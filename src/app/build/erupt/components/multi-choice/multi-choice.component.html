@@ -1,20 +1,27 @@
 
 @switch (eruptField.eruptFieldJson.edit.multiChoiceType.type) {
   @case (multiChoiceEnum.CHECKBOX) {
-    <nz-checkbox-wrapper (nzOnChange)="checkboxChange($event)" style="width:100%">
+    <div style="width:100%">
+      @if (eruptField.componentValue?.length && !readonly) {
+        <label nz-checkbox style="margin-bottom:8px;"
+          [nzChecked]="isAllChecked()"
+          [nzIndeterminate]="isIndeterminate()"
+          (nzCheckedChange)="toggleAll($event)">{{ 'global.select_all'|translate }}</label>
+      }
       <nz-row>
         @for (vl of eruptField.componentValue; track vl.value) {
           <nz-col nzSpan="4">
-            <label nz-checkbox [nzValue]="vl.value" nz-tooltip [nzDisabled]="readonly||vl.disable"
+            <label nz-checkbox nz-tooltip [nzDisabled]="readonly||vl.disable"
               [style.color]="!vl.disable && vl.color"
               [nzTooltipTitle]="vl.desc"
-              [nzChecked]="includes(this.eruptField.eruptFieldJson.edit.$value, vl.value)">
+              [nzChecked]="includes(this.eruptField.eruptFieldJson.edit.$value, vl.value)"
+              (nzCheckedChange)="onCheckChange(vl.value, $event)">
               {{ vl.label }}
             </label>
           </nz-col>
         }
       </nz-row>
-    </nz-checkbox-wrapper>
+    </div>
   }
   @case (multiChoiceEnum.SELECT) {
     <nz-select [(ngModel)]="this.eruptField.eruptFieldJson.edit.$value" [nzSize]="size" nzMode="multiple"

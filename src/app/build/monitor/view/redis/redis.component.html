@@ -1,0 +1,167 @@
+<nz-spin [nzSpinning]="loading" [nzTip]="'monitor.loading' | translate">
+    <div class="monitor" >
+        <div class="monitor-toolbar">
+            <div class="title"><i nz-icon nzType="database"></i>{{ 'monitor.redis.info' | translate }}</div>
+            <div class="actions">
+                <span class="last-update" *ngIf="lastUpdate">{{ 'monitor.last_update' | translate }}
+                    : {{ lastUpdate }}</span>
+                <span style="font-size:12px;color:rgba(0,0,0,.45)">{{ 'monitor.auto_refresh' | translate }}</span>
+                <nz-switch nzSize="small" [ngModel]="autoRefresh" (ngModelChange)="toggleAuto($event)"></nz-switch>
+                <button nz-button nzSize="small" (click)="toggleFullscreen()" nz-tooltip [nzTooltipTitle]="(isFullscreen ? 'monitor.fullscreen_exit' : 'monitor.fullscreen') | translate">
+                    <i nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"></i>
+                </button>
+                <button nz-button nzType="primary" nzSize="small" (click)="refresh()" [nzLoading]="refreshing">
+                    <i nz-icon nzType="reload"></i>{{ 'monitor.refresh' | translate }}
+                </button>
+            </div>
+        </div>
+
+        <div class="monitor-body">
+            <!-- 关键指标 -->
+            <div nz-row [nzGutter]="16">
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.clientNum||'-'"
+                                      [nzTitle]="'monitor.redis.client_num' | translate"
+                                      [nzPrefix]="iconApi"></nz-statistic>
+                        <ng-template #iconApi><i nz-icon nzType="api" class="stat-icon blue"></i></ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.keyNum||'-'"
+                                      [nzTitle]="'monitor.redis.key_count_series' | translate"
+                                      [nzPrefix]="iconKey"></nz-statistic>
+                        <ng-template #iconKey><i nz-icon nzType="database" class="stat-icon green"></i></ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.usedMem || '-'" [nzTitle]="'monitor.server.used_mem' | translate"
+                                      [nzPrefix]="iconMem"></nz-statistic>
+                        <ng-template #iconMem><i nz-icon nzType="thunderbolt" class="stat-icon orange"></i>
+                        </ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.day || '0'" [nzTitle]="'monitor.redis.run_days' | translate"
+                                      [nzSuffix]="'monitor.redis.days_unit' | translate"
+                                      [nzPrefix]="iconDay"></nz-statistic>
+                        <ng-template #iconDay><i nz-icon nzType="clock-circle" class="stat-icon purple"></i>
+                        </ng-template>
+                    </nz-card>
+                </div>
+            </div>
+
+            <!-- 健康指标 -->
+            <div nz-row [nzGutter]="16">
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.ops||'0'"
+                                      [nzTitle]="'monitor.redis.ops' | translate"
+                                      [nzSuffix]="' ops/s'"
+                                      [nzPrefix]="iconOps"></nz-statistic>
+                        <ng-template #iconOps><i nz-icon nzType="rocket" class="stat-icon cyan"></i></ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.hitRate||'-'"
+                                      [nzTitle]="'monitor.redis.hit_rate' | translate"
+                                      [nzSuffix]="redis.hitRate ? ' %' : ''"
+                                      [nzPrefix]="iconHit"></nz-statistic>
+                        <ng-template #iconHit><i nz-icon nzType="check-circle" class="stat-icon gold"></i></ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.evictedKeys ?? 0"
+                                      [nzTitle]="'monitor.redis.evicted_keys' | translate"
+                                      [nzPrefix]="iconEvict"></nz-statistic>
+                        <ng-template #iconEvict><i nz-icon nzType="close-circle" class="stat-icon red"></i></ng-template>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="12" [nzMd]="6">
+                    <nz-card [nzBordered]="false" class="stat-card">
+                        <nz-statistic [nzValue]="redis.usedMemPeak||'-'"
+                                      [nzTitle]="'monitor.redis.used_mem_peak' | translate"
+                                      [nzPrefix]="iconPeak"></nz-statistic>
+                        <ng-template #iconPeak><i nz-icon nzType="rise" class="stat-icon teal"></i></ng-template>
+                    </nz-card>
+                </div>
+            </div>
+
+            <!-- Redis 信息 + 命令统计 -->
+            <div nz-row [nzGutter]="16" class="equal-cards">
+                <div nz-col [nzXs]="24" [nzMd]="12">
+                    <nz-card [nzBordered]="false" [nzTitle]="redisTitle">
+                        <ng-template #redisTitle><i nz-icon nzType="database"></i>{{ 'monitor.redis.info' | translate }}
+                        </ng-template>
+                        <nz-descriptions nzBordered [nzColumn]="1" nzSize="small" class="desc-fixed">
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.version' | translate">{{ redis.version }}
+                            </nz-descriptions-item>
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.port' | translate">{{ redis.port }}
+                            </nz-descriptions-item>
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.is_cluster' | translate">
+                                <nz-tag
+                                    [nzColor]="redis.isCluster ? 'green' : 'default'">{{ (redis.isCluster ? 'Y' : 'N') | translate }}
+                                </nz-tag>
+                            </nz-descriptions-item>
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.persistence' | translate">
+                                <nz-tag [nzColor]="redis.isAOF ? 'blue' : 'orange'">{{ redis.isAOF ? 'AOF' : 'RDB' }}
+                                </nz-tag>
+                            </nz-descriptions-item>
+                            <nz-descriptions-item
+                                [nzTitle]="'monitor.server.total_mem' | translate">{{ redis.totalMem }}
+                            </nz-descriptions-item>
+                            <nz-descriptions-item
+                                [nzTitle]="'monitor.server.used_mem' | translate">{{ redis.usedMem }}
+                            </nz-descriptions-item>
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.frag_ratio' | translate">
+                                <nz-tag [nzColor]="fragRatioColor()">{{ redis.fragRatio || '-' }}</nz-tag>
+                            </nz-descriptions-item>
+                            <nz-descriptions-item [nzTitle]="'monitor.redis.rdb_status' | translate">
+                                <nz-tag [nzColor]="redis.rdbStatus === 'ok' ? 'green' : redis.rdbStatus ? 'red' : 'default'">
+                                    {{ redis.rdbStatus || '-' }}
+                                </nz-tag>
+                            </nz-descriptions-item>
+                        </nz-descriptions>
+                    </nz-card>
+                </div>
+                <div nz-col [nzXs]="24" [nzMd]="12">
+                    <nz-card [nzBordered]="false" [nzTitle]="cmdTitle">
+                        <ng-template #cmdTitle><i nz-icon
+                                                  nzType="pie-chart"></i>{{ 'monitor.redis.command_stat' | translate }}
+                        </ng-template>
+                        <div #commandPie class="chart chart-pie"></div>
+                        <div class="cmd-detail" *ngIf="selectedCmd">
+                            <div class="cmd-detail-header">
+                                <span><i nz-icon nzType="info-circle" style="color:#1890ff;margin-right:6px"></i>{{'monitor.redis.cmd_detail' | translate}}</span>
+                                <a (click)="clearCmdSelection()"><i nz-icon nzType="close"></i></a>
+                            </div>
+                            <nz-descriptions nzBordered [nzColumn]="3" nzSize="small">
+                                <nz-descriptions-item [nzTitle]="'monitor.redis.cmd_name' | translate">
+                                    <code>{{selectedCmd.name}}</code>
+                                </nz-descriptions-item>
+                                <nz-descriptions-item [nzTitle]="'monitor.redis.cmd_calls' | translate">{{selectedCmd.value}}</nz-descriptions-item>
+                                <nz-descriptions-item [nzTitle]="'monitor.redis.cmd_percent' | translate">
+                                    <nz-progress [nzPercent]="+selectedCmd.percent" nzSize="small"
+                                                 [nzFormat]="percentFmt"></nz-progress>
+                                    <ng-template #percentFmt let-p>{{p}}%</ng-template>
+                                </nz-descriptions-item>
+                            </nz-descriptions>
+                        </div>
+                    </nz-card>
+                </div>
+            </div>
+
+            <!-- Key 数量趋势 -->
+            <nz-card [nzBordered]="false" [nzTitle]="keyTitle">
+                <ng-template #keyTitle><i nz-icon nzType="fund"></i>{{ 'monitor.redis.key_trend' | translate }}
+                </ng-template>
+                <div #keyLine class="chart chart-line"></div>
+            </nz-card>
+        </div>
+    </div>
+</nz-spin>

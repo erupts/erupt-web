@@ -84,40 +84,40 @@ export interface FlowInstanceTask {
 }
 
 export enum TaskType {
-    /** 开始 */
+    /** Start */
     START = 'START',
 
-    /** 抄送 */
+    /** CC (carbon copy) */
     CC = 'CC',
 
-    /** 办理 */
+    /** Assignee handling */
     ASSIGNEE = 'ASSIGNEE',
 
-    /** 或签 */
+    /** Or-sign approval */
     USER_APPROVAL = 'USER_APPROVAL',
 
-    /** 会签 */
+    /** Joint approval (parallel) */
     USER_APPROVAL_PARALLEL = 'USER_APPROVAL_PARALLEL',
 
-    /** 转办 */
+    /** Transfer */
     TRANSFER = 'TRANSFER',
 
-    /** 撤回 */
+    /** Withdraw */
     WITHDRAWN = 'WITHDRAWN',
 
-    /** 加签：前加签 */
+    /** Add-sign: pre-sign */
     PRE_SIGN = 'PRE_SIGN',
 
-    /** 加签：后加签 */
+    /** Add-sign: post-sign */
     POST_SIGN = 'POST_SIGN',
 
-    /** 回退 */
+    /** Rollback */
     ROLLBACK = 'ROLLBACK',
 
-    /** 超时自动通过 */
+    /** Timeout auto-pass */
     TIMEOUT_AUTO_PASS = 'TIMEOUT_AUTO_PASS',
 
-    /** 超时自动拒绝 */
+    /** Timeout auto-reject */
     TIMEOUT_AUTO_REJECT = 'TIMEOUT_AUTO_REJECT',
 }
 

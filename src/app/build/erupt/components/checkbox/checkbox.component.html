@@ -1,15 +1,22 @@
 <nz-spin [nzSpinning]="loading">
-  <nz-checkbox-wrapper style="width: 100%;max-height: 305px;overflow: auto" (nzOnChange)="change($event)">
+  <div style="width: 100%;max-height: 305px;overflow: auto">
+    @if (checkbox?.length && !onlyRead) {
+      <label nz-checkbox style="margin-bottom:8px;"
+        [nzChecked]="isAllChecked()"
+        [nzIndeterminate]="isIndeterminate()"
+        (nzCheckedChange)="toggleAll($event)">{{ 'global.select_all'|translate }}</label>
+    }
     <div nz-row>
       @for (c of checkbox; track c) {
         <div nz-col [nzXs]="12" [nzSm]="8" [nzMd]="8" [nzLg]="4">
-          <label nz-checkbox [nzDisabled]="onlyRead" [nzValue]="c.id"
+          <label nz-checkbox [nzDisabled]="onlyRead"
             nz-tooltip [nzTooltipTitle]="c.remark" [title]="c.label"
-          [nzChecked]="edit.$value&&edit.$value.indexOf(c.id)!=-1">{{ c.label }}</label>
+          [nzChecked]="edit.$value&&edit.$value.indexOf(c.id)!=-1"
+          (nzCheckedChange)="onCheckChange(c.id, $event)">{{ c.label }}</label>
         </div>
       }
     </div>
-  </nz-checkbox-wrapper>
+  </div>
   @if (!checkbox || !checkbox.length) {
     <nz-empty [nzNotFoundImage]="'simple'" [nzNotFoundContent]="null">
     </nz-empty>

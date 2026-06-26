@@ -1,15 +1,16 @@
 import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, MultiChoiceEnum, PickerMode, TabEnum, ViewType} from "./erupt.enum";
+import {QueryExpression} from "./erupt.vo";
 import {KeyValueDiffer} from "@angular/core";
 import {Subject} from "rxjs";
 
 
 export interface EruptFieldModel {
     fieldName: string;
+    fieldReturnName: string;
     eruptFieldJson: EruptField;
     choiceMap?: Map<String, VL>;
     choiceLabelMap?: Map<String, VL>;
     componentValue?: any;
-
     value?: any;
 }
 
@@ -62,7 +63,7 @@ export interface View {
     width: string;
     desc: string;
     show: boolean;
-    viewType: ViewType;
+    type: ViewType;
     template: string;
     sortable: boolean;
     tpl: Tpl;
@@ -98,6 +99,7 @@ export interface Edit {
     sliderType?: SliderType;
     codeEditType?: CodeEditType;
     mapType?: MapType;
+    groupType?: GroupType;
     $tabTreeViewData?: any;
 
     $valueDiff?: KeyValueDiffer<any, any>;
@@ -109,6 +111,7 @@ export interface Edit {
     $beforeValue?: any;
     $l_val?: any;
     $r_val?: any;
+    $operator?: QueryExpression;
 }
 
 interface Readonly {
@@ -128,13 +131,13 @@ interface RateType {
 
 interface Search {
     value: boolean;
-    vague: boolean;
     notNull: boolean;
 }
 
 interface CodeEditType {
     language: string;
     height: number;
+    hintHandler?: string[];
 }
 
 //Edit Type
@@ -179,10 +182,11 @@ interface BoolType {
 
 interface ChoiceType {
     type: ChoiceEnum;
-    anewFetch: boolean;
     dependField: string;
     items: VL[],
     trigger: string;
+    fetchHandler: string[];
+
     onVLChange(value, oldValue): void;
 }
 
@@ -195,6 +199,7 @@ interface TagsType {
     allowExtension: boolean;
     joinSeparator: string;
     maxTagCount: number;
+    fetchHandler: string[];
 }
 
 
@@ -231,6 +236,11 @@ interface AttachmentType {
 export interface MapType {
     draw: boolean;
     drawMaxLayer: number;
+}
+
+interface GroupType {
+    fields: string[];
+    collapsed: boolean;
 }
 
 export interface VL {

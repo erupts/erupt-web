@@ -1,6 +1,7 @@
 import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {SharedModule} from "@shared/shared.module";
+import {NzAffixModule} from "ng-zorro-antd/affix";
 import {HttpClientModule} from "@angular/common/http";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {DataHandlerService} from "./service/data-handler.service";
@@ -19,6 +20,7 @@ import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
 import {TableComponent} from './view/table/table.component';
 import {LayoutTreeComponent} from './view/layout-tree/layout-tree.component';
+import {FormViewComponent} from './view/form-view/form-view.component';
 import {CodeEditorComponent} from './components/code-editor/code-editor.component';
 import {EruptUeditorComponent} from './components/ueditor/erupt-ueditor.component';
 import {TabTreeComponent} from './components/tab-tree/tab-tree.component';
@@ -30,6 +32,7 @@ import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
 import {CardComponent} from './vis/card/card.component';
+import {BoardComponent} from './vis/board/board.component';
 import {TagSelectModule} from "@delon/abc/tag-select";
 import {NzCodeEditorModule} from "ng-zorro-antd/code-editor";
 import {SearchComponent} from './components/search/search.component';
@@ -47,10 +50,16 @@ import {SignaturePadComponent} from './components/signature-pad/signature-pad.co
 import {SmartSearchComponent} from './components/smart-search/smart-search.component';
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 import {GanttComponent} from "./vis/gantt/gantt.component";
+import {CalendarComponent} from "./vis/calendar/calendar.component";
 import {NgxGanttModule} from "@worktile/gantt";
+import {NzCalendarModule} from "ng-zorro-antd/calendar";
 import {NzButtonModule} from "ng-zorro-antd/button";
+import {NzSpaceModule} from "ng-zorro-antd/space";
 import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
+import {AiChatComponent} from "../ai/view/ai-chat/ai-chat.component";
+import {NzMenuItemComponent} from "ng-zorro-antd/menu";
+import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdown";
 
 @NgModule({
     imports: [
@@ -68,10 +77,17 @@ import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
         NzEmptyModule,
         NzSegmentedModule,
         NgxGanttModule,
+        NzCalendarModule,
         NzButtonModule,
+        NzSpaceModule,
         NzTooltipDirective,
         SVComponent,
-        SVContainerComponent
+        SVContainerComponent,
+        NzAffixModule,
+        AiChatComponent,
+        NzMenuItemComponent,
+        NzDropdownMenuComponent,
+        NzDropdownDirective
     ],
     providers: [
         DataHandlerService,
@@ -109,6 +125,7 @@ import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
         ChoiceComponent,
         TagsComponent,
         CardComponent,
+        BoardComponent,
         SearchComponent,
         AutoCompleteComponent,
         ReferenceComponent,
@@ -128,7 +145,9 @@ import {SVComponent, SVContainerComponent} from "@delon/abc/sv";
         MultiChoiceComponent,
         SignaturePadComponent,
         SmartSearchComponent,
-        GanttComponent
+        GanttComponent,
+        CalendarComponent,
+        FormViewComponent
     ]
 })
 export class EruptModule {

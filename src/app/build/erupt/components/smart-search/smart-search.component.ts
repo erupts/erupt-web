@@ -12,6 +12,7 @@ import {
 } from "../../model/erupt-search.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {UpmsData, UpmsScope} from "../../model/upms.model";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -55,7 +56,8 @@ export class SmartSearchComponent implements OnInit {
         [EditType.REFERENCE_TREE]: OperatorType.REFERENCE,
     };
 
-    constructor(@Inject(NzMessageService) private msg: NzMessageService,) {
+    constructor(@Inject(NzMessageService) private msg: NzMessageService,
+                private i18n: I18NService) {
     }
 
 
@@ -63,16 +65,16 @@ export class SmartSearchComponent implements OnInit {
         for (let group of this.search) {
             for (let sh of group) {
                 if (!sh.field) {
-                    this.msg.error('请选择字段');
+                    this.msg.error(this.i18n.fanyi('smart_search.select_field'));
                     return false;
                 }
                 if (!sh.operator) {
-                    this.msg.error('请选择运算符');
+                    this.msg.error(this.i18n.fanyi('smart_search.select_operator'));
                     return false;
                 }
                 if (sh.operator != OperatorDateType.NOT_NULL && sh.operator != OperatorDateType.NULL) {
                     if (sh.value == null) {
-                        this.msg.error('请输入值');
+                        this.msg.error(this.i18n.fanyi('smart_search.input_value_required'));
                         return false;
                     }
                 }
@@ -132,19 +134,19 @@ export class SmartSearchComponent implements OnInit {
         }
     }
 
-    // 添加条件组（基于 search）
+    // add a condition group (based on search)
     addConditionGroup(): void {
         this.search.push([this.createEmptyCondition()]);
     }
 
-    // 删除条件组（基于 search）
+    // remove a condition group (based on search)
     removeConditionGroup(groupIndex: number): void {
         if (groupIndex >= 0 && groupIndex < this.search.length) {
             this.search.splice(groupIndex, 1);
         }
     }
 
-    // 添加条件（基于 search）
+    // add a condition (based on search)
     addCondition(groupIndex: number): void {
         if (!this.search[groupIndex]) {
             this.search[groupIndex] = [];
@@ -152,14 +154,14 @@ export class SmartSearchComponent implements OnInit {
         this.search[groupIndex].push(this.createEmptyCondition());
     }
 
-    // 删除条件（基于 search）
+    // remove a condition (based on search)
     removeCondition(groupIndex: number, conditionIndex: number): void {
         if (this.search[groupIndex]) {
             this.search[groupIndex].splice(conditionIndex, 1);
         }
     }
 
-    // 重置
+    // reset
     resetForm(): void {
         this.search = [[this.createEmptyCondition()]];
     }

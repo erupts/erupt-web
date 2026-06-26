@@ -5,6 +5,7 @@ import {NodeType} from "@flow/model/node.model";
 import {getAvatarColor} from "@flow/util/flow.util";
 import {FlowApprovalDetailComponent} from "@flow/view/flow-approval-detail/flow-approval-detail.component";
 import {SettingsService} from "@delon/theme";
+import {NzDrawerService} from "ng-zorro-antd/drawer";
 
 
 @Component({
@@ -39,7 +40,12 @@ export class FlowApprovalComponent implements OnInit {
     constructor(
         public settingSrv: SettingsService,
         private flowInstanceApiService: FlowInstanceApiService,
+        private drawerService: NzDrawerService,
     ) {
+    }
+
+    private isMobile(): boolean {
+        return window.innerWidth <= 768;
     }
 
     ngOnInit() {
@@ -50,10 +56,39 @@ export class FlowApprovalComponent implements OnInit {
 
     selectInstance(flow: FlowInstance) {
         this.selectedInstance = flow;
+        // On phones the detail opens in a drawer (see onInstanceClick); the inline
+        // detail pane is hidden, so skip driving it here.
+        if (this.isMobile()) {
+            return;
+        }
         this.approvalDetail.onSelectFlow(this.selectedView, this.selectedInstance);
-        // if (flow?.id) {
-        //     this.loadInstanceDetail(flow);
-        // }
+    }
+
+    /** Instance row tap: desktop updates the inline pane, phones open a drawer. */
+    onInstanceClick(flow: FlowInstance) {
+        this.selectInstance(flow);
+        if (this.isMobile()) {
+            this.openMobileDetail(flow);
+        }
+    }
+
+    private openMobileDetail(flow: FlowInstance) {
+        const drawerRef = this.drawerService.create<FlowApprovalDetailComponent>({
+            nzContent: FlowApprovalDetailComponent,
+            nzTitle: flow?.eruptFlowConfig?.name,
+            nzWidth: '100%',
+            nzBodyStyle: {padding: '0'},
+        });
+        drawerRef.afterOpen.subscribe(() => {
+            const detail = drawerRef.getContentComponent();
+            if (!detail) return;
+            detail.onSelectFlow(this.selectedView, flow);
+            const sub = detail.reloadFlows.subscribe(() => {
+                this.reloadFlows();
+                drawerRef.close();
+            });
+            drawerRef.afterClose.subscribe(() => sub.unsubscribe());
+        });
     }
 
     onSelectFlow(flow: number) {

@@ -12,7 +12,11 @@ import {NzFormatEmitEvent, NzTreeBaseService} from "ng-zorro-antd/core/tree";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {AppViewService} from "@shared/service/app-view.service";
-import {Scene} from "../../model/erupt.enum";
+import {FormSize, Scene} from "../../model/erupt.enum";
+import {EditComponent} from "../edit/edit.component";
+import {LocalSettingsService} from "../../service/local-settings.service";
+import {PrintTypeComponent} from "../../components/print-type/print-type";
+import {cloneDeep} from "lodash";
 
 @Component({
     standalone: false,
@@ -46,9 +50,21 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     private router$: Subscription;
 
-    private currentKey: string;
+    currentKey: string;
+
+    selectedKeys: any[] = [];
 
     treeScrollTop: number = 0;
+
+    printLoading: boolean = false;
+
+    treeWidth: number = 235;
+
+    resizing: boolean = false;
+
+    sortAsc: boolean | null = null;
+
+    mobileTreeCollapsed: boolean = false;
 
     @ViewChild("treeDiv", {static: false})
     treeDiv: ElementRef;
@@ -64,7 +80,8 @@ export class TreeComponent implements OnInit, OnDestroy {
                 private appViewService: AppViewService,
                 @Inject(NzModalService)
                 private modal: NzModalService,
-                private dataHandler: DataHandlerService) {
+                private dataHandler: DataHandlerService,
+                private localSettings: LocalSettingsService) {
     }
 
     ngOnInit(): void {
@@ -73,11 +90,14 @@ export class TreeComponent implements OnInit, OnDestroy {
             this.eruptName = params.name;
             this.currentKey = null;
             this.showEdit = false;
+            const saved = this.localSettings.get(this.eruptName);
+            if (saved?.treeWidth) this.treeWidth = saved.treeWidth;
             this.dataService.getEruptBuild(this.eruptName).subscribe(eb => {
                 this.appViewService.setRouterViewDesc(eb.eruptModel.eruptJson.desc);
                 this.dataHandler.initErupt(eb);
                 this.eruptBuildModel = eb;
                 this.fetchTreeData();
+                this.addBlock();
             });
         });
     }
@@ -87,7 +107,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         this.showEdit = true;
         this.loading = true;
         this.selectLeaf = false;
-        if (this.tree.getSelectedNodeList()[0]) {
+        if (this.tree?.getSelectedNodeList()?.[0]) {
             this.tree.getSelectedNodeList()[0].isSelected = false;
         }
         this.behavior = Scene.ADD;
@@ -95,6 +115,8 @@ export class TreeComponent implements OnInit, OnDestroy {
             this.loading = false;
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
             callback && callback();
+        }, () => {
+            this.loading = false;
         });
     }
 
@@ -126,7 +148,7 @@ export class TreeComponent implements OnInit, OnDestroy {
     }
 
     update() {
-        //校验菜单和合法性
+        //validate menu and data integrity
         if (this.validateParentIdValue()) {
             this.loading = true;
             this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName,
@@ -142,7 +164,7 @@ export class TreeComponent implements OnInit, OnDestroy {
         }
     }
 
-    //校验上级菜单值得合法性
+    //validate the parent menu value's integrity
     validateParentIdValue(): boolean {
         let eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
         let eruptFieldMap = this.eruptBuildModel.eruptModel.eruptFieldModelMap;
@@ -172,6 +194,48 @@ export class TreeComponent implements OnInit, OnDestroy {
         return true;
     }
 
+    copyNode() {
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        const eruptJson = this.eruptBuildModel.eruptModel.eruptJson;
+        this.loading = true;
+        this.dataService.queryEruptDataById(eruptName, this.currentKey).subscribe(data => {
+            this.loading = false;
+            delete data[eruptJson.primaryKeyCol];
+            let fullLine = false;
+            const layout = eruptJson.layout;
+            if (layout && layout.formSize == FormSize.FULL_LINE) fullLine = true;
+            const modal = this.modal.create({
+                nzDraggable: true,
+                nzStyle: {top: "60px"},
+                nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+                nzWidth: fullLine ? 550 : null,
+                nzMaskClosable: false,
+                nzKeyboard: false,
+                nzTitle: this.i18n.fanyi("global.copy"),
+                nzContent: EditComponent,
+                nzOkText: this.i18n.fanyi("global.add"),
+                nzOnOk: async () => {
+                    if (modal.getContentComponent().beforeSaveValidate()) {
+                        await this.dataService.addEruptData(
+                            eruptName,
+                            this.dataHandler.eruptValueToObject(this.eruptBuildModel)
+                        ).toPromise().then(res => res);
+                        this.msg.success(this.i18n.fanyi("global.add.success"));
+                        this.fetchTreeData();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            const editComp = modal.getContentComponent();
+            editComp.eruptBuildModel = this.eruptBuildModel;
+            editComp.behavior = Scene.ADD;
+            editComp.prefillData = data;
+        }, () => {
+            this.loading = false;
+        });
+    }
+
     del() {
         const nzTreeNode = this.tree.getSelectedNodeList()[0];
         if (nzTreeNode.isLeaf) {
@@ -199,17 +263,99 @@ export class TreeComponent implements OnInit, OnDestroy {
                 }
             });
         } else {
-            this.msg.error("存在叶节点不允许直接删除");
+            this.msg.error(this.i18n.fanyi("tree.delete_has_children"));
         }
     }
 
+    toggleSort(): void {
+        if (this.sortAsc === null) this.sortAsc = true;
+        else if (this.sortAsc === true) this.sortAsc = false;
+        else { this.fetchTreeData(); return; }
+        this.nodes = this.sortNodes([...this.nodes], this.sortAsc);
+    }
+
+    locateNode(): void {
+        this.expandPathTo(this.nodes, this.currentKey);
+        this.nodes = [...this.nodes];
+        this.selectedKeys = [...this.selectedKeys];
+        setTimeout(() => {
+            const container = this.treeDiv?.nativeElement;
+            if (!container) return;
+            const selected = container.querySelector('.ant-tree-node-selected');
+            if (selected) {
+                selected.scrollIntoView({behavior: 'smooth', block: 'center'});
+                return;
+            }
+            const viewport = container.querySelector('.cdk-virtual-scroll-viewport');
+            if (!viewport) return;
+            const idx = this.flattenVisible(this.nodes).findIndex((n: any) => n.key === this.currentKey);
+            if (idx >= 0) viewport.scrollTop = Math.max(0, idx * 28 - viewport.clientHeight / 2);
+        }, 100);
+    }
+
+    private expandPathTo(nodes: any[], key: string): boolean {
+        for (const n of nodes) {
+            if (n.key === key) return true;
+            if (n.children?.length && this.expandPathTo(n.children, key)) {
+                n.expanded = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private flattenVisible(nodes: any[]): any[] {
+        const result: any[] = [];
+        for (const n of nodes) {
+            result.push(n);
+            if (n.expanded && n.children?.length) result.push(...this.flattenVisible(n.children));
+        }
+        return result;
+    }
+
+    private sortNodes(nodes: any[], asc: boolean): any[] {
+        nodes.sort((a, b) => asc
+            ? String(a.title).localeCompare(String(b.title))
+            : String(b.title).localeCompare(String(a.title)));
+        nodes.forEach(n => { if (n.children?.length) n.children = this.sortNodes([...n.children], asc); });
+        return nodes;
+    }
+
+    printNode() {
+        this.printLoading = true;
+        this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
+            this.printLoading = false;
+            const printBuildModel = cloneDeep(this.eruptBuildModel);
+            this.dataHandler.objectToEruptValue(data, printBuildModel);
+            const modal = this.modal.create({
+                nzTitle: this.i18n.fanyi('print.preview'),
+                nzContent: PrintTypeComponent,
+                nzWidth: 700,
+                nzStyle: {top: '30px'},
+                nzBodyStyle: {maxHeight: '75vh', overflow: 'auto'},
+                nzMaskClosable: false,
+                nzDraggable: true,
+                nzOkText: this.i18n.fanyi('global.print'),
+                nzOnOk: () => { modal.getContentComponent().print(); return false; }
+            });
+            modal.getContentComponent().eruptBuildModel = printBuildModel;
+        }, () => { this.printLoading = false; });
+    }
+
     fetchTreeData() {
+        this.sortAsc = null;
         this.treeLoading = true;
         this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
             this.treeLoading = false;
             if (tree) {
                 this.dataLength = this.dataHandler.countNodes(tree);
                 this.nodes = this.dataHandler.dataTreeToZorroTree(tree, this.eruptBuildModel.eruptModel.eruptJson.tree.expandLevel);
+                if (this.currentKey) {
+                    this.selectedKeys = [this.currentKey];
+                    setTimeout(() => this.locateNode(), 200);
+                } else {
+                    this.selectedKeys = [];
+                }
                 this.rollTreePoint();
                 if (this.searchValue) {
                     let temp = this.searchValue;
@@ -219,10 +365,13 @@ export class TreeComponent implements OnInit, OnDestroy {
                     }, 0)
                 }
             }
+        }, () => {
+            this.treeLoading = false;
         });
     }
 
     private rollTreePoint() {
+        if (!this.treeDiv) return;
         let st = this.treeDiv.nativeElement.scrollTop;
         setTimeout(() => {
             this.treeScrollTop = st;
@@ -234,6 +383,41 @@ export class TreeComponent implements OnInit, OnDestroy {
         event.event.stopPropagation();
     }
 
+    expandAll(): void {
+        this.setExpanded(this.nodes, true);
+        this.nodes = [...this.nodes];
+    }
+
+    collapseAll(): void {
+        this.setExpanded(this.nodes, false);
+        this.nodes = [...this.nodes];
+    }
+
+private setExpanded(nodes: any[], expanded: boolean): void {
+        for (const n of nodes) {
+            if (!n.isLeaf) n.expanded = expanded;
+            if (n.children?.length) this.setExpanded(n.children, expanded);
+        }
+    }
+
+    onResizeDragStart(e: MouseEvent): void {
+        e.preventDefault();
+        const startX = e.clientX;
+        const startWidth = this.treeWidth;
+        this.resizing = true;
+        const onMove = (ev: MouseEvent) => {
+            this.treeWidth = Math.max(150, Math.min(500, startWidth + ev.clientX - startX));
+        };
+        const onUp = () => {
+            this.resizing = false;
+            this.localSettings.patch(this.eruptName, {treeWidth: this.treeWidth});
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
     ngOnDestroy(): void {
         this.router$.unsubscribe();
     }
@@ -241,11 +425,17 @@ export class TreeComponent implements OnInit, OnDestroy {
     nodeClickEvent(event: NzFormatEmitEvent): void {
         this.selectLeaf = true;
         this.loading = true;
-        this.showEdit = true;
         this.currentKey = event.node.origin.key;
+        this.selectedKeys = [this.currentKey];
+        if (window.innerWidth <= 767) {
+            this.mobileTreeCollapsed = true;
+        }
         this.behavior = Scene.EDIT;
+        this.showEdit = true;
         this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
+            this.loading = false;
+        }, () => {
             this.loading = false;
         });
     }

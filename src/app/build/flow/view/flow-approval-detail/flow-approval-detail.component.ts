@@ -43,7 +43,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     dataHistories: FlowInstanceDataHistory[] = [];
 
-    // 新增属性存储接口返回的数据
+    // Newly added property to store data returned from the API
     instanceDetail: FlowInstance = null;
 
     instanceTasks: FlowInstanceTask[] = [];
@@ -52,14 +52,14 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     comments: FlowInstanceComment[] = [];
 
-    // 评论相关
+    // Comment-related
     newComment: string = '';
     isSubmittingComment: boolean = false;
 
     eruptBuild: EruptBuildModel
 
 
-    // 弹窗相关属性
+    // Modal-related properties
     approveModalVisible: boolean = false;
     rejectModalVisible: boolean = false;
     ccModalVisible: boolean = false;
@@ -145,9 +145,9 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.reloadFlows.emit()
     }
 
-    // 加载实例详情
+    // Load instance detail
     loadInstanceDetail(flow: FlowInstance) {
-        // 加载实例详情
+        // Load instance detail
         this.flowInstanceApiService.detail(flow.no).subscribe({
             next: (data) => {
                 this.instanceDetail = data.data;
@@ -161,19 +161,19 @@ export class FlowApprovalDetailComponent implements OnInit {
         });
     }
 
-    // 同意审批
+    // Approve
     approve() {
         this.reason = null;
         this.approveModalVisible = true;
     }
 
-    // 办理
+    // Handle task
     handle() {
         this.reason = null;
         this.handleModalVisible = true;
     }
 
-    // 提交办理
+    // Submit task handling
     submitHandle() {
         let data;
         if (Object.keys(this.nodeInfo?.prop?.formAccesses || {}).length) {
@@ -182,7 +182,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
         for (let node of this.assignedNodes) {
             if (!node.userIds || node.userIds.length === 0) {
-                this.message.warning(`请选择节点 [${node.name}] 的审批人`);
+                this.message.warning(this.i18n.fanyi('flow.warning.select_approver_prefix') + node.name + this.i18n.fanyi('flow.warning.select_approver_suffix2'));
                 return;
             }
         }
@@ -194,7 +194,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.flowInstanceApiService.assignee(this.instanceDetail.taskId, this.reason, data, nodeAssignments).subscribe(res => {
             this.handleModalVisible = false;
             this.reason = null;
-            this.message.success('办理成功');
+            this.message.success(this.i18n.fanyi('flow.success.handle'));
             this.onReloadFlows();
         })
     }
@@ -231,13 +231,13 @@ export class FlowApprovalDetailComponent implements OnInit {
         }
     }
 
-    // 拒绝审批
+    // Reject approval
     reject() {
         this.reason = null;
         this.rejectModalVisible = true;
     }
 
-    // 抄送审批
+    // CC approval
     cc() {
         this.reason = null;
         this.ccUsers = [];
@@ -245,15 +245,15 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.ccModalVisible = true;
     }
 
-    // 提交同意
+    // Submit approval
     submitApprove() {
         if (this.nodeInfo?.prop?.requireApprovalNote && !this.reason?.trim()) {
-            this.message.warning('请填写同意原因');
+            this.message.warning(this.i18n.fanyi('flow.warning.fill_approve_opinion'));
             return;
         }
         for (let node of this.assignedNodes) {
             if (!node.userIds || node.userIds.length === 0) {
-                this.message.warning(`请选择节点 [${node.name}] 的审批人`);
+                this.message.warning(this.i18n.fanyi('flow.warning.select_approver_prefix') + node.name + this.i18n.fanyi('flow.warning.select_approver_suffix2'));
                 return;
             }
         }
@@ -271,35 +271,35 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.flowInstanceApiService.agree(this.instanceDetail.taskId, this.reason, this.approveSignature, data, nodeAssignments).subscribe(res => {
             this.approveModalVisible = false;
             this.reason = null;
-            this.message.success('审批已同意');
+            this.message.success(this.i18n.fanyi('flow.success.approve'));
             this.onReloadFlows();
         })
 
     }
 
-    // 提交拒绝
+    // Submit rejection
     submitReject() {
         if (!this.reason?.trim()) {
-            this.message.warning('请填写拒绝原因');
+            this.message.warning(this.i18n.fanyi('flow.warning.fill_reject_reason'));
             return;
         }
         this.flowInstanceApiService.refuse(this.instanceDetail.taskId, this.reason).subscribe(res => {
             this.rejectModalVisible = false;
             this.reason = null;
-            this.message.success('审批已拒绝');
+            this.message.success(this.i18n.fanyi('flow.success.reject'));
             this.onReloadFlows();
         })
     }
 
-    // 提交抄送
+    // Submit CC
     submitCc() {
         if (this.ccUsers.length === 0) {
-            this.message.warning('请选择抄送人员');
+            this.message.warning(this.i18n.fanyi('flow.warning.select_cc_user'));
             return;
         }
 
         if (!this.reason?.trim()) {
-            this.message.warning('请填写抄送说明');
+            this.message.warning(this.i18n.fanyi('flow.warning.fill_cc_reason'));
             return;
         }
 
@@ -307,8 +307,8 @@ export class FlowApprovalDetailComponent implements OnInit {
             this.reason = null;
             this.ccUsers = [];
             this.ccModalVisible = false;
-            this.message.success('抄送成功');
-            // 刷新数据
+            this.message.success(this.i18n.fanyi('flow.success.cc'));
+            // Refresh data
             if (this.selectedInstance?.id) {
                 this.onReloadFlows();
             }
@@ -316,21 +316,21 @@ export class FlowApprovalDetailComponent implements OnInit {
     }
 
 
-    // 提交转交
+    // Submit transfer
     submitTransfer() {
         if (!this.transferUser) {
-            this.message.warning('请选择转交人员');
+            this.message.warning(this.i18n.fanyi('flow.warning.select_transfer_user'));
             return;
         }
 
         if (!this.reason?.trim()) {
-            this.message.warning('请填写转交说明');
+            this.message.warning(this.i18n.fanyi('flow.warning.fill_transfer_reason'));
             return;
         }
 
         this.flowInstanceApiService.transfer(this.instanceDetail.taskId, this.transferUser, this.reason).subscribe(res => {
             this.transferModalVisible = false;
-            this.message.success('转交成功');
+            this.message.success(this.i18n.fanyi('flow.success.transfer'));
             this.transferModalVisible = false;
             this.reason = null;
             this.transferUser = null;
@@ -338,25 +338,25 @@ export class FlowApprovalDetailComponent implements OnInit {
         })
     }
 
-    // 提交加签
+    // Submit countersign
     submitAddSign() {
         if (!this.addSignType) {
-            this.message.warning('请选择加签类型');
+            this.message.warning(this.i18n.fanyi('flow.warning.select_add_sign_type'));
             return;
         }
 
         if (this.addSignUsers.length === 0) {
-            this.message.warning('请选择加签人员');
+            this.message.warning(this.i18n.fanyi('flow.warning.select_add_sign_user'));
             return;
         }
 
         if (!this.reason?.trim()) {
-            this.message.warning('请填写加签说明');
+            this.message.warning(this.i18n.fanyi('flow.warning.fill_add_sign_reason'));
             return;
         }
 
         this.flowInstanceApiService.addSign(this.instanceDetail.taskId, this.addSignType, this.addSignUsers, this.reason).subscribe(res => {
-            this.message.success('加签成功');
+            this.message.success(this.i18n.fanyi('flow.success.add_sign'));
             this.addSignModalVisible = false;
             this.onReloadFlows();
         })
@@ -364,20 +364,20 @@ export class FlowApprovalDetailComponent implements OnInit {
     }
 
 
-    // 提交退回
+    // Submit return
     submitReturn() {
         if (!this.returnNode) {
-            this.message.warning('请选择退回节点');
+            this.message.warning(this.i18n.fanyi('flow.warning.select_return_node'));
             return;
         }
 
         if (!this.reason?.trim()) {
-            this.message.warning('请填写退回说明');
+            this.message.warning(this.i18n.fanyi('flow.warning.fill_return_reason'));
             return;
         }
 
         this.flowInstanceApiService.rollback(this.instanceDetail.taskId, this.returnNode, this.reason).subscribe(res => {
-            this.message.success('退回成功');
+            this.message.success(this.i18n.fanyi('flow.success.return'));
             this.returnModalVisible = false;
             this.reason = null;
             this.returnNode = null;
@@ -385,7 +385,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         })
     }
 
-    // 转交审批
+    // Transfer approval
     transfer() {
         this.transferUser = null;
         this.reason = null;
@@ -393,7 +393,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.transferModalVisible = true;
     }
 
-    // 加签审批
+    // Add countersigner
     addSigner() {
         this.addSignUsers = [];
         this.reason = null;
@@ -402,7 +402,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.addSignModalVisible = true;
     }
 
-    // 退回审批
+    // Return approval
     return() {
         this.returnNode = null;
         this.reason = null;
@@ -414,14 +414,14 @@ export class FlowApprovalDetailComponent implements OnInit {
         })
     }
 
-    // 重新提交 / 提交
+    // Resubmit / Submit
     resubmit() {
         this.reason = null;
         this.selfSelectNodes = [];
         this.nodeUsersOptions = {};
         this.selectedNodeUserIds = {};
         this.resubmitModalVisible = true;
-        // 首次提交才需要加载自选节点
+        // Self-select nodes only need to be loaded on first submission
         if (this.instanceDetail?.eruptModelId) return;
         this.loadingSelfSelectNodes = true;
         const flowId = this.instanceDetail.eruptFlowConfig.id;
@@ -447,11 +447,11 @@ export class FlowApprovalDetailComponent implements OnInit {
         });
     }
 
-    // 提交重新提交 / 提交
+    // Submit resubmit / Submit
     submitResubmit() {
         for (let node of this.selfSelectNodes) {
             if (!this.selectedNodeUserIds[node.key] || this.selectedNodeUserIds[node.key].length === 0) {
-                this.message.warning(`请选择节点【${node.value}】的审批用户`);
+                this.message.warning(this.i18n.fanyi('flow.warning.select_approver_prefix') + node.value + this.i18n.fanyi('flow.warning.select_approver_suffix'));
                 return;
             }
         }
@@ -464,7 +464,7 @@ export class FlowApprovalDetailComponent implements OnInit {
             this.selfSelectNodes.length ? selfSelectNodeUsers : null).subscribe(res => {
             this.resubmitModalVisible = false;
             this.reason = null;
-            this.message.success('提交成功');
+            this.message.success(this.i18n.fanyi('flow.success.submit'));
             this.onReloadFlows();
         })
     }
@@ -473,7 +473,7 @@ export class FlowApprovalDetailComponent implements OnInit {
         let data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
         this.flowInstanceApiService.updateData(this.selectedInstance.id, data).subscribe({
             next: (data) => {
-                this.message.success('修改成功');
+                this.message.success(this.i18n.fanyi('global.update.success'));
                 this.getDataHistories(this.selectedInstance.id);
             }
         })
@@ -491,23 +491,23 @@ export class FlowApprovalDetailComponent implements OnInit {
     copyToClipboard(no: string) {
         if (!no) return;
         navigator.clipboard.writeText(no).then(() => {
-            this.message.success('编号已复制到剪贴板');
+            this.message.success(this.i18n.fanyi('flow.success.no_copied'));
         });
     }
 
     withdraw() {
-        this.flowInstanceApiService.withdraw(this.selectedInstance.id, '撤回').subscribe({
+        this.flowInstanceApiService.withdraw(this.selectedInstance.id, this.i18n.fanyi('flow.action.withdraw')).subscribe({
             next: (data) => {
-                this.message.success('撤回成功');
+                this.message.success(this.i18n.fanyi('flow.success.withdraw'));
                 this.onReloadFlows();
             }
         })
     }
 
     urge() {
-        this.flowInstanceApiService.urge(this.selectedInstance.id, '催办').subscribe({
+        this.flowInstanceApiService.urge(this.selectedInstance.id, this.i18n.fanyi('flow.action.urge')).subscribe({
             next: (data) => {
-                this.message.success('催办成功');
+                this.message.success(this.i18n.fanyi('flow.success.urge'));
                 this.loadInstanceDetail(this.selectedInstance);
             }
         })
@@ -541,7 +541,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                 })
 
             } else if (this.activeTabIndex === 1) {
-                // 加载任务列表
+                // Load task list
                 this.flowInstanceApiService.tasks(this.selectedInstance.id).subscribe({
                     next: (data) => {
                         const arr = data.data || [];
@@ -576,7 +576,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     }
 
 
-    // 新增方法：提交评论
+    // New method: submit a comment
     submitComment() {
         if (!this.newComment.trim() || !this.selectedInstance?.id) {
             return;
@@ -585,9 +585,9 @@ export class FlowApprovalDetailComponent implements OnInit {
         this.isSubmittingComment = true;
         this.flowInstanceApiService.commentCreate(Number(this.selectedInstance.id), this.newComment).subscribe({
             next: () => {
-                this.message.success('评论提交成功');
+                this.message.success(this.i18n.fanyi('flow.success.comment'));
                 this.newComment = '';
-                // 重新加载评论列表
+                // Reload comment list
                 if (this.selectedInstance?.id) {
                     this.flowInstanceApiService.commentList(Number(this.selectedInstance.id)).subscribe(data => {
                         this.comments = data.data || [];
@@ -603,12 +603,12 @@ export class FlowApprovalDetailComponent implements OnInit {
     openSign() {
         this.modal.create({
             nzDraggable: true,
-            nzTitle: '签名',
+            nzTitle: this.i18n.fanyi('flow.modal.signature'),
             nzContent: SignaturePadComponent,
             nzMaskClosable: false,
             nzWidth: '50%',
-            nzOkText: '保存',
-            nzCancelText: '取消',
+            nzOkText: this.i18n.fanyi('global.save'),
+            nzCancelText: this.i18n.fanyi('global.cancel'),
             nzOnOk: (sign: SignaturePadComponent) => {
                 this.approveSignature = sign.getSign();
             },
@@ -618,10 +618,10 @@ export class FlowApprovalDetailComponent implements OnInit {
         });
     }
 
-    // 新增方法：查看流程图
+    // New method: view the flow diagram
     viewFlow() {
         let ref = this.drawerService.create({
-            nzTitle: '查看流程',
+            nzTitle: this.i18n.fanyi('flow.action.view_flow'),
             nzContent: EruptFlowComponent,
             nzContentParams: {
                 eruptBuild: this.eruptBuild,
@@ -644,7 +644,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     showDiff(history: FlowInstanceDataHistory) {
         let ref = this.modal.create({
             nzDraggable: true,
-            nzTitle: '变更详情',
+            nzTitle: this.i18n.fanyi('flow.action.change_detail'),
             nzContent: NzCodeEditorComponent,
             nzBodyStyle: {
                 height: '500px'
@@ -669,11 +669,11 @@ export class FlowApprovalDetailComponent implements OnInit {
     copyLink() {
         let link = location.origin + "/#/fill/flow/approval-detail/" + this.selectedInstance.no;
         navigator.clipboard.writeText(link).then(() => {
-            this.message.success('地址已复制到剪贴板');
+            this.message.success(this.i18n.fanyi('flow.success.link_copied'));
         });
     }
 
-    // 打印预览功能
+    // Print preview feature
     print() {
         const modalRef = this.modal.create({
             nzDraggable: true,

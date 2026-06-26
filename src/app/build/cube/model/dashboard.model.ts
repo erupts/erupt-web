@@ -1,4 +1,4 @@
-import {GridsterItem} from "angular-gridster2";
+import {GridsterItemConfig} from "angular-gridster2";
 import {CubeOperator, FilterGroup, Sort} from "./cube-query.model";
 
 export interface EruptUser {
@@ -22,7 +22,7 @@ export interface Dashboard {
 
     draftDsl?: DashboardDSL;
     publishDsl?: DashboardDSL;
-    publishTime?: Date | string;  // 发布时间
+    publishTime?: Date | string;  // publish time
 }
 
 export interface DashboardPublishHistory {
@@ -40,7 +40,7 @@ export enum DashboardTheme {
 }
 
 /**
- * 仪表板 DSL 定义
+ * Dashboard DSL definition
  */
 export interface DashboardDSL {
     filters?: FilterDSL[];
@@ -66,20 +66,20 @@ export interface DashboardSettings {
     backgroundColor?: string;
     backgroundImage?: string;
     theme?: DashboardTheme;
-    autoRefreshInterval?: number; // 自动刷新间隔（秒），0 表示不自动刷新
-    gap?: number;                 // 报表间距
+    autoRefreshInterval?: number; // auto-refresh interval (seconds), 0 means no auto-refresh
+    gap?: number;                 // report spacing
 }
 
 export interface FilterDSL {
     title: string;
     field: string;
     hidden?: boolean;
-    notNull?: boolean;  // 排除空值（下拉选项过滤）
+    notNull?: boolean;  // exclude null values (dropdown option filter)
     operator?: CubeOperator;
     // Absolute value, or relative-time string "PAST:<days>" / "FUTURE:<days>"
     defaultValue?: any;
     value?: any;
-    linkage?: string[]; // 联动
+    linkage?: string[]; // linkage
 }
 
 /** Parse "PAST:7" / "FUTURE:14" from defaultValue. Returns null for absolute values. */
@@ -98,9 +98,9 @@ export interface CompareConfig {
 }
 
 /**
- * 报表 DSL 定义
+ * Report DSL definition
  */
-export interface ReportDSL extends GridsterItem {
+export interface ReportDSL extends GridsterItemConfig {
     type?: ReportType;
     title?: string;
     description?: string;
@@ -129,7 +129,7 @@ export enum CubeKey {
 }
 
 /**
- * 报表类型枚举
+ * Report type enum
  */
 export enum ReportType {
     LINE = 'LINE',

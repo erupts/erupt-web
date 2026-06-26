@@ -1,0 +1,126 @@
+app-terminal {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+}
+
+.terminal-shell {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: #141920;
+    overflow: hidden;
+    outline: none;
+}
+
+.tab-bar {
+    display: flex;
+    align-items: center;
+    height: 38px;
+    min-height: 38px;
+    background: #141920;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+}
+
+.tab-bar-tabs {
+    display: flex;
+    align-items: flex-end;
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 33px;
+    padding: 0 10px 0 14px;
+    margin-right: 2px;
+    cursor: pointer;
+    color: #5c6370;
+    font: 12px/1 system-ui, sans-serif;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background .12s, color .12s;
+    user-select: none;
+
+    &:hover { background: #1b2027; color: #abb2bf; }
+    &.active { background: #1b2027; color: #abb2bf; }
+
+    &:hover .tab-close,
+    &.active .tab-close { color: #5c6370; }
+}
+
+.tab-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #528bff;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity .2s;
+
+    &.visible { opacity: 1; }
+}
+
+.tab-close {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: transparent;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: background .1s, color .1s;
+
+    &:hover { background: #e06c75 !important; color: #fff !important; }
+}
+
+.btn-add-tab {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #abb2bf;
+    font-size: 20px;
+    flex-shrink: 0;
+    margin: 0 4px;
+    transition: background .12s, color .12s;
+    user-select: none;
+
+    &:hover { background: #2a3340; color: #fff; }
+}
+
+.terminals {
+    flex: 1;
+    background: #1b2027;
+    position: relative;
+    overflow: hidden;
+}
+
+.term-wrap {
+    position: absolute;
+    inset: 0;
+    padding: 8px 12px;
+    display: none;
+
+    &.active { display: block; }
+
+    .xterm { height: 100%; }
+    .xterm-viewport { overflow-y: auto !important; }
+}

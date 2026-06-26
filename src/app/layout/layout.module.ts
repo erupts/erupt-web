@@ -37,13 +37,13 @@ import {SettingsComponent} from "./erupt/header/settings/settings.component";
 import {NzAlertModule} from "ng-zorro-antd/alert";
 import {NzTableModule} from "ng-zorro-antd/table";
 import {SharedModule} from "@shared/shared.module";
-import {NzBackTopModule} from "ng-zorro-antd/back-top";
+import {NzFloatButtonModule} from "ng-zorro-antd/float-button";
 import {ReuseTabModule} from "@delon/abc/reuse-tab";
 import {HeaderRTLComponent} from "./erupt/header/components/rtl.component";
 import {MenuComponent} from './erupt/menu/menu.component';
 import {NzBreadCrumbModule} from "ng-zorro-antd/breadcrumb";
 import {LayoutEruptComponent} from "./erupt/erupt.component";
-import {NzWaterMarkModule} from "ng-zorro-antd/water-mark";
+import {NzWatermarkModule} from "ng-zorro-antd/watermark";
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 import {NoticeComponent} from './erupt/component/notice/notice.component';
 import {NoticeDetailComponent} from './erupt/component/notice-detail/notice-detail.component';
@@ -96,10 +96,10 @@ const PASSPORT = [LayoutPassportComponent];
         NzAlertModule,
         NzTableModule,
         SharedModule,
-        NzBackTopModule,
+        NzFloatButtonModule,
         ReuseTabModule,
         NzBreadCrumbModule,
-        NzWaterMarkModule,
+        NzWatermarkModule,
         NzSegmentedModule,
         DragDropModule,
         NzSpaceComponent,

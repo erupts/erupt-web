@@ -201,7 +201,7 @@ export class TabTableComponent implements OnInit {
             if (dependField.eruptFieldJson.edit.$value) {
                 dependVal = dependField.eruptFieldJson.edit.$value;
             } else {
-                this.msg.warning("请先选择" + dependField.eruptFieldJson.edit.title);
+                this.msg.warning(this.i18n.fanyi("global.pre_select") + dependField.eruptFieldJson.edit.title);
                 return;
             }
         }
@@ -210,6 +210,7 @@ export class TabTableComponent implements OnInit {
             nzStyle: {top: "20px"},
             nzDraggable:true,
             nzWrapClassName: "modal-xxl",
+            nzBodyStyle: {padding: "0"},
             nzMaskClosable: false,
             nzKeyboard: false,
             nzTitle: this.i18n.fanyi("global.new"),
@@ -253,7 +254,7 @@ export class TabTableComponent implements OnInit {
                     }
                 }
                 edit.$value.push(...edit.$tempValue);
-                edit.$value = [...new Set(edit.$value)]; //去重
+                edit.$value = [...new Set(edit.$value)]; //deduplicate
                 return true;
             }
         });

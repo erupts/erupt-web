@@ -7,7 +7,7 @@ import {EruptBuildModel} from "../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {DatePipe} from "@angular/common";
 import moment from 'moment';
-import {QueryCondition} from "../model/erupt.vo";
+import {QueryCondition, QueryExpression} from "../model/erupt.vo";
 import {isNotNull} from "@shared/util/erupt.util";
 import {NzUploadFile} from "ng-zorro-antd/upload";
 import {NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
@@ -82,10 +82,10 @@ export class DataHandlerService {
                     }
                     break;
             }
-            //生成columns
+            //generate columns
             field.eruptFieldJson.views.forEach(view => {
                 if (view.column) {
-                    //修复表格显示子类属性时无法正确检索到属性值的缺陷
+                    //fix defect where sub-class property values could not be correctly retrieved when displayed in the table
                     view.column = field.fieldName + "_" + view.column.replace(/\./g, "_");
                 } else {
                     view.column = field.fieldName;
@@ -137,38 +137,130 @@ export class DataHandlerService {
         return queryCondition;
     }
 
-    searchEruptToObject(eruptBuildModel: EruptBuildModel): object {
-        const obj = this.eruptValueToObject(eruptBuildModel);
-        eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
+    buildSearchConditions(eruptModel: EruptModel): QueryCondition[] {
+        const conditions: QueryCondition[] = [];
+        for (const field of eruptModel.eruptFieldModels) {
             const edit = field.eruptFieldJson.edit;
-            if (edit.search.value) {
-                if (edit.search.vague) {
-                    switch (edit.type) {
-                        case EditType.NUMBER:
-                            if ((edit.$l_val || edit.$l_val === 0) && (edit.$r_val || edit.$r_val === 0)) {
-                                obj[field.fieldName] = [edit.$l_val, edit.$r_val];
-                            }
-                            break;
-                        case EditType.DATE:
-                            if (edit.$value) {
-                                if (edit.dateType.type == DateEnum.DATE_TIME) {
-                                    obj[field.fieldName] = [
-                                        this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'HH:mm:ss.SSS"),
-                                        this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'HH:mm:ss.SSS")
-                                    ];
-                                } else {
-                                    obj[field.fieldName] = [
-                                        this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'00:00:00.000"),
-                                        this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'23:59:59.999")
-                                    ];
-                                }
-                            }
-                            break;
-                    }
-                }
+            if (!edit?.search?.value) continue;
+            const expression = edit.$operator ?? undefined;
+            if (expression === QueryExpression.NULL || expression === QueryExpression.NOT_NULL) {
+                conditions.push({key: field.fieldName, value: null, expression});
+                continue;
             }
-        });
-        return obj;
+            if (expression === QueryExpression.RANGE && edit.type === EditType.NUMBER) {
+                if (edit.$l_val != null || edit.$r_val != null) {
+                    conditions.push({key: field.fieldName, value: [edit.$l_val ?? null, edit.$r_val ?? null], expression});
+                }
+                continue;
+            }
+            if (expression === QueryExpression.IN || expression === QueryExpression.NOT_IN) {
+                if (edit.$value?.length) {
+                    conditions.push({key: field.fieldName, value: edit.$value, expression});
+                }
+                continue;
+            }
+            let value: any;
+            switch (edit.type) {
+                case EditType.INPUT:
+                    if (edit.$value) {
+                        const inputType = edit.inputType;
+                        value = (inputType?.prefixValue ?? '') + edit.$value + (inputType?.suffixValue ?? '');
+                    }
+                    break;
+                case EditType.PASSWORD:
+                    value = edit.$value;
+                    break;
+                case EditType.DATE:
+                    if (edit.$value) {
+                        if (Array.isArray(edit.$value) && edit.$value[0]) {
+                            value = edit.dateType.type === DateEnum.DATE_TIME ? [
+                                this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'HH:mm:ss.SSS"),
+                                this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'HH:mm:ss.SSS")
+                            ] : [
+                                this.datePipe.transform(edit.$value[0], "yyyy-MM-dd'T'00:00:00.000"),
+                                this.datePipe.transform(edit.$value[1], "yyyy-MM-dd'T'23:59:59.999")
+                            ];
+                        } else if (!Array.isArray(edit.$value)) {
+                            value = this.dateFormat(edit.$value, edit);
+                        }
+                    }
+                    break;
+                case EditType.REFERENCE_TABLE:
+                    if (edit.$value) {
+                        value = {
+                            [edit.referenceTableType.id]: edit.$value[edit.referenceTableType.id],
+                            [edit.referenceTableType.label]: edit.$value[edit.referenceTableType.label]
+                        };
+                    }
+                    break;
+                case EditType.REFERENCE_TREE:
+                    if (edit.$value) {
+                        value = {
+                            [edit.referenceTreeType.id]: edit.$value.id,
+                            [edit.referenceTreeType.label]: edit.$value.label
+                        };
+                    }
+                    break;
+                case EditType.TAGS:
+                    if (edit.$value?.length) {
+                        value = edit.tagsType.joinSeparator === '[]'
+                            ? JSON.stringify(edit.$value)
+                            : (<string[]>edit.$value).join(edit.tagsType.joinSeparator);
+                    }
+                    break;
+                default:
+                    if (edit.$value != null) {
+                        value = edit.$value;
+                    }
+                    break;
+            }
+            if (value == null) continue;
+            if (typeof value === 'string') {
+                value = value.trim();
+                if (!value) continue;
+            }
+            conditions.push({key: field.fieldName, value, expression});
+        }
+        return conditions;
+    }
+
+    private getDefaultSearchOperator(type: EditType): QueryExpression | null {
+        switch (type) {
+            case EditType.INPUT:
+            case EditType.PASSWORD:
+            case EditType.TEXTAREA:
+            case EditType.HTML_EDITOR:
+            case EditType.CODE_EDITOR:
+            case EditType.AUTO_COMPLETE:
+                return QueryExpression.EQ;
+            case EditType.NUMBER:
+            case EditType.REFERENCE_TABLE:
+            case EditType.REFERENCE_TREE:
+            case EditType.CHOICE:
+                return QueryExpression.EQ;
+            case EditType.DATE:
+                return QueryExpression.RANGE;
+            default:
+                return null;
+        }
+    }
+
+    initSearchOperators(eruptModel: EruptModel): void {
+        for (const field of eruptModel.eruptFieldModels) {
+            const edit = field.eruptFieldJson.edit;
+            if (!edit || !edit.search?.value) continue;
+            if (!edit.$operator) {
+                edit.$operator = this.getDefaultSearchOperator(edit.type);
+            }
+        }
+    }
+
+    resetSearchOperators(eruptModel: EruptModel): void {
+        for (const field of eruptModel.eruptFieldModels) {
+            const edit = field.eruptFieldJson.edit;
+            if (!edit || !edit.search?.value) continue;
+            edit.$operator = this.getDefaultSearchOperator(edit.type);
+        }
     }
 
     dateFormat(date, edit: Edit): string {
@@ -196,7 +288,7 @@ export class DataHandlerService {
         return this.datePipe.transform(date, format);
     }
 
-    //将eruptModel中的内容拼接成后台需要的json格式
+    //serialize the eruptModel content into the JSON format required by the backend
     eruptValueToObject(eruptBuildModel: EruptBuildModel): object {
         const eruptData: any = {};
         eruptBuildModel.eruptModel.eruptFieldModels.forEach(field => {
@@ -213,6 +305,11 @@ export class DataHandlerService {
                             }
                         }
                         break;
+                    case EditType.PASSWORD:
+                        if (edit.$value) {
+                            eruptData[field.fieldName] = edit.$value;
+                        }
+                        break;
                     case EditType.CHOICE:
                         if (edit.$value || edit.$value === 0) {
                             eruptData[field.fieldName] = edit.$value;
@@ -220,7 +317,9 @@ export class DataHandlerService {
                         break;
                     case EditType.TAGS:
                         if (edit.$value || edit.$value === 0) {
-                            let val = (<string[]>edit.$value).join(edit.tagsType.joinSeparator);
+                            let val = edit.tagsType.joinSeparator === '[]'
+                                ? JSON.stringify(edit.$value)
+                                : (<string[]>edit.$value).join(edit.tagsType.joinSeparator);
                             if (val) {
                                 eruptData[field.fieldName] = val;
                             }
@@ -393,7 +492,7 @@ export class DataHandlerService {
     }
 
 
-    //将后台数据转化成前端可视格式
+    //convert backend data into a frontend-displayable format
     objectToEruptValue(object: any, eruptBuild: EruptBuildModel) {
         this.emptyEruptValue(eruptBuild);
         for (let field of eruptBuild.eruptModel.eruptFieldModels) {
@@ -402,7 +501,7 @@ export class DataHandlerService {
                 switch (edit.type) {
                     case EditType.INPUT:
                         const inputType = edit.inputType;
-                        //处理前缀和后缀的数据
+                        //handle prefix and suffix data
                         if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
                             if (object[field.fieldName]) {
                                 let str = <string>object[field.fieldName];
@@ -425,6 +524,9 @@ export class DataHandlerService {
                         } else {
                             edit.$value = object[field.fieldName];
                         }
+                        break;
+                    case EditType.PASSWORD:
+                        edit.$value = object[field.fieldName];
                         break;
                     case EditType.DATE:
                         if (object[field.fieldName]) {
@@ -495,7 +597,16 @@ export class DataHandlerService {
                         break;
                     case EditType.TAGS:
                         if (object[field.fieldName]) {
-                            edit.$value = String(object[field.fieldName]).split(edit.tagsType.joinSeparator);
+                            const raw = String(object[field.fieldName]);
+                            if (edit.tagsType.joinSeparator === '[]') {
+                                try {
+                                    edit.$value = JSON.parse(raw);
+                                } catch {
+                                    edit.$value = raw ? [raw] : [];
+                                }
+                            } else {
+                                edit.$value = raw.split(edit.tagsType.joinSeparator);
+                            }
                         } else {
                             edit.$value = [];
                         }

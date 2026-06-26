@@ -3,6 +3,8 @@ import {MultiChoiceEnum} from "../../model/erupt.enum";
 import {EruptModel} from "../../model/erupt.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
+import {EruptBuildModel} from "../../model/erupt-build.model";
+import {DataHandlerService} from "../../service/data-handler.service";
 
 @Component({
     standalone: false,
@@ -14,6 +16,8 @@ export class MultiChoiceComponent implements OnInit, AfterViewChecked {
 
     @Input() eruptModel: EruptModel;
 
+    @Input() eruptBuildModel: EruptBuildModel;
+
     @Input() eruptField: EruptFieldModel;
 
     @Input() readonly: boolean = false;
@@ -24,25 +28,22 @@ export class MultiChoiceComponent implements OnInit, AfterViewChecked {
 
     multiChoiceEnum = MultiChoiceEnum;
 
-    constructor(private dataService: DataService, private el: ElementRef, private renderer: Renderer2) {
-
+    constructor(private dataService: DataService,
+                private el: ElementRef,
+                private renderer: Renderer2,
+                private dataHandlerService: DataHandlerService) {
     }
 
     ngOnInit(): void {
         if (this.eruptField.eruptFieldJson.edit.multiChoiceType.dependField) {
             this.eruptModel.eruptFieldModelMap.get(this.eruptField.eruptFieldJson.edit.multiChoiceType.dependField)
                 .eruptFieldJson.edit.$valueSubject?.asObservable().subscribe(val => {
-                this.dataService.findChoiceItemFilter(this.eruptModel.eruptName, this.eruptField.fieldName, this.getFromData(), this.eruptParentName).subscribe(data => {
+                this.dataService.findChoiceItemFilter(this.eruptModel.eruptName, this.eruptField.fieldName, this.getFormData(), this.eruptParentName).subscribe(data => {
                     this.eruptField.componentValue = data;
                     if (this.eruptField.eruptFieldJson.edit.$value) {
                         this.eruptField.eruptFieldJson.edit.$value = this.eruptField.eruptFieldJson.edit.$value.filter((value) => {
                             return this.eruptField.componentValue.some(cv => cv.value == String(value));
                         })
-
-                        //
-                        // if (this.eruptField.componentValue.filter((it: VL) => this.eruptField.eruptFieldJson.edit.$value?.some(value => String(value) === it.value)).length == 0) {
-                        //     this.eruptField.eruptFieldJson.edit.$value = [];
-                        // }
                     }
                 })
             })
@@ -72,13 +73,10 @@ export class MultiChoiceComponent implements OnInit, AfterViewChecked {
         }
     }
 
-
-    getFromData(): any {
-        let result = {};
-        for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
-            result[eruptFieldModel.fieldName] = eruptFieldModel.eruptFieldJson.edit.$value;
-        }
-        return result;
+    getFormData(): object {
+        return this.eruptBuildModel
+            ? this.dataHandlerService.eruptValueToObject(this.eruptBuildModel)
+            : {};
     }
 
     isNumeric(str: string): boolean {
@@ -92,8 +90,39 @@ export class MultiChoiceComponent implements OnInit, AfterViewChecked {
         return false;
     }
 
-    checkboxChange(e: any[]) {
-        this.eruptField.eruptFieldJson.edit.$value = e;
+    onCheckChange(value: any, checked: boolean) {
+        const values: any[] = this.eruptField.eruptFieldJson.edit.$value || [];
+        if (checked) {
+            if (!this.includes(values, value)) values.push(value);
+        } else {
+            const idx = values.findIndex(v => v == value);
+            if (idx !== -1) values.splice(idx, 1);
+        }
+        this.eruptField.eruptFieldJson.edit.$value = [...values];
+    }
+
+    isAllChecked(): boolean {
+        const items = this.eruptField.componentValue;
+        const values = this.eruptField.eruptFieldJson.edit.$value;
+        if (!items?.length || !values?.length) return false;
+        return items.filter(v => !v.disable).every(v => this.includes(values, v.value));
+    }
+
+    isIndeterminate(): boolean {
+        const items = this.eruptField.componentValue;
+        const values = this.eruptField.eruptFieldJson.edit.$value;
+        if (!items?.length || !values?.length) return false;
+        return !this.isAllChecked() && items.some(v => this.includes(values, v.value));
+    }
+
+    toggleAll(checked: boolean) {
+        if (checked) {
+            this.eruptField.eruptFieldJson.edit.$value = this.eruptField.componentValue
+                .filter(v => !v.disable)
+                .map(v => this.isNumeric(v.value) ? parseInt(v.value) : v.value);
+        } else {
+            this.eruptField.eruptFieldJson.edit.$value = [];
+        }
     }
 
     getValueColor(value: any): string {

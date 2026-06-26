@@ -1,36 +1,54 @@
-<div style="position: absolute;right: 5%;top: 5%;z-index: 999">
-  <i18n-choice style="font-size: 1.3em;color: #000"></i18n-choice>
-</div>
-<div class="container">
-  <div class="wrap">
-    <div class="top">
-      <div class="head">
+<div class="lp-page">
+
+  <!-- 主区域 -->
+  <div class="lp-side">
+    <nav class="lp-side-nav">
+      <!-- 移动端品牌名（左侧面板隐藏时出现） -->
+      <div class="lp-side-brand">
         @if (logoPath) {
-          <img class="logo" [src]="logoPath" alt="logo">
+          <img class="lp-side-brand-img" [src]="logoPath" alt="logo">
         }
-        <span class="title">{{title}}</span>
-      </div>
-      <div class="desc">
-        @if (desc) {
-          <span>{{desc}}</span>
+        @if (!logoPath) {
+          <svg class="lp-side-brand-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="15" height="15" rx="3" fill="currentColor"/>
+            <rect x="21" width="15" height="15" rx="3" fill="currentColor" opacity="0.45"/>
+            <rect y="21" width="15" height="15" rx="3" fill="currentColor" opacity="0.45"/>
+            <rect x="21" y="21" width="15" height="15" rx="3" fill="currentColor" opacity="0.15"/>
+          </svg>
         }
+        <span class="lp-side-brand-name">{{title}}</span>
       </div>
-    </div>
-    <div style="display: flex; justify-content: center;">
-      <div class="pass-form">
+      <div class="lp-side-nav-actions">
+        @if (copyright) {
+          <a class="lp-nav-btn" href="https://github.com/erupts/erupt" target="_blank"
+             nz-tooltip nzTooltipTitle="GitHub" nzTooltipPlacement="bottom">
+            <i nz-icon nzType="github" nzTheme="outline"></i>
+          </a>
+          <div class="lp-nav-divider"></div>
+        }
+        <div class="lp-nav-lang">
+          <i18n-choice></i18n-choice>
+        </div>
+      </div>
+    </nav>
+
+    <main class="lp-side-content">
+      <div class="lp-card">
         <router-outlet></router-outlet>
       </div>
-    </div>
+    </main>
+
     @if (copyright) {
-      <global-footer>
+      <p class="lp-copyright">
         @if (copyrightTxt) {
-          <p [innerHTML]="copyrightTxt"></p>
+          <span [innerHTML]="copyrightTxt"></span>
         }
         @if (!copyrightTxt) {
-          <i nz-icon nzType="copyright" nzTheme="outline"></i> 2018 - {{nowYear}}
-          <a href="https://www.erupt.xyz" target="_blank">Erupt Engine</a>&nbsp; All rights reserved.
+          &copy; 2018 – {{nowYear}}&nbsp;
+          <a href="https://www.erupt.xyz" target="_blank">Erupt Engine</a>
         }
-      </global-footer>
+      </p>
     }
   </div>
+
 </div>

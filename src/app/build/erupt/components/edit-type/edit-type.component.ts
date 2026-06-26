@@ -1,6 +1,15 @@
 import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
+import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {Edit, EruptFieldModel, FormCtrl} from "../../model/erupt-field.model";
-import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, MultiChoiceEnum, Scene} from "../../model/erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    EditType,
+    FormSize,
+    HtmlEditTypeEnum,
+    MultiChoiceEnum,
+    Scene
+} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
@@ -12,8 +21,9 @@ import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzUploadFile} from "ng-zorro-antd/upload";
+import {NzImageService} from "ng-zorro-antd/image";
 import {DataHandlerService} from "../../service/data-handler.service";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, skip} from "rxjs";
 import {SignaturePadComponent} from "../signature-pad/signature-pad.component";
 
 @Component({
@@ -65,6 +75,17 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     iframeHeight = IframeHeight;
 
+    divideCollapsed: { [key: string]: boolean } = {};
+
+    private divideGroupMap: Map<string, string> = new Map();
+
+    divideGroupFields: Map<string, EruptFieldModel[]> = new Map();
+
+    divideGroupedFieldSet: Set<string> = new Set();
+
+    // field name -> group name
+    private fieldToGroupMap: Map<string, string> = new Map();
+
     tabErupts: {
         key: string,
         value: EruptBuildModel
@@ -76,7 +97,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 private dataHandlerService: DataHandlerService,
                 @Inject(DA_SERVICE_TOKEN) public tokenService: ITokenService,
                 @Inject(NzModalService) private modal: NzModalService,
-                @Inject(NzMessageService) private msg: NzMessageService) {
+                @Inject(NzMessageService) private msg: NzMessageService,
+                private imageService: NzImageService) {
         this.supportCopy = "clipboard" in navigator
     }
 
@@ -85,6 +107,34 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         let layout = this.eruptModel.eruptJson.layout;
         if (layout && layout.formSize == FormSize.FULL_LINE) {
             this.col = colRules[1];
+        }
+        // Build divide group map: DIVIDE-to-DIVIDE implicit grouping
+        const fieldModelMap = this.eruptModel.eruptFieldModelMap;
+        let currentDivide: string = null;
+        for (let model of this.eruptModel.eruptFieldModels) {
+            if (model.eruptFieldJson.edit?.type === EditType.DIVIDE) {
+                currentDivide = model.fieldName;
+            } else if (model.eruptFieldJson.edit?.type === EditType.GROUP) {
+                // GROUP: explicit field list panel
+                const fields = model.eruptFieldJson.edit.groupType?.fields;
+                if (fields?.length) {
+                    const grouped: EruptFieldModel[] = [];
+                    for (let fn of fields) {
+                        const fm = fieldModelMap.get(fn);
+                        if (fm) {
+                            grouped.push(fm);
+                            this.divideGroupedFieldSet.add(fn);
+                            this.fieldToGroupMap.set(fn, model.fieldName);
+                        }
+                    }
+                    this.divideGroupFields.set(model.fieldName, grouped);
+                    if (model.eruptFieldJson.edit.groupType?.collapsed) {
+                        this.divideCollapsed[model.fieldName] = true;
+                    }
+                }
+            } else if (currentDivide && model.eruptFieldJson.edit?.show && model.eruptFieldJson.edit?.title) {
+                this.divideGroupMap.set(model.fieldName, currentDivide);
+            }
         }
         for (let model of this.eruptModel.eruptFieldModels) {
             switch (model.eruptFieldJson.edit.type) {
@@ -114,7 +164,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 this.dynamicByCheck(model);
             }
             if (model.eruptFieldJson.edit.onchange && model.eruptFieldJson.edit.onchange != "OnChange") {
-                model.eruptFieldJson.edit.$valueSubject.subscribe((value) => {
+                model.eruptFieldJson.edit.$valueSubject.pipe(skip(1)).subscribe((value) => {
                     if (!this.loading) {
                         this.dataService.onChange(this.eruptModel.eruptName, model.fieldName, this.dataHandlerService.eruptValueToObject(this.eruptBuildModel)).subscribe(res => {
                             if (res.data.formData) {
@@ -216,6 +266,21 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         }
     }
 
+    toggleDivideGroup(fieldName: string): void {
+        this.divideCollapsed[fieldName] = !this.divideCollapsed[fieldName];
+    }
+
+    isDivideCollapsed(field: EruptFieldModel): boolean {
+        if (field.eruptFieldJson.edit.type === EditType.DIVIDE) return false;
+        const group = this.divideGroupMap.get(field.fieldName);
+        return group ? !!this.divideCollapsed[group] : false;
+    }
+
+    isGroupCollapsed(field: EruptFieldModel): boolean {
+        const group = this.fieldToGroupMap.get(field.fieldName);
+        return group ? !!this.divideCollapsed[group] : false;
+    }
+
     ngOnDestroy(): void {
 
     }
@@ -223,7 +288,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     eruptEditValidate(): boolean {
         for (let key in this.uploadFilesStatus) {
             if (!this.uploadFilesStatus[key]) {
-                this.msg.warning("附件上传中请稍后");
+                this.msg.warning(this.i18n.fanyi("edit_type.uploading"));
                 return false;
             }
         }
@@ -243,19 +308,23 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                     nzContent: file.response.message
                 });
                 field.eruptFieldJson.edit.$viewValue.pop();
+            } else if (file.response?.data) {
+                file.url = DataService.previewAttachment(file.response.data);
             }
         } else if (status === "error") {
             this.uploadFilesStatus[file.uid] = true;
-            this.msg.error(`${file.name} 上传失败`);
+            this.msg.error(`${file.name} ${this.i18n.fanyi("edit_type.upload_failed")}`);
         }
     }
 
 
     previewImageHandler = (file: NzUploadFile) => {
-        if (file.url) {
-            window.open(file.url);
-        } else if (file.response && file.response.data) {
-            window.open(DataService.previewAttachment(file.response.data));
+        let url = file.url || file.thumbUrl;
+        if (!url && file.response?.data) {
+            url = DataService.previewAttachment(file.response.data);
+        }
+        if (url) {
+            this.imageService.preview([{src: url, alt: file.name}]);
         }
     };
 
@@ -268,6 +337,16 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         });
     }
 
+    onAttachmentDrop(event: CdkDragDrop<any>, field: EruptFieldModel): void {
+        moveItemInArray(field.eruptFieldJson.edit.$viewValue, event.previousIndex, event.currentIndex);
+    }
+
+    removeFile(file: any, field: EruptFieldModel): void {
+        const list = field.eruptFieldJson.edit.$viewValue;
+        const idx = list.indexOf(file);
+        if (idx >= 0) list.splice(idx, 1);
+    }
+
     uploadAccept(accept: string[]): string[] {
         if (!accept || accept.length == 0) {
             return null;
@@ -275,7 +354,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         return accept.map(it => '.' + it)
     }
 
-    //根据后端数据填充字段表单
+    //fill form fields from backend data
     fillForm(data: any) {
         for (let key in data) {
             if (this.eruptModel.eruptFieldModelMap.get(key)) {
@@ -290,13 +369,13 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     openSign(edit: Edit) {
         this.modal.create({
-            nzTitle: '签名',
+            nzTitle: this.i18n.fanyi("edit_type.signature"),
             nzDraggable: true,
             nzContent: SignaturePadComponent,
             nzMaskClosable: false,
             nzWidth: '50%',
-            nzOkText: '保存',
-            nzCancelText: '取消',
+            nzOkText: this.i18n.fanyi("global.save"),
+            nzCancelText: this.i18n.fanyi("global.cancel"),
             nzOnOk: (sign: SignaturePadComponent) => {
                 edit.$value = sign.getSign();
             },

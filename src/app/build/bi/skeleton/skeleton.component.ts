@@ -38,6 +38,8 @@ export class SkeletonComponent implements OnInit, OnDestroy {
 
     hideCondition: boolean = false;
 
+    isFullscreen: boolean = false;
+
     @ViewChild("st") st: STComponent;
 
     @ViewChildren('biChart') biCharts: QueryList<ChartComponent>;
@@ -82,7 +84,13 @@ export class SkeletonComponent implements OnInit, OnDestroy {
 
     columns: STColumn[] = [];
 
+    scrollX: string = '0px';
+
     timer: ReturnType<typeof setInterval> | null = null;
+
+    autoRefreshPaused: boolean = false;
+
+    countdown: number = 0;
 
     downloading: boolean = false;
 
@@ -106,6 +114,8 @@ export class SkeletonComponent implements OnInit, OnDestroy {
             }
             this.name = params['name'];
             this.biTable.data = null;
+            this.isFullscreen = false;
+            this.hideCondition = false;
             this.dataService.getBiBuild(this.name).subscribe(res => {
                 this.bi = res;
                 this.appViewService.setRouterViewDesc(this.bi.remark)
@@ -137,12 +147,18 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                     pageSize: this.biTable.size
                 });
                 if (this.bi.refreshTime) {
+                    this.autoRefreshPaused = false;
+                    this.countdown = this.bi.refreshTime;
                     this.timer = setInterval(() => {
-                        this.query({
-                            pageIndex: this.biTable.index,
-                            pageSize: this.biTable.size
-                        }, true, false);
-                    }, this.bi.refreshTime * 1000);
+                        if (this.autoRefreshPaused) return;
+                        if (--this.countdown <= 0) {
+                            this.countdown = this.bi.refreshTime;
+                            this.query({
+                                pageIndex: this.biTable.index,
+                                pageSize: this.biTable.size
+                            }, true, false);
+                        }
+                    }, 1000);
                 }
             });
         });
@@ -171,9 +187,10 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                     this.biTable.data = [];
                 } else {
                     let columns = [];
+                    let totalWidth = 0;
                     for (let column of res.columns) {
                         if (column.display) {
-                            let titleWidth = column.name.length * 14 + 22;
+                            let titleWidth = Math.max(column.name.length * 14 + 32, 80);
                             let col: STColumn = {
                                 title: {
                                     text: column.name,
@@ -182,6 +199,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                 },
                                 index: [column.name],
                                 className: "text-center",
+                                width: titleWidth + 'px',
                                 iif: (item) => {
                                     return item['show'];
                                 },
@@ -190,7 +208,13 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                             if (column.sortable) {
                                 col.sort = {
                                     key: column.name,
-                                    default: (this.sort.column == column.name) ? this.sort.direction : null
+                                    default: (this.sort.column == column.name) ? this.sort.direction : null,
+                                    compare: this.bi.pageType === pageType.front ? (a: any, b: any) => {
+                                        const va = a[column.name], vb = b[column.name];
+                                        if (va == null) return -1;
+                                        if (vb == null) return 1;
+                                        return typeof va === 'number' ? va - vb : String(va).localeCompare(String(vb));
+                                    } : undefined
                                 };
                             }
                             if (column.type == columnType.STRING) {
@@ -277,9 +301,11 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                                 };
                                 col.width = "160px"
                             }
+                            totalWidth += parseInt(col.width as string) || titleWidth;
                             columns.push(col);
                         }
                     }
+                    this.scrollX = totalWidth + 'px';
                     this.columns = columns;
                     this.biTable.data = res.list;
 
@@ -290,6 +316,9 @@ export class SkeletonComponent implements OnInit, OnDestroy {
 
     biTableChange(e) {
         if (e.type == 'sort') {
+            if (this.bi.pageType === pageType.front) {
+                return;
+            }
             this.sort = {
                 column: e.sort.column.indexKey
             };
@@ -333,7 +362,29 @@ export class SkeletonComponent implements OnInit, OnDestroy {
         })
     }
 
-    //导出报表数据
+    toggleFullscreen() {
+        const el = document.getElementById(this.name);
+        if (!document.fullscreenElement) {
+            el?.requestFullscreen();
+            this.isFullscreen = true;
+        } else {
+            document.exitFullscreen();
+            this.isFullscreen = false;
+        }
+    }
+
+    toggleCondition() {
+        this.hideCondition = !this.hideCondition;
+    }
+
+    toggleAutoRefresh() {
+        this.autoRefreshPaused = !this.autoRefreshPaused;
+        if (!this.autoRefreshPaused) {
+            this.countdown = this.bi.refreshTime;
+        }
+    }
+
+    // export report data
     exportBiData() {
         let param = this.handlerService.buildDimParam(this.bi);
         if (!param) {

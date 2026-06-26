@@ -1,5 +1,6 @@
-import {Component, Inject, Input, OnInit} from "@angular/core";
-import {MenuService, SettingsService} from "@delon/theme";
+import {Component, Inject, Input, NgZone, OnDestroy, OnInit} from "@angular/core";
+import {Menu, MenuService, SettingsService} from "@delon/theme";
+import {Subject, takeUntil} from "rxjs";
 import screenfull from 'screenfull';
 import {CustomerTool, WindowModel} from "@shared/model/window.model";
 import {Router} from "@angular/router";
@@ -10,12 +11,12 @@ import {AppViewService} from "@shared/service/app-view.service";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
-import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NoticeComponent} from "../component/notice/notice.component";
 import {NzNotificationService} from "ng-zorro-antd/notification";
 import {AnnouncementDetailComponent} from "../component/announcement-detail/announcement-detail.component";
+import {ReuseTabService} from "@delon/abc/reuse-tab";
 
 @Component({
     standalone: false,
@@ -25,9 +26,36 @@ import {AnnouncementDetailComponent} from "../component/announcement-detail/anno
         "./header.component.less"
     ]
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
     @Input() menu: MenuVo[];
+
+    private destroy$ = new Subject<void>();
+
+    splitTopItems: Menu[] = [];
+
+    get splitMenu(): boolean {
+        return !!this.settings.layout['splitMenu'];
+    }
+
+    isActiveSplitItem(item: Menu): boolean {
+        const key = this.settings.layout['splitMenuKey'];
+        return !!key && (item.key === key || item.text === key);
+    }
+
+    selectSplitItem(item: Menu): void {
+        this.settings.setLayout('splitMenuKey', item.key || item.text);
+        if (!item.children?.length) {
+            if (item.externalLink) {
+                item.target === '_blank'
+                    ? window.open(item.externalLink)
+                    : (window.location.href = item.externalLink);
+            } else if (item.link) {
+                this.appViewService.setRouterViewDesc(null);
+                this.ngZone.run(() => this.router.navigateByUrl(item.link!));
+            }
+        }
+    }
 
     searchToggleStatus: boolean;
 
@@ -53,6 +81,8 @@ export class HeaderComponent implements OnInit {
 
     unreadCount: number = 0;
 
+    aiLoading: boolean = false;
+
     get isEruptAi(): boolean {
         return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
     }
@@ -69,15 +99,19 @@ export class HeaderComponent implements OnInit {
         this.drawerVisible = false;
     }
 
+    refreshing: boolean = false;
+
     constructor(public settings: SettingsService,
                 private router: Router,
+                private ngZone: NgZone,
                 private appViewService: AppViewService,
                 private dataService: DataService,
                 private menuSrv: MenuService,
                 @Inject(NzDrawerService) private drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(NzModalService) private modal: NzModalService,
-                @Inject(NzNotificationService) private notification: NzNotificationService) {
+                @Inject(NzNotificationService) private notification: NzNotificationService,
+                @Inject(ReuseTabService) private reuseTabSrv: ReuseTabService) {
         if (this.tenantDomainInfo) {
             if (this.tenantDomainInfo.logo) {
                 this.logoPath = DataService.previewAttachment(this.tenantDomainInfo.logo)
@@ -86,6 +120,9 @@ export class HeaderComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.menuSrv.change.pipe(takeUntil(this.destroy$)).subscribe(data => {
+            this.splitTopItems = data.flatMap(g => (g.children || []).filter(i => !i['_hidden']));
+        });
         this.r_tools.forEach(tool => {
             tool.load && tool.load();
         });
@@ -150,8 +187,12 @@ export class HeaderComponent implements OnInit {
         }
     }
 
-    openEruptAi() {
-        let model = this.modal.create({
+    async openEruptAi() {
+        if (this.aiLoading) return;
+        this.aiLoading = true;
+        const { AiChatComponent } = await import('../../../build/ai/view/ai-chat/ai-chat.component');
+        this.aiLoading = false;
+        this.modal.create({
             nzDraggable: true,
             nzWrapClassName: "modal-lg",
             nzMaskClosable: false,
@@ -163,12 +204,12 @@ export class HeaderComponent implements OnInit {
                 top: '30px',
             },
             nzBodyStyle: {
-                padding: "0"
+                padding: "0",
+                height: "83vh",
+                overflow: "hidden"
             },
-            nzContent: EruptIframeComponent,
+            nzContent: AiChatComponent,
         });
-        model.getContentComponent().url = "#/fill/ai/chat";
-        model.getContentComponent().height = "83vh"
     }
 
     openEruptNotice() {
@@ -209,6 +250,20 @@ export class HeaderComponent implements OnInit {
         tool.click && tool.click(event);
     }
 
+    refreshPage() {
+        const url = this.router.url;
+        this.refreshing = true;
+        this.reuseTabSrv.close(url, true);
+        // shouldReuseRoute returns true for same-URL navigation so the component won't
+        // be recreated. Go through '/' first (different routeConfig) with skipLocationChange
+        // so the address bar never changes, then navigate to target URL for a clean reload.
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+            this.router.navigateByUrl(url).then(() => {
+                setTimeout(() => this.refreshing = false, 300);
+            });
+        });
+    }
+
     toIndex() {
         this.router.navigateByUrl(this.settings.user['indexPath']);
         return false;
@@ -228,6 +283,11 @@ export class HeaderComponent implements OnInit {
             nzContent: HeaderSearchComponent
         });
         model.getContentComponent().menu = this.menu
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
 }

@@ -1,0 +1,59 @@
+<div class="board-wrap">
+    @for (col of columns; track col.key; let i = $index) {
+        <div class="board-col" [style.--col-color]="col.color || '#94a3b8'">
+            <div class="board-col-header">
+                <div class="board-col-indicator"></div>
+                <span class="board-col-title" [innerHTML]="col.label | safeHtml"></span>
+                <span class="board-col-count">{{ col.items.length }}</span>
+            </div>
+
+            <div class="board-col-body"
+                 cdkDropList
+                 [id]="columnIds[i]"
+                 [cdkDropListData]="col.items"
+                 [cdkDropListConnectedTo]="columnIds"
+                 (cdkDropListDropped)="drop($event, col)">
+
+                @for (item of col.items; track item) {
+                    <div class="board-card" cdkDrag
+                         (click)="onEdit.emit(item[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])">
+                        @for (field of eruptBuildModel.eruptModel.eruptFieldModels; track field; let fi = $index) {
+                            @for (view of field.eruptFieldJson.views; track view) {
+                                @if ((vis.fieldVisibility == FieldVisibility.EXCLUDE)
+                                    ? vis.fields.indexOf(view.column) === -1
+                                    : vis.fields.indexOf(view.column) !== -1) {
+                                    @if (fi === 0) {
+                                        <p class="board-card-title">
+                                            @if (columnMap.get(field.fieldName)?.format) {
+                                                <span [innerHTML]="(columnMap.get(field.fieldName)?.format(item, columnMap.get(field.fieldName), null) || '') | safeHtml"></span>
+                                            } @else {
+                                                <span [innerHTML]="(item[view.column] == null ? '' : item[view.column]) | safeHtml"></span>
+                                            }
+                                        </p>
+                                    } @else {
+                                        <div class="board-meta-row">
+                                            <span class="meta-key">{{ view.title }}</span>
+                                            <span class="meta-val">
+                                                @if (columnMap.get(field.fieldName)?.format) {
+                                                    <span [innerHTML]="(columnMap.get(field.fieldName)?.format(item, columnMap.get(field.fieldName), null) || '') | safeHtml"></span>
+                                                } @else {
+                                                    <span [innerHTML]="(item[view.column] == null ? '—' : item[view.column]) | safeHtml"></span>
+                                                }
+                                            </span>
+                                        </div>
+                                    }
+                                }
+                            }
+                        }
+                    </div>
+                }
+
+                @if (col.items.length === 0) {
+                    <div class="board-empty">
+                        <nz-empty nzNotFoundImage="simple" [nzNotFoundFooter]="null"/>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

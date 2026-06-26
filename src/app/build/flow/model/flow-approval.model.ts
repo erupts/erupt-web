@@ -15,22 +15,22 @@ export enum AddSignType {
 }
 
 export enum ReviewMode {
-    /** 提交人本人 */
+    /** Submitter themselves */
     SUBMITTER_HIMSELF = 'SUBMITTER_HIMSELF',
 
-    /** 角色 */
+    /** Role */
     ROLE = 'ROLE',
 
-    /** 指定岗位 */
+    /** Specified position */
     POST = 'POST',
 
-    /** 指定人员 */
+    /** Specified user */
     SPECIFIED_USER = 'SPECIFIED_USER',
 
-    /** 组织负责人 */
+    /** Organization head */
     ORG_HEAD = 'ORG_HEAD',
 
-    /** 分管领导 */
+    /** Division leader */
     DIVISION_LEADER = 'DIVISION_LEADER',
 
     SELF_SELECT = 'SELF_SELECT',
@@ -45,18 +45,18 @@ export interface ReviewModeValue {
 }
 
 export enum ApprovalStrategy {
-    /** 会签：需所有审批人同意 */
+    /** Joint approval: all approvers must agree */
     ALL_APPROVE = 'ALL_APPROVE',
 
-    /** 或签：一名审批人同意即可 */
+    /** Or-approval: any single approver's agreement is sufficient */
     ANY_APPROVE = 'ANY_APPROVE',
 }
 
 export enum NobodyStrategy {
-    /** 无审批人时，转交给管理员 */
+    /** When there is no approver, transfer to the administrator */
     REDIRECT_TO_ADMIN = 'REDIRECT_TO_ADMIN',
 
-    /** 无审批人时，重定向到指定审批人 */
+    /** When there is no approver, redirect to a specified approver */
     REDIRECT_TO_SPECIFIED_USER = 'REDIRECT_TO_SPECIFIED_USER',
 }
 
@@ -84,22 +84,22 @@ export class ApproveNode {
 
     nobodyRedirectToUser: number;
 
-    /** 允许转交 */
+    /** Allow transfer */
     allowTransfer: boolean = true;
 
-    /** 允许加签 */
+    /** Allow add-sign */
     allowAddSign: boolean = true;
 
-    /** 允许抄送 */
+    /** Allow CC */
     allowCc: boolean = true;
 
-    /** 允许退回 */
+    /** Allow return */
     allowReturn: boolean = true;
 
-    /** 提交审批需填写审批意见 */
+    /** Approval submission requires an approval comment */
     requireApprovalNote: boolean = false;
 
-    /** 审批同意时需手写签名 */
+    /** Handwritten signature required when approving */
     requireSignature: boolean = false;
 
     approvalTimeoutEnabled: boolean = false;
@@ -172,10 +172,10 @@ export class SubNode {
 
 export enum SubTurnRule {
 
-    // 子流程结束后进去下一个节点
+    // Proceed to the next node after the sub-flow completes
     WAIT_COMPLETE = "WAIT_COMPLETE",
 
-    // 子流程发起后进去下一个节点
+    // Proceed to the next node after the sub-flow is initiated
     FIRE_AND_FORGET = "FIRE_AND_FORGET"
 
 }

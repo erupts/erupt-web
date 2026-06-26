@@ -1,13 +1,13 @@
 <nz-table [nzData]="eruptBuild.eruptModel.eruptFieldModels.length?[{}]:[]" [nzSize]="'small'" nzHideOnSinglePage>
     <thead>
     <tr>
-        <th [nzWidth]="'260px'">表单字段</th>
+        <th [nzWidth]="'260px'">{{ 'flow.form_access.field_col' | translate }}</th>
         <th style="background: #fafafa; border-bottom: 1px solid #f0f0f0;">
             <div style="display: flex; align-items: center;">
-                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.READONLY)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部只读">只读</span>
-                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.READ_WRITE)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部编辑">编辑</span>
-                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.NOT_NULL)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部必填">必填</span>
-                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.HIDE)" class="pointer-btn" nz-tooltip nzTooltipTitle="全部隐藏">隐藏</span>
+                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.READONLY)" class="pointer-btn" nz-tooltip [nzTooltipTitle]="'flow.form_access.all_read_only' | translate">{{ 'flow.form_access.read_only' | translate }}</span>
+                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.READ_WRITE)" class="pointer-btn" nz-tooltip [nzTooltipTitle]="'flow.form_access.all_editable' | translate">{{ 'flow.form_access.editable' | translate }}</span>
+                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.NOT_NULL)" class="pointer-btn" nz-tooltip [nzTooltipTitle]="'flow.form_access.all_required' | translate">{{ 'flow.form_access.required' | translate }}</span>
+                <span style="flex: 1; text-align: center;" (click)="setAllAccess(FormAccessEnum.HIDE)" class="pointer-btn" nz-tooltip [nzTooltipTitle]="'flow.form_access.all_hidden' | translate">{{ 'flow.form_access.hidden' | translate }}</span>
             </div>
         </th>
     </tr>

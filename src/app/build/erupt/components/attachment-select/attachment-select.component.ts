@@ -21,9 +21,9 @@ export class AttachmentSelectComponent {
     }
 
     open(path) {
-        if (this.view.viewType == ViewType.DOWNLOAD || this.view.viewType == ViewType.ATTACHMENT) {
+        if (this.view.type == ViewType.DOWNLOAD || this.view.type == ViewType.ATTACHMENT) {
             window.open(DataService.previewAttachment(path, true));
-        } else if (this.view.viewType == ViewType.ATTACHMENT_DIALOG) {
+        } else if (this.view.type == ViewType.ATTACHMENT_DIALOG) {
             let ref = this.modal.create({
                 nzDraggable:true,
                 nzWrapClassName: "modal-lg modal-body-nopadding",

@@ -41,8 +41,33 @@ export class CheckboxComponent implements OnInit {
         );
     }
 
-    change(e) {
-        this.eruptFieldModel.eruptFieldJson.edit.$value = e;
+    onCheckChange(id: any, checked: boolean) {
+        const values: any[] = this.eruptFieldModel.eruptFieldJson.edit.$value || [];
+        if (checked) {
+            if (values.indexOf(id) === -1) values.push(id);
+        } else {
+            const idx = values.indexOf(id);
+            if (idx !== -1) values.splice(idx, 1);
+        }
+        this.eruptFieldModel.eruptFieldJson.edit.$value = [...values];
+    }
+
+    isAllChecked(): boolean {
+        if (!this.checkbox?.length || !this.edit?.$value) return false;
+        return this.checkbox.every(c => this.edit.$value.indexOf(c.id) !== -1);
+    }
+
+    isIndeterminate(): boolean {
+        if (!this.checkbox?.length || !this.edit?.$value?.length) return false;
+        return !this.isAllChecked() && this.checkbox.some(c => this.edit.$value.indexOf(c.id) !== -1);
+    }
+
+    toggleAll(checked: boolean) {
+        if (checked) {
+            this.eruptFieldModel.eruptFieldJson.edit.$value = this.checkbox.map(c => c.id);
+        } else {
+            this.eruptFieldModel.eruptFieldJson.edit.$value = [];
+        }
     }
 
 }

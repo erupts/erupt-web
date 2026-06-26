@@ -1,9 +1,21 @@
-import {Component, Inject, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import {Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Power, Row, RowOperation, Sort, Vis, VisType} from "../../model/erupt.model";
+import {
+    Alert,
+    Drill,
+    DrillInput,
+    EruptModel,
+    Page,
+    Power,
+    Row,
+    RowOperation,
+    Vis,
+    VisType
+} from "../../model/erupt.model";
 
-import {SettingsService} from "@delon/theme";
+import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
@@ -18,6 +30,7 @@ import {
     Scene,
     SelectMode,
     SortType,
+    TableSize,
     ViewType
 } from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
@@ -26,18 +39,22 @@ import {Status} from "../../model/erupt-api.model";
 import {EruptFieldModel, View} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {UiBuildService} from "../../service/ui-build.service";
+import {EruptColumnConfig, LocalSettingsService} from "../../service/local-settings.service";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ModalButtonOptions, NzModalRef, NzModalService} from "ng-zorro-antd/modal";
 import {STChange, STColumn, STColumnButton, STComponent, STPage} from "@delon/abc/st";
 import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
-import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
+import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
 import {TableStyle} from "../../model/erupt.vo";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
 import {EruptAppData} from "@shared/model/erupt-app.model";
+import {PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
+import printJS from 'print-js';
 
 
 @Component({
@@ -52,7 +69,6 @@ export class TableComponent implements OnInit, OnDestroy {
 
     constructor(
         public settingSrv: SettingsService,
-        private dataHandlerService: DataHandlerService,
         @Inject(NzMessageService)
         private msg: NzMessageService,
         @Inject(NzModalService)
@@ -63,12 +79,29 @@ export class TableComponent implements OnInit, OnDestroy {
         private uiBuildService: UiBuildService,
         public i18n: I18NService,
         @Inject(NzDrawerService)
-        private drawerService: NzDrawerService
+        private drawerService: NzDrawerService,
+        private eruptLocalSettings: LocalSettingsService,
+        private el: ElementRef,
+        private menuSrv: MenuService,
+        private router: Router
     ) {
+        this.hideCondition = !!this.settingSrv.layout['searchCollapsed'];
     }
 
     @ViewChild("st", {static: false})
     st: STComponent;
+
+    @ViewChild("printSelectTpl", {static: true})
+    printSelectTpl: TemplateRef<any>;
+
+    @ViewChild("printConfigListTpl", {static: true})
+    printConfigListTpl: TemplateRef<any>;
+
+    printSelectData: any[] = [];
+
+    printConfigListData: any[] = [];
+
+    private printConfigListRef: NzModalRef;
 
     extraRows: Row[];
 
@@ -83,6 +116,13 @@ export class TableComponent implements OnInit, OnDestroy {
     clientWidth: number = document.body.clientWidth;
 
     clientHeight: number = document.body.clientHeight;
+
+    get tableScrollY(): string {
+        if (this.clientWidth > 768) {
+            return (this.clientHeight > 814 ? 525 + (this.clientHeight - 814) : 525) + 'px';
+        }
+        return Math.max(200, this.clientHeight - 290) + 'px';
+    }
 
     hideCondition: boolean = false;
 
@@ -115,7 +155,6 @@ export class TableComponent implements OnInit, OnDestroy {
         sort: Record<string, SortType>;
         total: number;
         data: any[];
-        multiSort?: string[]
         page: STPage;
         url: string
     } = {
@@ -127,7 +166,6 @@ export class TableComponent implements OnInit, OnDestroy {
         total: 0,
         data: [],
         sort: null,
-        multiSort: [],
         page: {
             show: false,
             toTop: false
@@ -141,17 +179,45 @@ export class TableComponent implements OnInit, OnDestroy {
 
     visOptions: any[] = [];
 
-    adding: boolean = false; //新增行为防抖
+    adding: boolean = false; //debounce for add action
 
     header: object;
 
     refreshTimeInterval: any;
+
+    autoRefreshSeconds: number = 0;
 
     existMultiRowFoldButtons: boolean = false;
 
     tableWidth: string;
 
     showSortPopover: boolean = false;
+
+    searchFieldsCollapsed: boolean = true;
+
+    isFullscreen: boolean = false;
+
+    treeWidth: number = 235;
+
+    treeCollapsed: boolean = false;
+
+    resizing: boolean = false;
+
+    showAiPanel: boolean = false;
+
+    aiPanelWidth: number = 420;
+
+    aiContext: string = '';
+
+    aiResizing: boolean = false;
+
+    private _aiResizeCleanup: (() => void) | null = null;
+
+    private fullscreenChange = () => {
+        this.isFullscreen = !!document.fullscreenElement;
+    };
+
+    private _resizeCleanup: (() => void) | null = null;
 
     sortFields: View[] = [];
 
@@ -215,16 +281,113 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-
+        document.addEventListener('fullscreenchange', this.fullscreenChange);
     }
 
-    isEruptPrint(): boolean {
+    get isEruptPrint(): boolean {
         return EruptAppData.get().properties["erupt-print"];
+    }
+
+    get hasPrintConfig(): boolean {
+        return this.isEruptPrint && null != this.menuSrv.getItem("PRINT_CONFIG");
     }
 
     ngOnDestroy(): void {
         this.refreshTimeInterval && clearInterval(this.refreshTimeInterval);
+        document.removeEventListener('fullscreenchange', this.fullscreenChange);
+        this._resizeCleanup?.();
+        this._aiResizeCleanup?.();
     }
+
+    onResizeDragStart(e: MouseEvent): void {
+        e.preventDefault();
+        const startX = e.clientX;
+        const startWidth = this.treeWidth;
+        this.resizing = true;
+
+        const onMove = (ev: MouseEvent) => {
+            const next = Math.max(120, Math.min(600, startWidth + ev.clientX - startX));
+            this.treeWidth = next;
+        };
+        const onUp = () => {
+            this.resizing = false;
+            this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {treeWidth: this.treeWidth});
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        this._resizeCleanup = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+    }
+
+    toggleTreeCollapsed() {
+        this.treeCollapsed = !this.treeCollapsed;
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {treeCollapsed: this.treeCollapsed});
+    }
+
+    get isAiEnabled(): boolean {
+        return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
+    }
+
+    private aiDrawerRef: NzDrawerRef | null = null;
+
+    toggleAiPanel() {
+        // On phones the inline side panel is too narrow — open the AI chat in a drawer instead.
+        if (window.innerWidth <= 768) {
+            this.openAiDrawer();
+            return;
+        }
+        this.showAiPanel = !this.showAiPanel;
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {aiPanelOpen: this.showAiPanel});
+    }
+
+    private openAiDrawer() {
+        if (this.aiDrawerRef) {
+            return;
+        }
+        this.aiDrawerRef = this.drawerService.create<AiChatComponent>({
+            nzContent: AiChatComponent,
+            nzContentParams: {collapseSidebar: true, embedded: true, context: this.aiContext},
+            nzTitle: this.i18n.fanyi('AI'),
+            nzWidth: '100%',
+            nzBodyStyle: {padding: '0', height: '100%'}
+        });
+        this.aiDrawerRef.afterClose.subscribe(() => this.aiDrawerRef = null);
+    }
+
+    onAiResizeDragStart(e: MouseEvent): void {
+        e.preventDefault();
+        const startX = e.clientX;
+        const startWidth = this.aiPanelWidth;
+        this.aiResizing = true;
+        const onMove = (ev: MouseEvent) => {
+            this.aiPanelWidth = Math.max(280, Math.min(800, startWidth + startX - ev.clientX));
+        };
+        const onUp = () => {
+            this.aiResizing = false;
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {aiPanelWidth: this.aiPanelWidth});
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        this._aiResizeCleanup = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+    }
+
+    toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            this.el.nativeElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
 
     init(observable: Observable<EruptBuildModel>, req: {
         url: string,
@@ -310,9 +473,25 @@ export class TableComponent implements OnInit, OnDestroy {
                 }
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
+                const savedSettings = this.eruptLocalSettings.get(eb.eruptModel.eruptName);
+                if (this.linkTree && savedSettings.treeWidth) this.treeWidth = savedSettings.treeWidth;
+                if (this.linkTree && savedSettings.treeCollapsed !== undefined) this.treeCollapsed = savedSettings.treeCollapsed;
+                if (savedSettings.aiPanelOpen && window.innerWidth > 768) this.showAiPanel = true;
+                if (savedSettings.aiPanelWidth) this.aiPanelWidth = savedSettings.aiPanelWidth;
                 this.dataHandler.initErupt(eb);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
+                const _menuPath = this.menuSrv.getPathByUrl(this.router.url.split('?')[0]);
+                const _menuName = _menuPath.length ? _menuPath[_menuPath.length - 1].text : null;
+                const _m = eb.eruptModel;
+                const _displayName = _menuName || _m.eruptName;
+                const _lines: string[] = [
+                    `The user is currently viewing the data management module "${_displayName}".`,
+                    `Technical model name: ${_m.eruptName}.`
+                ];
+                if (_m.eruptJson.desc) _lines.push(`Module description: ${_m.eruptJson.desc}`);
+                _lines.push(`Always refer to this module as "${_displayName}" in your responses, never use the technical model name directly.`);
+                this.aiContext = _lines.join('\n');
                 this.buildTableConfig();
                 this.searchErupt = <EruptModel>cloneDeep(this.eruptBuildModel.eruptModel);
                 for (let fieldModel of this.searchErupt.eruptFieldModels) {
@@ -324,6 +503,27 @@ export class TableComponent implements OnInit, OnDestroy {
                         }
                     }
                 }
+                this.dataHandler.initSearchOperators(this.searchErupt);
+                if (!this.vis.length) {
+                    this.hideCondition = savedSettings.searchCollapsed !== undefined
+                        ? savedSettings.searchCollapsed
+                        : !!this.settingSrv.layout['searchCollapsed'];
+                }
+                if (savedSettings.searchOperators) {
+                    for (const field of this.searchErupt.eruptFieldModels) {
+                        const edit = field.eruptFieldJson.edit;
+                        if (!edit?.search?.value) continue;
+                        const op = savedSettings.searchOperators[field.fieldName];
+                        if (op !== undefined) edit.$operator = op as any;
+                    }
+                }
+                if (savedSettings.pageSize && this.dataPage.showPagination) {
+                    this.dataPage.ps = savedSettings.pageSize;
+                }
+                if (savedSettings.visIndex !== undefined && savedSettings.visIndex < this.vis.length) {
+                    this.selectedVisIndex = savedSettings.visIndex;
+                }
+                this.searchFieldsCollapsed = savedSettings.searchFieldsCollapsed ?? true;
                 if (dt) {
                     this.showTable = !dt.dependNode;
                     if (dt.dependNode) {
@@ -336,58 +536,68 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     visChange(e: number) {
-        this.query();
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {visIndex: e});
+        const vis = this.vis[e];
+        if (vis?.type === VisType.BOARD) {
+            const savedPs = this.dataPage.ps;
+            this.query(1, 1000);
+            this.dataPage.ps = savedPs;
+        } else {
+            this.query(1);
+        }
+    }
+
+    toggleCondition() {
+        this.hideCondition = !this.hideCondition;
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {searchCollapsed: this.hideCondition});
+    }
+
+    private buildQueryBody(): Page {
+        const body: any = {
+            condition: this.dataHandler.buildSearchConditions(this.searchErupt),
+            pageIndex: this.dataPage.pi,
+            pageSize: this.dataPage.ps,
+            vis: this.vis[this.selectedVisIndex]?.code,
+            sort: null
+        };
+        const linkTree = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
+        if (linkTree && linkTree.field) {
+            body.linkTreeVal = linkTree.value;
+        }
+        if (this.dataPage.sort) {
+            body.sort = Object.entries(this.dataPage.sort).map(([field, dir]) => ({
+                field,
+                direction: (dir as string).toUpperCase() as SortType
+            }));
+        }
+        return body;
     }
 
     query(page?: number, size?: number, sort?: Record<string, SortType>) {
         if (!this.eruptBuildModel.power.query) {
             return;
         }
-        let query = {};
-        query["condition"] = this.dataHandler.eruptObjectToCondition(
-            this.dataHandler.searchEruptToObject({
-                eruptModel: this.searchErupt
-            })
-        );
-        let linkTree = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
-        if (linkTree && linkTree.field) {
-            query["linkTreeVal"] = linkTree.value;
+        if (!this.vis.length && this.eruptBuildModel.eruptModel.eruptJson.visRawTable === false) {
+            return;
         }
         this.dataPage.pi = page || this.dataPage.pi;
         this.dataPage.ps = size || this.dataPage.ps;
         this.dataPage.sort = sort || this.dataPage.sort;
-        let orderBy: Sort[] = null;
-        if (this.dataPage.sort) {
-            orderBy = [];
-            for (let key in this.dataPage.sort) {
-                orderBy.push({
-                    field: key,
-                    direction: this.dataPage.sort[key].toUpperCase() as SortType
-                })
-            }
-        }
         this.selectedRows = [];
         this.dataPage.querying = true;
         this.setVisTplData(null)
-        this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url, {
-            pageIndex: this.dataPage.pi,
-            pageSize: this.dataPage.ps,
-            vis: this.vis[this.selectedVisIndex]?.code,
-            sort: orderBy,
-            ...query
-        }, this.header).subscribe(page => {
+        this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url,
+            this.buildQueryBody(), this.header).subscribe(page => {
             this.dataPage.querying = false;
             this.dataPage.data = page.list || [];
             this.dataPage.total = page.total;
             this.alert = page.alert;
             this.extraContent = page.extraContent;
-            if (this.selectedVisIndex) {
-                if (this.vis[this.selectedVisIndex].type == VisType.TPL) {
-                    this.setVisTplData(this.dataPage.data);
-                }
+            if (this.vis[this.selectedVisIndex]?.type == VisType.TPL) {
+                this.setVisTplData(this.dataPage.data);
             }
         })
-        this.extraRowFun(query);
+        this.extraRowFun(this.buildQueryBody());
     }
 
     setVisTplData(data: any[]) {
@@ -402,17 +612,22 @@ export class TableComponent implements OnInit, OnDestroy {
         const _columns: STColumn[] = [];
         if (this._reference) {
             _columns.push({
-                title: "", type: this._reference.mode, fixed: "left", width: "50px", className: "text-center",
+                title: "",
+                type: this._reference.mode,
+                fixed: "left",
+                resizable: false,
+                width: "50px",
+                className: {"text-center": true},
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
         } else {
             _columns.push({
                 title: "",
-                width: "40px",
+                width: "50px",
                 resizable: false,
                 type: "checkbox",
                 fixed: "left",
-                className: "text-center left-sticky-checkbox",
+                className: {"text-center": true},
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
         }
@@ -424,53 +639,70 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         _columns.push(...viewCols);
         const tableOperators: STColumnButton[] = [];
+        const collapseAction = this.eruptBuildModel.eruptModel.eruptJson.layout?.collapseActionButton;
+        const collapsedStd: STColumnButton[] = [];
         if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
             let fullLine = false;
             let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
             if (layout && layout.formSize == FormSize.FULL_LINE) {
                 fullLine = true;
             }
-            tableOperators.push({
-                icon: "eye",
-                tooltip: this.i18n.fanyi("global.view"),
-                click: (record: any, modal: any) => {
-                    let params = {
-                        readonly: true,
-                        eruptBuildModel: this.eruptBuildModel,
-                        behavior: Scene.EDIT,
-                        id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
-                    };
-                    if (this.settingSrv.layout['drawDraw']) {
-                        //抽屉方式打开详情
-                        this.drawerService.create({
-                            nzTitle: this.i18n.fanyi("global.view"),
-                            nzWidth: "75%",
-                            nzContent: EditComponent,
-                            nzContentParams: params
-                        });
-                    } else {
-                        let ref = this.modal.create({
-                            nzDraggable: true,
-                            nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-                            nzWidth: fullLine ? 550 : null,
-                            nzStyle: {top: "60px"},
-                            nzMaskClosable: true,
-                            nzKeyboard: true,
-                            nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
-                            nzOkText: null,
-                            nzTitle: this.i18n.fanyi("global.view"),
-                            nzContent: EditComponent
-                        });
-                        Object.assign(ref.getContentComponent(), params)
-                    }
-                },
-                iif: (item) => {
-                    if (item[TableStyle.power]) {
-                        return (<Power>item[TableStyle.power]).viewDetails !== false
-                    }
-                    return true;
+            const _viewClick = (record: any, modal: any) => {
+                let params = {
+                    readonly: true,
+                    eruptBuildModel: this.eruptBuildModel,
+                    behavior: Scene.EDIT,
+                    id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
+                };
+                if (this.settingSrv.layout['drawDraw']) {
+                    //open details in drawer mode
+                    this.drawerService.create({
+                        nzTitle: this.i18n.fanyi("global.view"),
+                        nzWidth: "75%",
+                        nzContent: EditComponent,
+                        nzContentParams: params
+                    });
+                } else {
+                    let ref = this.modal.create({
+                        nzDraggable: true,
+                        nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+                        nzWidth: fullLine ? 550 : null,
+                        nzStyle: {top: "60px"},
+                        nzMaskClosable: true,
+                        nzKeyboard: true,
+                        nzTitle: this.i18n.fanyi("global.view"),
+                        nzContent: EditComponent,
+                        nzFooter: [
+                            ...getEditButtons(record),
+                            {
+                                label: this.i18n.fanyi("global.refresh"),
+                                onClick: () => ref.getContentComponent().reload()
+                            },
+                            {
+                                label: this.i18n.fanyi("global.close"),
+                                onClick: () => ref.close()
+                            }
+                        ]
+                    });
+                    Object.assign(ref.getContentComponent(), params)
                 }
-            });
+            };
+            const _viewIif = (item) => {
+                if (item[TableStyle.power]) {
+                    return (<Power>item[TableStyle.power]).viewDetails !== false
+                }
+                return true;
+            };
+            if (collapseAction) {
+                collapsedStd.push({text: this.i18n.fanyi("global.view"), click: _viewClick, iif: _viewIif});
+            } else {
+                tableOperators.push({
+                    icon: "eye",
+                    tooltip: this.i18n.fanyi("global.view"),
+                    click: _viewClick,
+                    iif: _viewIif
+                });
+            }
         }
         let tableButtons: STColumnButton[] = []
         let editButtons: ModalButtonOptions[] = [];
@@ -524,7 +756,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 nzDraggable: true,
                 nzWrapClassName: "modal-xxl",
                 nzStyle: {top: "30px"},
-                nzBodyStyle: {padding: "18px"},
+                nzBodyStyle: {padding: "0"},
                 nzMaskClosable: false,
                 nzKeyboard: false,
                 nzTitle: drill.title,
@@ -562,12 +794,24 @@ export class TableComponent implements OnInit, OnDestroy {
             })
         }
 
-        let getEditButtons = (record): ModalButtonOptions[] => {
+        let getEditButtons = (record: any): ModalButtonOptions[] => {
             for (let editButton of editButtons) {
                 editButton['id'] = record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
                 editButton['data'] = record
             }
-            return editButtons;
+            const roButtons: ModalButtonOptions[] = this.eruptBuildModel.eruptModel.eruptJson.rowOperation
+                .filter(ro => ro.mode !== OperationMode.BUTTON && ro.mode !== OperationMode.MULTI_ONLY)
+                .map(ro => {
+                    const enabled = exprEval(ro.ifExpr, record);
+                    return {
+                        label: ro.title,
+                        type: 'dashed' as const,
+                        show: enabled || ro.ifExprBehavior === OperationIfExprBehavior.DISABLE,
+                        disabled: !enabled && ro.ifExprBehavior === OperationIfExprBehavior.DISABLE,
+                        onClick: (comp: any) => that.createOperator(ro, {[eruptJson.primaryKeyCol]: comp.id})
+                    };
+                });
+            return [...roButtons, ...editButtons];
         }
 
         if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
@@ -576,51 +820,65 @@ export class TableComponent implements OnInit, OnDestroy {
             if (layout && layout.formSize == FormSize.FULL_LINE) {
                 fullLine = true;
             }
-            tableOperators.push({
-                icon: "edit",
-                tooltip: this.i18n.fanyi("global.editor"),
-                click: (record: any) => {
-                    this.onEdit(record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol], fullLine, getEditButtons(record));
-                },
-                iif: (item) => {
-                    if (item[TableStyle.power]) {
-                        return (<Power>item[TableStyle.power]).edit !== false
-                    }
-                    return true;
+            const _editClick = (record: any) => {
+                this.onEdit(record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol], fullLine, getEditButtons(record));
+            };
+            const _editIif = (item) => {
+                if (item[TableStyle.power]) {
+                    return (<Power>item[TableStyle.power]).edit !== false
                 }
-            });
+                return true;
+            };
+            if (collapseAction) {
+                collapsedStd.push({text: this.i18n.fanyi("global.editor"), click: _editClick, iif: _editIif});
+            } else {
+                tableOperators.push({
+                    icon: "edit",
+                    tooltip: this.i18n.fanyi("global.editor"),
+                    click: _editClick,
+                    iif: _editIif
+                });
+            }
         }
         if (this.eruptBuildModel.eruptModel.eruptJson.power.delete) {
-            tableOperators.push({
-                icon: {
-                    type: "delete",
-                    theme: "twotone",
-                    twoToneColor: "#f00"
-                },
-                tooltip: this.i18n.fanyi("global.delete"),
-                pop: this.i18n.fanyi("table.delete.hint"),
-                type: "del",
-                click: (record) => {
-                    this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                        record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
-                        .subscribe(result => {
-                            if (result.status === Status.SUCCESS) {
-                                if (this.dataPage.data.length <= 1) {
-                                    this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
-                                } else {
-                                    this.query(this.dataPage.pi);
-                                }
-                                this.msg.success(this.i18n.fanyi('global.delete.success'));
+            const _delClick = (record) => {
+                this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                    record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
+                    .subscribe(result => {
+                        if (result.status === Status.SUCCESS) {
+                            if (this.dataPage.data.length <= 1) {
+                                this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
+                            } else {
+                                this.query(this.dataPage.pi);
                             }
-                        });
-                },
-                iif: (item) => {
-                    if (item[TableStyle.power]) {
-                        return (<Power>item[TableStyle.power]).delete !== false
-                    }
-                    return true;
+                            this.msg.success(this.i18n.fanyi('global.delete.success'));
+                        }
+                    });
+            };
+            const _delIif = (item) => {
+                if (item[TableStyle.power]) {
+                    return (<Power>item[TableStyle.power]).delete !== false
                 }
-            });
+                return true;
+            };
+            if (collapseAction) {
+                collapsedStd.push({
+                    text: this.i18n.fanyi("global.delete"),
+                    pop: this.i18n.fanyi("table.delete.hint"),
+                    type: "del",
+                    click: _delClick,
+                    iif: _delIif
+                });
+            } else {
+                tableOperators.push({
+                    icon: {type: "delete", theme: "twotone", twoToneColor: "#f00"},
+                    tooltip: this.i18n.fanyi("global.delete"),
+                    pop: this.i18n.fanyi("table.delete.hint"),
+                    type: "del",
+                    click: _delClick,
+                    iif: _delIif
+                });
+            }
         }
         tableOperators.push(...tableButtons);
         if (this.eruptBuildModel.eruptModel.tags?.["EruptFlow"]) {
@@ -652,8 +910,9 @@ export class TableComponent implements OnInit, OnDestroy {
                 }
             });
         }
+        if (collapsedStd.length > 0) isFoldButtons = true;
         if (isFoldButtons) {
-            let children: STColumnButton[] = [];
+            let children: STColumnButton[] = [...collapsedStd];
             eruptJson.rowOperation.forEach(ro => {
                 if (ro.mode !== OperationMode.BUTTON && ro.mode !== OperationMode.MULTI_ONLY) {
                     ro.fold && children.push({
@@ -689,6 +948,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 resizable: false
             });
         }
+        this.restoreColumnSettings(this.eruptBuildModel.eruptModel.eruptName, _columns);
         this.columns = _columns;
         if (eruptJson.layout.tableWidth) {
             this.tableWidth = eruptJson.layout.tableWidth;
@@ -703,6 +963,18 @@ export class TableComponent implements OnInit, OnDestroy {
             id: pk,
             behavior: Scene.EDIT
         }
+        const doSave = async (): Promise<boolean> => {
+            let validateResult = model.getContentComponent().beforeSaveValidate();
+            if (!validateResult) return false;
+            let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
+            let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise();
+            if (res.status === Status.SUCCESS) {
+                this.msg.success(this.i18n.fanyi("global.update.success"));
+                this.query();
+                return true;
+            }
+            return false;
+        };
         const model = this.modal.create({
             nzDraggable: true,
             nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
@@ -711,49 +983,39 @@ export class TableComponent implements OnInit, OnDestroy {
             nzMaskClosable: false,
             nzKeyboard: false,
             nzTitle: this.i18n.fanyi("global.editor"),
-            nzOkText: this.i18n.fanyi("global.update"),
             nzContent: EditComponent,
             nzFooter: [
                 {
                     label: this.i18n.fanyi("global.cancel"),
-                    onClick: () => {
-                        model.close();
-                    }
+                    onClick: () => model.close()
+                },
+                {
+                    label: this.i18n.fanyi("global.refresh"),
+                    onClick: () => model.getContentComponent().reload()
                 },
                 ...buttons,
                 {
-                    label: this.i18n.fanyi("global.update"),
-                    type: "primary",
-                    onClick: () => {
-                        return model.triggerOk();
+                    label: this.i18n.fanyi("global.save_only"),
+                    onClick: async () => {
+                        await doSave();
                     }
                 },
+                {
+                    label: this.i18n.fanyi("global.save_close"),
+                    type: "primary",
+                    onClick: () => model.triggerOk()
+                },
             ],
-            nzOnOk: async () => {
-                let validateResult = model.getContentComponent().beforeSaveValidate();
-                if (validateResult) {
-                    let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
-                    let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise().then(res => res);
-                    if (res.status === Status.SUCCESS) {
-                        this.msg.success(this.i18n.fanyi("global.update.success"));
-                        this.query();
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            }
+            nzOnOk: async () => doSave()
         });
         Object.assign(model.getContentComponent(), params)
     }
 
 
     /**
-     * 自定义功能触发
-     * @param rowOperation 行按钮对象
-     * @param data 数据（单个执行时使用）
+     * Trigger a custom row operation
+     * @param rowOperation row operation button object
+     * @param data data (used when executing a single row action)
      */
     createOperator(rowOperation: RowOperation, data?: object) {
         const eruptModel = this.eruptBuildModel.eruptModel;
@@ -813,13 +1075,13 @@ export class TableComponent implements OnInit, OnDestroy {
                 modal.getContentComponent().parentEruptName = this.eruptBuildModel.eruptModel.eruptName;
                 this.dataService.operatorFormValue(this.eruptBuildModel.eruptModel.eruptName, ro.code, ids).subscribe(data => {
                     if (data) {
-                        this.dataHandlerService.objectToEruptValue(data, {
+                        this.dataHandler.objectToEruptValue(data, {
                             eruptModel: operationErupt
                         });
                     }
                 });
             } else {
-                // 兼容旧版本, 无callHint配置的情况
+                // backward compatibility for older versions without callHint configuration
                 if (null == ro.callHint) {
                     ro.callHint = this.i18n.fanyi("table.hint.operation");
                 }
@@ -853,7 +1115,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    //新增
+    //add new record
     addData() {
         let fullLine = false;
         let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
@@ -906,10 +1168,27 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     pageSizeChange(size) {
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {pageSize: size});
         this.query(1, size);
     }
 
-    //批量删除
+    onSearchFieldsCollapsedChange(collapsed: boolean) {
+        this.searchFieldsCollapsed = collapsed;
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {searchFieldsCollapsed: collapsed});
+    }
+
+    saveSearchOperators() {
+        if (!this.searchErupt || !this.eruptBuildModel) return;
+        const ops: Record<string, string> = {};
+        for (const field of this.searchErupt.eruptFieldModels) {
+            const edit = field.eruptFieldJson.edit;
+            if (!edit?.search?.value || edit.$operator == null) continue;
+            ops[field.fieldName] = edit.$operator;
+        }
+        this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {searchOperators: ops});
+    }
+
+    //batch delete
     delRows() {
         if (!this.selectedRows || this.selectedRows.length === 0) {
             this.msg.warning(this.i18n.fanyi("table.select_delete_item"));
@@ -951,11 +1230,12 @@ export class TableComponent implements OnInit, OnDestroy {
 
     clearCondition() {
         this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt});
+        this.dataHandler.resetSearchOperators(this.searchErupt);
         this.selectedSorts = [];
         this.query(1);
     }
 
-    // table checkBox 触发事件
+    // table checkbox change event
     tableDataChange(event: STChange) {
         if (this._reference) {
             if (this._reference.mode == SelectMode.radio) {
@@ -984,21 +1264,28 @@ export class TableComponent implements OnInit, OnDestroy {
             }
             this.query(1, this.dataPage.ps, (event.sort.map as Record<string, SortType>));
         }
+        if (event.type === "resize" && event.resize?.index) {
+            const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+            const saved = this.eruptLocalSettings.getColumns(eruptName);
+            const key = event.resize.index as string;
+            saved[key] = {...(saved[key] || {}), width: event.resize.width};
+            this.eruptLocalSettings.setColumns(eruptName, saved);
+        }
     }
 
-    // 处理甘特图选择变化
+    // handle Gantt chart selection change
     handleGanttSelectionChange(selectedRows: any[]) {
         this.selectedRows = selectedRows;
 
-        // 如果是引用表模式，将选中的数据存储到 $tempValue
+        // if in reference table mode, store the selected data into $tempValue
         if (this._reference) {
             if (selectedRows && selectedRows.length > 0) {
-                // 检查是单选还是多选模式
+                // check whether it is single-select or multi-select mode
                 if (this._reference.mode === SelectMode.radio) {
-                    // 单选模式：取第一项
+                    // single-select mode: take the first item
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = selectedRows[0];
                 } else {
-                    // 多选模式：保存整个数组
+                    // multi-select mode: save the entire array
                     this._reference.eruptField.eruptFieldJson.edit.$tempValue = selectedRows;
                 }
             } else {
@@ -1011,23 +1298,19 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataService.downloadExcelTemplate(this.eruptBuildModel.eruptModel.eruptName);
     }
 
-    // excel导出
+    // export to Excel
     exportExcel() {
-        let condition = null;
-        if (this.searchErupt && this.searchErupt.eruptFieldModels.length > 0) {
-            condition = this.dataHandler.eruptObjectToCondition(
-                this.dataHandler.searchEruptToObject({
-                    eruptModel: this.searchErupt
-                })
-            );
-        }
-        //导出接口
+        const ids = this.selectedRows.length > 0
+            ? this.selectedRows.map(r => r[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
+            : null;
         this.downloading = true;
-        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, condition,
+        this.dataService.downloadExcel(this.eruptBuildModel.eruptModel.eruptName, this.buildQueryBody(),
             this._drill ? DataService.drillToHeader(this._drill) : {},
-            () => {
+            (err?) => {
                 this.downloading = false;
-            }
+                if (err?.message) this.msg.warning(err.message);
+            },
+            ids
         );
     }
 
@@ -1048,7 +1331,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    // excel导入
+    // import from Excel
     importableExcel() {
         let model = this.modal.create({
             nzDraggable: true,
@@ -1068,7 +1351,7 @@ export class TableComponent implements OnInit, OnDestroy {
         model.getContentComponent().drillInput = this._drill;
     }
 
-    //提供自定义表达式可调用函数
+    //provides callable functions for custom expressions
     execExpr(expr: string) {
         let ev = {
             codeModal: (lang: string, code: any) => {
@@ -1097,21 +1380,177 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
 
-    protected readonly SortType = SortType;
-
-    // 判断字段是否为数字或时间类型
-    isNumericOrDateType(field: View): boolean {
-        return field.viewType === ViewType.NUMBER ||
-            field.viewType === ViewType.DATE ||
-            field.viewType === ViewType.DATE_TIME;
+    get hasActiveConditions(): boolean {
+        if (!this.searchErupt) return false;
+        return this.searchErupt.eruptFieldModels.some(f => {
+            const v = f.eruptFieldJson.edit?.$value;
+            return v !== null && v !== undefined && v !== '';
+        });
     }
 
-    // 获取可选的字段列表（排除已选择的）
+    private colIndexStr(col: STColumn): string {
+        return (Array.isArray(col.index) ? col.index[0] : col.index) as string;
+    }
+
+    saveColumnSettings() {
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        const columns: Record<string, EruptColumnConfig> = {};
+        const columnOrder: string[] = [];
+        this.columns.forEach(col => {
+            if (!col.index) return;
+            const idx = this.colIndexStr(col);
+            columns[idx] = {show: col['show'], width: col.width, fixed: col.fixed as 'left' | 'right' | undefined};
+            if (col.title) columnOrder.push(idx);
+        });
+        this.eruptLocalSettings.patch(eruptName, {columns, columnOrder});
+        this.st?.resetColumns();
+    }
+
+    private restoreColumnSettings(eruptName: string, columns: STColumn[]) {
+        const saved = this.eruptLocalSettings.get(eruptName);
+        const savedCols = saved.columns || {};
+        columns.forEach(col => {
+            if (!col.index) return;
+            const cfg = savedCols[this.colIndexStr(col)];
+            if (!cfg) return;
+            if (cfg.show !== undefined) col['show'] = cfg.show;
+            if (cfg.width !== undefined) col.width = cfg.width;
+            col.fixed = cfg.fixed;
+        });
+        if (saved.columnOrder?.length) {
+            const orderMap = new Map(saved.columnOrder.map((idx, i) => [idx, i]));
+            const viewCols = columns.filter(col => col.title && col.index);
+            viewCols.sort((a, b) => {
+                const ai = orderMap.get(this.colIndexStr(a)) ?? Infinity;
+                const bi = orderMap.get(this.colIndexStr(b)) ?? Infinity;
+                return ai - bi;
+            });
+            let vi = 0;
+            for (let i = 0; i < columns.length; i++) {
+                if (columns[i].title && columns[i].index) columns[i] = viewCols[vi++];
+            }
+        }
+    }
+
+    get columnListForCtrl(): STColumn[] {
+        return this.columns.filter(col => col.title && col.index);
+    }
+
+    onColumnDrop(event: CdkDragDrop<STColumn[]>) {
+        if (event.previousIndex === event.currentIndex) return;
+        const viewCols = this.columns.filter(col => col.title && col.index);
+        moveItemInArray(viewCols, event.previousIndex, event.currentIndex);
+        let vi = 0;
+        this.columns = this.columns.map(col => (col.title && col.index) ? viewCols[vi++] : col);
+        this.saveColumnSettings();
+    }
+
+    cycleColumnPin(col: STColumn) {
+        if (!col.fixed) col.fixed = 'left';
+        else if (col.fixed === 'left') col.fixed = 'right';
+        else col.fixed = undefined;
+        this.columns = [...this.columns];
+        this.saveColumnSettings();
+    }
+
+    getColumnPinTooltip(col: STColumn): string {
+        if (!col.fixed) return this.i18n.fanyi('table.column.pin.left');
+        if (col.fixed === 'left') return this.i18n.fanyi('table.column.pin.right');
+        return this.i18n.fanyi('table.column.unpin');
+    }
+
+    setAutoRefresh(seconds: number) {
+        this.autoRefreshSeconds = seconds;
+        if (this.refreshTimeInterval) {
+            clearInterval(this.refreshTimeInterval);
+            this.refreshTimeInterval = null;
+        }
+        if (seconds > 0) {
+            this.refreshTimeInterval = setInterval(() => this.query(), seconds * 1000);
+        }
+    }
+
+    duplicateRow() {
+        const selectedRow = this.selectedRows[0];
+        const pkCol = this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+        const id = selectedRow[pkCol];
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        this.dataService.queryEruptDataById(eruptName, id).subscribe(data => {
+            delete data[pkCol];
+            let fullLine = false;
+            const layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
+            if (layout && layout.formSize == FormSize.FULL_LINE) fullLine = true;
+            const modal = this.modal.create({
+                nzDraggable: true,
+                nzStyle: {top: "60px"},
+                nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
+                nzWidth: fullLine ? 550 : null,
+                nzMaskClosable: false,
+                nzKeyboard: false,
+                nzTitle: this.i18n.fanyi("global.copy"),
+                nzContent: EditComponent,
+                nzOkText: this.i18n.fanyi("global.add"),
+                nzOnOk: async () => {
+                    if (!this.adding) {
+                        this.adding = true;
+                        setTimeout(() => this.adding = false, 500);
+                        if (modal.getContentComponent().beforeSaveValidate()) {
+                            let header: any = {};
+                            if (this.linkTree) {
+                                const lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
+                                if (lt.dependNode && lt.value) header["link"] = lt.value;
+                            }
+                            if (this._drill) Object.assign(header, DataService.drillToHeader(this._drill));
+                            await this.dataService.addEruptData(
+                                eruptName,
+                                this.dataHandler.eruptValueToObject(this.eruptBuildModel),
+                                header
+                            ).toPromise().then(res => res);
+                            this.msg.success(this.i18n.fanyi("global.add.success"));
+                            this.query();
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            });
+            const editComp = modal.getContentComponent();
+            editComp.eruptBuildModel = this.eruptBuildModel;
+            editComp.behavior = Scene.ADD;
+            editComp.prefillData = data;
+            editComp.header = this._drill ? DataService.drillToHeader(this._drill) : {};
+        });
+    }
+
+    resetColumnWidths() {
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        const saved = this.eruptLocalSettings.get(eruptName);
+        if (saved.columns) {
+            const cleaned: Record<string, EruptColumnConfig> = {};
+            Object.entries(saved.columns).forEach(([k, v]) => {
+                cleaned[k] = {show: v.show, fixed: v.fixed};
+            });
+            this.eruptLocalSettings.patch(eruptName, {columns: cleaned});
+        }
+        this.buildTableConfig();
+    }
+
+
+    protected readonly SortType = SortType;
+
+    // determine whether a field is a numeric or date type
+    isNumericOrDateType(field: View): boolean {
+        return field.type === ViewType.NUMBER ||
+            field.type === ViewType.DATE ||
+            field.type === ViewType.DATE_TIME;
+    }
+
+    // get the list of available fields (excluding already selected ones)
     getAvailableFields(): View[] {
         return this.sortFields.filter(f => !this.selectedSorts.some(s => s.field.column === f.column));
     }
 
-    // 添加排序字段
+    // add a sort field
     addSortField(field: View) {
         if (!this.selectedSorts.some(s => s.field.column === field.column)) {
             this.selectedSorts.push({
@@ -1121,17 +1560,17 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    // 移除排序字段
+    // remove a sort field
     removeSortField(index: number) {
         this.selectedSorts.splice(index, 1);
     }
 
-    // 拖拽排序
+    // drag-and-drop sort
     onSortDrop(event: CdkDragDrop<Array<{ field: View, direction: SortType }>>) {
         moveItemInArray(this.selectedSorts, event.previousIndex, event.currentIndex);
     }
 
-    // 应用排序
+    // apply sort
     applySort() {
         if (this.selectedSorts.length === 0) {
             this.dataPage.sort = null;
@@ -1146,24 +1585,61 @@ export class TableComponent implements OnInit, OnDestroy {
         this.query(1, this.dataPage.ps, this.dataPage.sort);
     }
 
-    // 字段选择变化处理
+    // handle field selection change
     onFieldSelectChange(field: View) {
         if (field) {
             this.addSortField(field);
-            // 清空选择，以便可以再次选择同一个字段
+            // clear the selection so the same field can be selected again
             setTimeout(() => {
                 this.tempSelectedField = null;
             }, 0);
         }
     }
 
+    private _printPk: any;
+    private _printSelectRef: NzModalRef;
+    printLoading: boolean = false;
+
     printSelectedRows() {
-        if (!this.selectedRows || this.selectedRows.length === 0) {
-            this.msg.warning('Select the data you want to print');
-            return;
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        this._printPk = this.selectedRows[0][this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
+        this.printLoading = true;
+        this.dataService.printConfigList(eruptName).subscribe({
+            next: res => {
+                this.printLoading = false;
+                const configs = res.data || [];
+                if (configs.length === 0) {
+                    this.builtinPrint(this._printPk);
+                } else {
+                    this.printSelectData = configs;
+                    this._printSelectRef = this.modal.create({
+                        nzTitle: this.i18n.fanyi("print.select_layout"),
+                        nzContent: this.printSelectTpl,
+                        nzDraggable: true,
+                        nzWidth: 400,
+                        nzBodyStyle: {padding: '0'},
+                        nzFooter: null
+                    });
+                }
+            },
+            error: () => {
+                this.printLoading = false;
+                this.builtinPrint(this._printPk);
+            }
+        });
+    }
+
+    onPrintSelect(cfg: any) {
+        this._printSelectRef?.close();
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        if (!cfg) {
+            this.builtinPrint(this._printPk);
+        } else {
+            this.doTemplatePrint(eruptName, this._printPk, cfg);
         }
-        const row = this.selectedRows[0];
-        const pk = row[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
+    }
+
+    private builtinPrint(pk: any) {
         this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, pk).subscribe(data => {
             const printBuildModel = cloneDeep(this.eruptBuildModel);
             this.dataHandler.objectToEruptValue(data, printBuildModel);
@@ -1172,22 +1648,118 @@ export class TableComponent implements OnInit, OnDestroy {
                 nzContent: PrintTypeComponent,
                 nzWidth: 700,
                 nzStyle: {top: '30px'},
-                nzBodyStyle: {
-                    maxHeight: "75vh",
-                    overflow: 'auto'
-                },
+                nzBodyStyle: {maxHeight: '75vh', overflow: 'auto'},
                 nzMaskClosable: false,
                 nzDraggable: true,
                 nzOkText: this.i18n.fanyi("global.print"),
                 nzOnOk: () => {
                     modal.getContentComponent().print();
-                    return false; // 不关闭对话框
+                    return false;
                 }
             });
-            const component = modal.getContentComponent();
-            component.eruptBuildModel = printBuildModel;
+            modal.getContentComponent().eruptBuildModel = printBuildModel;
         });
     }
 
+    private doTemplatePrint(eruptName: string, pk: any, config: { content: string, pageConfig: any }) {
+        this.dataService.renderPrint(eruptName, pk, config.content).subscribe(res => {
+            const pc = config.pageConfig || {};
+            const pageSize = (!pc.paperSize || pc.paperSize === 'Custom') ? 'auto' : `${pc.paperSize} ${pc.orientation || 'portrait'}`;
+            const margin = `${pc.marginTop || 10}mm ${pc.marginRight || 10}mm ${pc.marginBottom || 10}mm ${pc.marginLeft || 10}mm`;
+            printJS({
+                printable: res.data,
+                type: 'raw-html',
+                style: `* { font-family: 'Heiti SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } @page { size: ${pageSize}; margin: ${margin}; }`
+            });
+        });
+    }
+
+    // ── Config: template list CRUD ──
+    managePrintConfig() {
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        this.dataService.printConfigList(eruptName).subscribe(res => {
+            this.showPrintConfigList(eruptName, res.data || []);
+        });
+    }
+
+    private showPrintConfigList(eruptName: string, configs: any[]) {
+        this.printConfigListData = configs;
+        this.printConfigListRef = this.modal.create({
+            nzTitle: this.i18n.fanyi("print.layout"),
+            nzContent: this.printConfigListTpl,
+            nzDraggable: true,
+            nzBodyStyle: {
+                padding: '0'
+            },
+            nzWidth: 420,
+            nzFooter: [{
+                label: this.i18n.fanyi("table.add"),
+                type: 'primary',
+                onClick: () => {
+                    this.printConfigListRef.close();
+                    this.editPrintConfig(this.eruptBuildModel.eruptModel.eruptName,
+                        {erupt: this.eruptBuildModel.eruptModel.eruptName, title: '', content: '', pageConfig: null});
+                }
+            }]
+        });
+    }
+
+    deletePrintConfig(cfg: any) {
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        this.dataService.printConfigDelete(eruptName, cfg.id).subscribe(() => {
+            this.msg.success(this.i18n.fanyi("global.delete.success"));
+            this.printConfigListData = this.printConfigListData.filter(c => c.id !== cfg.id);
+        });
+    }
+
+    editPrintConfig(eruptName: string, cfg: any) {
+        this.printConfigListRef?.close();
+        const vars: PrintVar[] = [];
+        this.eruptBuildModel.eruptModel.eruptFieldModels.forEach(f => {
+            if (f.eruptFieldJson.edit.title) {
+                vars.push({value: f.fieldName, label: f.eruptFieldJson.edit.title});
+            }
+        });
+        const isNew = !cfg.id;
+        const ref = this.modal.create({
+            nzTitle: isNew ? this.i18n.fanyi("global.new") : cfg.title,
+            nzDraggable: true,
+            nzContent: PrintTemplate,
+            nzWidth: '900px',
+            nzStyle: {top: '30px'},
+            nzMaskClosable: false,
+            nzKeyboard: false,
+            nzOnOk: () => {
+                const comp = ref.getContentComponent();
+                const title = comp.getTitle()?.trim();
+                if (!title) {
+                    this.msg.warning(this.i18n.fanyi("print.input_title"));
+                    return false as any;
+                }
+                const content = comp.getContent();
+                const pageConfig = comp.getPageConfig();
+                const data = {erupt: eruptName, title, content, pageConfig};
+                const api = isNew
+                    ? this.dataService.printConfigAdd(eruptName, data)
+                    : this.dataService.printConfigUpdate(eruptName, {...data, id: cfg.id});
+                api.subscribe(() => {
+                    this.msg.success(this.i18n.fanyi(isNew ? "global.add.success" : "global.update.success"));
+                    this.managePrintConfig();
+                });
+            }
+        });
+        const comp = ref.getContentComponent();
+        comp.height = 460;
+        comp.vars = vars;
+        comp.value = cfg.content || '';
+        comp.showTitle = true;
+        comp.configTitle = cfg.title || '';
+        comp.pageConfig = cfg.pageConfig || {
+            paperSize: 'A4', orientation: 'portrait',
+            marginTop: 10, marginRight: 10, marginBottom: 10, marginLeft: 10
+        };
+    }
+
+    protected readonly TableSize = TableSize;
 }
 

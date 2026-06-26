@@ -6,269 +6,240 @@
         .flow-approval-container {
             height: 100%;
             display: flex;
-            background-color: #f5f5f5;
+            background-color: #f5f7fa;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            overflow: hidden; // 防止整体滚动
+            overflow: hidden;
 
-            // 左侧导航栏
             .sidebar {
-                width: 180px;
-                height: 100%; // 固定高度
-                background: white;
-                border-right: 1px solid #e5e5e5;
+                width: 196px;
+                height: 100%;
+                background: #fff;
+                border-right: 1px solid #e4e6eb;
                 display: flex;
                 flex-direction: column;
-                transition: all 0.3s ease;
-                flex-shrink: 0; // 防止被压缩
-
-                &.collapsed {
-                    width: 80px;
-
-                    .search-text,
-                    .menu-title,
-                    .collapse-text {
-                        display: none;
-                    }
-
-                    .approval-menu {
-                        .ant-menu-item,
-                        .ant-menu-submenu-title {
-                            justify-content: center;
-                            padding: 0;
-                        }
-                    }
-                }
+                flex-shrink: 0;
 
                 .sidebar-header {
-                    padding: 13px;
-                    border-bottom: 1px solid #e5e5e5;
+                    height: 48px;
+                    padding: 0 14px;
+                    border-bottom: 1px solid #e4e6eb;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    flex-shrink: 0; // 防止头部被压缩
+                    flex-shrink: 0;
 
-                    .search-section {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        color: #666;
-                        font-size: 14px;
-                    }
-
-                    .menu-toggle {
-                        color: #666;
+                    .sidebar-title {
+                        font-size: 12px;
+                        font-weight: 600;
+                        color: #595959;
+                        letter-spacing: 0.04em;
+                        text-transform: uppercase;
                     }
                 }
 
-                .navigation-menu {
+                .sidebar-menu {
                     flex: 1;
-
-                    .approval-menu {
-                        border: none;
-                        background: transparent;
-
-                        // 菜单项样式
-                        .ant-menu-item {
-                            height: 48px;
-                            line-height: 48px;
-                            margin: 0;
-                            padding: 0 16px;
-                            display: flex;
-                            align-items: center;
-                            gap: 12px;
-                            transition: all 0.3s ease;
-
-                            &:hover {
-                                background-color: var(--ant-primary-1);
-                            }
-
-                            &.ant-menu-item-selected {
-                                background-color: var(--ant-primary-1);
-                                color: var(--ant-primary-color);
-                                font-weight: 500;
-                            }
-
-                            .menu-title {
-                                flex: 1;
-                                font-size: 14px;
-                                color: inherit;
-                            }
-
-                            .menu-badge {
-                                margin-left: auto;
-                            }
-                        }
-
-                        // 子菜单样式
-                        .ant-menu-submenu {
-                            .ant-menu-submenu-title {
-                                height: 48px;
-                                line-height: 48px;
-                                margin: 0;
-                                padding: 0 16px;
-                                display: flex;
-                                align-items: center;
-                                gap: 12px;
-                                transition: all 0.3s ease;
-
-                                &:hover {
-                                    background-color: #f5f5f5;
-                                }
-
-                                .ant-menu-title-content {
-                                    flex: 1;
-                                    font-size: 14px;
-                                    color: #333;
-                                }
-                            }
-
-                            .ant-menu-sub {
-                                background-color: #fafafa;
-                                border-left: 2px solid #e6f7ff;
-
-                                .ant-menu-item {
-                                    padding-left: 48px;
-                                    font-size: 13px;
-                                    color: #666;
-
-                                    &:hover {
-                                        background-color: var(--ant-primary-color-hover);
-                                    }
-
-                                    &.ant-menu-item-selected {
-                                        background-color: var(--ant-primary-1);
-                                        color: var(--ant-primary-color);
-                                        font-weight: 500;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    overflow-y: auto;
+                    padding: 6px 8px;
                 }
 
-                .sidebar-footer {
-                    padding: 16px;
-                    border-top: 1px solid #e5e5e5;
-                    flex-shrink: 0; // 防止底部被压缩
+                .menu-item {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    height: 32px;
+                    padding: 0 10px;
+                    gap: 8px;
+                    cursor: pointer;
+                    transition: background 0.12s;
+                    border-radius: 4px;
 
-                    .collapse-text {
-                        margin-left: 8px;
-                        font-size: 14px;
-                        color: #666;
+                    &:hover {
+                        background: #eef0f4;
+                    }
+
+                    &.active {
+                        background: var(--ant-primary-1, #e6f7ff);
+                        color: var(--ant-primary-color, #1890ff);
+                        font-weight: 500;
+
+                        &::before {
+                            content: '';
+                            position: absolute;
+                            left: 0;
+                            top: 6px;
+                            bottom: 6px;
+                            width: 2px;
+                            background: var(--ant-primary-color, #1890ff);
+                            border-radius: 1px;
+                        }
+
+                        [nz-icon] {
+                            color: var(--ant-primary-color, #1890ff);
+                        }
+                    }
+
+                    [nz-icon] {
+                        font-size: 13px;
+                        color: #8c8c8c;
+                        flex-shrink: 0;
+                    }
+
+                    .menu-label {
+                        flex: 1;
+                        font-size: 13px;
+                        color: inherit;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+
+                    .menu-badge {
+                        margin-left: auto;
+                        flex-shrink: 0;
                     }
                 }
             }
 
-            // 主内容区域
             .main-content {
                 flex: 1;
-                height: 100%; // 固定高度
+                height: 100%;
                 display: flex;
                 overflow: hidden;
 
-                // 中间列表区域 - 调窄宽度
                 .list-section {
-                    width: 260px;
-                    height: 100%; // 固定高度
+                    width: 280px;
+                    height: 100%;
                     background: white;
-                    border-right: 1px solid #e5e5e5;
+                    border-right: 1px solid var(--ant-border-color-split, #eee);
                     display: flex;
                     flex-direction: column;
-                    flex-shrink: 0; // 防止被压缩
+                    flex-shrink: 0;
 
                     .list-header {
-                        padding: 8px 0;
-                        border-bottom: 1px solid #e5e5e5;
+                        height: 48px;
+                        padding: 0 10px;
+                        border-bottom: 1px solid var(--ant-border-color-split, #eee);
                         display: flex;
                         align-items: center;
-                        gap: 12px;
-                        flex-shrink: 0; // 防止头部被压缩
-                    }
+                        gap: 6px;
+                        flex-shrink: 0;
 
-                    // 复制图标样式
-                    .copy-icon {
-                        margin-left: 6px;
-                        font-size: 14px;
-                        color: #8c8c8c;
-                        vertical-align: middle;
-                        transition: color 0.2s;
-                    }
+                        // Make the borderless filter look like a filled search field
+                        nz-select {
+                            flex: 1;
+                            min-width: 0;
 
-                    .item-id:hover .copy-icon {
-                        color: var(--ant-primary-color);
-                    }
+                            .ant-select-selector {
+                                background: #f5f7fa !important;
+                                border-radius: 6px !important;
+                                height: 32px !important;
+                                border-color: transparent !important;
+                                box-shadow: none !important;
+                            }
 
-                    .time-filter {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        font-size: 14px;
-                        color: #333;
-                        cursor: pointer;
-                    }
+                            .ant-select-selection-placeholder {
+                                line-height: 30px !important;
+                            }
+                        }
 
-                    .separator {
-                        width: 1px;
-                        height: 16px;
-                        background-color: #d9d9d9;
+                        // Compact, square reload button aligned with the field
+                        > button {
+                            flex-shrink: 0;
+                            width: 32px;
+                            height: 32px;
+                            padding: 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 6px;
+                            color: #8c8c8c;
+
+                            &:hover {
+                                color: var(--ant-primary-color, #1890ff);
+                                background: #f5f7fa;
+                            }
+                        }
                     }
                 }
 
                 .approval-list {
                     flex: 1;
                     overflow-y: auto;
+                    padding: 8px;
+                    background: #fff;
 
+                    // Bordered cards with hover lift, on a white canvas
                     .approval-item {
-                        padding: 12px;
+                        padding: 10px 12px;
+                        margin-bottom: 8px;
                         cursor: pointer;
-                        transition: all 0.3s ease;
-                        border-bottom: 1px solid #e5e5e5;
+                        transition: all 0.15s;
+                        background: #fff;
+                        border: 1px solid var(--ant-border-color-split, #eee);
+                        border-radius: 6px;
 
-                        &:hover {
-                            background-color: var(--ant-primary-1);
+                        &:last-child {
+                            margin-bottom: 0;
                         }
 
+                        &:hover {
+                            border-color: var(--ant-primary-color, #1890ff);
+                            box-shadow: 0 1px 6px rgba(24, 144, 255, 0.12);
+                        }
+
+                        // Selected instance: primary border + tint
                         &.active {
-                            background-color: var(--ant-primary-1);
-                            box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
+                            border-color: var(--ant-primary-color, #1890ff);
+                            background: var(--ant-primary-1, #e6f7ff);
+
+                            .item-header .item-title {
+                                color: var(--ant-primary-color, #1890ff);
+                            }
                         }
 
                         .item-header {
                             display: flex;
                             justify-content: space-between;
                             align-items: center;
-                            margin-bottom: 12px;
+                            margin-bottom: 6px;
 
                             .item-title {
-                                margin: 0;
-                                font-size: 16px;
-                                font-weight: 600;
-                                color: #333;
+                                font-size: 13px;
+                                font-weight: 500;
+                                color: #262626;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                flex: 1;
+                                min-width: 0;
+                                margin-right: 6px;
                             }
 
-                            .status-tag {
-                                font-size: 12px;
+                            .item-tags {
+                                display: flex;
+                                align-items: center;
+                                gap: 4px;
+                                flex-shrink: 0;
+
+                                nz-tag {
+                                    font-size: 11px;
+                                    margin: 0;
+                                    border-radius: 2px;
+                                }
                             }
                         }
 
-                        .item-content {
-                            margin-bottom: 12px;
+                        .item-subtitle {
+                            margin-bottom: 6px;
 
-                            .item-field {
-                                display: flex;
-                                margin-bottom: 6px;
-                                font-size: 13px;
-
-                                .field-label {
-                                    color: #666;
-                                    min-width: 80px;
-                                    flex-shrink: 0;
-                                }
-
-                                .field-value {
-                                    color: #333;
-                                    flex: 1;
-                                }
+                            p {
+                                font-size: 12px;
+                                color: #8c8c8c;
+                                margin-bottom: 2px;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
                             }
                         }
 
@@ -280,88 +251,108 @@
                             .submitter-info {
                                 display: flex;
                                 align-items: center;
-                                gap: 8px;
+                                gap: 6px;
 
                                 .submitter-name {
-                                    font-size: 13px;
-                                    color: #333;
+                                    font-size: 12px;
+                                    color: #595959;
                                 }
                             }
 
-                            .time-info {
-                                .process-time {
-                                    font-size: 12px;
-                                    color: #999;
-                                }
+                            .process-time {
+                                font-size: 11px;
+                                color: #bfbfbf;
+                            }
+                        }
+                    }
+
+                    .skeleton-approval-item {
+                        pointer-events: none;
+
+                        .sk-bar {
+                            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                            background-size: 400% 100%;
+                            animation: sk-shimmer 1.4s ease infinite;
+                            border-radius: 4px;
+                        }
+                    }
+
+                    @keyframes sk-shimmer {
+                        0%   { background-position: 100% 50%; }
+                        100% { background-position: 0%   50%; }
+                    }
+
+                    .loading-indicator {
+                        text-align: center;
+                        padding: 12px;
+                    }
+                }
+
+                .detail-section {
+                    flex: 1;
+                    height: 100%;
+                    background: white;
+                    display: flex;
+                    flex-direction: column;
+                    overflow-y: auto;
+                    position: relative;
+                }
+            }
+        }
+
+        // ── Mobile (phones) ──────────────────────────────────────────
+        @media (max-width: 768px) {
+            .flow-approval-container {
+                flex-direction: column;
+
+                // Views become a horizontal tab strip on top
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    flex-shrink: 0;
+                    border-right: none;
+                    border-bottom: 1px solid var(--ant-border-color-split, #eee);
+
+                    .sidebar-header {
+                        display: none;
+                    }
+
+                    .sidebar-menu {
+                        display: flex;
+                        gap: 4px;
+                        padding: 6px 8px;
+                        overflow-x: auto;
+                        -webkit-overflow-scrolling: touch;
+                        scrollbar-width: none;
+
+                        &::-webkit-scrollbar { display: none; }
+
+                        .menu-item {
+                            flex-shrink: 0;
+                            height: 30px;
+
+                            .menu-label {
+                                flex: none;
                             }
                         }
                     }
                 }
-            }
 
-            // 右侧详情区域
-            .detail-section {
-                flex: 1;
-                height: 100%; // 固定高度
-                background: white;
-                display: flex;
-                flex-direction: column;
-                overflow-y: auto;
-                position: relative; // 为固定底部按钮定位
-            }
-        }
-    }
+                .main-content {
+                    flex: 1;
+                    min-height: 0;
 
+                    // List takes the full width; detail opens in a drawer instead
+                    .list-section {
+                        width: 100%;
+                        flex: 1;
+                        min-height: 0;
+                        border-right: none;
+                    }
 
-    // 节点信息样式
-    .node-info {
-        .node-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            margin-bottom: 12px;
-
-            .node-name {
-                font-weight: 500;
-                color: #333;
-            }
-
-            .node-type {
-                padding: 4px 8px;
-                background-color: var(--ant-primary-1);
-                color: var(--ant-primary-color);
-                border-radius: 4px;
-                font-size: 12px;
-            }
-        }
-
-        .node-branches {
-            margin-left: 24px;
-
-            .branch-item {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 12px;
-                margin-bottom: 8px;
-                background-color: #fafafa;
-                border-radius: 4px;
-                border-left: 3px solid #d9d9d9;
-
-                .branch-name {
-                    font-weight: 500;
-                    color: #333;
-                }
-
-                .branch-type {
-                    padding: 2px 6px;
-                    background-color: #f0f0f0;
-                    color: #666;
-                    border-radius: 3px;
-                    font-size: 11px;
+                    .detail-section {
+                        display: none;
+                    }
                 }
             }
         }

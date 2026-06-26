@@ -8,6 +8,7 @@ import {
     Inject,
     Input,
     NgZone,
+    numberAttribute,
     OnChanges,
     OnDestroy,
     OnInit,
@@ -17,7 +18,6 @@ import {
 } from '@angular/core';
 import {DOCUMENT} from '@angular/common';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {InputNumber} from '@ng-util/util/convert';
 import {UEditorConfig} from './ueditor.config';
 import {NuLazyService} from '@ng-util/lazy';
 
@@ -95,7 +95,7 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
                 './assets/ueditor/ueditor.config.js',
                 './assets/ueditor/ueditor.all.min.js',
             ],
-            // 默认前端配置项
+            // default frontend configuration options
             options: {
                 UEDITOR_HOME_URL: './assets/ueditor/'
             }
@@ -103,7 +103,7 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
     }
 
     /**
-     * 获取UE实例
+     * Get the UE instance
      */
     get Instance(): any {
         return this.instance;
@@ -119,10 +119,10 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
 
     @Input() config: any;
 
-    @Input() @InputNumber() height = 360;
+    @Input({transform: numberAttribute}) height = 360;
 
     private _disabled = false;
-    @Input() @InputNumber() delay = 50;
+    @Input({transform: numberAttribute}) delay = 50;
     @Output() readonly onPreReady = new EventEmitter<UEditorComponent>();
     @Output() readonly onReady = new EventEmitter<UEditorComponent>();
     @Output() readonly onDestroy = new EventEmitter();
@@ -144,7 +144,7 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
         if (isSSR) {
             return;
         }
-        // 已经存在对象无须进入懒加载模式
+        // object already exists, no need to enter lazy-load mode
         if (this._getWin().UE) {
             this.initDelay();
             return;
@@ -168,7 +168,7 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
     private init(): void {
         const UE = this._getWin().UE;
         if (!UE) {
-            throw new Error('uedito js文件加载失败');
+            throw new Error('ueditor js file failed to load');
         }
 
         if (this.instance) {
@@ -221,7 +221,7 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
                 Object.keys(this.events).forEach((name) => this.instance.removeListener(name, this.events[name]));
                 this.instance.removeListener('ready');
                 this.instance.removeListener('contentChange');
-                // 由于此时 Angular 已经移除 DOM，可能会引起内部无法访问产生异常
+                // since Angular has already removed the DOM at this point, internal access may fail and throw an exception
                 // https://github.com/cipchk/ngx-ueditor/issues/62
                 try {
                     this.instance.destroy();
@@ -245,14 +245,14 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
     }
 
     /**
-     * 设置编辑器语言
+     * Set the editor language
      */
     setLanguage(lang: 'zh-cn' | 'en'): PromiseLike<void> {
         const UE = this._getWin().UE;
         return this.lazySrv.load(`${this.cog.options!.UEDITOR_HOME_URL}/lang/${lang}/${lang}.js`).then(() => {
             this.destroy();
 
-            // 清空语言
+            // clear language
             if (!UE._bak_I18N) {
                 UE._bak_I18N = UE.I18N;
             }
@@ -264,7 +264,7 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
     }
 
     /**
-     * 添加编辑器事件
+     * Add an editor event listener
      */
     addListener(eventName: EventTypes, fn: any): void {
         if (this.events[eventName]) {
@@ -275,7 +275,7 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
     }
 
     /**
-     * 移除编辑器事件
+     * Remove an editor event listener
      */
     removeListener(eventName: EventTypes): void {
         if (!this.events[eventName]) {

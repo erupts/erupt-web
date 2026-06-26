@@ -7,34 +7,41 @@
 @alain-default-header-hg: 44px !important;
 @router-animation-enabled: true;
 
-body.color-weak{
-    background: #121212;
+// Override @delon/theme's .color-weak (filter: invert) — applying filter on
+// <body> creates a new stacking context that breaks position:fixed children.
+// Moving the filter to <html> keeps fixed headers working correctly.
+html.color-weak {
+    filter: invert(80%);
 }
 
-body.color-gray{
+html.color-gray {
     filter: grayscale(100%);
     -webkit-filter: grayscale(100%);
     transition: filter 0.5s;
-    background: #fff;
+}
+
+// Neutralize @delon/theme's body-level .color-weak so it doesn't double-apply
+body.color-weak {
+    filter: none;
 }
 
 
 
 
-/* 滚动条轨道样式 */
+/* Scrollbar track style */
 ::-webkit-scrollbar-track {
-    background: #f1f1f1; /* 轨道颜色 */
+    background: #f1f1f1; /* Track color */
 }
 
-/* 滚动条滑块样式 */
+/* Scrollbar thumb style */
 ::-webkit-scrollbar-thumb {
-    background-color: #888888; /* 滑块颜色 */
-    border-radius: 4px; /* 滑块圆角 */
+    background-color: #888888; /* Thumb color */
+    border-radius: 4px; /* Thumb border radius */
 }
 
-/* 滑块悬停时的样式 */
+/* Scrollbar thumb hover style */
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #767676; /* 滑块悬停时颜色 */
+    background-color: #767676; /* Thumb hover color */
 }
 
 * {

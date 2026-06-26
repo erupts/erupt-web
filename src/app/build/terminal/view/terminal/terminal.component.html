@@ -1,0 +1,15 @@
+<div class="terminal-shell" (keydown)="onKeydown($event)" tabindex="-1">
+    <div class="tab-bar">
+        <div class="tab-bar-tabs">
+            @for (tab of tabs; track tab.id) {
+                <div class="tab" [class.active]="tab.id === activeId" (click)="switchTab(tab.id)">
+                    <span class="tab-dot" [class.visible]="tab.hasActivity"></span>
+                    <span class="tab-label">Terminal {{ tab.id }}</span>
+                    <span class="tab-close" (click)="closeTab(tab.id, $event)">✕</span>
+                </div>
+            }
+        </div>
+        <div class="btn-add-tab" title="New tab (Alt+T)" (click)="createTab()">+</div>
+    </div>
+    <div class="terminals" #terminalsEl></div>
+</div>

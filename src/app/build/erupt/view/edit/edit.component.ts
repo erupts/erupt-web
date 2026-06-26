@@ -25,9 +25,13 @@ export class EditComponent implements OnInit {
 
     @Input() id: any;
 
+    @Input() size: "large" | "small" | "default" = "large";
+
     @Input() readonly: boolean = false;
 
     @Input() header: object = {};
+
+    @Input() prefillData?: object;
 
     @ViewChild("eruptEdit", {static: false}) eruptEditComponent: EditTypeComponent;
 
@@ -43,21 +47,31 @@ export class EditComponent implements OnInit {
     ngOnInit() {
         this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
         if (this.behavior == Scene.ADD) {
-            this.loading = true;
-            this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName, null, this.header).subscribe(data => {
-                this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
-                this.loading = false;
-            });
+            if (this.prefillData) {
+                this.dataHandlerService.objectToEruptValue(this.prefillData, this.eruptBuildModel);
+            } else {
+                this.loading = true;
+                this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName, null, this.header).subscribe(data => {
+                    this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
+                    this.loading = false;
+                }, () => {
+                    this.loading = false;
+                });
+            }
         } else {
             this.loading = true;
             this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.id).subscribe(data => {
                 this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
-                // 防止 @Onchange 在 edit 加载数据时被执行导致 DB 的数据被改变的问题（ADD场景由于初始化数据的问题是必须要执行的）
+                // prevent @Onchange from being triggered during data loading in edit mode, which could inadvertently modify DB data (in ADD mode it must run due to data initialization requirements)
                 setTimeout(() => {
                     this.loading = false;
                 }, 50)
             });
         }
+    }
+
+    reload(): void {
+        this.ngOnInit();
     }
 
     beforeSaveValidate(): boolean {

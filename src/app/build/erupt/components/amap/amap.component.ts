@@ -3,6 +3,7 @@ import {LazyService} from "@delon/util";
 import {WindowModel} from "@shared/model/window.model";
 import {MapType} from "../../model/erupt-field.model";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {I18NService} from "@core";
 
 declare const AMap;
 
@@ -41,7 +42,8 @@ export class AmapComponent implements OnInit {
                 private ref: ElementRef,
                 private renderer: Renderer2,
                 @Inject(NzMessageService)
-                private msg: NzMessageService) {
+                private msg: NzMessageService,
+                private i18n: I18NService) {
     }
 
     map: any;
@@ -123,7 +125,7 @@ export class AmapComponent implements OnInit {
                         that.value = {lng, lat, name: address, address};
                         that.viewValue = address;
                         that.valueChange.emit(JSON.stringify(that.value));
-                        infoWindow.setContent(`<b>${address}</b><br>经度：${lng}<br>纬度：${lat}`);
+                        infoWindow.setContent(`<b>${address}</b><br>${this.i18n.fanyi('amap.info.lng')}${lng}<br>${this.i18n.fanyi('amap.info.lat')}${lat}`);
                         infoWindow.open(map, lnglat);
                     });
                 });
@@ -161,10 +163,10 @@ export class AmapComponent implements OnInit {
                     } else if (this.value["lng"] != null && this.value["lat"] != null) {
                         this.valueChange.emit(JSON.stringify(this.value));
                     } else {
-                        this.msg.warning("请选择有效的地址");
+                        this.msg.warning(this.i18n.fanyi("amap.select_valid_address"));
                     }
                 } else {
-                    this.msg.warning("请先选择地址");
+                    this.msg.warning(this.i18n.fanyi("amap.select_address_first"));
                 }
             };
 
@@ -184,25 +186,25 @@ export class AmapComponent implements OnInit {
                     that.currentMarker = new AMap.Marker({map: map, position: lnglat});
                     map.setZoomAndCenter(15, lnglat);
                     const label = this.value.name || this.value.address || `${this.value.lng},${this.value.lat}`;
-                    infoWindow.setContent(`<b>${label}</b><br>经度：${this.value.lng}<br>纬度：${this.value.lat}`);
+                    infoWindow.setContent(`<b>${label}</b><br>${this.i18n.fanyi('amap.info.lng')}${this.value.lng}<br>${this.i18n.fanyi('amap.info.lat')}${this.value.lat}`);
                     infoWindow.open(map, lnglat);
                 }
             }
 
 
-            //详情查询
+            //detail query
             function getDetails(id) {
                 placeSearch.getDetails(id, (status, result) => {
                     if (status === 'complete' && result.info === 'OK') {
                         placeSearchCallBack(result);
                         that.valueChange.emit(JSON.stringify(that.value));
                     } else {
-                        that.msg.warning("找不到该位置信息");
+                        that.msg.warning(that.i18n.fanyi("amap.location_not_found"));
                     }
                 });
             }
 
-            //回调函数
+            //callback function
             function placeSearchCallBack(data) {
                 let poiArr = data.poiList.pois;
                 if (that.currentMarker) {
@@ -217,14 +219,14 @@ export class AmapComponent implements OnInit {
                 infoWindow.open(map, that.currentMarker.getPosition());
             }
 
-            function createContent(poi) {  //信息窗体内容
+            function createContent(poi) {  //info window content
                 let s = [];
-                s.push("<b>名称：" + poi.name + "</b>");
-                s.push("地址：" + poi.address);
-                s.push("电话：" + poi.tel);
-                s.push("类型：" + poi.type);
-                s.push("经度：" + poi.location.lng);
-                s.push("纬度：" + poi.location.lat);
+                s.push("<b>" + that.i18n.fanyi('amap.info.name') + poi.name + "</b>");
+                s.push(that.i18n.fanyi('amap.info.address') + poi.address);
+                s.push(that.i18n.fanyi('amap.info.phone') + poi.tel);
+                s.push(that.i18n.fanyi('amap.info.type') + poi.type);
+                s.push(that.i18n.fanyi('amap.info.lng') + poi.location.lng);
+                s.push(that.i18n.fanyi('amap.info.lat') + poi.location.lat);
                 return s.join("<br>");
             }
         });
@@ -273,7 +275,7 @@ export class AmapComponent implements OnInit {
     overlays: any[];
 
     draw(type) {
-        //监听draw事件可获取画好的覆盖物
+        //listen for the draw event to retrieve the drawn overlay
         this.overlays = [];
         this.mouseTool.on('draw', (e) => {
             this.overlays.push(e.obj);
@@ -286,14 +288,14 @@ export class AmapComponent implements OnInit {
             switch (type) {
                 case 'marker': {
                     this.mouseTool.marker({
-                        //同Marker的Option设置
+                        //same as Marker options
                     });
                     break;
                 }
                 case 'polyline': {
                     this.mouseTool.polyline({
                         strokeColor: strokeColor
-                        //同Polyline的Option设置
+                        //same as Polyline options
                     });
                     break;
                 }
@@ -301,7 +303,7 @@ export class AmapComponent implements OnInit {
                     this.mouseTool.polygon({
                         fillColor: fillColor,
                         strokeColor: strokeColor
-                        //同Polygon的Option设置
+                        //same as Polygon options
                     });
                     break;
                 }
@@ -309,7 +311,7 @@ export class AmapComponent implements OnInit {
                     this.mouseTool.rectangle({
                         fillColor: fillColor,
                         strokeColor: strokeColor
-                        //同Polygon的Option设置
+                        //same as Polygon options
                     });
                     break;
                 }
@@ -317,7 +319,7 @@ export class AmapComponent implements OnInit {
                     this.mouseTool.circle({
                         fillColor: fillColor,
                         strokeColor: strokeColor
-                        //同Circle的Option设置
+                        //same as Circle options
                     });
                     break;
                 }
@@ -330,7 +332,7 @@ export class AmapComponent implements OnInit {
     }
 
     closeDraw() {
-        this.mouseTool.close(true); //关闭，并清除覆盖物
+        this.mouseTool.close(true); //close and clear overlays
         this.checkType = '';
     }
 

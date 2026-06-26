@@ -1,8 +1,9 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {NodeRule, NodeType} from "@flow/model/node.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -10,7 +11,7 @@ import {FlowTurn} from "@flow/model/flow-instance.model";
     templateUrl: './branch-node.component.html',
     styleUrls: ['./branch-node.component.less']
 })
-export class BranchNodeComponent implements AfterViewInit {
+export class BranchNodeComponent implements AfterViewInit, OnInit {
 
     @Input() eruptBuild: EruptBuildModel;
     @Output() insertFlexNode = new EventEmitter<FlexNodeModel>();
@@ -26,7 +27,7 @@ export class BranchNodeComponent implements AfterViewInit {
     @Input() showError = false;
     @Input() errorInfo = '';
     @Input() isDefault = false;
-    @Input() placeholder = '请设置';
+    @Input() placeholder = '';
     @Input() desc = '';
 
     @Input() progress: Record<string, FlowTurn>;
@@ -44,8 +45,16 @@ export class BranchNodeComponent implements AfterViewInit {
 
     enableEdit = false;
 
+    constructor(private i18n: I18NService) {}
+
+    ngOnInit() {
+        if (!this.placeholder) {
+            this.placeholder = this.i18n.fanyi('flow.node.placeholder_default');
+        }
+    }
+
     ngAfterViewInit() {
-        // 组件初始化后的处理
+        // Post-initialization logic
     }
 
     onEnableEdit() {

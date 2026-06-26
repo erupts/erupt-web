@@ -1,15 +1,91 @@
 :host {
+    // ── Split menu category tabs in header ────────────────────────────────
+    .split-nav-item {
+        display: flex;
+        align-items: center;
+        height: 30px;
+        padding: 0 12px;
+        border-radius: 4px;
+        font-size: 13px;
+        color: rgba(0, 0, 0, 0.65);
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background 0.18s, color 0.18s;
+
+        &:hover {
+            color: var(--ant-primary-color);
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        &--active {
+            color: var(--ant-primary-color);
+            background: var(--ant-primary-1, #e6f4ff);
+            font-weight: 500;
+        }
+    }
+
     .alain-default__nav {
+        gap: 2px;
+        align-items: center;
+
+        > li {
+            display: flex;
+            align-items: center;
+        }
+
         .alain-default__nav-item {
-            transition: all 300ms;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            transition: background 180ms ease, transform 120ms ease;
+            cursor: pointer;
 
             &:hover {
-                background: rgba(82, 82, 82, 0.1);
+                background: rgba(0, 0, 0, 0.06);
+            }
+
+            &:active {
+                background: rgba(0, 0, 0, 0.11);
+                transform: scale(0.92);
+            }
+
+            &.r_tool_item {
+                width: auto;
+                padding: 0 10px;
+                cursor: default;
+                &:hover { background: none; }
+                &:active { background: none; transform: none; }
+            }
+
+            .spin {
+                animation: spin 0.5s linear;
             }
         }
     }
 
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+    }
+
     ::ng-deep {
+        .split-nav-wrap {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            height: 44px;
+            padding: 0 4px;
+            gap: 2px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+            &::-webkit-scrollbar { display: none; }
+        }
+
         .header-logo {
             padding: 0 12px;
         }
@@ -24,19 +100,15 @@
             box-sizing: border-box;
             vertical-align: top;
             height: 44px;
-            padding: 4px 0
-        }
-
-        .alain-default__header {
-            box-shadow: none !important;
+            padding: 5px 0;
         }
 
         .alain-default__header-logo {
-            min-width: 200px;
+            min-width: ~"var(--sidebar-width, 200px)";
             text-align: center;
             width: auto;
             padding: 0 5px;
-            border-right: 1px solid rgb(229 229 229);
+            border-right: 1px solid rgba(0, 0, 0, 0.07);
         }
 
         .header-logo-text {
@@ -70,7 +142,7 @@
             display: none;
         }
 
-        .alain-default__aside{
+        .alain-default__aside {
             width: 48px;
         }
 
@@ -85,16 +157,6 @@
                 img {
                     width: auto;
                 }
-            }
-        }
-    }
-}
-
-[data-theme='dark'] {
-    :host {
-        ::ng-deep {
-            .alain-default__header-logo {
-                border-right: 1px solid #303030;
             }
         }
     }

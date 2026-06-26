@@ -1,0 +1,36 @@
+.io-stats {
+    margin-bottom: 8px;
+
+    [nz-col] {
+        text-align: center;
+    }
+}
+
+.disk-usage {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    nz-progress {
+        flex: 1;
+        max-width: 120px;
+    }
+}
+
+.ellipsis {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+}
+
+.input-args {
+    margin: 0;
+    max-height: 100px;
+    overflow: auto;
+    word-break: break-all;
+    color: rgba(0, 0, 0, 0.65);
+}
+

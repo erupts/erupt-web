@@ -49,135 +49,270 @@
             </div>
         </div>
     }
-    @if (cubeMeta) {
-        <div class="puzzle-filter-row">
-            <div class="filter-items" cdkDropList cdkDropListOrientation="horizontal"
-                 (cdkDropListDropped)="dropFilter($event)">
-                @for (filter of dsl.filters; track $index) {
-                    @if (edit || !filter.hidden) {
-                        <div class="filter-item" [class.filter-item-hidden]="edit && filter.hidden" cdkDrag
-                             [cdkDragDisabled]="!edit">
-                            @if (edit) {
-                                <span class="drag-handle" cdkDragHandle>
-                                <span nz-icon nzType="holder" nzTheme="outline"></span>
-                            </span>
+    <div class="cube-main-row">
+        <div class="cube-content">
+            @if (!cubeMeta) {
+                <div class="cube-skeleton">
+                    <!-- filter row -->
+                    <div class="sk-filter-row">
+                        @for (w of ['96px','128px','104px','116px']; track w) {
+                            <div class="sk-filter-pill" [style.width]="w"></div>
+                        }
+                        <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+                            @for (i of [1,2,3]; track i) {
+                                <div class="sk-bar" style="width:26px;height:26px;border-radius:4px"></div>
                             }
-                            <span class="filter-label">
-                                @if (filter.notNull) {<span style="color: #ff4d4f; margin-right: 4px;">*</span>}{{ filter.title || cubeMeta.fieldTitleMap.get(filter.field) }}:
-                            </span>
-                            <cube-puzzle-filter-control [style.width]="getFilterWidth(filter)" size="small"
-                                                        [filter]="filter" [cubeMeta]="cubeMeta" [dsl]="dsl"
-                                                        [dashboard]="dashboard"></cube-puzzle-filter-control>
-                            @if (edit) {
-                                <button nz-button nzType="text" nzSize="small" (click)="editFilter($index)">
-                                    <span nz-icon nzType="edit"></span>
-                                </button>
-                                <button nz-button nzType="text" nzDanger nzSize="small" style="margin-left: 0"
-                                        (click)="removeFilter($index)">
-                                    <span nz-icon nzType="close"></span>
-                                </button>
+                            <div class="sk-bar" style="width:60px;height:26px;border-radius:4px"></div>
+                        </div>
+                    </div>
+                    <!-- grid -->
+                    <div class="sk-grid">
+                        <!-- row1: 4 KPI cards -->
+                        <div class="sk-row1">
+                            @for (item of [{v:'42%'},{v:'55%'},{v:'38%'},{v:'50%'}]; track item) {
+                                <div class="sk-card sk-kpi-card">
+                                    <div class="sk-kpi-top">
+                                        <div class="sk-bar sk-kpi-label"></div>
+                                        <div class="sk-bar sk-kpi-icon"></div>
+                                    </div>
+                                    <div class="sk-bar sk-kpi-value" [style.width]="item.v"></div>
+                                    <div class="sk-bar sk-kpi-trend"></div>
+                                </div>
                             }
                         </div>
-                    }
-                }
-                @if (edit) {
-                    <button nz-button nzSize="small" nzType="dashed" (click)="addFilter()">
-                        <span nz-icon nzType="plus"></span> {{ 'cube.dashboard.add_filter' | translate }}
-                    </button>
-                }
-                <div style="margin-left: auto; display: flex; gap: 8px;">
-                    <button nz-button nzSize="small" (click)="copyLink()" [title]="'cube.dashboard.copy_link' | translate">
-                        <span nz-icon nzType="link"></span>
-                    </button>
-                    <button nz-button nzSize="small" (click)="toggleFullscreen()" [title]="'global.fullscreen' | translate">
-                        <span nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"></span>
-                    </button>
-                    @if (dsl.filters?.length > 0) {
-                        <button nz-button nzSize="small" (click)="reset()">{{ 'global.reset' | translate }}</button>
-                    }
-                    <button nz-button nzType="primary" nzSize="small" (click)="query()">{{ 'cube.dashboard.query' | translate }}</button>
-                </div>
-            </div>
-        </div>
-    }
-    <div class="gridster-wrapper" [style.background-image]="dsl?.settings?.backgroundImage ? 'url(' + dsl.settings.backgroundImage + ')' : 'none'"
-         [style.background-color]="dsl?.settings?.backgroundColor || (dsl?.settings?.theme === DashboardTheme.DARK ? '#1f1f1f' : 'transparent')"
-         [style.background-size]="'cover'"
-         [style.background-position]="'center'"
-    >
-        @if (!dsl?.reports || dsl.reports.length == 0) {
-            <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" style="margin-top: 20%"></nz-empty>
-        } @else {
-            <gridster [options]="options">
-                @if (dsl?.reports) {
-                    @for (report of dsl.reports; track $index) {
-                        <gridster-item [item]="report">
-                            <div class="puzzle-item">
-                                @if (edit) {
-                                    <div class="drag-handler item-actions" [title]="'global.drag' | translate"
-                                         style="left: 49%;right: auto;transform: rotateZ(90deg)">
-                                        <button nz-button nzType="text" nzSize="small">
-                                            <span nz-icon nzType="holder" nzTheme="outline"></span>
-                                        </button>
-                                    </div>
-                                    <div class="item-actions">
-                                        <button nz-button nzType="text" nzSize="small" (click)="editItem($index,report)"
-                                                [title]="'global.editor' | translate">
-                                            <span nz-icon nzType="edit"></span>
-                                        </button>
-                                        <button nz-button nzType="text" nzSize="small" (click)="copyItem($index,report)"
-                                                [title]="'global.copy' | translate">
-                                            <span nz-icon nzType="copy"></span>
-                                        </button>
-                                        <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)"
-                                                [title]="'global.fullscreen' | translate">
-                                            <span nz-icon [nzType]="isItemFullscreen($index) ? 'fullscreen-exit' : 'fullscreen'"></span>
-                                        </button>
-                                        <button nz-button nzType="text" nzSize="small" nzDanger
-                                                (click)="removeItem($index)"
-                                                [title]="'global.delete' | translate">
-                                            <span nz-icon nzType="delete"></span>
-                                        </button>
-                                    </div>
-                                } @else {
-                                    <div class="item-actions">
-                                        @if (report.description) {
-                                            <button nz-button nzType="text" nzSize="small">
-                                            <span nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
-                                                  [nzTooltipTitle]="report.description"></span>
-                                            </button>
+                        <!-- row2: bar chart (wide) + pie chart -->
+                        <div class="sk-row2">
+                            <div class="sk-card sk-card-wide">
+                                <div class="sk-chart-header">
+                                    <div class="sk-bar" style="width:28%;height:13px;border-radius:3px"></div>
+                                    <div class="sk-legend-row">
+                                        @for (w of ['48px','40px','52px']; track w) {
+                                            <div class="sk-legend-item">
+                                                <div class="sk-bar sk-legend-dot"></div>
+                                                <div class="sk-bar sk-legend-label" [style.width]="w"></div>
+                                            </div>
                                         }
-                                        @if (report.type != ReportType.KPI && report.type != ReportType.PIVOT_TABLE && report.type != ReportType.TEXT) {
-                                            <button nz-button nzType="text" nzSize="small" (click)="download($index)"
-                                                    [title]="'global.download' | translate">
-                                                <span nz-icon nzType="download"></span>
-                                            </button>
-                                        }
-                                        <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)"
-                                                [title]="'global.fullscreen' | translate">
-                                            <span nz-icon [nzType]="isItemFullscreen($index) ? 'fullscreen-exit' : 'fullscreen'"></span>
-                                        </button>
-                                        <button nz-button nzType="text" nzSize="small" (click)="refreshItem($index)"
-                                                [title]="'global.refresh' | translate">
-                                            <span nz-icon nzType="redo"></span>
-                                        </button>
                                     </div>
-                                }
-                                <div class="puzzle-content"
-                                     [style.background-color]="dsl?.settings?.theme === DashboardTheme.DARK ? '#141414' : 'var(--ant-primary-1)'">
-                                    @if (cubeMeta) {
-                                        <cube-puzzle-report [cubeMeta]="cubeMeta" [filters]="dsl.filters" [report]="report"
-                                                            [dashboard]="dashboard" [dsl]="dsl"
-                                                            (filterLink)="onFilterLink($event)"/>
+                                </div>
+                                <div class="sk-bar-chart">
+                                    @for (h of ['50%','72%','42%','88%','58%','66%','38%','78%','54%','62%']; track h) {
+                                        <div class="sk-bar-col" [style.height]="h"></div>
+                                    }
+                                </div>
+                                <div class="sk-xaxis">
+                                    @for (i of [1,2,3,4,5]; track i) {
+                                        <div class="sk-bar sk-xaxis-label"></div>
                                     }
                                 </div>
                             </div>
-                        </gridster-item>
-                    }
+                            <div class="sk-card">
+                                <div class="sk-bar" style="width:48%;height:13px;border-radius:3px"></div>
+                                <div class="sk-pie-chart">
+                                    <div class="sk-pie-circle"></div>
+                                    <div class="sk-pie-legend">
+                                        @for (w of ['65%','50%','72%','45%','58%']; track w) {
+                                            <div class="sk-legend-item">
+                                                <div class="sk-bar sk-legend-dot"></div>
+                                                <div class="sk-bar sk-legend-label" [style.width]="w"></div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- row3: full-width area chart -->
+                        <div class="sk-row3">
+                            <div class="sk-card sk-card-full">
+                                <div class="sk-chart-header">
+                                    <div class="sk-bar" style="width:18%;height:13px;border-radius:3px"></div>
+                                    <div class="sk-legend-row">
+                                        @for (w of ['44px','48px']; track w) {
+                                            <div class="sk-legend-item">
+                                                <div class="sk-bar sk-legend-dot"></div>
+                                                <div class="sk-bar sk-legend-label" [style.width]="w"></div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="sk-area-chart">
+                                    <div class="sk-yaxis">
+                                        @for (i of [1,2,3,4,5]; track i) {
+                                            <div class="sk-bar sk-yaxis-label"></div>
+                                        }
+                                    </div>
+                                    <div class="sk-area-body">
+                                        <div class="sk-area-wave"></div>
+                                        <div class="sk-xaxis sk-xaxis-row">
+                                            @for (i of [1,2,3,4,5,6,7]; track i) {
+                                                <div class="sk-bar sk-xaxis-label"></div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (cubeMeta) {
+                <div class="puzzle-filter-row">
+                    <div class="filter-items" cdkDropList cdkDropListOrientation="horizontal"
+                         (cdkDropListDropped)="dropFilter($event)">
+                        @for (filter of dsl.filters; track $index) {
+                            @if (edit || !filter.hidden) {
+                                <div class="filter-item" [class.filter-item-hidden]="edit && filter.hidden" cdkDrag
+                                     [cdkDragDisabled]="!edit">
+                                    @if (edit) {
+                                        <span class="drag-handle" cdkDragHandle>
+                                        <span nz-icon nzType="holder" nzTheme="outline"></span>
+                                    </span>
+                                    }
+                                    <span class="filter-label">
+                                        @if (filter.notNull) {<span style="color: #ff4d4f; margin-right: 4px;">*</span>}{{ filter.title || cubeMeta.fieldTitleMap.get(filter.field) }}:
+                                    </span>
+                                    <cube-puzzle-filter-control [style.width]="getFilterWidth(filter)" size="small"
+                                                                [filter]="filter" [cubeMeta]="cubeMeta" [dsl]="dsl"
+                                                                [dashboard]="dashboard"></cube-puzzle-filter-control>
+                                    @if (edit) {
+                                        <button nz-button nzType="text" nzSize="small" (click)="editFilter($index)">
+                                            <span nz-icon nzType="edit"></span>
+                                        </button>
+                                        <button nz-button nzType="text" nzDanger nzSize="small" style="margin-left: 0"
+                                                (click)="removeFilter($index)">
+                                            <span nz-icon nzType="close"></span>
+                                        </button>
+                                    }
+                                </div>
+                            }
+                        }
+                        @if (edit) {
+                            <button nz-button nzSize="small" nzType="dashed" (click)="addFilter()">
+                                <span nz-icon nzType="plus"></span> {{ 'cube.dashboard.add_filter' | translate }}
+                            </button>
+                        }
+                        <div style="margin-left: auto; display: flex;">
+                            @if (isAiEnabled) {
+                                <button nz-button nzSize="small"
+                                        nz-tooltip [nzTooltipTitle]="'AI'|translate"
+                                        [style.border-color]="showAiPanel ? 'var(--ant-primary-color-hover)' : null"
+                                        [style.color]="showAiPanel ? 'var(--ant-primary-color)' : null"
+                                        (click)="toggleAiPanel()">
+                                    <i nz-icon nzType="comment" nzTheme="outline"></i>
+                                </button>
+                            }
+                            <button nz-button nzSize="small" (click)="copyLink()" [title]="'cube.dashboard.copy_link' | translate">
+                                <span nz-icon nzType="link"></span>
+                            </button>
+                            <button nz-button nzSize="small" (click)="toggleFullscreen()" [title]="'global.fullscreen' | translate">
+                                <span nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"></span>
+                            </button>
+                            @if (dsl.filters?.length > 0) {
+                                <button nz-button nzSize="small" (click)="reset()">{{ 'global.reset' | translate }}</button>
+                            }
+                            <button nz-button nzType="primary" nzSize="small" (click)="query()">{{ 'cube.dashboard.query' | translate }}</button>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (cubeMeta) {
+            <div class="gridster-wrapper" [style.background-image]="dsl?.settings?.backgroundImage ? 'url(' + dsl.settings.backgroundImage + ')' : 'none'"
+                 [style.background-color]="dsl?.settings?.backgroundColor || (dsl?.settings?.theme === DashboardTheme.DARK ? '#1f1f1f' : 'transparent')"
+                 [style.background-size]="'cover'"
+                 [style.background-position]="'center'"
+            >
+                @if (!dsl?.reports || dsl.reports.length == 0) {
+                    <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" style="margin-top: 20%"></nz-empty>
+                } @else {
+                    <gridster [options]="options">
+                        @if (dsl?.reports) {
+                            @for (report of dsl.reports; track $index) {
+                                <gridster-item [item]="report">
+                                    <div class="puzzle-item">
+                                        @if (edit) {
+                                            <div class="drag-handler item-actions" [title]="'global.drag' | translate"
+                                                 style="left: 49%;right: auto;transform: rotateZ(90deg)">
+                                                <button nz-button nzType="text" nzSize="small">
+                                                    <span nz-icon nzType="holder" nzTheme="outline"></span>
+                                                </button>
+                                            </div>
+                                            <div class="item-actions">
+                                                <button nz-button nzType="text" nzSize="small" (click)="editItem($index,report)"
+                                                        [title]="'global.editor' | translate">
+                                                    <span nz-icon nzType="edit"></span>
+                                                </button>
+                                                <button nz-button nzType="text" nzSize="small" (click)="copyItem($index,report)"
+                                                        [title]="'global.copy' | translate">
+                                                    <span nz-icon nzType="copy"></span>
+                                                </button>
+                                                <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)"
+                                                        [title]="'global.fullscreen' | translate">
+                                                    <span nz-icon [nzType]="isItemFullscreen($index) ? 'fullscreen-exit' : 'fullscreen'"></span>
+                                                </button>
+                                                <button nz-button nzType="text" nzSize="small" nzDanger
+                                                        (click)="removeItem($index)"
+                                                        [title]="'global.delete' | translate">
+                                                    <span nz-icon nzType="delete"></span>
+                                                </button>
+                                            </div>
+                                        } @else {
+                                            <div class="item-actions">
+                                                @if (report.description) {
+                                                    <button nz-button nzType="text" nzSize="small">
+                                                    <span nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+                                                          [nzTooltipTitle]="report.description"></span>
+                                                    </button>
+                                                }
+                                                @if (report.type != ReportType.KPI && report.type != ReportType.PIVOT_TABLE && report.type != ReportType.TEXT) {
+                                                    <button nz-button nzType="text" nzSize="small" (click)="download($index)"
+                                                            [title]="'global.download' | translate">
+                                                        <span nz-icon nzType="download"></span>
+                                                    </button>
+                                                }
+                                                <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)"
+                                                        [title]="'global.fullscreen' | translate">
+                                                    <span nz-icon [nzType]="isItemFullscreen($index) ? 'fullscreen-exit' : 'fullscreen'"></span>
+                                                </button>
+                                                <button nz-button nzType="text" nzSize="small" (click)="refreshItem($index)"
+                                                        [title]="'global.refresh' | translate">
+                                                    <span nz-icon nzType="redo"></span>
+                                                </button>
+                                            </div>
+                                        }
+                                        <div class="puzzle-content"
+                                             [style.background-color]="dsl?.settings?.theme === DashboardTheme.DARK ? '#141414' : 'var(--ant-primary-1)'">
+                                            @if (cubeMeta) {
+                                                <cube-puzzle-report [cubeMeta]="cubeMeta" [filters]="dsl.filters" [report]="report"
+                                                                    [dashboard]="dashboard" [dsl]="dsl"
+                                                                    (filterLink)="onFilterLink($event)"/>
+                                            }
+                                        </div>
+                                    </div>
+                                </gridster-item>
+                            }
+                        }
+                    </gridster>
                 }
-            </gridster>
+            </div>
+            }
+        </div>
+        @if (showAiPanel) {
+            <div class="ai-resize-handle" (mousedown)="onAiResizeDragStart($event)"></div>
+            <div class="ai-panel" [style.width.px]="aiPanelWidth">
+                <div class="ai-panel-header">
+                    <span>AI</span>
+                    <button nz-button nzType="text" nzSize="small" (click)="toggleAiPanel()">
+                        <i nz-icon nzType="close" nzTheme="outline"></i>
+                    </button>
+                </div>
+                <div class="ai-panel-body">
+                    <erupt-ai-chat [collapseSidebar]="true" [embedded]="true" [context]="aiContext"></erupt-ai-chat>
+                </div>
+            </div>
         }
     </div>
+    @if (aiResizing) {
+        <div class="cube-resize-overlay"></div>
+    }
 </div>
 
 <ng-template #publishContent>

@@ -22,10 +22,10 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() readonly: boolean;
 
-    // 新增配置项输入，允许外部传入配置覆盖默认配置
+    // new config input, allows external config to override defaults
     @Input() editorConfig: any = {};
 
-    // 编辑器模式
+    // editor mode
     @Input() editorMode: 'wysiwyg' | 'ir' | 'sv' = 'wysiwyg';
 
 
@@ -39,7 +39,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private vditor: Vditor;
 
-    // 默认工具栏配置
+    // default toolbar configuration
     private defaultToolbar = [
         'emoji',
         'headings',
@@ -82,33 +82,33 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        // 延迟初始化，确保 DOM 已渲染
+        // delay initialization to ensure the DOM has rendered
         setTimeout(() => {
             this.lazy.loadScript(`${this.cdnPath}/dist/index.min.js`).then(() => {
                 this.initVditor();
             }).catch(error => {
                 this.loading = false;
                 this.editorError = true;
-                console.error('加载Vditor脚本失败:', error);
+                console.error('Failed to load Vditor script:', error);
             });
         }, 100);
     }
 
     /**
-     * 初始化Vditor编辑器
-     * 使用合并后的配置初始化编辑器
+     * Initialize the Vditor editor
+     * Uses the merged configuration to initialize the editor
      */
     private initVditor() {
         try {
-            // 检查 vditorContainer 是否存在
+            // check if vditorContainer exists
             if (!this.vditorContainer) {
-                console.error('vditorContainer is undefined');
+                console.error('vditorContainer is not available');
                 this.loading = false;
                 this.editorError = true;
                 return;
             }
 
-            // 获取上传URL，与原CKEditor保持一致
+            // get the upload URL, consistent with the original CKEditor
             const uploadUrl = RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
                 this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token;
             ;
@@ -117,7 +117,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
                 minHeight: 60,
                 mode: this.editorMode,
                 cache: {
-                    enable: false // 禁用缓存，避免不同实例间的缓存冲突
+                    enable: false // disable caching to avoid conflicts between different instances
                 },
                 upload: {
                     url: uploadUrl,
@@ -125,7 +125,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
                     filename: this.formatFilename,
                     success: this.handleUploadSuccess.bind(this),
                     error: () => {
-                        console.error('上传图片失败');
+                        console.error('Image upload failed');
                     }
                 },
                 input: (value) => {
@@ -151,51 +151,34 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch (error) {
             this.loading = false;
             this.editorError = true;
-            console.error('初始化Vditor失败:', error);
+            console.error('Failed to initialize Vditor:', error);
         }
     }
 
-    /**
-     * 格式化文件名
-     * 将文件名格式化逻辑抽离为单独方法
-     * @param name 原始文件名
-     * @returns 格式化后的文件名
-     */
     private formatFilename(name: string): string {
         return name.replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, '')
             .replace(/[\?\\/:|<>\*\[\]\(\)\$%\{\}@~]/g, '')
             .replace('/\\s/g', '');
     }
 
-    /**
-     * 处理上传成功回调
-     * 将上传成功处理逻辑抽离为单独方法
-     * @param _ 未使用参数
-     * @param res 上传响应数据
-     */
     private handleUploadSuccess(_, res) {
         try {
-            // 解析响应数据
             const response = JSON.parse(res);
-            console.log('上传成功回调:', response);
-
             let imageUrl = '';
 
             if (response.data) {
                 imageUrl = response.data;
             } else {
-                console.warn('未能识别的上传响应格式:', response);
+                console.warn('Unrecognized upload response format:', response);
                 return;
             }
 
             if (imageUrl) {
-                // 获取文件名
-                const fileName = response.fileName || '图片';
-                // 使用 insertValue 方法插入图片
+                const fileName = response.fileName || 'image';
                 this.vditor.insertValue(`![${fileName}](${imageUrl})`);
             }
         } catch (e) {
-            console.error('处理上传响应失败', e);
+            console.error('Failed to handle upload response', e);
         }
     }
 

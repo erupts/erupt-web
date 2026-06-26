@@ -3,19 +3,39 @@
     <nz-switch nzSize="small" [(ngModel)]="layout['fixed']" (ngModelChange)="setLayout('fixed', layout['fixed'])"></nz-switch>
 </div>
 <div class="setting-item">
+    <span>{{'setting.split-menu' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout['splitMenu']"
+               (ngModelChange)="toggleSplitMenu(layout['splitMenu'])"></nz-switch>
+</div>
+<div class="setting-item">
     <span>{{'setting.tab-reuse' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout['reuse']" (ngModelChange)="changeReuse(layout['reuse'])"></nz-switch>
 </div>
 <div class="setting-item">
     <span>{{'setting.nav' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout['breadcrumbs']"
-               (ngModelChange)="setLayout('breadcrumbs',layout['breadcrumbs'])"></nz-switch>
+               (ngModelChange)="toggleBreadcrumbs(layout['breadcrumbs'])"></nz-switch>
 </div>
 <div class="setting-item">
     <span>{{'setting.table-border' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout['bordered']"
                (ngModelChange)="setLayout('bordered', layout['bordered'])"></nz-switch>
 </div>
+<div class="setting-item">
+    <span>{{'setting.table-size' | translate}}</span>
+    <nz-select [(ngModel)]="layout['tableSize']" nzSize="small" style="width: 80px;"
+               (ngModelChange)="setLayout('tableSize', $event)">
+        <nz-option nzValue="small" [nzLabel]="'global.density.small'|translate"></nz-option>
+        <nz-option nzValue="middle" [nzLabel]="'global.density.middle'|translate"></nz-option>
+        <nz-option nzValue="default" [nzLabel]="'global.density.large'|translate"></nz-option>
+    </nz-select>
+</div>
+<div class="setting-item">
+    <span>{{'setting.detail-drawer' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout['drawDraw']"
+               (ngModelChange)="setLayout('drawDraw', layout['drawDraw'])"></nz-switch>
+</div>
+
 <div class="setting-item">
     <span>{{'setting.color-weak' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout.colorWeak"
@@ -26,7 +46,11 @@
     <nz-switch nzSize="small" [(ngModel)]="layout['colorGray']"
                (ngModelChange)="toggleColorGray(layout['colorGray'])"></nz-switch>
 </div>
-<!--<div class="setting-item">-->
-<!--    <span>{{'setting.clear-cache' | translate}}</span>-->
-<!--    <button nz-button [nzSize]="'small'" (click)="clear()">{{'setting.clear' | translate}}</button>-->
-<!--</div>-->
+<div class="setting-item">
+    <span>RTL</span>
+    <nz-switch nzSize="small" [ngModel]="rtl.dir === 'rtl'" (ngModelChange)="rtl.toggle()"></nz-switch>
+</div>
+<div class="setting-item">
+    <span>{{'setting.clear-cache' | translate}}</span>
+    <button nz-button [nzSize]="'small'" nzDanger (click)="clear()">{{'setting.clear' | translate}}</button>
+</div>

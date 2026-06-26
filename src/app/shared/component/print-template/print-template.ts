@@ -13,12 +13,12 @@ export interface PrintVar extends LV<string, string> {
 }
 
 export interface PrintPageConfig {
-    paperSize: string;  // 纸张大小
-    orientation: string;  // 纸张方向
-    marginTop: number;  // 上边距 (mm)
-    marginRight: number;  // 右边距 (mm)
-    marginBottom: number;  // 下边距 (mm)
-    marginLeft: number;  // 左边距 (mm)
+    paperSize: string;  // paper size
+    orientation: string;  // paper orientation
+    marginTop: number;  // top margin (mm)
+    marginRight: number;  // right margin (mm)
+    marginBottom: number;  // bottom margin (mm)
+    marginLeft: number;  // left margin (mm)
 }
 
 @Component({
@@ -40,6 +40,10 @@ export class PrintTemplate implements OnInit {
 
     @Input() pageConfig: PrintPageConfig;
 
+    @Input() showTitle: boolean = false;
+
+    @Input() configTitle: string = '';
+
     @ViewChild('ue') ue: UEditorComponent;
 
     public loading: boolean = true;
@@ -52,7 +56,7 @@ export class PrintTemplate implements OnInit {
 
     primaryColor: string = "#1890ff";
 
-    // 纸张大小选项
+    // paper size options
     paperSizeOptions = [
         {label: 'A4', value: 'A4'},
         {label: 'A3', value: 'A3'},
@@ -61,13 +65,13 @@ export class PrintTemplate implements OnInit {
         {label: 'Auto', value: 'Custom'}
     ];
 
-    // 纸张方向选项
+    // paper orientation options
     orientationOptions = [
-        {label: '纵向', value: 'portrait'},
-        {label: '横向', value: 'landscape'}
+        {label: 'print.portrait', value: 'portrait'},
+        {label: 'print.landscape', value: 'landscape'}
     ];
 
-    // 配置面板显示状态
+    // configuration panel visibility state
     showPageConfig = false;
 
     constructor(@Inject(NZ_MODAL_DATA) private data: any,
@@ -87,7 +91,7 @@ export class PrintTemplate implements OnInit {
             this.globalVars = res.data;
         });
 
-        // 初始化页面配置默认值
+        // initialize page configuration default values
         if (!this.pageConfig) {
             this.pageConfig = {
                 paperSize: 'A4',
@@ -102,6 +106,10 @@ export class PrintTemplate implements OnInit {
 
     getContent(): string {
         return this.ue.Instance.getContent();
+    }
+
+    getTitle(): string {
+        return this.configTitle;
     }
 
     getPageConfig(): PrintPageConfig {
@@ -122,7 +130,7 @@ export class PrintTemplate implements OnInit {
         }
         if (!vars || vars.length === 0) return;
         if (editor.getContent && editor.getContent.isHijacked) return;
-        // 这种方案最稳妥：拦截 setContent 和 getContent
+        // this approach is the most reliable: intercept setContent and getContent
         let that = this;
         if (editor.setContent) {
             const originalSetContent = editor.setContent;
@@ -161,7 +169,7 @@ export class PrintTemplate implements OnInit {
         let primaryColor = this.primaryColor;
         if (v.template) {
             let processedTemplate = v.template;
-            // 如果有子变量，需要渲染它们
+            // if there are child variables, render them
             if (v.vars && v.vars.length > 0) {
                 v.vars.forEach(subVar => {
                     const reg = new RegExp(`\\$\!\\{${subVar.value}\\}`, 'g');
@@ -187,7 +195,7 @@ export class PrintTemplate implements OnInit {
 
     onReady(ue: UEditorComponent) {
         this.loading = false;
-        // 如果 prototype 劫持失败，这里作为兜底
+        // fallback in case prototype interception fails
         if (!ue.Instance.getContent || !ue.Instance.getContent.isHijacked) {
             this.initMention(ue.Instance);
         }

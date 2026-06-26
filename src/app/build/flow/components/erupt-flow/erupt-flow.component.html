@@ -10,21 +10,21 @@
             </div>
         }
         <div class="operation-zoom">
-            <button nz-button nzSize="small" (click)="doZoom(-1)" title="缩小 (Ctrl + -)">
+            <button nz-button nzSize="small" (click)="doZoom(-1)" [title]="'flow.zoom.zoom_out' | translate">
                 <span nz-icon nzType="minus"></span>
             </button>
-            <span class="zoom-text" (click)="resetZoom()" style="cursor: pointer" title="点击恢复 100% 缩放">{{ (scale * 100) | number:'1.0-0' }}%</span>
-            <button nz-button nzSize="small" (click)="doHit()" title="自适应视图 (Ctrl + 0)">
+            <span class="zoom-text" (click)="resetZoom()" style="cursor: pointer" [title]="'flow.zoom.reset' | translate">{{ (scale * 100) | number:'1.0-0' }}%</span>
+            <button nz-button nzSize="small" (click)="doHit()" [title]="'flow.zoom.fit' | translate">
                 <span nz-icon nzType="aim"></span>
             </button>
-            <button nz-button nzSize="small" (click)="doZoom(1)" title="放大 (Ctrl + +)">
+            <button nz-button nzSize="small" (click)="doZoom(1)" [title]="'flow.zoom.zoom_in' | translate">
                 <span nz-icon nzType="plus"></span>
             </button>
             <nz-divider nzType="vertical"></nz-divider>
-            <button nz-button nzSize="small" (click)="showGrid = !showGrid" [title]="showGrid ? '隐藏网格' : '显示网格'">
+            <button nz-button nzSize="small" (click)="showGrid = !showGrid" [title]="showGrid ? ('flow.grid.hide' | translate) : ('flow.grid.show' | translate)">
                 <span nz-icon [nzType]="showGrid ? 'border-inner' : 'border-outer'"></span>
             </button>
-            <button nz-button nzSize="small" (click)="toggleFullscreen()" [title]="isFullscreen ? '退出全屏' : '全屏'">
+            <button nz-button nzSize="small" (click)="toggleFullscreen()" [title]="isFullscreen ? ('bi.exit_fullscreen' | translate) : ('global.fullscreen' | translate)">
                 <span nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"></span>
             </button>
         </div>

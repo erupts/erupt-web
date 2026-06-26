@@ -1,392 +1,343 @@
 :host {
+    display: block;
     height: 100%;
+    background: #f5f7fa;
     overflow: auto;
+    box-sizing: border-box;
 
     ::ng-deep {
-
-        .flow-dashboard {
-            padding: 16px;
+        .flow-dashboard-container {
+            height: 100%;
+            display: flex;
             background: #f5f7fa;
-            // 顶部总览卡片
-            .overview-section {
-                margin-bottom: 24px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+            box-sizing: border-box;
 
-                .overview-cards {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                    gap: 16px;
+            // ── Left sidebar ──────────────────────────────────────────
+            .sidebar {
+                width: 196px;
+                height: 100%;
+                background: #fff;
+                border-right: 1px solid var(--ant-border-color-split, #eee);
+                display: flex;
+                flex-direction: column;
+                flex-shrink: 0;
 
-                    .overview-card {
-                        background: white;
-                        border-radius: 12px;
-                        padding: 24px;
-                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-                        border: 1px solid #f0f0f0;
-                        display: flex;
-                        align-items: center;
-                        transition: all 0.3s ease;
+                .sidebar-header {
+                    height: 48px;
+                    padding: 0 14px;
+                    border-bottom: 1px solid var(--ant-border-color-split, #eee);
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex-shrink: 0;
 
-                        &:hover {
-                            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-                            transform: translateY(-2px);
+                    .sidebar-title {
+                        font-size: 12px;
+                        font-weight: 600;
+                        color: #595959;
+                        letter-spacing: 0.04em;
+                        text-transform: uppercase;
+                    }
+                }
+
+                .sidebar-menu {
+                    flex: 1;
+                    overflow-y: auto;
+                    padding: 6px 8px;
+                }
+
+                .menu-item {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    height: 32px;
+                    padding: 0 10px;
+                    gap: 8px;
+                    cursor: pointer;
+                    transition: background 0.15s;
+                    border-radius: 4px;
+
+                    &:hover {
+                        background: #f5f7fa;
+                    }
+
+                    &.active {
+                        background: var(--ant-primary-1, #e6f7ff);
+                        color: var(--ant-primary-color, #1890ff);
+                        font-weight: 500;
+
+                        &::before {
+                            content: '';
+                            position: absolute;
+                            left: 0;
+                            top: 6px;
+                            bottom: 6px;
+                            width: 2px;
+                            background: var(--ant-primary-color, #1890ff);
+                            border-radius: 1px;
                         }
 
-                        .card-icon {
-                            width: 48px;
-                            height: 48px;
-                            border-radius: 12px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            margin-right: 16px;
-                            font-size: 24px;
-
-                            &:nth-child(1) {
-                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                color: white;
-                            }
-
-                            &:nth-child(2) {
-                                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                                color: white;
-                            }
-
-                            &:nth-child(3) {
-                                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-                                color: white;
-                            }
-
-                            &:nth-child(4) {
-                                background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-                                color: white;
-                            }
+                        [nz-icon] {
+                            color: var(--ant-primary-color, #1890ff);
                         }
+                    }
 
-                        .card-content {
-                            flex: 1;
+                    [nz-icon] {
+                        font-size: 13px;
+                        color: #8c8c8c;
+                        flex-shrink: 0;
+                    }
 
-                            .card-number {
-                                font-size: 28px;
-                                font-weight: 700;
-                                color: #262626;
-                                line-height: 1;
-                                margin-bottom: 4px;
-                            }
+                    .menu-label {
+                        flex: 1;
+                        font-size: 13px;
+                        color: inherit;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
 
-                            .card-label {
-                                font-size: 14px;
-                                color: #8c8c8c;
-                                margin: 0;
-                            }
-                        }
-
-                        .card-trend {
-                            display: flex;
-                            align-items: center;
-                            font-size: 12px;
-                            font-weight: 500;
-                            padding: 4px 8px;
-                            border-radius: 6px;
-
-                            &.up {
-                                color: #52c41a;
-                                background: #f6ffed;
-                            }
-
-                            &.down {
-                                color: #ff4d4f;
-                                background: #fff2f0;
-                            }
-
-                            i {
-                                margin-right: 4px;
-                            }
-                        }
+                    .menu-badge {
+                        margin-left: auto;
+                        flex-shrink: 0;
                     }
                 }
             }
 
-            // 主要内容区域
+            // ── Main content ──────────────────────────────────────────
             .main-content {
-                display: grid;
-                grid-template-columns: 240px 1fr;
-                gap: 0;
-                background: white;
-                border-radius: 3px;
+                flex: 1;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
                 overflow: hidden;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-                border: 1px solid #f0f0f0;
+                background: #fff;
 
-                // 左侧分类导航
-                .category-sidebar {
-                    background: #fafafa;
-                    border-right: 1px solid #f0f0f0;
+                // ── Toolbar header ────────────────────────────────────
+                .list-header {
+                    height: 48px;
+                    padding: 0 20px;
+                    border-bottom: 1px solid var(--ant-border-color-split, #eee);
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                    flex-shrink: 0;
 
-                    .category-header {
-                        padding: 16px 20px;
-                        border-bottom: 1px solid #f0f0f0;
+                    .stat-item {
                         display: flex;
-                        justify-content: space-between;
-                        align-items: center;
+                        align-items: baseline;
+                        gap: 3px;
+                        flex-shrink: 0;
 
-                        h3 {
-                            margin: 0;
-                            font-size: 16px;
+                        .stat-num {
+                            font-size: 15px;
                             font-weight: 600;
                             color: #262626;
                         }
-                    }
 
-                    .category-list {
-                        .category-item {
-                            padding: 16px 20px;
-                            cursor: pointer;
-                            transition: all 0.2s ease;
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-
-                            &:hover {
-                                background: var(--ant-primary-1);
-                            }
-
-                            &.active {
-                                background: var(--ant-primary-1);
-                                color: var(--ant-primary-color);
-                                font-weight: 500;
-                            }
-
-                            .category-name {
-                                font-size: 14px;
-                            }
-
-                            .category-count {
-                                font-size: 12px;
-                                color: #8c8c8c;
-                                background: rgba(0, 0, 0, 0.1);
-                                padding: 2px 6px;
-                                border-radius: 10px;
-                            }
-
-                            &.active .category-count {
-                                color: #fff;
-                                background: var(--ant-primary-color);
-                            }
-                        }
-                    }
-                }
-
-                // 右侧流程内容
-                .content-area {
-                    padding: 16px;
-                    background: white;
-                    position: relative;
-
-                    .search-container {
-                        position: absolute;
-                        right: 16px;
-
-                        nz-input-group {
-                            max-width: 600px;
-                        }
-                    }
-
-                    .loading-container {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        min-height: 200px;
-
-                        .loading-text {
-                            margin-top: 16px;
+                        .stat-label {
+                            font-size: 12px;
                             color: #8c8c8c;
                         }
                     }
 
-                    .empty-state {
+                    .ant-input-affix-wrapper-borderless {
+                        background: #f5f7fa;
+                        border-radius: 4px;
+                        padding: 0 10px;
+                        height: 30px;
+                    }
+                }
+
+                .flow-content {
+                    flex: 1;
+                    overflow-y: auto;
+                    padding: 14px;
+                    background: #f5f7fa;
+                }
+
+                .flow-group {
+                    background: #fff;
+                    border: 1px solid var(--ant-border-color-split, #eee);
+                    border-radius: 6px;
+                    padding: 12px 16px 16px;
+                    margin-bottom: 16px;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    .group-title {
+                        font-size: 11px;
+                        font-weight: 600;
+                        color: #8c8c8c;
+                        text-transform: uppercase;
+                        letter-spacing: 0.07em;
+                        margin-bottom: 12px;
+                        padding-bottom: 8px;
+                        border-bottom: 1px solid var(--ant-border-color-split, #eee);
                         display: flex;
-                        flex-direction: column;
+                        align-items: center;
+                        gap: 8px;
+
+                        .group-count {
+                            font-size: 11px;
+                            font-weight: 400;
+                            color: #bfbfbf;
+                            letter-spacing: 0;
+                        }
+                    }
+
+                    .flow-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                        gap: 8px;
+                    }
+                }
+
+                .skeleton-group {
+                    pointer-events: none;
+
+                    .group-title {
+                        .ant-skeleton { margin: 0; .ant-skeleton-title { margin: 0; height: 12px; } }
+                    }
+
+                    .skeleton-item {
+                        cursor: default;
+
+                        nz-skeleton-element .ant-skeleton-avatar {
+                            width: 36px;
+                            height: 36px;
+                            border-radius: 6px;
+                        }
+
+                        .flow-body .ant-skeleton {
+                            margin: 0;
+                            .ant-skeleton-title { margin: 0 0 5px; height: 12px; }
+                            .ant-skeleton-paragraph { margin: 0; li { margin: 0; height: 10px; } }
+                        }
+                    }
+                }
+
+                .flow-item {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 10px 12px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: all 0.15s;
+                    background: #f7f8fa;
+                    border: 1px solid transparent;
+
+                    &:hover {
+                        border-color: var(--ant-primary-color, #1890ff);
+                        background: var(--ant-primary-1, #e6f7ff);
+                        box-shadow: 0 1px 6px rgba(24, 144, 255, 0.12);
+                    }
+
+                    .flow-icon {
+                        width: 36px;
+                        height: 36px;
+                        border-radius: 6px;
+                        flex-shrink: 0;
+                        display: flex;
                         align-items: center;
                         justify-content: center;
-                        min-height: 200px;
-                        color: #8c8c8c;
-
-                        i {
-                            font-size: 48px;
-                            margin-bottom: 16px;
-                        }
-
-                        p {
-                            margin-bottom: 16px;
-                            font-size: 16px;
-                        }
+                        color: #fff;
+                        font-size: 14px;
                     }
 
-                    .flow-groups {
-                        .group-section {
-                            margin-bottom: 32px;
+                    .flow-body {
+                        flex: 1;
+                        min-width: 0;
+                    }
 
-                            &:last-child {
-                                margin-bottom: 0;
-                            }
+                    .flow-name {
+                        font-size: 13px;
+                        font-weight: 500;
+                        color: #262626;
+                        line-height: 1.35;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
 
-                            .group-title {
-                                font-size: 18px;
-                                font-weight: 600;
-                                color: #262626;
-                                margin: 0 0 16px 0;
-                                padding-bottom: 8px;
-                                border-bottom: 2px solid #f0f0f0;
-                                display: flex;
-                                align-items: center;
-                                gap: 8px;
+                    .flow-desc {
+                        font-size: 11px;
+                        color: #b0b0b0;
+                        margin-top: 1px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+                }
+            }
+        }
+    }
 
-                                .group-count {
-                                    font-size: 14px;
-                                    color: #8c8c8c;
-                                    font-weight: normal;
-                                }
-                            }
+    .mobile-menu-btn {
+        display: none;
+        flex-shrink: 0;
+    }
 
-                            .flow-grid {
-                                display: grid;
-                                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                                gap: 16px;
+    @media (max-width: 768px) {
+        ::ng-deep {
+            .flow-dashboard-container {
+                .sidebar-backdrop {
+                    display: none;
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0, 0, 0, 0.35);
+                    z-index: 199;
+                }
 
-                                .flow-item {
-                                    background: white;
-                                    border: 1px solid #f0f0f0;
-                                    border-radius: 8px;
-                                    padding: 16px;
-                                    cursor: pointer;
-                                    transition: all 0.3s ease;
-                                    display: flex;
-                                    align-items: flex-start;
-                                    gap: 12px;
+                &.sidebar-open {
+                    .sidebar {
+                        transform: translateX(0);
+                        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+                    }
 
-                                    &:hover {
-                                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                                        transform: translateY(-2px);
-                                        border-color: var(--ant-primary-color);
-                                    }
+                    .sidebar-backdrop {
+                        display: block;
+                    }
+                }
 
-                                    &.flow-disabled {
-                                        opacity: 0.6;
-                                        cursor: not-allowed;
+                .sidebar {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    height: 100%;
+                    z-index: 200;
+                    transform: translateX(-100%);
+                    transition: transform 0.25s ease;
+                }
 
-                                        &:hover {
-                                            transform: none;
-                                            box-shadow: none;
-                                            border-color: #f0f0f0;
-                                        }
-                                    }
+                .main-content {
+                    width: 100%;
 
-                                    .flow-icon {
-                                        width: 40px;
-                                        height: 40px;
-                                        border-radius: 8px;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        font-size: 18px;
-                                        flex-shrink: 0;
-                                        color: #fff;
-                                    }
+                    .list-header {
+                        padding: 0 12px;
+                        gap: 8px;
+                    }
 
-                                    .flow-info {
-                                        flex: 1;
-                                        min-width: 0;
+                    .flow-content {
+                        padding: 12px;
+                    }
 
-                                        .flow-name {
-                                            font-size: 14px;
-                                            font-weight: 500;
-                                            color: #262626;
-                                            line-height: 1.4;
-                                            margin-bottom: 4px;
-                                        }
-
-                                        .flow-desc {
-                                            font-size: 12px;
-                                            color: #8c8c8c;
-                                            line-height: 1.4;
-                                            margin-bottom: 0;
-                                            display: -webkit-box;
-                                            -webkit-line-clamp: 2;
-                                            -webkit-box-orient: vertical;
-                                            overflow: hidden;
-                                        }
-
-                                        .flow-status {
-                                            display: flex;
-                                            align-items: center;
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    .flow-group .flow-grid {
+                        grid-template-columns: 1fr 1fr;
+                        gap: 6px;
                     }
                 }
             }
         }
 
-        // 响应式设计
-        @media (max-width: 1200px) {
-            .flow-dashboard {
-                .main-content {
-                    grid-template-columns: 200px 1fr;
-                }
-            }
-        }
-
-        @media (max-width: 768px) {
-            .flow-dashboard {
-                padding: 16px;
-
-                .overview-section {
-                    .overview-cards {
-                        grid-template-columns: 1fr;
-                        gap: 12px;
-                    }
-                }
-
-                .main-content {
-                    grid-template-columns: 1fr;
-                    border-radius: 6px;
-
-                    .category-sidebar {
-                        order: 2;
-                        border-right: none;
-                        border-top: 1px solid #f0f0f0;
-
-                        .category-list {
-                            display: flex;
-                            overflow-x: auto;
-
-                            .category-item {
-                                flex-shrink: 0;
-                                border-bottom: none;
-                                border-right: 1px solid #f0f0f0;
-                                min-width: 120px;
-                                text-align: center;
-                            }
-                        }
-                    }
-
-                    .content-area {
-                        order: 1;
-                        padding: 16px;
-
-                        .flow-groups {
-                            .group-section {
-                                .flow-grid {
-                                    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                                    gap: 12px;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        .mobile-menu-btn {
+            display: flex;
         }
     }
 }

@@ -1,8 +1,8 @@
 <div class="upms-select-container">
-  <!-- 左侧面板：选择 -->
+  <!-- Left panel: selection -->
   <div class="left-panel">
-    <!-- 使用 ng-zorro 的标签页 -->
-    <nz-tabset
+    <!-- Using ng-zorro tabs -->
+    <nz-tabs
       [(nzSelectedIndex)]="activeTab"
       (nzSelectedIndexChange)="onTabChange($event)"
       [nzTabPosition]="'top'"
@@ -17,22 +17,22 @@
             <span nz-icon [nzType]="tab.icon" nzTheme="outline"></span>
             <span class="tab-label">{{ tab.key | translate }}</span>
           </ng-template>
-          <!-- 搜索框 -->
+          <!-- Search box -->
           <div class="search-container">
             <nz-input-group nzSize="default">
               <input
                 nz-input
-                [placeholder]="'搜索' + i18n.fanyi(tab.key) + '名称...'"
+                [placeholder]="getSearchPlaceholder(tab.key)"
                 [(ngModel)]="tab.searchText"
                 (ngModelChange)="onSearchChange(tab.key, $event)"
                 />
             </nz-input-group>
           </div>
-          <!-- 项目列表 -->
+          <!-- Item list -->
           <div class="item-list">
             <div class="item-list-header">
               <span class="item-count">{{ getListTitle(tab.key) }}</span>
-              <span class="item-tip">点击选择或取消选择</span>
+              <span class="item-tip">{{ 'flow.upms.click_to_toggle' | translate }}</span>
             </div>
             @for (item of getFilteredItems(tab.key); track trackByKey($index, item)) {
               <div
@@ -58,14 +58,14 @@
           </div>
         </nz-tab>
       }
-    </nz-tabset>
+    </nz-tabs>
   </div>
 
-  <!-- 右侧面板：已选项目 -->
+  <!-- Right panel: selected items -->
   <div class="right-panel">
     <div class="selected-header">
       <div class="header-info">
-        <h3 class="panel-title">已选{{ flowUpmsScopes.length }} 项</h3>
+        <h3 class="panel-title">{{ 'flow.upms.selected_count_prefix' | translate }}{{ flowUpmsScopes.length }}{{ 'flow.upms.selected_count_suffix' | translate }}</h3>
       </div>
       <div class="header-actions">
         @if (flowUpmsScopes.length > 0) {
@@ -78,7 +78,7 @@
             class="clear-all-btn"
             >
             <span nz-icon nzType="delete" nzTheme="outline"></span>
-            清空全部
+            {{ 'flow.upms.clear_all' | translate }}
           </button>
         }
       </div>
@@ -109,7 +109,7 @@
             @if (group.items.length === 0) {
               <div class="group-empty">
                 <span nz-icon nzType="inbox" nzTheme="outline"></span>
-                <span class="empty-text">暂无已选{{ i18n.fanyi(group.scope) }}</span>
+                <span class="empty-text">{{ 'flow.upms.no_selected_prefix' | translate }}{{ i18n.fanyi(group.scope) }}</span>
               </div>
             }
             @if (group.items.length > 0) {
@@ -122,10 +122,10 @@
                   (click)="onClearAll(group.scope)"
                   class="clear-group-btn"
                   nz-tooltip
-                  [nzTooltipTitle]="'清空' + i18n.fanyi(group.scope)"
+                  [nzTooltipTitle]="('flow.upms.clear_prefix' | translate) + i18n.fanyi(group.scope)"
                   >
                   <span nz-icon nzType="delete" nzTheme="outline"></span>
-                  清空{{ i18n.fanyi(group.scope) }}
+                  {{ 'flow.upms.clear_prefix' | translate }}{{ i18n.fanyi(group.scope) }}
                 </button>
               </div>
             }

@@ -6,6 +6,7 @@ import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {CcNode, ReviewMode} from "@flow/model/flow-approval.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -40,7 +41,7 @@ export class CcNodeComponent extends ANode implements OnInit {
     }
 
     deleteReviewUser(index: number) {
-        // 确保最少保留一个审批人
+        // Ensure at least one approver is retained
         if (this.ccNode.reviewUserModes.length > 1) {
             this.ccNode.reviewUserModes.splice(index, 1);
         }
@@ -80,8 +81,19 @@ export class CcNodeComponent extends ANode implements OnInit {
         return "#5994F3";
     }
 
+    constructor(private i18n?: I18NService) {
+        super();
+    }
+
+    get ccTabOptions() {
+        return [
+            {value: 0, label: this.i18n.fanyi('flow.node.tab.set_cc')},
+            {value: 1, label: this.i18n.fanyi('flow.node.tab.form_access')},
+        ];
+    }
+
     override name(): string {
-        return "抄送人";
+        return I18NService.instance?.fanyi('flow.node.cc_label');
     }
 
     override create(): NodeRule {

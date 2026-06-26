@@ -1,8 +1,8 @@
 export interface PrintPageConfig {
-    paperSize: string;  // 纸张大小
-    orientation: string;  // 纸张方向
-    marginTop: number;  // 上边距 (mm)
-    marginRight: number;  // 右边距 (mm)
-    marginBottom: number;  // 下边距 (mm)
-    marginLeft: number;  // 左边距 (mm)
+    paperSize: string;  // paper size
+    orientation: string;  // paper orientation
+    marginTop: number;  // top margin (mm)
+    marginRight: number;  // right margin (mm)
+    marginBottom: number;  // bottom margin (mm)
+    marginLeft: number;  // left margin (mm)
 }

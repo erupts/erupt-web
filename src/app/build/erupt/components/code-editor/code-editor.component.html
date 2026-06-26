@@ -1,6 +1,6 @@
-<div class="code-editor-container" [style.height.px]="height">
+<div class="code-editor-container" [style.height.px]="height" [class.code-editor-fullscreen]="fullscreen">
     <nz-code-editor #codeEditor
-                    [ngStyle]="{height:height+'px', width: '100%'}" 
+                    [ngStyle]="{height:height+'px', width: '100%'}"
                     class="code-editor-style"
                     (nzEditorInitialized)="codeEditorInit($event)"
                     [(ngModel)]="edit.$value"
@@ -8,6 +8,14 @@
                     [nzEditorOption]="editorOption">
     </nz-code-editor>
     <div class="toolbar">
+        <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="Copy"
+                (click)="copyCode()" style="margin-right:4px;">
+            <i nz-icon nzType="copy" nzTheme="outline"></i>
+        </button>
+        <button nz-button nzType="text" nzSize="small" nz-tooltip [nzTooltipTitle]="fullscreen ? 'Exit' : 'Fullscreen'"
+                (click)="toggleFullscreen()" style="margin-right:4px;">
+            <i nz-icon [nzType]="fullscreen ? 'fullscreen-exit' : 'fullscreen'" nzTheme="outline"></i>
+        </button>
         <nz-switch nzSize="small" [ngModel]="dark"
                    [nzUnCheckedChildren]="unchecked"
                    [nzCheckedChildren]="checked"

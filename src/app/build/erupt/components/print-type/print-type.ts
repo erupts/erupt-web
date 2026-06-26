@@ -61,7 +61,7 @@ export class PrintTypeComponent implements OnInit {
         }
     }
 
-    // 获取显示值
+    // get the display value
     getDisplayValue(field: EruptFieldModel): any {
         const edit = field.eruptFieldJson.edit;
         const value = edit.$value;
@@ -116,13 +116,13 @@ export class PrintTypeComponent implements OnInit {
         }
     }
 
-    // 判断是否显示附件列表
+    // determine whether to display the attachment list
     hasAttachments(field: EruptFieldModel): boolean {
         const viewValue = field.eruptFieldJson.edit.$viewValue;
         return viewValue && Array.isArray(viewValue) && viewValue.length > 0;
     }
 
-    // 判断是否有签名
+    // determine whether a signature exists
     hasSignature(field: EruptFieldModel): boolean {
         return !!field.eruptFieldJson.edit.$value;
     }

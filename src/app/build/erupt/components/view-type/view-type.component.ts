@@ -37,7 +37,7 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        switch (this.view.viewType) {
+        switch (this.view.type) {
             case ViewType.TAB_VIEW:
                 this.loading = true;
                 this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.value).subscribe(data => {
@@ -63,7 +63,7 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
                             this.paths.push(DataService.previewAttachment(path));
                         }
                     }
-                    if (this.view.viewType == ViewType.ATTACHMENT_DIALOG) {
+                    if (this.view.type == ViewType.ATTACHMENT_DIALOG) {
                         this.value = [DataService.previewAttachment(this.value)];
                     }
                 }

@@ -1,4 +1,41 @@
 :host {
+    .aside-loading-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.75);
+        z-index: 10;
+    }
+
+
+    .sidebar-resize-handle {
+        position: absolute;
+        top: 0;
+        right: -3px;
+        width: 6px;
+        height: 100%;
+        cursor: col-resize;
+        z-index: 20;
+        transition: background 0.2s;
+
+        &:hover, &:active {
+            background: var(--ant-primary-color);
+            opacity: 0.3;
+        }
+    }
+
+    .sidebar-resize-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 9999;
+        cursor: col-resize;
+    }
+
     .fold {
         position: absolute;
         z-index: 0;
@@ -9,7 +46,7 @@
         text-align: center;
         cursor: pointer;
         transition: .4s all;
-        box-shadow: 0 -1px 0 0 #dadfe6;
+        border-top: 1px solid var(--ant-border-color-split);
         background: #fff;
     }
 
@@ -25,18 +62,7 @@
         }
 
         .sidebar-nav__item-icon {
-            font-size: 18px !important;
-        }
-    }
-}
-
-
-[data-theme='dark'] {
-    :host {
-        .fold {
-            color: #fff;
-            background: #141414;
-            box-shadow: 0 -1px 0 0 #303030;
+            font-size: 15px !important;
         }
     }
 }

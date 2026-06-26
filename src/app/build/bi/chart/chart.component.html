@@ -12,7 +12,7 @@
     }
     @default {
       <nz-card [nzTitle]="chart.name" nzSize="small" [nzBodyStyle]="{padding:'0'}" [nzHoverable]="true"
-        [nzExtra]="extraTemplate" style="margin-bottom: 12px">
+        [nzExtra]="extraTemplate">
         <div [ngClass]="open?'card-show':'card-hide'">
           @if (!ready) {
             <div [id]='chart.code' [ngStyle]="{height:chart.height+'px'}"

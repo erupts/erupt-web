@@ -1,11 +1,20 @@
-import {AfterViewInit, Component, Inject, Input, OnDestroy, OnInit, Optional} from "@angular/core";
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    Optional,
+    ViewChild
+} from "@angular/core";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {DA_SERVICE_TOKEN, SocialService, TokenService} from "@delon/auth";
 import {DataService} from "@shared/service/data.service";
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
-import {Md5} from "ts-md5";
 import {WindowModel} from "@shared/model/window.model";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
@@ -32,7 +41,17 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
 
     loading = false;
 
+    @ViewChild('pwdInput', {static: false}) pwdInput: ElementRef;
+    @ViewChild('userInput', {static: false}) userInput: ElementRef;
+
     passwordType: 'password' | 'text' = 'password';
+
+    capsLock = false;
+
+    shaking = false;
+
+
+    private static readonly REMEMBER_KEY = 'erupt_remember_account';
 
     @Input() modelFun: Function;
 
@@ -64,12 +83,13 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         private cacheService: CacheService
     ) {
         this.tenantLogin = !!(EruptAppData.get().properties && EruptAppData.get().properties["erupt-tenant"])
+        const savedAccount = localStorage.getItem(UserLoginComponent.REMEMBER_KEY);
         this.form = fb.group({
-            userName: [null, [Validators.required, Validators.minLength(1)]],
+            userName: [savedAccount, [Validators.required, Validators.minLength(1)]],
             password: [null, Validators.required],
             verifyCode: [null],
             mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
-            remember: [true]
+            rememberAccount: [!!savedAccount]
         });
         if (this.tenantDomainInfo) {
             this.router.navigateByUrl('/passport/tenant').then(r => true)
@@ -88,6 +108,13 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
             this.changeVerifyCode();
             Promise.resolve(null).then(() => this.useVerifyCode = true);
         }
+        setTimeout(() => {
+            if (this.userName.value) {
+                this.pwdInput?.nativeElement?.focus();
+            } else {
+                this.userInput?.nativeElement?.focus();
+            }
+        });
     }
 
     // region: fields
@@ -125,12 +152,17 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         this.loading = true;
         let pwd = this.password.value;
         if (EruptAppData.get().pwdTransferEncrypt) {
-            pwd = <string>Md5.hashStr(Md5.hashStr(this.password.value) + this.userName.value);
+            pwd = this.data.pwdEncode(this.password.value, 3);
         }
         this.data.login(this.userName.value, pwd, this.verifyCode.value, this.verifyCodeMark).subscribe((result) => {
             if (result.useVerifyCode) this.changeVerifyCode();
             this.useVerifyCode = result.useVerifyCode;
             if (result.pass) {
+                if (this.form.value.rememberAccount) {
+                    localStorage.setItem(UserLoginComponent.REMEMBER_KEY, this.userName.value);
+                } else {
+                    localStorage.removeItem(UserLoginComponent.REMEMBER_KEY);
+                }
                 this.tokenService.set({
                     token: result.token,
                     account: this.userName.value
@@ -156,6 +188,8 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
             } else {
                 this.loading = false;
                 this.error = result.reason;
+                this.shaking = true;
+                setTimeout(() => this.shaking = false, 400);
                 this.verifyCode.setValue(null);
                 if (result.useVerifyCode) {
                     this.changeVerifyCode();
@@ -170,6 +204,10 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
     changeVerifyCode() {
         this.verifyCodeMark = Math.ceil(Math.random() * new Date().getTime());
         this.verifyCodeUrl = DataService.getVerifyCodeUrl(this.verifyCodeMark);
+    }
+
+    focusPwd() {
+        this.pwdInput?.nativeElement?.focus();
     }
 
     forgot() {

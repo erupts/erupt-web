@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {SettingsService} from "@delon/theme";
+import {RTLService, SettingsService} from "@delon/theme";
 import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
+import {TableSize} from "../../../../build/erupt/model/erupt.enum";
 
 @Component({
     standalone: false,
@@ -18,14 +19,29 @@ export class SettingsComponent implements OnInit {
                 private confirmServ: NzModalService,
                 private messageServ: NzMessageService,
                 private i18n: I18NService,
-                private reuseTabService: ReuseTabService) {
+                private reuseTabService: ReuseTabService,
+                public rtl: RTLService) {
     }
 
     ngOnInit() {
+        if (!this.settingSrv.layout['tableSize']) {
+            this.settingSrv.setLayout('tableSize', TableSize.SMALL);
+        }
     }
 
     setLayout(name: string, value: any) {
         this.settingSrv.setLayout(name, value);
+    }
+
+    toggleSplitMenu(value: boolean) {
+        if (value) this.settingSrv.setLayout('breadcrumbs', false);
+        if (!value) this.settingSrv.setLayout('breadcrumbs', true);
+        this.settingSrv.setLayout('splitMenu', value);
+    }
+
+    toggleBreadcrumbs(value: boolean) {
+        if (value) this.settingSrv.setLayout('splitMenu', false);
+        this.settingSrv.setLayout('breadcrumbs', value);
     }
 
     get layout() {
@@ -36,7 +52,6 @@ export class SettingsComponent implements OnInit {
         if (value) {
             this.reuseTabService.mode = 0;
             this.reuseTabService.excludes = [];
-            this.toggleColorWeak(false);
         } else {
             this.reuseTabService.mode = 2;
             this.reuseTabService.excludes = [/\d*/];
@@ -45,31 +60,34 @@ export class SettingsComponent implements OnInit {
     }
 
     toggleColorWeak(value: boolean) {
+        if (value) this.toggleColorGray(false);
         this.settingSrv.setLayout("colorWeak", value)
         if (value) {
-            document.body.classList.add("color-weak");
-            this.changeReuse(false);
+            document.documentElement.classList.add("color-weak");
         } else {
-            document.body.classList.remove("color-weak");
+            document.documentElement.classList.remove("color-weak");
         }
     }
 
     toggleColorGray(value: boolean) {
+        if (value) this.toggleColorWeak(false);
         this.settingSrv.setLayout("colorGray", value)
         if (value) {
-            document.body.classList.add("color-gray");
+            document.documentElement.classList.add("color-gray");
         } else {
-            document.body.classList.remove("color-gray");
+            document.documentElement.classList.remove("color-gray");
         }
     }
 
     clear() {
         this.confirmServ.confirm({
-            // setting.ok
             nzTitle: this.i18n.fanyi("setting.confirm"),
             nzOnOk: () => {
+                const token = localStorage.getItem('_token');
                 localStorage.clear();
+                if (token) localStorage.setItem('_token', token);
                 this.messageServ.success(this.i18n.fanyi("finish"));
+                setTimeout(() => location.reload(), 500);
             }
         });
     }

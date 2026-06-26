@@ -8,22 +8,20 @@ import {generateMenuPath} from "@shared/util/erupt.util";
     standalone: false,
     selector: 'header-search',
     template: `
-        @if (menu) {
+        @if (_menu) {
           <nz-input-group [nzSuffix]="suffixTemplateInfo" [nzPrefix]="prefixTemplateInfo">
             <input nz-input autofocus [(ngModel)]="text" (focus)="qFocus()" (blur)="qBlur()" (input)="onInput($event)"
               [placeholder]="'global.search.hint'|translate" [nzAutocomplete]="auto"
               (keydown.enter)="search($event)">
             <nz-autocomplete #auto [nzBackfill]="false">
-              @for (menu of options; track menu) {
-                <nz-auto-option [nzValue]="menu.name"
-                  [nzLabel]="menu.name" (click)="toMenu(menu)" [nzDisabled]="!menu.value">
-                  @if (menu.icon) {
-                    <i [class]="menu.icon"></i>
-                  }
-                  @if (!menu.icon) {
-                    <i nz-icon nzType="unordered-list" nzTheme="outline"></i>
-                  }
-                  &nbsp; {{ menu.name }}
+              @for (m of options; track m) {
+                <nz-auto-option [nzValue]="m.name"
+                  [nzLabel]="m.name" (click)="toMenu(m)" [nzDisabled]="!m.value">
+                  <div style="display:flex;align-items:center;gap:6px;min-width:0">
+                    @if (m.icon) { <i [class]="m.icon" style="flex-shrink:0"></i> }
+                    @if (!m.icon) { <i nz-icon nzType="unordered-list" nzTheme="outline" style="flex-shrink:0"></i> }
+                    <span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ breadcrumb(m) }}</span>
+                  </div>
                 </nz-auto-option>
               }
             </nz-autocomplete>
@@ -44,7 +42,14 @@ import {generateMenuPath} from "@shared/util/erupt.util";
 })
 export class HeaderSearchComponent implements AfterViewInit {
 
-    @Input() menu: MenuVo[];
+    _menu: MenuVo[];
+    private menuMap = new Map<number, MenuVo>();
+
+    @Input() set menu(value: MenuVo[]) {
+        this._menu = value;
+        this.menuMap.clear();
+        value?.forEach(m => this.menuMap.set(m.id, m));
+    }
 
     text: any;
 
@@ -76,12 +81,24 @@ export class HeaderSearchComponent implements AfterViewInit {
         this.qIpt = (this.el.nativeElement as HTMLElement).querySelector('.ant-input') as HTMLInputElement;
     }
 
+    breadcrumb(item: MenuVo): string {
+        const parts: string[] = [item.name];
+        let cur = item;
+        while (cur.pid) {
+            const parent = this.menuMap.get(cur.pid);
+            if (!parent) break;
+            parts.unshift(parent.name);
+            cur = parent;
+        }
+        return parts.join(' → ');
+    }
+
     onInput(event) {
         let value = event.target.value;
         if (!value) {
             return;
         }
-        this.options = this.menu.filter((ml) => {
+        this.options = this._menu.filter((ml) => {
             if (ml.type == MenuTypeEnum.button || ml.type == MenuTypeEnum.api) {
                 return false;
             }
@@ -106,7 +123,7 @@ export class HeaderSearchComponent implements AfterViewInit {
 
     search(event) {
         if (this.text) {
-            let r = this.menu.filter((ml) => {
+            let r = this._menu.filter((ml) => {
                 return ml.name.toLocaleLowerCase().indexOf(this.text.toLocaleLowerCase()) !== -1;
             }) || []
             if (r[0]) {

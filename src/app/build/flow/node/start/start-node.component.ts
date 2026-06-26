@@ -7,6 +7,7 @@ import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {StartNode} from "@flow/model/flow-approval.model";
 import {FormAccessEnum} from "@flow/model/flow.model";
 import {FlowTurn} from "@flow/model/flow-instance.model";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -64,8 +65,12 @@ export class StartNodeComponent extends ANode implements OnInit {
         return "#80929C";
     }
 
+    constructor(private i18n?: I18NService) {
+        super();
+    }
+
     override name(): string {
-        return "发起人";
+        return I18NService.instance?.fanyi('flow.node.start_label');
     }
 
     override create(): any {

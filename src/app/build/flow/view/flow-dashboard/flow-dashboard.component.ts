@@ -7,6 +7,7 @@ import {Subject} from 'rxjs';
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {CreateInstanceComponent} from "@flow/view/flow-dashboard/create-instance/create-instance.component";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
+import {I18NService} from "@core";
 
 interface Category {
     key: string;
@@ -28,36 +29,38 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
 
     private destroy$ = new Subject<void>();
 
-    // 分类数据 - 从API动态获取
-    categories: Category[] = [
-        {key: '', name: '全部'}
-    ];
+    // Category data - dynamically loaded from the API
+    categories: Category[] = [];
 
-    // 流程分组数据
+    // Flow group data
     flowGroups: FlowGroup[] = [];
 
-    // 流程配置数据
+    // Flow configuration data
     flowConfigs: FlowConfig[] = [];
 
-    // 选中的分类
+    // Selected category
     selectedCategory: string = '';
 
-    // 搜索关键词
+    // Search keyword
     searchKeyword: string = '';
 
-    // 加载状态
+    // Loading state
     loading = false;
 
-    // 缓存的流程分组数据
+    // Mobile sidebar state
+    sidebarOpen = false;
+
+    // Cached flow group data
     private flowGroupsCache: FlowGroupWithFlows[] = [];
     private categoryFlowGroupsCache: Map<string, FlowGroupWithFlows[]> = new Map();
 
-    // 过滤后的流程分组（用于模板显示）
+    // Filtered flow groups (used for template display)
     filteredFlowGroups: FlowGroupWithFlows[] = [];
 
     constructor(private flowApiService: FlowApiService,
                 private instanceApiService: FlowInstanceApiService,
-                private drawerService: NzDrawerService) {
+                private drawerService: NzDrawerService,
+                private i18n: I18NService) {
     }
 
     ngOnInit(): void {
@@ -72,12 +75,12 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 加载数据
+     * Load data
      */
     loadData(): void {
         this.loading = true;
 
-        // 并行加载流程分组和配置数据
+        // Load flow groups and configuration data in parallel
         Promise.all([
             this.loadFlowGroups(),
             this.loadFlowConfigs()
@@ -88,7 +91,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 加载流程分组数据
+     * Load flow group data
      */
     private loadFlowGroups(): Promise<void> {
         return new Promise((resolve) => {
@@ -98,13 +101,13 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
                     next: (response: R<FlowGroup[]>) => {
                         if (response.success && response.data) {
                             this.flowGroups = response.data;
-                            // 根据分组数据动态生成分类
+                            // Dynamically generate categories based on group data
                             this.generateCategories();
                         }
                         resolve();
                     },
                     error: (error) => {
-                        console.error('加载流程分组失败:', error);
+                        console.error('Failed to load flow groups:', error);
                         resolve();
                     }
                 });
@@ -112,7 +115,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 加载流程配置数据
+     * Load flow configuration data
      */
     private loadFlowConfigs(): Promise<void> {
         return new Promise((resolve) => {
@@ -126,7 +129,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
                         resolve();
                     },
                     error: (error) => {
-                        console.error('加载流程配置失败:', error);
+                        console.error('Failed to load flow configurations:', error);
                         resolve();
                     }
                 });
@@ -134,13 +137,13 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 根据分组数据动态生成分类
+     * Dynamically generate categories from group data
      */
     private generateCategories(): void {
-        // 保留"全部"分类
-        this.categories = [{key: '', name: '全部'}];
+        // Keep the "All" category
+        this.categories = [{key: '', name: this.i18n.fanyi('global.all')}];
 
-        // 根据流程分组生成分类
+        // Generate categories from flow groups
         this.flowGroups.forEach(group => {
             this.categories.push({
                 key: group.name,
@@ -150,34 +153,42 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 更新流程分组缓存
+     * Update the flow group cache
      */
     private updateFlowGroupsCache(): void {
-        // 缓存所有流程分组
+        // Cache all flow groups
         this.flowGroupsCache = this.groupFlows(this.flowConfigs);
 
-        // 缓存每个分类的流程分组
-        this.categories.forEach(category => {
-            if (category.key) {
-                const categoryFlows = this.flowConfigs.filter(config => config.flowGroup?.name === category.key);
-                this.categoryFlowGroupsCache.set(category.key, this.groupFlows(categoryFlows));
+        // Cache the flow groups for each category and filter out empty ones
+        this.categoryFlowGroupsCache.clear();
+        this.categories = [{key: '', name: this.i18n.fanyi('global.all')}];
+        this.flowGroups.forEach(group => {
+            const categoryFlows = this.flowConfigs.filter(config => config.flowGroup?.name === group.name);
+            if (categoryFlows.length > 0) {
+                this.categories.push({key: group.name, name: group.name});
+                this.categoryFlowGroupsCache.set(group.name, this.groupFlows(categoryFlows));
             }
         });
 
-        // 更新过滤后的流程分组
+        // Update the filtered flow groups
         this.updateFilteredFlowGroups();
     }
 
     /**
-     * 分类选择事件
+     * Category selection event
      */
     onCategorySelect(categoryKey: string): void {
         this.selectedCategory = categoryKey;
         this.updateFilteredFlowGroups();
+        this.sidebarOpen = false;
+    }
+
+    toggleSidebar(): void {
+        this.sidebarOpen = !this.sidebarOpen;
     }
 
     /**
-     * 更新过滤后的流程分组
+     * Update the filtered flow groups
      */
     private updateFilteredFlowGroups(): void {
         let groups: FlowGroupWithFlows[] = [];
@@ -188,7 +199,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
             groups = this.categoryFlowGroupsCache.get(this.selectedCategory) || [];
         }
 
-        // 如果有搜索关键词，进行过滤
+        // If a search keyword is present, filter results
         if (this.searchKeyword && this.searchKeyword.trim()) {
             const keyword = this.searchKeyword.trim().toLowerCase();
             this.filteredFlowGroups = groups
@@ -206,13 +217,13 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 将流程按分组进行分组
+     * Group flows by their flow group
      */
     private groupFlows(flows: FlowConfig[]): FlowGroupWithFlows[] {
         const groupMap = new Map<string, FlowConfig[]>();
 
         flows.forEach(flow => {
-            const groupName = flow.flowGroup?.name || '其他';
+            const groupName = flow.flowGroup?.name || this.i18n.fanyi('flow.dashboard.others');
             if (!groupMap.has(groupName)) {
                 groupMap.set(groupName, []);
             }
@@ -226,10 +237,12 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 发起流程
+     * Launch a flow
      */
     launchFlow(flow: FlowConfig): void {
         if (flow.enable) {
+            // On phones, the fixed 520px drawer overflows the viewport — go full width.
+            const isMobile = window.innerWidth <= 768;
             const drawer = this.drawerService.create({
                 nzTitle: flow.name,
                 nzContent: CreateInstanceComponent,
@@ -238,7 +251,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
                     flow: flow,
                     onClose: () => drawer.close()
                 },
-                nzWidth: '520px',
+                nzWidth: isMobile ? '100%' : '520px',
                 nzBodyStyle: {
                     padding: '0'
                 },
@@ -248,7 +261,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 获取分类流程数量
+     * Get the flow count for a category
      */
     getCategoryFlowCount(categoryKey: string): number {
         if (!categoryKey) {
@@ -258,14 +271,14 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * 刷新数据
+     * Refresh data
      */
     refreshData(): void {
         this.loadData();
     }
 
     /**
-     * 搜索关键词变化事件
+     * Search keyword change event
      */
     onSearchChange(): void {
         this.updateFilteredFlowGroups();

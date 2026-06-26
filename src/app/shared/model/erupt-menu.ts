@@ -22,4 +22,5 @@ export enum MenuTypeEnum {
     tpl = "tpl",
     mtpl = "mtpl",
     cube = "cube",
+    form = "form",
 }

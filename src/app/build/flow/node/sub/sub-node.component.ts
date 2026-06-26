@@ -83,7 +83,7 @@ export class SubNodeComponent extends ANode implements OnInit {
     }
 
     name(): string {
-        return "子流程";
+        return I18NService.instance?.fanyi('flow.node.sub_label');
     }
 
     onDelete(): void {
