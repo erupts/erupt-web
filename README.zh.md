@@ -1,13 +1,13 @@
 ---
 
 <p align="center"><img src="./src/assets/logo-raw2.png" height="150" alt="logo"/></p>
-<h2 align="center">Erupt Engine &nbsp; 🚀 &nbsp; Universal Admin Framework</h2>
-<h3 align="center">Frontend Source Code</h3>
+<h2 align="center">Erupt Engine &nbsp; 🚀 &nbsp; 通用后台管理框架</h2>
+<h3 align="center">前端源码</h3>
 <h3 align="center"><a href="https://erupt.xyz" target="_blank">https://www.erupt.xyz</a></h3>
 
 ---
 
-<h4 align="center">Auto-generates forms from JSON Schema, enabling zero-frontend-code development</h4>
+<h4 align="center">通过 JSON Schema 自动构建表单，实现了erupt零前端代码能力</h4>
 
 ---
 
@@ -23,65 +23,65 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/erupts/erupt">GitHub</a> &nbsp; | &nbsp;
-    <a href="https://gitee.com/erupt/erupt">Gitee</a> &nbsp; | &nbsp;
-    <a href="https://www.erupt.xyz" target="_blank"><b>Official Website</b></a> &nbsp; | &nbsp;
-    <a href="https://www.erupt.xyz/demo" target="_blank">Live Demo</a> &nbsp; | &nbsp;
-    <a href="https://docs.erupt.xyz" target="_blank"><b>Documentation</b></a> &nbsp; | &nbsp;
-    <a href="./README.zh.md">中文</a>
+    <a href="https://github.com/erupts/erupt">Github 仓库</a> &nbsp; | &nbsp;
+    <a href="https://gitee.com/erupt/erupt">码云仓库</a> &nbsp; | &nbsp;
+    <a href="https://www.erupt.xyz" target="_blank"><b>🦅 官方网站</b></a> &nbsp; | &nbsp;
+    <a href="https://www.erupt.xyz/demo" target="_blank">在线体验</a> &nbsp; | &nbsp;
+    <a href="https://docs.erupt.xyz" target="_blank"><b>📕 使用文档</b></a> &nbsp; | &nbsp;
+    <a href="./README.md">English</a>
 </p>
 
 ---
 
-## Environment Setup
+## ⛰ 环境搭建
 
-Before getting started, make sure your development environment has Node.js and npm installed.
+在开始之前，请确保你的开发环境中包括 Node.js 和 npm 包管理器。
 
-Angular requires Node.js version 22.0.0 or higher.
+Angular 需要 Node.js 版本 22.0.0 或更高版本。
 
-To check your version, run `node -v` in your terminal.
+要检查你的版本，请在终端/控制台窗口中运行 `node -v`
 
-## Getting Started
+## 🥌 使用方法
 
-1. Install yarn
+1. 安装 yarn
 ```shell
 npm install -g yarn
 ```
 
-2. Install dependencies
+2. 安装依赖
 ```shell
 yarn install
 ```
 
-3. Configure the backend URL
+3. 修改服务端地址
 ```
 proxy.conf.js → host
 ```
 
-4. Start the dev server
+4. 启动
 ```shell
 yarn start
 ```
 
-## Build
+## 🍭 打包编译
 
-1. Set the output path in `angular.json`:
+1. 修改 `angular.json` 打包路径：
    > `projects.architect.build.options.outputPath`
 
-2. Run the build command
+2. 执行打包命令
 ```shell
 yarn run build
 ```
 
-## Tech Stack
+## 📟 核心技术栈
 
 TypeScript / RxJS / Less / Angular / ng-zorro-antd / ng-alain
 
-## Repositories
+## 🏅 代码仓库
 
-|         | GitHub                                        | Gitee                                        |
-| ------- | --------------------------------------------- | -------------------------------------------- |
-| Backend | https://github.com/erupts/erupt               | https://gitee.com/erupt/erupt                |
-| Frontend| https://github.com/erupts/erupt-web           | https://gitee.com/erupt/erupt-web            |
+|      | Github                                        | 码云                                         |
+| ---- | --------------------------------------------- | -------------------------------------------- |
+| 后端源码 | https://github.com/erupts/erupt               | https://gitee.com/erupt/erupt                |
+| 前端源码 | https://github.com/erupts/erupt-web           | https://gitee.com/erupt/erupt-web            |
 
 ---
