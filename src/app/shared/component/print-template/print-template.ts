@@ -2,7 +2,7 @@ import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {NZ_MODAL_DATA} from "ng-zorro-antd/modal";
 import {SharedModule} from "@shared/shared.module";
-import {UEditorComponent} from "../ueditor/ueditor.component";
+import {CkeditorComponent} from "../../../build/erupt/components/ckeditor/ckeditor.component";
 import {DataService} from "@shared/service/data.service";
 import {LV} from "../../../build/erupt/model/common.model";
 import {deepCopy} from "@delon/util";
@@ -44,9 +44,7 @@ export class PrintTemplate implements OnInit {
 
     @Input() configTitle: string = '';
 
-    @ViewChild('ue') ue: UEditorComponent;
-
-    public loading: boolean = true;
+    @ViewChild('ck') ck: CkeditorComponent;
 
     templates: { name: string, content: string }[] = [];
 
@@ -105,7 +103,7 @@ export class PrintTemplate implements OnInit {
     }
 
     getContent(): string {
-        return this.ue.Instance.getContent();
+        return this.ck.instance.getData();
     }
 
     getTitle(): string {
@@ -120,7 +118,7 @@ export class PrintTemplate implements OnInit {
         this.showPageConfig = !this.showPageConfig;
     }
 
-    initMention(editor: any) {
+    private flatVars(): PrintVar[] {
         const vars = deepCopy(this.vars);
         vars.push(...this.globalVars);
         for (let v of vars) {
@@ -128,48 +126,57 @@ export class PrintTemplate implements OnInit {
                 vars.push(...v.vars);
             }
         }
-        if (!vars || vars.length === 0) return;
-        if (editor.getContent && editor.getContent.isHijacked) return;
-        // this approach is the most reliable: intercept setContent and getContent
-        let that = this;
-        if (editor.setContent) {
-            const originalSetContent = editor.setContent;
-            editor.setContent = function (data: string, isAppendTo: boolean) {
-                let processedData = data;
-                vars.forEach(v => {
-                    const reg = new RegExp(`\\$\!\\{${v.value}\\}`, 'g');
-                    processedData = (processedData || '').replace(reg, that.renderVar(v));
-                });
-                return originalSetContent.call(this, processedData, isAppendTo);
-            };
-        }
+        return vars;
+    }
 
-        if (editor.getContent) {
-            const originalGetContent = editor.getContent;
-            editor.getContent = function () {
-                let data = originalGetContent.apply(this, arguments);
-                if (!data || typeof data !== 'string') return data;
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = data;
-                tempDiv.querySelectorAll('span[data-variable="true"]').forEach((el: any) => {
-                    const id = el.getAttribute('data-id');
-                    el.replaceWith('$!' + `{${id}}`);
-                });
-                return tempDiv.innerHTML;
-            };
-            editor.getContent.isHijacked = true;
-        }
+    initMention(editor: any) {
+        const vars = this.flatVars();
+        if (!vars || vars.length === 0) return;
+        if (editor.getData && editor.getData.isHijacked) return;
+        const that = this;
+
+        const originalSetData = editor.setData.bind(editor);
+        editor.setData = function (data: string) {
+            let processedData = data;
+            vars.forEach(v => {
+                const reg = new RegExp(`\\$\!\\{${v.value}\\}`, 'g');
+                processedData = (processedData || '').replace(reg, that.renderVar(v));
+            });
+            return originalSetData(processedData);
+        };
+
+        const originalGetData = editor.getData.bind(editor);
+        editor.getData = function (options?: any) {
+            let data = originalGetData(options);
+            if (!data || typeof data !== 'string') return data;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = data;
+            tempDiv.querySelectorAll('span[data-variable="true"]').forEach((el: any) => {
+                const id = el.getAttribute('data-id');
+                el.replaceWith('$!' + `{${id}}`);
+            });
+            return tempDiv.innerHTML;
+        };
+        editor.getData.isHijacked = true;
     }
 
     addVar(v: PrintVar) {
-        this.ue.Instance.execCommand('inserthtml', this.renderVar(v));
+        const editor = this.ck.instance;
+        if (!editor) return;
+        const html = this.renderVar(v);
+        try {
+            const viewFragment = editor.data.processor.toView(html);
+            const modelFragment = editor.data.toModel(viewFragment);
+            editor.model.insertContent(modelFragment);
+        } catch {
+            editor.setData(editor.getData() + html);
+        }
     }
 
     renderVar(v: PrintVar) {
         let primaryColor = this.primaryColor;
         if (v.template) {
             let processedTemplate = v.template;
-            // if there are child variables, render them
             if (v.vars && v.vars.length > 0) {
                 v.vars.forEach(subVar => {
                     const reg = new RegExp(`\\$\!\\{${subVar.value}\\}`, 'g');
@@ -183,24 +190,13 @@ export class PrintTemplate implements OnInit {
     }
 
     applyTemplate(content: string) {
-        this.ue.Instance.setContent(content);
+        this.ck.instance.setData(content);
     }
 
-    onPreReady(ue: UEditorComponent) {
-        const UE = (window as any).UE;
-        if (UE && UE.Editor) {
-            this.initMention(UE.Editor.prototype);
-        }
-    }
-
-    onReady(ue: UEditorComponent) {
-        this.loading = false;
-        // fallback in case prototype interception fails
-        if (!ue.Instance.getContent || !ue.Instance.getContent.isHijacked) {
-            this.initMention(ue.Instance);
-        }
+    onCkReady(editor: any) {
+        this.initMention(editor);
         if (this.value) {
-            ue.Instance.setContent(this.value);
+            editor.setData(this.value);
         }
     }
 

@@ -4,6 +4,7 @@ html {
     --ant-border-color-split: #e5e5e5;
 }
 
+
 .col-ctrl-popover .ant-popover-inner-content {
     padding: 0;
 }
@@ -82,6 +83,11 @@ span.ripple {
         size: A4 landscape;
         margin: 10mm;
     }
+}
+
+// UEditor popup layer: z-index set dynamically in ueditor.component.ts
+#edui_fixedlayer {
+    z-index: 9999;
 }
 
 .rich-content-html {

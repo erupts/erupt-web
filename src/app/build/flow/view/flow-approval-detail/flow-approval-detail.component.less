@@ -35,7 +35,7 @@
             flex: 1;
             overflow-y: auto; // only the content area is scrollable
             // leave space for the fixed bottom buttons
-            padding: 16px 16px 70px;
+            padding: 14px 14px 58px;
             background: #f5f7fa; // gray canvas; inner blocks become white cards
 
             // Header "hero" card grouping the title, status and submitter info
@@ -220,11 +220,11 @@
 
             .action-buttons {
                 display: flex;
-                gap: 8px;
+                gap: 6px;
                 flex-wrap: wrap;
 
                 .action-button {
-                    margin: 12px 4px;
+                    margin: 8px 0;
                 }
             }
         }
@@ -232,8 +232,6 @@
         // comment form styles
         .comment-form {
             margin-bottom: 0;
-            padding: 16px;
-            background-color: #fafafa;
 
             ::ng-deep .ant-input-group-wrapper {
                 width: 100%;
@@ -339,7 +337,7 @@
                 padding: 0 12px;
 
                 .action-buttons .action-button {
-                    margin: 8px 4px;
+                    margin: 6px 0;
                 }
             }
         }

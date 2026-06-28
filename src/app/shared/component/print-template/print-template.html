@@ -86,4 +86,4 @@
     </div>
 }
 
-<ueditor #ue [height]="height" [name]="'print-template'" [(ngModel)]="value" [config]="{serverUrl:''}" (onReady)="onReady($event)" (onPreReady)="onPreReady($event)"></ueditor>
+<ckeditor #ck [(value)]="value" (onReady)="onCkReady($event)"></ckeditor>

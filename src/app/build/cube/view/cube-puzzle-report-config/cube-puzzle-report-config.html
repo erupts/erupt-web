@@ -9,7 +9,7 @@
             </nz-form-item>
             <nz-form-item style="margin-bottom: 0;">
                 <nz-form-control>
-                    <ueditor [(ngModel)]="report.ui['content']" name="textContent" [height]="430"></ueditor>
+                    <ckeditor [(value)]="report.ui['content']"></ckeditor>
                 </nz-form-control>
             </nz-form-item>
         </form>

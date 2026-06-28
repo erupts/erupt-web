@@ -8,15 +8,15 @@
         </span>
             </div>
             <div class="header-right">
-                <button nz-button nzType="text" nzSize="small" nz-tooltip [nzTooltipTitle]="'flow.label.link' | translate" (click)="copyLink()">
+                <button nz-button nzType="text" nzSize="default" nz-tooltip [nzTooltipTitle]="'flow.label.link' | translate" (click)="copyLink()">
                     <span nz-icon nzType="link" nzTheme="outline"></span>
                 </button>
-                <button nz-button nzType="text" nzSize="small" nz-tooltip [nzTooltipTitle]="'global.refresh' | translate" (click)="loadInstanceDetail(selectedInstance)">
+                <button nz-button nzType="text" nzSize="default" nz-tooltip [nzTooltipTitle]="'global.refresh' | translate" (click)="loadInstanceDetail(selectedInstance)">
                     <span nz-icon nzType="reload" nzTheme="outline"></span>
                 </button>
                 @if (instanceDetail) {
                     @if (instanceDetail.eruptFlowConfig.setting.printSetting == null || instanceDetail.eruptFlowConfig.setting.printSetting !== PrintSetting.CLOSE) {
-                        <button nz-button nzType="text" nzSize="small" nz-tooltip [nzTooltipTitle]="'global.print' | translate" (click)="print()">
+                        <button nz-button nzType="text" nzSize="default" nz-tooltip [nzTooltipTitle]="'global.print' | translate" (click)="print()">
                             <span nz-icon nzType="printer" nzTheme="outline"></span>
                         </button>
                     }
@@ -31,7 +31,7 @@
                         <nz-tag>
                             {{ selectedInstance?.status | translate }}
                         </nz-tag>
-                        <button nz-button nzType="default" nzSize="small" (click)="viewFlow()" style="margin-left: auto">
+                        <button nz-button nzType="default" nzSize="default" (click)="viewFlow()" style="margin-left: auto">
                             <span nz-icon nzType="apartment" nzTheme="outline"></span>
                             {{ 'flow.action.view_flow_diagram' | translate }}
                         </button>
@@ -106,7 +106,7 @@
                                                                     <nz-avatar [nzText]="task?.assigneeUser?.name?.substring(0,1)"
                                                                                [ngStyle]="{backgroundColor: getAvatarColor(task?.assigneeUser?.name?.substring(0,1))}"
                                                                                [nzSrc]="task?.assigneeUser.avatar||null"
-                                                                               nzSize="small" class="mr-sm"></nz-avatar>
+                                                                               nzSize="default" class="mr-sm"></nz-avatar>
                                                                 }
                                                                 <span class="approval-name">{{ task.assigneeUser?.name || '-' }}</span>
                                                                 @if (task.parentTask) {
@@ -115,7 +115,7 @@
                                                                         <nz-avatar [nzText]="task.parentTask.assigneeUser?.name?.substring(0,1)"
                                                                                    [ngStyle]="{backgroundColor: getAvatarColor(task.parentTask.assigneeUser?.name?.substring(0,1))}"
                                                                                    [nzSrc]="task.parentTask.assigneeUser.avatar||null"
-                                                                                   nzSize="small" class="mr-sm"></nz-avatar>
+                                                                                   nzSize="default" class="mr-sm"></nz-avatar>
                                                                     }
                                                                     <span class="approval-name">{{ task.parentTask.assigneeUser?.name || '-' }}</span>
                                                                 }
@@ -173,7 +173,7 @@
                                         <button
                                             nz-button
                                             nzType="primary"
-                                            nzSize="small"
+                                            nzSize="default"
                                             [disabled]="!newComment.trim() || isSubmittingComment"
                                             (click)="submitComment()"
                                         >
@@ -192,7 +192,7 @@
                                                         <nz-avatar [nzText]="comment.createUser?.name?.substring(0,1)"
                                                                    [ngStyle]="{backgroundColor: getAvatarColor(comment.createUser?.name?.substring(0,1))}"
                                                                    [nzSrc]="comment.createUser.avatar||null"
-                                                                   nzSize="small"></nz-avatar>
+                                                                   nzSize="default"></nz-avatar>
                                                         <span class="comment-username">{{ comment.createUser?.name || '-' }}</span>
                                                     </div>
                                                     <span class="comment-time">{{ comment.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</span>
@@ -238,7 +238,7 @@
                                                                 <nz-avatar [nzText]="history.createUser?.name?.substring(0,1)"
                                                                            [ngStyle]="{backgroundColor: getAvatarColor(history.createUser?.name?.substring(0,1))}"
                                                                            [nzSrc]="history.createUser.avatar || null"
-                                                                           nzSize="small" class="mr-sm"></nz-avatar>
+                                                                           nzSize="default" class="mr-sm"></nz-avatar>
                                                             }
                                                             <span class="approval-name">{{ history.createUser?.name || '-' }}</span>
                                                         </div>
@@ -247,7 +247,7 @@
                                                         {{ history.createTime }}
                                                     </td>
                                                     <td>
-                                                        <button nz-button nzSize="small" (click)="showDiff(history)">{{ 'flow.button.view_detail' | translate }}</button>
+                                                        <button nz-button nzSize="default" (click)="showDiff(history)">{{ 'flow.button.view_detail' | translate }}</button>
                                                     </td>
                                                 </tr>
                                             }
