@@ -85,6 +85,11 @@ span.ripple {
     }
 }
 
+// UEditor popup layer must appear above ng-zorro CDK overlay (z-index: 1000)
+#edui_fixedlayer {
+    z-index: 10000;
+}
+
 .rich-content-html {
     position: relative;
 

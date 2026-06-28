@@ -97,7 +97,8 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
             ],
             // default frontend configuration options
             options: {
-                UEDITOR_HOME_URL: './assets/ueditor/'
+                UEDITOR_HOME_URL: './assets/ueditor/',
+                zIndex: 10000
             }
         }
     }
