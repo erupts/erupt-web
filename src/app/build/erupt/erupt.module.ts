@@ -12,7 +12,6 @@ import {TabTableComponent} from "./components/tab-table/tab-table.component";
 import {TreeSelectComponent} from "./components/tree-select/tree-select.component";
 import {ExcelImportComponent} from "./components/excel-import/excel-import.component";
 import {ReferenceTableComponent} from "./components/reference-table/reference-table.component";
-import {CkeditorComponent} from "./components/ckeditor/ckeditor.component";
 import {AmapComponent} from "./components/amap/amap.component";
 import {EruptRoutingModule} from "./erupt-routing.module";
 import {TreeComponent} from "./view/tree/tree.component";
@@ -104,7 +103,6 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         EditTypeComponent,
         PrintTypeComponent,
         TreeSelectComponent,
-        CkeditorComponent,
         TabTableComponent,
         AmapComponent,
         ExcelImportComponent,

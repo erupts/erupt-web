@@ -21,6 +21,7 @@ import {EruptStorageService} from "@shared/service/erupt-storage.service";
 import {StProgressComponent} from "@shared/component/st-progress/st-progress.component";
 import {STWidgetRegistry} from "@delon/abc/st";
 import {UEditorComponent} from "@shared/component/ueditor/ueditor.component";
+import {CkeditorComponent} from "../build/erupt/components/ckeditor/ckeditor.component";
 import {EruptContextService} from "@shared/service/erupt-context.service";
 import {UtilsService} from "@shared/service/utils.service";
 import {SocketService} from "@shared/service/socket.service";
@@ -36,7 +37,7 @@ import {LocalPipe} from "@shared/pipe/local.pipe";
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: any[] = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent];
+const COMPONENTS: any[] = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent, CkeditorComponent];
 const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, LocalPipe, SyncVirtualScrollDirective, KeysPipe];
 
 // #endregion
