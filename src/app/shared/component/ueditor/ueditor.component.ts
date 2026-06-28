@@ -194,6 +194,30 @@ export class UEditorComponent implements OnInit, AfterViewInit, OnChanges, OnDes
             const ueditor = UE.getEditor(this.id, opt);
             ueditor.ready(() => {
                 this.instance = ueditor;
+                // ng-zorro v21 uses popover="manual" (Popover API) for CDK overlay wrappers.
+                // Popover elements render in the browser top layer, above all z-index stacking.
+                // Moving #edui_fixedlayer inside the nearest popover ancestor of the editor
+                // makes it part of that top layer entry, so UEditor dropdowns appear above the modal.
+                const fixedLayer: HTMLElement = this.doc.getElementById('edui_fixedlayer');
+                if (fixedLayer && ueditor.container) {
+                    let el: HTMLElement = ueditor.container;
+                    let placed = false;
+                    while (el?.parentElement) {
+                        el = el.parentElement;
+                        if (el.hasAttribute('popover')) {
+                            el.appendChild(fixedLayer);
+                            fixedLayer.style.zIndex = '9999';
+                            // cdk-global-overlay-wrapper has pointer-events:none; override so
+                            // UEditor dropdown items receive mouse events normally.
+                            fixedLayer.style.pointerEvents = 'auto';
+                            placed = true;
+                            break;
+                        }
+                    }
+                    if (!placed) {
+                        fixedLayer.style.zIndex = '10009';
+                    }
+                }
                 if (this.value) {
                     this.instance.setContent(this.value);
                 }
