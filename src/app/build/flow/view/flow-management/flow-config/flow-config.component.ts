@@ -282,8 +282,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                             <td style="border: 1px solid #d9d9d9;padding: 8px;">
                                 $!{task.comment}<!--#if($task.signature)--><br/><img src="$!task.signature" style="border:1px solid #f0f0f0;margin: 4px 0 0;width: 160px;" alt="${this.i18n.fanyi('flow.modal.signature')}"><!--#end-->
                             </td>
-                            <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.createTime}</td>
-                            <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.completedAt}</td>
+                            <td style="border: 1px solid #d9d9d9;padding: 8px;">#if($task.createTime)$!{task.createTime.toString().replace("T", " ")}#end</td>
+                            <td style="border: 1px solid #d9d9d9;padding: 8px;">#if($task.completedAt)$!{task.completedAt.toString().replace("T", " ")}#end</td>
                         </tr>
                         <!--#end-->
                     </tbody>

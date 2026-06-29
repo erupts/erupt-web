@@ -1,15 +1,4 @@
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Inject,
-    Input,
-    OnChanges,
-    OnDestroy,
-    Output,
-    SimpleChanges
-} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnChanges, OnDestroy, Output, SimpleChanges} from "@angular/core";
 import {LazyService} from "@delon/util";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {EruptModel} from "../../model/erupt.model";
@@ -101,6 +90,74 @@ export function PrintVarPlugin(editor: any): void {
             });
             writer.insert(writer.createPositionAt(span, 0), writer.createText('{ ' + label + ' }'));
             return span;
+        }
+    });
+
+    // --- printTemplateVar: block widget for template-type variables (e.g. flow-record table) ---
+    // Stored as <!--TEMPLATE:code-->...Velocity HTML...<!--/TEMPLATE:code--> in the DB.
+    // In the editor it renders as a visual-only table preview (non-editable block widget).
+    editor.model.schema.register('printTemplateVar', {
+        allowWhere: '$block',
+        isObject: true,
+        allowAttributes: ['code', 'label', 'color', 'displayHtml']
+    });
+
+    // upcast: <div data-template-var="code" data-display-html="BASE64"> → model element.
+    // The base64 displayHtml (rendered table HTML) is injected by the setData hijack so
+    // the table preview is available when loading previously saved template content.
+    editor.conversion.for('upcast').elementToElement({
+        view: {name: 'div', attributes: {'data-template-var': true}},
+        model: (viewEl: any, api: any) => {
+            let displayHtml = '';
+            try {
+                const enc = viewEl.getAttribute('data-display-html');
+                if (enc) displayHtml = decodeURIComponent(escape(atob(enc)));
+            } catch (_) {}
+            return w(api).createElement('printTemplateVar', {
+                code: viewEl.getAttribute('data-template-var') || '',
+                label: viewEl.getAttribute('data-label') || '',
+                color: viewEl.getAttribute('data-color') || '',
+                displayHtml
+            });
+        }
+    });
+
+    // editingDowncast: block widget that injects the rendered table HTML via UIElement.
+    // UIElement content bypasses CKEditor's schema so the table can be displayed as-is.
+    editor.conversion.for('editingDowncast').elementToElement({
+        model: 'printTemplateVar',
+        view: (modelEl: any, api: any) => {
+            const writer = w(api);
+            const label = modelEl.getAttribute('label') || '';
+            const color = modelEl.getAttribute('color') || '#1890ff';
+            const displayHtml = modelEl.getAttribute('displayHtml') || '';
+            const wrapper = writer.createContainerElement('div', {
+                class: 'erupt-print-template-var ck-widget',
+                contenteditable: 'false'
+            });
+            const inner = writer.createUIElement('div', null, function (this: any, domDocument: any) {
+                const dom = this.toDomElement(domDocument);
+                dom.style.cssText = `border:1px dashed ${color};border-radius:3px;padding:6px;margin:2px 0;`;
+                dom.innerHTML = `<div style="font-size:11px;color:${color};font-weight:bold;padding:2px 0 4px">[ ${label} ]</div>${displayHtml}`;
+                return dom;
+            });
+            writer.insert(writer.createPositionAt(wrapper, 0), inner);
+            writer.setCustomProperty('widget', true, wrapper);
+            return wrapper;
+        }
+    });
+
+    // dataDowncast: output a lightweight marker div; the getData() hijack in print-template
+    // expands it to the full Velocity template HTML (with <!--#foreach-->...<!--#end-->).
+    editor.conversion.for('dataDowncast').elementToElement({
+        model: 'printTemplateVar',
+        view: (modelEl: any, api: any) => {
+            const writer = w(api);
+            return writer.createContainerElement('div', {
+                'data-template-var': modelEl.getAttribute('code') || '',
+                'data-label': modelEl.getAttribute('label') || '',
+                'data-color': modelEl.getAttribute('color') || ''
+            });
         }
     });
 }

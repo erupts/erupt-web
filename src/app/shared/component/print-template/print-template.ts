@@ -142,11 +142,26 @@ export class PrintTemplate implements OnInit {
 
         const originalSetData = editor.setData.bind(editor);
         editor.setData = function (data: string) {
-            let processedData = data;
+            let processedData = data || '';
+            // Template vars are stored as <!--TEMPLATE:code-->...<!--/TEMPLATE:code--> blocks.
+            // Convert back to the block widget div so CKEditor can upcast it. The base64
+            // data-display-html lets the widget restore the visual table preview on load.
+            processedData = processedData.replace(
+                /<!--TEMPLATE:([\w.]+)-->([\s\S]*?)<!--\/TEMPLATE:\1-->/g,
+                (_match, code) => {
+                    const v = vars.find(x => x.value === code);
+                    if (!v) return _match;
+                    let enc = '';
+                    try { enc = btoa(unescape(encodeURIComponent(that.renderVar(v)))); } catch (_) {}
+                    return `<div data-template-var="${code}" data-label="${v.label}" data-color="${that.primaryColor}" data-display-html="${enc}"></div>`;
+                }
+            );
+            // Simple vars are stored as Velocity quiet-reference tokens: $!{code}
             vars.forEach(v => {
-                // Storage uses the Velocity quiet-reference token: $!{code}
-                const reg = new RegExp(`\\$!\\{${that.escapeRegExp(v.value)}\\}`, 'g');
-                processedData = (processedData || '').replace(reg, that.renderVar(v));
+                if (!v.template) {
+                    const reg = new RegExp(`\\$!\\{${that.escapeRegExp(v.value)}\\}`, 'g');
+                    processedData = processedData.replace(reg, that.renderVar(v));
+                }
             });
             return originalSetData(processedData);
         };
@@ -157,9 +172,24 @@ export class PrintTemplate implements OnInit {
             if (!data || typeof data !== 'string') return data;
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = data;
+            // Simple var chips → $!{code} tokens
             tempDiv.querySelectorAll('span[data-variable="true"]').forEach((el: any) => {
-                const id = el.getAttribute('data-id');
-                el.replaceWith('$!' + `{${id}}`);
+                el.replaceWith('$!' + `{${el.getAttribute('data-id')}}`);
+            });
+            // Template var block widgets → full Velocity HTML wrapped in marker comments.
+            // Parsing through a temp element preserves HTML comments (<!--#foreach-->,
+            // <!--#end-->) as DOM Comment nodes, which innerHTML serializes back faithfully.
+            tempDiv.querySelectorAll('div[data-template-var]').forEach((el: any) => {
+                const code = el.getAttribute('data-template-var');
+                const matchedVar = vars.find(v => v.value === code);
+                if (matchedVar && matchedVar.template) {
+                    const tmp = document.createElement('div');
+                    tmp.innerHTML = `<!--TEMPLATE:${code}-->${matchedVar.template}<!--/TEMPLATE:${code}-->`;
+                    while (tmp.firstChild) {
+                        el.parentNode.insertBefore(tmp.firstChild, el);
+                    }
+                    el.remove();
+                }
             });
             return tempDiv.innerHTML;
         };
@@ -169,31 +199,33 @@ export class PrintTemplate implements OnInit {
     addVar(v: PrintVar) {
         const editor = this.ck.instance;
         if (!editor) return;
-        // Simple variable: insert a printVar model element directly at the caret.
-        // Going through HTML -> toModel would drop the inline element, since printVar
-        // is not allowed at the document-fragment root and only its text survives.
-        if (!v.template) {
+        if (v.template) {
+            // Template vars are block-level widgets that show the rendered table preview.
+            // The full Velocity HTML (with <!--#foreach--> etc.) is only emitted by getData().
             editor.model.change((writer: any) => {
-                const el = writer.createElement('printVar', {
-                    code: v.value, label: v.label, color: this.primaryColor
+                const el = writer.createElement('printTemplateVar', {
+                    code: v.value, label: v.label, color: this.primaryColor,
+                    displayHtml: this.renderVar(v)
                 });
                 editor.model.insertContent(el);
             });
             return;
         }
-        // Template variable: arbitrary (block) HTML, so the HTML round-trip works.
-        const html = this.renderVar(v);
-        try {
-            const viewFragment = editor.data.processor.toView(html);
-            const modelFragment = editor.data.toModel(viewFragment);
-            editor.model.insertContent(modelFragment);
-        } catch {
-            editor.setData(editor.getData() + html);
-        }
+        editor.model.change((writer: any) => {
+            const el = writer.createElement('printVar', {
+                code: v.value, label: v.label, color: this.primaryColor
+            });
+            editor.model.insertContent(el);
+        });
+    }
+
+    // Returns the span chip HTML for a var (always a chip, regardless of template).
+    private renderVarChip(v: PrintVar): string {
+        const color = this.primaryColor;
+        return `<span class="erupt-print-var mention" data-variable="true" data-id="${v.value}" data-label="${v.label}" data-color="${color}" style="color: ${color};margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{&nbsp;</span>${v.label}<span style="opacity: 0.5;">&nbsp;}</span></span>`;
     }
 
     renderVar(v: PrintVar) {
-        let primaryColor = this.primaryColor;
         if (v.template) {
             let processedTemplate = v.template;
             if (v.vars && v.vars.length > 0) {
@@ -203,11 +235,10 @@ export class PrintTemplate implements OnInit {
                 });
             }
             return processedTemplate;
-        } else {
-            // data-label / data-color let PrintVarPlugin rebuild the chip faithfully on
-            // upcast; data-variable + data-id are what getData() maps back to $!{code}.
-            return `<span class="erupt-print-var mention" data-variable="true" data-id="${v.value}" data-label="${v.label}" data-color="${primaryColor}" style="color: ${primaryColor};margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{&nbsp;</span>${v.label}<span style="opacity: 0.5;">&nbsp;}</span></span>`;
         }
+        // data-label / data-color let PrintVarPlugin rebuild the chip faithfully on
+        // upcast; data-variable + data-id are what getData() maps back to $!{code}.
+        return this.renderVarChip(v);
     }
 
     applyTemplate(content: string) {
