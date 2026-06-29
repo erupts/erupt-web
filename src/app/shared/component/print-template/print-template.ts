@@ -129,6 +129,11 @@ export class PrintTemplate implements OnInit {
         return vars;
     }
 
+    // Escape regex metacharacters in a variable code before building a matcher.
+    private escapeRegExp(str: string): string {
+        return String(str ?? '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
     initMention(editor: any) {
         const vars = this.flatVars();
         if (!vars || vars.length === 0) return;
@@ -139,7 +144,8 @@ export class PrintTemplate implements OnInit {
         editor.setData = function (data: string) {
             let processedData = data;
             vars.forEach(v => {
-                const reg = new RegExp(`\\$\!\\{${v.value}\\}`, 'g');
+                // Storage uses the Velocity quiet-reference token: $!{code}
+                const reg = new RegExp(`\\$!\\{${that.escapeRegExp(v.value)}\\}`, 'g');
                 processedData = (processedData || '').replace(reg, that.renderVar(v));
             });
             return originalSetData(processedData);
@@ -163,6 +169,19 @@ export class PrintTemplate implements OnInit {
     addVar(v: PrintVar) {
         const editor = this.ck.instance;
         if (!editor) return;
+        // Simple variable: insert a printVar model element directly at the caret.
+        // Going through HTML -> toModel would drop the inline element, since printVar
+        // is not allowed at the document-fragment root and only its text survives.
+        if (!v.template) {
+            editor.model.change((writer: any) => {
+                const el = writer.createElement('printVar', {
+                    code: v.value, label: v.label, color: this.primaryColor
+                });
+                editor.model.insertContent(el);
+            });
+            return;
+        }
+        // Template variable: arbitrary (block) HTML, so the HTML round-trip works.
         const html = this.renderVar(v);
         try {
             const viewFragment = editor.data.processor.toView(html);
@@ -179,13 +198,15 @@ export class PrintTemplate implements OnInit {
             let processedTemplate = v.template;
             if (v.vars && v.vars.length > 0) {
                 v.vars.forEach(subVar => {
-                    const reg = new RegExp(`\\$\!\\{${subVar.value}\\}`, 'g');
+                    const reg = new RegExp(`\\$!\\{${this.escapeRegExp(subVar.value)}\\}`, 'g');
                     processedTemplate = processedTemplate.replace(reg, this.renderVar(subVar));
                 });
             }
             return processedTemplate;
         } else {
-            return `<span class="mention" data-variable="true" data-id="${v.value}" style="color: ${primaryColor};margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{&nbsp;</span>${v.label}<span style="opacity: 0.5;">&nbsp;}</span></span>`;
+            // data-label / data-color let PrintVarPlugin rebuild the chip faithfully on
+            // upcast; data-variable + data-id are what getData() maps back to $!{code}.
+            return `<span class="erupt-print-var mention" data-variable="true" data-id="${v.value}" data-label="${v.label}" data-color="${primaryColor}" style="color: ${primaryColor};margin: 0 2px;font-weight: bold;" contenteditable="false"><span style="opacity: 0.5;">{&nbsp;</span>${v.label}<span style="opacity: 0.5;">&nbsp;}</span></span>`;
         }
     }
 

@@ -1,9 +1,109 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnChanges, OnDestroy, Output, SimpleChanges} from "@angular/core";
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    SimpleChanges
+} from "@angular/core";
 import {LazyService} from "@delon/util";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {EruptModel} from "../../model/erupt.model";
 import {RestPath} from "../../model/erupt.enum";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
+
+/**
+ * CKEditor 5 function plugin that turns `<span data-variable="true" ...>` markup into a
+ * first-class inline-object element ("printVar"). This is required because this prebuilt
+ * editor bundle ships without GeneralHtmlSupport: any unknown span attributes (data-id,
+ * style, contenteditable) would otherwise be stripped by the schema, breaking the
+ * display-label / store-token round-trip used by the print template editor.
+ *
+ * - upcast:          span[data-variable] -> model element (carries code/label/color)
+ * - editingDowncast: model element -> atomic inline widget chip shown inside the editor
+ * - dataDowncast:    model element -> span[data-variable][data-id] in getData() output,
+ *                    which the print-template component then maps back to the `$!{code}`
+ *                    Velocity token for storage.
+ *
+ * The plugin is inert for editors that never contain `data-variable` spans.
+ */
+export function PrintVarPlugin(editor: any): void {
+    // This prebuilt CKEditor 5 bundle (DecoupledDocumentEditor, © 2020) passes the
+    // conversion writer as the 2nd callback argument directly; modern CKEditor 5 wraps
+    // it as {writer}. Destructuring {writer} yields undefined here, which throws on
+    // createElement/createContainerElement and silently breaks both loading saved
+    // templates and inserting variables. Resolve the writer for either signature.
+    const w = (api: any) => (api && api.writer) ? api.writer : api;
+
+    editor.model.schema.register('printVar', {
+        allowWhere: '$text',
+        isInline: true,
+        isObject: true,
+        allowAttributes: ['code', 'label', 'color']
+    });
+
+    editor.conversion.for('upcast').elementToElement({
+        view: {name: 'span', attributes: {'data-variable': 'true'}},
+        model: (viewEl: any, api: any) => w(api).createElement('printVar', {
+            code: viewEl.getAttribute('data-id') || '',
+            label: viewEl.getAttribute('data-label') || viewEl.getAttribute('data-id') || '',
+            color: viewEl.getAttribute('data-color') || ''
+        })
+    });
+
+    // Inside the editor: render an atomic, selectable/deletable inline widget.
+    // The chip MUST be a widget (the 'widget' custom property + 'ck-widget' class) — a
+    // plain UIElement renders fine but is not real content, so the caret can't land on
+    // it and Backspace/selection never target it (it becomes impossible to delete). The
+    // Widget plugin shipped in this bundle then handles click-to-select and delete.
+    // A single text child keeps the widget atomic; nested inline spans re-introduce
+    // editable positions and break deletion. Styling is inline because Angular
+    // view-encapsulated .less cannot reach CKEditor-generated DOM.
+    editor.conversion.for('editingDowncast').elementToElement({
+        model: 'printVar',
+        view: (modelEl: any, api: any) => {
+            const writer = w(api);
+            const code = modelEl.getAttribute('code') || '';
+            const label = modelEl.getAttribute('label') || code;
+            const color = modelEl.getAttribute('color') || '#1890ff';
+            const span = writer.createContainerElement('span', {
+                class: 'erupt-print-var ck-widget',
+                'data-id': code,
+                contenteditable: 'false',
+                style: `color:${color};margin:0 2px;font-weight:bold;`
+            });
+            writer.insert(writer.createPositionAt(span, 0), writer.createText('{ ' + label + ' }'));
+            writer.setCustomProperty('widget', true, span);
+            return span;
+        }
+    });
+
+    // In getData() output: a normal span carrying data-variable/data-id, which the
+    // print-template hijack converts to the `$!{code}` token before persisting.
+    editor.conversion.for('dataDowncast').elementToElement({
+        model: 'printVar',
+        view: (modelEl: any, api: any) => {
+            const writer = w(api);
+            const code = modelEl.getAttribute('code') || '';
+            const label = modelEl.getAttribute('label') || code;
+            const color = modelEl.getAttribute('color') || '';
+            const span = writer.createContainerElement('span', {
+                class: 'erupt-print-var',
+                'data-variable': 'true',
+                'data-id': code,
+                'data-label': label,
+                'data-color': color,
+                contenteditable: 'false'
+            });
+            writer.insert(writer.createPositionAt(span, 0), writer.createText('{ ' + label + ' }'));
+            return span;
+        }
+    });
+}
 
 @Component({
     standalone: false,
@@ -82,7 +182,10 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
                     contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
                 },
                 licenseKey: '',
-                language: "zh-cn"
+                language: "zh-cn",
+                // Enables print-template variable chips (display label, store $!{code}).
+                // Inert when content contains no data-variable spans.
+                extraPlugins: [PrintVarPlugin]
             };
             if (uploadUrl) {
                 config.ckfinder = {uploadUrl};
