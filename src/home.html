@@ -9,13 +9,18 @@
 
         body {
             background: #fff;
+            background-image:
+                radial-gradient(900px 480px at 78% -10%, rgba(22, 119, 255, .045), transparent 60%),
+                radial-gradient(700px 420px at 6% 110%, rgba(22, 119, 255, .028), transparent 60%);
             overflow: hidden;
         }
 
         @keyframes fade-in { to { opacity: 1; } }
+        @keyframes rise { to { opacity: 1; transform: none; } }
         .ent {
             opacity: 0;
-            animation: fade-in .8s ease forwards;
+            transform: translateY(8px);
+            animation: rise .9s cubic-bezier(.22, 1, .36, 1) forwards;
         }
 
         /* ================= structural hairlines ================= */
@@ -45,6 +50,17 @@
         .vm { left: 62%; top: 14%; bottom: 0; animation-delay: .45s; }
         .h2 { top: 87%; left: 62%; right: 0; animation-delay: .85s; }
 
+        /* right side reads as a drawer panel */
+        .drawer {
+            position: fixed;
+            left: 62%; top: 14%; right: 0; bottom: 0;
+            background: #fff;
+            box-shadow: -28px 0 56px -40px rgba(15, 43, 92, .16);
+            opacity: 0;
+            animation: fade-in 1.2s ease .9s forwards;
+            pointer-events: none;
+        }
+
         .cross {
             position: fixed;
             width: 15px; height: 15px;
@@ -61,7 +77,7 @@
         .cross::after  { left: 7px; top: 0; width: 1px; height: 15px; }
         .x1 { left: 62%; top: 14%; }
         .x2 { left: 62%; top: 87%; animation-delay: 1.7s; }
-        .x2::before, .x2::after { background: rgba(0, 0, 0, .16); }
+        .x2::before, .x2::after { background: rgba(15, 35, 95, .18); }
 
         /* light glide along the header line */
         .glide {
@@ -113,13 +129,13 @@
             width: 34px; height: 4px;
             border-radius: 2px;
             margin-left: 14%;
-            background: rgba(0, 0, 0, .08);
+            background: rgba(15, 35, 95, .09);
         }
         .kpi .kvalue {
-            height: 10px;
-            border-radius: 5px;
+            height: 11px;
+            border-radius: 5.5px;
             margin: 12px 0 0 14%;
-            background: rgba(0, 0, 0, .12);
+            background: linear-gradient(90deg, rgba(15, 35, 95, .13), rgba(15, 35, 95, .07));
         }
         .kpi .kspark {
             position: absolute;
@@ -132,7 +148,7 @@
             display: block;
             width: 4px;
             border-radius: 2px 2px 1px 1px;
-            background: rgba(0, 0, 0, .07);
+            background: rgba(15, 35, 95, .08);
         }
         .kpi .kspark i:nth-child(1) { height: 7px; }
         .kpi .kspark i:nth-child(2) { height: 12px; }
@@ -159,7 +175,7 @@
             100% { box-shadow: 0 0 0 0 rgba(22, 119, 255, 0); }
         }
         .kpi.lit .kvalue {
-            background: linear-gradient(90deg, rgba(22, 119, 255, .40), rgba(22, 119, 255, .12));
+            background: linear-gradient(90deg, rgba(22, 119, 255, .42), rgba(22, 119, 255, .10));
         }
         .kpi.lit .kspark i { background: rgba(22, 119, 255, .25); }
         .kpi.lit .kspark i:nth-child(4) { background: rgba(22, 119, 255, .55); }
@@ -186,17 +202,19 @@
             left: 4%; top: 19%;
             width: 54%;
             overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, .09);
-            border-radius: 10px;
+            border: 1px solid rgba(15, 35, 95, .10);
+            border-radius: 12px;
             background: #fff;
-            box-shadow: 0 12px 32px -20px rgba(15, 43, 92, .14);
+            box-shadow:
+                0 1px 2px rgba(15, 43, 92, .04),
+                0 18px 44px -28px rgba(15, 43, 92, .20);
             animation-delay: 1.2s;
         }
         .thead {
             position: relative;
             height: 32px;
-            background: rgba(0, 0, 0, .022);
-            border-bottom: 1px solid rgba(0, 0, 0, .09);
+            background: linear-gradient(180deg, rgba(15, 35, 95, .035), rgba(15, 35, 95, .018));
+            border-bottom: 1px solid rgba(15, 35, 95, .09);
         }
         /* sort caret next to the first header cell */
         .thead .sort {
@@ -214,17 +232,17 @@
             width: 0; height: 0;
             border-left: 3.5px solid transparent;
             border-right: 3.5px solid transparent;
-            border-top: 4.5px solid rgba(0, 0, 0, .18);
+            border-top: 4.5px solid rgba(15, 35, 95, .18);
         }
         .trow {
             position: relative;
             height: 32px;
-            border-bottom: 1px solid rgba(0, 0, 0, .05);
+            border-bottom: 1px solid rgba(15, 35, 95, .05);
             opacity: 0;
             animation: fade-in .6s ease forwards;
         }
         .trow:last-of-type { border-bottom: none; }
-        .trow:nth-child(even) { background: rgba(0, 0, 0, .012); }
+        .trow:nth-child(even) { background: rgba(15, 35, 95, .014); }
         .trow:nth-child(2) { animation-delay: 1.5s; }
         .trow:nth-child(3) { animation-delay: 1.62s; }
         .trow:nth-child(4) { animation-delay: 1.74s; }
@@ -239,7 +257,7 @@
             position: absolute;
             left: 12px; top: 10px;
             width: 11px; height: 11px;
-            border: 1px solid rgba(0, 0, 0, .18);
+            border: 1px solid rgba(15, 35, 95, .20);
             border-radius: 3px;
             background: #fff;
         }
@@ -263,13 +281,15 @@
             top: 14px;
             height: 5px;
             border-radius: 2.5px;
-            background: rgba(0, 0, 0, .06);
+            background: rgba(15, 35, 95, .065);
         }
-        .thead .cell { background: rgba(0, 0, 0, .10); top: 13px; }
+        .thead .cell { background: rgba(15, 35, 95, .11); top: 13px; }
         .cc1 { left: 5%;  width: 26px; }
         .cc2 { left: 16%; width: 15%; }
         .trow .cc2 { left: calc(16% + 24px); }
         .cc3 { left: 42%; width: 10%; }
+        .cc4 { left: 58%; width: 30px; }
+        .cc5 { left: auto; right: 16px; width: 46px; }
         .trow:nth-child(odd)  .cc2 { width: 11%; }
         .trow:nth-child(even) .cc1 { width: 20px; }
 
@@ -279,28 +299,46 @@
             left: 16%; top: 8px;
             width: 16px; height: 16px;
             border-radius: 50%;
-            border: 1px solid rgba(0, 0, 0, .12);
-            background: rgba(0, 0, 0, .04);
+            border: 1px solid rgba(15, 35, 95, .13);
+            background: linear-gradient(135deg, rgba(15, 35, 95, .07), rgba(15, 35, 95, .03));
         }
         .trow:first-of-type .ava,
-        .trow:nth-child(4) .ava {
+        .trow:nth-child(5) .ava {
             border-color: rgba(22, 119, 255, .4);
-            background: rgba(22, 119, 255, .10);
+            background: linear-gradient(135deg, rgba(22, 119, 255, .16), rgba(22, 119, 255, .06));
         }
 
-        /* tag pill */
+        /* tag pill with status dot */
         .pill {
             position: absolute;
             left: 42%; top: 9px;
-            width: 34px; height: 15px;
+            width: 38px; height: 15px;
             border-radius: 8px;
             border: 1px solid rgba(22, 119, 255, .35);
-            background: rgba(22, 119, 255, .08);
+            background: rgba(22, 119, 255, .07);
+        }
+        .pill::before {
+            content: "";
+            position: absolute;
+            left: 6px; top: 5px;
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: rgba(22, 119, 255, .55);
+        }
+        .pill::after {
+            content: "";
+            position: absolute;
+            left: 15px; top: 6px;
+            width: 15px; height: 3px;
+            border-radius: 1.5px;
+            background: rgba(22, 119, 255, .30);
         }
         .pill.grey {
-            border-color: rgba(0, 0, 0, .12);
-            background: rgba(0, 0, 0, .03);
+            border-color: rgba(15, 35, 95, .13);
+            background: rgba(15, 35, 95, .025);
         }
+        .pill.grey::before { background: rgba(15, 35, 95, .22); }
+        .pill.grey::after  { background: rgba(15, 35, 95, .12); }
 
         /* progress column */
         .prog {
@@ -308,7 +346,7 @@
             left: 58%; top: 14px;
             width: 16%; height: 5px;
             border-radius: 2.5px;
-            background: rgba(0, 0, 0, .05);
+            background: rgba(15, 35, 95, .055);
             overflow: hidden;
         }
         .prog::before {
@@ -317,7 +355,7 @@
             left: 0; top: 0; bottom: 0;
             width: var(--p, 50%);
             border-radius: 2.5px;
-            background: rgba(22, 119, 255, .40);
+            background: linear-gradient(90deg, rgba(22, 119, 255, .30), rgba(22, 119, 255, .50));
             transform: scaleX(0);
             transform-origin: left center;
             animation: prog-in 1s cubic-bezier(.4, 0, .2, 1) 2.6s forwards;
@@ -340,7 +378,8 @@
             position: absolute;
             left: 0; right: 0;
             height: 32px;
-            background: rgba(22, 119, 255, .04);
+            background: rgba(22, 119, 255, .045);
+            box-shadow: inset 2px 0 0 rgba(22, 119, 255, .35);
             opacity: 0;
             animation: rove 18s ease-in-out 3s infinite;
             pointer-events: none;
@@ -371,9 +410,10 @@
         .pager s {
             display: block;
             width: 22px; height: 22px;
-            border: 1px solid rgba(0, 0, 0, .12);
-            border-radius: 5px;
+            border: 1px solid rgba(15, 35, 95, .13);
+            border-radius: 6px;
             background: #fff;
+            box-shadow: 0 1px 2px rgba(15, 43, 92, .04);
             position: relative;
         }
         .pager s::before {
@@ -383,7 +423,7 @@
             width: 8px; height: 4px;
             margin: -2px 0 0 -4px;
             border-radius: 2px;
-            background: rgba(0, 0, 0, .08);
+            background: rgba(15, 35, 95, .09);
         }
         .pager s.on {
             border-color: rgba(22, 119, 255, .6);
@@ -399,7 +439,7 @@
         .field .label {
             width: 52px; height: 5px;
             border-radius: 2.5px;
-            background: rgba(0, 0, 0, .10);
+            background: rgba(15, 35, 95, .11);
             margin-bottom: 9px;
         }
         .field .label.req::after {
@@ -414,16 +454,17 @@
         .field .box {
             position: relative;
             height: 34px;
-            border: 1px solid rgba(0, 0, 0, .12);
-            border-radius: 6px;
+            border: 1px solid rgba(15, 35, 95, .14);
+            border-radius: 8px;
             background: #fff;
+            box-shadow: 0 1px 2px rgba(15, 43, 92, .04);
         }
         .field .box .ph {
             position: absolute;
             left: 11px; top: 15px;
             width: 38%; height: 4px;
             border-radius: 2px;
-            background: rgba(0, 0, 0, .05);
+            background: rgba(15, 35, 95, .055);
         }
 
         .f1 { top: 20%; animation-delay: 1.6s; }
@@ -434,7 +475,7 @@
         /* focused input with blinking caret */
         .f2 .box {
             border-color: rgba(22, 119, 255, .55);
-            box-shadow: 0 0 0 3px rgba(22, 119, 255, .08);
+            box-shadow: 0 0 0 3px rgba(22, 119, 255, .08), 0 1px 2px rgba(15, 43, 92, .04);
         }
         .caret {
             position: absolute;
@@ -453,8 +494,8 @@
             position: absolute;
             right: 13px; top: 12px;
             width: 7px; height: 7px;
-            border-right: 1.5px solid rgba(0, 0, 0, .25);
-            border-bottom: 1.5px solid rgba(0, 0, 0, .25);
+            border-right: 1.5px solid rgba(15, 35, 95, .28);
+            border-bottom: 1.5px solid rgba(15, 35, 95, .28);
             transform: rotate(45deg);
         }
 
@@ -468,7 +509,7 @@
             position: relative;
             width: 34px; height: 18px;
             border-radius: 9px;
-            background: rgba(0, 0, 0, .15);
+            background: rgba(15, 35, 95, .16);
             animation: sw-bg 8s ease-in-out 4s infinite;
         }
         .switch::before {
@@ -478,11 +519,11 @@
             width: 14px; height: 14px;
             border-radius: 50%;
             background: #fff;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+            box-shadow: 0 1px 3px rgba(15, 43, 92, .25);
             animation: sw-knob 8s ease-in-out 4s infinite;
         }
         @keyframes sw-bg {
-            0%, 40%, 100% { background: rgba(0, 0, 0, .15); }
+            0%, 40%, 100% { background: rgba(15, 35, 95, .16); }
             50%, 90%      { background: rgba(22, 119, 255, .65); }
         }
         @keyframes sw-knob {
@@ -492,7 +533,7 @@
         .radio {
             width: 14px; height: 14px;
             border-radius: 50%;
-            border: 1px solid rgba(0, 0, 0, .18);
+            border: 1px solid rgba(15, 35, 95, .20);
             background: #fff;
         }
         .radio.on {
@@ -510,13 +551,14 @@
         .fbtns .primary {
             position: relative;
             width: 62px; height: 26px;
-            border-radius: 6px;
-            background: rgba(22, 119, 255, .6);
+            border-radius: 7px;
+            background: linear-gradient(180deg, rgba(22, 119, 255, .68), rgba(22, 119, 255, .52));
+            box-shadow: 0 4px 12px -4px rgba(22, 119, 255, .40);
             animation: btn-breathe 6s ease-in-out 3.5s infinite;
         }
         @keyframes btn-breathe {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(22, 119, 255, .18); }
-            50%      { box-shadow: 0 0 0 5px rgba(22, 119, 255, 0); }
+            0%, 100% { box-shadow: 0 4px 12px -4px rgba(22, 119, 255, .40), 0 0 0 0 rgba(22, 119, 255, .18); }
+            50%      { box-shadow: 0 4px 12px -4px rgba(22, 119, 255, .40), 0 0 0 5px rgba(22, 119, 255, 0); }
         }
         .fbtns .primary::before {
             content: "";
@@ -530,9 +572,10 @@
         .fbtns .plain {
             position: relative;
             width: 62px; height: 26px;
-            border-radius: 6px;
-            border: 1px solid rgba(0, 0, 0, .12);
+            border-radius: 7px;
+            border: 1px solid rgba(15, 35, 95, .14);
             background: #fff;
+            box-shadow: 0 1px 2px rgba(15, 43, 92, .04);
         }
         .fbtns .plain::before {
             content: "";
@@ -541,12 +584,13 @@
             width: 22px; height: 4px;
             margin-left: -11px;
             border-radius: 2px;
-            background: rgba(0, 0, 0, .08);
+            background: rgba(15, 35, 95, .09);
         }
     </style>
 </head>
 <body>
     <!-- frame -->
+    <div class="drawer"></div>
     <div class="line h h1"></div>
     <div class="line v hv1"></div>
     <div class="line v hv2"></div>
@@ -580,39 +624,58 @@
     <div class="table ent">
         <div class="thead">
             <span class="cb"></span>
-            <span class="cell cc1"></span>
+            <span class="cell cc1"></span><span class="sort"></span>
             <span class="cell cc2"></span>
             <span class="cell cc3"></span>
+            <span class="cell cc4"></span>
         </div>
         <div class="trow">
             <span class="cb on"></span>
-            <span class="cell cc1"></span><span class="cell cc2"></span><span class="cell cc3"></span>
-            <span class="pill"></span><span class="act"></span><span class="act2"></span>
+            <span class="cell cc1"></span><span class="ava"></span><span class="cell cc2"></span>
+            <span class="pill"></span><span class="prog" style="--p:72%"></span>
+            <span class="act"></span><span class="act2"></span>
         </div>
         <div class="trow">
             <span class="cb"></span>
-            <span class="cell cc1"></span><span class="cell cc2"></span><span class="cell cc3"></span>
-            <span class="pill grey"></span><span class="act"></span><span class="act2"></span>
+            <span class="cell cc1"></span><span class="ava"></span><span class="cell cc2"></span>
+            <span class="pill grey"></span><span class="prog" style="--p:38%"></span>
+            <span class="act"></span><span class="act2"></span>
         </div>
         <div class="trow">
             <span class="cb"></span>
-            <span class="cell cc1"></span><span class="cell cc2"></span><span class="cell cc3"></span>
-            <span class="pill"></span><span class="act"></span><span class="act2"></span>
+            <span class="cell cc1"></span><span class="ava"></span><span class="cell cc2"></span>
+            <span class="pill"></span><span class="prog" style="--p:56%"></span>
+            <span class="act"></span><span class="act2"></span>
         </div>
         <div class="trow">
             <span class="cb"></span>
-            <span class="cell cc1"></span><span class="cell cc2"></span><span class="cell cc3"></span>
-            <span class="pill grey"></span><span class="act"></span><span class="act2"></span>
+            <span class="cell cc1"></span><span class="ava"></span><span class="cell cc2"></span>
+            <span class="pill grey"></span><span class="prog" style="--p:84%"></span>
+            <span class="act"></span><span class="act2"></span>
         </div>
         <div class="trow">
             <span class="cb"></span>
-            <span class="cell cc1"></span><span class="cell cc2"></span><span class="cell cc3"></span>
-            <span class="pill"></span><span class="act"></span><span class="act2"></span>
+            <span class="cell cc1"></span><span class="ava"></span><span class="cell cc2"></span>
+            <span class="pill"></span><span class="prog" style="--p:47%"></span>
+            <span class="act"></span><span class="act2"></span>
         </div>
         <div class="trow">
             <span class="cb"></span>
-            <span class="cell cc1"></span><span class="cell cc2"></span><span class="cell cc3"></span>
-            <span class="pill grey"></span><span class="act"></span><span class="act2"></span>
+            <span class="cell cc1"></span><span class="ava"></span><span class="cell cc2"></span>
+            <span class="pill grey"></span><span class="prog" style="--p:63%"></span>
+            <span class="act"></span><span class="act2"></span>
+        </div>
+        <div class="trow">
+            <span class="cb"></span>
+            <span class="cell cc1"></span><span class="ava"></span><span class="cell cc2"></span>
+            <span class="pill"></span><span class="prog" style="--p:29%"></span>
+            <span class="act"></span><span class="act2"></span>
+        </div>
+        <div class="trow">
+            <span class="cb"></span>
+            <span class="cell cc1"></span><span class="ava"></span><span class="cell cc2"></span>
+            <span class="pill grey"></span><span class="prog" style="--p:70%"></span>
+            <span class="act"></span><span class="act2"></span>
         </div>
         <div class="rover"></div>
     </div>
