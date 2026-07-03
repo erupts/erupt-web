@@ -1,49 +1,104 @@
+<!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        html, body { height: 100%; }
+
         body {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f5f7fb;
+            background: #fff;
+            overflow: hidden;
         }
 
-        .icon {
-            animation: float 4s ease-in-out infinite;
+        canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            animation: fade 2s ease both;
         }
-        .rays {
-            animation: spin 22s linear infinite;
-            transform-origin: 44px 44px;
+        @keyframes fade {
+            from { opacity: 0; }
+            to   { opacity: 1; }
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50%       { transform: translateY(-9px); }
+
+        /* soft fade at the edges so lines melt into the shell */
+        .veil {
+            position: fixed;
+            pointer-events: none;
         }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to   { transform: rotate(360deg); }
-        }
+        .veil.l { left: 0; top: 0; bottom: 0; width: 16vw;
+                  background: linear-gradient(90deg, #fff, transparent); }
+        .veil.r { right: 0; top: 0; bottom: 0; width: 16vw;
+                  background: linear-gradient(-90deg, #fff, transparent); }
+        .veil.t { left: 0; right: 0; top: 0; height: 22vh;
+                  background: linear-gradient(180deg, #fff, transparent); }
+        .veil.b { left: 0; right: 0; bottom: 0; height: 18vh;
+                  background: linear-gradient(0deg, #fff, transparent); }
     </style>
 </head>
 <body>
-    <svg class="icon" width="96" height="96" viewBox="0 0 88 88"
-         fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g class="rays" stroke="#1677ff" stroke-linecap="round">
-            <line x1="44" y1="7"  x2="44" y2="17" stroke-width="3"   transform="rotate(0,44,44)"/>
-            <line x1="44" y1="7"  x2="44" y2="15" stroke-width="2"   transform="rotate(45,44,44)" opacity=".55"/>
-            <line x1="44" y1="7"  x2="44" y2="17" stroke-width="3"   transform="rotate(90,44,44)"/>
-            <line x1="44" y1="7"  x2="44" y2="15" stroke-width="2"   transform="rotate(135,44,44)" opacity=".55"/>
-            <line x1="44" y1="7"  x2="44" y2="17" stroke-width="3"   transform="rotate(180,44,44)"/>
-            <line x1="44" y1="7"  x2="44" y2="15" stroke-width="2"   transform="rotate(225,44,44)" opacity=".55"/>
-            <line x1="44" y1="7"  x2="44" y2="17" stroke-width="3"   transform="rotate(270,44,44)"/>
-            <line x1="44" y1="7"  x2="44" y2="15" stroke-width="2"   transform="rotate(315,44,44)" opacity=".55"/>
-        </g>
-        <circle cx="44" cy="44" r="17" fill="#1677ff"/>
-        <circle cx="44" cy="44" r="10" fill="white" opacity=".18"/>
-        <circle cx="39" cy="39" r="4"  fill="white" opacity=".22"/>
-    </svg>
+    <canvas id="c"></canvas>
+    <div class="veil l"></div>
+    <div class="veil r"></div>
+    <div class="veil t"></div>
+    <div class="veil b"></div>
+
+    <script>
+        (function () {
+            var canvas = document.getElementById("c");
+            var ctx = canvas.getContext("2d");
+            var W, H, dpr;
+
+            function resize() {
+                dpr = Math.min(window.devicePixelRatio || 1, 2);
+                W = window.innerWidth;
+                H = window.innerHeight;
+                canvas.width = W * dpr;
+                canvas.height = H * dpr;
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+            resize();
+            window.addEventListener("resize", resize);
+
+            var LINES = 26;
+
+            function draw(t) {
+                ctx.clearRect(0, 0, W, H);
+                var bandTop = H * 0.34;
+                var bandHeight = H * 0.42;
+                var step = 6;
+
+                for (var i = 0; i < LINES; i++) {
+                    var p = i / (LINES - 1);            // 0..1 down the band
+                    var baseY = bandTop + p * bandHeight;
+                    // center lines swell more than the outer ones
+                    var envelope = Math.sin(p * Math.PI);
+                    var amp1 = 14 + 26 * envelope;
+                    var amp2 = 6 + 10 * envelope;
+
+                    var blue = (i % 6 === 3);
+                    ctx.strokeStyle = blue
+                        ? "rgba(22, 119, 255, " + (0.10 + 0.14 * envelope) + ")"
+                        : "rgba(28, 46, 74, "  + (0.05 + 0.07 * envelope) + ")";
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+
+                    for (var x = -10; x <= W + 10; x += step) {
+                        var y = baseY
+                            + amp1 * Math.sin(x * 0.0028 + t * 0.00022 + i * 0.42)
+                            + amp2 * Math.sin(x * 0.0061 - t * 0.00014 + i * 0.9);
+                        if (x === -10) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                }
+                requestAnimationFrame(draw);
+            }
+            requestAnimationFrame(draw);
+        })();
+    </script>
 </body>
 </html>
