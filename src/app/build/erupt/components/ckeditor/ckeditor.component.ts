@@ -224,7 +224,7 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
             if (this.destroyed) return;
             // One shared upload endpoint for every editor scenario (form field, designer
             // callout, cube report, print template) — no erupt field context required.
-            const uploadUrl = RestPath.file + "/upload-html-editor?_token=" + this.tokenService.get().token;
+            const uploadUrl = RestPath.file + "/upload-editor?_token=" + this.tokenService.get().token;
             const config: any = {
                 toolbar: {
                     items: this.toolbar || [
