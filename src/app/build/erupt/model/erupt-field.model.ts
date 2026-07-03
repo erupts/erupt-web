@@ -1,4 +1,14 @@
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, MultiChoiceEnum, PickerMode, TabEnum, ViewType} from "./erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    DateEnum,
+    EditType,
+    HtmlEditTypeEnum,
+    MultiChoiceEnum,
+    PickerMode,
+    TabEnum,
+    ViewType
+} from "./erupt.enum";
 import {QueryExpression} from "./erupt.vo";
 import {KeyValueDiffer} from "@angular/core";
 import {Subject} from "rxjs";
@@ -132,6 +142,7 @@ interface RateType {
 interface Search {
     value: boolean;
     notNull: boolean;
+    operator?: QueryExpression;
 }
 
 interface CodeEditType {

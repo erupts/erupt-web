@@ -1599,6 +1599,7 @@ export class TableComponent implements OnInit, OnDestroy {
     private _printPk: any;
     private _printSelectRef: NzModalRef;
     printLoading: boolean = false;
+    printConfigLoading: boolean = false;
 
     printSelectedRows() {
         const eruptName = this.eruptBuildModel.eruptModel.eruptName;
@@ -1677,8 +1678,13 @@ export class TableComponent implements OnInit, OnDestroy {
     // ── Config: template list CRUD ──
     managePrintConfig() {
         const eruptName = this.eruptBuildModel.eruptModel.eruptName;
-        this.dataService.printConfigList(eruptName).subscribe(res => {
-            this.showPrintConfigList(eruptName, res.data || []);
+        this.printConfigLoading = true;
+        this.dataService.printConfigList(eruptName).subscribe({
+            next: res => {
+                this.printConfigLoading = false;
+                this.showPrintConfigList(eruptName, res.data || []);
+            },
+            error: () => this.printConfigLoading = false
         });
     }
 

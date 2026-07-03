@@ -76,10 +76,16 @@ export class SearchComponent implements OnInit, DoCheck {
         for (let model of this.searchEruptModel.eruptFieldModels) {
             model.eruptFieldJson.edit.$valueDiff = this.differs.find(model.eruptFieldJson.edit).create();
             model.eruptFieldJson.edit.$valueSubject = new BehaviorSubject<any>(null);
-            if (model.eruptFieldJson.edit?.search?.value && model.eruptFieldJson.edit.$operator == null) {
-                const opts = this.getOperatorOptions(model);
-                if (opts.length) {
-                    model.eruptFieldJson.edit.$operator = opts[0].value;
+            let edit = model.eruptFieldJson.edit;
+            if (edit?.search?.value && edit.$operator == null) {
+                // Operator configured on @Search wins; otherwise fall back to the first selectable option.
+                if (edit.search.operator) {
+                    edit.$operator = edit.search.operator;
+                } else {
+                    const opts = this.getOperatorOptions(model);
+                    if (opts.length) {
+                        edit.$operator = opts[0].value;
+                    }
                 }
             }
         }
