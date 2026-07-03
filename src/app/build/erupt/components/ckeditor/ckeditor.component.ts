@@ -1,4 +1,15 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnChanges, OnDestroy, Output, SimpleChanges} from "@angular/core";
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    SimpleChanges
+} from "@angular/core";
 import {LazyService} from "@delon/util";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {EruptModel} from "../../model/erupt.model";
@@ -204,15 +215,8 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.lazy.loadScript("assets/js/ckeditor.js").then(() => new Promise<void>(resolve => setTimeout(resolve, 50))).then(() => {
+        this.lazy.loadScript("assets/js/ckeditor.js").then(() => this.waitForEditorGlobal()).then(EditorCtor => {
             if (this.destroyed) return;
-            const EditorCtor = (window as any).DecoupledDocumentEditor;
-            if (!EditorCtor) {
-                this.loading = false;
-                this.editorError = true;
-                console.error('DecoupledDocumentEditor global not found after script load');
-                return;
-            }
             const uploadUrl = (this.erupt && this.eruptField)
                 ? RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
                   this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token
@@ -271,6 +275,32 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
                     this.editorError = true;
                     console.error(error);
                 });
+        }).catch(error => {
+            if (this.destroyed) return;
+            this.loading = false;
+            this.editorError = true;
+            console.error(error);
+        });
+    }
+
+    // LazyService dedupes in-flight script loads: a second loadScript() for the same
+    // path resolves immediately with status 'loading', i.e. BEFORE the script has
+    // executed. On a cold cache the ~2MB ckeditor.js takes far longer than any fixed
+    // delay, so poll until the global actually exists instead of sleeping.
+    private waitForEditorGlobal(timeout: number = 15000): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const start = Date.now();
+            const check = () => {
+                const ctor = (window as any).DecoupledDocumentEditor;
+                if (ctor) {
+                    resolve(ctor);
+                } else if (this.destroyed || Date.now() - start > timeout) {
+                    reject(new Error("DecoupledDocumentEditor global not found after script load"));
+                } else {
+                    setTimeout(check, 50);
+                }
+            };
+            check();
         });
     }
 

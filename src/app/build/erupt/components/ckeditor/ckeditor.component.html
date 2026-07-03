@@ -9,11 +9,12 @@
   @if (editorError) {
     <div>
       <p style="color: red">The text editor cannot be loaded. It is recommended to replace or upgrade your browser</p>
-      <textarea nz-input class="erupt-input" [name]="eruptField.fieldName"
+      <textarea nz-input class="erupt-input" [name]="eruptField?.fieldName || 'ckeditor'"
         [nzAutosize]="{ minRows: 3, maxRows: 20 }"
-        [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
+        [ngModel]="value"
+        (ngModelChange)="valueChange.emit($event)"
         [placeholder]="'The text editor cannot be loaded. It is recommended to replace or upgrade your browser'"
-        [required]="eruptField.eruptFieldJson.edit.notNull"
+        [required]="!!eruptField?.eruptFieldJson?.edit?.notNull"
         [disabled]="readonly"
       ></textarea>
     </div>
