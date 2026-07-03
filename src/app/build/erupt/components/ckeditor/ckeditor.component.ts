@@ -263,6 +263,19 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
                         return;
                     }
                     this.instance = editor;
+                    // Without an upload endpoint any pasted/dropped image throws
+                    // "filerepository-no-upload-adapter"; embed as base64 instead.
+                    if (!uploadUrl) {
+                        editor.plugins.get('FileRepository').createUploadAdapter = (loader: any) => ({
+                            upload: () => loader.file.then((file: File) => new Promise((resolve, reject) => {
+                                const reader = new FileReader();
+                                reader.onload = () => resolve({default: reader.result});
+                                reader.onerror = reject;
+                                reader.readAsDataURL(file);
+                            })),
+                            abort: () => {}
+                        });
+                    }
                     editor.isReadOnly = this.readonly;
                     this.loading = false;
                     const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
