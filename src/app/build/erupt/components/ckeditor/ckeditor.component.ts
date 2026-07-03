@@ -189,6 +189,11 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     @Input() readonly: boolean;
 
+    @Input() height: number = 400;
+
+    // Optional toolbar override; falls back to the full default toolbar when not provided
+    @Input() toolbar: string[];
+
     @Output() valueChange = new EventEmitter();
 
     @Output() onReady = new EventEmitter<any>();
@@ -223,7 +228,7 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
                 : null;
             const config: any = {
                 toolbar: {
-                    items: [
+                    items: this.toolbar || [
                         'heading', '|',
                         'fontSize', 'fontFamily', 'fontBackgroundColor', 'fontColor', '|',
                         'bold', 'italic', 'underline', 'strikethrough', '|',

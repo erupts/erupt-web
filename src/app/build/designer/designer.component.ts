@@ -35,6 +35,13 @@ export class DesignerComponent implements OnInit, OnDestroy {
 
     readonly paletteGroups: PaletteGroup[] = PALETTE_GROUPS;
     readonly editType = EditType;
+    // Compact toolbar for the callout content editor in the narrow props panel
+    readonly calloutToolbar: string[] = [
+        'bold', 'italic', 'underline', '|',
+        'fontColor', 'fontBackgroundColor', '|',
+        'link', 'numberedList', 'bulletedList', '|',
+        'undo', 'redo'
+    ];
     readonly dateEnum = DateEnum;
     readonly choiceEnum = ChoiceEnum;
     readonly attachmentEnum = AttachmentEnum;

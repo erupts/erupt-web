@@ -2,7 +2,8 @@
   @if (!editorError) {
     <div style="background: #eee;">
       <div id="toolbar-container"></div>
-      <div id="editor" style="padding: 5px 10px;height: 400px;overflow-y: auto;background: #fff;border: 1px solid #c4c4c4;border-top: none">
+      <div id="editor" [style.height.px]="height"
+           style="padding: 5px 10px;overflow-y: auto;background: #fff;border: 1px solid #c4c4c4;border-top: none">
       </div>
     </div>
   }

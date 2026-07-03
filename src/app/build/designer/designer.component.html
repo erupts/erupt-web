@@ -621,8 +621,9 @@
                                                 nzOrientation="left" nzPlain></nz-divider>
                                     <div class="prop-item">
                                         <label>{{ 'designer.callout_content' | translate }}</label>
-                                        <textarea nz-input rows="4" [(ngModel)]="selected.edit.calloutType!.value"
-                                                  (ngModelChange)="saveDraft()"></textarea>
+                                        <ckeditor [value]="selected.edit.calloutType!.value" [height]="220"
+                                                  [toolbar]="calloutToolbar"
+                                                  (valueChange)="selected.edit.calloutType!.value = $event; saveDraft()"></ckeditor>
                                     </div>
                                     <div class="prop-item">
                                         <label>{{ 'designer.callout_style' | translate }}</label>
