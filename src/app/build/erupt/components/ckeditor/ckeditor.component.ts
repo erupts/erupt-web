@@ -222,10 +222,9 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
     ngAfterViewInit() {
         this.lazy.loadScript("assets/js/ckeditor.js").then(() => this.waitForEditorGlobal()).then(EditorCtor => {
             if (this.destroyed) return;
-            const uploadUrl = (this.erupt && this.eruptField)
-                ? RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
-                  this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token
-                : null;
+            // One shared upload endpoint for every editor scenario (form field, designer
+            // callout, cube report, print template) — no erupt field context required.
+            const uploadUrl = RestPath.file + "/upload-html-editor?_token=" + this.tokenService.get().token;
             const config: any = {
                 toolbar: {
                     items: this.toolbar || [
@@ -251,11 +250,9 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
                 language: "zh-cn",
                 // Enables print-template variable chips (display label, store $!{code}).
                 // Inert when content contains no data-variable spans.
-                extraPlugins: [PrintVarPlugin]
+                extraPlugins: [PrintVarPlugin],
+                ckfinder: {uploadUrl}
             };
-            if (uploadUrl) {
-                config.ckfinder = {uploadUrl};
-            }
             EditorCtor.create(this.ref.nativeElement.querySelector("#editor"), config)
                 .then(editor => {
                     if (this.destroyed) {
@@ -263,19 +260,6 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
                         return;
                     }
                     this.instance = editor;
-                    // Without an upload endpoint any pasted/dropped image throws
-                    // "filerepository-no-upload-adapter"; embed as base64 instead.
-                    if (!uploadUrl) {
-                        editor.plugins.get('FileRepository').createUploadAdapter = (loader: any) => ({
-                            upload: () => loader.file.then((file: File) => new Promise((resolve, reject) => {
-                                const reader = new FileReader();
-                                reader.onload = () => resolve({default: reader.result});
-                                reader.onerror = reject;
-                                reader.readAsDataURL(file);
-                            })),
-                            abort: () => {}
-                        });
-                    }
                     editor.isReadOnly = this.readonly;
                     this.loading = false;
                     const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
