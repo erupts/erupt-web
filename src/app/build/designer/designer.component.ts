@@ -558,7 +558,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
 
     // aligned with edit-type render rules: these types are always full-width
     private static readonly FULL_LINE_TYPES = new Set<EditType>([
-        EditType.DIVIDE, EditType.GROUP, EditType.COMBINE, EditType.TEXTAREA, EditType.MARKDOWN,
+        EditType.DIVIDE, EditType.GROUP, EditType.CALLOUT, EditType.COMBINE, EditType.TEXTAREA, EditType.MARKDOWN,
         EditType.TAGS, EditType.CHECKBOX, EditType.ATTACHMENT, EditType.HTML_EDITOR, EditType.MAP,
         EditType.CODE_EDITOR, EditType.SIGNATURE, EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE
     ]);

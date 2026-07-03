@@ -123,6 +123,19 @@
                         @if (field.edit.type === editType.DIVIDE) {
                             <nz-divider [nzText]="field.edit.title" nzOrientation="left"
                                         style="margin: 4px 0;"></nz-divider>
+                        } @else if (field.edit.type === editType.CALLOUT) {
+                            @if ((field.edit.calloutType?.style || 'INFO') === 'CARD') {
+                                <nz-card nzSize="small" [nzTitle]="field.edit.title">
+                                    <div [innerHTML]="field.edit.calloutType?.value || '' | safeHtml"></div>
+                                </nz-card>
+                            } @else {
+                                <nz-alert [nzType]="$any((field.edit.calloutType?.style || 'INFO').toLowerCase())"
+                                          [nzMessage]="field.edit.title"
+                                          [nzDescription]="calloutPreviewTpl"></nz-alert>
+                                <ng-template #calloutPreviewTpl>
+                                    <div [innerHTML]="field.edit.calloutType?.value || '' | safeHtml"></div>
+                                </ng-template>
+                            }
                         } @else {
                             <div class="field-label">
                                 @if (field.edit.notNull) {
@@ -601,6 +614,24 @@
                                         <label>{{ 'designer.collapsed' | translate }}</label>
                                         <nz-switch nzSize="small" [(ngModel)]="selected.edit.groupType!.collapsed"
                                                    (ngModelChange)="saveDraft()"></nz-switch>
+                                    </div>
+                                }
+                                @case (editType.CALLOUT) {
+                                    <nz-divider [nzText]="'designer.type_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.callout_content' | translate }}</label>
+                                        <textarea nz-input rows="4" [(ngModel)]="selected.edit.calloutType!.value"
+                                                  (ngModelChange)="saveDraft()"></textarea>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.callout_style' | translate }}</label>
+                                        <nz-select style="width: 100%" [(ngModel)]="selected.edit.calloutType!.style"
+                                                   (ngModelChange)="saveDraft()">
+                                            @for (s of ['CARD', 'INFO', 'SUCCESS', 'WARNING', 'ERROR']; track s) {
+                                                <nz-option [nzValue]="s" [nzLabel]="s"></nz-option>
+                                            }
+                                        </nz-select>
                                     </div>
                                 }
                             }

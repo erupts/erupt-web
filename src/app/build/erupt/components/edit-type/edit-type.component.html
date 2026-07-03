@@ -32,6 +32,22 @@
                             </nz-collapse>
                         </div>
                     }
+                    @case (editType.CALLOUT) {
+                        <div nz-col [nzSpan]="24" style="margin-bottom: 16px">
+                            @if (field.eruptFieldJson.edit.calloutType.style === 'CARD') {
+                                <nz-card nzSize="small" [nzTitle]="field.eruptFieldJson.edit.title">
+                                    <div [innerHTML]="field.eruptFieldJson.edit.calloutType.value | safeHtml"></div>
+                                </nz-card>
+                            } @else {
+                                <nz-alert [nzType]="$any(field.eruptFieldJson.edit.calloutType.style.toLowerCase())"
+                                          [nzMessage]="field.eruptFieldJson.edit.title"
+                                          [nzDescription]="calloutContentTpl"></nz-alert>
+                                <ng-template #calloutContentTpl>
+                                    <div [innerHTML]="field.eruptFieldJson.edit.calloutType.value | safeHtml"></div>
+                                </ng-template>
+                            }
+                        </div>
+                    }
                     @case (editType.COMBINE) {
                         <div nz-col [nzSpan]="24" style="margin-top: 8px">
                             <nz-collapse nzAccordion [nzExpandIconPosition]="'end'">

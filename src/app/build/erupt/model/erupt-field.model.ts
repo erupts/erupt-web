@@ -110,6 +110,7 @@ export interface Edit {
     codeEditType?: CodeEditType;
     mapType?: MapType;
     groupType?: GroupType;
+    calloutType?: CalloutType;
     $tabTreeViewData?: any;
 
     $valueDiff?: KeyValueDiffer<any, any>;
@@ -252,6 +253,11 @@ export interface MapType {
 interface GroupType {
     fields: string[];
     collapsed: boolean;
+}
+
+export interface CalloutType {
+    value: string;
+    style: "CARD" | "INFO" | "SUCCESS" | "WARNING" | "ERROR";
 }
 
 export interface VL {
