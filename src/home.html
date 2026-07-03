@@ -12,93 +12,270 @@
             overflow: hidden;
         }
 
-        canvas {
+        /* ================= structural hairlines ================= */
+        .line {
             position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            animation: fade 2s ease both;
+            background: #e8ecf3;
         }
-        @keyframes fade {
-            from { opacity: 0; }
-            to   { opacity: 1; }
+        .h {
+            height: 1px;
+            transform: scaleX(0);
+            transform-origin: left center;
+            animation: grow-x 1s cubic-bezier(.4, 0, .2, 1) forwards;
+        }
+        .v {
+            width: 1px;
+            transform: scaleY(0);
+            transform-origin: center top;
+            animation: grow-y 1s cubic-bezier(.4, 0, .2, 1) forwards;
+        }
+        @keyframes grow-x { to { transform: scaleX(1); } }
+        @keyframes grow-y { to { transform: scaleY(1); } }
+
+        .v1 { left: 30%; top: 0; bottom: 0; animation-delay: .1s; }
+        .v2 { left: 70%; top: 0; bottom: 0; animation-delay: .25s; }
+        .h1 { top: 26%; left: 0; right: 0; animation-delay: .2s; }
+        .h2 { top: 66%; left: 30%; right: 0; animation-delay: .4s; }
+        .h3 { top: 50%; left: 0; width: 30%; animation-delay: .55s; }
+
+        /* ruler ticks under the header line, left segment */
+        .ruler {
+            position: fixed;
+            top: calc(26% + 1px);
+            left: 0; width: 30%;
+            height: 5px;
+            background: repeating-linear-gradient(90deg,
+                #dde4ef 0, #dde4ef 1px, transparent 1px, transparent 26px);
+            opacity: 0;
+            animation: fade-in .8s ease 1.2s forwards;
+        }
+        @keyframes fade-in { to { opacity: 1; } }
+
+        /* ================= faint cell washes ================= */
+        .cell {
+            position: fixed;
+            opacity: 0;
+            animation: fade-in 1.4s ease .8s forwards,
+                       breathe 14s ease-in-out 3s infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { opacity: 1; }
+            50%      { opacity: .4; }
+        }
+        .cell-a {
+            left: 30%; top: 26%;
+            width: 40%; height: 40%;
+            background: linear-gradient(135deg, rgba(22, 119, 255, .045), rgba(22, 119, 255, 0) 65%);
+        }
+        .cell-b {
+            left: 70%; top: 0;
+            right: 0; height: 26%;
+            background: linear-gradient(225deg, rgba(28, 46, 74, .03), transparent 70%);
+            animation-delay: 1s, 8s;
         }
 
-        /* soft fade at the edges so lines melt into the shell */
-        .veil {
+        /* ================= blueprint details ================= */
+        .cross {
             position: fixed;
-            pointer-events: none;
+            width: 15px; height: 15px;
+            margin: -7px 0 0 -7px;
+            opacity: 0;
+            animation: fade-in .7s ease forwards;
         }
-        .veil.l { left: 0; top: 0; bottom: 0; width: 16vw;
-                  background: linear-gradient(90deg, #fff, transparent); }
-        .veil.r { right: 0; top: 0; bottom: 0; width: 16vw;
-                  background: linear-gradient(-90deg, #fff, transparent); }
-        .veil.t { left: 0; right: 0; top: 0; height: 22vh;
-                  background: linear-gradient(180deg, #fff, transparent); }
-        .veil.b { left: 0; right: 0; bottom: 0; height: 18vh;
-                  background: linear-gradient(0deg, #fff, transparent); }
+        .cross::before, .cross::after {
+            content: "";
+            position: absolute;
+            background: #c9d3e4;
+        }
+        .cross::before { left: 0; top: 7px; width: 15px; height: 1px; }
+        .cross::after  { left: 7px; top: 0; width: 1px; height: 15px; }
+        .cross.blue::before, .cross.blue::after { background: rgba(22, 119, 255, .55); }
+        .x1 { left: 30%; top: 26%; animation-delay: 1.1s; }
+        .x2 { left: 70%; top: 66%; animation-delay: 1.3s; }
+        .x3 { left: 30%; top: 66%; animation-delay: 1.5s; }
+        .x4 { left: 70%; top: 26%; animation-delay: 1.7s; }
+
+        /* corner-radius guide arc at the blue intersection */
+        .arc {
+            position: fixed;
+            left: calc(30% - 27px); top: calc(26% - 27px);
+            width: 54px; height: 54px;
+            border: 1px solid #d8e1ef;
+            border-radius: 50%;
+            clip-path: inset(50% 0 0 50%);
+            opacity: 0;
+            animation: fade-in .8s ease 1.9s forwards;
+        }
+
+        /* small square knots resting on lines */
+        .knot {
+            position: fixed;
+            width: 8px; height: 8px;
+            margin: -4px 0 0 -4px;
+            background: #fff;
+            border: 1px solid #d4dcea;
+            opacity: 0;
+            animation: fade-in .7s ease 2s forwards;
+        }
+        .k1 { left: 30%; top: 50%; }
+        .k2 { left: 70%; top: 44%; animation-delay: 2.2s; }
+        .k3 { left: 52%; top: 66%; animation-delay: 2.4s; }
+
+        /* diagonal hatch, architectural texture */
+        .hatch {
+            position: fixed;
+            left: 5%; bottom: 8%;
+            width: 46px; height: 46px;
+            background: repeating-linear-gradient(45deg,
+                transparent 0, transparent 9px, #dfe6f1 9px, #dfe6f1 10px);
+            opacity: 0;
+            animation: fade-in 1s ease 2.3s forwards;
+        }
+
+        /* ================= ghost panels ================= */
+        .ghost {
+            position: fixed;
+            background: #fff;
+            border: 1px solid #e7ecf4;
+            border-radius: 10px;
+            box-shadow: 0 14px 34px -16px rgba(15, 43, 92, .10);
+            opacity: 0;
+            animation: rise 1s cubic-bezier(.22, 1, .36, 1) forwards,
+                       hover 9s ease-in-out 2s infinite;
+        }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes hover {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-6px); }
+        }
+
+        /* main ghost card, centered in the big cell */
+        .g1 {
+            left: 39.5%; top: 36%;
+            width: 21%; height: 21%;
+            animation-delay: 1.2s, 2.2s;
+        }
+        .g1::before {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; top: 34px;
+            height: 1px;
+            background: #eef2f8;
+        }
+        .g1::after {
+            content: "";
+            position: absolute;
+            left: 14px; top: 14px;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: rgba(22, 119, 255, .65);
+        }
+
+        /* small solid card in the left column */
+        .g2 {
+            left: 8%; top: 60%;
+            width: 13%; height: 15%;
+            animation-delay: 1.5s, 3s;
+            animation-duration: 1s, 11s;
+        }
+        .g2::after {
+            content: "";
+            position: absolute;
+            left: 12px; bottom: 12px;
+            width: 34%; height: 4px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, rgba(22, 119, 255, .35), rgba(22, 119, 255, .1));
+        }
+
+        /* dashed placeholder in the bottom-right cell */
+        .g3 {
+            left: 76%; top: 74%;
+            width: 15%; height: 13%;
+            background: transparent;
+            border: 1px dashed #d9e1ee;
+            box-shadow: none;
+            animation-delay: 1.8s, 4s;
+            animation-duration: 1s, 10s;
+        }
+        .g3::after {
+            content: "";
+            position: absolute;
+            left: 50%; top: 50%;
+            width: 12px; height: 12px;
+            margin: -6px 0 0 -6px;
+            background:
+                linear-gradient(#c4d0e4, #c4d0e4) 5px 0 / 2px 12px no-repeat,
+                linear-gradient(#c4d0e4, #c4d0e4) 0 5px / 12px 2px no-repeat;
+        }
+
+        /* ================= light glides ================= */
+        .glide-h {
+            position: fixed;
+            top: calc(26% - 1px);
+            left: 0;
+            width: 200px; height: 1px;
+            background: linear-gradient(90deg,
+                transparent, rgba(22, 119, 255, .55) 50%, transparent);
+            box-shadow: 0 0 8px rgba(22, 119, 255, .25);
+            opacity: 0;
+            animation: slide-x 18s linear 3s infinite;
+        }
+        @keyframes slide-x {
+            0%   { transform: translateX(-200px); opacity: 0; }
+            4%   { opacity: 1; }
+            42%  { opacity: 1; }
+            46%  { transform: translateX(100vw); opacity: 0; }
+            100% { transform: translateX(100vw); opacity: 0; }
+        }
+        .glide-v {
+            position: fixed;
+            left: calc(70% - 1px);
+            top: 0;
+            width: 1px; height: 170px;
+            background: linear-gradient(180deg,
+                transparent, rgba(22, 119, 255, .45) 50%, transparent);
+            box-shadow: 0 0 8px rgba(22, 119, 255, .2);
+            opacity: 0;
+            animation: slide-y 22s linear 11s infinite;
+        }
+        @keyframes slide-y {
+            0%   { transform: translateY(-170px); opacity: 0; }
+            4%   { opacity: 1; }
+            42%  { opacity: 1; }
+            46%  { transform: translateY(100vh); opacity: 0; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
     </style>
 </head>
 <body>
-    <canvas id="c"></canvas>
-    <div class="veil l"></div>
-    <div class="veil r"></div>
-    <div class="veil t"></div>
-    <div class="veil b"></div>
+    <div class="cell cell-a"></div>
+    <div class="cell cell-b"></div>
 
-    <script>
-        (function () {
-            var canvas = document.getElementById("c");
-            var ctx = canvas.getContext("2d");
-            var W, H, dpr;
+    <div class="line v v1"></div>
+    <div class="line v v2"></div>
+    <div class="line h h1"></div>
+    <div class="line h h2"></div>
+    <div class="line h h3"></div>
+    <div class="ruler"></div>
 
-            function resize() {
-                dpr = Math.min(window.devicePixelRatio || 1, 2);
-                W = window.innerWidth;
-                H = window.innerHeight;
-                canvas.width = W * dpr;
-                canvas.height = H * dpr;
-                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            }
-            resize();
-            window.addEventListener("resize", resize);
+    <span class="cross blue x1"></span>
+    <span class="cross x2"></span>
+    <span class="cross x3"></span>
+    <span class="cross x4"></span>
+    <div class="arc"></div>
+    <span class="knot k1"></span>
+    <span class="knot k2"></span>
+    <span class="knot k3"></span>
+    <div class="hatch"></div>
 
-            var LINES = 26;
+    <div class="ghost g1"></div>
+    <div class="ghost g2"></div>
+    <div class="ghost g3"></div>
 
-            function draw(t) {
-                ctx.clearRect(0, 0, W, H);
-                var bandTop = H * 0.34;
-                var bandHeight = H * 0.42;
-                var step = 6;
-
-                for (var i = 0; i < LINES; i++) {
-                    var p = i / (LINES - 1);            // 0..1 down the band
-                    var baseY = bandTop + p * bandHeight;
-                    // center lines swell more than the outer ones
-                    var envelope = Math.sin(p * Math.PI);
-                    var amp1 = 14 + 26 * envelope;
-                    var amp2 = 6 + 10 * envelope;
-
-                    var blue = (i % 6 === 3);
-                    ctx.strokeStyle = blue
-                        ? "rgba(22, 119, 255, " + (0.10 + 0.14 * envelope) + ")"
-                        : "rgba(28, 46, 74, "  + (0.05 + 0.07 * envelope) + ")";
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-
-                    for (var x = -10; x <= W + 10; x += step) {
-                        var y = baseY
-                            + amp1 * Math.sin(x * 0.0028 + t * 0.00022 + i * 0.42)
-                            + amp2 * Math.sin(x * 0.0061 - t * 0.00014 + i * 0.9);
-                        if (x === -10) ctx.moveTo(x, y);
-                        else ctx.lineTo(x, y);
-                    }
-                    ctx.stroke();
-                }
-                requestAnimationFrame(draw);
-            }
-            requestAnimationFrame(draw);
-        })();
-    </script>
+    <div class="glide-h"></div>
+    <div class="glide-v"></div>
 </body>
 </html>
