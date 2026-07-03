@@ -47,6 +47,9 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         {value: 'mobile', icon: 'mobile'}
     ];
 
+    // The model's own formSize, restored when previewing on desktop
+    private originFormSize: FormSize;
+
     eruptFlows: VL[] = [];
 
     // Group options
@@ -112,8 +115,16 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         this.flowApiService.eruptFlowBuild(erupt).subscribe(res => {
             this.dataHandlerService.initErupt(res.data)
             this.eruptBuild = res.data;
-            this.eruptBuild.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
+            this.originFormSize = res.data.eruptModel.eruptJson.layout?.formSize;
+            this.previewDeviceChange();
         })
+    }
+
+    previewDeviceChange() {
+        let layout = this.eruptBuild?.eruptModel.eruptJson.layout;
+        if (layout) {
+            layout.formSize = this.previewDevice === 'mobile' ? FormSize.FULL_LINE : this.originFormSize;
+        }
     }
 
     changeSubmitPermission(permission: FlowPermission) {

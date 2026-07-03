@@ -187,12 +187,13 @@
                 @if (eruptBuild) {
                     <div class="form-preview">
                         <div class="preview-device-switch">
-                            <nz-segmented [nzOptions]="previewDeviceOptions" [(ngModel)]="previewDevice"></nz-segmented>
+                            <nz-segmented [nzOptions]="previewDeviceOptions" [(ngModel)]="previewDevice"
+                                          (ngModelChange)="previewDeviceChange()"></nz-segmented>
                         </div>
                         <div class="preview-stage">
                             @if (previewDevice === 'desktop') {
                                 <div class="desktop-wrapper">
-                                    <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="false"/>
+                                    <erupt-flow-form [eruptBuild]="eruptBuild" [readonly]="false" size="large"/>
                                 </div>
                             } @else {
                                 <div class="phone-wrapper">
