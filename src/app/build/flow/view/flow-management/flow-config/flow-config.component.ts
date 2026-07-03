@@ -39,6 +39,14 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     // Current step
     currentStep = 1;
 
+    // Form preview device, defaults to desktop
+    previewDevice: 'desktop' | 'mobile' = 'desktop';
+
+    previewDeviceOptions = [
+        {value: 'desktop', icon: 'desktop'},
+        {value: 'mobile', icon: 'mobile'}
+    ];
+
     eruptFlows: VL[] = [];
 
     // Group options
