@@ -2,18 +2,20 @@
   @if (!editorError) {
     <div style="background: #eee;">
       <div id="toolbar-container"></div>
-      <div id="editor" style="padding: 5px 10px;height: 400px;overflow-y: auto;background: #fff;border: 1px solid #c4c4c4;border-top: none">
+      <div id="editor" [style.height.px]="height"
+           style="padding: 5px 10px;overflow-y: auto;background: #fff;border: 1px solid #c4c4c4;border-top: none">
       </div>
     </div>
   }
   @if (editorError) {
     <div>
       <p style="color: red">The text editor cannot be loaded. It is recommended to replace or upgrade your browser</p>
-      <textarea nz-input class="erupt-input" [name]="eruptField.fieldName"
+      <textarea nz-input class="erupt-input" [name]="eruptField?.fieldName || 'ckeditor'"
         [nzAutosize]="{ minRows: 3, maxRows: 20 }"
-        [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
+        [ngModel]="value"
+        (ngModelChange)="valueChange.emit($event)"
         [placeholder]="'The text editor cannot be loaded. It is recommended to replace or upgrade your browser'"
-        [required]="eruptField.eruptFieldJson.edit.notNull"
+        [required]="!!eruptField?.eruptFieldJson?.edit?.notNull"
         [disabled]="readonly"
       ></textarea>
     </div>

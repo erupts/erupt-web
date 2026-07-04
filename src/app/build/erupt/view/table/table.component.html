@@ -128,7 +128,8 @@
                             </button>
                         }
                         @if (hasPrintConfig) {
-                            <button nz-button nzSize="small" (click)="managePrintConfig()">
+                            <button nz-button nzSize="small" [nzLoading]="printConfigLoading"
+                                    (click)="managePrintConfig()">
                                 <i nz-icon nzType="setting" nzTheme="outline"></i>{{ 'print.layout'|translate }}
                             </button>
                         }

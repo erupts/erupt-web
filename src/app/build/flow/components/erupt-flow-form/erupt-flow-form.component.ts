@@ -30,6 +30,8 @@ export class EruptFlowFormComponent implements OnInit {
 
     @Input() defaultFormAccess: FormAccessEnum = FormAccessEnum.DEFAULT
 
+    @Input() size: "large" | "small" | "default" = "default";
+
     constructor(private dataService: DataService,
                 private flowApiService: FlowApiService,
                 private dataHandlerService: DataHandlerService) {

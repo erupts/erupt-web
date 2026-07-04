@@ -2,18 +2,7 @@ import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, Vi
 import {Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {
-    Alert,
-    Drill,
-    DrillInput,
-    EruptModel,
-    Page,
-    Power,
-    Row,
-    RowOperation,
-    Vis,
-    VisType
-} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, Page, Power, Row, RowOperation, Vis, VisType} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -53,7 +42,7 @@ import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
 import {EruptAppData} from "@shared/model/erupt-app.model";
-import {PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
+import {eruptToPrintVars, PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
 import printJS from 'print-js';
 
 
@@ -1599,6 +1588,7 @@ export class TableComponent implements OnInit, OnDestroy {
     private _printPk: any;
     private _printSelectRef: NzModalRef;
     printLoading: boolean = false;
+    printConfigLoading: boolean = false;
 
     printSelectedRows() {
         const eruptName = this.eruptBuildModel.eruptModel.eruptName;
@@ -1640,45 +1630,64 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     private builtinPrint(pk: any) {
-        this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, pk).subscribe(data => {
-            const printBuildModel = cloneDeep(this.eruptBuildModel);
-            this.dataHandler.objectToEruptValue(data, printBuildModel);
-            const modal = this.modal.create({
-                nzTitle: this.i18n.fanyi("print.preview"),
-                nzContent: PrintTypeComponent,
-                nzWidth: 700,
-                nzStyle: {top: '30px'},
-                nzBodyStyle: {maxHeight: '75vh', overflow: 'auto'},
-                nzMaskClosable: false,
-                nzDraggable: true,
-                nzOkText: this.i18n.fanyi("global.print"),
-                nzOnOk: () => {
-                    modal.getContentComponent().print();
-                    return false;
-                }
-            });
-            modal.getContentComponent().eruptBuildModel = printBuildModel;
+        const msgLoading = this.msg.loading(this.i18n.fanyi("global.print"), {nzDuration: 0});
+        this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, pk).subscribe({
+            next: data => {
+                this.msg.remove(msgLoading.messageId);
+                this.openBuiltinPrintModal(data);
+            },
+            error: () => this.msg.remove(msgLoading.messageId)
         });
     }
 
+    private openBuiltinPrintModal(data: any) {
+        const printBuildModel = cloneDeep(this.eruptBuildModel);
+        this.dataHandler.objectToEruptValue(data, printBuildModel);
+        const modal = this.modal.create({
+            nzTitle: this.i18n.fanyi("print.preview"),
+            nzContent: PrintTypeComponent,
+            nzWidth: 700,
+            nzStyle: {top: '30px'},
+            nzBodyStyle: {maxHeight: '75vh', overflow: 'auto'},
+            nzMaskClosable: false,
+            nzDraggable: true,
+            nzOkText: this.i18n.fanyi("global.print"),
+            nzOnOk: () => {
+                modal.getContentComponent().print();
+                return false;
+            }
+        });
+        modal.getContentComponent().eruptBuildModel = printBuildModel;
+    }
+
     private doTemplatePrint(eruptName: string, pk: any, config: { content: string, pageConfig: any }) {
-        this.dataService.renderPrint(eruptName, pk, config.content).subscribe(res => {
-            const pc = config.pageConfig || {};
-            const pageSize = (!pc.paperSize || pc.paperSize === 'Custom') ? 'auto' : `${pc.paperSize} ${pc.orientation || 'portrait'}`;
-            const margin = `${pc.marginTop || 10}mm ${pc.marginRight || 10}mm ${pc.marginBottom || 10}mm ${pc.marginLeft || 10}mm`;
-            printJS({
-                printable: res.data,
-                type: 'raw-html',
-                style: `* { font-family: 'Heiti SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } @page { size: ${pageSize}; margin: ${margin}; }`
-            });
+        const msgLoading = this.msg.loading(this.i18n.fanyi("global.print"), {nzDuration: 0});
+        this.dataService.renderPrint(eruptName, pk, config.content).subscribe({
+            next: res => {
+                this.msg.remove(msgLoading.messageId);
+                const pc = config.pageConfig || {};
+                const pageSize = (!pc.paperSize || pc.paperSize === 'Custom') ? 'auto' : `${pc.paperSize} ${pc.orientation || 'portrait'}`;
+                const margin = `${pc.marginTop || 10}mm ${pc.marginRight || 10}mm ${pc.marginBottom || 10}mm ${pc.marginLeft || 10}mm`;
+                printJS({
+                    printable: res.data,
+                    type: 'raw-html',
+                    style: `* { font-family: 'Heiti SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } @page { size: ${pageSize}; margin: ${margin}; }`
+                });
+            },
+            error: () => this.msg.remove(msgLoading.messageId)
         });
     }
 
     // ── Config: template list CRUD ──
     managePrintConfig() {
         const eruptName = this.eruptBuildModel.eruptModel.eruptName;
-        this.dataService.printConfigList(eruptName).subscribe(res => {
-            this.showPrintConfigList(eruptName, res.data || []);
+        this.printConfigLoading = true;
+        this.dataService.printConfigList(eruptName).subscribe({
+            next: res => {
+                this.printConfigLoading = false;
+                this.showPrintConfigList(eruptName, res.data || []);
+            },
+            error: () => this.printConfigLoading = false
         });
     }
 
@@ -1714,12 +1723,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     editPrintConfig(eruptName: string, cfg: any) {
         this.printConfigListRef?.close();
-        const vars: PrintVar[] = [];
-        this.eruptBuildModel.eruptModel.eruptFieldModels.forEach(f => {
-            if (f.eruptFieldJson.edit.title) {
-                vars.push({value: f.fieldName, label: f.eruptFieldJson.edit.title});
-            }
-        });
+        const vars: PrintVar[] = eruptToPrintVars(this.eruptBuildModel);
         const isNew = !cfg.id;
         const ref = this.modal.create({
             nzTitle: isNew ? this.i18n.fanyi("global.new") : cfg.title,

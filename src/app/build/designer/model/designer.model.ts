@@ -1,4 +1,12 @@
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, PickerMode} from "../../erupt/model/erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    DateEnum,
+    EditType,
+    FormSize,
+    PagingType,
+    PickerMode
+} from "../../erupt/model/erupt.enum";
 import {I18NService} from "@core";
 
 /**
@@ -126,6 +134,7 @@ export interface DesignerEdit {
     referenceTableType?: { id?: string; label?: string };
     checkboxType?: { id?: string; label?: string };
     groupType?: { fields?: string[]; collapsed?: boolean };
+    calloutType?: { value?: string; style?: string };
 }
 
 export interface DesignerVL {
@@ -233,7 +242,8 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
         title: "designer.group.layout",
         items: [
             {type: EditType.DIVIDE, label: "designer.type.divide", icon: "line", noView: true},
-            {type: EditType.GROUP, label: "designer.type.group", icon: "block", noView: true, edit: {groupType: {fields: [], collapsed: false}}}
+            {type: EditType.GROUP, label: "designer.type.group", icon: "block", noView: true, edit: {groupType: {fields: [], collapsed: false}}},
+            {type: EditType.CALLOUT, label: "designer.type.callout", icon: "profile", noView: true, edit: {calloutType: {value: "", style: "CARD"}}}
         ]
     },
     {

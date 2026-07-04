@@ -221,6 +221,12 @@
                         <nz-divider [nzDashed]="false" [nzText]="field.eruptFieldJson.edit.title"></nz-divider>
                     </sv>
                 }
+                <!-- CALLOUT -->
+                @case (editType.CALLOUT) {
+                    <sv [col]="1" [label]="field.eruptFieldJson.edit.title">
+                        <div [innerHTML]="field.eruptFieldJson.edit.calloutType.value | safeHtml"></div>
+                    </sv>
+                }
             }
         }
     }

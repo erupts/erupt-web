@@ -6,33 +6,94 @@ app-terminal {
 
 .terminal-shell {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
     height: 100%;
-    background: #141920;
+    background: #15161b;
     overflow: hidden;
     outline: none;
 }
 
-.tab-bar {
+// Left session list (macOS-style gray panel)
+.side-bar {
     display: flex;
-    align-items: center;
-    height: 38px;
-    min-height: 38px;
-    background: #141920;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
+    flex-direction: column;
+    width: 210px;
+    min-width: 210px;
+    background: #2a2b30;
+    border-right: 1px solid rgba(0, 0, 0, 0.45);
+    transition: width .2s, min-width .2s;
 
-    &::-webkit-scrollbar { display: none; }
+    &.collapsed {
+        width: 46px;
+        min-width: 46px;
+
+        .side-header {
+            justify-content: center;
+            padding: 0;
+        }
+
+        .side-header.collapsed-add {
+            height: 32px;
+            min-height: 32px;
+        }
+
+        .side-tabs {
+            padding: 2px 6px 8px;
+        }
+
+        .tab {
+            justify-content: center;
+            padding: 0;
+            height: 34px;
+            position: relative;
+        }
+    }
 }
 
-.tab-bar-tabs {
+.side-header {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: space-between;
+    height: 40px;
+    min-height: 40px;
+    padding: 0 10px 0 16px;
+}
+
+.side-title {
+    font: 600 11px/1 system-ui, sans-serif;
+    letter-spacing: 1.5px;
+    color: #98989d;
+    user-select: none;
+}
+
+.side-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.btn-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #b8b8bd;
+    font-size: 15px;
+    line-height: 1;
+    transition: background .12s, color .12s;
+    user-select: none;
+
+    &:hover { background: #3e3f45; color: #fff; }
+}
+
+.side-tabs {
     flex: 1;
-    overflow-x: auto;
-    overflow-y: hidden;
+    padding: 2px 8px 8px;
+    overflow-y: auto;
     scrollbar-width: none;
 
     &::-webkit-scrollbar { display: none; }
@@ -41,86 +102,100 @@ app-terminal {
 .tab {
     display: flex;
     align-items: center;
-    gap: 6px;
-    height: 33px;
-    padding: 0 10px 0 14px;
-    margin-right: 2px;
+    gap: 8px;
+    height: 40px;
+    padding: 0 10px 0 12px;
+    margin-bottom: 4px;
+    border-radius: 8px;
     cursor: pointer;
-    color: #5c6370;
-    font: 12px/1 system-ui, sans-serif;
+    color: #d0d0d4;
+    font: 13px/1 system-ui, sans-serif;
     white-space: nowrap;
-    flex-shrink: 0;
     transition: background .12s, color .12s;
     user-select: none;
 
-    &:hover { background: #1b2027; color: #abb2bf; }
-    &.active { background: #1b2027; color: #abb2bf; }
-
-    &:hover .tab-close,
-    &.active .tab-close { color: #5c6370; }
+    &:hover { background: rgba(255, 255, 255, 0.06); }
+    &.active { background: #3e3f45; color: #ffffff; }
 }
 
 .tab-dot {
     width: 7px;
     height: 7px;
+    margin-left: -4px;
     border-radius: 50%;
-    background: #528bff;
+    background: #a2c95c;
     flex-shrink: 0;
     opacity: 0;
     transition: opacity .2s;
 
     &.visible { opacity: 1; }
+
+    &.corner {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 5px;
+        height: 5px;
+        margin: 0;
+    }
+}
+
+.tab-num {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.tab-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .tab-close {
-    width: 16px;
-    height: 16px;
+    display: none;
+    width: 18px;
+    height: 18px;
     border-radius: 4px;
-    display: flex;
     align-items: center;
     justify-content: center;
     font-size: 11px;
-    color: transparent;
+    color: #b8b8bd;
     flex-shrink: 0;
     line-height: 1;
     transition: background .1s, color .1s;
 
-    &:hover { background: #e06c75 !important; color: #fff !important; }
+    &:hover { background: #ff5f57; color: #fff; }
 }
 
-.btn-add-tab {
-    width: 28px;
-    height: 28px;
+.tab:hover .tab-close {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    cursor: pointer;
-    color: #abb2bf;
-    font-size: 20px;
-    flex-shrink: 0;
-    margin: 0 4px;
-    transition: background .12s, color .12s;
-    user-select: none;
-
-    &:hover { background: #2a3340; color: #fff; }
 }
 
 .terminals {
     flex: 1;
-    background: #1b2027;
+    min-width: 0;
+    background: #15161b;
     position: relative;
     overflow: hidden;
 }
 
 .term-wrap {
     position: absolute;
-    inset: 0;
-    padding: 8px 12px;
+    inset: 8px;
     display: none;
 
-    &.active { display: block; }
+    // Center the terminal so the sub-cell leftover from fit() rounding is
+    // split evenly on all sides instead of piling up at the right/bottom
+    &.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-    .xterm { height: 100%; }
-    .xterm-viewport { overflow-y: auto !important; }
+    // xterm.css defaults the viewport to #000; rows rarely fill the height
+    // exactly, so the leftover strip shows as a black line — make it transparent
+    .xterm-viewport {
+        overflow-y: auto !important;
+        background-color: transparent !important;
+    }
 }

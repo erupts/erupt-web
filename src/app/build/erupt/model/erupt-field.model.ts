@@ -1,4 +1,14 @@
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, MultiChoiceEnum, PickerMode, TabEnum, ViewType} from "./erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    DateEnum,
+    EditType,
+    HtmlEditTypeEnum,
+    MultiChoiceEnum,
+    PickerMode,
+    TabEnum,
+    ViewType
+} from "./erupt.enum";
 import {QueryExpression} from "./erupt.vo";
 import {KeyValueDiffer} from "@angular/core";
 import {Subject} from "rxjs";
@@ -100,6 +110,7 @@ export interface Edit {
     codeEditType?: CodeEditType;
     mapType?: MapType;
     groupType?: GroupType;
+    calloutType?: CalloutType;
     $tabTreeViewData?: any;
 
     $valueDiff?: KeyValueDiffer<any, any>;
@@ -132,6 +143,7 @@ interface RateType {
 interface Search {
     value: boolean;
     notNull: boolean;
+    operator?: QueryExpression;
 }
 
 interface CodeEditType {
@@ -241,6 +253,11 @@ export interface MapType {
 interface GroupType {
     fields: string[];
     collapsed: boolean;
+}
+
+export interface CalloutType {
+    value: string;
+    style: "CARD" | "INFO" | "SUCCESS" | "WARNING" | "ERROR";
 }
 
 export interface VL {

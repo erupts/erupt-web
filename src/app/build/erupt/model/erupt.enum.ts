@@ -37,6 +37,7 @@ export enum EditType {
     TAB_TABLE_ADD = "TAB_TABLE_ADD",
     TAB_TABLE_REFER = "TAB_TABLE_REFER",
     DIVIDE = "DIVIDE",                         //divider
+    CALLOUT = "CALLOUT",                       //static descriptive content callout
     SLIDER = "SLIDER",                         //numeric slider
     RATE = "RATE",
     CHECKBOX = "CHECKBOX",

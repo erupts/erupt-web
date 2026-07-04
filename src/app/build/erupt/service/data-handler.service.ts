@@ -224,8 +224,12 @@ export class DataHandlerService {
         return conditions;
     }
 
-    private getDefaultSearchOperator(type: EditType): QueryExpression | null {
-        switch (type) {
+    private getDefaultSearchOperator(edit: Edit): QueryExpression | null {
+        // The backend always resolves @Search.operator to a concrete value; the switch below is a fallback.
+        if (edit.search?.operator) {
+            return edit.search.operator;
+        }
+        switch (edit.type) {
             case EditType.INPUT:
             case EditType.PASSWORD:
             case EditType.TEXTAREA:
@@ -250,7 +254,7 @@ export class DataHandlerService {
             const edit = field.eruptFieldJson.edit;
             if (!edit || !edit.search?.value) continue;
             if (!edit.$operator) {
-                edit.$operator = this.getDefaultSearchOperator(edit.type);
+                edit.$operator = this.getDefaultSearchOperator(edit);
             }
         }
     }
@@ -259,7 +263,7 @@ export class DataHandlerService {
         for (const field of eruptModel.eruptFieldModels) {
             const edit = field.eruptFieldJson.edit;
             if (!edit || !edit.search?.value) continue;
-            edit.$operator = this.getDefaultSearchOperator(edit.type);
+            edit.$operator = this.getDefaultSearchOperator(edit);
         }
     }
 

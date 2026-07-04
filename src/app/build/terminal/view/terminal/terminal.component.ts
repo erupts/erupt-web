@@ -15,26 +15,26 @@ interface TermTab {
 }
 
 const TERM_THEME = {
-    background: '#1b2027',
-    foreground: '#abb2bf',
-    cursor: '#528bff',
-    cursorAccent: '#1b2027',
-    selectionBackground: 'rgba(82,139,255,0.25)',
-    black: '#1b2027',
-    red: '#e06c75',
-    green: '#98c379',
-    yellow: '#e5c07b',
-    blue: '#61afef',
-    magenta: '#c678dd',
-    cyan: '#56b6c2',
-    white: '#abb2bf',
-    brightBlack: '#5c6370',
-    brightRed: '#e06c75',
-    brightGreen: '#98c379',
-    brightYellow: '#e5c07b',
-    brightBlue: '#61afef',
-    brightMagenta: '#c678dd',
-    brightCyan: '#56b6c2',
+    background: '#15161b',
+    foreground: '#d6d6d6',
+    cursor: '#c7c7c7',
+    cursorAccent: '#15161b',
+    selectionBackground: 'rgba(255,255,255,0.18)',
+    black: '#1c1d22',
+    red: '#ff6b66',
+    green: '#a2c95c',
+    yellow: '#d9c76a',
+    blue: '#6cb2ff',
+    magenta: '#d183e8',
+    cyan: '#5fd1d5',
+    white: '#d6d6d6',
+    brightBlack: '#7a7a80',
+    brightRed: '#ff8580',
+    brightGreen: '#b5da74',
+    brightYellow: '#e8d98a',
+    brightBlue: '#8ac2ff',
+    brightMagenta: '#df9df0',
+    brightCyan: '#7fdde1',
     brightWhite: '#ffffff'
 };
 
@@ -51,6 +51,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
     tabs: TermTab[] = [];
     activeId: number | null = null;
+    sideCollapsed: boolean = localStorage.getItem('erupt-terminal-side-collapsed') === '1';
     private tabSeq = 0;
     private resizeObserver!: ResizeObserver;
     private wsUrl: string;
@@ -92,7 +93,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
         const term = new Terminal({
             cursorBlink: true,
-            cursorStyle: 'bar',
+            cursorStyle: 'block',
             fontSize: 14,
             fontFamily: '"JetBrains Mono","Fira Code","Cascadia Code",Menlo,Monaco,"Courier New",monospace',
             lineHeight: 1.25,
@@ -109,9 +110,36 @@ export class TerminalComponent implements OnInit, OnDestroy {
         term.onData(data => this.tabSend(tab, {type: 'input', data}));
         term.onResize(sz => this.tabSend(tab, {type: 'resize', cols: sz.cols, rows: sz.rows}));
 
-        requestAnimationFrame(() => {
-            fit.fit();
-            this.connectTab(tab);
+        requestAnimationFrame(() => fit.fit());
+        // On a hard refresh the container is still shifting (fonts, sidebar,
+        // scrollbars) right after route activation; if the PTY starts with stale
+        // cols, zsh's first prompt wraps and leaves a stray "%" line. So connect
+        // only once the measured size has been stable for a few ticks.
+        document.fonts.ready.then(() => this.connectWhenStable(tab));
+    }
+
+    private connectWhenStable(tab: TermTab): void {
+        this.ngZone.runOutsideAngular(() => {
+            let lastCols = -1, lastRows = -1, stable = 0, attempts = 0;
+            const timer = setInterval(() => {
+                if (!this.tabs.includes(tab)) {
+                    clearInterval(timer);
+                    return;
+                }
+                const dims = tab.fit.proposeDimensions();
+                if (dims && dims.cols === lastCols && dims.rows === lastRows) {
+                    stable++;
+                } else {
+                    stable = 0;
+                    lastCols = dims?.cols ?? -1;
+                    lastRows = dims?.rows ?? -1;
+                }
+                if (stable >= 3 || ++attempts >= 40) {
+                    clearInterval(timer);
+                    tab.fit.fit();
+                    this.connectTab(tab);
+                }
+            }, 50);
         });
     }
 
@@ -161,6 +189,11 @@ export class TerminalComponent implements OnInit, OnDestroy {
         if (tab.ws?.readyState === WebSocket.OPEN) {
             tab.ws.send(JSON.stringify(msg));
         }
+    }
+
+    toggleSide(): void {
+        this.sideCollapsed = !this.sideCollapsed;
+        localStorage.setItem('erupt-terminal-side-collapsed', this.sideCollapsed ? '1' : '0');
     }
 
     switchTab(id: number): void {

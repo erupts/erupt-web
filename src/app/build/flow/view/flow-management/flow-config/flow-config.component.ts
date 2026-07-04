@@ -16,7 +16,7 @@ import {DataHandlerService} from "../../../../erupt/service/data-handler.service
 import html2canvas from "html2canvas";
 import {DataService} from "@shared/service/data.service";
 import {NoticeChannel} from "@shared/model/user.model";
-import {PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
+import {eruptToPrintVars, PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
 
 @Component({
     standalone: false,
@@ -38,6 +38,17 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     // Current step
     currentStep = 1;
+
+    // Form preview device, defaults to desktop
+    previewDevice: 'desktop' | 'mobile' = 'desktop';
+
+    previewDeviceOptions = [
+        {value: 'desktop', icon: 'desktop'},
+        {value: 'mobile', icon: 'mobile'}
+    ];
+
+    // The model's own formSize, restored when previewing on desktop
+    private originFormSize: FormSize;
 
     eruptFlows: VL[] = [];
 
@@ -104,8 +115,16 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         this.flowApiService.eruptFlowBuild(erupt).subscribe(res => {
             this.dataHandlerService.initErupt(res.data)
             this.eruptBuild = res.data;
-            this.eruptBuild.eruptModel.eruptJson.layout.formSize = FormSize.FULL_LINE;
+            this.originFormSize = res.data.eruptModel.eruptJson.layout?.formSize;
+            this.previewDeviceChange();
         })
+    }
+
+    previewDeviceChange() {
+        let layout = this.eruptBuild?.eruptModel.eruptJson.layout;
+        if (layout) {
+            layout.formSize = this.previewDevice === 'mobile' ? FormSize.FULL_LINE : this.originFormSize;
+        }
     }
 
     changeSubmitPermission(permission: FlowPermission) {
@@ -282,8 +301,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                             <td style="border: 1px solid #d9d9d9;padding: 8px;">
                                 $!{task.comment}<!--#if($task.signature)--><br/><img src="$!task.signature" style="border:1px solid #f0f0f0;margin: 4px 0 0;width: 160px;" alt="${this.i18n.fanyi('flow.modal.signature')}"><!--#end-->
                             </td>
-                            <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.createTime}</td>
-                            <td style="border: 1px solid #d9d9d9;padding: 8px;">$!{task.completedAt}</td>
+                            <td style="border: 1px solid #d9d9d9;padding: 8px;">#if($task.createTime)$!{task.createTime.toString().replace("T", " ")}#end</td>
+                            <td style="border: 1px solid #d9d9d9;padding: 8px;">#if($task.completedAt)$!{task.completedAt.toString().replace("T", " ")}#end</td>
                         </tr>
                         <!--#end-->
                     </tbody>
@@ -298,14 +317,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             ]
         });
         if (this.eruptBuild && this.eruptBuild.eruptModel) {
-            this.eruptBuild.eruptModel.eruptFieldModels.forEach(f => {
-                if (f.eruptFieldJson.edit.title) {
-                    vars.push({
-                        value: f.fieldName,
-                        label: f.eruptFieldJson.edit.title
-                    })
-                }
-            })
+            vars.push(...eruptToPrintVars(this.eruptBuild));
         }
         let ref = this.modal.create({
             nzTitle: this.i18n.fanyi('flow.modal.print_config_title'),
