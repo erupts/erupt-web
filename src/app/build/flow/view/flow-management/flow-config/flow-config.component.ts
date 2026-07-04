@@ -16,7 +16,7 @@ import {DataHandlerService} from "../../../../erupt/service/data-handler.service
 import html2canvas from "html2canvas";
 import {DataService} from "@shared/service/data.service";
 import {NoticeChannel} from "@shared/model/user.model";
-import {PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
+import {eruptToPrintVars, PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
 
 @Component({
     standalone: false,
@@ -317,14 +317,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
             ]
         });
         if (this.eruptBuild && this.eruptBuild.eruptModel) {
-            this.eruptBuild.eruptModel.eruptFieldModels.forEach(f => {
-                if (f.eruptFieldJson.edit.title) {
-                    vars.push({
-                        value: f.fieldName,
-                        label: f.eruptFieldJson.edit.title
-                    })
-                }
-            })
+            vars.push(...eruptToPrintVars(this.eruptBuild));
         }
         let ref = this.modal.create({
             nzTitle: this.i18n.fanyi('flow.modal.print_config_title'),
