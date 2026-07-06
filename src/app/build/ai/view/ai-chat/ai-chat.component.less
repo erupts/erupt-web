@@ -32,6 +32,26 @@
             flex: 1;
         }
     }
+
+    /* Embedded mode (e.g. inside a drawer): the sidebar overlays the chat area instead of squeezing it */
+    &.is-embedded {
+        position: relative;
+
+        .sidebar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 20;
+            border-right: 1px solid var(--ant-border-color-split, #eee);
+            box-shadow: 6px 0 16px rgba(0, 0, 0, 0.08);
+
+            &.is-collapsed {
+                border-right: none;
+                box-shadow: none;
+            }
+        }
+    }
 }
 
 /* ========== Sidebar: light theme ========== */

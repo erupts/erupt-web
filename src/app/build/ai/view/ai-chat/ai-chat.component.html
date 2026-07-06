@@ -1,4 +1,4 @@
-<div class="ai-chat-layout" [class.is-fullscreen]="fullscreen">
+<div class="ai-chat-layout" [class.is-fullscreen]="fullscreen" [class.is-embedded]="embedded">
     <div class="sidebar" [class.is-collapsed]="sidebarCollapsed"
          [style.width.px]="sidebarCollapsed ? null : sidebarWidth">
         <div class="sidebar-header">
@@ -59,7 +59,7 @@
             }
         </ul>
     </div>
-    @if (!sidebarCollapsed) {
+    @if (!sidebarCollapsed && !embedded) {
         <div class="sidebar-resizer" (mousedown)="onResizerMousedown($event)"></div>
     }
     <div class="main">
