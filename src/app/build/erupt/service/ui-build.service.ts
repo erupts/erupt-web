@@ -388,7 +388,7 @@ export class UiBuildService {
                     break;
                 case ViewType.IMAGE:
                     obj.type = "link";
-                    obj.className = "text-center p-mini";
+                    obj.className = ["text-center", "p-mini"];
                     obj.width = titleWidth + 30;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
@@ -502,7 +502,7 @@ export class UiBuildService {
                 case ViewType.IMAGE_BASE64:
                     obj.type = "link";
                     obj.width = "90px";
-                    obj.className = "text-center p-sm";
+                    obj.className = ["text-center", "p-sm"];
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return `<img width="100%" alt="${obj.title}" src="${item[view.column]}" title=""/>`;
@@ -610,7 +610,19 @@ export class UiBuildService {
                 };
             }
             if (view.className) {
-                obj.className += " " + view.className;
+                // delon st applies array classNames token by token via classList.add,
+                // so merged classes must be split into space-free tokens
+                let classes: string[] = [];
+                if (obj.className) {
+                    if (Array.isArray(obj.className)) {
+                        classes.push(...obj.className);
+                    } else {
+                        classes.push(...(<string>obj.className).split(/\s+/));
+                    }
+                }
+                classes.push(...view.className.split(/\s+/));
+                console.log(classes)
+                obj.className = classes.filter(c => !!c);
             }
             if (obj.width && <number>obj.width < titleWidth) {
                 obj.width = titleWidth;
