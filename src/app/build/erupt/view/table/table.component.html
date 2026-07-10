@@ -122,10 +122,12 @@
                             }
                         }
                         @if (selectedRows.length == 1) {
-                            <button nz-button nzSize="small" id="erupt-btn-print"
-                                    [nzLoading]="printLoading" (click)="printSelectedRows()">
-                                <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
-                            </button>
+                            @if (eruptBuildModel.eruptModel.eruptJson.power.print) {
+                                <button nz-button nzSize="small" id="erupt-btn-print"
+                                        [nzLoading]="printLoading" (click)="printSelectedRows()">
+                                    <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
+                                </button>
+                            }
                         }
                         @if (hasPrintConfig) {
                             <button nz-button nzSize="small" [nzLoading]="printConfigLoading"
