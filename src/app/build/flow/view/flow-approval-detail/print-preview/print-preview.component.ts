@@ -21,6 +21,8 @@ export class FlowPrintPreviewComponent implements OnInit {
 
     printContent: string;
 
+    printLoading: boolean = false;
+
     currentDate = new Date();
 
     constructor(private elementRef: ElementRef,
@@ -30,8 +32,13 @@ export class FlowPrintPreviewComponent implements OnInit {
 
     ngOnInit() {
         if (this.instance.eruptFlowConfig.setting.printSetting == PrintSetting.CUSTOM) {
-            this.flowInstanceApiService.print(this.instance.id).subscribe(res => {
-                this.printContent = res.data;
+            this.printLoading = true;
+            this.flowInstanceApiService.print(this.instance.id).subscribe({
+                next: res => {
+                    this.printContent = res.data;
+                    this.printLoading = false;
+                },
+                error: () => this.printLoading = false
             });
         }
     }

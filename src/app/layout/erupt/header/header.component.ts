@@ -190,25 +190,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
     async openEruptAi() {
         if (this.aiLoading) return;
         this.aiLoading = true;
-        const { AiChatComponent } = await import('../../../build/ai/view/ai-chat/ai-chat.component');
+        const {AiChatComponent} = await import('../../../build/ai/view/ai-chat/ai-chat.component');
         this.aiLoading = false;
-        this.modal.create({
-            nzDraggable: true,
-            nzWrapClassName: "modal-lg",
-            nzMaskClosable: false,
-            nzKeyboard: true,
-            nzFooter: null,
-            nzClosable: true,
+        this.drawer.create({
             nzTitle: "AI Chat",
-            nzStyle: {
-                top: '30px',
-            },
+            nzContent: AiChatComponent,
+            nzWidth: "520px",
+            nzMask: false,
+            nzClosable: true,
+            nzKeyboard: true,
+            nzPlacement: "right",
             nzBodyStyle: {
                 padding: "0",
-                height: "83vh",
                 overflow: "hidden"
             },
-            nzContent: AiChatComponent,
+            nzContentParams: {
+                embedded: true
+            }
         });
     }
 

@@ -1,15 +1,37 @@
 <div class="terminal-shell" (keydown)="onKeydown($event)" tabindex="-1">
-    <div class="tab-bar">
-        <div class="tab-bar-tabs">
+    <div class="side-bar" [class.collapsed]="sideCollapsed">
+        <div class="side-header">
+            @if (!sideCollapsed) {
+                <span class="side-title">TABS</span>
+            }
+            <div class="side-actions">
+                @if (!sideCollapsed) {
+                    <span class="btn-icon" title="New tab (Alt+T)" (click)="createTab()">+</span>
+                }
+                <span class="btn-icon" [title]="sideCollapsed ? 'Expand' : 'Collapse'"
+                      (click)="toggleSide()">{{ sideCollapsed ? '»' : '«' }}</span>
+            </div>
+        </div>
+        @if (sideCollapsed) {
+            <div class="side-header collapsed-add">
+                <span class="btn-icon" title="New tab (Alt+T)" (click)="createTab()">+</span>
+            </div>
+        }
+        <div class="side-tabs">
             @for (tab of tabs; track tab.id) {
-                <div class="tab" [class.active]="tab.id === activeId" (click)="switchTab(tab.id)">
-                    <span class="tab-dot" [class.visible]="tab.hasActivity"></span>
-                    <span class="tab-label">Terminal {{ tab.id }}</span>
-                    <span class="tab-close" (click)="closeTab(tab.id, $event)">✕</span>
+                <div class="tab" [class.active]="tab.id === activeId" (click)="switchTab(tab.id)"
+                     [title]="'Terminal ' + tab.id">
+                    @if (sideCollapsed) {
+                        <span class="tab-num">{{ tab.id }}</span>
+                        <span class="tab-dot corner" [class.visible]="tab.hasActivity"></span>
+                    } @else {
+                        <span class="tab-dot" [class.visible]="tab.hasActivity"></span>
+                        <span class="tab-label">Terminal {{ tab.id }}</span>
+                        <span class="tab-close" (click)="closeTab(tab.id, $event)">✕</span>
+                    }
                 </div>
             }
         </div>
-        <div class="btn-add-tab" title="New tab (Alt+T)" (click)="createTab()">+</div>
     </div>
     <div class="terminals" #terminalsEl></div>
 </div>

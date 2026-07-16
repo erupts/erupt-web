@@ -6,10 +6,105 @@ import {CkeditorComponent} from "../../../build/erupt/components/ckeditor/ckedit
 import {DataService} from "@shared/service/data.service";
 import {LV} from "../../../build/erupt/model/common.model";
 import {deepCopy} from "@delon/util";
+import {EruptBuildModel} from "../../../build/erupt/model/erupt-build.model";
+import {EruptFieldModel} from "../../../build/erupt/model/erupt-field.model";
+import {EditType} from "../../../build/erupt/model/erupt.enum";
 
 export interface PrintVar extends LV<string, string> {
     template?: string;
     vars?: LV<string, string>[];
+}
+
+// Edit types whose backend data map value is not printable as text
+const NOT_PRINTABLE_TYPES: EditType[] = [
+    EditType.TAB_TREE, EditType.CHECKBOX, EditType.DIVIDE, EditType.EMPTY,
+    EditType.TPL, EditType.CALLOUT, EditType.GROUP, EditType.PASSWORD
+];
+
+const CONTAINER_TYPES: EditType[] = [
+    EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.COMBINE
+];
+
+const TH_STYLE = 'border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;';
+const TD_STYLE = 'border: 1px solid #d9d9d9;padding: 8px;';
+
+// Velocity expression for a field value, honoring how EruptUtil.generateEruptDataMap
+// shapes each edit type (reference values are maps keyed by their label field)
+function fieldExpr(path: string, field: EruptFieldModel): string {
+    const edit = field.eruptFieldJson.edit;
+    let label: string;
+    if (edit.type === EditType.REFERENCE_TREE) {
+        label = edit.referenceTreeType.label;
+    } else if (edit.type === EditType.REFERENCE_TABLE) {
+        label = edit.referenceTableType.label;
+    } else {
+        return path;
+    }
+    return label.includes('.') ? `${path}.get("${label}")` : `${path}.${label}`;
+}
+
+function isColumnField(field: EruptFieldModel): boolean {
+    const edit = field.eruptFieldJson.edit;
+    return !!edit.title && !NOT_PRINTABLE_TYPES.includes(edit.type) && !CONTAINER_TYPES.includes(edit.type);
+}
+
+// One-to-many / many-to-many fields render as a table looping over the row list
+function tabTablePrintVar(field: EruptFieldModel, tabBuild: EruptBuildModel): PrintVar {
+    const item = field.fieldName + 'Item';
+    const cols = tabBuild.eruptModel.eruptFieldModels.filter(isColumnField);
+    const subVars = cols.map(sf => ({
+        value: fieldExpr(`${item}.${sf.fieldName}`, sf),
+        label: sf.eruptFieldJson.edit.title
+    }));
+    const th = cols.map(sf => `<th style="${TH_STYLE}">${sf.eruptFieldJson.edit.title}</th>`).join('');
+    const td = subVars.map(v => `<td style="${TD_STYLE}">$!{${v.value}}</td>`).join('');
+    return {
+        value: field.fieldName,
+        label: field.eruptFieldJson.edit.title,
+        template: `
+            <table style="width:100%;border-collapse: collapse;">
+                <thead><tr>${th}</tr></thead>
+                <tbody>
+                    <!--#foreach($${item} in $${field.fieldName})-->
+                    <tr>${td}</tr>
+                    <!--#end-->
+                </tbody>
+            </table>
+        `,
+        vars: subVars
+    };
+}
+
+// Build print vars from an erupt model, dispatching on each field's edit type
+export function eruptToPrintVars(eruptBuild: EruptBuildModel): PrintVar[] {
+    const vars: PrintVar[] = [];
+    for (const f of eruptBuild.eruptModel.eruptFieldModels) {
+        const edit = f.eruptFieldJson.edit;
+        if (!edit.title || NOT_PRINTABLE_TYPES.includes(edit.type)) continue;
+        switch (edit.type) {
+            case EditType.TAB_TABLE_ADD:
+            case EditType.TAB_TABLE_REFER: {
+                const tabBuild = eruptBuild.tabErupts?.[f.fieldName];
+                if (tabBuild) {
+                    vars.push(tabTablePrintVar(f, tabBuild));
+                }
+                break;
+            }
+            case EditType.COMBINE: {
+                const combine = eruptBuild.combineErupts?.[f.fieldName];
+                combine?.eruptFieldModels.filter(isColumnField).forEach(cf => {
+                    vars.push({
+                        value: fieldExpr(`${f.fieldName}.${cf.fieldName}`, cf),
+                        label: `${edit.title} · ${cf.eruptFieldJson.edit.title}`
+                    });
+                });
+                break;
+            }
+            default:
+                vars.push({value: fieldExpr(f.fieldName, f), label: edit.title});
+        }
+    }
+    return vars;
 }
 
 export interface PrintPageConfig {
