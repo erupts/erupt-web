@@ -290,6 +290,16 @@ export class UiBuildService {
                         });
                     };
                     break;
+                case ViewType.PASSWORD:
+                    obj.className = "text-center";
+                    obj.format = (item: any) => {
+                        if (item[view.column]) {
+                            return "<i class='fa fa-lock' aria-hidden='true' style='margin-right:4px;opacity:.45'></i><span style='letter-spacing:2px;opacity:.65'>\u2022\u2022\u2022\u2022\u2022\u2022</span>";
+                        } else {
+                            return "";
+                        }
+                    };
+                    break;
                 case ViewType.MARKDOWN:
                     obj.className = "text-center";
                     obj.type = "link";
