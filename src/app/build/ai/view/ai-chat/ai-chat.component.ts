@@ -1,4 +1,17 @@
-import {AfterViewChecked, Component, ElementRef, Inject, Input, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {
+    AfterViewChecked,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Inject,
+    Input,
+    NgZone,
+    OnDestroy,
+    OnInit,
+    TemplateRef,
+    ViewChild
+} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {SharedModule} from '@shared/shared.module';
 import {ActivatedRoute} from '@angular/router';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
@@ -139,10 +152,17 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         private modal: NzModalService,
         private message: NzMessageService,
         private ngZone: NgZone,
+        private cdr: ChangeDetectorRef,
         private route: ActivatedRoute,
         private i18n: I18NService
     ) {
         this.llmId = this.route.snapshot.queryParams['llm'] || '';
+        // when embedded the drawer/modal host is OnPush, which gates this subtree from
+        // zone-driven global change detection; run a local check per turn instead, the
+        // same treatment it gets under the Default-strategy ancestors of the routed page
+        this.ngZone.onMicrotaskEmpty.pipe(takeUntilDestroyed()).subscribe(() => {
+            if (this.embedded) this.cdr.detectChanges();
+        });
     }
 
     ngOnInit(): void {
