@@ -44,7 +44,6 @@ export enum EditType {
     EMPTY = "EMPTY",
     TPL = "TPL",
     MARKDOWN = "MARKDOWN",
-    PASSWORD = "PASSWORD",
     HTML_EDITOR = "HTML_EDITOR",
     MAP = "MAP",
     CODE_EDITOR = "CODE_EDITOR",
