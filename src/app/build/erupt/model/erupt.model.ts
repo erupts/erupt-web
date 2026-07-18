@@ -20,6 +20,7 @@ export interface Erupt {
     power: Power;
     tree: Tree;
     linkTree: LinkTree;
+    dragSort: DragSort;
     rowOperation: RowOperation[];
     drills: Drill[];
     layout: Layout;
@@ -117,6 +118,10 @@ interface LinkTree {
     field: string;
     dependNode: boolean;
     value: string[];
+}
+
+interface DragSort {
+    field: string;
 }
 
 export interface Drill {

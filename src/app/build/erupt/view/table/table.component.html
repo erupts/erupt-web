@@ -519,10 +519,12 @@
     }
 }
 <ng-template #eruptTable>
-    <div [syncVirtualScroll]="dataPage.data.length >= 100 && !extraRows?.length">
+    <div [syncVirtualScroll]="dataPage.data.length >= 100 && !extraRows?.length && !dragSortField"
+         [class.erupt-drag-sort]="dragSortAllowed()">
         <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
             [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
-            [virtualScroll]="dataPage.data.length >= 100 && !extraRows?.length"
+            [drag]="dragSortAllowed() ? dragOptions : null"
+            [virtualScroll]="dataPage.data.length >= 100 && !extraRows?.length && !dragSortField"
             [virtualItemSize]="47"
             [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: tableScrollY}"
             (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"

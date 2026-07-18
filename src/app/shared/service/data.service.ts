@@ -377,6 +377,15 @@ export class DataService {
         });
     }
 
+    //drag sort, sortData: id -> sort value
+    dragSortEruptData(eruptName: string, sortData: { [id: string]: number }): Observable<EruptApiModel> {
+        return this._http.post(RestPath.dataModify + "/" + eruptName + "/drag-sort", sortData, null, {
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
     //delete data
     deleteEruptData(eruptName: string, id): Observable<EruptApiModel> {
         return this.deleteEruptDataList(eruptName, [id]);

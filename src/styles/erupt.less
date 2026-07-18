@@ -53,6 +53,112 @@ span.ripple {
     font-size: 12px
 }
 
+.e-progress {
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    vertical-align: middle;
+
+    .e-progress-outer {
+        flex: 1;
+        display: inline-block;
+        height: 8px;
+        background: rgba(0, 0, 0, 0.06);
+        border-radius: 100px;
+        overflow: hidden;
+    }
+
+    .e-progress-inner {
+        display: block;
+        height: 100%;
+        border-radius: 100px;
+        transition: width .3s ease;
+    }
+
+    .e-progress-text {
+        margin-left: 8px;
+        font-size: 12px;
+        min-width: 36px;
+        text-align: left;
+        color: rgba(0, 0, 0, 0.65);
+    }
+}
+
+// ant-design "holder" (six-dot grip) icon via svg mask so color is a plain background-color
+.drag-grip-icon() {
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="64 64 896 896"><path d="M300 276.5a56 56 0 1056-97 56 56 0 00-56 97zm0 284a56 56 0 1056-97 56 56 0 00-56 97zM640 228a56 56 0 10112 0 56 56 0 00-112 0zm0 284a56 56 0 10112 0 56 56 0 00-112 0zM300 844.5a56 56 0 1056-97 56 56 0 00-56 97zM640 796a56 56 0 10112 0 56 56 0 00-112 0z"/></svg>') no-repeat center / contain;
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="64 64 896 896"><path d="M300 276.5a56 56 0 1056-97 56 56 0 00-56 97zm0 284a56 56 0 1056-97 56 56 0 00-56 97zM640 228a56 56 0 10112 0 56 56 0 00-112 0zm0 284a56 56 0 10112 0 56 56 0 00-112 0zM300 844.5a56 56 0 1056-97 56 56 0 00-56 97zM640 796a56 56 0 10112 0 56 56 0 00-112 0z"/></svg>') no-repeat center / contain;
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: background-color .2s;
+}
+
+.erupt-drag-sort {
+    // the checkbox column doubles as the drag zone: grip icon on the left, checkbox on the right
+    tbody tr > td:first-child {
+        position: relative;
+        user-select: none;
+
+        &::before {
+            .drag-grip-icon();
+        }
+    }
+
+    tbody tr > td:first-child {
+        cursor: grab;
+    }
+
+    tbody tr:hover > td:first-child::before {
+        background-color: rgba(0, 0, 0, 0.55);
+    }
+
+    // smooth shifting of sibling rows while dragging
+    .cdk-drop-list-dragging tr:not(.cdk-drag-placeholder) {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    tr.cdk-drag-placeholder {
+        opacity: 0.35;
+        background: #e6f7ff;
+    }
+}
+
+// dragged row preview is appended to the overlay layer (outside the table and .erupt-drag-sort);
+// cell widths/padding are pinned inline by the component before CDK clones the row
+tr.cdk-drag-preview {
+    display: table;
+    table-layout: fixed;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08);
+    cursor: grabbing;
+
+    > td {
+        display: table-cell;
+        vertical-align: middle;
+        border: none;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    > td:first-child {
+        position: relative;
+
+        &::before {
+            .drag-grip-icon();
+            background-color: rgba(0, 0, 0, 0.55);
+        }
+    }
+}
+
 .cell-center {
     display: table-cell !important;
     text-align: center;

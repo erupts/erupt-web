@@ -32,7 +32,7 @@ import {EruptColumnConfig, LocalSettingsService} from "../../service/local-setti
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ModalButtonOptions, NzModalRef, NzModalService} from "ng-zorro-antd/modal";
-import {STChange, STColumn, STColumnButton, STComponent, STPage} from "@delon/abc/st";
+import {STChange, STColumn, STColumnButton, STComponent, STDragOptions, STPage} from "@delon/abc/st";
 import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
@@ -128,6 +128,8 @@ export class TableComponent implements OnInit, OnDestroy {
     columns: STColumn[];
 
     linkTree: boolean = false;
+
+    dragSortField: string = null;
 
     showTable: boolean = true;
 
@@ -271,6 +273,8 @@ export class TableComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         document.addEventListener('fullscreenchange', this.fullscreenChange);
+        // capture-phase filter so the CDK row drag (st has no drag handle support) only starts from the grip cell
+        this.el.nativeElement.addEventListener('mousedown', this.dragHandleFilter, true);
     }
 
     get isEruptPrint(): boolean {
@@ -284,6 +288,7 @@ export class TableComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.refreshTimeInterval && clearInterval(this.refreshTimeInterval);
         document.removeEventListener('fullscreenchange', this.fullscreenChange);
+        this.el.nativeElement.removeEventListener('mousedown', this.dragHandleFilter, true);
         this._resizeCleanup?.();
         this._aiResizeCleanup?.();
     }
@@ -462,6 +467,8 @@ export class TableComponent implements OnInit, OnDestroy {
                 }
                 let dt = eb.eruptModel.eruptJson.linkTree;
                 this.linkTree = !!dt;
+                this.dragSortField = (eb.power && eb.power.edit && eb.eruptModel.eruptJson.dragSort)
+                    ? eb.eruptModel.eruptJson.dragSort.field : null;
                 const savedSettings = this.eruptLocalSettings.get(eb.eruptModel.eruptName);
                 if (this.linkTree && savedSettings.treeWidth) this.treeWidth = savedSettings.treeWidth;
                 if (this.linkTree && savedSettings.treeCollapsed !== undefined) this.treeCollapsed = savedSettings.treeCollapsed;
@@ -612,7 +619,8 @@ export class TableComponent implements OnInit, OnDestroy {
         } else {
             _columns.push({
                 title: "",
-                width: "50px",
+                // wider when the drag grip shares the cell with the checkbox
+                width: this.dragSortField ? "60px" : "50px",
                 resizable: false,
                 type: "checkbox",
                 fixed: "left",
@@ -1525,11 +1533,101 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
 
+    //---------- row drag sort ----------
+
+    dragOptions: STDragOptions = {
+        dropped: (e: CdkDragDrop<any>) => {
+            let offset = 0;
+            let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
+            // with front paging the CDK indexes are relative to the current page
+            if (layout && layout.pagingType == PagingType.FRONT) {
+                offset = (this.st.pi - 1) * this.st.ps;
+            }
+            this.applyDragSort(offset + e.previousIndex, offset + e.currentIndex);
+        }
+    };
+
+    // drag is disallowed when user sorted by a column other than the drag sort field
+    dragSortAllowed(): boolean {
+        if (!this.dragSortField || this._reference) return false;
+        return !this.dataPage.sort || Object.keys(this.dataPage.sort).every(f => f === this.dragSortField);
+    }
+
+    // blocks the mousedown from reaching the row's CdkDrag unless it starts on the grip cell
+    private dragHandleFilter = (e: MouseEvent) => {
+        if (!this.dragSortAllowed()) return;
+        let target = e.target as HTMLElement;
+        let tr = target.closest("tbody tr.cdk-drag");
+        if (!tr || !this.el.nativeElement.contains(tr)) return;
+        let td = target.closest("td") as HTMLTableCellElement;
+        if (td && td.cellIndex === 0 && !target.closest("label,input,.ant-checkbox-wrapper")) {
+            this.freezeRowStylesForDragPreview(tr as HTMLTableRowElement);
+            return;
+        }
+        e.stopPropagation();
+    };
+
+    // CDK builds the drag preview by cloning the <tr> into the overlay, where table layout and
+    // ant-table cell padding no longer apply; pin them inline before the clone happens
+    private freezeRowStylesForDragPreview(tr: HTMLTableRowElement) {
+        let cells = Array.from(tr.cells);
+        let styles = cells.map(cell => {
+            let s = getComputedStyle(cell);
+            return {width: s.width, padding: s.padding, textAlign: s.textAlign};
+        });
+        cells.forEach((cell, i) => {
+            cell.style.width = styles[i].width;
+            cell.style.padding = styles[i].padding;
+            cell.style.textAlign = styles[i].textAlign;
+        });
+        document.addEventListener("mouseup", () => cells.forEach(cell => {
+            cell.style.width = cell.style.padding = cell.style.textAlign = "";
+        }), {once: true});
+    }
+
+    private applyDragSort(from: number, to: number) {
+        if (from === to) return;
+        let field = this.dragSortField;
+        let data = [...this.dataPage.data];
+        let values = data.map(row => row[field]);
+        let allNumeric = values.every(v => typeof v === "number") && new Set(values).size === values.length;
+        let sorted: number[];
+        if (allNumeric) {
+            let desc = this.dataPage.sort && (this.dataPage.sort[field] + "").toUpperCase().startsWith("DESC");
+            sorted = [...values].sort((a, b) => desc ? b - a : a - b);
+        } else {
+            // initialize sequential order values when current values are absent or duplicated
+            let base = (this.dataPage.pi - 1) * this.dataPage.ps;
+            sorted = values.map((_, i) => base + i + 1);
+        }
+        let moved = data.splice(from, 1)[0];
+        data.splice(to, 0, moved);
+        let pk = this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+        let sortData: { [id: string]: number } = {};
+        data.forEach((row, i) => {
+            if (row[field] !== sorted[i]) {
+                sortData[row[pk]] = sorted[i];
+                row[field] = sorted[i];
+            }
+        });
+        this.dataPage.data = data;
+        if (Object.keys(sortData).length) {
+            this.dataService.dragSortEruptData(this.eruptBuildModel.eruptModel.eruptName, sortData).subscribe(res => {
+                if (res.status == Status.SUCCESS) {
+                    this.msg.success(this.i18n.fanyi("global.update.success"));
+                } else {
+                    this.query();
+                }
+            });
+        }
+    }
+
     protected readonly SortType = SortType;
 
     // determine whether a field is a numeric or date type
     isNumericOrDateType(field: View): boolean {
         return field.type === ViewType.NUMBER ||
+            field.type === ViewType.PROGRESS ||
             field.type === ViewType.DATE ||
             field.type === ViewType.DATE_TIME;
     }
