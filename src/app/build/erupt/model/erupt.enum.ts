@@ -90,6 +90,7 @@ export enum ViewType {
     DATE_TIME = "DATE_TIME",
     BOOLEAN = "BOOLEAN",
     NUMBER = "NUMBER",
+    PROGRESS = "PROGRESS",
     MARKDOWN = "MARKDOWN",
     PASSWORD = "PASSWORD",
     HIDDEN = "HIDDEN",

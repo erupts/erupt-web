@@ -150,6 +150,26 @@ export class UiBuildService {
                         }
                     };
                     break;
+                case ViewType.PROGRESS:
+                    obj.width = titleWidth + 80;
+                    let isSlider = edit && edit.type === EditType.SLIDER && edit.sliderType;
+                    let progressMin = isSlider ? edit.sliderType.min || 0 : 0;
+                    let progressMax = isSlider ? edit.sliderType.max : 100;
+                    obj.format = (item: any) => {
+                        let value = item[view.column];
+                        if (value === null || value === undefined || value === "") {
+                            return "";
+                        }
+                        let num = Number(value);
+                        if (isNaN(num)) {
+                            return value;
+                        }
+                        let range = progressMax - progressMin;
+                        let percent = range > 0 ? Math.min(Math.max((num - progressMin) / range * 100, 0), 100) : 0;
+                        let color = percent >= 100 ? "#52c41a" : "#1890ff";
+                        return `<span class="e-progress"><span class="e-progress-outer"><span class="e-progress-inner" style="width:${percent}%;background:${color}"></span></span><span class="e-progress-text">${Math.round(percent)}%</span></span>`;
+                    };
+                    break;
                 case ViewType.COLOR:
                     obj.className = "text-center";
                     obj.type = "link";
