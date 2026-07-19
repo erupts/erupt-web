@@ -150,6 +150,26 @@ export class UiBuildService {
                         }
                     };
                     break;
+                case ViewType.PROGRESS:
+                    obj.width = titleWidth + 80;
+                    let isSlider = edit && edit.type === EditType.SLIDER && edit.sliderType;
+                    let progressMin = isSlider ? edit.sliderType.min || 0 : 0;
+                    let progressMax = isSlider ? edit.sliderType.max : 100;
+                    obj.format = (item: any) => {
+                        let value = item[view.column];
+                        if (value === null || value === undefined || value === "") {
+                            return "";
+                        }
+                        let num = Number(value);
+                        if (isNaN(num)) {
+                            return value;
+                        }
+                        let range = progressMax - progressMin;
+                        let percent = range > 0 ? Math.min(Math.max((num - progressMin) / range * 100, 0), 100) : 0;
+                        let color = percent >= 100 ? "#52c41a" : "#1890ff";
+                        return `<span class="e-progress"><span class="e-progress-outer"><span class="e-progress-inner" style="width:${percent}%;background:${color}"></span></span><span class="e-progress-text">${Math.round(percent)}%</span></span>`;
+                    };
+                    break;
                 case ViewType.COLOR:
                     obj.className = "text-center";
                     obj.type = "link";
@@ -290,6 +310,16 @@ export class UiBuildService {
                         });
                     };
                     break;
+                case ViewType.PASSWORD:
+                    obj.className = "text-center";
+                    obj.format = (item: any) => {
+                        if (item[view.column]) {
+                            return "<i class='fa fa-lock' aria-hidden='true' style='margin-right:4px;opacity:.45'></i><span style='letter-spacing:2px;opacity:.65'>\u2022\u2022\u2022\u2022\u2022\u2022</span>";
+                        } else {
+                            return "";
+                        }
+                    };
+                    break;
                 case ViewType.MARKDOWN:
                     obj.className = "text-center";
                     obj.type = "link";
@@ -388,7 +418,7 @@ export class UiBuildService {
                     break;
                 case ViewType.IMAGE:
                     obj.type = "link";
-                    obj.className = "text-center p-mini";
+                    obj.className = ["text-center", "p-mini"];
                     obj.width = titleWidth + 30;
                     obj.format = (item: any) => {
                         if (item[view.column]) {
@@ -502,7 +532,7 @@ export class UiBuildService {
                 case ViewType.IMAGE_BASE64:
                     obj.type = "link";
                     obj.width = "90px";
-                    obj.className = "text-center p-sm";
+                    obj.className = ["text-center", "p-sm"];
                     obj.format = (item: any) => {
                         if (item[view.column]) {
                             return `<img width="100%" alt="${obj.title}" src="${item[view.column]}" title=""/>`;
@@ -610,7 +640,19 @@ export class UiBuildService {
                 };
             }
             if (view.className) {
-                obj.className += " " + view.className;
+                // delon st applies array classNames token by token via classList.add,
+                // so merged classes must be split into space-free tokens
+                let classes: string[] = [];
+                if (obj.className) {
+                    if (Array.isArray(obj.className)) {
+                        classes.push(...obj.className);
+                    } else {
+                        classes.push(...(<string>obj.className).split(/\s+/));
+                    }
+                }
+                classes.push(...view.className.split(/\s+/));
+                console.log(classes)
+                obj.className = classes.filter(c => !!c);
             }
             if (obj.width && <number>obj.width < titleWidth) {
                 obj.width = titleWidth;

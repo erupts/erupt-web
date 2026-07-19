@@ -1,15 +1,7 @@
 import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {Edit, EruptFieldModel, FormCtrl} from "../../model/erupt-field.model";
-import {
-    AttachmentEnum,
-    ChoiceEnum,
-    EditType,
-    FormSize,
-    HtmlEditTypeEnum,
-    MultiChoiceEnum,
-    Scene
-} from "../../model/erupt.enum";
+import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, MultiChoiceEnum, Scene} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
@@ -70,6 +62,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     attachmentEnum = AttachmentEnum;
 
     uploadFilesStatus: { [key: string]: boolean } = {};
+
+    buttonLoading: { [key: string]: boolean } = {};
 
     supportCopy: boolean;
 
@@ -167,30 +161,61 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 model.eruptFieldJson.edit.$valueSubject.pipe(skip(1)).subscribe((value) => {
                     if (!this.loading) {
                         this.dataService.onChange(this.eruptModel.eruptName, model.fieldName, this.dataHandlerService.eruptValueToObject(this.eruptBuildModel)).subscribe(res => {
-                            if (res.data.formData) {
-                                for (let k of Object.keys(res.data.formData)) {
-                                    let v = res.data.formData[k];
-                                    let eruptFieldModel: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(k);
-                                    if (eruptFieldModel) {
-                                        eruptFieldModel.eruptFieldJson.edit.$value = v;
-                                    }
-                                }
-                            }
-                            if (res.data.editExpr) {
-                                for (let k of Object.keys(res.data.editExpr)) {
-                                    let v = res.data.editExpr[k];
-                                    let eruptFieldModel: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(k);
-                                    if (eruptFieldModel) {
-                                        let e = eruptFieldModel.eruptFieldJson.edit;
-                                        new Function("edit", v)(e);
-                                    }
-                                }
-                            }
+                            this.applyFormChange(res.data);
                         })
                     }
                 })
             }
         }
+    }
+
+    //apply formData (populate values) and editExpr (edit config linkage) to the current form
+    private applyFormChange(vo: { formData?: { [key: string]: any }, editExpr?: { [key: string]: string } }) {
+        if (!vo) {
+            return;
+        }
+        if (vo.formData) {
+            for (let k of Object.keys(vo.formData)) {
+                let eruptFieldModel: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(k);
+                if (eruptFieldModel) {
+                    eruptFieldModel.eruptFieldJson.edit.$value = vo.formData[k];
+                }
+            }
+        }
+        if (vo.editExpr) {
+            for (let k of Object.keys(vo.editExpr)) {
+                let eruptFieldModel: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(k);
+                if (eruptFieldModel) {
+                    new Function("edit", vo.editExpr[k])(eruptFieldModel.eruptFieldJson.edit);
+                }
+            }
+        }
+    }
+
+    clickEruptButton(field: EruptFieldModel) {
+        this.buttonLoading[field.fieldName] = true;
+        let formData = this.dataHandlerService.eruptValueToObject(this.eruptBuildModel);
+        this.dataService.execEruptButton(this.eruptModel.eruptName, field.fieldName, formData).subscribe({
+            next: (res) => {
+                this.buttonLoading[field.fieldName] = false;
+                if (res.status === Status.SUCCESS) {
+                    let vo = res.data;
+                    this.applyFormChange(vo);
+                    if (vo && vo.eval) {
+                        try {
+                            new Function(vo.eval)();
+                        } catch (e) {
+                            this.msg.error(e);
+                        }
+                    } else if (res.message) {
+                        this.msg.success(res.message);
+                    }
+                }
+            },
+            error: () => {
+                this.buttonLoading[field.fieldName] = false;
+            }
+        });
     }
 
     isReadonly(eruptFieldModel: EruptFieldModel): boolean {

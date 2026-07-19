@@ -1,5 +1,6 @@
 import {
     AfterViewChecked,
+    ChangeDetectorRef,
     Component,
     ElementRef,
     Inject,
@@ -10,6 +11,7 @@ import {
     TemplateRef,
     ViewChild
 } from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {SharedModule} from '@shared/shared.module';
 import {ActivatedRoute} from '@angular/router';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
@@ -150,15 +152,25 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         private modal: NzModalService,
         private message: NzMessageService,
         private ngZone: NgZone,
+        private cdr: ChangeDetectorRef,
         private route: ActivatedRoute,
         private i18n: I18NService
     ) {
         this.llmId = this.route.snapshot.queryParams['llm'] || '';
+        // when embedded the drawer/modal host is OnPush, which gates this subtree from
+        // zone-driven global change detection; run a local check per turn instead, the
+        // same treatment it gets under the Default-strategy ancestors of the routed page
+        this.ngZone.onMicrotaskEmpty.pipe(takeUntilDestroyed()).subscribe(() => {
+            if (this.embedded) this.cdr.detectChanges();
+        });
     }
 
     ngOnInit(): void {
         if (this.collapseSidebar) this.sidebarCollapsed = true;
-        if (this.embedded) this.wideMode = false;
+        if (this.embedded) {
+            this.wideMode = false;
+            this.sidebarCollapsed = true;
+        }
         this.markdown.warmup();
         this.fetchChats();
         this.chatApi.agents().subscribe(res => {
@@ -278,6 +290,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     onSelectChat(chatId: number, after?: () => void): void {
+        // in embedded mode the sidebar overlays the chat, so close it once a conversation is picked
+        if (this.embedded) {
+            this.sidebarCollapsed = true;
+        }
         // reset UI state (without closing SSE connections of other chats)
         this.selectChat = chatId;
         this.sending = false;
@@ -821,7 +837,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     toggleSidebar(): void {
         this.sidebarCollapsed = !this.sidebarCollapsed;
-        this.saveLayout();
+        // embedded mode has its own forced-collapsed default; don't overwrite the full-page layout preference
+        if (!this.embedded) {
+            this.saveLayout();
+        }
     }
 
     /** Clear the input box */

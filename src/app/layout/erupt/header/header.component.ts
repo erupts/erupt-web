@@ -190,25 +190,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
     async openEruptAi() {
         if (this.aiLoading) return;
         this.aiLoading = true;
-        const { AiChatComponent } = await import('../../../build/ai/view/ai-chat/ai-chat.component');
-        this.aiLoading = false;
-        this.modal.create({
-            nzDraggable: true,
-            nzWrapClassName: "modal-lg",
-            nzMaskClosable: false,
-            nzKeyboard: true,
-            nzFooter: null,
-            nzClosable: true,
-            nzTitle: "AI Chat",
-            nzStyle: {
-                top: '30px',
-            },
-            nzBodyStyle: {
-                padding: "0",
-                height: "83vh",
-                overflow: "hidden"
-            },
-            nzContent: AiChatComponent,
+        const {AiChatComponent} = await import('../../../build/ai/view/ai-chat/ai-chat.component');
+        // await on the native import() promise escapes the Angular zone (zone.js cannot
+        // patch native async/await), so re-enter the zone before creating the drawer —
+        // otherwise every async operation inside the drawer misses change detection.
+        this.ngZone.run(() => {
+            this.aiLoading = false;
+            this.drawer.create({
+                nzTitle: "AI Chat",
+                nzContent: AiChatComponent,
+                nzWidth: "520px",
+                nzMask: false,
+                nzClosable: true,
+                nzKeyboard: true,
+                nzPlacement: "right",
+                nzBodyStyle: {
+                    padding: "0",
+                    overflow: "hidden"
+                },
+                nzContentParams: {
+                    embedded: true
+                }
+            });
         });
     }
 

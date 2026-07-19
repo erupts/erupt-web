@@ -60,6 +60,16 @@
                 &:active { background: none; transform: none; }
             }
 
+            // .ant-badge hardcodes font-size 14px; also the bell glyph is optically
+            // smaller than sibling icons, so bump it 1px for visual balance
+            nz-badge {
+                font-size: inherit;
+
+                .anticon {
+                    font-size: 18px;
+                }
+            }
+
             .spin {
                 animation: spin 0.5s linear;
             }

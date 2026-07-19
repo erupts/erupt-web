@@ -50,6 +50,16 @@
             margin-bottom: 0;
         }
 
+        // .erupt-input forces width:100%, which combined with ant-slider's own
+        // horizontal margins overflows the form item; the 14px handle also
+        // overhangs rail ends by 7px, so inset by 7px instead
+        nz-slider.erupt-input {
+            display: block;
+            width: auto;
+            margin-left: 7px;
+            margin-right: 7px;
+        }
+
 
         form.ant-form-horizontal {
             se .ant-form-item-label {

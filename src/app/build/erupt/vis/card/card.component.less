@@ -3,6 +3,36 @@
         .erupt-card {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
             cursor: pointer;
+            position: relative;
+
+            &.erupt-card-selected {
+                border-color: var(--ant-primary-color);
+                box-shadow: 0 0 0 1px var(--ant-primary-color);
+            }
+
+            .card-select {
+                position: absolute;
+                top: 8px;
+                left: 8px;
+                z-index: 2;
+                display: flex;
+                font-size: 0;
+                line-height: 1;
+
+                .ant-radio-wrapper, .ant-checkbox-wrapper {
+                    margin: 0;
+                    line-height: 1;
+                }
+
+                .ant-radio, .ant-checkbox {
+                    top: 0;
+                }
+
+                // the empty label text span leaves a padded white sliver
+                .ant-radio + span, .ant-checkbox + span {
+                    display: none;
+                }
+            }
 
             .no-image {
                 position: absolute;

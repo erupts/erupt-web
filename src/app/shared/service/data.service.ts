@@ -291,6 +291,16 @@ export class DataService {
         });
     }
 
+    //BUTTON component click, passes all current form values to the backend handler
+    execEruptButton(eruptName: string, field: string, formData: object): Observable<EruptApiModel> {
+        return this._http.post(RestPath.comp + "/button/" + eruptName + "/" + field, formData, null, {
+            observe: "body",
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
     //custom button form initial values
     operatorFormValue(eruptName: string, operatorCode: string, ids: any): Observable<any> {
         return this._http.post(RestPath.data + "/" + eruptName + "/operator/" + operatorCode + "/form-value", null, {
@@ -371,6 +381,15 @@ export class DataService {
     updateEruptData(eruptName: string, data: object): Observable<any> {
         return this._http.post<EruptApiModel>(RestPath.dataModify + "/" + eruptName + "/update", data, null, {
             observe: null,
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
+    //drag sort, sortData: id -> sort value
+    dragSortEruptData(eruptName: string, sortData: { [id: string]: number }): Observable<EruptApiModel> {
+        return this._http.post(RestPath.dataModify + "/" + eruptName + "/drag-sort", sortData, null, {
             headers: {
                 erupt: eruptName
             }

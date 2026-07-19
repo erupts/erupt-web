@@ -122,10 +122,12 @@
                             }
                         }
                         @if (selectedRows.length == 1) {
-                            <button nz-button nzSize="small" id="erupt-btn-print"
-                                    [nzLoading]="printLoading" (click)="printSelectedRows()">
-                                <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
-                            </button>
+                            @if (eruptBuildModel.eruptModel.eruptJson.power.print) {
+                                <button nz-button nzSize="small" id="erupt-btn-print"
+                                        [nzLoading]="printLoading" (click)="printSelectedRows()">
+                                    <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
+                                </button>
+                            }
                         }
                         @if (hasPrintConfig) {
                             <button nz-button nzSize="small" [nzLoading]="printConfigLoading"
@@ -440,7 +442,10 @@
                                 @switch (vis[selectedVisIndex]?.type) {
                                     @case (VisType.CARD) {
                                         <vis-card [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
-                                                  (onEdit)="onEdit($event)" [vis]="vis[selectedVisIndex]"/>
+                                                  (onEdit)="onEdit($event)"
+                                                  (onSelectionChange)="handleVisSelectionChange($event)"
+                                                  [selectionMode]="_reference ? _reference.mode : null"
+                                                  [vis]="vis[selectedVisIndex]"/>
                                     }
                                     @case (VisType.TABLE) {
                                         <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
@@ -456,7 +461,7 @@
                                     @case (VisType.GANTT) {
                                         <vis-gantt [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
                                                    (onEdit)="onEdit($event)"
-                                                   (onSelectionChange)="handleGanttSelectionChange($event)"
+                                                   (onSelectionChange)="handleVisSelectionChange($event)"
                                                    [selectionMode]="_reference ? _reference.mode : null"
                                                    [vis]="vis[selectedVisIndex]"/>
                                     }
@@ -517,10 +522,12 @@
     }
 }
 <ng-template #eruptTable>
-    <div [syncVirtualScroll]="dataPage.data.length >= 100 && !extraRows?.length">
+    <div [syncVirtualScroll]="dataPage.data.length >= 100 && !extraRows?.length && !dragSortField"
+         [class.erupt-drag-sort]="dragSortAllowed()">
         <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
             [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
-            [virtualScroll]="dataPage.data.length >= 100 && !extraRows?.length"
+            [drag]="dragSortAllowed() ? dragOptions : null"
+            [virtualScroll]="dataPage.data.length >= 100 && !extraRows?.length && !dragSortField"
             [virtualItemSize]="47"
             [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: tableScrollY}"
             (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
