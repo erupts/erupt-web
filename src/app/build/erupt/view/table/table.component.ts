@@ -1270,8 +1270,8 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    // handle Gantt chart selection change
-    handleGanttSelectionChange(selectedRows: any[]) {
+    // handle selection change from vis components (gantt, card)
+    handleVisSelectionChange(selectedRows: any[]) {
         this.selectedRows = selectedRows;
 
         // if in reference table mode, store the selected data into $tempValue

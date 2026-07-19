@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {CoverEffect, FieldVisibility, Page, Vis} from "../../model/erupt.model";
@@ -6,6 +6,7 @@ import {NzImageService} from "ng-zorro-antd/image";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {UiBuildService} from "../../service/ui-build.service";
 import {STColumn} from "@delon/abc/st";
+import {SelectMode} from "../../model/erupt.enum";
 
 @Component({
     standalone: false,
@@ -14,7 +15,7 @@ import {STColumn} from "@delon/abc/st";
     styles: [],
     styleUrls: ["./card.component.less"]
 })
-export class CardComponent implements OnInit {
+export class CardComponent implements OnInit, OnChanges {
 
     constructor(private imageService: NzImageService, private uiBuildService: UiBuildService) {
     }
@@ -25,9 +26,15 @@ export class CardComponent implements OnInit {
 
     @Input() vis: Vis;
 
+    @Input() selectionMode: SelectMode | null = null;
+
     columnMap: Map<any, STColumn>;
 
     @Output() onEdit = new EventEmitter<any>();
+
+    @Output() onSelectionChange = new EventEmitter<any[]>();
+
+    selectedKeys: Set<any> = new Set<any>();
 
     page: Page;
 
@@ -36,6 +43,34 @@ export class CardComponent implements OnInit {
         for (let col of this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true)) {
             this.columnMap.set(col.index, col);
         }
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['data'] && !changes['data'].firstChange) {
+            this.selectedKeys.clear();
+            this.onSelectionChange.emit([]);
+        }
+    }
+
+    private get primaryKeyCol(): string {
+        return this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+    }
+
+    isSelected(d: any): boolean {
+        return this.selectedKeys.has(d[this.primaryKeyCol]);
+    }
+
+    toggleSelection(d: any) {
+        let key = d[this.primaryKeyCol];
+        if (this.selectedKeys.has(key)) {
+            this.selectedKeys.delete(key);
+        } else {
+            if (this.selectionMode === SelectMode.radio) {
+                this.selectedKeys.clear();
+            }
+            this.selectedKeys.add(key);
+        }
+        this.onSelectionChange.emit(this.data.filter(it => this.selectedKeys.has(it[this.primaryKeyCol])));
     }
 
     clickField(e,field: string) {
@@ -63,4 +98,5 @@ export class CardComponent implements OnInit {
 
     protected readonly clearInterval = clearInterval;
     protected readonly FieldVisibility = FieldVisibility;
+    protected readonly SelectMode = SelectMode;
 }

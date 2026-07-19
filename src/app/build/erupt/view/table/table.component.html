@@ -442,7 +442,10 @@
                                 @switch (vis[selectedVisIndex]?.type) {
                                     @case (VisType.CARD) {
                                         <vis-card [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
-                                                  (onEdit)="onEdit($event)" [vis]="vis[selectedVisIndex]"/>
+                                                  (onEdit)="onEdit($event)"
+                                                  (onSelectionChange)="handleVisSelectionChange($event)"
+                                                  [selectionMode]="_reference ? _reference.mode : null"
+                                                  [vis]="vis[selectedVisIndex]"/>
                                     }
                                     @case (VisType.TABLE) {
                                         <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
@@ -458,7 +461,7 @@
                                     @case (VisType.GANTT) {
                                         <vis-gantt [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
                                                    (onEdit)="onEdit($event)"
-                                                   (onSelectionChange)="handleGanttSelectionChange($event)"
+                                                   (onSelectionChange)="handleVisSelectionChange($event)"
                                                    [selectionMode]="_reference ? _reference.mode : null"
                                                    [vis]="vis[selectedVisIndex]"/>
                                     }

@@ -4,8 +4,18 @@
       @for (d of data; track d) {
         <div nz-col [nzXXl]="eruptBuildModel.eruptModel.eruptJson.linkTree ? 6 : 4"
           [nzXl]="6" [nzLg]="8" [nzMd]="12" [nzSm]="12" [nzXs]="24">
-          <nz-card class="erupt-card" [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'0'}"
+          <nz-card class="erupt-card" [class.erupt-card-selected]="isSelected(d)"
+            [nzCover]="coverTemplate" [nzBodyStyle]="{padding:'0'}"
             [nzBordered]="true" (click)="onEdit.emit(d[eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])">
+            <div class="card-select" (click)="$event.stopPropagation()">
+              @if (selectionMode === SelectMode.radio) {
+                <label nz-radio [ngModel]="isSelected(d)"
+                  (click)="toggleSelection(d); $event.preventDefault()"></label>
+              } @else {
+                <label nz-checkbox [nzChecked]="isSelected(d)"
+                  (nzCheckedChange)="toggleSelection(d)"></label>
+              }
+            </div>
             @if (vis.fields.length < eruptBuildModel.eruptModel.eruptFieldModels.length) {
               @if ((vis.fieldVisibility === FieldVisibility.INCLUDE)? vis.fields.length:true) {
                 <div style="padding: 12px">
