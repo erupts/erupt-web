@@ -174,7 +174,8 @@
         </ng-template>
 
         <ng-template #buttonSe let-field>
-            <se [optionalHelp]="field.eruptFieldJson.edit.desc">
+            <!-- placeholder label keeps the button aligned with sibling inputs in the grid -->
+            <se label="&nbsp;" [optionalHelp]="field.eruptFieldJson.edit.desc">
                 <button nz-button
                         [nzType]="field.eruptFieldJson.edit.buttonType.style"
                         [nzDanger]="field.eruptFieldJson.edit.buttonType.danger"
