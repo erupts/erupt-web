@@ -291,6 +291,16 @@ export class DataService {
         });
     }
 
+    //BUTTON component click, passes all current form values to the backend handler
+    execEruptButton(eruptName: string, field: string, formData: object): Observable<EruptApiModel> {
+        return this._http.post(RestPath.comp + "/button/" + eruptName + "/" + field, formData, null, {
+            observe: "body",
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
     //custom button form initial values
     operatorFormValue(eruptName: string, operatorCode: string, ids: any): Observable<any> {
         return this._http.post(RestPath.data + "/" + eruptName + "/operator/" + operatorCode + "/form-value", null, {

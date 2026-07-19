@@ -173,6 +173,27 @@
             </se>
         </ng-template>
 
+        <ng-template #buttonSe let-field>
+            <se [optionalHelp]="field.eruptFieldJson.edit.desc">
+                <button nz-button
+                        [nzType]="field.eruptFieldJson.edit.buttonType.style"
+                        [nzDanger]="field.eruptFieldJson.edit.buttonType.danger"
+                        [nzSize]="size"
+                        [nzLoading]="buttonLoading[field.fieldName]"
+                        [disabled]="isReadonly(field)"
+                        [style.width]="field.eruptFieldJson.edit.buttonType.fullSpan ? '100%' : null"
+                        nz-popconfirm
+                        [nzPopconfirmTitle]="field.eruptFieldJson.edit.buttonType.confirm"
+                        [nzCondition]="!field.eruptFieldJson.edit.buttonType.confirm"
+                        (nzOnConfirm)="clickEruptButton(field)">
+                    @if (field.eruptFieldJson.edit.buttonType.icon) {
+                        <i class="fa" [ngClass]="field.eruptFieldJson.edit.buttonType.icon"></i>&nbsp;
+                    }
+                    <span>{{ field.eruptFieldJson.edit.title }}</span>
+                </button>
+            </se>
+        </ng-template>
+
         <!-- Shared field renderer: used by both the main loop and GROUP panels -->
         <ng-template #fieldRenderer let-field>
             @switch (field.eruptFieldJson.edit.type) {
@@ -186,6 +207,20 @@
                         <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                              [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
                             <ng-container [ngTemplateOutlet]="inputSe"
+                                          [ngTemplateOutletContext]="{$implicit: field}"></ng-container>
+                        </div>
+                    }
+                }
+                @case (editType.BUTTON) {
+                    @if (field.eruptFieldJson.edit.buttonType.fullSpan) {
+                        <div nz-col [nzSpan]="24">
+                            <ng-container [ngTemplateOutlet]="buttonSe"
+                                          [ngTemplateOutletContext]="{$implicit: field}"></ng-container>
+                        </div>
+                    } @else {
+                        <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                             [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
+                            <ng-container [ngTemplateOutlet]="buttonSe"
                                           [ngTemplateOutletContext]="{$implicit: field}"></ng-container>
                         </div>
                     }

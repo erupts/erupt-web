@@ -38,6 +38,7 @@ export enum EditType {
     TAB_TABLE_REFER = "TAB_TABLE_REFER",
     DIVIDE = "DIVIDE",                         //divider
     CALLOUT = "CALLOUT",                       //static descriptive content callout
+    BUTTON = "BUTTON",                         //button that passes all form values to backend handler
     SLIDER = "SLIDER",                         //numeric slider
     RATE = "RATE",
     CHECKBOX = "CHECKBOX",
