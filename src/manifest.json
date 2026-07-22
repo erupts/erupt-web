@@ -23,21 +23,9 @@
             "purpose": "any"
         },
         {
-            "src": "assets/icon.png",
-            "sizes": "300x300",
-            "type": "image/png",
-            "purpose": "any"
-        },
-        {
-            "src": "assets/icon.png",
-            "sizes": "500x500",
-            "type": "image/png",
-            "purpose": "any"
-        },
-        {
-            "src": "assets/icon.png",
-            "sizes": "300x300",
-            "type": "image/png",
+            "src": "assets/icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
             "purpose": "maskable"
         }
     ]
