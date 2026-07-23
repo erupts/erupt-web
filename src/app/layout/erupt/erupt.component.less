@@ -47,7 +47,7 @@
     @tab-h: 38px;
 
     .erupt-side:after {
-        border-right: 1px solid rgba(0, 0, 0, 0.1);
+        border-right: 1px solid var(--ant-border-color-split);
     }
 
     .alain-default__aside {
@@ -56,7 +56,7 @@
     }
 
     .alain-default__aside:after {
-        border-right: 1px solid #e5e5e5;
+        border-right: 1px solid var(--ant-border-color-split);
     }
 
     .erupt_content {
@@ -147,7 +147,7 @@
             font-size: 13px;
             transition: color 0.2s, background 0.2s;
             padding: 0 16px !important;
-            border-right: 1px solid #e4e7ec !important;
+            border-right: 1px solid var(--ant-border-color-split, #eee) !important;
 
             &:hover {
                 color: var(--ant-primary-color, #1677ff);
@@ -164,7 +164,7 @@
 
         .ant-tabs-nav-operations {
             background: #fff;
-            border-left: 1px solid #e4e7ec;
+            border-left: 1px solid var(--ant-border-color-split, #eee);
             padding: 0 4px;
         }
     }
@@ -258,7 +258,7 @@
         height: 44px;
         padding: 0 16px;
         background: #fff;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid var(--ant-border-color-split);
     }
 
     .erupt-header_fixed {
@@ -296,7 +296,7 @@
 
         .alain-default__header {
             box-shadow: none;
-            border-bottom: 1px solid #efe3e5;
+            border-bottom: 1px solid var(--ant-border-color-split);
         }
 
         .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab + .ant-tabs-tab {
