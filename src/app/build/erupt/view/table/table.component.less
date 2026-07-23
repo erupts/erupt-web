@@ -60,7 +60,9 @@
             height: 47px;
             border-bottom: 1px solid var(--ant-border-color-split);
 
-            &:last-child { border-bottom: none; }
+            &:last-child {
+                border-bottom: none;
+            }
         }
 
         .sk-col {
@@ -71,8 +73,12 @@
     }
 
     @keyframes sk-shimmer {
-        0%   { background-position: 100% 50%; }
-        100% { background-position: 0%   50%; }
+        0% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
     }
 
     // ── Left-right split layout ──────────────────────────────────────────
@@ -342,7 +348,10 @@
                 flex-wrap: nowrap;
                 -webkit-overflow-scrolling: touch;
                 scrollbar-width: none;
-                &::-webkit-scrollbar { display: none; }
+
+                &::-webkit-scrollbar {
+                    display: none;
+                }
 
                 > button, > span, > nz-badge {
                     flex-shrink: 0;
@@ -390,19 +399,25 @@
             }
         }
 
+        // When the search area is visible, drop the table's top border so it
+        // doesn't stack with .tc-search's bottom border. If there's no search
+        // (or it's hidden), the table keeps its own top border.
+        .tc-search:not([hidden]) ~ .tc-body st .ant-table .ant-table-container {
+            border-top: none !important;
+        }
+
         st {
             .ant-table {
                 border-color: var(--ant-border-color-split);
 
-                // Left edge (container border-left) + right edge / vertical dividers
-                // (cell border-right). ng-zorro's bordered-table selectors are highly
-                // specific, so override the color directly.
-                .ant-table-container,
-                .ant-table-cell,
-                th,
-                td {
-                    border-color: var(--ant-border-color-split) !important;
+                .ant-table-container {
+                    border: 1px solid var(--ant-border-color-split);
+                    border-bottom: none;
                 }
+
+                //.ant-table-cell, th, td {
+                //    border-color: var(--ant-border-color-split) !important;
+                //}
 
                 tr {
                     th:nth-child(n+2) {
