@@ -23,8 +23,8 @@ export class SettingsComponent implements OnInit {
                 public rtl: RTLService) {
     }
 
-    // Neo-Brutalist skin — reflects the class index.html applied before bootstrap.
-    neoBrutalist: boolean = document.documentElement.classList.contains("neo-brutalist");
+    // Brutalist Theme skin — reflects the class index.html applied before bootstrap.
+    brutalistTheme: boolean = document.documentElement.classList.contains("brutalist-theme");
 
     ngOnInit() {
         if (!this.settingSrv.layout['tableSize']) {
@@ -32,11 +32,11 @@ export class SettingsComponent implements OnInit {
         }
     }
 
-    toggleNeoBrutalist(value: boolean) {
-        this.neoBrutalist = value;
-        document.documentElement.classList.toggle("neo-brutalist", value);
+    toggleBrutalistTheme(value: boolean) {
+        this.brutalistTheme = value;
+        document.documentElement.classList.toggle("brutalist-theme", value);
         // Persist so the choice survives reload (honored by index.html on next load).
-        localStorage.setItem("neo-brutalist", String(value));
+        localStorage.setItem("brutalist-theme", String(value));
     }
 
     setLayout(name: string, value: any) {

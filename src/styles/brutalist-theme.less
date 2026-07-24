@@ -1,5 +1,5 @@
 /**
- * Erupt Theme — a neo-brutalist "handmade paper" skin that overrides
+ * Erupt Theme — a brutalist-theme "handmade paper" skin that overrides
  * ng-zorro-antd (Ant Design) components and the app layout shell.
  *
  * Design language: Erupt Raft (新粗野主义 × 手作纸感), applied with restraint:
@@ -10,17 +10,17 @@
  *     modals). Inline surfaces — cards, inputs, tables — stay flat.
  *
  * OPTIONAL OVERRIDE
- *   Every rule is scoped under `html.neo-brutalist`. Without that class the app
+ *   Every rule is scoped under `html.brutalist-theme`. Without that class the app
  *   renders with stock Ant Design. Toggle at runtime via:
- *       document.documentElement.classList.toggle('neo-brutalist')
- *   (see `src/app.js` -> `eruptSiteConfig.neoBrutalist`). Add `dark` as well
- *   (`html.neo-brutalist.dark`) for the dark variant.
+ *       document.documentElement.classList.toggle('brutalist-theme')
+ *   (see `src/app.js` -> `eruptSiteConfig.brutalistTheme`). Add `dark` as well
+ *   (`html.brutalist-theme.dark`) for the dark variant.
  */
 
 /* ------------------------------------------------------------------ *
  * Design tokens (scoped so they never leak into the default theme)
  * ------------------------------------------------------------------ */
-html.neo-brutalist {
+html.brutalist-theme {
     /* Structure — light */
     --raft-ink: #14120B;          /* borders, headings, primary text        */
     --raft-paper: #FFFFFF;        /* content canvas, cards, floating panels  */
@@ -32,7 +32,7 @@ html.neo-brutalist {
     /* Drive every split border (menu, header, tree, cards) off the ink color */
     --ant-border-color-split: var(--raft-ink);
 
-    /* Left menu — neo-brutalist square block (structure lives in
+    /* Left menu — brutalist-theme square block (structure lives in
      * menu.component.less; here we only flip the shared variables).
      * Kill the classic left-bar + row tint; the selection is an inset
      * accent block on the link instead. */
@@ -44,7 +44,7 @@ html.neo-brutalist {
     --erupt-menu-hover-bg: var(--raft-paper);
     --erupt-menu-hover-color: var(--raft-ink);
     --erupt-menu-selected-bg: var(--raft-accent);
-    // Keep the accent block flat on hover (no tint-lightening) — neo-brutalist.
+    // Keep the accent block flat on hover (no tint-lightening) — brutalist-theme.
     --erupt-menu-selected-hover-bg: var(--raft-accent);
     --erupt-menu-selected-color: var(--raft-ink);
     --erupt-menu-selected-weight: 800;
@@ -56,7 +56,7 @@ html.neo-brutalist {
     --erupt-fold-color: var(--raft-ink);
     --erupt-fold-weight: 800;
 
-    /* Lock the primary color to cyan while the Neo-Brutalist skin is on. Higher
+    /* Lock the primary color to cyan while the Brutalist Theme skin is on. Higher
      * specificity than the app's dynamic `html`-level primary, and it reverts the
      * moment the class is removed. --raft-accent follows it automatically below. */
     --ant-primary-color: var(--raft-cyan);
@@ -78,7 +78,7 @@ html.neo-brutalist {
 }
 
 /* Dark mode — ink and paper swap roles, candy stays put */
-html.neo-brutalist.dark {
+html.brutalist-theme.dark {
     --raft-ink: #F0E8D6;
     --raft-paper: #201C12;
     --raft-cream: #1C190F;
@@ -90,7 +90,7 @@ html.neo-brutalist.dark {
 /* ================================================================== *
  * COMPONENT OVERRIDES
  * ================================================================== */
-html.neo-brutalist {
+html.brutalist-theme {
 
     /* --- Square corners everywhere ------------------------------- */
     .ant-btn, .ant-input, .ant-input-affix-wrapper, .ant-input-number,
@@ -431,7 +431,7 @@ html.neo-brutalist {
  *   by the shared --erupt-menu-* variables in menu.component.less. Here
  *   we only paint the shell surface and the mono group kicker.
  * ================================================================== */
-html.neo-brutalist {
+html.brutalist-theme {
 
     /* Cream sidebar panel — the 2px ink right edge comes from
      * --ant-border-color-split (= --raft-ink). */
@@ -447,7 +447,7 @@ html.neo-brutalist {
 
 /* Reduced motion — kill the press animation for users who ask */
 @media (prefers-reduced-motion: reduce) {
-    html.neo-brutalist .ant-btn { transition: none; }
-    html.neo-brutalist .ant-btn:hover,
-    html.neo-brutalist .ant-btn:active { transform: none; }
+    html.brutalist-theme .ant-btn { transition: none; }
+    html.brutalist-theme .ant-btn:hover,
+    html.brutalist-theme .ant-btn:active { transform: none; }
 }
