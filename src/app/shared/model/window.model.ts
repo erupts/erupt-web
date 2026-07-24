@@ -56,7 +56,9 @@ export class WindowModel {
         WindowModel.copyright = WindowModel.config["copyright"];
         WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //license text
         WindowModel.upload = WindowModel.config["upload"] || false;
-        WindowModel.theme = WindowModel.config["theme"] || {}
+        WindowModel.theme = WindowModel.config["theme"] || {
+            primaryColor: "#1890ff",
+        }
     }
 
     public static eruptEvent: {
