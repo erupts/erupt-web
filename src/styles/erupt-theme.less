@@ -1,0 +1,446 @@
+/**
+ * Erupt Theme — a neo-brutalist "handmade paper" skin that overrides
+ * ng-zorro-antd (Ant Design) components and the app layout shell.
+ *
+ * Design language: Erupt Raft (新粗野主义 × 手作纸感), applied with restraint:
+ *   - Lines are solid   : 2px ink borders instead of soft dividers.
+ *   - Corners are square : border-radius 0.
+ *   - Shadows are hard, and RARE : a `Npx Npx 0` offset block is reserved for
+ *     small interactive things (buttons, tags) and floating overlays (menus,
+ *     modals). Inline surfaces — cards, inputs, tables — stay flat.
+ *
+ * OPTIONAL OVERRIDE
+ *   Every rule is scoped under `html.erupt-theme`. Without that class the app
+ *   renders with stock Ant Design. Toggle at runtime via:
+ *       document.documentElement.classList.toggle('erupt-theme')
+ *   (see `src/app.js` -> `eruptSiteConfig.eruptTheme`). Add `dark` as well
+ *   (`html.erupt-theme.dark`) for the dark variant.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Design tokens (scoped so they never leak into the default theme)
+ * ------------------------------------------------------------------ */
+html.erupt-theme {
+    /* Structure — light */
+    --raft-ink: #14120B;          /* borders, headings, primary text        */
+    --raft-paper: #FFFFFF;        /* content canvas, cards, floating panels  */
+    --raft-cream: #FFFBF0;        /* sidebar, header logo cell, input affix  */
+    --raft-text: #14120B;         /* body text                               */
+    --raft-text-2: #8A8577;       /* secondary text + kickers (warm gray)    */
+    --raft-muted: #E4DFD2;        /* hairlines, inactive fills               */
+
+    /* Drive every split border (menu, header, tree, cards) off the ink color */
+    --ant-border-color-split: var(--raft-ink);
+
+    /* Left menu — neo-brutalist square block (structure lives in
+     * menu.component.less; here we only flip the shared variables).
+     * Kill the classic left-bar + row tint; the selection is an inset
+     * accent block on the link instead. */
+    --erupt-menu-bar-width: 0;
+    --erupt-menu-bar-color: transparent;
+    --erupt-menu-row-bg: transparent;
+    --erupt-menu-radius: 0;
+    --erupt-menu-inset: 6px;
+    --erupt-menu-hover-bg: var(--raft-paper);
+    --erupt-menu-hover-color: var(--raft-ink);
+    --erupt-menu-selected-bg: var(--raft-accent);
+    // Keep the accent block flat on hover (no tint-lightening) — neo-brutalist.
+    --erupt-menu-selected-hover-bg: var(--raft-accent);
+    --erupt-menu-selected-color: var(--raft-ink);
+    --erupt-menu-selected-weight: 800;
+    --erupt-menu-selected-border: 2px solid var(--raft-ink);
+    --erupt-menu-group-color: var(--raft-text-2);
+
+    /* Sidebar shell — cream panel + bold ink fold toggle */
+    --erupt-aside-bg: var(--raft-cream);
+    --erupt-fold-color: var(--raft-ink);
+    --erupt-fold-weight: 800;
+
+    /* Candy accents — constant across light/dark */
+    --raft-accent: var(--ant-primary-color, #F585B4);  /* follows the theme color — active / selected / primary CTA */
+    --raft-yellow: #FFC93E;       /* brand / logo tile                       */
+    --raft-green: #93D655;        /* success / switch-on                     */
+    --raft-orange: #F6935B;       /* danger / destructive                    */
+    --raft-cyan: #4FC8EC;         /* available accent (unused by default)    */
+
+    /* Hard shadows — small, and used sparingly */
+    --raft-sh: 3px 3px 0 var(--raft-ink);
+    --raft-sh-sm: 2px 2px 0 var(--raft-ink);
+
+    --raft-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Dark mode — ink and paper swap roles, candy stays put */
+html.erupt-theme.dark {
+    --raft-ink: #F0E8D6;
+    --raft-paper: #201C12;
+    --raft-cream: #1C190F;
+    --raft-text: #F0E8D6;
+    --raft-text-2: #B0A78F;
+    --raft-muted: #3A3529;
+}
+
+/* ================================================================== *
+ * COMPONENT OVERRIDES
+ * ================================================================== */
+html.erupt-theme {
+
+    /* --- Square corners everywhere ------------------------------- */
+    .ant-btn, .ant-input, .ant-input-affix-wrapper, .ant-input-number,
+    .ant-select-selector, .ant-picker, .ant-card, .ant-modal-content,
+    .ant-drawer-content, .ant-tag, .ant-alert, .ant-dropdown-menu,
+    .ant-popover-inner, .ant-tooltip-inner, .ant-notification-notice,
+    .ant-message-notice-content, .ant-pagination-item, .ant-tabs-tab,
+    .ant-collapse, .ant-collapse-item, .ant-badge-count, .ant-switch,
+    .ant-checkbox-inner, .ant-radio-inner, .ant-menu, .ant-segmented,
+    .ant-segmented-item-label, .ant-progress-inner {
+        border-radius: 0 !important;
+    }
+
+    /* -------------------------------------------------------------- *
+     * Buttons — the main home of the hard shadow + press interaction
+     * -------------------------------------------------------------- */
+    .ant-btn {
+        border: 2px solid var(--raft-ink);
+        background: var(--raft-paper);
+        color: var(--raft-ink);
+        font-weight: 800;
+        box-shadow: var(--raft-sh-sm);
+        transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .ant-btn:not([disabled]):hover {
+        transform: translate(-1px, -1px);
+        box-shadow: var(--raft-sh);
+        color: var(--raft-ink);
+        border-color: var(--raft-ink);
+        background: var(--raft-paper);
+    }
+    .ant-btn:not([disabled]):active {
+        transform: translate(1px, 1px);
+        box-shadow: 0 0 0 var(--raft-ink);
+    }
+    .ant-btn[disabled], .ant-btn[disabled]:hover {
+        box-shadow: none;
+        transform: none;
+        opacity: .5;
+    }
+    /* Primary CTA — pink block, ink text */
+    .ant-btn-primary,
+    .ant-btn-primary:not([disabled]):hover {
+        background: var(--raft-accent);
+        color: var(--raft-ink);
+        border-color: var(--raft-ink);
+    }
+    /* Danger — orange block */
+    .ant-btn-dangerous,
+    .ant-btn-dangerous:not([disabled]):hover {
+        background: var(--raft-orange);
+        color: var(--raft-ink);
+        border-color: var(--raft-ink);
+    }
+    /* Link / text buttons stay flat */
+    .ant-btn-link, .ant-btn-text {
+        border: none;
+        box-shadow: none;
+        background: transparent;
+        font-weight: 700;
+    }
+    .ant-btn-link:not([disabled]):hover,
+    .ant-btn-text:not([disabled]):hover {
+        transform: none;
+        box-shadow: none;
+        background: transparent;
+    }
+
+    /* -------------------------------------------------------------- *
+     * Inputs — flat 2px ink border, no shadow (focus = subtle pink)
+     * -------------------------------------------------------------- */
+    .ant-input,
+    .ant-input-affix-wrapper,
+    .ant-input-number,
+    .ant-picker,
+    .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+        border: 2px solid var(--raft-ink);
+        background: var(--raft-paper);
+        color: var(--raft-text);
+        box-shadow: none;
+    }
+    .ant-input:hover,
+    .ant-input-affix-wrapper:hover,
+    .ant-input-number:hover,
+    .ant-picker:hover,
+    .ant-select:not(.ant-select-customize-input) .ant-select-selector:hover {
+        border-color: var(--raft-ink) !important;
+    }
+    .ant-input:focus,
+    .ant-input-focused,
+    .ant-input-affix-wrapper:focus,
+    .ant-input-affix-wrapper-focused,
+    .ant-input-number-focused,
+    .ant-picker-focused,
+    .ant-select-focused:not(.ant-select-customize-input) .ant-select-selector {
+        border-color: var(--raft-ink) !important;
+        box-shadow: var(--raft-sh-sm) !important;
+    }
+    .ant-input::placeholder,
+    .ant-input-number-input::placeholder { color: var(--raft-text-2); }
+    /* Affix add-ons read as a cream slip (see reference @-prefix) */
+    .ant-input-group-addon {
+        border: 2px solid var(--raft-ink);
+        background: var(--raft-cream);
+        border-radius: 0;
+        font-weight: 700;
+    }
+    .ant-input-affix-wrapper > .ant-input,
+    .ant-input-number-input { border: none !important; box-shadow: none !important; background: transparent; }
+
+    /* -------------------------------------------------------------- *
+     * Floating panels — 2px ink border + small shadow so they lift
+     * -------------------------------------------------------------- */
+    .ant-select-dropdown,
+    .ant-cascader-menus,
+    .ant-picker-panel-container,
+    .ant-dropdown-menu,
+    .ant-mentions-dropdown,
+    .ant-popover-inner {
+        border: 2px solid var(--raft-ink);
+        border-radius: 0;
+        box-shadow: var(--raft-sh);
+        background: var(--raft-paper);
+    }
+    .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+        background: var(--raft-accent);
+        color: var(--raft-ink);
+        font-weight: 800;
+    }
+    .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+        background: var(--raft-cream);
+    }
+
+    /* -------------------------------------------------------------- *
+     * Checkbox / Radio / Switch
+     * -------------------------------------------------------------- */
+    .ant-checkbox-inner,
+    .ant-radio-inner {
+        border: 2px solid var(--raft-ink);
+        background: var(--raft-paper);
+    }
+    .ant-checkbox-checked .ant-checkbox-inner {
+        background: var(--raft-accent);
+        border-color: var(--raft-ink);
+    }
+    .ant-checkbox-checked .ant-checkbox-inner::after { border-color: var(--raft-ink); }
+    .ant-checkbox-checked::after { border: none; }
+    .ant-radio-checked .ant-radio-inner { border-color: var(--raft-ink); }
+    .ant-radio-checked .ant-radio-inner::after { background: var(--raft-accent); }
+
+    .ant-switch {
+        background: var(--raft-muted);
+        border: 2px solid var(--raft-ink);
+    }
+    .ant-switch-checked { background: var(--raft-green); }
+    .ant-switch .ant-switch-handle::before {
+        border-radius: 0;
+        border: 2px solid var(--raft-ink);
+        box-shadow: none;
+    }
+
+    /* -------------------------------------------------------------- *
+     * Tables — flat, cream mono header
+     * -------------------------------------------------------------- */
+    .ant-table { background: var(--raft-paper); color: var(--raft-text); }
+    .ant-table-thead > tr > th {
+        background: var(--raft-cream);
+        color: var(--raft-ink);
+        font-weight: 800;
+        font-family: var(--raft-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border-bottom: 2px solid var(--raft-ink) !important;
+    }
+    .ant-table-tbody > tr > td { border-bottom: 1px solid var(--raft-muted); }
+    .ant-table-tbody > tr.ant-table-row:hover > td { background: var(--raft-cream); }
+    .ant-table.ant-table-bordered > .ant-table-container {
+        border: 2px solid var(--raft-ink);
+        border-radius: 0;
+    }
+
+    /* -------------------------------------------------------------- *
+     * Cards / Collapse — flat, no shadow (matches the reference)
+     * -------------------------------------------------------------- */
+    .ant-card {
+        border: 2px solid var(--ant-border-color-split);
+        box-shadow: none;
+        background: var(--raft-paper);
+    }
+    .ant-card-head {
+        border-bottom: 2px solid var(--ant-border-color-split);
+        font-weight: 800;
+        color: var(--raft-ink);
+    }
+    .ant-collapse {
+        border: 2px solid var(--raft-ink);
+        background: var(--raft-paper);
+    }
+    .ant-collapse > .ant-collapse-item { border-bottom: 2px solid var(--raft-ink); }
+    .ant-collapse-item:last-child { border-bottom: none; }
+    .ant-collapse-content { border-top: 2px solid var(--raft-ink); }
+
+    /* -------------------------------------------------------------- *
+     * Modal / Drawer — floating, so a small shadow is allowed
+     * -------------------------------------------------------------- */
+    .ant-modal-content,
+    .ant-drawer-content {
+        border: 2px solid var(--raft-ink);
+        box-shadow: var(--raft-sh);
+        background: var(--raft-paper);
+    }
+    .ant-modal-header,
+    .ant-drawer-header {
+        border-bottom: 2px solid var(--raft-ink);
+        background: var(--raft-paper);
+    }
+    .ant-modal-title,
+    .ant-drawer-title { font-weight: 800; color: var(--raft-ink); }
+    .ant-modal-footer { border-top: 2px solid var(--raft-ink); }
+
+    /* -------------------------------------------------------------- *
+     * Tabs — active underlined in pink
+     * -------------------------------------------------------------- */
+    .ant-tabs-tab { font-weight: 700; }
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn { color: var(--raft-ink); font-weight: 800; }
+    .ant-tabs-ink-bar { background: var(--raft-accent); height: 3px !important; }
+    .ant-tabs-top > .ant-tabs-nav::before { border-bottom: 2px solid var(--raft-ink); }
+
+    /* -------------------------------------------------------------- *
+     * ng-zorro menu (not the app sidebar) — active = pink block
+     * -------------------------------------------------------------- */
+    .ant-menu-item-selected,
+    .ant-menu-light .ant-menu-item-selected {
+        background: var(--raft-accent) !important;
+        color: var(--raft-ink) !important;
+        font-weight: 800;
+    }
+    .ant-menu-item-selected::after,
+    .ant-menu-item::after { border-right: none !important; }
+    .ant-menu-item:hover,
+    .ant-menu-submenu-title:hover { color: var(--raft-ink); }
+
+    /* -------------------------------------------------------------- *
+     * Tags — candy sticker with ink border (keeps its small shadow)
+     * -------------------------------------------------------------- */
+    .ant-tag {
+        border: 2px solid var(--raft-ink);
+        color: var(--raft-ink);
+        font-weight: 700;
+        background: var(--raft-paper);
+        box-shadow: var(--raft-sh-sm);
+    }
+    .ant-tag-blue, .ant-tag-cyan, .ant-tag-geekblue { background: var(--raft-cyan); color: var(--raft-ink); }
+    .ant-tag-pink, .ant-tag-magenta { background: var(--raft-accent); color: var(--raft-ink); }
+    .ant-tag-green, .ant-tag-success, .ant-tag-lime { background: var(--raft-green); color: var(--raft-ink); }
+    .ant-tag-red, .ant-tag-volcano, .ant-tag-error { background: var(--raft-orange); color: var(--raft-ink); }
+    .ant-tag-purple, .ant-tag-gold, .ant-tag-warning { background: var(--raft-yellow); color: var(--raft-ink); }
+
+    /* -------------------------------------------------------------- *
+     * Pagination
+     * -------------------------------------------------------------- */
+    .ant-pagination-item,
+    .ant-pagination-prev .ant-pagination-item-link,
+    .ant-pagination-next .ant-pagination-item-link {
+        border: 2px solid var(--raft-ink);
+        border-radius: 0;
+        background: var(--raft-paper);
+        font-weight: 700;
+    }
+    .ant-pagination-item-active {
+        background: var(--raft-accent);
+        border-color: var(--raft-ink);
+    }
+    .ant-pagination-item-active a { color: var(--raft-ink) !important; font-weight: 800; }
+
+    /* -------------------------------------------------------------- *
+     * Tooltip / Alert / Message / Notification
+     * -------------------------------------------------------------- */
+    .ant-tooltip-inner {
+        border: 2px solid var(--raft-ink);
+        background: var(--raft-ink);
+        color: var(--raft-paper);
+        border-radius: 0;
+        font-weight: 700;
+    }
+    .ant-alert {
+        border: 2px solid var(--raft-ink);
+        border-radius: 0;
+        box-shadow: none;
+    }
+    .ant-alert-success { background: fade(#93D655, 28%); }
+    .ant-alert-info { background: var(--raft-cream); }
+    .ant-alert-warning { background: fade(#FFC93E, 32%); }
+    .ant-alert-error { background: fade(#F6935B, 28%); }
+
+    .ant-message-notice-content,
+    .ant-notification-notice {
+        border: 2px solid var(--raft-ink);
+        border-radius: 0;
+        box-shadow: var(--raft-sh);
+        background: var(--raft-paper);
+    }
+
+    /* Badge / Slider / Progress / Segmented -------------------------- */
+    .ant-badge-count {
+        border: 2px solid var(--raft-ink);
+        border-radius: 0;
+        background: var(--raft-accent);
+        color: var(--raft-ink);
+        font-weight: 800;
+        box-shadow: none;
+    }
+    .ant-slider-track { background: var(--raft-accent); }
+    .ant-slider-handle {
+        border: 2px solid var(--raft-ink);
+        background: var(--raft-paper);
+        box-shadow: none;
+    }
+    .ant-progress-bg { background: var(--raft-accent); }
+    .ant-progress-inner { background: var(--raft-muted); border-radius: 0; }
+
+    .ant-segmented {
+        border: 2px solid var(--raft-ink);
+        background: var(--raft-paper);
+        border-radius: 0;
+    }
+    .ant-segmented-item-selected {
+        background: var(--raft-accent);
+        color: var(--raft-ink);
+        border-radius: 0;
+        box-shadow: none;
+        font-weight: 800;
+    }
+}
+/* ================================================================== *
+ * LEFT MENU & SIDEBAR SHELL
+ *   The menu ITEM look (radius, inset, hover, selected block) is driven
+ *   by the shared --erupt-menu-* variables in menu.component.less. Here
+ *   we only paint the shell surface and the mono group kicker.
+ * ================================================================== */
+html.erupt-theme {
+
+    /* Cream sidebar panel — the 2px ink right edge comes from
+     * --ant-border-color-split (= --raft-ink). */
+    .alain-default__aside { background: var(--raft-cream); }
+
+    /* Group title — mono uppercase kicker (color = --erupt-menu-group-color) */
+    .sidebar-nav__group-title {
+        font-family: var(--raft-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+}
+
+/* Reduced motion — kill the press animation for users who ask */
+@media (prefers-reduced-motion: reduce) {
+    html.erupt-theme .ant-btn { transition: none; }
+    html.erupt-theme .ant-btn:hover,
+    html.erupt-theme .ant-btn:active { transform: none; }
+}
