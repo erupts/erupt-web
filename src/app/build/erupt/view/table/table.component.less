@@ -24,7 +24,7 @@
             align-items: center;
             gap: 8px;
             padding: 7px 15px;
-            border-bottom: 1px solid var(--ant-border-color-split, #eee);
+            border-bottom: 1px solid var(--ant-border-color-split);
             flex-shrink: 0;
         }
 
@@ -36,7 +36,7 @@
         }
 
         .sk-table {
-            border: 1px solid var(--ant-border-color-split, #eee);
+            border: 1px solid var(--ant-border-color-split);
             border-radius: 4px;
             overflow: hidden;
             background: #fff;
@@ -47,7 +47,7 @@
             align-items: center;
             height: 38px;
             background: #fafafa;
-            border-bottom: 1px solid var(--ant-border-color-split, #eee);
+            border-bottom: 1px solid var(--ant-border-color-split);
             padding: 0 16px;
             gap: 16px;
         }
@@ -58,9 +58,11 @@
             gap: 16px;
             padding: 0 16px;
             height: 47px;
-            border-bottom: 1px solid var(--ant-border-color-split, #eee);
+            border-bottom: 1px solid var(--ant-border-color-split);
 
-            &:last-child { border-bottom: none; }
+            &:last-child {
+                border-bottom: none;
+            }
         }
 
         .sk-col {
@@ -71,8 +73,12 @@
     }
 
     @keyframes sk-shimmer {
-        0%   { background-position: 100% 50%; }
-        100% { background-position: 0%   50%; }
+        0% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
     }
 
     // ── Left-right split layout ──────────────────────────────────────────
@@ -99,7 +105,7 @@
         width: 1px;
         flex-shrink: 0;
         cursor: col-resize;
-        background: var(--ant-border-color-split, #eee);
+        background: var(--ant-border-color-split);
         transition: background 0.15s;
         position: relative;
         z-index: 1;
@@ -121,7 +127,7 @@
         width: 1px;
         flex-shrink: 0;
         cursor: col-resize;
-        background: var(--ant-border-color-split, #eee);
+        background: var(--ant-border-color-split);
         transition: background 0.15s;
         position: relative;
         z-index: 1;
@@ -148,7 +154,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 7px 12px;
-        border-bottom: 1px solid var(--ant-border-color-split, #eee);
+        border-bottom: 1px solid var(--ant-border-color-split);
         background: #fff;
         font-size: 13px;
         font-weight: 500;
@@ -191,7 +197,7 @@
         display: flex;
         align-items: center;
         padding: 7px 15px;
-        border-bottom: 1px solid var(--ant-border-color-split, #eee);
+        border-bottom: 1px solid var(--ant-border-color-split);
         background: #fff;
         flex-shrink: 0;
         gap: 8px;
@@ -223,7 +229,7 @@
     .tc-search {
         padding: 6px 8px;
         background: #fff;
-        border: 1px solid var(--ant-border-color-split, #eee);
+        border: 1px solid var(--ant-border-color-split);
         flex-shrink: 0;
     }
 
@@ -252,7 +258,7 @@
         align-items: center;
         justify-content: center;
         padding: 0;
-        border: 1px solid var(--ant-border-color-split, #eee);
+        border: 1px solid var(--ant-border-color-split);
         border-top: none;
         background: #fff;
         flex-shrink: 0;
@@ -276,14 +282,14 @@
         }
 
         .ant-tabs {
-            border: 1px solid var(--ant-border-color-split, #eee);
+            border: 1px solid var(--ant-border-color-split);
 
             .ant-tabs-nav {
                 margin: 0;
             }
 
             .ant-tabs-tab-active {
-                border-bottom: 1px solid var(--ant-border-color-split, #eee) !important;
+                border-bottom: 1px solid var(--ant-border-color-split) !important;
             }
 
             .ant-tabs-tab {
@@ -315,7 +321,7 @@
                 min-width: unset;
                 height: auto;
                 max-height: 35vh;
-                border-bottom: 1px solid var(--ant-border-color-split, #eee);
+                border-bottom: 1px solid var(--ant-border-color-split);
                 overflow: auto;
 
                 &.tree-panel-collapsed {
@@ -342,7 +348,10 @@
                 flex-wrap: nowrap;
                 -webkit-overflow-scrolling: touch;
                 scrollbar-width: none;
-                &::-webkit-scrollbar { display: none; }
+
+                &::-webkit-scrollbar {
+                    display: none;
+                }
 
                 > button, > span, > nz-badge {
                     flex-shrink: 0;
@@ -390,19 +399,25 @@
             }
         }
 
+        // When the search area is visible, drop the table's top border so it
+        // doesn't stack with .tc-search's bottom border. If there's no search
+        // (or it's hidden), the table keeps its own top border.
+        .tc-search:not([hidden]) ~ .tc-body st .ant-table .ant-table-container {
+            border-top: none !important;
+        }
+
         st {
             .ant-table {
-                border-color: var(--ant-border-color-split, #eee);
+                border-color: var(--ant-border-color-split);
 
-                // Left edge (container border-left) + right edge / vertical dividers
-                // (cell border-right). ng-zorro's bordered-table selectors are highly
-                // specific, so override the color directly.
-                .ant-table-container,
-                .ant-table-cell,
-                th,
-                td {
-                    border-color: var(--ant-border-color-split, #eee) !important;
+                .ant-table-container {
+                    border: 1px solid var(--ant-border-color-split);
+                    border-bottom: none;
                 }
+
+                //.ant-table-cell, th, td {
+                //    border-color: var(--ant-border-color-split) !important;
+                //}
 
                 tr {
                     th:nth-child(n+2) {
