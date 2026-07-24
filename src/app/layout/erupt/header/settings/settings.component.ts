@@ -23,10 +23,20 @@ export class SettingsComponent implements OnInit {
                 public rtl: RTLService) {
     }
 
+    // Neo-Brutalist skin — reflects the class index.html applied before bootstrap.
+    neoBrutalist: boolean = document.documentElement.classList.contains("neo-brutalist");
+
     ngOnInit() {
         if (!this.settingSrv.layout['tableSize']) {
             this.settingSrv.setLayout('tableSize', TableSize.SMALL);
         }
+    }
+
+    toggleNeoBrutalist(value: boolean) {
+        this.neoBrutalist = value;
+        document.documentElement.classList.toggle("neo-brutalist", value);
+        // Persist so the choice survives reload (honored by index.html on next load).
+        localStorage.setItem("neo-brutalist", String(value));
     }
 
     setLayout(name: string, value: any) {

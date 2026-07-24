@@ -406,13 +406,20 @@
             border-top: none !important;
         }
 
+        // Drop the table's bottom border only when a pagination bar follows it:
+        // the pagination bar (border-top: none + its own bottom/side borders)
+        // then closes the box. With no pagination the table keeps its own bottom
+        // border so it never renders with an open bottom edge.
+        .tc-body:has(+ .tc-pagination) st .ant-table .ant-table-container {
+            border-bottom: none;
+        }
+
         st {
             .ant-table {
                 border-color: var(--ant-border-color-split);
 
                 .ant-table-container {
                     border: 1px solid var(--ant-border-color-split);
-                    border-bottom: none;
                 }
 
                 //.ant-table-cell, th, td {

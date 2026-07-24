@@ -57,7 +57,7 @@ export class WindowModel {
         WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //license text
         WindowModel.upload = WindowModel.config["upload"] || false;
         WindowModel.theme = WindowModel.config["theme"] || {
-            primaryColor: "#1890ff",
+            primaryColor: "rgb(63, 81, 181)",
         }
     }
 

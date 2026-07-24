@@ -19,6 +19,11 @@
         <span class="lp-side-brand-name">{{title}}</span>
       </div>
       <div class="lp-side-nav-actions">
+        <a class="lp-nav-btn" (click)="toggleNeoBrutalist()" style="cursor:pointer"
+           nz-tooltip nzTooltipTitle="Neo-Brutalist" nzTooltipPlacement="bottom">
+          <i nz-icon nzType="bulb" [nzTheme]="neoBrutalist ? 'fill' : 'outline'"></i>
+        </a>
+        <div class="lp-nav-divider"></div>
         @if (copyright) {
           <a class="lp-nav-btn" href="https://github.com/erupts/erupt" target="_blank"
              nz-tooltip nzTooltipTitle="GitHub" nzTooltipPlacement="bottom">

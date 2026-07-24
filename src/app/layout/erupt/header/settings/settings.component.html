@@ -47,6 +47,11 @@
                (ngModelChange)="toggleColorGray(layout['colorGray'])"></nz-switch>
 </div>
 <div class="setting-item">
+    <span>Neo-Brutalist</span>
+    <nz-switch nzSize="small" [(ngModel)]="neoBrutalist"
+               (ngModelChange)="toggleNeoBrutalist($event)"></nz-switch>
+</div>
+<div class="setting-item">
     <span>RTL</span>
     <nz-switch nzSize="small" [ngModel]="rtl.dir === 'rtl'" (ngModelChange)="rtl.toggle()"></nz-switch>
 </div>

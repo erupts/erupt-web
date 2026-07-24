@@ -17,6 +17,7 @@ import {
     BorderOuterOutline,
     BorderOutline,
     BuildOutline,
+    BulbFill,
     BulbOutline,
     BulbTwoTone,
     CaretDownOutline,
@@ -119,6 +120,7 @@ import {
 export const ICONS_AUTO = [
     CloudOutline,
     ArrowDownOutline,
+    BulbFill,
     BulbOutline,
     TableOutline,
     SyncOutline,

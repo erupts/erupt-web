@@ -10,21 +10,21 @@
  *     modals). Inline surfaces — cards, inputs, tables — stay flat.
  *
  * OPTIONAL OVERRIDE
- *   Every rule is scoped under `html.erupt-theme`. Without that class the app
+ *   Every rule is scoped under `html.neo-brutalist`. Without that class the app
  *   renders with stock Ant Design. Toggle at runtime via:
- *       document.documentElement.classList.toggle('erupt-theme')
- *   (see `src/app.js` -> `eruptSiteConfig.eruptTheme`). Add `dark` as well
- *   (`html.erupt-theme.dark`) for the dark variant.
+ *       document.documentElement.classList.toggle('neo-brutalist')
+ *   (see `src/app.js` -> `eruptSiteConfig.neoBrutalist`). Add `dark` as well
+ *   (`html.neo-brutalist.dark`) for the dark variant.
  */
 
 /* ------------------------------------------------------------------ *
  * Design tokens (scoped so they never leak into the default theme)
  * ------------------------------------------------------------------ */
-html.erupt-theme {
+html.neo-brutalist {
     /* Structure — light */
     --raft-ink: #14120B;          /* borders, headings, primary text        */
     --raft-paper: #FFFFFF;        /* content canvas, cards, floating panels  */
-    --raft-cream: #FFFBF0;        /* sidebar, header logo cell, input affix  */
+    --raft-cream: #ffffff;        /* sidebar, header logo cell, input affix  */
     --raft-text: #14120B;         /* body text                               */
     --raft-text-2: #8A8577;       /* secondary text + kickers (warm gray)    */
     --raft-muted: #E4DFD2;        /* hairlines, inactive fills               */
@@ -56,6 +56,13 @@ html.erupt-theme {
     --erupt-fold-color: var(--raft-ink);
     --erupt-fold-weight: 800;
 
+    /* Lock the primary color to cyan while the Neo-Brutalist skin is on. Higher
+     * specificity than the app's dynamic `html`-level primary, and it reverts the
+     * moment the class is removed. --raft-accent follows it automatically below. */
+    --ant-primary-color: var(--raft-cyan);
+    --ant-primary-color-hover: var(--raft-cyan);
+    --ant-primary-color-active: var(--raft-cyan);
+
     /* Candy accents — constant across light/dark */
     --raft-accent: var(--ant-primary-color, #F585B4);  /* follows the theme color — active / selected / primary CTA */
     --raft-yellow: #FFC93E;       /* brand / logo tile                       */
@@ -71,7 +78,7 @@ html.erupt-theme {
 }
 
 /* Dark mode — ink and paper swap roles, candy stays put */
-html.erupt-theme.dark {
+html.neo-brutalist.dark {
     --raft-ink: #F0E8D6;
     --raft-paper: #201C12;
     --raft-cream: #1C190F;
@@ -83,7 +90,7 @@ html.erupt-theme.dark {
 /* ================================================================== *
  * COMPONENT OVERRIDES
  * ================================================================== */
-html.erupt-theme {
+html.neo-brutalist {
 
     /* --- Square corners everywhere ------------------------------- */
     .ant-btn, .ant-input, .ant-input-affix-wrapper, .ant-input-number,
@@ -424,7 +431,7 @@ html.erupt-theme {
  *   by the shared --erupt-menu-* variables in menu.component.less. Here
  *   we only paint the shell surface and the mono group kicker.
  * ================================================================== */
-html.erupt-theme {
+html.neo-brutalist {
 
     /* Cream sidebar panel — the 2px ink right edge comes from
      * --ant-border-color-split (= --raft-ink). */
@@ -440,7 +447,7 @@ html.erupt-theme {
 
 /* Reduced motion — kill the press animation for users who ask */
 @media (prefers-reduced-motion: reduce) {
-    html.erupt-theme .ant-btn { transition: none; }
-    html.erupt-theme .ant-btn:hover,
-    html.erupt-theme .ant-btn:active { transform: none; }
+    html.neo-brutalist .ant-btn { transition: none; }
+    html.neo-brutalist .ant-btn:hover,
+    html.neo-brutalist .ant-btn:active { transform: none; }
 }
