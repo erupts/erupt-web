@@ -24,7 +24,7 @@ html.brutalist-theme {
     /* Structure — light */
     --raft-ink: #14120B;          /* borders, headings, primary text        */
     --raft-paper: #FFFFFF;        /* content canvas, cards, floating panels  */
-    --raft-cream: #ffffff;        /* sidebar, header logo cell, input affix  */
+    --raft-cream: #F7F3E9;        /* warm paper — sidebar, headers, hovers, wells, affix */
     --raft-text: #14120B;         /* body text                               */
     --raft-text-2: #8A8577;       /* secondary text + kickers (warm gray)    */
     --raft-muted: #E4DFD2;        /* hairlines, inactive fills               */
@@ -69,6 +69,7 @@ html.brutalist-theme {
     --raft-green: #93D655;        /* success / switch-on                     */
     --raft-orange: #F6935B;       /* danger / destructive                    */
     --raft-cyan: #4FC8EC;         /* available accent (unused by default)    */
+    --raft-accent-soft: rgba(79, 200, 236, 0.16); /* faint accent wash — selected rows, date range */
 
     /* Hard shadows — small, and used sparingly */
     --raft-sh: 3px 3px 0 var(--raft-ink);
@@ -425,6 +426,314 @@ html.brutalist-theme {
         font-weight: 800;
     }
 }
+
+/* ================================================================== *
+ * EXTENDED COMPONENT COVERAGE
+ *   Reuses the --raft-* tokens, so everything below adapts to dark mode
+ *   automatically. Square corners, 2px ink borders, hard shadows only on
+ *   floating / interactive surfaces.
+ * ================================================================== */
+html.brutalist-theme {
+
+    /* Square-corner sweep for components not squared individually above */
+    .ant-radio-button-wrapper, .ant-avatar, .ant-steps-item-icon,
+    .ant-timeline-item-head, .ant-descriptions-view, .ant-list, .ant-list-bordered,
+    .ant-transfer-list, .ant-upload, .ant-upload-list-item, .ant-picker-cell-inner,
+    .ant-result-icon, .ant-back-top, .ant-float-btn-body, .ant-tree-checkbox-inner,
+    .ant-select-selection-item, .ant-btn-icon-only, .ant-statistic-content,
+    .ant-input-search-button, .ant-image, .ant-picker-time-panel-cell-inner,
+    .ant-tree-node-content-wrapper, .ant-anchor-ink-ball, .ant-slider-dot,
+    .ant-select-tree-checkbox-inner, .ant-tabs-card .ant-tabs-tab, .ant-affix .ant-btn {
+        border-radius: 0 !important;
+    }
+
+    /* --- Typography --------------------------------------------------- */
+    a { color: var(--raft-ink); }
+    a:hover { color: var(--raft-accent); }
+    h1, h2, h3, h4, h5 { color: var(--raft-ink); }
+    code, kbd {
+        border: 1.5px solid var(--raft-ink);
+        border-radius: 0;
+        background: var(--raft-cream);
+        color: var(--raft-ink);
+        font-family: var(--raft-mono);
+    }
+    mark { background: var(--raft-yellow); color: var(--raft-ink); }
+
+    /* --- Form — bold labels, ink required mark, orange error state ---- */
+    .ant-form-item-label > label { font-weight: 700; color: var(--raft-ink); }
+    .ant-form-item-required::before { color: var(--raft-orange) !important; }
+    .ant-form-item-explain-error { color: var(--raft-orange); font-weight: 600; }
+    .ant-form-item-has-error .ant-input,
+    .ant-form-item-has-error .ant-input-affix-wrapper,
+    .ant-form-item-has-error .ant-input-number,
+    .ant-form-item-has-error .ant-picker,
+    .ant-form-item-has-error .ant-select .ant-select-selector {
+        border-color: var(--raft-orange) !important;
+    }
+    .ant-form-item-has-error .ant-input:focus,
+    .ant-form-item-has-error .ant-input-affix-wrapper-focused {
+        box-shadow: 2px 2px 0 var(--raft-orange) !important;
+    }
+
+    /* --- Radio buttons (segmented group) ------------------------------ */
+    .ant-radio-button-wrapper {
+        border: 2px solid var(--raft-ink);
+        background: var(--raft-paper);
+        color: var(--raft-ink);
+        font-weight: 700;
+    }
+    .ant-radio-button-wrapper:not(:first-child)::before { background: var(--raft-ink); }
+    .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+        background: var(--raft-accent) !important;
+        color: var(--raft-ink) !important;
+        border-color: var(--raft-ink) !important;
+        box-shadow: none;
+    }
+    .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+        background: var(--raft-ink) !important;
+    }
+
+    /* --- Select: multiple tags, arrow, clear -------------------------- */
+    .ant-select-multiple .ant-select-selection-item {
+        border: 1.5px solid var(--raft-ink);
+        background: var(--raft-cream);
+        color: var(--raft-ink);
+        font-weight: 600;
+    }
+    .ant-select-arrow, .ant-select-clear, .ant-picker-suffix { color: var(--raft-ink); }
+    .ant-select-clear { background: var(--raft-paper); }
+
+    /* --- Tree / Tree-select ------------------------------------------- */
+    .ant-tree .ant-tree-node-content-wrapper:hover,
+    .ant-select-tree .ant-select-tree-node-content-wrapper:hover { background: var(--raft-cream); }
+    .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected,
+    .ant-select-tree .ant-select-tree-node-content-wrapper.ant-select-tree-node-selected {
+        background: var(--raft-accent) !important;
+        color: var(--raft-ink);
+        font-weight: 700;
+    }
+    .ant-tree-checkbox-inner, .ant-select-tree-checkbox-inner { border: 2px solid var(--raft-ink); }
+    .ant-tree-checkbox-checked .ant-tree-checkbox-inner,
+    .ant-select-tree-checkbox-checked .ant-select-tree-checkbox-inner {
+        background: var(--raft-accent);
+        border-color: var(--raft-ink);
+    }
+    .ant-tree-checkbox-checked .ant-tree-checkbox-inner::after { border-color: var(--raft-ink); }
+
+    /* --- DatePicker / TimePicker panel -------------------------------- */
+    .ant-picker-header { border-bottom: 2px solid var(--raft-ink); }
+    .ant-picker-header button { color: var(--raft-ink); font-weight: 700; }
+    .ant-picker-content th { color: var(--raft-text-2); font-family: var(--raft-mono); }
+    .ant-picker-cell-in-view .ant-picker-cell-inner { color: var(--raft-ink); }
+    .ant-picker-cell .ant-picker-cell-inner:hover { background: var(--raft-cream) !important; }
+    .ant-picker-cell-today .ant-picker-cell-inner::before {
+        border: 1.5px solid var(--raft-ink) !important;
+        border-radius: 0;
+    }
+    .ant-picker-cell-selected .ant-picker-cell-inner,
+    .ant-picker-cell-range-start .ant-picker-cell-inner,
+    .ant-picker-cell-range-end .ant-picker-cell-inner {
+        background: var(--raft-accent) !important;
+        color: var(--raft-ink) !important;
+        font-weight: 800;
+    }
+    .ant-picker-cell-in-range::before,
+    .ant-picker-cell-range-hover::before { background: var(--raft-accent-soft) !important; }
+    .ant-picker-footer { border-top: 2px solid var(--raft-ink); }
+    .ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+        background: var(--raft-accent) !important;
+        color: var(--raft-ink);
+        font-weight: 700;
+    }
+
+    /* --- Steps -------------------------------------------------------- */
+    .ant-steps-item-icon {
+        border: 2px solid var(--raft-ink) !important;
+        background: var(--raft-paper) !important;
+    }
+    .ant-steps-item-icon > .ant-steps-icon { color: var(--raft-ink); font-weight: 800; }
+    .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-icon { background: var(--raft-accent) !important; }
+    .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-icon { background: var(--raft-green) !important; }
+    .ant-steps-item-tail::after { background: var(--raft-ink) !important; }
+    .ant-steps-item-title { font-weight: 700; color: var(--raft-ink); }
+
+    /* --- Timeline ----------------------------------------------------- */
+    .ant-timeline-item-head {
+        border: 2px solid var(--raft-ink);
+        background: var(--raft-paper);
+        width: 12px;
+        height: 12px;
+    }
+    .ant-timeline-item-head-blue { background: var(--raft-accent); }
+    .ant-timeline-item-head-green { background: var(--raft-green); }
+    .ant-timeline-item-head-red { background: var(--raft-orange); }
+    .ant-timeline-item-tail { border-left: 2px solid var(--raft-ink); }
+
+    /* --- Descriptions ------------------------------------------------- */
+    .ant-descriptions-bordered .ant-descriptions-view { border: 2px solid var(--raft-ink); }
+    .ant-descriptions-bordered .ant-descriptions-row { border-bottom: 2px solid var(--raft-ink); }
+    .ant-descriptions-bordered .ant-descriptions-item-label {
+        background: var(--raft-cream);
+        color: var(--raft-ink);
+        font-weight: 700;
+        border-inline-end: 2px solid var(--raft-ink);
+    }
+    .ant-descriptions-bordered .ant-descriptions-item-content { border-inline-end: 1px solid var(--raft-muted); }
+
+    /* --- List --------------------------------------------------------- */
+    .ant-list-bordered { border: 2px solid var(--raft-ink); }
+    .ant-list-item { border-bottom: 1px solid var(--raft-muted); }
+    .ant-list-header, .ant-list-footer { border-color: var(--raft-ink); }
+
+    /* --- Divider ------------------------------------------------------ */
+    .ant-divider { border-color: var(--raft-ink); border-top-color: var(--raft-ink); }
+    .ant-divider-with-text { color: var(--raft-ink); font-weight: 700; }
+    .ant-divider-with-text::before, .ant-divider-with-text::after { border-block-start: 1.5px solid var(--raft-ink) !important; }
+
+    /* --- Avatar ------------------------------------------------------- */
+    .ant-avatar {
+        border: 2px solid var(--raft-ink);
+        background: var(--raft-cream);
+        color: var(--raft-ink);
+        font-weight: 700;
+    }
+
+    /* --- Breadcrumb --------------------------------------------------- */
+    .ant-breadcrumb a { color: var(--raft-text-2); font-weight: 600; }
+    .ant-breadcrumb a:hover { color: var(--raft-accent); background: transparent; }
+    .ant-breadcrumb > span:last-child { color: var(--raft-ink); font-weight: 700; }
+
+    /* --- Upload ------------------------------------------------------- */
+    .ant-upload.ant-upload-drag {
+        border: 2px dashed var(--raft-ink);
+        background: var(--raft-cream);
+    }
+    .ant-upload-list-item { border: 1.5px solid var(--raft-ink) !important; }
+    .ant-upload-list-item-name { color: var(--raft-ink); }
+
+    /* --- Rate --------------------------------------------------------- */
+    .ant-rate { color: var(--raft-yellow); }
+    .ant-rate-star-zero .ant-rate-star-first,
+    .ant-rate-star-zero .ant-rate-star-second { color: var(--raft-muted); }
+
+    /* --- Spin --------------------------------------------------------- */
+    .ant-spin-dot-item { background: var(--raft-accent); }
+    .ant-spin-text { color: var(--raft-accent); font-weight: 700; }
+
+    /* --- Empty / Result / Statistic ----------------------------------- */
+    .ant-empty-description { color: var(--raft-text-2); }
+    .ant-result-title { color: var(--raft-ink); font-weight: 800; }
+    .ant-result-subtitle { color: var(--raft-text-2); }
+    .ant-statistic-title {
+        color: var(--raft-text-2);
+        font-family: var(--raft-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .ant-statistic-content { color: var(--raft-ink); font-weight: 800; }
+
+    /* --- Anchor ------------------------------------------------------- */
+    .ant-anchor-ink-ball { border: 2px solid var(--raft-accent); background: var(--raft-paper); }
+    .ant-anchor-link-active > .ant-anchor-link-title { color: var(--raft-accent); font-weight: 700; }
+
+    /* --- Popover / Popconfirm title ----------------------------------- */
+    .ant-popover-title { border-bottom: 2px solid var(--raft-ink); font-weight: 800; color: var(--raft-ink); }
+    .ant-popover-message-title, .ant-popconfirm-message-title { color: var(--raft-ink); }
+
+    /* --- Dropdown items ----------------------------------------------- */
+    .ant-dropdown-menu-item:hover,
+    .ant-dropdown-menu-submenu-title:hover { background: var(--raft-cream); }
+    .ant-dropdown-menu-item-selected {
+        background: var(--raft-accent);
+        color: var(--raft-ink);
+        font-weight: 700;
+    }
+
+    /* --- Table extras: sorter / filter / selection / summary ---------- */
+    .ant-table-column-sorter-up.active,
+    .ant-table-column-sorter-down.active { color: var(--raft-accent); }
+    .ant-table-filter-trigger.active { color: var(--raft-accent); }
+    .ant-table-tbody > tr.ant-table-row-selected > td,
+    .ant-table-tbody > tr.ant-table-row-selected:hover > td { background: var(--raft-accent-soft) !important; }
+    .ant-table-cell-fix-left, .ant-table-cell-fix-right { background: var(--raft-paper); }
+    .ant-table-expanded-row > td { background: var(--raft-cream); }
+    .ant-table-summary {
+        border-top: 2px solid var(--raft-ink);
+        background: var(--raft-cream);
+        font-weight: 700;
+    }
+
+    /* --- Pagination: jumper input / size select ----------------------- */
+    .ant-pagination-options-quick-jumper input {
+        border: 2px solid var(--raft-ink);
+        border-radius: 0;
+        background: var(--raft-paper);
+    }
+    .ant-pagination-item-link,
+    .ant-pagination-jump-prev, .ant-pagination-jump-next { color: var(--raft-ink); }
+    .ant-pagination-disabled .ant-pagination-item-link { opacity: .4; }
+
+    /* --- Tabs (card type) --------------------------------------------- */
+    .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
+        border: 2px solid var(--raft-ink) !important;
+        background: var(--raft-cream);
+        margin-left: 0;
+    }
+    .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active {
+        background: var(--raft-paper);
+        border-bottom-color: var(--raft-paper) !important;
+    }
+
+    /* --- Menu: submenu popup / horizontal / active -------------------- */
+    .ant-menu-submenu-popup > .ant-menu {
+        border: 2px solid var(--raft-ink);
+        box-shadow: var(--raft-sh);
+    }
+    .ant-menu-horizontal { border-bottom: 2px solid var(--raft-ink); }
+    .ant-menu-item-active,
+    .ant-menu-submenu-active > .ant-menu-submenu-title { color: var(--raft-accent) !important; }
+
+    /* --- Progress circle ---------------------------------------------- */
+    .ant-progress-circle .ant-progress-inner { border: none; }
+    .ant-progress-circle-path { stroke: var(--raft-accent); }
+    .ant-progress-circle-trail { stroke: var(--raft-muted); }
+
+    /* --- Slider (rail / dots / marks) --------------------------------- */
+    .ant-slider-rail { background: var(--raft-muted); border-radius: 0; }
+    .ant-slider-dot { border: 2px solid var(--raft-ink); background: var(--raft-paper); }
+    .ant-slider-dot-active { border-color: var(--raft-accent); }
+    .ant-slider-mark-text-active { color: var(--raft-ink); font-weight: 700; }
+
+    /* --- Modal / Drawer close + confirm icon -------------------------- */
+    .ant-modal-close, .ant-drawer-close { color: var(--raft-ink); }
+    .ant-modal-close:hover, .ant-drawer-close:hover { color: var(--raft-accent); }
+    .ant-modal-confirm-body > .anticon { color: var(--raft-ink); }
+
+    /* --- Float button / BackTop --------------------------------------- */
+    .ant-float-btn .ant-float-btn-body, .ant-back-top {
+        border: 2px solid var(--raft-ink);
+        box-shadow: var(--raft-sh);
+        background: var(--raft-paper);
+    }
+
+    /* --- Skeleton bars stay square ------------------------------------ */
+    .ant-skeleton-content .ant-skeleton-title,
+    .ant-skeleton-content .ant-skeleton-paragraph > li,
+    .ant-skeleton-button, .ant-skeleton-input { border-radius: 0; }
+
+    /* --- Keyboard focus ring (accessibility) -------------------------- */
+    :focus-visible { outline: 2px solid var(--raft-accent); outline-offset: 1px; }
+
+    /* --- Scrollbars — thin ink rail ----------------------------------- */
+    ::-webkit-scrollbar { width: 12px; height: 12px; }
+    ::-webkit-scrollbar-thumb {
+        background: var(--raft-muted);
+        border: 2px solid var(--raft-ink);
+    }
+    ::-webkit-scrollbar-track { background: var(--raft-paper); }
+}
+
 /* ================================================================== *
  * LEFT MENU & SIDEBAR SHELL
  *   The menu ITEM look (radius, inset, hover, selected block) is driven

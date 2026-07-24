@@ -223,6 +223,12 @@
                 if (window.eruptSiteConfig.theme && window.eruptSiteConfig.theme.primaryColor) {
                     _preloaderEl.style.background = window.eruptSiteConfig.theme.primaryColor;
                 }
+                // Optional Brutalist Theme skin — a saved user toggle (localStorage)
+                // overrides the config default; otherwise fall back to the config flag.
+                var _nbPref = localStorage.getItem("brutalist-theme");
+                if (_nbPref === "true" || (_nbPref === null && window.eruptSiteConfig.brutalistTheme)) {
+                    document.documentElement.classList.add("brutalist-theme");
+                }
                 if (_brandEl) {
                     _brandEl.textContent = window.eruptSiteConfig.logoText || window.eruptSiteConfig.title || "Loading";
                 }
