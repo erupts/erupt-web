@@ -203,6 +203,42 @@ html.brutalist-theme {
     .ant-input-number-input { border: none !important; box-shadow: none !important; background: transparent; }
 
     /* -------------------------------------------------------------- *
+     * Input states — make editable / read-only / disabled unmistakable
+     *   editable  : white paper + SOLID ink border  (the default above)
+     *   read-only : warm cream  + SOLID ink border  (locked, still readable)
+     *   disabled  : muted fill  + DASHED faded border + not-allowed (inert)
+     * -------------------------------------------------------------- */
+    /* Read-only — cream tint, keep the solid ink frame */
+    .ant-input[readonly]:not([disabled]),
+    textarea.ant-input[readonly]:not([disabled]),
+    .ant-input-affix-wrapper:has(input[readonly]):not(.ant-input-affix-wrapper-disabled) {
+        background: var(--raft-cream) !important;
+        cursor: default;
+    }
+    .ant-input-affix-wrapper:has(input[readonly]) > .ant-input { background: transparent !important; }
+
+    /* Disabled — keep the normal solid ink frame, just swap in a muted fill so it
+     * lines up exactly with a normal field. For a copy-icon input-group, tint the
+     * addon + affix cells too; inner inputs go transparent to show the muted fill. */
+    .ant-input-disabled,
+    .ant-input[disabled],
+    textarea.ant-input[disabled],
+    .ant-input-affix-wrapper-disabled,
+    .ant-input-number-disabled,
+    .ant-picker-disabled,
+    .ant-select-disabled .ant-select-selector,
+    .ant-input-group-wrapper.ant-input-disabled .ant-input-group-addon,
+    .ant-input-group-wrapper.ant-input-disabled .ant-input-affix-wrapper {
+        background: var(--raft-muted) !important;
+        cursor: not-allowed;
+    }
+    .ant-input-affix-wrapper-disabled > .ant-input,
+    .ant-input-number-disabled .ant-input-number-input,
+    .ant-input-group-wrapper.ant-input-disabled .ant-input {
+        background: transparent !important;
+    }
+
+    /* -------------------------------------------------------------- *
      * Floating panels — 2px ink border + small shadow so they lift
      * -------------------------------------------------------------- */
     .ant-select-dropdown,
@@ -266,11 +302,19 @@ html.brutalist-theme {
         letter-spacing: 0.04em;
         border-bottom: 2px solid var(--raft-ink) !important;
     }
-    .ant-table-tbody > tr > td { border-bottom: 1px solid var(--raft-muted); }
+    .ant-table-tbody > tr > td { border-bottom: 1px solid var(--raft-ink); }
     .ant-table-tbody > tr.ant-table-row:hover > td { background: var(--raft-cream); }
     .ant-table.ant-table-bordered > .ant-table-container {
         border: 2px solid var(--raft-ink);
         border-radius: 0;
+    }
+    /* Bordered table — ink column dividers on every header & body cell.
+     * Kept shallow so it matches both normal and fixed-header/fixed-column
+     * table structures (.ant-table-header vs .ant-table-content); the
+     * !important beats antd's default light split color regardless. */
+    .ant-table-bordered .ant-table-thead > tr > th,
+    .ant-table-bordered .ant-table-tbody > tr > td {
+        border-inline-end: 1px solid var(--raft-ink) !important;
     }
 
     /* -------------------------------------------------------------- *
@@ -410,7 +454,7 @@ html.brutalist-theme {
         background: var(--raft-paper);
         box-shadow: none;
     }
-    .ant-progress-bg { background: var(--raft-accent); }
+    .ant-progress-bg { background: #fff; }
     .ant-progress-inner { background: var(--raft-muted); border-radius: 0; }
 
     .ant-segmented {
@@ -510,7 +554,9 @@ html.brutalist-theme {
     .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected,
     .ant-select-tree .ant-select-tree-node-content-wrapper.ant-select-tree-node-selected {
         background: var(--raft-accent) !important;
-        color: var(--raft-ink);
+        // !important — a scoped tree component (.layout-tree-body[_ngcontent]) sets the
+        // selected text to the primary color, which now equals the accent bg (cyan-on-cyan).
+        color: var(--raft-ink) !important;
         font-weight: 700;
     }
     .ant-tree-checkbox-inner, .ant-select-tree-checkbox-inner { border: 2px solid var(--raft-ink); }
@@ -722,6 +768,19 @@ html.brutalist-theme {
     .ant-skeleton-content .ant-skeleton-paragraph > li,
     .ant-skeleton-button, .ant-skeleton-input { border-radius: 0; }
 
+    /* --- Code editor (Monaco via nz-code-editor) ---------------------- *
+     * Frame the editor as a brutalist block. Monaco's own light/dark syntax
+     * theme (toggled by the editor's built-in switch) is left untouched; we
+     * only warm the gutter when Monaco is in its LIGHT (.vs) theme so it
+     * never clashes with the editor's dark mode. */
+    nz-code-editor, .code-editor-style {
+        border: 2px solid var(--raft-ink) !important;
+        border-radius: 0 !important;
+    }
+    .monaco-editor.vs .margin { background-color: #F7F3E9 !important; }
+    .monaco-editor.vs .line-numbers { color: var(--raft-text-2) !important; }
+    .monaco-editor.vs .current-line { border-color: var(--raft-muted) !important; }
+
     /* --- Keyboard focus ring (accessibility) -------------------------- */
     :focus-visible { outline: 2px solid var(--raft-accent); outline-offset: 1px; }
 
@@ -744,7 +803,9 @@ html.brutalist-theme {
 
     /* Cream sidebar panel — the 2px ink right edge comes from
      * --ant-border-color-split (= --raft-ink). */
-    .alain-default__aside { background: var(--raft-cream); }
+    .alain-default__aside {
+        background: #fff;
+    }
 
     /* Group title — mono uppercase kicker (color = --erupt-menu-group-color) */
     .sidebar-nav__group-title {
