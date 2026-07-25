@@ -1,6 +1,8 @@
 @node-width: 200px;
 @node-line-len: 80px;
-@node-line-color: #d9d9d9;
+// Backed by a CSS custom property so the color can be themed at runtime
+// (see the `:host-context(.brutalist-theme)` override at the bottom).
+@node-line-color: var(--node-line-color, #d9d9d9);
 @error-color: #FF4D4F;
 
 .p-node {
@@ -142,6 +144,40 @@
             border-style: solid;
             border-width: 8px 6px 4px;
             border-color: @node-line-color transparent transparent;
+        }
+    }
+}
+
+// Brutalist skin for branch (gateway) node cards.
+// Overriding --node-line-color here recolors the connector line + arrow
+// through the Less alias declared at the top of the file.
+:host-context(.brutalist-theme) {
+    --node-line-color: #0a0a0a;
+
+    .p-node .p-node-body {
+        border-radius: 0;
+        border: 1.5px solid #0a0a0a;
+        box-shadow: 4px 4px 0 #0a0a0a;
+        transition: transform .12s ease, box-shadow .12s ease;
+
+        .p-node-header {
+            border-radius: 0;
+            border-bottom: 1.5px solid #0a0a0a;
+
+            input {
+                border-radius: 0;
+                border: 1.5px solid #0a0a0a;
+                background: #fff;
+            }
+        }
+
+        .p-node-content {
+            border-radius: 0;
+        }
+
+        &:hover {
+            box-shadow: 6px 6px 0 #0a0a0a;
+            transform: translate(-1px, -1px);
         }
     }
 }
