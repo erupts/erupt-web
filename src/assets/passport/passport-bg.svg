@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
-    <rect width="1600" height="1000" fill="#f4f6f9"/>
+    <rect width="1600" height="1000" fill="#fff"/>
 
     <g fill="none" stroke="#0f172a" stroke-opacity="0.045">
         <circle cx="180" cy="180" r="260" stroke-width="1"/>
