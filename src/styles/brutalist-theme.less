@@ -39,7 +39,7 @@ html.brutalist-theme {
     --erupt-menu-bar-width: 0;
     --erupt-menu-bar-color: transparent;
     --erupt-menu-row-bg: transparent;
-    --erupt-menu-radius: 0;
+    --erupt-menu-radius: 3px;   /* rounded pill selection (menu is the one place we soften corners) */
     --erupt-menu-inset: 6px;
     --erupt-menu-hover-bg: var(--raft-paper);
     --erupt-menu-hover-color: var(--raft-ink);
@@ -812,6 +812,14 @@ html.brutalist-theme {
         font-family: var(--raft-mono);
         text-transform: uppercase;
         letter-spacing: 0.06em;
+    }
+
+    /* Menu click ripple (span.ripple, added by erupt.component) — recolor to ink.
+     * The stock ripple uses --ant-primary-color (= cyan here), which vanishes on the
+     * cyan hover / selected pills; ink keeps it visible over every menu surface. */
+    .sidebar-nav__item span.ripple {
+        background: var(--raft-ink) !important;
+        opacity: 0.12 !important;
     }
 }
 
