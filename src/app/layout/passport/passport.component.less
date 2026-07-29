@@ -6,19 +6,18 @@
 
     ::ng-deep {
 
-        // ── 整体布局 ──────────────────────────────────────────────────
+        // ── Page ─────────────────────────────────────────────────────
         .lp-page {
             display: flex;
             min-height: 100vh;
             min-height: 100dvh;
-            background-color: #fff;
+            background-color: #ede9df;
             background-image: url('/assets/passport/passport-bg.svg');
             background-repeat: no-repeat;
-            background-position: center;
+            background-position: center center;
             background-size: cover;
         }
 
-        // ── 主区域 ────────────────────────────────────────────────────
         .lp-side {
             flex: 1;
             min-width: 0;
@@ -26,42 +25,43 @@
             flex-direction: column;
         }
 
-        // ── 顶部导航 ──────────────────────────────────────────────────
+        // ── Top nav ──────────────────────────────────────────────────
         .lp-side-nav {
-            height: 56px;
+            height: 44px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             padding: 0 28px;
-            background: #fbfcfd;
-            border-bottom: 1px solid var(--ant-border-color-split);
+            background: #fff;
+            border-bottom: 1.5px solid #0a0a0a;
         }
 
         .lp-side-brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex: 1;
             text-decoration: none;
         }
 
         .lp-side-brand-icon {
-            width: 24px;
-            height: 24px;
-            color: var(--ant-primary-color, #3f51b5);
+            width: 22px;
+            height: 22px;
+            color: #0a0a0a;
             flex-shrink: 0;
         }
 
         .lp-side-brand-img {
-            height: 24px;
+            height: 22px;
             object-fit: contain;
         }
 
         .lp-side-brand-name {
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.2px;
-            color: rgba(0, 0, 0, 0.88);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #0a0a0a;
             line-height: 1;
         }
 
@@ -77,22 +77,21 @@
             justify-content: center;
             width: 34px;
             height: 34px;
-            border-radius: 7px;
+            border-radius: 0;
             font-size: 16px;
-            color: rgba(0, 0, 0, 0.50);
+            color: #0a0a0a;
             text-decoration: none;
-            transition: color 0.18s, background 0.18s;
+            transition: background 0.15s;
 
             &:hover {
-                color: rgba(0, 0, 0, 0.80);
-                background: rgba(0, 0, 0, 0.06);
+                background: rgba(10, 10, 10, 0.08);
             }
         }
 
         .lp-nav-divider {
             width: 1px;
             height: 18px;
-            background: rgba(0, 0, 0, 0.10);
+            background: rgba(10, 10, 10, 0.20);
             margin: 0 6px;
         }
 
@@ -106,65 +105,70 @@
 
             i[nz-icon] {
                 font-size: 16px;
-                color: rgba(0, 0, 0, 0.50);
+                color: #0a0a0a;
                 cursor: pointer;
                 padding: 9px;
-                border-radius: 7px;
-                transition: color 0.18s, background 0.18s;
+                border-radius: 0;
+                transition: background 0.15s;
 
                 &:hover {
-                    color: rgba(0, 0, 0, 0.80);
-                    background: rgba(0, 0, 0, 0.06);
+                    background: rgba(10, 10, 10, 0.08);
                 }
             }
         }
 
-        // ── 表单内容区 ────────────────────────────────────────────────
+        // ── Form container ───────────────────────────────────────────
         .lp-side-content {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px 56px;
+            padding: 48px 20px 60px;
         }
 
-        // ── 登录卡片 ──────────────────────────────────────────────────
+        // ── Login card ───────────────────────────────────────────────
         .lp-card {
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             background: #fff;
-            border-radius: 8px;
+            border: 1.5px solid #0a0a0a;
+            border-radius: 0;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
-            0 4px 16px rgba(0, 0, 0, 0.08),
-            0 24px 56px rgba(0, 0, 0, 0.08);
+            box-shadow: 8px 8px 0 #0a0a0a;
             animation: lpCardIn 0.40s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
 
         @keyframes lpCardIn {
             from {
                 opacity: 0;
-                transform: translateY(22px) scale(0.978);
+                transform: translate(6px, 6px);
+                box-shadow: 0 0 0 #0a0a0a;
             }
             to {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translate(0, 0);
+                box-shadow: 8px 8px 0 #0a0a0a;
             }
         }
 
-        // ── 版权 ──────────────────────────────────────────────────────
+        // ── Copyright ────────────────────────────────────────────────
         .lp-copyright {
-            padding-bottom: 20px;
-            font-size: 12px;
-            color: rgba(0, 0, 0, 0.38);
+            padding-bottom: 24px;
+            font-family: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, Consolas, monospace;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            color: rgba(10, 10, 10, 0.55);
             text-align: center;
+            text-transform: uppercase;
 
             a {
-                color: rgba(0, 0, 0, 0.45);
+                color: #0a0a0a;
                 text-decoration: none;
+                border-bottom: 1px solid rgba(10, 10, 10, 0.35);
+                padding-bottom: 1px;
 
                 &:hover {
-                    color: var(--ant-primary-color, #3f51b5);
+                    border-bottom-color: #0a0a0a;
                 }
             }
         }

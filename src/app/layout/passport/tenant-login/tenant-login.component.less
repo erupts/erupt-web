@@ -1,53 +1,64 @@
 :host {
     display: block;
 
-    .lf-toolbar {
+    --lf-ink: #0a0a0a;
+    --lf-paper: #fff;
+    --lf-muted: rgba(10, 10, 10, 0.55);
+    --lf-hair: rgba(10, 10, 10, 0.12);
+    --lf-mono: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, Consolas, monospace;
+
+    .lf-head {
+        padding: 28px 28px 20px;
+        border-bottom: 1.5px solid var(--lf-ink);
+    }
+
+    .lf-eyebrow {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 16px 20px;
-        border-bottom: 1px solid var(--ant-border-color-split, #eee);
+        gap: 10px;
+        font-family: var(--lf-mono);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--lf-muted);
+        margin-bottom: 14px;
     }
 
-    .lf-toolbar-icon {
-        flex-shrink: 0;
-        width: 38px;
-        height: 38px;
-        border-radius: 9px;
-        background: var(--ant-primary-color, #3f51b5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        box-shadow: 0 3px 10px rgba(63, 81, 181, 0.28);
-
-        svg {
-            width: 20px;
-            height: 20px;
-        }
-    }
-
-    .lf-toolbar-info {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-    }
-
-    .lf-toolbar-title {
-        font-size: 15px;
+    .lf-eyebrow-mark {
+        color: var(--lf-ink);
         font-weight: 600;
-        color: rgba(0, 0, 0, 0.85);
-        line-height: 1.35;
     }
 
-    .lf-toolbar-subtitle {
-        font-size: 12px;
-        color: rgba(0, 0, 0, 0.38);
-        line-height: 1.4;
+    .lf-eyebrow-rule {
+        flex: 1;
+        height: 1px;
+        background: var(--lf-ink);
+        opacity: 0.35;
+    }
+
+    .lf-eyebrow-tag {
+        color: var(--lf-ink);
+        font-weight: 600;
+    }
+
+    .lf-title {
+        margin: 0 0 8px;
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: -0.015em;
+        color: var(--lf-ink);
+        line-height: 1.15;
+    }
+
+    .lf-subtitle {
+        margin: 0;
+        font-size: 13px;
+        color: var(--lf-muted);
+        line-height: 1.45;
     }
 
     .lf-body {
-        padding: 26px 24px 30px;
+        padding: 24px 28px 28px;
     }
 
     ::ng-deep {
@@ -56,92 +67,130 @@
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
             -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
-            -webkit-text-fill-color: rgba(0, 0, 0, 0.85) !important;
-            caret-color: rgba(0, 0, 0, 0.85);
+            -webkit-text-fill-color: var(--lf-ink) !important;
+            caret-color: var(--lf-ink);
             transition: background-color 5000s ease-in-out 0s;
         }
 
-        .ant-input-affix-wrapper .ant-input:not(:first-child) {
-            padding-left: 8px;
-        }
-
         .ant-form-item {
-            margin-bottom: 18px;
-        }
-
-        .ant-input-affix-wrapper {
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .ant-input-affix-wrapper:hover {
-            border-color: var(--ant-primary-color, #3f51b5);
-        }
-
-        .ant-input-affix-wrapper:focus,
-        .ant-input-affix-wrapper-focused {
-            border-color: var(--ant-primary-color, #3f51b5);
-            box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.12);
-        }
-
-        .ant-btn-primary {
-            height: 42px;
-            font-weight: 500;
-            font-size: 14px;
-            letter-spacing: 0.4px;
-            border: none;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                        box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                        opacity 0.2s;
-
-            &:not([disabled]):hover {
-                transform: translateY(-1px);
-                box-shadow: 0 6px 18px rgba(63, 81, 181, 0.32);
-                opacity: 0.92;
-            }
-
-            &:not([disabled]):active {
-                transform: translateY(0);
-                box-shadow: 0 2px 6px rgba(63, 81, 181, 0.20);
-                opacity: 1;
-            }
-        }
-
-        .icon {
-            font-size: 18px;
-            color: rgba(0, 0, 0, 0.20);
-            cursor: pointer;
-            transition: color 0.2s;
-            &:hover { color: var(--ant-primary-color); }
+            margin-bottom: 14px;
         }
 
         .lf-link {
-            font-size: 13px;
-            color: var(--ant-primary-color);
-            &:hover { opacity: 0.75; }
+            font-family: var(--lf-mono);
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--lf-ink);
+            border-bottom: 1px solid var(--lf-ink);
+            padding-bottom: 1px;
+            cursor: pointer;
+            transition: opacity 0.15s;
+
+            &:hover {
+                color: var(--lf-ink);
+                opacity: 0.55;
+            }
         }
 
         .lf-divider {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
-            margin-top: 16px;
-            color: rgba(0, 0, 0, 0.22);
-            font-size: 12px;
-
-            &::before,
-            &::after {
-                content: '';
-                flex: 1;
-                height: 1px;
-                background: rgba(0, 0, 0, 0.09);
-            }
+            margin-top: 22px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--lf-hair);
         }
 
         .point {
             cursor: pointer;
-            color: rgba(0, 0, 0, 0.35);
-            transition: color 0.2s;
-            &:hover { color: var(--ant-primary-color); }
+            color: var(--lf-ink);
+            opacity: 0.55;
+            transition: opacity 0.15s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        // Full-width submit; label on the left, arrow on the right.
+        .lf-submit {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        // Hide the arrow while the button shows its loading spinner.
+        .lf-submit.ant-btn-loading .lf-submit-arrow {
+            display: none;
         }
     }
+}
+
+// ── Brutalist form control overrides ─────────────────────────────
+// Only active when <html> has the .brutalist-theme class.
+:host-context(.brutalist-theme) ::ng-deep {
+    .ant-input,
+    .ant-input-affix-wrapper {
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        transition: background 0.15s, box-shadow 0.15s;
+    }
+
+    .ant-input-affix-wrapper {
+        border: 1.5px solid var(--lf-ink) !important;
+        background: #fff;
+        padding: 6px 12px !important;
+    }
+
+    .ant-input-affix-wrapper .ant-input:not(:first-child) {
+        padding-left: 8px;
+    }
+
+    .ant-input-affix-wrapper:hover {
+        background: rgba(10, 10, 10, 0.03);
+    }
+
+    .ant-input-affix-wrapper:focus,
+    .ant-input-affix-wrapper-focused {
+        box-shadow: 3px 3px 0 var(--lf-ink) !important;
+    }
+
+    .ant-input-affix-wrapper .anticon,
+    .ant-input-prefix .anticon {
+        color: var(--lf-ink);
+        opacity: 0.55;
+    }
+
+    .ant-input-affix-wrapper-lg,
+    .ant-input-lg {
+        font-size: 14px !important;
+    }
+
+    .ant-input-group-addon {
+        border-radius: 0 !important;
+        background: #fff !important;
+        border: 1.5px solid var(--lf-ink) !important;
+        border-left: none !important;
+        color: var(--lf-ink);
+        padding: 0 12px !important;
+    }
+
+    .ant-input-affix-wrapper .ant-input {
+        border: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+    }
+
+    .ant-input-group > .ant-input {
+        border: 1.5px solid var(--lf-ink) !important;
+    }
+
+    .ant-alert {
+        border-radius: 0 !important;
+        border-width: 1.5px !important;
+    }
+
 }

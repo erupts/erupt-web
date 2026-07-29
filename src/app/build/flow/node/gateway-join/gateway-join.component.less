@@ -1,0 +1,9 @@
+// Drive the join-gateway icon color from the shared --node-line-color token
+// so it flips together with connector lines under the brutalist theme.
+svg.icon path {
+    fill: var(--node-line-color, #d9d9d9);
+}
+
+:host-context(.brutalist-theme) {
+    --node-line-color: #0a0a0a;
+}
