@@ -851,6 +851,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     /** Stop the streaming response of the current chat */
     stopGeneration(): void {
         if (this.selectChat == null) return;
+        // Signal the backend to stop generating, so it persists the partial content
+        // and stops consuming the LLM stream (closing the EventSource alone is only
+        // detected server-side on the next write)
+        this.chatApi.stopChat(this.selectChat).subscribe();
         const state = this.pendingSse.get(this.selectChat);
         if (state) {
             state.eventSource.close();
