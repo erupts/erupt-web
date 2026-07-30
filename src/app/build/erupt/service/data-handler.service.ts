@@ -300,7 +300,7 @@ export class DataHandlerService {
             if (edit) {
                 switch (edit.type) {
                     case EditType.INPUT:
-                        if (edit.$value) {
+                        if (edit.$value || edit.$value === 0) {
                             const inputType = edit.inputType;
                             if (inputType.prefixValue || inputType.suffixValue) {
                                 eruptData[field.fieldName] = (inputType.prefixValue || "") + edit.$value + (inputType.suffixValue || "");
@@ -507,8 +507,8 @@ export class DataHandlerService {
                         const inputType = edit.inputType;
                         //handle prefix and suffix data
                         if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
-                            if (object[field.fieldName]) {
-                                let str = <string>object[field.fieldName];
+                            if (isNotNull(object[field.fieldName])) {
+                                let str = String(object[field.fieldName]);
                                 for (let pre of inputType.prefix) {
                                     if (str.startsWith(pre.value)) {
                                         edit.inputType.prefixValue = pre.value;
