@@ -24,37 +24,13 @@ html.brutalist-theme {
     /* Structure — light */
     --raft-ink: #14120B;          /* borders, headings, primary text        */
     --raft-paper: #FFFFFF;        /* content canvas, cards, floating panels  */
-    --raft-cream: #F7F3E9;        /* warm paper — sidebar, headers, hovers, wells, affix */
+    --raft-cream: #F2F2EF;        /* stone gray — sidebar, headers, hovers, wells, affix */
     --raft-text: #14120B;         /* body text                               */
     --raft-text-2: #8A8577;       /* secondary text + kickers (warm gray)    */
-    --raft-muted: #E4DFD2;        /* hairlines, inactive fills               */
+    --raft-muted: #E5E4DF;        /* hairlines, inactive fills               */
 
     /* Drive every split border (menu, header, tree, cards) off the ink color */
     --ant-border-color-split: var(--raft-ink);
-
-    /* Left menu — brutalist-theme square block (structure lives in
-     * menu.component.less; here we only flip the shared variables).
-     * Kill the classic left-bar + row tint; the selection is an inset
-     * accent block on the link instead. */
-    --erupt-menu-bar-width: 0;
-    --erupt-menu-bar-color: transparent;
-    --erupt-menu-row-bg: transparent;
-    --erupt-menu-radius: 3px;   /* rounded pill selection (menu is the one place we soften corners) */
-    --erupt-menu-inset: 6px;
-    --erupt-menu-hover-bg: var(--raft-paper);
-    --erupt-menu-hover-color: var(--raft-ink);
-    --erupt-menu-selected-bg: var(--raft-accent);
-    // Keep the accent block flat on hover (no tint-lightening) — brutalist-theme.
-    --erupt-menu-selected-hover-bg: var(--raft-accent);
-    --erupt-menu-selected-color: var(--raft-ink);
-    --erupt-menu-selected-weight: 800;
-    --erupt-menu-selected-border: 2px solid var(--raft-ink);
-    --erupt-menu-group-color: var(--raft-text-2);
-
-    /* Sidebar shell — cream panel + bold ink fold toggle */
-    --erupt-aside-bg: var(--raft-cream);
-    --erupt-fold-color: var(--raft-ink);
-    --erupt-fold-weight: 800;
 
     /* Lock the primary color to cyan while the Brutalist Theme skin is on. Higher
      * specificity than the app's dynamic `html`-level primary, and it reverts the
@@ -82,7 +58,7 @@ html.brutalist-theme {
 html.brutalist-theme.dark {
     --raft-ink: #F0E8D6;
     --raft-paper: #201C12;
-    --raft-cream: #1C190F;
+    --raft-cream: #1B1A17;
     --raft-text: #F0E8D6;
     --raft-text-2: #B0A78F;
     --raft-muted: #3A3529;
@@ -777,7 +753,7 @@ html.brutalist-theme {
         border: 2px solid var(--raft-ink) !important;
         border-radius: 0 !important;
     }
-    .monaco-editor.vs .margin { background-color: #F7F3E9 !important; }
+    .monaco-editor.vs .margin { background-color: #F2F2EF !important; }
     .monaco-editor.vs .line-numbers { color: var(--raft-text-2) !important; }
     .monaco-editor.vs .current-line { border-color: var(--raft-muted) !important; }
 
@@ -795,28 +771,79 @@ html.brutalist-theme {
 
 /* ================================================================== *
  * LEFT MENU & SIDEBAR SHELL
- *   The menu ITEM look (radius, inset, hover, selected block) is driven
- *   by the shared --erupt-menu-* variables in menu.component.less. Here
- *   we only paint the shell surface and the mono group kicker.
+ *   All menu-item styling lives here, scoped to the brutalist skin —
+ *   the default theme keeps stock delon sidebar-nav styles.
  * ================================================================== */
 html.brutalist-theme {
 
-    /* Cream sidebar panel — the 2px ink right edge comes from
+    /* White sidebar panel — the 2px ink right edge comes from
      * --ant-border-color-split (= --raft-ink). */
     .alain-default__aside {
         background: #fff;
     }
 
-    /* Group title — mono uppercase kicker (color = --erupt-menu-group-color) */
+    /* Group title — mono uppercase kicker */
     .sidebar-nav__group-title {
         font-family: var(--raft-mono);
         text-transform: uppercase;
         letter-spacing: 0.06em;
+        color: var(--raft-text-2);
+    }
+
+    /* Drop delon's classic left-bar indicator — selection is an ink-framed block */
+    .sidebar-nav__item {
+        border-left: 0 !important;
+    }
+
+    .sidebar-nav__item-link {
+        position: relative;
+        margin: 2px 6px;
+        border: 2px solid transparent;   /* reserve space so the selected frame never shifts layout */
+        border-radius: 0;
+        transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+        &:hover {
+            background: var(--raft-cream);
+            color: var(--raft-ink);
+
+            .sidebar-nav__item-icon { color: var(--raft-ink); }
+        }
+    }
+
+    /* Selected — flat accent block stamped with an ink frame */
+    .sidebar-nav__selected {
+        background-color: transparent !important;
+
+        > .sidebar-nav__item-link {
+            background: var(--raft-accent);
+            border-color: var(--raft-ink);
+            color: var(--raft-ink);
+            font-weight: 800;
+
+            .sidebar-nav__item-icon { color: var(--raft-ink); }
+
+            /* stay flat on hover — no tint-lightening */
+            &:hover {
+                background: var(--raft-accent);
+                color: var(--raft-ink);
+            }
+        }
+    }
+
+    /* Collapsed rail — compact centered square hugging the icon */
+    .alain-default__collapsed .sidebar-nav__item .sidebar-nav__item-link {
+        width: 40px;
+        height: 40px;
+        margin: 4px auto;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     /* Menu click ripple (span.ripple, added by erupt.component) — recolor to ink.
      * The stock ripple uses --ant-primary-color (= cyan here), which vanishes on the
-     * cyan hover / selected pills; ink keeps it visible over every menu surface. */
+     * cyan selected block; ink keeps it visible over every menu surface. */
     .sidebar-nav__item span.ripple {
         background: var(--raft-ink) !important;
         opacity: 0.12 !important;

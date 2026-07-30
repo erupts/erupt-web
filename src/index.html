@@ -26,20 +26,28 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            background-color: #ede9df;
-            background-image: url('assets/passport/passport-bg.svg');
-            --pl-accent: #0a0a0a;
+            background: #fff url('assets/passport/passport-bg.svg');
+            --pl-accent: #1677ff;
         }
 
+        /* ---- default skin: soft blueprint card ---- */
         .pl-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            padding: 28px 32px;
+            gap: 18px;
+            padding: 28px 34px 24px;
             background: #fff;
-            border: 1.5px solid #0a0a0a;
-            box-shadow: 8px 8px 0 #0a0a0a;
+            border: 1px solid rgba(15, 35, 95, 0.12);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px -6px rgba(15, 43, 92, .18),
+                        0 24px 64px -36px rgba(15, 43, 92, .35);
+            animation: plFadeUp .7s cubic-bezier(.22, 1, .36, 1) both;
+        }
+
+        @keyframes plFadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: none; }
         }
 
         .pl-eyebrow {
@@ -48,61 +56,60 @@
             gap: 10px;
             width: 260px;
             font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: #0a0a0a;
+            color: rgba(15, 35, 95, 0.40);
         }
 
         .pl-eyebrow-rule {
             flex: 1;
             height: 1px;
-            background: #0a0a0a;
+            background: rgba(15, 35, 95, 0.60);
             opacity: 0.35;
         }
 
         .pl-brand {
-            color: #0a0a0a;
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
+            color: rgba(0, 0, 0, 0.80);
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
             white-space: nowrap;
             line-height: 1;
-            padding-right: 0.28em;
         }
 
         .pl-track {
             position: relative;
             width: 260px;
-            height: 10px;
-            border: 1.5px solid #0a0a0a;
+            height: 4px;
+            border-radius: 2px;
             overflow: hidden;
-            background: #fff;
+            background: rgba(15, 35, 95, 0.08);
         }
 
         .pl-bar {
             position: absolute;
             top: 0;
             left: 0;
-            width: 40%;
+            width: 50%;
             height: 100%;
-            background: var(--pl-accent);
-            animation: plBarMarch 1.4s steps(24) infinite;
+            border-radius: 2px;
+            background: linear-gradient(90deg, transparent, var(--pl-accent) 40%, var(--pl-accent) 60%, transparent);
+            animation: plBarMarch 1.6s cubic-bezier(.4, 0, .2, 1) infinite;
         }
 
         @keyframes plBarMarch {
             0%   { transform: translateX(-100%); }
-            100% { transform: translateX(250%); }
+            100% { transform: translateX(200%); }
         }
 
         .pl-meta {
             display: flex;
             justify-content: space-between;
             width: 260px;
-            color: rgba(10, 10, 10, 0.65);
+            color: rgba(15, 35, 95, 0.38);
             font-size: 10px;
             font-weight: 600;
             letter-spacing: 0.22em;
@@ -111,7 +118,7 @@
         }
 
         .pl-meta .pl-blink {
-            color: #0a0a0a;
+            color: var(--pl-accent);
             animation: plBlink 1s steps(2) infinite;
         }
 
@@ -120,22 +127,17 @@
             50%       { opacity: 0; }
         }
 
-        .preloader-hidden-add         { opacity: 1; display: flex; }
-        .preloader-hidden-add-active  { opacity: 0; }
-        .preloader-hidden             { display: none; }
-
         #preloader-tip {
             text-align: center;
-            color: rgba(10, 10, 10, 0.5);
-            font-size: 11px;
+            color: rgba(0, 0, 0, 0.40);
+            font-size: 12px;
             position: absolute;
             left: 0;
             right: 0;
             bottom: 24px;
             animation: tipFadeIn 6s;
-            font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            letter-spacing: 0.02em;
         }
 
         @keyframes tipFadeIn {
@@ -143,9 +145,79 @@
             100%    { opacity: 1; }
         }
 
+        /* ---- brutalist skin (html.brutalist-theme) ---- */
+        html.brutalist-theme .preloader {
+            background-color: #eaeae6;
+            --pl-accent: #0a0a0a;
+        }
+
+        html.brutalist-theme .pl-content {
+            gap: 20px;
+            padding: 28px 32px;
+            background: #fff;
+            border: 1.5px solid #0a0a0a;
+            border-radius: 0;
+            box-shadow: 8px 8px 0 #0a0a0a;
+            animation: none;
+        }
+
+        html.brutalist-theme .pl-eyebrow {
+            font-size: 11px;
+            color: #0a0a0a;
+        }
+
+        html.brutalist-theme .pl-eyebrow-rule {
+            background: #0a0a0a;
+        }
+
+        html.brutalist-theme .pl-brand {
+            color: #0a0a0a;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
+            padding-right: 0.28em;
+        }
+
+        html.brutalist-theme .pl-track {
+            width: 260px;
+            height: 10px;
+            border: 1.5px solid #0a0a0a;
+            border-radius: 0;
+            background: #fff;
+        }
+
+        html.brutalist-theme .pl-bar {
+            width: 40%;
+            border-radius: 0;
+            background: var(--pl-accent);
+            animation-timing-function: steps(24);
+        }
+
+        html.brutalist-theme .pl-meta {
+            color: rgba(10, 10, 10, 0.65);
+        }
+
+        html.brutalist-theme .pl-meta .pl-blink {
+            color: #0a0a0a;
+        }
+
+        html.brutalist-theme #preloader-tip {
+            color: rgba(10, 10, 10, 0.5);
+            font-size: 11px;
+            font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .preloader-hidden-add         { opacity: 1; display: flex; }
+        .preloader-hidden-add-active  { opacity: 0; }
+        .preloader-hidden             { display: none; }
+
         @media (prefers-reduced-motion: reduce) {
-            .pl-bar, .pl-blink { animation: none; }
-            .pl-bar { transform: translateX(0); width: 60%; }
+            .pl-bar, .pl-blink, .pl-brand, .pl-content { animation: none; }
+            .pl-bar { transform: translateX(0); width: 60%; background: var(--pl-accent); }
         }
     </style>
 </head>
@@ -181,17 +253,21 @@
         );
         var _preloaderEl = document.querySelector(".preloader");
         var _brandEl = document.getElementById("preload-brand");
+        // Optional Brutalist Theme skin — apply a saved user toggle right away so
+        // the preloader renders with the correct skin, without waiting for app.js.
+        var _nbPref = localStorage.getItem("brutalist-theme");
+        if (_nbPref === "true") {
+            document.documentElement.classList.add("brutalist-theme");
+        }
         var _colorCheckTimer = setInterval(function () {
             if (window.eruptSiteConfig !== undefined) {
                 clearInterval(_colorCheckTimer);
+                // No saved toggle — fall back to the config flag.
+                if (_nbPref === null && window.eruptSiteConfig.brutalistTheme) {
+                    document.documentElement.classList.add("brutalist-theme");
+                }
                 if (window.eruptSiteConfig.theme && window.eruptSiteConfig.theme.primaryColor) {
                     _preloaderEl.style.setProperty("--pl-accent", window.eruptSiteConfig.theme.primaryColor);
-                }
-                // Optional Brutalist Theme skin — a saved user toggle (localStorage)
-                // overrides the config default; otherwise fall back to the config flag.
-                var _nbPref = localStorage.getItem("brutalist-theme");
-                if (_nbPref === "true" || (_nbPref === null && window.eruptSiteConfig.brutalistTheme)) {
-                    document.documentElement.classList.add("brutalist-theme");
                 }
                 if (_brandEl) {
                     _brandEl.textContent = window.eruptSiteConfig.logoText || window.eruptSiteConfig.title || "Loading";

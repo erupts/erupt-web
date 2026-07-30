@@ -7,7 +7,157 @@
     --lf-hair: rgba(10, 10, 10, 0.12);
     --lf-mono: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, Consolas, monospace;
 
-    // ── Head ─────────────────────────────────────────────────────
+    // ── Head (default: soft) ─────────────────────────────────────
+    .lf-head {
+        padding: 22px 24px 16px;
+        border-bottom: 1px solid var(--ant-border-color-split, #eee);
+    }
+
+    .lf-eyebrow {
+        display: none;
+    }
+
+    .lf-title {
+        margin: 0 0 4px;
+        font-size: 18px;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 1.35;
+    }
+
+    .lf-subtitle {
+        margin: 0;
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.38);
+        line-height: 1.4;
+    }
+
+    // ── Body ─────────────────────────────────────────────────────
+    .lf-body {
+        padding: 26px 24px 30px;
+    }
+
+    ::ng-deep {
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+            -webkit-text-fill-color: rgba(0, 0, 0, 0.85) !important;
+            caret-color: rgba(0, 0, 0, 0.85);
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .ant-input-affix-wrapper .ant-input:not(:first-child) {
+            padding-left: 8px;
+        }
+
+        .ant-form-item {
+            margin-bottom: 18px;
+        }
+
+        .ant-input-affix-wrapper {
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .ant-input-affix-wrapper:hover {
+            border-color: var(--ant-primary-color, #3f51b5);
+        }
+
+        .ant-input-affix-wrapper:focus,
+        .ant-input-affix-wrapper-focused {
+            border-color: var(--ant-primary-color, #3f51b5);
+            box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.12);
+        }
+
+        .ant-checkbox-wrapper {
+            font-size: 13px;
+            color: rgba(0, 0, 0, 0.50);
+        }
+
+        // ── Links ────────────────────────────────────────────────
+        .lf-link {
+            font-size: 13px;
+            color: var(--ant-primary-color, #3f51b5);
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.75;
+            }
+        }
+
+        // ── Bottom divider (tenant login link) ───────────────────
+        .lf-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 16px;
+
+            &::before,
+            &::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: rgba(0, 0, 0, 0.09);
+            }
+        }
+
+        // ── Password visibility toggle ───────────────────────────
+        .point {
+            cursor: pointer;
+            color: rgba(0, 0, 0, 0.35);
+            transition: color 0.2s;
+
+            &:hover {
+                color: var(--ant-primary-color, #3f51b5);
+            }
+        }
+
+        // Full-width submit (default: centered label, no arrow)
+        .lf-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .lf-submit-arrow {
+            display: none;
+        }
+    }
+}
+
+// Soft primary button — only while the brutalist skin is OFF, so it never
+// fights the global brutalist button styling.
+:host-context(html:not(.brutalist-theme)) ::ng-deep .ant-btn-primary {
+    height: 42px;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.4px;
+    border: none;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.2s;
+
+    &:not([disabled]):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(63, 81, 181, 0.32);
+        opacity: 0.92;
+    }
+
+    &:not([disabled]):active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(63, 81, 181, 0.20);
+        opacity: 1;
+    }
+}
+
+// ── Brutalist skin ────────────────────────────────────────────────
+// Only active when <html> has the .brutalist-theme class.
+:host-context(.brutalist-theme) {
+
+    // ── Head: eyebrow tag + sharp bottom border ──────────────────
     .lf-head {
         padding: 28px 28px 20px;
         border-bottom: 1.5px solid var(--lf-ink);
@@ -52,13 +202,11 @@
     }
 
     .lf-subtitle {
-        margin: 0;
         font-size: 13px;
         color: var(--lf-muted);
         line-height: 1.45;
     }
 
-    // ── Body ─────────────────────────────────────────────────────
     .lf-body {
         padding: 24px 28px 28px;
     }
@@ -68,10 +216,8 @@
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
             -webkit-text-fill-color: var(--lf-ink) !important;
             caret-color: var(--lf-ink);
-            transition: background-color 5000s ease-in-out 0s;
         }
 
         .ant-form-item {
@@ -87,7 +233,6 @@
             color: var(--lf-ink);
             border-bottom: 1px solid var(--lf-ink);
             padding-bottom: 1px;
-            cursor: pointer;
             transition: opacity 0.15s;
 
             &:hover {
@@ -98,134 +243,128 @@
 
         // ── Bottom divider (tenant login link) ───────────────────
         .lf-divider {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
             margin-top: 22px;
             padding-top: 20px;
             border-top: 1px dashed var(--lf-hair);
+
+            &::before,
+            &::after {
+                display: none;
+            }
         }
 
         // ── Password visibility toggle ───────────────────────────
         .point {
-            cursor: pointer;
             color: var(--lf-ink);
             opacity: 0.55;
             transition: opacity 0.15s;
 
             &:hover {
+                color: var(--lf-ink);
                 opacity: 1;
             }
         }
 
-        // Full-width submit; label on the left, arrow on the right.
+        // Label on the left, arrow on the right.
         .lf-submit {
-            display: flex;
-            align-items: center;
             justify-content: space-between;
-            width: 100%;
+        }
+
+        .lf-submit-arrow {
+            display: inline;
         }
 
         // Hide the arrow while the button shows its loading spinner.
         .lf-submit.ant-btn-loading .lf-submit-arrow {
             display: none;
         }
-    }
-}
 
-// ── Brutalist form control overrides ─────────────────────────────
-// Only active when <html> has the .brutalist-theme class.
-:host-context(.brutalist-theme) ::ng-deep {
-    // ── Inputs: sharp, thick black border ────────────────────
-    .ant-input,
-    .ant-input-affix-wrapper {
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        transition: background 0.15s, box-shadow 0.15s;
-    }
+        // ── Inputs: sharp, thick black border ────────────────────
+        .ant-input,
+        .ant-input-affix-wrapper {
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            transition: background 0.15s, box-shadow 0.15s;
+        }
 
-    .ant-input-affix-wrapper {
-        border: 1.5px solid var(--lf-ink) !important;
-        background: #fff;
-        padding: 6px 12px !important;
-    }
+        .ant-input-affix-wrapper {
+            border: 1.5px solid var(--lf-ink) !important;
+            background: #fff;
+            padding: 6px 12px !important;
+        }
 
-    .ant-input-affix-wrapper .ant-input:not(:first-child) {
-        padding-left: 8px;
-    }
+        .ant-input-affix-wrapper:hover {
+            background: rgba(10, 10, 10, 0.03);
+        }
 
-    .ant-input-affix-wrapper:hover {
-        background: rgba(10, 10, 10, 0.03);
-    }
+        .ant-input-affix-wrapper:focus,
+        .ant-input-affix-wrapper-focused {
+            box-shadow: 3px 3px 0 var(--lf-ink) !important;
+        }
 
-    .ant-input-affix-wrapper:focus,
-    .ant-input-affix-wrapper-focused {
-        box-shadow: 3px 3px 0 var(--lf-ink) !important;
-    }
+        .ant-input-affix-wrapper .anticon,
+        .ant-input-prefix .anticon {
+            color: var(--lf-ink);
+            opacity: 0.55;
+        }
 
-    .ant-input-affix-wrapper .anticon,
-    .ant-input-prefix .anticon {
-        color: var(--lf-ink);
-        opacity: 0.55;
-    }
+        .ant-input-affix-wrapper-lg,
+        .ant-input-lg {
+            font-size: 14px !important;
+        }
 
-    .ant-input-affix-wrapper-lg,
-    .ant-input-lg {
-        font-size: 14px !important;
-    }
+        // ── Group addon (eye toggle) ─────────────────────────────
+        .ant-input-group-addon {
+            border-radius: 0 !important;
+            background: #fff !important;
+            border: 1.5px solid var(--lf-ink) !important;
+            border-left: none !important;
+            color: var(--lf-ink);
+            padding: 0 12px !important;
+        }
 
-    // ── Group addon (eye toggle) ─────────────────────────────
-    .ant-input-group-addon {
-        border-radius: 0 !important;
-        background: #fff !important;
-        border: 1.5px solid var(--lf-ink) !important;
-        border-left: none !important;
-        color: var(--lf-ink);
-        padding: 0 12px !important;
-    }
+        // Reset inner input inside affix wrapper — border lives on the wrapper
+        .ant-input-affix-wrapper .ant-input {
+            border: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
 
-    // Reset inner input inside affix wrapper — border lives on the wrapper
-    .ant-input-affix-wrapper .ant-input {
-        border: 0 !important;
-        box-shadow: none !important;
-        background: transparent !important;
-    }
+        // Verify-code input (no affix wrapper, direct child of group)
+        .ant-input-group > .ant-input {
+            border: 1.5px solid var(--lf-ink) !important;
+        }
 
-    // Verify-code input (no affix wrapper, direct child of group)
-    .ant-input-group > .ant-input {
-        border: 1.5px solid var(--lf-ink) !important;
-    }
+        // ── Alerts: sharp corners ────────────────────────────────
+        .ant-alert {
+            border-radius: 0 !important;
+            border-width: 1.5px !important;
+        }
 
-    // ── Alerts: sharp corners ────────────────────────────────
-    .ant-alert {
-        border-radius: 0 !important;
-        border-width: 1.5px !important;
-    }
+        // ── Checkbox: sharp ──────────────────────────────────────
+        .ant-checkbox-wrapper {
+            font-family: var(--lf-mono);
+            font-size: 11px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--lf-muted);
+        }
 
-    // ── Checkbox: sharp ──────────────────────────────────────
-    .ant-checkbox-wrapper {
-        font-family: var(--lf-mono);
-        font-size: 11px;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: var(--lf-muted);
-    }
+        .ant-checkbox-inner {
+            border-radius: 0 !important;
+            border: 1.5px solid var(--lf-ink) !important;
+            background: #fff;
+        }
 
-    .ant-checkbox-inner {
-        border-radius: 0 !important;
-        border: 1.5px solid var(--lf-ink) !important;
-        background: #fff;
-    }
+        .ant-checkbox-checked .ant-checkbox-inner {
+            background: var(--lf-ink) !important;
+            border-color: var(--lf-ink) !important;
+        }
 
-    .ant-checkbox-checked .ant-checkbox-inner {
-        background: var(--lf-ink) !important;
-        border-color: var(--lf-ink) !important;
-    }
-
-    .ant-checkbox-checked::after {
-        border-radius: 0 !important;
-        border-color: var(--lf-ink);
+        .ant-checkbox-checked::after {
+            border-radius: 0 !important;
+            border-color: var(--lf-ink);
+        }
     }
 }
 
