@@ -210,6 +210,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.selectChat = null;
         this.sending = false;
         this.sendDisabled = false;
+        this.streaming = false;
     }
 
     /** Fetch the chat list: when reset is true, re-fetch from the first page and select the first item */
