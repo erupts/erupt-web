@@ -122,8 +122,14 @@
                                     <span class="streaming-cursor"></span>
                                 }
                             }
-                            @if (!item.loading && !item.content && !item.contentHtml && !item.frozenSegments?.length && item.senderType === 'MODEL') {
+                            @if (!item.loading && !item.interrupted && !item.content && !item.contentHtml && !item.frozenSegments?.length && item.senderType === 'MODEL') {
                                 <div class="placeholder">{{ 'ai.chat.thinking' | translate }}</div>
+                            }
+                            @if (!item.loading && item.interrupted) {
+                                <div class="bubble-interrupted">
+                                    <span nz-icon nzType="stop" nzTheme="outline"></span>
+                                    <span>{{ 'ai.chat.stopped' | translate }}</span>
+                                </div>
                             }
                             @if (!item.loading) {
                                 <div class="bubble-actions">

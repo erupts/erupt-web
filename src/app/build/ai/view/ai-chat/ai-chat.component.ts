@@ -865,19 +865,21 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.sending = false;
         this.sendDisabled = false;
         const last = this.messages[this.messages.length - 1];
-        if (last?.loading) {
-            last.loading = false;
-            const md = state?.accumulatedMarkdown || '';
-            const frozen = last.frozenSegments ?? [];
-            last.frozenSegments = undefined;
-            if (md || frozen.length) {
-                last.content = md;
-                (md ? this.markdown.render(md) : Promise.resolve('')).then(tokenHtml => {
-                    last.contentHtml = frozen.join('') + tokenHtml || `<p>${this.i18n.fanyi('ai.chat.stopped')}</p>`;
-                });
-            } else {
-                last.content = this.i18n.fanyi('ai.chat.stopped');
-                last.contentHtml = `<p>${this.i18n.fanyi('ai.chat.stopped')}</p>`;
+        if (last?.senderType === 'MODEL') {
+            // Same marker the backend persists (AiChatMessage.interrupted), so the local
+            // view matches what a reload of the chat history will show
+            last.interrupted = true;
+            if (last.loading) {
+                last.loading = false;
+                const md = state?.accumulatedMarkdown || '';
+                const frozen = last.frozenSegments ?? [];
+                if (md || frozen.length) {
+                    last.frozenSegments = undefined;
+                    last.content = md;
+                    (md ? this.markdown.render(md) : Promise.resolve('')).then(tokenHtml => {
+                        last.contentHtml = frozen.join('') + tokenHtml;
+                    });
+                }
             }
         }
     }

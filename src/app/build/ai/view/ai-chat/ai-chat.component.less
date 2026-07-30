@@ -510,6 +510,20 @@
     font-size: 14px;
 }
 
+/* Marker shown on replies the user stopped before completion */
+.bubble-interrupted {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--ant-text-color-secondary, #999);
+
+    [nz-icon] {
+        font-size: 12px;
+    }
+}
+
 /* Per-message action bar: fades in on hover */
 .bubble-actions {
     display: flex;
