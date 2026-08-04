@@ -17,6 +17,9 @@ module.exports = {
     '/magic': proxy,
     '/log': proxy,
     '/erupt-attachment': proxy,
+    // Static assets referenced by AI-view generated pages, served from backend jars
+    '/element-plus': proxy,
+    '/erupt-canvas-sdk.js': proxy,
     '/erupt-websocket': {
         ...proxy,
         ws: true
