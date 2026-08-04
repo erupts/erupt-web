@@ -7,23 +7,56 @@
                 <nz-tag class="version-tag" nzColor="blue">v{{ activeVersionNo }}</nz-tag>
             }
             <span class="bar-space"></span>
+            <span class="device-group">
+                <button nz-button nzType="text" nzSize="small" [class.active]="device === 'desktop'"
+                        (click)="setDevice('desktop')" [title]="'ai.canvas.device_desktop' | translate">
+                    <span nz-icon nzType="desktop" nzTheme="outline"></span>
+                </button>
+                <button nz-button nzType="text" nzSize="small" [class.active]="device === 'tablet'"
+                        (click)="setDevice('tablet')" [title]="'ai.canvas.device_tablet' | translate">
+                    <span nz-icon nzType="tablet" nzTheme="outline"></span>
+                </button>
+                <button nz-button nzType="text" nzSize="small" [class.active]="device === 'mobile'"
+                        (click)="setDevice('mobile')" [title]="'ai.canvas.device_mobile' | translate">
+                    <span nz-icon nzType="mobile" nzTheme="outline"></span>
+                </button>
+            </span>
+            <nz-divider nzType="vertical"></nz-divider>
             <button nz-button nzType="text" nzSize="small" (click)="refreshPreview()"
                     [disabled]="!previewUrl" [title]="'ai.canvas.refresh' | translate">
                 <span nz-icon nzType="reload" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="text" nzSize="small" (click)="viewSource()"
+                    [disabled]="!previewUrl" [title]="'ai.canvas.view_source' | translate">
+                <span nz-icon nzType="code" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="text" nzSize="small" (click)="copyLink()"
+                    [disabled]="!previewUrl" [title]="'ai.canvas.copy_link' | translate">
+                <span nz-icon nzType="link" nzTheme="outline"></span>
             </button>
             <button nz-button nzType="text" nzSize="small" (click)="openInNew()"
                     [disabled]="!previewUrl" [title]="'ai.canvas.open_new' | translate">
                 <span nz-icon nzType="export" nzTheme="outline"></span>
             </button>
         </div>
-        @if (previewUrl) {
-            <iframe class="preview-frame" [src]="previewUrl"></iframe>
-        } @else {
-            <div class="preview-empty">
-                <span nz-icon nzType="layout" nzTheme="outline"></span>
-                <p>{{ 'ai.canvas.no_page' | translate }}</p>
-            </div>
-        }
+        <div class="preview-body">
+            @if (previewUrl) {
+                <div class="device-frame" [class.full]="device === 'desktop'"
+                     [style.width]="deviceWidth">
+                    @if (iframeLoading) {
+                        <div class="frame-loading">
+                            <nz-spin nzSimple></nz-spin>
+                        </div>
+                    }
+                    <iframe class="preview-frame" [src]="previewUrl" (load)="iframeLoading = false"></iframe>
+                </div>
+            } @else {
+                <div class="preview-empty">
+                    <span nz-icon nzType="layout" nzTheme="outline"></span>
+                    <p>{{ 'ai.canvas.no_page' | translate }}</p>
+                </div>
+            }
+        </div>
     </div>
 
     <!-- Right: generation conversation -->
@@ -104,6 +137,7 @@
                       [disabled]="generating" rows="3"></textarea>
             <div class="sender-toolbar">
                 <nz-select class="toolbar-select" nzSize="small" nzBorderless [(ngModel)]="modelKey" nzShowSearch
+                           [nzDropdownMatchSelectWidth]="false" [nzDropdownStyle]="{'min-width': '320px'}"
                            [nzPlaceHolder]="'ai.canvas.data_model' | translate" [nzDisabled]="generating">
                     @for (group of modelGroups; track group.type) {
                         <nz-option-group [nzLabel]="group.type">
@@ -116,6 +150,7 @@
                 </nz-select>
                 <nz-select class="toolbar-select toolbar-style" nzSize="small" nzBorderless [(ngModel)]="style"
                            nzAllowClear nzShowSearch
+                           [nzDropdownMatchSelectWidth]="false" [nzDropdownStyle]="{'min-width': '260px'}"
                            [nzPlaceHolder]="'ai.canvas.style' | translate" [nzDisabled]="generating">
                     @for (s of styles; track s.id) {
                         <nz-option nzCustomContent [nzValue]="s.id" [nzLabel]="s.name">
@@ -150,3 +185,8 @@
         </div>
     </div>
 </div>
+
+<ng-template #sourceTpl>
+    <nz-code-editor class="source-editor" [ngModel]="sourceRaw"
+                    [nzEditorOption]="sourceEditorOption"></nz-code-editor>
+</ng-template>

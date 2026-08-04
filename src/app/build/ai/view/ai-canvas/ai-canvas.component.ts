@@ -3,9 +3,11 @@ import {ActivatedRoute} from '@angular/router';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {NzMessageService} from 'ng-zorro-antd/message';
+import {NzModalService} from 'ng-zorro-antd/modal';
 import {SharedModule} from '@shared/shared.module';
 import {I18NService} from '@core';
 import {RestPath} from '../../../erupt/model/erupt.enum';
+import {NzCodeEditorModule} from 'ng-zorro-antd/code-editor';
 import {SseMessage, SseMessageEvent} from '../../model/chat.model';
 import {CanvasApiService, CanvasInfo, CanvasStyle, CanvasVersion, ModelGroup} from '../../service/canvas-api.service';
 
@@ -18,14 +20,40 @@ import {CanvasApiService, CanvasInfo, CanvasStyle, CanvasVersion, ModelGroup} fr
     selector: 'erupt-ai-canvas',
     templateUrl: './ai-canvas.component.html',
     styleUrls: ['./ai-canvas.component.less'],
-    imports: [SharedModule],
+    imports: [SharedModule, NzCodeEditorModule],
     providers: [CanvasApiService]
 })
 export class AiCanvasComponent implements OnInit, OnDestroy {
 
     @ViewChild('streamRef') streamRef?: ElementRef<HTMLPreElement>;
 
+    @ViewChild('sourceTpl') sourceTpl?: any;
+
     canvasId!: number;
+
+    /** Preview viewport width: desktop fills the pane, tablet/mobile simulate devices */
+    device: 'desktop' | 'tablet' | 'mobile' = 'desktop';
+
+    static readonly DEVICE_WIDTHS: Record<string, string | null> = {desktop: null, tablet: '768px', mobile: '390px'};
+
+    get deviceWidth(): string | null {
+        return AiCanvasComponent.DEVICE_WIDTHS[this.device];
+    }
+
+    /** True while the iframe is loading after a refresh, drives the overlay spinner */
+    iframeLoading = false;
+
+    /** Page source shown in the source modal's code editor */
+    sourceRaw = '';
+
+    /** Monaco options for the readonly source viewer, same editor as erupt CODE_EDITOR fields */
+    readonly sourceEditorOption = {
+        language: 'html',
+        readOnly: true,
+        minimap: {enabled: false},
+        scrollBeyondLastLine: false,
+        automaticLayout: true
+    };
 
     name = '';
 
@@ -67,6 +95,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private sanitizer: DomSanitizer,
         private message: NzMessageService,
+        private modal: NzModalService,
         private i18n: I18NService,
         private ngZone: NgZone,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService
@@ -129,11 +158,36 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     }
 
     refreshPreview(): void {
+        this.iframeLoading = true;
         this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.rawPreviewUrl());
     }
 
     openInNew(): void {
         window.open(this.rawPreviewUrl());
+    }
+
+    setDevice(device: 'desktop' | 'tablet' | 'mobile'): void {
+        this.device = device;
+    }
+
+    /** Copy the render path (without token) — mount it as a Link menu or share to logged-in users */
+    copyLink(): void {
+        const url = `${location.origin}${RestPath.erupt}/ai-canvas/render/${this.canvasId}`;
+        navigator.clipboard.writeText(url).then(() =>
+            this.message.success(this.i18n.fanyi('ai.canvas.link_copied')));
+    }
+
+    /** Show the active version's page source in a modal, in the readonly code editor */
+    viewSource(): void {
+        fetch(this.rawPreviewUrl()).then(r => r.text()).then(html => this.ngZone.run(() => {
+            this.sourceRaw = html;
+            this.modal.create({
+                nzTitle: this.i18n.fanyi('ai.canvas.source_title'),
+                nzContent: this.sourceTpl,
+                nzWidth: 900,
+                nzFooter: null
+            });
+        }));
     }
 
     send(): void {
@@ -184,8 +238,10 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         };
     }
 
-    /** Cancel the running generation: the backend discards the round, no version is filed */
+    /** Cancel the running generation: the explicit stop signal makes the backend
+     *  discard the round — closing the connection alone would still persist it */
     stop(): void {
+        this.api.stop(this.canvasId).subscribe();
         this.closeSse();
         this.content = this.pendingMessage;
     }
