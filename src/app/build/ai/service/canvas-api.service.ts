@@ -71,4 +71,9 @@ export class CanvasApiService {
         return this._http.post<R<void>>(`${this.base}/active/${canvasId}/${versionId}`);
     }
 
+    /** Signal the backend to discard the running generation round */
+    stop(canvasId: number): Observable<R<void>> {
+        return this._http.post<R<void>>(`${this.base}/stop/${canvasId}`);
+    }
+
 }
