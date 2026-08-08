@@ -36,7 +36,7 @@
   </ul>
 
   @if (splitMenu && splitTopItems.length) {
-    <div class="split-nav-wrap hidden-mobile"
+    <div class="split-nav-wrap hidden-mobile" (wheel)="onSplitNavWheel($event)"
          style="min-width:0;display:flex;align-items:center;height:44px;padding:0 4px;gap:2px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;">
       @for (item of splitTopItems; track item) {
         <a class="split-nav-item" [class.split-nav-item--active]="isActiveSplitItem(item)"

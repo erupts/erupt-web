@@ -57,6 +57,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
     }
 
+    // The split nav hides its scrollbar; on Windows mice have no horizontal wheel,
+    // so translate vertical wheel delta into horizontal scrolling.
+    onSplitNavWheel(event: WheelEvent): void {
+        const el = event.currentTarget as HTMLElement;
+        if (el.scrollWidth <= el.clientWidth) return;
+        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+            el.scrollLeft += event.deltaY;
+            event.preventDefault();
+        }
+    }
+
     searchToggleStatus: boolean;
 
     isFullScreen: boolean = false;
