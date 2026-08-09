@@ -61,8 +61,8 @@ export class DefaultInterceptor implements HttpInterceptor {
                 // The code snippet below can be used directly in that case
                 if (event instanceof HttpResponse) {
                     const body: any = event.body;
-                    // If the response body is an EruptApi object
-                    if ("status" in body && "message" in body && "promptWay" in body) {
+                    // If the response body is an EruptApi object (text/blob responses stay untouched)
+                    if (body && typeof body === "object" && "status" in body && "message" in body && "promptWay" in body) {
                         let eruptApiBody = <EruptApiModel>body;
                         if (eruptApiBody.message) {
                             switch (eruptApiBody.promptWay) {

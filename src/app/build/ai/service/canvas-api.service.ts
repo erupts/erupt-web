@@ -44,8 +44,13 @@ export class CanvasApiService {
     constructor(private _http: _HttpClient) {
     }
 
-    info(canvasId: number): Observable<R<CanvasInfo>> {
-        return this._http.get<R<CanvasInfo>>(`${this.base}/${canvasId}`);
+    info(code: string): Observable<R<CanvasInfo>> {
+        return this._http.get<R<CanvasInfo>>(`${this.base}/${code}`);
+    }
+
+    /** Processed page source of the active version, embedded via iframe srcdoc */
+    html(code: string): Observable<string> {
+        return this._http.get(`${RestPath.erupt}/ai-canvas/html/${code}`, null, {responseType: 'text'});
     }
 
     models(): Observable<R<ModelGroup[]>> {
@@ -56,24 +61,24 @@ export class CanvasApiService {
         return this._http.get<R<CanvasStyle[]>>(`${this.base}/styles`);
     }
 
-    generate(canvasId: number, message: string, dataType: string, targetModel: string, style: string | null): Observable<R<CanvasVersion>> {
-        return this._http.post<R<CanvasVersion>>(`${this.base}/generate/${canvasId}`, {message, dataType, targetModel, style});
+    generate(code: string, message: string, dataType: string, targetModel: string, style: string | null): Observable<R<CanvasVersion>> {
+        return this._http.post<R<CanvasVersion>>(`${this.base}/generate/${code}`, {message, dataType, targetModel, style});
     }
 
     /** SSE URL of the streaming generate endpoint (EventSource is GET-only, token travels as _token) */
-    generateSseUrl(canvasId: number, message: string, dataType: string, targetModel: string, style: string | null, token: string): string {
+    generateSseUrl(code: string, message: string, dataType: string, targetModel: string, style: string | null, token: string): string {
         const params = new URLSearchParams({message, dataType, targetModel, _token: token});
         if (style) params.set('style', style);
-        return `${this.base}/generate-sse/${canvasId}?${params.toString()}`;
+        return `${this.base}/generate-sse/${code}?${params.toString()}`;
     }
 
-    active(canvasId: number, versionId: number): Observable<R<void>> {
-        return this._http.post<R<void>>(`${this.base}/active/${canvasId}/${versionId}`);
+    active(code: string, versionId: number): Observable<R<void>> {
+        return this._http.post<R<void>>(`${this.base}/active/${code}/${versionId}`);
     }
 
     /** Signal the backend to discard the running generation round */
-    stop(canvasId: number): Observable<R<void>> {
-        return this._http.post<R<void>>(`${this.base}/stop/${canvasId}`);
+    stop(code: string): Observable<R<void>> {
+        return this._http.post<R<void>>(`${this.base}/stop/${code}`);
     }
 
 }

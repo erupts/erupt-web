@@ -1,12 +1,12 @@
 import {Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Location} from '@angular/common';
 import {ActivatedRoute} from '@angular/router';
-import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {SharedModule} from '@shared/shared.module';
 import {I18NService} from '@core';
-import {RestPath} from '../../../erupt/model/erupt.enum';
 import {NzCodeEditorModule} from 'ng-zorro-antd/code-editor';
 import {SseMessage, SseMessageEvent} from '../../model/chat.model';
 import {CanvasApiService, CanvasInfo, CanvasStyle, CanvasVersion, ModelGroup} from '../../service/canvas-api.service';
@@ -38,7 +38,8 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
 
     @ViewChild('frameRef') frameRef?: ElementRef<HTMLIFrameElement>;
 
-    canvasId!: number;
+    /** Short unique code, path segment of the end-user access route #/ai/canvas/{code} */
+    code!: string;
 
     /** Preview viewport width: desktop fills the pane, tablet/mobile simulate devices */
     device: 'desktop' | 'tablet' | 'mobile' = 'desktop';
@@ -85,7 +86,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
 
     loading = true;
 
-    previewUrl: SafeResourceUrl | null = null;
+    previewHtml: SafeHtml | null = null;
 
     /** Streaming code accumulated during generation, shown as live progress */
     streamingText = '';
@@ -118,8 +119,13 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         private modal: NzModalService,
         private i18n: I18NService,
         private ngZone: NgZone,
+        private location: Location,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService
     ) {
+    }
+
+    goBack(): void {
+        this.location.back();
     }
 
     ngOnDestroy(): void {
@@ -128,10 +134,10 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.canvasId = +this.route.snapshot.params['id'];
+        this.code = this.route.snapshot.params['code'];
         this.api.models().subscribe(res => this.modelGroups = res.data || []);
         this.api.styles().subscribe(res => this.styles = res.data || []);
-        this.api.info(this.canvasId).subscribe({
+        this.api.info(this.code).subscribe({
             next: res => {
                 this.loading = false;
                 this.applyInfo(res.data);
@@ -173,15 +179,21 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         return model ? model.label : version.targetModel;
     }
 
-    private rawPreviewUrl(): string {
-        const token = this.tokenService.get()?.token || '';
-        return `${RestPath.erupt}/ai-canvas/render/${this.canvasId}?_token=${encodeURIComponent(token)}&_=${Date.now()}`;
+    /** End-user access URL of this page, served by the frontend route */
+    private accessUrl(): string {
+        return `${location.origin}${location.pathname}${location.search}#/ai/canvas/${this.code}`;
     }
 
     refreshPreview(): void {
         this.exitPick();
         this.iframeLoading = true;
-        this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.rawPreviewUrl());
+        this.api.html(this.code).subscribe({
+            next: html => {
+                this.sourceRaw = html || '';
+                this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(this.sourceRaw);
+            },
+            error: () => this.iframeLoading = false
+        });
     }
 
     /** Pick-mode listeners live in the iframe document, gone after each reload */
@@ -285,31 +297,27 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     }
 
     openInNew(): void {
-        window.open(this.rawPreviewUrl());
+        window.open(this.accessUrl());
     }
 
     setDevice(device: 'desktop' | 'tablet' | 'mobile'): void {
         this.device = device;
     }
 
-    /** Copy the render path (without token) — mount it as a Link menu or share to logged-in users */
+    /** Copy the access URL — mount it as a menu or share to logged-in users */
     copyLink(): void {
-        const url = `${location.origin}${RestPath.erupt}/ai-canvas/render/${this.canvasId}`;
-        navigator.clipboard.writeText(url).then(() =>
+        navigator.clipboard.writeText(this.accessUrl()).then(() =>
             this.message.success(this.i18n.fanyi('ai.canvas.link_copied')));
     }
 
     /** Show the active version's page source in a modal, in the readonly code editor */
     viewSource(): void {
-        fetch(this.rawPreviewUrl()).then(r => r.text()).then(html => this.ngZone.run(() => {
-            this.sourceRaw = html;
-            this.modal.create({
-                nzTitle: this.i18n.fanyi('ai.canvas.source_title'),
-                nzContent: this.sourceTpl,
-                nzWidth: 900,
-                nzFooter: null
-            });
-        }));
+        this.modal.create({
+            nzTitle: this.i18n.fanyi('ai.canvas.source_title'),
+            nzContent: this.sourceTpl,
+            nzWidth: 900,
+            nzFooter: null
+        });
     }
 
     send(): void {
@@ -333,7 +341,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         this.picked = null;
         this.streamingText = '';
         const token = this.tokenService.get()?.token || '';
-        this.eventSource = new EventSource(this.api.generateSseUrl(this.canvasId, fullMsg, dataType, targetModel, this.style, token));
+        this.eventSource = new EventSource(this.api.generateSseUrl(this.code, fullMsg, dataType, targetModel, this.style, token));
         this.eventSource.onmessage = event => {
             const body: SseMessage = JSON.parse(event.data);
             if (body.event === SseMessageEvent.TOKEN && body.data) {
@@ -369,7 +377,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     /** Cancel the running generation: the explicit stop signal makes the backend
      *  discard the round — closing the connection alone would still persist it */
     stop(): void {
-        this.api.stop(this.canvasId).subscribe();
+        this.api.stop(this.code).subscribe();
         this.closeSse();
         this.restorePending();
     }
@@ -398,7 +406,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
 
     activate(version: CanvasVersion): void {
         if (version.id === this.activeVersion || this.generating) return;
-        this.api.active(this.canvasId, version.id).subscribe(() => {
+        this.api.active(this.code, version.id).subscribe(() => {
             this.activeVersion = version.id;
             this.refreshPreview();
         });

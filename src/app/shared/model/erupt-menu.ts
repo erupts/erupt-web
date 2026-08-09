@@ -23,4 +23,5 @@ export enum MenuTypeEnum {
     mtpl = "mtpl",
     cube = "cube",
     form = "form",
+    aiCanvas = "aiCanvas",
 }
