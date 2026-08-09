@@ -30,18 +30,31 @@
             --pl-accent: #1677ff;
         }
 
-        /* ---- default skin: soft blueprint card ---- */
+        /* soft breathing halo behind the grid */
+        .preloader::before {
+            content: '';
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+                color-mix(in srgb, var(--pl-accent) 10%, transparent) 0%,
+                transparent 65%);
+            animation: plHalo 3.2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes plHalo {
+            0%, 100% { transform: scale(1);    opacity: .7; }
+            50%      { transform: scale(1.18); opacity: 1; }
+        }
+
+        /* ---- default skin: comet-tail orbit rings ---- */
         .pl-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 18px;
-            padding: 28px 34px 24px;
-            background: #fff;
-            border: 1px solid rgba(15, 35, 95, 0.12);
-            border-radius: 12px;
-            box-shadow: 0 2px 10px -6px rgba(15, 43, 92, .18),
-                        0 24px 64px -36px rgba(15, 43, 92, .35);
+            gap: 30px;
             animation: plFadeUp .7s cubic-bezier(.22, 1, .36, 1) both;
         }
 
@@ -50,81 +63,91 @@
             to   { opacity: 1; transform: none; }
         }
 
-        .pl-eyebrow {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 260px;
-            font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: rgba(15, 35, 95, 0.40);
+        .pl-orbit {
+            position: relative;
+            width: 92px;
+            height: 92px;
         }
 
-        .pl-eyebrow-rule {
-            flex: 1;
-            height: 1px;
-            background: rgba(15, 35, 95, 0.60);
-            opacity: 0.35;
+        .pl-ring {
+            position: absolute;
+            border-radius: 50%;
+            background: conic-gradient(transparent var(--pl-tail), var(--pl-ring-color));
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+            animation: plSpin linear infinite;
+        }
+
+        /* rounded comet head at the leading edge (top of the ring) */
+        .pl-ring::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 3px;
+            height: 3px;
+            margin-left: -1.5px;
+            border-radius: 50%;
+            background: var(--pl-ring-color);
+        }
+
+        .pl-ring:nth-child(1) {
+            inset: 0;
+            --pl-tail: 18%;
+            --pl-ring-color: var(--pl-accent);
+            animation-duration: 1.5s;
+        }
+
+        .pl-ring:nth-child(2) {
+            inset: 14px;
+            --pl-tail: 30%;
+            --pl-ring-color: color-mix(in srgb, var(--pl-accent) 55%, transparent);
+            animation-duration: 2.2s;
+            animation-direction: reverse;
+        }
+
+        .pl-ring:nth-child(3) {
+            inset: 28px;
+            --pl-tail: 42%;
+            --pl-ring-color: color-mix(in srgb, var(--pl-accent) 32%, transparent);
+            animation-duration: 1.1s;
+        }
+
+        @keyframes plSpin {
+            to { transform: rotate(1turn); }
+        }
+
+        .pl-core {
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--pl-accent);
+            animation: plCore 1.6s ease-in-out infinite;
+        }
+
+        @keyframes plCore {
+            0%, 100% { transform: scale(1);  opacity: 1; }
+            50%      { transform: scale(.55); opacity: .5; }
         }
 
         .pl-brand {
-            color: rgba(0, 0, 0, 0.80);
-            font-size: 17px;
+            color: rgba(0, 0, 0, 0.72);
+            font-size: 16px;
             font-weight: 600;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.14em;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
             white-space: nowrap;
             line-height: 1;
+            padding-left: 0.14em;
+            animation: plBrandBreathe 2.4s ease-in-out infinite;
         }
 
-        .pl-track {
-            position: relative;
-            width: 260px;
-            height: 4px;
-            border-radius: 2px;
-            overflow: hidden;
-            background: rgba(15, 35, 95, 0.08);
-        }
-
-        .pl-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 50%;
-            height: 100%;
-            border-radius: 2px;
-            background: linear-gradient(90deg, transparent, var(--pl-accent) 40%, var(--pl-accent) 60%, transparent);
-            animation: plBarMarch 1.6s cubic-bezier(.4, 0, .2, 1) infinite;
-        }
-
-        @keyframes plBarMarch {
-            0%   { transform: translateX(-100%); }
-            100% { transform: translateX(200%); }
-        }
-
-        .pl-meta {
-            display: flex;
-            justify-content: space-between;
-            width: 260px;
-            color: rgba(15, 35, 95, 0.38);
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
-        }
-
-        .pl-meta .pl-blink {
-            color: var(--pl-accent);
-            animation: plBlink 1s steps(2) infinite;
-        }
-
-        @keyframes plBlink {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0; }
+        @keyframes plBrandBreathe {
+            0%, 100% { opacity: .55; }
+            50%      { opacity: .95; }
         }
 
         #preloader-tip {
@@ -151,56 +174,35 @@
             --pl-accent: #0a0a0a;
         }
 
+        html.brutalist-theme .preloader::before {
+            display: none;
+        }
+
         html.brutalist-theme .pl-content {
-            gap: 20px;
-            padding: 28px 32px;
-            background: #fff;
-            border: 1.5px solid #0a0a0a;
-            border-radius: 0;
-            box-shadow: 8px 8px 0 #0a0a0a;
             animation: none;
         }
 
-        html.brutalist-theme .pl-eyebrow {
-            font-size: 11px;
-            color: #0a0a0a;
+        html.brutalist-theme .pl-ring {
+            /* inline --pl-accent from site config must not tint the hard skin */
+            --pl-ring-color: #0a0a0a !important;
+            animation-timing-function: steps(12);
         }
 
-        html.brutalist-theme .pl-eyebrow-rule {
+        html.brutalist-theme .pl-core {
             background: #0a0a0a;
+            border-radius: 0;
+            animation-timing-function: steps(2, jump-none);
         }
 
         html.brutalist-theme .pl-brand {
             color: #0a0a0a;
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 700;
             letter-spacing: 0.28em;
             text-transform: uppercase;
             font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Courier New', monospace;
-            padding-right: 0.28em;
-        }
-
-        html.brutalist-theme .pl-track {
-            width: 260px;
-            height: 10px;
-            border: 1.5px solid #0a0a0a;
-            border-radius: 0;
-            background: #fff;
-        }
-
-        html.brutalist-theme .pl-bar {
-            width: 40%;
-            border-radius: 0;
-            background: var(--pl-accent);
-            animation-timing-function: steps(24);
-        }
-
-        html.brutalist-theme .pl-meta {
-            color: rgba(10, 10, 10, 0.65);
-        }
-
-        html.brutalist-theme .pl-meta .pl-blink {
-            color: #0a0a0a;
+            padding-left: 0.28em;
+            animation: none;
         }
 
         html.brutalist-theme #preloader-tip {
@@ -216,25 +218,20 @@
         .preloader-hidden             { display: none; }
 
         @media (prefers-reduced-motion: reduce) {
-            .pl-bar, .pl-blink, .pl-brand, .pl-content { animation: none; }
-            .pl-bar { transform: translateX(0); width: 60%; background: var(--pl-accent); }
+            .pl-ring, .pl-core, .pl-brand, .pl-content, .preloader::before { animation: none; }
         }
     </style>
 </head>
 <body>
 <div class="preloader">
     <div class="pl-content">
-        <div class="pl-eyebrow">
-            <span>[ 00 ]</span>
-            <span class="pl-eyebrow-rule"></span>
-            <span>BOOT</span>
+        <div class="pl-orbit">
+            <i class="pl-ring"></i>
+            <i class="pl-ring"></i>
+            <i class="pl-ring"></i>
+            <b class="pl-core"></b>
         </div>
         <div class="pl-brand" id="preload-brand">Loading</div>
-        <div class="pl-track"><div class="pl-bar"></div></div>
-        <div class="pl-meta">
-            <span>SYS / INIT</span>
-            <span class="pl-blink">_</span>
-        </div>
     </div>
     <div id="preloader-tip">Stuck? Press Ctrl + Shift + R to reload.</div>
 </div>
