@@ -11,6 +11,13 @@ import {NzCodeEditorModule} from 'ng-zorro-antd/code-editor';
 import {SseMessage, SseMessageEvent} from '../../model/chat.model';
 import {CanvasApiService, CanvasInfo, CanvasStyle, CanvasVersion, ModelGroup} from '../../service/canvas-api.service';
 
+/** Element picked from the preview iframe, referenced in the next generation round */
+interface PickedElement {
+    selector: string;
+    tag: string;
+    snippet: string;
+}
+
 /**
  * AI view designer: preview on the left, generation conversation on the right.
  * Each user message produces a new page version; versions are switchable.
@@ -28,6 +35,8 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     @ViewChild('streamRef') streamRef?: ElementRef<HTMLPreElement>;
 
     @ViewChild('sourceTpl') sourceTpl?: any;
+
+    @ViewChild('frameRef') frameRef?: ElementRef<HTMLIFrameElement>;
 
     canvasId!: number;
 
@@ -81,8 +90,19 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     /** Streaming code accumulated during generation, shown as live progress */
     streamingText = '';
 
+    /** True while element-pick mode is active on the preview iframe */
+    picking = false;
+
+    /** Element picked from the preview, shown as a reference chip above the input */
+    picked: PickedElement | null = null;
+
+    /** Removes pick-mode listeners and overlay from the iframe document */
+    private detachPicker: (() => void) | null = null;
+
     /** Message of the running round, restored to the input on failure/cancel */
     private pendingMessage = '';
+
+    private pendingPicked: PickedElement | null = null;
 
     get pendingRequirement(): string {
         return this.pendingMessage;
@@ -104,6 +124,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.eventSource?.close();
+        this.exitPick();
     }
 
     ngOnInit(): void {
@@ -158,8 +179,109 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     }
 
     refreshPreview(): void {
+        this.exitPick();
         this.iframeLoading = true;
         this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.rawPreviewUrl());
+    }
+
+    /** Pick-mode listeners live in the iframe document, gone after each reload */
+    onFrameLoad(): void {
+        this.iframeLoading = false;
+        this.exitPick();
+    }
+
+    // ---------- element pick mode ----------
+
+    togglePick(): void {
+        if (this.picking) {
+            this.exitPick();
+            return;
+        }
+        const doc = this.frameRef?.nativeElement?.contentDocument;
+        if (!doc?.body) return;
+        this.picking = true;
+        this.attachPicker(doc);
+    }
+
+    exitPick(): void {
+        this.detachPicker?.();
+        this.detachPicker = null;
+        this.picking = false;
+    }
+
+    private attachPicker(doc: Document): void {
+        const overlay = doc.createElement('div');
+        overlay.style.cssText = 'position:fixed;pointer-events:none;z-index:2147483647;display:none;'
+            + 'border:1.5px solid #1890ff;background:rgba(24,144,255,.12);box-sizing:border-box;';
+        const label = doc.createElement('span');
+        label.style.cssText = 'position:absolute;left:-1.5px;bottom:100%;padding:1px 6px;'
+            + 'background:#1890ff;color:#fff;font:11px/1.6 monospace;white-space:nowrap;';
+        overlay.appendChild(label);
+        doc.body.appendChild(overlay);
+
+        const cursorStyle = doc.createElement('style');
+        cursorStyle.textContent = '*{cursor:crosshair!important}';
+        doc.head.appendChild(cursorStyle);
+
+        const onOver = (ev: Event) => {
+            const el = ev.target as Element;
+            if (!el || el === overlay || el.tagName === 'HTML') return;
+            const rect = el.getBoundingClientRect();
+            overlay.style.display = 'block';
+            overlay.style.left = rect.left + 'px';
+            overlay.style.top = rect.top + 'px';
+            overlay.style.width = rect.width + 'px';
+            overlay.style.height = rect.height + 'px';
+            label.textContent = el.tagName.toLowerCase();
+        };
+        const onScroll = () => overlay.style.display = 'none';
+        const onClick = (ev: Event) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            const el = ev.target as Element;
+            if (!el || el === overlay || el.tagName === 'HTML') return;
+            const html = el.outerHTML || '';
+            // iframe listeners are outside the Angular zone (separate realm, unpatched by zone.js)
+            this.ngZone.run(() => {
+                this.picked = {
+                    selector: AiCanvasComponent.cssPath(el),
+                    tag: el.tagName.toLowerCase(),
+                    snippet: html.length > 600 ? html.slice(0, 600) + '…' : html
+                };
+                this.exitPick();
+            });
+        };
+        doc.addEventListener('mouseover', onOver, true);
+        doc.addEventListener('scroll', onScroll, true);
+        doc.addEventListener('click', onClick, true);
+        this.detachPicker = () => {
+            doc.removeEventListener('mouseover', onOver, true);
+            doc.removeEventListener('scroll', onScroll, true);
+            doc.removeEventListener('click', onClick, true);
+            overlay.remove();
+            cursorStyle.remove();
+        };
+    }
+
+    /** Shortest unique-enough CSS path: nearest #id anchor, then tag:nth-of-type segments */
+    private static cssPath(el: Element): string {
+        const parts: string[] = [];
+        let node: Element | null = el;
+        while (node && node.tagName !== 'HTML' && node.tagName !== 'BODY') {
+            if (node.id) {
+                parts.unshift('#' + node.id);
+                return parts.join(' > ');
+            }
+            let seg = node.tagName.toLowerCase();
+            const parent = node.parentElement;
+            if (parent) {
+                const sameTag = Array.from(parent.children).filter(c => c.tagName === node!.tagName);
+                if (sameTag.length > 1) seg += `:nth-of-type(${sameTag.indexOf(node) + 1})`;
+            }
+            parts.unshift(seg);
+            node = parent;
+        }
+        return parts.join(' > ');
     }
 
     openInNew(): void {
@@ -202,10 +324,16 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         const targetModel = this.modelKey.substring(sep + 1);
         this.generating = true;
         this.pendingMessage = msg;
+        this.pendingPicked = this.picked;
+        // Append the picked element as context so the model knows what "this" refers to
+        const fullMsg = this.picked
+            ? `${msg}\n\n[selected element] ${this.picked.selector}\n\`\`\`html\n${this.picked.snippet}\n\`\`\``
+            : msg;
         this.content = '';
+        this.picked = null;
         this.streamingText = '';
         const token = this.tokenService.get()?.token || '';
-        this.eventSource = new EventSource(this.api.generateSseUrl(this.canvasId, msg, dataType, targetModel, this.style, token));
+        this.eventSource = new EventSource(this.api.generateSseUrl(this.canvasId, fullMsg, dataType, targetModel, this.style, token));
         this.eventSource.onmessage = event => {
             const body: SseMessage = JSON.parse(event.data);
             if (body.event === SseMessageEvent.TOKEN && body.data) {
@@ -223,7 +351,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
                         this.refreshPreview();
                     } else {
                         this.message.error(payload.error || 'Generation failed');
-                        this.content = this.pendingMessage;
+                        this.restorePending();
                     }
                 });
             }
@@ -233,7 +361,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
                 if (!this.generating) return;
                 this.closeSse();
                 this.message.error(this.i18n.fanyi('ai.canvas.stream_broken'));
-                this.content = this.pendingMessage;
+                this.restorePending();
             });
         };
     }
@@ -243,7 +371,12 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     stop(): void {
         this.api.stop(this.canvasId).subscribe();
         this.closeSse();
+        this.restorePending();
+    }
+
+    private restorePending(): void {
         this.content = this.pendingMessage;
+        this.picked = this.pendingPicked;
     }
 
     private closeSse(): void {

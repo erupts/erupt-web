@@ -22,6 +22,11 @@
                 </button>
             </span>
             <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button nzType="text" nzSize="small" class="pick-btn" [class.active]="picking"
+                    (click)="togglePick()" [disabled]="!previewUrl"
+                    [title]="'ai.canvas.pick_element' | translate">
+                <span nz-icon nzType="aim" nzTheme="outline"></span>
+            </button>
             <button nz-button nzType="text" nzSize="small" (click)="refreshPreview()"
                     [disabled]="!previewUrl" [title]="'ai.canvas.refresh' | translate">
                 <span nz-icon nzType="reload" nzTheme="outline"></span>
@@ -48,7 +53,7 @@
                             <nz-spin nzSimple></nz-spin>
                         </div>
                     }
-                    <iframe class="preview-frame" [src]="previewUrl" (load)="iframeLoading = false"></iframe>
+                    <iframe #frameRef class="preview-frame" [src]="previewUrl" (load)="onFrameLoad()"></iframe>
                 </div>
             } @else {
                 <div class="preview-empty">
@@ -130,6 +135,15 @@
                         <span class="style-hint-name">{{ s.name }}</span>
                     </div>
                     <div class="style-hint-desc">{{ s.description }}</div>
+                </div>
+            }
+            @if (picked; as p) {
+                <div class="picked-chip">
+                    <span nz-icon nzType="aim" nzTheme="outline"></span>
+                    <span class="picked-tag">&lt;{{ p.tag }}&gt;</span>
+                    <code class="picked-selector" [title]="p.selector">{{ p.selector }}</code>
+                    <span nz-icon nzType="close" nzTheme="outline" class="picked-close"
+                          (click)="picked = null"></span>
                 </div>
             }
             <textarea [(ngModel)]="content" (keydown)="onInputKeydown($event)"

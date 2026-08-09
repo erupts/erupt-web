@@ -51,6 +51,11 @@
     }
 }
 
+.pick-btn.active {
+    color: var(--ant-primary-color, #1890ff);
+    background: var(--ant-primary-1, #e6f7ff);
+}
+
 /* Canvas backdrop: dotted grid, the page floats on it like a design artboard */
 .preview-body {
     flex: 1;
@@ -305,6 +310,44 @@
             margin-top: 3px;
             line-height: 1.6;
             word-break: break-word;
+        }
+    }
+
+    /* Picked element reference: selector chip above the input, cleared with the close icon */
+    .picked-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: var(--ant-primary-1, #e6f7ff);
+        border: 1px solid var(--ant-primary-3, #91d5ff);
+        color: var(--ant-primary-color, #1890ff);
+        font-size: 12px;
+
+        .picked-tag {
+            font-family: monospace;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .picked-selector {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #667;
+        }
+
+        .picked-close {
+            cursor: pointer;
+            color: #999;
+
+            &:hover {
+                color: #666;
+            }
         }
     }
 
