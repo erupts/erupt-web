@@ -19,6 +19,7 @@ export interface CanvasInfo {
     dataType: string | null;
     targetModel: string | null;
     style: string | null;
+    llmId: number | null;
     activeVersion: number | null;
     versions: CanvasVersion[];
 }
@@ -26,6 +27,12 @@ export interface CanvasInfo {
 export interface ModelGroup {
     type: string;
     models: { value: string; label: string }[];
+}
+
+export interface Llm {
+    id: number;
+    name: string;
+    defaultLLM: boolean;
 }
 
 export interface CanvasStyle {
@@ -61,14 +68,24 @@ export class CanvasApiService {
         return this._http.get<R<CanvasStyle[]>>(`${this.base}/styles`);
     }
 
-    generate(code: string, message: string, dataType: string, targetModel: string, style: string | null): Observable<R<CanvasVersion>> {
-        return this._http.post<R<CanvasVersion>>(`${this.base}/generate/${code}`, {message, dataType, targetModel, style});
+    llms(): Observable<R<Llm[]>> {
+        return this._http.get<R<Llm[]>>(`${this.base}/llms`);
+    }
+
+    generate(code: string, message: string, dataType: string, targetModel: string, style: string | null, llmId: number | null,
+             element: string | null): Observable<R<CanvasVersion>> {
+        return this._http.post<R<CanvasVersion>>(`${this.base}/generate/${code}`, {message, dataType, targetModel, style, llmId, element});
     }
 
     /** SSE URL of the streaming generate endpoint (EventSource is GET-only, token travels as _token) */
-    generateSseUrl(code: string, message: string, dataType: string, targetModel: string, style: string | null, token: string): string {
+    generateSseUrl(code: string, message: string, dataType: string, targetModel: string, style: string | null, llmId: number | null, token: string,
+                   element: string | null): string {
         const params = new URLSearchParams({message, dataType, targetModel, _token: token});
         if (style) params.set('style', style);
+        if (llmId != null) params.set('llmId', String(llmId));
+        // Only the picked element's selector travels here — the backend already holds the
+        // full page source, so it resolves the element there without shipping its markup
+        if (element) params.set('element', element);
         return `${this.base}/generate-sse/${code}?${params.toString()}`;
     }
 

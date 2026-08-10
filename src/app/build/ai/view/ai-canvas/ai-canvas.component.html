@@ -187,6 +187,15 @@
                         </nz-option>
                     }
                 </nz-select>
+                <nz-select class="toolbar-select" nzSize="small" nzBorderless [(ngModel)]="llmId"
+                           nzAllowClear nzShowSearch
+                           [nzDropdownMatchSelectWidth]="false" [nzDropdownStyle]="{'min-width': '220px'}"
+                           [nzPlaceHolder]="'ai.canvas.chat_model' | translate" [nzDisabled]="generating">
+                    @for (l of llms; track l.id) {
+                        <nz-option [nzValue]="l.id"
+                                   [nzLabel]="l.defaultLLM ? l.name + ' ★' : l.name"></nz-option>
+                    }
+                </nz-select>
                 <span class="toolbar-space"></span>
                 @if (generating) {
                     <button nz-button nzDanger nzShape="circle" nzSize="small"

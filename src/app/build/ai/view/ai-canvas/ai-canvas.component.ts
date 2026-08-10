@@ -9,13 +9,19 @@ import {SharedModule} from '@shared/shared.module';
 import {I18NService} from '@core';
 import {NzCodeEditorModule} from 'ng-zorro-antd/code-editor';
 import {SseMessage, SseMessageEvent} from '../../model/chat.model';
-import {CanvasApiService, CanvasInfo, CanvasStyle, CanvasVersion, ModelGroup} from '../../service/canvas-api.service';
+import {
+    CanvasApiService,
+    CanvasInfo,
+    CanvasStyle,
+    CanvasVersion,
+    Llm,
+    ModelGroup
+} from '../../service/canvas-api.service';
 
 /** Element picked from the preview iframe, referenced in the next generation round */
 interface PickedElement {
     selector: string;
     tag: string;
-    snippet: string;
 }
 
 /**
@@ -72,9 +78,14 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
 
     style: string | null = null;
 
+    /** Chat model for the next generation; null uses the default chat model */
+    llmId: number | null = null;
+
     modelGroups: ModelGroup[] = [];
 
     styles: CanvasStyle[] = [];
+
+    llms: Llm[] = [];
 
     versions: CanvasVersion[] = [];
 
@@ -137,6 +148,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         this.code = this.route.snapshot.params['code'];
         this.api.models().subscribe(res => this.modelGroups = res.data || []);
         this.api.styles().subscribe(res => this.styles = res.data || []);
+        this.api.llms().subscribe(res => this.llms = res.data || []);
         this.api.info(this.code).subscribe({
             next: res => {
                 this.loading = false;
@@ -149,6 +161,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     private applyInfo(info: CanvasInfo): void {
         this.name = info.name;
         this.style = info.style;
+        this.llmId = info.llmId;
         this.versions = info.versions || [];
         this.activeVersion = info.activeVersion;
         if (info.dataType && info.targetModel) {
@@ -252,13 +265,11 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
             ev.stopPropagation();
             const el = ev.target as Element;
             if (!el || el === overlay || el.tagName === 'HTML') return;
-            const html = el.outerHTML || '';
             // iframe listeners are outside the Angular zone (separate realm, unpatched by zone.js)
             this.ngZone.run(() => {
                 this.picked = {
                     selector: AiCanvasComponent.cssPath(el),
-                    tag: el.tagName.toLowerCase(),
-                    snippet: html.length > 600 ? html.slice(0, 600) + '…' : html
+                    tag: el.tagName.toLowerCase()
                 };
                 this.exitPick();
             });
@@ -333,15 +344,16 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         this.generating = true;
         this.pendingMessage = msg;
         this.pendingPicked = this.picked;
-        // Append the picked element as context so the model knows what "this" refers to
-        const fullMsg = this.picked
-            ? `${msg}\n\n[selected element] ${this.picked.selector}\n\`\`\`html\n${this.picked.snippet}\n\`\`\``
-            : msg;
+        // The picked element travels as its own params, not spliced into the message,
+        // so the backend frames it as a targeted-edit instruction the model won't ignore
+        const picked = this.picked;
         this.content = '';
         this.picked = null;
         this.streamingText = '';
         const token = this.tokenService.get()?.token || '';
-        this.eventSource = new EventSource(this.api.generateSseUrl(this.code, fullMsg, dataType, targetModel, this.style, token));
+        this.eventSource = new EventSource(this.api.generateSseUrl(
+            this.code, msg, dataType, targetModel, this.style, this.llmId, token,
+            picked?.selector ?? null));
         this.eventSource.onmessage = event => {
             const body: SseMessage = JSON.parse(event.data);
             if (body.event === SseMessageEvent.TOKEN && body.data) {
