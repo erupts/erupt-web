@@ -753,7 +753,8 @@ export class TableComponent implements OnInit, OnDestroy {
                 nzDraggable: true,
                 nzWrapClassName: "modal-xxl",
                 nzStyle: {top: "30px"},
-                nzBodyStyle: {padding: "0"},
+                // definite body height so the inner height:100% chain (table/AI panel) can fill the modal
+                nzBodyStyle: {padding: "0", height: "calc(100vh - 115px)", overflow: "hidden"},
                 nzMaskClosable: false,
                 nzKeyboard: false,
                 nzTitle: drill.title,
