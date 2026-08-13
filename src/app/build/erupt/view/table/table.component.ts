@@ -323,7 +323,9 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     get isAiEnabled(): boolean {
-        return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
+        return EruptAppData.get().properties["erupt-ai"]
+            && null != this.menuSrv.getItem("ai-chat")
+            && this.eruptBuildModel.eruptModel.eruptJson.power.ai !== false;
     }
 
     private aiDrawerRef: NzDrawerRef | null = null;
