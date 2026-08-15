@@ -109,6 +109,12 @@
       </div>
     </li>
 
+    <li class="hidden-mobile" (click)="toggleBrutalistTheme()">
+      <div class="alain-default__nav-item" title="Brutalist Theme">
+        <i nz-icon nzType="bulb" [nzTheme]="brutalistTheme ? 'fill' : 'outline'"></i>
+      </div>
+    </li>
+
     <li [hidden]="!showI18n">
       <div class="alain-default__nav-item">
         <i18n-choice></i18n-choice>
