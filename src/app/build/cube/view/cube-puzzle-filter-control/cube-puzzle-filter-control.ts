@@ -180,7 +180,7 @@ export class CubePuzzleFilterControl implements OnInit {
                     }
                 }
                 if (this.cubeMeta.parameters.filter(it => it.code == this.filter.field).length > 0) {
-                    this.cubeApiService.parameterItems(this.cubeMeta.code, this.filter.field).subscribe({
+                    this.cubeApiService.parameterItems(this.cubeMeta.code, this.filter.field, this.dashboard.source).subscribe({
                         next: res => {
                             this.data = res.data;
                         },
@@ -193,7 +193,7 @@ export class CubePuzzleFilterControl implements OnInit {
                         dimensions: [this.filter.field],
                         filters: queryFilters,
                         limit: 500,
-                    }).subscribe({
+                    }, this.dashboard.source).subscribe({
                         next: res => {
                             this.data = res.data.map(datum => this.toVL(datum[this.filter.field]));
                         },
