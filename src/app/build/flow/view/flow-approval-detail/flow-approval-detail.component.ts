@@ -27,6 +27,7 @@ import {forkJoin} from "rxjs";
 import {getAvatarColor} from "@flow/util/flow.util";
 import {ActivatedRoute} from "@angular/router";
 import {FormAccessEnum, PrintSetting} from "@flow/model/flow.model";
+import {Scene} from "../../../erupt/model/erupt.enum";
 import {FlowPrintPreviewComponent} from "./print-preview/print-preview.component";
 import {I18NService} from "@core";
 import {UpmsDataService} from "@flow/service/upms-data.service";
@@ -713,5 +714,7 @@ export class FlowApprovalDetailComponent implements OnInit {
     protected readonly InstanceStatus = InstanceStatus;
 
     protected readonly TaskType = TaskType;
+
+    protected readonly Scene = Scene;
 
 }

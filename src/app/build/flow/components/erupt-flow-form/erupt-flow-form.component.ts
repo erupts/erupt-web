@@ -3,7 +3,7 @@ import {EruptBuildModel} from "../../../erupt/model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../../erupt/service/data-handler.service";
 import {FlowApiService} from "@flow/service/flow-api.service";
-import {FormSize} from "../../../erupt/model/erupt.enum";
+import {FormSize, Scene} from "../../../erupt/model/erupt.enum";
 import {FormAccessEnum} from "@flow/model/flow.model";
 
 @Component({
@@ -31,6 +31,10 @@ export class EruptFlowFormComponent implements OnInit {
     @Input() defaultFormAccess: FormAccessEnum = FormAccessEnum.DEFAULT
 
     @Input() size: "large" | "small" | "default" = "default";
+
+    // Launching a flow instance is semantically an ADD; approval views pass Scene.EDIT
+    // so @Readonly(add/edit) resolves against the correct scene.
+    @Input() mode: Scene = Scene.ADD;
 
     constructor(private dataService: DataService,
                 private flowApiService: FlowApiService,
