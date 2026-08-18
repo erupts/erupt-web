@@ -204,6 +204,7 @@ export interface Power {
     importable: boolean;
     export: boolean;
     copy: boolean;
+    ai: boolean;
 }
 
 export interface Row {

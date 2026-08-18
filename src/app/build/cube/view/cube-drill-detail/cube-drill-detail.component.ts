@@ -20,6 +20,7 @@ export class CubeDrillDetailComponent implements OnInit {
     @Input() filters?: CubeFilter[]; // filters
     @Input() cube?: string;          // overrides dashboard.cuber (used with sub-models)
     @Input() explore?: string;       // overrides dashboard.explore (used with sub-models)
+    @Input() source?: string;        // overrides dashboard.source (used with sub-models)
 
     @ViewChild('st', {static: false}) st: STComponent;
 
@@ -60,7 +61,7 @@ export class CubeDrillDetailComponent implements OnInit {
             parameter: {},
             limit: 1000,
             drillMeasure: this.measure
-        }).pipe(
+        }, this.source || this.dashboard.source).pipe(
             finalize(() => { this.loading = false; })
         ).subscribe({
             next: (response) => {

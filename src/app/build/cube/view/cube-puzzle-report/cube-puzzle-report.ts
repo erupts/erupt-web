@@ -1,24 +1,5 @@
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    HostListener,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    ViewChild
-} from '@angular/core';
-import {
-    CubeKey,
-    Dashboard,
-    DashboardDSL,
-    DashboardTheme,
-    FilterDSL,
-    ReportDSL,
-    ReportType,
-    SubModelDSL
-} from "../../model/dashboard.model";
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType, SubModelDSL} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
 import {CubeFilter, CubeOperator, DimensionFormat} from "../../model/cube-query.model";
@@ -122,12 +103,12 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     }
 
     private getCachedSubMeta(subModelDSL: SubModelDSL): CubeMeta | null {
-        return this.subMetaCache[`${subModelDSL.cube}/${subModelDSL.explore}`] || null;
+        return this.subMetaCache[`${subModelDSL.source || 'local'}/${subModelDSL.cube}/${subModelDSL.explore}`] || null;
     }
 
     private loadAndCacheSubMeta(subModelDSL: SubModelDSL, callback: (meta: CubeMeta) => void) {
-        const key = `${subModelDSL.cube}/${subModelDSL.explore}`;
-        this.cubeApiService.cubeMetadata(subModelDSL.cube, subModelDSL.explore).subscribe(res => {
+        const key = `${subModelDSL.source || 'local'}/${subModelDSL.cube}/${subModelDSL.explore}`;
+        this.cubeApiService.cubeMetadata(subModelDSL.cube, subModelDSL.explore, subModelDSL.source).subscribe(res => {
             const meta = res.data;
             const fieldTitleMap = new Map<string, string>();
             const fieldMap = new Map<string, BaseField>();
@@ -375,6 +356,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         const activeMeta = subModelDSL ? this.getCachedSubMeta(subModelDSL) : this.cubeMeta;
         const queryCube = subModelDSL ? subModelDSL.cube : this.dashboard.cuber;
         const queryExplore = subModelDSL ? subModelDSL.explore : this.dashboard.explore;
+        const querySource = subModelDSL ? subModelDSL.source : this.dashboard.source;
 
         let parameters: Record<string, any> = {};
         let cf: CubeFilter[] = [];
@@ -465,8 +447,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 const compareLabel = compare.compareLabel || (compare.type === 'YOY' ? 'Same period last year' : 'Same period last month');
                 this._compareSeriesOverride = '_period';
                 forkJoin([
-                    this.cubeApiService.query(baseQuery),
-                    this.cubeApiService.query({...baseQuery, filters: prevFilters})
+                    this.cubeApiService.query(baseQuery, querySource),
+                    this.cubeApiService.query({...baseQuery, filters: prevFilters}, querySource)
                 ]).pipe(finalize(() => { this.querying = false; })).subscribe({
                     next: ([curr, prev]) => {
                         this.chartData = [
@@ -492,8 +474,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 const prevEnd = this.shiftDateByMonths(dateFilter.value[1], shift);
                 const prevFilters = cf.map(f => f === dateFilter ? {...f, value: [prevStart, prevEnd]} : f);
                 forkJoin([
-                    this.cubeApiService.query(baseQuery),
-                    this.cubeApiService.query({...baseQuery, filters: prevFilters})
+                    this.cubeApiService.query(baseQuery, querySource),
+                    this.cubeApiService.query({...baseQuery, filters: prevFilters}, querySource)
                 ]).pipe(finalize(() => { this.querying = false; })).subscribe({
                     next: ([curr, prev]) => {
                         this.chartData = curr.data;
@@ -508,7 +490,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
         this.kpiCompareValue = null;
 
-        this.cubeApiService.query(baseQuery).subscribe({
+        this.cubeApiService.query(baseQuery, querySource).subscribe({
             next: (response) => {
                 this.chartData = response.data;
                 if (this.report.type == ReportType.TABLE) {
@@ -1115,6 +1097,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 filters: drillFilters,
                 cube: subModelDSL?.cube,
                 explore: subModelDSL?.explore,
+                source: subModelDSL?.source,
             },
             nzWidth: '75%',
             nzClosable: true,

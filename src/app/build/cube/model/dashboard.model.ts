@@ -17,6 +17,7 @@ export interface Dashboard {
     name: string;
     description?: string;
 
+    source?: string;  // cube source: null/"local" = this application, otherwise an erupt-cloud node name
     cuber: string;
     explore: string;
 
@@ -52,6 +53,7 @@ export interface DashboardDSL {
 export interface SubModelDSL {
     id: string;
     alias: string;
+    source?: string;  // cube source: null/"local" = this application, otherwise an erupt-cloud node name
     cube: string;
     explore: string;
     fieldMappings?: FieldMapping[];
