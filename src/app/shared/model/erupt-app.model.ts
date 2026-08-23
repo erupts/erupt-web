@@ -9,6 +9,7 @@ export interface EruptAppModel {
     waterMarkDate: boolean;  // whether the watermark displays the date
     waterMarkContent: string;  // custom watermark content
     resetPwd: boolean;
+    resetPwdPrompt: boolean;  // whether to prompt users who haven't changed the default password
     properties: object;
 }
 
