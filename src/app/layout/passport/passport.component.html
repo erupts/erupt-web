@@ -10,15 +10,20 @@
         }
         @if (!logoPath) {
           <svg class="lp-side-brand-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="15" height="15" rx="3" fill="currentColor"/>
-            <rect x="21" width="15" height="15" rx="3" fill="currentColor" opacity="0.45"/>
-            <rect y="21" width="15" height="15" rx="3" fill="currentColor" opacity="0.45"/>
-            <rect x="21" y="21" width="15" height="15" rx="3" fill="currentColor" opacity="0.15"/>
+            <rect width="15" height="15" fill="currentColor"/>
+            <rect x="21" width="15" height="15" fill="currentColor" opacity="0.45"/>
+            <rect y="21" width="15" height="15" fill="currentColor" opacity="0.45"/>
+            <rect x="21" y="21" width="15" height="15" fill="currentColor" opacity="0.15"/>
           </svg>
         }
         <span class="lp-side-brand-name">{{title}}</span>
       </div>
       <div class="lp-side-nav-actions">
+        <a class="lp-nav-btn" (click)="toggleBrutalistTheme()" style="cursor:pointer"
+           nz-tooltip nzTooltipTitle="Brutalist Theme" nzTooltipPlacement="bottom">
+          <i nz-icon nzType="bulb" [nzTheme]="brutalistTheme ? 'fill' : 'outline'"></i>
+        </a>
+        <div class="lp-nav-divider"></div>
         @if (copyright) {
           <a class="lp-nav-btn" href="https://github.com/erupts/erupt" target="_blank"
              nz-tooltip nzTooltipTitle="GitHub" nzTooltipPlacement="bottom">

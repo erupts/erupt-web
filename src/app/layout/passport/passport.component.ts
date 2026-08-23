@@ -26,6 +26,16 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     tenantDomainInfo = EruptTenantInfoData.get();
 
+    // Brutalist Theme skin — reflects the class index.html applied before bootstrap.
+    brutalistTheme: boolean = document.documentElement.classList.contains("brutalist-theme");
+
+    toggleBrutalistTheme(): void {
+        this.brutalistTheme = !this.brutalistTheme;
+        document.documentElement.classList.toggle("brutalist-theme", this.brutalistTheme);
+        // Persist so the choice survives reload (honored by index.html on next load).
+        localStorage.setItem("brutalist-theme", String(this.brutalistTheme));
+    }
+
     constructor(private modalSrv: NzModalService) {
         if (WindowModel.copyrightTxt) {
             if (typeof (WindowModel.copyrightTxt) === 'function') {

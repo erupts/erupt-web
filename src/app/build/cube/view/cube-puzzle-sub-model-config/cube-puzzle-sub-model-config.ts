@@ -17,8 +17,9 @@ export class CubePuzzleSubModelConfig implements OnInit {
     @Input() dsl: DashboardDSL;
 
     subModels: SubModelDSL[] = [];
-    cubesList: VL[] = [];
-    exploresMap: { [cube: string]: VL[] } = {};
+    sourcesList: VL[] = [];
+    cubesMap: { [source: string]: VL[] } = {};
+    exploresMap: { [sourceCube: string]: VL[] } = {};
     subMetaMap: { [key: string]: CubeMeta } = {};
 
     searchKeyword = '';
@@ -30,8 +31,8 @@ export class CubePuzzleSubModelConfig implements OnInit {
             .filter(({item}) =>
                 !kw ||
                 item.alias?.toLowerCase().includes(kw) ||
-                this.getCubeLabel(item.cube)?.toLowerCase().includes(kw) ||
-                this.getExploreLabel(item.cube, item.explore)?.toLowerCase().includes(kw)
+                this.getCubeLabel(item.cube, item.source)?.toLowerCase().includes(kw) ||
+                this.getExploreLabel(item.cube, item.explore, item.source)?.toLowerCase().includes(kw)
             );
     }
 
@@ -48,19 +49,46 @@ export class CubePuzzleSubModelConfig implements OnInit {
     ngOnInit() {
         if (!this.dsl.subModels) this.dsl.subModels = [];
         this.subModels = this.dsl.subModels;
-        this.cubeApiService.cubes().subscribe(res => {
-            this.cubesList = res.data || [];
+        this.cubeApiService.sources().subscribe(res => {
+            this.sourcesList = res.data || [];
         });
+        // preload cube lists for every source referenced, so table labels resolve
+        const sources = new Set<string>(this.subModels.map(it => this.src(it.source)));
+        sources.add('local');
+        sources.forEach(source => this.loadCubes(source));
+    }
+
+    src(source?: string): string {
+        return source || 'local';
+    }
+
+    private loadCubes(source: string) {
+        if (this.cubesMap[source]) return;
+        this.cubeApiService.cubes(source).subscribe(res => {
+            this.cubesMap[source] = res.data || [];
+        });
+    }
+
+    onSourceChange() {
+        this.editForm.cube = null;
+        this.editForm.explore = null;
+        this.editSubMeta = null;
+        this.loadCubes(this.src(this.editForm.source));
     }
 
     onCubeChange(cube: string) {
         this.editForm.explore = null;
         this.editSubMeta = null;
         if (!cube) return;
-        if (this.exploresMap[cube]) return;
+        this.loadExplores(cube, this.editForm.source);
+    }
+
+    private loadExplores(cube: string, source?: string) {
+        const key = `${this.src(source)}/${cube}`;
+        if (this.exploresMap[key]) return;
         this.loadingExplores = true;
-        this.cubeApiService.explores(cube).subscribe(res => {
-            this.exploresMap[cube] = res.data || [];
+        this.cubeApiService.explores(cube, source).subscribe(res => {
+            this.exploresMap[key] = res.data || [];
             this.loadingExplores = false;
         });
     }
@@ -73,13 +101,13 @@ export class CubePuzzleSubModelConfig implements OnInit {
 
     loadSubMeta() {
         if (!this.editForm?.cube || !this.editForm?.explore) return;
-        const key = `${this.editForm.cube}/${this.editForm.explore}`;
+        const key = `${this.src(this.editForm.source)}/${this.editForm.cube}/${this.editForm.explore}`;
         if (this.subMetaMap[key]) {
             this.editSubMeta = this.subMetaMap[key];
             return;
         }
         this.loadingMeta = true;
-        this.cubeApiService.cubeMetadata(this.editForm.cube, this.editForm.explore).subscribe(res => {
+        this.cubeApiService.cubeMetadata(this.editForm.cube, this.editForm.explore, this.editForm.source).subscribe(res => {
             const meta = res.data;
             const fieldTitleMap = new Map<string, string>();
             const fieldMap = new Map<string, BaseField>();
@@ -115,22 +143,18 @@ export class CubePuzzleSubModelConfig implements OnInit {
 
     addNew() {
         this.editingIndex = this.NEW_IDX;
-        this.editForm = {id: this.generateId(), alias: '', cube: '', explore: '', fieldMappings: []};
+        this.editForm = {id: this.generateId(), alias: '', source: 'local', cube: '', explore: '', fieldMappings: []};
         this.editSubMeta = null;
     }
 
     startEdit(index: number) {
         this.editingIndex = index;
         this.editForm = cloneDeep(this.subModels[index]);
+        this.editForm.source = this.src(this.editForm.source);
         this.editSubMeta = null;
+        this.loadCubes(this.src(this.editForm.source));
         if (this.editForm.cube) {
-            if (!this.exploresMap[this.editForm.cube]) {
-                this.loadingExplores = true;
-                this.cubeApiService.explores(this.editForm.cube).subscribe(res => {
-                    this.exploresMap[this.editForm.cube] = res.data || [];
-                    this.loadingExplores = false;
-                });
-            }
+            this.loadExplores(this.editForm.cube, this.editForm.source);
             if (this.editForm.explore) {
                 this.loadSubMeta();
             }
@@ -205,12 +229,17 @@ export class CubePuzzleSubModelConfig implements OnInit {
         ].filter(f => !f.hidden);
     }
 
-    getCubeLabel(cube: string): string {
-        return this.cubesList.find(c => c.value === cube)?.label || cube;
+    getCubeLabel(cube: string, source?: string): string {
+        return (this.cubesMap[this.src(source)] || []).find(c => c.value === cube)?.label || cube;
     }
 
-    getExploreLabel(cube: string, explore: string): string {
-        return (this.exploresMap[cube] || []).find(e => e.value === explore)?.label || explore;
+    getExploreLabel(cube: string, explore: string, source?: string): string {
+        return (this.exploresMap[`${this.src(source)}/${cube}`] || []).find(e => e.value === explore)?.label || explore;
+    }
+
+    getSourceLabel(source?: string): string {
+        const s = this.src(source);
+        return this.sourcesList.find(it => it.value === s)?.label || s;
     }
 
     getFieldLabel(meta: CubeMeta, code: string): string {

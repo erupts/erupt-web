@@ -23,6 +23,8 @@ export interface ChatMessage {
     /** Message action state */
     copied?: boolean;
     speaking?: boolean;
+    /** True when the user stopped the generation before it finished */
+    interrupted?: boolean;
 }
 
 export interface UserInfo {

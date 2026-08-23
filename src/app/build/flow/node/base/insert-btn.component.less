@@ -33,3 +33,37 @@
         }
     }
 }
+
+// Brutalist skin for the "select flow node" popover and its option tiles.
+// The popover is rendered into a body-level overlay, so we globalize via
+// ::ng-deep and gate on the html.brutalist-theme ancestor class.
+::ng-deep .brutalist-theme {
+    .insert-btn-popover {
+        .ant-popover-inner {
+            border-radius: 0 !important;
+            border: 1.5px solid #0a0a0a;
+            box-shadow: 4px 4px 0 #0a0a0a;
+        }
+
+        .ant-popover-title {
+            border-bottom: 1.5px solid #0a0a0a;
+            font-weight: 700;
+        }
+
+        .ant-popover-arrow {
+            display: none;
+        }
+
+        .node-options > div {
+            border-radius: 0 !important;
+            border: 1.5px solid #0a0a0a;
+            background: #fff !important;
+            transition: transform .12s ease, box-shadow .12s ease;
+
+            &:hover {
+                box-shadow: 3px 3px 0 #0a0a0a;
+                transform: translate(-1px, -1px);
+            }
+        }
+    }
+}

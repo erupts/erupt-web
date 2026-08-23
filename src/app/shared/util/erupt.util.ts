@@ -35,6 +35,8 @@ function joinPath(type: string, value: string): string {
             return "/mtpl/" + menuValue;
         case MenuTypeEnum.router:
             return menuValue;
+        case MenuTypeEnum.aiCanvas:
+            return "/ai/canvas/" + menuValue;
         case MenuTypeEnum.newWindow:
             return "/" + menuValue;
         case MenuTypeEnum.selfWindow:

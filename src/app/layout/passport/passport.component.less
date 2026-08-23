@@ -6,30 +6,34 @@
 
     ::ng-deep {
 
-        // ── 整体布局 ──────────────────────────────────────────────────
+        // ── Page ─────────────────────────────────────────────────────
         .lp-page {
             display: flex;
             min-height: 100vh;
             min-height: 100dvh;
+            background-color: #fff;
+            background-image: url('/assets/passport/passport-bg.svg');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
         }
 
-        // ── 主区域 ────────────────────────────────────────────────────
         .lp-side {
             flex: 1;
             min-width: 0;
             display: flex;
             flex-direction: column;
-            background-color: #fff;
         }
 
-        // ── 顶部导航 ──────────────────────────────────────────────────
+        // ── Top nav ──────────────────────────────────────────────────
         .lp-side-nav {
-            height: 44px;
+            height: 56px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 1px 0 0 #e5e5e5;
+            padding: 0 28px;
+            background: #fbfcfd;
+            border-bottom: 1px solid var(--ant-border-color-split);
         }
 
         .lp-side-brand {
@@ -114,7 +118,7 @@
             }
         }
 
-        // ── 表单内容区 ────────────────────────────────────────────────
+        // ── Form container ───────────────────────────────────────────
         .lp-side-content {
             flex: 1;
             display: flex;
@@ -123,7 +127,7 @@
             padding: 40px 20px 56px;
         }
 
-        // ── 登录卡片 ──────────────────────────────────────────────────
+        // ── Login card ───────────────────────────────────────────────
         .lp-card {
             width: 100%;
             max-width: 380px;
@@ -147,7 +151,7 @@
             }
         }
 
-        // ── 版权 ──────────────────────────────────────────────────────
+        // ── Copyright ────────────────────────────────────────────────
         .lp-copyright {
             padding-bottom: 20px;
             font-size: 12px;
@@ -164,5 +168,113 @@
             }
         }
 
+    }
+}
+
+// ── Brutalist skin ────────────────────────────────────────────────
+// Only active when <html> has the .brutalist-theme class.
+:host-context(.brutalist-theme) ::ng-deep {
+
+    .lp-page {
+        background-color: #e3ebee;
+    }
+
+    .lp-side-nav {
+        height: 44px;
+        background: #fff;
+        border-bottom: 1.5px solid #0a0a0a;
+    }
+
+    .lp-side-brand {
+        gap: 12px;
+    }
+
+    .lp-side-brand-icon {
+        width: 22px;
+        height: 22px;
+        color: #0a0a0a;
+    }
+
+    .lp-side-brand-img {
+        height: 22px;
+    }
+
+    .lp-side-brand-name {
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #0a0a0a;
+    }
+
+    .lp-nav-btn {
+        border-radius: 0;
+        color: #0a0a0a;
+        transition: background 0.15s;
+
+        &:hover {
+            color: #0a0a0a;
+            background: rgba(10, 10, 10, 0.08);
+        }
+    }
+
+    .lp-nav-divider {
+        background: rgba(10, 10, 10, 0.20);
+    }
+
+    .lp-nav-lang i[nz-icon] {
+        color: #0a0a0a;
+        border-radius: 0;
+        transition: background 0.15s;
+
+        &:hover {
+            color: #0a0a0a;
+            background: rgba(10, 10, 10, 0.08);
+        }
+    }
+
+    .lp-side-content {
+        padding: 48px 20px 60px;
+    }
+
+    .lp-card {
+        max-width: 400px;
+        border: 1.5px solid #0a0a0a;
+        border-radius: 0;
+        box-shadow: 8px 8px 0 #0a0a0a;
+        animation: lpCardInBrutalist 0.40s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes lpCardInBrutalist {
+        from {
+            opacity: 0;
+            transform: translate(6px, 6px);
+            box-shadow: 0 0 0 #0a0a0a;
+        }
+        to {
+            opacity: 1;
+            transform: translate(0, 0);
+            box-shadow: 8px 8px 0 #0a0a0a;
+        }
+    }
+
+    .lp-copyright {
+        padding-bottom: 24px;
+        font-family: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, Consolas, monospace;
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        color: rgba(10, 10, 10, 0.55);
+        text-transform: uppercase;
+
+        a {
+            color: #0a0a0a;
+            border-bottom: 1px solid rgba(10, 10, 10, 0.35);
+            padding-bottom: 1px;
+
+            &:hover {
+                color: #0a0a0a;
+                border-bottom-color: #0a0a0a;
+            }
+        }
     }
 }

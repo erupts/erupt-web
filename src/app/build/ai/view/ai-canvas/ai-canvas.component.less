@@ -1,0 +1,395 @@
+/* AI View Designer: preview left, generation conversation right */
+@radius: 8px;
+
+:host {
+    height: 100%;
+    display: block;
+}
+
+.designer-layout {
+    height: 100%;
+    display: flex;
+    background: #f5f5f5;
+}
+
+/* ========== Left: preview ========== */
+.preview-pane {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+.preview-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--ant-border-color-split);
+
+    .view-name {
+        font-weight: 600;
+    }
+
+    .version-tag {
+        margin: 0;
+    }
+
+    .bar-space {
+        flex: 1;
+    }
+}
+
+/* Viewport toggle buttons in the bar */
+.device-group {
+    display: flex;
+
+    button.active {
+        color: var(--ant-primary-color, #1890ff);
+        background: var(--ant-primary-1, #e6f7ff);
+    }
+}
+
+.pick-btn.active {
+    color: var(--ant-primary-color, #1890ff);
+    background: var(--ant-primary-1, #e6f7ff);
+}
+
+/* Canvas backdrop: dotted grid, the page floats on it like a design artboard */
+.preview-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    background: #eef0f4 radial-gradient(#d4d8e0 1px, transparent 1px);
+    background-size: 18px 18px;
+    padding: 14px;
+    overflow: auto;
+}
+
+.device-frame {
+    position: relative;
+    height: 100%;
+    max-width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px #0000000f, 0 10px 30px #00000014;
+    overflow: hidden;
+    transition: width 0.25s ease;
+
+    &.full {
+        width: 100%;
+    }
+}
+
+.frame-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffffb3;
+    z-index: 1;
+}
+
+.preview-frame {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+.preview-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #aab;
+
+    [nz-icon] {
+        font-size: 42px;
+        margin-bottom: 12px;
+    }
+}
+
+/* Readonly Monaco viewer in the source modal */
+.source-editor {
+    display: block;
+    height: 62vh;
+    border: 1px solid var(--ant-border-color-split);
+    border-radius: 4px;
+}
+
+/* ========== Right: conversation ========== */
+.chat-pane {
+    width: 380px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--ant-border-color-split);
+    background: #fafafa;
+}
+
+.bubbles {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 14px 12px;
+}
+
+.bubbles-loading {
+    display: flex;
+    justify-content: center;
+    padding-top: 40px;
+}
+
+.chat-empty {
+    text-align: center;
+    color: #999;
+    padding-top: 60px;
+
+    [nz-icon] {
+        font-size: 36px;
+        color: #ccc;
+    }
+
+    h3 {
+        margin: 12px 0 4px;
+        color: #666;
+    }
+}
+
+.bubble {
+    display: flex;
+    margin-bottom: 12px;
+
+    &.user {
+        justify-content: flex-end;
+
+        .bubble-body {
+            background: var(--ant-primary-color, #1890ff);
+            color: #fff;
+            border-radius: @radius @radius 2px @radius;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+    }
+
+    &.model {
+        justify-content: flex-start;
+
+        .bubble-body {
+            background: #fff;
+            border: 1px solid var(--ant-border-color-split);
+            border-radius: @radius @radius @radius 2px;
+        }
+    }
+
+    .bubble-body {
+        max-width: 86%;
+        padding: 8px 12px;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+}
+
+.version-card {
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+        border-color: var(--ant-primary-color, #1890ff);
+    }
+
+    &.active {
+        border-color: var(--ant-primary-color, #1890ff);
+        cursor: default;
+    }
+
+    .version-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .version-title {
+            font-weight: 500;
+        }
+
+        .use-version {
+            font-size: 12px;
+        }
+    }
+
+    .version-meta {
+        margin-top: 6px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    nz-tag {
+        margin: 0;
+        font-size: 11px;
+    }
+}
+
+.generating-stream {
+    width: 86%;
+
+    .generating-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #888;
+    }
+
+    /* Live code stream: fixed-height scrolling tail as progress feedback */
+    .stream-code {
+        margin: 8px 0 0;
+        max-height: 200px;
+        overflow-y: auto;
+        background: #1e1e1e;
+        color: #9cdcfe;
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 11px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+}
+
+/* ========== Sender ========== */
+.sender {
+    padding: 10px 12px 8px;
+    border-top: 1px solid var(--ant-border-color-split);
+    background: #fff;
+
+    /* Selected style hint: swatches + name on the first row, wrapping description below */
+    .style-hint {
+        margin-bottom: 8px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        background: #f5f7fa;
+        font-size: 12px;
+
+        &.dark {
+            background: #1e293b;
+
+            .style-hint-name { color: #e2e8f0; }
+            .style-hint-desc { color: #94a3b8; }
+        }
+
+        .style-hint-head {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .style-swatches {
+            display: flex;
+            gap: 2px;
+            flex-shrink: 0;
+
+            .swatch {
+                width: 10px;
+                height: 10px;
+                border-radius: 3px;
+                display: inline-block;
+            }
+        }
+
+        .style-hint-name {
+            font-weight: 600;
+        }
+
+        .style-hint-desc {
+            color: #999;
+            margin-top: 3px;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+    }
+
+    /* Picked element reference: selector chip above the input, cleared with the close icon */
+    .picked-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: var(--ant-primary-1, #e6f7ff);
+        border: 1px solid var(--ant-primary-3, #91d5ff);
+        color: var(--ant-primary-color, #1890ff);
+        font-size: 12px;
+
+        .picked-tag {
+            font-family: monospace;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .picked-selector {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #667;
+        }
+
+        .picked-close {
+            cursor: pointer;
+            color: #999;
+
+            &:hover {
+                color: #666;
+            }
+        }
+    }
+
+    textarea {
+        width: 100%;
+        resize: none;
+        border: 1px solid var(--ant-border-color-split);
+        border-radius: @radius;
+        padding: 8px 10px;
+        font-size: 13px;
+        line-height: 1.6;
+        outline: none;
+        background: #fafafa;
+
+        &:focus {
+            border-color: var(--ant-primary-color, #1890ff);
+            background: #fff;
+        }
+
+        &:disabled {
+            color: #aaa;
+        }
+    }
+
+    /* Data source / style pickers live with the input, ChatGPT-toolbar style */
+    .sender-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 2px;
+
+        .toolbar-select {
+            max-width: 220px;
+            min-width: 110px;
+        }
+
+        .toolbar-style {
+            max-width: 160px;
+        }
+
+        .toolbar-space {
+            flex: 1;
+        }
+    }
+}

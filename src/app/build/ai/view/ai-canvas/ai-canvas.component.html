@@ -1,0 +1,219 @@
+<div class="designer-layout">
+    <!-- Left: generated page preview -->
+    <div class="preview-pane">
+        <div class="preview-bar">
+            <button nz-button nzType="text" nzSize="small" (click)="goBack()"
+                    [title]="'global.back' | translate">
+                <span nz-icon nzType="arrow-left" nzTheme="outline"></span>
+            </button>
+            <span class="view-name">{{ name }}</span>
+            @if (activeVersionNo != null) {
+                <nz-tag class="version-tag" nzColor="blue">v{{ activeVersionNo }}</nz-tag>
+            }
+            <span class="bar-space"></span>
+            <span class="device-group">
+                <button nz-button nzType="text" nzSize="small" [class.active]="device === 'desktop'"
+                        (click)="setDevice('desktop')" [title]="'ai.canvas.device_desktop' | translate">
+                    <span nz-icon nzType="desktop" nzTheme="outline"></span>
+                </button>
+                <button nz-button nzType="text" nzSize="small" [class.active]="device === 'tablet'"
+                        (click)="setDevice('tablet')" [title]="'ai.canvas.device_tablet' | translate">
+                    <span nz-icon nzType="tablet" nzTheme="outline"></span>
+                </button>
+                <button nz-button nzType="text" nzSize="small" [class.active]="device === 'mobile'"
+                        (click)="setDevice('mobile')" [title]="'ai.canvas.device_mobile' | translate">
+                    <span nz-icon nzType="mobile" nzTheme="outline"></span>
+                </button>
+            </span>
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button nzType="text" nzSize="small" class="pick-btn" [class.active]="picking"
+                    (click)="togglePick()" [disabled]="!previewHtml"
+                    [title]="'ai.canvas.pick_element' | translate">
+                <span nz-icon nzType="aim" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="text" nzSize="small" (click)="refreshPreview()"
+                    [disabled]="!previewHtml" [title]="'ai.canvas.refresh' | translate">
+                <span nz-icon nzType="reload" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="text" nzSize="small" (click)="viewSource()"
+                    [disabled]="!previewHtml" [title]="'ai.canvas.view_source' | translate">
+                <span nz-icon nzType="code" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="text" nzSize="small" (click)="copyLink()"
+                    [disabled]="!previewHtml" [title]="'ai.canvas.copy_link' | translate">
+                <span nz-icon nzType="link" nzTheme="outline"></span>
+            </button>
+            <button nz-button nzType="text" nzSize="small" (click)="openInNew()"
+                    [disabled]="!previewHtml" [title]="'ai.canvas.open_new' | translate">
+                <span nz-icon nzType="export" nzTheme="outline"></span>
+            </button>
+        </div>
+        <div class="preview-body">
+            @if (previewHtml) {
+                <div class="device-frame" [class.full]="device === 'desktop'"
+                     [style.width]="deviceWidth">
+                    @if (iframeLoading) {
+                        <div class="frame-loading">
+                            <nz-spin nzSimple></nz-spin>
+                        </div>
+                    }
+                    <iframe #frameRef class="preview-frame" [srcdoc]="previewHtml" (load)="onFrameLoad()"></iframe>
+                </div>
+            } @else {
+                <div class="preview-empty">
+                    <span nz-icon nzType="layout" nzTheme="outline"></span>
+                    <p>{{ 'ai.canvas.no_page' | translate }}</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Right: generation conversation -->
+    <div class="chat-pane">
+        <div class="bubbles">
+            @if (loading) {
+                <div class="bubbles-loading">
+                    <nz-spin nzSimple></nz-spin>
+                </div>
+            } @else if (!versions.length && !generating) {
+                <div class="chat-empty">
+                    <span nz-icon nzType="highlight" nzTheme="outline"></span>
+                    <h3>{{ 'ai.canvas.empty_title' | translate }}</h3>
+                    <p>{{ 'ai.canvas.empty_hint' | translate }}</p>
+                </div>
+            }
+            @for (v of versions; track v.id) {
+                <div class="bubble user">
+                    <div class="bubble-body">{{ v.message }}</div>
+                </div>
+                <div class="bubble model">
+                    <div class="bubble-body version-card" [class.active]="v.id === activeVersion"
+                         (click)="activate(v)">
+                        <div class="version-head">
+                            <span nz-icon nzType="file-done" nzTheme="outline"></span>
+                            <span class="version-title">{{ 'ai.canvas.generated' | translate }} v{{ v.version }}</span>
+                            @if (v.id === activeVersion) {
+                                <nz-tag nzColor="green">{{ 'ai.canvas.active' | translate }}</nz-tag>
+                            } @else {
+                                <a class="use-version">{{ 'ai.canvas.use_version' | translate }}</a>
+                            }
+                        </div>
+                        <div class="version-meta">
+                            <nz-tag>{{ modelLabel(v) }}</nz-tag>
+                            @if (v.style) {
+                                <nz-tag nzColor="purple">{{ styleName(v.style) }}</nz-tag>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (generating) {
+                <div class="bubble user">
+                    <div class="bubble-body">{{ pendingRequirement }}</div>
+                </div>
+                <div class="bubble model">
+                    <div class="bubble-body generating-stream">
+                        <div class="generating-head">
+                            <nz-spin nzSimple nzSize="small"></nz-spin>
+                            <span>{{ 'ai.canvas.generating' | translate }}</span>
+                        </div>
+                        @if (streamingText) {
+                            <pre #streamRef class="stream-code">{{ streamTail }}</pre>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="sender">
+            @if (selectedStyle; as s) {
+                <div class="style-hint" [class.dark]="s.mode === 'dark'">
+                    <div class="style-hint-head">
+                        @if (s.palette?.length) {
+                            <span class="style-swatches">
+                                @for (c of s.palette!.slice(0, 5); track $index) {
+                                    <i class="swatch" [style.background]="c"></i>
+                                }
+                            </span>
+                        }
+                        <span class="style-hint-name">{{ s.name }}</span>
+                    </div>
+                    <div class="style-hint-desc">{{ s.description }}</div>
+                </div>
+            }
+            @if (picked; as p) {
+                <div class="picked-chip">
+                    <span nz-icon nzType="aim" nzTheme="outline"></span>
+                    <span class="picked-tag">&lt;{{ p.tag }}&gt;</span>
+                    <code class="picked-selector" [title]="p.selector">{{ p.selector }}</code>
+                    <span nz-icon nzType="close" nzTheme="outline" class="picked-close"
+                          (click)="picked = null"></span>
+                </div>
+            }
+            <textarea [(ngModel)]="content" (keydown)="onInputKeydown($event)"
+                      [placeholder]="'ai.canvas.input_placeholder' | translate"
+                      [disabled]="generating" rows="3"></textarea>
+            <div class="sender-toolbar">
+                <nz-select class="toolbar-select" nzSize="small" nzBorderless [(ngModel)]="modelKey" nzShowSearch
+                           [nzDropdownMatchSelectWidth]="false" [nzDropdownStyle]="{'min-width': '320px'}"
+                           [nzPlaceHolder]="'ai.canvas.data_model' | translate" [nzDisabled]="generating">
+                    @for (group of modelGroups; track group.type) {
+                        <nz-option-group [nzLabel]="group.type">
+                            @for (m of group.models; track m.value) {
+                                <nz-option [nzValue]="group.type + ':' + m.value"
+                                           [nzLabel]="m.label + ' (' + m.value + ')'"></nz-option>
+                            }
+                        </nz-option-group>
+                    }
+                </nz-select>
+                <nz-select class="toolbar-select toolbar-style" nzSize="small" nzBorderless [(ngModel)]="style"
+                           nzAllowClear nzShowSearch
+                           [nzDropdownMatchSelectWidth]="false" [nzDropdownStyle]="{'min-width': '260px'}"
+                           [nzPlaceHolder]="'ai.canvas.style' | translate" [nzDisabled]="generating">
+                    @for (s of styles; track s.id) {
+                        <nz-option nzCustomContent [nzValue]="s.id" [nzLabel]="s.name">
+                            <!-- Rendered inside the cdk-overlay (outside this component's DOM),
+                                 so layout-critical styles are inlined instead of scoped classes -->
+                            <span style="display:inline-flex;align-items:center;gap:2px;margin-right:6px;vertical-align:middle">
+                                @for (c of (s.palette || []).slice(0, 5); track $index) {
+                                    <i style="width:9px;height:9px;border-radius:2px;display:inline-block"
+                                       [style.background]="c"></i>
+                                }
+                            </span>
+                            <span>{{ s.name }}</span>
+                            @if (s.mode === 'dark') {
+                                <span style="font-size:10px;color:#fff;background:#334155;border-radius:3px;padding:0 4px;margin-left:6px;vertical-align:middle">dark</span>
+                            }
+                        </nz-option>
+                    }
+                </nz-select>
+                <nz-select class="toolbar-select" nzSize="small" nzBorderless [(ngModel)]="llmId"
+                           nzAllowClear nzShowSearch
+                           [nzDropdownMatchSelectWidth]="false" [nzDropdownStyle]="{'min-width': '220px'}"
+                           [nzPlaceHolder]="'ai.canvas.chat_model' | translate" [nzDisabled]="generating">
+                    @for (l of llms; track l.id) {
+                        <nz-option [nzValue]="l.id"
+                                   [nzLabel]="l.defaultLLM ? l.name + ' ★' : l.name"></nz-option>
+                    }
+                </nz-select>
+                <span class="toolbar-space"></span>
+                @if (generating) {
+                    <button nz-button nzDanger nzShape="circle" nzSize="small"
+                            (click)="stop()" [title]="'ai.canvas.stop' | translate">
+                        <span nz-icon nzType="stop" nzTheme="outline"></span>
+                    </button>
+                } @else {
+                    <button nz-button nzType="primary" nzShape="circle" nzSize="small"
+                            (click)="send()" [disabled]="!content.trim()">
+                        <span nz-icon nzType="arrow-up" nzTheme="outline"></span>
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #sourceTpl>
+    <nz-code-editor class="source-editor" [ngModel]="sourceRaw"
+                    [nzEditorOption]="sourceEditorOption"></nz-code-editor>
+</ng-template>

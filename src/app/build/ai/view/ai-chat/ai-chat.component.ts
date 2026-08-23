@@ -210,6 +210,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.selectChat = null;
         this.sending = false;
         this.sendDisabled = false;
+        this.streaming = false;
     }
 
     /** Fetch the chat list: when reset is true, re-fetch from the first page and select the first item */
@@ -851,6 +852,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     /** Stop the streaming response of the current chat */
     stopGeneration(): void {
         if (this.selectChat == null) return;
+        // Signal the backend to stop generating, so it persists the partial content
+        // and stops consuming the LLM stream (closing the EventSource alone is only
+        // detected server-side on the next write)
+        this.chatApi.stopChat(this.selectChat).subscribe();
         const state = this.pendingSse.get(this.selectChat);
         if (state) {
             state.eventSource.close();
@@ -860,19 +865,21 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.sending = false;
         this.sendDisabled = false;
         const last = this.messages[this.messages.length - 1];
-        if (last?.loading) {
-            last.loading = false;
-            const md = state?.accumulatedMarkdown || '';
-            const frozen = last.frozenSegments ?? [];
-            last.frozenSegments = undefined;
-            if (md || frozen.length) {
-                last.content = md;
-                (md ? this.markdown.render(md) : Promise.resolve('')).then(tokenHtml => {
-                    last.contentHtml = frozen.join('') + tokenHtml || `<p>${this.i18n.fanyi('ai.chat.stopped')}</p>`;
-                });
-            } else {
-                last.content = this.i18n.fanyi('ai.chat.stopped');
-                last.contentHtml = `<p>${this.i18n.fanyi('ai.chat.stopped')}</p>`;
+        if (last?.senderType === 'MODEL') {
+            // Same marker the backend persists (AiChatMessage.interrupted), so the local
+            // view matches what a reload of the chat history will show
+            last.interrupted = true;
+            if (last.loading) {
+                last.loading = false;
+                const md = state?.accumulatedMarkdown || '';
+                const frozen = last.frozenSegments ?? [];
+                if (md || frozen.length) {
+                    last.frozenSegments = undefined;
+                    last.content = md;
+                    (md ? this.markdown.render(md) : Promise.resolve('')).then(tokenHtml => {
+                        last.contentHtml = frozen.join('') + tokenHtml;
+                    });
+                }
             }
         }
     }

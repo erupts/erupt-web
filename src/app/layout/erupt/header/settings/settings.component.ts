@@ -23,10 +23,20 @@ export class SettingsComponent implements OnInit {
                 public rtl: RTLService) {
     }
 
+    // Brutalist Theme skin — reflects the class index.html applied before bootstrap.
+    brutalistTheme: boolean = document.documentElement.classList.contains("brutalist-theme");
+
     ngOnInit() {
         if (!this.settingSrv.layout['tableSize']) {
             this.settingSrv.setLayout('tableSize', TableSize.SMALL);
         }
+    }
+
+    toggleBrutalistTheme(value: boolean) {
+        this.brutalistTheme = value;
+        document.documentElement.classList.toggle("brutalist-theme", value);
+        // Persist so the choice survives reload (honored by index.html on next load).
+        localStorage.setItem("brutalist-theme", String(value));
     }
 
     setLayout(name: string, value: any) {

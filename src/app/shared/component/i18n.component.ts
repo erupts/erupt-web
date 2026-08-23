@@ -17,7 +17,6 @@ import {EruptAppData} from "@shared/model/erupt-app.model";
               @for (item of langs; track item) {
                 <li nz-menu-item [nzSelected]="item.code == curLangCode"
                   (click)="change(item.code)">
-                  <span role="img" [attr.aria-label]="item.text" class="pr-xs">{{ item.abbr }}</span>
                   {{ item.text }}
                 </li>
               }

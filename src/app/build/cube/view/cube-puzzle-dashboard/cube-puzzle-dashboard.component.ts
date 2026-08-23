@@ -1,15 +1,4 @@
-import {
-    Component,
-    ElementRef,
-    Inject,
-    Input,
-    OnDestroy,
-    OnInit,
-    QueryList,
-    TemplateRef,
-    ViewChild,
-    ViewChildren
-} from '@angular/core';
+import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
@@ -209,7 +198,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                     }
                 } catch (e) {}
             }
-            this.cubeApiService.cubeMetadata(this.dashboard.cuber, this.dashboard.explore).subscribe(res => {
+            this.cubeApiService.cubeMetadata(this.dashboard.cuber, this.dashboard.explore, this.dashboard.source).subscribe(res => {
                 const meta = res.data;
                 const fieldTitleMap = new Map<string, string>();
                 const fieldMap = new Map<string, BaseField>();

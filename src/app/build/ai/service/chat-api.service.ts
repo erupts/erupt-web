@@ -27,6 +27,10 @@ export class ChatApiService {
         return this._http.post<R<number>>(RestPath.erupt + '/ai/chat/create-chat?title=' + title);
     }
 
+    stopChat(chatId: number): Observable<R<void>> {
+        return this._http.get<R<void>>(RestPath.erupt + '/ai/chat/stop', {chatId});
+    }
+
     deleteChat(chatId: number): Observable<R<void>> {
         return this._http.get<R<void>>(RestPath.erupt + '/ai/chat/delete-chat', {chatId});
     }

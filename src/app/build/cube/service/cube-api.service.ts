@@ -18,28 +18,36 @@ export class CubeApiService {
         return this._http.get<R<Dashboard>>(RestPath.erupt + "/cube/dashboard/detail/" + code);
     }
 
-    cubes() {
-        return this._http.get<R<VL[]>>(RestPath.erupt + "/cube/semantic/cubes");
+    sources() {
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/cube/semantic/sources");
     }
 
-    explores(cube: string) {
-        return this._http.get<R<VL[]>>(RestPath.erupt + "/cube/semantic/" + cube + "/explores");
+    cubes(source?: string) {
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/cube/semantic/cubes", this.sourceParams(source));
     }
 
-    cubeMetadata(cube: string, explore: string) {
-        return this._http.get<R<CubeMeta>>(RestPath.erupt + "/cube/semantic/metadata/" + cube + "/" + explore);
+    explores(cube: string, source?: string) {
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/cube/semantic/" + cube + "/explores", this.sourceParams(source));
+    }
+
+    cubeMetadata(cube: string, explore: string, source?: string) {
+        return this._http.get<R<CubeMeta>>(RestPath.erupt + "/cube/semantic/metadata/" + cube + "/" + explore, this.sourceParams(source));
     }
 
     updateDsl(id: number, dsl: DashboardDSL) {
         return this._http.post<R<void>>(RestPath.erupt + "/cube/dashboard/update-dsl/" + id, dsl);
     }
 
-    query(cubeQuery: CubeQuery) {
-        return this._http.post<R<Record<string, any>[]>>(RestPath.erupt + "/cube/semantic/query", cubeQuery);
+    query(cubeQuery: CubeQuery, source?: string) {
+        return this._http.post<R<Record<string, any>[]>>(RestPath.erupt + "/cube/semantic/query", cubeQuery, this.sourceParams(source));
     }
 
-    parameterItems(cube: string, parameter: string) {
-        return this._http.get<R<VL[]>>(RestPath.erupt + "/cube/semantic/parameter-items/" + cube + "/" + parameter);
+    parameterItems(cube: string, parameter: string, source?: string) {
+        return this._http.get<R<VL[]>>(RestPath.erupt + "/cube/semantic/parameter-items/" + cube + "/" + parameter, this.sourceParams(source));
+    }
+
+    private sourceParams(source?: string): Record<string, string> {
+        return source ? {source} : {};
     }
 
     publish(id: number, description: string) {

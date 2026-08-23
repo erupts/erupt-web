@@ -122,8 +122,14 @@
                                     <span class="streaming-cursor"></span>
                                 }
                             }
-                            @if (!item.loading && !item.content && !item.contentHtml && !item.frozenSegments?.length && item.senderType === 'MODEL') {
+                            @if (!item.loading && !item.interrupted && !item.content && !item.contentHtml && !item.frozenSegments?.length && item.senderType === 'MODEL') {
                                 <div class="placeholder">{{ 'ai.chat.thinking' | translate }}</div>
+                            }
+                            @if (!item.loading && item.interrupted) {
+                                <div class="bubble-interrupted">
+                                    <span nz-icon nzType="stop" nzTheme="outline"></span>
+                                    <span>{{ 'ai.chat.stopped' | translate }}</span>
+                                </div>
                             }
                             @if (!item.loading) {
                                 <div class="bubble-actions">
@@ -139,7 +145,7 @@
                                             (click)="toggleSpeak(item)">
                                         <span nz-icon [nzType]="item.speaking ? 'pause-circle' : 'sound'" nzTheme="outline"></span>
                                     </button>
-                                    @if (item.senderType === 'USER') {
+                                    @if (item.senderType === 'USER' && !streaming && !sending) {
                                         <button nz-button nzType="text" nzSize="small" class="action-btn"
                                                 [title]="'ai.chat.edit_resend' | translate"
                                                 (click)="editResend(item, $index)">
@@ -231,7 +237,7 @@
                 <div class="input-footer">
                     <span class="shortcut-hint">{{ 'ai.chat.shortcut_hint' | translate }}</span>
                     <div class="footer-actions">
-                        @if (sending) {
+                        @if (sending || streaming) {
                             <button nz-button nzType="text" nzSize="small" class="toolbar-icon toolbar-icon-stop"
                                     [title]="'ai.chat.stop_generation' | translate" (click)="stopGeneration()">
                                 <span nz-icon nzType="stop" nzTheme="outline"></span>

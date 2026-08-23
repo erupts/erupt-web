@@ -2,7 +2,7 @@ import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, Vi
 import {Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, Page, Power, Row, RowOperation, Vis, VisType} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, FieldVisibility, Page, Power, Row, RowOperation, Vis, VisType} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -323,7 +323,9 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     get isAiEnabled(): boolean {
-        return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
+        return EruptAppData.get().properties["erupt-ai"]
+            && null != this.menuSrv.getItem("ai-chat")
+            && this.eruptBuildModel.eruptModel.eruptJson.power.ai !== false;
     }
 
     private aiDrawerRef: NzDrawerRef | null = null;
@@ -533,6 +535,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     visChange(e: number) {
         this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {visIndex: e});
+        this.st?.resetColumns();
         const vis = this.vis[e];
         if (vis?.type === VisType.BOARD) {
             const savedPs = this.dataPage.ps;
@@ -631,7 +634,7 @@ export class TableComponent implements OnInit, OnDestroy {
         let viewCols = this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true);
         for (let viewCol of viewCols) {
             viewCol.iif = () => {
-                return viewCol['show'];
+                return viewCol['show'] && this.visFieldVisible(this.colIndexStr(viewCol));
             };
         }
         _columns.push(...viewCols);
@@ -753,7 +756,8 @@ export class TableComponent implements OnInit, OnDestroy {
                 nzDraggable: true,
                 nzWrapClassName: "modal-xxl",
                 nzStyle: {top: "30px"},
-                nzBodyStyle: {padding: "0"},
+                // definite body height so the inner height:100% chain (table/AI panel) can fill the modal
+                nzBodyStyle: {padding: "0", height: "calc(100vh - 115px)", overflow: "hidden"},
                 nzMaskClosable: false,
                 nzKeyboard: false,
                 nzTitle: drill.title,
@@ -1387,6 +1391,16 @@ export class TableComponent implements OnInit, OnDestroy {
 
     private colIndexStr(col: STColumn): string {
         return (Array.isArray(col.index) ? col.index[0] : col.index) as string;
+    }
+
+    // column index uses "_" instead of "." for nested paths, so normalize vis fields the same way
+    private visFieldVisible(colIndex: string): boolean {
+        const vis = this.vis[this.selectedVisIndex];
+        if (!vis || vis.type !== VisType.TABLE || !vis.fields || !vis.fields.length) {
+            return true;
+        }
+        const hit = vis.fields.some(f => f.replace(/\./g, "_") === colIndex);
+        return vis.fieldVisibility === FieldVisibility.INCLUDE ? hit : !hit;
     }
 
     saveColumnSettings() {

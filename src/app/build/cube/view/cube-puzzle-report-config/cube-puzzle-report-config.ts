@@ -108,14 +108,14 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     private loadSubModelMeta(alias: string, refreshAfterLoad: boolean) {
         const subModel = this.dsl?.subModels?.find(m => m.id === alias);
         if (!subModel) return;
-        const key = `${subModel.cube}/${subModel.explore}`;
+        const key = `${subModel.source || 'local'}/${subModel.cube}/${subModel.explore}`;
         if (this.subMetaCache[key]) {
             this.activeMeta = this.subMetaCache[key];
             if (refreshAfterLoad) this.changeCube();
             return;
         }
         this.loadingSubMeta = true;
-        this.cubeApiService.cubeMetadata(subModel.cube, subModel.explore).subscribe(res => {
+        this.cubeApiService.cubeMetadata(subModel.cube, subModel.explore, subModel.source).subscribe(res => {
             const meta = res.data;
             const fieldTitleMap = new Map<string, string>();
             const fieldMap = new Map<string, BaseField>();

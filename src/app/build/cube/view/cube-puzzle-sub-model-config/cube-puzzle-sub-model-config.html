@@ -11,6 +11,9 @@
             <thead>
             <tr>
                 <th>{{ 'cube.sub_model.alias' | translate }}</th>
+                @if (sourcesList.length > 1) {
+                    <th>{{ 'cube.sub_model.source' | translate }}</th>
+                }
                 <th>Cube</th>
                 <th>Explore</th>
                 <th>{{ 'cube.sub_model.mappings' | translate }}</th>
@@ -21,8 +24,11 @@
             @for (entry of filteredSubModels; track entry.origIndex) {
                 <tr [class.editing-row]="editingIndex === entry.origIndex">
                     <td><strong>{{ entry.item.alias }}</strong></td>
-                    <td>{{ getCubeLabel(entry.item.cube) }}</td>
-                    <td>{{ getExploreLabel(entry.item.cube, entry.item.explore) }}</td>
+                    @if (sourcesList.length > 1) {
+                        <td>{{ getSourceLabel(entry.item.source) }}</td>
+                    }
+                    <td>{{ getCubeLabel(entry.item.cube, entry.item.source) }}</td>
+                    <td>{{ getExploreLabel(entry.item.cube, entry.item.explore, entry.item.source) }}</td>
                     <td>{{ entry.item.fieldMappings?.length || 0 }}</td>
                     <td>
                         <button nz-button nzType="text" nzSize="small" (click)="startEdit(entry.origIndex)"
@@ -54,11 +60,22 @@
                 </div>
             </div>
             <div class="form-row">
+                @if (sourcesList.length > 1) {
+                    <div class="form-field">
+                        <div class="form-label">{{ 'cube.sub_model.source' | translate }}</div>
+                        <nz-select [(ngModel)]="editForm.source" (ngModelChange)="onSourceChange()"
+                                   nzShowSearch style="width: 100%">
+                            @for (source of sourcesList; track source.value) {
+                                <nz-option [nzLabel]="source.label" [nzValue]="source.value"></nz-option>
+                            }
+                        </nz-select>
+                    </div>
+                }
                 <div class="form-field">
                     <div class="form-label">Cube</div>
                     <nz-select [(ngModel)]="editForm.cube" (ngModelChange)="onCubeChange($event)"
                                nzShowSearch style="width: 100%">
-                        @for (cube of cubesList; track cube.value) {
+                        @for (cube of (cubesMap[src(editForm.source)] || []); track cube.value) {
                             <nz-option [nzLabel]="cube.label" [nzValue]="cube.value"></nz-option>
                         }
                     </nz-select>
@@ -68,7 +85,7 @@
                     <nz-select [(ngModel)]="editForm.explore" (ngModelChange)="onExploreChange()"
                                nzShowSearch style="width: 100%" [nzLoading]="loadingExplores"
                                [nzDisabled]="!editForm.cube">
-                        @for (explore of (exploresMap[editForm.cube] || []); track explore.value) {
+                        @for (explore of (exploresMap[src(editForm.source) + '/' + editForm.cube] || []); track explore.value) {
                             <nz-option [nzLabel]="explore.label" [nzValue]="explore.value"></nz-option>
                         }
                     </nz-select>

@@ -48,7 +48,7 @@ export class WindowModel {
         WindowModel.amapSecurityJsCode = WindowModel.config["amapSecurityJsCode"];
         WindowModel.title = WindowModel.config["title"] === null ? 'Erupt Engine' : WindowModel.config["title"];
         WindowModel.desc = WindowModel.config["desc"] || undefined;
-        WindowModel.logoPath = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "erupt.svg");
+        WindowModel.logoPath = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "assets/logo.svg");
         WindowModel.logoFoldPath = WindowModel.config["logoFoldPath"] || WindowModel.logoPath;
         WindowModel.loginLogoPath = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
         WindowModel.logoText = WindowModel.config["logoText"] || "";
@@ -56,7 +56,9 @@ export class WindowModel {
         WindowModel.copyright = WindowModel.config["copyright"];
         WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //license text
         WindowModel.upload = WindowModel.config["upload"] || false;
-        WindowModel.theme = WindowModel.config["theme"] || {}
+        WindowModel.theme = WindowModel.config["theme"] || {
+            primaryColor: "rgb(63, 81, 181)",
+        }
     }
 
     public static eruptEvent: {
