@@ -7,7 +7,8 @@
       <img [src]="logoFoldPath" class="header-logo-img" alt=""/>
     }
     @if (logoText) {
-      <span class="header-logo-text hidden-mobile">{{ logoText }}</span>
+      <span class="header-logo-text hidden-mobile" [class.header-logo-text--long]="logoText.length > 8"
+            [title]="logoText">{{ logoText }}</span>
     }
   </a>
 </div>
