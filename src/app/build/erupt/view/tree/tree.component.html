@@ -91,6 +91,22 @@
                         <i nz-icon nzType="node-collapse" nzTheme="outline"></i>
                     </button>
                 }
+                @if (eruptBuildModel.eruptModel.eruptJson.power.delete) {
+                    <button nz-button nzType="text" nzSize="small"
+                            [style.color]="checkable ? 'var(--ant-primary-color)' : ''"
+                            nz-tooltip [nzTooltipTitle]="'tree.batch_delete'|translate"
+                            (click)="toggleCheckable()" id="erupt-btn-batch-check">
+                        <i nz-icon nzType="check-square" nzTheme="outline"></i>
+                    </button>
+                }
+                @if (checkable) {
+                    <button nz-button nzType="text" nzSize="small" nzDanger
+                            [disabled]="checkedCount === 0 || treeLoading"
+                            nz-tooltip [nzTooltipTitle]="'tree.batch_delete'|translate"
+                            (click)="batchDel()" id="erupt-btn-batch-delete">
+                        <i nz-icon nzType="delete" nzTheme="outline"></i>@if (checkedCount > 0) {<span>{{ checkedCount }}</span>}
+                    </button>
+                }
                 @if (eruptBuildModel.eruptModel.eruptJson.power.add) {
                     <button nz-button nzType="text" nzSize="small"
                             nz-tooltip [nzTooltipTitle]="'tree.add_button'|translate"
@@ -107,12 +123,15 @@
                 }
             </div>
 
-            <div class="tree-nav-body" [scrollTop]="treeScrollTop" #treeDiv>
+            <div class="tree-nav-body" #treeDiv>
                 <nz-spin [nzSpinning]="treeLoading" style="min-height: 120px;">
                     <nz-tree #tree
                              [nzVirtualHeight]="dataLength > 50 ? 'calc(100vh - 140px - ' + (settingSrv.layout['reuse'] ? '40px' : '0px') + ')' : null"
                              [nzShowLine]="true"
                              [nzData]="nodes"
+                             [nzCheckable]="checkable"
+                             [nzCheckedKeys]="checkedKeys"
+                             (nzCheckboxChange)="onCheckBoxChange()"
                              [nzSelectedKeys]="selectedKeys"
                              [nzSearchValue]="searchValue"
                              [nzBlockNode]="true"

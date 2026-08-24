@@ -54,17 +54,21 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     selectedKeys: any[] = [];
 
-    treeScrollTop: number = 0;
-
     printLoading: boolean = false;
 
-    treeWidth: number = 235;
+    treeWidth: number = 280;
 
     resizing: boolean = false;
 
     sortAsc: boolean | null = null;
 
     mobileTreeCollapsed: boolean = false;
+
+    checkable: boolean = false;
+
+    checkedKeys: string[] = [];
+
+    checkedCount: number = 0;
 
     @ViewChild("treeDiv", {static: false})
     treeDiv: ElementRef;
@@ -267,6 +271,55 @@ export class TreeComponent implements OnInit, OnDestroy {
         }
     }
 
+    toggleCheckable(): void {
+        this.checkable = !this.checkable;
+        this.checkedKeys = [];
+        this.checkedCount = 0;
+    }
+
+    onCheckBoxChange(): void {
+        this.checkedCount = this.collectCheckedKeys().length;
+    }
+
+    //checked parents cascade to children; collect keys deepest-first so children are deleted before parents
+    private collectCheckedKeys(): string[] {
+        const keys: string[] = [];
+        const walk = (node: any) => {
+            node.getChildren().forEach(walk);
+            keys.push(node.origin.key);
+        };
+        this.tree.getCheckedNodeList().forEach(walk);
+        return keys;
+    }
+
+    batchDel(): void {
+        const keys = this.collectCheckedKeys();
+        if (keys.length === 0) return;
+        this.modal.confirm({
+            nzTitle: this.i18n.fanyi("global.delete.hint"),
+            nzContent: "",
+            nzOkDanger: true,
+            nzOnOk: () => {
+                this.treeLoading = true;
+                this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, keys).subscribe(res => {
+                    this.treeLoading = false;
+                    if (res.status == Status.SUCCESS) {
+                        this.msg.success(this.i18n.fanyi("global.delete.success"));
+                        this.checkedKeys = [];
+                        this.checkedCount = 0;
+                        if (this.currentKey && keys.indexOf(this.currentKey) > -1) {
+                            this.currentKey = null;
+                            this.showEdit = false;
+                        }
+                        this.fetchTreeData();
+                    }
+                }, () => {
+                    this.treeLoading = false;
+                });
+            }
+        });
+    }
+
     toggleSort(): void {
         if (this.sortAsc === null) this.sortAsc = true;
         else if (this.sortAsc === true) this.sortAsc = false;
@@ -345,6 +398,7 @@ export class TreeComponent implements OnInit, OnDestroy {
     fetchTreeData() {
         this.sortAsc = null;
         this.treeLoading = true;
+        const scrollTop = this.getTreeScrollTop();
         this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
             this.treeLoading = false;
             if (tree) {
@@ -355,8 +409,8 @@ export class TreeComponent implements OnInit, OnDestroy {
                     setTimeout(() => this.locateNode(), 200);
                 } else {
                     this.selectedKeys = [];
+                    this.restoreTreeScroll(scrollTop);
                 }
-                this.rollTreePoint();
                 if (this.searchValue) {
                     let temp = this.searchValue;
                     this.searchValue = null;
@@ -370,12 +424,26 @@ export class TreeComponent implements OnInit, OnDestroy {
         });
     }
 
-    private rollTreePoint() {
-        if (!this.treeDiv) return;
-        let st = this.treeDiv.nativeElement.scrollTop;
+    //the scroll container is the virtual viewport when virtual scroll is active, otherwise the nav body div
+    private getTreeScrollTop(): number {
+        const el = this.treeDiv?.nativeElement;
+        if (!el) return 0;
+        const viewport = el.querySelector('.cdk-virtual-scroll-viewport');
+        return viewport ? viewport.scrollTop : el.scrollTop;
+    }
+
+    private restoreTreeScroll(top: number): void {
+        if (!top) return;
         setTimeout(() => {
-            this.treeScrollTop = st;
-        }, 900);
+            const el = this.treeDiv?.nativeElement;
+            if (!el) return;
+            const viewport = el.querySelector('.cdk-virtual-scroll-viewport');
+            if (viewport) {
+                viewport.scrollTop = top;
+            } else {
+                el.scrollTop = top;
+            }
+        }, 200);
     }
 
     nzDblClick(event: NzFormatEmitEvent) {
