@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, DoCheck, ElementRef, Inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import Vditor from 'vditor';
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {EruptModel} from "../../model/erupt.model";
@@ -12,7 +12,7 @@ import {LazyService} from "@delon/util";
     templateUrl: './markdown.component.html',
     styleUrls: ['./markdown.component.less']
 })
-export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MarkdownComponent implements OnInit, AfterViewInit, DoCheck, OnDestroy {
 
     @ViewChild('vditorContainer', {static: true}) private vditorContainer: ElementRef;
 
@@ -38,6 +38,8 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
     editorError: boolean = false;
 
     private vditor: Vditor;
+
+    private _lastValue: any;
 
     // default toolbar configuration
     private defaultToolbar = [
@@ -79,6 +81,16 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit() {
         this.loading = true;
+    }
+
+    ngDoCheck() {
+        if (this.vditor && this.eruptField) {
+            const currentValue = this.eruptField.eruptFieldJson?.edit?.$value;
+            if (currentValue !== this._lastValue) {
+                this._lastValue = currentValue;
+                this.vditor.setValue(currentValue || '');
+            }
+        }
     }
 
     ngAfterViewInit() {
@@ -144,7 +156,9 @@ export class MarkdownComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.vditor.disabled();
                     }
                     setTimeout(() => {
-                        this.vditor.setValue(this.eruptField.eruptFieldJson.edit.$value || '');
+                        const val = this.eruptField.eruptFieldJson.edit.$value || '';
+                        this._lastValue = this.eruptField.eruptFieldJson.edit.$value;
+                        this.vditor.setValue(val);
                     }, 100)
                 }
             });
