@@ -1,8 +1,4 @@
 <div class="setting-item">
-    <span>{{'setting.fixed-header' | translate}}</span>
-    <nz-switch nzSize="small" [(ngModel)]="layout['fixed']" (ngModelChange)="setLayout('fixed', layout['fixed'])"></nz-switch>
-</div>
-<div class="setting-item">
     <span>{{'setting.split-menu' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout['splitMenu']"
                (ngModelChange)="toggleSplitMenu(layout['splitMenu'])"></nz-switch>

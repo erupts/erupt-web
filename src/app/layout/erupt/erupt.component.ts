@@ -158,7 +158,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             renderer,
             {
                 ["alain-default"]: true,
-                [`alain-default__fixed`]: layout['fixed'],
+                [`alain-default__fixed`]: true,
                 [`alain-default__boxed`]: layout['boxed'],
                 [`alain-default__collapsed`]: layout.collapsed
             },
