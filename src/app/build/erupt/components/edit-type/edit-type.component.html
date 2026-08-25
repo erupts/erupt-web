@@ -626,6 +626,17 @@
                         </div>
                     }
                 }
+                @case (editType.MULTI_FORM) {
+                    <div nz-col [nzSpan]="24">
+                        <se [label]="field.eruptFieldJson.edit.title"
+                            [required]="field.eruptFieldJson.edit.notNull"
+                            [optionalHelp]="field.eruptFieldJson.edit.desc">
+                            <erupt-multi-form [onlyRead]="isReadonly(field)"
+                                                [tabErupt]="{eruptBuildModel: eruptBuildModel.tabErupts[field.fieldName], eruptFieldModel: field}"
+                                                [eruptBuildModel]="eruptBuildModel"></erupt-multi-form>
+                        </se>
+                    </div>
+                }
                 @default {
                 }
             }

@@ -405,6 +405,23 @@ export class DataHandlerService {
                             eruptData[field.fieldName] = edit.$value;
                         }
                         break;
+                    case EditType.MULTI_FORM:
+                        if (edit.$tempValue) {
+                            if (!eruptBuildModel.tabErupts) {
+                                return;
+                            }
+                            let pkCol = eruptBuildModel.tabErupts[field.fieldName].eruptModel.eruptJson.primaryKeyCol;
+                            eruptData[field.fieldName] = (<any[]>edit.$tempValue).map(block => {
+                                let obj = this.eruptValueToObject(block.build);
+                                if (obj[pkCol] == null) {
+                                    obj[pkCol] = block.pk;
+                                }
+                                return obj;
+                            });
+                        } else if (edit.$value) {
+                            eruptData[field.fieldName] = edit.$value;
+                        }
+                        break;
                     case EditType.ATTACHMENT:
                         if (edit.$viewValue) {
                             const $value: string[] = [];
@@ -624,6 +641,10 @@ export class DataHandlerService {
                         edit.$value = object[field.fieldName] || [];
                         // edit.$value.forEach(val => this.objectToEruptValue(val, eruptBuild.tabErupts[field.fieldName]))
                         break;
+                    case EditType.MULTI_FORM:
+                        edit.$value = object[field.fieldName] || [];
+                        edit.$tempValue = null;
+                        break;
                     default:
                         edit.$value = object[field.fieldName];
                         break;
@@ -685,6 +706,10 @@ export class DataHandlerService {
                 case EditType.TAB_TABLE_REFER:
                 case EditType.TAB_TABLE_ADD:
                     ef.eruptFieldJson.edit.$value = [];
+                    break;
+                case EditType.MULTI_FORM:
+                    ef.eruptFieldJson.edit.$value = [];
+                    ef.eruptFieldJson.edit.$tempValue = null;
                     break;
             }
         });
