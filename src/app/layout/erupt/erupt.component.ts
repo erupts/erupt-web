@@ -112,7 +112,9 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private reuseTabService: ReuseTabService,
                 @Inject(DOCUMENT) private doc: any) {
         iconSrv.addIcon(...ICONS);
-        let initReuseTab = false;
+        // clear tabs left over from a previous session; must run before the initial
+        // NavigationEnd, otherwise the first opened tab gets wiped and the bar shows empty
+        this.reuseTabService?.clear();
         let fetchTimer: ReturnType<typeof setTimeout> | null = null;
         // this.themes = [
         //     {key: 'default', text: this.i18n.fanyi("theme.default")},
@@ -122,10 +124,6 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         router.events.subscribe(evt => {
             if (evt instanceof NavigationStart) {
                 fetchTimer = setTimeout(() => { this.isFetching = true; }, 300);
-            }
-            if (!initReuseTab) {
-                this.reuseTabService.clear();
-                initReuseTab = true;
             }
             if (evt instanceof NavigationError || evt instanceof NavigationCancel) {
                 clearTimeout(fetchTimer);
