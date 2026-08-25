@@ -2,6 +2,7 @@ import {Component, DoCheck, Input, OnInit} from "@angular/core";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {EruptModel} from "../../model/erupt.model";
+import {EditType} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {colRules} from "@shared/model/util.model";
@@ -87,6 +88,15 @@ export class MultiFormComponent implements OnInit, DoCheck {
         });
     }
 
+    copyBlock(index: number) {
+        let data = this.dataHandlerService.eruptValueToObject(this.blocks[index].build);
+        this.stripPk(data, this.tabErupt.eruptBuildModel);
+        let build = this.createBuild();
+        this.dataHandlerService.objectToEruptValue(data, build);
+        this.blocks.push({build: build, pk: null});
+        this.pageIndex = Math.ceil(this.blocks.length / this.pageSize);
+    }
+
     removeBlock(index: number) {
         this.blocks.splice(index, 1);
         let maxPage = Math.max(1, Math.ceil(this.blocks.length / this.pageSize));
@@ -107,6 +117,26 @@ export class MultiFormComponent implements OnInit, DoCheck {
         }
         if (!this.onlyRead) {
             this.edit.$tempValue = this.blocks;
+        }
+    }
+
+    // a copied block must become a brand-new entity, including its one-to-many children
+    private stripPk(data: any, build: EruptBuildModel) {
+        if (!data) {
+            return;
+        }
+        delete data[build.eruptModel.eruptJson.primaryKeyCol];
+        for (let key in build.tabErupts || {}) {
+            let field = build.eruptModel.eruptFieldModelMap.get(key);
+            // TAB_TABLE_REFER rows only reference existing entities, their pk must survive
+            if (field && field.eruptFieldJson.edit.type == EditType.TAB_TABLE_REFER) {
+                continue;
+            }
+            if (Array.isArray(data[key])) {
+                for (let row of data[key]) {
+                    this.stripPk(row, build.tabErupts[key]);
+                }
+            }
         }
     }
 

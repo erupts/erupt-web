@@ -4,11 +4,18 @@
             @if (!onlyRead) {
                 <div class="multi-form-block-bar">
                     <span class="block-index">#{{ pageOffset + i + 1 }}</span>
-                    <button nz-button nzType="link" nzSize="small"
-                            nz-popconfirm [nzPopconfirmTitle]="'table.delete.hint' | translate"
-                            (nzOnConfirm)="removeBlock(pageOffset + i)">
-                        <span nz-icon nzType="delete" nzTheme="twotone" nzTwotoneColor="#f00"></span>
-                    </button>
+                    <span>
+                        <button nz-button nzType="link" nzSize="small"
+                                nz-tooltip [nzTooltipTitle]="'global.copy' | translate"
+                                (click)="copyBlock(pageOffset + i)">
+                            <span nz-icon nzType="copy" nzTheme="outline"></span>
+                        </button>
+                        <button nz-button nzType="link" nzSize="small"
+                                nz-popconfirm [nzPopconfirmTitle]="'table.delete.hint' | translate"
+                                (nzOnConfirm)="removeBlock(pageOffset + i)">
+                            <span nz-icon nzType="delete" nzTheme="twotone" nzTwotoneColor="#f00"></span>
+                        </button>
+                    </span>
                 </div>
             }
             <erupt-edit-type [eruptBuildModel]="block.build"
