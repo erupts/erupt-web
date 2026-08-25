@@ -18,6 +18,8 @@ export class CheckboxComponent implements OnInit {
 
     @Input() onlyRead: boolean = false;
 
+    @Input() eruptParentName: string;
+
     checkbox: Checkbox[];
 
     loading = false;
@@ -30,7 +32,7 @@ export class CheckboxComponent implements OnInit {
 
     ngOnInit() {
         this.loading = true;
-        this.dataService.findCheckBox(this.eruptBuildModel.eruptModel.eruptName, this.eruptFieldModel.fieldName).subscribe(
+        this.dataService.findCheckBox(this.eruptBuildModel.eruptModel.eruptName, this.eruptFieldModel.fieldName, this.eruptParentName).subscribe(
             result => {
                 if (result) {
                     this.edit = this.eruptFieldModel.eruptFieldJson.edit;

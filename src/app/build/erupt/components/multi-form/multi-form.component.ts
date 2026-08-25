@@ -29,6 +29,9 @@ export class MultiFormComponent implements OnInit, DoCheck {
 
     @Input() onlyRead: boolean = false;
 
+    // menu-bound ancestor erupt: set when this component is itself nested inside another sub-form
+    @Input() eruptParentName: string;
+
     blocks: MultiFormBlock[] = [];
 
     col = colRules[3];
@@ -59,6 +62,10 @@ export class MultiFormComponent implements OnInit, DoCheck {
         return (this.pageIndex - 1) * this.pageSize;
     }
 
+    get anchorEruptName(): string {
+        return this.eruptParentName || this.eruptBuildModel.eruptModel.eruptName;
+    }
+
     ngOnInit() {
         this.template = JSON.stringify(this.tabErupt.eruptBuildModel);
         this.syncFromValue();
@@ -74,7 +81,7 @@ export class MultiFormComponent implements OnInit, DoCheck {
     addBlock() {
         this.adding = true;
         this.dataService.getInitValue(this.tabErupt.eruptBuildModel.eruptModel.eruptName,
-            this.eruptBuildModel.eruptModel.eruptName).subscribe({
+            this.anchorEruptName).subscribe({
             next: data => {
                 let build = this.createBuild();
                 this.dataHandlerService.objectToEruptValue(data || {}, build);
