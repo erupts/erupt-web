@@ -51,7 +51,7 @@ export class WindowModel {
         WindowModel.logoPath = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "assets/logo.svg");
         WindowModel.logoFoldPath = WindowModel.config["logoFoldPath"] || WindowModel.logoPath;
         WindowModel.loginLogoPath = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
-        WindowModel.logoText = WindowModel.config["logoText"] || "";
+        WindowModel.logoText = WindowModel.config["logoText"] || WindowModel.title;
         WindowModel.registerPage = WindowModel.config["registerPage"] || undefined; //registration page URL
         WindowModel.copyright = WindowModel.config["copyright"];
         WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //license text

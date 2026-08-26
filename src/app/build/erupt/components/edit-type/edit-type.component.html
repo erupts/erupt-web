@@ -354,6 +354,7 @@
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
                             <erupt-checkbox [eruptBuildModel]="eruptBuildModel" [onlyRead]="isReadonly(field)"
+                                            [eruptParentName]="parentEruptName"
                                             [eruptFieldModel]="field" style="max-height: 20px"></erupt-checkbox>
                         </se>
                     </div>
@@ -626,6 +627,18 @@
                         </div>
                     }
                 }
+                @case (editType.MULTI_FORM) {
+                    <div nz-col [nzSpan]="24">
+                        <se [label]="field.eruptFieldJson.edit.title"
+                            [required]="field.eruptFieldJson.edit.notNull"
+                            [optionalHelp]="field.eruptFieldJson.edit.desc">
+                            <erupt-multi-form [onlyRead]="isReadonly(field)"
+                                                [tabErupt]="{eruptBuildModel: eruptBuildModel.tabErupts[field.fieldName], eruptFieldModel: field}"
+                                                [eruptBuildModel]="eruptBuildModel"
+                                                [eruptParentName]="parentEruptName"></erupt-multi-form>
+                        </se>
+                    </div>
+                }
                 @default {
                 }
             }
@@ -643,18 +656,21 @@
                                 <tab-table [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
                                            [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptModel.eruptFieldModelMap.get(item.key)}"
                                            [eruptBuildModel]="eruptBuildModel"
+                                           [eruptParentName]="parentEruptName"
                                 ></tab-table>
                             }
                             @case (editType.TAB_TABLE_REFER) {
                                 <tab-table [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
                                            [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptModel.eruptFieldModelMap.get(item.key)}"
                                            [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
+                                           [eruptParentName]="parentEruptName"
                                 ></tab-table>
                             }
                             @case (editType.TAB_TREE) {
                                 <erupt-tab-tree [eruptFieldModel]="eruptModel.eruptFieldModelMap.get(item.key)"
                                                 [eruptBuildModel]="eruptBuildModel"
                                                 [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
+                                                [eruptParentName]="parentEruptName"
                                 ></erupt-tab-tree>
                             }
                         }

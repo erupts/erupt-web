@@ -1,11 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {EruptFieldModel} from "../../model/erupt-field.model";
-import {NzTreeNode} from "ng-zorro-antd/core/tree";
+import {NzFormatEmitEvent, NzTreeNode} from "ng-zorro-antd/core/tree";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {DataService} from "@shared/service/data.service";
 import {calcChecks} from "@shared/util/zorro.util";
-import {NzFormatEmitEvent} from "ng-zorro-antd/core/tree";
 
 @Component({
     standalone: false,
@@ -21,6 +20,8 @@ export class TabTreeComponent implements OnInit {
 
     @Input() onlyRead: boolean = false;
 
+    @Input() eruptParentName: string;
+
     treeData: any;
 
     loading = false;
@@ -33,7 +34,7 @@ export class TabTreeComponent implements OnInit {
 
     ngOnInit() {
         this.loading = true;
-        this.dataService.findTabTree(this.eruptBuildModel.eruptModel.eruptName, this.eruptFieldModel.fieldName).subscribe(
+        this.dataService.findTabTree(this.eruptBuildModel.eruptModel.eruptName, this.eruptFieldModel.fieldName, this.eruptParentName).subscribe(
             tree => {
                 const tabTree = this.eruptBuildModel.tabErupts[this.eruptFieldModel.fieldName];
                 this.dataLength = this.dataHandlerService.countNodes(tree)

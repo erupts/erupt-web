@@ -51,6 +51,7 @@ export class PrintTypeComponent implements OnInit {
             switch (model.eruptFieldJson.edit.type) {
                 case EditType.TAB_TABLE_REFER:
                 case EditType.TAB_TABLE_ADD:
+                case EditType.MULTI_FORM:
                 case EditType.TAB_TREE:
                     this.tabErupts.push({
                         key: model.fieldName,

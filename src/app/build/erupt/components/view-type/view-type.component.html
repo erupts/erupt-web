@@ -70,6 +70,14 @@
               [eruptBuildModel]="eruptBuildModel"
             ></tab-table>
           }
+          @case (editType.MULTI_FORM) {
+            <erupt-multi-form
+              [onlyRead]="true"
+                            [tabErupt]="{eruptBuildModel:eruptBuildModel.tabErupts[view.eruptFieldModel.fieldName]
+                                            ,eruptFieldModel:eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)}"
+              [eruptBuildModel]="eruptBuildModel"
+            ></erupt-multi-form>
+          }
           @case (editType.TAB_TABLE_REFER) {
             <tab-table [onlyRead]="true"
                                    [tabErupt]="{eruptBuildModel:eruptBuildModel.tabErupts[view.eruptFieldModel.fieldName]

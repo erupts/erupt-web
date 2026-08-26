@@ -273,20 +273,22 @@ export class DataService {
     }
 
 
-    findTabTree(eruptName: string, tabFieldName: string): Observable<Tree[]> {
+    findTabTree(eruptName: string, tabFieldName: string, eruptParentName?: string): Observable<Tree[]> {
         return this._http.get<Tree[]>(RestPath.data + "/tab/tree/" + eruptName + "/" + tabFieldName, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
             }
         });
     }
 
-    findCheckBox(eruptName: string, fieldName: string): Observable<Checkbox[]> {
+    findCheckBox(eruptName: string, fieldName: string, eruptParentName?: string): Observable<Checkbox[]> {
         return this._http.get<Checkbox[]>(RestPath.data + "/" + eruptName + "/checkbox/" + fieldName, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
             }
         });
     }
@@ -419,26 +421,29 @@ export class DataService {
         });
     }
 
-    eruptTabAdd(eruptName: string, tabName: string, data: any): Observable<EruptApiModel> {
+    eruptTabAdd(eruptName: string, tabName: string, data: any, eruptParentName?: string): Observable<EruptApiModel> {
         return this._http.post(RestPath.dataModify + "/tab-add/" + eruptName + "/" + tabName, data, null, {
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
             }
         });
     }
 
-    eruptTabUpdate(eruptName: string, tabName: string, data: any): Observable<EruptApiModel> {
+    eruptTabUpdate(eruptName: string, tabName: string, data: any, eruptParentName?: string): Observable<EruptApiModel> {
         return this._http.post(RestPath.dataModify + "/tab-update/" + eruptName + "/" + tabName, data, null, {
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
             }
         });
     }
 
-    eruptTabDelete(eruptName: string, tabName: string, data: any): Observable<EruptApiModel> {
+    eruptTabDelete(eruptName: string, tabName: string, data: any, eruptParentName?: string): Observable<EruptApiModel> {
         return this._http.post(RestPath.dataModify + "/tab-delete/" + eruptName + "/" + tabName, data, null, {
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
             }
         });
     }

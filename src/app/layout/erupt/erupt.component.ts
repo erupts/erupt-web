@@ -112,7 +112,9 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private reuseTabService: ReuseTabService,
                 @Inject(DOCUMENT) private doc: any) {
         iconSrv.addIcon(...ICONS);
-        let initReuseTab = false;
+        // clear tabs left over from a previous session; must run before the initial
+        // NavigationEnd, otherwise the first opened tab gets wiped and the bar shows empty
+        this.reuseTabService?.clear();
         let fetchTimer: ReturnType<typeof setTimeout> | null = null;
         // this.themes = [
         //     {key: 'default', text: this.i18n.fanyi("theme.default")},
@@ -122,10 +124,6 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         router.events.subscribe(evt => {
             if (evt instanceof NavigationStart) {
                 fetchTimer = setTimeout(() => { this.isFetching = true; }, 300);
-            }
-            if (!initReuseTab) {
-                this.reuseTabService.clear();
-                initReuseTab = true;
             }
             if (evt instanceof NavigationError || evt instanceof NavigationCancel) {
                 clearTimeout(fetchTimer);
@@ -160,7 +158,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             renderer,
             {
                 ["alain-default"]: true,
-                [`alain-default__fixed`]: layout['fixed'],
+                [`alain-default__fixed`]: true,
                 [`alain-default__boxed`]: layout['boxed'],
                 [`alain-default__collapsed`]: layout.collapsed
             },
@@ -289,7 +287,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.router.url === "/") {
                 path && this.router.navigateByUrl(path).then();
             }
-            if (userinfo.resetPwd && EruptAppData.get().resetPwd) {
+            if (userinfo.resetPwd && EruptAppData.get().resetPwd && EruptAppData.get().resetPwdPrompt) {
                 this.modal.create({
                     nzDraggable:true,
                     nzTitle: this.i18n.fanyi("global.reset_pwd"),

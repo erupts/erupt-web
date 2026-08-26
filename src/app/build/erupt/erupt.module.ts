@@ -9,6 +9,7 @@ import {EditTypeComponent} from "./components/edit-type/edit-type.component";
 import {PrintTypeComponent} from "./components/print-type/print-type";
 import {ViewTypeComponent} from "./components/view-type/view-type.component";
 import {TabTableComponent} from "./components/tab-table/tab-table.component";
+import {MultiFormComponent} from "./components/multi-form/multi-form.component";
 import {TreeSelectComponent} from "./components/tree-select/tree-select.component";
 import {ExcelImportComponent} from "./components/excel-import/excel-import.component";
 import {ReferenceTableComponent} from "./components/reference-table/reference-table.component";
@@ -104,6 +105,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         PrintTypeComponent,
         TreeSelectComponent,
         TabTableComponent,
+        MultiFormComponent,
         AmapComponent,
         ExcelImportComponent,
         ReferenceTableComponent,
