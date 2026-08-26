@@ -30,6 +30,8 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
     loadingSubMeta = false;
     private subMetaCache: { [key: string]: CubeMeta } = {};
 
+    mapList: { code: string; name: string; url: string }[] = null;
+
     constructor(private cubeApiService: CubeApiService) {
     }
 
@@ -92,6 +94,10 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
                 }
             }
         }
+        if (this.report.type === ReportType.MAP) {
+            this.report.ui['matchBy'] = this.report.ui['matchBy'] || 'name';
+            this.loadMaps();
+        }
     }
 
     onSubModelChange(alias: string) {
@@ -134,6 +140,14 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         this.changeCube();
+    }
+
+    loadMaps() {
+        if (this.mapList !== null) {
+            return;
+        }
+        this.mapList = [];
+        this.cubeApiService.maps().subscribe(res => this.mapList = res.data || []);
     }
 
     renderChart() {
@@ -250,6 +264,12 @@ export class CubePuzzleReportConfig implements OnInit, AfterViewInit {
             this.report.cube = {};
             this.report.sorts = [];
             return;
+        }
+        if (this.report.type === ReportType.MAP) {
+            // quick-start default; for production, download the GeoJSON (e.g. from the DataV atlas) and self-host it
+            this.report.ui['geoUrl'] = this.report.ui['geoUrl'] || 'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json';
+            this.report.ui['matchBy'] = this.report.ui['matchBy'] || 'name';
+            this.loadMaps();
         }
         if (this.report.type === ReportType.KPI || this.report.type === ReportType.PROGRESS || this.report.type === ReportType.RING_PROGRESS || this.report.type === ReportType.GAUGE) {
             let yField: string | string[];

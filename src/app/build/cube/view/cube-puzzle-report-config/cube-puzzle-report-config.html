@@ -78,6 +78,7 @@
                                                 <nz-option [nzValue]="ReportType.WATERFALL" [nzLabel]="'cube.report.config.chart.waterfall' | translate"></nz-option>
                                                 <nz-option [nzValue]="ReportType.ROSE" [nzLabel]="'cube.report.config.chart.rose' | translate"></nz-option>
                                                 <nz-option [nzValue]="ReportType.RADIAL_BAR" [nzLabel]="'cube.report.config.chart.radial_bar' | translate"></nz-option>
+                                                <nz-option [nzValue]="ReportType.MAP" [nzLabel]="'cube.report.config.chart.map' | translate"></nz-option>
                                             </nz-option-group>
                                             <nz-option-group [nzLabel]="'cube.report.config.relation_charts' | translate">
                                                 <!--                                            <nz-option [nzValue]="ReportType.SANKEY" nzLabel="Sankey chart"></nz-option>-->
@@ -493,6 +494,49 @@
                                                                  name="background"></nz-color-picker>
                                             </div>
                                         </div>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            }
+                            @if (report.type === ReportType.MAP) {
+                                <nz-form-item>
+                                    <nz-form-label>{{ 'cube.report.config.map.select' | translate }}</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-select [ngModel]="report.ui['geoUrl']" name="mapSelect"
+                                                   nzShowSearch nzAllowClear
+                                                   (ngModelChange)="report.ui['geoUrl'] = $event; renderChart()">
+                                            @for (m of mapList; track m.code) {
+                                                <nz-option [nzValue]="m.url" [nzLabel]="m.name + ' (' + m.code + ')'"></nz-option>
+                                            }
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <nz-form-item>
+                                    <nz-form-label>{{ 'cube.report.config.map.geo_url' | translate }}</nz-form-label>
+                                    <nz-form-control [nzExtra]="'cube.report.config.map.geo_url_hint' | translate">
+                                        <input nz-input [(ngModel)]="report.ui['geoUrl']" name="geoUrl"
+                                               (change)="renderChart()"/>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <nz-form-item>
+                                    <nz-form-label>{{ 'cube.report.config.map.match_by' | translate }}</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-radio-group [(ngModel)]="report.ui['matchBy']" name="mapMatchBy"
+                                                        (ngModelChange)="renderChart()">
+                                            <label nz-radio nzValue="name">{{ 'cube.report.config.map.match_name' | translate }}</label>
+                                            <label nz-radio nzValue="adcode">adcode</label>
+                                        </nz-radio-group>
+                                    </nz-form-control>
+                                </nz-form-item>
+                                <nz-form-item>
+                                    <nz-form-control>
+                                        <label nz-checkbox [(ngModel)]="report.ui['showLabel']" name="mapShowLabel"
+                                               (ngModelChange)="renderChart()">
+                                            {{ 'cube.report.config.show_label' | translate }}
+                                        </label>
+                                        <label nz-checkbox [(ngModel)]="report.ui['roam']" name="mapRoam"
+                                               (ngModelChange)="renderChart()">
+                                            {{ 'cube.report.config.map.roam' | translate }}
+                                        </label>
                                     </nz-form-control>
                                 </nz-form-item>
                             }

@@ -1,5 +1,24 @@
-import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {CubeKey, Dashboard, DashboardDSL, DashboardTheme, FilterDSL, ReportDSL, ReportType, SubModelDSL} from "../../model/dashboard.model";
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
+import {
+    CubeKey,
+    Dashboard,
+    DashboardDSL,
+    DashboardTheme,
+    FilterDSL,
+    ReportDSL,
+    ReportType,
+    SubModelDSL
+} from "../../model/dashboard.model";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
 import {CubeFilter, CubeOperator, DimensionFormat} from "../../model/cube-query.model";
@@ -29,12 +48,19 @@ import {
     Waterfall,
     WordCloud
 } from "@antv/g2plot";
+import * as echarts from 'echarts/core';
+import {MapChart} from 'echarts/charts';
+import {TooltipComponent, VisualMapComponent} from 'echarts/components';
+import {CanvasRenderer} from 'echarts/renderers';
 import {BaseField, CubeMeta, FieldType} from "../../model/cube.model";
+import {RestPath} from "../../../erupt/model/erupt.enum";
 import {STColumn, STComponent} from "@delon/abc/st";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {CubeDrillDetailComponent} from "../cube-drill-detail/cube-drill-detail.component";
 import {forkJoin} from "rxjs";
 import {finalize} from "rxjs/operators";
+
+echarts.use([MapChart, TooltipComponent, VisualMapComponent, CanvasRenderer]);
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -166,6 +192,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 this.s2.changeSheetSize(this.pivotContainer.nativeElement.clientWidth, this.pivotContainer.nativeElement.clientHeight);
                 this.s2.render(false);
             }
+        } else if (this.report.type === ReportType.MAP) {
+            this.chart?.resize?.();
         }
     }
 
@@ -554,9 +582,102 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             });
             this.s2.setThemeCfg({name: this.dsl?.settings?.theme === DashboardTheme.DARK ? 'dark' : (this.report.ui['pivotTheme'] || 'gray')});
             this.s2.render();
+        } else if (this.report.type == ReportType.MAP) {
+            this.renderMap(this.chartData);
         } else {
             this.chart = this.renderChart(this.chartData)
         }
+    }
+
+    /** GeoJSON cache shared across all map reports, keyed by URL */
+    private static geoJsonCache: { [url: string]: Promise<any> } = {};
+
+    /** Guards async map rendering: only the latest render() call may attach a chart */
+    private mapRenderSeq = 0;
+
+    /**
+     * Render a choropleth map: xField = region dimension, yField = measure.
+     * The GeoJSON is fetched from report.ui['geoUrl'] (e.g. downloaded from the
+     * Alibaba DataV atlas and self-hosted) and registered with ECharts by URL.
+     */
+    private renderMap(data: Record<string, any>[]): void {
+        const url = this.report.ui['geoUrl'];
+        if (!url) {
+            return;
+        }
+        const seq = ++this.mapRenderSeq;
+        // maps managed by the CubeMap registry are stored as site-relative attachment paths
+        const fetchUrl = url.startsWith('/erupt-attachment/')
+            ? RestPath.eruptAttachment + url.substring('/erupt-attachment'.length)
+            : url;
+        if (!CubePuzzleReport.geoJsonCache[url]) {
+            CubePuzzleReport.geoJsonCache[url] = fetch(fetchUrl).then(res => {
+                if (!res.ok) throw new Error(res.statusText);
+                return res.json();
+            }).catch(err => {
+                delete CubePuzzleReport.geoJsonCache[url];
+                throw err;
+            });
+        }
+        CubePuzzleReport.geoJsonCache[url].then(geoJson => {
+            if (seq !== this.mapRenderSeq || !this.chartContainer) {
+                return;
+            }
+            echarts.registerMap(url, geoJson);
+            const xF = this.report.cube[CubeKey.xField] as string;
+            const yF = this.report.cube[CubeKey.yField] as string;
+            const features: any[] = geoJson.features || [];
+            const geoNames: string[] = features.map(f => f.properties?.name).filter(Boolean);
+            // ui.matchBy decides how rows join regions: 'adcode' = exact administrative code,
+            // 'name' (default) tolerates short names in data ("浙江") vs full GeoJSON names ("浙江省")
+            const byAdcode = this.report.ui['matchBy'] === 'adcode';
+            const adcodeNames: { [adcode: string]: string } = {};
+            features.forEach(f => f.properties?.adcode != null && (adcodeNames[String(f.properties.adcode)] = f.properties.name));
+            const seriesData = data.map(row => {
+                const v = String(row[xF] ?? '');
+                const name = byAdcode ? (adcodeNames[v] || v)
+                    : geoNames.includes(v) ? v
+                        : geoNames.find(n => n.startsWith(v) || v.startsWith(n)) || v;
+                return {name, value: Number(row[yF] ?? 0), raw: row[xF]};
+            });
+            const values = seriesData.map(d => d.value).filter(v => !isNaN(v));
+            const dark = this.dsl?.settings?.theme === DashboardTheme.DARK;
+            const chart = echarts.init(this.chartContainer.nativeElement, dark ? 'dark' : null);
+            chart.setOption({
+                backgroundColor: 'transparent',
+                tooltip: {
+                    formatter: (p: any) => `${p.name}<br/>${this.getFieldTitle(yF)}: ${isNaN(p.value) ? '-' : p.value}`
+                },
+                visualMap: {
+                    min: Math.min(0, ...values),
+                    max: Math.max(1, ...values),
+                    calculable: true,
+                    left: 8,
+                    bottom: 8,
+                    inRange: {
+                        color: this.report.ui['color']?.length > 1 ? this.report.ui['color'] : ['#e0ecff', '#1c63b6']
+                    }
+                },
+                series: [{
+                    type: 'map',
+                    map: url,
+                    roam: !!this.report.ui['roam'],
+                    label: {show: !!this.report.ui['showLabel']},
+                    emphasis: {label: {show: true}},
+                    data: seriesData
+                }]
+            });
+            chart.on('click', (p: any) => {
+                const raw = p.data?.raw;
+                if (raw !== undefined && raw !== null) {
+                    this.filterLink.emit({field: xF, value: raw});
+                }
+            });
+            // render()/ngOnDestroy call chart.destroy(); align the ECharts instance with that contract
+            (chart as any).destroy = () => chart.dispose();
+            this.chart = chart;
+        }).catch(() => {
+        });
     }
 
     renderChart(data: Record<string, any>[]): any {
@@ -1111,6 +1232,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.mapRenderSeq++;
         if (this.observer) {
             this.observer.disconnect();
         }
