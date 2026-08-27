@@ -779,6 +779,9 @@ smart_search.input_value_required,请输入值,請輸入值,Please enter a value
 edit_type.uploading,附件上传中请稍后,附件上傳中請稍後,Uploading attachment please wait,Téléchargement de la pièce jointe en cours,添付ファイルをアップロード中,첨부 파일 업로드 중,Загрузка вложения,Cargando archivo adjunto,Anhang wird hochgeladen,Enviando anexo,Mengunggah lampiran,جارٍ تحميل المرفق
 edit_type.upload_failed,上传失败,上傳失敗,Upload failed,Échec du téléchargement,アップロード失敗,업로드 실패,Ошибка загрузки,Error al subir,Upload fehlgeschlagen,Falha no envio,Gagal diunggah,فشل التحميل
 edit_type.signature,签名,簽名,Signature,Signature,署名,서명,Подпись,Firma,Unterschrift,Assinatura,Tanda Tangan,توقيع
+edit_type.prev_step,上一步,上一步,Previous,Précédent,前へ,이전,Назад,Anterior,Zurück,Anterior,Sebelumnya,السابق
+edit_type.next_step,下一步,下一步,Next,Suivant,次へ,다음,Далее,Siguiente,Weiter,Próximo,Berikutnya,التالي
+edit_type.step_required,不能为空,不能為空,cannot be empty,ne peut pas être vide,を入力してください,을(를) 입력하세요,не может быть пустым,no puede estar vacío,darf nicht leer sein,não pode estar vazio,tidak boleh kosong,لا يمكن أن يكون فارغًا
 amap.close_point_select,关闭点选,關閉點選,Disable Point Select,Désactiver la sélection,点選を無効化,점 선택 비활성화,Отключить выбор точки,Desactivar selección,Punktauswahl deaktivieren,Desativar seleção,Nonaktifkan Pemilihan,تعطيل التحديد
 amap.point_select,点击地图选点,點擊地圖選點,Click Map to Select,Cliquer sur la carte,地図をクリックして選択,지도 클릭으로 선택,Клик на карте для выбора,Clic en mapa para seleccionar,Auf Karte klicken,Clique no mapa,Klik Peta untuk Memilih,انقر على الخريطة
 amap.select_valid_address,请选择有效的地址,請選擇有效的地址,Please select a valid address,Sélectionner une adresse valide,有効な住所を選択してください,유효한 주소를 선택하세요,Выберите действительный адрес,Seleccione una dirección válida,Bitte eine gültige Adresse wählen,Selecione um endereço válido,Pilih alamat yang valid,اختر عنوانًا صحيحًا

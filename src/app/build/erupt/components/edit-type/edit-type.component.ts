@@ -1,7 +1,15 @@
 import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {Edit, EruptFieldModel, FormCtrl} from "../../model/erupt-field.model";
-import {AttachmentEnum, ChoiceEnum, EditType, FormSize, HtmlEditTypeEnum, MultiChoiceEnum, Scene} from "../../model/erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    EditType,
+    FormSize,
+    HtmlEditTypeEnum,
+    MultiChoiceEnum,
+    Scene
+} from "../../model/erupt.enum";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {colRules} from "@shared/model/util.model";
@@ -80,6 +88,16 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     // field name -> group name
     private fieldToGroupMap: Map<string, string> = new Map();
 
+    // step wizard mode (layout.formSteps): each DIVIDE field becomes a step
+    formSteps: boolean = false;
+
+    steps: EruptFieldModel[] = [];
+
+    currentStep: number = 0;
+
+    // DIVIDE field name -> step index
+    private stepIndexMap: Map<string, number> = new Map();
+
     tabErupts: {
         key: string,
         value: EruptBuildModel
@@ -109,6 +127,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             if (model.eruptFieldJson.edit?.type === EditType.DIVIDE) {
                 currentDivide = model.fieldName;
             } else if (model.eruptFieldJson.edit?.type === EditType.GROUP) {
+                if (currentDivide) {
+                    this.divideGroupMap.set(model.fieldName, currentDivide);
+                }
                 // GROUP: explicit field list panel
                 const fields = model.eruptFieldJson.edit.groupType?.fields;
                 if (fields?.length) {
@@ -129,6 +150,12 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             } else if (currentDivide && model.eruptFieldJson.edit?.show && model.eruptFieldJson.edit?.title) {
                 this.divideGroupMap.set(model.fieldName, currentDivide);
             }
+        }
+        if (layout && layout.formSteps) {
+            this.steps = this.eruptModel.eruptFieldModels.filter(m =>
+                m.eruptFieldJson.edit?.type === EditType.DIVIDE && m.eruptFieldJson.edit.show && m.eruptFieldJson.edit.title);
+            this.formSteps = this.steps.length > 0;
+            this.steps.forEach((s, i) => this.stepIndexMap.set(s.fieldName, i));
         }
         for (let model of this.eruptModel.eruptFieldModels) {
             switch (model.eruptFieldJson.edit.type) {
@@ -306,6 +333,80 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         return group ? !!this.divideCollapsed[group] : false;
     }
 
+    private fieldStep(field: EruptFieldModel): number {
+        const key = field.eruptFieldJson.edit.type === EditType.DIVIDE
+            ? field.fieldName : this.divideGroupMap.get(field.fieldName);
+        // fields before the first DIVIDE belong to step 0
+        return (key && this.stepIndexMap.get(key)) || 0;
+    }
+
+    stepVisible(field: EruptFieldModel): boolean {
+        if (!this.formSteps) {
+            return true;
+        }
+        // the steps header replaces divider rendering
+        if (field.eruptFieldJson.edit.type === EditType.DIVIDE) {
+            return false;
+        }
+        return this.fieldStep(field) === this.currentStep;
+    }
+
+    prevStep(): void {
+        if (this.currentStep > 0) {
+            this.currentStep--;
+        }
+    }
+
+    nextStep(): void {
+        if (this.validateStep(this.currentStep)) {
+            this.currentStep++;
+        }
+    }
+
+    // steps header click: backward jump is free, forward jump validates each step passed over
+    stepJumpTo(index: number): void {
+        if (index <= this.currentStep) {
+            this.currentStep = index;
+            return;
+        }
+        for (let i = this.currentStep; i < index; i++) {
+            if (!this.validateStep(i)) {
+                this.currentStep = i;
+                return;
+            }
+        }
+        this.currentStep = index;
+    }
+
+    private validateStep(index: number): boolean {
+        if (this.readonly) {
+            return true;
+        }
+        for (let model of this.eruptModel.eruptFieldModels) {
+            let edit = model.eruptFieldJson.edit;
+            if (!edit || !edit.show || !edit.title || !edit.notNull || edit.type === EditType.DIVIDE) {
+                continue;
+            }
+            if (this.fieldStep(model) === index && this.isEmptyValue(model)) {
+                this.msg.warning(edit.title + " " + this.i18n.fanyi("edit_type.step_required"));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private isEmptyValue(model: EruptFieldModel): boolean {
+        let edit = model.eruptFieldJson.edit;
+        if (edit.type === EditType.ATTACHMENT) {
+            return !edit.$viewValue || edit.$viewValue.length === 0;
+        }
+        let value = edit.$value;
+        if (value === null || value === undefined || value === "") {
+            return true;
+        }
+        return Array.isArray(value) && value.length === 0;
+    }
+
     ngOnDestroy(): void {
 
     }
@@ -315,6 +416,15 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             if (!this.uploadFilesStatus[key]) {
                 this.msg.warning(this.i18n.fanyi("edit_type.uploading"));
                 return false;
+            }
+        }
+        if (this.formSteps) {
+            // jump to the first step with an unfilled required field
+            for (let i = 0; i < this.steps.length; i++) {
+                if (!this.validateStep(i)) {
+                    this.currentStep = i;
+                    return false;
+                }
             }
         }
         return true;

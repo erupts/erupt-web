@@ -38,6 +38,7 @@ import {NzTreeModule} from "ng-zorro-antd/tree";
 import {NzSkeletonModule} from "ng-zorro-antd/skeleton";
 import {NzCarouselModule} from "ng-zorro-antd/carousel";
 import {NzTransferModule} from "ng-zorro-antd/transfer";
+import {NzStepsModule} from "ng-zorro-antd/steps";
 
 export const SHARED_ZORRO_MODULES = [
     NzButtonModule,
@@ -79,5 +80,6 @@ export const SHARED_ZORRO_MODULES = [
     NzSkeletonModule,
     NzCarouselModule,
     NzBreadCrumbModule,
-    NzTransferModule
+    NzTransferModule,
+    NzStepsModule
 ];

@@ -1,7 +1,17 @@
 <div nz-row [nzGutter]="16">
+    @if (formSteps) {
+        <div style="width: 100%; padding: 8px 8px 24px">
+            <nz-steps [nzCurrent]="currentStep" nzSize="small" (nzIndexChange)="stepJumpTo($event)">
+                @for (step of steps; track step.fieldName) {
+                    <nz-step [nzTitle]="step.eruptFieldJson.edit.title"
+                             [nzDescription]="step.eruptFieldJson.edit.desc"></nz-step>
+                }
+            </nz-steps>
+        </div>
+    }
     <form nz-form [nzLayout]="layout" se-container style="width: 100%" class="erupt-form">
         @for (field of eruptModel.eruptFieldModels; track field) {
-            @if (field.eruptFieldJson.edit && field.eruptFieldJson.edit.show && field.eruptFieldJson.edit.title && !isDivideCollapsed(field) && !isGroupCollapsed(field) && !divideGroupedFieldSet.has(field.fieldName)) {
+            @if (field.eruptFieldJson.edit && field.eruptFieldJson.edit.show && field.eruptFieldJson.edit.title && stepVisible(field) && !isDivideCollapsed(field) && !isGroupCollapsed(field) && !divideGroupedFieldSet.has(field.fieldName)) {
                 @switch (field.eruptFieldJson.edit.type) {
                     @case (editType.DIVIDE) {
                         <div nz-col [nzSpan]="24" style="margin-bottom: 0">
@@ -78,6 +88,21 @@
                     }
                 }
             }
+        }
+
+        @if (formSteps) {
+            <div nz-col [nzSpan]="24" style="text-align: right; margin-top: 8px">
+                @if (currentStep > 0) {
+                    <button nz-button type="button" (click)="prevStep()" style="margin-right: 8px">
+                        {{ 'edit_type.prev_step' | translate }}
+                    </button>
+                }
+                @if (currentStep < steps.length - 1) {
+                    <button nz-button type="button" nzType="primary" (click)="nextStep()">
+                        {{ 'edit_type.next_step' | translate }}
+                    </button>
+                }
+            </div>
         }
 
         <!-- Shared sub-templates for types with variant col widths -->
@@ -645,7 +670,7 @@
         </ng-template>
     </form>
 
-    @if (eruptBuildModel.tabErupts) {
+    @if (eruptBuildModel.tabErupts && (!formSteps || currentStep === steps.length - 1)) {
         <nz-tabs [nzType]="'card'" style="margin-top: 5px">
             @for (item of tabErupts; track item) {
                 @if (eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.show) {
