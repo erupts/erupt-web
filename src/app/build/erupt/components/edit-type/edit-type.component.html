@@ -282,7 +282,12 @@
                                              [name]="field.fieldName"
                                              [nzMin]="field.eruptFieldJson.edit.numberType.min"
                                              [nzMax]="field.eruptFieldJson.edit.numberType.max"
-                                             [nzStep]="1"></nz-input-number>
+                                             [nzPrecision]="field.eruptFieldJson.edit.numberType.precision >= 0 ? field.eruptFieldJson.edit.numberType.precision : null"
+                                             [nzPrefix]="field.eruptFieldJson.edit.numberType.prefix || undefined"
+                                             [nzSuffix]="field.eruptFieldJson.edit.numberType.suffix || undefined"
+                                             [nzFormatter]="field.eruptFieldJson.edit.numberType.thousandsSeparator ? thousandsFormatter : null"
+                                             [nzParser]="field.eruptFieldJson.edit.numberType.thousandsSeparator ? thousandsParser : null"
+                                             [nzStep]="field.eruptFieldJson.edit.numberType.step"></nz-input-number>
                         </se>
                     </div>
                 }
@@ -292,16 +297,16 @@
                         <se [label]="field.eruptFieldJson.edit.title"
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
-                            <nz-input-wrapper class="erupt-input" nzAllowClear>
-                                <input nz-input [nzSize]="size" autocomplete="off" nz-tooltip
-                                       nzTooltipTrigger="focus"
-                                       nzTooltipPlacement="topLeft"
-                                       type="color"
-                                       [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                       [name]="field.fieldName"
-                                       [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                       [disabled]="isReadonly(field)">
-                            </nz-input-wrapper>
+                            <nz-color-picker class="erupt-input"
+                                             [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                             [name]="field.fieldName"
+                                             [nzSize]="size"
+                                             nzFormat="hex"
+                                             [nzShowText]="field.eruptFieldJson.edit.colorType.showText"
+                                             [nzAllowClear]="!field.eruptFieldJson.edit.notNull"
+                                             [nzDisabledAlpha]="!field.eruptFieldJson.edit.colorType.alpha"
+                                             [nzPresets]="colorPresets(field)"
+                                             [nzDisabled]="isReadonly(field)"></nz-color-picker>
                         </se>
                     </div>
                 }

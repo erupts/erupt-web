@@ -59,6 +59,15 @@
         [name]="field.fieldName">
       </nz-month-picker>
     }
+    @case (dateEnum.QUARTER) {
+      <nz-quarter-picker [nzSize]="size" class="erupt-input stander-line-height"
+        [(ngModel)]="edit.$value"
+        [nzDisabled]="readonly"
+        [nzDisabledDate]="disabledDate"
+        [nzPlaceHolder]="edit.placeHolder"
+        [name]="field.fieldName">
+      </nz-quarter-picker>
+    }
     @case (dateEnum.YEAR) {
       <nz-year-picker [nzSize]="size" class="erupt-input stander-line-height"
         [(ngModel)]="edit.$value"

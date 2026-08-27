@@ -1,4 +1,14 @@
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, HtmlEditTypeEnum, MultiChoiceEnum, PickerMode, TabEnum, ViewType} from "./erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    DateEnum,
+    EditType,
+    HtmlEditTypeEnum,
+    MultiChoiceEnum,
+    PickerMode,
+    TabEnum,
+    ViewType
+} from "./erupt.enum";
 import {QueryExpression} from "./erupt.vo";
 import {KeyValueDiffer} from "@angular/core";
 import {Subject} from "rxjs";
@@ -99,6 +109,7 @@ export interface Edit {
     sliderType?: SliderType;
     codeEditType?: CodeEditType;
     mapType?: MapType;
+    colorType?: ColorType;
     groupType?: GroupType;
     calloutType?: CalloutType;
     buttonType?: ButtonType;
@@ -157,6 +168,11 @@ interface InputType {
 interface NumberType {
     min: number;
     max: number;
+    precision: number;
+    step: number;
+    prefix: string;
+    suffix: string;
+    thousandsSeparator: boolean;
 }
 
 interface AutoCompleteType {
@@ -223,7 +239,8 @@ interface SliderType {
 interface DateType {
     type: DateEnum;
     pickerMode: PickerMode;
-    isRange: boolean;
+    min: string;
+    max: string;
 }
 
 interface AttachmentType {
@@ -239,6 +256,12 @@ interface AttachmentType {
 export interface MapType {
     draw: boolean;
     drawMaxLayer: number;
+}
+
+export interface ColorType {
+    alpha: boolean;
+    presets: string[];
+    showText: boolean;
 }
 
 interface GroupType {

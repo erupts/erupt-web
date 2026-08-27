@@ -104,6 +104,7 @@ export enum DateEnum {
     DATE_TIME = "DATE_TIME",
     WEEK = "WEEK",
     MONTH = "MONTH",
+    QUARTER = "QUARTER",
     YEAR = "YEAR"
 }
 

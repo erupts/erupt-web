@@ -472,6 +472,30 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         });
     }
 
+    // NUMBER thousands separator (display only). Stable references so nz-input-number
+    // does not re-run change detection on every cycle.
+    thousandsFormatter = (val: number | string): string => {
+        if (val === null || val === undefined || val === '') return '';
+        const [int, dec] = `${val}`.split('.');
+        const grouped = int.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return dec === undefined ? grouped : `${grouped}.${dec}`;
+    };
+
+    thousandsParser = (val: string): any => (val || '').replace(/,/g, '');
+
+    // COLOR preset swatches, memoized per field to keep the @Input reference stable.
+    private colorPresetsCache = new Map<string, any[]>();
+
+    colorPresets(field: EruptFieldModel): any[] {
+        const presets = field.eruptFieldJson.edit.colorType?.presets;
+        if (!presets || presets.length === 0) return null;
+        const key = field.fieldName;
+        if (!this.colorPresetsCache.has(key)) {
+            this.colorPresetsCache.set(key, [{label: this.i18n.fanyi("edit_type.color_presets"), colors: presets}]);
+        }
+        return this.colorPresetsCache.get(key);
+    }
+
     onAttachmentDrop(event: CdkDragDrop<any>, field: EruptFieldModel): void {
         moveItemInArray(field.eruptFieldJson.edit.$viewValue, event.previousIndex, event.currentIndex);
     }

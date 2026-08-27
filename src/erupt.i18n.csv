@@ -781,6 +781,7 @@ edit_type.upload_failed,上传失败,上傳失敗,Upload failed,Échec du télé
 edit_type.signature,签名,簽名,Signature,Signature,署名,서명,Подпись,Firma,Unterschrift,Assinatura,Tanda Tangan,توقيع
 edit_type.prev_step,上一步,上一步,Previous,Précédent,前へ,이전,Назад,Anterior,Zurück,Anterior,Sebelumnya,السابق
 edit_type.next_step,下一步,下一步,Next,Suivant,次へ,다음,Далее,Siguiente,Weiter,Próximo,Berikutnya,التالي
+edit_type.color_presets,预设颜色,預設顏色,Presets,Préréglages,プリセット,프리셋,Пресеты,Preajustes,Voreinstellungen,Predefinições,Prasetel,الإعدادات المسبقة
 edit_type.step_required,不能为空,不能為空,cannot be empty,ne peut pas être vide,を入力してください,을(를) 입력하세요,не может быть пустым,no puede estar vacío,darf nicht leer sein,não pode estar vazio,tidak boleh kosong,لا يمكن أن يكون فارغًا
 amap.close_point_select,关闭点选,關閉點選,Disable Point Select,Désactiver la sélection,点選を無効化,점 선택 비활성화,Отключить выбор точки,Desactivar selección,Punktauswahl deaktivieren,Desativar seleção,Nonaktifkan Pemilihan,تعطيل التحديد
 amap.point_select,点击地图选点,點擊地圖選點,Click Map to Select,Cliquer sur la carte,地図をクリックして選択,지도 클릭으로 선택,Клик на карте для выбора,Clic en mapa para seleccionar,Auf Karte klicken,Clique no mapa,Klik Peta untuk Memilih,انقر على الخريطة
