@@ -220,4 +220,9 @@ export class SearchComponent implements OnInit, DoCheck {
         this.operatorChange.emit();
     }
 
+    // Operator locked via @Search(lockOperator = true): the operator selector is hidden so the user cannot change it
+    isOperatorLocked(field: EruptFieldModel): boolean {
+        return !!field.eruptFieldJson.edit?.search?.lockOperator;
+    }
+
 }

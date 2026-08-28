@@ -146,6 +146,8 @@ interface Search {
     value: boolean;
     notNull: boolean;
     operator?: QueryExpression;
+    // Lock the operator: the operator selector is hidden so users cannot change it
+    lockOperator?: boolean;
 }
 
 interface CodeEditType {
