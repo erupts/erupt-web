@@ -77,8 +77,8 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     @Output() readonly select = new EventEmitter<Menu>();
 
-    private static readonly MENU_ORDER_KEY = 'erupt_menu_order';
-    private static readonly FAVORITES_KEY = 'erupt_menu_favorites';
+    static readonly MENU_ORDER_KEY = 'erupt_menu_order';
+    static readonly FAVORITES_KEY = 'erupt_menu_favorites';
 
     favorites: Nav[] = [];
 

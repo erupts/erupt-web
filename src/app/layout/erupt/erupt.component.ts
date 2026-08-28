@@ -1,9 +1,21 @@
-import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, Optional, Renderer2, ViewChild, ViewContainerRef} from "@angular/core";
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Inject,
+    OnDestroy,
+    OnInit,
+    Optional,
+    Renderer2,
+    ViewChild,
+    ViewContainerRef
+} from "@angular/core";
 import {IframeManagerService} from "@shared/service/iframe-manager.service";
 import {DOCUMENT} from "@angular/common";
 import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router} from "@angular/router";
 
 import {Observable, Subscription} from "rxjs";
+import {tap} from "rxjs/operators";
 import {ScrollService, updateHostClass} from "@delon/util";
 import {Menu, MenuService, SettingsService} from "@delon/theme";
 import {
@@ -181,7 +193,63 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.notify$ = this.settings.notify.subscribe(() => this.setClass());
         this.setClass();
-        this.data.getMenu().subscribe(res => {
+        this.loadMenu().subscribe();
+        let userinfoObservable: Observable<Userinfo>;
+
+        if (this.utilsService.isTenantToken()) {
+            userinfoObservable = this.data.tenantUserinfo()
+        } else {
+            userinfoObservable = this.data.userinfo();
+        }
+        userinfoObservable.subscribe(userinfo => {
+            let path = generateMenuPath(userinfo.indexMenuType, userinfo.indexMenuValue);
+            const appConfig = EruptAppData.get();
+            if (appConfig.waterMark) {
+                // watermark content format: name-custom content-date
+                let watermark = userinfo.nickname;
+                if (appConfig.waterMarkContent) {
+                    watermark += '-' + appConfig.waterMarkContent;
+                }
+                if (appConfig.waterMarkDate) {
+                    const now = new Date();
+                    const pad = (n: number) => String(n).padStart(2, '0');
+                    watermark += '-' + now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+                }
+                this.nickName = watermark;
+            }
+            this.settingsService.setUser({
+                avatar: userinfo.avatar,
+                name: userinfo.nickname,
+                tenantName: userinfo.tenantName || null,
+                indexPath: path
+            });
+            if (this.router.url === "/") {
+                path && this.router.navigateByUrl(path).then();
+            }
+            if (userinfo.resetPwd && EruptAppData.get().resetPwd && EruptAppData.get().resetPwdPrompt) {
+                this.modal.create({
+                    nzDraggable:true,
+                    nzTitle: this.i18n.fanyi("global.reset_pwd"),
+                    nzMaskClosable: false,
+                    nzClosable: true,
+                    nzKeyboard: true,
+                    nzContent: ResetPwdComponent,
+                    nzFooter: null,
+                    nzBodyStyle: {
+                        paddingBottom: '1px'
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Load the menu into the MenuService and rebuild the sidebar.
+     * Pass flush=true to force the backend to reload the menu from the database,
+     * bypassing the stale session cache (used by the sidebar refresh button).
+     */
+    loadMenu(flush = false): Observable<MenuVo[]> {
+        return this.data.getMenu(flush).pipe(tap(res => {
             this.menu = res;
 
             // this.statusService.menus = res;
@@ -254,54 +322,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                     }, 800);
                 });
             }
-        });
-        let userinfoObservable: Observable<Userinfo>;
-
-        if (this.utilsService.isTenantToken()) {
-            userinfoObservable = this.data.tenantUserinfo()
-        } else {
-            userinfoObservable = this.data.userinfo();
-        }
-        userinfoObservable.subscribe(userinfo => {
-            let path = generateMenuPath(userinfo.indexMenuType, userinfo.indexMenuValue);
-            const appConfig = EruptAppData.get();
-            if (appConfig.waterMark) {
-                // watermark content format: name-custom content-date
-                let watermark = userinfo.nickname;
-                if (appConfig.waterMarkContent) {
-                    watermark += '-' + appConfig.waterMarkContent;
-                }
-                if (appConfig.waterMarkDate) {
-                    const now = new Date();
-                    const pad = (n: number) => String(n).padStart(2, '0');
-                    watermark += '-' + now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
-                }
-                this.nickName = watermark;
-            }
-            this.settingsService.setUser({
-                avatar: userinfo.avatar,
-                name: userinfo.nickname,
-                tenantName: userinfo.tenantName || null,
-                indexPath: path
-            });
-            if (this.router.url === "/") {
-                path && this.router.navigateByUrl(path).then();
-            }
-            if (userinfo.resetPwd && EruptAppData.get().resetPwd && EruptAppData.get().resetPwdPrompt) {
-                this.modal.create({
-                    nzDraggable:true,
-                    nzTitle: this.i18n.fanyi("global.reset_pwd"),
-                    nzMaskClosable: false,
-                    nzClosable: true,
-                    nzKeyboard: true,
-                    nzContent: ResetPwdComponent,
-                    nzFooter: null,
-                    nzBodyStyle: {
-                        paddingBottom: '1px'
-                    }
-                });
-            }
-        });
+        }));
     }
 
     ngOnDestroy() {

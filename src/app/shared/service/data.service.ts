@@ -502,9 +502,9 @@ export class DataService {
         );
     }
 
-    //get menu
-    getMenu(): Observable<MenuVo[]> {
-        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", null, {
+    //get menu, pass flush=true to rebuild the menu cache from the database
+    getMenu(flush?: boolean): Observable<MenuVo[]> {
+        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", flush ? {flush: true} : null, {
             observe: "body"
         });
     }

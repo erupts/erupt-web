@@ -1,8 +1,30 @@
 <div class="alain-default__aside-wrap">
     <div class="alain-default__aside-inner" style="overflow: scroll">
         <erupt-menu [autoCloseUnderPad]="true" class="d-block" style="padding-top: 0 !important;padding-bottom:38px;"></erupt-menu>
-        <div class="fold" (click)="toggleCollapsedSidebar()" style="height: 38px">
-            <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}" style="font-size: 1.2em"></i>
+        <div class="fold" style="height: 38px">
+            @if (!settings.layout.collapsed) {
+                <div class="fold__btn" (click)="refreshMenu()"
+                     nz-tooltip nzTooltipPlacement="top" [nzTooltipTitle]="'global.refresh' | translate">
+                    <i nz-icon nzType="reload" [nzSpin]="refreshing"></i>
+                </div>
+                <div class="fold__btn" (click)="resetMenu()"
+                     nz-tooltip nzTooltipPlacement="top" [nzTooltipTitle]="'menu.reset' | translate">
+                    <i nz-icon nzType="clear"></i>
+                </div>
+                <div class="fold__btn" (click)="toggleExpandAll()"
+                     nz-tooltip nzTooltipPlacement="top" [nzTooltipTitle]="'menu.toggle_all' | translate">
+                    <i nz-icon nzType="node-expand"></i>
+                </div>
+                <div class="fold__btn" [class.fold__btn--active]="splitMenu" (click)="toggleSplitMenu()"
+                     nz-tooltip nzTooltipPlacement="top" [nzTooltipTitle]="'menu.split_mode' | translate">
+                    <i nz-icon nzType="layout"></i>
+                </div>
+            }
+            <div class="fold__btn" (click)="toggleCollapsedSidebar()"
+                 nz-tooltip nzTooltipPlacement="top"
+                 [nzTooltipTitle]="(settings.layout.collapsed ? 'menu.expand' : 'menu.collapse') | translate">
+                <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
+            </div>
         </div>
     </div>
     @if (loading) {

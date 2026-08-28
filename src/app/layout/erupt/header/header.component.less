@@ -178,6 +178,15 @@
 
         .alain-default__header-logo {
             min-width: 48px;
+            // Lock to the collapsed sidebar width so the logo never overflows the divider
+            max-width: 48px;
+            box-sizing: border-box;
+            padding: 0;
+            overflow: hidden;
+
+            .header-link {
+                padding: 0;
+            }
 
             img {
                 width: 36px;
