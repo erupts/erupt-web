@@ -6,7 +6,7 @@
     <layout-sidebar class="erupt-side alain-default__aside"></layout-sidebar>
     <section class="erupt_content">
         @if (settingSrv.layout['reuse']) {
-            <reuse-tab [max]="30" tabType="card" [tabBarGutter]="0"
+            <reuse-tab class="hidden-mobile" [max]="30" tabType="card" [tabBarGutter]="0"
                        [tabMaxWidth]="180"></reuse-tab>
         }
         <router-outlet></router-outlet>
