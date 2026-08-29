@@ -82,6 +82,25 @@
     }
 
     ::ng-deep {
+        // Breadcrumb: when horizontal space runs out, truncate with an ellipsis instead of squeezing the header
+        .header-breadcrumb {
+            min-width: 0;
+            overflow: hidden;
+
+            erupt-nav {
+                display: block;
+                min-width: 0;
+                max-width: 100%;
+
+                .ant-breadcrumb {
+                    display: block;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+
         .split-nav-wrap {
             flex: 1;
             min-width: 0;

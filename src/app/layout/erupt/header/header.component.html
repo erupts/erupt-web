@@ -13,8 +13,8 @@
   </a>
 </div>
 
-<div class="alain-default__nav-wrap" style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;">
-  <ul class="alain-default__nav" style="flex-shrink:0;" [style.margin-right]="(splitMenu && splitTopItems.length) ? '0' : null">
+<div class="alain-default__nav-wrap" style="display:grid;grid-template-columns:minmax(0,auto) 1fr auto;align-items:center;">
+  <ul class="alain-default__nav" style="min-width:0;" [style.margin-right]="(splitMenu && splitTopItems.length) ? '0' : null">
     <!-- mobile sidebar toggle -->
     <li class="hidden-pc">
       <div class="alain-default__nav-item" (click)="toggleCollapsedSidebar()">
@@ -22,7 +22,7 @@
       </div>
     </li>
     @if (!splitMenu && settings.layout['breadcrumbs']) {
-      <li class="hidden-mobile" style="padding:0 10px 0 18px;">
+      <li class="hidden-mobile header-breadcrumb" style="padding:0 10px 0 18px;">
         <erupt-nav></erupt-nav>
       </li>
     }
