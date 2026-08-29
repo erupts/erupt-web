@@ -72,7 +72,6 @@ export class TabTableComponent implements OnInit {
         setTimeout(() => {
             this.loading = false;
         }, 300);
-        this.tableWidth = (this.tabErupt.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length * 160 * this.i18n.getCurrLangInfo().columnWidthZoom) + "px"
         if (this.onlyRead) {
             this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true);
         } else {
@@ -156,6 +155,7 @@ export class TabTableComponent implements OnInit {
             });
             this.column = viewValue;
         }
+        this.tableWidth = UiBuildService.calcTableWidth(this.column);
     }
 
     addData() {
