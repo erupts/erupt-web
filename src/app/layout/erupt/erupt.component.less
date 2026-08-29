@@ -99,10 +99,13 @@
     }
 
     // In Fixed mode, the router-outlet placeholder height follows the tab height
+    // (@tab-h nav + 1px card bottom border); flex-shrink: 0 keeps it from being
+    // squeezed by overflowing page content inside the flex column
     @media (min-width: 768px) {
         .alain-default__fixed .reuse-tab + router-outlet {
             display: block;
-            height: @tab-h !important;
+            flex-shrink: 0;
+            height: calc(@tab-h + 1px) !important;
         }
     }
 
