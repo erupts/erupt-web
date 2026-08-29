@@ -165,7 +165,8 @@
                   </nz-select>
                   }
                   <div style="flex:1;min-width:0" [class.null-op-disabled]="isNullOp(field)">
-                    <erupt-reference [eruptModel]="searchEruptModel" [field]="field" [readonly]="false" [size]="size"/>
+                    <erupt-reference [eruptModel]="searchEruptModel" [field]="field" [readonly]="false" [size]="size"
+                                     [multiple]="isTagsInputOp(field)"/>
                   </div>
                 </nz-space-compact>
               </erupt-search-se>

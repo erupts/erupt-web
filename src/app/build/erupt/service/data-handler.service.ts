@@ -155,7 +155,20 @@ export class DataHandlerService {
             }
             if (expression === QueryExpression.IN || expression === QueryExpression.NOT_IN) {
                 if (edit.$value?.length) {
-                    conditions.push({key: field.fieldName, value: edit.$value, expression});
+                    let value: any[] = edit.$value;
+                    // reference values are picked as {id, label} objects; normalize keys to the configured id/label fields
+                    if (edit.type === EditType.REFERENCE_TABLE) {
+                        value = value.map(v => ({
+                            [edit.referenceTableType.id]: v[edit.referenceTableType.id],
+                            [edit.referenceTableType.label]: v[edit.referenceTableType.label]
+                        }));
+                    } else if (edit.type === EditType.REFERENCE_TREE) {
+                        value = value.map(v => ({
+                            [edit.referenceTreeType.id]: v.id,
+                            [edit.referenceTreeType.label]: v.label
+                        }));
+                    }
+                    conditions.push({key: field.fieldName, value, expression});
                 }
                 continue;
             }

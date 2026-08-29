@@ -145,6 +145,8 @@ export class SearchComponent implements OnInit, DoCheck {
                 return [
                     {abbr: '=',  label: `= ${this.t('query.op.eq')}`,         value: QueryExpression.EQ},
                     {abbr: '≠',  label: `≠ ${this.t('query.op.neq')}`,        value: QueryExpression.NEQ},
+                    {abbr: '∈',  label: `∈ ${this.t('query.op.in')}`,         value: QueryExpression.IN},
+                    {abbr: '∉',  label: `∉ ${this.t('query.op.not_in')}`,     value: QueryExpression.NOT_IN},
                     {abbr: '∅',  label: `∅ ${this.t('query.op.null')}`,       value: QueryExpression.NULL},
                     {abbr: '!∅', label: `!∅ ${this.t('query.op.not_null')}`,  value: QueryExpression.NOT_NULL},
                 ];
