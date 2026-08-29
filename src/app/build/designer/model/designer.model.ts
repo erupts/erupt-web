@@ -1,12 +1,4 @@
-import {
-    AttachmentEnum,
-    ChoiceEnum,
-    DateEnum,
-    EditType,
-    FormSize,
-    PagingType,
-    PickerMode
-} from "../../erupt/model/erupt.enum";
+import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, PickerMode} from "../../erupt/model/erupt.enum";
 import {I18NService} from "@core";
 
 /**
@@ -76,6 +68,7 @@ export interface DesignerVis {
 
 export interface DesignerLayout {
     formSize?: FormSize;
+    formSteps?: boolean;
     pagingType?: PagingType;
     pageSize?: number;
     tableLeftFixed?: number;

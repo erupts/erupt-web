@@ -684,6 +684,11 @@
                 </nz-radio-group>
             </div>
             <div class="prop-item">
+                <label>{{ 'designer.form_steps' | translate }}</label>
+                <nz-switch nzSize="small" [(ngModel)]="form.erupt.layout!.formSteps"
+                           (ngModelChange)="saveDraft()"></nz-switch>
+            </div>
+            <div class="prop-item">
                 <label>{{ 'designer.page_size' | translate }}</label>
                 <nz-input-number [(ngModel)]="form.erupt.layout!.pageSize" [nzMin]="1"
                                  style="width: 100%"></nz-input-number>

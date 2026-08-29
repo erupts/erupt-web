@@ -675,7 +675,7 @@
         </ng-template>
     </form>
 
-    @if (eruptBuildModel.tabErupts && (!formSteps || currentStep === steps.length - 1)) {
+    @if (tabErupts.length && (!formSteps || currentStep === steps.length - 1)) {
         <nz-tabs [nzType]="'card'" style="margin-top: 5px">
             @for (item of tabErupts; track item) {
                 @if (eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.show) {

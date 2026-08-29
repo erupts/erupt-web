@@ -17,6 +17,7 @@
 } @else {
     <nz-select class="erupt-input"
                [nzLoading]="isLoading"
+               [nzMode]="multiple ? 'multiple' : 'default'"
                [nzDisabled]="readonly" nzAllowClear
                [(ngModel)]="eruptField.eruptFieldJson.edit.$value"
                [nzPlaceHolder]="eruptField.eruptFieldJson.edit.placeHolder"
