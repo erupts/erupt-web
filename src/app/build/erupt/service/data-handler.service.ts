@@ -153,6 +153,20 @@ export class DataHandlerService {
                 }
                 continue;
             }
+            // TIME has no range picker, its range bounds come from two time pickers ($l_val / $r_val)
+            if (expression === QueryExpression.RANGE && edit.type === EditType.DATE && edit.dateType?.type === DateEnum.TIME) {
+                if (edit.$l_val != null || edit.$r_val != null) {
+                    conditions.push({
+                        key: field.fieldName,
+                        value: [
+                            edit.$l_val ? this.datePipe.transform(edit.$l_val, "HH:mm:ss") : null,
+                            edit.$r_val ? this.datePipe.transform(edit.$r_val, "HH:mm:ss") : null
+                        ],
+                        expression
+                    });
+                }
+                continue;
+            }
             if (expression === QueryExpression.IN || expression === QueryExpression.NOT_IN) {
                 if (edit.$value?.length) {
                     let value: any[] = edit.$value;

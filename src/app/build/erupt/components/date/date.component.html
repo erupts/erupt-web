@@ -10,6 +10,23 @@
       [nzDisabledDate]="disabledDate"
       [nzRanges]="dateRanges">
     </nz-range-picker>
+  } @else {
+    <!-- ng-zorro has no time range picker, so compose one from two pickers bound to $l_val / $r_val -->
+    <div style="display:flex;align-items:center" class="erupt-input stander-line-height">
+      <nz-time-picker [nzSize]="size" style="flex:1;min-width:0"
+        [(ngModel)]="edit.$l_val"
+        [nzDisabled]="readonly"
+        [nzPlaceHolder]="edit.placeHolder"
+        [name]="field.fieldName + '_l'">
+      </nz-time-picker>
+      <span style="padding:0 4px">~</span>
+      <nz-time-picker [nzSize]="size" style="flex:1;min-width:0"
+        [(ngModel)]="edit.$r_val"
+        [nzDisabled]="readonly"
+        [nzPlaceHolder]="edit.placeHolder"
+        [name]="field.fieldName + '_r'">
+      </nz-time-picker>
+    </div>
   }
 }
 @if (!range) {
