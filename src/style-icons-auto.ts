@@ -23,11 +23,13 @@ import {
     BulbTwoTone,
     CaretDownOutline,
     CaretUpOutline,
+    CheckSquareOutline,
     ClearOutline,
     ClockCircleOutline,
     CloseCircleFill,
     CloseOutline,
     CloudOutline,
+    CloudUploadOutline,
     ClusterOutline,
     CodeOutline,
     ColumnWidthOutline,
@@ -168,6 +170,7 @@ export const ICONS_AUTO = [
     EyeOutline,
     DownloadOutline,
     SearchOutline,
+    CheckSquareOutline,
     DeleteOutline,
     ReloadOutline,
     RobotOutline,
@@ -242,5 +245,6 @@ export const ICONS_AUTO = [
     PlayCircleOutline,
     ThunderboltOutline,
     FolderOutline,
-    AppstoreOutline
+    AppstoreOutline,
+    CloudUploadOutline
 ];

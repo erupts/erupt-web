@@ -1,9 +1,10 @@
-import {Component, Input, OnInit} from "@angular/core";
+import {Component, Input, OnInit, ViewChild} from "@angular/core";
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 import {EruptModel} from "../../model/erupt.model";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {NzFormatEmitEvent, NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
+import {NzTreeComponent} from "ng-zorro-antd/tree";
 
 @Component({
     standalone: false,
@@ -20,6 +21,11 @@ export class TreeSelectComponent implements OnInit {
     @Input() parentEruptName: string;
 
     @Input() dependVal: any;
+
+    // checkable multi-select mode: $tempValue holds an array of {id, label}
+    @Input() multiple: boolean = false;
+
+    @ViewChild('tree') tree: NzTreeComponent;
 
     list: NzTreeNodeOptions[];
 
@@ -40,10 +46,22 @@ export class TreeSelectComponent implements OnInit {
     }
 
     nodeClickEvent(event: NzFormatEmitEvent) {
+        if (this.multiple) {
+            event.node.setChecked(!event.node.isChecked);
+            this.checkBoxChange();
+            return;
+        }
         this.eruptField.eruptFieldJson.edit.$tempValue = {
             id: event.node.origin.key,
             label: event.node.origin.title
         };
+    }
+
+    checkBoxChange() {
+        this.eruptField.eruptFieldJson.edit.$tempValue = this.tree.getCheckedNodeList().map(node => ({
+            id: node.origin.key,
+            label: node.origin.title
+        }));
     }
 
 }

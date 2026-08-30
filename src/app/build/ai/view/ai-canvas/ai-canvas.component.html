@@ -47,6 +47,13 @@
                     [disabled]="!previewHtml" [title]="'ai.canvas.open_new' | translate">
                 <span nz-icon nzType="export" nzTheme="outline"></span>
             </button>
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button nzType="primary" nzSize="small" [nzLoading]="publishing"
+                    (click)="publish()" [disabled]="!activeVersion || generating || !unpublishedChanges"
+                    [title]="(unpublishedChanges ? 'ai.canvas.publish_hint' : 'ai.canvas.publish_up_to_date') | translate">
+                <span nz-icon nzType="cloud-upload" nzTheme="outline"></span>
+                {{ 'ai.canvas.publish' | translate }}
+            </button>
         </div>
         <div class="preview-body">
             @if (previewHtml) {
@@ -70,6 +77,14 @@
 
     <!-- Right: generation conversation -->
     <div class="chat-pane">
+        @if (modelLabel) {
+            <!-- Data model is fixed on the canvas record; shown as conversation context -->
+            <div class="chat-context" [title]="dataType + ' / ' + targetModel">
+                <span nz-icon nzType="database" nzTheme="outline"></span>
+                <span class="chat-context-label">{{ modelLabel }}</span>
+                <span class="chat-context-type">{{ dataType }}</span>
+            </div>
+        }
         <div class="bubbles">
             @if (loading) {
                 <div class="bubbles-loading">
@@ -92,18 +107,20 @@
                         <div class="version-head">
                             <span nz-icon nzType="file-done" nzTheme="outline"></span>
                             <span class="version-title">{{ 'ai.canvas.generated' | translate }} v{{ v.version }}</span>
+                            @if (v.id === publishVersion) {
+                                <nz-tag nzColor="gold">{{ 'ai.canvas.published' | translate }}</nz-tag>
+                            }
                             @if (v.id === activeVersion) {
                                 <nz-tag nzColor="green">{{ 'ai.canvas.active' | translate }}</nz-tag>
                             } @else {
                                 <a class="use-version">{{ 'ai.canvas.use_version' | translate }}</a>
                             }
                         </div>
-                        <div class="version-meta">
-                            <nz-tag>{{ modelLabel(v) }}</nz-tag>
-                            @if (v.style) {
+                        @if (v.style) {
+                            <div class="version-meta">
                                 <nz-tag nzColor="purple">{{ styleName(v.style) }}</nz-tag>
-                            }
-                        </div>
+                            </div>
+                        }
                     </div>
                 </div>
             }
@@ -154,19 +171,7 @@
                       [placeholder]="'ai.canvas.input_placeholder' | translate"
                       [disabled]="generating" rows="3"></textarea>
             <div class="sender-toolbar">
-                <nz-select class="toolbar-select" nzSize="small" nzBorderless [(ngModel)]="modelKey" nzShowSearch
-                           [nzDropdownMatchSelectWidth]="false" [nzDropdownStyle]="{'min-width': '320px'}"
-                           [nzPlaceHolder]="'ai.canvas.data_model' | translate" [nzDisabled]="generating">
-                    @for (group of modelGroups; track group.type) {
-                        <nz-option-group [nzLabel]="group.type">
-                            @for (m of group.models; track m.value) {
-                                <nz-option [nzValue]="group.type + ':' + m.value"
-                                           [nzLabel]="m.label + ' (' + m.value + ')'"></nz-option>
-                            }
-                        </nz-option-group>
-                    }
-                </nz-select>
-                <nz-select class="toolbar-select toolbar-style" nzSize="small" nzBorderless [(ngModel)]="style"
+                <nz-select class="toolbar-select" nzSize="small" nzBorderless [(ngModel)]="style"
                            nzAllowClear nzShowSearch
                            [nzDropdownMatchSelectWidth]="false" [nzDropdownStyle]="{'min-width': '260px'}"
                            [nzPlaceHolder]="'ai.canvas.style' | translate" [nzDisabled]="generating">
@@ -196,14 +201,13 @@
                                    [nzLabel]="l.defaultLLM ? l.name + ' ★' : l.name"></nz-option>
                     }
                 </nz-select>
-                <span class="toolbar-space"></span>
                 @if (generating) {
-                    <button nz-button nzDanger nzShape="circle" nzSize="small"
+                    <button nz-button nzDanger nzSize="small"
                             (click)="stop()" [title]="'ai.canvas.stop' | translate">
                         <span nz-icon nzType="stop" nzTheme="outline"></span>
                     </button>
                 } @else {
-                    <button nz-button nzType="primary" nzShape="circle" nzSize="small"
+                    <button nz-button nzType="primary" nzSize="small"
                             (click)="send()" [disabled]="!content.trim()">
                         <span nz-icon nzType="arrow-up" nzTheme="outline"></span>
                     </button>

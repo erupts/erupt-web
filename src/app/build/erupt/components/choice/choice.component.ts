@@ -40,6 +40,9 @@ export class ChoiceComponent implements OnInit {
 
     @Input() selectMode: boolean = false;
 
+    // render the select in multiple mode (e.g. search with IN / NOT_IN operator)
+    @Input() multiple: boolean = false;
+
     choiceVL: VL[] = [];
 
     constructor(private dataService: DataService,

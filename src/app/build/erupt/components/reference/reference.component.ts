@@ -25,6 +25,9 @@ export class ReferenceComponent implements OnInit {
 
     @Input() readonly: boolean = false;
 
+    // multi-select mode (e.g. search with IN / NOT_IN operator): $value holds an array of {id, label}
+    @Input() multiple: boolean = false;
+
     @Input() parentEruptName: string
 
     @Input() ngModel: any;
@@ -62,6 +65,11 @@ export class ReferenceComponent implements OnInit {
     getDisplayValue(field: EruptFieldModel): string {
         const edit = field.eruptFieldJson.edit;
         if (!edit.$value) return null;
+        if (this.multiple && Array.isArray(edit.$value)) {
+            if (edit.type == EditType.REFERENCE_TREE) return edit.$value.map(v => v.label).join(', ');
+            if (edit.type == EditType.REFERENCE_TABLE) return edit.$value.map(v => v[edit.referenceTableType.label]).join(', ');
+            return null;
+        }
         if (edit.type == EditType.REFERENCE_TREE) return edit.$value.label;
         if (edit.type == EditType.REFERENCE_TABLE) return edit.$value[edit.referenceTableType.label];
         return null;
@@ -89,6 +97,15 @@ export class ReferenceComponent implements OnInit {
             nzContent: TreeSelectComponent,
             nzOnOk: () => {
                 const tempVal = field.eruptFieldJson.edit.$tempValue;
+                if (this.multiple) {
+                    if (!tempVal?.length) {
+                        this.msg.warning(this.i18n.fanyi("global.select.one"));
+                        return false;
+                    }
+                    field.eruptFieldJson.edit.$value = tempVal;
+                    field.eruptFieldJson.edit.$tempValue = null;
+                    return true;
+                }
                 if (!tempVal) {
                     this.msg.warning(this.i18n.fanyi("global.select.one"));
                     return false;
@@ -106,7 +123,8 @@ export class ReferenceComponent implements OnInit {
             parentEruptName: this.parentEruptName,
             eruptModel: this.eruptModel,
             eruptField: field,
-            dependVal: dependVal
+            dependVal: dependVal,
+            multiple: this.multiple
         })
     }
 
@@ -133,6 +151,19 @@ export class ReferenceComponent implements OnInit {
             nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
             nzContent: TableComponent,
             nzOnOk: () => {
+                if (this.multiple) {
+                    const rows: any[] = edit.$tempValue;
+                    if (!rows?.length) {
+                        this.msg.warning(this.i18n.fanyi("global.select.one"));
+                        return false;
+                    }
+                    edit.$value = rows.map(row => ({
+                        [edit.referenceTableType.id]: row[edit.referenceTableType.id],
+                        [edit.referenceTableType.label]: row[edit.referenceTableType.label.replace(".", "_")] || '-----'
+                    }));
+                    edit.$tempValue = null;
+                    return true;
+                }
                 let radioValue = edit.$tempValue;
                 if (!radioValue) {
                     this.msg.warning(this.i18n.fanyi("global.select.one"));
@@ -155,7 +186,7 @@ export class ReferenceComponent implements OnInit {
                 eruptModel: this.eruptModel
             },
             eruptField: field,
-            mode: SelectMode.radio,
+            mode: this.multiple ? SelectMode.checkbox : SelectMode.radio,
             dependVal: dependVal,
             parentEruptName: this.parentEruptName,
             tabRef: false

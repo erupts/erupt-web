@@ -7,13 +7,14 @@
       <img [src]="logoFoldPath" class="header-logo-img" alt=""/>
     }
     @if (logoText) {
-      <span class="header-logo-text hidden-mobile">{{ logoText }}</span>
+      <span class="header-logo-text hidden-mobile" [class.header-logo-text--long]="logoText.length > 8"
+            [title]="logoText">{{ logoText }}</span>
     }
   </a>
 </div>
 
-<div class="alain-default__nav-wrap" style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;">
-  <ul class="alain-default__nav" style="flex-shrink:0;" [style.margin-right]="(splitMenu && splitTopItems.length) ? '0' : null">
+<div class="alain-default__nav-wrap" style="display:grid;grid-template-columns:minmax(0,auto) 1fr auto;align-items:center;">
+  <ul class="alain-default__nav" style="min-width:0;" [style.margin-right]="(splitMenu && splitTopItems.length) ? '0' : null">
     <!-- mobile sidebar toggle -->
     <li class="hidden-pc">
       <div class="alain-default__nav-item" (click)="toggleCollapsedSidebar()">
@@ -21,7 +22,7 @@
       </div>
     </li>
     @if (!splitMenu && settings.layout['breadcrumbs']) {
-      <li class="hidden-mobile" style="padding:0 10px 0 18px;">
+      <li class="hidden-mobile header-breadcrumb" style="padding:0 10px 0 18px;">
         <erupt-nav></erupt-nav>
       </li>
     }
@@ -106,12 +107,6 @@
     <li class="hidden-mobile" (click)="toggleScreen()">
       <div class="alain-default__nav-item">
         <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'"></i>
-      </div>
-    </li>
-
-    <li class="hidden-mobile" (click)="toggleBrutalistTheme()">
-      <div class="alain-default__nav-item" title="Brutalist Theme">
-        <i nz-icon nzType="bulb" [nzTheme]="brutalistTheme ? 'fill' : 'outline'"></i>
       </div>
     </li>
 

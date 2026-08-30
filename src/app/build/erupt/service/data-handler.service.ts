@@ -153,9 +153,36 @@ export class DataHandlerService {
                 }
                 continue;
             }
+            // TIME has no range picker, its range bounds come from two time pickers ($l_val / $r_val)
+            if (expression === QueryExpression.RANGE && edit.type === EditType.DATE && edit.dateType?.type === DateEnum.TIME) {
+                if (edit.$l_val != null || edit.$r_val != null) {
+                    conditions.push({
+                        key: field.fieldName,
+                        value: [
+                            edit.$l_val ? this.datePipe.transform(edit.$l_val, "HH:mm:ss") : null,
+                            edit.$r_val ? this.datePipe.transform(edit.$r_val, "HH:mm:ss") : null
+                        ],
+                        expression
+                    });
+                }
+                continue;
+            }
             if (expression === QueryExpression.IN || expression === QueryExpression.NOT_IN) {
                 if (edit.$value?.length) {
-                    conditions.push({key: field.fieldName, value: edit.$value, expression});
+                    let value: any[] = edit.$value;
+                    // reference values are picked as {id, label} objects; normalize keys to the configured id/label fields
+                    if (edit.type === EditType.REFERENCE_TABLE) {
+                        value = value.map(v => ({
+                            [edit.referenceTableType.id]: v[edit.referenceTableType.id],
+                            [edit.referenceTableType.label]: v[edit.referenceTableType.label]
+                        }));
+                    } else if (edit.type === EditType.REFERENCE_TREE) {
+                        value = value.map(v => ({
+                            [edit.referenceTreeType.id]: v.id,
+                            [edit.referenceTreeType.label]: v.label
+                        }));
+                    }
+                    conditions.push({key: field.fieldName, value, expression});
                 }
                 continue;
             }
@@ -405,6 +432,23 @@ export class DataHandlerService {
                             eruptData[field.fieldName] = edit.$value;
                         }
                         break;
+                    case EditType.MULTI_FORM:
+                        if (edit.$tempValue) {
+                            if (!eruptBuildModel.tabErupts) {
+                                return;
+                            }
+                            let pkCol = eruptBuildModel.tabErupts[field.fieldName].eruptModel.eruptJson.primaryKeyCol;
+                            eruptData[field.fieldName] = (<any[]>edit.$tempValue).map(block => {
+                                let obj = this.eruptValueToObject(block.build);
+                                if (obj[pkCol] == null) {
+                                    obj[pkCol] = block.pk;
+                                }
+                                return obj;
+                            });
+                        } else if (edit.$value) {
+                            eruptData[field.fieldName] = edit.$value;
+                        }
+                        break;
                     case EditType.ATTACHMENT:
                         if (edit.$viewValue) {
                             const $value: string[] = [];
@@ -624,6 +668,10 @@ export class DataHandlerService {
                         edit.$value = object[field.fieldName] || [];
                         // edit.$value.forEach(val => this.objectToEruptValue(val, eruptBuild.tabErupts[field.fieldName]))
                         break;
+                    case EditType.MULTI_FORM:
+                        edit.$value = object[field.fieldName] || [];
+                        edit.$tempValue = null;
+                        break;
                     default:
                         edit.$value = object[field.fieldName];
                         break;
@@ -685,6 +733,10 @@ export class DataHandlerService {
                 case EditType.TAB_TABLE_REFER:
                 case EditType.TAB_TABLE_ADD:
                     ef.eruptFieldJson.edit.$value = [];
+                    break;
+                case EditType.MULTI_FORM:
+                    ef.eruptFieldJson.edit.$value = [];
+                    ef.eruptFieldJson.edit.$tempValue = null;
                     break;
             }
         });

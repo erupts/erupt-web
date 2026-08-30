@@ -1,95 +1,95 @@
 ---
 name: i18n
-description: i18n — 新增多语言翻译。当用户需要为 erupt.i18n.csv 添加新的翻译 key 时使用，例如："/i18n global.save 保存"、"帮我加一条翻译"、"新增 i18n key"。
+description: i18n — add multilingual translations. Use when the user wants to add new translation keys to erupt.i18n.csv, e.g. "/i18n global.save 保存", "add a translation for me", "add an i18n key".
 ---
 
-# i18n — 新增多语言翻译
+# i18n — Add Multilingual Translations
 
-为 `src/erupt.i18n.csv` 添加一条或多条新的多语言条目。
+Add one or more new multilingual entries to `src/erupt.i18n.csv`.
 
-## 用法
+## Usage
 
 ```
-/i18n <key> <中文原文>
-/i18n <key> <中文原文> [附加上下文说明]
+/i18n <key> <Chinese source text>
+/i18n <key> <Chinese source text> [additional context]
 ```
 
-**示例：**
+**Examples:**
 ```
 /i18n global.save 保存
-/i18n flow.approve 审批通过 （工作流节点操作按钮）
+/i18n flow.approve 审批通过 (workflow node action button)
 ```
 
 ---
 
-## 执行步骤
+## Steps
 
-### 1. 读取 CSV 文件
+### 1. Read the CSV file
 
-读取 `/Users/liyuepeng/git/erupt-web/src/erupt.i18n.csv`，确认：
-- 表头顺序：`key,zh-CN,zh-TW,en-US,fr-FR,ja-JP,ko-KR,ru-RU,es-ES,de-DE,pt-PT,id-ID,ar-SA`
-- 检查 `$ARGUMENTS` 中提供的 key 是否已存在（若已存在，提示用户并询问是否覆盖）
+Read `/Users/liyuepeng/git/erupt-web/src/erupt.i18n.csv` and confirm:
+- Header order: `key,zh-CN,zh-TW,en-US,fr-FR,ja-JP,ko-KR,ru-RU,es-ES,de-DE,pt-PT,id-ID,ar-SA`
+- Check whether the key provided in `$ARGUMENTS` already exists (if so, notify the user and ask whether to overwrite)
 
-### 2. 生成翻译
+### 2. Generate translations
 
-根据提供的中文原文（zh-CN），为以下 12 种语言生成**地道、简洁**的 UI 界面翻译：
+Based on the provided Chinese source text (zh-CN), generate **idiomatic, concise** UI translations for the following 12 languages:
 
-| 列索引 | 语言代码 | 语言名称 |
-|--------|----------|----------|
-| 1 | zh-CN | 简体中文（原文） |
-| 2 | zh-TW | 繁體中文 |
+| Column index | Language code | Language name |
+|--------------|---------------|---------------|
+| 1 | zh-CN | Simplified Chinese (source) |
+| 2 | zh-TW | Traditional Chinese |
 | 3 | en-US | English |
-| 4 | fr-FR | Français |
-| 5 | ja-JP | 日本語 |
-| 6 | ko-KR | 한국어 |
-| 7 | ru-RU | Русский |
-| 8 | es-ES | Español |
-| 9 | de-DE | Deutsch |
-| 10 | pt-PT | Português |
-| 11 | id-ID | Bahasa Indonesia |
-| 12 | ar-SA | العربية |
+| 4 | fr-FR | French |
+| 5 | ja-JP | Japanese |
+| 6 | ko-KR | Korean |
+| 7 | ru-RU | Russian |
+| 8 | es-ES | Spanish |
+| 9 | de-DE | German |
+| 10 | pt-PT | Portuguese |
+| 11 | id-ID | Indonesian |
+| 12 | ar-SA | Arabic |
 
-翻译原则：
-- 保持与 UI 按钮/标签场景一致，用词简洁
-- 若翻译文字中含有英文逗号 `,`，需用双引号包裹整个字段，例如：`"Yes, confirm"`
-- 繁体中文（zh-TW）与简体（zh-CN）尽量保持转换准确
+Translation principles:
+- Keep wording concise and appropriate for UI buttons/labels
+- If a translation contains an English comma `,`, wrap the entire field in double quotes, e.g. `"Yes, confirm"`
+- Traditional Chinese (zh-TW) should be an accurate conversion of the Simplified Chinese (zh-CN)
 
-### 3. 追加到 CSV
+### 3. Append to the CSV
 
-将新行追加到 `src/erupt.i18n.csv` 末尾，格式为：
+Append the new row to the end of `src/erupt.i18n.csv` in this format:
 ```
-key,zh-CN值,zh-TW值,en-US值,fr-FR值,ja-JP值,ko-KR值,ru-RU值,es-ES值,de-DE值,pt-PT值,id-ID值,ar-SA值
+key,zh-CN value,zh-TW value,en-US value,fr-FR value,ja-JP value,ko-KR value,ru-RU value,es-ES value,de-DE value,pt-PT value,id-ID value,ar-SA value
 ```
 
-如果同时新增多个 key，每个 key 一行，依次追加。
+If adding multiple keys at once, append one row per key.
 
-### 4. 输出使用示例
+### 4. Show usage examples
 
-新增完成后，展示该 key 的使用方式：
+After adding, show how to use the key:
 
-**在 Angular 模板中（使用 `translate` pipe）：**
+**In Angular templates (via the `translate` pipe):**
 ```html
 {{ 'YOUR_KEY' | translate }}
 
-<!-- 用于属性绑定 -->
+<!-- For attribute bindings -->
 <input [placeholder]="'YOUR_KEY' | translate" />
 <button [nzTooltipTitle]="'YOUR_KEY' | translate">...</button>
 ```
 
-**在 TypeScript 中（注入 `I18NService`）：**
+**In TypeScript (inject `I18NService`):**
 ```typescript
 import { I18NService } from '@core';
 
 constructor(private i18n: I18NService) {}
 
-// 翻译文本
+// Translate text
 const label = this.i18n.fanyi('YOUR_KEY');
 ```
 
 ---
 
-## 注意事项
+## Notes
 
-- key 命名约定：使用点分隔的命名空间，如 `global.save`、`table.export`、`flow.approve`
-- 不要修改已有行的内容，只追加新行
-- 如果用户没有提供 `$ARGUMENTS`，提示用户提供 key 和中文原文
+- Key naming convention: use dot-separated namespaces, e.g. `global.save`, `table.export`, `flow.approve`
+- Never modify existing rows; only append new ones
+- If the user did not provide `$ARGUMENTS`, ask them for the key and the Chinese source text

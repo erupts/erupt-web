@@ -35,6 +35,7 @@ export enum EditType {
     AUTO_COMPLETE = "AUTO_COMPLETE",           //auto complete
     TAB_TREE = "TAB_TREE",
     TAB_TABLE_ADD = "TAB_TABLE_ADD",
+    MULTI_FORM = "MULTI_FORM",                 //multi form blocks (one-to-many)
     TAB_TABLE_REFER = "TAB_TABLE_REFER",
     DIVIDE = "DIVIDE",                         //divider
     CALLOUT = "CALLOUT",                       //static descriptive content callout
@@ -103,6 +104,7 @@ export enum DateEnum {
     DATE_TIME = "DATE_TIME",
     WEEK = "WEEK",
     MONTH = "MONTH",
+    QUARTER = "QUARTER",
     YEAR = "YEAR"
 }
 

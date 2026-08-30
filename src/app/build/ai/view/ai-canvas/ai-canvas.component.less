@@ -1,5 +1,7 @@
 /* AI View Designer: preview left, generation conversation right */
 @radius: 8px;
+/* Shared height of the preview bar and the chat context bar, borders included */
+@bar-height: 41px;
 
 :host {
     height: 100%;
@@ -25,7 +27,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 14px;
+    height: @bar-height;
+    padding: 0 14px;
     border-bottom: 1px solid var(--ant-border-color-split);
 
     .view-name {
@@ -130,6 +133,32 @@
     flex-direction: column;
     border-left: 1px solid var(--ant-border-color-split);
     background: #fafafa;
+}
+
+/* Slim context bar: the canvas's fixed data model, read-only */
+.chat-context {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: @bar-height;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--ant-border-color-split);
+    background: #fff;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 12px;
+    flex-shrink: 0;
+
+    .chat-context-label {
+        font-weight: 500;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .chat-context-type {
+        color: rgba(0, 0, 0, 0.35);
+        flex-shrink: 0;
+    }
 }
 
 .bubbles {
@@ -376,20 +405,13 @@
     .sender-toolbar {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 8px;
         margin-top: 2px;
 
+        /* Style and model pickers share the remaining width equally */
         .toolbar-select {
-            max-width: 220px;
-            min-width: 110px;
-        }
-
-        .toolbar-style {
-            max-width: 160px;
-        }
-
-        .toolbar-space {
             flex: 1;
+            min-width: 0;
         }
     }
 }

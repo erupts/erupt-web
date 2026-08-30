@@ -1,14 +1,4 @@
-import {
-    Component,
-    DoCheck,
-    EventEmitter,
-    Input,
-    KeyValueDiffers,
-    OnInit,
-    Output,
-    QueryList,
-    ViewChildren
-} from '@angular/core';
+import {Component, DoCheck, EventEmitter, Input, KeyValueDiffers, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
 import {EditType} from "../../model/erupt.enum";
 import {colRules} from "@shared/model/util.model";
@@ -155,6 +145,8 @@ export class SearchComponent implements OnInit, DoCheck {
                 return [
                     {abbr: '=',  label: `= ${this.t('query.op.eq')}`,         value: QueryExpression.EQ},
                     {abbr: '≠',  label: `≠ ${this.t('query.op.neq')}`,        value: QueryExpression.NEQ},
+                    {abbr: '∈',  label: `∈ ${this.t('query.op.in')}`,         value: QueryExpression.IN},
+                    {abbr: '∉',  label: `∉ ${this.t('query.op.not_in')}`,     value: QueryExpression.NOT_IN},
                     {abbr: '∅',  label: `∅ ${this.t('query.op.null')}`,       value: QueryExpression.NULL},
                     {abbr: '!∅', label: `!∅ ${this.t('query.op.not_null')}`,  value: QueryExpression.NOT_NULL},
                 ];
@@ -162,6 +154,8 @@ export class SearchComponent implements OnInit, DoCheck {
                 return [
                     {abbr: '=',  label: `= ${this.t('query.op.eq')}`,         value: QueryExpression.EQ},
                     {abbr: '≠',  label: `≠ ${this.t('query.op.neq')}`,        value: QueryExpression.NEQ},
+                    {abbr: '∈',  label: `∈ ${this.t('query.op.in')}`,         value: QueryExpression.IN},
+                    {abbr: '∉',  label: `∉ ${this.t('query.op.not_in')}`,     value: QueryExpression.NOT_IN},
                     {abbr: '∅',  label: `∅ ${this.t('query.op.null')}`,       value: QueryExpression.NULL},
                     {abbr: '!∅', label: `!∅ ${this.t('query.op.not_null')}`,  value: QueryExpression.NOT_NULL},
                 ];
@@ -218,6 +212,11 @@ export class SearchComponent implements OnInit, DoCheck {
         field.eruptFieldJson.edit.$l_val = null;
         field.eruptFieldJson.edit.$r_val = null;
         this.operatorChange.emit();
+    }
+
+    // Operator locked via @Search(lockOperator = true): the operator selector is hidden so the user cannot change it
+    isOperatorLocked(field: EruptFieldModel): boolean {
+        return !!field.eruptFieldJson.edit?.search?.lockOperator;
     }
 
 }

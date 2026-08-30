@@ -22,7 +22,7 @@ const NOT_PRINTABLE_TYPES: EditType[] = [
 ];
 
 const CONTAINER_TYPES: EditType[] = [
-    EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.COMBINE
+    EditType.TAB_TABLE_ADD, EditType.MULTI_FORM, EditType.TAB_TABLE_REFER, EditType.COMBINE
 ];
 
 const TH_STYLE = 'border: 1px solid #d9d9d9;padding: 8px;background: #f5f5f5;font-weight: 600;';
@@ -83,6 +83,7 @@ export function eruptToPrintVars(eruptBuild: EruptBuildModel): PrintVar[] {
         if (!edit.title || NOT_PRINTABLE_TYPES.includes(edit.type)) continue;
         switch (edit.type) {
             case EditType.TAB_TABLE_ADD:
+            case EditType.MULTI_FORM:
             case EditType.TAB_TABLE_REFER: {
                 const tabBuild = eruptBuild.tabErupts?.[f.fieldName];
                 if (tabBuild) {

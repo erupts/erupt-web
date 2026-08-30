@@ -34,6 +34,10 @@ export class DateComponent implements OnInit {
 
     endToday: Date;
 
+    minDate: Date;
+
+    maxDate: Date;
+
     rangeMode: NzDateMode;
 
     constructor(private i18n: I18NService) {
@@ -76,6 +80,10 @@ export class DateComponent implements OnInit {
             ],
         };
         this.edit = this.field.eruptFieldJson.edit;
+        // Explicit min / max bounds (yyyy-MM-dd). Empty means unbounded.
+        const dt = this.edit.dateType;
+        this.minDate = dt.min ? moment(dt.min, 'YYYY-MM-DD').startOf('day').toDate() : null;
+        this.maxDate = dt.max ? moment(dt.max, 'YYYY-MM-DD').endOf('day').toDate() : null;
         if (this.range) {
             switch (this.field.eruptFieldJson.edit.dateType.type) {
                 case DateEnum.DATE:
@@ -88,6 +96,9 @@ export class DateComponent implements OnInit {
                 case DateEnum.MONTH:
                     this.rangeMode = 'month'
                     break;
+                case DateEnum.QUARTER:
+                    this.rangeMode = 'quarter'
+                    break;
                 case DateEnum.YEAR:
                     this.rangeMode = 'year'
                     break;
@@ -96,16 +107,19 @@ export class DateComponent implements OnInit {
     }
 
     disabledDate: DisabledDateFn = (date) => {
-        if (this.edit.dateType.pickerMode == PickerMode.ALL) {
-            return false;
+        // Explicit bounds take priority and combine with the relative picker mode.
+        if (this.minDate && date.getTime() < this.minDate.getTime()) {
+            return true;
+        }
+        if (this.maxDate && date.getTime() > this.maxDate.getTime()) {
+            return true;
         }
         if (this.edit.dateType.pickerMode == PickerMode.FUTURE) {
             return date.getTime() < this.startToday.getTime();
         } else if (this.edit.dateType.pickerMode == PickerMode.HISTORY) {
-
             return date.getTime() > this.endToday.getTime();
         }
-        return null;
+        return false;
     };
 
 

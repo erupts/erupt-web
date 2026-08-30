@@ -56,6 +56,10 @@ export class CubeApiService {
         });
     }
 
+    maps() {
+        return this._http.get<R<{ code: string; name: string; url: string }[]>>(RestPath.erupt + "/cube/dashboard/maps");
+    }
+
     publishHistory(id: number) {
         return this._http.get<R<DashboardPublishHistory[]>>(RestPath.erupt + "/cube/dashboard/publish-history/" + id);
     }

@@ -7,6 +7,7 @@
             <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
               <erupt-search-se [field]="field">
                 <nz-space-compact [nzBlock]="true" class="erupt-input">
+                  @if (!isOperatorLocked(field)) {
                   <nz-select [(ngModel)]="field.eruptFieldJson.edit.$operator"
                     [ngModelOptions]="{standalone: true}"
                     [nzSize]="size" [nzDropdownMatchSelectWidth]="false" style="width:40px;text-align:center"
@@ -15,6 +16,7 @@
                       <nz-option [nzValue]="op.value" [nzLabel]="op.abbr" [nzCustomContent]="true">{{ op.label }}</nz-option>
                     }
                   </nz-select>
+                  }
                   @if (!isTagsInputOp(field)) {
                     <input nz-input [nzSize]="size" style="flex:1" autocomplete="off"
                       [type]="field.eruptFieldJson.edit.inputType ? field.eruptFieldJson.edit.inputType.type : 'text'"
@@ -39,6 +41,7 @@
               <erupt-search-se [field]="field">
                 @if (isRangeOp(field)) {
                   <nz-space-compact [nzBlock]="true" class="erupt-input">
+                    @if (!isOperatorLocked(field)) {
                     <nz-select [(ngModel)]="field.eruptFieldJson.edit.$operator"
                       [ngModelOptions]="{standalone: true}"
                       [nzSize]="size" [nzDropdownMatchSelectWidth]="false" style="width:40px;text-align:center"
@@ -47,6 +50,7 @@
                         <nz-option [nzValue]="op.value" [nzLabel]="op.abbr" [nzCustomContent]="true">{{ op.label }}</nz-option>
                       }
                     </nz-select>
+                    }
                     <nz-input-number [nzSize]="size" style="flex:1"
                       [(ngModel)]="field.eruptFieldJson.edit.$l_val" [name]="field.fieldName"
                       [nzPlaceHolder]="field.eruptFieldJson.edit.placeHolder"
@@ -64,6 +68,7 @@
                   </nz-space-compact>
                 } @else {
                   <nz-space-compact [nzBlock]="true" class="erupt-input">
+                    @if (!isOperatorLocked(field)) {
                     <nz-select [(ngModel)]="field.eruptFieldJson.edit.$operator"
                       [ngModelOptions]="{standalone: true}"
                       [nzSize]="size" [nzDropdownMatchSelectWidth]="false" style="width:40px;text-align:center"
@@ -72,6 +77,7 @@
                         <nz-option [nzValue]="op.value" [nzLabel]="op.abbr" [nzCustomContent]="true">{{ op.label }}</nz-option>
                       }
                     </nz-select>
+                    }
                     @if (!isTagsInputOp(field)) {
                       <nz-input-number [nzSize]="size" style="flex:1"
                         [(ngModel)]="field.eruptFieldJson.edit.$value"
@@ -96,6 +102,7 @@
             <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
               <erupt-search-se [field]="field">
                 <nz-space-compact [nzBlock]="true" class="erupt-input">
+                  @if (!isOperatorLocked(field)) {
                   <nz-select [(ngModel)]="field.eruptFieldJson.edit.$operator"
                     [ngModelOptions]="{standalone: true}"
                     [nzSize]="size" [nzDropdownMatchSelectWidth]="false" style="width:40px"
@@ -104,8 +111,10 @@
                       <nz-option [nzValue]="op.value" [nzLabel]="op.abbr" [nzCustomContent]="true">{{ op.label }}</nz-option>
                     }
                   </nz-select>
+                  }
                   <div style="flex:1;min-width:0" [class.null-op-disabled]="isNullOp(field)">
-                    <erupt-choice [eruptModel]="searchEruptModel" [eruptBuildModel]="{eruptModel: searchEruptModel}" [eruptField]="field" [size]="size" [selectMode]="true"/>
+                    <erupt-choice [eruptModel]="searchEruptModel" [eruptBuildModel]="{eruptModel: searchEruptModel}" [eruptField]="field" [size]="size" [selectMode]="true"
+                                  [multiple]="isTagsInputOp(field)"/>
                   </div>
                 </nz-space-compact>
               </erupt-search-se>
@@ -124,6 +133,7 @@
             <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
               <erupt-search-se [field]="field">
                 <nz-space-compact [nzBlock]="true" class="erupt-input">
+                  @if (!isOperatorLocked(field)) {
                   <nz-select [(ngModel)]="field.eruptFieldJson.edit.$operator"
                     [ngModelOptions]="{standalone: true}"
                     [nzSize]="size" [nzDropdownMatchSelectWidth]="false" style="width:40px;text-align:center"
@@ -132,6 +142,7 @@
                       <nz-option [nzValue]="op.value" [nzLabel]="op.abbr" [nzCustomContent]="true">{{ op.label }}</nz-option>
                     }
                   </nz-select>
+                  }
                   <div style="flex:1;min-width:0" [class.null-op-disabled]="isNullOp(field)">
                     <erupt-date [field]="field" [size]="size" [range]="isRangeOp(field)"/>
                   </div>
@@ -143,6 +154,7 @@
             <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
               <erupt-search-se [field]="field">
                 <nz-space-compact [nzBlock]="true" class="erupt-input">
+                  @if (!isOperatorLocked(field)) {
                   <nz-select [(ngModel)]="field.eruptFieldJson.edit.$operator"
                     [ngModelOptions]="{standalone: true}"
                     [nzSize]="size" [nzDropdownMatchSelectWidth]="false" style="width:40px;text-align:center"
@@ -151,8 +163,10 @@
                       <nz-option [nzValue]="op.value" [nzLabel]="op.abbr" [nzCustomContent]="true">{{ op.label }}</nz-option>
                     }
                   </nz-select>
+                  }
                   <div style="flex:1;min-width:0" [class.null-op-disabled]="isNullOp(field)">
-                    <erupt-reference [eruptModel]="searchEruptModel" [field]="field" [readonly]="false" [size]="size"/>
+                    <erupt-reference [eruptModel]="searchEruptModel" [field]="field" [readonly]="false" [size]="size"
+                                     [multiple]="isTagsInputOp(field)"/>
                   </div>
                 </nz-space-compact>
               </erupt-search-se>
@@ -173,6 +187,7 @@
             <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md" [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
               <erupt-search-se [field]="field">
                 <nz-space-compact [nzBlock]="true" class="erupt-input">
+                  @if (!isOperatorLocked(field)) {
                   <nz-select [(ngModel)]="field.eruptFieldJson.edit.$operator"
                     [ngModelOptions]="{standalone: true}"
                     [nzSize]="size" [nzDropdownMatchSelectWidth]="false" style="width:40px"
@@ -181,6 +196,7 @@
                       <nz-option [nzValue]="op.value" [nzLabel]="op.abbr" [nzCustomContent]="true">{{ op.label }}</nz-option>
                     }
                   </nz-select>
+                  }
                   <div style="flex:1;min-width:0" [class.null-op-disabled]="isNullOp(field)">
                     <erupt-auto-complete [size]="size" [field]="field" [eruptModel]="searchEruptModel"
                                         [eruptBuildModel]="{eruptModel: searchEruptModel}"/>

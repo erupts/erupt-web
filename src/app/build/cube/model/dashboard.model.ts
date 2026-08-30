@@ -151,6 +151,7 @@ export enum ReportType {
 
     SANKEY = 'SANKEY',
     CHORD = 'CHORD',
+    MAP = 'MAP',
     BUBBLE = 'BUBBLE',
     TREEMAP = 'TREEMAP',
     HEATMAP = 'HEATMAP',

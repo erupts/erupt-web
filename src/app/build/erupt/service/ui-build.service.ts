@@ -21,6 +21,43 @@ import {Router} from "@angular/router";
 @Injectable()
 export class UiBuildService {
 
+    private static measureCtx: CanvasRenderingContext2D;
+
+    // Measure the real rendered pixel width of a header title. A fixed per-character
+    // estimate is only right for CJK; Latin/Cyrillic glyphs are proportional, which
+    // made columns too wide or narrow enough to wrap in non-Chinese locales.
+    private static measureTitle(title: string): number {
+        if (!UiBuildService.measureCtx) {
+            UiBuildService.measureCtx = document.createElement("canvas").getContext("2d");
+            // .ant-table thead th renders at 14px / font-weight 500
+            UiBuildService.measureCtx.font = `500 14px ${getComputedStyle(document.body).fontFamily}`;
+        }
+        return Math.ceil(UiBuildService.measureCtx.measureText(title).width);
+    }
+
+    // Derive the table's scroll-x from the actual column widths instead of a
+    // "count x 160 x language zoom" guess, which squeezed width-less columns
+    // into wrapping whenever the fixed columns outgrew the budget.
+    static calcTableWidth(columns: STColumn[]): string {
+        // flexible share reserved for columns without an explicit width (e.g. TEXT)
+        const FLEX_COL_WIDTH = 200;
+        let total = 0;
+        for (let col of columns) {
+            if (col["show"] === false) {
+                continue;
+            }
+            let width = col.width;
+            if (typeof width === "number") {
+                total += width;
+            } else if (typeof width === "string" && width.endsWith("px")) {
+                total += parseFloat(width) || FLEX_COL_WIDTH;
+            } else {
+                total += FLEX_COL_WIDTH;
+            }
+        }
+        return total + "px";
+    }
+
     constructor(
         private imageService: NzImageService,
         private i18n: I18NService,
@@ -46,7 +83,8 @@ export class UiBuildService {
         let layout = eruptBuildModel.eruptModel.eruptJson.layout;
         let i = 0;
         for (let view of views) {
-            let titleWidth: number = view.title.length * 16 + 22;
+            // measured text + horizontal cell padding (8px x 2 at small size) + slack
+            let titleWidth: number = UiBuildService.measureTitle(view.title) + 26;
             if (titleWidth > 280) {
                 titleWidth = 280;
             }

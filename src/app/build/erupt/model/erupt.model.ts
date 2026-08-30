@@ -102,6 +102,7 @@ export enum CoverEffect {
 
 interface Layout {
     formSize: FormSize;
+    formSteps: boolean;
     pagingType: PagingType;
     tableLeftFixed: number;
     tableRightFixed: number;

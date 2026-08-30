@@ -1,7 +1,17 @@
 <div nz-row [nzGutter]="16">
+    @if (formSteps) {
+        <div style="width: 100%; padding: 8px 8px 24px">
+            <nz-steps [nzCurrent]="currentStep" nzSize="small" (nzIndexChange)="stepJumpTo($event)">
+                @for (step of steps; track step.fieldName) {
+                    <nz-step [nzTitle]="step.eruptFieldJson.edit.title"
+                             [nzDescription]="step.eruptFieldJson.edit.desc"></nz-step>
+                }
+            </nz-steps>
+        </div>
+    }
     <form nz-form [nzLayout]="layout" se-container style="width: 100%" class="erupt-form">
         @for (field of eruptModel.eruptFieldModels; track field) {
-            @if (field.eruptFieldJson.edit && field.eruptFieldJson.edit.show && field.eruptFieldJson.edit.title && !isDivideCollapsed(field) && !isGroupCollapsed(field) && !divideGroupedFieldSet.has(field.fieldName)) {
+            @if (field.eruptFieldJson.edit && field.eruptFieldJson.edit.show && field.eruptFieldJson.edit.title && stepVisible(field) && !isDivideCollapsed(field) && !isGroupCollapsed(field) && !divideGroupedFieldSet.has(field.fieldName)) {
                 @switch (field.eruptFieldJson.edit.type) {
                     @case (editType.DIVIDE) {
                         <div nz-col [nzSpan]="24" style="margin-bottom: 0">
@@ -78,6 +88,21 @@
                     }
                 }
             }
+        }
+
+        @if (formSteps) {
+            <div nz-col [nzSpan]="24" style="text-align: right; margin-top: 8px">
+                @if (currentStep > 0) {
+                    <button nz-button type="button" (click)="prevStep()" style="margin-right: 8px">
+                        {{ 'edit_type.prev_step' | translate }}
+                    </button>
+                }
+                @if (currentStep < steps.length - 1) {
+                    <button nz-button type="button" nzType="primary" (click)="nextStep()">
+                        {{ 'edit_type.next_step' | translate }}
+                    </button>
+                }
+            </div>
         }
 
         <!-- Shared sub-templates for types with variant col widths -->
@@ -257,7 +282,12 @@
                                              [name]="field.fieldName"
                                              [nzMin]="field.eruptFieldJson.edit.numberType.min"
                                              [nzMax]="field.eruptFieldJson.edit.numberType.max"
-                                             [nzStep]="1"></nz-input-number>
+                                             [nzPrecision]="field.eruptFieldJson.edit.numberType.precision >= 0 ? field.eruptFieldJson.edit.numberType.precision : null"
+                                             [nzPrefix]="field.eruptFieldJson.edit.numberType.prefix || undefined"
+                                             [nzSuffix]="field.eruptFieldJson.edit.numberType.suffix || undefined"
+                                             [nzFormatter]="field.eruptFieldJson.edit.numberType.thousandsSeparator ? thousandsFormatter : null"
+                                             [nzParser]="field.eruptFieldJson.edit.numberType.thousandsSeparator ? thousandsParser : null"
+                                             [nzStep]="field.eruptFieldJson.edit.numberType.step"></nz-input-number>
                         </se>
                     </div>
                 }
@@ -267,16 +297,16 @@
                         <se [label]="field.eruptFieldJson.edit.title"
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
-                            <nz-input-wrapper class="erupt-input" nzAllowClear>
-                                <input nz-input [nzSize]="size" autocomplete="off" nz-tooltip
-                                       nzTooltipTrigger="focus"
-                                       nzTooltipPlacement="topLeft"
-                                       type="color"
-                                       [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                       [name]="field.fieldName"
-                                       [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                                       [disabled]="isReadonly(field)">
-                            </nz-input-wrapper>
+                            <nz-color-picker class="erupt-input"
+                                             [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                             [name]="field.fieldName"
+                                             [nzSize]="size"
+                                             nzFormat="hex"
+                                             [nzShowText]="field.eruptFieldJson.edit.colorType.showText"
+                                             [nzAllowClear]="!field.eruptFieldJson.edit.notNull"
+                                             [nzDisabledAlpha]="!field.eruptFieldJson.edit.colorType.alpha"
+                                             [nzPresets]="colorPresets(field)"
+                                             [nzDisabled]="isReadonly(field)"></nz-color-picker>
                         </se>
                     </div>
                 }
@@ -354,6 +384,7 @@
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
                             <erupt-checkbox [eruptBuildModel]="eruptBuildModel" [onlyRead]="isReadonly(field)"
+                                            [eruptParentName]="parentEruptName"
                                             [eruptFieldModel]="field" style="max-height: 20px"></erupt-checkbox>
                         </se>
                     </div>
@@ -626,13 +657,25 @@
                         </div>
                     }
                 }
+                @case (editType.MULTI_FORM) {
+                    <div nz-col [nzSpan]="24">
+                        <se [label]="field.eruptFieldJson.edit.title"
+                            [required]="field.eruptFieldJson.edit.notNull"
+                            [optionalHelp]="field.eruptFieldJson.edit.desc">
+                            <erupt-multi-form [onlyRead]="isReadonly(field)"
+                                                [tabErupt]="{eruptBuildModel: eruptBuildModel.tabErupts[field.fieldName], eruptFieldModel: field}"
+                                                [eruptBuildModel]="eruptBuildModel"
+                                                [eruptParentName]="parentEruptName"></erupt-multi-form>
+                        </se>
+                    </div>
+                }
                 @default {
                 }
             }
         </ng-template>
     </form>
 
-    @if (eruptBuildModel.tabErupts) {
+    @if (tabErupts.length && (!formSteps || currentStep === steps.length - 1)) {
         <nz-tabs [nzType]="'card'" style="margin-top: 5px">
             @for (item of tabErupts; track item) {
                 @if (eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.show) {
@@ -643,18 +686,21 @@
                                 <tab-table [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
                                            [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptModel.eruptFieldModelMap.get(item.key)}"
                                            [eruptBuildModel]="eruptBuildModel"
+                                           [eruptParentName]="parentEruptName"
                                 ></tab-table>
                             }
                             @case (editType.TAB_TABLE_REFER) {
                                 <tab-table [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
                                            [tabErupt]="{eruptBuildModel:item.value,eruptFieldModel:eruptModel.eruptFieldModelMap.get(item.key)}"
                                            [eruptBuildModel]="eruptBuildModel" [mode]="'refer-add'"
+                                           [eruptParentName]="parentEruptName"
                                 ></tab-table>
                             }
                             @case (editType.TAB_TREE) {
                                 <erupt-tab-tree [eruptFieldModel]="eruptModel.eruptFieldModelMap.get(item.key)"
                                                 [eruptBuildModel]="eruptBuildModel"
                                                 [onlyRead]="isReadonly(eruptModel.eruptFieldModelMap.get(item.key))"
+                                                [eruptParentName]="parentEruptName"
                                 ></erupt-tab-tree>
                             }
                         }

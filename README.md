@@ -1,6 +1,6 @@
 ---
 
-<p align="center"><img src="./src/assets/logo-raw2.png" height="150" alt="logo"/></p>
+<p align="center"><img src="./src/assets/logo-light.svg" height="150" alt="logo"/></p>
 <h2 align="center">Erupt Engine &nbsp; 🚀 &nbsp; Universal Admin Framework</h2>
 <h3 align="center">Frontend Source Code</h3>
 <h3 align="center"><a href="https://erupt.xyz" target="_blank">https://www.erupt.xyz</a></h3>

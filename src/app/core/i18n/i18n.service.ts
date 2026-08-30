@@ -63,7 +63,6 @@ interface LangConfigData {
     ng: NzSafeAny;
     zorro: NzSafeAny;
     delon: NzSafeAny;
-    columnWidthZoom: number;
     color: string;
 }
 
@@ -75,7 +74,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngEn,
         zorro: zorroEnUS,
         delon: delonEnUS,
-        columnWidthZoom: 1.3,
         color: '#1E88E5'
     },
     'fr-FR': {
@@ -85,7 +83,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngFr,
         zorro: zorroFr,
         delon: delonFr,
-        columnWidthZoom: 1.5,
         color: '#3949AB'
     },
     'de-DE': {
@@ -95,7 +92,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngDe,
         zorro: zorroDe,
         delon: delonEnUS, // Fall back to English if delon.de_DE is unavailable
-        columnWidthZoom: 1.5,
         color: '#6D4C41'
     },
     'zh-CN': {
@@ -105,7 +101,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         date: dfZhCn,
         zorro: zorroZhCN,
         delon: delonZhCn,
-        columnWidthZoom: 1,
         color: '#E53935'
     },
     'zh-TW': {
@@ -115,7 +110,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngZhTw,
         zorro: zorroZhTW,
         delon: delonZhTw,
-        columnWidthZoom: 1,
         color: '#8E24AA'
     },
     'ja-JP': {
@@ -125,7 +119,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngJA,
         zorro: ja_JP,
         delon: delonJp,
-        columnWidthZoom: 1,
         color: '#F06292'
     },
     'ko-KR': {
@@ -135,7 +128,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngKO,
         zorro: ko_KR,
         delon: delonKo,
-        columnWidthZoom: 1,
         color: '#00ACC1'
     },
     'ru-RU': {
@@ -145,7 +137,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngRu,
         zorro: zorroRu,
         delon: delonEs,
-        columnWidthZoom: 1.5,
         color: '#546E7A'
     },
     'es-ES': {
@@ -155,7 +146,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngEs,
         zorro: zorroEs,
         delon: delonEnUS,
-        columnWidthZoom: 1.5,
         color: '#FB8C00'
     },
     'pt-PT': {
@@ -165,7 +155,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngPt,
         zorro: zorroPt,
         delon: delonEnUS, // No delon.pt_PT available yet
-        columnWidthZoom: 1.5,
         color: '#43A047'
     },
     'id-ID': {
@@ -175,7 +164,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngId,
         zorro: zorroEnUS, // fallback — zorro has no id-ID locale
         delon: delonEnUS,
-        columnWidthZoom: 1.5,
         color: '#D81B60'
     },
     'ar-SA': {
@@ -185,7 +173,6 @@ const LANGS: { [key: string]: LangConfigData } = {
         ng: ngAr,
         zorro: zorroAr, // Using ar_EG as a substitute
         delon: delonEnUS,
-        columnWidthZoom: 1.2,
         color: '#009688'
     },
 };

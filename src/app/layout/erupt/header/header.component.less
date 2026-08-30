@@ -82,6 +82,25 @@
     }
 
     ::ng-deep {
+        // Breadcrumb: when horizontal space runs out, truncate with an ellipsis instead of squeezing the header
+        .header-breadcrumb {
+            min-width: 0;
+            overflow: hidden;
+
+            erupt-nav {
+                display: block;
+                min-width: 0;
+                max-width: 100%;
+
+                .ant-breadcrumb {
+                    display: block;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+
         .split-nav-wrap {
             flex: 1;
             min-width: 0;
@@ -115,10 +134,21 @@
 
         .alain-default__header-logo {
             min-width: ~"var(--sidebar-width, 200px)";
+            // Cap at sidebar width so a long title never pushes the divider
+            // out of alignment with the sidebar edge.
+            max-width: ~"var(--sidebar-width, 200px)";
             text-align: center;
             width: auto;
             padding: 0 5px;
             border-right: 1px solid var(--ant-border-color-split);
+        }
+
+        .header-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 44px;
+            padding: 0 6px;
         }
 
         .header-logo-text {
@@ -128,6 +158,15 @@
             letter-spacing: 2px;
             margin-left: 6px;
             font-family: 'Courier New', Arial, Helvetica, sans-serif;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &--long {
+                font-size: 1.15em;
+                letter-spacing: 0;
+            }
         }
 
         @media (max-width: 767px) {
@@ -158,6 +197,15 @@
 
         .alain-default__header-logo {
             min-width: 48px;
+            // Lock to the collapsed sidebar width so the logo never overflows the divider
+            max-width: 48px;
+            box-sizing: border-box;
+            padding: 0;
+            overflow: hidden;
+
+            .header-link {
+                padding: 0;
+            }
 
             img {
                 width: 36px;

@@ -38,6 +38,9 @@ export class TabTableComponent implements OnInit {
 
     @Input() onlyRead: boolean = false;
 
+    // menu-bound ancestor erupt: set when this tab is nested inside another sub-form (e.g. MULTI_FORM)
+    @Input() eruptParentName: string;
+
     clientWidth = document.body.clientWidth;
 
     column: STColumn[];
@@ -69,7 +72,6 @@ export class TabTableComponent implements OnInit {
         setTimeout(() => {
             this.loading = false;
         }, 300);
-        this.tableWidth = (this.tabErupt.eruptBuildModel.eruptModel.tableColumns.filter(e => e.show).length * 160 * this.i18n.getCurrLangInfo().columnWidthZoom) + "px"
         if (this.onlyRead) {
             this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true);
         } else {
@@ -100,7 +102,7 @@ export class TabTableComponent implements OnInit {
                             nzContent: EditTypeComponent,
                             nzOnOk: async () => {
                                 let obj = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
-                                let result = await this.dataService.eruptTabUpdate(this.eruptBuildModel.eruptModel.eruptName, this.tabErupt.eruptFieldModel.fieldName, obj)
+                                let result = await this.dataService.eruptTabUpdate(this.eruptBuildModel.eruptModel.eruptName, this.tabErupt.eruptFieldModel.fieldName, obj, this.eruptParentName)
                                     .toPromise().then(resp => resp);
                                 if (result.status == Status.SUCCESS) {
                                     obj = result.data;
@@ -121,7 +123,7 @@ export class TabTableComponent implements OnInit {
                         });
                         ref.getContentComponent().col = colRules[3]
                         ref.getContentComponent().eruptBuildModel = this.tabErupt.eruptBuildModel
-                        ref.getContentComponent().parentEruptName = this.eruptBuildModel.eruptModel.eruptName;
+                        ref.getContentComponent().parentEruptName = this.eruptParentName || this.eruptBuildModel.eruptModel.eruptName;
                     }
                 });
             }
@@ -153,11 +155,12 @@ export class TabTableComponent implements OnInit {
             });
             this.column = viewValue;
         }
+        this.tableWidth = UiBuildService.calcTableWidth(this.column);
     }
 
     addData() {
         // this.dataHandlerService.emptyEruptValue(this.tabErupt.eruptBuildModel);
-        this.dataService.getInitValue(this.tabErupt.eruptBuildModel.eruptModel.eruptName, this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
+        this.dataService.getInitValue(this.tabErupt.eruptBuildModel.eruptModel.eruptName, this.eruptParentName || this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
             this.dataHandlerService.objectToEruptValue(data, this.tabErupt.eruptBuildModel);
             let ref = this.modal.create({
                 nzWrapClassName: "modal-lg",
@@ -169,7 +172,7 @@ export class TabTableComponent implements OnInit {
                 nzContent: EditTypeComponent,
                 nzOnOk: async () => {
                     let obj: any = this.dataHandlerService.eruptValueToObject(this.tabErupt.eruptBuildModel);
-                    let result = await this.dataService.eruptTabAdd(this.eruptBuildModel.eruptModel.eruptName, this.tabErupt.eruptFieldModel.fieldName, obj).toPromise().then(resp => resp);
+                    let result = await this.dataService.eruptTabAdd(this.eruptBuildModel.eruptModel.eruptName, this.tabErupt.eruptFieldModel.fieldName, obj, this.eruptParentName).toPromise().then(resp => resp);
                     if (result.status == Status.SUCCESS) {
                         obj = result.data;
                         obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = -Math.floor(Math.random() * 1000);
@@ -188,7 +191,7 @@ export class TabTableComponent implements OnInit {
             });
             ref.getContentComponent().mode = Scene.ADD;
             ref.getContentComponent().eruptBuildModel = this.tabErupt.eruptBuildModel;
-            ref.getContentComponent().parentEruptName = this.eruptBuildModel.eruptModel.eruptName;
+            ref.getContentComponent().parentEruptName = this.eruptParentName || this.eruptBuildModel.eruptModel.eruptName;
         });
     }
 
@@ -263,7 +266,8 @@ export class TabTableComponent implements OnInit {
             eruptField: this.tabErupt.eruptFieldModel,
             mode: SelectMode.checkbox,
             tabRef: true,
-            dependVal: dependVal
+            dependVal: dependVal,
+            parentEruptName: this.eruptParentName
         })
     }
 
