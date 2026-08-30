@@ -9,14 +9,7 @@ import {SharedModule} from '@shared/shared.module';
 import {I18NService} from '@core';
 import {NzCodeEditorModule} from 'ng-zorro-antd/code-editor';
 import {SseMessage, SseMessageEvent} from '../../model/chat.model';
-import {
-    CanvasApiService,
-    CanvasInfo,
-    CanvasStyle,
-    CanvasVersion,
-    Llm,
-    ModelGroup
-} from '../../service/canvas-api.service';
+import {CanvasApiService, CanvasInfo, CanvasStyle, CanvasVersion, Llm, ModelGroup} from '../../service/canvas-api.service';
 
 /** Element picked from the preview iframe, referenced in the next generation round */
 interface PickedElement {
@@ -26,7 +19,8 @@ interface PickedElement {
 
 /**
  * AI view designer: preview on the left, generation conversation on the right.
- * Each user message produces a new page version; versions are switchable.
+ * Each user message produces a new page version; versions are switchable as the
+ * working draft. Viewers only see the draft after an explicit publish.
  */
 @Component({
     standalone: true,
@@ -73,8 +67,10 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
 
     name = '';
 
-    /** Combined data source selection: '<type>:<model>' */
-    modelKey: string | null = null;
+    /** Data source type + model: configured on the AiCanvas record, read-only here */
+    dataType: string | null = null;
+
+    targetModel: string | null = null;
 
     style: string | null = null;
 
@@ -90,6 +86,11 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     versions: CanvasVersion[] = [];
 
     activeVersion: number | null = null;
+
+    /** Version currently live for viewers; null until the first publish */
+    publishVersion: number | null = null;
+
+    publishing = false;
 
     content = '';
 
@@ -164,9 +165,9 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         this.llmId = info.llmId;
         this.versions = info.versions || [];
         this.activeVersion = info.activeVersion;
-        if (info.dataType && info.targetModel) {
-            this.modelKey = `${info.dataType}:${info.targetModel}`;
-        }
+        this.publishVersion = info.publishVersion;
+        this.dataType = info.dataType;
+        this.targetModel = info.targetModel;
         if (this.activeVersion) {
             this.refreshPreview();
         }
@@ -186,10 +187,12 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         return this.style ? this.styles.find(s => s.id === this.style) : undefined;
     }
 
-    modelLabel(version: CanvasVersion): string {
-        const group = this.modelGroups.find(g => g.type === version.dataType);
-        const model = group?.models.find(m => m.value === version.targetModel);
-        return model ? model.label : version.targetModel;
+    /** Display label of the canvas's data model, resolved against the provider catalog */
+    get modelLabel(): string | null {
+        if (!this.targetModel) return null;
+        const group = this.modelGroups.find(g => g.type === this.dataType);
+        const model = group?.models.find(m => m.value === this.targetModel);
+        return model ? model.label : this.targetModel;
     }
 
     /** End-user access URL of this page, served by the frontend route */
@@ -197,10 +200,28 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         return `${location.origin}${location.pathname}${location.search}#/ai/canvas/${this.code}`;
     }
 
+    /** The draft may differ from what viewers see until it is published again */
+    get unpublishedChanges(): boolean {
+        return this.activeVersion != null && this.activeVersion !== this.publishVersion;
+    }
+
+    publish(): void {
+        if (this.publishing || !this.activeVersion) return;
+        this.publishing = true;
+        this.api.publish(this.code).subscribe({
+            next: () => {
+                this.publishing = false;
+                this.publishVersion = this.activeVersion;
+                this.message.success(this.i18n.fanyi('ai.canvas.publish_success'));
+            },
+            error: () => this.publishing = false
+        });
+    }
+
     refreshPreview(): void {
         this.exitPick();
         this.iframeLoading = true;
-        this.api.html(this.code).subscribe({
+        this.api.preview(this.code).subscribe({
             next: html => {
                 this.sourceRaw = html || '';
                 this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(this.sourceRaw);
@@ -334,13 +355,10 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     send(): void {
         const msg = this.content?.trim();
         if (!msg || this.generating) return;
-        if (!this.modelKey) {
-            this.message.warning(this.i18n.fanyi('ai.canvas.select_model_first'));
+        if (!this.dataType || !this.targetModel) {
+            this.message.warning(this.i18n.fanyi('ai.canvas.model_not_configured'));
             return;
         }
-        const sep = this.modelKey.indexOf(':');
-        const dataType = this.modelKey.substring(0, sep);
-        const targetModel = this.modelKey.substring(sep + 1);
         this.generating = true;
         this.pendingMessage = msg;
         this.pendingPicked = this.picked;
@@ -352,7 +370,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         this.streamingText = '';
         const token = this.tokenService.get()?.token || '';
         this.eventSource = new EventSource(this.api.generateSseUrl(
-            this.code, msg, dataType, targetModel, this.style, this.llmId, token,
+            this.code, msg, this.style, this.llmId, token,
             picked?.selector ?? null));
         this.eventSource.onmessage = event => {
             const body: SseMessage = JSON.parse(event.data);
@@ -420,6 +438,8 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         if (version.id === this.activeVersion || this.generating) return;
         this.api.active(this.code, version.id).subscribe(() => {
             this.activeVersion = version.id;
+            // Mirror the backend: activating a version restores its style snapshot
+            this.style = version.style;
             this.refreshPreview();
         });
     }

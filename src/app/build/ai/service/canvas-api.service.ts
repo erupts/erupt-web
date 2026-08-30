@@ -8,8 +8,6 @@ export interface CanvasVersion {
     id: number;
     version: number;
     message: string;
-    dataType: string;
-    targetModel: string;
     style: string | null;
     createTime: string;
 }
@@ -21,6 +19,7 @@ export interface CanvasInfo {
     style: string | null;
     llmId: number | null;
     activeVersion: number | null;
+    publishVersion: number | null;
     versions: CanvasVersion[];
 }
 
@@ -55,9 +54,14 @@ export class CanvasApiService {
         return this._http.get<R<CanvasInfo>>(`${this.base}/${code}`);
     }
 
-    /** Processed page source of the active version, embedded via iframe srcdoc */
+    /** Published page source served to viewers */
     html(code: string): Observable<string> {
         return this._http.get(`${RestPath.erupt}/ai-canvas/html/${code}`, null, {responseType: 'text'});
+    }
+
+    /** Working-draft page source (active version) for the designer preview iframe */
+    preview(code: string): Observable<string> {
+        return this._http.get(`${this.base}/preview/${code}`, null, {responseType: 'text'});
     }
 
     models(): Observable<R<ModelGroup[]>> {
@@ -72,15 +76,15 @@ export class CanvasApiService {
         return this._http.get<R<Llm[]>>(`${this.base}/llms`);
     }
 
-    generate(code: string, message: string, dataType: string, targetModel: string, style: string | null, llmId: number | null,
+    generate(code: string, message: string, style: string | null, llmId: number | null,
              element: string | null): Observable<R<CanvasVersion>> {
-        return this._http.post<R<CanvasVersion>>(`${this.base}/generate/${code}`, {message, dataType, targetModel, style, llmId, element});
+        return this._http.post<R<CanvasVersion>>(`${this.base}/generate/${code}`, {message, style, llmId, element});
     }
 
     /** SSE URL of the streaming generate endpoint (EventSource is GET-only, token travels as _token) */
-    generateSseUrl(code: string, message: string, dataType: string, targetModel: string, style: string | null, llmId: number | null, token: string,
+    generateSseUrl(code: string, message: string, style: string | null, llmId: number | null, token: string,
                    element: string | null): string {
-        const params = new URLSearchParams({message, dataType, targetModel, _token: token});
+        const params = new URLSearchParams({message, _token: token});
         if (style) params.set('style', style);
         if (llmId != null) params.set('llmId', String(llmId));
         // Only the picked element's selector travels here — the backend already holds the
@@ -91,6 +95,11 @@ export class CanvasApiService {
 
     active(code: string, versionId: number): Observable<R<void>> {
         return this._http.post<R<void>>(`${this.base}/active/${code}/${versionId}`);
+    }
+
+    /** Publish the working draft so viewers pick it up */
+    publish(code: string): Observable<R<void>> {
+        return this._http.post<R<void>>(`${this.base}/publish/${code}`);
     }
 
     /** Signal the backend to discard the running generation round */
