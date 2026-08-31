@@ -19,10 +19,12 @@ import {Subject} from 'rxjs';
 import {throttleTime} from 'rxjs/operators';
 import {ChatApiService} from '../../service/chat-api.service';
 import {MarkdownService} from '../../service/markdown.service';
-import {Agent, Chat, ChatMessage, SseMessage, SseMessageEvent} from '../../model/chat.model';
+import {Agent, Chat, ChatMessage, Llm, SseMessage, SseMessageEvent} from '../../model/chat.model';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {NzMessageService} from 'ng-zorro-antd/message';
+import {NzImageService} from 'ng-zorro-antd/image';
 import {RestPath} from "../../../erupt/model/erupt.enum";
+import {DataService} from "@shared/service/data.service";
 import {SettingsService} from "@delon/theme";
 import {I18NService} from '@core';
 
@@ -56,7 +58,7 @@ const BUBBLES_BOTTOM_BUFFER_PX = 300;
     templateUrl: './ai-chat.component.html',
     styleUrls: ['./ai-chat.component.less'],
     imports: [SharedModule],
-    providers: [ChatApiService, MarkdownService]
+    providers: [ChatApiService, MarkdownService, NzImageService]
 })
 export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     @Input() collapseSidebar = false;
@@ -70,14 +72,25 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     @ViewChild('renameModalTpl') renameModalTpl!: TemplateRef<unknown>;
     @ViewChild('textareaRef') textareaRef!: ElementRef<HTMLTextAreaElement>;
     @ViewChild('senderWrapRef') senderWrapRef!: ElementRef<HTMLDivElement>;
+    @ViewChild('imageInputRef') imageInputRef!: ElementRef<HTMLInputElement>;
 
     chats: Chat[] = [];
     agents: Agent[] = [];
+    /** Enabled models; the picker is shown only when there is more than one */
+    llms: Llm[] = [];
     messages: ChatMessage[] = [];
     selectChat: number | null = null;
     /** Selected agent id, bound to the dropdown; use get selectAgent() to retrieve the full object when sending */
     selectAgentId: number | null = null;
+    /** Selected model id; preset by the llm query param, otherwise the default model */
+    selectLlmId: number | null = null;
+    /** True when the model is pinned via the llm query param (model test): the picker is hidden */
+    private fixedLlm = false;
     content = '';
+    /** Images attached to the next message; uploaded immediately on pick/paste */
+    pendingImages: { path: string; url: string }[] = [];
+    /** Number of image uploads in flight; sending is blocked until it drops to 0 */
+    uploadingImageCount = 0;
     /** Chat search keyword */
     chatSearchKeyword = '';
     /** Input history */
@@ -131,7 +144,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     private renameChatId: number | null = null;
     /** Running SSE state for each chat, keyed by chatId */
     private pendingSse = new Map<number, ChatSseState>();
-    private llmId = '';
     private scrollSubject = new Subject<void>();
     private speakingMessage: ChatMessage | null = null;
 
@@ -147,16 +159,21 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     constructor(
         protected settingsService: SettingsService,
         private chatApi: ChatApiService,
+        // Constructing DataService seeds its static tokenService, which the static
+        // previewAttachment helper (used for image URLs) depends on
+        private dataService: DataService,
         private markdown: MarkdownService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
         private modal: NzModalService,
         private message: NzMessageService,
+        private imageService: NzImageService,
         private ngZone: NgZone,
         private cdr: ChangeDetectorRef,
         private route: ActivatedRoute,
         private i18n: I18NService
     ) {
-        this.llmId = this.route.snapshot.queryParams['llm'] || '';
+        this.selectLlmId = +this.route.snapshot.queryParams['llm'] || null;
+        this.fixedLlm = this.selectLlmId != null;
         // when embedded the drawer/modal host is OnPush, which gates this subtree from
         // zone-driven global change detection; run a local check per turn instead, the
         // same treatment it gets under the Default-strategy ancestors of the routed page
@@ -176,6 +193,13 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.chatApi.agents().subscribe(res => {
             this.agents = res.data;
         });
+        // With a pinned model (?llm=, model test) the picker is hidden, no need to fetch
+        if (!this.fixedLlm) {
+            this.chatApi.llms().subscribe(res => {
+                this.llms = res.data || [];
+                this.selectLlmId = (this.llms.find(l => l.defaultLLM) ?? this.llms[0])?.id ?? null;
+            });
+        }
         this.scrollSubject.pipe(throttleTime(50)).subscribe(() => {
             if (this.isBubblesNearBottom()) {
                 this.scrollBubblesToBottom();
@@ -354,16 +378,23 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     send(message: string): void {
-        if (!message?.trim()) return;
-        this.inputHistory.push(message.trim());
-        this.historyIndex = -1;
+        message = message ?? '';
+        const images = this.pendingImages.map(i => i.path);
+        if (!message.trim() && !images.length) return;
+        if (this.uploadingImageCount > 0) return;
+        if (message.trim()) {
+            this.inputHistory.push(message.trim());
+            this.historyIndex = -1;
+        }
         const doStart = (chatId: number) => {
             this.sending = true;
             this.content = '';
+            this.pendingImages = [];
             this.messages.push({
                 id: Math.random(),
                 senderType: 'USER',
                 content: message,
+                images: images.length ? JSON.stringify(images) : undefined,
                 loading: false
             } as ChatMessage);
             this.messages.push({
@@ -373,11 +404,12 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 loading: true
             } as ChatMessage);
             setTimeout(() => this.scrollBubblesToBottom(), 10);
-            this.openSse(chatId, message);
+            this.openSse(chatId, message, images);
         };
 
         if (this.selectChat == null) {
-            this.chatApi.createChat(message).subscribe({
+            const title = message.trim() || this.i18n.fanyi('ai.chat.image_message');
+            this.chatApi.createChat(title).subscribe({
                 next: res => {
                     this.fetchChats(true, () => doStart(res.data));
                 }
@@ -388,7 +420,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     /** Open an SSE connection and listen for streaming events; supports background operation, caching continues after switching chats */
-    private openSse(chatId: number, message: string): void {
+    private openSse(chatId: number, message: string, images?: string[]): void {
         // if this chat already has an SSE connection (e.g. regenerating), close the old one first
         const existing = this.pendingSse.get(chatId);
         if (existing) {
@@ -409,7 +441,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
         const token = this.tokenService.get()?.token || '';
         const contextParam = this.context ? `&contextPrompt=${encodeURIComponent(this.context)}` : '';
-        const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.llmId}&autoToolCall=${this.autoToolCall}${contextParam}`;
+        const imagesParam = images?.length ? `&images=${encodeURIComponent(JSON.stringify(images))}` : '';
+        const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.selectLlmId ?? ''}&autoToolCall=${this.autoToolCall}${contextParam}${imagesParam}`;
         state.eventSource = new EventSource(url);
         this.pendingSse.set(chatId, state);
         this.streaming = true;
@@ -564,6 +597,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     /** Fill the user message back into the input box and truncate subsequent messages, supporting back-editing */
     editResend(item: ChatMessage, index: number): void {
         this.content = item.content;
+        this.pendingImages = this.getImages(item).map(path => ({path, url: this.imageUrl(path)}));
         this.messages = this.messages.slice(0, index);
         setTimeout(() => this.textareaRef?.nativeElement?.focus(), 50);
     }
@@ -609,13 +643,15 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     regenerate(index: number): void {
         if (this.sending || this.streaming || this.selectChat == null) return;
         let userContent = '';
+        let userImages: string[] = [];
         for (let i = index - 1; i >= 0; i--) {
             if (this.messages[i].senderType === 'USER') {
                 userContent = this.messages[i].content;
+                userImages = this.getImages(this.messages[i]);
                 break;
             }
         }
-        if (!userContent) return;
+        if (!userContent && !userImages.length) return;
         this.messages = this.messages.slice(0, index);
         this.messages.push({
             id: Math.random(),
@@ -626,7 +662,78 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.sending = true;
         this.sendDisabled = true;
         setTimeout(() => this.scrollBubblesToBottom(), 10);
-        this.openSse(this.selectChat, userContent);
+        this.openSse(this.selectChat, userContent, userImages);
+    }
+
+    /** Open the image picker dialog */
+    pickImages(): void {
+        this.imageInputRef?.nativeElement?.click();
+    }
+
+    onImageFilesSelected(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        this.uploadImages(Array.from(input.files ?? []));
+        input.value = '';
+    }
+
+    /** Paste images from the clipboard directly into the input box */
+    onPaste(event: ClipboardEvent): void {
+        const files = Array.from(event.clipboardData?.items ?? [])
+            .filter(i => i.kind === 'file' && i.type.startsWith('image/'))
+            .map(i => i.getAsFile())
+            .filter((f): f is File => !!f);
+        if (files.length) {
+            event.preventDefault();
+            this.uploadImages(files);
+        }
+    }
+
+    private uploadImages(files: File[]): void {
+        for (const file of files.filter(f => f.type.startsWith('image/'))) {
+            this.uploadingImageCount++;
+            this.chatApi.uploadImage(file).subscribe({
+                next: res => {
+                    this.uploadingImageCount--;
+                    this.pendingImages.push({path: res.data, url: this.imageUrl(res.data)});
+                },
+                error: () => {
+                    this.uploadingImageCount--;
+                    this.message.error(this.i18n.fanyi('ai.chat.image_upload_failed'));
+                }
+            });
+        }
+    }
+
+    removePendingImage(index: number): void {
+        this.pendingImages.splice(index, 1);
+    }
+
+    /** Image attachment paths of a message, parsed from JSON once and cached on the object */
+    getImages(item: ChatMessage): string[] {
+        if (!item.images) return [];
+        if (!item.imagesParsed) {
+            try {
+                item.imagesParsed = JSON.parse(item.images);
+            } catch {
+                item.imagesParsed = [];
+            }
+        }
+        return item.imagesParsed!;
+    }
+
+    imageUrl(path: string): string {
+        return DataService.previewAttachment(path);
+    }
+
+    /** Preview all images of a message as a switchable gallery, starting at the clicked one */
+    openImage(item: ChatMessage, index: number): void {
+        const ref = this.imageService.preview(this.getImages(item).map(p => ({src: this.imageUrl(p)})));
+        if (index > 0) ref.switchTo(index);
+    }
+
+    previewPendingImage(index: number): void {
+        const ref = this.imageService.preview(this.pendingImages.map(i => ({src: i.url})));
+        if (index > 0) ref.switchTo(index);
     }
 
     /** HTML for displaying model messages: prefer contentHtml (already rendered during streaming), otherwise asynchronously render content (including historical think blocks) */
@@ -762,7 +869,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     onInputKeydown(e: KeyboardEvent): void {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            if (!this.sendDisabled && this.content?.trim()) {
+            if (!this.sendDisabled && (this.content?.trim() || this.pendingImages.length) && !this.uploadingImageCount) {
                 this.send(this.content);
                 this.content = '';
             }

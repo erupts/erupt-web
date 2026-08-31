@@ -382,6 +382,27 @@
 
 }
 
+/* Image attachments of a user message */
+.bubble-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 12px;
+
+    img {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: @radius-sm;
+        border: 1px solid var(--ant-border-color-split);
+        cursor: zoom-in;
+        object-fit: cover;
+    }
+}
+
+.bubble-wrap:not(.is-model) .bubble-images {
+    justify-content: flex-end;
+}
+
 /* Tool Call block: injected via innerHTML, requires ::ng-deep */
 ::ng-deep .call-block-inline {
     display: inline-flex;
@@ -690,6 +711,67 @@
         max-width: @content-max;
     }
 
+    /* Preview strip of images attached to the next message */
+    .pending-images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 14px 4px;
+
+        .pending-image {
+            position: relative;
+            width: 64px;
+            height: 64px;
+
+            img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border: 1px solid var(--ant-border-color-split);
+                border-radius: 6px;
+                cursor: zoom-in;
+                transition: opacity 0.15s;
+
+                &:hover {
+                    opacity: 0.85;
+                }
+            }
+
+            &.pending-image-loading {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #fafafa;
+                border: 1px dashed var(--ant-border-color-split);
+                border-radius: 6px;
+            }
+
+            /* Round badge floating over the corner, like ant-design upload cards */
+            .pending-image-remove {
+                position: absolute;
+                top: -6px;
+                right: -6px;
+                width: 18px;
+                height: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.65);
+                color: #fff;
+                font-size: 10px;
+                cursor: pointer;
+                border-radius: 50%;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+                transition: background 0.15s;
+
+                &:hover {
+                    background: #e53935;
+                }
+            }
+        }
+    }
+
     .hints-wrap {
         padding: 5px;
         border-bottom: 1px solid var(--ant-border-color-split);
@@ -878,9 +960,30 @@
     border-top: 1px solid var(--ant-border-color-split);
 }
 
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    /* Attachment entry: bordered so it reads as a button, not a passive icon */
+    .attach-btn {
+        border: 1px solid var(--ant-border-color-split);
+
+        &:hover {
+            border-color: var(--ant-primary-color);
+            color: var(--ant-primary-color);
+            background: transparent;
+        }
+    }
+}
+
+/* Sits in the action group right before the buttons it describes */
 .shortcut-hint {
     font-size: 12px;
     color: var(--ant-text-color-secondary, #999);
+    margin-right: 6px;
+    white-space: nowrap;
+    user-select: none;
 }
 
 .btn-send {

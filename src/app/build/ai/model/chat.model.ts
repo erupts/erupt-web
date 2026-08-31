@@ -25,6 +25,10 @@ export interface ChatMessage {
     speaking?: boolean;
     /** True when the user stopped the generation before it finished */
     interrupted?: boolean;
+    /** JSON array (string) of image attachment paths sent with a user message */
+    images?: string;
+    /** Parsed cache of images, filled lazily on first render */
+    imagesParsed?: string[];
 }
 
 export interface UserInfo {
@@ -36,6 +40,12 @@ export interface Agent {
     name: string;
     desc: string;
     hints: string[]
+}
+
+export interface Llm {
+    id: number;
+    name: string;
+    defaultLLM?: boolean;
 }
 
 export interface SseMessage {
