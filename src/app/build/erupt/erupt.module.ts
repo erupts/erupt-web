@@ -31,6 +31,7 @@ import {MarkdownComponent} from './components/markdown/markdown.component';
 import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
+import {TextareaComponent} from "./components/textarea/textarea.component";
 import {CardComponent} from './vis/card/card.component';
 import {BoardComponent} from './vis/board/board.component';
 import {TagSelectModule} from "@delon/abc/tag-select";
@@ -124,6 +125,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         MarkdownComponent,
         ChoiceComponent,
         TagsComponent,
+        TextareaComponent,
         CardComponent,
         BoardComponent,
         SearchComponent,

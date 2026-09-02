@@ -314,16 +314,10 @@
                         <se [label]="field.eruptFieldJson.edit.title"
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
-                            <nz-textarea-count
-                                [nzMaxCharacterCount]="field.eruptFieldJson.edit.inputType?.length > 0 ? field.eruptFieldJson.edit.inputType.length : null">
-                <textarea nz-input class="erupt-input" [name]="field.fieldName"
-                          [nzAutosize]="{ minRows: 3, maxRows: 20 }"
-                          [(ngModel)]="field.eruptFieldJson.edit.$value"
-                          [maxlength]="field.eruptFieldJson.edit.inputType?.length > 0 ? field.eruptFieldJson.edit.inputType.length : null"
-                          [placeholder]="field.eruptFieldJson.edit.placeHolder"
-                          [disabled]="isReadonly(field)"
-                ></textarea>
-                            </nz-textarea-count>
+                            <erupt-textarea [eruptModel]="eruptModel" [eruptBuildModel]="eruptBuildModel"
+                                            [eruptField]="field"
+                                            [eruptParentName]="parentEruptName"
+                                            [readonly]="isReadonly(field)"></erupt-textarea>
                         </se>
                     </div>
                 }

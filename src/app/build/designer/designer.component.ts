@@ -290,6 +290,9 @@ export class DesignerComponent implements OnInit, OnDestroy {
         if (e.type === EditType.CHECKBOX) {
             e.checkboxType = e.checkboxType || {};
         }
+        if (e.type === EditType.TEXTAREA) {
+            e.textareaType = e.textareaType || {};
+        }
     }
 
     deselect(): void {

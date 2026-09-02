@@ -1,0 +1,24 @@
+@let textareaType = edit.textareaType;
+@if (textareaType?.mentionPrefix?.length > 0) {
+    <nz-mention [nzSuggestions]="suggestions"
+                [nzPrefix]="textareaType.mentionPrefix"
+                [nzLoading]="loading"
+                (nzOnSearchChange)="loadMentions()">
+        <textarea nz-input class="erupt-input" nzMentionTrigger
+                  [name]="eruptField.fieldName"
+                  [nzAutosize]="{ minRows: textareaType?.minRows || 3, maxRows: textareaType?.maxRows || 20 }"
+                  [(ngModel)]="edit.$value"
+                  [maxlength]="maxLength"
+                  [placeholder]="edit.placeHolder"
+                  [disabled]="readonly"></textarea>
+    </nz-mention>
+} @else {
+    <textarea nz-input class="erupt-input"
+              [name]="eruptField.fieldName"
+              [nzAutosize]="{ minRows: textareaType?.minRows || 3, maxRows: textareaType?.maxRows || 20 }"
+              [(ngModel)]="edit.$value"
+              [maxlength]="maxLength"
+              [placeholder]="edit.placeHolder"
+              [disabled]="readonly"></textarea>
+}
+<div class="erupt-textarea-count">{{ (edit.$value || '').length }}@if (maxLength) { / {{ maxLength }}}</div>

@@ -311,6 +311,17 @@
                                                    (ngModelChange)="saveDraft()"></nz-switch>
                                     </div>
                                 }
+                                @case (editType.TEXTAREA) {
+                                    <nz-divider [nzText]="'designer.type_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.max_length' | translate }}</label>
+                                        <nz-input-number [(ngModel)]="selected.edit.textareaType!.length"
+                                                         [nzMin]="1" [nzPlaceHolder]="'designer.max_length_unlimited' | translate"
+                                                         (ngModelChange)="saveDraft()"
+                                                         style="width: 100%"></nz-input-number>
+                                    </div>
+                                }
                                 @case (editType.NUMBER) {
                                     <nz-divider [nzText]="'designer.type_config' | translate"
                                                 nzOrientation="left" nzPlain></nz-divider>

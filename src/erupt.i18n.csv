@@ -1209,3 +1209,5 @@ ai.chat.upload_image,上传图片,上傳圖片,Upload image,Envoyer une image,�
 ai.chat.image_upload_failed,图片上传失败,圖片上傳失敗,Image upload failed,Échec de l'envoi de l'image,画像のアップロードに失敗しました,이미지 업로드 실패,Не удалось загрузить изображение,Error al subir la imagen,Bild-Upload fehlgeschlagen,Falha ao carregar imagem,Gagal mengunggah gambar,فشل تحميل الصورة
 ai.chat.image_message,[图片],[圖片],[Image],[Image],[画像],[이미지],[Изображение],[Imagen],[Bild],[Imagem],[Gambar],[صورة]
 ai.chat.model,模型,模型,Model,Modèle,モデル,모델,Модель,Modelo,Modell,Modelo,Model,النموذج
+designer.max_length,最大字数,最大字數,Max Length,Longueur max,最大文字数,최대 글자 수,Макс. длина,Longitud máx.,Max. Länge,Comprimento máx.,Panjang maks,الحد الأقصى للطول
+designer.max_length_unlimited,不限制,不限制,Unlimited,Illimité,無制限,제한 없음,Без ограничений,Sin límite,Unbegrenzt,Sem limite,Tak terbatas,غير محدود

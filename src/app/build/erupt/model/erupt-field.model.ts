@@ -94,6 +94,7 @@ export interface Edit {
     search: Search;
     tabType?: TabType;
     inputType?: InputType;
+    textareaType?: TextareaType;
     numberType?: NumberType;
     referenceTreeType?: ReferenceTreeType;
     referenceTableType?: ReferenceTableType;
@@ -154,6 +155,14 @@ interface CodeEditType {
     language: string;
     height: number;
     hintHandler?: string[];
+}
+
+interface TextareaType {
+    length: number;
+    minRows: number;
+    maxRows: number;
+    mentionPrefix: string[];
+    mentionFetchHandler: string[];
 }
 
 //Edit Type

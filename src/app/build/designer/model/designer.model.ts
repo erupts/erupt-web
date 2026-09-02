@@ -1,4 +1,12 @@
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, PickerMode} from "../../erupt/model/erupt.enum";
+import {
+    AttachmentEnum,
+    ChoiceEnum,
+    DateEnum,
+    EditType,
+    FormSize,
+    PagingType,
+    PickerMode
+} from "../../erupt/model/erupt.enum";
 import {I18NService} from "@core";
 
 /**
@@ -113,6 +121,7 @@ export interface DesignerEdit {
     search?: { value?: boolean; };
     readonly?: { add?: boolean; edit?: boolean };
     inputType?: { length?: number; fullSpan?: boolean; regex?: string };
+    textareaType?: { length?: number; minRows?: number; maxRows?: number };
     numberType?: { min?: number; max?: number };
     sliderType?: { min?: number; max?: number; step?: number; dots?: boolean };
     rateType?: { count?: number; allowHalf?: boolean };
@@ -156,7 +165,7 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
         title: "designer.group.basic",
         items: [
             {type: EditType.INPUT, label: "designer.type.input", icon: "edit", edit: {inputType: {length: 255}}},
-            {type: EditType.TEXTAREA, label: "designer.type.textarea", icon: "file-text"},
+            {type: EditType.TEXTAREA, label: "designer.type.textarea", icon: "file-text", edit: {textareaType: {}}},
             {type: EditType.NUMBER, label: "designer.type.number", icon: "field-number", edit: {numberType: {}}},
             {type: EditType.PASSWORD, label: "designer.type.password", icon: "lock"},
             {
