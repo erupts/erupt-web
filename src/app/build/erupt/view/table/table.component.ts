@@ -2,7 +2,19 @@ import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, Vi
 import {Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, FieldVisibility, Page, Power, Row, RowOperation, Vis, VisType} from "../../model/erupt.model";
+import {
+    Alert,
+    Drill,
+    DrillInput,
+    EruptModel,
+    FieldVisibility,
+    Page,
+    Power,
+    Row,
+    RowOperation,
+    Vis,
+    VisType
+} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -998,7 +1010,11 @@ export class TableComponent implements OnInit, OnDestroy {
                 {
                     label: this.i18n.fanyi("global.save_only"),
                     onClick: async () => {
-                        await doSave();
+                        // reload after save: unsaved sub-table rows hold temp ids, the form
+                        // must be rebuilt from backend data to pick up the persisted ids
+                        if (await doSave()) {
+                            model.getContentComponent().reload();
+                        }
                     }
                 },
                 {
