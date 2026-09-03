@@ -37,22 +37,9 @@ a:hover {
     color: var(--ant-primary-color-hover);
 }
 
-// Sidebar menu: the stock dark theme leaves the selected row invisible
-// (#141414 on a #141414 aside) and paints states in the fixed blue.
-// Give states a visible surface and follow the brand color.
-.sidebar-nav__item-link:hover {
-    color: var(--ant-primary-color);
-    background-color: var(--erupt-fill-tertiary, rgba(255, 255, 255, 0.08));
-}
-
-.sidebar-nav__selected {
-    border-left-color: var(--ant-primary-color);
-    background-color: var(--ant-primary-1);
-}
-
-.sidebar-nav__selected > .sidebar-nav__item-link {
-    color: var(--ant-primary-color);
-}
+// Sidebar menu states (hover / active-trail bar / selected leaf) live in the
+// shared dark-aside block in styles/tokens.less, common to this dark theme
+// and the aside-dark skin — do not restyle them here.
 
 // Keep project-level theme variable overrides in sync with src/styles/theme.less
 @alain-default-header-hg: 44px !important;

@@ -92,32 +92,12 @@ html.aside-dark:not(.dark):not(.brutalist-theme) {
     // Keep it transparent and paint the leaf link instead (leaves carry href).
     --alain-default-aside-bg: #001529;
     --alain-default-aside-nav-divider: rgba(255, 255, 255, 0.12);
-    --alain-default-aside-nav-selected-bg: transparent;
 
     .alain-default__aside {
+        // base ink for the navy panel; interactive states (hover/selected)
+        // come from the shared dark-aside block below
         .sidebar-nav__item-link {
             color: rgba(255, 255, 255, 0.68);
-
-            &:hover {
-                color: #fff;
-                background-color: rgba(255, 255, 255, 0.06);
-            }
-        }
-
-        .sidebar-nav__selected {
-            // active-trail parents only tint their own title, never the subtree
-            > .sidebar-nav__item-link {
-                color: #fff;
-            }
-
-            // solid primary rounded block on the selected leaf row only
-            > .sidebar-nav__item-link[href] {
-                background-color: var(--ant-primary-color);
-
-                &:hover {
-                    background-color: var(--ant-primary-color);
-                }
-            }
         }
 
         .sidebar-nav__group-title {
@@ -189,6 +169,48 @@ html.aside-dark:not(.dark):not(.brutalist-theme) {
     }
 }
 
+// ── Shared dark-aside menu language ──────────────────────────────
+// ONE set of sidebar menu states for both dark surfaces — the global dark
+// theme (#141414 aside) and the aside-dark skin (navy) — so they never drift
+// apart. Scoped selectors out-specify both the compiled dark bundle and the
+// aside-dark base rules above (keep this block after that one). The brutalist
+// skin owns its own menu rows. Colors are dark-surface constants, so no
+// --erupt-* tokens here (in aside-dark the page is still the light theme).
+html.dark:not(.brutalist-theme),
+html.aside-dark:not(.brutalist-theme) {
+    // never wash the selected <li> through the hook — it paints the <li>,
+    // which CONTAINS the expanded submenu <ul>
+    --alain-default-aside-nav-selected-bg: transparent;
+
+    .alain-default__aside {
+        .sidebar-nav__item-link:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        // active-trail guide bar on the <li>, brand colored; never fill it
+        .sidebar-nav__selected {
+            border-left-color: var(--ant-primary-color);
+            background-color: transparent;
+        }
+
+        // active-trail parents only tint their own title, never the subtree
+        .sidebar-nav__selected > .sidebar-nav__item-link {
+            color: #fff;
+        }
+
+        // solid primary block on the selected leaf row only (leaves carry href)
+        .sidebar-nav__selected > .sidebar-nav__item-link[href] {
+            background-color: var(--ant-primary-color);
+            color: #fff;
+
+            &:hover {
+                background-color: var(--ant-primary-color);
+            }
+        }
+    }
+}
+
 // style.dark.css is compiled from less with a fixed primary color, so it would
 // repaint brand-colored controls in the stock dark blue. Re-anchor the most
 // visible primary surfaces to the runtime --ant-primary-* variables; html.dark
@@ -249,6 +271,15 @@ html.dark {
         &::before {
             background-color: var(--ant-primary-color);
         }
+    }
+
+    // solid variant (nzButtonStyle="solid"): the compiled dark css paints the
+    // checked segment in the stock blue while the rule above re-colors only the
+    // text — re-anchor the filled state as a whole (brand bg, white text)
+    .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+        background: var(--ant-primary-color);
+        border-color: var(--ant-primary-color);
+        color: #fff;
     }
 
     .ant-input:focus, .ant-input-focused,
