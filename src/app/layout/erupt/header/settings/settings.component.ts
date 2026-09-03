@@ -105,7 +105,7 @@ export class SettingsComponent implements OnInit {
     // Preset bar colors: one classic dark plus distinct mid-tone hues —
     // clearly distinguishable at swatch size, all pairing with white text.
     headerPresets: string[] = [
-        "#001529", // classic navy (ant design pro)
+        "#141414", // ink — same surface as the dark sidebar (tokens.less aside-dark)
         "#2563eb", // sapphire blue
         "#0d9488", // teal
         "#7c3aed", // violet

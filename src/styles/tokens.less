@@ -90,11 +90,12 @@ html.aside-dark:not(.dark):not(.brutalist-theme) {
     // NOTE: the selected-bg hook paints the <li>, which CONTAINS the expanded
     // submenu <ul> — a strong color there floods the whole open subtree.
     // Keep it transparent and paint the leaf link instead (leaves carry href).
-    --alain-default-aside-bg: #001529;
+    // Same surface as the global dark theme's aside so the two never differ.
+    --alain-default-aside-bg: #141414;
     --alain-default-aside-nav-divider: rgba(255, 255, 255, 0.12);
 
     .alain-default__aside {
-        // base ink for the navy panel; interactive states (hover/selected)
+        // base ink for the dark panel; interactive states (hover/selected)
         // come from the shared dark-aside block below
         .sidebar-nav__item-link {
             color: rgba(255, 255, 255, 0.68);
@@ -144,7 +145,7 @@ html.aside-dark:not(.dark):not(.brutalist-theme) {
         // bottom utility bar
         .fold {
             color: rgba(255, 255, 255, 0.65);
-            background: #001529;
+            background: #141414;
             border-top-color: rgba(255, 255, 255, 0.12);
 
             .fold__btn:hover {
@@ -154,11 +155,11 @@ html.aside-dark:not(.dark):not(.brutalist-theme) {
         }
 
         .aside-loading-overlay {
-            background: rgba(0, 21, 41, 0.75);
+            background: rgba(20, 20, 20, 0.75);
         }
     }
 
-    // the 1px sidebar edge line looks harsh against the navy panel
+    // the 1px sidebar edge line looks harsh against the dark panel
     .erupt-side:after,
     .alain-default__aside:after {
         border-right-color: rgba(0, 0, 0, 0.18);
@@ -335,6 +336,27 @@ html.compact {
         border-color: var(--ant-primary-color);
 
         > .ant-steps-icon {
+            color: var(--ant-primary-color);
+        }
+    }
+}
+
+// Compact LIGHT sidebar: the compiled compact bundle repaints the light-theme
+// sidebar states (hover text, selected guide bar, selected link) in the stock
+// blue literal. Re-anchor them to the runtime brand color. Dark / aside-dark
+// sidebars are excluded — their menu states come from the shared dark-aside
+// block above — and the brutalist skin owns its own sidebar look.
+html.compact:not(.dark):not(.aside-dark):not(.brutalist-theme) {
+    .alain-default__aside {
+        .sidebar-nav__item-link:hover {
+            color: var(--ant-primary-color);
+        }
+
+        .sidebar-nav__selected {
+            border-left-color: var(--ant-primary-color);
+        }
+
+        .sidebar-nav__selected > .sidebar-nav__item-link {
             color: var(--ant-primary-color);
         }
     }

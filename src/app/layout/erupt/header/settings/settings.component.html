@@ -41,7 +41,7 @@
         }
         <label class="theme-color-picker__swatch theme-color-picker__custom"
                [class.theme-color-picker__swatch--active]="headerColor !== '' && headerColor !== 'primary' && !headerPresets.includes(headerColor)">
-            <input type="color" [value]="headerColor.startsWith('#') ? headerColor : '#001529'"
+            <input type="color" [value]="headerColor.startsWith('#') ? headerColor : '#141414'"
                    (change)="setHeaderColor($any($event.target).value)">
         </label>
     </div>
