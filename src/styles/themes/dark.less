@@ -1,12 +1,14 @@
 // Dark theme bundle — compiled as a lazy global style (see angular.json:
 // inject:false + bundleName "style.dark"), emitted as a stable, non-hashed
-// "style.dark.css". It is NOT loaded by default: index.html (pre-bootstrap)
-// and the settings drawer attach/detach a <link id="site-theme-dark"> to it
-// and toggle the `dark` class on <html>.
+// "style.dark.css". It is NOT loaded by default: index.html pre-creates a
+// permanent <link id="site-theme-style"> (before Angular's runtime component
+// styles, so the cascade order never changes) and the settings drawer swaps
+// its href / disabled state while toggling the `dark` class on <html>.
 //
 // The full ng-zorro + @delon styles are re-compiled here with the official
-// dark theme variables; loaded after the main stylesheet, equal-specificity
-// rules win by source order, flipping every standard component to dark.
+// dark theme variables; loaded after the main stylesheet but BEFORE component
+// styles, equal-specificity rules win by source order over styles.css only —
+// component ::ng-deep overrides still take precedence, same as in light mode.
 @import 'ng-zorro-antd/ng-zorro-antd.less';
 @import 'ng-zorro-antd/code-editor/style/entry.less';
 @import 'ng-zorro-antd/resizable/style/entry.less';

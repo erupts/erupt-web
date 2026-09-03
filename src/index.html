@@ -293,6 +293,16 @@
         // stylesheets; using both loads the merged compact-dark bundle.
         // One <link> is swapped between the three — shared with the settings
         // drawer via window.eruptApply*Theme so the logic lives in one place.
+        // The <link> is created once, pre-bootstrap, and never removed: it must
+        // stay BEFORE Angular's runtime-injected component <style> tags, so the
+        // cascade order is identical whether a theme was on at load or toggled
+        // later (appending it at runtime let the bundle's @delon defaults beat
+        // equal-specificity component overrides, e.g. the reuse-tab bar).
+        var _themeLink = document.createElement("link");
+        _themeLink.id = "site-theme-style";
+        _themeLink.rel = "stylesheet";
+        _themeLink.disabled = true;
+        document.head.appendChild(_themeLink);
         window.eruptSyncThemeBundles = function () {
             var cls = document.documentElement.classList;
             var dark = cls.contains("dark");
@@ -300,21 +310,15 @@
             var href = dark && compact ? "style.compact-dark.css"
                 : dark ? "style.dark.css"
                     : compact ? "style.compact.css" : null;
-            var link = document.getElementById("site-theme-style");
             if (!href) {
-                if (link) link.parentNode.removeChild(link);
+                _themeLink.disabled = true;
                 return;
             }
             href += "?_=" + __t__;
-            if (!link) {
-                link = document.createElement("link");
-                link.id = "site-theme-style";
-                link.rel = "stylesheet";
-                document.head.appendChild(link);
+            if (_themeLink.getAttribute("href") !== href) {
+                _themeLink.setAttribute("href", href);
             }
-            if (link.getAttribute("href") !== href) {
-                link.setAttribute("href", href);
-            }
+            _themeLink.disabled = false;
         };
         window.eruptApplyDarkTheme = function (dark) {
             document.documentElement.classList.toggle("dark", dark);
