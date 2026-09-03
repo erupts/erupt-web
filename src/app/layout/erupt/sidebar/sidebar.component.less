@@ -73,7 +73,8 @@
     }
 }
 
-::ng-deep {
+// Collapsed sidebar, icon-only (default): historic compact styling
+::ng-deep html:not(.aside-collapsed-text):not(.brutalist-theme) {
     .alain-default__collapsed {
         .sidebar-nav__item-link {
             padding: 14px 0 !important;
@@ -81,6 +82,38 @@
 
         .sidebar-nav__item-icon {
             font-size: 15px !important;
+        }
+    }
+}
+
+// Collapsed sidebar with text labels enabled (html.aside-collapsed-text, from the
+// settings drawer): 60px rail showing icon with the menu name underneath
+// (the framework default hides the text; !important is needed to beat it).
+// Scoped away from the brutalist skin, which keeps its own icon-only square rail.
+::ng-deep html.aside-collapsed-text:not(.brutalist-theme) {
+    .alain-default__collapsed {
+        .sidebar-nav:not(.sidebar-nav__sub) .sidebar-nav__item-link {
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 8px 2px !important;
+
+            .sidebar-nav__item-icon {
+                margin-right: 0;
+                font-size: 16px !important;
+            }
+
+            .sidebar-nav__item-text {
+                display: block !important;
+                opacity: 1 !important;
+                width: 100%;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                text-align: center;
+                font-size: 11px;
+                line-height: 1.2;
+            }
         }
     }
 }

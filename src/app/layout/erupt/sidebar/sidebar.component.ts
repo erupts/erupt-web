@@ -40,12 +40,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
         return !!this.settings.layout['splitMenu'];
     }
 
+    get dualMenu(): boolean {
+        return !!this.settings.layout['dualMenu'];
+    }
+
     ngOnInit(): void {
         const saved = parseInt(localStorage.getItem(SIDEBAR_WIDTH_KEY), 10);
         if (saved >= MIN_WIDTH && saved <= MAX_WIDTH) {
             this.sidebarWidth = saved;
-            this.applyWidth(saved);
         }
+        this.applyWidth(this.sidebarWidth);
         this.menuSrv.change.pipe(
             skip(1),
             takeUntil(this.destroy$)
@@ -100,9 +104,18 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this.menuSrv.openAll(this.allExpanded);
     }
 
-    // Switch between the normal single-column menu and the split (top-level tabs) menu
-    toggleSplitMenu() {
-        this.settings.setLayout("splitMenu", !this.splitMenu);
+    // Menu layout mode: normal single-column, split (top-level tabs in the header)
+    // or dual-column (first-level rail inside the sidebar). Modes are exclusive;
+    // split mode replaces the header breadcrumbs with the category tabs.
+    setMenuMode(mode: 'normal' | 'split' | 'dual') {
+        if (mode === 'split') {
+            this.settings.setLayout("breadcrumbs", false);
+        } else if (this.splitMenu) {
+            // restore breadcrumbs only when leaving split mode
+            this.settings.setLayout("breadcrumbs", true);
+        }
+        this.settings.setLayout("splitMenu", mode === 'split');
+        this.settings.setLayout("dualMenu", mode === 'dual');
     }
 
     onResizeStart(e: MouseEvent) {
@@ -128,6 +141,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
         document.addEventListener('mouseup', onUp);
     }
 
+    // --sidebar-width drives the aside width, content margin and tab-bar offset;
+    // in dual-column mode the first-level rail is carved out of the same width
     private applyWidth(width: number) {
         document.documentElement.style.setProperty('--sidebar-width', width + 'px');
     }

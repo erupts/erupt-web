@@ -108,29 +108,65 @@
   </div>
 </ng-template>
 
-<!-- Favorites (shown in both modes) -->
-@if (!collapsed && !isPad && favorites.length > 0) {
-  <ul class="sidebar-nav sidebar-nav--pinned" cdkDropList (cdkDropListDropped)="dropFavorite($event)">
-    @for (f of favorites; track f) {
-      <li cdkDrag class="sidebar-nav__item sidebar-nav__item--fav" [class.sidebar-nav__selected]="f._selected">
-        <div class="sidebar-nav__drag-placeholder" *cdkDragPlaceholder></div>
-        <a class="sidebar-nav__item-link" (click)="to(f)" [href]="'#'+f.link">
-          <i nz-icon nzType="holder" class="sidebar-nav__drag-handle"></i>
-          @if (f._needIcon) {
-            <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: f.icon }"></ng-template>
+<!-- Favorites (shown in every mode) -->
+<ng-template #favTpl>
+  @if (!collapsed && !isPad && favorites.length > 0) {
+    <ul class="sidebar-nav sidebar-nav--pinned" cdkDropList (cdkDropListDropped)="dropFavorite($event)">
+      @for (f of favorites; track f) {
+        <li cdkDrag class="sidebar-nav__item sidebar-nav__item--fav" [class.sidebar-nav__selected]="f._selected">
+          <div class="sidebar-nav__drag-placeholder" *cdkDragPlaceholder></div>
+          <a class="sidebar-nav__item-link" (click)="to(f)" [href]="'#'+f.link">
+            <i nz-icon nzType="holder" class="sidebar-nav__drag-handle"></i>
+            @if (f._needIcon) {
+              <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: f.icon }"></ng-template>
+            }
+            <span class="sidebar-nav__item-text" [innerHTML]="f._text" [attr.title]="f.text"></span>
+            <i nz-icon nzType="pushpin" nzTheme="fill"
+               class="sidebar-nav__pin sidebar-nav__pin--active"
+               (click)="$event.preventDefault(); $event.stopPropagation(); toggleFavorite(f)"></i>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</ng-template>
+
+@if (!dualMenu || collapsed) {
+  <ng-template [ngTemplateOutlet]="favTpl"></ng-template>
+}
+
+<!-- ── Dual-column mode: first-level rail on the left, selected category's children on the right ── -->
+@if (dualMenu && !collapsed) {
+  <div class="dual-menu">
+    <div class="dual-menu__rail">
+      @for (item of splitTopItems; track item) {
+        <a class="dual-menu__rail-item" [class.dual-menu__rail-item--active]="item === selectedTopItem"
+           (click)="selectTopItem(item)">
+          @if (item.icon) {
+            <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: item.icon }"></ng-template>
+          } @else {
+            <i class="sidebar-nav__item-icon" nz-icon nzType="appstore" nzTheme="outline"></i>
           }
-          <span class="sidebar-nav__item-text" [innerHTML]="f._text" [attr.title]="f.text"></span>
-          <i nz-icon nzType="pushpin" nzTheme="fill"
-             class="sidebar-nav__pin sidebar-nav__pin--active"
-             (click)="$event.preventDefault(); $event.stopPropagation(); toggleFavorite(f)"></i>
+          <span class="dual-menu__rail-text" [attr.title]="item.text">{{ item.text }}</span>
         </a>
-      </li>
-    }
-  </ul>
+      }
+    </div>
+    <div class="dual-menu__main">
+      <ng-template [ngTemplateOutlet]="favTpl"></ng-template>
+      <ul class="sidebar-nav">
+        @if (loading) {
+          <nz-skeleton [nzParagraph]="{ rows: 8 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>
+        }
+        @if (!loading && selectedTopItem?.children?.length) {
+          <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: selectedTopItem.children }"></ng-template>
+        }
+      </ul>
+    </div>
+  </div>
 }
 
 <!-- ── Split menu mode: show only selected category's children ── -->
-@if (splitMenu) {
+@if (splitMenu && !dualMenu) {
   @if (selectedTopItem?.children?.length) {
     <ul class="sidebar-nav">
       @if (loading) {
@@ -144,7 +180,7 @@
 }
 
 <!-- ── Normal menu mode ── -->
-@if (!splitMenu) {
+@if (!splitMenu && (!dualMenu || collapsed)) {
   <ul class="sidebar-nav">
     @if (loading) {
       <nz-skeleton [nzParagraph]="{ rows: 12 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>

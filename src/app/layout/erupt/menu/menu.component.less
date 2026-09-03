@@ -80,3 +80,73 @@
     align-items: center;
 }
 
+// ── Dual-column menu mode ─────────────────────────────────────
+// Height fills the viewport between the 44px header and the 38px fold bar,
+// so the rail and the submenu column scroll independently.
+@dual-rail-width: 60px;
+
+.dual-menu {
+    display: flex;
+    align-items: stretch;
+    height: calc(100vh - 44px - 38px);
+}
+
+.dual-menu__rail {
+    width: @dual-rail-width;
+    flex-shrink: 0;
+    padding: 4px 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-right: 1px solid var(--ant-border-color-split);
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.dual-menu__rail-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin: 2px 4px;
+    padding: 6px 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.65);
+    transition: background 0.2s, color 0.2s;
+
+    .sidebar-nav__item-icon {
+        margin-right: 0;
+        font-size: 16px;
+    }
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.04);
+        color: rgba(0, 0, 0, 0.88);
+    }
+
+    &--active {
+        background: var(--ant-primary-1, #e6f4ff);
+        color: var(--ant-primary-color, #1677ff);
+        font-weight: 500;
+    }
+}
+
+.dual-menu__rail-text {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.dual-menu__main {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+

@@ -102,6 +102,10 @@ export class MenuComponent implements OnInit, OnDestroy {
         return !!this.settings.layout['splitMenu'];
     }
 
+    get dualMenu(): boolean {
+        return !!this.settings.layout['dualMenu'];
+    }
+
     private computeSplitItems(): void {
         this.splitTopItems = this.list.flatMap(g =>
             (g.children as Nav[] || []).filter((i: Nav) => !i['_hidden'])
@@ -109,7 +113,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
 
     private autoSelectTopItem(): void {
-        if (!this.splitMenu || !this.splitTopItems.length) return;
+        if ((!this.splitMenu && !this.dualMenu) || !this.splitTopItems.length) return;
         const active = this.splitTopItems.find(i => i['_open'] || i['_selected']);
         if (active) {
             const key = active.key || active.text;
@@ -265,6 +269,16 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.menuSrv.toggleOpen(item);
     }
 
+    // Dual-column mode: click on a first-level rail item selects its category;
+    // a leaf item (no children) navigates directly.
+    selectTopItem(item: Nav): void {
+        this.settings.setLayout('splitMenuKey', item.key || item.text);
+        if (!item.children?.length) {
+            this.to(item);
+        }
+        this.cdr.detectChanges();
+    }
+
     _click(): void {
         if (this.isPad && this.collapsed) {
             this.openAside(false);
@@ -321,7 +335,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         settings.notify
             .pipe(
                 takeUntil(destroy$),
-                filter(t => t.type === 'layout' && (t.name === 'collapsed' || t.name === 'splitMenu' || t.name === 'splitMenuKey'))
+                filter(t => t.type === 'layout' && (t.name === 'collapsed' || t.name === 'splitMenu' || t.name === 'dualMenu' || t.name === 'splitMenuKey'))
             )
             .subscribe(() => {
                 this.clearFloating();

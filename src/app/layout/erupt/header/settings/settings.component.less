@@ -7,5 +7,68 @@
             height: 40px;
             //border-bottom: 1px dashed #efefef;
         }
+
+        // Stacked variant: label on top, control block underneath
+        .setting-item--stack {
+            flex-direction: column;
+            align-items: stretch;
+            height: auto;
+            padding: 8px 0;
+            gap: 8px;
+        }
+
+        // Secondary row inside the menu block (e.g. collapsed text labels)
+        .menu-mode-sub {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.45);
+        }
+
+        // Menu-mode radio tiles with a mini layout pictogram each
+        .menu-mode-picker {
+            display: flex;
+            gap: 8px;
+
+            &__item {
+                flex: 1;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                padding: 5px;
+                border: 1px solid var(--ant-border-color-split);
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 12px;
+                color: rgba(0, 0, 0, 0.65);
+                transition: border-color 0.2s, color 0.2s;
+
+                svg {
+                    display: block;
+                    width: 100%;
+                    height: auto;
+                    border-radius: 3px;
+                }
+
+                span {
+                    max-width: 100%;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+
+                &:hover {
+                    border-color: var(--ant-primary-color-hover);
+                }
+
+                &--active {
+                    border-color: var(--ant-primary-color);
+                    color: var(--ant-primary-color);
+                }
+            }
+        }
     }
 }

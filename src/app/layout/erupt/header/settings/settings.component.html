@@ -1,7 +1,59 @@
-<div class="setting-item">
-    <span>{{'setting.split-menu' | translate}}</span>
-    <nz-switch nzSize="small" [(ngModel)]="layout['splitMenu']"
-               (ngModelChange)="toggleSplitMenu(layout['splitMenu'])"></nz-switch>
+<div class="setting-item setting-item--stack">
+    <span>{{'setting.menu-mode' | translate}}</span>
+    <div class="menu-mode-picker">
+        <!-- normal: single-column sidebar -->
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="menuMode === 'normal'"
+             (click)="setMenuMode('normal')">
+            <svg viewBox="0 0 44 32">
+                <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
+                <path d="M0 3a3 3 0 0 1 3-3h11v32H3a3 3 0 0 1-3-3V3Z" fill="#273142"/>
+                <rect x="3" y="5" width="8" height="2" rx="1" fill="#fff" opacity=".85"/>
+                <rect x="3" y="10" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="3" y="15" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="14" y="0" width="30" height="6" fill="#fff"/>
+            </svg>
+            <span>{{'menu.normal_mode' | translate}}</span>
+        </div>
+        <!-- split: top-level categories as tabs in the header -->
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="menuMode === 'split'"
+             (click)="setMenuMode('split')">
+            <svg viewBox="0 0 44 32">
+                <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
+                <path d="M0 3a3 3 0 0 1 3-3h38a3 3 0 0 1 3 3v3H0V3Z" fill="#273142"/>
+                <rect x="16" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".85"/>
+                <rect x="25" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="34" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".45"/>
+                <path d="M0 6h14v26H3a3 3 0 0 1-3-3V6Z" fill="#fff"/>
+                <rect x="3" y="10" width="8" height="2" rx="1" fill="#bfbfbf"/>
+                <rect x="3" y="15" width="8" height="2" rx="1" fill="#d9d9d9"/>
+                <rect x="3" y="20" width="8" height="2" rx="1" fill="#d9d9d9"/>
+            </svg>
+            <span>{{'setting.split-menu' | translate}}</span>
+        </div>
+        <!-- dual: first-level rail + submenu column inside the sidebar -->
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="menuMode === 'dual'"
+             (click)="setMenuMode('dual')">
+            <svg viewBox="0 0 44 32">
+                <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
+                <path d="M0 3a3 3 0 0 1 3-3h5v32H3a3 3 0 0 1-3-3V3Z" fill="#273142"/>
+                <rect x="2" y="4" width="4" height="4" rx="1" fill="#fff" opacity=".85"/>
+                <rect x="2" y="12" width="4" height="4" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="2" y="20" width="4" height="4" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="8" y="0" width="10" height="32" fill="#fff"/>
+                <rect x="10" y="5" width="6" height="2" rx="1" fill="#bfbfbf"/>
+                <rect x="10" y="10" width="6" height="2" rx="1" fill="#d9d9d9"/>
+                <rect x="10" y="15" width="6" height="2" rx="1" fill="#d9d9d9"/>
+                <rect x="18" y="0" width="26" height="6" fill="#fff" opacity=".6"/>
+            </svg>
+            <span>{{'menu.dual_mode' | translate}}</span>
+        </div>
+    </div>
+    <!-- sub-option of the menu block: show menu names in the collapsed sidebar -->
+    <div class="menu-mode-sub">
+        <span>{{'setting.collapsed-text' | translate}}</span>
+        <nz-switch nzSize="small" [(ngModel)]="layout['collapsedText']"
+                   (ngModelChange)="setLayout('collapsedText', layout['collapsedText'])"></nz-switch>
+    </div>
 </div>
 <div class="setting-item">
     <span>{{'setting.tab-reuse' | translate}}</span>

@@ -46,6 +46,16 @@
     @header-h: 44px;
     @tab-h: 38px;
 
+    // Collapsed sidebar width: 60px when collapsed text labels are enabled
+    // (html.aside-collapsed-text, toggled from the settings drawer), 48px icon-only otherwise
+    html {
+        --collapsed-width: 48px;
+    }
+
+    html.aside-collapsed-text {
+        --collapsed-width: 60px;
+    }
+
     .erupt-side:after {
         border-right: 1px solid var(--ant-border-color-split);
     }
@@ -109,9 +119,9 @@
         }
     }
 
-    // Collapsed sidebar: set left to 48px
+    // Collapsed sidebar: follow the collapsed rail width
     .alain-default__collapsed .reuse-tab {
-        left: 48px;
+        left: var(--collapsed-width, 48px);
         margin-left: 0;
     }
 
@@ -212,7 +222,7 @@
         }
 
         .alain-default__collapsed .erupt_content {
-            margin-left: 48px;
+            margin-left: var(--collapsed-width, 48px);
         }
 
         @media (max-width: 767px) {
@@ -237,7 +247,7 @@
         }
 
         .alain-default__collapsed .erupt_content {
-            margin-right: 48px;
+            margin-right: var(--collapsed-width, 48px);
         }
 
         .alain-default__fixed .reuse-tab {
@@ -246,7 +256,7 @@
         }
 
         .alain-default__collapsed .reuse-tab {
-            right: 48px;
+            right: var(--collapsed-width, 48px);
             left: 0;
         }
 

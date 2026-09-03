@@ -178,6 +178,8 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         );
         this.doc.documentElement.classList[layout["colorGray"] ? "add" : "remove"]("color-gray");
         this.doc.documentElement.classList[layout.colorWeak ? "add" : "remove"]("color-weak");
+        // show menu names under the icons when the sidebar is collapsed (off by default)
+        this.doc.documentElement.classList[layout["collapsedText"] ? "add" : "remove"]("aside-collapsed-text");
     }
 
     ngAfterViewInit(): void {

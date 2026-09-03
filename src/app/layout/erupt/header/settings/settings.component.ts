@@ -43,10 +43,24 @@ export class SettingsComponent implements OnInit {
         this.settingSrv.setLayout(name, value);
     }
 
-    toggleSplitMenu(value: boolean) {
-        if (value) this.settingSrv.setLayout('breadcrumbs', false);
-        if (!value) this.settingSrv.setLayout('breadcrumbs', true);
-        this.settingSrv.setLayout('splitMenu', value);
+    // Menu layout mode radio: normal single-column, split (top-level tabs in the
+    // header) or dual-column (first-level rail inside the sidebar). Split mode
+    // replaces the header breadcrumbs with the category tabs.
+    get menuMode(): 'normal' | 'split' | 'dual' {
+        if (this.layout['splitMenu']) return 'split';
+        if (this.layout['dualMenu']) return 'dual';
+        return 'normal';
+    }
+
+    setMenuMode(mode: 'normal' | 'split' | 'dual') {
+        if (mode === 'split') {
+            this.settingSrv.setLayout('breadcrumbs', false);
+        } else if (this.layout['splitMenu']) {
+            // restore breadcrumbs only when leaving split mode
+            this.settingSrv.setLayout('breadcrumbs', true);
+        }
+        this.settingSrv.setLayout('splitMenu', mode === 'split');
+        this.settingSrv.setLayout('dualMenu', mode === 'dual');
     }
 
     toggleBreadcrumbs(value: boolean) {
