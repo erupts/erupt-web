@@ -51,7 +51,10 @@ export class CodeEditorComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.dark = this.cacheService.getNone(codeEditorDarkKey) || false;
+        // No per-editor preference saved — follow the global dark theme.
+        const darkPref = this.cacheService.getNone<boolean>(codeEditorDarkKey);
+        this.dark = darkPref === null || darkPref === undefined
+            ? document.documentElement.classList.contains("dark") : darkPref;
         this.theme = this.dark ? 'vs-dark' : 'vs';
         this.editorOption = {
             language: this.language,

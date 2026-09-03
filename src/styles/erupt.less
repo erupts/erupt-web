@@ -1,8 +1,5 @@
 @import "./theme.less";
-
-html {
-    --ant-border-color-split: #c9c9c9;
-}
+// --ant-border-color-split and the --erupt-* tokens live in ./tokens.less
 
 
 .col-ctrl-popover .ant-popover-inner-content {
@@ -46,9 +43,9 @@ span.ripple {
     display: inline-block;
     padding: 0 7px;
     line-height: 20px;
-    color: #000000d9;
-    background: #fafafa;
-    border: 1px solid #d9d9d9;
+    color: var(--erupt-text, #000000d9);
+    background: var(--erupt-bg-spotlight, #fafafa);
+    border: 1px solid var(--erupt-border, #d9d9d9);
     border-radius: 3px;
     font-size: 12px
 }
@@ -63,7 +60,7 @@ span.ripple {
         flex: 1;
         display: inline-block;
         height: 8px;
-        background: rgba(0, 0, 0, 0.06);
+        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
         border-radius: 100px;
         overflow: hidden;
     }
@@ -80,7 +77,7 @@ span.ripple {
         font-size: 12px;
         min-width: 36px;
         text-align: left;
-        color: rgba(0, 0, 0, 0.65);
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
     }
 }
 
@@ -89,7 +86,7 @@ span.ripple {
     content: "";
     width: 15px;
     height: 15px;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.2));
     mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="64 64 896 896"><path d="M300 276.5a56 56 0 1056-97 56 56 0 00-56 97zm0 284a56 56 0 1056-97 56 56 0 00-56 97zM640 228a56 56 0 10112 0 56 56 0 00-112 0zm0 284a56 56 0 10112 0 56 56 0 00-112 0zM300 844.5a56 56 0 1056-97 56 56 0 00-56 97zM640 796a56 56 0 10112 0 56 56 0 00-112 0z"/></svg>') no-repeat center / contain;
     -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="64 64 896 896"><path d="M300 276.5a56 56 0 1056-97 56 56 0 00-56 97zm0 284a56 56 0 1056-97 56 56 0 00-56 97zM640 228a56 56 0 10112 0 56 56 0 00-112 0zm0 284a56 56 0 10112 0 56 56 0 00-112 0zM300 844.5a56 56 0 1056-97 56 56 0 00-56 97zM640 796a56 56 0 10112 0 56 56 0 00-112 0z"/></svg>') no-repeat center / contain;
     position: absolute;
@@ -115,7 +112,7 @@ span.ripple {
     }
 
     tbody tr:hover > td:first-child::before {
-        background-color: rgba(0, 0, 0, 0.55);
+        background-color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.55));
     }
 
     // smooth shifting of sibling rows while dragging
@@ -125,7 +122,7 @@ span.ripple {
 
     tr.cdk-drag-placeholder {
         opacity: 0.35;
-        background: #e6f7ff;
+        background: var(--ant-primary-1, #e6f7ff);
     }
 }
 
@@ -135,7 +132,7 @@ tr.cdk-drag-preview {
     display: table;
     table-layout: fixed;
     overflow: hidden;
-    background: #fff;
+    background: var(--erupt-bg-elevated, #fff);
     border-radius: 4px;
     box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08);
     cursor: grabbing;
@@ -154,7 +151,7 @@ tr.cdk-drag-preview {
 
         &::before {
             .drag-grip-icon();
-            background-color: rgba(0, 0, 0, 0.55);
+            background-color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.55));
         }
     }
 }
@@ -208,11 +205,11 @@ tr.cdk-drag-preview {
 
         td, th {
             padding: 12px 8px;
-            border: 1px solid #e8e8e8;
+            border: 1px solid var(--erupt-border, #e8e8e8);
         }
 
         th {
-            background: #fafafa;
+            background: var(--erupt-bg-spotlight, #fafafa);
             text-align: center;
         }
 
@@ -234,11 +231,11 @@ tr.cdk-drag-preview {
 
             td, th {
                 padding: 12px 8px;
-                border: 1px solid #e8e8e8;
+                border: 1px solid var(--erupt-border, #e8e8e8);
             }
 
             th {
-                background: #fafafa;
+                background: var(--erupt-bg-spotlight, #fafafa);
                 text-align: center;
             }
 

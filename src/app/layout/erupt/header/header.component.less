@@ -7,19 +7,19 @@
         padding: 0 12px;
         border-radius: 4px;
         font-size: 13px;
-        color: rgba(0, 0, 0, 0.65);
+        color: var(--erupt-header-text-secondary, rgba(0, 0, 0, 0.65));
         white-space: nowrap;
         cursor: pointer;
         transition: background 0.18s, color 0.18s;
 
         &:hover {
-            color: var(--ant-primary-color);
-            background: rgba(0, 0, 0, 0.04);
+            color: var(--erupt-header-active-text, var(--ant-primary-color));
+            background: var(--erupt-header-fill, rgba(0, 0, 0, 0.04));
         }
 
         &--active {
-            color: var(--ant-primary-color);
-            background: var(--ant-primary-1, #e6f4ff);
+            color: var(--erupt-header-active-text, var(--ant-primary-color));
+            background: var(--erupt-header-active-bg, var(--ant-primary-1, #e6f4ff));
             font-weight: 500;
         }
     }
@@ -44,11 +44,11 @@
             cursor: pointer;
 
             &:hover {
-                background: rgba(0, 0, 0, 0.06);
+                background: var(--erupt-header-fill, rgba(0, 0, 0, 0.06));
             }
 
             &:active {
-                background: rgba(0, 0, 0, 0.11);
+                background: var(--erupt-header-fill-strong, rgba(0, 0, 0, 0.11));
                 transform: scale(0.92);
             }
 
@@ -82,10 +82,30 @@
     }
 
     ::ng-deep {
+        // Vertical divider between toolbar groups follows the header border color
+        .alain-default__nav .ant-divider-vertical {
+            border-left-color: var(--erupt-header-border, var(--ant-border-color-split));
+        }
+
         // Breadcrumb: when horizontal space runs out, truncate with an ellipsis instead of squeezing the header
         .header-breadcrumb {
             min-width: 0;
             overflow: hidden;
+
+            // Follow the configurable header foreground colors
+            .ant-breadcrumb a,
+            .ant-breadcrumb-separator,
+            .ant-breadcrumb > nz-breadcrumb-item:not(:last-child) .ant-breadcrumb-link {
+                color: var(--erupt-header-text-secondary, rgba(0, 0, 0, 0.45));
+            }
+
+            .ant-breadcrumb > nz-breadcrumb-item:last-child .ant-breadcrumb-link {
+                color: var(--erupt-header-text, rgba(0, 0, 0, 0.85));
+            }
+
+            .ant-breadcrumb a:hover {
+                color: var(--erupt-header-active-text, var(--ant-primary-color));
+            }
 
             erupt-nav {
                 display: block;
@@ -140,7 +160,7 @@
             text-align: center;
             width: auto;
             padding: 0 5px;
-            border-right: 1px solid var(--ant-border-color-split);
+            border-right: 1px solid var(--erupt-header-border, var(--ant-border-color-split));
         }
 
         .header-link {
@@ -152,7 +172,7 @@
         }
 
         .header-logo-text {
-            color: #000;
+            color: var(--erupt-header-text, #000);
             line-height: 44px;
             font-size: 1.8em;
             letter-spacing: 2px;

@@ -123,6 +123,12 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     private subMetaCache: { [key: string]: CubeMeta } = {};
 
+    // Dashboard-level theme wins; otherwise follow the global dark theme (html.dark).
+    private get effectiveTheme(): DashboardTheme {
+        return this.dsl?.settings?.theme
+            || (document.documentElement.classList.contains("dark") ? DashboardTheme.DARK : DashboardTheme.LIGHT);
+    }
+
     private getSubModelDSL(): SubModelDSL | null {
         if (!this.report?.subModel || !this.dsl?.subModels) return null;
         return this.dsl.subModels.find(m => m.id === this.report.subModel) || null;
@@ -580,7 +586,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 width: this.pivotContainer.nativeElement.clientWidth,
                 height: this.pivotContainer.nativeElement.clientHeight
             });
-            this.s2.setThemeCfg({name: this.dsl?.settings?.theme === DashboardTheme.DARK ? 'dark' : (this.report.ui['pivotTheme'] || 'gray')});
+            this.s2.setThemeCfg({name: this.effectiveTheme === DashboardTheme.DARK ? 'dark' : (this.report.ui['pivotTheme'] || 'gray')});
             this.s2.render();
         } else if (this.report.type == ReportType.MAP) {
             this.renderMap(this.chartData);
@@ -641,7 +647,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 return {name, value: Number(row[yF] ?? 0), raw: row[xF]};
             });
             const values = seriesData.map(d => d.value).filter(v => !isNaN(v));
-            const dark = this.dsl?.settings?.theme === DashboardTheme.DARK;
+            const dark = this.effectiveTheme === DashboardTheme.DARK;
             const chart = echarts.init(this.chartContainer.nativeElement, dark ? 'dark' : null);
             chart.setOption({
                 backgroundColor: 'transparent',
@@ -689,7 +695,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             ...this.report.ui,
             autoFit: true,
             margin: 12,
-            theme: this.dsl?.settings?.theme || DashboardTheme.LIGHT,
+            theme: this.effectiveTheme,
             meta: {
                 ...this.getFieldMeta(this.report.cube[CubeKey.xField]),
                 ...this.getFieldMeta(this.report.cube[CubeKey.yField]),

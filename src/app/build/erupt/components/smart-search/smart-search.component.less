@@ -16,13 +16,13 @@
       margin: 0;
       font-size: 14px;
       font-weight: 500;
-      color: rgb(100 100 100);
+      color: var(--erupt-text-secondary, rgb(100 100 100));
       display: flex;
       align-items: center;
       gap: 8px;
 
       i {
-        color: rgba(0, 0, 0, 0.45);
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
         font-size: 14px;
       }
     }
@@ -58,14 +58,14 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: #f0f0f0;
+    background: var(--erupt-border, #f0f0f0);
     z-index: 1;
   }
 
   .or-text {
-    background: #fff;
+    background: var(--erupt-bg-container, #fff);
     padding: 0 16px;
-    color: rgba(0, 0, 0, 0.45);
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
     font-size: 12px;
     font-weight: 500;
     position: relative;
@@ -100,7 +100,7 @@
   }
 
   .card-title-text {
-    color: rgba(0, 0, 0, 0.85);
+    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
   }
 }
 
@@ -124,7 +124,7 @@
 
   .logic-text {
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.45);
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
     font-weight: 500;
   }
 }

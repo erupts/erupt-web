@@ -1,7 +1,7 @@
 :host {
     display: block;
     height: 100%;
-    background: #f5f7fa;
+    background: var(--erupt-bg-layout, #f5f7fa);
     overflow: auto;
     box-sizing: border-box;
 
@@ -9,7 +9,7 @@
         .flow-dashboard-container {
             height: 100%;
             display: flex;
-            background: #f5f7fa;
+            background: var(--erupt-bg-layout, #f5f7fa);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             overflow: hidden;
             box-sizing: border-box;
@@ -18,7 +18,7 @@
             .sidebar {
                 width: 196px;
                 height: 100%;
-                background: #fff;
+                background: var(--erupt-bg-container, #fff);
                 border-right: 1px solid var(--ant-border-color-split);
                 display: flex;
                 flex-direction: column;
@@ -36,7 +36,7 @@
                     .sidebar-title {
                         font-size: 12px;
                         font-weight: 600;
-                        color: #595959;
+                        color: var(--erupt-text-secondary, #595959);
                         letter-spacing: 0.04em;
                         text-transform: uppercase;
                     }
@@ -60,7 +60,7 @@
                     border-radius: 4px;
 
                     &:hover {
-                        background: #f5f7fa;
+                        background: var(--erupt-fill-tertiary, #f5f7fa);
                     }
 
                     &.active {
@@ -86,7 +86,7 @@
 
                     [nz-icon] {
                         font-size: 13px;
-                        color: #8c8c8c;
+                        color: var(--erupt-text-tertiary, #8c8c8c);
                         flex-shrink: 0;
                     }
 
@@ -113,7 +113,7 @@
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
-                background: #fff;
+                background: var(--erupt-bg-container, #fff);
 
                 // ── Toolbar header ────────────────────────────────────
                 .list-header {
@@ -134,17 +134,17 @@
                         .stat-num {
                             font-size: 15px;
                             font-weight: 600;
-                            color: #262626;
+                            color: var(--erupt-text, #262626);
                         }
 
                         .stat-label {
                             font-size: 12px;
-                            color: #8c8c8c;
+                            color: var(--erupt-text-tertiary, #8c8c8c);
                         }
                     }
 
                     .ant-input-affix-wrapper-borderless {
-                        background: #f5f7fa;
+                        background: var(--erupt-bg-spotlight, #f5f7fa);
                         border-radius: 4px;
                         padding: 0 10px;
                         height: 30px;
@@ -155,11 +155,11 @@
                     flex: 1;
                     overflow-y: auto;
                     padding: 14px;
-                    background: #f5f7fa;
+                    background: var(--erupt-bg-layout, #f5f7fa);
                 }
 
                 .flow-group {
-                    background: #fff;
+                    background: var(--erupt-bg-container, #fff);
                     border: 1px solid var(--ant-border-color-split);
                     border-radius: 6px;
                     padding: 12px 16px 16px;
@@ -172,7 +172,7 @@
                     .group-title {
                         font-size: 11px;
                         font-weight: 600;
-                        color: #8c8c8c;
+                        color: var(--erupt-text-tertiary, #8c8c8c);
                         text-transform: uppercase;
                         letter-spacing: 0.07em;
                         margin-bottom: 12px;
@@ -185,7 +185,7 @@
                         .group-count {
                             font-size: 11px;
                             font-weight: 400;
-                            color: #bfbfbf;
+                            color: var(--erupt-text-quaternary, #bfbfbf);
                             letter-spacing: 0;
                         }
                     }
@@ -230,7 +230,7 @@
                     border-radius: 4px;
                     cursor: pointer;
                     transition: all 0.15s;
-                    background: #f7f8fa;
+                    background: var(--erupt-bg-spotlight, #f7f8fa);
                     border: 1px solid transparent;
 
                     &:hover {
@@ -259,7 +259,7 @@
                     .flow-name {
                         font-size: 13px;
                         font-weight: 500;
-                        color: #262626;
+                        color: var(--erupt-text, #262626);
                         line-height: 1.35;
                         overflow: hidden;
                         text-overflow: ellipsis;
@@ -268,7 +268,7 @@
 
                     .flow-desc {
                         font-size: 11px;
-                        color: #b0b0b0;
+                        color: var(--erupt-text-quaternary, #b0b0b0);
                         margin-top: 1px;
                         overflow: hidden;
                         text-overflow: ellipsis;

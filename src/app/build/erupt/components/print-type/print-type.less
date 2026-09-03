@@ -10,11 +10,11 @@
             sv {
                 .sv__label {
                     font-weight: 500;
-                    color: #000;
+                    color: var(--erupt-text, #000);
                 }
 
                 .sv__detail {
-                    color: #666;
+                    color: var(--erupt-text-secondary, #666);
                     word-break: normal;
                 }
             }
@@ -28,14 +28,14 @@
                 .combine-title {
                     padding: 10px 12px;
                     font-weight: 600;
-                    color: #333;
-                    background: #f5f5f5;
+                    color: var(--erupt-text, #333);
+                    background: var(--erupt-bg-spotlight, #f5f5f5);
                     border-bottom: 1px solid var(--ant-border-color-split);
                 }
 
                 .combine-content {
                     padding: 12px;
-                    background: white;
+                    background: var(--erupt-bg-container, white);
                 }
             }
         }

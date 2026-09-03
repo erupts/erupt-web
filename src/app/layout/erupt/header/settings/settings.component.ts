@@ -4,7 +4,10 @@ import {I18NService} from "@core";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
+import {NzConfigService} from "ng-zorro-antd/core/config";
 import {TableSize} from "../../../../build/erupt/model/erupt.enum";
+import {WindowModel} from "@shared/model/window.model";
+import {applyHeaderColor} from "@shared/util/theme.util";
 
 @Component({
     standalone: false,
@@ -20,16 +23,95 @@ export class SettingsComponent implements OnInit {
                 private messageServ: NzMessageService,
                 private i18n: I18NService,
                 private reuseTabService: ReuseTabService,
+                private nzConfigService: NzConfigService,
                 public rtl: RTLService) {
     }
 
     // Brutalist Theme skin — reflects the class index.html applied before bootstrap.
     brutalistTheme: boolean = document.documentElement.classList.contains("brutalist-theme");
 
+    // Dark theme — reflects the class index.html applied before bootstrap.
+    darkTheme: boolean = document.documentElement.classList.contains("dark");
+
+    // Theme color — user choice (localStorage) wins over the site config default.
+    // Curated palette: mid-tone (600-level) hues that stay readable under white
+    // text and hold up in both light and dark themes.
+    presetColors: string[] = [
+        "#1677ff", // daybreak blue (ant design)
+        "#2563eb", // sapphire blue
+        "#0ea5e9", // sky blue
+        "#4f46e5", // indigo
+        "#7c3aed", // violet
+        "#c026d3", // fuchsia
+        "#db2777", // rose pink
+        "#e11d48", // rose red
+        "#ff6b2a", // erupt lava orange
+        "#d97706", // amber
+        "#059669", // emerald
+        "#0d9488", // teal
+        "#0891b2", // peacock cyan
+        "#475569"  // graphite slate
+    ];
+
+    themeColor: string = localStorage.getItem("theme-color") || WindowModel.theme?.primaryColor || "#1677ff";
+
+    setThemeColor(color: string) {
+        this.themeColor = color;
+        localStorage.setItem("theme-color", color);
+        this.nzConfigService.set("theme", {...WindowModel.theme, primaryColor: color});
+    }
+
+    resetThemeColor() {
+        localStorage.removeItem("theme-color");
+        this.themeColor = WindowModel.theme?.primaryColor || "#1677ff";
+        this.nzConfigService.set("theme", {...WindowModel.theme, primaryColor: this.themeColor});
+    }
+
+    // Header (top bar) color: "" = follow theme, "primary" = theme color, or a literal color.
+    headerColor: string = localStorage.getItem("header-color") || "";
+
+    // Preset bar colors: one classic dark plus distinct mid-tone hues —
+    // clearly distinguishable at swatch size, all pairing with white text.
+    headerPresets: string[] = [
+        "#001529", // classic navy (ant design pro)
+        "#2563eb", // sapphire blue
+        "#0d9488", // teal
+        "#7c3aed", // violet
+        "#64748b"  // misty slate
+    ];
+
+    setHeaderColor(value: string) {
+        this.headerColor = value;
+        if (value) {
+            localStorage.setItem("header-color", value);
+        } else {
+            localStorage.removeItem("header-color");
+        }
+        // Empty = back to the site default (theme.headerColor, or follow the theme)
+        applyHeaderColor(value || WindowModel.theme?.headerColor || null);
+    }
+
+    // <input type="color"> only accepts #rrggbb; the site config may use rgb().
+    get themeColorHex(): string {
+        const m = this.themeColor.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+        if (m) {
+            return "#" + [1, 2, 3].map(i => (+m[i]).toString(16).padStart(2, "0")).join("");
+        }
+        return this.themeColor;
+    }
+
     ngOnInit() {
         if (!this.settingSrv.layout['tableSize']) {
             this.settingSrv.setLayout('tableSize', TableSize.SMALL);
         }
+    }
+
+    toggleDarkTheme(value: boolean) {
+        this.darkTheme = value;
+        // Applies html.dark and mounts/unmounts style.dark.css (defined in index.html).
+        window["eruptApplyDarkTheme"](value);
+        // Persist so the choice survives reload (honored by index.html on next load).
+        localStorage.setItem("dark-theme", String(value));
     }
 
     toggleBrutalistTheme(value: boolean) {

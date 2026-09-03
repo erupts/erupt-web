@@ -4,7 +4,7 @@
     align-items: center;
     padding: 12px 20px;
     gap: 12px;
-    background: white;
+    background: var(--erupt-bg-elevated, white);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     border-radius: 4px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -28,7 +28,7 @@
         .flow-name {
             font-size: 14px;
             font-weight: 500;
-            color: #262626;
+            color: var(--erupt-text, #262626);
             display: flex;
             align-items: center;
             gap: 6px;
@@ -36,7 +36,7 @@
 
         .flow-desc {
             font-size: 12px;
-            color: #8c8c8c;
+            color: var(--erupt-text-tertiary, #8c8c8c);
             margin-top: 1px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -60,14 +60,14 @@
     padding: 0 10px;
     gap: 8px;
     border-radius: 4px;
-    background: white;
+    background: var(--erupt-bg-elevated, white);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
     .menu-label {
         flex: 1;
         font-size: 13px;
-        color: #262626;
+        color: var(--erupt-text, #262626);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

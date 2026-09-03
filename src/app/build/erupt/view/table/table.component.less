@@ -1,7 +1,7 @@
 :host {
     display: block;
     height: 100%;
-    background: #f5f7fa;
+    background: var(--erupt-bg-layout, #f5f7fa);
     overflow: auto;
     box-sizing: border-box;
 
@@ -9,10 +9,10 @@
         display: flex;
         flex-direction: column;
         height: 100%;
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
 
         .sk-bar {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+            background: linear-gradient(90deg, var(--erupt-fill-secondary, #f0f0f0) 25%, var(--erupt-fill, #e8e8e8) 50%, var(--erupt-fill-secondary, #f0f0f0) 75%);
             background-size: 400% 100%;
             animation: sk-shimmer 1.4s ease infinite;
             border-radius: 3px;
@@ -32,21 +32,21 @@
             padding: 12px;
             flex: 1;
             overflow: hidden;
-            background: #f5f7fa;
+            background: var(--erupt-bg-layout, #f5f7fa);
         }
 
         .sk-table {
             border: 1px solid var(--ant-border-color-split);
             border-radius: 4px;
             overflow: hidden;
-            background: #fff;
+            background: var(--erupt-bg-container, #fff);
         }
 
         .sk-thead {
             display: flex;
             align-items: center;
             height: 38px;
-            background: #fafafa;
+            background: var(--erupt-bg-spotlight, #fafafa);
             border-bottom: 1px solid var(--ant-border-color-split);
             padding: 0 16px;
             gap: 16px;
@@ -155,7 +155,7 @@
         justify-content: space-between;
         padding: 7px 12px;
         border-bottom: 1px solid var(--ant-border-color-split);
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         font-size: 13px;
         font-weight: 500;
     }
@@ -198,7 +198,7 @@
         align-items: center;
         padding: 7px 15px;
         border-bottom: 1px solid var(--ant-border-color-split);
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         flex-shrink: 0;
         gap: 8px;
         flex-wrap: wrap;
@@ -228,7 +228,7 @@
     // ── Search filter area ────────────────────────────────────────────
     .tc-search {
         padding: 6px 8px;
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         border: 1px solid var(--ant-border-color-split);
         flex-shrink: 0;
     }
@@ -260,7 +260,7 @@
         padding: 0;
         border: 1px solid var(--ant-border-color-split);
         border-top: none;
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         flex-shrink: 0;
     }
 

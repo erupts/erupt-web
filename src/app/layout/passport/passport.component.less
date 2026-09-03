@@ -11,7 +11,7 @@
             display: flex;
             min-height: 100vh;
             min-height: 100dvh;
-            background-color: #fff;
+            background-color: var(--erupt-bg-container, #fff);
             background-image: url('/assets/passport/passport-bg.svg');
             background-repeat: no-repeat;
             background-position: center center;
@@ -32,7 +32,7 @@
             display: flex;
             align-items: center;
             padding: 0 28px;
-            background: #fbfcfd;
+            background: var(--erupt-bg-spotlight, #fbfcfd);
             border-bottom: 1px solid var(--ant-border-color-split);
         }
 
@@ -53,7 +53,7 @@
             font-size: 16px;
             font-weight: 600;
             letter-spacing: 0.2px;
-            color: rgba(0, 0, 0, 0.88);
+            color: var(--erupt-text, rgba(0, 0, 0, 0.88));
             line-height: 1;
         }
 
@@ -71,20 +71,20 @@
             height: 34px;
             border-radius: 7px;
             font-size: 16px;
-            color: rgba(0, 0, 0, 0.50);
+            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.50));
             text-decoration: none;
             transition: color 0.18s, background 0.18s;
 
             &:hover {
-                color: rgba(0, 0, 0, 0.80);
-                background: rgba(0, 0, 0, 0.06);
+                color: var(--erupt-text, rgba(0, 0, 0, 0.80));
+                background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
             }
         }
 
         .lp-nav-divider {
             width: 1px;
             height: 18px;
-            background: rgba(0, 0, 0, 0.10);
+            background: var(--erupt-fill, rgba(0, 0, 0, 0.10));
             margin: 0 6px;
         }
 
@@ -98,15 +98,15 @@
 
             i[nz-icon] {
                 font-size: 16px;
-                color: rgba(0, 0, 0, 0.50);
+                color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.50));
                 cursor: pointer;
                 padding: 9px;
                 border-radius: 7px;
                 transition: color 0.18s, background 0.18s;
 
                 &:hover {
-                    color: rgba(0, 0, 0, 0.80);
-                    background: rgba(0, 0, 0, 0.06);
+                    color: var(--erupt-text, rgba(0, 0, 0, 0.80));
+                    background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
                 }
             }
         }
@@ -124,7 +124,7 @@
         .lp-card {
             width: 100%;
             max-width: 380px;
-            background: #fff;
+            background: var(--erupt-bg-container, #fff);
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
@@ -148,11 +148,11 @@
         .lp-copyright {
             padding-bottom: 20px;
             font-size: 12px;
-            color: rgba(0, 0, 0, 0.38);
+            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.38));
             text-align: center;
 
             a {
-                color: rgba(0, 0, 0, 0.45);
+                color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
                 text-decoration: none;
 
                 &:hover {

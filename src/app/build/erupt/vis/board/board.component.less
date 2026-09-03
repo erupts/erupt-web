@@ -18,7 +18,7 @@
         background: transparent;
     }
     &::-webkit-scrollbar-thumb {
-        background: #d1d5db;
+        background: var(--erupt-fill, #d1d5db);
         border-radius: 3px;
     }
 }
@@ -30,7 +30,7 @@
     display: flex;
     flex-direction: column;
     border-radius: 10px;
-    background: #fff;
+    background: var(--erupt-bg-container, #fff);
     border: 1px solid var(--ant-border-color-split);
     overflow: hidden;
 }
@@ -58,7 +58,7 @@
     flex: 1;
     font-size: 13px;
     font-weight: 600;
-    color: #1e2330;
+    color: var(--erupt-text, #1e2330);
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -70,8 +70,8 @@
     flex-shrink: 0;
     font-size: 11px;
     font-weight: 500;
-    color: #8a94a6;
-    background: #f0f2f5;
+    color: var(--erupt-text-tertiary, #8a94a6);
+    background: var(--erupt-fill-secondary, #f0f2f5);
     border-radius: 20px;
     padding: 2px 7px;
     line-height: 16px;
@@ -92,14 +92,14 @@
         width: 4px;
     }
     &::-webkit-scrollbar-thumb {
-        background: #dde1e7;
+        background: var(--erupt-fill, #dde1e7);
         border-radius: 2px;
     }
 }
 
 // ── Card ───────────────────────────────────────────────────
 .board-card {
-    background: #ffffff;
+    background: var(--erupt-bg-container, #ffffff);
     padding: 11px 13px 10px;
     border: 1px solid var(--ant-border-color-split);
     cursor: pointer;
@@ -121,7 +121,7 @@
     }
 
     &:hover {
-        border-color: #cdd3db;
+        border-color: var(--erupt-border, #cdd3db);
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
         transform: translateY(-2px);
 
@@ -140,7 +140,7 @@
     margin: 0 0 6px 8px;
     font-size: 13px;
     font-weight: 600;
-    color: #1e2330;
+    color: var(--erupt-text, #1e2330);
     line-height: 1.5;
     word-break: break-word;
 
@@ -165,7 +165,7 @@
 }
 
 .meta-key {
-    color: #a0aab4;
+    color: var(--erupt-text-tertiary, #a0aab4);
     white-space: nowrap;
     flex-shrink: 0;
     font-size: 11px;
@@ -176,7 +176,7 @@
 }
 
 .meta-val {
-    color: #4a5568;
+    color: var(--erupt-text-secondary, #4a5568);
     word-break: break-word;
     min-width: 0;
 }
@@ -195,16 +195,16 @@
     // Drag preview card (follows the cursor)
     .cdk-drag-preview {
         border-radius: 8px;
-        border: 1px solid #cdd3db;
+        border: 1px solid var(--erupt-border, #cdd3db);
         box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(0, 0, 0, 0.08);
-        background: #fff;
+        background: var(--erupt-bg-elevated, #fff);
         opacity: 0.97;
         transform: rotate(1.5deg);
     }
 
     // In-place placeholder
     .cdk-drag-placeholder {
-        background: color-mix(in srgb, var(--col-color, #94a3b8) 8%, #f8f9fb);
+        background: color-mix(in srgb, var(--col-color, #94a3b8) 8%, var(--erupt-bg-container, #f8f9fb));
         border: 1.5px dashed color-mix(in srgb, var(--col-color, #94a3b8) 55%, transparent);
         border-radius: 8px;
         min-height: 52px;
@@ -225,7 +225,7 @@
 
     // Drop zone highlight
     .cdk-drop-list-receiving {
-        background: color-mix(in srgb, var(--col-color, #94a3b8) 6%, #f8f9fb) !important;
+        background: color-mix(in srgb, var(--col-color, #94a3b8) 6%, var(--erupt-bg-container, #f8f9fb)) !important;
         outline: 2px dashed color-mix(in srgb, var(--col-color, #94a3b8) 40%, transparent);
         outline-offset: -2px;
         border-radius: 10px;

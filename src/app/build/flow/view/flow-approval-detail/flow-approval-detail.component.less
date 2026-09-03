@@ -3,7 +3,7 @@
     overflow: auto;
 
     .approval-detail {
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         display: flex;
         flex-direction: column;
         height: 100%;
@@ -21,7 +21,7 @@
             .header-left {
                 .item-id {
                     font-size: 14px;
-                    color: #666;
+                    color: var(--erupt-text-secondary, #666);
                 }
             }
 
@@ -36,11 +36,11 @@
             overflow-y: auto; // only the content area is scrollable
             // leave space for the fixed bottom buttons
             padding: 14px 14px 58px;
-            background: #f5f7fa; // gray canvas; inner blocks become white cards
+            background: var(--erupt-bg-layout, #f5f7fa); // gray canvas; inner blocks become white cards
 
             // Header "hero" card grouping the title, status and submitter info
             .detail-hero {
-                background: #fff;
+                background: var(--erupt-bg-container, #fff);
                 border: 1px solid var(--ant-border-color-split);
                 border-radius: 6px;
                 padding: 14px 16px;
@@ -61,7 +61,7 @@
                     flex: 0 1 auto;
                     font-size: 18px;
                     font-weight: 600;
-                    color: #262626;
+                    color: var(--erupt-text, #262626);
                     line-height: 1.4;
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -94,23 +94,23 @@
                     .submitter-name-large {
                         font-size: 13px;
                         font-weight: 600;
-                        color: #262626;
+                        color: var(--erupt-text, #262626);
                     }
 
                     .submitter-dept {
                         font-size: 13px;
-                        color: #8c8c8c;
+                        color: var(--erupt-text-tertiary, #8c8c8c);
                     }
 
                     .submit-time {
                         font-size: 12px;
-                        color: #8c8c8c;
+                        color: var(--erupt-text-tertiary, #8c8c8c);
                     }
                 }
             }
 
             .detail-tabs {
-                background: #fff;
+                background: var(--erupt-bg-container, #fff);
                 border: 1px solid var(--ant-border-color-split);
                 border-radius: 6px;
                 padding: 8px 16px 16px;
@@ -125,7 +125,7 @@
                         .section-title {
                             font-size: 16px;
                             font-weight: 600;
-                            color: #333;
+                            color: var(--erupt-text, #333);
                             margin-bottom: 16px;
                             padding-bottom: 8px;
                             border-bottom: 1px solid var(--ant-border-color-split);
@@ -134,7 +134,7 @@
                         .detail-descriptions {
                             ::ng-deep .ant-descriptions-item-label {
                                 font-weight: 500;
-                                color: #666;
+                                color: var(--erupt-text-secondary, #666);
                             }
                         }
 
@@ -142,30 +142,30 @@
                             margin-bottom: 16px;
 
                             ::ng-deep .ant-table-thead > tr > th {
-                                background-color: #fafafa;
+                                background-color: var(--erupt-bg-spotlight, #fafafa);
                                 font-weight: 600;
-                                color: #333;
+                                color: var(--erupt-text, #333);
                             }
                         }
 
                         .expense-summary {
-                            background-color: #fafafa;
+                            background-color: var(--erupt-bg-spotlight, #fafafa);
                             padding: 16px;
                             border-radius: 6px;
 
                             .summary-descriptions {
                                 ::ng-deep .ant-descriptions-item-label {
                                     font-weight: 500;
-                                    color: #666;
+                                    color: var(--erupt-text-secondary, #666);
                                 }
                             }
                         }
 
                         .records-table {
                             ::ng-deep .ant-table-thead > tr > th {
-                                background-color: #fafafa;
+                                background-color: var(--erupt-bg-spotlight, #fafafa);
                                 font-weight: 600;
-                                color: #333;
+                                color: var(--erupt-text, #333);
                             }
 
                             .approval-info {
@@ -187,14 +187,14 @@
 
                                 .approval-name {
                                     font-size: 13px;
-                                    color: #333;
+                                    color: var(--erupt-text, #333);
                                 }
                             }
 
                             .time-info {
                                 .time-detail {
                                     font-size: 12px;
-                                    color: #999;
+                                    color: var(--erupt-text-tertiary, #999);
                                     margin-top: 2px;
                                 }
                             }
@@ -210,7 +210,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: white;
+            background: var(--erupt-bg-container, white);
             border-top: 1px solid var(--ant-border-color-split);
             display: flex;
             box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
@@ -251,7 +251,7 @@
         .comments-list {
             .comment-item {
                 &:hover {
-                    background-color: #f0f0f0;
+                    background-color: var(--erupt-fill-secondary, #f0f0f0);
                 }
 
                 transition: background-color 0.3s ease;
@@ -288,18 +288,18 @@
 
                         .comment-username {
                             font-weight: 500;
-                            color: #333;
+                            color: var(--erupt-text, #333);
                         }
                     }
 
                     .comment-time {
                         font-size: 12px;
-                        color: #999;
+                        color: var(--erupt-text-tertiary, #999);
                     }
                 }
 
                 .comment-content {
-                    color: #333;
+                    color: var(--erupt-text, #333);
                     line-height: 1.5;
                     padding-left: 32px;
                 }
@@ -350,7 +350,7 @@
     .modal-content {
         .modal-description {
             margin-bottom: 16px;
-            color: #666;
+            color: var(--erupt-text-secondary, #666);
             font-size: 14px;
         }
 
@@ -361,7 +361,7 @@
                 display: block;
                 margin-bottom: 8px;
                 font-weight: 500;
-                color: #333;
+                color: var(--erupt-text, #333);
             }
 
             .cc-user-select,

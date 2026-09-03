@@ -16,7 +16,7 @@
     height: 100%;
     box-sizing: border-box;
     display: flex;
-    background: #f5f5f5;
+    background: var(--erupt-bg-spotlight, #f5f5f5);
 
     &.is-fullscreen {
         position: fixed;
@@ -59,7 +59,7 @@
     width: 220px; /* Default value; overridden at runtime via [style.width.px] */
     flex-shrink: 0;
     min-height: 0;
-    background: #fafafa;
+    background: var(--erupt-bg-spotlight, #fafafa);
     display: flex;
     flex-direction: column;
     transition: width 0.22s ease, border-color 0.22s ease;
@@ -100,7 +100,7 @@
     padding: 0 !important;
     border-radius: @radius-sm;
     border: 1px solid var(--ant-border-color-base, #e0e0e0) !important;
-    background: #fff !important;
+    background: var(--erupt-bg-container, #fff) !important;
     color: var(--ant-text-color-secondary, #888) !important;
     display: inline-flex;
     align-items: center;
@@ -131,7 +131,7 @@
     border-radius: @radius-sm;
 
     &:hover {
-        background: rgba(0, 0, 0, 0.06) !important;
+        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06)) !important;
         color: var(--ant-text-color, #1a1a1a) !important;
     }
 }
@@ -146,7 +146,7 @@
     padding: 0 !important;
     border-radius: @radius-sm;
     border: 1px solid var(--ant-border-color-base, #e0e0e0) !important;
-    background: #fff !important;
+    background: var(--erupt-bg-elevated, #fff) !important;
     color: var(--ant-text-color-secondary, #888) !important;
     display: inline-flex;
     align-items: center;
@@ -241,7 +241,7 @@
 
             &:hover {
                 color: var(--ant-text-color, #1a1a1a);
-                background: rgba(0, 0, 0, 0.06);
+                background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
             }
         }
 
@@ -289,7 +289,7 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    background: #ffffff;
+    background: var(--erupt-bg-container, #ffffff);
     position: relative;
 }
 
@@ -409,14 +409,14 @@
     align-items: center;
     gap: 6px;
     padding: 3px 10px 3px 8px;
-    background: #fff;
+    background: var(--erupt-bg-container, #fff);
     border: 1px solid var(--ant-border-color-split);
     border-radius: 3px;
     margin-bottom: 1em;
     margin-right: 4px;
     font-size: 12px;
     font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
-    color: #8c8c8c;
+    color: var(--erupt-text-tertiary, #8c8c8c);
     line-height: 1.7;
     vertical-align: middle;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
@@ -569,7 +569,7 @@
 
         &:hover {
             color: var(--ant-text-color, #1a1a1a);
-            background: rgba(0, 0, 0, 0.06);
+            background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
         }
 
         .anticon {
@@ -632,7 +632,7 @@
         height: 36px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         border-color: var(--ant-border-color-base, #e0e0e0);
-        background: #fff;
+        background: var(--erupt-bg-elevated, #fff);
         color: var(--ant-text-color-secondary, #666);
 
         &:hover {
@@ -699,7 +699,7 @@
         }
     }
 
-    background: #ffffff;
+    background: var(--erupt-bg-container, #ffffff);
     border-top: 1px solid var(--ant-border-color-split);
 
     &:not(.is-wide) .input-card {
@@ -742,7 +742,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: #fafafa;
+                background: var(--erupt-bg-spotlight, #fafafa);
                 border: 1px dashed var(--ant-border-color-split);
                 border-radius: 6px;
             }
@@ -782,8 +782,8 @@
 
         .hint-tag {
             padding: 4px 12px;
-            background: #f0f0f0;
-            border: 1px solid #e0e0e0;
+            background: var(--erupt-fill-secondary, #f0f0f0);
+            border: 1px solid var(--erupt-border, #e0e0e0);
             border-radius: @radius-sm;
             font-size: 13px;
             color: var(--ant-text-color-secondary, #666);
@@ -801,7 +801,7 @@
 
 /* Input card: appearance - light grey border, rounded corners, top arrow, toolbar, bottom shortcut hints and send group */
 .input-card {
-    background: #fff;
+    background: var(--erupt-bg-container, #fff);
     //border: 1px solid #eee;
     //border-top: none;
     //border-bottom: none;
@@ -864,7 +864,7 @@
 
     &:hover {
         color: var(--ant-text-color, #1a1a1a);
-        background: rgba(0, 0, 0, 0.04);
+        background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.04));
     }
 
     .anticon {
@@ -1017,7 +1017,7 @@
     width: 100%;
     height: 100%;
     border-radius: @radius-sm;
-    background: #f5f5f5;
+    background: var(--erupt-bg-spotlight, #f5f5f5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1035,7 +1035,7 @@
     margin: 8px 0;
     border-radius: @radius;
     overflow: hidden;
-    background: #f6f8fa;
+    background: var(--erupt-bg-spotlight, #f6f8fa);
     border: 1px solid var(--ant-border-color-split);
 
     .code-lang {
@@ -1043,7 +1043,7 @@
         top: 8px;
         left: 12px;
         font-size: 11px;
-        color: rgba(0, 0, 0, 0.35);
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.35));
         font-family: monospace;
         pointer-events: none;
         user-select: none;
@@ -1058,9 +1058,9 @@
         right: 8px;
         padding: 2px 8px;
         font-size: 11px;
-        background: #fff;
-        color: rgba(0, 0, 0, 0.45);
-        border: 1px solid #d0d7de;
+        background: var(--erupt-bg-container, #fff);
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        border: 1px solid var(--erupt-border, #d0d7de);
         border-radius: @radius-sm;
         cursor: pointer;
         transition: all 0.15s;
@@ -1068,8 +1068,8 @@
         z-index: 1;
 
         &:hover {
-            background: #f3f4f6;
-            color: rgba(0, 0, 0, 0.75);
+            background: var(--erupt-fill-tertiary, #f3f4f6);
+            color: var(--erupt-text, rgba(0, 0, 0, 0.75));
             border-color: #adb5bd;
         }
 
@@ -1098,7 +1098,7 @@
         flex-direction: column;
         padding: 12px 10px 12px 12px;
         text-align: right;
-        color: rgba(0, 0, 0, 0.25);
+        color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
         font-size: 12px;
         line-height: 1.6;
         font-family: monospace;
@@ -1135,7 +1135,7 @@
         padding: 8px 14px;
         font-size: 13px;
         font-weight: 600;
-        background: rgba(0, 0, 0, 0.04);
+        background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.04));
     }
 
     .callout-body {

@@ -2,7 +2,7 @@
 .icon-selector-content {
     width: 550px;
     max-width: 90vw;
-    background: #fff;
+    background: var(--erupt-bg-elevated, #fff);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -33,13 +33,13 @@
         margin: 0 0 16px 0;
         font-size: 15px;
         font-weight: 600;
-        color: #262626;
+        color: var(--erupt-text, #262626);
     }
 
     // Preview section
     .preview-section {
         padding: 12px;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        background: linear-gradient(135deg, var(--erupt-bg-spotlight, #f8f9fa) 0%, var(--erupt-fill-secondary, #e9ecef) 100%);
         border-bottom: 1px solid var(--ant-border-color-split);
 
         .preview-display {
@@ -70,14 +70,14 @@
                 .preview-name {
                     font-size: 16px;
                     font-weight: 600;
-                    color: #262626;
+                    color: var(--erupt-text, #262626);
                     margin-bottom: 6px;
                 }
 
                 .preview-color {
                     font-size: 13px;
-                    color: #666;
-                    background: rgba(255, 255, 255, 0.8);
+                    color: var(--erupt-text-secondary, #666);
+                    background: color-mix(in srgb, var(--erupt-bg-container, #fff) 80%, transparent);
                     padding: 4px 12px;
                     border-radius: 12px;
                     display: inline-block;
@@ -140,16 +140,16 @@
             }
 
             &::-webkit-scrollbar-track {
-                background: #f1f1f1;
+                background: var(--erupt-scrollbar-track, #f1f1f1);
                 border-radius: 3px;
             }
 
             &::-webkit-scrollbar-thumb {
-                background: #c1c1c1;
+                background: var(--erupt-scrollbar-thumb, #c1c1c1);
                 border-radius: 3px;
 
                 &:hover {
-                    background: #a8a8a8;
+                    background: var(--erupt-scrollbar-thumb-hover, #a8a8a8);
                 }
             }
 
@@ -164,9 +164,9 @@
                 justify-content: center;
 
                 &:hover {
-                    background-color: #f0f8ff;
+                    background-color: var(--ant-primary-1, #f0f8ff);
                     transform: scale(1.08);
-                    border-color: #d6e4ff;
+                    border-color: var(--ant-primary-2, #d6e4ff);
                 }
 
                 &.selected {
@@ -194,7 +194,7 @@
 
                 .icon-name {
                     font-size: 11px;
-                    color: #666;
+                    color: var(--erupt-text-secondary, #666);
                     line-height: 1.3;
                     word-break: break-word;
                     max-width: 100%;
@@ -208,7 +208,7 @@
         display: flex;
         justify-content: flex-end;
         padding: 12px;
-        background: #fafafa;
+        background: var(--erupt-bg-spotlight, #fafafa);
         border-top: 1px solid var(--ant-border-color-split);
 
         .buttons {

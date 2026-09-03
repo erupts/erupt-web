@@ -136,7 +136,7 @@
         padding-top: 0;
         padding-left: 0;
         padding-right: 0;
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         border-bottom: 1px solid var(--ant-border-color-split);
 
         .ant-tabs-bar {
@@ -161,13 +161,13 @@
                 border: none !important;
                 border-radius: 1px !important;
                 background: transparent !important;
-                color: rgba(0, 0, 0, 0.65);
+                color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
                 font-size: 13px;
                 transition: color 0.2s, background 0.2s;
 
                 &:hover {
-                    background: rgba(0, 0, 0, 0.045) !important;
-                    color: rgba(0, 0, 0, 0.88);
+                    background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.045)) !important;
+                    color: var(--erupt-text, rgba(0, 0, 0, 0.88));
                 }
 
                 .ant-tabs-tab-remove {
@@ -288,8 +288,8 @@
         width: 100%;
         height: 44px;
         padding: 0 16px;
-        background: #fff;
-        border-bottom: 1px solid var(--ant-border-color-split);
+        background: var(--erupt-header-bg, var(--erupt-bg-container, #fff));
+        border-bottom: 1px solid var(--erupt-header-border, var(--ant-border-color-split));
     }
 
     .erupt-header_fixed {
@@ -306,7 +306,7 @@
         padding-top: 3px;
         line-height: 25px;
         text-align: center;
-        color: #000;
+        color: var(--erupt-text, #000);
     }
 
     ::ng-deep {
@@ -322,12 +322,12 @@
         }
 
         .alain-default__nav-item, .alain-default__nav nz-badge {
-            color: #000;
+            color: var(--erupt-header-text, #000);
         }
 
         .alain-default__header {
             box-shadow: none;
-            border-bottom: 1px solid var(--ant-border-color-split);
+            border-bottom: 1px solid var(--erupt-header-border, var(--ant-border-color-split));
         }
 
         .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab + .ant-tabs-tab {

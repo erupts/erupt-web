@@ -21,14 +21,14 @@
         margin: 0 0 4px;
         font-size: 18px;
         font-weight: 600;
-        color: rgba(0, 0, 0, 0.85);
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
         line-height: 1.35;
     }
 
     .lf-subtitle {
         margin: 0;
         font-size: 12px;
-        color: rgba(0, 0, 0, 0.38);
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.38));
         line-height: 1.4;
     }
 
@@ -42,9 +42,9 @@
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
-            -webkit-text-fill-color: rgba(0, 0, 0, 0.85) !important;
-            caret-color: rgba(0, 0, 0, 0.85);
+            -webkit-box-shadow: 0 0 0 1000px var(--erupt-bg-container, #fff) inset !important;
+            -webkit-text-fill-color: var(--erupt-text, rgba(0, 0, 0, 0.85)) !important;
+            caret-color: var(--erupt-text, rgba(0, 0, 0, 0.85));
             transition: background-color 5000s ease-in-out 0s;
         }
 
@@ -94,14 +94,14 @@
                 content: '';
                 flex: 1;
                 height: 1px;
-                background: rgba(0, 0, 0, 0.09);
+                background: var(--erupt-fill, rgba(0, 0, 0, 0.09));
             }
         }
 
         // ── Password visibility toggle ───────────────────────────
         .point {
             cursor: pointer;
-            color: rgba(0, 0, 0, 0.35);
+            color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.35));
             transition: color 0.2s;
 
             &:hover {

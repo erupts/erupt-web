@@ -16,6 +16,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 
 
 import {NzConfigService} from "ng-zorro-antd/core/config";
+import {applyHeaderColor} from "../../shared/util/theme.util";
 
 
 @Injectable()
@@ -31,11 +32,24 @@ export class StartupService {
         iconSrv.addIcon(...ICONS_AUTO);
     }
 
+    // Site config supplies the default theme; a color the user picked in the
+    // settings drawer (localStorage "theme-color") wins over it.
+    private applyTheme(): void {
+        const theme = {...(WindowModel.theme || {})};
+        const savedColor = localStorage.getItem("theme-color");
+        if (savedColor) {
+            theme.primaryColor = savedColor;
+        }
+        if (Object.keys(theme).length > 0) {
+            this.nzConfigService.set('theme', theme);
+        }
+        // User choice first, then the site config default (theme.headerColor)
+        applyHeaderColor(localStorage.getItem("header-color") || theme.headerColor || null);
+    }
+
     async load(): Promise<any> {
         WindowModel.init();
-        if (WindowModel.theme && Object.keys(WindowModel.theme).length > 0) {
-            this.nzConfigService.set('theme', WindowModel.theme);
-        }
+        this.applyTheme();
         if (WindowModel.copyright) {
             console.group(WindowModel.title);
             console.log("%c" +
@@ -85,9 +99,7 @@ export class StartupService {
                                         }
                                     }
                                     WindowModel.init();
-                                    if (WindowModel.theme) {
-                                        this.nzConfigService.set('theme', WindowModel.theme);
-                                    }
+                                    this.applyTheme();
                                     EruptAppData.put(eruptAppProp);
                                 }
                                 resolve();

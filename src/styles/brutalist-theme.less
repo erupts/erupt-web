@@ -28,6 +28,7 @@ html.brutalist-theme {
     --raft-text: #14120B;         /* body text                               */
     --raft-text-2: #8A8577;       /* secondary text + kickers (warm gray)    */
     --raft-muted: #E1E8EB;        /* hairlines, inactive fills               */
+    --raft-panel: #fff;           /* raised panels (sidebar) — brighter than paper */
 
     /* Drive every split border (menu, header, tree, cards) off the ink color */
     --ant-border-color-split: var(--raft-ink);
@@ -62,6 +63,7 @@ html.brutalist-theme.dark {
     --raft-text: #F0E8D6;
     --raft-text-2: #B0A78F;
     --raft-muted: #3A3529;
+    --raft-panel: #14120B;        /* sidebar stays ink-black, darker than paper */
 }
 
 /* ================================================================== *
@@ -776,10 +778,10 @@ html.brutalist-theme {
  * ================================================================== */
 html.brutalist-theme {
 
-    /* White sidebar panel — the 2px ink right edge comes from
-     * --ant-border-color-split (= --raft-ink). */
+    /* Sidebar panel (white in light, ink-black in dark via --raft-panel) —
+     * the 2px ink right edge comes from --ant-border-color-split (= --raft-ink). */
     .alain-default__aside {
-        background: #fff;
+        background: var(--raft-panel, #fff);
     }
 
     /* Group title — mono uppercase kicker */

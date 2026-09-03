@@ -1,0 +1,61 @@
+// Dark theme bundle — compiled as a lazy global style (see angular.json:
+// inject:false + bundleName "style.dark"), emitted as a stable, non-hashed
+// "style.dark.css". It is NOT loaded by default: index.html (pre-bootstrap)
+// and the settings drawer attach/detach a <link id="site-theme-dark"> to it
+// and toggle the `dark` class on <html>.
+//
+// The full ng-zorro + @delon styles are re-compiled here with the official
+// dark theme variables; loaded after the main stylesheet, equal-specificity
+// rules win by source order, flipping every standard component to dark.
+@import 'ng-zorro-antd/ng-zorro-antd.less';
+@import 'ng-zorro-antd/code-editor/style/entry.less';
+@import 'ng-zorro-antd/resizable/style/entry.less';
+
+// Equivalent of @delon/theme/dark.less minus '@delon/chart' (not installed).
+// theme-dark.less comes last: less variables are lazily evaluated, so the dark
+// values recolor everything imported above.
+@import '@delon/theme/theme-default.less';
+@import '@delon/theme/system/index.less';
+@import '@delon/theme/layout-default/style/index.less';
+@import '@delon/theme/layout-blank/style/index.less';
+@import '@delon/abc/index.less';
+@import '@delon/theme/theme-dark.less';
+
+// Dark highlight.js syntax theme (the main bundle ships the light github theme)
+@import 'highlight.js/styles/github-dark.min.css';
+
+// ── Project re-anchors — appended last so source order beats the imports ──
+
+// Plain links follow the runtime brand color instead of the stock dark blue.
+// Kept at (0,0,1) specificity so component link styles (e.g. the sidebar
+// menu's .sidebar-nav__item-link) still take precedence.
+a {
+    color: var(--ant-primary-color);
+}
+
+a:hover {
+    color: var(--ant-primary-color-hover);
+}
+
+// Sidebar menu: the stock dark theme leaves the selected row invisible
+// (#141414 on a #141414 aside) and paints states in the fixed blue.
+// Give states a visible surface and follow the brand color.
+.sidebar-nav__item-link:hover {
+    color: var(--ant-primary-color);
+    background-color: var(--erupt-fill-tertiary, rgba(255, 255, 255, 0.08));
+}
+
+.sidebar-nav__selected {
+    border-left-color: var(--ant-primary-color);
+    background-color: var(--ant-primary-1);
+}
+
+.sidebar-nav__selected > .sidebar-nav__item-link {
+    color: var(--ant-primary-color);
+}
+
+// Keep project-level theme variable overrides in sync with src/styles/theme.less
+@alain-default-header-hg: 44px !important;
+
+// Semantic --erupt-* tokens flip to their dark values in src/styles/tokens.less
+// (main bundle, guarded by html.dark), so no component overrides are needed here.

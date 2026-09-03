@@ -2,7 +2,7 @@
     display: block;
     height: 100%;
     overflow: hidden;
-    background: #f5f7fa;
+    background: var(--erupt-bg-layout, #f5f7fa);
 }
 
 :host > nz-spin {
@@ -34,7 +34,7 @@
     align-items: center;
     gap: 8px;
     padding: 7px 15px;
-    background: #fff;
+    background: var(--erupt-bg-container, #fff);
     border-bottom: 1px solid var(--ant-border-color-split);
 
     .title {
@@ -42,7 +42,7 @@
         align-items: center;
         font-size: 14px;
         font-weight: 600;
-        color: rgba(0, 0, 0, 0.85);
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
 
         i {
             margin-right: 8px;
@@ -58,7 +58,7 @@
 
         .last-update {
             font-size: 12px;
-            color: rgba(0, 0, 0, 0.45);
+            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
         }
     }
 }
@@ -132,7 +132,7 @@
 
     .label {
         font-size: 13px;
-        color: rgba(0, 0, 0, 0.45);
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
         margin-bottom: 4px;
     }
 
@@ -141,10 +141,10 @@
         justify-content: space-between;
         font-size: 13px;
         padding: 3px 0;
-        color: rgba(0, 0, 0, 0.65);
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
 
         b {
-            color: rgba(0, 0, 0, 0.85);
+            color: var(--erupt-text, rgba(0, 0, 0, 0.85));
             font-weight: 500;
         }
     }

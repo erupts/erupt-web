@@ -27,8 +27,8 @@
         width: 52px;
         height: 52px;
         border-radius: 50%;
-        background: #f5f5f5;
-        border: 1px dashed #d9d9d9;
+        background: var(--erupt-bg-spotlight, #f5f5f5);
+        border: 1px dashed var(--erupt-border, #d9d9d9);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -38,7 +38,7 @@
 
     .placeholder-text {
         font-size: 12px;
-        color: #bfbfbf;
+        color: var(--erupt-text-quaternary, #bfbfbf);
     }
 }
 
@@ -128,14 +128,14 @@
             }
 
             a {
-                color: #000 !important;
+                color: var(--erupt-text, #000) !important;
             }
         }
 
         // Filter tags display area
         .filter-tags-container {
             padding: 12px 16px;
-            background: #f5f7fa;
+            background: var(--erupt-bg-spotlight, #f5f7fa);
             border-bottom: 1px solid var(--ant-border-color-split);
             display: flex;
             align-items: center;
@@ -144,7 +144,7 @@
 
             .filter-label {
                 font-size: 13px;
-                color: #666;
+                color: var(--erupt-text-secondary, #666);
                 font-weight: 500;
             }
 

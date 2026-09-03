@@ -213,6 +213,39 @@
             text-transform: uppercase;
         }
 
+        /* ---- dark theme (html.dark) ---- */
+        html.dark .preloader {
+            background: #141414;
+            --pl-accent: #1677ff;
+        }
+
+        html.dark .pl-brand {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        html.dark #preloader-tip {
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        html.dark.brutalist-theme .preloader {
+            background-color: #141414;
+            --pl-accent: #f5f5f0;
+        }
+
+        html.dark.brutalist-theme .pl-ring {
+            --pl-ring-color: #f5f5f0 !important;
+        }
+
+        html.dark.brutalist-theme .pl-core,
+        html.dark.brutalist-theme .pl-brand {
+            background: none;
+            color: #f5f5f0;
+        }
+
+        html.dark.brutalist-theme .pl-core {
+            background: #f5f5f0;
+        }
+
         .preloader-hidden-add         { opacity: 1; display: flex; }
         .preloader-hidden-add-active  { opacity: 0; }
         .preloader-hidden             { display: none; }
@@ -256,6 +289,31 @@
         if (_nbPref === "true") {
             document.documentElement.classList.add("brutalist-theme");
         }
+        // Dark theme: toggles html.dark and lazy-loads the compiled dark
+        // stylesheet (style.dark.css). Shared with the settings drawer via
+        // window.eruptApplyDarkTheme so the logic lives in one place.
+        window.eruptApplyDarkTheme = function (dark) {
+            document.documentElement.classList.toggle("dark", dark);
+            var link = document.getElementById("site-theme-dark");
+            if (dark && !link) {
+                link = document.createElement("link");
+                link.id = "site-theme-dark";
+                link.rel = "stylesheet";
+                link.href = "style.dark.css?_=" + __t__;
+                document.head.appendChild(link);
+            } else if (!dark && link) {
+                link.parentNode.removeChild(link);
+            }
+        };
+        var _darkPref = localStorage.getItem("dark-theme");
+        if (_darkPref === "true") {
+            window.eruptApplyDarkTheme(true);
+        }
+        // A user-picked theme color (settings drawer) tints the preloader too.
+        var _tcPref = localStorage.getItem("theme-color");
+        if (_tcPref) {
+            _preloaderEl.style.setProperty("--pl-accent", _tcPref);
+        }
         var _colorCheckTimer = setInterval(function () {
             if (window.eruptSiteConfig !== undefined) {
                 clearInterval(_colorCheckTimer);
@@ -263,7 +321,10 @@
                 if (_nbPref === null && window.eruptSiteConfig.brutalistTheme) {
                     document.documentElement.classList.add("brutalist-theme");
                 }
-                if (window.eruptSiteConfig.theme && window.eruptSiteConfig.theme.primaryColor) {
+                if (_darkPref === null && window.eruptSiteConfig.darkTheme) {
+                    window.eruptApplyDarkTheme(true);
+                }
+                if (_tcPref === null && window.eruptSiteConfig.theme && window.eruptSiteConfig.theme.primaryColor) {
                     _preloaderEl.style.setProperty("--pl-accent", window.eruptSiteConfig.theme.primaryColor);
                 }
                 if (_brandEl) {

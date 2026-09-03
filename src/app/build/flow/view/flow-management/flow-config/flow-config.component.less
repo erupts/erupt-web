@@ -5,7 +5,7 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background-color: #f5f5f5;
+            background-color: var(--erupt-bg-layout, #f5f5f5);
         }
 
         // Top navigation bar
@@ -14,7 +14,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 8px 16px;
-            background-color: #fff;
+            background-color: var(--erupt-bg-container, #fff);
             border-bottom: 1px solid var(--ant-border-color-split);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             z-index: 1000;
@@ -29,7 +29,7 @@
                     padding: 4px 8px;
                     border: none;
                     background: transparent;
-                    color: #666;
+                    color: var(--erupt-text-secondary, #666);
                     cursor: pointer;
 
                     &:hover {
@@ -42,7 +42,7 @@
                         margin: 0;
                         font-size: 18px;
                         font-weight: 600;
-                        color: #262626;
+                        color: var(--erupt-text, #262626);
                     }
 
                     .draft-status {
@@ -51,7 +51,7 @@
                         gap: 4px;
                         margin-top: 4px;
                         font-size: 12px;
-                        color: #8c8c8c;
+                        color: var(--erupt-text-tertiary, #8c8c8c);
                         cursor: pointer;
 
                         &:hover {
@@ -96,8 +96,8 @@
                             width: 24px;
                             height: 24px;
                             border-radius: 50%;
-                            background-color: #d9d9d9;
-                            color: #666;
+                            background-color: var(--erupt-fill, #d9d9d9);
+                            color: var(--erupt-text-secondary, #666);
                             font-size: 12px;
                             font-weight: 600;
                         }
@@ -177,7 +177,7 @@
                 width: 100%;
                 max-width: 960px;
                 height: 100%;
-                background: #fff;
+                background: var(--erupt-bg-container, #fff);
                 border-radius: 0;
                 border: 1px solid var(--ant-border-color-split);
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -232,7 +232,7 @@
 
                 .phone-wrapper-screen {
                     flex: 1;
-                    background: #fff;
+                    background: var(--erupt-bg-container, #fff);
                     width: 100%;
                     padding: 12px;
                     border-radius: 12px;
@@ -263,7 +263,7 @@
             .form-section {
                 max-width: 800px;
                 padding: 32px;
-                background-color: #fff;
+                background-color: var(--erupt-bg-container, #fff);
                 margin: 16px auto;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
@@ -276,7 +276,7 @@
                             margin-bottom: 8px;
                             font-size: 14px;
                             font-weight: 500;
-                            color: #262626;
+                            color: var(--erupt-text, #262626);
 
                             &.required::after {
                                 content: ' *';
@@ -316,13 +316,13 @@
                                     .icon-name {
                                         font-size: 14px;
                                         font-weight: 500;
-                                        color: #262626;
+                                        color: var(--erupt-text, #262626);
                                         margin-bottom: 4px;
                                     }
 
                                     .icon-color {
                                         font-size: 12px;
-                                        color: #8c8c8c;
+                                        color: var(--erupt-text-tertiary, #8c8c8c);
                                     }
                                 }
                             }
@@ -350,7 +350,7 @@
                         .permission-scopes {
                             margin-top: 12px;
                             padding: 8px;
-                            background-color: #fafafa;
+                            background-color: var(--erupt-bg-spotlight, #fafafa);
                             border: 1px solid var(--ant-border-color-split);
                         }
 
@@ -364,10 +364,10 @@
                                 align-items: center;
                                 gap: 8px;
                                 font-size: 14px;
-                                color: #262626;
+                                color: var(--erupt-text, #262626);
 
                                 .help-icon {
-                                    color: #8c8c8c;
+                                    color: var(--erupt-text-tertiary, #8c8c8c);
                                     cursor: pointer;
 
                                     &:hover {
@@ -390,7 +390,7 @@
                                     padding: 12px;
                                     border: 1px solid var(--ant-border-color-split);
                                     border-radius: 6px;
-                                    background-color: #fafafa;
+                                    background-color: var(--erupt-bg-spotlight, #fafafa);
 
                                     .admin-avatar {
                                         width: 40px;
@@ -411,7 +411,7 @@
                                         .admin-name {
                                             font-size: 14px;
                                             font-weight: 500;
-                                            color: #262626;
+                                            color: var(--erupt-text, #262626);
                                             margin-bottom: 4px;
                                         }
 
@@ -446,10 +446,10 @@
                                 .add-admin-btn {
                                     width: 100%;
                                     height: 48px;
-                                    border: 2px dashed #d9d9d9;
+                                    border: 2px dashed var(--erupt-border, #d9d9d9);
                                     border-radius: 6px;
                                     background-color: transparent;
-                                    color: #8c8c8c;
+                                    color: var(--erupt-text-tertiary, #8c8c8c);
                                     display: flex;
                                     align-items: center;
                                     justify-content: center;
@@ -474,7 +474,7 @@
                         display: flex;
                         justify-content: flex-end;
                         padding: 12px;
-                        background: #fafafa;
+                        background: var(--erupt-bg-spotlight, #fafafa);
                         border-top: 1px solid var(--ant-border-color-split);
 
                         .buttons {

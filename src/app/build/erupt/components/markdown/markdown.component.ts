@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, DoCheck, ElementRef, Inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    DoCheck,
+    ElementRef,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    ViewChild
+} from '@angular/core';
 import Vditor from 'vditor';
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {EruptModel} from "../../model/erupt.model";
@@ -143,7 +153,12 @@ export class MarkdownComponent implements OnInit, AfterViewInit, DoCheck, OnDest
                 input: (value) => {
                     this.eruptField.eruptFieldJson.edit.$value = value;
                 },
-                theme: 'classic',
+                theme: document.documentElement.classList.contains('dark') ? 'dark' : 'classic',
+                preview: {
+                    theme: {
+                        current: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+                    }
+                },
                 lang: 'zh_CN',
                 fullscreen: {
                     index: 9999,

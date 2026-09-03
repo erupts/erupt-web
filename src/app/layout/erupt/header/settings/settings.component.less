@@ -1,5 +1,22 @@
 :host {
     ::ng-deep {
+        // Section kicker separating the settings groups
+        .setting-group-title {
+            margin: 20px 0 4px;
+            padding-top: 12px;
+            border-top: 1px solid var(--ant-border-color-split);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+
+            &:first-child {
+                margin-top: 0;
+                padding-top: 0;
+                border-top: none;
+            }
+        }
+
         .setting-item {
             display: flex;
             align-items: center;
@@ -23,7 +40,68 @@
             align-items: center;
             justify-content: space-between;
             font-size: 12px;
-            color: rgba(0, 0, 0, 0.45);
+            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        }
+
+        // Theme color swatch row
+        .theme-color-picker {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            &__swatch {
+                width: 22px;
+                height: 22px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: transform 0.15s, box-shadow 0.15s;
+
+                &:hover {
+                    transform: scale(1.15);
+                }
+
+                &--active {
+                    box-shadow: 0 0 0 2px var(--erupt-bg-container, #fff), 0 0 0 4px var(--ant-primary-color);
+                }
+            }
+
+            // "Follow theme" tile: half light / half dark diagonal
+            &__auto {
+                background: linear-gradient(135deg, #fff 50%, #141414 50%);
+                border: 1px solid var(--erupt-border, #d9d9d9);
+            }
+
+            // Custom color: rainbow tile hiding a native color input
+            &__custom {
+                background: conic-gradient(#f5222d, #faad14, #52c41a, #13c2c2, #1677ff, #722ed1, #f5222d);
+                position: relative;
+                overflow: hidden;
+
+                input {
+                    position: absolute;
+                    inset: 0;
+                    opacity: 0;
+                    cursor: pointer;
+                }
+            }
+
+            &__reset {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 22px;
+                height: 22px;
+                border-radius: 4px;
+                cursor: pointer;
+                color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+                border: 1px dashed var(--erupt-border, #d9d9d9);
+
+                &:hover {
+                    color: var(--ant-primary-color);
+                    border-color: var(--ant-primary-color);
+                }
+            }
         }
 
         // Menu-mode radio tiles with a mini layout pictogram each
@@ -43,7 +121,7 @@
                 border-radius: 4px;
                 cursor: pointer;
                 font-size: 12px;
-                color: rgba(0, 0, 0, 0.65);
+                color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
                 transition: border-color 0.2s, color 0.2s;
 
                 svg {
@@ -71,4 +149,9 @@
             }
         }
     }
+}
+
+// Dim the light-canvas layout pictograms so they don't glare in dark mode
+:host-context(html.dark) ::ng-deep .menu-mode-picker__item svg {
+    filter: invert(0.88) hue-rotate(180deg);
 }

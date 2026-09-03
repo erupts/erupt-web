@@ -1,3 +1,64 @@
+<!-- ── Appearance ──────────────────────────────────────────────── -->
+<div class="setting-group-title">{{'setting.group.appearance' | translate}}</div>
+<div class="setting-item setting-item--stack">
+    <span>{{'setting.theme-color' | translate}}</span>
+    <div class="theme-color-picker">
+        @for (c of presetColors; track c) {
+            <span class="theme-color-picker__swatch"
+                  [style.background]="c"
+                  [class.theme-color-picker__swatch--active]="themeColorHex.toLowerCase() === c"
+                  (click)="setThemeColor(c)"></span>
+        }
+        <!-- custom color: a conic-rainbow swatch wrapping a native color input -->
+        <label class="theme-color-picker__swatch theme-color-picker__custom"
+               [class.theme-color-picker__swatch--active]="!presetColors.includes(themeColorHex.toLowerCase())">
+            <input type="color" [value]="themeColorHex" (change)="setThemeColor($any($event.target).value)">
+        </label>
+        <span class="theme-color-picker__reset" (click)="resetThemeColor()"
+              nz-tooltip [nzTooltipTitle]="'global.reset' | translate">
+            <i nz-icon nzType="undo" nzTheme="outline"></i>
+        </span>
+    </div>
+</div>
+<div class="setting-item setting-item--stack">
+    <span>{{'setting.header-color' | translate}}</span>
+    <div class="theme-color-picker">
+        <!-- follow theme (white in light / dark surface in dark) -->
+        <span class="theme-color-picker__swatch theme-color-picker__auto"
+              [class.theme-color-picker__swatch--active]="headerColor === ''"
+              (click)="setHeaderColor('')"
+              nz-tooltip [nzTooltipTitle]="'global.reset' | translate"></span>
+        <!-- follow the primary theme color -->
+        <span class="theme-color-picker__swatch"
+              [style.background]="'var(--ant-primary-color)'"
+              [class.theme-color-picker__swatch--active]="headerColor === 'primary'"
+              (click)="setHeaderColor('primary')"></span>
+        @for (c of headerPresets; track c) {
+            <span class="theme-color-picker__swatch"
+                  [style.background]="c"
+                  [class.theme-color-picker__swatch--active]="headerColor === c"
+                  (click)="setHeaderColor(c)"></span>
+        }
+        <label class="theme-color-picker__swatch theme-color-picker__custom"
+               [class.theme-color-picker__swatch--active]="headerColor !== '' && headerColor !== 'primary' && !headerPresets.includes(headerColor)">
+            <input type="color" [value]="headerColor.startsWith('#') ? headerColor : '#001529'"
+                   (change)="setHeaderColor($any($event.target).value)">
+        </label>
+    </div>
+</div>
+<div class="setting-item">
+    <span>{{'setting.dark' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="darkTheme"
+               (ngModelChange)="toggleDarkTheme($event)"></nz-switch>
+</div>
+<div class="setting-item">
+    <span>Brutalist Theme</span>
+    <nz-switch nzSize="small" [(ngModel)]="brutalistTheme"
+               (ngModelChange)="toggleBrutalistTheme($event)"></nz-switch>
+</div>
+
+<!-- ── Navigation ──────────────────────────────────────────────── -->
+<div class="setting-group-title">{{'setting.group.navigation' | translate}}</div>
 <div class="setting-item setting-item--stack">
     <span>{{'setting.menu-mode' | translate}}</span>
     <div class="menu-mode-picker">
@@ -64,6 +125,9 @@
     <nz-switch nzSize="small" [(ngModel)]="layout['breadcrumbs']"
                (ngModelChange)="toggleBreadcrumbs(layout['breadcrumbs'])"></nz-switch>
 </div>
+
+<!-- ── Table ───────────────────────────────────────────────────── -->
+<div class="setting-group-title">{{'setting.group.table' | translate}}</div>
 <div class="setting-item">
     <span>{{'setting.table-border' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout['bordered']"
@@ -84,6 +148,8 @@
                (ngModelChange)="setLayout('drawDraw', layout['drawDraw'])"></nz-switch>
 </div>
 
+<!-- ── Others ──────────────────────────────────────────────────── -->
+<div class="setting-group-title">{{'setting.group.other' | translate}}</div>
 <div class="setting-item">
     <span>{{'setting.color-weak' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout.colorWeak"
@@ -93,11 +159,6 @@
     <span>{{'setting.color-gray' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout['colorGray']"
                (ngModelChange)="toggleColorGray(layout['colorGray'])"></nz-switch>
-</div>
-<div class="setting-item">
-    <span>Brutalist Theme</span>
-    <nz-switch nzSize="small" [(ngModel)]="brutalistTheme"
-               (ngModelChange)="toggleBrutalistTheme($event)"></nz-switch>
 </div>
 <div class="setting-item">
     <span>RTL</span>

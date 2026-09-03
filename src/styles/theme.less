@@ -30,21 +30,21 @@ body.color-weak {
 
 /* Scrollbar track style */
 ::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Track color */
+    background: var(--erupt-scrollbar-track, #f1f1f1);
 }
 
 /* Scrollbar thumb style */
 ::-webkit-scrollbar-thumb {
-    background-color: #888888; /* Thumb color */
+    background-color: var(--erupt-scrollbar-thumb, #888888);
     border-radius: 4px; /* Thumb border radius */
 }
 
 /* Scrollbar thumb hover style */
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #767676; /* Thumb hover color */
+    background-color: var(--erupt-scrollbar-thumb-hover, #767676);
 }
 
 * {
     scrollbar-width: thin;
-    scrollbar-color: #888888 #f1f1f1;
+    scrollbar-color: var(--erupt-scrollbar-thumb, #888888) var(--erupt-scrollbar-track, #f1f1f1);
 }

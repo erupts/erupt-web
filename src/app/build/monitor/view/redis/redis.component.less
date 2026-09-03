@@ -9,15 +9,15 @@
         align-items: center;
         justify-content: space-between;
         padding: 8px 12px;
-        background: #fafafa;
+        background: var(--erupt-bg-spotlight, #fafafa);
         border-bottom: 1px solid var(--ant-border-color-split);
         font-size: 13px;
         font-weight: 500;
 
         a {
-            color: rgba(0, 0, 0, 0.45);
+            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
             cursor: pointer;
-            &:hover { color: rgba(0, 0, 0, 0.75); }
+            &:hover { color: var(--erupt-text, rgba(0, 0, 0, 0.75)); }
         }
     }
 }
@@ -38,7 +38,7 @@
 .stat-card {
     ::ng-deep .ant-statistic-title {
         font-size: 13px;
-        color: rgba(0, 0, 0, 0.45);
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
     }
 
     ::ng-deep .ant-statistic-content {

@@ -70,6 +70,15 @@ Hash-based routing. Feature modules are lazy-loaded:
 @env/*     → src/environments/*
 ```
 
+### Dark Theme
+
+The app supports a runtime dark theme (settings drawer → 夜间模式, persisted as `localStorage["dark-theme"]`, default via `eruptSiteConfig.darkTheme`):
+
+- `src/styles.dark.less` recompiles the full ng-zorro + @delon styles with the official dark variables. It builds as a lazy global style (angular.json `inject:false`, `bundleName: "style.dark"`) emitted as a stable, non-hashed `style.dark.css`. `window.eruptApplyDarkTheme(bool)` (defined in `index.html`, applied pre-bootstrap to avoid a light flash) toggles `html.dark` and mounts/unmounts the `<link>`.
+- `src/styles/tokens.less` defines semantic `--erupt-*` color tokens on `html` (light) and `html.dark` (dark), plus dark remaps of `--ant-primary-1..3` and a block re-anchoring high-visibility ant components to the runtime `--ant-primary-*` brand color (the compiled dark css uses a fixed primary). Low-specificity re-anchors (plain `a`, sidebar menu states) live at the END of `styles.dark.less` instead — never add a bare `html.dark a`-style rule in tokens.less: its extra specificity beats component link styles (this once turned every sidebar menu item brand-orange).
+- Theme color and header color are user-configurable in the settings drawer: `localStorage["theme-color"]` (primary palette via NzConfigService) and `localStorage["header-color"]` (`"primary"` or a literal color; `applyHeaderColor()` in `@shared/util/theme.util` sets `--erupt-header-*` inline on `<html>`, with luminance-based foreground). Header styles must use the `--erupt-header-*` tokens, not `--erupt-text`/`--erupt-bg-container`.
+- **Never hard-code light-theme colors in less files** (`#fff` surfaces, black-based text, light borders/fills). Use the tokens with the original value as fallback, e.g. `background: var(--erupt-bg-container, #fff)`. Colors on brand/colored/intentionally-dark surfaces (white text on primary buttons, node card headers, terminal) stay literal. Charts/editors follow `document.documentElement.classList.contains('dark')` (see bi chart, cube report, code-editor, markdown components).
+
 ### Icons
 
 This project uses **static icon tree-shaking** via `src/style-icons-auto.ts`. Only icons listed in `ICONS_AUTO` are bundled.

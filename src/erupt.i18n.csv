@@ -123,6 +123,12 @@ setting.nav,面包屑导航,面包屑導航,Breadcrumb nav,Navigation sur breadc
 setting.table-border,表格边框,表格邊框,Table bordered,Bordure de table,表の境界線,표테두리,Табличная боковая рама,Borde de tabla,Tabelle im rahmen,Borda da tabela,Batas tabel,إطار الجدول
 setting.color-weak,色弱模式,色弱模式,Color weak mode,Mode faible couleur,色弱モードです,색약 패턴,Слабая модель цвета,Modo débil de color,Das zerstörerische muster,Modo fraco da cor,Pola afektif,وضع ضعيف
 setting.color-gray,灰色模式,灰色模式,Grey mode,Le mode gris,グレーパターンです ,그레이 모드,Серая модель.,Andamento grigio,Das graue muster.,O modo cinzento,Mode abu,الوضع الرمادي
+setting.theme-color,主题色,主題色,Theme color,Couleur du thème,テーマカラー,테마 색상,Цвет темы,Color del tema,Themenfarbe,Cor do tema,Warna tema,لون السمة
+setting.header-color,顶栏颜色,頂欄顏色,Header color,Couleur de la barre,ヘッダーカラー,상단바 색상,Цвет шапки,Color de la barra,Kopfleistenfarbe,Cor da barra,Warna bilah atas,لون الشريط العلوي
+setting.group.appearance,外观,外觀,Appearance,Apparence,外観,모양,Внешний вид,Apariencia,Erscheinungsbild,Aparência,Tampilan,المظهر
+setting.group.navigation,导航,導航,Navigation,Navigation,ナビゲーション,내비게이션,Навигация,Navegación,Navigation,Navegação,Navigasi,التنقل
+setting.group.table,表格,表格,Table,Tableau,テーブル,표,Таблица,Tabla,Tabelle,Tabela,Tabel,الجدول
+setting.group.other,其他,其他,Others,Autres,その他,기타,Прочее,Otros,Sonstiges,Outros,Lainnya,أخرى
 setting.dark,夜间模式,夜間模式,Dark mode,Le mode nuit,ナイトモード,야간모드,Ночной режим,Modo nocturno,Die nachtmodus.,Modo de noite,Mode malam,الوضع الليلي
 setting.clear-cache,清理本地缓存,清理本地緩存,Clear Local Cache,Nettoyer votre cache local,로컬캐시지우기,로컬캐시청소,Очистка местного кэша,Limpiar el caché local,Räumen sie den lokalen bereich auf,Limpar o cache local,Bersihkan tembolok lokal,تنظيف التخزين المؤقت المحلي
 setting.clear,清理,清理,Clear,nettoyage,整理する,청소,очист,limpieza,Reinigen.,limpar,membersihkan,تنظيف
