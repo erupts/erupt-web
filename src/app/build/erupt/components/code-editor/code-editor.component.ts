@@ -1,11 +1,7 @@
 import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Edit} from "../../model/erupt-field.model";
-import {CacheService} from "@delon/cache";
 import {JoinedEditorOptions, NzCodeEditorComponent} from "ng-zorro-antd/code-editor";
-import {NzConfigService} from "ng-zorro-antd/core/config";
 import {DataService} from "@shared/service/data.service";
-
-let codeEditorDarkKey = "code_editor_dark";
 
 @Component({
     standalone: false,
@@ -38,24 +34,19 @@ export class CodeEditorComponent implements OnInit, OnDestroy {
 
     fullscreen = false;
 
-    dark = false;
-
     theme: 'vs-dark' | 'vs';
 
     editorOption: JoinedEditorOptions;
 
     private _completionProvider: any;
     private _hintsCache: string[] | null = null;
+    private _themeObserver: MutationObserver;
 
-    constructor(private cacheService: CacheService, private nzConfigService: NzConfigService, private dataService: DataService) {
+    constructor(private dataService: DataService) {
     }
 
     ngOnInit() {
-        // No per-editor preference saved — follow the global dark theme.
-        const darkPref = this.cacheService.getNone<boolean>(codeEditorDarkKey);
-        this.dark = darkPref === null || darkPref === undefined
-            ? document.documentElement.classList.contains("dark") : darkPref;
-        this.theme = this.dark ? 'vs-dark' : 'vs';
+        this.theme = document.documentElement.classList.contains("dark") ? 'vs-dark' : 'vs';
         this.editorOption = {
             language: this.language,
             theme: this.theme,
@@ -65,6 +56,16 @@ export class CodeEditorComponent implements OnInit, OnDestroy {
             minimap: {enabled: true},
             scrollBeyondLastLine: false
         };
+        // The runtime dark theme toggles html.dark without reloading, so keep
+        // already-rendered editors in sync by watching that class.
+        this._themeObserver = new MutationObserver(() => {
+            const theme = document.documentElement.classList.contains("dark") ? 'vs-dark' : 'vs';
+            if (theme !== this.theme) {
+                this.theme = theme;
+                (window as any).monaco?.editor?.setTheme(theme);
+            }
+        });
+        this._themeObserver.observe(document.documentElement, {attributes: true, attributeFilter: ["class"]});
     }
 
     codeEditorInit(editor: any) {
@@ -117,20 +118,7 @@ export class CodeEditorComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this._completionProvider?.dispose();
-    }
-
-    switchChange(bool: boolean) {
-        this.dark = bool;
-        this.theme = this.dark ? 'vs-dark' : 'vs';
-        this.cacheService.set(codeEditorDarkKey, this.dark);
-        const defaultEditorOption = this.nzConfigService.getConfigForComponent('codeEditor')?.defaultEditorOption || {};
-        this.nzConfigService.set('codeEditor', {
-            defaultEditorOption: {
-                ...defaultEditorOption,
-                theme: this.theme
-            }
-        });
-        setTimeout(() => this.editorComponent?.layout(), 100);
+        this._themeObserver?.disconnect();
     }
 
     copyCode() {

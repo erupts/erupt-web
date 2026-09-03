@@ -19,6 +19,21 @@
             display: flex;
             align-items: center;
             z-index: 10;
+
+            .ant-btn {
+                color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+                transition: color 0.2s;
+
+                &:hover {
+                    color: var(--ant-primary-color, #1890ff);
+                    background: transparent;
+                }
+
+                &:active {
+                    color: var(--ant-primary-7, #096dd9);
+                    background: transparent;
+                }
+            }
         }
 
         .code-editor-style {

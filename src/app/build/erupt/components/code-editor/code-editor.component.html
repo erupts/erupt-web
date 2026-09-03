@@ -13,19 +13,8 @@
             <i nz-icon nzType="copy" nzTheme="outline"></i>
         </button>
         <button nz-button nzType="text" nzSize="small" nz-tooltip [nzTooltipTitle]="fullscreen ? 'Exit' : 'Fullscreen'"
-                (click)="toggleFullscreen()" style="margin-right:4px;">
+                (click)="toggleFullscreen()">
             <i nz-icon [nzType]="fullscreen ? 'fullscreen-exit' : 'fullscreen'" nzTheme="outline"></i>
         </button>
-        <nz-switch nzSize="small" [ngModel]="dark"
-                   [nzUnCheckedChildren]="unchecked"
-                   [nzCheckedChildren]="checked"
-                   (ngModelChange)="switchChange($event)"
-        ></nz-switch>
-        <ng-template #unchecked>
-            <i nz-icon nzType="bulb"></i>
-        </ng-template>
-        <ng-template #checked>
-            <i nz-icon nzType="poweroff"></i>
-        </ng-template>
     </div>
 </div>
